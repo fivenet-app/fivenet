@@ -675,7 +675,9 @@
         "heatmap": "Heatmap",
         "meters": "Meter | Meter",
         "meter": "0 Meter | 1 Meter | {n} Meter",
-        "draggable": "Halten & Verschieben"
+        "draggable": "Halten & Verschieben",
+        "set_wanted": "Als Gesucht markieren",
+        "revoke_wanted": "Gesuchten-Status entfernen"
     },
     "components": {
         "partials": {

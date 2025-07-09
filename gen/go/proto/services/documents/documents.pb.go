@@ -3677,12 +3677,13 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"comment_id\x18\x01 \x01(\x04R\tcommentId\"\x17\n" +
 	"\x15DeleteCommentResponse\"S\n" +
 	"\x16UpdateDocumentResponse\x129\n" +
-	"\bdocument\x18\x01 \x01(\v2\x1d.resources.documents.DocumentR\bdocument\"{\n" +
+	"\bdocument\x18\x01 \x01(\v2\x1d.resources.documents.DocumentR\bdocument\"\x80\x01\n" +
 	"\x15DeleteDocumentRequest\x120\n" +
 	"\vdocument_id\x18\x01 \x01(\x04B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\n" +
-	"documentId\x12%\n" +
-	"\x06reason\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x00R\x06reason\x88\x01\x01B\t\n" +
+	"documentId\x12*\n" +
+	"\x06reason\x18\x02 \x01(\tB\r\xbaH\n" +
+	"\xd8\x01\x01r\x05\x10\x00\x18\xff\x01H\x00R\x06reason\x88\x01\x01B\t\n" +
 	"\a_reason\"\x18\n" +
 	"\x16DeleteDocumentResponse\"P\n" +
 	"\x15ToggleDocumentRequest\x12\x1f\n" +

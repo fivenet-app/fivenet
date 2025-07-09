@@ -3,8 +3,8 @@ syntax = "proto3";
 package resources.vehicles;
 
 import "buf/validate/validate.proto";
-import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
+import "resources/vehicles/props.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/vehicles;vehicles";
 
@@ -17,11 +17,5 @@ message Vehicle {
   optional resources.users.UserShort owner = 5;
   optional string job = 7 [(buf.validate.field).string.max_len = 20];
   optional string job_label = 8 [(buf.validate.field).string.max_len = 50];
-}
-
-message VehicleProps {
-  string plate = 1 [(buf.validate.field).string.max_len = 32];
-  optional resources.timestamp.Timestamp updated_at = 2;
-  optional bool wanted = 3;
-  optional string wanted_reason = 4 [(buf.validate.field).string.max_len = 255];
+  optional VehicleProps props = 9;
 }

@@ -675,7 +675,9 @@
         "heatmap": "Heatmap",
         "meters": "Meter | Meters",
         "meter": "0 Meters | 1 Meter | {n} Meters",
-        "draggable": "Draggable"
+        "draggable": "Draggable",
+        "set_wanted": "Set Wanted",
+        "revoke_wanted": "Revoke Wanted"
     },
     "components": {
         "partials": {
@@ -2169,7 +2171,8 @@
             "ErrPropsMugshotDenied": "You are not allowed to set a citizen's mug shot!"
         },
         "VehiclesService": {
-            "ErrFailedQuery": "Failed to search vehicles data!"
+            "ErrFailedQuery": "Failed to search vehicles data!",
+            "ErrPropsWantedDenied": "You are not allowed to set a vehicle's wanted status!"
         },
         "DocumentsService": {
             "ErrFailedQuery": "Failed to get/ create/ update documents!",
@@ -2870,7 +2873,13 @@
                 "category": "Vehicles",
                 "ListVehicles": {
                     "key": "Search Vehicles",
-                    "description": "Search and find citizen's vehicles."
+                    "description": "Search and find citizen's vehicles.",
+                    "attrs": {
+                        "Wanted": "Wanted Status"
+                    },
+                    "attrs_types": {
+                        "Fields": "Vehicle Properties Fields"
+                    }
                 },
                 "SetVehicleProps": {
                     "key": "Set Vehicle Properties",

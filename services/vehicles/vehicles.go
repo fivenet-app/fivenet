@@ -7,15 +7,20 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/vehicles"
 	permscitizens "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens/perms"
 	pbvehicles "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/vehicles"
+	permsvehicles "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/vehicles/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsvehicles "github.com/fivenet-app/fivenet/v2025/services/vehicles/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
 
 func (s *Server) ListVehicles(ctx context.Context, req *pbvehicles.ListVehiclesRequest) (*pbvehicles.ListVehiclesResponse, error) {
@@ -23,7 +28,14 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbvehicles.ListVehiclesR
 	logRequest := false
 
 	tVehicles := tables.OwnedVehicles().AS("vehicle")
+	tVehicleProps := table.FivenetVehiclesProps.AS("vehicle_props")
 	tUsers := tables.User().AS("user_short")
+
+	// Field Permission Check
+	fields, err := s.ps.AttrStringList(userInfo, permsvehicles.VehiclesServicePerm, permsvehicles.VehiclesServiceSetVehiclePropsPerm, permsvehicles.VehiclesServiceSetVehiclePropsFieldsPermField)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
+	}
 
 	condition := jet.Bool(true)
 	userCondition := tUsers.Identifier.EQ(tVehicles.Owner)
@@ -60,6 +72,15 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbvehicles.ListVehiclesR
 		condition = jet.AND(condition,
 			tVehicles.Job.EQ(jet.String(*req.Job)),
 		)
+	}
+
+	if fields.Contains("Wanted") {
+		if req.Wanted != nil && *req.Wanted {
+			logRequest = true
+			condition = jet.AND(condition,
+				tVehicleProps.Wanted.EQ(jet.Bool(*req.Wanted)),
+			)
+		}
 	}
 
 	if logRequest {
@@ -131,6 +152,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbvehicles.ListVehiclesR
 		tUsers.Firstname,
 		tUsers.Lastname,
 		tUsers.Dateofbirth,
+		tVehicleProps.Plate,
 	}
 
 	if !tables.ESXCompatEnabled {
@@ -141,13 +163,23 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbvehicles.ListVehiclesR
 	}
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(userInfo, permscitizens.CitizensServicePerm, permscitizens.CitizensServiceListCitizensPerm, permscitizens.CitizensServiceListCitizensFieldsPermField)
+	userFields, err := s.ps.AttrStringList(userInfo, permscitizens.CitizensServicePerm, permscitizens.CitizensServiceListCitizensPerm, permscitizens.CitizensServiceListCitizensFieldsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
 
-	if fields.Contains("PhoneNumber") {
+	if userFields.Contains("PhoneNumber") {
 		columns = append(columns, tUsers.PhoneNumber)
+	}
+
+	if fields.Len() > 0 {
+		columns = append(columns, tVehicleProps.UpdatedAt)
+	}
+	if fields.Contains("Wanted") {
+		columns = append(columns,
+			tVehicleProps.Wanted,
+			tVehicleProps.WantedReason,
+		)
 	}
 
 	stmt := tVehicles.
@@ -159,6 +191,9 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbvehicles.ListVehiclesR
 			tVehicles.
 				LEFT_JOIN(tUsers,
 					userCondition,
+				).
+				LEFT_JOIN(tVehicleProps,
+					tVehicleProps.Plate.EQ(tVehicles.Plate),
 				),
 		).
 		WHERE(condition).
@@ -179,4 +214,102 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbvehicles.ListVehiclesR
 	resp.Pagination.Update(len(resp.Vehicles))
 
 	return resp, nil
+}
+
+func (s *Server) SetVehicleProps(ctx context.Context, req *pbvehicles.SetVehiclePropsRequest) (*pbvehicles.SetVehiclePropsResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.Vehicles.plate", req.Props.Plate))
+
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &audit.AuditEntry{
+		Service: pbvehicles.VehiclesService_ServiceDesc.ServiceName,
+		Method:  "SetVehicleProps",
+		UserId:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
+	}
+	defer s.aud.Log(auditEntry, req)
+
+	// Get current vehicle props to be able to compare
+	props, err := s.getVehicleProps(ctx, req.Props.Plate)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
+	}
+
+	if props.Wanted == nil {
+		wanted := false
+		props.Wanted = &wanted
+	}
+
+	resp := &pbvehicles.SetVehiclePropsResponse{
+		Props: &vehicles.VehicleProps{},
+	}
+
+	// Field Permission Check
+	fields, err := s.ps.AttrStringList(userInfo, permsvehicles.VehiclesServicePerm, permsvehicles.VehiclesServiceSetVehiclePropsPerm, permsvehicles.VehiclesServiceSetVehiclePropsFieldsPermField)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
+	}
+
+	// Generate the update sets
+	if req.Props.Wanted != nil {
+		if !fields.Contains("Wanted") {
+			return nil, errorsvehicles.ErrPropsWantedDenied
+		}
+	}
+
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
+	if err := props.HandleChanges(ctx, tx, req.Props); err != nil {
+		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
+		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
+	}
+
+	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+
+	resp.Props, err = s.getVehicleProps(ctx, req.Props.Plate)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
+	}
+
+	return resp, nil
+}
+
+func (s *Server) getVehicleProps(ctx context.Context, plate string) (*vehicles.VehicleProps, error) {
+	tVehicleProps := table.FivenetVehiclesProps.AS("vehicle_props")
+
+	stmt := tVehicleProps.
+		SELECT(
+			tVehicleProps.Plate,
+			tVehicleProps.UpdatedAt,
+			tVehicleProps.Wanted,
+		).
+		FROM(tVehicleProps).
+		WHERE(
+			tVehicleProps.Plate.EQ(jet.String(plate)),
+		).
+		LIMIT(1)
+
+	var dest vehicles.VehicleProps
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	if dest.Plate == "" {
+		return nil, nil
+	}
+
+	return &dest, nil
 }

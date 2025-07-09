@@ -83,6 +83,7 @@
 // source: resources/users/props.proto
 // source: resources/users/users.proto
 // source: resources/vehicles/activity.proto
+// source: resources/vehicles/props.proto
 // source: resources/vehicles/vehicles.proto
 // source: resources/wiki/access.proto
 // source: resources/wiki/activity.proto

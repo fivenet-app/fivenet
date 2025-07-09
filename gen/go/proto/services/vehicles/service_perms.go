@@ -4,6 +4,7 @@
 package vehicles
 
 import (
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
 	permkeys "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/vehicles/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 )
@@ -15,14 +16,26 @@ func init() {
 		{
 			Category: permkeys.VehiclesServicePerm,
 			Name:     permkeys.VehiclesServiceListVehiclesPerm,
-			Attrs:    []perms.Attr{},
-			Order:    0,
+			Attrs: []perms.Attr{
+				{
+					Key:         permkeys.VehiclesServiceListVehiclesFieldsPermField,
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"Wanted"},
+				},
+			},
+			Order: 0,
 		},
 		{
 			Category: permkeys.VehiclesServicePerm,
 			Name:     permkeys.VehiclesServiceSetVehiclePropsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    0,
+			Attrs: []perms.Attr{
+				{
+					Key:         permkeys.VehiclesServiceSetVehiclePropsFieldsPermField,
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"Wanted"},
+				},
+			},
+			Order: 0,
 		},
 	})
 }

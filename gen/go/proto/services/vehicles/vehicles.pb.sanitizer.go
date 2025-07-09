@@ -3,6 +3,10 @@
 
 package vehicles
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
 func (m *ListVehiclesRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -88,6 +92,9 @@ func (m *SetVehiclePropsResponse) Sanitize() error {
 			}
 		}
 	}
+
+	// Field: Reason
+	m.Reason = htmlsanitizer.Sanitize(m.Reason)
 
 	return nil
 }

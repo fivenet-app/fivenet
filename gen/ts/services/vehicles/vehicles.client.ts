@@ -17,13 +17,13 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface IVehiclesServiceClient {
     /**
-     * @perm
+     * @perm: Attrs=Fields/StringList:[]string{"Wanted"}
      *
      * @generated from protobuf rpc: ListVehicles
      */
     listVehicles(input: ListVehiclesRequest, options?: RpcOptions): UnaryCall<ListVehiclesRequest, ListVehiclesResponse>;
     /**
-     * @perm
+     * @perm: Attrs=Fields/StringList:[]string{"Wanted"}
      *
      * @generated from protobuf rpc: SetVehicleProps
      */
@@ -39,7 +39,7 @@ export class VehiclesServiceClient implements IVehiclesServiceClient, ServiceInf
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm
+     * @perm: Attrs=Fields/StringList:[]string{"Wanted"}
      *
      * @generated from protobuf rpc: ListVehicles
      */
@@ -48,7 +48,7 @@ export class VehiclesServiceClient implements IVehiclesServiceClient, ServiceInf
         return stackIntercept<ListVehiclesRequest, ListVehiclesResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
+     * @perm: Attrs=Fields/StringList:[]string{"Wanted"}
      *
      * @generated from protobuf rpc: SetVehicleProps
      */

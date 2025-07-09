@@ -17,17 +17,9 @@ func (m *Vehicle) Sanitize() error {
 		}
 	}
 
-	return nil
-}
-
-func (m *VehicleProps) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: UpdatedAt
-	if m.UpdatedAt != nil {
-		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+	// Field: Props
+	if m.Props != nil {
+		if v, ok := any(m.GetProps()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

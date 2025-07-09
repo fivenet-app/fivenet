@@ -32,6 +32,7 @@ type ListVehiclesRequest struct {
 	Model         *string `protobuf:"bytes,4,opt,name=model,proto3,oneof" json:"model,omitempty"`
 	UserIds       []int32 `protobuf:"varint,5,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
 	Job           *string `protobuf:"bytes,6,opt,name=job,proto3,oneof" json:"job,omitempty"`
+	Wanted        *bool   `protobuf:"varint,7,opt,name=wanted,proto3,oneof" json:"wanted,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -106,6 +107,13 @@ func (x *ListVehiclesRequest) GetJob() string {
 		return *x.Job
 	}
 	return ""
+}
+
+func (x *ListVehiclesRequest) GetWanted() bool {
+	if x != nil && x.Wanted != nil {
+		return *x.Wanted
+	}
+	return false
 }
 
 type ListVehiclesResponse struct {
@@ -205,8 +213,10 @@ func (x *SetVehiclePropsRequest) GetProps() *vehicles.VehicleProps {
 }
 
 type SetVehiclePropsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Props         *vehicles.VehicleProps `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Props *vehicles.VehicleProps `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
+	// @sanitize
+	Reason        string `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -248,11 +258,18 @@ func (x *SetVehiclePropsResponse) GetProps() *vehicles.VehicleProps {
 	return nil
 }
 
+func (x *SetVehiclePropsResponse) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
 var File_services_vehicles_vehicles_proto protoreflect.FileDescriptor
 
 const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\n" +
-	" services/vehicles/vehicles.proto\x12\x11services.vehicles\x1a(resources/common/database/database.proto\x1a!resources/vehicles/vehicles.proto\"\xf2\x02\n" +
+	" services/vehicles/vehicles.proto\x12\x11services.vehicles\x1a(resources/common/database/database.proto\x1a\x1eresources/vehicles/props.proto\x1a!resources/vehicles/vehicles.proto\"\x9a\x03\n" +
 	"\x13ListVehiclesRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
@@ -261,20 +278,24 @@ const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\rlicense_plate\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x18 H\x01R\flicensePlate\x88\x01\x01\x12\"\n" +
 	"\x05model\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18 H\x02R\x05model\x88\x01\x01\x12'\n" +
 	"\buser_ids\x18\x05 \x03(\x05B\f\xbaH\t\x92\x01\x06\"\x04\x1a\x02(\x00R\auserIds\x12\x1e\n" +
-	"\x03job\x18\x06 \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x03R\x03job\x88\x01\x01B\a\n" +
+	"\x03job\x18\x06 \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x03R\x03job\x88\x01\x01\x12\x1b\n" +
+	"\x06wanted\x18\a \x01(\bH\x04R\x06wanted\x88\x01\x01B\a\n" +
 	"\x05_sortB\x10\n" +
 	"\x0e_license_plateB\b\n" +
 	"\x06_modelB\x06\n" +
-	"\x04_job\"\x9e\x01\n" +
+	"\x04_jobB\t\n" +
+	"\a_wanted\"\x9e\x01\n" +
 	"\x14ListVehiclesResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x127\n" +
 	"\bvehicles\x18\x02 \x03(\v2\x1b.resources.vehicles.VehicleR\bvehicles\"X\n" +
 	"\x16SetVehiclePropsRequest\x12>\n" +
-	"\x05props\x18\x01 \x01(\v2 .resources.vehicles.VehiclePropsB\x06\xbaH\x03\xc8\x01\x01R\x05props\"Q\n" +
+	"\x05props\x18\x01 \x01(\v2 .resources.vehicles.VehiclePropsB\x06\xbaH\x03\xc8\x01\x01R\x05props\"x\n" +
 	"\x17SetVehiclePropsResponse\x126\n" +
-	"\x05props\x18\x01 \x01(\v2 .resources.vehicles.VehiclePropsR\x05props2\xdc\x01\n" +
+	"\x05props\x18\x01 \x01(\v2 .resources.vehicles.VehiclePropsR\x05props\x12%\n" +
+	"\x06reason\x18\x02 \x01(\tB\r\xbaH\n" +
+	"\xd8\x01\x01r\x05\x10\x03\x18\xff\x01R\x06reason2\xdc\x01\n" +
 	"\x0fVehiclesService\x12_\n" +
 	"\fListVehicles\x12&.services.vehicles.ListVehiclesRequest\x1a'.services.vehicles.ListVehiclesResponse\x12h\n" +
 	"\x0fSetVehicleProps\x12).services.vehicles.SetVehiclePropsRequest\x1a*.services.vehicles.SetVehiclePropsResponseBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/vehicles;vehiclesb\x06proto3"

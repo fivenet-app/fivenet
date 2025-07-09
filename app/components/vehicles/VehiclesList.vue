@@ -10,6 +10,7 @@ import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 import type { ListVehiclesResponse } from '~~/gen/ts/services/vehicles/vehicles';
 import ColleagueName from '../jobs/colleagues/ColleagueName.vue';
+import ConfirmModalWithReason from '../partials/ConfirmModalWithReason.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -29,6 +30,8 @@ const props = withDefaults(
         hideCopy: false,
     },
 );
+
+const modal = useModal();
 
 const clipboardStore = useClipboardStore();
 
@@ -102,6 +105,33 @@ function addToClipboard(vehicle: Vehicle): void {
         timeout: 3250,
         type: NotificationType.INFO,
     });
+}
+
+async function setVehicleProps(vehicle: Vehicle, reason?: string, wanted?: boolean): Promise<void> {
+    if (!can('vehicles.VehiclesService/SetVehicleProps').value) {
+        return;
+    }
+
+    try {
+        const { response } = await $grpc.vehicles.vehicles.setVehicleProps({
+            props: {
+                plate: vehicle.plate,
+                wanted: wanted,
+                wantedReason: reason,
+            },
+        });
+
+        notifications.add({
+            title: { key: 'notifications.vehicles.vehicle_props_updated.title', parameters: {} },
+            description: { key: 'notifications.vehicles.vehicle_props_updated.content', parameters: {} },
+            timeout: 3250,
+            type: NotificationType.SUCCESS,
+        });
+
+        vehicle.props = response.props;
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+    }
 }
 
 const columns = computed(() =>
@@ -244,6 +274,22 @@ defineShortcuts({
 
         <template #actions-data="{ row: vehicle }">
             <div :key="vehicle.plate" class="flex flex-col justify-end md:flex-row">
+                <UTooltip
+                    v-if="can('vehicles.VehiclesService/SetVehicleProps').value"
+                    :text="vehicle?.props?.wanted ? $t('common.revoke_wanted') : $t('common.set_wanted')"
+                >
+                    <UButton
+                        variant="link"
+                        :color="vehicle?.props?.wanted ? 'error' : 'primary'"
+                        :icon="vehicle?.props?.wanted ? 'i-mdi-account-alert' : 'i-mdi-account-cancel'"
+                        @click="
+                            modal.open(ConfirmModalWithReason, {
+                                confirm: async (reason?: string) => setVehicleProps(vehicle, reason, !vehicle.props?.wanted),
+                            })
+                        "
+                    />
+                </UTooltip>
+
                 <UTooltip v-if="!hideCopy" :text="$t('components.clipboard.clipboard_button.add')">
                     <UButton variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(vehicle)" />
                 </UTooltip>

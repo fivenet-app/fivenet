@@ -10,6 +10,8 @@ import (
 const (
 	VehiclesServicePerm perms.Category = "vehicles.VehiclesService"
 
-	VehiclesServiceListVehiclesPerm    perms.Name = "ListVehicles"
-	VehiclesServiceSetVehiclePropsPerm perms.Name = "SetVehicleProps"
+	VehiclesServiceListVehiclesPerm               perms.Name = "ListVehicles"
+	VehiclesServiceListVehiclesFieldsPermField    perms.Key  = "Fields"
+	VehiclesServiceSetVehiclePropsPerm            perms.Name = "SetVehicleProps"
+	VehiclesServiceSetVehiclePropsFieldsPermField perms.Key  = "Fields"
 )

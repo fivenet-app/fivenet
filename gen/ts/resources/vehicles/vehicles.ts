@@ -11,7 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Timestamp } from "../timestamp/timestamp";
+import { VehicleProps } from "./props";
 import { UserShort } from "../users/users";
 /**
  * @generated from protobuf message resources.vehicles.Vehicle
@@ -49,27 +49,10 @@ export interface Vehicle {
      * @generated from protobuf field: optional string job_label = 8
      */
     jobLabel?: string;
-}
-/**
- * @generated from protobuf message resources.vehicles.VehicleProps
- */
-export interface VehicleProps {
     /**
-     * @generated from protobuf field: string plate = 1
+     * @generated from protobuf field: optional resources.vehicles.VehicleProps props = 9
      */
-    plate: string;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 2
-     */
-    updatedAt?: Timestamp;
-    /**
-     * @generated from protobuf field: optional bool wanted = 3
-     */
-    wanted?: boolean;
-    /**
-     * @generated from protobuf field: optional string wanted_reason = 4
-     */
-    wantedReason?: string;
+    props?: VehicleProps;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Vehicle$Type extends MessageType<Vehicle> {
@@ -82,7 +65,8 @@ class Vehicle$Type extends MessageType<Vehicle> {
             { no: 6, name: "owner_identifier", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
             { no: 5, name: "owner", kind: "message", T: () => UserShort },
             { no: 7, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 8, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } }
+            { no: 8, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
+            { no: 9, name: "props", kind: "message", T: () => VehicleProps }
         ]);
     }
     create(value?: PartialMessage<Vehicle>): Vehicle {
@@ -122,6 +106,9 @@ class Vehicle$Type extends MessageType<Vehicle> {
                 case /* optional string job_label */ 8:
                     message.jobLabel = reader.string();
                     break;
+                case /* optional resources.vehicles.VehicleProps props */ 9:
+                    message.props = VehicleProps.internalBinaryRead(reader, reader.uint32(), options, message.props);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -158,6 +145,9 @@ class Vehicle$Type extends MessageType<Vehicle> {
         /* optional string job_label = 8; */
         if (message.jobLabel !== undefined)
             writer.tag(8, WireType.LengthDelimited).string(message.jobLabel);
+        /* optional resources.vehicles.VehicleProps props = 9; */
+        if (message.props)
+            VehicleProps.internalBinaryWrite(message.props, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -168,71 +158,3 @@ class Vehicle$Type extends MessageType<Vehicle> {
  * @generated MessageType for protobuf message resources.vehicles.Vehicle
  */
 export const Vehicle = new Vehicle$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class VehicleProps$Type extends MessageType<VehicleProps> {
-    constructor() {
-        super("resources.vehicles.VehicleProps", [
-            { no: 1, name: "plate", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
-            { no: 2, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "wanted", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 4, name: "wanted_reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } }
-        ]);
-    }
-    create(value?: PartialMessage<VehicleProps>): VehicleProps {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.plate = "";
-        if (value !== undefined)
-            reflectionMergePartial<VehicleProps>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: VehicleProps): VehicleProps {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string plate */ 1:
-                    message.plate = reader.string();
-                    break;
-                case /* optional resources.timestamp.Timestamp updated_at */ 2:
-                    message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
-                    break;
-                case /* optional bool wanted */ 3:
-                    message.wanted = reader.bool();
-                    break;
-                case /* optional string wanted_reason */ 4:
-                    message.wantedReason = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: VehicleProps, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string plate = 1; */
-        if (message.plate !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.plate);
-        /* optional resources.timestamp.Timestamp updated_at = 2; */
-        if (message.updatedAt)
-            Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* optional bool wanted = 3; */
-        if (message.wanted !== undefined)
-            writer.tag(3, WireType.Varint).bool(message.wanted);
-        /* optional string wanted_reason = 4; */
-        if (message.wantedReason !== undefined)
-            writer.tag(4, WireType.LengthDelimited).string(message.wantedReason);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.vehicles.VehicleProps
- */
-export const VehicleProps = new VehicleProps$Type();

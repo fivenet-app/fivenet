@@ -12,7 +12,7 @@ import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { VehicleProps } from "../../resources/vehicles/vehicles";
+import { VehicleProps } from "../../resources/vehicles/props";
 import { Vehicle } from "../../resources/vehicles/vehicles";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { Sort } from "../../resources/common/database/database";
@@ -47,6 +47,10 @@ export interface ListVehiclesRequest {
      * @generated from protobuf field: optional string job = 6
      */
     job?: string;
+    /**
+     * @generated from protobuf field: optional bool wanted = 7
+     */
+    wanted?: boolean;
 }
 /**
  * @generated from protobuf message services.vehicles.ListVehiclesResponse
@@ -78,6 +82,12 @@ export interface SetVehiclePropsResponse {
      * @generated from protobuf field: resources.vehicles.VehicleProps props = 1
      */
     props?: VehicleProps;
+    /**
+     * @sanitize
+     *
+     * @generated from protobuf field: string reason = 2
+     */
+    reason: string;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListVehiclesRequest$Type extends MessageType<ListVehiclesRequest> {
@@ -88,7 +98,8 @@ class ListVehiclesRequest$Type extends MessageType<ListVehiclesRequest> {
             { no: 3, name: "license_plate", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
             { no: 4, name: "model", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
             { no: 5, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { items: { int32: { gte: 0 } } } } } },
-            { no: 6, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } }
+            { no: 6, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
+            { no: 7, name: "wanted", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ListVehiclesRequest>): ListVehiclesRequest {
@@ -125,6 +136,9 @@ class ListVehiclesRequest$Type extends MessageType<ListVehiclesRequest> {
                 case /* optional string job */ 6:
                     message.job = reader.string();
                     break;
+                case /* optional bool wanted */ 7:
+                    message.wanted = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -159,6 +173,9 @@ class ListVehiclesRequest$Type extends MessageType<ListVehiclesRequest> {
         /* optional string job = 6; */
         if (message.job !== undefined)
             writer.tag(6, WireType.LengthDelimited).string(message.job);
+        /* optional bool wanted = 7; */
+        if (message.wanted !== undefined)
+            writer.tag(7, WireType.Varint).bool(message.wanted);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -273,11 +290,13 @@ export const SetVehiclePropsRequest = new SetVehiclePropsRequest$Type();
 class SetVehiclePropsResponse$Type extends MessageType<SetVehiclePropsResponse> {
     constructor() {
         super("services.vehicles.SetVehiclePropsResponse", [
-            { no: 1, name: "props", kind: "message", T: () => VehicleProps }
+            { no: 1, name: "props", kind: "message", T: () => VehicleProps },
+            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_UNPOPULATED", string: { minLen: "3", maxLen: "255" } } } }
         ]);
     }
     create(value?: PartialMessage<SetVehiclePropsResponse>): SetVehiclePropsResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.reason = "";
         if (value !== undefined)
             reflectionMergePartial<SetVehiclePropsResponse>(this, message, value);
         return message;
@@ -289,6 +308,9 @@ class SetVehiclePropsResponse$Type extends MessageType<SetVehiclePropsResponse> 
             switch (fieldNo) {
                 case /* resources.vehicles.VehicleProps props */ 1:
                     message.props = VehicleProps.internalBinaryRead(reader, reader.uint32(), options, message.props);
+                    break;
+                case /* string reason */ 2:
+                    message.reason = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -305,6 +327,9 @@ class SetVehiclePropsResponse$Type extends MessageType<SetVehiclePropsResponse> 
         /* resources.vehicles.VehicleProps props = 1; */
         if (message.props)
             VehicleProps.internalBinaryWrite(message.props, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* string reason = 2; */
+        if (message.reason !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.reason);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

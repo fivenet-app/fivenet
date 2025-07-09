@@ -5,4 +5,7 @@ import (
 	"google.golang.org/grpc/codes"
 )
 
-var ErrFailedQuery = common.NewI18nErr(codes.Internal, &common.I18NItem{Key: "errors.VehiclesService.ErrFailedQuery"}, nil)
+var (
+	ErrFailedQuery       = common.NewI18nErr(codes.Internal, &common.I18NItem{Key: "errors.VehiclesService.ErrFailedQuery"}, nil)
+	ErrPropsWantedDenied = common.NewI18nErr(codes.PermissionDenied, &common.I18NItem{Key: "errors.VehiclesService.ErrPropsWantedDenied"}, nil)
+)

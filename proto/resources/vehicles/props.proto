@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package resources.vehicles;
+
+import "buf/validate/validate.proto";
+import "resources/timestamp/timestamp.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/vehicles;vehicles";
+
+message VehicleProps {
+  string plate = 1 [(buf.validate.field).string.max_len = 32];
+  optional resources.timestamp.Timestamp updated_at = 2;
+  optional bool wanted = 3;
+  optional string wanted_reason = 4 [(buf.validate.field).string.max_len = 255];
+}

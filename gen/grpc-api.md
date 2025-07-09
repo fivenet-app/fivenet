@@ -3421,6 +3421,32 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 
 
+## resources/vehicles/props.proto
+
+
+### resources.vehicles.VehicleProps
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `plate` | [string](#string) |  |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `wanted` | [bool](#bool) | optional |  |
+| `wanted_reason` | [string](#string) | optional |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## resources/vehicles/vehicles.proto
 
 
@@ -3437,20 +3463,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `owner` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
 | `job` | [string](#string) | optional |  |
 | `job_label` | [string](#string) | optional |  |
-
-
-
-
-
-### resources.vehicles.VehicleProps
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `plate` | [string](#string) |  |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `wanted` | [bool](#bool) | optional |  |
-| `wanted_reason` | [string](#string) | optional |  |
+| `props` | [VehicleProps](#resourcesvehiclesVehicleProps) | optional |  |
 
 
 
@@ -11738,6 +11751,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `model` | [string](#string) | optional |  |
 | `user_ids` | [int32](#int32) | repeated |  |
 | `job` | [string](#string) | optional |  |
+| `wanted` | [bool](#bool) | optional |  |
 
 
 
@@ -11772,6 +11786,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `props` | [resources.vehicles.VehicleProps](#resourcesvehiclesVehicleProps) |  |  |
+| `reason` | [string](#string) |  | @sanitize |
 
 
 
@@ -11787,8 +11802,8 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `ListVehicles` | [ListVehiclesRequest](#servicesvehiclesListVehiclesRequest) | [ListVehiclesResponse](#servicesvehiclesListVehiclesResponse) |@perm |
-| `SetVehicleProps` | [SetVehiclePropsRequest](#servicesvehiclesSetVehiclePropsRequest) | [SetVehiclePropsResponse](#servicesvehiclesSetVehiclePropsResponse) |@perm |
+| `ListVehicles` | [ListVehiclesRequest](#servicesvehiclesListVehiclesRequest) | [ListVehiclesResponse](#servicesvehiclesListVehiclesResponse) |@perm: Attrs=Fields/StringList:[]string{"Wanted"} |
+| `SetVehicleProps` | [SetVehiclePropsRequest](#servicesvehiclesSetVehiclePropsRequest) | [SetVehiclePropsResponse](#servicesvehiclesSetVehiclePropsResponse) |@perm: Attrs=Fields/StringList:[]string{"Wanted"} |
 
  <!-- end services -->
 
