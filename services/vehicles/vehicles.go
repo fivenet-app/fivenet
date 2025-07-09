@@ -74,7 +74,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbvehicles.ListVehiclesR
 		)
 	}
 
-	if fields.Contains("Wanted") {
+	if fields.Contains("Wanted") || userInfo.Superuser {
 		if req.Wanted != nil && *req.Wanted {
 			logRequest = true
 			condition = jet.AND(condition,
@@ -101,6 +101,9 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbvehicles.ListVehiclesR
 			tVehicles.
 				LEFT_JOIN(tUsers,
 					userCondition,
+				).
+				LEFT_JOIN(tVehicleProps,
+					tVehicleProps.Plate.EQ(tVehicles.Plate),
 				),
 		).
 		WHERE(condition)
@@ -175,7 +178,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbvehicles.ListVehiclesR
 	if fields.Len() > 0 {
 		columns = append(columns, tVehicleProps.UpdatedAt)
 	}
-	if fields.Contains("Wanted") {
+	if fields.Contains("Wanted") || userInfo.Superuser {
 		columns = append(columns,
 			tVehicleProps.Wanted,
 			tVehicleProps.WantedReason,
@@ -253,7 +256,7 @@ func (s *Server) SetVehicleProps(ctx context.Context, req *pbvehicles.SetVehicle
 
 	// Generate the update sets
 	if req.Props.Wanted != nil {
-		if !fields.Contains("Wanted") {
+		if !fields.Contains("Wanted") && !userInfo.Superuser {
 			return nil, errorsvehicles.ErrPropsWantedDenied
 		}
 	}
@@ -293,6 +296,7 @@ func (s *Server) getVehicleProps(ctx context.Context, plate string) (*vehicles.V
 			tVehicleProps.Plate,
 			tVehicleProps.UpdatedAt,
 			tVehicleProps.Wanted,
+			tVehicleProps.WantedReason,
 		).
 		FROM(tVehicleProps).
 		WHERE(
@@ -308,7 +312,7 @@ func (s *Server) getVehicleProps(ctx context.Context, plate string) (*vehicles.V
 	}
 
 	if dest.Plate == "" {
-		return nil, nil
+		dest.Plate = plate
 	}
 
 	return &dest, nil

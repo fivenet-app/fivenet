@@ -26,11 +26,13 @@ func (x *VehicleProps) HandleChanges(ctx context.Context, tx *sql.Tx, in *Vehicl
 		stmt := tUserProps.
 			INSERT(
 				tUserProps.Plate,
+				tUserProps.UpdatedAt,
 				tUserProps.Wanted,
 				tUserProps.WantedReason,
 			).
 			VALUES(
 				in.Plate,
+				jet.CURRENT_TIMESTAMP(),
 				in.Wanted,
 				in.WantedReason,
 			).

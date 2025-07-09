@@ -10,7 +10,7 @@ import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 import type { ListVehiclesResponse } from '~~/gen/ts/services/vehicles/vehicles';
 import ColleagueName from '../jobs/colleagues/ColleagueName.vue';
-import ConfirmModalWithReason from '../partials/ConfirmModalWithReason.vue';
+import VehicleInfoPopover from './VehicleInfoPopover.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -31,18 +31,18 @@ const props = withDefaults(
     },
 );
 
-const modal = useModal();
-
 const clipboardStore = useClipboardStore();
 
 const notifications = useNotificationsStore();
 
-const { can } = useAuth();
+const { attr, attrStringList, can, isSuperuser } = useAuth();
 
 const schema = z.object({
     licensePlate: z.string().max(32).default(''),
     model: z.string().min(6).max(32).optional(),
     userIds: z.coerce.number().array().max(5).default([]),
+    wanted: z.boolean().default(false),
+
     sort: z.custom<TableSortable>().default({
         column: 'plate',
         direction: 'asc',
@@ -71,6 +71,7 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
             licensePlate: query.licensePlate,
             model: query.model,
             userIds: query.userIds,
+            wanted: query.wanted,
         });
         const { response } = await call;
 
@@ -107,30 +108,10 @@ function addToClipboard(vehicle: Vehicle): void {
     });
 }
 
-async function setVehicleProps(vehicle: Vehicle, reason?: string, wanted?: boolean): Promise<void> {
-    if (!can('vehicles.VehiclesService/SetVehicleProps').value) {
-        return;
-    }
-
-    try {
-        const { response } = await $grpc.vehicles.vehicles.setVehicleProps({
-            props: {
-                plate: vehicle.plate,
-                wanted: wanted,
-                wantedReason: reason,
-            },
-        });
-
-        notifications.add({
-            title: { key: 'notifications.vehicles.vehicle_props_updated.title', parameters: {} },
-            description: { key: 'notifications.vehicles.vehicle_props_updated.content', parameters: {} },
-            timeout: 3250,
-            type: NotificationType.SUCCESS,
-        });
-
-        vehicle.props = response.props;
-    } catch (e) {
-        handleGRPCError(e as RpcError);
+function updateVehicle(plate: string, vehicle: Vehicle): void {
+    const index = data.value?.vehicles.findIndex((v) => v.plate === plate);
+    if (index !== undefined && index >= 0 && data.value?.vehicles[index]) {
+        data.value.vehicles[index] = vehicle;
     }
 }
 
@@ -141,6 +122,13 @@ const columns = computed(() =>
             label: t('common.plate'),
             sortable: true,
         },
+        attr('vehicles.VehiclesService/ListVehicles', 'Fields', 'Wanted').value
+            ? {
+                  key: 'wanted',
+                  label: t('common.wanted'),
+                  sortable: false,
+              }
+            : undefined,
         {
             key: 'model',
             label: t('common.model'),
@@ -238,6 +226,18 @@ defineShortcuts({
                         </USelectMenu>
                     </ClientOnly>
                 </UFormGroup>
+
+                <UFormGroup
+                    v-if="attr('vehicles.VehiclesService/ListVehicles', 'Fields', 'Wanted').value"
+                    class="flex flex-initial flex-col"
+                    name="wanted"
+                    :label="$t('common.only_wanted')"
+                    :ui="{ container: 'flex-1 flex' }"
+                >
+                    <div class="flex flex-1 items-center">
+                        <UToggle v-model="query.wanted" />
+                    </div>
+                </UFormGroup>
             </UForm>
         </template>
     </UDashboardToolbar>
@@ -260,7 +260,15 @@ defineShortcuts({
         sort-mode="manual"
     >
         <template #plate-data="{ row: vehicle }">
-            <LicensePlate class="mr-2" :plate="vehicle.plate" />
+            <div class="inline-flex items-center gap-1">
+                <LicensePlate :plate="vehicle.plate" />
+            </div>
+        </template>
+
+        <template #wanted-data="{ row: vehicle }">
+            <UBadge v-if="vehicle.props?.wanted" color="error">
+                {{ $t('common.wanted').toUpperCase() }}
+            </UBadge>
         </template>
 
         <template #type-data="{ row: vehicle }">
@@ -275,19 +283,10 @@ defineShortcuts({
         <template #actions-data="{ row: vehicle }">
             <div :key="vehicle.plate" class="flex flex-col justify-end md:flex-row">
                 <UTooltip
-                    v-if="can('vehicles.VehiclesService/SetVehicleProps').value"
-                    :text="vehicle?.props?.wanted ? $t('common.revoke_wanted') : $t('common.set_wanted')"
+                    v-if="attrStringList('vehicles.VehiclesService/ListVehicles', 'Fields').value.length > 0 || isSuperuser"
+                    :text="$t('common.propertie', 2)"
                 >
-                    <UButton
-                        variant="link"
-                        :color="vehicle?.props?.wanted ? 'error' : 'primary'"
-                        :icon="vehicle?.props?.wanted ? 'i-mdi-account-alert' : 'i-mdi-account-cancel'"
-                        @click="
-                            modal.open(ConfirmModalWithReason, {
-                                confirm: async (reason?: string) => setVehicleProps(vehicle, reason, !vehicle.props?.wanted),
-                            })
-                        "
-                    />
+                    <VehicleInfoPopover :model-value="vehicle" @update:model-value="updateVehicle(vehicle.plate, $event)" />
                 </UTooltip>
 
                 <UTooltip v-if="!hideCopy" :text="$t('components.clipboard.clipboard_button.add')">

@@ -677,7 +677,8 @@
         "meter": "0 Meter | 1 Meter | {n} Meter",
         "draggable": "Halten & Verschieben",
         "set_wanted": "Als Gesucht markieren",
-        "revoke_wanted": "Gesuchten-Status entfernen"
+        "revoke_wanted": "Gesuchten-Status entfernen",
+        "only_wanted": "Nur Gesuchte"
     },
     "components": {
         "partials": {
@@ -1224,7 +1225,6 @@
         },
         "citizens": {
             "CitizensList": {
-                "only_wanted": "Nur Gesuchte",
                 "no_citizens": "Benutze das obige Suchfeld, um erneut zu suchen oder die Anfrage zu aktualisieren.",
                 "open_fine": "Offene Geldstrafen"
             },

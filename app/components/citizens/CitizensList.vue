@@ -208,15 +208,11 @@ defineShortcuts({
                     v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.Wanted').value"
                     class="flex flex-initial flex-col"
                     name="wanted"
-                    :label="$t('components.citizens.CitizensList.only_wanted')"
+                    :label="$t('common.only_wanted')"
                     :ui="{ container: 'flex-1 flex' }"
                 >
                     <div class="flex flex-1 items-center">
-                        <UToggle v-model="query.wanted">
-                            <span class="sr-only">
-                                {{ $t('components.citizens.CitizensList.only_wanted') }}
-                            </span>
-                        </UToggle>
+                        <UToggle v-model="query.wanted" />
                     </div>
                 </UFormGroup>
             </div>

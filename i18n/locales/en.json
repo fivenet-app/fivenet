@@ -677,7 +677,8 @@
         "meter": "0 Meters | 1 Meter | {n} Meters",
         "draggable": "Draggable",
         "set_wanted": "Set Wanted",
-        "revoke_wanted": "Revoke Wanted"
+        "revoke_wanted": "Revoke Wanted",
+        "only_wanted": "Only Wanted"
     },
     "components": {
         "partials": {
@@ -1224,7 +1225,6 @@
         },
         "citizens": {
             "CitizensList": {
-                "only_wanted": "Only Wanted",
                 "no_citizens": "Use the search field above to search or update your query.",
                 "open_fine": "Open fines"
             },
