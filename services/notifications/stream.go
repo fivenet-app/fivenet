@@ -19,17 +19,37 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/grpcws"
 	natsutils "github.com/fivenet-app/fivenet/v2025/pkg/nats"
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
+	"github.com/fivenet-app/fivenet/v2025/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
 	pbmailer "github.com/fivenet-app/fivenet/v2025/services/mailer"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
 	"github.com/nats-io/nats.go/jetstream"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 )
 
 const feedFetch = 8
+
+var (
+	// metricActiveUserSessions tracks the number of active user sessions for Prometheus monitoring.
+	metricActiveUserSessions = promauto.NewGauge(prometheus.GaugeOpts{
+		Namespace: admin.MetricsNamespace,
+		Subsystem: "user",
+		Name:      "active_session_count",
+		Help:      "Number of active user sessions.",
+	})
+
+	metricLastUserSession = promauto.NewGauge(prometheus.GaugeOpts{
+		Namespace: admin.MetricsNamespace,
+		Subsystem: "user",
+		Name:      "last_session_time",
+		Help:      "Timestamp of the last started user session.",
+	})
+)
 
 func (s *Server) buildSubjects(ctx context.Context, userInfo *pbuserinfo.UserInfo) ([]string, []string, error) {
 	baseSubjects := []string{
@@ -100,6 +120,11 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 		return fmt.Errorf("failed to create consumer. %w", err)
 	}
 	defer s.js.DeleteConsumer(ctx, notifi.StreamName, consCfg.Durable)
+
+	metricLastUserSession.SetToCurrentTime()
+
+	metricActiveUserSessions.Inc()
+	defer metricActiveUserSessions.Dec()
 
 	// Central pipe: all feeds push messages into outCh
 	outCh := make(chan *pbnotifications.StreamResponse, 256)
