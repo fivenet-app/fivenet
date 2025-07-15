@@ -2,6 +2,76 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025.7.0] - 2025-07-15
+
+### 🚀 Features
+
+- Add icon field to units
+- Display unit icon as user marker icon
+- Add vehicles activity proto messages
+- Use function to calculate pagination offset and cleanup creator
+- Add storage space usage metrics
+- Increase exam questions to 100
+- Add draggable tooltip to vue-draggable icon indicators
+- Add arrow controls for draggables and fix answer fields for exam
+- Conversion of single to multiple and reverse on question type
+- Add creds file nats connect option
+- Add missing apis for vehicle props
+- Refine vehicless properties ui
+- Add active user sessions metric
+
+### 🐛 Bug Fixes
+
+- Unregister notifications consumers via defer for now
+- Missing nats stream/kv descriptions
+- Lru cache janitor interval
+- Prevent lru cache to be copied
+- Adjust anypb empty state creation
+- Collab rooms consumer's being revived
+- Collab room consumer name being "wrong"
+- Tweak cron data logic
+- Housekeper dispatches attributes nil panic
+- Load dispatches housekeeper nil panic
+- Cron attributes anypb usage
+- Adjust timing for removal of dispatches from kv
+- Cron data nil issue
+- Delete old dispatches from kv id/key logic
+- Nats store warpper using * instead of >
+- Add info log to leadelection start call
+- Filestore housekeeper setting "loaded_dispatches" as attribute
+- Tracker manager tests
+- Tracker manager test by adding last missing dep
+- Use embed funcs for cron data wrapping
+- Rewrite leader election logic to be more resilient
+- Access manager issue when id is 0 and reimplement enhanced image
+- Buf validate ignore uses in users.proto
+- Access entries containing user data that might be invalid
+- Cron data marshal/unmarshal in other cron jobs
+- Collab state kv name and disabled state for editor image popover
+- Improve grpcws limits
+- Collab client room id keys
+- Collab deleting wrong old kv
+- Old collab state kv name
+- Yjs sync for secondary clients
+- Colleague activity not setting colleage when prop is set
+- Colleague profile activity showing all activity
+- Import lint issue and add font-family regex to htmlsanitizer
+- Yjs sync issues on reconnect
+- Collab disconnect not happening correctly
+- Reduce leaderelection log spam
+- Base64 encode image urls in sanitizer for image proxy
+- Centrum access up sql migration
+- Storage metrics collector missing from fx
+- Add random delay to storage metrics colletor
+- Register storage metric only when enabled
+- Leaderelection not started for metrics collector
+- Metrics collector not having storage set
+- Conduct update of type and create/update status select not using
+- Increase exam question limit in ui
+- Qualification tutor answer issues
+- Vehicle info layout when empty
+- License plate width for bigger screens
+
 ## [2025.6.5] - 2025-06-27
 
 ### 🚀 Features
