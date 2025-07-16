@@ -1,4 +1,4 @@
-name: Build Dev Image & Update Channels
+name: Update Release Channels
 
 on:
   workflow_call:
@@ -22,6 +22,7 @@ env:
 
 jobs:
   update-channels:
+    name: Update ${{ inputs.channel }} Release Channel
     needs: build-image
     runs-on: ubuntu-latest
     permissions:
