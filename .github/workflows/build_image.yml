@@ -122,7 +122,7 @@ jobs:
         id: set-tag
         # docker/metadata-action emits all tags as a comma-separated string
         run: |
-          IFS=',' read -ra TAGS <<< "${{ steps.meta.outputs.tags }}"
+          IFS= read -ra TAGS < <(echo "${{ steps.meta.outputs.tags }}" | grep "sha-")
           SHA_TAG="${TAGS[-1]}"
           SHA_TAG="${SHA_TAG##*:}"
           echo "Picked SHA tag: $SHA_TAG"
