@@ -44,7 +44,7 @@ jobs:
       - name: Commit changes on main
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "ci: bump dev channel to ${{ needs.build-image.outputs.image_tag }}"
+          commit_message: "ci: bump dev channel to ${{ inputs.image_tag }}"
           file_pattern: |
             channels.json
           branch: main
@@ -66,5 +66,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "actions@github.com"
           git add channels.json
-          git commit -m "ci: update dev channel image to ${{ needs.build-image.outputs.image_tag }}" || echo "No changes to commit"
+          git commit -m "ci: update dev channel image to ${{ inputs.image_tag }}" || echo "No changes to commit"
           git push origin HEAD:${{ env.GH_PAGES_BRANCH }}
