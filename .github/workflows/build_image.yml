@@ -124,6 +124,7 @@ jobs:
         run: |
           IFS=',' read -ra TAGS <<< "${{ steps.meta.outputs.tags }}"
           SHA_TAG="${TAGS[-1]}"
+          SHA_TAG="${SHA_TAG##*:}"
           echo "Picked SHA tag: $SHA_TAG"
           echo "image_tag=$SHA_TAG" >> $GITHUB_OUTPUT
 
