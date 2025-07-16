@@ -25,7 +25,7 @@ func PrepareDSN(inDSN string, disableLocking bool, opts ...mysql.Option) (string
 	outDsn := dsn.FormatDSN()
 	if outDsn != "" && disableLocking {
 		if !strings.Contains(outDsn, "transaction_isolation") {
-			outDsn += "&transaction_isolation=%27REPEATABLE%20READ%27"
+			outDsn += "&transaction_isolation=%27READ-COMMITTED%27"
 		}
 	}
 
