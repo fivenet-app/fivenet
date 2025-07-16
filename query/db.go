@@ -60,7 +60,7 @@ func SetupDB(p Params) (*sql.DB, error) {
 
 	// Run DB migrations unless explicitly skipped via environment variable.
 	if skip, _ := strconv.ParseBool(os.Getenv(envs.SkipDBMigrationsEnv)); !skip {
-		if err := MigrateDB(p.Logger, p.Config.Database.DSN, p.Config.Database.ESXCompat); err != nil {
+		if err := MigrateDB(p.Logger, p.Config.Database.DSN, p.Config.Database.ESXCompat, p.Config.Database.DisableLocking); err != nil {
 			return nil, err
 		}
 	}

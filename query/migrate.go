@@ -43,7 +43,7 @@ func (l *MigrateLogger) Verbose() bool {
 
 // NewMigrate creates a new migrate.Migrate instance for the given DB and ESX compatibility flag.
 // It sets up the migration source and driver, and injects template data for migration scripts.
-func NewMigrate(db *sql.DB, esxCompat bool) (*migrate.Migrate, error) {
+func NewMigrate(db *sql.DB, esxCompat bool, disableLocking bool) (*migrate.Migrate, error) {
 	// FiveNet's own users/chars table
 	tableName := "fivenet_user"
 	if esxCompat {
@@ -65,6 +65,7 @@ func NewMigrate(db *sql.DB, esxCompat bool) (*migrate.Migrate, error) {
 
 	driver, err := mysqlmigrate.WithInstance(db, &mysqlmigrate.Config{
 		MigrationsTable: "fivenet_zschema_migrations",
+		NoLock:          disableLocking,
 	})
 	if err != nil {
 		return nil, err
@@ -82,7 +83,7 @@ func NewMigrate(db *sql.DB, esxCompat bool) (*migrate.Migrate, error) {
 
 // MigrateDB runs database migrations using golang-migrate, logging progress and errors.
 // It prepares the DSN, connects to the DB, runs migrations, and logs the result.
-func MigrateDB(logger *zap.Logger, dbDSN string, esxCompat bool) error {
+func MigrateDB(logger *zap.Logger, dbDSN string, esxCompat bool, disableLocking bool) error {
 	logger.Info("starting database migrations")
 
 	dsn, err := dsn.PrepareDSN(dbDSN, dsn.WithMultiStatements())
@@ -96,7 +97,7 @@ func MigrateDB(logger *zap.Logger, dbDSN string, esxCompat bool) error {
 		return err
 	}
 
-	m, err := NewMigrate(db, esxCompat)
+	m, err := NewMigrate(db, esxCompat, disableLocking)
 	if err != nil {
 		return err
 	}

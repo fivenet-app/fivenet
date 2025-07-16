@@ -45,6 +45,7 @@ database:
   maxIdleConns: 5
   connMaxIdleTime: 15m
   connMaxLifetime: 60m
+  disableLocking: false
   # Must be enabled if using a gameserver database (with ESX tables) and not wanting to use the dbsync
   esxCompat: true
   custom:

@@ -122,6 +122,9 @@ type Database struct {
 	// ConnMaxLifetime specifies the maximum amount of time a connection can remain open.
 	ConnMaxLifetime time.Duration `default:"60m" yaml:"connMaxLifetime"`
 
+	// DisableLocking disables the use of table locking in the database (mainly for migrations).
+	DisableLocking bool `default:"false" yaml:"disableLocking"`
+
 	// ESXCompat enables compatibility mode for ESX-specific database configurations.
 	ESXCompat bool `default:"false" yaml:"esxCompat"`
 
