@@ -144,12 +144,10 @@ jobs:
     uses: ./.github/workflows/build_image.yml
     secrets: inherit
 
-  update-channel:
+  update-dev-channel:
+    name: Update Dev Channel
     needs: image-build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Update dev channel
-        uses: ./.github/actions/update-channel.yml
-        with:
-          channel: dev
-          image_tag: ${{ needs.image-build.outputs.image_tag }}
+    uses: ./.github/workflows/update-channel.yml
+    with:
+      channel: dev
+      image_tag: ${{ needs.image-build.outputs.image_tag }}
