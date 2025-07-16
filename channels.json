@@ -3,8 +3,8 @@
     "repoUrl": "https://fivenet.github.io/charts",
     "chartName": "fivenet",
     "chartVersion": "0.18.3",
-    "appVersion": "main",
-    "publishedAt": "2025-07-16T13:42:47Z"
+    "appVersion": "sha-564c304",
+    "publishedAt": "2025-07-16T14:16:24Z"
   },
   "stable": {
     "repoUrl": "https://fivenet.github.io/charts",
