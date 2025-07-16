@@ -44,7 +44,7 @@ var prepareDSNTests = []struct {
 		Input:          "tcp(localhost:3306)/fivenet?loc=Europe%2FBerlin&parseTime=false",
 		Opts:           []mysql.Option{WithMultiStatements()},
 		DisableLocking: true,
-		Expected:       "tcp(localhost:3306)/fivenet?connectionAttributes=transaction_isolation%3D%22REPEATABLE-READ%22&loc=Europe%2FBerlin&multiStatements=true&parseTime=true",
+		Expected:       "tcp(localhost:3306)/fivenet?loc=Europe%2FBerlin&multiStatements=true&parseTime=true&transaction_isolation=%27REPEATABLE-READ%27",
 	},
 }
 

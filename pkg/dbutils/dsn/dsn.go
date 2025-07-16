@@ -2,6 +2,7 @@ package dsn
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/go-sql-driver/mysql"
 )
@@ -14,10 +15,6 @@ func PrepareDSN(inDSN string, disableLocking bool, opts ...mysql.Option) (string
 		return "", fmt.Errorf("failed to parse database DSN. %w", err)
 	}
 
-	if disableLocking {
-		opts = append(opts, WithIsolationLevel("REPEATABLE-READ"))
-	}
-
 	if err := dsn.Apply(opts...); err != nil {
 		return "", fmt.Errorf("failed to apply dsn option. %w", err)
 	}
@@ -25,35 +22,20 @@ func PrepareDSN(inDSN string, disableLocking bool, opts ...mysql.Option) (string
 	// Make sure parse time is enabled
 	dsn.ParseTime = true
 
-	return dsn.FormatDSN(), nil
+	outDsn := dsn.FormatDSN()
+	if outDsn != "" && disableLocking {
+		if !strings.Contains(outDsn, "transaction_isolation") {
+			outDsn += "&transaction_isolation=%27REPEATABLE%20READ%27"
+		}
+	}
+
+	return outDsn, nil
 }
 
 // WithMultiStatements returns a MySQL config option that enables multi-statement execution.
 func WithMultiStatements() func(c *mysql.Config) error {
 	return func(c *mysql.Config) error {
 		c.MultiStatements = true
-		return nil
-	}
-}
-
-func WithIsolationLevel(level string) func(c *mysql.Config) error {
-	return func(c *mysql.Config) error {
-		if c.ConnectionAttributes != "" {
-			c.ConnectionAttributes += ","
-		}
-
-		switch level {
-		case "UNCOMMITTED":
-			c.ConnectionAttributes += "transaction_isolation=\"UNCOMMITTED\""
-		case "READ-COMMITTED":
-			c.ConnectionAttributes += "transaction_isolation=\"READ-COMMITTED\""
-		case "REPEATABLE-READ":
-			c.ConnectionAttributes += "transaction_isolation=\"REPEATABLE-READ\""
-		case "SERIALIZABLE":
-			c.ConnectionAttributes += "transaction_isolation=\"SERIALIZABLE\""
-		default:
-			return fmt.Errorf("unsupported isolation level: %s", level)
-		}
 		return nil
 	}
 }

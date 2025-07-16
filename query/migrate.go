@@ -88,18 +88,18 @@ func MigrateDB(logger *zap.Logger, dbDSN string, esxCompat bool, disableLocking 
 
 	dsn, err := dsn.PrepareDSN(dbDSN, disableLocking, dsn.WithMultiStatements())
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to prepare DSN. %w", err)
 	}
 
 	// Connect to database
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to connect to database. %w", err)
 	}
 
 	m, err := NewMigrate(db, esxCompat, disableLocking)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create migration instance. %w", err)
 	}
 	m.Log = NewMigrateLogger(logger)
 
