@@ -16,6 +16,8 @@ jobs:
   build-binaries:
     name: Build Binaries
     runs-on: ubuntu-latest
+    outputs:
+      APP_VERSION: ${{ steps.set-version.outputs.APP_VERSION }}
     strategy:
       matrix:
         # Build and publish in parallel: linux/amd64, linux/arm64, windows/amd64
@@ -30,9 +32,14 @@ jobs:
           fetch-depth: 2
 
       - name: Set APP_VERSION env
-        run: echo APP_VERSION=$(git describe --tags --exclude='fivenet-*') >> ${GITHUB_ENV}
+        id: set-version
+        run: |
+          APP_VERSION=$(git describe --tags --exclude='fivenet-*')
+          echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
+          echo "APP_VERSION=$APP_VERSION" >> $GITHUB_OUTPUT
 
-      - uses: wangyoucao577/go-release-action@v1.53
+      - name: Release Binaries
+        uses: wangyoucao577/go-release-action@v1.53
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           goos: ${{ matrix.goos }}
@@ -43,17 +50,19 @@ jobs:
           ldflags: '-X github.com/fivenet-app/fivenet/v2025/pkg/version.Version=${{ env.APP_VERSION }}'
 
   update-channels:
-    needs: build-images
+    needs:
+      - build-images
+      - build-binaries
     runs-on: ubuntu-latest
     steps:
       - name: Update dev channel
-        uses: ./.github/actions/update-channel
+        uses: ./.github/actions/update-channel.yml
         with:
           channel: dev
-          image_tag: ${{ env.APP_VERSION }}
+          image_tag: ${{ jobs.build-binaries.outputs.APP_VERSION }}
 
       - name: Update stable channel
-        uses: ./.github/actions/update-channel
+        uses: ./.github/actions/update-channel.yml
         with:
           channel: stable
-          image_tag: ${{ env.APP_VERSION }}
+          image_tag: ${{ jobs.build-binaries.outputs.APP_VERSION }}
