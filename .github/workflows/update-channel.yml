@@ -1,4 +1,4 @@
-name: Update Release Channels
+name: Update Release Channel
 
 on:
   workflow_call:
@@ -21,9 +21,8 @@ env:
   CHANNEL_NAME: dev
 
 jobs:
-  update-channels:
+  update-channel:
     name: Update ${{ inputs.channel }} Release Channel
-    needs: build-image
     runs-on: ubuntu-latest
     permissions:
       contents: write

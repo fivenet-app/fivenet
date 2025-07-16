@@ -133,7 +133,7 @@ jobs:
       - name: Run Go Build
         run: GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o fivenet .
 
-  image-build:
+  build-image:
     name: Image Build
     if: ${{ github.event_name != 'pull_request' && !inputs.skipImageBuild }}
     needs:
@@ -146,8 +146,8 @@ jobs:
 
   update-dev-channel:
     name: Update Dev Channel
-    needs: image-build
+    needs: build-image
     uses: ./.github/workflows/update-channel.yml
     with:
       channel: dev
-      image_tag: ${{ needs.image-build.outputs.image_tag }}
+      image_tag: ${{ needs.build-image.outputs.image_tag }}

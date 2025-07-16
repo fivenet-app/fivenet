@@ -51,16 +51,16 @@ jobs:
 
   update-dev-channel:
     name: Update Dev Channel
-    needs: image-build
+    needs: build-images
     uses: ./.github/workflows/update-channel.yml
     with:
       channel: dev
-      image_tag: ${{ needs.image-build.outputs.image_tag }}
+      image_tag: ${{ needs.build-images.outputs.image_tag }}
 
   update-stable-channel:
     name: Update Stable Channel
-    needs: image-build
+    needs: build-images
     uses: ./.github/workflows/update-channel.yml
     with:
       channel: stable
-      image_tag: ${{ needs.image-build.outputs.image_tag }}
+      image_tag: ${{ needs.build-images.outputs.image_tag }}
