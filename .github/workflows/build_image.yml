@@ -4,7 +4,7 @@ on:
     outputs:
       image_tag:
         description: 'The image tag that was built.'
-        value: ${{ steps.build.outputs.image_tag }}
+        value: ${{ jobs.merge.outputs.image_tag }}
 
 permissions:
   contents: write
@@ -79,6 +79,8 @@ jobs:
     name: Merge and Push Image Digests
     runs-on: ubuntu-latest
     needs: [build-image]
+    outputs:
+      image_tag: ${{ steps.set-tag.outputs.image_tag }}
     steps:
       - name: Download digests
         uses: actions/download-artifact@v4
@@ -117,6 +119,7 @@ jobs:
             $(printf 'ghcr.io/fivenet-app/fivenet@sha256:%s ' *)
 
       - name: Pick the SHA tag as IMAGE_TAG
+        id: set-tag
         # docker/metadata-action emits all tags as a comma-separated string
         run: |
           IFS=',' read -ra TAGS <<< "${{ steps.meta.outputs.tags }}"
