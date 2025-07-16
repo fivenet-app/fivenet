@@ -32,24 +32,23 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Prepare inputs
+      - name: Make script executable
+        run: chmod +x ./internal/scripts/update-channel.sh
+
+      - name: Invoke update script
         run: |
-          echo "CHANNEL=${{ inputs.channel }}" >> $GITHUB_ENV
-          echo "IMAGE_TAG=${{ inputs.image_tag }}" >> $GITHUB_ENV
-          if [[ -n "${{ inputs.chart_version }}" ]]; then
-            echo "CHART_VERSION=${{ inputs.chart_version }}" >> $GITHUB_ENV
-          fi
+          ./internal/scripts/update-channel.sh \
+            "${{ inputs.channel }}" \
+            "${{ inputs.image_tag }}" \
+            "${{ inputs.chart_version }}"
 
       - name: Commit changes on main
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v6
         with:
           commit_message: "ci: bump dev channel to ${{ inputs.image_tag }}"
           file_pattern: |
             channels.json
           branch: main
-          commit_user_name: github-actions[bot]
-          commit_user_email: actions@github.com
-          token: ${{ secrets.GH_TOKEN }}
 
       - name: Checkout gh-pages branch
         uses: actions/checkout@v4
