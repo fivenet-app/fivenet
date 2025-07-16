@@ -87,7 +87,7 @@ func New(p Params) (*Sync, error) {
 		return nil, err
 	}
 
-	dsn, err := dsn.PrepareDSN(s.cfg.Load().Source.DSN)
+	dsn, err := dsn.PrepareDSN(s.cfg.Load().Source.DSN, false)
 	if err != nil {
 		return nil, err
 	}

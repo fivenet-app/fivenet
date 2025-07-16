@@ -86,7 +86,7 @@ func NewMigrate(db *sql.DB, esxCompat bool, disableLocking bool) (*migrate.Migra
 func MigrateDB(logger *zap.Logger, dbDSN string, esxCompat bool, disableLocking bool) error {
 	logger.Info("starting database migrations")
 
-	dsn, err := dsn.PrepareDSN(dbDSN, dsn.WithMultiStatements())
+	dsn, err := dsn.PrepareDSN(dbDSN, disableLocking, dsn.WithMultiStatements())
 	if err != nil {
 		return err
 	}

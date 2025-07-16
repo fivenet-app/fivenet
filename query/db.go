@@ -66,7 +66,7 @@ func SetupDB(p Params) (*sql.DB, error) {
 	}
 
 	// Prepare the DSN (Data Source Name) for the database connection.
-	dsn, err := dsn.PrepareDSN(p.Config.Database.DSN)
+	dsn, err := dsn.PrepareDSN(p.Config.Database.DSN, p.Config.Database.DisableLocking)
 	if err != nil {
 		return nil, err
 	}
