@@ -1,0 +1,69 @@
+name: Build Dev Image & Update Channels
+
+on:
+  workflow_call:
+    inputs:
+      channel:
+        description: 'Which channel to update (stable or dev)'
+        required: false
+        type: string
+        default: 'dev'
+      image_tag:
+        description: 'The new image tag (appVersion)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+env:
+  GH_PAGES_BRANCH: gh-pages
+  CHANNEL_NAME: dev
+
+jobs:
+  update-channels:
+    needs: build-image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Prepare inputs
+        run: |
+          echo "CHANNEL=${{ inputs.channel }}" >> $GITHUB_ENV
+          echo "IMAGE_TAG=${{ inputs.image_tag }}" >> $GITHUB_ENV
+          if [[ -n "${{ inputs.chart_version }}" ]]; then
+            echo "CHART_VERSION=${{ inputs.chart_version }}" >> $GITHUB_ENV
+          fi
+
+      - name: Commit changes on main
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "ci: bump dev channel to ${{ needs.build-image.outputs.image_tag }}"
+          file_pattern: |
+            channels.json
+          branch: main
+          commit_user_name: github-actions[bot]
+          commit_user_email: actions@github.com
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.GH_PAGES_BRANCH }}
+          path: gh-pages
+          fetch-depth: 0
+
+      - name: Publish to gh-pages
+        run: |
+          cp channels.json gh-pages/channels.json
+          cd gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "actions@github.com"
+          git add channels.json
+          git commit -m "ci: update dev channel image to ${{ needs.build-image.outputs.image_tag }}" || echo "No changes to commit"
+          git push origin HEAD:${{ env.GH_PAGES_BRANCH }}

@@ -1,6 +1,10 @@
 name: Build & Publish Container Images
 on:
   workflow_call:
+    outputs:
+      image_tag:
+        description: 'The image tag that was built.'
+        value: ${{ steps.build.outputs.image_tag }}
 
 permissions:
   contents: write
@@ -112,6 +116,15 @@ jobs:
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
             $(printf 'ghcr.io/fivenet-app/fivenet@sha256:%s ' *)
 
+      - name: Pick the SHA tag as IMAGE_TAG
+        # docker/metadata-action emits all tags as a comma-separated string
+        run: |
+          IFS=',' read -ra TAGS <<< "${{ steps.meta.outputs.tags }}"
+          SHA_TAG="${TAGS[-1]}"
+          echo "Picked SHA tag: $SHA_TAG"
+          echo "image_tag=$SHA_TAG" >> $GITHUB_OUTPUT
+
       - name: Inspect image
         run: |
+          echo "Image Tag: ${{ steps.meta.outputs.version }}"
           docker buildx imagetools inspect ghcr.io/fivenet-app/fivenet:${{ steps.meta.outputs.version }}

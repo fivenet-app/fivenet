@@ -143,3 +143,13 @@ jobs:
       - binary-build
     uses: ./.github/workflows/build_image.yml
     secrets: inherit
+
+  update-channel:
+    needs: image-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update dev channel
+        uses: ./.github/actions/update-channel
+        with:
+          channel: dev
+          image_tag: ${{ needs.image-build.outputs.image_tag }}
