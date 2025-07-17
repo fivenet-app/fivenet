@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025.7.1] - 2025-07-17
+
+### 🚀 Features
+
+- Add release channels.json file
+- Add config option to disable database locking during migrations
+- Set transaction isolation to REPEATABLE READ when locking is
+
+### 🐛 Bug Fixes
+
+- Channel update issue
+- Use reuseable workflow directly for channel update
+- Update channel flow not working due to a needs list
+- Update-channel not invoking update channel script
+- Update-channel script name
+- Sestting dsn transaction_isolation level
+- Tweak transaction isolation dsn
+- Db dsn test
+- Tools db up command
+- Older migration causing issues with clustered dbs
+- Internet basse up feature migrations
+
 ## [2025.7.0] - 2025-07-15
 
 ### 🚀 Features
