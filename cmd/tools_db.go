@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"os"
 
@@ -11,7 +12,9 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/dsn"
 	"github.com/fivenet-app/fivenet/v2025/query"
+	"github.com/golang-migrate/migrate/v4"
 	"go.uber.org/fx"
+	"go.uber.org/zap"
 )
 
 type DBCmd struct {
@@ -89,13 +92,15 @@ func (c *UpCmd) Run(ctx *kong.Context) error {
 	}
 
 	fxOpts = append(fxOpts,
-		fx.Invoke(func(lifecycle fx.Lifecycle, cfg *config.Config, shutdowner fx.Shutdowner) {
+		fx.Invoke(func(logger *zap.Logger, lifecycle fx.Lifecycle, cfg *config.Config, shutdowner fx.Shutdowner) {
 			lifecycle.Append(fx.Hook{
 				OnStart: func(ctx context.Context) error {
 					go func() {
 						exitCode := 0
-						if err := c.run(ctx, cfg); err != nil {
+						if err := c.run(ctx, logger, cfg); err != nil {
+							logger.Error("Failed to run migrations", zap.Error(err))
 							// handle error, set non-zero exit code so caller knows the job failed
+
 							exitCode = 1
 						}
 						_ = shutdowner.Shutdown(fx.ExitCode(exitCode))
@@ -112,25 +117,29 @@ func (c *UpCmd) Run(ctx *kong.Context) error {
 	return nil
 }
 
-func (c *UpCmd) run(_ context.Context, cfg *config.Config) error {
+func (c *UpCmd) run(_ context.Context, logger *zap.Logger, cfg *config.Config) error {
 	dsn, err := dsn.PrepareDSN(cfg.Database.DSN, cfg.Database.DisableLocking, dsn.WithMultiStatements())
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to prepare dsn. %w", err)
 	}
 
 	// Connect to database
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to open mysqsl db connection. %w", err)
 	}
 
 	m, err := query.NewMigrate(db, cfg.Database.ESXCompat, cfg.Database.DisableLocking)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create migrationg client. %w", err)
 	}
 
 	if err := m.Up(); err != nil {
-		return err
+		if !errors.Is(err, migrate.ErrNoChange) {
+			return fmt.Errorf("failed to migrate. %w", err)
+		}
+
+		logger.Info("No migrations to apply, database is up to date")
 	}
 
 	return nil
