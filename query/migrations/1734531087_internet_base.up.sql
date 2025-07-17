@@ -116,6 +116,6 @@ INSERT INTO `fivenet_internet_domains` (`tld_id`, `name`, `active`) VALUES((SELE
 INSERT INTO `fivenet_internet_domains` (`tld_id`, `name`, `active`) VALUES((SELECT `id` FROM `fivenet_internet_tlds` WHERE `name` = 'ls' LIMIT 1), 'example', 1);
 
 -- Table: fivenet_internet_pages - Insert `example.ls` page entry
-INSERT INTO fivenet_internet_pages (id, domain_id, `path`, title, description, `data`, creator_job, creator_id) VALUES(1, 4, '/', 'Example Domain', 'Example Domain for demonstration purposes.', '{"layoutType":"PAGE_LAYOUT_TYPE_LANDING_PAGE","node":{"type":"NODE_TYPE_ELEMENT","tag":"ULandingSection","attrs":{},"content":[{"type":"NODE_TYPE_ELEMENT","tag":"ULandingCard","attrs":{"title":"Example Domain","description":"Example Domain for demonstration purposes."},"content":[],"slots":[]}],"slots":[]}}', NULL, NULL);
+INSERT INTO fivenet_internet_pages (id, domain_id, `path`, title, description, `data`, creator_job, creator_id) VALUES(1, (SELECT `id` FROM `fivenet_internet_domains` WHERE `name` = 'example' LIMIT 1), '/', 'Example Domain', 'Example Domain for demonstration purposes.', '{"layoutType":"PAGE_LAYOUT_TYPE_LANDING_PAGE","node":{"type":"NODE_TYPE_ELEMENT","tag":"ULandingSection","attrs":{},"content":[{"type":"NODE_TYPE_ELEMENT","tag":"ULandingCard","attrs":{"title":"Example Domain","description":"Example Domain for demonstration purposes."},"content":[],"slots":[]}],"slots":[]}}', NULL, NULL);
 
 COMMIT;
