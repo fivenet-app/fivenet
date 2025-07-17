@@ -59,7 +59,9 @@ jobs:
 
   update-stable-channel:
     name: Update Stable Channel
-    needs: build-images
+    needs:
+      - build-images
+      - update-dev-channel
     uses: ./.github/workflows/update-channel.yml
     with:
       channel: stable
