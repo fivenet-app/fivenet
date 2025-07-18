@@ -112,6 +112,12 @@ type DBSyncTable struct {
 }
 
 func (c *DBSyncTable) GetSyncInterval() *time.Duration {
+	// Minimum sync interval is 1 second
+	if c.SyncInterval != nil && *c.SyncInterval <= 1*time.Second {
+		interval := 1 * time.Second
+		return &interval
+	}
+
 	return c.SyncInterval
 }
 
