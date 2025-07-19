@@ -146,6 +146,7 @@ jobs:
 
   update-dev-channel:
     name: Update Dev Channel
+    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/develop' }}
     needs: build-image
     uses: ./.github/workflows/update-channel.yml
     with:
