@@ -127,6 +127,8 @@ type UsersDBSyncTable struct {
 	SplitName    bool                  `default:"false" yaml:"splitName"`
 	DateOfBirth  DateOfBirthNormalizer `yaml:"dateOfBirth"`
 	ValueMapping *UsersValueMappings   `yaml:"valueMapping"`
+
+	IgnoreEmptyName bool `default:"true" yaml:"ignoreEmptyName"`
 }
 
 type DateOfBirthNormalizer struct {

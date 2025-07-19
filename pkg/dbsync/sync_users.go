@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -48,16 +49,16 @@ func (s *usersSync) Sync(ctx context.Context) error {
 	sQuery := s.cfg.Tables.Users.DBSyncTable
 	query := prepareStringQuery(sQuery, s.state, offset, limit)
 
-	users := []*users.User{}
-	if _, err := qrm.Query(ctx, s.db, query, []any{}, &users); err != nil {
+	us := []*users.User{}
+	if _, err := qrm.Query(ctx, s.db, query, []any{}, &us); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return fmt.Errorf("failed to query users table. %w", err)
 		}
 	}
 
-	s.logger.Debug("usersSync", zap.Any("users", users))
+	s.logger.Debug("usersSync", zap.Any("users", us))
 
-	if len(users) == 0 {
+	if len(us) == 0 {
 		s.logger.Debug("no users found to sync, resetting state offset")
 		s.state.Set(0, nil)
 		return nil
@@ -67,13 +68,13 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		// Retrieve user' licenses
 		errs := multierr.Combine()
 		var err error
-		for k := range users {
+		for k := range us {
 			identifier := ""
-			if users[k].Identifier != nil {
-				identifier = *users[k].Identifier
+			if us[k].Identifier != nil {
+				identifier = *us[k].Identifier
 			}
 
-			users[k].Licenses, err = s.retrieveLicenses(ctx, users[k].UserId, identifier)
+			us[k].Licenses, err = s.retrieveLicenses(ctx, us[k].UserId, identifier)
 			if err != nil {
 				errs = multierr.Append(errs, fmt.Errorf("failed to retrieve users %s licenses. %w", identifier, err))
 			}
@@ -84,35 +85,42 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		}
 	}
 
-	for k := range users {
+	if s.cfg.Tables.Users.IgnoreEmptyName {
+		us = slices.DeleteFunc(us, func(in *users.User) bool {
+			// If the user has no firstname and lastname, skip it
+			return in == nil || (in.Firstname == "" && in.Lastname == "")
+		})
+	}
+
+	for k := range us {
 		// Value mapping logic
 		if s.cfg.Tables.Users.ValueMapping != nil {
-			if users[k].Sex != nil && !s.cfg.Tables.Users.ValueMapping.Sex.IsEmpty() {
-				s.cfg.Tables.Users.ValueMapping.Sex.Process(users[k].Sex)
+			if us[k].Sex != nil && !s.cfg.Tables.Users.ValueMapping.Sex.IsEmpty() {
+				s.cfg.Tables.Users.ValueMapping.Sex.Process(us[k].Sex)
 			}
 		}
 
 		// Split names if only one field is used by the source data structure and only if we get 2 names out of it
 		if s.cfg.Tables.Users.SplitName {
-			if users[k].Lastname == "" {
-				ss := strings.Split(users[k].Firstname, " ")
+			if us[k].Lastname == "" {
+				ss := strings.Split(us[k].Firstname, " ")
 				if len(ss) > 1 {
-					users[k].Lastname = ss[len(ss)-1]
+					us[k].Lastname = ss[len(ss)-1]
 
-					users[k].Firstname = strings.Replace(users[k].Firstname, " "+users[k].Lastname, "", 1)
+					us[k].Firstname = strings.Replace(us[k].Firstname, " "+us[k].Lastname, "", 1)
 				}
 			}
 		}
 
 		// Attempt to parse date of birth via list of input formats
 		for _, format := range s.cfg.Tables.Users.DateOfBirth.Formats {
-			parsedTime, err := time.Parse(format, users[k].Dateofbirth)
+			parsedTime, err := time.Parse(format, us[k].Dateofbirth)
 			if err != nil {
 				continue
 			}
 
 			// Format dates to the output format so all are the same if parseable
-			users[k].Dateofbirth = parsedTime.Format(s.cfg.Tables.Users.DateOfBirth.OutputFormat)
+			us[k].Dateofbirth = parsedTime.Format(s.cfg.Tables.Users.DateOfBirth.OutputFormat)
 			break
 		}
 	}
@@ -121,7 +129,7 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		if _, err := s.cli.SendData(ctx, &pbsync.SendDataRequest{
 			Data: &pbsync.SendDataRequest_Users{
 				Users: &sync.DataUsers{
-					Users: users,
+					Users: us,
 				},
 			},
 		}); err != nil {
@@ -132,12 +140,12 @@ func (s *usersSync) Sync(ctx context.Context) error {
 	// If less users than limit are returned, we probably have reached the "end" of the table
 	// and need to reset the offset to 0. That means we are "synced up" and can start the normal
 	// sync loop of checking the "updatedAt" date.
-	if int64(len(users)) < limit {
+	if int64(len(us)) < limit {
 		offset = 0
 		s.state.SyncedUp = true
 	}
 
-	lastUserId := strconv.FormatInt(int64(users[len(users)-1].UserId), 10)
+	lastUserId := strconv.FormatInt(int64(us[len(us)-1].UserId), 10)
 	s.state.Set(uint64(limit)+offset, &lastUserId)
 
 	return nil

@@ -346,7 +346,7 @@ var File_resources_users_users_proto protoreflect.FileDescriptor
 
 const file_resources_users_users_proto_rawDesc = "" +
 	"\n" +
-	"\x1bresources/users/users.proto\x12\x0fresources.users\x1a\x1eresources/users/licenses.proto\x1a\x1bresources/users/props.proto\x1a\x13tagger/tagger.proto\"\xed\x04\n" +
+	"\x1bresources/users/users.proto\x12\x0fresources.users\x1a\x1eresources/users/licenses.proto\x1a\x1bresources/users/props.proto\x1a\x13tagger/tagger.proto\"\xec\x04\n" +
 	"\tUserShort\x12/\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x16\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"\xbaH\x04\x1a\x02 \x00R\x06userId\x12,\n" +
@@ -360,8 +360,9 @@ const file_resources_users_users_proto_rawDesc = "" +
 	"\xbaH\a\xd8\x01\x02\x1a\x02(\x00R\bjobGrade\x124\n" +
 	"\x0fjob_grade_label\x18\x06 \x01(\tB\a\xbaH\x04r\x02\x182H\x02R\rjobGradeLabel\x88\x01\x01\x12'\n" +
 	"\tfirstname\x18\a \x01(\tB\t\xbaH\x06r\x04\x10\x01\x182R\tfirstname\x12(\n" +
-	"\blastname\x18\b \x01(\tB\f\xbaH\t\xd8\x01\x02r\x04\x10\x01\x182R\blastname\x12-\n" +
-	"\vdateofbirth\x18\t \x01(\tB\v\xbaH\b\xd8\x01\x02r\x03\x98\x01\n" +
+	"\blastname\x18\b \x01(\tB\f\xbaH\t\xd8\x01\x02r\x04\x10\x01\x182R\blastname\x12,\n" +
+	"\vdateofbirth\x18\t \x01(\tB\n" +
+	"\xbaH\a\xd8\x01\x02r\x02\x18\n" +
 	"R\vdateofbirth\x12/\n" +
 	"\fphone_number\x18\f \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x03R\vphoneNumber\x88\x01\x01\x12)\n" +
 	"\x0eavatar_file_id\x18\x11 \x01(\x04H\x04R\favatarFileId\x88\x01\x01\x12\x1b\n" +
@@ -372,7 +373,7 @@ const file_resources_users_users_proto_rawDesc = "" +
 	"\x10_job_grade_labelB\x0f\n" +
 	"\r_phone_numberB\x11\n" +
 	"\x0f_avatar_file_idB\t\n" +
-	"\a_avatar\"\xf2\a\n" +
+	"\a_avatar\"\xf1\a\n" +
 	"\x04User\x12/\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x16\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"\xbaH\x04\x1a\x02 \x00R\x06userId\x12,\n" +
@@ -386,8 +387,9 @@ const file_resources_users_users_proto_rawDesc = "" +
 	"\xbaH\a\xd8\x01\x02\x1a\x02(\x00R\bjobGrade\x124\n" +
 	"\x0fjob_grade_label\x18\x06 \x01(\tB\a\xbaH\x04r\x02\x182H\x02R\rjobGradeLabel\x88\x01\x01\x12'\n" +
 	"\tfirstname\x18\a \x01(\tB\t\xbaH\x06r\x04\x10\x01\x182R\tfirstname\x12(\n" +
-	"\blastname\x18\b \x01(\tB\f\xbaH\t\xd8\x01\x02r\x04\x10\x01\x182R\blastname\x12-\n" +
-	"\vdateofbirth\x18\t \x01(\tB\v\xbaH\b\xd8\x01\x02r\x03\x98\x01\n" +
+	"\blastname\x18\b \x01(\tB\f\xbaH\t\xd8\x01\x02r\x04\x10\x01\x182R\blastname\x12,\n" +
+	"\vdateofbirth\x18\t \x01(\tB\n" +
+	"\xbaH\a\xd8\x01\x02r\x02\x18\n" +
 	"R\vdateofbirth\x12 \n" +
 	"\x03sex\x18\n" +
 	" \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18\x02H\x03R\x03sex\x88\x01\x01\x12\x1b\n" +
