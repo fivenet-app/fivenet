@@ -37,7 +37,7 @@ message UserShort {
     }
   ];
   string dateofbirth = 9 [
-    (buf.validate.field).string.len = 10,
+    (buf.validate.field).string.max_len = 10,
     (buf.validate.field).ignore = IGNORE_IF_DEFAULT_VALUE
   ];
   optional string phone_number = 12 [(buf.validate.field).string.max_len = 20];
@@ -73,7 +73,7 @@ message User {
     (buf.validate.field).ignore = IGNORE_IF_DEFAULT_VALUE
   ];
   string dateofbirth = 9 [
-    (buf.validate.field).string.len = 10,
+    (buf.validate.field).string.max_len = 10,
     (buf.validate.field).ignore = IGNORE_IF_DEFAULT_VALUE
   ];
   optional string sex = 10 [(buf.validate.field).string = {

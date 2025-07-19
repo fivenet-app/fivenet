@@ -103,6 +103,8 @@ tables:
         fallback: 'm'
         values:
           '1': 'f'
+    # If the firstname or lastname is empty or null, do not sync the user at all
+    ignoreEmptyNames: true
   userLicenses:
     # Must return `user_license.type`, `user_license.owner` columns
     enabled: true
