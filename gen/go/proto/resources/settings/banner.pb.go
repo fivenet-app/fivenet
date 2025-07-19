@@ -115,11 +115,11 @@ var File_resources_settings_banner_proto protoreflect.FileDescriptor
 
 const file_resources_settings_banner_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/settings/banner.proto\x12\x12resources.settings\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xea\x02\n" +
+	"\x1fresources/settings/banner.proto\x12\x12resources.settings\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xed\x02\n" +
 	"\rBannerMessage\x12\x17\n" +
-	"\x02id\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18@R\x02id\x12 \n" +
-	"\x05title\x18\x02 \x01(\tB\n" +
-	"\xbaH\ar\x05\x10\x03\x18\x80\x04R\x05title\x12'\n" +
+	"\x02id\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18@R\x02id\x12#\n" +
+	"\x05title\x18\x02 \x01(\tB\r\xbaH\n" +
+	"\xd8\x01\x02r\x05\x10\x03\x18\x80\x04R\x05title\x12'\n" +
 	"\x04icon\x18\x03 \x01(\tB\x0e\xbaH\vr\t\x18\x80\x01B\x04IconH\x00R\x04icon\x88\x01\x01\x12\"\n" +
 	"\x05color\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18\fH\x01R\x05color\x88\x01\x01\x12T\n" +
 	"\n" +

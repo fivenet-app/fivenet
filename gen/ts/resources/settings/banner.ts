@@ -54,7 +54,7 @@ class BannerMessage$Type extends MessageType<BannerMessage> {
     constructor() {
         super("resources.settings.BannerMessage", [
             { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
-            { no: 2, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "512" } } } },
+            { no: 2, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_DEFAULT_VALUE", string: { minLen: "3", maxLen: "512" } } } },
             { no: 3, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128", suffix: "Icon" } } } },
             { no: 4, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "12" } } } },
             { no: 5, name: "created_at", kind: "message", T: () => Timestamp, options: { "tagger.tags": "json:\"createdAt\"" } },
