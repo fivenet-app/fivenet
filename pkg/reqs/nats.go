@@ -16,6 +16,7 @@ type NatsReqs struct {
 
 func NewNatsReqs(nc *nats.Conn) *NatsReqs {
 	return &NatsReqs{
+		mu: sync.Mutex{},
 		nc: nc,
 	}
 }

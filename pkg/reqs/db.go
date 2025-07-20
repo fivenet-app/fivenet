@@ -30,6 +30,7 @@ type DBReqs struct {
 
 func NewDBReqs(db *sql.DB) *DBReqs {
 	return &DBReqs{
+		mu: sync.Mutex{},
 		db: db,
 	}
 }
