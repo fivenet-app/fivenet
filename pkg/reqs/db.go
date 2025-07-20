@@ -86,7 +86,7 @@ func (r *DBReqs) ValidateTables() error {
 
 	// Check if any tables are mismatched
 	if len(tables) > 0 {
-		return fmt.Errorf("database tables are mismatched: %v", tables)
+		return fmt.Errorf("database (charset: %q, collation: %q) tables are mismatched: %v", r.dbCharset, r.dbCollation, tables)
 	}
 
 	return nil
