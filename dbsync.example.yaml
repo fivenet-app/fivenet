@@ -119,7 +119,7 @@ tables:
       LIMIT $limit
       OFFSET $offset;
   vehicles:
-    # Must return `vehicle.owner_id` (the user's DB ID) or `vehicle.owner_identifier`, `vehicle.plate`, `vehicle.type`, `vehicle.model` columns
+    # Must return `vehicle.owner_id` (the user's DB ID) or `vehicle.owner_identifier`, `vehicle.plate`, `vehicle.type`, `vehicle.model` and `vehicle.job` columns
     enabled: true
     query: |
       SELECT
