@@ -1549,6 +1549,25 @@
             },
             "accounts": {
                 "edit_account": "Edit Account"
+            },
+            "system_status": {
+                "title": "System Status",
+                "database": {
+                    "title": "Database",
+                    "migration_version": "Migration Version",
+                    "migration_dirty": "Migration Dirty",
+                    "db_charset": "Database Charset",
+                    "db_collation": "Database Collation",
+                    "tables_ok": "Tables OK"
+                },
+                "nats": {
+                    "title": "NATS"
+                },
+                "db_sync": {
+                    "title": "DB Sync",
+                    "last_data_received": "Last Data Received",
+                    "last_activity_received": "Last Activity Received"
+                }
             }
         }
     },

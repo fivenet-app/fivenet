@@ -9,7 +9,7 @@ import RoleViewAttr from '~/components/settings/roles/RoleViewAttr.vue';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes';
 import type { Permission, Role } from '~~/gen/ts/resources/permissions/permissions';
-import type { AttrsUpdate, PermsUpdate } from '~~/gen/ts/services/settings/settings';
+import type { AttrsUpdate, PermsUpdate } from '~~/gen/ts/resources/settings/perms';
 import EffectivePermsSlideover from './EffectivePermsSlideover.vue';
 import { isEmptyAttributes } from './helpers';
 

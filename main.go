@@ -35,6 +35,11 @@ func main() {
 			panic(err)
 		}
 	}
+	if cmd.Cli.IgnoreRequirements != nil {
+		if err := os.Setenv(envs.IgnoreRequirementsEnv, strconv.FormatBool(*cmd.Cli.IgnoreRequirements)); err != nil {
+			panic(err)
+		}
+	}
 
 	if cmd.Cli.StartTimeout <= 0 {
 		cmd.Cli.StartTimeout = 180 * time.Second

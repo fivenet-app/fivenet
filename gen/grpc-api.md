@@ -5670,6 +5670,42 @@ User related events
 
 
 
+## resources/settings/perms.proto
+
+
+### resources.settings.AttrsUpdate
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `to_update` | [resources.permissions.RoleAttribute](#resourcespermissionsRoleAttribute) | repeated |  |
+| `to_remove` | [resources.permissions.RoleAttribute](#resourcespermissionsRoleAttribute) | repeated |  |
+
+
+
+
+
+### resources.settings.PermsUpdate
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `to_update` | [resources.permissions.PermItem](#resourcespermissionsPermItem) | repeated |  |
+| `to_remove` | [resources.permissions.PermItem](#resourcespermissionsPermItem) | repeated |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## resources/stats/stats.proto
 
 
@@ -11086,18 +11122,6 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 ## services/settings/settings.proto
 
 
-### services.settings.AttrsUpdate
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `to_update` | [resources.permissions.RoleAttribute](#resourcespermissionsRoleAttribute) | repeated |  |
-| `to_remove` | [resources.permissions.RoleAttribute](#resourcespermissionsRoleAttribute) | repeated |  |
-
-
-
-
-
 ### services.settings.CreateRoleRequest
 
 
@@ -11116,23 +11140,6 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `role` | [resources.permissions.Role](#resourcespermissionsRole) |  |  |
-
-
-
-
-
-### services.settings.DeleteFactionRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job` | [string](#string) |  |  |
-
-
-
-
-
-### services.settings.DeleteFactionResponse
 
 
 
@@ -11167,29 +11174,6 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 
 
-### services.settings.GetAllPermissionsRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job` | [string](#string) |  |  |
-
-
-
-
-
-### services.settings.GetAllPermissionsResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `permissions` | [resources.permissions.Permission](#resourcespermissionsPermission) | repeated |  |
-| `attributes` | [resources.permissions.RoleAttribute](#resourcespermissionsRoleAttribute) | repeated |  |
-
-
-
-
-
 ### services.settings.GetEffectivePermissionsRequest
 
 
@@ -11207,31 +11191,6 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `role` | [resources.permissions.Role](#resourcespermissionsRole) |  |  |
-| `permissions` | [resources.permissions.Permission](#resourcespermissionsPermission) | repeated |  |
-| `attributes` | [resources.permissions.RoleAttribute](#resourcespermissionsRoleAttribute) | repeated |  |
-
-
-
-
-
-### services.settings.GetJobLimitsRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job` | [string](#string) |  |  |
-
-
-
-
-
-### services.settings.GetJobLimitsResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
 | `permissions` | [resources.permissions.Permission](#resourcespermissionsPermission) | repeated |  |
 | `attributes` | [resources.permissions.RoleAttribute](#resourcespermissionsRoleAttribute) | repeated |  |
 
@@ -11323,20 +11282,6 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 
 
-### services.settings.GetStatusRequest
-
-
-
-
-
-### services.settings.GetStatusResponse
-TODO
-
-
-
-
-
-
 ### services.settings.ListDiscordChannelsRequest
 
 
@@ -11371,18 +11316,6 @@ TODO
 
 
 
-### services.settings.PermsUpdate
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `to_update` | [resources.permissions.PermItem](#resourcespermissionsPermItem) | repeated |  |
-| `to_remove` | [resources.permissions.PermItem](#resourcespermissionsPermItem) | repeated |  |
-
-
-
-
-
 ### services.settings.SetJobPropsRequest
 
 
@@ -11405,33 +11338,14 @@ TODO
 
 
 
-### services.settings.UpdateJobLimitsRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job` | [string](#string) |  |  |
-| `perms` | [PermsUpdate](#servicessettingsPermsUpdate) | optional |  |
-| `attrs` | [AttrsUpdate](#servicessettingsAttrsUpdate) | optional |  |
-
-
-
-
-
-### services.settings.UpdateJobLimitsResponse
-
-
-
-
-
 ### services.settings.UpdateRolePermsRequest
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `id` | [uint64](#uint64) |  |  |
-| `perms` | [PermsUpdate](#servicessettingsPermsUpdate) | optional |  |
-| `attrs` | [AttrsUpdate](#servicessettingsAttrsUpdate) | optional |  |
+| `perms` | [resources.settings.PermsUpdate](#resourcessettingsPermsUpdate) | optional |  |
+| `attrs` | [resources.settings.AttrsUpdate](#resourcessettingsAttrsUpdate) | optional |  |
 
 
 
@@ -11494,15 +11408,178 @@ TODO
 | `GetPermissions` | [GetPermissionsRequest](#servicessettingsGetPermissionsRequest) | [GetPermissionsResponse](#servicessettingsGetPermissionsResponse) |@perm: Name=GetRoles |
 | `GetEffectivePermissions` | [GetEffectivePermissionsRequest](#servicessettingsGetEffectivePermissionsRequest) | [GetEffectivePermissionsResponse](#servicessettingsGetEffectivePermissionsResponse) |@perm: Name=GetRoles |
 | `ViewAuditLog` | [ViewAuditLogRequest](#servicessettingsViewAuditLogRequest) | [ViewAuditLogResponse](#servicessettingsViewAuditLogResponse) |@perm |
-| `GetAllPermissions` | [GetAllPermissionsRequest](#servicessettingsGetAllPermissionsRequest) | [GetAllPermissionsResponse](#servicessettingsGetAllPermissionsResponse) |@perm: Name=Superuser |
-| `GetJobLimits` | [GetJobLimitsRequest](#servicessettingsGetJobLimitsRequest) | [GetJobLimitsResponse](#servicessettingsGetJobLimitsResponse) |@perm: Name=Superuser |
-| `UpdateJobLimits` | [UpdateJobLimitsRequest](#servicessettingsUpdateJobLimitsRequest) | [UpdateJobLimitsResponse](#servicessettingsUpdateJobLimitsResponse) |@perm: Name=Superuser |
-| `DeleteFaction` | [DeleteFactionRequest](#servicessettingsDeleteFactionRequest) | [DeleteFactionResponse](#servicessettingsDeleteFactionResponse) |@perm: Name=Superuser |
 | `ListDiscordChannels` | [ListDiscordChannelsRequest](#servicessettingsListDiscordChannelsRequest) | [ListDiscordChannelsResponse](#servicessettingsListDiscordChannelsResponse) |@perm: Name=SetJobProps |
 | `ListUserGuilds` | [ListUserGuildsRequest](#servicessettingsListUserGuildsRequest) | [ListUserGuildsResponse](#servicessettingsListUserGuildsResponse) |@perm: Name=SetJobProps |
 | `UploadJobLogo` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |@perm: Name=SetJobProps buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
 | `DeleteJobLogo` | [DeleteJobLogoRequest](#servicessettingsDeleteJobLogoRequest) | [DeleteJobLogoResponse](#servicessettingsDeleteJobLogoResponse) |@perm: Name=SetJobProps |
+
+ <!-- end services -->
+
+
+
+## services/settings/system.proto
+
+
+### services.settings.DBSyncStatus
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `enabled` | [bool](#bool) |  |  |
+| `last_synced_data` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `last_synced_activity` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+
+
+
+
+
+### services.settings.Database
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `version` | [string](#string) |  |  |
+| `connected` | [bool](#bool) |  |  |
+| `migration_version` | [uint64](#uint64) |  |  |
+| `migration_dirty` | [bool](#bool) |  |  |
+| `db_charset` | [string](#string) |  |  |
+| `db_collation` | [string](#string) |  |  |
+| `tables_ok` | [bool](#bool) |  |  |
+
+
+
+
+
+### services.settings.DeleteFactionRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+
+
+
+
+
+### services.settings.DeleteFactionResponse
+
+
+
+
+
+### services.settings.GetAllPermissionsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+
+
+
+
+
+### services.settings.GetAllPermissionsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `permissions` | [resources.permissions.Permission](#resourcespermissionsPermission) | repeated |  |
+| `attributes` | [resources.permissions.RoleAttribute](#resourcespermissionsRoleAttribute) | repeated |  |
+
+
+
+
+
+### services.settings.GetJobLimitsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+
+
+
+
+
+### services.settings.GetJobLimitsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `permissions` | [resources.permissions.Permission](#resourcespermissionsPermission) | repeated |  |
+| `attributes` | [resources.permissions.RoleAttribute](#resourcespermissionsRoleAttribute) | repeated |  |
+
+
+
+
+
+### services.settings.GetStatusRequest
+
+
+
+
+
+### services.settings.GetStatusResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `database` | [Database](#servicessettingsDatabase) |  |  |
+| `nats` | [Nats](#servicessettingsNats) |  |  |
+| `dbsync` | [DBSyncStatus](#servicessettingsDBSyncStatus) |  |  |
+
+
+
+
+
+### services.settings.Nats
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `version` | [string](#string) |  |  |
+| `connected` | [bool](#bool) |  |  |
+
+
+
+
+
+### services.settings.UpdateJobLimitsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+| `perms` | [resources.settings.PermsUpdate](#resourcessettingsPermsUpdate) | optional |  |
+| `attrs` | [resources.settings.AttrsUpdate](#resourcessettingsAttrsUpdate) | optional |  |
+
+
+
+
+
+### services.settings.UpdateJobLimitsResponse
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+### services.settings.SystemService
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
 | `GetStatus` | [GetStatusRequest](#servicessettingsGetStatusRequest) | [GetStatusResponse](#servicessettingsGetStatusResponse) |@perm: Name=Superuser |
+| `GetAllPermissions` | [GetAllPermissionsRequest](#servicessettingsGetAllPermissionsRequest) | [GetAllPermissionsResponse](#servicessettingsGetAllPermissionsResponse) |@perm: Name=Superuser |
+| `GetJobLimits` | [GetJobLimitsRequest](#servicessettingsGetJobLimitsRequest) | [GetJobLimitsResponse](#servicessettingsGetJobLimitsResponse) |@perm: Name=Superuser |
+| `UpdateJobLimits` | [UpdateJobLimitsRequest](#servicessettingsUpdateJobLimitsRequest) | [UpdateJobLimitsResponse](#servicessettingsUpdateJobLimitsResponse) |@perm: Name=Superuser |
+| `DeleteFaction` | [DeleteFactionRequest](#servicessettingsDeleteFactionRequest) | [DeleteFactionResponse](#servicessettingsDeleteFactionResponse) |@perm: Name=Superuser |
 
  <!-- end services -->
 

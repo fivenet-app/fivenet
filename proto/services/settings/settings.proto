@@ -10,6 +10,7 @@ import "resources/file/filestore.proto";
 import "resources/jobs/job_props.proto";
 import "resources/permissions/attributes.proto";
 import "resources/permissions/permissions.proto";
+import "resources/settings/perms.proto";
 import "resources/timestamp/timestamp.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settings";
@@ -61,18 +62,8 @@ message DeleteRoleResponse {}
 
 message UpdateRolePermsRequest {
   uint64 id = 1;
-  optional PermsUpdate perms = 2;
-  optional AttrsUpdate attrs = 3;
-}
-
-message PermsUpdate {
-  repeated resources.permissions.PermItem to_update = 1;
-  repeated resources.permissions.PermItem to_remove = 2;
-}
-
-message AttrsUpdate {
-  repeated resources.permissions.RoleAttribute to_update = 1;
-  repeated resources.permissions.RoleAttribute to_remove = 2;
+  optional resources.settings.PermsUpdate perms = 2;
+  optional resources.settings.AttrsUpdate attrs = 3;
 }
 
 message UpdateRolePermsResponse {}
@@ -131,40 +122,6 @@ message ViewAuditLogResponse {
   repeated resources.audit.AuditEntry logs = 2;
 }
 
-message GetAllPermissionsRequest {
-  string job = 1 [(buf.validate.field).string.max_len = 20];
-}
-
-message GetAllPermissionsResponse {
-  repeated resources.permissions.Permission permissions = 1;
-  repeated resources.permissions.RoleAttribute attributes = 2;
-}
-
-message GetJobLimitsRequest {
-  string job = 1 [(buf.validate.field).string.max_len = 20];
-}
-
-message GetJobLimitsResponse {
-  string job = 1 [(buf.validate.field).string.max_len = 20];
-  optional string job_label = 2;
-  repeated resources.permissions.Permission permissions = 3;
-  repeated resources.permissions.RoleAttribute attributes = 4;
-}
-
-message UpdateJobLimitsRequest {
-  string job = 1 [(buf.validate.field).string.max_len = 20];
-  optional PermsUpdate perms = 2;
-  optional AttrsUpdate attrs = 3;
-}
-
-message UpdateJobLimitsResponse {}
-
-message DeleteFactionRequest {
-  string job = 1 [(buf.validate.field).string.max_len = 20];
-}
-
-message DeleteFactionResponse {}
-
 message ListDiscordChannelsRequest {}
 
 message ListDiscordChannelsResponse {
@@ -180,12 +137,6 @@ message ListUserGuildsResponse {
 message DeleteJobLogoRequest {}
 
 message DeleteJobLogoResponse {}
-
-message GetStatusRequest {}
-
-message GetStatusResponse {
-  // TODO
-}
 
 service SettingsService {
   // @perm
@@ -213,15 +164,6 @@ service SettingsService {
   // @perm
   rpc ViewAuditLog(ViewAuditLogRequest) returns (ViewAuditLogResponse);
 
-  // @perm: Name=Superuser
-  rpc GetAllPermissions(GetAllPermissionsRequest) returns (GetAllPermissionsResponse);
-  // @perm: Name=Superuser
-  rpc GetJobLimits(GetJobLimitsRequest) returns (GetJobLimitsResponse);
-  // @perm: Name=Superuser
-  rpc UpdateJobLimits(UpdateJobLimitsRequest) returns (UpdateJobLimitsResponse);
-  // @perm: Name=Superuser
-  rpc DeleteFaction(DeleteFactionRequest) returns (DeleteFactionResponse);
-
   // @perm: Name=SetJobProps
   rpc ListDiscordChannels(ListDiscordChannelsRequest) returns (ListDiscordChannelsResponse);
   // @perm: Name=SetJobProps
@@ -234,7 +176,4 @@ service SettingsService {
   rpc UploadJobLogo(stream resources.file.UploadFileRequest) returns (resources.file.UploadFileResponse);
   // @perm: Name=SetJobProps
   rpc DeleteJobLogo(DeleteJobLogoRequest) returns (DeleteJobLogoResponse);
-
-  // @perm: Name=Superuser
-  rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
 }

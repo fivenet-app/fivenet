@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"slices"
+	"time"
 
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
@@ -20,6 +21,8 @@ import (
 
 func (s *Server) AddActivity(ctx context.Context, req *pbsync.AddActivityRequest) (*pbsync.AddActivityResponse, error) {
 	resp := &pbsync.AddActivityResponse{}
+
+	s.lastSyncedActivity.Store(time.Now().Unix())
 
 	switch d := req.Activity.(type) {
 	case *pbsync.AddActivityRequest_UserOauth2:

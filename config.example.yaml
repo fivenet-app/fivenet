@@ -16,6 +16,9 @@ logLevelOverrides:
 # Must be 32 chars (bytes) long
 secret: "your_generated_db_secret_32_char"
 
+# Indicates whether to ignore database and nats requirements on startup
+ignoreRequirements: false
+
 jwt:
   secret: "your_generated_jwt_secret"
 
@@ -48,6 +51,8 @@ database:
   disableLocking: false
   # Must be enabled if using a gameserver database (with ESX tables) and not wanting to use the dbsync
   esxCompat: true
+  # Indicates whether to skip database migrations on startup
+  skipMigrations: false
   custom:
     # To disable a column, set it to `"-"`
     columns:

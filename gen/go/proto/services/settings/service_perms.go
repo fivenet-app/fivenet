@@ -4,6 +4,7 @@
 // source: services/settings/cron.proto
 // source: services/settings/laws.proto
 // source: services/settings/settings.proto
+// source: services/settings/system.proto
 
 package settings
 
@@ -31,18 +32,20 @@ var PermsRemap = map[string]string{
 	"settings.LawsService/DeleteLaw":         "settings.LawsService/DeleteLawBook",
 
 	// Service: settings.SettingsService
-	"settings.SettingsService/DeleteFaction":           "Superuser",
 	"settings.SettingsService/DeleteJobLogo":           "settings.SettingsService/SetJobProps",
-	"settings.SettingsService/GetAllPermissions":       "Superuser",
 	"settings.SettingsService/GetEffectivePermissions": "settings.SettingsService/GetRoles",
-	"settings.SettingsService/GetJobLimits":            "Superuser",
 	"settings.SettingsService/GetPermissions":          "settings.SettingsService/GetRoles",
 	"settings.SettingsService/GetRole":                 "settings.SettingsService/GetRoles",
-	"settings.SettingsService/GetStatus":               "Superuser",
 	"settings.SettingsService/ListDiscordChannels":     "settings.SettingsService/SetJobProps",
 	"settings.SettingsService/ListUserGuilds":          "settings.SettingsService/SetJobProps",
-	"settings.SettingsService/UpdateJobLimits":         "Superuser",
 	"settings.SettingsService/UploadJobLogo":           "settings.SettingsService/SetJobProps",
+
+	// Service: settings.SystemService
+	"settings.SystemService/DeleteFaction":     "Superuser",
+	"settings.SystemService/GetAllPermissions": "Superuser",
+	"settings.SystemService/GetJobLimits":      "Superuser",
+	"settings.SystemService/GetStatus":         "Superuser",
+	"settings.SystemService/UpdateJobLimits":   "Superuser",
 }
 
 func init() {

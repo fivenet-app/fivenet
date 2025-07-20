@@ -22,9 +22,10 @@ import { EventType } from "../../resources/audit/audit";
 import { Timestamp } from "../../resources/timestamp/timestamp";
 import { Sort } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
-import { Permission } from "../../resources/permissions/permissions";
 import { RoleAttribute } from "../../resources/permissions/attributes";
-import { PermItem } from "../../resources/permissions/permissions";
+import { Permission } from "../../resources/permissions/permissions";
+import { AttrsUpdate } from "../../resources/settings/perms";
+import { PermsUpdate } from "../../resources/settings/perms";
 import { Role } from "../../resources/permissions/permissions";
 import { JobProps } from "../../resources/jobs/job_props";
 /**
@@ -140,39 +141,13 @@ export interface UpdateRolePermsRequest {
      */
     id: number;
     /**
-     * @generated from protobuf field: optional services.settings.PermsUpdate perms = 2
+     * @generated from protobuf field: optional resources.settings.PermsUpdate perms = 2
      */
     perms?: PermsUpdate;
     /**
-     * @generated from protobuf field: optional services.settings.AttrsUpdate attrs = 3
+     * @generated from protobuf field: optional resources.settings.AttrsUpdate attrs = 3
      */
     attrs?: AttrsUpdate;
-}
-/**
- * @generated from protobuf message services.settings.PermsUpdate
- */
-export interface PermsUpdate {
-    /**
-     * @generated from protobuf field: repeated resources.permissions.PermItem to_update = 1
-     */
-    toUpdate: PermItem[];
-    /**
-     * @generated from protobuf field: repeated resources.permissions.PermItem to_remove = 2
-     */
-    toRemove: PermItem[];
-}
-/**
- * @generated from protobuf message services.settings.AttrsUpdate
- */
-export interface AttrsUpdate {
-    /**
-     * @generated from protobuf field: repeated resources.permissions.RoleAttribute to_update = 1
-     */
-    toUpdate: RoleAttribute[];
-    /**
-     * @generated from protobuf field: repeated resources.permissions.RoleAttribute to_remove = 2
-     */
-    toRemove: RoleAttribute[];
 }
 /**
  * @generated from protobuf message services.settings.UpdateRolePermsResponse
@@ -288,94 +263,6 @@ export interface ViewAuditLogResponse {
     logs: AuditEntry[];
 }
 /**
- * @generated from protobuf message services.settings.GetAllPermissionsRequest
- */
-export interface GetAllPermissionsRequest {
-    /**
-     * @generated from protobuf field: string job = 1
-     */
-    job: string;
-}
-/**
- * @generated from protobuf message services.settings.GetAllPermissionsResponse
- */
-export interface GetAllPermissionsResponse {
-    /**
-     * @generated from protobuf field: repeated resources.permissions.Permission permissions = 1
-     */
-    permissions: Permission[];
-    /**
-     * @generated from protobuf field: repeated resources.permissions.RoleAttribute attributes = 2
-     */
-    attributes: RoleAttribute[];
-}
-/**
- * @generated from protobuf message services.settings.GetJobLimitsRequest
- */
-export interface GetJobLimitsRequest {
-    /**
-     * @generated from protobuf field: string job = 1
-     */
-    job: string;
-}
-/**
- * @generated from protobuf message services.settings.GetJobLimitsResponse
- */
-export interface GetJobLimitsResponse {
-    /**
-     * @generated from protobuf field: string job = 1
-     */
-    job: string;
-    /**
-     * @generated from protobuf field: optional string job_label = 2
-     */
-    jobLabel?: string;
-    /**
-     * @generated from protobuf field: repeated resources.permissions.Permission permissions = 3
-     */
-    permissions: Permission[];
-    /**
-     * @generated from protobuf field: repeated resources.permissions.RoleAttribute attributes = 4
-     */
-    attributes: RoleAttribute[];
-}
-/**
- * @generated from protobuf message services.settings.UpdateJobLimitsRequest
- */
-export interface UpdateJobLimitsRequest {
-    /**
-     * @generated from protobuf field: string job = 1
-     */
-    job: string;
-    /**
-     * @generated from protobuf field: optional services.settings.PermsUpdate perms = 2
-     */
-    perms?: PermsUpdate;
-    /**
-     * @generated from protobuf field: optional services.settings.AttrsUpdate attrs = 3
-     */
-    attrs?: AttrsUpdate;
-}
-/**
- * @generated from protobuf message services.settings.UpdateJobLimitsResponse
- */
-export interface UpdateJobLimitsResponse {
-}
-/**
- * @generated from protobuf message services.settings.DeleteFactionRequest
- */
-export interface DeleteFactionRequest {
-    /**
-     * @generated from protobuf field: string job = 1
-     */
-    job: string;
-}
-/**
- * @generated from protobuf message services.settings.DeleteFactionResponse
- */
-export interface DeleteFactionResponse {
-}
-/**
  * @generated from protobuf message services.settings.ListDiscordChannelsRequest
  */
 export interface ListDiscordChannelsRequest {
@@ -412,18 +299,6 @@ export interface DeleteJobLogoRequest {
  * @generated from protobuf message services.settings.DeleteJobLogoResponse
  */
 export interface DeleteJobLogoResponse {
-}
-/**
- * @generated from protobuf message services.settings.GetStatusRequest
- */
-export interface GetStatusRequest {
-}
-/**
- * TODO
- *
- * @generated from protobuf message services.settings.GetStatusResponse
- */
-export interface GetStatusResponse {
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class GetJobPropsRequest$Type extends MessageType<GetJobPropsRequest> {
@@ -997,10 +872,10 @@ class UpdateRolePermsRequest$Type extends MessageType<UpdateRolePermsRequest> {
                 case /* uint64 id */ 1:
                     message.id = reader.uint64().toNumber();
                     break;
-                case /* optional services.settings.PermsUpdate perms */ 2:
+                case /* optional resources.settings.PermsUpdate perms */ 2:
                     message.perms = PermsUpdate.internalBinaryRead(reader, reader.uint32(), options, message.perms);
                     break;
-                case /* optional services.settings.AttrsUpdate attrs */ 3:
+                case /* optional resources.settings.AttrsUpdate attrs */ 3:
                     message.attrs = AttrsUpdate.internalBinaryRead(reader, reader.uint32(), options, message.attrs);
                     break;
                 default:
@@ -1018,10 +893,10 @@ class UpdateRolePermsRequest$Type extends MessageType<UpdateRolePermsRequest> {
         /* uint64 id = 1; */
         if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
-        /* optional services.settings.PermsUpdate perms = 2; */
+        /* optional resources.settings.PermsUpdate perms = 2; */
         if (message.perms)
             PermsUpdate.internalBinaryWrite(message.perms, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* optional services.settings.AttrsUpdate attrs = 3; */
+        /* optional resources.settings.AttrsUpdate attrs = 3; */
         if (message.attrs)
             AttrsUpdate.internalBinaryWrite(message.attrs, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1034,116 +909,6 @@ class UpdateRolePermsRequest$Type extends MessageType<UpdateRolePermsRequest> {
  * @generated MessageType for protobuf message services.settings.UpdateRolePermsRequest
  */
 export const UpdateRolePermsRequest = new UpdateRolePermsRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class PermsUpdate$Type extends MessageType<PermsUpdate> {
-    constructor() {
-        super("services.settings.PermsUpdate", [
-            { no: 1, name: "to_update", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PermItem },
-            { no: 2, name: "to_remove", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PermItem }
-        ]);
-    }
-    create(value?: PartialMessage<PermsUpdate>): PermsUpdate {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.toUpdate = [];
-        message.toRemove = [];
-        if (value !== undefined)
-            reflectionMergePartial<PermsUpdate>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PermsUpdate): PermsUpdate {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated resources.permissions.PermItem to_update */ 1:
-                    message.toUpdate.push(PermItem.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* repeated resources.permissions.PermItem to_remove */ 2:
-                    message.toRemove.push(PermItem.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: PermsUpdate, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.permissions.PermItem to_update = 1; */
-        for (let i = 0; i < message.toUpdate.length; i++)
-            PermItem.internalBinaryWrite(message.toUpdate[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.permissions.PermItem to_remove = 2; */
-        for (let i = 0; i < message.toRemove.length; i++)
-            PermItem.internalBinaryWrite(message.toRemove[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.settings.PermsUpdate
- */
-export const PermsUpdate = new PermsUpdate$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class AttrsUpdate$Type extends MessageType<AttrsUpdate> {
-    constructor() {
-        super("services.settings.AttrsUpdate", [
-            { no: 1, name: "to_update", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => RoleAttribute },
-            { no: 2, name: "to_remove", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => RoleAttribute }
-        ]);
-    }
-    create(value?: PartialMessage<AttrsUpdate>): AttrsUpdate {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.toUpdate = [];
-        message.toRemove = [];
-        if (value !== undefined)
-            reflectionMergePartial<AttrsUpdate>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AttrsUpdate): AttrsUpdate {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated resources.permissions.RoleAttribute to_update */ 1:
-                    message.toUpdate.push(RoleAttribute.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* repeated resources.permissions.RoleAttribute to_remove */ 2:
-                    message.toRemove.push(RoleAttribute.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: AttrsUpdate, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.permissions.RoleAttribute to_update = 1; */
-        for (let i = 0; i < message.toUpdate.length; i++)
-            RoleAttribute.internalBinaryWrite(message.toUpdate[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.permissions.RoleAttribute to_remove = 2; */
-        for (let i = 0; i < message.toRemove.length; i++)
-            RoleAttribute.internalBinaryWrite(message.toRemove[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.settings.AttrsUpdate
- */
-export const AttrsUpdate = new AttrsUpdate$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UpdateRolePermsResponse$Type extends MessageType<UpdateRolePermsResponse> {
     constructor() {
@@ -1570,409 +1335,6 @@ class ViewAuditLogResponse$Type extends MessageType<ViewAuditLogResponse> {
  */
 export const ViewAuditLogResponse = new ViewAuditLogResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class GetAllPermissionsRequest$Type extends MessageType<GetAllPermissionsRequest> {
-    constructor() {
-        super("services.settings.GetAllPermissionsRequest", [
-            { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } }
-        ]);
-    }
-    create(value?: PartialMessage<GetAllPermissionsRequest>): GetAllPermissionsRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.job = "";
-        if (value !== undefined)
-            reflectionMergePartial<GetAllPermissionsRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetAllPermissionsRequest): GetAllPermissionsRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string job */ 1:
-                    message.job = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: GetAllPermissionsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string job = 1; */
-        if (message.job !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.job);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.settings.GetAllPermissionsRequest
- */
-export const GetAllPermissionsRequest = new GetAllPermissionsRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class GetAllPermissionsResponse$Type extends MessageType<GetAllPermissionsResponse> {
-    constructor() {
-        super("services.settings.GetAllPermissionsResponse", [
-            { no: 1, name: "permissions", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Permission },
-            { no: 2, name: "attributes", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => RoleAttribute }
-        ]);
-    }
-    create(value?: PartialMessage<GetAllPermissionsResponse>): GetAllPermissionsResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.permissions = [];
-        message.attributes = [];
-        if (value !== undefined)
-            reflectionMergePartial<GetAllPermissionsResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetAllPermissionsResponse): GetAllPermissionsResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated resources.permissions.Permission permissions */ 1:
-                    message.permissions.push(Permission.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* repeated resources.permissions.RoleAttribute attributes */ 2:
-                    message.attributes.push(RoleAttribute.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: GetAllPermissionsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.permissions.Permission permissions = 1; */
-        for (let i = 0; i < message.permissions.length; i++)
-            Permission.internalBinaryWrite(message.permissions[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.permissions.RoleAttribute attributes = 2; */
-        for (let i = 0; i < message.attributes.length; i++)
-            RoleAttribute.internalBinaryWrite(message.attributes[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.settings.GetAllPermissionsResponse
- */
-export const GetAllPermissionsResponse = new GetAllPermissionsResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class GetJobLimitsRequest$Type extends MessageType<GetJobLimitsRequest> {
-    constructor() {
-        super("services.settings.GetJobLimitsRequest", [
-            { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } }
-        ]);
-    }
-    create(value?: PartialMessage<GetJobLimitsRequest>): GetJobLimitsRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.job = "";
-        if (value !== undefined)
-            reflectionMergePartial<GetJobLimitsRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetJobLimitsRequest): GetJobLimitsRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string job */ 1:
-                    message.job = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: GetJobLimitsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string job = 1; */
-        if (message.job !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.job);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.settings.GetJobLimitsRequest
- */
-export const GetJobLimitsRequest = new GetJobLimitsRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class GetJobLimitsResponse$Type extends MessageType<GetJobLimitsResponse> {
-    constructor() {
-        super("services.settings.GetJobLimitsResponse", [
-            { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 2, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "permissions", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Permission },
-            { no: 4, name: "attributes", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => RoleAttribute }
-        ]);
-    }
-    create(value?: PartialMessage<GetJobLimitsResponse>): GetJobLimitsResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.job = "";
-        message.permissions = [];
-        message.attributes = [];
-        if (value !== undefined)
-            reflectionMergePartial<GetJobLimitsResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetJobLimitsResponse): GetJobLimitsResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string job */ 1:
-                    message.job = reader.string();
-                    break;
-                case /* optional string job_label */ 2:
-                    message.jobLabel = reader.string();
-                    break;
-                case /* repeated resources.permissions.Permission permissions */ 3:
-                    message.permissions.push(Permission.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* repeated resources.permissions.RoleAttribute attributes */ 4:
-                    message.attributes.push(RoleAttribute.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: GetJobLimitsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string job = 1; */
-        if (message.job !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.job);
-        /* optional string job_label = 2; */
-        if (message.jobLabel !== undefined)
-            writer.tag(2, WireType.LengthDelimited).string(message.jobLabel);
-        /* repeated resources.permissions.Permission permissions = 3; */
-        for (let i = 0; i < message.permissions.length; i++)
-            Permission.internalBinaryWrite(message.permissions[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.permissions.RoleAttribute attributes = 4; */
-        for (let i = 0; i < message.attributes.length; i++)
-            RoleAttribute.internalBinaryWrite(message.attributes[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.settings.GetJobLimitsResponse
- */
-export const GetJobLimitsResponse = new GetJobLimitsResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class UpdateJobLimitsRequest$Type extends MessageType<UpdateJobLimitsRequest> {
-    constructor() {
-        super("services.settings.UpdateJobLimitsRequest", [
-            { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 2, name: "perms", kind: "message", T: () => PermsUpdate },
-            { no: 3, name: "attrs", kind: "message", T: () => AttrsUpdate }
-        ]);
-    }
-    create(value?: PartialMessage<UpdateJobLimitsRequest>): UpdateJobLimitsRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.job = "";
-        if (value !== undefined)
-            reflectionMergePartial<UpdateJobLimitsRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateJobLimitsRequest): UpdateJobLimitsRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string job */ 1:
-                    message.job = reader.string();
-                    break;
-                case /* optional services.settings.PermsUpdate perms */ 2:
-                    message.perms = PermsUpdate.internalBinaryRead(reader, reader.uint32(), options, message.perms);
-                    break;
-                case /* optional services.settings.AttrsUpdate attrs */ 3:
-                    message.attrs = AttrsUpdate.internalBinaryRead(reader, reader.uint32(), options, message.attrs);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: UpdateJobLimitsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string job = 1; */
-        if (message.job !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.job);
-        /* optional services.settings.PermsUpdate perms = 2; */
-        if (message.perms)
-            PermsUpdate.internalBinaryWrite(message.perms, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* optional services.settings.AttrsUpdate attrs = 3; */
-        if (message.attrs)
-            AttrsUpdate.internalBinaryWrite(message.attrs, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.settings.UpdateJobLimitsRequest
- */
-export const UpdateJobLimitsRequest = new UpdateJobLimitsRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class UpdateJobLimitsResponse$Type extends MessageType<UpdateJobLimitsResponse> {
-    constructor() {
-        super("services.settings.UpdateJobLimitsResponse", []);
-    }
-    create(value?: PartialMessage<UpdateJobLimitsResponse>): UpdateJobLimitsResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<UpdateJobLimitsResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateJobLimitsResponse): UpdateJobLimitsResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: UpdateJobLimitsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.settings.UpdateJobLimitsResponse
- */
-export const UpdateJobLimitsResponse = new UpdateJobLimitsResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class DeleteFactionRequest$Type extends MessageType<DeleteFactionRequest> {
-    constructor() {
-        super("services.settings.DeleteFactionRequest", [
-            { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } }
-        ]);
-    }
-    create(value?: PartialMessage<DeleteFactionRequest>): DeleteFactionRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.job = "";
-        if (value !== undefined)
-            reflectionMergePartial<DeleteFactionRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteFactionRequest): DeleteFactionRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string job */ 1:
-                    message.job = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: DeleteFactionRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string job = 1; */
-        if (message.job !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.job);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.settings.DeleteFactionRequest
- */
-export const DeleteFactionRequest = new DeleteFactionRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class DeleteFactionResponse$Type extends MessageType<DeleteFactionResponse> {
-    constructor() {
-        super("services.settings.DeleteFactionResponse", []);
-    }
-    create(value?: PartialMessage<DeleteFactionResponse>): DeleteFactionResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<DeleteFactionResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteFactionResponse): DeleteFactionResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: DeleteFactionResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.settings.DeleteFactionResponse
- */
-export const DeleteFactionResponse = new DeleteFactionResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class ListDiscordChannelsRequest$Type extends MessageType<ListDiscordChannelsRequest> {
     constructor() {
         super("services.settings.ListDiscordChannelsRequest", []);
@@ -2218,82 +1580,6 @@ class DeleteJobLogoResponse$Type extends MessageType<DeleteJobLogoResponse> {
  * @generated MessageType for protobuf message services.settings.DeleteJobLogoResponse
  */
 export const DeleteJobLogoResponse = new DeleteJobLogoResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class GetStatusRequest$Type extends MessageType<GetStatusRequest> {
-    constructor() {
-        super("services.settings.GetStatusRequest", []);
-    }
-    create(value?: PartialMessage<GetStatusRequest>): GetStatusRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<GetStatusRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetStatusRequest): GetStatusRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: GetStatusRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.settings.GetStatusRequest
- */
-export const GetStatusRequest = new GetStatusRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class GetStatusResponse$Type extends MessageType<GetStatusResponse> {
-    constructor() {
-        super("services.settings.GetStatusResponse", []);
-    }
-    create(value?: PartialMessage<GetStatusResponse>): GetStatusResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<GetStatusResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetStatusResponse): GetStatusResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: GetStatusResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.settings.GetStatusResponse
- */
-export const GetStatusResponse = new GetStatusResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.settings.SettingsService
  */
@@ -2308,13 +1594,8 @@ export const SettingsService = new ServiceType("services.settings.SettingsServic
     { name: "GetPermissions", options: {}, I: GetPermissionsRequest, O: GetPermissionsResponse },
     { name: "GetEffectivePermissions", options: {}, I: GetEffectivePermissionsRequest, O: GetEffectivePermissionsResponse },
     { name: "ViewAuditLog", options: {}, I: ViewAuditLogRequest, O: ViewAuditLogResponse },
-    { name: "GetAllPermissions", options: {}, I: GetAllPermissionsRequest, O: GetAllPermissionsResponse },
-    { name: "GetJobLimits", options: {}, I: GetJobLimitsRequest, O: GetJobLimitsResponse },
-    { name: "UpdateJobLimits", options: {}, I: UpdateJobLimitsRequest, O: UpdateJobLimitsResponse },
-    { name: "DeleteFaction", options: {}, I: DeleteFactionRequest, O: DeleteFactionResponse },
     { name: "ListDiscordChannels", options: {}, I: ListDiscordChannelsRequest, O: ListDiscordChannelsResponse },
     { name: "ListUserGuilds", options: {}, I: ListUserGuildsRequest, O: ListUserGuildsResponse },
     { name: "UploadJobLogo", clientStreaming: true, options: {}, I: UploadFileRequest, O: UploadFileResponse },
-    { name: "DeleteJobLogo", options: {}, I: DeleteJobLogoRequest, O: DeleteJobLogoResponse },
-    { name: "GetStatus", options: {}, I: GetStatusRequest, O: GetStatusResponse }
+    { name: "DeleteJobLogo", options: {}, I: DeleteJobLogoRequest, O: DeleteJobLogoResponse }
 ]);

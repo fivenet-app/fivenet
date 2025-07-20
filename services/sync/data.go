@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"slices"
+	"time"
 
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
@@ -27,6 +28,8 @@ func (s *Server) SendData(ctx context.Context, req *pbsync.SendDataRequest) (*pb
 	resp := &pbsync.SendDataResponse{
 		AffectedRows: 0,
 	}
+
+	s.lastSyncedData.Store(time.Now().Unix())
 
 	var err error
 	switch d := req.Data.(type) {

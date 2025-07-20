@@ -5,10 +5,15 @@ import (
 	"database/sql"
 	"fmt"
 	"slices"
+	"sync/atomic"
+	"time"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
 	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
+	pkggrpc "github.com/fivenet-app/fivenet/v2025/pkg/grpc"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatches"
 	"go.uber.org/fx"
@@ -30,6 +35,9 @@ type Server struct {
 
 	esxCompat bool
 	tokens    []string
+
+	lastSyncedData     atomic.Int64
+	lastSyncedActivity atomic.Int64
 }
 
 type Params struct {
@@ -45,7 +53,14 @@ type Params struct {
 	DispatchDB *dispatches.DispatchDB
 }
 
-func NewServer(p Params) *Server {
+type Result struct {
+	fx.Out
+
+	Server  *Server
+	Service pkggrpc.Service `group:"grpcservices"`
+}
+
+func NewServer(p Params) (Result, error) {
 	s := &Server{
 		logger: p.Logger.Named("sync"),
 		db:     p.DB,
@@ -67,7 +82,10 @@ func NewServer(p Params) *Server {
 		return nil
 	}))
 
-	return s
+	return Result{
+		Server:  s,
+		Service: s,
+	}, nil
 }
 
 func (s *Server) RegisterServer(srv *grpc.Server) {
@@ -103,4 +121,22 @@ func (s *Server) PermissionUnaryFuncOverride(ctx context.Context, info *grpc.Una
 func (s *Server) PermissionStreamFuncOverride(ctx context.Context, srv any, info *grpc.StreamServerInfo) (context.Context, error) {
 	// Skip permission check for the sync service
 	return ctx, nil
+}
+
+func (s *Server) GetSyncTimes() *pbsettings.DBSyncStatus {
+	st := &pbsettings.DBSyncStatus{
+		Enabled: s.cfg.Sync.Enabled,
+	}
+
+	lastSyncedData := s.lastSyncedData.Load()
+	if lastSyncedData > 0 {
+		st.LastSyncedData = timestamp.New(time.Unix(lastSyncedData, 0))
+	}
+
+	lastSyncedActivity := s.lastSyncedActivity.Load()
+	if lastSyncedActivity > 0 {
+		st.LastSyncedActivity = timestamp.New(time.Unix(lastSyncedActivity, 0))
+	}
+
+	return st
 }

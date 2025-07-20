@@ -15,9 +15,11 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2025/pkg/reqs"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	syncservice "github.com/fivenet-app/fivenet/v2025/services/sync"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -40,6 +42,7 @@ type Server struct {
 	pbsettings.CronServiceServer
 	pbsettings.LawsServiceServer
 	pbsettings.AccountsServiceServer
+	pbsettings.SystemServiceServer
 
 	logger    *zap.Logger
 	db        *sql.DB
@@ -59,6 +62,10 @@ type Server struct {
 
 	dc               *discordapi.Client
 	dcOAuth2Provider *config.OAuth2Provider
+
+	syncServer *syncservice.Server
+	dbReq      *reqs.DBReqs
+	natsReq    *reqs.NatsReqs
 }
 
 type Params struct {
@@ -77,6 +84,10 @@ type Params struct {
 	CronState *croner.Registry
 	Crypt     *crypt.Crypt
 	Notifi    notifi.INotifi
+
+	SyncServer *syncservice.Server
+	DBReq      *reqs.DBReqs
+	NatsReq    *reqs.NatsReqs
 }
 
 func NewServer(p Params) *Server {
@@ -119,6 +130,10 @@ func NewServer(p Params) *Server {
 
 		dc:               dc,
 		dcOAuth2Provider: dcOAuth2Provider,
+
+		syncServer: p.SyncServer,
+		dbReq:      p.DBReq,
+		natsReq:    p.NatsReq,
 	}
 
 	return s
@@ -130,6 +145,7 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbsettings.RegisterCronServiceServer(srv, s)
 	pbsettings.RegisterLawsServiceServer(srv, s)
 	pbsettings.RegisterAccountsServiceServer(srv, s)
+	pbsettings.RegisterSystemServiceServer(srv, s)
 }
 
 func (s *Server) GetPermsRemap() map[string]string {

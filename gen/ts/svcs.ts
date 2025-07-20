@@ -71,6 +71,7 @@
 // source: resources/qualifications/qualifications.proto
 // source: resources/settings/banner.proto
 // source: resources/settings/config.proto
+// source: resources/settings/perms.proto
 // source: resources/stats/stats.proto
 // source: resources/sync/activity.proto
 // source: resources/sync/data.proto
@@ -111,6 +112,7 @@
 // source: services/settings/cron.proto
 // source: services/settings/laws.proto
 // source: services/settings/settings.proto
+// source: services/settings/system.proto
 // source: services/stats/stats.proto
 // source: services/sync/sync.proto
 // source: services/vehicles/vehicles.proto
@@ -141,6 +143,7 @@ export const grpcServices = [
     'settings.CronService',
     'settings.LawsService',
     'settings.SettingsService',
+    'settings.SystemService',
     'stats.StatsService',
     'sync.SyncService',
     'vehicles.VehiclesService',
@@ -342,15 +345,15 @@ export const grpcMethods = [
 	'settings.SettingsService/GetPermissions',
 	'settings.SettingsService/GetEffectivePermissions',
 	'settings.SettingsService/ViewAuditLog',
-	'settings.SettingsService/GetAllPermissions',
-	'settings.SettingsService/GetJobLimits',
-	'settings.SettingsService/UpdateJobLimits',
-	'settings.SettingsService/DeleteFaction',
 	'settings.SettingsService/ListDiscordChannels',
 	'settings.SettingsService/ListUserGuilds',
 	'settings.SettingsService/UploadJobLogo',
 	'settings.SettingsService/DeleteJobLogo',
-	'settings.SettingsService/GetStatus',
+	'settings.SystemService/GetStatus',
+	'settings.SystemService/GetAllPermissions',
+	'settings.SystemService/GetJobLimits',
+	'settings.SystemService/UpdateJobLimits',
+	'settings.SystemService/DeleteFaction',
 	'stats.StatsService/GetStats',
 	'sync.SyncService/GetStatus',
 	'sync.SyncService/AddActivity',

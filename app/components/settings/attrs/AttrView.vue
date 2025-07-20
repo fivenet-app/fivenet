@@ -9,7 +9,8 @@ import AttrViewAttr from '~/components/settings/attrs/AttrViewAttr.vue';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes';
 import type { Permission } from '~~/gen/ts/resources/permissions/permissions';
-import type { AttrsUpdate, GetJobLimitsResponse, PermsUpdate } from '~~/gen/ts/services/settings/settings';
+import type { AttrsUpdate, PermsUpdate } from '~~/gen/ts/resources/settings/perms';
+import type { GetJobLimitsResponse } from '~~/gen/ts/services/settings/system';
 
 const props = defineProps<{
     job: string;
@@ -46,7 +47,7 @@ const attrList = ref<RoleAttribute[]>([]);
 
 async function getJobLimits(job: string): Promise<GetJobLimitsResponse> {
     try {
-        const call = $grpc.settings.settings.getJobLimits({
+        const call = $grpc.settings.system.getJobLimits({
             job: job,
         });
         const { response } = await call;
@@ -60,7 +61,7 @@ async function getJobLimits(job: string): Promise<GetJobLimitsResponse> {
 
 async function getAllPermissions(job: string): Promise<void> {
     try {
-        const call = $grpc.settings.settings.getAllPermissions({
+        const call = $grpc.settings.system.getAllPermissions({
             job: job,
         });
         const { response } = await call;
@@ -172,7 +173,7 @@ async function updateJobLimits(): Promise<void> {
     }
 
     try {
-        await $grpc.settings.settings.updateJobLimits({
+        await $grpc.settings.system.updateJobLimits({
             job: props.job,
             perms: perms,
             attrs: attrs,
@@ -344,7 +345,7 @@ const accordionCategories = computed(() =>
 
 async function deleteFaction(job: string): Promise<void> {
     try {
-        await $grpc.settings.settings.deleteFaction({
+        await $grpc.settings.system.deleteFaction({
             job: job,
         });
 

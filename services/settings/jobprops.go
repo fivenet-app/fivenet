@@ -18,10 +18,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorssettings "github.com/fivenet-app/fivenet/v2025/services/settings/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
-	"go.uber.org/multierr"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
 )
@@ -231,79 +227,4 @@ func (s *Server) DeleteJobLogo(ctx context.Context, req *pbsettings.DeleteJobLog
 	}
 
 	return &pbsettings.DeleteJobLogoResponse{}, nil
-}
-
-func (s *Server) DeleteFaction(ctx context.Context, req *pbsettings.DeleteFactionRequest) (*pbsettings.DeleteFactionResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.settings.job", req.Job))
-
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
-		Method:  "DeleteFaction",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
-	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.settings.job", req.Job))
-
-	roles, err := s.ps.GetJobRoles(ctx, req.Job)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
-	}
-
-	errs := multierr.Combine()
-	for _, role := range roles {
-		if err := s.ps.DeleteRole(ctx, role.Id); err != nil {
-			errs = multierr.Append(errs, err)
-			continue
-		}
-	}
-
-	if err := s.ps.ClearJobAttributes(ctx, req.Job); err != nil {
-		errs = multierr.Append(errs, err)
-		return nil, errswrap.NewError(errs, errorssettings.ErrFailedQuery)
-	}
-
-	if err := s.ps.ClearJobPermissions(ctx, req.Job); err != nil {
-		errs = multierr.Append(errs, err)
-		return nil, errswrap.NewError(errs, errorssettings.ErrFailedQuery)
-	}
-
-	if err := s.ps.ApplyJobPermissions(ctx, req.Job); err != nil {
-		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
-	}
-
-	// Set job props to be deleted as last action to start the removal of a faction and it's data from the database
-	if err := s.deleteJobProps(ctx, s.db, req.Job); err != nil {
-		errs = multierr.Append(errs, err)
-	}
-
-	if errs != nil {
-		return nil, errswrap.NewError(errs, errorssettings.ErrFailedQuery)
-	}
-
-	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
-
-	return &pbsettings.DeleteFactionResponse{}, nil
-}
-
-func (s *Server) deleteJobProps(ctx context.Context, tx qrm.DB, job string) error {
-	stmt := tJobProps.
-		UPDATE().
-		SET(
-			tJobProps.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
-		).
-		WHERE(
-			tJobProps.Job.EQ(jet.String(job)),
-		).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return err
-	}
-
-	return nil
 }

@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/creasty/defaults"
@@ -89,6 +90,22 @@ func Load() (Result, error) {
 		if v == "" {
 			c.LogLevelOverrides[k] = c.LogLevel
 		}
+	}
+
+	// Handle special environment variables
+	if val := os.Getenv(envs.SkipDBMigrationsEnv); val != "" {
+		skip, err := strconv.ParseBool(val)
+		if err != nil {
+			return res, fmt.Errorf("failed to parse %q as bool. %w", envs.SkipDBMigrationsEnv, err)
+		}
+		c.Database.SkipMigrations = skip
+	}
+	if val := os.Getenv(envs.IgnoreRequirementsEnv); val != "" {
+		skip, err := strconv.ParseBool(val)
+		if err != nil {
+			return res, fmt.Errorf("failed to parse %q as bool. %w", envs.IgnoreRequirementsEnv, err)
+		}
+		c.IgnoreRequirements = skip
 	}
 
 	return res, nil

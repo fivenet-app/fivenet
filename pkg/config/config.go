@@ -18,6 +18,9 @@ type Config struct {
 	// Secret used to encrypt/decrypt data in, e.g., the database
 	Secret string `yaml:"secret"`
 
+	// IgnoreRequirements indicates whether to ignore database and nats requirements on startup.
+	IgnoreRequirements bool `default:"false" yaml:"ignoreRequirements"`
+
 	Demo Demo `yaml:"demo"`
 
 	JWT            JWT            `yaml:"jwt"`
@@ -127,6 +130,9 @@ type Database struct {
 
 	// ESXCompat enables compatibility mode for ESX-specific database configurations.
 	ESXCompat bool `default:"false" yaml:"esxCompat"`
+
+	// SkipMigrations indicates whether to skip database migrations on startup.
+	SkipMigrations bool `default:"false" yaml:"skipMigrations"`
 
 	// Custom contains additional custom database configuration options.
 	Custom CustomDB `yaml:"custom"`
