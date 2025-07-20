@@ -90,7 +90,7 @@ async function getStatus() {
                 </template>
             </UPopover>
 
-            <UPopover v-if="!data.dbsync?.enabled" class="flex-1">
+            <UPopover v-if="data.dbsync?.enabled" class="flex-1">
                 <UButton variant="link" size="xl" :padded="false">
                     <UIcon name="i-mdi-database-sync" class="size-10" />
 
