@@ -10,13 +10,13 @@ import (
 type NatsReqs struct {
 	mu sync.Mutex
 
-	nc      *nats.Conn
+	nc *nats.Conn
+
 	version string
 }
 
 func NewNatsReqs(nc *nats.Conn) *NatsReqs {
 	return &NatsReqs{
-		mu: sync.Mutex{},
 		nc: nc,
 	}
 }

@@ -123,7 +123,7 @@ func SetupDB(p Params) (Result, error) {
 	prometheus.MustRegister(collectors.NewDBStatsCollector(db, "fivenet"))
 
 	if req == nil {
-		req := reqs.NewDBReqs(db)
+		req = reqs.NewDBReqs(db)
 		// Collect requirement errors if any
 		var errs error
 		if err := req.ValidateVersion(); err != nil {
