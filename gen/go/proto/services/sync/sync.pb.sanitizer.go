@@ -206,6 +206,14 @@ func (m *SendDataRequest) Sanitize() error {
 			}
 		}
 
+		// Field: LastCharId
+	case *SendDataRequest_LastCharId:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 		// Field: Licenses
 	case *SendDataRequest_Licenses:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {

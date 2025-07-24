@@ -461,6 +461,58 @@ func (x *DeleteVehicles) GetPlates() []string {
 	return nil
 }
 
+type LastCharID struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Identifier    string                 `protobuf:"bytes,1,opt,name=identifier,proto3" json:"identifier,omitempty"`
+	LastCharId    *int32                 `protobuf:"varint,2,opt,name=last_char_id,json=lastCharId,proto3,oneof" json:"last_char_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LastCharID) Reset() {
+	*x = LastCharID{}
+	mi := &file_resources_sync_data_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LastCharID) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LastCharID) ProtoMessage() {}
+
+func (x *LastCharID) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_sync_data_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LastCharID.ProtoReflect.Descriptor instead.
+func (*LastCharID) Descriptor() ([]byte, []int) {
+	return file_resources_sync_data_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *LastCharID) GetIdentifier() string {
+	if x != nil {
+		return x.Identifier
+	}
+	return ""
+}
+
+func (x *LastCharID) GetLastCharId() int32 {
+	if x != nil && x.LastCharId != nil {
+		return *x.LastCharId
+	}
+	return 0
+}
+
 var File_resources_sync_data_proto protoreflect.FileDescriptor
 
 const file_resources_sync_data_proto_rawDesc = "" +
@@ -493,7 +545,15 @@ const file_resources_sync_data_proto_rawDesc = "" +
 	"\vDeleteUsers\x12#\n" +
 	"\buser_ids\x18\x01 \x03(\x05B\b\xbaH\x05\x92\x01\x02\x10dR\auserIds\"2\n" +
 	"\x0eDeleteVehicles\x12 \n" +
-	"\x06plates\x18\x01 \x03(\tB\b\xbaH\x05\x92\x01\x02\x10dR\x06platesBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/sync;syncb\x06proto3"
+	"\x06plates\x18\x01 \x03(\tB\b\xbaH\x05\x92\x01\x02\x10dR\x06plates\"v\n" +
+	"\n" +
+	"LastCharID\x12'\n" +
+	"\n" +
+	"identifier\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18@R\n" +
+	"identifier\x12.\n" +
+	"\flast_char_id\x18\x02 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x00R\n" +
+	"lastCharId\x88\x01\x01B\x0f\n" +
+	"\r_last_char_idBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/sync;syncb\x06proto3"
 
 var (
 	file_resources_sync_data_proto_rawDescOnce sync.Once
@@ -507,7 +567,7 @@ func file_resources_sync_data_proto_rawDescGZIP() []byte {
 	return file_resources_sync_data_proto_rawDescData
 }
 
-var file_resources_sync_data_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_resources_sync_data_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_resources_sync_data_proto_goTypes = []any{
 	(*DataStatus)(nil),        // 0: resources.sync.DataStatus
 	(*DataJobs)(nil),          // 1: resources.sync.DataJobs
@@ -518,19 +578,20 @@ var file_resources_sync_data_proto_goTypes = []any{
 	(*CitizenLocations)(nil),  // 6: resources.sync.CitizenLocations
 	(*DeleteUsers)(nil),       // 7: resources.sync.DeleteUsers
 	(*DeleteVehicles)(nil),    // 8: resources.sync.DeleteVehicles
-	(*jobs.Job)(nil),          // 9: resources.jobs.Job
-	(*users.User)(nil),        // 10: resources.users.User
-	(*vehicles.Vehicle)(nil),  // 11: resources.vehicles.Vehicle
-	(*users.License)(nil),     // 12: resources.users.License
-	(*livemap.Coords)(nil),    // 13: resources.livemap.Coords
+	(*LastCharID)(nil),        // 9: resources.sync.LastCharID
+	(*jobs.Job)(nil),          // 10: resources.jobs.Job
+	(*users.User)(nil),        // 11: resources.users.User
+	(*vehicles.Vehicle)(nil),  // 12: resources.vehicles.Vehicle
+	(*users.License)(nil),     // 13: resources.users.License
+	(*livemap.Coords)(nil),    // 14: resources.livemap.Coords
 }
 var file_resources_sync_data_proto_depIdxs = []int32{
-	9,  // 0: resources.sync.DataJobs.jobs:type_name -> resources.jobs.Job
-	10, // 1: resources.sync.DataUsers.users:type_name -> resources.users.User
-	11, // 2: resources.sync.DataVehicles.vehicles:type_name -> resources.vehicles.Vehicle
-	12, // 3: resources.sync.DataLicenses.licenses:type_name -> resources.users.License
+	10, // 0: resources.sync.DataJobs.jobs:type_name -> resources.jobs.Job
+	11, // 1: resources.sync.DataUsers.users:type_name -> resources.users.User
+	12, // 2: resources.sync.DataVehicles.vehicles:type_name -> resources.vehicles.Vehicle
+	13, // 3: resources.sync.DataLicenses.licenses:type_name -> resources.users.License
 	6,  // 4: resources.sync.DataUserLocations.users:type_name -> resources.sync.CitizenLocations
-	13, // 5: resources.sync.CitizenLocations.coords:type_name -> resources.livemap.Coords
+	14, // 5: resources.sync.CitizenLocations.coords:type_name -> resources.livemap.Coords
 	6,  // [6:6] is the sub-list for method output_type
 	6,  // [6:6] is the sub-list for method input_type
 	6,  // [6:6] is the sub-list for extension type_name
@@ -544,13 +605,14 @@ func file_resources_sync_data_proto_init() {
 		return
 	}
 	file_resources_sync_data_proto_msgTypes[5].OneofWrappers = []any{}
+	file_resources_sync_data_proto_msgTypes[9].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_sync_data_proto_rawDesc), len(file_resources_sync_data_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

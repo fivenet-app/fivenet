@@ -117,6 +117,19 @@ export interface DeleteVehicles {
      */
     plates: string[];
 }
+/**
+ * @generated from protobuf message resources.sync.LastCharID
+ */
+export interface LastCharID {
+    /**
+     * @generated from protobuf field: string identifier = 1
+     */
+    identifier: string;
+    /**
+     * @generated from protobuf field: optional int32 last_char_id = 2
+     */
+    lastCharId?: number;
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class DataStatus$Type extends MessageType<DataStatus> {
     constructor() {
@@ -586,3 +599,57 @@ class DeleteVehicles$Type extends MessageType<DeleteVehicles> {
  * @generated MessageType for protobuf message resources.sync.DeleteVehicles
  */
 export const DeleteVehicles = new DeleteVehicles$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class LastCharID$Type extends MessageType<LastCharID> {
+    constructor() {
+        super("resources.sync.LastCharID", [
+            { no: 1, name: "identifier", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
+            { no: 2, name: "last_char_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } }
+        ]);
+    }
+    create(value?: PartialMessage<LastCharID>): LastCharID {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.identifier = "";
+        if (value !== undefined)
+            reflectionMergePartial<LastCharID>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: LastCharID): LastCharID {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string identifier */ 1:
+                    message.identifier = reader.string();
+                    break;
+                case /* optional int32 last_char_id */ 2:
+                    message.lastCharId = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: LastCharID, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string identifier = 1; */
+        if (message.identifier !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.identifier);
+        /* optional int32 last_char_id = 2; */
+        if (message.lastCharId !== undefined)
+            writer.tag(2, WireType.Varint).int32(message.lastCharId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.sync.LastCharID
+ */
+export const LastCharID = new LastCharID$Type();

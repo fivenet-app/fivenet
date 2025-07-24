@@ -566,6 +566,7 @@ type SendDataRequest struct {
 	//	*SendDataRequest_Users
 	//	*SendDataRequest_Vehicles
 	//	*SendDataRequest_UserLocations
+	//	*SendDataRequest_LastCharId
 	Data          isSendDataRequest_Data `protobuf_oneof:"data"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -653,6 +654,15 @@ func (x *SendDataRequest) GetUserLocations() *sync.DataUserLocations {
 	return nil
 }
 
+func (x *SendDataRequest) GetLastCharId() *sync.LastCharID {
+	if x != nil {
+		if x, ok := x.Data.(*SendDataRequest_LastCharId); ok {
+			return x.LastCharId
+		}
+	}
+	return nil
+}
+
 type isSendDataRequest_Data interface {
 	isSendDataRequest_Data()
 }
@@ -677,6 +687,10 @@ type SendDataRequest_UserLocations struct {
 	UserLocations *sync.DataUserLocations `protobuf:"bytes,5,opt,name=user_locations,json=userLocations,proto3,oneof"`
 }
 
+type SendDataRequest_LastCharId struct {
+	LastCharId *sync.LastCharID `protobuf:"bytes,6,opt,name=last_char_id,json=lastCharId,proto3,oneof"`
+}
+
 func (*SendDataRequest_Jobs) isSendDataRequest_Data() {}
 
 func (*SendDataRequest_Licenses) isSendDataRequest_Data() {}
@@ -686,6 +700,8 @@ func (*SendDataRequest_Users) isSendDataRequest_Data() {}
 func (*SendDataRequest_Vehicles) isSendDataRequest_Data() {}
 
 func (*SendDataRequest_UserLocations) isSendDataRequest_Data() {}
+
+func (*SendDataRequest_LastCharId) isSendDataRequest_Data() {}
 
 type SendDataResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -986,13 +1002,15 @@ const file_services_sync_sync_proto_rawDesc = "" +
 	"oldLicense\x12(\n" +
 	"\vnew_license\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18@R\n" +
 	"newLicense\"\x19\n" +
-	"\x17TransferAccountResponse\"\xc7\x02\n" +
+	"\x17TransferAccountResponse\"\x87\x03\n" +
 	"\x0fSendDataRequest\x12.\n" +
 	"\x04jobs\x18\x01 \x01(\v2\x18.resources.sync.DataJobsH\x00R\x04jobs\x12:\n" +
 	"\blicenses\x18\x02 \x01(\v2\x1c.resources.sync.DataLicensesH\x00R\blicenses\x121\n" +
 	"\x05users\x18\x03 \x01(\v2\x19.resources.sync.DataUsersH\x00R\x05users\x12:\n" +
 	"\bvehicles\x18\x04 \x01(\v2\x1c.resources.sync.DataVehiclesH\x00R\bvehicles\x12J\n" +
-	"\x0euser_locations\x18\x05 \x01(\v2!.resources.sync.DataUserLocationsH\x00R\ruserLocationsB\r\n" +
+	"\x0euser_locations\x18\x05 \x01(\v2!.resources.sync.DataUserLocationsH\x00R\ruserLocations\x12>\n" +
+	"\flast_char_id\x18\x06 \x01(\v2\x1a.resources.sync.LastCharIDH\x00R\n" +
+	"lastCharIdB\r\n" +
 	"\x04data\x12\x05\xbaH\x02\b\x01\"7\n" +
 	"\x10SendDataResponse\x12#\n" +
 	"\raffected_rows\x18\x01 \x01(\x03R\faffectedRows\"\x95\x01\n" +
@@ -1057,8 +1075,9 @@ var file_services_sync_sync_proto_goTypes = []any{
 	(*sync.DataUsers)(nil),          // 25: resources.sync.DataUsers
 	(*sync.DataVehicles)(nil),       // 26: resources.sync.DataVehicles
 	(*sync.DataUserLocations)(nil),  // 27: resources.sync.DataUserLocations
-	(*sync.DeleteUsers)(nil),        // 28: resources.sync.DeleteUsers
-	(*sync.DeleteVehicles)(nil),     // 29: resources.sync.DeleteVehicles
+	(*sync.LastCharID)(nil),         // 28: resources.sync.LastCharID
+	(*sync.DeleteUsers)(nil),        // 29: resources.sync.DeleteUsers
+	(*sync.DeleteVehicles)(nil),     // 30: resources.sync.DeleteVehicles
 }
 var file_services_sync_sync_proto_depIdxs = []int32{
 	14, // 0: services.sync.GetStatusResponse.jobs:type_name -> resources.sync.DataStatus
@@ -1078,27 +1097,28 @@ var file_services_sync_sync_proto_depIdxs = []int32{
 	25, // 14: services.sync.SendDataRequest.users:type_name -> resources.sync.DataUsers
 	26, // 15: services.sync.SendDataRequest.vehicles:type_name -> resources.sync.DataVehicles
 	27, // 16: services.sync.SendDataRequest.user_locations:type_name -> resources.sync.DataUserLocations
-	28, // 17: services.sync.DeleteDataRequest.users:type_name -> resources.sync.DeleteUsers
-	29, // 18: services.sync.DeleteDataRequest.vehicles:type_name -> resources.sync.DeleteVehicles
-	0,  // 19: services.sync.SyncService.GetStatus:input_type -> services.sync.GetStatusRequest
-	2,  // 20: services.sync.SyncService.AddActivity:input_type -> services.sync.AddActivityRequest
-	4,  // 21: services.sync.SyncService.RegisterAccount:input_type -> services.sync.RegisterAccountRequest
-	6,  // 22: services.sync.SyncService.TransferAccount:input_type -> services.sync.TransferAccountRequest
-	8,  // 23: services.sync.SyncService.SendData:input_type -> services.sync.SendDataRequest
-	10, // 24: services.sync.SyncService.DeleteData:input_type -> services.sync.DeleteDataRequest
-	12, // 25: services.sync.SyncService.Stream:input_type -> services.sync.StreamRequest
-	1,  // 26: services.sync.SyncService.GetStatus:output_type -> services.sync.GetStatusResponse
-	3,  // 27: services.sync.SyncService.AddActivity:output_type -> services.sync.AddActivityResponse
-	5,  // 28: services.sync.SyncService.RegisterAccount:output_type -> services.sync.RegisterAccountResponse
-	7,  // 29: services.sync.SyncService.TransferAccount:output_type -> services.sync.TransferAccountResponse
-	9,  // 30: services.sync.SyncService.SendData:output_type -> services.sync.SendDataResponse
-	11, // 31: services.sync.SyncService.DeleteData:output_type -> services.sync.DeleteDataResponse
-	13, // 32: services.sync.SyncService.Stream:output_type -> services.sync.StreamResponse
-	26, // [26:33] is the sub-list for method output_type
-	19, // [19:26] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	28, // 17: services.sync.SendDataRequest.last_char_id:type_name -> resources.sync.LastCharID
+	29, // 18: services.sync.DeleteDataRequest.users:type_name -> resources.sync.DeleteUsers
+	30, // 19: services.sync.DeleteDataRequest.vehicles:type_name -> resources.sync.DeleteVehicles
+	0,  // 20: services.sync.SyncService.GetStatus:input_type -> services.sync.GetStatusRequest
+	2,  // 21: services.sync.SyncService.AddActivity:input_type -> services.sync.AddActivityRequest
+	4,  // 22: services.sync.SyncService.RegisterAccount:input_type -> services.sync.RegisterAccountRequest
+	6,  // 23: services.sync.SyncService.TransferAccount:input_type -> services.sync.TransferAccountRequest
+	8,  // 24: services.sync.SyncService.SendData:input_type -> services.sync.SendDataRequest
+	10, // 25: services.sync.SyncService.DeleteData:input_type -> services.sync.DeleteDataRequest
+	12, // 26: services.sync.SyncService.Stream:input_type -> services.sync.StreamRequest
+	1,  // 27: services.sync.SyncService.GetStatus:output_type -> services.sync.GetStatusResponse
+	3,  // 28: services.sync.SyncService.AddActivity:output_type -> services.sync.AddActivityResponse
+	5,  // 29: services.sync.SyncService.RegisterAccount:output_type -> services.sync.RegisterAccountResponse
+	7,  // 30: services.sync.SyncService.TransferAccount:output_type -> services.sync.TransferAccountResponse
+	9,  // 31: services.sync.SyncService.SendData:output_type -> services.sync.SendDataResponse
+	11, // 32: services.sync.SyncService.DeleteData:output_type -> services.sync.DeleteDataResponse
+	13, // 33: services.sync.SyncService.Stream:output_type -> services.sync.StreamResponse
+	27, // [27:34] is the sub-list for method output_type
+	20, // [20:27] is the sub-list for method input_type
+	20, // [20:20] is the sub-list for extension type_name
+	20, // [20:20] is the sub-list for extension extendee
+	0,  // [0:20] is the sub-list for field type_name
 }
 
 func init() { file_services_sync_sync_proto_init() }
@@ -1124,6 +1144,7 @@ func file_services_sync_sync_proto_init() {
 		(*SendDataRequest_Users)(nil),
 		(*SendDataRequest_Vehicles)(nil),
 		(*SendDataRequest_UserLocations)(nil),
+		(*SendDataRequest_LastCharId)(nil),
 	}
 	file_services_sync_sync_proto_msgTypes[10].OneofWrappers = []any{
 		(*DeleteDataRequest_Users)(nil),

@@ -143,3 +143,11 @@ func (m *DeleteVehicles) Sanitize() error {
 
 	return nil
 }
+
+func (m *LastCharID) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}

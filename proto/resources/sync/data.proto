@@ -51,3 +51,8 @@ message DeleteUsers {
 message DeleteVehicles {
   repeated string plates = 1 [(buf.validate.field).repeated.max_items = 100];
 }
+
+message LastCharID {
+  string identifier = 1 [(buf.validate.field).string.max_len = 64];
+  optional int32 last_char_id = 2 [(buf.validate.field).int32.gt = 0];
+}

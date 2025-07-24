@@ -5916,6 +5916,18 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
+
+### resources.sync.LastCharID
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `identifier` | [string](#string) |  |  |
+| `last_char_id` | [int32](#int32) | optional |  |
+
+
+
+
  <!-- end messages -->
 
  <!-- end enums -->
@@ -11739,6 +11751,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `users` | [resources.sync.DataUsers](#resourcessyncDataUsers) |  |  |
 | `vehicles` | [resources.sync.DataVehicles](#resourcessyncDataVehicles) |  |  |
 | `user_locations` | [resources.sync.DataUserLocations](#resourcessyncDataUserLocations) |  |  |
+| `last_char_id` | [resources.sync.LastCharID](#resourcessyncLastCharID) |  |  |
 
 
 

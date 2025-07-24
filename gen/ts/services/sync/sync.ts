@@ -14,6 +14,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { DeleteVehicles } from "../../resources/sync/data";
 import { DeleteUsers } from "../../resources/sync/data";
+import { LastCharID } from "../../resources/sync/data";
 import { DataUserLocations } from "../../resources/sync/data";
 import { DataVehicles } from "../../resources/sync/data";
 import { DataUsers } from "../../resources/sync/data";
@@ -219,6 +220,12 @@ export interface SendDataRequest {
          * @generated from protobuf field: resources.sync.DataUserLocations user_locations = 5
          */
         userLocations: DataUserLocations;
+    } | {
+        oneofKind: "lastCharId";
+        /**
+         * @generated from protobuf field: resources.sync.LastCharID last_char_id = 6
+         */
+        lastCharId: LastCharID;
     } | {
         oneofKind: undefined;
     };
@@ -764,7 +771,8 @@ class SendDataRequest$Type extends MessageType<SendDataRequest> {
             { no: 2, name: "licenses", kind: "message", oneof: "data", T: () => DataLicenses },
             { no: 3, name: "users", kind: "message", oneof: "data", T: () => DataUsers },
             { no: 4, name: "vehicles", kind: "message", oneof: "data", T: () => DataVehicles },
-            { no: 5, name: "user_locations", kind: "message", oneof: "data", T: () => DataUserLocations }
+            { no: 5, name: "user_locations", kind: "message", oneof: "data", T: () => DataUserLocations },
+            { no: 6, name: "last_char_id", kind: "message", oneof: "data", T: () => LastCharID }
         ]);
     }
     create(value?: PartialMessage<SendDataRequest>): SendDataRequest {
@@ -809,6 +817,12 @@ class SendDataRequest$Type extends MessageType<SendDataRequest> {
                         userLocations: DataUserLocations.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).userLocations)
                     };
                     break;
+                case /* resources.sync.LastCharID last_char_id */ 6:
+                    message.data = {
+                        oneofKind: "lastCharId",
+                        lastCharId: LastCharID.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).lastCharId)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -836,6 +850,9 @@ class SendDataRequest$Type extends MessageType<SendDataRequest> {
         /* resources.sync.DataUserLocations user_locations = 5; */
         if (message.data.oneofKind === "userLocations")
             DataUserLocations.internalBinaryWrite(message.data.userLocations, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.LastCharID last_char_id = 6; */
+        if (message.data.oneofKind === "lastCharId")
+            LastCharID.internalBinaryWrite(message.data.lastCharId, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
