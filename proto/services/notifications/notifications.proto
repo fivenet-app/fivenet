@@ -34,7 +34,7 @@ message MarkNotificationsRequest {
       min_items: 1
       max_items: 20
     },
-    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
   ];
   optional bool all = 3;
 }

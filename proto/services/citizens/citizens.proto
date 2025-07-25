@@ -59,7 +59,7 @@ message SetUserPropsRequest {
       min_len: 3
       max_len: 255
     },
-    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
   ];
 }
 
@@ -79,7 +79,7 @@ message DeleteMugshotRequest {
       min_len: 3
       max_len: 255
     },
-    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
   ];
 }
 

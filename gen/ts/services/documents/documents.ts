@@ -2642,7 +2642,7 @@ class DeleteDocumentRequest$Type extends MessageType<DeleteDocumentRequest> {
     constructor() {
         super("services.documents.DeleteDocumentRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "alias:\"id\"" } },
-            { no: 2, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_UNPOPULATED", string: { minLen: "0", maxLen: "255" } } } }
+            { no: 2, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "0", maxLen: "255" } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteDocumentRequest>): DeleteDocumentRequest {
