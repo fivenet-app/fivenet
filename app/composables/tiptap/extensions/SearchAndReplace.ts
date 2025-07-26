@@ -64,6 +64,10 @@ declare module '@tiptap/core' {
             replaceAll: () => ReturnType;
         };
     }
+
+    interface Storage {
+        searchAndReplace: SearchAndReplaceStorage;
+    }
 }
 
 interface TextNodesWithPosition {

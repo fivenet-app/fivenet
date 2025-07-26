@@ -22,8 +22,6 @@ export function isNumber(value?: string | number): boolean {
     return value !== undefined && value !== null && value !== '' && !isNaN(Number(value.toString()));
 }
 
-// Nuxt UI helpers
-export type TableSortable = {
-    column: string;
-    direction: 'asc' | 'desc';
-};
+export type ToggleItem = { id: number; label: string; value?: boolean };
+
+export type ClassProp = undefined | string | Record<string, boolean> | (string | Record<string, boolean>)[];

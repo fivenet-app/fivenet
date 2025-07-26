@@ -8,7 +8,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import type { ToggleItem } from '~/typings';
+import type { ToggleItem } from '~/utils/types';
 import { DocRelation } from '~~/gen/ts/resources/documents/documents';
 import type { ListUserDocumentsResponse } from '~~/gen/ts/services/documents/documents';
 

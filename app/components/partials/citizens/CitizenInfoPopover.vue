@@ -4,7 +4,7 @@ import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vu
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import type { ClipboardUser } from '~/stores/clipboard';
-import type { ClassProp } from '~/typings';
+import type { ClassProp } from '~/utils/types';
 import type { User, UserShort } from '~~/gen/ts/resources/users/users';
 import EmailBlock from './EmailBlock.vue';
 

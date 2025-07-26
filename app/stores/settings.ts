@@ -74,7 +74,13 @@ export const useSettingsStore = defineStore(
 
         const streamerMode = ref<boolean>(false);
         const calculatorPosition = ref<'top' | 'middle' | 'bottom'>('middle');
-        const jobsService = ref({ cardView: true });
+        const jobsService = ref({
+            cardView: true,
+        });
+
+        const editor = ref<{ showInvisibleCharacters: boolean }>({
+            showInvisibleCharacters: false,
+        });
 
         // Actions
         const setVersion = (newVersion: string): void => {
@@ -162,6 +168,7 @@ export const useSettingsStore = defineStore(
             streamerMode,
             calculatorPosition,
             jobsService,
+            editor,
 
             // Actions
             getLogger,

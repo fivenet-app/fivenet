@@ -18,9 +18,5 @@ declare module '@nuxtjs/i18n' {
     }
 }
 
-export type ToggleItem = { id: number; label: string; value?: boolean };
-
-export type ClassProp = undefined | string | Record<string, boolean> | (string | Record<string, boolean>)[];
-
 // It is always important to ensure you import/export something when augmenting a type
 export {};

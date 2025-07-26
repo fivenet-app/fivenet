@@ -776,7 +776,8 @@
                             "with": "With-Block"
                         }
                     }
-                }
+                },
+                "invisible_characters": "Show/Hide Invisible Characters"
             }
         },
         "clipboard": {

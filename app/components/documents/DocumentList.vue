@@ -11,7 +11,7 @@ import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { useSettingsStore } from '~/stores/settings';
-import type { ToggleItem } from '~/typings';
+import type { ToggleItem } from '~/utils/types';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
