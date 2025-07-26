@@ -29,7 +29,7 @@ RUN find ./public/images/livemap/ \
         -exec rm -rf {} +
 
 # Backend Build
-FROM docker.io/library/golang:1.24.4 AS gobuilder
+FROM docker.io/library/golang:1.24.5 AS gobuilder
 
 WORKDIR /go/src/github.com/fivenet-app/fivenet/v2025/
 
