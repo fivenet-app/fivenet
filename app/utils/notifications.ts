@@ -1,5 +1,4 @@
 import type { NotificationAction } from '#ui/types';
-import type { I18NItem } from '~/types/i18n';
 import type { Data, NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 export interface NotificationActionI18n extends Omit<NotificationAction, 'label'> {
