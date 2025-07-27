@@ -1,3 +1,4 @@
+import type { RoutePathSchema } from '@typed-router';
 import { defineStore } from 'pinia';
 import type { Locale } from 'vue-i18n';
 import type { Perms } from '~~/gen/ts/perms';
@@ -53,7 +54,7 @@ export const useSettingsStore = defineStore(
         const livemapLayers = ref<LivemapLayer[]>([]);
         const livemapLayerCategories = ref<LivemapLayerCategory[]>([]);
 
-        const startpage = ref<string>('/overview');
+        const startpage = ref<RoutePathSchema>('/overview');
         const design = ref({
             documents: {
                 listStyle: 'single' as 'single' | 'double',

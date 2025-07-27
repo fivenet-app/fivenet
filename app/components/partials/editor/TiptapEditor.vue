@@ -7,9 +7,7 @@ import { Code } from '@tiptap/extension-code';
 import { CodeBlock } from '@tiptap/extension-code-block';
 import Collaboration, { isChangeOrigin } from '@tiptap/extension-collaboration';
 import CollaborationCaret from '@tiptap/extension-collaboration-caret';
-import { Color } from '@tiptap/extension-color';
 import { Document } from '@tiptap/extension-document';
-import FontFamily from '@tiptap/extension-font-family';
 import { HardBreak } from '@tiptap/extension-hard-break';
 import { Heading } from '@tiptap/extension-heading';
 import Highlight from '@tiptap/extension-highlight';
@@ -31,7 +29,6 @@ import UniqueID from '@tiptap/extension-unique-id';
 import { CharacterCount, Dropcursor, Gapcursor, Placeholder, UndoRedo } from '@tiptap/extensions';
 import type { Schema } from '@tiptap/pm/model';
 import { initProseMirrorDoc, prosemirrorJSONToYDoc } from '@tiptap/y-tiptap';
-import FontSize from 'tiptap-extension-font-size';
 import * as Y from 'yjs';
 import { CheckboxStandalone } from '~/composables/tiptap/extensions/CheckboxStandalone';
 import { DeleteImageTracker } from '~/composables/tiptap/extensions/DeleteImageTracker';
@@ -124,11 +121,8 @@ const extensions = [
     BulletList,
     Code,
     CodeBlock,
-    Color,
     Document,
     Dropcursor,
-    FontFamily,
-    FontSize,
     Gapcursor,
     HardBreak,
     Heading,
