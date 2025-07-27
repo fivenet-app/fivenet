@@ -163,11 +163,13 @@
                 },
                 "three": {
                     "question": "Where can I find the FiveNet development roadmap?",
-                    "answer": "<a class=\"underline\" href=\"{repoLink}/#readme\">Click here (GitHub galexrt/fivenet README)</a>."
+                    "click_here": "Click here to go to the development roadmap on GitHub."
                 },
                 "four": {
                     "question": "I found a bug or other issue with FiveNet. Where do I report it?",
-                    "answer": "Please report on <a class=\"underline\" href=\"{discordLink}\">the Galexrt Discord server</a> or on <a class=\"underline\" href=\"{repoLink}\">the FiveNet GitHub project</a>."
+                    "answer": "Please report on {discordLink} or on {repoLink}.",
+                    "discord_link": "the Galexrt Discord server",
+                    "repo_link": "the FiveNet GitHub project issue tracker"
                 }
             },
             "questions_or_issues": {

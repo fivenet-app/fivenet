@@ -101,16 +101,19 @@ function onClickNext() {
                             {{ currentPage }}
                         </span>
                     </template>
+
                     <template #total>
                         <span class="text-neutral font-medium">
                             {{ total === -1 ? '∞' : total }}
                         </span>
                     </template>
+
                     <template #maxPage>
                         <span class="text-neutral font-medium">
                             {{ totalPages === 0 ? 1 : totalPages }}
                         </span>
                     </template>
+
                     <template #size>
                         <span class="text-neutral font-medium">
                             {{ pageSize }}
@@ -128,6 +131,7 @@ function onClickNext() {
                             {{ currentPage }}
                         </span>
                     </template>
+
                     <template #size>
                         <span class="text-neutral font-medium">
                             {{ pageSize }}

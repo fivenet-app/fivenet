@@ -27,6 +27,7 @@ const props = defineProps<{
                                     {{ activity.data.data.nameChange.old }}
                                 </span>
                             </template>
+
                             <template #new>
                                 <span class="font-semibold">
                                     {{ activity.data.data.nameChange.new }}
@@ -220,6 +221,7 @@ const props = defineProps<{
                             <template #old>
                                 <span class="font-semibold">{{ activity.data.data.trafficInfractionPointsChange.old }}</span>
                             </template>
+
                             <template #new>
                                 <span class="font-semibold">{{ activity.data.data.trafficInfractionPointsChange.new }}</span>
                             </template>
