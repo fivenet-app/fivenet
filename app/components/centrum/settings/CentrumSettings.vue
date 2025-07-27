@@ -22,12 +22,7 @@ const notifications = useNotificationsStore();
 
 const { maxAccessEntries } = useAppConfig();
 
-const {
-    data: settings,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData('settings-centrum-settings', () => getCentrumSettings());
+const { data: settings, status, refresh, error } = useLazyAsyncData('settings-centrum-settings', () => getCentrumSettings());
 
 async function getCentrumSettings(): Promise<Settings> {
     try {
@@ -238,7 +233,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </template>
         </UDashboardNavbar>
 
-        <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.settings')])" />
+        <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.settings')])" />
         <DataErrorBlock
             v-else-if="error"
             :title="$t('common.unable_to_load', [$t('common.settings')])"

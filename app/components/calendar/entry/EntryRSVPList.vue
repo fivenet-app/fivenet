@@ -40,12 +40,9 @@ const ownEntry = useVModel(props, 'modelValue', emit);
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
-const {
-    data,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(`calendar-entry:${props.entryId}-${page.value}`, () => listCalendarEntryRSVP());
+const { data, status, refresh, error } = useLazyAsyncData(`calendar-entry:${props.entryId}-${page.value}`, () =>
+    listCalendarEntryRSVP(),
+);
 
 async function listCalendarEntryRSVP(): Promise<ListCalendarEntryRSVPResponse> {
     try {
@@ -183,7 +180,10 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
         >
             <template #rsvp>
                 <UContainer>
-                    <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.entry', 1)])" />
+                    <DataPendingBlock
+                        v-if="isRequestPending(status)"
+                        :message="$t('common.loading', [$t('common.entry', 1)])"
+                    />
                     <DataErrorBlock
                         v-else-if="error"
                         :title="$t('common.unable_to_load', [$t('common.entry', 1)])"

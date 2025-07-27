@@ -32,12 +32,9 @@ const notifications = useNotificationsStore();
 
 const w = window;
 
-const {
-    data,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(`calendar-entry:${props.entryId}`, () => calendarStore.getCalendarEntry({ entryId: props.entryId }));
+const { data, status, refresh, error } = useLazyAsyncData(`calendar-entry:${props.entryId}`, () =>
+    calendarStore.getCalendarEntry({ entryId: props.entryId }),
+);
 
 const entry = computed(() => data.value?.entry);
 
@@ -128,7 +125,7 @@ const canDo = computed(() => ({
             </template>
 
             <div class="flex h-full flex-1 flex-col">
-                <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.entry', 1)])" />
+                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.entry', 1)])" />
                 <DataErrorBlock
                     v-else-if="error"
                     :title="$t('common.unable_to_load', [$t('common.entry', 1)])"

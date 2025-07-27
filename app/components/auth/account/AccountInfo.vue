@@ -20,7 +20,7 @@ const modal = useModal();
 const settingsStore = useSettingsStore();
 const { streamerMode } = storeToRefs(settingsStore);
 
-const { data: account, pending: loading, refresh, error } = useLazyAsyncData(`accountinfo`, () => getAccountInfo());
+const { data: account, status, refresh, error } = useLazyAsyncData(`accountinfo`, () => getAccountInfo());
 
 async function getAccountInfo(): Promise<GetAccountInfoResponse> {
     try {
@@ -87,7 +87,7 @@ const selectedTab = computed({
     <template v-else>
         <UDashboardPanelContent class="p-0 sm:pb-0">
             <DataPendingBlock
-                v-if="loading"
+                v-if="isRequestPending(status)"
                 :message="$t('common.loading', [`${$t('common.account')} ${$t('common.info')}`])"
             />
 

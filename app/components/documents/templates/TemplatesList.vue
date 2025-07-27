@@ -15,7 +15,7 @@ defineOptions({
 
 const { $grpc } = useNuxtApp();
 
-const { data: templates, pending: loading, refresh, error } = useLazyAsyncData(`documents-templates`, () => listTemplates());
+const { data: templates, status, refresh, error } = useLazyAsyncData(`documents-templates`, () => listTemplates());
 
 async function listTemplates(): Promise<TemplateShort[]> {
     try {
@@ -44,13 +44,13 @@ function selected(idx: number): TemplateShort | undefined {
 }
 
 defineExpose({
-    loading,
+    status,
     refresh,
 });
 </script>
 
 <template>
-    <div v-if="loading" class="flex justify-center">
+    <div v-if="isRequestPending(status)" class="flex justify-center">
         <UPageGrid>
             <UPageCard v-for="idx in 6" :key="idx">
                 <template #title>

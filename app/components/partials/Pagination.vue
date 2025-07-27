@@ -1,5 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script lang="ts" setup>
+import type { AsyncDataRequestStatus } from '#app';
 import type { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 
 const props = withDefaults(
@@ -8,7 +9,7 @@ const props = withDefaults(
         pagination?: PaginationResponse | undefined | null;
         disableBorder?: boolean;
         refresh?: () => Promise<void>;
-        loading?: boolean;
+        status?: AsyncDataRequestStatus;
         hideText?: boolean;
         hideButtons?: boolean;
     }>(),
@@ -17,7 +18,7 @@ const props = withDefaults(
         pagination: undefined,
         disableBorder: false,
         refresh: undefined,
-        loading: false,
+        status: 'pending',
         hideText: false,
         hideButtons: false,
     },
@@ -36,17 +37,17 @@ const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
 
 const loadingState = ref(false);
 watch(
-    () => props.loading,
+    () => props.status,
     () => {
-        if (props.loading) {
+        if (isRequestPending(props.status)) {
             loadingState.value = true;
         }
     },
 );
 watchDebounced(
-    () => props.loading,
+    () => props.status,
     () => {
-        if (!props.loading) {
+        if (!isRequestPending(props.status)) {
             loadingState.value = false;
         }
     },
@@ -146,8 +147,8 @@ function onClickNext() {
                     class="p-px"
                     variant="link"
                     icon="i-mdi-refresh"
-                    :disabled="loading || loadingState"
-                    :loading="loading || loadingState"
+                    :disabled="loadingState || isRequestPending(status)"
+                    :loading="loadingState || isRequestPending(status)"
                     @click="refresh()"
                 >
                     <span class="@md/pagination:block hidden">
@@ -168,14 +169,14 @@ function onClickNext() {
                         :label="$t('common.previous')"
                         color="gray"
                         icon="i-mdi-chevron-left"
-                        :disabled="!canGoFirstOrPrev || loading"
+                        :disabled="!canGoFirstOrPrev || isRequestPending(status)"
                         @click="onClickPrev"
                     />
                     <UButton :label="currentPage.toString()" color="white" disabled />
                     <UButton
                         :label="$t('common.next')"
                         color="gray"
-                        :disabled="!canGoLastOrNext || loading"
+                        :disabled="!canGoLastOrNext || isRequestPending(status)"
                         trailing
                         trailing-icon="i-mdi-chevron-right"
                         @click="onClickNext"

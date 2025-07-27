@@ -38,14 +38,13 @@ const historyStore = useHistoryStore();
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
-const {
-    data,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(`document-${props.documentId}-comments-${page.value}`, () => getComments(), {
-    immediate: false,
-});
+const { data, status, refresh, error } = useLazyAsyncData(
+    `document-${props.documentId}-comments-${page.value}`,
+    () => getComments(),
+    {
+        immediate: false,
+    },
+);
 
 async function getComments(): Promise<GetCommentsResponse> {
     try {
@@ -231,7 +230,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </div>
 
         <div class="mt-2">
-            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.comment', 2)])" />
+            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.comment', 2)])" />
             <DataErrorBlock
                 v-else-if="error"
                 :title="$t('common.unable_to_load', [$t('common.comment', 2)])"
@@ -257,7 +256,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 v-if="data?.pagination?.totalCount && data?.pagination?.totalCount > 0"
                 v-model="page"
                 :pagination="data?.pagination"
-                :loading="loading"
+                :status="status"
                 :refresh="refresh"
                 disable-border
             />

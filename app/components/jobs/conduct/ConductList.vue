@@ -53,12 +53,7 @@ const schema = z.object({
 
 const query = useSearchForm('jobs_conduct', schema);
 
-const {
-    data,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(
+const { data, status, refresh, error } = useLazyAsyncData(
     `jobs-conduct-${query.sort.column}:${query.sort.direction}-${query.page}-${query.types.join(',')}-${query.showExpired}-${query.id}`,
     () => listConductEntries(),
     {
@@ -302,7 +297,7 @@ const columns = [
         v-else
         v-model:sort="query.sort"
         class="flex-1"
-        :loading="loading"
+        :loading="isRequestPending(status)"
         :columns="columns"
         :rows="data?.entries"
         :empty-state="{ icon: 'i-mdi-list-status', label: $t('common.not_found', [$t('common.entry', 2)]) }"
@@ -400,5 +395,5 @@ const columns = [
         </template>
     </UTable>
 
-    <Pagination v-model="query.page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+    <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
 </template>

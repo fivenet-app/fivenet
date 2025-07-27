@@ -9,7 +9,7 @@ import Pagination from '../partials/Pagination.vue';
 
 const { $grpc } = useNuxtApp();
 
-const { data: cronjobs, pending: loading, refresh, error } = useLazyAsyncData(`settings-cronjobs`, () => listCronjobs());
+const { data: cronjobs, status, refresh, error } = useLazyAsyncData(`settings-cronjobs`, () => listCronjobs());
 
 async function listCronjobs(): Promise<ListCronjobsResponse> {
     try {
@@ -114,7 +114,7 @@ const expand = ref({
         v-else
         v-model:expand="expand"
         class="flex-1"
-        :loading="loading"
+        :loading="isRequestPending(status)"
         :columns="columns"
         :rows="cronjobs?.jobs"
         :empty-state="{ icon: 'i-mdi-calendar-task', label: $t('common.not_found', [$t('pages.settings.cron.title', 2)]) }"
@@ -211,7 +211,7 @@ const expand = ref({
         </template>
     </UTable>
 
-    <Pagination :loading="loading" :refresh="refresh" hide-text hide-buttons>
+    <Pagination :status="status" :refresh="refresh" hide-text hide-buttons>
         <p>
             {{ $t('common.refresh_in_x', { d: remaining, unit: $t('common.time_ago.second', remaining) }) }}
         </p>

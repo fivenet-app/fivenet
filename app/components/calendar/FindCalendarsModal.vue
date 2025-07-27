@@ -17,7 +17,7 @@ const { currentDate } = storeToRefs(calendarStore);
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
-const { data, pending: loading, error, refresh } = useLazyAsyncData(`calendars-${page.value}`, () => listCalendars());
+const { data, status, error, refresh } = useLazyAsyncData(`calendars-${page.value}`, () => listCalendars());
 
 async function listCalendars(): Promise<ListCalendarsResponse> {
     const response = await calendarStore.listCalendars({
@@ -79,7 +79,7 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
             </template>
 
             <div>
-                <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.calendar')])" />
+                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.calendar')])" />
                 <DataErrorBlock
                     v-else-if="error"
                     :title="$t('common.not_found', [$t('common.calendar')])"
@@ -124,7 +124,7 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
                     </li>
                 </ul>
 
-                <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+                <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
             </div>
 
             <template #footer>

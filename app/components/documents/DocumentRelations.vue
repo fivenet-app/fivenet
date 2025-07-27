@@ -26,7 +26,7 @@ const { t } = useI18n();
 
 const {
     data: relations,
-    pending: loading,
+    status,
     refresh,
     error,
 } = useLazyAsyncData(`document-${props.documentId}-relations`, () => getDocumentRelations());
@@ -77,7 +77,7 @@ const columns = computed(() =>
 
 <template>
     <div>
-        <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.relation', 2)])" />
+        <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.relation', 2)])" />
         <DataErrorBlock
             v-else-if="error"
             :title="$t('common.unable_to_load', [$t('common.relation', 2)])"
@@ -142,7 +142,7 @@ const columns = computed(() =>
                     <div class="flex flex-col">
                         <div class="w-full overflow-hidden overflow-x-auto align-middle">
                             <UTable
-                                :loading="loading"
+                                :loading="isRequestPending(status)"
                                 :columns="columns"
                                 :rows="relations"
                                 :empty-state="{

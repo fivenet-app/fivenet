@@ -22,7 +22,7 @@ const { activeChar } = storeToRefs(authStore);
 
 const {
     data: template,
-    pending: loading,
+    status,
     refresh,
     error,
 } = useLazyAsyncData(`documents-templates-${props.templateId}`, () => getTemplate());
@@ -64,7 +64,7 @@ async function getTemplate(): Promise<Template> {
             </template>
 
             <div>
-                <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.template', 2)])" />
+                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.template', 2)])" />
                 <DataErrorBlock
                     v-else-if="error"
                     :title="$t('common.unable_to_load', [$t('common.template', 2)])"

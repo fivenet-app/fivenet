@@ -46,7 +46,7 @@ const queryDoc = ref('');
 
 const {
     data: documents,
-    pending: loading,
+    status,
     refresh,
     error,
 } = useLazyAsyncData(`document-${props.documentId}-references-docs-${queryDoc.value}`, () => listDocuments());
@@ -319,7 +319,7 @@ const columnsNew = [
                             <UTable
                                 v-else
                                 :columns="columnsNew"
-                                :loading="loading"
+                                :loading="isRequestPending(status)"
                                 :rows="documents"
                                 :empty-state="{
                                     icon: 'i-mdi-file',

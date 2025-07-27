@@ -21,12 +21,10 @@ const schema = z.object({
 
 const query = useSearchForm('qualifications_list', schema);
 
-const {
-    data,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(`qualifications-${query.sort.column}:${query.sort.direction}-${query.page}`, () => listQualifications());
+const { data, status, refresh, error } = useLazyAsyncData(
+    `qualifications-${query.sort.column}:${query.sort.direction}-${query.page}`,
+    () => listQualifications(),
+);
 
 async function listQualifications(): Promise<ListQualificationsResponse> {
     try {
@@ -78,7 +76,10 @@ watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
         </template>
 
         <div>
-            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.qualifications', 2)])" />
+            <DataPendingBlock
+                v-if="isRequestPending(status)"
+                :message="$t('common.loading', [$t('common.qualifications', 2)])"
+            />
             <DataErrorBlock
                 v-else-if="error"
                 :title="$t('common.unable_to_load', [$t('common.qualifications', 2)])"
@@ -104,7 +105,7 @@ watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
             <Pagination
                 v-model="query.page"
                 :pagination="data?.pagination"
-                :loading="loading"
+                :status="status"
                 :refresh="refresh"
                 disable-border
             />

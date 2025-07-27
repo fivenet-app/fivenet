@@ -18,7 +18,7 @@ const modal = useModal();
 
 const notifications = useNotificationsStore();
 
-const { data: units, pending: loading, refresh, error } = useLazyAsyncData('centrum-units', () => listUnits());
+const { data: units, status, refresh, error } = useLazyAsyncData('centrum-units', () => listUnits());
 
 async function listUnits(): Promise<ListUnitsResponse> {
     try {
@@ -125,7 +125,7 @@ const columns = [
     <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.unit', 2)])" :error="error" :retry="refresh" />
     <UTable
         v-else
-        :loading="loading"
+        :loading="isRequestPending(status)"
         :columns="columns"
         :rows="units?.units"
         :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.unit', 2)]) }"

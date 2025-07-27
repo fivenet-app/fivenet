@@ -23,7 +23,7 @@ const page = useRouteQuery('page', '1', { transform: Number });
 
 const {
     data: files,
-    pending: loading,
+    status,
     refresh,
     error,
 } = useLazyAsyncData(`files-${page.value}-${prefix.value}`, () => listFiles(prefix.value));
@@ -148,7 +148,7 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
         <UTable
             v-else
             class="flex-1"
-            :loading="loading"
+            :loading="isRequestPending(status)"
             :columns="columns"
             :rows="files?.files"
             :empty-state="{ icon: 'i-mdi-file-multiple', label: $t('common.not_found', [$t('common.file', 2)]) }"
@@ -202,6 +202,6 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
             </template>
         </UTable>
 
-        <Pagination v-model="page" :pagination="files?.pagination" :loading="loading" :refresh="refresh" />
+        <Pagination v-model="page" :pagination="files?.pagination" :status="status" :refresh="refresh" />
     </template>
 </template>

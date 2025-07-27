@@ -36,12 +36,7 @@ const sort = useRouteQueryObject<TableSortable>('sort', {
     direction: 'asc',
 });
 
-const {
-    data,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(
+const { data, status, refresh, error } = useLazyAsyncData(
     `jobs-timeclock-inactive-${sort.value.column}:${sort.value.direction}-${page.value}-${state.days}`,
     () => listInactiveEmployees(state),
     {
@@ -152,7 +147,7 @@ const { game } = useAppConfig();
         v-else
         v-model:sort="sort"
         class="flex-1"
-        :loading="loading"
+        :loading="isRequestPending(status)"
         :columns="columns"
         :rows="data?.colleagues"
         :empty-state="{ icon: 'i-mdi-account', label: $t('common.not_found', [$t('common.colleague', 2)]) }"
@@ -218,5 +213,5 @@ const { game } = useAppConfig();
         </template>
     </UTable>
 
-    <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+    <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
 </template>

@@ -32,7 +32,7 @@ const notifications = useNotificationsStore();
 
 const {
     data: jobLimits,
-    pending: loading,
+    status,
     refresh,
     error,
 } = useLazyAsyncData(`settings-limiter-${props.job}`, () => getJobLimits(props.job));
@@ -372,7 +372,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 <template>
     <div class="w-full">
         <div class="px-1 sm:px-2">
-            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.job', 1)])" />
+            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.job', 1)])" />
             <DataErrorBlock
                 v-else-if="error"
                 :title="$t('common.unable_to_load', [$t('common.job', 1)])"

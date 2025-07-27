@@ -22,12 +22,9 @@ const { isOpen } = useSlideover();
 
 const calendarStore = useCalendarStore();
 
-const {
-    data,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(`calendar-${props.calendarId}`, () => calendarStore.getCalendar({ calendarId: props.calendarId }));
+const { data, status, refresh, error } = useLazyAsyncData(`calendar-${props.calendarId}`, () =>
+    calendarStore.getCalendar({ calendarId: props.calendarId }),
+);
 
 const calendar = computed(() => data.value?.calendar);
 </script>
@@ -95,7 +92,7 @@ const calendar = computed(() => data.value?.calendar);
             </template>
 
             <div>
-                <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.calendar')])" />
+                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.calendar')])" />
                 <DataErrorBlock
                     v-else-if="error"
                     :title="$t('common.unable_to_load', [$t('common.calendar')])"

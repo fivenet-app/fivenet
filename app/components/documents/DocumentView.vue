@@ -49,7 +49,7 @@ const commentCount = ref<undefined | number>();
 
 const {
     data: doc,
-    pending: loading,
+    status,
     refresh,
     error,
 } = useLazyAsyncData(`document-${props.documentId}`, () => documentsDocuments.getDocument(props.documentId));
@@ -200,7 +200,7 @@ const scrollRef = useTemplateRef('scrollRef');
         <template #right>
             <PartialsBackButton to="/documents" />
 
-            <UButton icon="i-mdi-refresh" :label="$t('common.refresh')" :loading="loading" @click="refresh" />
+            <UButton icon="i-mdi-refresh" :label="$t('common.refresh')" :loading="isRequestPending(status)" @click="refresh" />
 
             <UButtonGroup class="inline-flex">
                 <IDCopyBadge
@@ -216,7 +216,7 @@ const scrollRef = useTemplateRef('scrollRef');
     </UDashboardNavbar>
 
     <UDashboardPanelContent class="p-0 sm:pb-0">
-        <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.document', 1)])" />
+        <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.document', 1)])" />
         <template v-else-if="error">
             <DataErrorBlock :title="$t('common.unable_to_load', [$t('common.document', 1)])" :error="error" :retry="refresh" />
             <DocumentRequestAccess

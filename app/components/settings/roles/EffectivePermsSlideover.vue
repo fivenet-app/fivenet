@@ -39,7 +39,7 @@ async function getEffectivePermissions(roleId: number): Promise<GetEffectivePerm
 
 const {
     data: role,
-    pending: loading,
+    status,
     refresh,
     error,
 } = useLazyAsyncData(`settings-roles-${props.roleId}-effective`, () => getEffectivePermissions(props.roleId));
@@ -125,7 +125,7 @@ const permCategoriesSorted = computed(() =>
 
                 <UDivider class="mb-2" />
 
-                <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.role')])" />
+                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.role')])" />
                 <DataErrorBlock
                     v-else-if="error"
                     :title="$t('common.unable_to_load', [$t('common.role')])"

@@ -54,12 +54,10 @@ const query = useSearchForm('vehicles', schema);
 
 const hideVehicleModell = ref(false);
 
-const {
-    data,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(`vehicles-${query.sort.column}:${query.sort.direction}-${query.page}`, () => listVehicles());
+const { data, status, refresh, error } = useLazyAsyncData(
+    `vehicles-${query.sort.column}:${query.sort.direction}-${query.page}`,
+    () => listVehicles(),
+);
 
 async function listVehicles(): Promise<ListVehiclesResponse> {
     try {
@@ -253,7 +251,7 @@ defineShortcuts({
         v-else
         v-model:sort="query.sort"
         class="flex-1"
-        :loading="loading"
+        :loading="isRequestPending(status)"
         :columns="columns"
         :rows="data?.vehicles"
         :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.vehicle', 2)]) }"
@@ -310,5 +308,5 @@ defineShortcuts({
         </template>
     </UTable>
 
-    <Pagination v-model="query.page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+    <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
 </template>

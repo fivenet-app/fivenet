@@ -182,7 +182,7 @@ watchDebounced(
 
 const {
     data: qualification,
-    pending: loading,
+    status,
     error,
     refresh,
 } = useLazyAsyncData(`qualification-${props.qualificationId}-editor`, () => getQualification(props.qualificationId));
@@ -427,7 +427,10 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
         </UDashboardNavbar>
 
         <UDashboardPanelContent class="p-0 sm:pb-0">
-            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.qualification', 1)])" />
+            <DataPendingBlock
+                v-if="isRequestPending(status)"
+                :message="$t('common.loading', [$t('common.qualification', 1)])"
+            />
             <DataErrorBlock
                 v-else-if="error"
                 :title="$t('common.unable_to_load', [$t('common.qualification', 1)])"
@@ -454,7 +457,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                 }"
             >
                 <template #content>
-                    <div v-if="loading" class="flex flex-col gap-2">
+                    <div v-if="isRequestPending(status)" class="flex flex-col gap-2">
                         <USkeleton v-for="idx in 6" :key="idx" class="size-24 w-full" />
                     </div>
 
@@ -718,7 +721,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                 </template>
 
                 <template #exam>
-                    <div v-if="loading" class="flex flex-col gap-2">
+                    <div v-if="isRequestPending(status)" class="flex flex-col gap-2">
                         <USkeleton v-for="idx in 6" :key="idx" class="size-24 w-full" />
                     </div>
 

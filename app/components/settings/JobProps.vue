@@ -134,7 +134,7 @@ async function getJobProps(): Promise<JobProps> {
     }
 }
 
-const { data: jobProps, pending: loading, refresh, error } = useLazyAsyncData(`settings-jobprops`, () => getJobProps());
+const { data: jobProps, status, refresh, error } = useLazyAsyncData(`settings-jobprops`, () => getJobProps());
 
 async function setJobProps(values: Schema): Promise<void> {
     if (!jobProps.value) {
@@ -358,10 +358,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 :retry="refresh"
             />
 
-            <template v-else-if="loading || jobProps">
+            <template v-else-if="isRequestPending(status) || jobProps">
                 <UTabs v-model="selectedTab" class="w-full" :items="items" :ui="{ list: { rounded: '' } }">
                     <template #jobprops>
-                        <div v-if="loading" class="space-y-1 px-4">
+                        <div v-if="isRequestPending(status)" class="space-y-1 px-4">
                             <USkeleton v-for="idx in 5" :key="idx" class="h-20 w-full" />
                         </div>
 
@@ -494,7 +494,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </template>
 
                     <template v-if="appConfig.discord.botEnabled" #discord>
-                        <div v-if="loading" class="space-y-1 px-4">
+                        <div v-if="isRequestPending(status)" class="space-y-1 px-4">
                             <USkeleton v-for="idx in 10" :key="idx" class="h-20 w-full" />
                         </div>
 

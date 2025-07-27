@@ -47,7 +47,12 @@ const templatesListRef = useTemplateRef('templatesListRef');
                 <TemplatesList ref="templatesListRef" @selected="selected($event)" />
             </UDashboardPanelContent>
 
-            <Pagination :loading="templatesListRef?.loading" :refresh="templatesListRef?.refresh" hide-buttons hide-text />
+            <Pagination
+                :loading="isRequestPending(templatesListRef?.status ?? 'pending')"
+                :refresh="templatesListRef?.refresh"
+                hide-buttons
+                hide-text
+            />
         </UDashboardPanel>
     </UDashboardPage>
 </template>

@@ -12,7 +12,7 @@ const internetStore = useInternetStore();
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
-const { data, pending: loading, refresh } = useLazyAsyncData(`internet-domain-list-${page.value}`, () => listDomains());
+const { data, status, refresh } = useLazyAsyncData(`internet-domain-list-${page.value}`, () => listDomains());
 
 async function listDomains(): Promise<ListDomainsResponse> {
     try {
@@ -85,6 +85,6 @@ const columns = [
             </template>
         </UTable>
 
-        <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+        <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
     </div>
 </template>

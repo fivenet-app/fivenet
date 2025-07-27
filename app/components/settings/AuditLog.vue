@@ -57,12 +57,7 @@ const statesOptions = eventTypes.map((eventType) => ({ eventType: eventType }));
 
 const usersLoading = ref(false);
 
-const {
-    data,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(
+const { data, status, refresh, error } = useLazyAsyncData(
     `settings-audit-${query.sort.column}:${query.sort.direction}-${query.page}-${query.date?.start}-${query.date?.end}-${query.methods}-${query.services}-${query.search}-${query.users.join(',')}`,
     () => viewAuditLog(),
 );
@@ -375,7 +370,7 @@ function statesToLabel(states: { eventType: EventType }[]): string {
         v-else
         v-model:expand="expand"
         class="flex-1"
-        :loading="loading"
+        :loading="isRequestPending(status)"
         :columns="columns"
         :rows="data?.logs"
         :empty-state="{
@@ -424,5 +419,5 @@ function statesToLabel(states: { eventType: EventType }[]): string {
         </template>
     </UTable>
 
-    <Pagination v-model="query.page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+    <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
 </template>

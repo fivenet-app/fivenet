@@ -39,7 +39,7 @@ const page = useRouteQuery('page', '1', { transform: Number });
 
 const {
     data: calendarsData,
-    pending: calendarsLoading,
+    status: calendarsStatus,
     error: calendarsError,
     refresh: calendarsRefresh,
 } = useLazyAsyncData(`calendars:${page.value}`, () => listCalendars());
@@ -61,11 +61,7 @@ async function listCalendars(): Promise<ListCalendarsResponse> {
     return response;
 }
 
-const {
-    refresh,
-    pending: loading,
-    error,
-} = useLazyAsyncData(
+const { refresh, status, error } = useLazyAsyncData(
     `calendar-entries-${currentDate.value.year}-${currentDate.value.month}-${activeCalendarIds.value.join(':')}`,
     () =>
         calendarStore.listCalendarEntries({
@@ -242,15 +238,15 @@ async function resetToToday(): Promise<void> {
 }
 
 const loadingState = ref(false);
-watch(loading, () => {
-    if (loading.value) {
+watch(status, () => {
+    if (isRequestPending(status.value)) {
         loadingState.value = true;
     }
 });
 watchDebounced(
-    loading,
+    status,
     () => {
-        if (!loading.value) {
+        if (status.value === 'success' || status.value === 'error') {
             loadingState.value = false;
         }
     },
@@ -311,7 +307,7 @@ const isOpen = ref(false);
                                 color="white"
                                 icon="i-mdi-calendar"
                                 trailing-icon="i-mdi-chevron-down"
-                                :loading="calendarsLoading"
+                                :loading="isRequestPending(calendarsStatus)"
                             >
                                 {{ $t('common.calendar') }}
                             </UButton>
@@ -319,7 +315,7 @@ const isOpen = ref(false);
                             <template #panel>
                                 <div class="p-4">
                                     <DataPendingBlock
-                                        v-if="calendarsLoading"
+                                        v-if="isRequestPending(calendarsStatus)"
                                         :message="$t('common.loading', [$t('common.calendar')])"
                                     />
                                     <DataErrorBlock
@@ -364,7 +360,11 @@ const isOpen = ref(false);
                             </template>
                         </UPopover>
 
-                        <UButton icon="i-mdi-calendar-today" :disabled="calendarsLoading" @click="resetToToday">
+                        <UButton
+                            icon="i-mdi-calendar-today"
+                            :disabled="isRequestPending(calendarsStatus)"
+                            @click="resetToToday"
+                        >
                             {{ $t('common.today') }}
                         </UButton>
                     </div>
@@ -527,8 +527,8 @@ const isOpen = ref(false);
                         icon="i-mdi-refresh"
                         variant="outline"
                         :title="$t('common.refresh')"
-                        :disabled="loading || loadingState"
-                        :loading="loading || loadingState"
+                        :disabled="isRequestPending(status) || loadingState"
+                        :loading="isRequestPending(status) || loadingState"
                         @click="refresh()"
                     >
                         {{ $t('common.refresh') }}
@@ -577,7 +577,10 @@ const isOpen = ref(false);
                 <div>
                     <p class="font-semibold">{{ $t('common.calendar') }}</p>
 
-                    <DataPendingBlock v-if="calendarsLoading" :message="$t('common.loading', [$t('common.calendar')])" />
+                    <DataPendingBlock
+                        v-if="isRequestPending(calendarsStatus)"
+                        :message="$t('common.loading', [$t('common.calendar')])"
+                    />
                     <DataErrorBlock
                         v-else-if="calendarsError"
                         :title="$t('common.unable_to_load', [$t('common.calendar', 1)])"
@@ -636,8 +639,8 @@ const isOpen = ref(false);
                         class="w-full"
                         icon="i-mdi-refresh"
                         variant="outline"
-                        :disabled="loading || loadingState"
-                        :loading="loading || loadingState"
+                        :disabled="isRequestPending(status) || loadingState"
+                        :loading="isRequestPending(status) || loadingState"
                         @click="refresh()"
                     >
                         {{ $t('common.refresh') }}

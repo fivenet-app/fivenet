@@ -22,7 +22,7 @@ const { can, activeChar } = useAuth();
 const completorStore = useCompletorStore();
 const { getJobByName } = completorStore;
 
-const { data: roles, pending: loading, refresh, error } = useLazyAsyncData('settings-roles', () => getRoles());
+const { data: roles, status, refresh, error } = useLazyAsyncData('settings-roles', () => getRoles());
 
 async function getRoles(): Promise<Role[]> {
     try {
@@ -174,7 +174,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     v-else
                     :columns="columns"
                     :rows="sortedRoles"
-                    :loading="loading"
+                    :loading="isRequestPending(status)"
                     :empty-state="{
                         icon: 'i-mdi-account-group',
                         label: $t('common.not_found', [$t('common.role', 2)]),
@@ -197,7 +197,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     </template>
                 </UTable>
 
-                <Pagination :loading="loading" :refresh="refresh" hide-buttons hide-text />
+                <Pagination :status="status" :refresh="refresh" hide-buttons hide-text />
 
                 <SingleHint class="mt-2" hint-id="settings_roles_superuser" />
             </div>

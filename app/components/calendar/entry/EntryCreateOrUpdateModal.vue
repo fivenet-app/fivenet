@@ -55,14 +55,13 @@ const state = reactive<Schema>({
     users: [],
 });
 
-const {
-    data,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(`calendar-entry:${props.entryId}`, () => calendarStore.getCalendarEntry({ entryId: props.entryId! }), {
-    immediate: !!props.calendarId && !!props.entryId,
-});
+const { data, status, refresh, error } = useLazyAsyncData(
+    `calendar-entry:${props.entryId}`,
+    () => calendarStore.getCalendarEntry({ entryId: props.entryId! }),
+    {
+        immediate: !!props.calendarId && !!props.entryId,
+    },
+);
 
 async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpdateCalendarEntryResponse> {
     if (!values.calendar) {
@@ -173,7 +172,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <div>
                     <DataPendingBlock
-                        v-if="props.entryId && loading"
+                        v-if="props.entryId && isRequestPending(status)"
                         :message="$t('common.loading', [$t('common.entry', 1)])"
                     />
                     <DataErrorBlock

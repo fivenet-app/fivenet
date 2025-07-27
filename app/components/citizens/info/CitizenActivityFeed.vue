@@ -40,13 +40,9 @@ const schema = z.object({
 
 const query = useSearchForm('citizen_activity', schema);
 
-const {
-    data,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(`citizeninfo-activity-${query.sort.column}:${query.sort.direction}-${props.userId}-${query.page}`, () =>
-    listUserActivity(),
+const { data, status, refresh, error } = useLazyAsyncData(
+    `citizeninfo-activity-${query.sort.column}:${query.sort.direction}-${props.userId}-${query.page}`,
+    () => listUserActivity(),
 );
 
 async function listUserActivity(): Promise<ListUserActivityResponse> {
@@ -127,7 +123,7 @@ watchDebounced(query, async () => refresh(), {
 
         <div class="relative mt-2 flex-1">
             <DataPendingBlock
-                v-if="loading"
+                v-if="isRequestPending(status)"
                 :message="$t('common.loading', [`${$t('common.citizen', 1)} ${$t('common.activity')}`])"
             />
             <DataErrorBlock
@@ -155,6 +151,6 @@ watchDebounced(query, async () => refresh(), {
             </div>
         </div>
 
-        <Pagination v-model="query.page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+        <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
     </div>
 </template>

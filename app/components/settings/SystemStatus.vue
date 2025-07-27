@@ -5,7 +5,7 @@ import GenericTime from '../partials/elements/GenericTime.vue';
 
 const { $grpc } = useNuxtApp();
 
-const { data, error, pending: loading, refresh } = useLazyAsyncData('settings-system-status', () => getStatus());
+const { data, error, status, refresh } = useLazyAsyncData('settings-system-status', () => getStatus());
 
 async function getStatus() {
     try {
@@ -26,7 +26,7 @@ async function getStatus() {
             <h2 class="text-lg font-medium">{{ $t('components.settings.system_status.title') }}</h2>
         </template>
 
-        <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.status')])" />
+        <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.status')])" />
         <DataErrorBlock
             v-else-if="error"
             :title="$t('common.not_found', [$t('common.status')])"

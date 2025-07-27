@@ -56,7 +56,7 @@ async function listPages(): Promise<PageShort[]> {
 
 const {
     data: page,
-    pending: loading,
+    status,
     refresh,
     error,
 } = useLazyAsyncData(`wiki-page:${route.path}`, () => getPage(parseInt(route.params.id)), {
@@ -81,7 +81,7 @@ async function getPage(id: number): Promise<Page | undefined> {
 <template>
     <UDashboardPage>
         <UDashboardPanel class="shrink-0 border-b border-gray-200 lg:border-b-0 lg:border-r dark:border-gray-800" grow>
-            <PageView :loading="loading" :error="error" :refresh="refresh" :page="page" :pages="pages ?? []">
+            <PageView :status="status" :error="error" :refresh="refresh" :page="page" :pages="pages ?? []">
                 <template #left>
                     <DataErrorBlock v-if="pagesError" :error="pagesError" :retry="pagesRefresh" />
                     <ClientOnly v-else>

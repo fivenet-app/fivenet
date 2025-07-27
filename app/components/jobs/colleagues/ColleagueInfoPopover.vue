@@ -35,12 +35,9 @@ const { popover } = useAppConfig();
 
 const userId = computed(() => props.userId ?? props.user?.userId ?? 0);
 
-const {
-    data,
-    refresh,
-    pending: loading,
-    error,
-} = useLazyAsyncData(`colleague-info-${userId.value}`, () => getCitizen(userId.value), { immediate: !props.user });
+const { data, refresh, status, error } = useLazyAsyncData(`colleague-info-${userId.value}`, () => getCitizen(userId.value), {
+    immediate: !props.user,
+});
 
 async function getCitizen(id: number): Promise<Colleague> {
     try {
@@ -88,11 +85,11 @@ watchOnce(opened, async () => {
         >
             <slot name="before" />
             <template v-if="showAvatar" #leading>
-                <USkeleton v-if="!user && loading" class="h-6 w-6" :ui="{ rounded: 'rounded-full' }" />
+                <USkeleton v-if="!user && isRequestPending(status)" class="h-6 w-6" :ui="{ rounded: 'rounded-full' }" />
                 <ProfilePictureImg v-else :src="user?.avatar" :name="`${user?.firstname} ${user?.lastname}`" size="3xs" />
             </template>
 
-            <USkeleton v-if="!user && loading" class="h-8 w-[125px]" />
+            <USkeleton v-if="!user && isRequestPending(status)" class="h-8 w-[125px]" />
             <span v-else class="truncate" :class="textClass"> <ColleagueName :colleague="user" /> </span>
             <slot name="after" />
         </UButton>
@@ -139,7 +136,7 @@ watchOnce(opened, async () => {
                     />
                 </div>
 
-                <div v-else-if="loading && !user" class="flex flex-col gap-2 text-gray-900 dark:text-white">
+                <div v-else-if="isRequestPending(status) && !user" class="flex flex-col gap-2 text-gray-900 dark:text-white">
                     <USkeleton class="h-8 w-[250px]" />
 
                     <div class="flex flex-row items-center gap-2">
