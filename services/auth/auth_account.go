@@ -9,6 +9,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
 	pbauth "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
+	errorsgrpcauth "github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/errors"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -21,7 +22,7 @@ var ErrGenericAccount = common.NewI18nErr(codes.Internal, &common.I18NItem{Key: 
 func (s *Server) GetAccountInfo(ctx context.Context, req *pbauth.GetAccountInfoRequest) (*pbauth.GetAccountInfoResponse, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
-		return nil, errswrap.NewError(err, auth.ErrInvalidToken)
+		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
 	}
 
 	claims, err := s.tm.ParseWithClaims(token)

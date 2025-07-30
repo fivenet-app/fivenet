@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 
+	errorsgrpcauth "github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/errors"
 	grpc_permission "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/permission"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"google.golang.org/grpc"
@@ -26,7 +27,7 @@ func (g *GRPCPerm) GRPCPermissionUnaryFunc(ctx context.Context, info *grpc.Unary
 		if ok {
 			perm, found := strings.CutPrefix(info.FullMethod, "/services.")
 			if !found {
-				return nil, ErrPermissionDenied
+				return nil, errorsgrpcauth.ErrPermissionDenied
 			}
 
 			if overrideSrv, ok := info.Server.(grpc_permission.GetPermsRemapFunc); ok {
@@ -54,7 +55,7 @@ func (g *GRPCPerm) GRPCPermissionUnaryFunc(ctx context.Context, info *grpc.Unary
 		}
 	}
 
-	return nil, ErrPermissionDenied
+	return nil, errorsgrpcauth.ErrPermissionDenied
 }
 
 func (g *GRPCPerm) GRPCPermissionStreamFunc(ctx context.Context, srv any, info *grpc.StreamServerInfo) (context.Context, error) {
@@ -64,7 +65,7 @@ func (g *GRPCPerm) GRPCPermissionStreamFunc(ctx context.Context, srv any, info *
 		if ok {
 			perm, found := strings.CutPrefix(info.FullMethod, "/services.")
 			if !found {
-				return nil, ErrPermissionDenied
+				return nil, errorsgrpcauth.ErrPermissionDenied
 			}
 
 			if overrideSrv, ok := srv.(grpc_permission.GetPermsRemapFunc); ok {
@@ -92,5 +93,5 @@ func (g *GRPCPerm) GRPCPermissionStreamFunc(ctx context.Context, srv any, info *
 		}
 	}
 
-	return nil, ErrPermissionDenied
+	return nil, errorsgrpcauth.ErrPermissionDenied
 }

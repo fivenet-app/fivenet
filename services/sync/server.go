@@ -15,6 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	pkggrpc "github.com/fivenet-app/fivenet/v2025/pkg/grpc"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
+	errorsgrpcauth "github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/errors"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatches"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -107,7 +108,7 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (conte
 	}
 
 	if !slices.Contains(s.tokens, t) {
-		return nil, auth.ErrInvalidToken
+		return nil, errorsgrpcauth.ErrInvalidToken
 	}
 
 	return ctx, nil

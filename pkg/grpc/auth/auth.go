@@ -5,6 +5,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
+	errorsgrpcauth "github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/errors"
 	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"go.opentelemetry.io/otel/attribute"
@@ -69,13 +70,13 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context
 	}
 
 	if t == "" {
-		return nil, ErrNoToken
+		return nil, errorsgrpcauth.ErrNoToken
 	}
 
 	// Parse token only returns the token info when the token is still valid
 	tInfo, err := g.tm.ParseWithClaims(t)
 	if err != nil {
-		return nil, ErrInvalidToken
+		return nil, errorsgrpcauth.ErrInvalidToken
 	}
 
 	userInfo, err := g.ui.GetUserInfo(ctx, tInfo.CharID, tInfo.AccID)
@@ -98,7 +99,7 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context
 
 	if userInfo.LastChar != nil && *userInfo.LastChar != userInfo.UserId && g.appCfg.Get().Auth.LastCharLock {
 		if !userInfo.CanBeSuperuser && !userInfo.Superuser {
-			return nil, ErrCharLock
+			return nil, errorsgrpcauth.ErrCharLock
 		}
 	}
 
@@ -112,13 +113,13 @@ func (g *GRPCAuth) GRPCAuthFuncWithoutUserInfo(ctx context.Context, fullMethod s
 	}
 
 	if t == "" {
-		return nil, ErrNoToken
+		return nil, errorsgrpcauth.ErrNoToken
 	}
 
 	// Parse token only returns the token info when the token is still valid
 	tInfo, err := g.tm.ParseWithClaims(t)
 	if err != nil {
-		return nil, ErrInvalidToken
+		return nil, errorsgrpcauth.ErrInvalidToken
 	}
 
 	ctx = logging.InjectFields(ctx, logging.Fields{
