@@ -576,6 +576,11 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *pbauth.ChooseCharacte
 
 	isSuperuser := slices.Contains(s.superuserGroups, userGroup) || slices.Contains(s.superuserUsers, claims.Subject)
 
+	if err := s.ui.RefreshUserInfo(ctx, char.UserId, claims.AccID); err != nil {
+		s.logger.Error("failed to refresh user info", zap.Error(err), zap.Int32("user_id", char.UserId))
+		return nil, errswrap.NewError(err, errorsauth.ErrUnableToChooseChar)
+	}
+
 	// If char lock is active, make sure that the user is choosing the active char
 	if !isSuperuser &&
 		s.appCfg.Get().Auth.LastCharLock &&
