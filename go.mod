@@ -1,6 +1,6 @@
 module github.com/fivenet-app/fivenet/v2025
 
-go 1.24.4
+go 1.24.5
 
 require (
 	buf.build/go/protovalidate v0.14.0
@@ -42,7 +42,7 @@ require (
 	github.com/minio/minio-go/v7 v7.0.95
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f
 	github.com/nats-io/nats-server/v2 v2.11.6
-	github.com/nats-io/nats.go v1.43.0
+	github.com/nats-io/nats.go v1.44.0
 	github.com/ory/dockertest/v3 v3.12.0
 	github.com/paulmach/orb v0.11.1
 	github.com/pkg/errors v0.9.1
