@@ -50,7 +50,7 @@ const queryCitizens = ref('');
 
 const {
     data: citizens,
-    pending: loading,
+    status,
     refresh,
     error,
 } = useLazyAsyncData(`document-${props.documentId?.toString()}-relations-citzens-${queryCitizens.value}`, () => listCitizens());
@@ -296,7 +296,7 @@ const columnsNew = [
                             <UTable
                                 v-else
                                 :columns="columnsNew"
-                                :loading="loading"
+                                :loading="isRequestPending(status)"
                                 :rows="citizens"
                                 :empty-state="{ icon: 'i-mdi-file', label: $t('common.not_found', [$t('common.citizen', 2)]) }"
                             >

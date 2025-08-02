@@ -24,6 +24,7 @@ import { ConfigServiceClient as settingsConfigServiceClient } from '~~/gen/ts/se
 import { CronServiceClient as settingsCronServiceClient } from '~~/gen/ts/services/settings/cron.client';
 import { LawsServiceClient as settingsLawsServiceClient } from '~~/gen/ts/services/settings/laws.client';
 import { SettingsServiceClient as settingsSettingsServiceClient } from '~~/gen/ts/services/settings/settings.client';
+import { SystemServiceClient as settingsSystemServiceClient } from '~~/gen/ts/services/settings/system.client';
 import { StatsServiceClient as statsStatsServiceClient } from '~~/gen/ts/services/stats/stats.client';
 import { SyncServiceClient as syncSyncServiceClient } from '~~/gen/ts/services/sync/sync.client';
 import { VehiclesServiceClient as vehiclesVehiclesServiceClient } from '~~/gen/ts/services/vehicles/vehicles.client';
@@ -81,6 +82,7 @@ export class GRPCClients {
         cron: settingsCronServiceClient;
         laws: settingsLawsServiceClient;
         settings: settingsSettingsServiceClient;
+        system: settingsSystemServiceClient;
     };
     public stats: {
         stats: statsStatsServiceClient;
@@ -147,6 +149,7 @@ export class GRPCClients {
             cron: new settingsCronServiceClient(transport),
             laws: new settingsLawsServiceClient(transport),
             settings: new settingsSettingsServiceClient(transport),
+            system: new settingsSystemServiceClient(transport),
         };
         this.stats = {
             stats: new statsStatsServiceClient(transport),

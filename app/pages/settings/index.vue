@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import CardsList from '~/components/partials/CardsList.vue';
+import SystemStatus from '~/components/settings/SystemStatus.vue';
 import type { CardElements } from '~/utils/types';
 
 const { t } = useI18n();
@@ -13,6 +14,8 @@ definePageMeta({
     requiresAuth: true,
     permission: 'settings.SettingsService/GetRoles',
 });
+
+const { isSuperuser } = useAuth();
 
 const items = [
     {
@@ -58,18 +61,18 @@ const items = [
         icon: 'i-mdi-file-multiple',
     },
     {
-        title: t('pages.settings.settings.title'),
-        description: t('pages.settings.features.settings'),
-        to: { name: 'settings-settings' },
-        permission: 'Superuser/Superuser',
-        icon: 'i-mdi-office-building-cog',
-    },
-    {
         title: t('pages.settings.accounts.title'),
         description: t('pages.settings.features.accounts'),
         to: { name: 'settings-accounts' },
         permission: 'Superuser/Superuser',
         icon: 'i-mdi-account-multiple',
+    },
+    {
+        title: t('pages.settings.settings.title'),
+        description: t('pages.settings.features.settings'),
+        to: { name: 'settings-settings' },
+        permission: 'Superuser/Superuser',
+        icon: 'i-mdi-office-building-cog',
     },
     {
         title: t('pages.settings.cron.title'),
@@ -87,6 +90,8 @@ const items = [
             <UDashboardNavbar :title="$t('common.control_panel')" />
 
             <UDashboardPanelContent>
+                <SystemStatus v-if="isSuperuser" class="mb-4" />
+
                 <CardsList :items="items" />
             </UDashboardPanelContent>
         </UDashboardPanel>

@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package resources.settings;
+
+import "resources/permissions/attributes.proto";
+import "resources/permissions/permissions.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings;settings";
+
+message PermsUpdate {
+  repeated resources.permissions.PermItem to_update = 1;
+  repeated resources.permissions.PermItem to_remove = 2;
+}
+
+message AttrsUpdate {
+  repeated resources.permissions.RoleAttribute to_update = 1;
+  repeated resources.permissions.RoleAttribute to_remove = 2;
+}

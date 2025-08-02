@@ -43,12 +43,7 @@ const sort = useRouteQueryObject<TableSortable>('sort', {
     direction: 'desc',
 });
 
-const {
-    data,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(
+const { data, status, refresh, error } = useLazyAsyncData(
     `qualifications-results-${sort.value.column}:${sort.value.direction}-${page.value}-${props.qualification.id}`,
     () => listQualificationsResults(props.qualification.id, props.status),
     {
@@ -151,7 +146,7 @@ defineExpose({
             <template v-else>
                 <UTable
                     v-model:sort="sort"
-                    :loading="loading"
+                    :loading="isRequestPending(status)"
                     :columns="columns"
                     :rows="data?.results"
                     :empty-state="{ icon: 'i-mdi-sigma', label: $t('common.not_found', [$t('common.result', 2)]) }"
@@ -160,6 +155,7 @@ defineExpose({
                     <template #citizen-data="{ row: result }">
                         <CitizenInfoPopover :user="result.user" />
                     </template>
+
                     <template #status-data="{ row: result }">
                         <template v-if="result.status !== undefined">
                             <span class="font-medium" :class="resultStatusToTextColor(result.status)">
@@ -169,20 +165,25 @@ defineExpose({
                             </span>
                         </template>
                     </template>
+
                     <template #score-data="{ row: result }">
                         <template v-if="result.score">{{ $n(result.score) }}</template>
                     </template>
+
                     <template #summary-data="{ row: result }">
                         <p v-if="result.summary" class="text-sm">
                             {{ result.summary }}
                         </p>
                     </template>
+
                     <template #createdAt-data="{ row: result }">
                         <GenericTime :value="result.createdAt" />
                     </template>
+
                     <template #creator-data="{ row: result }">
                         <CitizenInfoPopover v-if="result.creator" :user="result.creator" />
                     </template>
+
                     <template #actions-data="{ row: result }">
                         <div :key="result.id">
                             <UTooltip v-if="result.status === ResultStatus.PENDING" :text="$t('common.grade')">
@@ -248,7 +249,7 @@ defineExpose({
                     </template>
                 </UTable>
 
-                <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+                <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
             </template>
         </div>
     </div>

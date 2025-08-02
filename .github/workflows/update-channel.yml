@@ -27,7 +27,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Checkout main
+      - name: Checkout develop
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -42,13 +42,13 @@ jobs:
             "${{ inputs.image_tag }}" \
             "${{ inputs.chart_version }}"
 
-      - name: Commit changes on main
+      - name: Commit changes on develop
         uses: stefanzweifel/git-auto-commit-action@v6
         with:
           commit_message: "ci: bump dev channel to ${{ inputs.image_tag }}"
           file_pattern: |
             channels.json
-          branch: main
+          branch: develop
 
       - name: Checkout gh-pages branch
         uses: actions/checkout@v4

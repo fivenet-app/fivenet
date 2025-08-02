@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { ButtonSize, ButtonVariant } from '#ui/types';
-import type { I18NItem } from '~/types/i18n';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = withDefaults(

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"slices"
+	"time"
 
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
@@ -27,6 +28,8 @@ func (s *Server) SendData(ctx context.Context, req *pbsync.SendDataRequest) (*pb
 	resp := &pbsync.SendDataResponse{
 		AffectedRows: 0,
 	}
+
+	s.lastSyncedData.Store(time.Now().Unix())
 
 	var err error
 	switch d := req.Data.(type) {
@@ -68,6 +71,11 @@ func (s *Server) SendData(ctx context.Context, req *pbsync.SendDataRequest) (*pb
 
 	case *pbsync.SendDataRequest_UserLocations:
 		if resp.AffectedRows, err = s.handleUserLocations(ctx, d); err != nil {
+			return nil, fmt.Errorf("failed to handle user locations data. %w", err)
+		}
+
+	case *pbsync.SendDataRequest_LastCharId:
+		if resp.AffectedRows, err = s.handleLastCharId(ctx, d); err != nil {
 			return nil, fmt.Errorf("failed to handle user locations data. %w", err)
 		}
 	}
@@ -740,6 +748,37 @@ func (s *Server) handleUserLocations(ctx context.Context, data *pbsync.SendDataR
 			return 0, fmt.Errorf("failed to retrieve rows affected for user locations delete. %w", err)
 		}
 		rowsAffected += rows
+	}
+
+	return rowsAffected, nil
+}
+
+func (s *Server) handleLastCharId(ctx context.Context, data *pbsync.SendDataRequest_LastCharId) (int64, error) {
+	if data.LastCharId == nil || data.LastCharId.Identifier == "" || data.LastCharId.LastCharId == nil || *data.LastCharId.LastCharId == 0 {
+		return 0, status.Error(codes.InvalidArgument, "LastCharId must contain UserId and CharacterId")
+	}
+
+	tAccounts := table.FivenetAccounts
+
+	stmt := tAccounts.
+		UPDATE(
+			tAccounts.LastChar,
+		).
+		SET(
+			tAccounts.LastChar.SET(jet.Int32(*data.LastCharId.LastCharId)),
+		).
+		WHERE(
+			tAccounts.License.EQ(jet.String(data.LastCharId.Identifier)),
+		).
+		LIMIT(1)
+
+	res, err := stmt.ExecContext(ctx, s.db)
+	if err != nil {
+		return 0, fmt.Errorf("failed to execute last character insert statement. %w", err)
+	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return 0, fmt.Errorf("failed to retrieve rows affected for last character insert. %w", err)
 	}
 
 	return rowsAffected, nil

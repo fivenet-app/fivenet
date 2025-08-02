@@ -38,12 +38,9 @@ const modal = useModal();
 
 const notifications = useNotificationsStore();
 
-const {
-    data,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(`qualification-${props.qualificationId}`, () => getQualification(props.qualificationId));
+const { data, status, refresh, error } = useLazyAsyncData(`qualification-${props.qualificationId}`, () =>
+    getQualification(props.qualificationId),
+);
 
 async function getQualification(qualificationId: number): Promise<GetQualificationResponse> {
     try {
@@ -182,7 +179,7 @@ const accordionItems = computed(() =>
         <template #right>
             <PartialsBackButton to="/qualifications" />
 
-            <UButton icon="i-mdi-refresh" :label="$t('common.refresh')" :loading="loading" @click="refresh" />
+            <UButton icon="i-mdi-refresh" :label="$t('common.refresh')" :loading="isRequestPending(status)" @click="refresh" />
 
             <UButtonGroup class="inline-flex">
                 <IDCopyBadge
@@ -198,7 +195,7 @@ const accordionItems = computed(() =>
         </template>
     </UDashboardNavbar>
 
-    <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.qualifications', 1)])" />
+    <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.qualifications', 1)])" />
     <DataErrorBlock
         v-else-if="error"
         :title="$t('common.unable_to_load', [$t('common.qualifications', 1)])"

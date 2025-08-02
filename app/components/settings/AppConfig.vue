@@ -27,7 +27,7 @@ const { streamerMode } = storeToRefs(settingsStore);
 
 const notifications = useNotificationsStore();
 
-const { data: config, pending: loading, refresh, error } = useLazyAsyncData(`settings-appconfig`, () => getAppConfig());
+const { data: config, status, refresh, error } = useLazyAsyncData(`settings-appconfig`, () => getAppConfig());
 
 async function getAppConfig(): Promise<GetAppConfigResponse> {
     try {
@@ -364,7 +364,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </UDashboardNavbar>
 
         <UDashboardPanelContent class="p-0 sm:pb-0">
-            <div v-if="loading" class="space-y-1 px-4">
+            <div v-if="isRequestPending(status)" class="space-y-1 px-4">
                 <USkeleton class="mb-6 h-11 w-full" />
                 <USkeleton v-for="idx in 5" :key="idx" class="h-20 w-full" />
             </div>

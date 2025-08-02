@@ -7,38 +7,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
-func (m *AttrsUpdate) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: ToRemove
-	for idx, item := range m.ToRemove {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	// Field: ToUpdate
-	for idx, item := range m.ToUpdate {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
 func (m *CreateRoleRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -59,22 +27,6 @@ func (m *CreateRoleResponse) Sanitize() error {
 				return err
 			}
 		}
-	}
-
-	return nil
-}
-
-func (m *DeleteFactionRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-func (m *DeleteFactionResponse) Sanitize() error {
-	if m == nil {
-		return nil
 	}
 
 	return nil
@@ -107,46 +59,6 @@ func (m *DeleteRoleRequest) Sanitize() error {
 func (m *DeleteRoleResponse) Sanitize() error {
 	if m == nil {
 		return nil
-	}
-
-	return nil
-}
-
-func (m *GetAllPermissionsRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-func (m *GetAllPermissionsResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Attributes
-	for idx, item := range m.Attributes {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	// Field: Permissions
-	for idx, item := range m.Permissions {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
 	}
 
 	return nil
@@ -196,46 +108,6 @@ func (m *GetEffectivePermissionsResponse) Sanitize() error {
 				return err
 			}
 		}
-	}
-
-	return nil
-}
-
-func (m *GetJobLimitsRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-func (m *GetJobLimitsResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Attributes
-	for idx, item := range m.Attributes {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	// Field: Permissions
-	for idx, item := range m.Permissions {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
 	}
 
 	return nil
@@ -359,22 +231,6 @@ func (m *GetRolesResponse) Sanitize() error {
 	return nil
 }
 
-func (m *GetStatusRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-func (m *GetStatusResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
 func (m *ListDiscordChannelsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -431,38 +287,6 @@ func (m *ListUserGuildsResponse) Sanitize() error {
 	return nil
 }
 
-func (m *PermsUpdate) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: ToRemove
-	for idx, item := range m.ToRemove {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	// Field: ToUpdate
-	for idx, item := range m.ToUpdate {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
 func (m *SetJobPropsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -492,40 +316,6 @@ func (m *SetJobPropsResponse) Sanitize() error {
 				return err
 			}
 		}
-	}
-
-	return nil
-}
-
-func (m *UpdateJobLimitsRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Attrs
-	if m.Attrs != nil {
-		if v, ok := any(m.GetAttrs()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Perms
-	if m.Perms != nil {
-		if v, ok := any(m.GetPerms()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-func (m *UpdateJobLimitsResponse) Sanitize() error {
-	if m == nil {
-		return nil
 	}
 
 	return nil

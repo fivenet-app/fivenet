@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
+	"github.com/fivenet-app/fivenet/v2025/pkg/reqs"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/admin"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
@@ -53,6 +54,8 @@ type Result struct {
 
 	NC *nats.Conn
 	JS *JSWrapper
+
+	Req *reqs.NatsReqs
 }
 
 func New(p Params) (res Result, err error) {
@@ -105,6 +108,14 @@ func New(p Params) (res Result, err error) {
 	}
 
 	res.JS = NewJSWrapper(js, p.Config.NATS, p.Shutdowner)
+
+	res.Req = reqs.NewNatsReqs(nc)
+	if err := res.Req.ValidateAll(); err != nil {
+		if !p.Config.IgnoreRequirements {
+			return res, fmt.Errorf("failed to validate nats requirements. %w", err)
+		}
+		p.Logger.Warn("ignoring failed nats requirements", zap.Error(err))
+	}
 
 	wg := sync.WaitGroup{}
 	ctx, cancel := context.WithCancel(context.Background())

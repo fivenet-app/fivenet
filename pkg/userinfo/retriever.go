@@ -34,6 +34,7 @@ type UserInfoRetriever interface {
 	GetUserInfo(ctx context.Context, userId int32, accountId uint64) (*pbuserinfo.UserInfo, error)
 	GetUserInfoWithoutAccountId(ctx context.Context, userId int32) (*pbuserinfo.UserInfo, error)
 	SetUserInfo(ctx context.Context, accountId uint64, superuser bool, job *string, jobGrade *int32) error
+	RefreshUserInfo(ctx context.Context, userId int32, accountId uint64) error
 }
 
 // UIRetriever implements UserInfoRetriever and provides user info retrieval with caching.
@@ -172,6 +173,25 @@ func (r *Retriever) GetUserInfo(ctx context.Context, userId int32, accountId uin
 		return dest, nil
 	}
 
+	dest, err := r.getUserInfo(ctx, userId, accountId)
+	if err != nil {
+		return nil, err
+	}
+
+	// If account is not enabled, fail here
+	if !dest.Enabled {
+		return nil, ErrAccountError
+	}
+
+	// Set superuser status and override job/grade if applicable
+	r.setSuperuserStatus(dest)
+
+	r.userCache.Put(key, dest, r.userCacheTTL)
+
+	return dest, nil
+}
+
+func (r *Retriever) getUserInfo(ctx context.Context, userId int32, accountId uint64) (*pbuserinfo.UserInfo, error) {
 	dest := &pbuserinfo.UserInfo{}
 	tUsers := tables.User().AS("user_info")
 
@@ -202,16 +222,6 @@ func (r *Retriever) GetUserInfo(ctx context.Context, userId int32, accountId uin
 	if err := stmt.QueryContext(ctx, r.db, dest); err != nil {
 		return nil, errswrap.NewError(err, ErrAccountError)
 	}
-
-	// If account is not enabled, fail here
-	if !dest.Enabled {
-		return nil, ErrAccountError
-	}
-
-	// Set superuser status and override job/grade if applicable
-	r.setSuperuserStatus(dest)
-
-	r.userCache.Put(key, dest, r.userCacheTTL)
 
 	return dest, nil
 }
@@ -282,6 +292,18 @@ func (r *Retriever) SetUserInfo(ctx context.Context, accountId uint64, superuser
 	if _, err := stmt.ExecContext(ctx, r.db); err != nil {
 		return err
 	}
+
+	return nil
+}
+
+func (r *Retriever) RefreshUserInfo(ctx context.Context, userId int32, accountId uint64) error {
+	dest, err := r.getUserInfo(ctx, userId, accountId)
+	if err != nil {
+		return err
+	}
+
+	key := userAccountKey{UserID: userId, AccountID: accountId}
+	r.userCache.Put(key, dest, r.userCacheTTL)
 
 	return nil
 }

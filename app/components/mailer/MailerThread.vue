@@ -61,7 +61,7 @@ function resetForm(): void {
     }
 }
 
-const { data: thread, pending: loading } = useLazyAsyncData(
+const { data: thread, status } = useLazyAsyncData(
     `mailer-thread:${props.threadId}`,
     () => mailerStore.getThread(props.threadId),
     {
@@ -71,7 +71,7 @@ const { data: thread, pending: loading } = useLazyAsyncData(
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
-const { pending: messagesLoading, refresh: refreshMessages } = useLazyAsyncData(
+const { status: messagesStatus, refresh: refreshMessages } = useLazyAsyncData(
     `mailer-thread:${props.threadId}-messages:${page.value}`,
     async () => {
         const response = await mailerStore.listThreadMessages({
@@ -193,7 +193,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UDashboardToolbar :ui="{ container: 'flex-col gap-y-2' }">
-        <USkeleton v-if="loading" class="h-12 w-full" />
+        <USkeleton v-if="isRequestPending(status)" class="h-12 w-full" />
 
         <template v-else-if="thread">
             <div class="flex w-full flex-1 items-center justify-between gap-1">
@@ -225,7 +225,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     </UDashboardToolbar>
 
     <UDashboardPanelContent class="p-0 sm:pb-0">
-        <div v-if="messagesLoading" class="flex-1 space-y-2">
+        <div v-if="isRequestPending(messagesStatus)" class="flex-1 space-y-2">
             <USkeleton class="h-32 w-full" />
             <USkeleton class="h-48 w-full" />
             <USkeleton class="h-32 w-full" />
@@ -321,7 +321,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </div>
         </div>
 
-        <Pagination v-if="messages?.pagination" v-model="page" :pagination="messages?.pagination" :refresh="refreshMessages" />
+        <Pagination
+            v-if="messages?.pagination"
+            v-model="page"
+            :pagination="messages?.pagination"
+            :loading="isRequestPending(messagesStatus)"
+            :refresh="refreshMessages"
+        />
     </UDashboardPanelContent>
 
     <UDashboardToolbar

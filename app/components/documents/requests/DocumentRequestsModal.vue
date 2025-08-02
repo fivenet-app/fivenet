@@ -56,7 +56,7 @@ const offset = ref(0);
 
 const {
     data: requests,
-    pending: loading,
+    status,
     refresh,
     error,
 } = useLazyAsyncData(`document-${props.doc.id}-requests-${offset.value}`, () => listDocumnetReqs(props.doc.id));
@@ -207,7 +207,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </template>
 
                     <div>
-                        <ul v-if="loading" class="mb-6 divide-y divide-gray-800 rounded-md dark:divide-gray-500" role="list">
+                        <ul
+                            v-if="isRequestPending(status)"
+                            class="mb-6 divide-y divide-gray-800 rounded-md dark:divide-gray-500"
+                            role="list"
+                        >
                             <li v-for="idx in 2" :key="idx" class="flex justify-between gap-x-4 py-4">
                                 <div class="flex min-w-0 gap-x-2 px-2">
                                     <div class="min-w-0 flex-auto">

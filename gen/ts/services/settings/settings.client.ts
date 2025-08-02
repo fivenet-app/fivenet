@@ -5,8 +5,6 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { SettingsService } from "./settings";
-import type { GetStatusResponse } from "./settings";
-import type { GetStatusRequest } from "./settings";
 import type { DeleteJobLogoResponse } from "./settings";
 import type { DeleteJobLogoRequest } from "./settings";
 import type { UploadFileResponse } from "../../resources/file/filestore";
@@ -16,14 +14,6 @@ import type { ListUserGuildsResponse } from "./settings";
 import type { ListUserGuildsRequest } from "./settings";
 import type { ListDiscordChannelsResponse } from "./settings";
 import type { ListDiscordChannelsRequest } from "./settings";
-import type { DeleteFactionResponse } from "./settings";
-import type { DeleteFactionRequest } from "./settings";
-import type { UpdateJobLimitsResponse } from "./settings";
-import type { UpdateJobLimitsRequest } from "./settings";
-import type { GetJobLimitsResponse } from "./settings";
-import type { GetJobLimitsRequest } from "./settings";
-import type { GetAllPermissionsResponse } from "./settings";
-import type { GetAllPermissionsRequest } from "./settings";
 import type { ViewAuditLogResponse } from "./settings";
 import type { ViewAuditLogRequest } from "./settings";
 import type { GetEffectivePermissionsResponse } from "./settings";
@@ -112,30 +102,6 @@ export interface ISettingsServiceClient {
      */
     viewAuditLog(input: ViewAuditLogRequest, options?: RpcOptions): UnaryCall<ViewAuditLogRequest, ViewAuditLogResponse>;
     /**
-     * @perm: Name=Superuser
-     *
-     * @generated from protobuf rpc: GetAllPermissions
-     */
-    getAllPermissions(input: GetAllPermissionsRequest, options?: RpcOptions): UnaryCall<GetAllPermissionsRequest, GetAllPermissionsResponse>;
-    /**
-     * @perm: Name=Superuser
-     *
-     * @generated from protobuf rpc: GetJobLimits
-     */
-    getJobLimits(input: GetJobLimitsRequest, options?: RpcOptions): UnaryCall<GetJobLimitsRequest, GetJobLimitsResponse>;
-    /**
-     * @perm: Name=Superuser
-     *
-     * @generated from protobuf rpc: UpdateJobLimits
-     */
-    updateJobLimits(input: UpdateJobLimitsRequest, options?: RpcOptions): UnaryCall<UpdateJobLimitsRequest, UpdateJobLimitsResponse>;
-    /**
-     * @perm: Name=Superuser
-     *
-     * @generated from protobuf rpc: DeleteFaction
-     */
-    deleteFaction(input: DeleteFactionRequest, options?: RpcOptions): UnaryCall<DeleteFactionRequest, DeleteFactionResponse>;
-    /**
      * @perm: Name=SetJobProps
      *
      * @generated from protobuf rpc: ListDiscordChannels
@@ -162,12 +128,6 @@ export interface ISettingsServiceClient {
      * @generated from protobuf rpc: DeleteJobLogo
      */
     deleteJobLogo(input: DeleteJobLogoRequest, options?: RpcOptions): UnaryCall<DeleteJobLogoRequest, DeleteJobLogoResponse>;
-    /**
-     * @perm: Name=Superuser
-     *
-     * @generated from protobuf rpc: GetStatus
-     */
-    getStatus(input: GetStatusRequest, options?: RpcOptions): UnaryCall<GetStatusRequest, GetStatusResponse>;
 }
 /**
  * @generated from protobuf service services.settings.SettingsService
@@ -269,48 +229,12 @@ export class SettingsServiceClient implements ISettingsServiceClient, ServiceInf
         return stackIntercept<ViewAuditLogRequest, ViewAuditLogResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Superuser
-     *
-     * @generated from protobuf rpc: GetAllPermissions
-     */
-    getAllPermissions(input: GetAllPermissionsRequest, options?: RpcOptions): UnaryCall<GetAllPermissionsRequest, GetAllPermissionsResponse> {
-        const method = this.methods[10], opt = this._transport.mergeOptions(options);
-        return stackIntercept<GetAllPermissionsRequest, GetAllPermissionsResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm: Name=Superuser
-     *
-     * @generated from protobuf rpc: GetJobLimits
-     */
-    getJobLimits(input: GetJobLimitsRequest, options?: RpcOptions): UnaryCall<GetJobLimitsRequest, GetJobLimitsResponse> {
-        const method = this.methods[11], opt = this._transport.mergeOptions(options);
-        return stackIntercept<GetJobLimitsRequest, GetJobLimitsResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm: Name=Superuser
-     *
-     * @generated from protobuf rpc: UpdateJobLimits
-     */
-    updateJobLimits(input: UpdateJobLimitsRequest, options?: RpcOptions): UnaryCall<UpdateJobLimitsRequest, UpdateJobLimitsResponse> {
-        const method = this.methods[12], opt = this._transport.mergeOptions(options);
-        return stackIntercept<UpdateJobLimitsRequest, UpdateJobLimitsResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm: Name=Superuser
-     *
-     * @generated from protobuf rpc: DeleteFaction
-     */
-    deleteFaction(input: DeleteFactionRequest, options?: RpcOptions): UnaryCall<DeleteFactionRequest, DeleteFactionResponse> {
-        const method = this.methods[13], opt = this._transport.mergeOptions(options);
-        return stackIntercept<DeleteFactionRequest, DeleteFactionResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
      * @perm: Name=SetJobProps
      *
      * @generated from protobuf rpc: ListDiscordChannels
      */
     listDiscordChannels(input: ListDiscordChannelsRequest, options?: RpcOptions): UnaryCall<ListDiscordChannelsRequest, ListDiscordChannelsResponse> {
-        const method = this.methods[14], opt = this._transport.mergeOptions(options);
+        const method = this.methods[10], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListDiscordChannelsRequest, ListDiscordChannelsResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -319,7 +243,7 @@ export class SettingsServiceClient implements ISettingsServiceClient, ServiceInf
      * @generated from protobuf rpc: ListUserGuilds
      */
     listUserGuilds(input: ListUserGuildsRequest, options?: RpcOptions): UnaryCall<ListUserGuildsRequest, ListUserGuildsResponse> {
-        const method = this.methods[15], opt = this._transport.mergeOptions(options);
+        const method = this.methods[11], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListUserGuildsRequest, ListUserGuildsResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -331,7 +255,7 @@ export class SettingsServiceClient implements ISettingsServiceClient, ServiceInf
      * @generated from protobuf rpc: UploadJobLogo
      */
     uploadJobLogo(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse> {
-        const method = this.methods[16], opt = this._transport.mergeOptions(options);
+        const method = this.methods[12], opt = this._transport.mergeOptions(options);
         return stackIntercept<UploadFileRequest, UploadFileResponse>("clientStreaming", this._transport, method, opt);
     }
     /**
@@ -340,16 +264,7 @@ export class SettingsServiceClient implements ISettingsServiceClient, ServiceInf
      * @generated from protobuf rpc: DeleteJobLogo
      */
     deleteJobLogo(input: DeleteJobLogoRequest, options?: RpcOptions): UnaryCall<DeleteJobLogoRequest, DeleteJobLogoResponse> {
-        const method = this.methods[17], opt = this._transport.mergeOptions(options);
+        const method = this.methods[13], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteJobLogoRequest, DeleteJobLogoResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm: Name=Superuser
-     *
-     * @generated from protobuf rpc: GetStatus
-     */
-    getStatus(input: GetStatusRequest, options?: RpcOptions): UnaryCall<GetStatusRequest, GetStatusResponse> {
-        const method = this.methods[18], opt = this._transport.mergeOptions(options);
-        return stackIntercept<GetStatusRequest, GetStatusResponse>("unary", this._transport, method, opt, input);
     }
 }

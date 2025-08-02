@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Editor } from '@tiptap/core';
+import type { Editor } from '@tiptap/vue-3';
 import type { File } from '~~/gen/ts/resources/file/file';
 import DataNoDataBlock from '../data/DataNoDataBlock.vue';
 import GenericImg from '../elements/GenericImg.vue';

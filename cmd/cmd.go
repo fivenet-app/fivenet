@@ -80,9 +80,10 @@ type Context struct{}
 var Cli struct {
 	Version kong.VersionFlag `help:"Print version information and quit"`
 
-	Config         string        `help:"Config file path" env:"FIVENET_CONFIG_FILE"`
-	StartTimeout   time.Duration `help:"App start timeout duration" default:"180s" env:"FIVENET_START_TIMEOUT"`
-	SkipMigrations *bool         `help:"Disable the automatic DB migrations on startup." env:"FIVENET_SKIP_DB_MIGRATIONS"`
+	Config             string        `help:"Config file path" env:"FIVENET_CONFIG_FILE"`
+	StartTimeout       time.Duration `help:"App start timeout duration" default:"180s" env:"FIVENET_START_TIMEOUT"`
+	SkipMigrations     *bool         `help:"Disable the automatic DB migrations on startup." env:"FIVENET_SKIP_DB_MIGRATIONS"`
+	IgnoreRequirements *bool         `help:"Ignore database and Nats requirements on startup." env:"FIVENET_IGNORE_REQUIREMENTS"`
 
 	Server   ServerCmd   `cmd:"" help:"Run FiveNet server."`
 	Worker   WorkerCmd   `cmd:"" help:"Run FiveNet worker."`
@@ -198,7 +199,7 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 			grpc.AsService(pbstats.NewServer),
 			grpc.AsService(pbwiki.NewServer),
 			grpc.AsService(pbinternet.NewServer),
-			grpc.AsService(pbsync.NewServer),
+			pbsync.NewServer,
 			grpc.AsService(pbfilestore.NewServer),
 		),
 

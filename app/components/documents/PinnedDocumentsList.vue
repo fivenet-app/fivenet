@@ -13,12 +13,7 @@ const { attr, can } = useAuth();
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
-const {
-    data,
-    pending: loading,
-    error,
-    refresh,
-} = useLazyAsyncData(`calendars-${page.value}`, () => listDocumentPins(), {
+const { data, status, error, refresh } = useLazyAsyncData(`calendars-${page.value}`, () => listDocumentPins(), {
     immediate: can('documents.DocumentsService/ToggleDocumentPin').value,
 });
 
@@ -97,7 +92,7 @@ const editing = ref(false);
                     :type="$t('common.pinned_document', 0)"
                 />
 
-                <template v-else-if="loading">
+                <template v-else-if="isRequestPending(status)">
                     <USkeleton v-for="idx in 10" :key="idx" class="h-16 w-full" />
                 </template>
                 <div v-else class="flex flex-col gap-2">
@@ -192,6 +187,6 @@ const editing = ref(false);
             </div>
         </UDashboardPanelContent>
 
-        <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+        <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
     </div>
 </template>

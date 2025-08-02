@@ -31,7 +31,7 @@ const query = useSearchForm('settings_accounts', schema);
 
 const {
     data: accounts,
-    pending: loading,
+    status,
     refresh,
     error,
 } = useLazyAsyncData(
@@ -212,7 +212,7 @@ const columns = [
         <UTable
             v-else
             class="flex-1"
-            :loading="loading"
+            :loading="isRequestPending(status)"
             :columns="columns"
             :rows="accounts?.accounts"
             :empty-state="{ icon: 'i-mdi-account-multiple', label: $t('common.not_found', [$t('common.account', 2)]) }"
@@ -273,6 +273,6 @@ const columns = [
             </template>
         </UTable>
 
-        <Pagination v-model="query.page" :pagination="accounts?.pagination" :loading="loading" :refresh="refresh" />
+        <Pagination v-model="query.page" :pagination="accounts?.pagination" :status="status" :refresh="refresh" />
     </template>
 </template>

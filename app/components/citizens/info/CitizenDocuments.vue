@@ -8,7 +8,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import type { ToggleItem } from '~/typings';
+import type { ToggleItem } from '~/utils/types';
 import { DocRelation } from '~~/gen/ts/resources/documents/documents';
 import type { ListUserDocumentsResponse } from '~~/gen/ts/services/documents/documents';
 
@@ -48,12 +48,9 @@ const schema = z.object({
 
 const query = useSearchForm('citizen_documents', schema);
 
-const {
-    data,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(`citizeninfo-documents-${props.userId}-${query.page}`, () => listUserDocuments());
+const { data, status, refresh, error } = useLazyAsyncData(`citizeninfo-documents-${props.userId}-${query.page}`, () =>
+    listUserDocuments(),
+);
 
 async function listUserDocuments(): Promise<ListUserDocumentsResponse> {
     try {
@@ -162,7 +159,7 @@ const columns = [
     <UTable
         v-else
         class="flex-1"
-        :loading="loading"
+        :loading="isRequestPending(status)"
         :columns="columns"
         :rows="data?.relations"
         :empty-state="{
@@ -197,5 +194,5 @@ const columns = [
         </template>
     </UTable>
 
-    <Pagination v-model="query.page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+    <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
 </template>

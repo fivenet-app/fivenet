@@ -68,7 +68,7 @@ const selectedTab = computed({
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
-const { pending: loading, refresh: refresh } = useLazyAsyncData(`mailer-thread:${page.value}`, () => loadThreads(), {
+const { status, refresh } = useLazyAsyncData(`mailer-thread:${page.value}`, () => loadThreads(), {
     immediate: false,
 });
 
@@ -299,7 +299,7 @@ onBeforeMount(async () => {
                             <Pagination
                                 v-model="page"
                                 :pagination="threads?.pagination"
-                                :loading="loading"
+                                :status="status"
                                 :refresh="refresh"
                                 hide-text
                             />

@@ -24,7 +24,7 @@ const { t } = useI18n();
 
 const {
     data: references,
-    pending: loading,
+    status,
     refresh,
     error,
 } = useLazyAsyncData(`document-${props.documentId}-references`, () => getDocumentReferences());
@@ -73,7 +73,7 @@ const columns = computed(() =>
 
 <template>
     <div>
-        <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.reference', 2)])" />
+        <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.reference', 2)])" />
         <DataErrorBlock
             v-else-if="error"
             :title="$t('common.unable_to_load', [$t('common.reference', 2)])"
@@ -137,7 +137,7 @@ const columns = computed(() =>
                     <div class="flex flex-col">
                         <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-lg">
                             <UTable
-                                :loading="loading"
+                                :loading="isRequestPending(status)"
                                 :columns="columns"
                                 :rows="references"
                                 :empty-state="{

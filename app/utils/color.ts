@@ -1,5 +1,3 @@
-import type { Color, RGB } from '~/types/color';
-
 export const primaryColors: Color[] = [
     // Primary - Default
     { label: 'green', chip: 'green', class: 'bg-green-500 dark:bg-green-400' },

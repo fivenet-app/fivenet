@@ -13,6 +13,7 @@ import (
 	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	permissions "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
+	settings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -551,8 +552,8 @@ func (*DeleteRoleResponse) Descriptor() ([]byte, []int) {
 type UpdateRolePermsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Perms         *PermsUpdate           `protobuf:"bytes,2,opt,name=perms,proto3,oneof" json:"perms,omitempty"`
-	Attrs         *AttrsUpdate           `protobuf:"bytes,3,opt,name=attrs,proto3,oneof" json:"attrs,omitempty"`
+	Perms         *settings.PermsUpdate  `protobuf:"bytes,2,opt,name=perms,proto3,oneof" json:"perms,omitempty"`
+	Attrs         *settings.AttrsUpdate  `protobuf:"bytes,3,opt,name=attrs,proto3,oneof" json:"attrs,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -594,120 +595,16 @@ func (x *UpdateRolePermsRequest) GetId() uint64 {
 	return 0
 }
 
-func (x *UpdateRolePermsRequest) GetPerms() *PermsUpdate {
+func (x *UpdateRolePermsRequest) GetPerms() *settings.PermsUpdate {
 	if x != nil {
 		return x.Perms
 	}
 	return nil
 }
 
-func (x *UpdateRolePermsRequest) GetAttrs() *AttrsUpdate {
+func (x *UpdateRolePermsRequest) GetAttrs() *settings.AttrsUpdate {
 	if x != nil {
 		return x.Attrs
-	}
-	return nil
-}
-
-type PermsUpdate struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
-	ToUpdate      []*permissions.PermItem `protobuf:"bytes,1,rep,name=to_update,json=toUpdate,proto3" json:"to_update,omitempty"`
-	ToRemove      []*permissions.PermItem `protobuf:"bytes,2,rep,name=to_remove,json=toRemove,proto3" json:"to_remove,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *PermsUpdate) Reset() {
-	*x = PermsUpdate{}
-	mi := &file_services_settings_settings_proto_msgTypes[13]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *PermsUpdate) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*PermsUpdate) ProtoMessage() {}
-
-func (x *PermsUpdate) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[13]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PermsUpdate.ProtoReflect.Descriptor instead.
-func (*PermsUpdate) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{13}
-}
-
-func (x *PermsUpdate) GetToUpdate() []*permissions.PermItem {
-	if x != nil {
-		return x.ToUpdate
-	}
-	return nil
-}
-
-func (x *PermsUpdate) GetToRemove() []*permissions.PermItem {
-	if x != nil {
-		return x.ToRemove
-	}
-	return nil
-}
-
-type AttrsUpdate struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
-	ToUpdate      []*permissions.RoleAttribute `protobuf:"bytes,1,rep,name=to_update,json=toUpdate,proto3" json:"to_update,omitempty"`
-	ToRemove      []*permissions.RoleAttribute `protobuf:"bytes,2,rep,name=to_remove,json=toRemove,proto3" json:"to_remove,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *AttrsUpdate) Reset() {
-	*x = AttrsUpdate{}
-	mi := &file_services_settings_settings_proto_msgTypes[14]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *AttrsUpdate) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AttrsUpdate) ProtoMessage() {}
-
-func (x *AttrsUpdate) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[14]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use AttrsUpdate.ProtoReflect.Descriptor instead.
-func (*AttrsUpdate) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{14}
-}
-
-func (x *AttrsUpdate) GetToUpdate() []*permissions.RoleAttribute {
-	if x != nil {
-		return x.ToUpdate
-	}
-	return nil
-}
-
-func (x *AttrsUpdate) GetToRemove() []*permissions.RoleAttribute {
-	if x != nil {
-		return x.ToRemove
 	}
 	return nil
 }
@@ -720,7 +617,7 @@ type UpdateRolePermsResponse struct {
 
 func (x *UpdateRolePermsResponse) Reset() {
 	*x = UpdateRolePermsResponse{}
-	mi := &file_services_settings_settings_proto_msgTypes[15]
+	mi := &file_services_settings_settings_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -732,7 +629,7 @@ func (x *UpdateRolePermsResponse) String() string {
 func (*UpdateRolePermsResponse) ProtoMessage() {}
 
 func (x *UpdateRolePermsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[15]
+	mi := &file_services_settings_settings_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -745,7 +642,7 @@ func (x *UpdateRolePermsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateRolePermsResponse.ProtoReflect.Descriptor instead.
 func (*UpdateRolePermsResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{15}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{13}
 }
 
 type GetPermissionsRequest struct {
@@ -757,7 +654,7 @@ type GetPermissionsRequest struct {
 
 func (x *GetPermissionsRequest) Reset() {
 	*x = GetPermissionsRequest{}
-	mi := &file_services_settings_settings_proto_msgTypes[16]
+	mi := &file_services_settings_settings_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -769,7 +666,7 @@ func (x *GetPermissionsRequest) String() string {
 func (*GetPermissionsRequest) ProtoMessage() {}
 
 func (x *GetPermissionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[16]
+	mi := &file_services_settings_settings_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -782,7 +679,7 @@ func (x *GetPermissionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPermissionsRequest.ProtoReflect.Descriptor instead.
 func (*GetPermissionsRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{16}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *GetPermissionsRequest) GetRoleId() uint64 {
@@ -802,7 +699,7 @@ type GetPermissionsResponse struct {
 
 func (x *GetPermissionsResponse) Reset() {
 	*x = GetPermissionsResponse{}
-	mi := &file_services_settings_settings_proto_msgTypes[17]
+	mi := &file_services_settings_settings_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -814,7 +711,7 @@ func (x *GetPermissionsResponse) String() string {
 func (*GetPermissionsResponse) ProtoMessage() {}
 
 func (x *GetPermissionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[17]
+	mi := &file_services_settings_settings_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -827,7 +724,7 @@ func (x *GetPermissionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPermissionsResponse.ProtoReflect.Descriptor instead.
 func (*GetPermissionsResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{17}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *GetPermissionsResponse) GetPermissions() []*permissions.Permission {
@@ -853,7 +750,7 @@ type GetEffectivePermissionsRequest struct {
 
 func (x *GetEffectivePermissionsRequest) Reset() {
 	*x = GetEffectivePermissionsRequest{}
-	mi := &file_services_settings_settings_proto_msgTypes[18]
+	mi := &file_services_settings_settings_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -865,7 +762,7 @@ func (x *GetEffectivePermissionsRequest) String() string {
 func (*GetEffectivePermissionsRequest) ProtoMessage() {}
 
 func (x *GetEffectivePermissionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[18]
+	mi := &file_services_settings_settings_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -878,7 +775,7 @@ func (x *GetEffectivePermissionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEffectivePermissionsRequest.ProtoReflect.Descriptor instead.
 func (*GetEffectivePermissionsRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{18}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *GetEffectivePermissionsRequest) GetRoleId() uint64 {
@@ -899,7 +796,7 @@ type GetEffectivePermissionsResponse struct {
 
 func (x *GetEffectivePermissionsResponse) Reset() {
 	*x = GetEffectivePermissionsResponse{}
-	mi := &file_services_settings_settings_proto_msgTypes[19]
+	mi := &file_services_settings_settings_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -911,7 +808,7 @@ func (x *GetEffectivePermissionsResponse) String() string {
 func (*GetEffectivePermissionsResponse) ProtoMessage() {}
 
 func (x *GetEffectivePermissionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[19]
+	mi := &file_services_settings_settings_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -924,7 +821,7 @@ func (x *GetEffectivePermissionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEffectivePermissionsResponse.ProtoReflect.Descriptor instead.
 func (*GetEffectivePermissionsResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{19}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *GetEffectivePermissionsResponse) GetRole() *permissions.Role {
@@ -968,7 +865,7 @@ type ViewAuditLogRequest struct {
 
 func (x *ViewAuditLogRequest) Reset() {
 	*x = ViewAuditLogRequest{}
-	mi := &file_services_settings_settings_proto_msgTypes[20]
+	mi := &file_services_settings_settings_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -980,7 +877,7 @@ func (x *ViewAuditLogRequest) String() string {
 func (*ViewAuditLogRequest) ProtoMessage() {}
 
 func (x *ViewAuditLogRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[20]
+	mi := &file_services_settings_settings_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -993,7 +890,7 @@ func (x *ViewAuditLogRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ViewAuditLogRequest.ProtoReflect.Descriptor instead.
 func (*ViewAuditLogRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{20}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *ViewAuditLogRequest) GetPagination() *database.PaginationRequest {
@@ -1069,7 +966,7 @@ type ViewAuditLogResponse struct {
 
 func (x *ViewAuditLogResponse) Reset() {
 	*x = ViewAuditLogResponse{}
-	mi := &file_services_settings_settings_proto_msgTypes[21]
+	mi := &file_services_settings_settings_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1081,7 +978,7 @@ func (x *ViewAuditLogResponse) String() string {
 func (*ViewAuditLogResponse) ProtoMessage() {}
 
 func (x *ViewAuditLogResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[21]
+	mi := &file_services_settings_settings_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1094,7 +991,7 @@ func (x *ViewAuditLogResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ViewAuditLogResponse.ProtoReflect.Descriptor instead.
 func (*ViewAuditLogResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{21}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *ViewAuditLogResponse) GetPagination() *database.PaginationResponse {
@@ -1111,390 +1008,6 @@ func (x *ViewAuditLogResponse) GetLogs() []*audit.AuditEntry {
 	return nil
 }
 
-type GetAllPermissionsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Job           string                 `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetAllPermissionsRequest) Reset() {
-	*x = GetAllPermissionsRequest{}
-	mi := &file_services_settings_settings_proto_msgTypes[22]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetAllPermissionsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetAllPermissionsRequest) ProtoMessage() {}
-
-func (x *GetAllPermissionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[22]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetAllPermissionsRequest.ProtoReflect.Descriptor instead.
-func (*GetAllPermissionsRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{22}
-}
-
-func (x *GetAllPermissionsRequest) GetJob() string {
-	if x != nil {
-		return x.Job
-	}
-	return ""
-}
-
-type GetAllPermissionsResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
-	Permissions   []*permissions.Permission    `protobuf:"bytes,1,rep,name=permissions,proto3" json:"permissions,omitempty"`
-	Attributes    []*permissions.RoleAttribute `protobuf:"bytes,2,rep,name=attributes,proto3" json:"attributes,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetAllPermissionsResponse) Reset() {
-	*x = GetAllPermissionsResponse{}
-	mi := &file_services_settings_settings_proto_msgTypes[23]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetAllPermissionsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetAllPermissionsResponse) ProtoMessage() {}
-
-func (x *GetAllPermissionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[23]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetAllPermissionsResponse.ProtoReflect.Descriptor instead.
-func (*GetAllPermissionsResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{23}
-}
-
-func (x *GetAllPermissionsResponse) GetPermissions() []*permissions.Permission {
-	if x != nil {
-		return x.Permissions
-	}
-	return nil
-}
-
-func (x *GetAllPermissionsResponse) GetAttributes() []*permissions.RoleAttribute {
-	if x != nil {
-		return x.Attributes
-	}
-	return nil
-}
-
-type GetJobLimitsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Job           string                 `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetJobLimitsRequest) Reset() {
-	*x = GetJobLimitsRequest{}
-	mi := &file_services_settings_settings_proto_msgTypes[24]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetJobLimitsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetJobLimitsRequest) ProtoMessage() {}
-
-func (x *GetJobLimitsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[24]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetJobLimitsRequest.ProtoReflect.Descriptor instead.
-func (*GetJobLimitsRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{24}
-}
-
-func (x *GetJobLimitsRequest) GetJob() string {
-	if x != nil {
-		return x.Job
-	}
-	return ""
-}
-
-type GetJobLimitsResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
-	Job           string                       `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
-	JobLabel      *string                      `protobuf:"bytes,2,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
-	Permissions   []*permissions.Permission    `protobuf:"bytes,3,rep,name=permissions,proto3" json:"permissions,omitempty"`
-	Attributes    []*permissions.RoleAttribute `protobuf:"bytes,4,rep,name=attributes,proto3" json:"attributes,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetJobLimitsResponse) Reset() {
-	*x = GetJobLimitsResponse{}
-	mi := &file_services_settings_settings_proto_msgTypes[25]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetJobLimitsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetJobLimitsResponse) ProtoMessage() {}
-
-func (x *GetJobLimitsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[25]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetJobLimitsResponse.ProtoReflect.Descriptor instead.
-func (*GetJobLimitsResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{25}
-}
-
-func (x *GetJobLimitsResponse) GetJob() string {
-	if x != nil {
-		return x.Job
-	}
-	return ""
-}
-
-func (x *GetJobLimitsResponse) GetJobLabel() string {
-	if x != nil && x.JobLabel != nil {
-		return *x.JobLabel
-	}
-	return ""
-}
-
-func (x *GetJobLimitsResponse) GetPermissions() []*permissions.Permission {
-	if x != nil {
-		return x.Permissions
-	}
-	return nil
-}
-
-func (x *GetJobLimitsResponse) GetAttributes() []*permissions.RoleAttribute {
-	if x != nil {
-		return x.Attributes
-	}
-	return nil
-}
-
-type UpdateJobLimitsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Job           string                 `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
-	Perms         *PermsUpdate           `protobuf:"bytes,2,opt,name=perms,proto3,oneof" json:"perms,omitempty"`
-	Attrs         *AttrsUpdate           `protobuf:"bytes,3,opt,name=attrs,proto3,oneof" json:"attrs,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdateJobLimitsRequest) Reset() {
-	*x = UpdateJobLimitsRequest{}
-	mi := &file_services_settings_settings_proto_msgTypes[26]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateJobLimitsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateJobLimitsRequest) ProtoMessage() {}
-
-func (x *UpdateJobLimitsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[26]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateJobLimitsRequest.ProtoReflect.Descriptor instead.
-func (*UpdateJobLimitsRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{26}
-}
-
-func (x *UpdateJobLimitsRequest) GetJob() string {
-	if x != nil {
-		return x.Job
-	}
-	return ""
-}
-
-func (x *UpdateJobLimitsRequest) GetPerms() *PermsUpdate {
-	if x != nil {
-		return x.Perms
-	}
-	return nil
-}
-
-func (x *UpdateJobLimitsRequest) GetAttrs() *AttrsUpdate {
-	if x != nil {
-		return x.Attrs
-	}
-	return nil
-}
-
-type UpdateJobLimitsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdateJobLimitsResponse) Reset() {
-	*x = UpdateJobLimitsResponse{}
-	mi := &file_services_settings_settings_proto_msgTypes[27]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateJobLimitsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateJobLimitsResponse) ProtoMessage() {}
-
-func (x *UpdateJobLimitsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[27]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateJobLimitsResponse.ProtoReflect.Descriptor instead.
-func (*UpdateJobLimitsResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{27}
-}
-
-type DeleteFactionRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Job           string                 `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DeleteFactionRequest) Reset() {
-	*x = DeleteFactionRequest{}
-	mi := &file_services_settings_settings_proto_msgTypes[28]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DeleteFactionRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteFactionRequest) ProtoMessage() {}
-
-func (x *DeleteFactionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[28]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DeleteFactionRequest.ProtoReflect.Descriptor instead.
-func (*DeleteFactionRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{28}
-}
-
-func (x *DeleteFactionRequest) GetJob() string {
-	if x != nil {
-		return x.Job
-	}
-	return ""
-}
-
-type DeleteFactionResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DeleteFactionResponse) Reset() {
-	*x = DeleteFactionResponse{}
-	mi := &file_services_settings_settings_proto_msgTypes[29]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DeleteFactionResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteFactionResponse) ProtoMessage() {}
-
-func (x *DeleteFactionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[29]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DeleteFactionResponse.ProtoReflect.Descriptor instead.
-func (*DeleteFactionResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{29}
-}
-
 type ListDiscordChannelsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -1503,7 +1016,7 @@ type ListDiscordChannelsRequest struct {
 
 func (x *ListDiscordChannelsRequest) Reset() {
 	*x = ListDiscordChannelsRequest{}
-	mi := &file_services_settings_settings_proto_msgTypes[30]
+	mi := &file_services_settings_settings_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1515,7 +1028,7 @@ func (x *ListDiscordChannelsRequest) String() string {
 func (*ListDiscordChannelsRequest) ProtoMessage() {}
 
 func (x *ListDiscordChannelsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[30]
+	mi := &file_services_settings_settings_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1528,7 +1041,7 @@ func (x *ListDiscordChannelsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDiscordChannelsRequest.ProtoReflect.Descriptor instead.
 func (*ListDiscordChannelsRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{30}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{20}
 }
 
 type ListDiscordChannelsResponse struct {
@@ -1540,7 +1053,7 @@ type ListDiscordChannelsResponse struct {
 
 func (x *ListDiscordChannelsResponse) Reset() {
 	*x = ListDiscordChannelsResponse{}
-	mi := &file_services_settings_settings_proto_msgTypes[31]
+	mi := &file_services_settings_settings_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1552,7 +1065,7 @@ func (x *ListDiscordChannelsResponse) String() string {
 func (*ListDiscordChannelsResponse) ProtoMessage() {}
 
 func (x *ListDiscordChannelsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[31]
+	mi := &file_services_settings_settings_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1565,7 +1078,7 @@ func (x *ListDiscordChannelsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDiscordChannelsResponse.ProtoReflect.Descriptor instead.
 func (*ListDiscordChannelsResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{31}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *ListDiscordChannelsResponse) GetChannels() []*discord.Channel {
@@ -1583,7 +1096,7 @@ type ListUserGuildsRequest struct {
 
 func (x *ListUserGuildsRequest) Reset() {
 	*x = ListUserGuildsRequest{}
-	mi := &file_services_settings_settings_proto_msgTypes[32]
+	mi := &file_services_settings_settings_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1595,7 +1108,7 @@ func (x *ListUserGuildsRequest) String() string {
 func (*ListUserGuildsRequest) ProtoMessage() {}
 
 func (x *ListUserGuildsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[32]
+	mi := &file_services_settings_settings_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1608,7 +1121,7 @@ func (x *ListUserGuildsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUserGuildsRequest.ProtoReflect.Descriptor instead.
 func (*ListUserGuildsRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{32}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{22}
 }
 
 type ListUserGuildsResponse struct {
@@ -1620,7 +1133,7 @@ type ListUserGuildsResponse struct {
 
 func (x *ListUserGuildsResponse) Reset() {
 	*x = ListUserGuildsResponse{}
-	mi := &file_services_settings_settings_proto_msgTypes[33]
+	mi := &file_services_settings_settings_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1632,7 +1145,7 @@ func (x *ListUserGuildsResponse) String() string {
 func (*ListUserGuildsResponse) ProtoMessage() {}
 
 func (x *ListUserGuildsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[33]
+	mi := &file_services_settings_settings_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1645,7 +1158,7 @@ func (x *ListUserGuildsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUserGuildsResponse.ProtoReflect.Descriptor instead.
 func (*ListUserGuildsResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{33}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *ListUserGuildsResponse) GetGuilds() []*discord.Guild {
@@ -1663,7 +1176,7 @@ type DeleteJobLogoRequest struct {
 
 func (x *DeleteJobLogoRequest) Reset() {
 	*x = DeleteJobLogoRequest{}
-	mi := &file_services_settings_settings_proto_msgTypes[34]
+	mi := &file_services_settings_settings_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1675,7 +1188,7 @@ func (x *DeleteJobLogoRequest) String() string {
 func (*DeleteJobLogoRequest) ProtoMessage() {}
 
 func (x *DeleteJobLogoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[34]
+	mi := &file_services_settings_settings_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1688,7 +1201,7 @@ func (x *DeleteJobLogoRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteJobLogoRequest.ProtoReflect.Descriptor instead.
 func (*DeleteJobLogoRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{34}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{24}
 }
 
 type DeleteJobLogoResponse struct {
@@ -1699,7 +1212,7 @@ type DeleteJobLogoResponse struct {
 
 func (x *DeleteJobLogoResponse) Reset() {
 	*x = DeleteJobLogoResponse{}
-	mi := &file_services_settings_settings_proto_msgTypes[35]
+	mi := &file_services_settings_settings_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1711,7 +1224,7 @@ func (x *DeleteJobLogoResponse) String() string {
 func (*DeleteJobLogoResponse) ProtoMessage() {}
 
 func (x *DeleteJobLogoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[35]
+	mi := &file_services_settings_settings_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1724,86 +1237,14 @@ func (x *DeleteJobLogoResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteJobLogoResponse.ProtoReflect.Descriptor instead.
 func (*DeleteJobLogoResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{35}
-}
-
-type GetStatusRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetStatusRequest) Reset() {
-	*x = GetStatusRequest{}
-	mi := &file_services_settings_settings_proto_msgTypes[36]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetStatusRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetStatusRequest) ProtoMessage() {}
-
-func (x *GetStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[36]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetStatusRequest.ProtoReflect.Descriptor instead.
-func (*GetStatusRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{36}
-}
-
-type GetStatusResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetStatusResponse) Reset() {
-	*x = GetStatusResponse{}
-	mi := &file_services_settings_settings_proto_msgTypes[37]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetStatusResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetStatusResponse) ProtoMessage() {}
-
-func (x *GetStatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[37]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetStatusResponse.ProtoReflect.Descriptor instead.
-func (*GetStatusResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{37}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{25}
 }
 
 var File_services_settings_settings_proto protoreflect.FileDescriptor
 
 const file_services_settings_settings_proto_rawDesc = "" +
 	"\n" +
-	" services/settings/settings.proto\x12\x11services.settings\x1a\x1bresources/audit/audit.proto\x1a(resources/common/database/database.proto\x1a\x1fresources/discord/discord.proto\x1a\x1eresources/file/filestore.proto\x1a\x1eresources/jobs/job_props.proto\x1a&resources/permissions/attributes.proto\x1a'resources/permissions/permissions.proto\x1a#resources/timestamp/timestamp.proto\"\x14\n" +
+	" services/settings/settings.proto\x12\x11services.settings\x1a\x1bresources/audit/audit.proto\x1a(resources/common/database/database.proto\x1a\x1fresources/discord/discord.proto\x1a\x1eresources/file/filestore.proto\x1a\x1eresources/jobs/job_props.proto\x1a&resources/permissions/attributes.proto\x1a'resources/permissions/permissions.proto\x1a\x1eresources/settings/perms.proto\x1a#resources/timestamp/timestamp.proto\"\x14\n" +
 	"\x12GetJobPropsRequest\"L\n" +
 	"\x13GetJobPropsResponse\x125\n" +
 	"\tjob_props\x18\x01 \x01(\v2\x18.resources.jobs.JobPropsR\bjobProps\"K\n" +
@@ -1828,19 +1269,13 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\x04role\x18\x01 \x01(\v2\x1b.resources.permissions.RoleR\x04role\"#\n" +
 	"\x11DeleteRoleRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\"\x14\n" +
-	"\x12DeleteRoleResponse\"\xb2\x01\n" +
+	"\x12DeleteRoleResponse\"\xb4\x01\n" +
 	"\x16UpdateRolePermsRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x129\n" +
-	"\x05perms\x18\x02 \x01(\v2\x1e.services.settings.PermsUpdateH\x00R\x05perms\x88\x01\x01\x129\n" +
-	"\x05attrs\x18\x03 \x01(\v2\x1e.services.settings.AttrsUpdateH\x01R\x05attrs\x88\x01\x01B\b\n" +
+	"\x02id\x18\x01 \x01(\x04R\x02id\x12:\n" +
+	"\x05perms\x18\x02 \x01(\v2\x1f.resources.settings.PermsUpdateH\x00R\x05perms\x88\x01\x01\x12:\n" +
+	"\x05attrs\x18\x03 \x01(\v2\x1f.resources.settings.AttrsUpdateH\x01R\x05attrs\x88\x01\x01B\b\n" +
 	"\x06_permsB\b\n" +
-	"\x06_attrs\"\x89\x01\n" +
-	"\vPermsUpdate\x12<\n" +
-	"\tto_update\x18\x01 \x03(\v2\x1f.resources.permissions.PermItemR\btoUpdate\x12<\n" +
-	"\tto_remove\x18\x02 \x03(\v2\x1f.resources.permissions.PermItemR\btoRemove\"\x93\x01\n" +
-	"\vAttrsUpdate\x12A\n" +
-	"\tto_update\x18\x01 \x03(\v2$.resources.permissions.RoleAttributeR\btoUpdate\x12A\n" +
-	"\tto_remove\x18\x02 \x03(\v2$.resources.permissions.RoleAttributeR\btoRemove\"\x19\n" +
+	"\x06_attrs\"\x19\n" +
 	"\x17UpdateRolePermsResponse\"0\n" +
 	"\x15GetPermissionsRequest\x12\x17\n" +
 	"\arole_id\x18\x01 \x01(\x04R\x06roleId\"\xa3\x01\n" +
@@ -1880,35 +1315,7 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12/\n" +
-	"\x04logs\x18\x02 \x03(\v2\x1b.resources.audit.AuditEntryR\x04logs\"5\n" +
-	"\x18GetAllPermissionsRequest\x12\x19\n" +
-	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\"\xa6\x01\n" +
-	"\x19GetAllPermissionsResponse\x12C\n" +
-	"\vpermissions\x18\x01 \x03(\v2!.resources.permissions.PermissionR\vpermissions\x12D\n" +
-	"\n" +
-	"attributes\x18\x02 \x03(\v2$.resources.permissions.RoleAttributeR\n" +
-	"attributes\"0\n" +
-	"\x13GetJobLimitsRequest\x12\x19\n" +
-	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\"\xec\x01\n" +
-	"\x14GetJobLimitsResponse\x12\x19\n" +
-	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12 \n" +
-	"\tjob_label\x18\x02 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12C\n" +
-	"\vpermissions\x18\x03 \x03(\v2!.resources.permissions.PermissionR\vpermissions\x12D\n" +
-	"\n" +
-	"attributes\x18\x04 \x03(\v2$.resources.permissions.RoleAttributeR\n" +
-	"attributesB\f\n" +
-	"\n" +
-	"_job_label\"\xbd\x01\n" +
-	"\x16UpdateJobLimitsRequest\x12\x19\n" +
-	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x129\n" +
-	"\x05perms\x18\x02 \x01(\v2\x1e.services.settings.PermsUpdateH\x00R\x05perms\x88\x01\x01\x129\n" +
-	"\x05attrs\x18\x03 \x01(\v2\x1e.services.settings.AttrsUpdateH\x01R\x05attrs\x88\x01\x01B\b\n" +
-	"\x06_permsB\b\n" +
-	"\x06_attrs\"\x19\n" +
-	"\x17UpdateJobLimitsResponse\"1\n" +
-	"\x14DeleteFactionRequest\x12\x19\n" +
-	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\"\x17\n" +
-	"\x15DeleteFactionResponse\"\x1c\n" +
+	"\x04logs\x18\x02 \x03(\v2\x1b.resources.audit.AuditEntryR\x04logs\"\x1c\n" +
 	"\x1aListDiscordChannelsRequest\"U\n" +
 	"\x1bListDiscordChannelsResponse\x126\n" +
 	"\bchannels\x18\x01 \x03(\v2\x1a.resources.discord.ChannelR\bchannels\"\x17\n" +
@@ -1916,9 +1323,8 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\x16ListUserGuildsResponse\x120\n" +
 	"\x06guilds\x18\x01 \x03(\v2\x18.resources.discord.GuildR\x06guilds\"\x16\n" +
 	"\x14DeleteJobLogoRequest\"\x17\n" +
-	"\x15DeleteJobLogoResponse\"\x12\n" +
-	"\x10GetStatusRequest\"\x13\n" +
-	"\x11GetStatusResponse2\xf1\x0e\n" +
+	"\x15DeleteJobLogoResponse2\xfa\n" +
+	"\n" +
 	"\x0fSettingsService\x12\\\n" +
 	"\vGetJobProps\x12%.services.settings.GetJobPropsRequest\x1a&.services.settings.GetJobPropsResponse\x12\\\n" +
 	"\vSetJobProps\x12%.services.settings.SetJobPropsRequest\x1a&.services.settings.SetJobPropsResponse\x12S\n" +
@@ -1931,16 +1337,11 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\x0fUpdateRolePerms\x12).services.settings.UpdateRolePermsRequest\x1a*.services.settings.UpdateRolePermsResponse\x12e\n" +
 	"\x0eGetPermissions\x12(.services.settings.GetPermissionsRequest\x1a).services.settings.GetPermissionsResponse\x12\x80\x01\n" +
 	"\x17GetEffectivePermissions\x121.services.settings.GetEffectivePermissionsRequest\x1a2.services.settings.GetEffectivePermissionsResponse\x12_\n" +
-	"\fViewAuditLog\x12&.services.settings.ViewAuditLogRequest\x1a'.services.settings.ViewAuditLogResponse\x12n\n" +
-	"\x11GetAllPermissions\x12+.services.settings.GetAllPermissionsRequest\x1a,.services.settings.GetAllPermissionsResponse\x12_\n" +
-	"\fGetJobLimits\x12&.services.settings.GetJobLimitsRequest\x1a'.services.settings.GetJobLimitsResponse\x12h\n" +
-	"\x0fUpdateJobLimits\x12).services.settings.UpdateJobLimitsRequest\x1a*.services.settings.UpdateJobLimitsResponse\x12b\n" +
-	"\rDeleteFaction\x12'.services.settings.DeleteFactionRequest\x1a(.services.settings.DeleteFactionResponse\x12t\n" +
+	"\fViewAuditLog\x12&.services.settings.ViewAuditLogRequest\x1a'.services.settings.ViewAuditLogResponse\x12t\n" +
 	"\x13ListDiscordChannels\x12-.services.settings.ListDiscordChannelsRequest\x1a..services.settings.ListDiscordChannelsResponse\x12e\n" +
 	"\x0eListUserGuilds\x12(.services.settings.ListUserGuildsRequest\x1a).services.settings.ListUserGuildsResponse\x12X\n" +
 	"\rUploadJobLogo\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse(\x01\x12b\n" +
-	"\rDeleteJobLogo\x12'.services.settings.DeleteJobLogoRequest\x1a(.services.settings.DeleteJobLogoResponse\x12V\n" +
-	"\tGetStatus\x12#.services.settings.GetStatusRequest\x1a$.services.settings.GetStatusResponseBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settingsb\x06proto3"
+	"\rDeleteJobLogo\x12'.services.settings.DeleteJobLogoRequest\x1a(.services.settings.DeleteJobLogoResponseBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settingsb\x06proto3"
 
 var (
 	file_services_settings_settings_proto_rawDescOnce sync.Once
@@ -1954,7 +1355,7 @@ func file_services_settings_settings_proto_rawDescGZIP() []byte {
 	return file_services_settings_settings_proto_rawDescData
 }
 
-var file_services_settings_settings_proto_msgTypes = make([]protoimpl.MessageInfo, 38)
+var file_services_settings_settings_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
 var file_services_settings_settings_proto_goTypes = []any{
 	(*GetJobPropsRequest)(nil),              // 0: services.settings.GetJobPropsRequest
 	(*GetJobPropsResponse)(nil),             // 1: services.settings.GetJobPropsResponse
@@ -1969,123 +1370,92 @@ var file_services_settings_settings_proto_goTypes = []any{
 	(*DeleteRoleRequest)(nil),               // 10: services.settings.DeleteRoleRequest
 	(*DeleteRoleResponse)(nil),              // 11: services.settings.DeleteRoleResponse
 	(*UpdateRolePermsRequest)(nil),          // 12: services.settings.UpdateRolePermsRequest
-	(*PermsUpdate)(nil),                     // 13: services.settings.PermsUpdate
-	(*AttrsUpdate)(nil),                     // 14: services.settings.AttrsUpdate
-	(*UpdateRolePermsResponse)(nil),         // 15: services.settings.UpdateRolePermsResponse
-	(*GetPermissionsRequest)(nil),           // 16: services.settings.GetPermissionsRequest
-	(*GetPermissionsResponse)(nil),          // 17: services.settings.GetPermissionsResponse
-	(*GetEffectivePermissionsRequest)(nil),  // 18: services.settings.GetEffectivePermissionsRequest
-	(*GetEffectivePermissionsResponse)(nil), // 19: services.settings.GetEffectivePermissionsResponse
-	(*ViewAuditLogRequest)(nil),             // 20: services.settings.ViewAuditLogRequest
-	(*ViewAuditLogResponse)(nil),            // 21: services.settings.ViewAuditLogResponse
-	(*GetAllPermissionsRequest)(nil),        // 22: services.settings.GetAllPermissionsRequest
-	(*GetAllPermissionsResponse)(nil),       // 23: services.settings.GetAllPermissionsResponse
-	(*GetJobLimitsRequest)(nil),             // 24: services.settings.GetJobLimitsRequest
-	(*GetJobLimitsResponse)(nil),            // 25: services.settings.GetJobLimitsResponse
-	(*UpdateJobLimitsRequest)(nil),          // 26: services.settings.UpdateJobLimitsRequest
-	(*UpdateJobLimitsResponse)(nil),         // 27: services.settings.UpdateJobLimitsResponse
-	(*DeleteFactionRequest)(nil),            // 28: services.settings.DeleteFactionRequest
-	(*DeleteFactionResponse)(nil),           // 29: services.settings.DeleteFactionResponse
-	(*ListDiscordChannelsRequest)(nil),      // 30: services.settings.ListDiscordChannelsRequest
-	(*ListDiscordChannelsResponse)(nil),     // 31: services.settings.ListDiscordChannelsResponse
-	(*ListUserGuildsRequest)(nil),           // 32: services.settings.ListUserGuildsRequest
-	(*ListUserGuildsResponse)(nil),          // 33: services.settings.ListUserGuildsResponse
-	(*DeleteJobLogoRequest)(nil),            // 34: services.settings.DeleteJobLogoRequest
-	(*DeleteJobLogoResponse)(nil),           // 35: services.settings.DeleteJobLogoResponse
-	(*GetStatusRequest)(nil),                // 36: services.settings.GetStatusRequest
-	(*GetStatusResponse)(nil),               // 37: services.settings.GetStatusResponse
-	(*jobs.JobProps)(nil),                   // 38: resources.jobs.JobProps
-	(*permissions.Role)(nil),                // 39: resources.permissions.Role
-	(*permissions.PermItem)(nil),            // 40: resources.permissions.PermItem
-	(*permissions.RoleAttribute)(nil),       // 41: resources.permissions.RoleAttribute
-	(*permissions.Permission)(nil),          // 42: resources.permissions.Permission
-	(*database.PaginationRequest)(nil),      // 43: resources.common.database.PaginationRequest
-	(*database.Sort)(nil),                   // 44: resources.common.database.Sort
-	(*timestamp.Timestamp)(nil),             // 45: resources.timestamp.Timestamp
-	(audit.EventType)(0),                    // 46: resources.audit.EventType
-	(*database.PaginationResponse)(nil),     // 47: resources.common.database.PaginationResponse
-	(*audit.AuditEntry)(nil),                // 48: resources.audit.AuditEntry
-	(*discord.Channel)(nil),                 // 49: resources.discord.Channel
-	(*discord.Guild)(nil),                   // 50: resources.discord.Guild
-	(*file.UploadFileRequest)(nil),          // 51: resources.file.UploadFileRequest
-	(*file.UploadFileResponse)(nil),         // 52: resources.file.UploadFileResponse
+	(*UpdateRolePermsResponse)(nil),         // 13: services.settings.UpdateRolePermsResponse
+	(*GetPermissionsRequest)(nil),           // 14: services.settings.GetPermissionsRequest
+	(*GetPermissionsResponse)(nil),          // 15: services.settings.GetPermissionsResponse
+	(*GetEffectivePermissionsRequest)(nil),  // 16: services.settings.GetEffectivePermissionsRequest
+	(*GetEffectivePermissionsResponse)(nil), // 17: services.settings.GetEffectivePermissionsResponse
+	(*ViewAuditLogRequest)(nil),             // 18: services.settings.ViewAuditLogRequest
+	(*ViewAuditLogResponse)(nil),            // 19: services.settings.ViewAuditLogResponse
+	(*ListDiscordChannelsRequest)(nil),      // 20: services.settings.ListDiscordChannelsRequest
+	(*ListDiscordChannelsResponse)(nil),     // 21: services.settings.ListDiscordChannelsResponse
+	(*ListUserGuildsRequest)(nil),           // 22: services.settings.ListUserGuildsRequest
+	(*ListUserGuildsResponse)(nil),          // 23: services.settings.ListUserGuildsResponse
+	(*DeleteJobLogoRequest)(nil),            // 24: services.settings.DeleteJobLogoRequest
+	(*DeleteJobLogoResponse)(nil),           // 25: services.settings.DeleteJobLogoResponse
+	(*jobs.JobProps)(nil),                   // 26: resources.jobs.JobProps
+	(*permissions.Role)(nil),                // 27: resources.permissions.Role
+	(*settings.PermsUpdate)(nil),            // 28: resources.settings.PermsUpdate
+	(*settings.AttrsUpdate)(nil),            // 29: resources.settings.AttrsUpdate
+	(*permissions.Permission)(nil),          // 30: resources.permissions.Permission
+	(*permissions.RoleAttribute)(nil),       // 31: resources.permissions.RoleAttribute
+	(*database.PaginationRequest)(nil),      // 32: resources.common.database.PaginationRequest
+	(*database.Sort)(nil),                   // 33: resources.common.database.Sort
+	(*timestamp.Timestamp)(nil),             // 34: resources.timestamp.Timestamp
+	(audit.EventType)(0),                    // 35: resources.audit.EventType
+	(*database.PaginationResponse)(nil),     // 36: resources.common.database.PaginationResponse
+	(*audit.AuditEntry)(nil),                // 37: resources.audit.AuditEntry
+	(*discord.Channel)(nil),                 // 38: resources.discord.Channel
+	(*discord.Guild)(nil),                   // 39: resources.discord.Guild
+	(*file.UploadFileRequest)(nil),          // 40: resources.file.UploadFileRequest
+	(*file.UploadFileResponse)(nil),         // 41: resources.file.UploadFileResponse
 }
 var file_services_settings_settings_proto_depIdxs = []int32{
-	38, // 0: services.settings.GetJobPropsResponse.job_props:type_name -> resources.jobs.JobProps
-	38, // 1: services.settings.SetJobPropsRequest.job_props:type_name -> resources.jobs.JobProps
-	38, // 2: services.settings.SetJobPropsResponse.job_props:type_name -> resources.jobs.JobProps
-	39, // 3: services.settings.GetRolesResponse.roles:type_name -> resources.permissions.Role
-	39, // 4: services.settings.GetRoleResponse.role:type_name -> resources.permissions.Role
-	39, // 5: services.settings.CreateRoleResponse.role:type_name -> resources.permissions.Role
-	13, // 6: services.settings.UpdateRolePermsRequest.perms:type_name -> services.settings.PermsUpdate
-	14, // 7: services.settings.UpdateRolePermsRequest.attrs:type_name -> services.settings.AttrsUpdate
-	40, // 8: services.settings.PermsUpdate.to_update:type_name -> resources.permissions.PermItem
-	40, // 9: services.settings.PermsUpdate.to_remove:type_name -> resources.permissions.PermItem
-	41, // 10: services.settings.AttrsUpdate.to_update:type_name -> resources.permissions.RoleAttribute
-	41, // 11: services.settings.AttrsUpdate.to_remove:type_name -> resources.permissions.RoleAttribute
-	42, // 12: services.settings.GetPermissionsResponse.permissions:type_name -> resources.permissions.Permission
-	41, // 13: services.settings.GetPermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
-	39, // 14: services.settings.GetEffectivePermissionsResponse.role:type_name -> resources.permissions.Role
-	42, // 15: services.settings.GetEffectivePermissionsResponse.permissions:type_name -> resources.permissions.Permission
-	41, // 16: services.settings.GetEffectivePermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
-	43, // 17: services.settings.ViewAuditLogRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	44, // 18: services.settings.ViewAuditLogRequest.sort:type_name -> resources.common.database.Sort
-	45, // 19: services.settings.ViewAuditLogRequest.from:type_name -> resources.timestamp.Timestamp
-	45, // 20: services.settings.ViewAuditLogRequest.to:type_name -> resources.timestamp.Timestamp
-	46, // 21: services.settings.ViewAuditLogRequest.states:type_name -> resources.audit.EventType
-	47, // 22: services.settings.ViewAuditLogResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	48, // 23: services.settings.ViewAuditLogResponse.logs:type_name -> resources.audit.AuditEntry
-	42, // 24: services.settings.GetAllPermissionsResponse.permissions:type_name -> resources.permissions.Permission
-	41, // 25: services.settings.GetAllPermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
-	42, // 26: services.settings.GetJobLimitsResponse.permissions:type_name -> resources.permissions.Permission
-	41, // 27: services.settings.GetJobLimitsResponse.attributes:type_name -> resources.permissions.RoleAttribute
-	13, // 28: services.settings.UpdateJobLimitsRequest.perms:type_name -> services.settings.PermsUpdate
-	14, // 29: services.settings.UpdateJobLimitsRequest.attrs:type_name -> services.settings.AttrsUpdate
-	49, // 30: services.settings.ListDiscordChannelsResponse.channels:type_name -> resources.discord.Channel
-	50, // 31: services.settings.ListUserGuildsResponse.guilds:type_name -> resources.discord.Guild
-	0,  // 32: services.settings.SettingsService.GetJobProps:input_type -> services.settings.GetJobPropsRequest
-	2,  // 33: services.settings.SettingsService.SetJobProps:input_type -> services.settings.SetJobPropsRequest
-	4,  // 34: services.settings.SettingsService.GetRoles:input_type -> services.settings.GetRolesRequest
-	6,  // 35: services.settings.SettingsService.GetRole:input_type -> services.settings.GetRoleRequest
-	8,  // 36: services.settings.SettingsService.CreateRole:input_type -> services.settings.CreateRoleRequest
-	10, // 37: services.settings.SettingsService.DeleteRole:input_type -> services.settings.DeleteRoleRequest
-	12, // 38: services.settings.SettingsService.UpdateRolePerms:input_type -> services.settings.UpdateRolePermsRequest
-	16, // 39: services.settings.SettingsService.GetPermissions:input_type -> services.settings.GetPermissionsRequest
-	18, // 40: services.settings.SettingsService.GetEffectivePermissions:input_type -> services.settings.GetEffectivePermissionsRequest
-	20, // 41: services.settings.SettingsService.ViewAuditLog:input_type -> services.settings.ViewAuditLogRequest
-	22, // 42: services.settings.SettingsService.GetAllPermissions:input_type -> services.settings.GetAllPermissionsRequest
-	24, // 43: services.settings.SettingsService.GetJobLimits:input_type -> services.settings.GetJobLimitsRequest
-	26, // 44: services.settings.SettingsService.UpdateJobLimits:input_type -> services.settings.UpdateJobLimitsRequest
-	28, // 45: services.settings.SettingsService.DeleteFaction:input_type -> services.settings.DeleteFactionRequest
-	30, // 46: services.settings.SettingsService.ListDiscordChannels:input_type -> services.settings.ListDiscordChannelsRequest
-	32, // 47: services.settings.SettingsService.ListUserGuilds:input_type -> services.settings.ListUserGuildsRequest
-	51, // 48: services.settings.SettingsService.UploadJobLogo:input_type -> resources.file.UploadFileRequest
-	34, // 49: services.settings.SettingsService.DeleteJobLogo:input_type -> services.settings.DeleteJobLogoRequest
-	36, // 50: services.settings.SettingsService.GetStatus:input_type -> services.settings.GetStatusRequest
-	1,  // 51: services.settings.SettingsService.GetJobProps:output_type -> services.settings.GetJobPropsResponse
-	3,  // 52: services.settings.SettingsService.SetJobProps:output_type -> services.settings.SetJobPropsResponse
-	5,  // 53: services.settings.SettingsService.GetRoles:output_type -> services.settings.GetRolesResponse
-	7,  // 54: services.settings.SettingsService.GetRole:output_type -> services.settings.GetRoleResponse
-	9,  // 55: services.settings.SettingsService.CreateRole:output_type -> services.settings.CreateRoleResponse
-	11, // 56: services.settings.SettingsService.DeleteRole:output_type -> services.settings.DeleteRoleResponse
-	15, // 57: services.settings.SettingsService.UpdateRolePerms:output_type -> services.settings.UpdateRolePermsResponse
-	17, // 58: services.settings.SettingsService.GetPermissions:output_type -> services.settings.GetPermissionsResponse
-	19, // 59: services.settings.SettingsService.GetEffectivePermissions:output_type -> services.settings.GetEffectivePermissionsResponse
-	21, // 60: services.settings.SettingsService.ViewAuditLog:output_type -> services.settings.ViewAuditLogResponse
-	23, // 61: services.settings.SettingsService.GetAllPermissions:output_type -> services.settings.GetAllPermissionsResponse
-	25, // 62: services.settings.SettingsService.GetJobLimits:output_type -> services.settings.GetJobLimitsResponse
-	27, // 63: services.settings.SettingsService.UpdateJobLimits:output_type -> services.settings.UpdateJobLimitsResponse
-	29, // 64: services.settings.SettingsService.DeleteFaction:output_type -> services.settings.DeleteFactionResponse
-	31, // 65: services.settings.SettingsService.ListDiscordChannels:output_type -> services.settings.ListDiscordChannelsResponse
-	33, // 66: services.settings.SettingsService.ListUserGuilds:output_type -> services.settings.ListUserGuildsResponse
-	52, // 67: services.settings.SettingsService.UploadJobLogo:output_type -> resources.file.UploadFileResponse
-	35, // 68: services.settings.SettingsService.DeleteJobLogo:output_type -> services.settings.DeleteJobLogoResponse
-	37, // 69: services.settings.SettingsService.GetStatus:output_type -> services.settings.GetStatusResponse
-	51, // [51:70] is the sub-list for method output_type
-	32, // [32:51] is the sub-list for method input_type
-	32, // [32:32] is the sub-list for extension type_name
-	32, // [32:32] is the sub-list for extension extendee
-	0,  // [0:32] is the sub-list for field type_name
+	26, // 0: services.settings.GetJobPropsResponse.job_props:type_name -> resources.jobs.JobProps
+	26, // 1: services.settings.SetJobPropsRequest.job_props:type_name -> resources.jobs.JobProps
+	26, // 2: services.settings.SetJobPropsResponse.job_props:type_name -> resources.jobs.JobProps
+	27, // 3: services.settings.GetRolesResponse.roles:type_name -> resources.permissions.Role
+	27, // 4: services.settings.GetRoleResponse.role:type_name -> resources.permissions.Role
+	27, // 5: services.settings.CreateRoleResponse.role:type_name -> resources.permissions.Role
+	28, // 6: services.settings.UpdateRolePermsRequest.perms:type_name -> resources.settings.PermsUpdate
+	29, // 7: services.settings.UpdateRolePermsRequest.attrs:type_name -> resources.settings.AttrsUpdate
+	30, // 8: services.settings.GetPermissionsResponse.permissions:type_name -> resources.permissions.Permission
+	31, // 9: services.settings.GetPermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
+	27, // 10: services.settings.GetEffectivePermissionsResponse.role:type_name -> resources.permissions.Role
+	30, // 11: services.settings.GetEffectivePermissionsResponse.permissions:type_name -> resources.permissions.Permission
+	31, // 12: services.settings.GetEffectivePermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
+	32, // 13: services.settings.ViewAuditLogRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	33, // 14: services.settings.ViewAuditLogRequest.sort:type_name -> resources.common.database.Sort
+	34, // 15: services.settings.ViewAuditLogRequest.from:type_name -> resources.timestamp.Timestamp
+	34, // 16: services.settings.ViewAuditLogRequest.to:type_name -> resources.timestamp.Timestamp
+	35, // 17: services.settings.ViewAuditLogRequest.states:type_name -> resources.audit.EventType
+	36, // 18: services.settings.ViewAuditLogResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	37, // 19: services.settings.ViewAuditLogResponse.logs:type_name -> resources.audit.AuditEntry
+	38, // 20: services.settings.ListDiscordChannelsResponse.channels:type_name -> resources.discord.Channel
+	39, // 21: services.settings.ListUserGuildsResponse.guilds:type_name -> resources.discord.Guild
+	0,  // 22: services.settings.SettingsService.GetJobProps:input_type -> services.settings.GetJobPropsRequest
+	2,  // 23: services.settings.SettingsService.SetJobProps:input_type -> services.settings.SetJobPropsRequest
+	4,  // 24: services.settings.SettingsService.GetRoles:input_type -> services.settings.GetRolesRequest
+	6,  // 25: services.settings.SettingsService.GetRole:input_type -> services.settings.GetRoleRequest
+	8,  // 26: services.settings.SettingsService.CreateRole:input_type -> services.settings.CreateRoleRequest
+	10, // 27: services.settings.SettingsService.DeleteRole:input_type -> services.settings.DeleteRoleRequest
+	12, // 28: services.settings.SettingsService.UpdateRolePerms:input_type -> services.settings.UpdateRolePermsRequest
+	14, // 29: services.settings.SettingsService.GetPermissions:input_type -> services.settings.GetPermissionsRequest
+	16, // 30: services.settings.SettingsService.GetEffectivePermissions:input_type -> services.settings.GetEffectivePermissionsRequest
+	18, // 31: services.settings.SettingsService.ViewAuditLog:input_type -> services.settings.ViewAuditLogRequest
+	20, // 32: services.settings.SettingsService.ListDiscordChannels:input_type -> services.settings.ListDiscordChannelsRequest
+	22, // 33: services.settings.SettingsService.ListUserGuilds:input_type -> services.settings.ListUserGuildsRequest
+	40, // 34: services.settings.SettingsService.UploadJobLogo:input_type -> resources.file.UploadFileRequest
+	24, // 35: services.settings.SettingsService.DeleteJobLogo:input_type -> services.settings.DeleteJobLogoRequest
+	1,  // 36: services.settings.SettingsService.GetJobProps:output_type -> services.settings.GetJobPropsResponse
+	3,  // 37: services.settings.SettingsService.SetJobProps:output_type -> services.settings.SetJobPropsResponse
+	5,  // 38: services.settings.SettingsService.GetRoles:output_type -> services.settings.GetRolesResponse
+	7,  // 39: services.settings.SettingsService.GetRole:output_type -> services.settings.GetRoleResponse
+	9,  // 40: services.settings.SettingsService.CreateRole:output_type -> services.settings.CreateRoleResponse
+	11, // 41: services.settings.SettingsService.DeleteRole:output_type -> services.settings.DeleteRoleResponse
+	13, // 42: services.settings.SettingsService.UpdateRolePerms:output_type -> services.settings.UpdateRolePermsResponse
+	15, // 43: services.settings.SettingsService.GetPermissions:output_type -> services.settings.GetPermissionsResponse
+	17, // 44: services.settings.SettingsService.GetEffectivePermissions:output_type -> services.settings.GetEffectivePermissionsResponse
+	19, // 45: services.settings.SettingsService.ViewAuditLog:output_type -> services.settings.ViewAuditLogResponse
+	21, // 46: services.settings.SettingsService.ListDiscordChannels:output_type -> services.settings.ListDiscordChannelsResponse
+	23, // 47: services.settings.SettingsService.ListUserGuilds:output_type -> services.settings.ListUserGuildsResponse
+	41, // 48: services.settings.SettingsService.UploadJobLogo:output_type -> resources.file.UploadFileResponse
+	25, // 49: services.settings.SettingsService.DeleteJobLogo:output_type -> services.settings.DeleteJobLogoResponse
+	36, // [36:50] is the sub-list for method output_type
+	22, // [22:36] is the sub-list for method input_type
+	22, // [22:22] is the sub-list for extension type_name
+	22, // [22:22] is the sub-list for extension extendee
+	0,  // [0:22] is the sub-list for field type_name
 }
 
 func init() { file_services_settings_settings_proto_init() }
@@ -2095,16 +1465,14 @@ func file_services_settings_settings_proto_init() {
 	}
 	file_services_settings_settings_proto_msgTypes[4].OneofWrappers = []any{}
 	file_services_settings_settings_proto_msgTypes[12].OneofWrappers = []any{}
-	file_services_settings_settings_proto_msgTypes[20].OneofWrappers = []any{}
-	file_services_settings_settings_proto_msgTypes[25].OneofWrappers = []any{}
-	file_services_settings_settings_proto_msgTypes[26].OneofWrappers = []any{}
+	file_services_settings_settings_proto_msgTypes[18].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_settings_settings_proto_rawDesc), len(file_services_settings_settings_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   38,
+			NumMessages:   26,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

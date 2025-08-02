@@ -8,7 +8,7 @@ const props = defineProps<{
 
 const { $grpc } = useNuxtApp();
 
-const { data, error, pending: loading, refresh } = useLazyAsyncData(`jobs-timeclock-stats`, () => getTimeclockStats());
+const { data, error, status, refresh } = useLazyAsyncData(`jobs-timeclock-stats`, () => getTimeclockStats());
 
 async function getTimeclockStats(): Promise<GetTimeclockStatsResponse> {
     try {
@@ -36,7 +36,7 @@ const refreshThrottle = useThrottleFn(async () => {
         :stats="data?.stats"
         :weekly="data?.weekly"
         :failed="!!error"
-        :loading="loading"
+        :loading="isRequestPending(status)"
         @refresh="refreshThrottle"
     />
 </template>

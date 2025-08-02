@@ -19,6 +19,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
+	errorsgrpcauth "github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/errors"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
@@ -191,7 +192,7 @@ func (s *Server) CreateAccount(ctx context.Context, req *pbauth.CreateAccountReq
 func (s *Server) ChangePassword(ctx context.Context, req *pbauth.ChangePasswordRequest) (*pbauth.ChangePasswordResponse, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
-		return nil, errswrap.NewError(err, auth.ErrInvalidToken)
+		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
 	}
 
 	claims, err := s.tm.ParseWithClaims(token)
@@ -263,7 +264,7 @@ func (s *Server) ChangePassword(ctx context.Context, req *pbauth.ChangePasswordR
 func (s *Server) ChangeUsername(ctx context.Context, req *pbauth.ChangeUsernameRequest) (*pbauth.ChangeUsernameResponse, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
-		return nil, errswrap.NewError(err, auth.ErrInvalidToken)
+		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
 	}
 
 	claims, err := s.tm.ParseWithClaims(token)
@@ -372,7 +373,7 @@ func (s *Server) ForgotPassword(ctx context.Context, req *pbauth.ForgotPasswordR
 func (s *Server) GetCharacters(ctx context.Context, req *pbauth.GetCharactersRequest) (*pbauth.GetCharactersResponse, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
-		return nil, errswrap.NewError(err, auth.ErrInvalidToken)
+		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
 	}
 
 	claims, err := s.tm.ParseWithClaims(token)
@@ -548,12 +549,12 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *pbauth.ChooseCharacte
 
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
-		return nil, errswrap.NewError(err, auth.ErrInvalidToken)
+		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
 	}
 
 	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
-		return nil, errswrap.NewError(err, auth.ErrInvalidToken)
+		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
 	}
 
 	// Load account data for token creation
@@ -575,12 +576,17 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *pbauth.ChooseCharacte
 
 	isSuperuser := slices.Contains(s.superuserGroups, userGroup) || slices.Contains(s.superuserUsers, claims.Subject)
 
+	if err := s.ui.RefreshUserInfo(ctx, char.UserId, claims.AccID); err != nil {
+		s.logger.Error("failed to refresh user info", zap.Error(err), zap.Int32("user_id", char.UserId))
+		return nil, errswrap.NewError(err, errorsauth.ErrUnableToChooseChar)
+	}
+
 	// If char lock is active, make sure that the user is choosing the active char
 	if !isSuperuser &&
 		s.appCfg.Get().Auth.LastCharLock &&
 		account.LastChar != nil &&
 		*account.LastChar != req.CharId {
-		return nil, errorsauth.ErrCharLock
+		return nil, errorsgrpcauth.ErrCharLock
 	}
 
 	// Centralized superuser/override logic
@@ -658,12 +664,12 @@ func (s *Server) listUserPerms(ctx context.Context, account *model.FivenetAccoun
 func (s *Server) SetSuperuserMode(ctx context.Context, req *pbauth.SetSuperuserModeRequest) (*pbauth.SetSuperuserModeResponse, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
-		return nil, auth.ErrInvalidToken
+		return nil, errorsgrpcauth.ErrInvalidToken
 	}
 
 	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
-		return nil, errswrap.NewError(err, auth.ErrInvalidToken)
+		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
 	}
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)

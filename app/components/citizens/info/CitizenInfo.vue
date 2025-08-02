@@ -59,12 +59,7 @@ const items: TabItem[] = [
     },
 ].flatMap((item) => (can(item.permission).value ? [item] : []));
 
-const {
-    data: user,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(`citizen-${props.userId}`, () => getUser(props.userId));
+const { data: user, status, refresh, error } = useLazyAsyncData(`citizen-${props.userId}`, () => getUser(props.userId));
 
 async function getUser(userId: number): Promise<User> {
     try {
@@ -150,7 +145,12 @@ const isOpen = ref(false);
                 <template #right>
                     <PartialsBackButton fallback-to="/citizens" />
 
-                    <UButton icon="i-mdi-refresh" :label="$t('common.refresh')" :loading="loading" @click="refresh" />
+                    <UButton
+                        icon="i-mdi-refresh"
+                        :label="$t('common.refresh')"
+                        :loading="isRequestPending(status)"
+                        @click="refresh"
+                    />
 
                     <UButtonGroup class="inline-flex lg:hidden">
                         <IDCopyBadge
@@ -166,7 +166,7 @@ const isOpen = ref(false);
             </UDashboardNavbar>
 
             <UDashboardPanelContent>
-                <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.citizen', 1)])" />
+                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.citizen', 1)])" />
                 <DataErrorBlock
                     v-else-if="error"
                     :title="$t('common.unable_to_load', [$t('common.citizen', 1)])"

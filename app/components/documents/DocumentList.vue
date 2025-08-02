@@ -11,7 +11,7 @@ import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { useSettingsStore } from '~/stores/settings';
-import type { ToggleItem } from '~/typings';
+import type { ToggleItem } from '~/utils/types';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
@@ -64,12 +64,10 @@ const query = useSearchForm('documents', schema);
 
 const usersLoading = ref(false);
 
-const {
-    data,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(`documents-${query.sort.column}:${query.sort.direction}-${query.page}`, () => listDocuments());
+const { data, status, refresh, error } = useLazyAsyncData(
+    `documents-${query.sort.column}:${query.sort.direction}-${query.page}`,
+    () => listDocuments(),
+);
 
 async function listDocuments(): Promise<ListDocumentsResponse> {
     const req: ListDocumentsRequest = {
@@ -446,13 +444,13 @@ defineShortcuts({
         />
         <DataNoDataBlock v-else-if="data?.documents.length === 0" :type="$t('common.document', 2)" />
 
-        <div v-else-if="data?.documents || loading" class="relative overflow-x-auto">
+        <div v-else-if="data?.documents || isRequestPending(status)" class="relative overflow-x-auto">
             <ul
                 class="my-1 flex flex-initial flex-col divide-y divide-gray-100 dark:divide-gray-800"
                 :class="design.documents.listStyle === 'double' ? '2xl:grid 2xl:grid-cols-2' : ''"
                 role="list"
             >
-                <template v-if="loading">
+                <template v-if="isRequestPending(status)">
                     <li v-for="idx in 8" :key="idx" class="flex-initial">
                         <div class="m-2">
                             <div class="flex flex-row gap-2 truncate">
@@ -512,5 +510,5 @@ defineShortcuts({
         </div>
     </UDashboardPanelContent>
 
-    <Pagination v-model="query.page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+    <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
 </template>

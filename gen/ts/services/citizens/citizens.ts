@@ -590,7 +590,7 @@ class SetUserPropsRequest$Type extends MessageType<SetUserPropsRequest> {
     constructor() {
         super("services.citizens.SetUserPropsRequest", [
             { no: 1, name: "props", kind: "message", T: () => UserProps, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_UNPOPULATED", string: { minLen: "3", maxLen: "255" } } } }
+            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "3", maxLen: "255" } } } }
         ]);
     }
     create(value?: PartialMessage<SetUserPropsRequest>): SetUserPropsRequest {
@@ -766,7 +766,7 @@ class DeleteMugshotRequest$Type extends MessageType<DeleteMugshotRequest> {
     constructor() {
         super("services.citizens.DeleteMugshotRequest", [
             { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
-            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_UNPOPULATED", string: { minLen: "3", maxLen: "255" } } } }
+            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "3", maxLen: "255" } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteMugshotRequest>): DeleteMugshotRequest {

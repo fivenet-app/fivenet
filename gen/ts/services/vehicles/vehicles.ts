@@ -291,7 +291,7 @@ class SetVehiclePropsResponse$Type extends MessageType<SetVehiclePropsResponse> 
     constructor() {
         super("services.vehicles.SetVehiclePropsResponse", [
             { no: 1, name: "props", kind: "message", T: () => VehicleProps },
-            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_UNPOPULATED", string: { minLen: "3", maxLen: "255" } } } }
+            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "3", maxLen: "255" } } } }
         ]);
     }
     create(value?: PartialMessage<SetVehiclePropsResponse>): SetVehiclePropsResponse {

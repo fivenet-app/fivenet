@@ -3,7 +3,7 @@ import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import type { ClassProp } from '~/typings';
+import type { ClassProp } from '~/utils/types';
 import type { Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import DocumentCategoryBadge from './DocumentCategoryBadge.vue';
 
@@ -42,14 +42,13 @@ const { popover } = useAppConfig();
 
 const documentId = computed(() => props.documentId ?? props.document?.id ?? 0);
 
-const {
-    data,
-    refresh,
-    pending: loading,
-    error,
-} = useLazyAsyncData(`document-info-${documentId.value}`, () => getDocument(documentId.value), {
-    immediate: !props.loadOnOpen,
-});
+const { data, refresh, status, error } = useLazyAsyncData(
+    `document-info-${documentId.value}`,
+    () => getDocument(documentId.value),
+    {
+        immediate: !props.loadOnOpen,
+    },
+);
 
 async function getDocument(id: number): Promise<Document> {
     const call = $grpc.documents.documents.getDocument({
@@ -84,7 +83,7 @@ watchOnce(opened, async () => {
 
 <template>
     <template v-if="!document && !documentId">
-        <slot name="title" :document="document" :loading="loading">
+        <slot name="title" :document="document" :loading="isRequestPending(status)">
             <span class="inline-flex items-center">
                 {{ $t('common.na') }}
             </span>
@@ -100,8 +99,8 @@ watchOnce(opened, async () => {
             v-bind="$attrs"
             @click="opened = true"
         >
-            <slot name="title" :document="document" :loading="loading">
-                <template v-if="!document && loading">
+            <slot name="title" :document="document" :loading="isRequestPending(status)">
+                <template v-if="!document && isRequestPending(status)">
                     <IDCopyBadge v-if="showId" :id="documentId" prefix="DOC" hide-icon :disable-tooltip="disableTooltip" />
                     <USkeleton v-else class="h-8 w-full min-w-[125px]" />
                 </template>
@@ -146,7 +145,10 @@ watchOnce(opened, async () => {
                     />
                 </div>
 
-                <div v-else-if="loading && !document" class="flex flex-col gap-2 text-gray-900 dark:text-white">
+                <div
+                    v-else-if="isRequestPending(status) && !document"
+                    class="flex flex-col gap-2 text-gray-900 dark:text-white"
+                >
                     <USkeleton class="h-8 w-[250px]" />
 
                     <div class="flex flex-row items-center gap-2">

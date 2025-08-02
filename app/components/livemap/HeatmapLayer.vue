@@ -16,7 +16,7 @@ const { $grpc } = useNuxtApp();
 
 const {
     data: heatmap,
-    pending: loading,
+    status,
     refresh,
 } = useLazyAsyncData(`centrum-heatmap`, () => getDispatchHeatmap(), { immediate: props.show });
 
@@ -39,7 +39,7 @@ const heat = inject<Ref<L.HeatLayer | undefined>>('heat');
 async function handleProps(show: boolean): Promise<void> {
     if (show) {
         // If we have no heatmap data, or it's pending, refresh it
-        if (!heatmap.value || loading.value) {
+        if (!heatmap.value || isRequestPending(status.value)) {
             await refresh();
         }
 

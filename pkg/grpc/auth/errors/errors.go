@@ -1,4 +1,4 @@
-package auth
+package errorsgrpcauth
 
 import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
@@ -12,5 +12,5 @@ var (
 	ErrUserNoPerms      = common.NewI18nErr(codes.PermissionDenied, &common.I18NItem{Key: "errors.pkg-auth.ErrUserNoPerms"}, nil)
 	ErrNoUserInfo       = common.NewI18nErr(codes.Unauthenticated, &common.I18NItem{Key: "errors.pkg-auth.ErrNoUserInfo"}, nil)
 	ErrPermissionDenied = common.NewI18nErr(codes.PermissionDenied, &common.I18NItem{Key: "errors.pkg-auth.ErrPermissionDenied"}, nil)
-	ErrCharLock         = common.NewI18nErr(codes.PermissionDenied, &common.I18NItem{Key: "errors.AuthService.ErrCharLock.content"}, &common.I18NItem{Key: "errors.AuthService.ErrCharLock.title"}) // Copied from the auth service
+	ErrCharLock         = common.NewI18nErr(codes.PermissionDenied, &common.I18NItem{Key: "errors.AuthService.ErrCharLock.content"}, &common.I18NItem{Key: "errors.AuthService.ErrCharLock.title"})
 )

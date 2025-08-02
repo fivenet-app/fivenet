@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package services.settings;
+
+import "buf/validate/validate.proto";
+import "resources/permissions/attributes.proto";
+import "resources/permissions/permissions.proto";
+import "resources/settings/perms.proto";
+import "resources/timestamp/timestamp.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settings";
+
+message GetAllPermissionsRequest {
+  string job = 1 [(buf.validate.field).string.max_len = 20];
+}
+
+message GetAllPermissionsResponse {
+  repeated resources.permissions.Permission permissions = 1;
+  repeated resources.permissions.RoleAttribute attributes = 2;
+}
+
+message GetJobLimitsRequest {
+  string job = 1 [(buf.validate.field).string.max_len = 20];
+}
+
+message GetJobLimitsResponse {
+  string job = 1 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 2;
+  repeated resources.permissions.Permission permissions = 3;
+  repeated resources.permissions.RoleAttribute attributes = 4;
+}
+
+message UpdateJobLimitsRequest {
+  string job = 1 [(buf.validate.field).string.max_len = 20];
+  optional resources.settings.PermsUpdate perms = 2;
+  optional resources.settings.AttrsUpdate attrs = 3;
+}
+
+message UpdateJobLimitsResponse {}
+
+message DeleteFactionRequest {
+  string job = 1 [(buf.validate.field).string.max_len = 20];
+}
+
+message DeleteFactionResponse {}
+
+message GetStatusRequest {}
+
+message GetStatusResponse {
+  Database database = 1;
+  Nats nats = 2;
+  DBSyncStatus dbsync = 3;
+}
+
+message Nats {
+  string version = 1 [(buf.validate.field).string.max_len = 32];
+  bool connected = 2;
+}
+
+message Database {
+  string version = 1 [(buf.validate.field).string.max_len = 32];
+  bool connected = 2;
+  uint64 migration_version = 3 [(buf.validate.field).uint64.gt = 0];
+  bool migration_dirty = 4;
+  string db_charset = 5 [(buf.validate.field).string.max_len = 32];
+  string db_collation = 6 [(buf.validate.field).string.max_len = 32];
+  bool tables_ok = 7;
+}
+
+message DBSyncStatus {
+  bool enabled = 1;
+  optional resources.timestamp.Timestamp last_synced_data = 2;
+  optional resources.timestamp.Timestamp last_synced_activity = 3;
+}
+
+service SystemService {
+  // @perm: Name=Superuser
+  rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
+
+  // @perm: Name=Superuser
+  rpc GetAllPermissions(GetAllPermissionsRequest) returns (GetAllPermissionsResponse);
+  // @perm: Name=Superuser
+  rpc GetJobLimits(GetJobLimitsRequest) returns (GetJobLimitsResponse);
+  // @perm: Name=Superuser
+  rpc UpdateJobLimits(UpdateJobLimitsRequest) returns (UpdateJobLimitsResponse);
+  // @perm: Name=Superuser
+  rpc DeleteFaction(DeleteFactionRequest) returns (DeleteFactionResponse);
+}

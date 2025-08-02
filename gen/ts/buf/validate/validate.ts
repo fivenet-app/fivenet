@@ -17,18 +17,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
-import type { IBinaryWriter } from "@protobuf-ts/runtime";
-import { WireType } from "@protobuf-ts/runtime";
-import type { BinaryReadOptions } from "@protobuf-ts/runtime";
-import type { IBinaryReader } from "@protobuf-ts/runtime";
-import { UnknownFieldHandler } from "@protobuf-ts/runtime";
-import type { PartialMessage } from "@protobuf-ts/runtime";
-import { reflectionMergePartial } from "@protobuf-ts/runtime";
-import { MessageType } from "@protobuf-ts/runtime";
-import { FieldDescriptorProto_Type } from "../../google/protobuf/descriptor";
-import { Timestamp } from "../../google/protobuf/timestamp";
-import { Duration } from "../../google/protobuf/duration";
+import type { BinaryReadOptions, BinaryWriteOptions, IBinaryReader, IBinaryWriter, PartialMessage } from '@protobuf-ts/runtime';
+import { MessageType, reflectionMergePartial, UnknownFieldHandler, WireType } from '@protobuf-ts/runtime';
+import { FieldDescriptorProto_Type } from '../../google/protobuf/descriptor';
+import { Duration } from '../../google/protobuf/duration';
+import { Timestamp } from '../../google/protobuf/timestamp';
 /**
  * `Rule` represents a validation rule written in the Common Expression
  * Language (CEL) syntax. Each Rule includes a unique identifier, an
@@ -259,7 +252,7 @@ export interface FieldRules {
      *   // The uri rule only applies if the field is populated and not an empty
      *   // string.
      *   optional string url = 1 [
-     *     (buf.validate.field).ignore = IGNORE_IF_DEFAULT_VALUE,
+     *     (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
      *     (buf.validate.field).string.uri = true,
      *   ];
      * }
@@ -271,141 +264,163 @@ export interface FieldRules {
     /**
      * @generated from protobuf oneof: type
      */
-    type: {
-        oneofKind: "float";
-        /**
-         * Scalar Field Types
-         *
-         * @generated from protobuf field: buf.validate.FloatRules float = 1
-         */
-        float: FloatRules;
-    } | {
-        oneofKind: "double";
-        /**
-         * @generated from protobuf field: buf.validate.DoubleRules double = 2
-         */
-        double: DoubleRules;
-    } | {
-        oneofKind: "int32";
-        /**
-         * @generated from protobuf field: buf.validate.Int32Rules int32 = 3
-         */
-        int32: Int32Rules;
-    } | {
-        oneofKind: "int64";
-        /**
-         * @generated from protobuf field: buf.validate.Int64Rules int64 = 4
-         */
-        int64: Int64Rules;
-    } | {
-        oneofKind: "uint32";
-        /**
-         * @generated from protobuf field: buf.validate.UInt32Rules uint32 = 5
-         */
-        uint32: UInt32Rules;
-    } | {
-        oneofKind: "uint64";
-        /**
-         * @generated from protobuf field: buf.validate.UInt64Rules uint64 = 6
-         */
-        uint64: UInt64Rules;
-    } | {
-        oneofKind: "sint32";
-        /**
-         * @generated from protobuf field: buf.validate.SInt32Rules sint32 = 7
-         */
-        sint32: SInt32Rules;
-    } | {
-        oneofKind: "sint64";
-        /**
-         * @generated from protobuf field: buf.validate.SInt64Rules sint64 = 8
-         */
-        sint64: SInt64Rules;
-    } | {
-        oneofKind: "fixed32";
-        /**
-         * @generated from protobuf field: buf.validate.Fixed32Rules fixed32 = 9
-         */
-        fixed32: Fixed32Rules;
-    } | {
-        oneofKind: "fixed64";
-        /**
-         * @generated from protobuf field: buf.validate.Fixed64Rules fixed64 = 10
-         */
-        fixed64: Fixed64Rules;
-    } | {
-        oneofKind: "sfixed32";
-        /**
-         * @generated from protobuf field: buf.validate.SFixed32Rules sfixed32 = 11
-         */
-        sfixed32: SFixed32Rules;
-    } | {
-        oneofKind: "sfixed64";
-        /**
-         * @generated from protobuf field: buf.validate.SFixed64Rules sfixed64 = 12
-         */
-        sfixed64: SFixed64Rules;
-    } | {
-        oneofKind: "bool";
-        /**
-         * @generated from protobuf field: buf.validate.BoolRules bool = 13
-         */
-        bool: BoolRules;
-    } | {
-        oneofKind: "string";
-        /**
-         * @generated from protobuf field: buf.validate.StringRules string = 14
-         */
-        string: StringRules;
-    } | {
-        oneofKind: "bytes";
-        /**
-         * @generated from protobuf field: buf.validate.BytesRules bytes = 15
-         */
-        bytes: BytesRules;
-    } | {
-        oneofKind: "enum";
-        /**
-         * Complex Field Types
-         *
-         * @generated from protobuf field: buf.validate.EnumRules enum = 16
-         */
-        enum: EnumRules;
-    } | {
-        oneofKind: "repeated";
-        /**
-         * @generated from protobuf field: buf.validate.RepeatedRules repeated = 18
-         */
-        repeated: RepeatedRules;
-    } | {
-        oneofKind: "map";
-        /**
-         * @generated from protobuf field: buf.validate.MapRules map = 19
-         */
-        map: MapRules;
-    } | {
-        oneofKind: "any";
-        /**
-         * Well-Known Field Types
-         *
-         * @generated from protobuf field: buf.validate.AnyRules any = 20
-         */
-        any: AnyRules;
-    } | {
-        oneofKind: "duration";
-        /**
-         * @generated from protobuf field: buf.validate.DurationRules duration = 21
-         */
-        duration: DurationRules;
-    } | {
-        oneofKind: "timestamp";
-        /**
-         * @generated from protobuf field: buf.validate.TimestampRules timestamp = 22
-         */
-        timestamp: TimestampRules;
-    } | {
-        oneofKind: undefined;
-    };
+    type:
+        | {
+              oneofKind: 'float';
+              /**
+               * Scalar Field Types
+               *
+               * @generated from protobuf field: buf.validate.FloatRules float = 1
+               */
+              float: FloatRules;
+          }
+        | {
+              oneofKind: 'double';
+              /**
+               * @generated from protobuf field: buf.validate.DoubleRules double = 2
+               */
+              double: DoubleRules;
+          }
+        | {
+              oneofKind: 'int32';
+              /**
+               * @generated from protobuf field: buf.validate.Int32Rules int32 = 3
+               */
+              int32: Int32Rules;
+          }
+        | {
+              oneofKind: 'int64';
+              /**
+               * @generated from protobuf field: buf.validate.Int64Rules int64 = 4
+               */
+              int64: Int64Rules;
+          }
+        | {
+              oneofKind: 'uint32';
+              /**
+               * @generated from protobuf field: buf.validate.UInt32Rules uint32 = 5
+               */
+              uint32: UInt32Rules;
+          }
+        | {
+              oneofKind: 'uint64';
+              /**
+               * @generated from protobuf field: buf.validate.UInt64Rules uint64 = 6
+               */
+              uint64: UInt64Rules;
+          }
+        | {
+              oneofKind: 'sint32';
+              /**
+               * @generated from protobuf field: buf.validate.SInt32Rules sint32 = 7
+               */
+              sint32: SInt32Rules;
+          }
+        | {
+              oneofKind: 'sint64';
+              /**
+               * @generated from protobuf field: buf.validate.SInt64Rules sint64 = 8
+               */
+              sint64: SInt64Rules;
+          }
+        | {
+              oneofKind: 'fixed32';
+              /**
+               * @generated from protobuf field: buf.validate.Fixed32Rules fixed32 = 9
+               */
+              fixed32: Fixed32Rules;
+          }
+        | {
+              oneofKind: 'fixed64';
+              /**
+               * @generated from protobuf field: buf.validate.Fixed64Rules fixed64 = 10
+               */
+              fixed64: Fixed64Rules;
+          }
+        | {
+              oneofKind: 'sfixed32';
+              /**
+               * @generated from protobuf field: buf.validate.SFixed32Rules sfixed32 = 11
+               */
+              sfixed32: SFixed32Rules;
+          }
+        | {
+              oneofKind: 'sfixed64';
+              /**
+               * @generated from protobuf field: buf.validate.SFixed64Rules sfixed64 = 12
+               */
+              sfixed64: SFixed64Rules;
+          }
+        | {
+              oneofKind: 'bool';
+              /**
+               * @generated from protobuf field: buf.validate.BoolRules bool = 13
+               */
+              bool: BoolRules;
+          }
+        | {
+              oneofKind: 'string';
+              /**
+               * @generated from protobuf field: buf.validate.StringRules string = 14
+               */
+              string: StringRules;
+          }
+        | {
+              oneofKind: 'bytes';
+              /**
+               * @generated from protobuf field: buf.validate.BytesRules bytes = 15
+               */
+              bytes: BytesRules;
+          }
+        | {
+              oneofKind: 'enum';
+              /**
+               * Complex Field Types
+               *
+               * @generated from protobuf field: buf.validate.EnumRules enum = 16
+               */
+              enum: EnumRules;
+          }
+        | {
+              oneofKind: 'repeated';
+              /**
+               * @generated from protobuf field: buf.validate.RepeatedRules repeated = 18
+               */
+              repeated: RepeatedRules;
+          }
+        | {
+              oneofKind: 'map';
+              /**
+               * @generated from protobuf field: buf.validate.MapRules map = 19
+               */
+              map: MapRules;
+          }
+        | {
+              oneofKind: 'any';
+              /**
+               * Well-Known Field Types
+               *
+               * @generated from protobuf field: buf.validate.AnyRules any = 20
+               */
+              any: AnyRules;
+          }
+        | {
+              oneofKind: 'duration';
+              /**
+               * @generated from protobuf field: buf.validate.DurationRules duration = 21
+               */
+              duration: DurationRules;
+          }
+        | {
+              oneofKind: 'timestamp';
+              /**
+               * @generated from protobuf field: buf.validate.TimestampRules timestamp = 22
+               */
+              timestamp: TimestampRules;
+          }
+        | {
+              oneofKind: undefined;
+          };
 }
 /**
  * PredefinedRules are custom rules that can be re-used with
@@ -458,99 +473,105 @@ export interface FloatRules {
     /**
      * @generated from protobuf oneof: less_than
      */
-    lessThan: {
-        oneofKind: "lt";
-        /**
-         * `lt` requires the field value to be less than the specified value (field <
-         * value). If the field value is equal to or greater than the specified value,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MyFloat {
-         *   // value must be less than 10.0
-         *   float value = 1 [(buf.validate.field).float.lt = 10.0];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: float lt = 2
-         */
-        lt: number;
-    } | {
-        oneofKind: "lte";
-        /**
-         * `lte` requires the field value to be less than or equal to the specified
-         * value (field <= value). If the field value is greater than the specified
-         * value, an error message is generated.
-         *
-         * ```proto
-         * message MyFloat {
-         *   // value must be less than or equal to 10.0
-         *   float value = 1 [(buf.validate.field).float.lte = 10.0];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: float lte = 3
-         */
-        lte: number;
-    } | {
-        oneofKind: undefined;
-    };
+    lessThan:
+        | {
+              oneofKind: 'lt';
+              /**
+               * `lt` requires the field value to be less than the specified value (field <
+               * value). If the field value is equal to or greater than the specified value,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MyFloat {
+               *   // value must be less than 10.0
+               *   float value = 1 [(buf.validate.field).float.lt = 10.0];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: float lt = 2
+               */
+              lt: number;
+          }
+        | {
+              oneofKind: 'lte';
+              /**
+               * `lte` requires the field value to be less than or equal to the specified
+               * value (field <= value). If the field value is greater than the specified
+               * value, an error message is generated.
+               *
+               * ```proto
+               * message MyFloat {
+               *   // value must be less than or equal to 10.0
+               *   float value = 1 [(buf.validate.field).float.lte = 10.0];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: float lte = 3
+               */
+              lte: number;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * @generated from protobuf oneof: greater_than
      */
-    greaterThan: {
-        oneofKind: "gt";
-        /**
-         * `gt` requires the field value to be greater than the specified value
-         * (exclusive). If the value of `gt` is larger than a specified `lt` or
-         * `lte`, the range is reversed, and the field value must be outside the
-         * specified range. If the field value doesn't meet the required conditions,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MyFloat {
-         *   // value must be greater than 5.0 [float.gt]
-         *   float value = 1 [(buf.validate.field).float.gt = 5.0];
-         *
-         *   // value must be greater than 5 and less than 10.0 [float.gt_lt]
-         *   float other_value = 2 [(buf.validate.field).float = { gt: 5.0, lt: 10.0 }];
-         *
-         *   // value must be greater than 10 or less than 5.0 [float.gt_lt_exclusive]
-         *   float another_value = 3 [(buf.validate.field).float = { gt: 10.0, lt: 5.0 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: float gt = 4
-         */
-        gt: number;
-    } | {
-        oneofKind: "gte";
-        /**
-         * `gte` requires the field value to be greater than or equal to the specified
-         * value (exclusive). If the value of `gte` is larger than a specified `lt`
-         * or `lte`, the range is reversed, and the field value must be outside the
-         * specified range. If the field value doesn't meet the required conditions,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MyFloat {
-         *   // value must be greater than or equal to 5.0 [float.gte]
-         *   float value = 1 [(buf.validate.field).float.gte = 5.0];
-         *
-         *   // value must be greater than or equal to 5.0 and less than 10.0 [float.gte_lt]
-         *   float other_value = 2 [(buf.validate.field).float = { gte: 5.0, lt: 10.0 }];
-         *
-         *   // value must be greater than or equal to 10.0 or less than 5.0 [float.gte_lt_exclusive]
-         *   float another_value = 3 [(buf.validate.field).float = { gte: 10.0, lt: 5.0 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: float gte = 5
-         */
-        gte: number;
-    } | {
-        oneofKind: undefined;
-    };
+    greaterThan:
+        | {
+              oneofKind: 'gt';
+              /**
+               * `gt` requires the field value to be greater than the specified value
+               * (exclusive). If the value of `gt` is larger than a specified `lt` or
+               * `lte`, the range is reversed, and the field value must be outside the
+               * specified range. If the field value doesn't meet the required conditions,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MyFloat {
+               *   // value must be greater than 5.0 [float.gt]
+               *   float value = 1 [(buf.validate.field).float.gt = 5.0];
+               *
+               *   // value must be greater than 5 and less than 10.0 [float.gt_lt]
+               *   float other_value = 2 [(buf.validate.field).float = { gt: 5.0, lt: 10.0 }];
+               *
+               *   // value must be greater than 10 or less than 5.0 [float.gt_lt_exclusive]
+               *   float another_value = 3 [(buf.validate.field).float = { gt: 10.0, lt: 5.0 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: float gt = 4
+               */
+              gt: number;
+          }
+        | {
+              oneofKind: 'gte';
+              /**
+               * `gte` requires the field value to be greater than or equal to the specified
+               * value (exclusive). If the value of `gte` is larger than a specified `lt`
+               * or `lte`, the range is reversed, and the field value must be outside the
+               * specified range. If the field value doesn't meet the required conditions,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MyFloat {
+               *   // value must be greater than or equal to 5.0 [float.gte]
+               *   float value = 1 [(buf.validate.field).float.gte = 5.0];
+               *
+               *   // value must be greater than or equal to 5.0 and less than 10.0 [float.gte_lt]
+               *   float other_value = 2 [(buf.validate.field).float = { gte: 5.0, lt: 10.0 }];
+               *
+               *   // value must be greater than or equal to 10.0 or less than 5.0 [float.gte_lt_exclusive]
+               *   float another_value = 3 [(buf.validate.field).float = { gte: 10.0, lt: 5.0 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: float gte = 5
+               */
+              gte: number;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * `in` requires the field value to be equal to one of the specified values.
      * If the field value isn't one of the specified values, an error message
@@ -630,99 +651,105 @@ export interface DoubleRules {
     /**
      * @generated from protobuf oneof: less_than
      */
-    lessThan: {
-        oneofKind: "lt";
-        /**
-         * `lt` requires the field value to be less than the specified value (field <
-         * value). If the field value is equal to or greater than the specified
-         * value, an error message is generated.
-         *
-         * ```proto
-         * message MyDouble {
-         *   // value must be less than 10.0
-         *   double value = 1 [(buf.validate.field).double.lt = 10.0];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: double lt = 2
-         */
-        lt: number;
-    } | {
-        oneofKind: "lte";
-        /**
-         * `lte` requires the field value to be less than or equal to the specified value
-         * (field <= value). If the field value is greater than the specified value,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MyDouble {
-         *   // value must be less than or equal to 10.0
-         *   double value = 1 [(buf.validate.field).double.lte = 10.0];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: double lte = 3
-         */
-        lte: number;
-    } | {
-        oneofKind: undefined;
-    };
+    lessThan:
+        | {
+              oneofKind: 'lt';
+              /**
+               * `lt` requires the field value to be less than the specified value (field <
+               * value). If the field value is equal to or greater than the specified
+               * value, an error message is generated.
+               *
+               * ```proto
+               * message MyDouble {
+               *   // value must be less than 10.0
+               *   double value = 1 [(buf.validate.field).double.lt = 10.0];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: double lt = 2
+               */
+              lt: number;
+          }
+        | {
+              oneofKind: 'lte';
+              /**
+               * `lte` requires the field value to be less than or equal to the specified value
+               * (field <= value). If the field value is greater than the specified value,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MyDouble {
+               *   // value must be less than or equal to 10.0
+               *   double value = 1 [(buf.validate.field).double.lte = 10.0];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: double lte = 3
+               */
+              lte: number;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * @generated from protobuf oneof: greater_than
      */
-    greaterThan: {
-        oneofKind: "gt";
-        /**
-         * `gt` requires the field value to be greater than the specified value
-         * (exclusive). If the value of `gt` is larger than a specified `lt` or `lte`,
-         * the range is reversed, and the field value must be outside the specified
-         * range. If the field value doesn't meet the required conditions, an error
-         * message is generated.
-         *
-         * ```proto
-         * message MyDouble {
-         *   // value must be greater than 5.0 [double.gt]
-         *   double value = 1 [(buf.validate.field).double.gt = 5.0];
-         *
-         *   // value must be greater than 5 and less than 10.0 [double.gt_lt]
-         *   double other_value = 2 [(buf.validate.field).double = { gt: 5.0, lt: 10.0 }];
-         *
-         *   // value must be greater than 10 or less than 5.0 [double.gt_lt_exclusive]
-         *   double another_value = 3 [(buf.validate.field).double = { gt: 10.0, lt: 5.0 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: double gt = 4
-         */
-        gt: number;
-    } | {
-        oneofKind: "gte";
-        /**
-         * `gte` requires the field value to be greater than or equal to the specified
-         * value (exclusive). If the value of `gte` is larger than a specified `lt` or
-         * `lte`, the range is reversed, and the field value must be outside the
-         * specified range. If the field value doesn't meet the required conditions,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MyDouble {
-         *   // value must be greater than or equal to 5.0 [double.gte]
-         *   double value = 1 [(buf.validate.field).double.gte = 5.0];
-         *
-         *   // value must be greater than or equal to 5.0 and less than 10.0 [double.gte_lt]
-         *   double other_value = 2 [(buf.validate.field).double = { gte: 5.0, lt: 10.0 }];
-         *
-         *   // value must be greater than or equal to 10.0 or less than 5.0 [double.gte_lt_exclusive]
-         *   double another_value = 3 [(buf.validate.field).double = { gte: 10.0, lt: 5.0 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: double gte = 5
-         */
-        gte: number;
-    } | {
-        oneofKind: undefined;
-    };
+    greaterThan:
+        | {
+              oneofKind: 'gt';
+              /**
+               * `gt` requires the field value to be greater than the specified value
+               * (exclusive). If the value of `gt` is larger than a specified `lt` or `lte`,
+               * the range is reversed, and the field value must be outside the specified
+               * range. If the field value doesn't meet the required conditions, an error
+               * message is generated.
+               *
+               * ```proto
+               * message MyDouble {
+               *   // value must be greater than 5.0 [double.gt]
+               *   double value = 1 [(buf.validate.field).double.gt = 5.0];
+               *
+               *   // value must be greater than 5 and less than 10.0 [double.gt_lt]
+               *   double other_value = 2 [(buf.validate.field).double = { gt: 5.0, lt: 10.0 }];
+               *
+               *   // value must be greater than 10 or less than 5.0 [double.gt_lt_exclusive]
+               *   double another_value = 3 [(buf.validate.field).double = { gt: 10.0, lt: 5.0 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: double gt = 4
+               */
+              gt: number;
+          }
+        | {
+              oneofKind: 'gte';
+              /**
+               * `gte` requires the field value to be greater than or equal to the specified
+               * value (exclusive). If the value of `gte` is larger than a specified `lt` or
+               * `lte`, the range is reversed, and the field value must be outside the
+               * specified range. If the field value doesn't meet the required conditions,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MyDouble {
+               *   // value must be greater than or equal to 5.0 [double.gte]
+               *   double value = 1 [(buf.validate.field).double.gte = 5.0];
+               *
+               *   // value must be greater than or equal to 5.0 and less than 10.0 [double.gte_lt]
+               *   double other_value = 2 [(buf.validate.field).double = { gte: 5.0, lt: 10.0 }];
+               *
+               *   // value must be greater than or equal to 10.0 or less than 5.0 [double.gte_lt_exclusive]
+               *   double another_value = 3 [(buf.validate.field).double = { gte: 10.0, lt: 5.0 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: double gte = 5
+               */
+              gte: number;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * `in` requires the field value to be equal to one of the specified values.
      * If the field value isn't one of the specified values, an error message is
@@ -802,99 +829,105 @@ export interface Int32Rules {
     /**
      * @generated from protobuf oneof: less_than
      */
-    lessThan: {
-        oneofKind: "lt";
-        /**
-         * `lt` requires the field value to be less than the specified value (field
-         * < value). If the field value is equal to or greater than the specified
-         * value, an error message is generated.
-         *
-         * ```proto
-         * message MyInt32 {
-         *   // value must be less than 10
-         *   int32 value = 1 [(buf.validate.field).int32.lt = 10];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: int32 lt = 2
-         */
-        lt: number;
-    } | {
-        oneofKind: "lte";
-        /**
-         * `lte` requires the field value to be less than or equal to the specified
-         * value (field <= value). If the field value is greater than the specified
-         * value, an error message is generated.
-         *
-         * ```proto
-         * message MyInt32 {
-         *   // value must be less than or equal to 10
-         *   int32 value = 1 [(buf.validate.field).int32.lte = 10];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: int32 lte = 3
-         */
-        lte: number;
-    } | {
-        oneofKind: undefined;
-    };
+    lessThan:
+        | {
+              oneofKind: 'lt';
+              /**
+               * `lt` requires the field value to be less than the specified value (field
+               * < value). If the field value is equal to or greater than the specified
+               * value, an error message is generated.
+               *
+               * ```proto
+               * message MyInt32 {
+               *   // value must be less than 10
+               *   int32 value = 1 [(buf.validate.field).int32.lt = 10];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: int32 lt = 2
+               */
+              lt: number;
+          }
+        | {
+              oneofKind: 'lte';
+              /**
+               * `lte` requires the field value to be less than or equal to the specified
+               * value (field <= value). If the field value is greater than the specified
+               * value, an error message is generated.
+               *
+               * ```proto
+               * message MyInt32 {
+               *   // value must be less than or equal to 10
+               *   int32 value = 1 [(buf.validate.field).int32.lte = 10];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: int32 lte = 3
+               */
+              lte: number;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * @generated from protobuf oneof: greater_than
      */
-    greaterThan: {
-        oneofKind: "gt";
-        /**
-         * `gt` requires the field value to be greater than the specified value
-         * (exclusive). If the value of `gt` is larger than a specified `lt` or
-         * `lte`, the range is reversed, and the field value must be outside the
-         * specified range. If the field value doesn't meet the required conditions,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MyInt32 {
-         *   // value must be greater than 5 [int32.gt]
-         *   int32 value = 1 [(buf.validate.field).int32.gt = 5];
-         *
-         *   // value must be greater than 5 and less than 10 [int32.gt_lt]
-         *   int32 other_value = 2 [(buf.validate.field).int32 = { gt: 5, lt: 10 }];
-         *
-         *   // value must be greater than 10 or less than 5 [int32.gt_lt_exclusive]
-         *   int32 another_value = 3 [(buf.validate.field).int32 = { gt: 10, lt: 5 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: int32 gt = 4
-         */
-        gt: number;
-    } | {
-        oneofKind: "gte";
-        /**
-         * `gte` requires the field value to be greater than or equal to the specified value
-         * (exclusive). If the value of `gte` is larger than a specified `lt` or
-         * `lte`, the range is reversed, and the field value must be outside the
-         * specified range. If the field value doesn't meet the required conditions,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MyInt32 {
-         *   // value must be greater than or equal to 5 [int32.gte]
-         *   int32 value = 1 [(buf.validate.field).int32.gte = 5];
-         *
-         *   // value must be greater than or equal to 5 and less than 10 [int32.gte_lt]
-         *   int32 other_value = 2 [(buf.validate.field).int32 = { gte: 5, lt: 10 }];
-         *
-         *   // value must be greater than or equal to 10 or less than 5 [int32.gte_lt_exclusive]
-         *   int32 another_value = 3 [(buf.validate.field).int32 = { gte: 10, lt: 5 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: int32 gte = 5
-         */
-        gte: number;
-    } | {
-        oneofKind: undefined;
-    };
+    greaterThan:
+        | {
+              oneofKind: 'gt';
+              /**
+               * `gt` requires the field value to be greater than the specified value
+               * (exclusive). If the value of `gt` is larger than a specified `lt` or
+               * `lte`, the range is reversed, and the field value must be outside the
+               * specified range. If the field value doesn't meet the required conditions,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MyInt32 {
+               *   // value must be greater than 5 [int32.gt]
+               *   int32 value = 1 [(buf.validate.field).int32.gt = 5];
+               *
+               *   // value must be greater than 5 and less than 10 [int32.gt_lt]
+               *   int32 other_value = 2 [(buf.validate.field).int32 = { gt: 5, lt: 10 }];
+               *
+               *   // value must be greater than 10 or less than 5 [int32.gt_lt_exclusive]
+               *   int32 another_value = 3 [(buf.validate.field).int32 = { gt: 10, lt: 5 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: int32 gt = 4
+               */
+              gt: number;
+          }
+        | {
+              oneofKind: 'gte';
+              /**
+               * `gte` requires the field value to be greater than or equal to the specified value
+               * (exclusive). If the value of `gte` is larger than a specified `lt` or
+               * `lte`, the range is reversed, and the field value must be outside the
+               * specified range. If the field value doesn't meet the required conditions,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MyInt32 {
+               *   // value must be greater than or equal to 5 [int32.gte]
+               *   int32 value = 1 [(buf.validate.field).int32.gte = 5];
+               *
+               *   // value must be greater than or equal to 5 and less than 10 [int32.gte_lt]
+               *   int32 other_value = 2 [(buf.validate.field).int32 = { gte: 5, lt: 10 }];
+               *
+               *   // value must be greater than or equal to 10 or less than 5 [int32.gte_lt_exclusive]
+               *   int32 another_value = 3 [(buf.validate.field).int32 = { gte: 10, lt: 5 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: int32 gte = 5
+               */
+              gte: number;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * `in` requires the field value to be equal to one of the specified values.
      * If the field value isn't one of the specified values, an error message is
@@ -967,99 +1000,105 @@ export interface Int64Rules {
     /**
      * @generated from protobuf oneof: less_than
      */
-    lessThan: {
-        oneofKind: "lt";
-        /**
-         * `lt` requires the field value to be less than the specified value (field <
-         * value). If the field value is equal to or greater than the specified value,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MyInt64 {
-         *   // value must be less than 10
-         *   int64 value = 1 [(buf.validate.field).int64.lt = 10];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: int64 lt = 2
-         */
-        lt: number;
-    } | {
-        oneofKind: "lte";
-        /**
-         * `lte` requires the field value to be less than or equal to the specified
-         * value (field <= value). If the field value is greater than the specified
-         * value, an error message is generated.
-         *
-         * ```proto
-         * message MyInt64 {
-         *   // value must be less than or equal to 10
-         *   int64 value = 1 [(buf.validate.field).int64.lte = 10];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: int64 lte = 3
-         */
-        lte: number;
-    } | {
-        oneofKind: undefined;
-    };
+    lessThan:
+        | {
+              oneofKind: 'lt';
+              /**
+               * `lt` requires the field value to be less than the specified value (field <
+               * value). If the field value is equal to or greater than the specified value,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MyInt64 {
+               *   // value must be less than 10
+               *   int64 value = 1 [(buf.validate.field).int64.lt = 10];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: int64 lt = 2
+               */
+              lt: number;
+          }
+        | {
+              oneofKind: 'lte';
+              /**
+               * `lte` requires the field value to be less than or equal to the specified
+               * value (field <= value). If the field value is greater than the specified
+               * value, an error message is generated.
+               *
+               * ```proto
+               * message MyInt64 {
+               *   // value must be less than or equal to 10
+               *   int64 value = 1 [(buf.validate.field).int64.lte = 10];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: int64 lte = 3
+               */
+              lte: number;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * @generated from protobuf oneof: greater_than
      */
-    greaterThan: {
-        oneofKind: "gt";
-        /**
-         * `gt` requires the field value to be greater than the specified value
-         * (exclusive). If the value of `gt` is larger than a specified `lt` or
-         * `lte`, the range is reversed, and the field value must be outside the
-         * specified range. If the field value doesn't meet the required conditions,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MyInt64 {
-         *   // value must be greater than 5 [int64.gt]
-         *   int64 value = 1 [(buf.validate.field).int64.gt = 5];
-         *
-         *   // value must be greater than 5 and less than 10 [int64.gt_lt]
-         *   int64 other_value = 2 [(buf.validate.field).int64 = { gt: 5, lt: 10 }];
-         *
-         *   // value must be greater than 10 or less than 5 [int64.gt_lt_exclusive]
-         *   int64 another_value = 3 [(buf.validate.field).int64 = { gt: 10, lt: 5 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: int64 gt = 4
-         */
-        gt: number;
-    } | {
-        oneofKind: "gte";
-        /**
-         * `gte` requires the field value to be greater than or equal to the specified
-         * value (exclusive). If the value of `gte` is larger than a specified `lt`
-         * or `lte`, the range is reversed, and the field value must be outside the
-         * specified range. If the field value doesn't meet the required conditions,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MyInt64 {
-         *   // value must be greater than or equal to 5 [int64.gte]
-         *   int64 value = 1 [(buf.validate.field).int64.gte = 5];
-         *
-         *   // value must be greater than or equal to 5 and less than 10 [int64.gte_lt]
-         *   int64 other_value = 2 [(buf.validate.field).int64 = { gte: 5, lt: 10 }];
-         *
-         *   // value must be greater than or equal to 10 or less than 5 [int64.gte_lt_exclusive]
-         *   int64 another_value = 3 [(buf.validate.field).int64 = { gte: 10, lt: 5 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: int64 gte = 5
-         */
-        gte: number;
-    } | {
-        oneofKind: undefined;
-    };
+    greaterThan:
+        | {
+              oneofKind: 'gt';
+              /**
+               * `gt` requires the field value to be greater than the specified value
+               * (exclusive). If the value of `gt` is larger than a specified `lt` or
+               * `lte`, the range is reversed, and the field value must be outside the
+               * specified range. If the field value doesn't meet the required conditions,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MyInt64 {
+               *   // value must be greater than 5 [int64.gt]
+               *   int64 value = 1 [(buf.validate.field).int64.gt = 5];
+               *
+               *   // value must be greater than 5 and less than 10 [int64.gt_lt]
+               *   int64 other_value = 2 [(buf.validate.field).int64 = { gt: 5, lt: 10 }];
+               *
+               *   // value must be greater than 10 or less than 5 [int64.gt_lt_exclusive]
+               *   int64 another_value = 3 [(buf.validate.field).int64 = { gt: 10, lt: 5 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: int64 gt = 4
+               */
+              gt: number;
+          }
+        | {
+              oneofKind: 'gte';
+              /**
+               * `gte` requires the field value to be greater than or equal to the specified
+               * value (exclusive). If the value of `gte` is larger than a specified `lt`
+               * or `lte`, the range is reversed, and the field value must be outside the
+               * specified range. If the field value doesn't meet the required conditions,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MyInt64 {
+               *   // value must be greater than or equal to 5 [int64.gte]
+               *   int64 value = 1 [(buf.validate.field).int64.gte = 5];
+               *
+               *   // value must be greater than or equal to 5 and less than 10 [int64.gte_lt]
+               *   int64 other_value = 2 [(buf.validate.field).int64 = { gte: 5, lt: 10 }];
+               *
+               *   // value must be greater than or equal to 10 or less than 5 [int64.gte_lt_exclusive]
+               *   int64 another_value = 3 [(buf.validate.field).int64 = { gte: 10, lt: 5 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: int64 gte = 5
+               */
+              gte: number;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * `in` requires the field value to be equal to one of the specified values.
      * If the field value isn't one of the specified values, an error message is
@@ -1132,99 +1171,105 @@ export interface UInt32Rules {
     /**
      * @generated from protobuf oneof: less_than
      */
-    lessThan: {
-        oneofKind: "lt";
-        /**
-         * `lt` requires the field value to be less than the specified value (field <
-         * value). If the field value is equal to or greater than the specified value,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MyUInt32 {
-         *   // value must be less than 10
-         *   uint32 value = 1 [(buf.validate.field).uint32.lt = 10];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: uint32 lt = 2
-         */
-        lt: number;
-    } | {
-        oneofKind: "lte";
-        /**
-         * `lte` requires the field value to be less than or equal to the specified
-         * value (field <= value). If the field value is greater than the specified
-         * value, an error message is generated.
-         *
-         * ```proto
-         * message MyUInt32 {
-         *   // value must be less than or equal to 10
-         *   uint32 value = 1 [(buf.validate.field).uint32.lte = 10];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: uint32 lte = 3
-         */
-        lte: number;
-    } | {
-        oneofKind: undefined;
-    };
+    lessThan:
+        | {
+              oneofKind: 'lt';
+              /**
+               * `lt` requires the field value to be less than the specified value (field <
+               * value). If the field value is equal to or greater than the specified value,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MyUInt32 {
+               *   // value must be less than 10
+               *   uint32 value = 1 [(buf.validate.field).uint32.lt = 10];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: uint32 lt = 2
+               */
+              lt: number;
+          }
+        | {
+              oneofKind: 'lte';
+              /**
+               * `lte` requires the field value to be less than or equal to the specified
+               * value (field <= value). If the field value is greater than the specified
+               * value, an error message is generated.
+               *
+               * ```proto
+               * message MyUInt32 {
+               *   // value must be less than or equal to 10
+               *   uint32 value = 1 [(buf.validate.field).uint32.lte = 10];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: uint32 lte = 3
+               */
+              lte: number;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * @generated from protobuf oneof: greater_than
      */
-    greaterThan: {
-        oneofKind: "gt";
-        /**
-         * `gt` requires the field value to be greater than the specified value
-         * (exclusive). If the value of `gt` is larger than a specified `lt` or
-         * `lte`, the range is reversed, and the field value must be outside the
-         * specified range. If the field value doesn't meet the required conditions,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MyUInt32 {
-         *   // value must be greater than 5 [uint32.gt]
-         *   uint32 value = 1 [(buf.validate.field).uint32.gt = 5];
-         *
-         *   // value must be greater than 5 and less than 10 [uint32.gt_lt]
-         *   uint32 other_value = 2 [(buf.validate.field).uint32 = { gt: 5, lt: 10 }];
-         *
-         *   // value must be greater than 10 or less than 5 [uint32.gt_lt_exclusive]
-         *   uint32 another_value = 3 [(buf.validate.field).uint32 = { gt: 10, lt: 5 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: uint32 gt = 4
-         */
-        gt: number;
-    } | {
-        oneofKind: "gte";
-        /**
-         * `gte` requires the field value to be greater than or equal to the specified
-         * value (exclusive). If the value of `gte` is larger than a specified `lt`
-         * or `lte`, the range is reversed, and the field value must be outside the
-         * specified range. If the field value doesn't meet the required conditions,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MyUInt32 {
-         *   // value must be greater than or equal to 5 [uint32.gte]
-         *   uint32 value = 1 [(buf.validate.field).uint32.gte = 5];
-         *
-         *   // value must be greater than or equal to 5 and less than 10 [uint32.gte_lt]
-         *   uint32 other_value = 2 [(buf.validate.field).uint32 = { gte: 5, lt: 10 }];
-         *
-         *   // value must be greater than or equal to 10 or less than 5 [uint32.gte_lt_exclusive]
-         *   uint32 another_value = 3 [(buf.validate.field).uint32 = { gte: 10, lt: 5 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: uint32 gte = 5
-         */
-        gte: number;
-    } | {
-        oneofKind: undefined;
-    };
+    greaterThan:
+        | {
+              oneofKind: 'gt';
+              /**
+               * `gt` requires the field value to be greater than the specified value
+               * (exclusive). If the value of `gt` is larger than a specified `lt` or
+               * `lte`, the range is reversed, and the field value must be outside the
+               * specified range. If the field value doesn't meet the required conditions,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MyUInt32 {
+               *   // value must be greater than 5 [uint32.gt]
+               *   uint32 value = 1 [(buf.validate.field).uint32.gt = 5];
+               *
+               *   // value must be greater than 5 and less than 10 [uint32.gt_lt]
+               *   uint32 other_value = 2 [(buf.validate.field).uint32 = { gt: 5, lt: 10 }];
+               *
+               *   // value must be greater than 10 or less than 5 [uint32.gt_lt_exclusive]
+               *   uint32 another_value = 3 [(buf.validate.field).uint32 = { gt: 10, lt: 5 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: uint32 gt = 4
+               */
+              gt: number;
+          }
+        | {
+              oneofKind: 'gte';
+              /**
+               * `gte` requires the field value to be greater than or equal to the specified
+               * value (exclusive). If the value of `gte` is larger than a specified `lt`
+               * or `lte`, the range is reversed, and the field value must be outside the
+               * specified range. If the field value doesn't meet the required conditions,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MyUInt32 {
+               *   // value must be greater than or equal to 5 [uint32.gte]
+               *   uint32 value = 1 [(buf.validate.field).uint32.gte = 5];
+               *
+               *   // value must be greater than or equal to 5 and less than 10 [uint32.gte_lt]
+               *   uint32 other_value = 2 [(buf.validate.field).uint32 = { gte: 5, lt: 10 }];
+               *
+               *   // value must be greater than or equal to 10 or less than 5 [uint32.gte_lt_exclusive]
+               *   uint32 another_value = 3 [(buf.validate.field).uint32 = { gte: 10, lt: 5 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: uint32 gte = 5
+               */
+              gte: number;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * `in` requires the field value to be equal to one of the specified values.
      * If the field value isn't one of the specified values, an error message is
@@ -1297,99 +1342,105 @@ export interface UInt64Rules {
     /**
      * @generated from protobuf oneof: less_than
      */
-    lessThan: {
-        oneofKind: "lt";
-        /**
-         * `lt` requires the field value to be less than the specified value (field <
-         * value). If the field value is equal to or greater than the specified value,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MyUInt64 {
-         *   // value must be less than 10
-         *   uint64 value = 1 [(buf.validate.field).uint64.lt = 10];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: uint64 lt = 2
-         */
-        lt: number;
-    } | {
-        oneofKind: "lte";
-        /**
-         * `lte` requires the field value to be less than or equal to the specified
-         * value (field <= value). If the field value is greater than the specified
-         * value, an error message is generated.
-         *
-         * ```proto
-         * message MyUInt64 {
-         *   // value must be less than or equal to 10
-         *   uint64 value = 1 [(buf.validate.field).uint64.lte = 10];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: uint64 lte = 3
-         */
-        lte: number;
-    } | {
-        oneofKind: undefined;
-    };
+    lessThan:
+        | {
+              oneofKind: 'lt';
+              /**
+               * `lt` requires the field value to be less than the specified value (field <
+               * value). If the field value is equal to or greater than the specified value,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MyUInt64 {
+               *   // value must be less than 10
+               *   uint64 value = 1 [(buf.validate.field).uint64.lt = 10];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: uint64 lt = 2
+               */
+              lt: number;
+          }
+        | {
+              oneofKind: 'lte';
+              /**
+               * `lte` requires the field value to be less than or equal to the specified
+               * value (field <= value). If the field value is greater than the specified
+               * value, an error message is generated.
+               *
+               * ```proto
+               * message MyUInt64 {
+               *   // value must be less than or equal to 10
+               *   uint64 value = 1 [(buf.validate.field).uint64.lte = 10];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: uint64 lte = 3
+               */
+              lte: number;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * @generated from protobuf oneof: greater_than
      */
-    greaterThan: {
-        oneofKind: "gt";
-        /**
-         * `gt` requires the field value to be greater than the specified value
-         * (exclusive). If the value of `gt` is larger than a specified `lt` or
-         * `lte`, the range is reversed, and the field value must be outside the
-         * specified range. If the field value doesn't meet the required conditions,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MyUInt64 {
-         *   // value must be greater than 5 [uint64.gt]
-         *   uint64 value = 1 [(buf.validate.field).uint64.gt = 5];
-         *
-         *   // value must be greater than 5 and less than 10 [uint64.gt_lt]
-         *   uint64 other_value = 2 [(buf.validate.field).uint64 = { gt: 5, lt: 10 }];
-         *
-         *   // value must be greater than 10 or less than 5 [uint64.gt_lt_exclusive]
-         *   uint64 another_value = 3 [(buf.validate.field).uint64 = { gt: 10, lt: 5 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: uint64 gt = 4
-         */
-        gt: number;
-    } | {
-        oneofKind: "gte";
-        /**
-         * `gte` requires the field value to be greater than or equal to the specified
-         * value (exclusive). If the value of `gte` is larger than a specified `lt`
-         * or `lte`, the range is reversed, and the field value must be outside the
-         * specified range. If the field value doesn't meet the required conditions,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MyUInt64 {
-         *   // value must be greater than or equal to 5 [uint64.gte]
-         *   uint64 value = 1 [(buf.validate.field).uint64.gte = 5];
-         *
-         *   // value must be greater than or equal to 5 and less than 10 [uint64.gte_lt]
-         *   uint64 other_value = 2 [(buf.validate.field).uint64 = { gte: 5, lt: 10 }];
-         *
-         *   // value must be greater than or equal to 10 or less than 5 [uint64.gte_lt_exclusive]
-         *   uint64 another_value = 3 [(buf.validate.field).uint64 = { gte: 10, lt: 5 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: uint64 gte = 5
-         */
-        gte: number;
-    } | {
-        oneofKind: undefined;
-    };
+    greaterThan:
+        | {
+              oneofKind: 'gt';
+              /**
+               * `gt` requires the field value to be greater than the specified value
+               * (exclusive). If the value of `gt` is larger than a specified `lt` or
+               * `lte`, the range is reversed, and the field value must be outside the
+               * specified range. If the field value doesn't meet the required conditions,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MyUInt64 {
+               *   // value must be greater than 5 [uint64.gt]
+               *   uint64 value = 1 [(buf.validate.field).uint64.gt = 5];
+               *
+               *   // value must be greater than 5 and less than 10 [uint64.gt_lt]
+               *   uint64 other_value = 2 [(buf.validate.field).uint64 = { gt: 5, lt: 10 }];
+               *
+               *   // value must be greater than 10 or less than 5 [uint64.gt_lt_exclusive]
+               *   uint64 another_value = 3 [(buf.validate.field).uint64 = { gt: 10, lt: 5 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: uint64 gt = 4
+               */
+              gt: number;
+          }
+        | {
+              oneofKind: 'gte';
+              /**
+               * `gte` requires the field value to be greater than or equal to the specified
+               * value (exclusive). If the value of `gte` is larger than a specified `lt`
+               * or `lte`, the range is reversed, and the field value must be outside the
+               * specified range. If the field value doesn't meet the required conditions,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MyUInt64 {
+               *   // value must be greater than or equal to 5 [uint64.gte]
+               *   uint64 value = 1 [(buf.validate.field).uint64.gte = 5];
+               *
+               *   // value must be greater than or equal to 5 and less than 10 [uint64.gte_lt]
+               *   uint64 other_value = 2 [(buf.validate.field).uint64 = { gte: 5, lt: 10 }];
+               *
+               *   // value must be greater than or equal to 10 or less than 5 [uint64.gte_lt_exclusive]
+               *   uint64 another_value = 3 [(buf.validate.field).uint64 = { gte: 10, lt: 5 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: uint64 gte = 5
+               */
+              gte: number;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * `in` requires the field value to be equal to one of the specified values.
      * If the field value isn't one of the specified values, an error message is
@@ -1461,99 +1512,105 @@ export interface SInt32Rules {
     /**
      * @generated from protobuf oneof: less_than
      */
-    lessThan: {
-        oneofKind: "lt";
-        /**
-         * `lt` requires the field value to be less than the specified value (field
-         * < value). If the field value is equal to or greater than the specified
-         * value, an error message is generated.
-         *
-         * ```proto
-         * message MySInt32 {
-         *   // value must be less than 10
-         *   sint32 value = 1 [(buf.validate.field).sint32.lt = 10];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: sint32 lt = 2
-         */
-        lt: number;
-    } | {
-        oneofKind: "lte";
-        /**
-         * `lte` requires the field value to be less than or equal to the specified
-         * value (field <= value). If the field value is greater than the specified
-         * value, an error message is generated.
-         *
-         * ```proto
-         * message MySInt32 {
-         *   // value must be less than or equal to 10
-         *   sint32 value = 1 [(buf.validate.field).sint32.lte = 10];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: sint32 lte = 3
-         */
-        lte: number;
-    } | {
-        oneofKind: undefined;
-    };
+    lessThan:
+        | {
+              oneofKind: 'lt';
+              /**
+               * `lt` requires the field value to be less than the specified value (field
+               * < value). If the field value is equal to or greater than the specified
+               * value, an error message is generated.
+               *
+               * ```proto
+               * message MySInt32 {
+               *   // value must be less than 10
+               *   sint32 value = 1 [(buf.validate.field).sint32.lt = 10];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: sint32 lt = 2
+               */
+              lt: number;
+          }
+        | {
+              oneofKind: 'lte';
+              /**
+               * `lte` requires the field value to be less than or equal to the specified
+               * value (field <= value). If the field value is greater than the specified
+               * value, an error message is generated.
+               *
+               * ```proto
+               * message MySInt32 {
+               *   // value must be less than or equal to 10
+               *   sint32 value = 1 [(buf.validate.field).sint32.lte = 10];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: sint32 lte = 3
+               */
+              lte: number;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * @generated from protobuf oneof: greater_than
      */
-    greaterThan: {
-        oneofKind: "gt";
-        /**
-         * `gt` requires the field value to be greater than the specified value
-         * (exclusive). If the value of `gt` is larger than a specified `lt` or
-         * `lte`, the range is reversed, and the field value must be outside the
-         * specified range. If the field value doesn't meet the required conditions,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MySInt32 {
-         *   // value must be greater than 5 [sint32.gt]
-         *   sint32 value = 1 [(buf.validate.field).sint32.gt = 5];
-         *
-         *   // value must be greater than 5 and less than 10 [sint32.gt_lt]
-         *   sint32 other_value = 2 [(buf.validate.field).sint32 = { gt: 5, lt: 10 }];
-         *
-         *   // value must be greater than 10 or less than 5 [sint32.gt_lt_exclusive]
-         *   sint32 another_value = 3 [(buf.validate.field).sint32 = { gt: 10, lt: 5 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: sint32 gt = 4
-         */
-        gt: number;
-    } | {
-        oneofKind: "gte";
-        /**
-         * `gte` requires the field value to be greater than or equal to the specified
-         * value (exclusive). If the value of `gte` is larger than a specified `lt`
-         * or `lte`, the range is reversed, and the field value must be outside the
-         * specified range. If the field value doesn't meet the required conditions,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MySInt32 {
-         *  // value must be greater than or equal to 5 [sint32.gte]
-         *  sint32 value = 1 [(buf.validate.field).sint32.gte = 5];
-         *
-         *  // value must be greater than or equal to 5 and less than 10 [sint32.gte_lt]
-         *  sint32 other_value = 2 [(buf.validate.field).sint32 = { gte: 5, lt: 10 }];
-         *
-         *  // value must be greater than or equal to 10 or less than 5 [sint32.gte_lt_exclusive]
-         *  sint32 another_value = 3 [(buf.validate.field).sint32 = { gte: 10, lt: 5 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: sint32 gte = 5
-         */
-        gte: number;
-    } | {
-        oneofKind: undefined;
-    };
+    greaterThan:
+        | {
+              oneofKind: 'gt';
+              /**
+               * `gt` requires the field value to be greater than the specified value
+               * (exclusive). If the value of `gt` is larger than a specified `lt` or
+               * `lte`, the range is reversed, and the field value must be outside the
+               * specified range. If the field value doesn't meet the required conditions,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MySInt32 {
+               *   // value must be greater than 5 [sint32.gt]
+               *   sint32 value = 1 [(buf.validate.field).sint32.gt = 5];
+               *
+               *   // value must be greater than 5 and less than 10 [sint32.gt_lt]
+               *   sint32 other_value = 2 [(buf.validate.field).sint32 = { gt: 5, lt: 10 }];
+               *
+               *   // value must be greater than 10 or less than 5 [sint32.gt_lt_exclusive]
+               *   sint32 another_value = 3 [(buf.validate.field).sint32 = { gt: 10, lt: 5 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: sint32 gt = 4
+               */
+              gt: number;
+          }
+        | {
+              oneofKind: 'gte';
+              /**
+               * `gte` requires the field value to be greater than or equal to the specified
+               * value (exclusive). If the value of `gte` is larger than a specified `lt`
+               * or `lte`, the range is reversed, and the field value must be outside the
+               * specified range. If the field value doesn't meet the required conditions,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MySInt32 {
+               *  // value must be greater than or equal to 5 [sint32.gte]
+               *  sint32 value = 1 [(buf.validate.field).sint32.gte = 5];
+               *
+               *  // value must be greater than or equal to 5 and less than 10 [sint32.gte_lt]
+               *  sint32 other_value = 2 [(buf.validate.field).sint32 = { gte: 5, lt: 10 }];
+               *
+               *  // value must be greater than or equal to 10 or less than 5 [sint32.gte_lt_exclusive]
+               *  sint32 another_value = 3 [(buf.validate.field).sint32 = { gte: 10, lt: 5 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: sint32 gte = 5
+               */
+              gte: number;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * `in` requires the field value to be equal to one of the specified values.
      * If the field value isn't one of the specified values, an error message is
@@ -1625,99 +1682,105 @@ export interface SInt64Rules {
     /**
      * @generated from protobuf oneof: less_than
      */
-    lessThan: {
-        oneofKind: "lt";
-        /**
-         * `lt` requires the field value to be less than the specified value (field
-         * < value). If the field value is equal to or greater than the specified
-         * value, an error message is generated.
-         *
-         * ```proto
-         * message MySInt64 {
-         *   // value must be less than 10
-         *   sint64 value = 1 [(buf.validate.field).sint64.lt = 10];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: sint64 lt = 2
-         */
-        lt: number;
-    } | {
-        oneofKind: "lte";
-        /**
-         * `lte` requires the field value to be less than or equal to the specified
-         * value (field <= value). If the field value is greater than the specified
-         * value, an error message is generated.
-         *
-         * ```proto
-         * message MySInt64 {
-         *   // value must be less than or equal to 10
-         *   sint64 value = 1 [(buf.validate.field).sint64.lte = 10];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: sint64 lte = 3
-         */
-        lte: number;
-    } | {
-        oneofKind: undefined;
-    };
+    lessThan:
+        | {
+              oneofKind: 'lt';
+              /**
+               * `lt` requires the field value to be less than the specified value (field
+               * < value). If the field value is equal to or greater than the specified
+               * value, an error message is generated.
+               *
+               * ```proto
+               * message MySInt64 {
+               *   // value must be less than 10
+               *   sint64 value = 1 [(buf.validate.field).sint64.lt = 10];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: sint64 lt = 2
+               */
+              lt: number;
+          }
+        | {
+              oneofKind: 'lte';
+              /**
+               * `lte` requires the field value to be less than or equal to the specified
+               * value (field <= value). If the field value is greater than the specified
+               * value, an error message is generated.
+               *
+               * ```proto
+               * message MySInt64 {
+               *   // value must be less than or equal to 10
+               *   sint64 value = 1 [(buf.validate.field).sint64.lte = 10];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: sint64 lte = 3
+               */
+              lte: number;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * @generated from protobuf oneof: greater_than
      */
-    greaterThan: {
-        oneofKind: "gt";
-        /**
-         * `gt` requires the field value to be greater than the specified value
-         * (exclusive). If the value of `gt` is larger than a specified `lt` or
-         * `lte`, the range is reversed, and the field value must be outside the
-         * specified range. If the field value doesn't meet the required conditions,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MySInt64 {
-         *   // value must be greater than 5 [sint64.gt]
-         *   sint64 value = 1 [(buf.validate.field).sint64.gt = 5];
-         *
-         *   // value must be greater than 5 and less than 10 [sint64.gt_lt]
-         *   sint64 other_value = 2 [(buf.validate.field).sint64 = { gt: 5, lt: 10 }];
-         *
-         *   // value must be greater than 10 or less than 5 [sint64.gt_lt_exclusive]
-         *   sint64 another_value = 3 [(buf.validate.field).sint64 = { gt: 10, lt: 5 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: sint64 gt = 4
-         */
-        gt: number;
-    } | {
-        oneofKind: "gte";
-        /**
-         * `gte` requires the field value to be greater than or equal to the specified
-         * value (exclusive). If the value of `gte` is larger than a specified `lt`
-         * or `lte`, the range is reversed, and the field value must be outside the
-         * specified range. If the field value doesn't meet the required conditions,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MySInt64 {
-         *   // value must be greater than or equal to 5 [sint64.gte]
-         *   sint64 value = 1 [(buf.validate.field).sint64.gte = 5];
-         *
-         *   // value must be greater than or equal to 5 and less than 10 [sint64.gte_lt]
-         *   sint64 other_value = 2 [(buf.validate.field).sint64 = { gte: 5, lt: 10 }];
-         *
-         *   // value must be greater than or equal to 10 or less than 5 [sint64.gte_lt_exclusive]
-         *   sint64 another_value = 3 [(buf.validate.field).sint64 = { gte: 10, lt: 5 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: sint64 gte = 5
-         */
-        gte: number;
-    } | {
-        oneofKind: undefined;
-    };
+    greaterThan:
+        | {
+              oneofKind: 'gt';
+              /**
+               * `gt` requires the field value to be greater than the specified value
+               * (exclusive). If the value of `gt` is larger than a specified `lt` or
+               * `lte`, the range is reversed, and the field value must be outside the
+               * specified range. If the field value doesn't meet the required conditions,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MySInt64 {
+               *   // value must be greater than 5 [sint64.gt]
+               *   sint64 value = 1 [(buf.validate.field).sint64.gt = 5];
+               *
+               *   // value must be greater than 5 and less than 10 [sint64.gt_lt]
+               *   sint64 other_value = 2 [(buf.validate.field).sint64 = { gt: 5, lt: 10 }];
+               *
+               *   // value must be greater than 10 or less than 5 [sint64.gt_lt_exclusive]
+               *   sint64 another_value = 3 [(buf.validate.field).sint64 = { gt: 10, lt: 5 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: sint64 gt = 4
+               */
+              gt: number;
+          }
+        | {
+              oneofKind: 'gte';
+              /**
+               * `gte` requires the field value to be greater than or equal to the specified
+               * value (exclusive). If the value of `gte` is larger than a specified `lt`
+               * or `lte`, the range is reversed, and the field value must be outside the
+               * specified range. If the field value doesn't meet the required conditions,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MySInt64 {
+               *   // value must be greater than or equal to 5 [sint64.gte]
+               *   sint64 value = 1 [(buf.validate.field).sint64.gte = 5];
+               *
+               *   // value must be greater than or equal to 5 and less than 10 [sint64.gte_lt]
+               *   sint64 other_value = 2 [(buf.validate.field).sint64 = { gte: 5, lt: 10 }];
+               *
+               *   // value must be greater than or equal to 10 or less than 5 [sint64.gte_lt_exclusive]
+               *   sint64 another_value = 3 [(buf.validate.field).sint64 = { gte: 10, lt: 5 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: sint64 gte = 5
+               */
+              gte: number;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * `in` requires the field value to be equal to one of the specified values.
      * If the field value isn't one of the specified values, an error message
@@ -1789,99 +1852,105 @@ export interface Fixed32Rules {
     /**
      * @generated from protobuf oneof: less_than
      */
-    lessThan: {
-        oneofKind: "lt";
-        /**
-         * `lt` requires the field value to be less than the specified value (field <
-         * value). If the field value is equal to or greater than the specified value,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MyFixed32 {
-         *   // value must be less than 10
-         *   fixed32 value = 1 [(buf.validate.field).fixed32.lt = 10];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: fixed32 lt = 2
-         */
-        lt: number;
-    } | {
-        oneofKind: "lte";
-        /**
-         * `lte` requires the field value to be less than or equal to the specified
-         * value (field <= value). If the field value is greater than the specified
-         * value, an error message is generated.
-         *
-         * ```proto
-         * message MyFixed32 {
-         *   // value must be less than or equal to 10
-         *   fixed32 value = 1 [(buf.validate.field).fixed32.lte = 10];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: fixed32 lte = 3
-         */
-        lte: number;
-    } | {
-        oneofKind: undefined;
-    };
+    lessThan:
+        | {
+              oneofKind: 'lt';
+              /**
+               * `lt` requires the field value to be less than the specified value (field <
+               * value). If the field value is equal to or greater than the specified value,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MyFixed32 {
+               *   // value must be less than 10
+               *   fixed32 value = 1 [(buf.validate.field).fixed32.lt = 10];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: fixed32 lt = 2
+               */
+              lt: number;
+          }
+        | {
+              oneofKind: 'lte';
+              /**
+               * `lte` requires the field value to be less than or equal to the specified
+               * value (field <= value). If the field value is greater than the specified
+               * value, an error message is generated.
+               *
+               * ```proto
+               * message MyFixed32 {
+               *   // value must be less than or equal to 10
+               *   fixed32 value = 1 [(buf.validate.field).fixed32.lte = 10];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: fixed32 lte = 3
+               */
+              lte: number;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * @generated from protobuf oneof: greater_than
      */
-    greaterThan: {
-        oneofKind: "gt";
-        /**
-         * `gt` requires the field value to be greater than the specified value
-         * (exclusive). If the value of `gt` is larger than a specified `lt` or
-         * `lte`, the range is reversed, and the field value must be outside the
-         * specified range. If the field value doesn't meet the required conditions,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MyFixed32 {
-         *   // value must be greater than 5 [fixed32.gt]
-         *   fixed32 value = 1 [(buf.validate.field).fixed32.gt = 5];
-         *
-         *   // value must be greater than 5 and less than 10 [fixed32.gt_lt]
-         *   fixed32 other_value = 2 [(buf.validate.field).fixed32 = { gt: 5, lt: 10 }];
-         *
-         *   // value must be greater than 10 or less than 5 [fixed32.gt_lt_exclusive]
-         *   fixed32 another_value = 3 [(buf.validate.field).fixed32 = { gt: 10, lt: 5 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: fixed32 gt = 4
-         */
-        gt: number;
-    } | {
-        oneofKind: "gte";
-        /**
-         * `gte` requires the field value to be greater than or equal to the specified
-         * value (exclusive). If the value of `gte` is larger than a specified `lt`
-         * or `lte`, the range is reversed, and the field value must be outside the
-         * specified range. If the field value doesn't meet the required conditions,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MyFixed32 {
-         *   // value must be greater than or equal to 5 [fixed32.gte]
-         *   fixed32 value = 1 [(buf.validate.field).fixed32.gte = 5];
-         *
-         *   // value must be greater than or equal to 5 and less than 10 [fixed32.gte_lt]
-         *   fixed32 other_value = 2 [(buf.validate.field).fixed32 = { gte: 5, lt: 10 }];
-         *
-         *   // value must be greater than or equal to 10 or less than 5 [fixed32.gte_lt_exclusive]
-         *   fixed32 another_value = 3 [(buf.validate.field).fixed32 = { gte: 10, lt: 5 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: fixed32 gte = 5
-         */
-        gte: number;
-    } | {
-        oneofKind: undefined;
-    };
+    greaterThan:
+        | {
+              oneofKind: 'gt';
+              /**
+               * `gt` requires the field value to be greater than the specified value
+               * (exclusive). If the value of `gt` is larger than a specified `lt` or
+               * `lte`, the range is reversed, and the field value must be outside the
+               * specified range. If the field value doesn't meet the required conditions,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MyFixed32 {
+               *   // value must be greater than 5 [fixed32.gt]
+               *   fixed32 value = 1 [(buf.validate.field).fixed32.gt = 5];
+               *
+               *   // value must be greater than 5 and less than 10 [fixed32.gt_lt]
+               *   fixed32 other_value = 2 [(buf.validate.field).fixed32 = { gt: 5, lt: 10 }];
+               *
+               *   // value must be greater than 10 or less than 5 [fixed32.gt_lt_exclusive]
+               *   fixed32 another_value = 3 [(buf.validate.field).fixed32 = { gt: 10, lt: 5 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: fixed32 gt = 4
+               */
+              gt: number;
+          }
+        | {
+              oneofKind: 'gte';
+              /**
+               * `gte` requires the field value to be greater than or equal to the specified
+               * value (exclusive). If the value of `gte` is larger than a specified `lt`
+               * or `lte`, the range is reversed, and the field value must be outside the
+               * specified range. If the field value doesn't meet the required conditions,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MyFixed32 {
+               *   // value must be greater than or equal to 5 [fixed32.gte]
+               *   fixed32 value = 1 [(buf.validate.field).fixed32.gte = 5];
+               *
+               *   // value must be greater than or equal to 5 and less than 10 [fixed32.gte_lt]
+               *   fixed32 other_value = 2 [(buf.validate.field).fixed32 = { gte: 5, lt: 10 }];
+               *
+               *   // value must be greater than or equal to 10 or less than 5 [fixed32.gte_lt_exclusive]
+               *   fixed32 another_value = 3 [(buf.validate.field).fixed32 = { gte: 10, lt: 5 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: fixed32 gte = 5
+               */
+              gte: number;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * `in` requires the field value to be equal to one of the specified values.
      * If the field value isn't one of the specified values, an error message
@@ -1953,99 +2022,105 @@ export interface Fixed64Rules {
     /**
      * @generated from protobuf oneof: less_than
      */
-    lessThan: {
-        oneofKind: "lt";
-        /**
-         * `lt` requires the field value to be less than the specified value (field <
-         * value). If the field value is equal to or greater than the specified value,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MyFixed64 {
-         *   // value must be less than 10
-         *   fixed64 value = 1 [(buf.validate.field).fixed64.lt = 10];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: fixed64 lt = 2
-         */
-        lt: number;
-    } | {
-        oneofKind: "lte";
-        /**
-         * `lte` requires the field value to be less than or equal to the specified
-         * value (field <= value). If the field value is greater than the specified
-         * value, an error message is generated.
-         *
-         * ```proto
-         * message MyFixed64 {
-         *   // value must be less than or equal to 10
-         *   fixed64 value = 1 [(buf.validate.field).fixed64.lte = 10];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: fixed64 lte = 3
-         */
-        lte: number;
-    } | {
-        oneofKind: undefined;
-    };
+    lessThan:
+        | {
+              oneofKind: 'lt';
+              /**
+               * `lt` requires the field value to be less than the specified value (field <
+               * value). If the field value is equal to or greater than the specified value,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MyFixed64 {
+               *   // value must be less than 10
+               *   fixed64 value = 1 [(buf.validate.field).fixed64.lt = 10];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: fixed64 lt = 2
+               */
+              lt: number;
+          }
+        | {
+              oneofKind: 'lte';
+              /**
+               * `lte` requires the field value to be less than or equal to the specified
+               * value (field <= value). If the field value is greater than the specified
+               * value, an error message is generated.
+               *
+               * ```proto
+               * message MyFixed64 {
+               *   // value must be less than or equal to 10
+               *   fixed64 value = 1 [(buf.validate.field).fixed64.lte = 10];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: fixed64 lte = 3
+               */
+              lte: number;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * @generated from protobuf oneof: greater_than
      */
-    greaterThan: {
-        oneofKind: "gt";
-        /**
-         * `gt` requires the field value to be greater than the specified value
-         * (exclusive). If the value of `gt` is larger than a specified `lt` or
-         * `lte`, the range is reversed, and the field value must be outside the
-         * specified range. If the field value doesn't meet the required conditions,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MyFixed64 {
-         *   // value must be greater than 5 [fixed64.gt]
-         *   fixed64 value = 1 [(buf.validate.field).fixed64.gt = 5];
-         *
-         *   // value must be greater than 5 and less than 10 [fixed64.gt_lt]
-         *   fixed64 other_value = 2 [(buf.validate.field).fixed64 = { gt: 5, lt: 10 }];
-         *
-         *   // value must be greater than 10 or less than 5 [fixed64.gt_lt_exclusive]
-         *   fixed64 another_value = 3 [(buf.validate.field).fixed64 = { gt: 10, lt: 5 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: fixed64 gt = 4
-         */
-        gt: number;
-    } | {
-        oneofKind: "gte";
-        /**
-         * `gte` requires the field value to be greater than or equal to the specified
-         * value (exclusive). If the value of `gte` is larger than a specified `lt`
-         * or `lte`, the range is reversed, and the field value must be outside the
-         * specified range. If the field value doesn't meet the required conditions,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MyFixed64 {
-         *   // value must be greater than or equal to 5 [fixed64.gte]
-         *   fixed64 value = 1 [(buf.validate.field).fixed64.gte = 5];
-         *
-         *   // value must be greater than or equal to 5 and less than 10 [fixed64.gte_lt]
-         *   fixed64 other_value = 2 [(buf.validate.field).fixed64 = { gte: 5, lt: 10 }];
-         *
-         *   // value must be greater than or equal to 10 or less than 5 [fixed64.gte_lt_exclusive]
-         *   fixed64 another_value = 3 [(buf.validate.field).fixed64 = { gte: 10, lt: 5 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: fixed64 gte = 5
-         */
-        gte: number;
-    } | {
-        oneofKind: undefined;
-    };
+    greaterThan:
+        | {
+              oneofKind: 'gt';
+              /**
+               * `gt` requires the field value to be greater than the specified value
+               * (exclusive). If the value of `gt` is larger than a specified `lt` or
+               * `lte`, the range is reversed, and the field value must be outside the
+               * specified range. If the field value doesn't meet the required conditions,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MyFixed64 {
+               *   // value must be greater than 5 [fixed64.gt]
+               *   fixed64 value = 1 [(buf.validate.field).fixed64.gt = 5];
+               *
+               *   // value must be greater than 5 and less than 10 [fixed64.gt_lt]
+               *   fixed64 other_value = 2 [(buf.validate.field).fixed64 = { gt: 5, lt: 10 }];
+               *
+               *   // value must be greater than 10 or less than 5 [fixed64.gt_lt_exclusive]
+               *   fixed64 another_value = 3 [(buf.validate.field).fixed64 = { gt: 10, lt: 5 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: fixed64 gt = 4
+               */
+              gt: number;
+          }
+        | {
+              oneofKind: 'gte';
+              /**
+               * `gte` requires the field value to be greater than or equal to the specified
+               * value (exclusive). If the value of `gte` is larger than a specified `lt`
+               * or `lte`, the range is reversed, and the field value must be outside the
+               * specified range. If the field value doesn't meet the required conditions,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MyFixed64 {
+               *   // value must be greater than or equal to 5 [fixed64.gte]
+               *   fixed64 value = 1 [(buf.validate.field).fixed64.gte = 5];
+               *
+               *   // value must be greater than or equal to 5 and less than 10 [fixed64.gte_lt]
+               *   fixed64 other_value = 2 [(buf.validate.field).fixed64 = { gte: 5, lt: 10 }];
+               *
+               *   // value must be greater than or equal to 10 or less than 5 [fixed64.gte_lt_exclusive]
+               *   fixed64 another_value = 3 [(buf.validate.field).fixed64 = { gte: 10, lt: 5 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: fixed64 gte = 5
+               */
+              gte: number;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * `in` requires the field value to be equal to one of the specified values.
      * If the field value isn't one of the specified values, an error message is
@@ -2117,99 +2192,105 @@ export interface SFixed32Rules {
     /**
      * @generated from protobuf oneof: less_than
      */
-    lessThan: {
-        oneofKind: "lt";
-        /**
-         * `lt` requires the field value to be less than the specified value (field <
-         * value). If the field value is equal to or greater than the specified value,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MySFixed32 {
-         *   // value must be less than 10
-         *   sfixed32 value = 1 [(buf.validate.field).sfixed32.lt = 10];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: sfixed32 lt = 2
-         */
-        lt: number;
-    } | {
-        oneofKind: "lte";
-        /**
-         * `lte` requires the field value to be less than or equal to the specified
-         * value (field <= value). If the field value is greater than the specified
-         * value, an error message is generated.
-         *
-         * ```proto
-         * message MySFixed32 {
-         *   // value must be less than or equal to 10
-         *   sfixed32 value = 1 [(buf.validate.field).sfixed32.lte = 10];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: sfixed32 lte = 3
-         */
-        lte: number;
-    } | {
-        oneofKind: undefined;
-    };
+    lessThan:
+        | {
+              oneofKind: 'lt';
+              /**
+               * `lt` requires the field value to be less than the specified value (field <
+               * value). If the field value is equal to or greater than the specified value,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MySFixed32 {
+               *   // value must be less than 10
+               *   sfixed32 value = 1 [(buf.validate.field).sfixed32.lt = 10];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: sfixed32 lt = 2
+               */
+              lt: number;
+          }
+        | {
+              oneofKind: 'lte';
+              /**
+               * `lte` requires the field value to be less than or equal to the specified
+               * value (field <= value). If the field value is greater than the specified
+               * value, an error message is generated.
+               *
+               * ```proto
+               * message MySFixed32 {
+               *   // value must be less than or equal to 10
+               *   sfixed32 value = 1 [(buf.validate.field).sfixed32.lte = 10];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: sfixed32 lte = 3
+               */
+              lte: number;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * @generated from protobuf oneof: greater_than
      */
-    greaterThan: {
-        oneofKind: "gt";
-        /**
-         * `gt` requires the field value to be greater than the specified value
-         * (exclusive). If the value of `gt` is larger than a specified `lt` or
-         * `lte`, the range is reversed, and the field value must be outside the
-         * specified range. If the field value doesn't meet the required conditions,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MySFixed32 {
-         *   // value must be greater than 5 [sfixed32.gt]
-         *   sfixed32 value = 1 [(buf.validate.field).sfixed32.gt = 5];
-         *
-         *   // value must be greater than 5 and less than 10 [sfixed32.gt_lt]
-         *   sfixed32 other_value = 2 [(buf.validate.field).sfixed32 = { gt: 5, lt: 10 }];
-         *
-         *   // value must be greater than 10 or less than 5 [sfixed32.gt_lt_exclusive]
-         *   sfixed32 another_value = 3 [(buf.validate.field).sfixed32 = { gt: 10, lt: 5 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: sfixed32 gt = 4
-         */
-        gt: number;
-    } | {
-        oneofKind: "gte";
-        /**
-         * `gte` requires the field value to be greater than or equal to the specified
-         * value (exclusive). If the value of `gte` is larger than a specified `lt`
-         * or `lte`, the range is reversed, and the field value must be outside the
-         * specified range. If the field value doesn't meet the required conditions,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MySFixed32 {
-         *   // value must be greater than or equal to 5 [sfixed32.gte]
-         *   sfixed32 value = 1 [(buf.validate.field).sfixed32.gte = 5];
-         *
-         *   // value must be greater than or equal to 5 and less than 10 [sfixed32.gte_lt]
-         *   sfixed32 other_value = 2 [(buf.validate.field).sfixed32 = { gte: 5, lt: 10 }];
-         *
-         *   // value must be greater than or equal to 10 or less than 5 [sfixed32.gte_lt_exclusive]
-         *   sfixed32 another_value = 3 [(buf.validate.field).sfixed32 = { gte: 10, lt: 5 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: sfixed32 gte = 5
-         */
-        gte: number;
-    } | {
-        oneofKind: undefined;
-    };
+    greaterThan:
+        | {
+              oneofKind: 'gt';
+              /**
+               * `gt` requires the field value to be greater than the specified value
+               * (exclusive). If the value of `gt` is larger than a specified `lt` or
+               * `lte`, the range is reversed, and the field value must be outside the
+               * specified range. If the field value doesn't meet the required conditions,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MySFixed32 {
+               *   // value must be greater than 5 [sfixed32.gt]
+               *   sfixed32 value = 1 [(buf.validate.field).sfixed32.gt = 5];
+               *
+               *   // value must be greater than 5 and less than 10 [sfixed32.gt_lt]
+               *   sfixed32 other_value = 2 [(buf.validate.field).sfixed32 = { gt: 5, lt: 10 }];
+               *
+               *   // value must be greater than 10 or less than 5 [sfixed32.gt_lt_exclusive]
+               *   sfixed32 another_value = 3 [(buf.validate.field).sfixed32 = { gt: 10, lt: 5 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: sfixed32 gt = 4
+               */
+              gt: number;
+          }
+        | {
+              oneofKind: 'gte';
+              /**
+               * `gte` requires the field value to be greater than or equal to the specified
+               * value (exclusive). If the value of `gte` is larger than a specified `lt`
+               * or `lte`, the range is reversed, and the field value must be outside the
+               * specified range. If the field value doesn't meet the required conditions,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MySFixed32 {
+               *   // value must be greater than or equal to 5 [sfixed32.gte]
+               *   sfixed32 value = 1 [(buf.validate.field).sfixed32.gte = 5];
+               *
+               *   // value must be greater than or equal to 5 and less than 10 [sfixed32.gte_lt]
+               *   sfixed32 other_value = 2 [(buf.validate.field).sfixed32 = { gte: 5, lt: 10 }];
+               *
+               *   // value must be greater than or equal to 10 or less than 5 [sfixed32.gte_lt_exclusive]
+               *   sfixed32 another_value = 3 [(buf.validate.field).sfixed32 = { gte: 10, lt: 5 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: sfixed32 gte = 5
+               */
+              gte: number;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * `in` requires the field value to be equal to one of the specified values.
      * If the field value isn't one of the specified values, an error message is
@@ -2281,99 +2362,105 @@ export interface SFixed64Rules {
     /**
      * @generated from protobuf oneof: less_than
      */
-    lessThan: {
-        oneofKind: "lt";
-        /**
-         * `lt` requires the field value to be less than the specified value (field <
-         * value). If the field value is equal to or greater than the specified value,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MySFixed64 {
-         *   // value must be less than 10
-         *   sfixed64 value = 1 [(buf.validate.field).sfixed64.lt = 10];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: sfixed64 lt = 2
-         */
-        lt: number;
-    } | {
-        oneofKind: "lte";
-        /**
-         * `lte` requires the field value to be less than or equal to the specified
-         * value (field <= value). If the field value is greater than the specified
-         * value, an error message is generated.
-         *
-         * ```proto
-         * message MySFixed64 {
-         *   // value must be less than or equal to 10
-         *   sfixed64 value = 1 [(buf.validate.field).sfixed64.lte = 10];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: sfixed64 lte = 3
-         */
-        lte: number;
-    } | {
-        oneofKind: undefined;
-    };
+    lessThan:
+        | {
+              oneofKind: 'lt';
+              /**
+               * `lt` requires the field value to be less than the specified value (field <
+               * value). If the field value is equal to or greater than the specified value,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MySFixed64 {
+               *   // value must be less than 10
+               *   sfixed64 value = 1 [(buf.validate.field).sfixed64.lt = 10];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: sfixed64 lt = 2
+               */
+              lt: number;
+          }
+        | {
+              oneofKind: 'lte';
+              /**
+               * `lte` requires the field value to be less than or equal to the specified
+               * value (field <= value). If the field value is greater than the specified
+               * value, an error message is generated.
+               *
+               * ```proto
+               * message MySFixed64 {
+               *   // value must be less than or equal to 10
+               *   sfixed64 value = 1 [(buf.validate.field).sfixed64.lte = 10];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: sfixed64 lte = 3
+               */
+              lte: number;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * @generated from protobuf oneof: greater_than
      */
-    greaterThan: {
-        oneofKind: "gt";
-        /**
-         * `gt` requires the field value to be greater than the specified value
-         * (exclusive). If the value of `gt` is larger than a specified `lt` or
-         * `lte`, the range is reversed, and the field value must be outside the
-         * specified range. If the field value doesn't meet the required conditions,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MySFixed64 {
-         *   // value must be greater than 5 [sfixed64.gt]
-         *   sfixed64 value = 1 [(buf.validate.field).sfixed64.gt = 5];
-         *
-         *   // value must be greater than 5 and less than 10 [sfixed64.gt_lt]
-         *   sfixed64 other_value = 2 [(buf.validate.field).sfixed64 = { gt: 5, lt: 10 }];
-         *
-         *   // value must be greater than 10 or less than 5 [sfixed64.gt_lt_exclusive]
-         *   sfixed64 another_value = 3 [(buf.validate.field).sfixed64 = { gt: 10, lt: 5 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: sfixed64 gt = 4
-         */
-        gt: number;
-    } | {
-        oneofKind: "gte";
-        /**
-         * `gte` requires the field value to be greater than or equal to the specified
-         * value (exclusive). If the value of `gte` is larger than a specified `lt`
-         * or `lte`, the range is reversed, and the field value must be outside the
-         * specified range. If the field value doesn't meet the required conditions,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MySFixed64 {
-         *   // value must be greater than or equal to 5 [sfixed64.gte]
-         *   sfixed64 value = 1 [(buf.validate.field).sfixed64.gte = 5];
-         *
-         *   // value must be greater than or equal to 5 and less than 10 [sfixed64.gte_lt]
-         *   sfixed64 other_value = 2 [(buf.validate.field).sfixed64 = { gte: 5, lt: 10 }];
-         *
-         *   // value must be greater than or equal to 10 or less than 5 [sfixed64.gte_lt_exclusive]
-         *   sfixed64 another_value = 3 [(buf.validate.field).sfixed64 = { gte: 10, lt: 5 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: sfixed64 gte = 5
-         */
-        gte: number;
-    } | {
-        oneofKind: undefined;
-    };
+    greaterThan:
+        | {
+              oneofKind: 'gt';
+              /**
+               * `gt` requires the field value to be greater than the specified value
+               * (exclusive). If the value of `gt` is larger than a specified `lt` or
+               * `lte`, the range is reversed, and the field value must be outside the
+               * specified range. If the field value doesn't meet the required conditions,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MySFixed64 {
+               *   // value must be greater than 5 [sfixed64.gt]
+               *   sfixed64 value = 1 [(buf.validate.field).sfixed64.gt = 5];
+               *
+               *   // value must be greater than 5 and less than 10 [sfixed64.gt_lt]
+               *   sfixed64 other_value = 2 [(buf.validate.field).sfixed64 = { gt: 5, lt: 10 }];
+               *
+               *   // value must be greater than 10 or less than 5 [sfixed64.gt_lt_exclusive]
+               *   sfixed64 another_value = 3 [(buf.validate.field).sfixed64 = { gt: 10, lt: 5 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: sfixed64 gt = 4
+               */
+              gt: number;
+          }
+        | {
+              oneofKind: 'gte';
+              /**
+               * `gte` requires the field value to be greater than or equal to the specified
+               * value (exclusive). If the value of `gte` is larger than a specified `lt`
+               * or `lte`, the range is reversed, and the field value must be outside the
+               * specified range. If the field value doesn't meet the required conditions,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MySFixed64 {
+               *   // value must be greater than or equal to 5 [sfixed64.gte]
+               *   sfixed64 value = 1 [(buf.validate.field).sfixed64.gte = 5];
+               *
+               *   // value must be greater than or equal to 5 and less than 10 [sfixed64.gte_lt]
+               *   sfixed64 other_value = 2 [(buf.validate.field).sfixed64 = { gte: 5, lt: 10 }];
+               *
+               *   // value must be greater than or equal to 10 or less than 5 [sfixed64.gte_lt_exclusive]
+               *   sfixed64 another_value = 3 [(buf.validate.field).sfixed64 = { gte: 10, lt: 5 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: sfixed64 gte = 5
+               */
+              gte: number;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * `in` requires the field value to be equal to one of the specified values.
      * If the field value isn't one of the specified values, an error message is
@@ -2688,382 +2775,401 @@ export interface StringRules {
      *
      * @generated from protobuf oneof: well_known
      */
-    wellKnown: {
-        oneofKind: "email";
-        /**
-         * `email` specifies that the field value must be a valid email address, for
-         * example "foo@example.com".
-         *
-         * Conforms to the definition for a valid email address from the [HTML standard](https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address).
-         * Note that this standard willfully deviates from [RFC 5322](https://datatracker.ietf.org/doc/html/rfc5322),
-         * which allows many unexpected forms of email addresses and will easily match
-         * a typographical error.
-         *
-         * If the field value isn't a valid email address, an error message will be generated.
-         *
-         * ```proto
-         * message MyString {
-         *   // value must be a valid email address
-         *   string value = 1 [(buf.validate.field).string.email = true];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: bool email = 12
-         */
-        email: boolean;
-    } | {
-        oneofKind: "hostname";
-        /**
-         * `hostname` specifies that the field value must be a valid hostname, for
-         * example "foo.example.com".
-         *
-         * A valid hostname follows the rules below:
-         * - The name consists of one or more labels, separated by a dot (".").
-         * - Each label can be 1 to 63 alphanumeric characters.
-         * - A label can contain hyphens ("-"), but must not start or end with a hyphen.
-         * - The right-most label must not be digits only.
-         * - The name can have a trailing dot—for example, "foo.example.com.".
-         * - The name can be 253 characters at most, excluding the optional trailing dot.
-         *
-         * If the field value isn't a valid hostname, an error message will be generated.
-         *
-         * ```proto
-         * message MyString {
-         *   // value must be a valid hostname
-         *   string value = 1 [(buf.validate.field).string.hostname = true];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: bool hostname = 13
-         */
-        hostname: boolean;
-    } | {
-        oneofKind: "ip";
-        /**
-         * `ip` specifies that the field value must be a valid IP (v4 or v6) address.
-         *
-         * IPv4 addresses are expected in the dotted decimal format—for example, "192.168.5.21".
-         * IPv6 addresses are expected in their text representation—for example, "::1",
-         * or "2001:0DB8:ABCD:0012::0".
-         *
-         * Both formats are well-defined in the internet standard [RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986).
-         * Zone identifiers for IPv6 addresses (for example, "fe80::a%en1") are supported.
-         *
-         * If the field value isn't a valid IP address, an error message will be
-         * generated.
-         *
-         * ```proto
-         * message MyString {
-         *   // value must be a valid IP address
-         *   string value = 1 [(buf.validate.field).string.ip = true];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: bool ip = 14
-         */
-        ip: boolean;
-    } | {
-        oneofKind: "ipv4";
-        /**
-         * `ipv4` specifies that the field value must be a valid IPv4 address—for
-         * example "192.168.5.21". If the field value isn't a valid IPv4 address, an
-         * error message will be generated.
-         *
-         * ```proto
-         * message MyString {
-         *   // value must be a valid IPv4 address
-         *   string value = 1 [(buf.validate.field).string.ipv4 = true];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: bool ipv4 = 15
-         */
-        ipv4: boolean;
-    } | {
-        oneofKind: "ipv6";
-        /**
-         * `ipv6` specifies that the field value must be a valid IPv6 address—for
-         * example "::1", or "d7a:115c:a1e0:ab12:4843:cd96:626b:430b". If the field
-         * value is not a valid IPv6 address, an error message will be generated.
-         *
-         * ```proto
-         * message MyString {
-         *   // value must be a valid IPv6 address
-         *   string value = 1 [(buf.validate.field).string.ipv6 = true];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: bool ipv6 = 16
-         */
-        ipv6: boolean;
-    } | {
-        oneofKind: "uri";
-        /**
-         * `uri` specifies that the field value must be a valid URI, for example
-         * "https://example.com/foo/bar?baz=quux#frag".
-         *
-         * URI is defined in the internet standard [RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986).
-         * Zone Identifiers in IPv6 address literals are supported ([RFC 6874](https://datatracker.ietf.org/doc/html/rfc6874)).
-         *
-         * If the field value isn't a valid URI, an error message will be generated.
-         *
-         * ```proto
-         * message MyString {
-         *   // value must be a valid URI
-         *   string value = 1 [(buf.validate.field).string.uri = true];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: bool uri = 17
-         */
-        uri: boolean;
-    } | {
-        oneofKind: "uriRef";
-        /**
-         * `uri_ref` specifies that the field value must be a valid URI Reference—either
-         * a URI such as "https://example.com/foo/bar?baz=quux#frag", or a Relative
-         * Reference such as "./foo/bar?query".
-         *
-         * URI, URI Reference, and Relative Reference are defined in the internet
-         * standard [RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986). Zone
-         * Identifiers in IPv6 address literals are supported ([RFC 6874](https://datatracker.ietf.org/doc/html/rfc6874)).
-         *
-         * If the field value isn't a valid URI Reference, an error message will be
-         * generated.
-         *
-         * ```proto
-         * message MyString {
-         *   // value must be a valid URI Reference
-         *   string value = 1 [(buf.validate.field).string.uri_ref = true];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: bool uri_ref = 18
-         */
-        uriRef: boolean;
-    } | {
-        oneofKind: "address";
-        /**
-         * `address` specifies that the field value must be either a valid hostname
-         * (for example, "example.com"), or a valid IP (v4 or v6) address (for example,
-         * "192.168.0.1", or "::1"). If the field value isn't a valid hostname or IP,
-         * an error message will be generated.
-         *
-         * ```proto
-         * message MyString {
-         *   // value must be a valid hostname, or ip address
-         *   string value = 1 [(buf.validate.field).string.address = true];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: bool address = 21
-         */
-        address: boolean;
-    } | {
-        oneofKind: "uuid";
-        /**
-         * `uuid` specifies that the field value must be a valid UUID as defined by
-         * [RFC 4122](https://datatracker.ietf.org/doc/html/rfc4122#section-4.1.2). If the
-         * field value isn't a valid UUID, an error message will be generated.
-         *
-         * ```proto
-         * message MyString {
-         *   // value must be a valid UUID
-         *   string value = 1 [(buf.validate.field).string.uuid = true];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: bool uuid = 22
-         */
-        uuid: boolean;
-    } | {
-        oneofKind: "tuuid";
-        /**
-         * `tuuid` (trimmed UUID) specifies that the field value must be a valid UUID as
-         * defined by [RFC 4122](https://datatracker.ietf.org/doc/html/rfc4122#section-4.1.2) with all dashes
-         * omitted. If the field value isn't a valid UUID without dashes, an error message
-         * will be generated.
-         *
-         * ```proto
-         * message MyString {
-         *   // value must be a valid trimmed UUID
-         *   string value = 1 [(buf.validate.field).string.tuuid = true];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: bool tuuid = 33
-         */
-        tuuid: boolean;
-    } | {
-        oneofKind: "ipWithPrefixlen";
-        /**
-         * `ip_with_prefixlen` specifies that the field value must be a valid IP
-         * (v4 or v6) address with prefix length—for example, "192.168.5.21/16" or
-         * "2001:0DB8:ABCD:0012::F1/64". If the field value isn't a valid IP with
-         * prefix length, an error message will be generated.
-         *
-         * ```proto
-         * message MyString {
-         *   // value must be a valid IP with prefix length
-         *    string value = 1 [(buf.validate.field).string.ip_with_prefixlen = true];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: bool ip_with_prefixlen = 26
-         */
-        ipWithPrefixlen: boolean;
-    } | {
-        oneofKind: "ipv4WithPrefixlen";
-        /**
-         * `ipv4_with_prefixlen` specifies that the field value must be a valid
-         * IPv4 address with prefix length—for example, "192.168.5.21/16". If the
-         * field value isn't a valid IPv4 address with prefix length, an error
-         * message will be generated.
-         *
-         * ```proto
-         * message MyString {
-         *   // value must be a valid IPv4 address with prefix length
-         *    string value = 1 [(buf.validate.field).string.ipv4_with_prefixlen = true];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: bool ipv4_with_prefixlen = 27
-         */
-        ipv4WithPrefixlen: boolean;
-    } | {
-        oneofKind: "ipv6WithPrefixlen";
-        /**
-         * `ipv6_with_prefixlen` specifies that the field value must be a valid
-         * IPv6 address with prefix length—for example, "2001:0DB8:ABCD:0012::F1/64".
-         * If the field value is not a valid IPv6 address with prefix length,
-         * an error message will be generated.
-         *
-         * ```proto
-         * message MyString {
-         *   // value must be a valid IPv6 address prefix length
-         *    string value = 1 [(buf.validate.field).string.ipv6_with_prefixlen = true];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: bool ipv6_with_prefixlen = 28
-         */
-        ipv6WithPrefixlen: boolean;
-    } | {
-        oneofKind: "ipPrefix";
-        /**
-         * `ip_prefix` specifies that the field value must be a valid IP (v4 or v6)
-         * prefix—for example, "192.168.0.0/16" or "2001:0DB8:ABCD:0012::0/64".
-         *
-         * The prefix must have all zeros for the unmasked bits. For example,
-         * "2001:0DB8:ABCD:0012::0/64" designates the left-most 64 bits for the
-         * prefix, and the remaining 64 bits must be zero.
-         *
-         * If the field value isn't a valid IP prefix, an error message will be
-         * generated.
-         *
-         * ```proto
-         * message MyString {
-         *   // value must be a valid IP prefix
-         *    string value = 1 [(buf.validate.field).string.ip_prefix = true];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: bool ip_prefix = 29
-         */
-        ipPrefix: boolean;
-    } | {
-        oneofKind: "ipv4Prefix";
-        /**
-         * `ipv4_prefix` specifies that the field value must be a valid IPv4
-         * prefix, for example "192.168.0.0/16".
-         *
-         * The prefix must have all zeros for the unmasked bits. For example,
-         * "192.168.0.0/16" designates the left-most 16 bits for the prefix,
-         * and the remaining 16 bits must be zero.
-         *
-         * If the field value isn't a valid IPv4 prefix, an error message
-         * will be generated.
-         *
-         * ```proto
-         * message MyString {
-         *   // value must be a valid IPv4 prefix
-         *    string value = 1 [(buf.validate.field).string.ipv4_prefix = true];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: bool ipv4_prefix = 30
-         */
-        ipv4Prefix: boolean;
-    } | {
-        oneofKind: "ipv6Prefix";
-        /**
-         * `ipv6_prefix` specifies that the field value must be a valid IPv6 prefix—for
-         * example, "2001:0DB8:ABCD:0012::0/64".
-         *
-         * The prefix must have all zeros for the unmasked bits. For example,
-         * "2001:0DB8:ABCD:0012::0/64" designates the left-most 64 bits for the
-         * prefix, and the remaining 64 bits must be zero.
-         *
-         * If the field value is not a valid IPv6 prefix, an error message will be
-         * generated.
-         *
-         * ```proto
-         * message MyString {
-         *   // value must be a valid IPv6 prefix
-         *    string value = 1 [(buf.validate.field).string.ipv6_prefix = true];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: bool ipv6_prefix = 31
-         */
-        ipv6Prefix: boolean;
-    } | {
-        oneofKind: "hostAndPort";
-        /**
-         * `host_and_port` specifies that the field value must be valid host/port
-         * pair—for example, "example.com:8080".
-         *
-         * The host can be one of:
-         * - An IPv4 address in dotted decimal format—for example, "192.168.5.21".
-         * - An IPv6 address enclosed in square brackets—for example, "[2001:0DB8:ABCD:0012::F1]".
-         * - A hostname—for example, "example.com".
-         *
-         * The port is separated by a colon. It must be non-empty, with a decimal number
-         * in the range of 0-65535, inclusive.
-         *
-         * @generated from protobuf field: bool host_and_port = 32
-         */
-        hostAndPort: boolean;
-    } | {
-        oneofKind: "wellKnownRegex";
-        /**
-         * `well_known_regex` specifies a common well-known pattern
-         * defined as a regex. If the field value doesn't match the well-known
-         * regex, an error message will be generated.
-         *
-         * ```proto
-         * message MyString {
-         *   // value must be a valid HTTP header value
-         *   string value = 1 [(buf.validate.field).string.well_known_regex = KNOWN_REGEX_HTTP_HEADER_VALUE];
-         * }
-         * ```
-         *
-         * #### KnownRegex
-         *
-         * `well_known_regex` contains some well-known patterns.
-         *
-         * | Name                          | Number | Description                               |
-         * |-------------------------------|--------|-------------------------------------------|
-         * | KNOWN_REGEX_UNSPECIFIED       | 0      |                                           |
-         * | KNOWN_REGEX_HTTP_HEADER_NAME  | 1      | HTTP header name as defined by [RFC 7230](https://datatracker.ietf.org/doc/html/rfc7230#section-3.2)  |
-         * | KNOWN_REGEX_HTTP_HEADER_VALUE | 2      | HTTP header value as defined by [RFC 7230](https://datatracker.ietf.org/doc/html/rfc7230#section-3.2.4) |
-         *
-         * @generated from protobuf field: buf.validate.KnownRegex well_known_regex = 24
-         */
-        wellKnownRegex: KnownRegex;
-    } | {
-        oneofKind: undefined;
-    };
+    wellKnown:
+        | {
+              oneofKind: 'email';
+              /**
+               * `email` specifies that the field value must be a valid email address, for
+               * example "foo@example.com".
+               *
+               * Conforms to the definition for a valid email address from the [HTML standard](https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address).
+               * Note that this standard willfully deviates from [RFC 5322](https://datatracker.ietf.org/doc/html/rfc5322),
+               * which allows many unexpected forms of email addresses and will easily match
+               * a typographical error.
+               *
+               * If the field value isn't a valid email address, an error message will be generated.
+               *
+               * ```proto
+               * message MyString {
+               *   // value must be a valid email address
+               *   string value = 1 [(buf.validate.field).string.email = true];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: bool email = 12
+               */
+              email: boolean;
+          }
+        | {
+              oneofKind: 'hostname';
+              /**
+               * `hostname` specifies that the field value must be a valid hostname, for
+               * example "foo.example.com".
+               *
+               * A valid hostname follows the rules below:
+               * - The name consists of one or more labels, separated by a dot (".").
+               * - Each label can be 1 to 63 alphanumeric characters.
+               * - A label can contain hyphens ("-"), but must not start or end with a hyphen.
+               * - The right-most label must not be digits only.
+               * - The name can have a trailing dot—for example, "foo.example.com.".
+               * - The name can be 253 characters at most, excluding the optional trailing dot.
+               *
+               * If the field value isn't a valid hostname, an error message will be generated.
+               *
+               * ```proto
+               * message MyString {
+               *   // value must be a valid hostname
+               *   string value = 1 [(buf.validate.field).string.hostname = true];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: bool hostname = 13
+               */
+              hostname: boolean;
+          }
+        | {
+              oneofKind: 'ip';
+              /**
+               * `ip` specifies that the field value must be a valid IP (v4 or v6) address.
+               *
+               * IPv4 addresses are expected in the dotted decimal format—for example, "192.168.5.21".
+               * IPv6 addresses are expected in their text representation—for example, "::1",
+               * or "2001:0DB8:ABCD:0012::0".
+               *
+               * Both formats are well-defined in the internet standard [RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986).
+               * Zone identifiers for IPv6 addresses (for example, "fe80::a%en1") are supported.
+               *
+               * If the field value isn't a valid IP address, an error message will be
+               * generated.
+               *
+               * ```proto
+               * message MyString {
+               *   // value must be a valid IP address
+               *   string value = 1 [(buf.validate.field).string.ip = true];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: bool ip = 14
+               */
+              ip: boolean;
+          }
+        | {
+              oneofKind: 'ipv4';
+              /**
+               * `ipv4` specifies that the field value must be a valid IPv4 address—for
+               * example "192.168.5.21". If the field value isn't a valid IPv4 address, an
+               * error message will be generated.
+               *
+               * ```proto
+               * message MyString {
+               *   // value must be a valid IPv4 address
+               *   string value = 1 [(buf.validate.field).string.ipv4 = true];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: bool ipv4 = 15
+               */
+              ipv4: boolean;
+          }
+        | {
+              oneofKind: 'ipv6';
+              /**
+               * `ipv6` specifies that the field value must be a valid IPv6 address—for
+               * example "::1", or "d7a:115c:a1e0:ab12:4843:cd96:626b:430b". If the field
+               * value is not a valid IPv6 address, an error message will be generated.
+               *
+               * ```proto
+               * message MyString {
+               *   // value must be a valid IPv6 address
+               *   string value = 1 [(buf.validate.field).string.ipv6 = true];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: bool ipv6 = 16
+               */
+              ipv6: boolean;
+          }
+        | {
+              oneofKind: 'uri';
+              /**
+               * `uri` specifies that the field value must be a valid URI, for example
+               * "https://example.com/foo/bar?baz=quux#frag".
+               *
+               * URI is defined in the internet standard [RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986).
+               * Zone Identifiers in IPv6 address literals are supported ([RFC 6874](https://datatracker.ietf.org/doc/html/rfc6874)).
+               *
+               * If the field value isn't a valid URI, an error message will be generated.
+               *
+               * ```proto
+               * message MyString {
+               *   // value must be a valid URI
+               *   string value = 1 [(buf.validate.field).string.uri = true];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: bool uri = 17
+               */
+              uri: boolean;
+          }
+        | {
+              oneofKind: 'uriRef';
+              /**
+               * `uri_ref` specifies that the field value must be a valid URI Reference—either
+               * a URI such as "https://example.com/foo/bar?baz=quux#frag", or a Relative
+               * Reference such as "./foo/bar?query".
+               *
+               * URI, URI Reference, and Relative Reference are defined in the internet
+               * standard [RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986). Zone
+               * Identifiers in IPv6 address literals are supported ([RFC 6874](https://datatracker.ietf.org/doc/html/rfc6874)).
+               *
+               * If the field value isn't a valid URI Reference, an error message will be
+               * generated.
+               *
+               * ```proto
+               * message MyString {
+               *   // value must be a valid URI Reference
+               *   string value = 1 [(buf.validate.field).string.uri_ref = true];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: bool uri_ref = 18
+               */
+              uriRef: boolean;
+          }
+        | {
+              oneofKind: 'address';
+              /**
+               * `address` specifies that the field value must be either a valid hostname
+               * (for example, "example.com"), or a valid IP (v4 or v6) address (for example,
+               * "192.168.0.1", or "::1"). If the field value isn't a valid hostname or IP,
+               * an error message will be generated.
+               *
+               * ```proto
+               * message MyString {
+               *   // value must be a valid hostname, or ip address
+               *   string value = 1 [(buf.validate.field).string.address = true];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: bool address = 21
+               */
+              address: boolean;
+          }
+        | {
+              oneofKind: 'uuid';
+              /**
+               * `uuid` specifies that the field value must be a valid UUID as defined by
+               * [RFC 4122](https://datatracker.ietf.org/doc/html/rfc4122#section-4.1.2). If the
+               * field value isn't a valid UUID, an error message will be generated.
+               *
+               * ```proto
+               * message MyString {
+               *   // value must be a valid UUID
+               *   string value = 1 [(buf.validate.field).string.uuid = true];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: bool uuid = 22
+               */
+              uuid: boolean;
+          }
+        | {
+              oneofKind: 'tuuid';
+              /**
+               * `tuuid` (trimmed UUID) specifies that the field value must be a valid UUID as
+               * defined by [RFC 4122](https://datatracker.ietf.org/doc/html/rfc4122#section-4.1.2) with all dashes
+               * omitted. If the field value isn't a valid UUID without dashes, an error message
+               * will be generated.
+               *
+               * ```proto
+               * message MyString {
+               *   // value must be a valid trimmed UUID
+               *   string value = 1 [(buf.validate.field).string.tuuid = true];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: bool tuuid = 33
+               */
+              tuuid: boolean;
+          }
+        | {
+              oneofKind: 'ipWithPrefixlen';
+              /**
+               * `ip_with_prefixlen` specifies that the field value must be a valid IP
+               * (v4 or v6) address with prefix length—for example, "192.168.5.21/16" or
+               * "2001:0DB8:ABCD:0012::F1/64". If the field value isn't a valid IP with
+               * prefix length, an error message will be generated.
+               *
+               * ```proto
+               * message MyString {
+               *   // value must be a valid IP with prefix length
+               *    string value = 1 [(buf.validate.field).string.ip_with_prefixlen = true];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: bool ip_with_prefixlen = 26
+               */
+              ipWithPrefixlen: boolean;
+          }
+        | {
+              oneofKind: 'ipv4WithPrefixlen';
+              /**
+               * `ipv4_with_prefixlen` specifies that the field value must be a valid
+               * IPv4 address with prefix length—for example, "192.168.5.21/16". If the
+               * field value isn't a valid IPv4 address with prefix length, an error
+               * message will be generated.
+               *
+               * ```proto
+               * message MyString {
+               *   // value must be a valid IPv4 address with prefix length
+               *    string value = 1 [(buf.validate.field).string.ipv4_with_prefixlen = true];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: bool ipv4_with_prefixlen = 27
+               */
+              ipv4WithPrefixlen: boolean;
+          }
+        | {
+              oneofKind: 'ipv6WithPrefixlen';
+              /**
+               * `ipv6_with_prefixlen` specifies that the field value must be a valid
+               * IPv6 address with prefix length—for example, "2001:0DB8:ABCD:0012::F1/64".
+               * If the field value is not a valid IPv6 address with prefix length,
+               * an error message will be generated.
+               *
+               * ```proto
+               * message MyString {
+               *   // value must be a valid IPv6 address prefix length
+               *    string value = 1 [(buf.validate.field).string.ipv6_with_prefixlen = true];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: bool ipv6_with_prefixlen = 28
+               */
+              ipv6WithPrefixlen: boolean;
+          }
+        | {
+              oneofKind: 'ipPrefix';
+              /**
+               * `ip_prefix` specifies that the field value must be a valid IP (v4 or v6)
+               * prefix—for example, "192.168.0.0/16" or "2001:0DB8:ABCD:0012::0/64".
+               *
+               * The prefix must have all zeros for the unmasked bits. For example,
+               * "2001:0DB8:ABCD:0012::0/64" designates the left-most 64 bits for the
+               * prefix, and the remaining 64 bits must be zero.
+               *
+               * If the field value isn't a valid IP prefix, an error message will be
+               * generated.
+               *
+               * ```proto
+               * message MyString {
+               *   // value must be a valid IP prefix
+               *    string value = 1 [(buf.validate.field).string.ip_prefix = true];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: bool ip_prefix = 29
+               */
+              ipPrefix: boolean;
+          }
+        | {
+              oneofKind: 'ipv4Prefix';
+              /**
+               * `ipv4_prefix` specifies that the field value must be a valid IPv4
+               * prefix, for example "192.168.0.0/16".
+               *
+               * The prefix must have all zeros for the unmasked bits. For example,
+               * "192.168.0.0/16" designates the left-most 16 bits for the prefix,
+               * and the remaining 16 bits must be zero.
+               *
+               * If the field value isn't a valid IPv4 prefix, an error message
+               * will be generated.
+               *
+               * ```proto
+               * message MyString {
+               *   // value must be a valid IPv4 prefix
+               *    string value = 1 [(buf.validate.field).string.ipv4_prefix = true];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: bool ipv4_prefix = 30
+               */
+              ipv4Prefix: boolean;
+          }
+        | {
+              oneofKind: 'ipv6Prefix';
+              /**
+               * `ipv6_prefix` specifies that the field value must be a valid IPv6 prefix—for
+               * example, "2001:0DB8:ABCD:0012::0/64".
+               *
+               * The prefix must have all zeros for the unmasked bits. For example,
+               * "2001:0DB8:ABCD:0012::0/64" designates the left-most 64 bits for the
+               * prefix, and the remaining 64 bits must be zero.
+               *
+               * If the field value is not a valid IPv6 prefix, an error message will be
+               * generated.
+               *
+               * ```proto
+               * message MyString {
+               *   // value must be a valid IPv6 prefix
+               *    string value = 1 [(buf.validate.field).string.ipv6_prefix = true];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: bool ipv6_prefix = 31
+               */
+              ipv6Prefix: boolean;
+          }
+        | {
+              oneofKind: 'hostAndPort';
+              /**
+               * `host_and_port` specifies that the field value must be valid host/port
+               * pair—for example, "example.com:8080".
+               *
+               * The host can be one of:
+               * - An IPv4 address in dotted decimal format—for example, "192.168.5.21".
+               * - An IPv6 address enclosed in square brackets—for example, "[2001:0DB8:ABCD:0012::F1]".
+               * - A hostname—for example, "example.com".
+               *
+               * The port is separated by a colon. It must be non-empty, with a decimal number
+               * in the range of 0-65535, inclusive.
+               *
+               * @generated from protobuf field: bool host_and_port = 32
+               */
+              hostAndPort: boolean;
+          }
+        | {
+              oneofKind: 'wellKnownRegex';
+              /**
+               * `well_known_regex` specifies a common well-known pattern
+               * defined as a regex. If the field value doesn't match the well-known
+               * regex, an error message will be generated.
+               *
+               * ```proto
+               * message MyString {
+               *   // value must be a valid HTTP header value
+               *   string value = 1 [(buf.validate.field).string.well_known_regex = KNOWN_REGEX_HTTP_HEADER_VALUE];
+               * }
+               * ```
+               *
+               * #### KnownRegex
+               *
+               * `well_known_regex` contains some well-known patterns.
+               *
+               * | Name                          | Number | Description                               |
+               * |-------------------------------|--------|-------------------------------------------|
+               * | KNOWN_REGEX_UNSPECIFIED       | 0      |                                           |
+               * | KNOWN_REGEX_HTTP_HEADER_NAME  | 1      | HTTP header name as defined by [RFC 7230](https://datatracker.ietf.org/doc/html/rfc7230#section-3.2)  |
+               * | KNOWN_REGEX_HTTP_HEADER_VALUE | 2      | HTTP header value as defined by [RFC 7230](https://datatracker.ietf.org/doc/html/rfc7230#section-3.2.4) |
+               *
+               * @generated from protobuf field: buf.validate.KnownRegex well_known_regex = 24
+               */
+              wellKnownRegex: KnownRegex;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * This applies to regexes `HTTP_HEADER_NAME` and `HTTP_HEADER_VALUE` to
      * enable strict header validation. By default, this is true, and HTTP header
@@ -3263,56 +3369,60 @@ export interface BytesRules {
      *
      * @generated from protobuf oneof: well_known
      */
-    wellKnown: {
-        oneofKind: "ip";
-        /**
-         * `ip` ensures that the field `value` is a valid IP address (v4 or v6) in byte format.
-         * If the field value doesn't meet this rule, an error message is generated.
-         *
-         * ```proto
-         * message MyBytes {
-         *   // value must be a valid IP address
-         *   optional bytes value = 1 [(buf.validate.field).bytes.ip = true];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: bool ip = 10
-         */
-        ip: boolean;
-    } | {
-        oneofKind: "ipv4";
-        /**
-         * `ipv4` ensures that the field `value` is a valid IPv4 address in byte format.
-         * If the field value doesn't meet this rule, an error message is generated.
-         *
-         * ```proto
-         * message MyBytes {
-         *   // value must be a valid IPv4 address
-         *   optional bytes value = 1 [(buf.validate.field).bytes.ipv4 = true];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: bool ipv4 = 11
-         */
-        ipv4: boolean;
-    } | {
-        oneofKind: "ipv6";
-        /**
-         * `ipv6` ensures that the field `value` is a valid IPv6 address in byte format.
-         * If the field value doesn't meet this rule, an error message is generated.
-         * ```proto
-         * message MyBytes {
-         *   // value must be a valid IPv6 address
-         *   optional bytes value = 1 [(buf.validate.field).bytes.ipv6 = true];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: bool ipv6 = 12
-         */
-        ipv6: boolean;
-    } | {
-        oneofKind: undefined;
-    };
+    wellKnown:
+        | {
+              oneofKind: 'ip';
+              /**
+               * `ip` ensures that the field `value` is a valid IP address (v4 or v6) in byte format.
+               * If the field value doesn't meet this rule, an error message is generated.
+               *
+               * ```proto
+               * message MyBytes {
+               *   // value must be a valid IP address
+               *   optional bytes value = 1 [(buf.validate.field).bytes.ip = true];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: bool ip = 10
+               */
+              ip: boolean;
+          }
+        | {
+              oneofKind: 'ipv4';
+              /**
+               * `ipv4` ensures that the field `value` is a valid IPv4 address in byte format.
+               * If the field value doesn't meet this rule, an error message is generated.
+               *
+               * ```proto
+               * message MyBytes {
+               *   // value must be a valid IPv4 address
+               *   optional bytes value = 1 [(buf.validate.field).bytes.ipv4 = true];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: bool ipv4 = 11
+               */
+              ipv4: boolean;
+          }
+        | {
+              oneofKind: 'ipv6';
+              /**
+               * `ipv6` ensures that the field `value` is a valid IPv6 address in byte format.
+               * If the field value doesn't meet this rule, an error message is generated.
+               * ```proto
+               * message MyBytes {
+               *   // value must be a valid IPv6 address
+               *   optional bytes value = 1 [(buf.validate.field).bytes.ipv6 = true];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: bool ipv6 = 12
+               */
+              ipv6: boolean;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * `example` specifies values that the field may have. These values SHOULD
      * conform to other rules. `example` values will not impact validation
@@ -3660,99 +3770,105 @@ export interface DurationRules {
     /**
      * @generated from protobuf oneof: less_than
      */
-    lessThan: {
-        oneofKind: "lt";
-        /**
-         * `lt` stipulates that the field must be less than the specified value of the `google.protobuf.Duration` type,
-         * exclusive. If the field's value is greater than or equal to the specified
-         * value, an error message will be generated.
-         *
-         * ```proto
-         * message MyDuration {
-         *   // value must be less than 5s
-         *   google.protobuf.Duration value = 1 [(buf.validate.field).duration.lt = "5s"];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: google.protobuf.Duration lt = 3
-         */
-        lt: Duration;
-    } | {
-        oneofKind: "lte";
-        /**
-         * `lte` indicates that the field must be less than or equal to the specified
-         * value of the `google.protobuf.Duration` type, inclusive. If the field's value is greater than the specified value,
-         * an error message will be generated.
-         *
-         * ```proto
-         * message MyDuration {
-         *   // value must be less than or equal to 10s
-         *   google.protobuf.Duration value = 1 [(buf.validate.field).duration.lte = "10s"];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: google.protobuf.Duration lte = 4
-         */
-        lte: Duration;
-    } | {
-        oneofKind: undefined;
-    };
+    lessThan:
+        | {
+              oneofKind: 'lt';
+              /**
+               * `lt` stipulates that the field must be less than the specified value of the `google.protobuf.Duration` type,
+               * exclusive. If the field's value is greater than or equal to the specified
+               * value, an error message will be generated.
+               *
+               * ```proto
+               * message MyDuration {
+               *   // value must be less than 5s
+               *   google.protobuf.Duration value = 1 [(buf.validate.field).duration.lt = "5s"];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: google.protobuf.Duration lt = 3
+               */
+              lt: Duration;
+          }
+        | {
+              oneofKind: 'lte';
+              /**
+               * `lte` indicates that the field must be less than or equal to the specified
+               * value of the `google.protobuf.Duration` type, inclusive. If the field's value is greater than the specified value,
+               * an error message will be generated.
+               *
+               * ```proto
+               * message MyDuration {
+               *   // value must be less than or equal to 10s
+               *   google.protobuf.Duration value = 1 [(buf.validate.field).duration.lte = "10s"];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: google.protobuf.Duration lte = 4
+               */
+              lte: Duration;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * @generated from protobuf oneof: greater_than
      */
-    greaterThan: {
-        oneofKind: "gt";
-        /**
-         * `gt` requires the duration field value to be greater than the specified
-         * value (exclusive). If the value of `gt` is larger than a specified `lt`
-         * or `lte`, the range is reversed, and the field value must be outside the
-         * specified range. If the field value doesn't meet the required conditions,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MyDuration {
-         *   // duration must be greater than 5s [duration.gt]
-         *   google.protobuf.Duration value = 1 [(buf.validate.field).duration.gt = { seconds: 5 }];
-         *
-         *   // duration must be greater than 5s and less than 10s [duration.gt_lt]
-         *   google.protobuf.Duration another_value = 2 [(buf.validate.field).duration = { gt: { seconds: 5 }, lt: { seconds: 10 } }];
-         *
-         *   // duration must be greater than 10s or less than 5s [duration.gt_lt_exclusive]
-         *   google.protobuf.Duration other_value = 3 [(buf.validate.field).duration = { gt: { seconds: 10 }, lt: { seconds: 5 } }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: google.protobuf.Duration gt = 5
-         */
-        gt: Duration;
-    } | {
-        oneofKind: "gte";
-        /**
-         * `gte` requires the duration field value to be greater than or equal to the
-         * specified value (exclusive). If the value of `gte` is larger than a
-         * specified `lt` or `lte`, the range is reversed, and the field value must
-         * be outside the specified range. If the field value doesn't meet the
-         * required conditions, an error message is generated.
-         *
-         * ```proto
-         * message MyDuration {
-         *  // duration must be greater than or equal to 5s [duration.gte]
-         *  google.protobuf.Duration value = 1 [(buf.validate.field).duration.gte = { seconds: 5 }];
-         *
-         *  // duration must be greater than or equal to 5s and less than 10s [duration.gte_lt]
-         *  google.protobuf.Duration another_value = 2 [(buf.validate.field).duration = { gte: { seconds: 5 }, lt: { seconds: 10 } }];
-         *
-         *  // duration must be greater than or equal to 10s or less than 5s [duration.gte_lt_exclusive]
-         *  google.protobuf.Duration other_value = 3 [(buf.validate.field).duration = { gte: { seconds: 10 }, lt: { seconds: 5 } }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: google.protobuf.Duration gte = 6
-         */
-        gte: Duration;
-    } | {
-        oneofKind: undefined;
-    };
+    greaterThan:
+        | {
+              oneofKind: 'gt';
+              /**
+               * `gt` requires the duration field value to be greater than the specified
+               * value (exclusive). If the value of `gt` is larger than a specified `lt`
+               * or `lte`, the range is reversed, and the field value must be outside the
+               * specified range. If the field value doesn't meet the required conditions,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MyDuration {
+               *   // duration must be greater than 5s [duration.gt]
+               *   google.protobuf.Duration value = 1 [(buf.validate.field).duration.gt = { seconds: 5 }];
+               *
+               *   // duration must be greater than 5s and less than 10s [duration.gt_lt]
+               *   google.protobuf.Duration another_value = 2 [(buf.validate.field).duration = { gt: { seconds: 5 }, lt: { seconds: 10 } }];
+               *
+               *   // duration must be greater than 10s or less than 5s [duration.gt_lt_exclusive]
+               *   google.protobuf.Duration other_value = 3 [(buf.validate.field).duration = { gt: { seconds: 10 }, lt: { seconds: 5 } }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: google.protobuf.Duration gt = 5
+               */
+              gt: Duration;
+          }
+        | {
+              oneofKind: 'gte';
+              /**
+               * `gte` requires the duration field value to be greater than or equal to the
+               * specified value (exclusive). If the value of `gte` is larger than a
+               * specified `lt` or `lte`, the range is reversed, and the field value must
+               * be outside the specified range. If the field value doesn't meet the
+               * required conditions, an error message is generated.
+               *
+               * ```proto
+               * message MyDuration {
+               *  // duration must be greater than or equal to 5s [duration.gte]
+               *  google.protobuf.Duration value = 1 [(buf.validate.field).duration.gte = { seconds: 5 }];
+               *
+               *  // duration must be greater than or equal to 5s and less than 10s [duration.gte_lt]
+               *  google.protobuf.Duration another_value = 2 [(buf.validate.field).duration = { gte: { seconds: 5 }, lt: { seconds: 10 } }];
+               *
+               *  // duration must be greater than or equal to 10s or less than 5s [duration.gte_lt_exclusive]
+               *  google.protobuf.Duration other_value = 3 [(buf.validate.field).duration = { gte: { seconds: 10 }, lt: { seconds: 5 } }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: google.protobuf.Duration gte = 6
+               */
+              gte: Duration;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * `in` asserts that the field must be equal to one of the specified values of the `google.protobuf.Duration` type.
      * If the field's value doesn't correspond to any of the specified values,
@@ -3824,125 +3940,133 @@ export interface TimestampRules {
     /**
      * @generated from protobuf oneof: less_than
      */
-    lessThan: {
-        oneofKind: "lt";
-        /**
-         * requires the duration field value to be less than the specified value (field < value). If the field value doesn't meet the required conditions, an error message is generated.
-         *
-         * ```proto
-         * message MyDuration {
-         *   // duration must be less than 'P3D' [duration.lt]
-         *   google.protobuf.Duration value = 1 [(buf.validate.field).duration.lt = { seconds: 259200 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: google.protobuf.Timestamp lt = 3
-         */
-        lt: Timestamp;
-    } | {
-        oneofKind: "lte";
-        /**
-         * requires the timestamp field value to be less than or equal to the specified value (field <= value). If the field value doesn't meet the required conditions, an error message is generated.
-         *
-         * ```proto
-         * message MyTimestamp {
-         *   // timestamp must be less than or equal to '2023-05-14T00:00:00Z' [timestamp.lte]
-         *   google.protobuf.Timestamp value = 1 [(buf.validate.field).timestamp.lte = { seconds: 1678867200 }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: google.protobuf.Timestamp lte = 4
-         */
-        lte: Timestamp;
-    } | {
-        oneofKind: "ltNow";
-        /**
-         * `lt_now` specifies that this field, of the `google.protobuf.Timestamp` type, must be less than the current time. `lt_now` can only be used with the `within` rule.
-         *
-         * ```proto
-         * message MyTimestamp {
-         *  // value must be less than now
-         *   google.protobuf.Timestamp created_at = 1 [(buf.validate.field).timestamp.lt_now = true];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: bool lt_now = 7
-         */
-        ltNow: boolean;
-    } | {
-        oneofKind: undefined;
-    };
+    lessThan:
+        | {
+              oneofKind: 'lt';
+              /**
+               * requires the duration field value to be less than the specified value (field < value). If the field value doesn't meet the required conditions, an error message is generated.
+               *
+               * ```proto
+               * message MyDuration {
+               *   // duration must be less than 'P3D' [duration.lt]
+               *   google.protobuf.Duration value = 1 [(buf.validate.field).duration.lt = { seconds: 259200 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: google.protobuf.Timestamp lt = 3
+               */
+              lt: Timestamp;
+          }
+        | {
+              oneofKind: 'lte';
+              /**
+               * requires the timestamp field value to be less than or equal to the specified value (field <= value). If the field value doesn't meet the required conditions, an error message is generated.
+               *
+               * ```proto
+               * message MyTimestamp {
+               *   // timestamp must be less than or equal to '2023-05-14T00:00:00Z' [timestamp.lte]
+               *   google.protobuf.Timestamp value = 1 [(buf.validate.field).timestamp.lte = { seconds: 1678867200 }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: google.protobuf.Timestamp lte = 4
+               */
+              lte: Timestamp;
+          }
+        | {
+              oneofKind: 'ltNow';
+              /**
+               * `lt_now` specifies that this field, of the `google.protobuf.Timestamp` type, must be less than the current time. `lt_now` can only be used with the `within` rule.
+               *
+               * ```proto
+               * message MyTimestamp {
+               *  // value must be less than now
+               *   google.protobuf.Timestamp created_at = 1 [(buf.validate.field).timestamp.lt_now = true];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: bool lt_now = 7
+               */
+              ltNow: boolean;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * @generated from protobuf oneof: greater_than
      */
-    greaterThan: {
-        oneofKind: "gt";
-        /**
-         * `gt` requires the timestamp field value to be greater than the specified
-         * value (exclusive). If the value of `gt` is larger than a specified `lt`
-         * or `lte`, the range is reversed, and the field value must be outside the
-         * specified range. If the field value doesn't meet the required conditions,
-         * an error message is generated.
-         *
-         * ```proto
-         * message MyTimestamp {
-         *   // timestamp must be greater than '2023-01-01T00:00:00Z' [timestamp.gt]
-         *   google.protobuf.Timestamp value = 1 [(buf.validate.field).timestamp.gt = { seconds: 1672444800 }];
-         *
-         *   // timestamp must be greater than '2023-01-01T00:00:00Z' and less than '2023-01-02T00:00:00Z' [timestamp.gt_lt]
-         *   google.protobuf.Timestamp another_value = 2 [(buf.validate.field).timestamp = { gt: { seconds: 1672444800 }, lt: { seconds: 1672531200 } }];
-         *
-         *   // timestamp must be greater than '2023-01-02T00:00:00Z' or less than '2023-01-01T00:00:00Z' [timestamp.gt_lt_exclusive]
-         *   google.protobuf.Timestamp other_value = 3 [(buf.validate.field).timestamp = { gt: { seconds: 1672531200 }, lt: { seconds: 1672444800 } }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: google.protobuf.Timestamp gt = 5
-         */
-        gt: Timestamp;
-    } | {
-        oneofKind: "gte";
-        /**
-         * `gte` requires the timestamp field value to be greater than or equal to the
-         * specified value (exclusive). If the value of `gte` is larger than a
-         * specified `lt` or `lte`, the range is reversed, and the field value
-         * must be outside the specified range. If the field value doesn't meet
-         * the required conditions, an error message is generated.
-         *
-         * ```proto
-         * message MyTimestamp {
-         *   // timestamp must be greater than or equal to '2023-01-01T00:00:00Z' [timestamp.gte]
-         *   google.protobuf.Timestamp value = 1 [(buf.validate.field).timestamp.gte = { seconds: 1672444800 }];
-         *
-         *   // timestamp must be greater than or equal to '2023-01-01T00:00:00Z' and less than '2023-01-02T00:00:00Z' [timestamp.gte_lt]
-         *   google.protobuf.Timestamp another_value = 2 [(buf.validate.field).timestamp = { gte: { seconds: 1672444800 }, lt: { seconds: 1672531200 } }];
-         *
-         *   // timestamp must be greater than or equal to '2023-01-02T00:00:00Z' or less than '2023-01-01T00:00:00Z' [timestamp.gte_lt_exclusive]
-         *   google.protobuf.Timestamp other_value = 3 [(buf.validate.field).timestamp = { gte: { seconds: 1672531200 }, lt: { seconds: 1672444800 } }];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: google.protobuf.Timestamp gte = 6
-         */
-        gte: Timestamp;
-    } | {
-        oneofKind: "gtNow";
-        /**
-         * `gt_now` specifies that this field, of the `google.protobuf.Timestamp` type, must be greater than the current time. `gt_now` can only be used with the `within` rule.
-         *
-         * ```proto
-         * message MyTimestamp {
-         *   // value must be greater than now
-         *   google.protobuf.Timestamp created_at = 1 [(buf.validate.field).timestamp.gt_now = true];
-         * }
-         * ```
-         *
-         * @generated from protobuf field: bool gt_now = 8
-         */
-        gtNow: boolean;
-    } | {
-        oneofKind: undefined;
-    };
+    greaterThan:
+        | {
+              oneofKind: 'gt';
+              /**
+               * `gt` requires the timestamp field value to be greater than the specified
+               * value (exclusive). If the value of `gt` is larger than a specified `lt`
+               * or `lte`, the range is reversed, and the field value must be outside the
+               * specified range. If the field value doesn't meet the required conditions,
+               * an error message is generated.
+               *
+               * ```proto
+               * message MyTimestamp {
+               *   // timestamp must be greater than '2023-01-01T00:00:00Z' [timestamp.gt]
+               *   google.protobuf.Timestamp value = 1 [(buf.validate.field).timestamp.gt = { seconds: 1672444800 }];
+               *
+               *   // timestamp must be greater than '2023-01-01T00:00:00Z' and less than '2023-01-02T00:00:00Z' [timestamp.gt_lt]
+               *   google.protobuf.Timestamp another_value = 2 [(buf.validate.field).timestamp = { gt: { seconds: 1672444800 }, lt: { seconds: 1672531200 } }];
+               *
+               *   // timestamp must be greater than '2023-01-02T00:00:00Z' or less than '2023-01-01T00:00:00Z' [timestamp.gt_lt_exclusive]
+               *   google.protobuf.Timestamp other_value = 3 [(buf.validate.field).timestamp = { gt: { seconds: 1672531200 }, lt: { seconds: 1672444800 } }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: google.protobuf.Timestamp gt = 5
+               */
+              gt: Timestamp;
+          }
+        | {
+              oneofKind: 'gte';
+              /**
+               * `gte` requires the timestamp field value to be greater than or equal to the
+               * specified value (exclusive). If the value of `gte` is larger than a
+               * specified `lt` or `lte`, the range is reversed, and the field value
+               * must be outside the specified range. If the field value doesn't meet
+               * the required conditions, an error message is generated.
+               *
+               * ```proto
+               * message MyTimestamp {
+               *   // timestamp must be greater than or equal to '2023-01-01T00:00:00Z' [timestamp.gte]
+               *   google.protobuf.Timestamp value = 1 [(buf.validate.field).timestamp.gte = { seconds: 1672444800 }];
+               *
+               *   // timestamp must be greater than or equal to '2023-01-01T00:00:00Z' and less than '2023-01-02T00:00:00Z' [timestamp.gte_lt]
+               *   google.protobuf.Timestamp another_value = 2 [(buf.validate.field).timestamp = { gte: { seconds: 1672444800 }, lt: { seconds: 1672531200 } }];
+               *
+               *   // timestamp must be greater than or equal to '2023-01-02T00:00:00Z' or less than '2023-01-01T00:00:00Z' [timestamp.gte_lt_exclusive]
+               *   google.protobuf.Timestamp other_value = 3 [(buf.validate.field).timestamp = { gte: { seconds: 1672531200 }, lt: { seconds: 1672444800 } }];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: google.protobuf.Timestamp gte = 6
+               */
+              gte: Timestamp;
+          }
+        | {
+              oneofKind: 'gtNow';
+              /**
+               * `gt_now` specifies that this field, of the `google.protobuf.Timestamp` type, must be greater than the current time. `gt_now` can only be used with the `within` rule.
+               *
+               * ```proto
+               * message MyTimestamp {
+               *   // value must be greater than now
+               *   google.protobuf.Timestamp created_at = 1 [(buf.validate.field).timestamp.gt_now = true];
+               * }
+               * ```
+               *
+               * @generated from protobuf field: bool gt_now = 8
+               */
+              gtNow: boolean;
+          }
+        | {
+              oneofKind: undefined;
+          };
     /**
      * `within` specifies that this field, of the `google.protobuf.Timestamp` type, must be within the specified duration of the current time. If the field value isn't within the duration, an error message is generated.
      *
@@ -4189,49 +4313,55 @@ export interface FieldPathElement {
      *
      * @generated from protobuf oneof: subscript
      */
-    subscript: {
-        oneofKind: "index";
-        /**
-         * `index` specifies a 0-based index into a repeated field.
-         *
-         * @generated from protobuf field: uint64 index = 6
-         */
-        index: number;
-    } | {
-        oneofKind: "boolKey";
-        /**
-         * `bool_key` specifies a map key of type bool.
-         *
-         * @generated from protobuf field: bool bool_key = 7
-         */
-        boolKey: boolean;
-    } | {
-        oneofKind: "intKey";
-        /**
-         * `int_key` specifies a map key of type int32, int64, sint32, sint64, sfixed32 or sfixed64.
-         *
-         * @generated from protobuf field: int64 int_key = 8
-         */
-        intKey: number;
-    } | {
-        oneofKind: "uintKey";
-        /**
-         * `uint_key` specifies a map key of type uint32, uint64, fixed32 or fixed64.
-         *
-         * @generated from protobuf field: uint64 uint_key = 9
-         */
-        uintKey: number;
-    } | {
-        oneofKind: "stringKey";
-        /**
-         * `string_key` specifies a map key of type string.
-         *
-         * @generated from protobuf field: string string_key = 10
-         */
-        stringKey: string;
-    } | {
-        oneofKind: undefined;
-    };
+    subscript:
+        | {
+              oneofKind: 'index';
+              /**
+               * `index` specifies a 0-based index into a repeated field.
+               *
+               * @generated from protobuf field: uint64 index = 6
+               */
+              index: number;
+          }
+        | {
+              oneofKind: 'boolKey';
+              /**
+               * `bool_key` specifies a map key of type bool.
+               *
+               * @generated from protobuf field: bool bool_key = 7
+               */
+              boolKey: boolean;
+          }
+        | {
+              oneofKind: 'intKey';
+              /**
+               * `int_key` specifies a map key of type int32, int64, sint32, sint64, sfixed32 or sfixed64.
+               *
+               * @generated from protobuf field: int64 int_key = 8
+               */
+              intKey: number;
+          }
+        | {
+              oneofKind: 'uintKey';
+              /**
+               * `uint_key` specifies a map key of type uint32, uint64, fixed32 or fixed64.
+               *
+               * @generated from protobuf field: uint64 uint_key = 9
+               */
+              uintKey: number;
+          }
+        | {
+              oneofKind: 'stringKey';
+              /**
+               * `string_key` specifies a map key of type string.
+               *
+               * @generated from protobuf field: string string_key = 10
+               */
+              stringKey: string;
+          }
+        | {
+              oneofKind: undefined;
+          };
 }
 /**
  * Specifies how FieldRules.ignore behaves. See the documentation for
@@ -4285,34 +4415,34 @@ export enum Ignore {
      *   // The uri rule applies only if the value is not the empty string.
      *   string foo = 1 [
      *     (buf.validate.field).string.uri = true,
-     *     (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+     *     (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
      *   ];
      *
-     *   // IGNORE_IF_UNPOPULATED is equivalent to IGNORE_UNSPECIFIED in this
+     *   // IGNORE_IF_ZERO_VALUE is equivalent to IGNORE_UNSPECIFIED in this
      *   // case: the uri rule only applies if the field is set, including if
      *   // it's set to the empty string.
      *   optional string bar = 2 [
      *     (buf.validate.field).string.uri = true,
-     *     (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+     *     (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
      *   ];
      *
      *   // The min_items rule only applies if the list has at least one item.
      *   repeated string baz = 3 [
      *     (buf.validate.field).repeated.min_items = 3,
-     *     (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+     *     (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
      *   ];
      *
-     *   // IGNORE_IF_UNPOPULATED is equivalent to IGNORE_UNSPECIFIED in this
+     *   // IGNORE_IF_ZERO_VALUE is equivalent to IGNORE_UNSPECIFIED in this
      *   // case: the custom CEL rule applies only if the field is set, including
      *   // if it's the "zero" value of that message.
      *   SomeMessage quux = 4 [
      *     (buf.validate.field).cel = {/* ... *\/},
-     *     (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+     *     (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
      *   ];
      * }
      * ```
      *
-     * @generated from protobuf enum value: IGNORE_IF_UNPOPULATED = 1;
+     * @generated from protobuf enum value: IGNORE_IF_ZERO_VALUE = 1;
      */
     IF_UNPOPULATED = 1,
     /**
@@ -4325,34 +4455,34 @@ export enum Ignore {
      * syntax="proto3
      *
      * message Request {
-     *   // IGNORE_IF_DEFAULT_VALUE is equivalent to IGNORE_IF_UNPOPULATED in
+     *   // IGNORE_IF_ZERO_VALUE is equivalent to IGNORE_IF_ZERO_VALUE in
      *   // this case; the uri rule applies only if the value is not the empty
      *   // string.
      *   string foo = 1 [
      *     (buf.validate.field).string.uri = true,
-     *     (buf.validate.field).ignore = IGNORE_IF_DEFAULT_VALUE
+     *     (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
      *   ];
      *
      *   // The uri rule only applies if the field is set to a value other than
      *   // the empty string.
      *   optional string bar = 2 [
      *     (buf.validate.field).string.uri = true,
-     *     (buf.validate.field).ignore = IGNORE_IF_DEFAULT_VALUE
+     *     (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
      *   ];
      *
-     *   // IGNORE_IF_DEFAULT_VALUE is equivalent to IGNORE_IF_UNPOPULATED in
+     *   // IGNORE_IF_ZERO_VALUE is equivalent to IGNORE_IF_ZERO_VALUE in
      *   // this case; the min_items rule only applies if the list has at least
      *   // one item.
      *   repeated string baz = 3 [
      *     (buf.validate.field).repeated.min_items = 3,
-     *     (buf.validate.field).ignore = IGNORE_IF_DEFAULT_VALUE
+     *     (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
      *   ];
      *
      *   // The custom CEL rule only applies if the field is set to a value other
      *   // than an empty message (i.e., fields are unpopulated).
      *   SomeMessage quux = 4 [
      *     (buf.validate.field).cel = {/* ... *\/},
-     *     (buf.validate.field).ignore = IGNORE_IF_DEFAULT_VALUE
+     *     (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
      *   ];
      * }
      * ```
@@ -4369,11 +4499,11 @@ export enum Ignore {
      *   optional int32 value = 1 [
      *     default = -42,
      *     (buf.validate.field).int32.gt = 0,
-     *     (buf.validate.field).ignore = IGNORE_IF_DEFAULT_VALUE
+     *     (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
      *   ];
      * }
      *
-     * @generated from protobuf enum value: IGNORE_IF_DEFAULT_VALUE = 2;
+     * @generated from protobuf enum value: IGNORE_IF_ZERO_VALUE = 2;
      */
     IF_DEFAULT_VALUE = 2,
     /**
@@ -4393,7 +4523,7 @@ export enum Ignore {
      *
      * @generated from protobuf enum value: IGNORE_ALWAYS = 3;
      */
-    ALWAYS = 3
+    ALWAYS = 3,
 }
 /**
  * KnownRegex contains some well-known patterns.
@@ -4416,25 +4546,25 @@ export enum KnownRegex {
      *
      * @generated from protobuf enum value: KNOWN_REGEX_HTTP_HEADER_VALUE = 2;
      */
-    HTTP_HEADER_VALUE = 2
+    HTTP_HEADER_VALUE = 2,
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Rule$Type extends MessageType<Rule> {
     constructor() {
-        super("buf.validate.Rule", [
-            { no: 1, name: "id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "message", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "expression", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        super('buf.validate.Rule', [
+            { no: 1, name: 'id', kind: 'scalar', opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: 'message', kind: 'scalar', opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: 'expression', kind: 'scalar', opt: true, T: 9 /*ScalarType.STRING*/ },
         ]);
     }
     create(value?: PartialMessage<Rule>): Rule {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<Rule>(this, message, value);
+        const message = globalThis.Object.create(this.messagePrototype!);
+        if (value !== undefined) reflectionMergePartial<Rule>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Rule): Rule {
-        let message = target ?? this.create(), end = reader.pos + length;
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -4449,7 +4579,7 @@ class Rule$Type extends MessageType<Rule> {
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -4460,17 +4590,13 @@ class Rule$Type extends MessageType<Rule> {
     }
     internalBinaryWrite(message: Rule, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional string id = 1; */
-        if (message.id !== undefined)
-            writer.tag(1, WireType.LengthDelimited).string(message.id);
+        if (message.id !== undefined) writer.tag(1, WireType.LengthDelimited).string(message.id);
         /* optional string message = 2; */
-        if (message.message !== undefined)
-            writer.tag(2, WireType.LengthDelimited).string(message.message);
+        if (message.message !== undefined) writer.tag(2, WireType.LengthDelimited).string(message.message);
         /* optional string expression = 3; */
-        if (message.expression !== undefined)
-            writer.tag(3, WireType.LengthDelimited).string(message.expression);
+        if (message.expression !== undefined) writer.tag(3, WireType.LengthDelimited).string(message.expression);
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -4481,22 +4607,22 @@ export const Rule = new Rule$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class MessageRules$Type extends MessageType<MessageRules> {
     constructor() {
-        super("buf.validate.MessageRules", [
-            { no: 1, name: "disabled", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "cel", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Rule },
-            { no: 4, name: "oneof", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => MessageOneofRule }
+        super('buf.validate.MessageRules', [
+            { no: 1, name: 'disabled', kind: 'scalar', opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: 'cel', kind: 'message', repeat: 2 /*RepeatType.UNPACKED*/, T: () => Rule },
+            { no: 4, name: 'oneof', kind: 'message', repeat: 2 /*RepeatType.UNPACKED*/, T: () => MessageOneofRule },
         ]);
     }
     create(value?: PartialMessage<MessageRules>): MessageRules {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.cel = [];
         message.oneof = [];
-        if (value !== undefined)
-            reflectionMergePartial<MessageRules>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<MessageRules>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: MessageRules): MessageRules {
-        let message = target ?? this.create(), end = reader.pos + length;
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -4511,7 +4637,7 @@ class MessageRules$Type extends MessageType<MessageRules> {
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -4522,17 +4648,19 @@ class MessageRules$Type extends MessageType<MessageRules> {
     }
     internalBinaryWrite(message: MessageRules, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional bool disabled = 1; */
-        if (message.disabled !== undefined)
-            writer.tag(1, WireType.Varint).bool(message.disabled);
+        if (message.disabled !== undefined) writer.tag(1, WireType.Varint).bool(message.disabled);
         /* repeated buf.validate.Rule cel = 3; */
         for (let i = 0; i < message.cel.length; i++)
             Rule.internalBinaryWrite(message.cel[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         /* repeated buf.validate.MessageOneofRule oneof = 4; */
         for (let i = 0; i < message.oneof.length; i++)
-            MessageOneofRule.internalBinaryWrite(message.oneof[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+            MessageOneofRule.internalBinaryWrite(
+                message.oneof[i],
+                writer.tag(4, WireType.LengthDelimited).fork(),
+                options,
+            ).join();
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -4543,20 +4671,25 @@ export const MessageRules = new MessageRules$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class MessageOneofRule$Type extends MessageType<MessageOneofRule> {
     constructor() {
-        super("buf.validate.MessageOneofRule", [
-            { no: 1, name: "fields", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "required", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+        super('buf.validate.MessageOneofRule', [
+            { no: 1, name: 'fields', kind: 'scalar', repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: 'required', kind: 'scalar', opt: true, T: 8 /*ScalarType.BOOL*/ },
         ]);
     }
     create(value?: PartialMessage<MessageOneofRule>): MessageOneofRule {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.fields = [];
-        if (value !== undefined)
-            reflectionMergePartial<MessageOneofRule>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<MessageOneofRule>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: MessageOneofRule): MessageOneofRule {
-        let message = target ?? this.create(), end = reader.pos + length;
+    internalBinaryRead(
+        reader: IBinaryReader,
+        length: number,
+        options: BinaryReadOptions,
+        target?: MessageOneofRule,
+    ): MessageOneofRule {
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -4568,7 +4701,7 @@ class MessageOneofRule$Type extends MessageType<MessageOneofRule> {
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -4579,14 +4712,11 @@ class MessageOneofRule$Type extends MessageType<MessageOneofRule> {
     }
     internalBinaryWrite(message: MessageOneofRule, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* repeated string fields = 1; */
-        for (let i = 0; i < message.fields.length; i++)
-            writer.tag(1, WireType.LengthDelimited).string(message.fields[i]);
+        for (let i = 0; i < message.fields.length; i++) writer.tag(1, WireType.LengthDelimited).string(message.fields[i]);
         /* optional bool required = 2; */
-        if (message.required !== undefined)
-            writer.tag(2, WireType.Varint).bool(message.required);
+        if (message.required !== undefined) writer.tag(2, WireType.Varint).bool(message.required);
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -4597,18 +4727,16 @@ export const MessageOneofRule = new MessageOneofRule$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class OneofRules$Type extends MessageType<OneofRules> {
     constructor() {
-        super("buf.validate.OneofRules", [
-            { no: 1, name: "required", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
-        ]);
+        super('buf.validate.OneofRules', [{ no: 1, name: 'required', kind: 'scalar', opt: true, T: 8 /*ScalarType.BOOL*/ }]);
     }
     create(value?: PartialMessage<OneofRules>): OneofRules {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<OneofRules>(this, message, value);
+        const message = globalThis.Object.create(this.messagePrototype!);
+        if (value !== undefined) reflectionMergePartial<OneofRules>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: OneofRules): OneofRules {
-        let message = target ?? this.create(), end = reader.pos + length;
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -4617,7 +4745,7 @@ class OneofRules$Type extends MessageType<OneofRules> {
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -4628,11 +4756,9 @@ class OneofRules$Type extends MessageType<OneofRules> {
     }
     internalBinaryWrite(message: OneofRules, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional bool required = 1; */
-        if (message.required !== undefined)
-            writer.tag(1, WireType.Varint).bool(message.required);
+        if (message.required !== undefined) writer.tag(1, WireType.Varint).bool(message.required);
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -4643,43 +4769,43 @@ export const OneofRules = new OneofRules$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class FieldRules$Type extends MessageType<FieldRules> {
     constructor() {
-        super("buf.validate.FieldRules", [
-            { no: 23, name: "cel", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Rule },
-            { no: 25, name: "required", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 27, name: "ignore", kind: "enum", opt: true, T: () => ["buf.validate.Ignore", Ignore, "IGNORE_"] },
-            { no: 1, name: "float", kind: "message", oneof: "type", T: () => FloatRules },
-            { no: 2, name: "double", kind: "message", oneof: "type", T: () => DoubleRules },
-            { no: 3, name: "int32", kind: "message", oneof: "type", T: () => Int32Rules },
-            { no: 4, name: "int64", kind: "message", oneof: "type", T: () => Int64Rules },
-            { no: 5, name: "uint32", kind: "message", oneof: "type", T: () => UInt32Rules },
-            { no: 6, name: "uint64", kind: "message", oneof: "type", T: () => UInt64Rules },
-            { no: 7, name: "sint32", kind: "message", oneof: "type", T: () => SInt32Rules },
-            { no: 8, name: "sint64", kind: "message", oneof: "type", T: () => SInt64Rules },
-            { no: 9, name: "fixed32", kind: "message", oneof: "type", T: () => Fixed32Rules },
-            { no: 10, name: "fixed64", kind: "message", oneof: "type", T: () => Fixed64Rules },
-            { no: 11, name: "sfixed32", kind: "message", oneof: "type", T: () => SFixed32Rules },
-            { no: 12, name: "sfixed64", kind: "message", oneof: "type", T: () => SFixed64Rules },
-            { no: 13, name: "bool", kind: "message", oneof: "type", T: () => BoolRules },
-            { no: 14, name: "string", kind: "message", oneof: "type", T: () => StringRules },
-            { no: 15, name: "bytes", kind: "message", oneof: "type", T: () => BytesRules },
-            { no: 16, name: "enum", kind: "message", oneof: "type", T: () => EnumRules },
-            { no: 18, name: "repeated", kind: "message", oneof: "type", T: () => RepeatedRules },
-            { no: 19, name: "map", kind: "message", oneof: "type", T: () => MapRules },
-            { no: 20, name: "any", kind: "message", oneof: "type", T: () => AnyRules },
-            { no: 21, name: "duration", kind: "message", oneof: "type", T: () => DurationRules },
-            { no: 22, name: "timestamp", kind: "message", oneof: "type", T: () => TimestampRules }
+        super('buf.validate.FieldRules', [
+            { no: 23, name: 'cel', kind: 'message', repeat: 2 /*RepeatType.UNPACKED*/, T: () => Rule },
+            { no: 25, name: 'required', kind: 'scalar', opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 27, name: 'ignore', kind: 'enum', opt: true, T: () => ['buf.validate.Ignore', Ignore, 'IGNORE_'] },
+            { no: 1, name: 'float', kind: 'message', oneof: 'type', T: () => FloatRules },
+            { no: 2, name: 'double', kind: 'message', oneof: 'type', T: () => DoubleRules },
+            { no: 3, name: 'int32', kind: 'message', oneof: 'type', T: () => Int32Rules },
+            { no: 4, name: 'int64', kind: 'message', oneof: 'type', T: () => Int64Rules },
+            { no: 5, name: 'uint32', kind: 'message', oneof: 'type', T: () => UInt32Rules },
+            { no: 6, name: 'uint64', kind: 'message', oneof: 'type', T: () => UInt64Rules },
+            { no: 7, name: 'sint32', kind: 'message', oneof: 'type', T: () => SInt32Rules },
+            { no: 8, name: 'sint64', kind: 'message', oneof: 'type', T: () => SInt64Rules },
+            { no: 9, name: 'fixed32', kind: 'message', oneof: 'type', T: () => Fixed32Rules },
+            { no: 10, name: 'fixed64', kind: 'message', oneof: 'type', T: () => Fixed64Rules },
+            { no: 11, name: 'sfixed32', kind: 'message', oneof: 'type', T: () => SFixed32Rules },
+            { no: 12, name: 'sfixed64', kind: 'message', oneof: 'type', T: () => SFixed64Rules },
+            { no: 13, name: 'bool', kind: 'message', oneof: 'type', T: () => BoolRules },
+            { no: 14, name: 'string', kind: 'message', oneof: 'type', T: () => StringRules },
+            { no: 15, name: 'bytes', kind: 'message', oneof: 'type', T: () => BytesRules },
+            { no: 16, name: 'enum', kind: 'message', oneof: 'type', T: () => EnumRules },
+            { no: 18, name: 'repeated', kind: 'message', oneof: 'type', T: () => RepeatedRules },
+            { no: 19, name: 'map', kind: 'message', oneof: 'type', T: () => MapRules },
+            { no: 20, name: 'any', kind: 'message', oneof: 'type', T: () => AnyRules },
+            { no: 21, name: 'duration', kind: 'message', oneof: 'type', T: () => DurationRules },
+            { no: 22, name: 'timestamp', kind: 'message', oneof: 'type', T: () => TimestampRules },
         ]);
     }
     create(value?: PartialMessage<FieldRules>): FieldRules {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.cel = [];
         message.type = { oneofKind: undefined };
-        if (value !== undefined)
-            reflectionMergePartial<FieldRules>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<FieldRules>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: FieldRules): FieldRules {
-        let message = target ?? this.create(), end = reader.pos + length;
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -4694,133 +4820,168 @@ class FieldRules$Type extends MessageType<FieldRules> {
                     break;
                 case /* buf.validate.FloatRules float */ 1:
                     message.type = {
-                        oneofKind: "float",
-                        float: FloatRules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).float)
+                        oneofKind: 'float',
+                        float: FloatRules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).float),
                     };
                     break;
                 case /* buf.validate.DoubleRules double */ 2:
                     message.type = {
-                        oneofKind: "double",
-                        double: DoubleRules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).double)
+                        oneofKind: 'double',
+                        double: DoubleRules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).double),
                     };
                     break;
                 case /* buf.validate.Int32Rules int32 */ 3:
                     message.type = {
-                        oneofKind: "int32",
-                        int32: Int32Rules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).int32)
+                        oneofKind: 'int32',
+                        int32: Int32Rules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).int32),
                     };
                     break;
                 case /* buf.validate.Int64Rules int64 */ 4:
                     message.type = {
-                        oneofKind: "int64",
-                        int64: Int64Rules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).int64)
+                        oneofKind: 'int64',
+                        int64: Int64Rules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).int64),
                     };
                     break;
                 case /* buf.validate.UInt32Rules uint32 */ 5:
                     message.type = {
-                        oneofKind: "uint32",
-                        uint32: UInt32Rules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).uint32)
+                        oneofKind: 'uint32',
+                        uint32: UInt32Rules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).uint32),
                     };
                     break;
                 case /* buf.validate.UInt64Rules uint64 */ 6:
                     message.type = {
-                        oneofKind: "uint64",
-                        uint64: UInt64Rules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).uint64)
+                        oneofKind: 'uint64',
+                        uint64: UInt64Rules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).uint64),
                     };
                     break;
                 case /* buf.validate.SInt32Rules sint32 */ 7:
                     message.type = {
-                        oneofKind: "sint32",
-                        sint32: SInt32Rules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).sint32)
+                        oneofKind: 'sint32',
+                        sint32: SInt32Rules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).sint32),
                     };
                     break;
                 case /* buf.validate.SInt64Rules sint64 */ 8:
                     message.type = {
-                        oneofKind: "sint64",
-                        sint64: SInt64Rules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).sint64)
+                        oneofKind: 'sint64',
+                        sint64: SInt64Rules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).sint64),
                     };
                     break;
                 case /* buf.validate.Fixed32Rules fixed32 */ 9:
                     message.type = {
-                        oneofKind: "fixed32",
-                        fixed32: Fixed32Rules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).fixed32)
+                        oneofKind: 'fixed32',
+                        fixed32: Fixed32Rules.internalBinaryRead(
+                            reader,
+                            reader.uint32(),
+                            options,
+                            (message.type as any).fixed32,
+                        ),
                     };
                     break;
                 case /* buf.validate.Fixed64Rules fixed64 */ 10:
                     message.type = {
-                        oneofKind: "fixed64",
-                        fixed64: Fixed64Rules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).fixed64)
+                        oneofKind: 'fixed64',
+                        fixed64: Fixed64Rules.internalBinaryRead(
+                            reader,
+                            reader.uint32(),
+                            options,
+                            (message.type as any).fixed64,
+                        ),
                     };
                     break;
                 case /* buf.validate.SFixed32Rules sfixed32 */ 11:
                     message.type = {
-                        oneofKind: "sfixed32",
-                        sfixed32: SFixed32Rules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).sfixed32)
+                        oneofKind: 'sfixed32',
+                        sfixed32: SFixed32Rules.internalBinaryRead(
+                            reader,
+                            reader.uint32(),
+                            options,
+                            (message.type as any).sfixed32,
+                        ),
                     };
                     break;
                 case /* buf.validate.SFixed64Rules sfixed64 */ 12:
                     message.type = {
-                        oneofKind: "sfixed64",
-                        sfixed64: SFixed64Rules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).sfixed64)
+                        oneofKind: 'sfixed64',
+                        sfixed64: SFixed64Rules.internalBinaryRead(
+                            reader,
+                            reader.uint32(),
+                            options,
+                            (message.type as any).sfixed64,
+                        ),
                     };
                     break;
                 case /* buf.validate.BoolRules bool */ 13:
                     message.type = {
-                        oneofKind: "bool",
-                        bool: BoolRules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).bool)
+                        oneofKind: 'bool',
+                        bool: BoolRules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).bool),
                     };
                     break;
                 case /* buf.validate.StringRules string */ 14:
                     message.type = {
-                        oneofKind: "string",
-                        string: StringRules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).string)
+                        oneofKind: 'string',
+                        string: StringRules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).string),
                     };
                     break;
                 case /* buf.validate.BytesRules bytes */ 15:
                     message.type = {
-                        oneofKind: "bytes",
-                        bytes: BytesRules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).bytes)
+                        oneofKind: 'bytes',
+                        bytes: BytesRules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).bytes),
                     };
                     break;
                 case /* buf.validate.EnumRules enum */ 16:
                     message.type = {
-                        oneofKind: "enum",
-                        enum: EnumRules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).enum)
+                        oneofKind: 'enum',
+                        enum: EnumRules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).enum),
                     };
                     break;
                 case /* buf.validate.RepeatedRules repeated */ 18:
                     message.type = {
-                        oneofKind: "repeated",
-                        repeated: RepeatedRules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).repeated)
+                        oneofKind: 'repeated',
+                        repeated: RepeatedRules.internalBinaryRead(
+                            reader,
+                            reader.uint32(),
+                            options,
+                            (message.type as any).repeated,
+                        ),
                     };
                     break;
                 case /* buf.validate.MapRules map */ 19:
                     message.type = {
-                        oneofKind: "map",
-                        map: MapRules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).map)
+                        oneofKind: 'map',
+                        map: MapRules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).map),
                     };
                     break;
                 case /* buf.validate.AnyRules any */ 20:
                     message.type = {
-                        oneofKind: "any",
-                        any: AnyRules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).any)
+                        oneofKind: 'any',
+                        any: AnyRules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).any),
                     };
                     break;
                 case /* buf.validate.DurationRules duration */ 21:
                     message.type = {
-                        oneofKind: "duration",
-                        duration: DurationRules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).duration)
+                        oneofKind: 'duration',
+                        duration: DurationRules.internalBinaryRead(
+                            reader,
+                            reader.uint32(),
+                            options,
+                            (message.type as any).duration,
+                        ),
                     };
                     break;
                 case /* buf.validate.TimestampRules timestamp */ 22:
                     message.type = {
-                        oneofKind: "timestamp",
-                        timestamp: TimestampRules.internalBinaryRead(reader, reader.uint32(), options, (message.type as any).timestamp)
+                        oneofKind: 'timestamp',
+                        timestamp: TimestampRules.internalBinaryRead(
+                            reader,
+                            reader.uint32(),
+                            options,
+                            (message.type as any).timestamp,
+                        ),
                     };
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -4831,80 +4992,129 @@ class FieldRules$Type extends MessageType<FieldRules> {
     }
     internalBinaryWrite(message: FieldRules, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* buf.validate.FloatRules float = 1; */
-        if (message.type.oneofKind === "float")
+        if (message.type.oneofKind === 'float')
             FloatRules.internalBinaryWrite(message.type.float, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         /* buf.validate.DoubleRules double = 2; */
-        if (message.type.oneofKind === "double")
-            DoubleRules.internalBinaryWrite(message.type.double, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        if (message.type.oneofKind === 'double')
+            DoubleRules.internalBinaryWrite(
+                message.type.double,
+                writer.tag(2, WireType.LengthDelimited).fork(),
+                options,
+            ).join();
         /* buf.validate.Int32Rules int32 = 3; */
-        if (message.type.oneofKind === "int32")
+        if (message.type.oneofKind === 'int32')
             Int32Rules.internalBinaryWrite(message.type.int32, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         /* buf.validate.Int64Rules int64 = 4; */
-        if (message.type.oneofKind === "int64")
+        if (message.type.oneofKind === 'int64')
             Int64Rules.internalBinaryWrite(message.type.int64, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         /* buf.validate.UInt32Rules uint32 = 5; */
-        if (message.type.oneofKind === "uint32")
-            UInt32Rules.internalBinaryWrite(message.type.uint32, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        if (message.type.oneofKind === 'uint32')
+            UInt32Rules.internalBinaryWrite(
+                message.type.uint32,
+                writer.tag(5, WireType.LengthDelimited).fork(),
+                options,
+            ).join();
         /* buf.validate.UInt64Rules uint64 = 6; */
-        if (message.type.oneofKind === "uint64")
-            UInt64Rules.internalBinaryWrite(message.type.uint64, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        if (message.type.oneofKind === 'uint64')
+            UInt64Rules.internalBinaryWrite(
+                message.type.uint64,
+                writer.tag(6, WireType.LengthDelimited).fork(),
+                options,
+            ).join();
         /* buf.validate.SInt32Rules sint32 = 7; */
-        if (message.type.oneofKind === "sint32")
-            SInt32Rules.internalBinaryWrite(message.type.sint32, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        if (message.type.oneofKind === 'sint32')
+            SInt32Rules.internalBinaryWrite(
+                message.type.sint32,
+                writer.tag(7, WireType.LengthDelimited).fork(),
+                options,
+            ).join();
         /* buf.validate.SInt64Rules sint64 = 8; */
-        if (message.type.oneofKind === "sint64")
-            SInt64Rules.internalBinaryWrite(message.type.sint64, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        if (message.type.oneofKind === 'sint64')
+            SInt64Rules.internalBinaryWrite(
+                message.type.sint64,
+                writer.tag(8, WireType.LengthDelimited).fork(),
+                options,
+            ).join();
         /* buf.validate.Fixed32Rules fixed32 = 9; */
-        if (message.type.oneofKind === "fixed32")
-            Fixed32Rules.internalBinaryWrite(message.type.fixed32, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        if (message.type.oneofKind === 'fixed32')
+            Fixed32Rules.internalBinaryWrite(
+                message.type.fixed32,
+                writer.tag(9, WireType.LengthDelimited).fork(),
+                options,
+            ).join();
         /* buf.validate.Fixed64Rules fixed64 = 10; */
-        if (message.type.oneofKind === "fixed64")
-            Fixed64Rules.internalBinaryWrite(message.type.fixed64, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        if (message.type.oneofKind === 'fixed64')
+            Fixed64Rules.internalBinaryWrite(
+                message.type.fixed64,
+                writer.tag(10, WireType.LengthDelimited).fork(),
+                options,
+            ).join();
         /* buf.validate.SFixed32Rules sfixed32 = 11; */
-        if (message.type.oneofKind === "sfixed32")
-            SFixed32Rules.internalBinaryWrite(message.type.sfixed32, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        if (message.type.oneofKind === 'sfixed32')
+            SFixed32Rules.internalBinaryWrite(
+                message.type.sfixed32,
+                writer.tag(11, WireType.LengthDelimited).fork(),
+                options,
+            ).join();
         /* buf.validate.SFixed64Rules sfixed64 = 12; */
-        if (message.type.oneofKind === "sfixed64")
-            SFixed64Rules.internalBinaryWrite(message.type.sfixed64, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        if (message.type.oneofKind === 'sfixed64')
+            SFixed64Rules.internalBinaryWrite(
+                message.type.sfixed64,
+                writer.tag(12, WireType.LengthDelimited).fork(),
+                options,
+            ).join();
         /* buf.validate.BoolRules bool = 13; */
-        if (message.type.oneofKind === "bool")
+        if (message.type.oneofKind === 'bool')
             BoolRules.internalBinaryWrite(message.type.bool, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
         /* buf.validate.StringRules string = 14; */
-        if (message.type.oneofKind === "string")
-            StringRules.internalBinaryWrite(message.type.string, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
+        if (message.type.oneofKind === 'string')
+            StringRules.internalBinaryWrite(
+                message.type.string,
+                writer.tag(14, WireType.LengthDelimited).fork(),
+                options,
+            ).join();
         /* buf.validate.BytesRules bytes = 15; */
-        if (message.type.oneofKind === "bytes")
+        if (message.type.oneofKind === 'bytes')
             BytesRules.internalBinaryWrite(message.type.bytes, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
         /* buf.validate.EnumRules enum = 16; */
-        if (message.type.oneofKind === "enum")
+        if (message.type.oneofKind === 'enum')
             EnumRules.internalBinaryWrite(message.type.enum, writer.tag(16, WireType.LengthDelimited).fork(), options).join();
         /* buf.validate.RepeatedRules repeated = 18; */
-        if (message.type.oneofKind === "repeated")
-            RepeatedRules.internalBinaryWrite(message.type.repeated, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
+        if (message.type.oneofKind === 'repeated')
+            RepeatedRules.internalBinaryWrite(
+                message.type.repeated,
+                writer.tag(18, WireType.LengthDelimited).fork(),
+                options,
+            ).join();
         /* buf.validate.MapRules map = 19; */
-        if (message.type.oneofKind === "map")
+        if (message.type.oneofKind === 'map')
             MapRules.internalBinaryWrite(message.type.map, writer.tag(19, WireType.LengthDelimited).fork(), options).join();
         /* buf.validate.AnyRules any = 20; */
-        if (message.type.oneofKind === "any")
+        if (message.type.oneofKind === 'any')
             AnyRules.internalBinaryWrite(message.type.any, writer.tag(20, WireType.LengthDelimited).fork(), options).join();
         /* buf.validate.DurationRules duration = 21; */
-        if (message.type.oneofKind === "duration")
-            DurationRules.internalBinaryWrite(message.type.duration, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
+        if (message.type.oneofKind === 'duration')
+            DurationRules.internalBinaryWrite(
+                message.type.duration,
+                writer.tag(21, WireType.LengthDelimited).fork(),
+                options,
+            ).join();
         /* buf.validate.TimestampRules timestamp = 22; */
-        if (message.type.oneofKind === "timestamp")
-            TimestampRules.internalBinaryWrite(message.type.timestamp, writer.tag(22, WireType.LengthDelimited).fork(), options).join();
+        if (message.type.oneofKind === 'timestamp')
+            TimestampRules.internalBinaryWrite(
+                message.type.timestamp,
+                writer.tag(22, WireType.LengthDelimited).fork(),
+                options,
+            ).join();
         /* repeated buf.validate.Rule cel = 23; */
         for (let i = 0; i < message.cel.length; i++)
             Rule.internalBinaryWrite(message.cel[i], writer.tag(23, WireType.LengthDelimited).fork(), options).join();
         /* optional bool required = 25; */
-        if (message.required !== undefined)
-            writer.tag(25, WireType.Varint).bool(message.required);
+        if (message.required !== undefined) writer.tag(25, WireType.Varint).bool(message.required);
         /* optional buf.validate.Ignore ignore = 27; */
-        if (message.ignore !== undefined)
-            writer.tag(27, WireType.Varint).int32(message.ignore);
+        if (message.ignore !== undefined) writer.tag(27, WireType.Varint).int32(message.ignore);
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -4915,19 +5125,24 @@ export const FieldRules = new FieldRules$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PredefinedRules$Type extends MessageType<PredefinedRules> {
     constructor() {
-        super("buf.validate.PredefinedRules", [
-            { no: 1, name: "cel", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Rule }
+        super('buf.validate.PredefinedRules', [
+            { no: 1, name: 'cel', kind: 'message', repeat: 2 /*RepeatType.UNPACKED*/, T: () => Rule },
         ]);
     }
     create(value?: PartialMessage<PredefinedRules>): PredefinedRules {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.cel = [];
-        if (value !== undefined)
-            reflectionMergePartial<PredefinedRules>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<PredefinedRules>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PredefinedRules): PredefinedRules {
-        let message = target ?? this.create(), end = reader.pos + length;
+    internalBinaryRead(
+        reader: IBinaryReader,
+        length: number,
+        options: BinaryReadOptions,
+        target?: PredefinedRules,
+    ): PredefinedRules {
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -4936,7 +5151,7 @@ class PredefinedRules$Type extends MessageType<PredefinedRules> {
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -4950,8 +5165,7 @@ class PredefinedRules$Type extends MessageType<PredefinedRules> {
         for (let i = 0; i < message.cel.length; i++)
             Rule.internalBinaryWrite(message.cel[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -4962,31 +5176,212 @@ export const PredefinedRules = new PredefinedRules$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class FloatRules$Type extends MessageType<FloatRules> {
     constructor() {
-        super("buf.validate.FloatRules", [
-            { no: 1, name: "const", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/, options: { "buf.validate.predefined": { cel: [{ id: "float.const", expression: "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''" }] } } },
-            { no: 2, name: "lt", kind: "scalar", oneof: "lessThan", T: 2 /*ScalarType.FLOAT*/, options: { "buf.validate.predefined": { cel: [{ id: "float.lt", expression: "!has(rules.gte) && !has(rules.gt) && (this.isNan() || this >= rules.lt)? 'value must be less than %s'.format([rules.lt]) : ''" }] } } },
-            { no: 3, name: "lte", kind: "scalar", oneof: "lessThan", T: 2 /*ScalarType.FLOAT*/, options: { "buf.validate.predefined": { cel: [{ id: "float.lte", expression: "!has(rules.gte) && !has(rules.gt) && (this.isNan() || this > rules.lte)? 'value must be less than or equal to %s'.format([rules.lte]) : ''" }] } } },
-            { no: 4, name: "gt", kind: "scalar", oneof: "greaterThan", T: 2 /*ScalarType.FLOAT*/, options: { "buf.validate.predefined": { cel: [{ id: "float.gt", expression: "!has(rules.lt) && !has(rules.lte) && (this.isNan() || this <= rules.gt)? 'value must be greater than %s'.format([rules.gt]) : ''" }, { id: "float.gt_lt", expression: "has(rules.lt) && rules.lt >= rules.gt && (this.isNan() || this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "float.gt_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gt && (this.isNan() || (rules.lt <= this && this <= rules.gt))? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "float.gt_lte", expression: "has(rules.lte) && rules.lte >= rules.gt && (this.isNan() || this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }, { id: "float.gt_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gt && (this.isNan() || (rules.lte < this && this <= rules.gt))? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }] } } },
-            { no: 5, name: "gte", kind: "scalar", oneof: "greaterThan", T: 2 /*ScalarType.FLOAT*/, options: { "buf.validate.predefined": { cel: [{ id: "float.gte", expression: "!has(rules.lt) && !has(rules.lte) && (this.isNan() || this < rules.gte)? 'value must be greater than or equal to %s'.format([rules.gte]) : ''" }, { id: "float.gte_lt", expression: "has(rules.lt) && rules.lt >= rules.gte && (this.isNan() || this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "float.gte_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gte && (this.isNan() || (rules.lt <= this && this < rules.gte))? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "float.gte_lte", expression: "has(rules.lte) && rules.lte >= rules.gte && (this.isNan() || this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }, { id: "float.gte_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gte && (this.isNan() || (rules.lte < this && this < rules.gte))? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }] } } },
-            { no: 6, name: "in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 2 /*ScalarType.FLOAT*/, options: { "buf.validate.predefined": { cel: [{ id: "float.in", expression: "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''" }] } } },
-            { no: 7, name: "not_in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 2 /*ScalarType.FLOAT*/, options: { "buf.validate.predefined": { cel: [{ id: "float.not_in", expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''" }] } } },
-            { no: 8, name: "finite", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "float.finite", expression: "rules.finite ? (this.isNan() || this.isInf() ? 'value must be finite' : '') : ''" }] } } },
-            { no: 9, name: "example", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 2 /*ScalarType.FLOAT*/, options: { "buf.validate.predefined": { cel: [{ id: "float.example", expression: "true" }] } } }
+        super('buf.validate.FloatRules', [
+            {
+                no: 1,
+                name: 'const',
+                kind: 'scalar',
+                opt: true,
+                T: 2 /*ScalarType.FLOAT*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'float.const',
+                                expression:
+                                    "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 2,
+                name: 'lt',
+                kind: 'scalar',
+                oneof: 'lessThan',
+                T: 2 /*ScalarType.FLOAT*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'float.lt',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && (this.isNan() || this >= rules.lt)? 'value must be less than %s'.format([rules.lt]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 3,
+                name: 'lte',
+                kind: 'scalar',
+                oneof: 'lessThan',
+                T: 2 /*ScalarType.FLOAT*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'float.lte',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && (this.isNan() || this > rules.lte)? 'value must be less than or equal to %s'.format([rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 4,
+                name: 'gt',
+                kind: 'scalar',
+                oneof: 'greaterThan',
+                T: 2 /*ScalarType.FLOAT*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'float.gt',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && (this.isNan() || this <= rules.gt)? 'value must be greater than %s'.format([rules.gt]) : ''",
+                            },
+                            {
+                                id: 'float.gt_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gt && (this.isNan() || this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'float.gt_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gt && (this.isNan() || (rules.lt <= this && this <= rules.gt))? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'float.gt_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gt && (this.isNan() || this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'float.gt_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gt && (this.isNan() || (rules.lte < this && this <= rules.gt))? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 5,
+                name: 'gte',
+                kind: 'scalar',
+                oneof: 'greaterThan',
+                T: 2 /*ScalarType.FLOAT*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'float.gte',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && (this.isNan() || this < rules.gte)? 'value must be greater than or equal to %s'.format([rules.gte]) : ''",
+                            },
+                            {
+                                id: 'float.gte_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gte && (this.isNan() || this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'float.gte_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gte && (this.isNan() || (rules.lt <= this && this < rules.gte))? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'float.gte_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gte && (this.isNan() || this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'float.gte_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gte && (this.isNan() || (rules.lte < this && this < rules.gte))? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 6,
+                name: 'in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 2 /*ScalarType.FLOAT*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'float.in',
+                                expression:
+                                    "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 7,
+                name: 'not_in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 2 /*ScalarType.FLOAT*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'float.not_in',
+                                expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 8,
+                name: 'finite',
+                kind: 'scalar',
+                opt: true,
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'float.finite',
+                                expression: "rules.finite ? (this.isNan() || this.isInf() ? 'value must be finite' : '') : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 9,
+                name: 'example',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 2 /*ScalarType.FLOAT*/,
+                options: { 'buf.validate.predefined': { cel: [{ id: 'float.example', expression: 'true' }] } },
+            },
         ]);
     }
     create(value?: PartialMessage<FloatRules>): FloatRules {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.lessThan = { oneofKind: undefined };
         message.greaterThan = { oneofKind: undefined };
         message.in = [];
         message.notIn = [];
         message.example = [];
-        if (value !== undefined)
-            reflectionMergePartial<FloatRules>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<FloatRules>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: FloatRules): FloatRules {
-        let message = target ?? this.create(), end = reader.pos + length;
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -4995,55 +5390,49 @@ class FloatRules$Type extends MessageType<FloatRules> {
                     break;
                 case /* float lt */ 2:
                     message.lessThan = {
-                        oneofKind: "lt",
-                        lt: reader.float()
+                        oneofKind: 'lt',
+                        lt: reader.float(),
                     };
                     break;
                 case /* float lte */ 3:
                     message.lessThan = {
-                        oneofKind: "lte",
-                        lte: reader.float()
+                        oneofKind: 'lte',
+                        lte: reader.float(),
                     };
                     break;
                 case /* float gt */ 4:
                     message.greaterThan = {
-                        oneofKind: "gt",
-                        gt: reader.float()
+                        oneofKind: 'gt',
+                        gt: reader.float(),
                     };
                     break;
                 case /* float gte */ 5:
                     message.greaterThan = {
-                        oneofKind: "gte",
-                        gte: reader.float()
+                        oneofKind: 'gte',
+                        gte: reader.float(),
                     };
                     break;
                 case /* repeated float in */ 6:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.in.push(reader.float());
-                    else
-                        message.in.push(reader.float());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.in.push(reader.float());
+                    else message.in.push(reader.float());
                     break;
                 case /* repeated float not_in */ 7:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.notIn.push(reader.float());
-                    else
-                        message.notIn.push(reader.float());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.notIn.push(reader.float());
+                    else message.notIn.push(reader.float());
                     break;
                 case /* optional bool finite */ 8:
                     message.finite = reader.bool();
                     break;
                 case /* repeated float example */ 9:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.example.push(reader.float());
-                    else
-                        message.example.push(reader.float());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.example.push(reader.float());
+                    else message.example.push(reader.float());
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -5054,35 +5443,25 @@ class FloatRules$Type extends MessageType<FloatRules> {
     }
     internalBinaryWrite(message: FloatRules, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional float const = 1; */
-        if (message.const !== undefined)
-            writer.tag(1, WireType.Bit32).float(message.const);
+        if (message.const !== undefined) writer.tag(1, WireType.Bit32).float(message.const);
         /* float lt = 2; */
-        if (message.lessThan.oneofKind === "lt")
-            writer.tag(2, WireType.Bit32).float(message.lessThan.lt);
+        if (message.lessThan.oneofKind === 'lt') writer.tag(2, WireType.Bit32).float(message.lessThan.lt);
         /* float lte = 3; */
-        if (message.lessThan.oneofKind === "lte")
-            writer.tag(3, WireType.Bit32).float(message.lessThan.lte);
+        if (message.lessThan.oneofKind === 'lte') writer.tag(3, WireType.Bit32).float(message.lessThan.lte);
         /* float gt = 4; */
-        if (message.greaterThan.oneofKind === "gt")
-            writer.tag(4, WireType.Bit32).float(message.greaterThan.gt);
+        if (message.greaterThan.oneofKind === 'gt') writer.tag(4, WireType.Bit32).float(message.greaterThan.gt);
         /* float gte = 5; */
-        if (message.greaterThan.oneofKind === "gte")
-            writer.tag(5, WireType.Bit32).float(message.greaterThan.gte);
+        if (message.greaterThan.oneofKind === 'gte') writer.tag(5, WireType.Bit32).float(message.greaterThan.gte);
         /* repeated float in = 6; */
-        for (let i = 0; i < message.in.length; i++)
-            writer.tag(6, WireType.Bit32).float(message.in[i]);
+        for (let i = 0; i < message.in.length; i++) writer.tag(6, WireType.Bit32).float(message.in[i]);
         /* repeated float not_in = 7; */
-        for (let i = 0; i < message.notIn.length; i++)
-            writer.tag(7, WireType.Bit32).float(message.notIn[i]);
+        for (let i = 0; i < message.notIn.length; i++) writer.tag(7, WireType.Bit32).float(message.notIn[i]);
         /* optional bool finite = 8; */
-        if (message.finite !== undefined)
-            writer.tag(8, WireType.Varint).bool(message.finite);
+        if (message.finite !== undefined) writer.tag(8, WireType.Varint).bool(message.finite);
         /* repeated float example = 9; */
-        for (let i = 0; i < message.example.length; i++)
-            writer.tag(9, WireType.Bit32).float(message.example[i]);
+        for (let i = 0; i < message.example.length; i++) writer.tag(9, WireType.Bit32).float(message.example[i]);
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -5093,31 +5472,212 @@ export const FloatRules = new FloatRules$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DoubleRules$Type extends MessageType<DoubleRules> {
     constructor() {
-        super("buf.validate.DoubleRules", [
-            { no: 1, name: "const", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/, options: { "buf.validate.predefined": { cel: [{ id: "double.const", expression: "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''" }] } } },
-            { no: 2, name: "lt", kind: "scalar", oneof: "lessThan", T: 1 /*ScalarType.DOUBLE*/, options: { "buf.validate.predefined": { cel: [{ id: "double.lt", expression: "!has(rules.gte) && !has(rules.gt) && (this.isNan() || this >= rules.lt)? 'value must be less than %s'.format([rules.lt]) : ''" }] } } },
-            { no: 3, name: "lte", kind: "scalar", oneof: "lessThan", T: 1 /*ScalarType.DOUBLE*/, options: { "buf.validate.predefined": { cel: [{ id: "double.lte", expression: "!has(rules.gte) && !has(rules.gt) && (this.isNan() || this > rules.lte)? 'value must be less than or equal to %s'.format([rules.lte]) : ''" }] } } },
-            { no: 4, name: "gt", kind: "scalar", oneof: "greaterThan", T: 1 /*ScalarType.DOUBLE*/, options: { "buf.validate.predefined": { cel: [{ id: "double.gt", expression: "!has(rules.lt) && !has(rules.lte) && (this.isNan() || this <= rules.gt)? 'value must be greater than %s'.format([rules.gt]) : ''" }, { id: "double.gt_lt", expression: "has(rules.lt) && rules.lt >= rules.gt && (this.isNan() || this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "double.gt_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gt && (this.isNan() || (rules.lt <= this && this <= rules.gt))? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "double.gt_lte", expression: "has(rules.lte) && rules.lte >= rules.gt && (this.isNan() || this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }, { id: "double.gt_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gt && (this.isNan() || (rules.lte < this && this <= rules.gt))? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }] } } },
-            { no: 5, name: "gte", kind: "scalar", oneof: "greaterThan", T: 1 /*ScalarType.DOUBLE*/, options: { "buf.validate.predefined": { cel: [{ id: "double.gte", expression: "!has(rules.lt) && !has(rules.lte) && (this.isNan() || this < rules.gte)? 'value must be greater than or equal to %s'.format([rules.gte]) : ''" }, { id: "double.gte_lt", expression: "has(rules.lt) && rules.lt >= rules.gte && (this.isNan() || this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "double.gte_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gte && (this.isNan() || (rules.lt <= this && this < rules.gte))? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "double.gte_lte", expression: "has(rules.lte) && rules.lte >= rules.gte && (this.isNan() || this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }, { id: "double.gte_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gte && (this.isNan() || (rules.lte < this && this < rules.gte))? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }] } } },
-            { no: 6, name: "in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 1 /*ScalarType.DOUBLE*/, options: { "buf.validate.predefined": { cel: [{ id: "double.in", expression: "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''" }] } } },
-            { no: 7, name: "not_in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 1 /*ScalarType.DOUBLE*/, options: { "buf.validate.predefined": { cel: [{ id: "double.not_in", expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''" }] } } },
-            { no: 8, name: "finite", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "double.finite", expression: "rules.finite ? (this.isNan() || this.isInf() ? 'value must be finite' : '') : ''" }] } } },
-            { no: 9, name: "example", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 1 /*ScalarType.DOUBLE*/, options: { "buf.validate.predefined": { cel: [{ id: "double.example", expression: "true" }] } } }
+        super('buf.validate.DoubleRules', [
+            {
+                no: 1,
+                name: 'const',
+                kind: 'scalar',
+                opt: true,
+                T: 1 /*ScalarType.DOUBLE*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'double.const',
+                                expression:
+                                    "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 2,
+                name: 'lt',
+                kind: 'scalar',
+                oneof: 'lessThan',
+                T: 1 /*ScalarType.DOUBLE*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'double.lt',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && (this.isNan() || this >= rules.lt)? 'value must be less than %s'.format([rules.lt]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 3,
+                name: 'lte',
+                kind: 'scalar',
+                oneof: 'lessThan',
+                T: 1 /*ScalarType.DOUBLE*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'double.lte',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && (this.isNan() || this > rules.lte)? 'value must be less than or equal to %s'.format([rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 4,
+                name: 'gt',
+                kind: 'scalar',
+                oneof: 'greaterThan',
+                T: 1 /*ScalarType.DOUBLE*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'double.gt',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && (this.isNan() || this <= rules.gt)? 'value must be greater than %s'.format([rules.gt]) : ''",
+                            },
+                            {
+                                id: 'double.gt_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gt && (this.isNan() || this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'double.gt_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gt && (this.isNan() || (rules.lt <= this && this <= rules.gt))? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'double.gt_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gt && (this.isNan() || this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'double.gt_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gt && (this.isNan() || (rules.lte < this && this <= rules.gt))? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 5,
+                name: 'gte',
+                kind: 'scalar',
+                oneof: 'greaterThan',
+                T: 1 /*ScalarType.DOUBLE*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'double.gte',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && (this.isNan() || this < rules.gte)? 'value must be greater than or equal to %s'.format([rules.gte]) : ''",
+                            },
+                            {
+                                id: 'double.gte_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gte && (this.isNan() || this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'double.gte_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gte && (this.isNan() || (rules.lt <= this && this < rules.gte))? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'double.gte_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gte && (this.isNan() || this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'double.gte_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gte && (this.isNan() || (rules.lte < this && this < rules.gte))? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 6,
+                name: 'in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 1 /*ScalarType.DOUBLE*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'double.in',
+                                expression:
+                                    "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 7,
+                name: 'not_in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 1 /*ScalarType.DOUBLE*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'double.not_in',
+                                expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 8,
+                name: 'finite',
+                kind: 'scalar',
+                opt: true,
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'double.finite',
+                                expression: "rules.finite ? (this.isNan() || this.isInf() ? 'value must be finite' : '') : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 9,
+                name: 'example',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 1 /*ScalarType.DOUBLE*/,
+                options: { 'buf.validate.predefined': { cel: [{ id: 'double.example', expression: 'true' }] } },
+            },
         ]);
     }
     create(value?: PartialMessage<DoubleRules>): DoubleRules {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.lessThan = { oneofKind: undefined };
         message.greaterThan = { oneofKind: undefined };
         message.in = [];
         message.notIn = [];
         message.example = [];
-        if (value !== undefined)
-            reflectionMergePartial<DoubleRules>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<DoubleRules>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DoubleRules): DoubleRules {
-        let message = target ?? this.create(), end = reader.pos + length;
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -5126,55 +5686,49 @@ class DoubleRules$Type extends MessageType<DoubleRules> {
                     break;
                 case /* double lt */ 2:
                     message.lessThan = {
-                        oneofKind: "lt",
-                        lt: reader.double()
+                        oneofKind: 'lt',
+                        lt: reader.double(),
                     };
                     break;
                 case /* double lte */ 3:
                     message.lessThan = {
-                        oneofKind: "lte",
-                        lte: reader.double()
+                        oneofKind: 'lte',
+                        lte: reader.double(),
                     };
                     break;
                 case /* double gt */ 4:
                     message.greaterThan = {
-                        oneofKind: "gt",
-                        gt: reader.double()
+                        oneofKind: 'gt',
+                        gt: reader.double(),
                     };
                     break;
                 case /* double gte */ 5:
                     message.greaterThan = {
-                        oneofKind: "gte",
-                        gte: reader.double()
+                        oneofKind: 'gte',
+                        gte: reader.double(),
                     };
                     break;
                 case /* repeated double in */ 6:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.in.push(reader.double());
-                    else
-                        message.in.push(reader.double());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.in.push(reader.double());
+                    else message.in.push(reader.double());
                     break;
                 case /* repeated double not_in */ 7:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.notIn.push(reader.double());
-                    else
-                        message.notIn.push(reader.double());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.notIn.push(reader.double());
+                    else message.notIn.push(reader.double());
                     break;
                 case /* optional bool finite */ 8:
                     message.finite = reader.bool();
                     break;
                 case /* repeated double example */ 9:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.example.push(reader.double());
-                    else
-                        message.example.push(reader.double());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.example.push(reader.double());
+                    else message.example.push(reader.double());
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -5185,35 +5739,25 @@ class DoubleRules$Type extends MessageType<DoubleRules> {
     }
     internalBinaryWrite(message: DoubleRules, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional double const = 1; */
-        if (message.const !== undefined)
-            writer.tag(1, WireType.Bit64).double(message.const);
+        if (message.const !== undefined) writer.tag(1, WireType.Bit64).double(message.const);
         /* double lt = 2; */
-        if (message.lessThan.oneofKind === "lt")
-            writer.tag(2, WireType.Bit64).double(message.lessThan.lt);
+        if (message.lessThan.oneofKind === 'lt') writer.tag(2, WireType.Bit64).double(message.lessThan.lt);
         /* double lte = 3; */
-        if (message.lessThan.oneofKind === "lte")
-            writer.tag(3, WireType.Bit64).double(message.lessThan.lte);
+        if (message.lessThan.oneofKind === 'lte') writer.tag(3, WireType.Bit64).double(message.lessThan.lte);
         /* double gt = 4; */
-        if (message.greaterThan.oneofKind === "gt")
-            writer.tag(4, WireType.Bit64).double(message.greaterThan.gt);
+        if (message.greaterThan.oneofKind === 'gt') writer.tag(4, WireType.Bit64).double(message.greaterThan.gt);
         /* double gte = 5; */
-        if (message.greaterThan.oneofKind === "gte")
-            writer.tag(5, WireType.Bit64).double(message.greaterThan.gte);
+        if (message.greaterThan.oneofKind === 'gte') writer.tag(5, WireType.Bit64).double(message.greaterThan.gte);
         /* repeated double in = 6; */
-        for (let i = 0; i < message.in.length; i++)
-            writer.tag(6, WireType.Bit64).double(message.in[i]);
+        for (let i = 0; i < message.in.length; i++) writer.tag(6, WireType.Bit64).double(message.in[i]);
         /* repeated double not_in = 7; */
-        for (let i = 0; i < message.notIn.length; i++)
-            writer.tag(7, WireType.Bit64).double(message.notIn[i]);
+        for (let i = 0; i < message.notIn.length; i++) writer.tag(7, WireType.Bit64).double(message.notIn[i]);
         /* optional bool finite = 8; */
-        if (message.finite !== undefined)
-            writer.tag(8, WireType.Varint).bool(message.finite);
+        if (message.finite !== undefined) writer.tag(8, WireType.Varint).bool(message.finite);
         /* repeated double example = 9; */
-        for (let i = 0; i < message.example.length; i++)
-            writer.tag(9, WireType.Bit64).double(message.example[i]);
+        for (let i = 0; i < message.example.length; i++) writer.tag(9, WireType.Bit64).double(message.example[i]);
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -5224,30 +5768,195 @@ export const DoubleRules = new DoubleRules$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class Int32Rules$Type extends MessageType<Int32Rules> {
     constructor() {
-        super("buf.validate.Int32Rules", [
-            { no: 1, name: "const", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.predefined": { cel: [{ id: "int32.const", expression: "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''" }] } } },
-            { no: 2, name: "lt", kind: "scalar", oneof: "lessThan", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.predefined": { cel: [{ id: "int32.lt", expression: "!has(rules.gte) && !has(rules.gt) && this >= rules.lt? 'value must be less than %s'.format([rules.lt]) : ''" }] } } },
-            { no: 3, name: "lte", kind: "scalar", oneof: "lessThan", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.predefined": { cel: [{ id: "int32.lte", expression: "!has(rules.gte) && !has(rules.gt) && this > rules.lte? 'value must be less than or equal to %s'.format([rules.lte]) : ''" }] } } },
-            { no: 4, name: "gt", kind: "scalar", oneof: "greaterThan", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.predefined": { cel: [{ id: "int32.gt", expression: "!has(rules.lt) && !has(rules.lte) && this <= rules.gt? 'value must be greater than %s'.format([rules.gt]) : ''" }, { id: "int32.gt_lt", expression: "has(rules.lt) && rules.lt >= rules.gt && (this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "int32.gt_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gt && (rules.lt <= this && this <= rules.gt)? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "int32.gt_lte", expression: "has(rules.lte) && rules.lte >= rules.gt && (this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }, { id: "int32.gt_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gt && (rules.lte < this && this <= rules.gt)? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }] } } },
-            { no: 5, name: "gte", kind: "scalar", oneof: "greaterThan", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.predefined": { cel: [{ id: "int32.gte", expression: "!has(rules.lt) && !has(rules.lte) && this < rules.gte? 'value must be greater than or equal to %s'.format([rules.gte]) : ''" }, { id: "int32.gte_lt", expression: "has(rules.lt) && rules.lt >= rules.gte && (this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "int32.gte_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gte && (rules.lt <= this && this < rules.gte)? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "int32.gte_lte", expression: "has(rules.lte) && rules.lte >= rules.gte && (this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }, { id: "int32.gte_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gte && (rules.lte < this && this < rules.gte)? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }] } } },
-            { no: 6, name: "in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.predefined": { cel: [{ id: "int32.in", expression: "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''" }] } } },
-            { no: 7, name: "not_in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.predefined": { cel: [{ id: "int32.not_in", expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''" }] } } },
-            { no: 8, name: "example", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.predefined": { cel: [{ id: "int32.example", expression: "true" }] } } }
+        super('buf.validate.Int32Rules', [
+            {
+                no: 1,
+                name: 'const',
+                kind: 'scalar',
+                opt: true,
+                T: 5 /*ScalarType.INT32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'int32.const',
+                                expression:
+                                    "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 2,
+                name: 'lt',
+                kind: 'scalar',
+                oneof: 'lessThan',
+                T: 5 /*ScalarType.INT32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'int32.lt',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && this >= rules.lt? 'value must be less than %s'.format([rules.lt]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 3,
+                name: 'lte',
+                kind: 'scalar',
+                oneof: 'lessThan',
+                T: 5 /*ScalarType.INT32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'int32.lte',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && this > rules.lte? 'value must be less than or equal to %s'.format([rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 4,
+                name: 'gt',
+                kind: 'scalar',
+                oneof: 'greaterThan',
+                T: 5 /*ScalarType.INT32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'int32.gt',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && this <= rules.gt? 'value must be greater than %s'.format([rules.gt]) : ''",
+                            },
+                            {
+                                id: 'int32.gt_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gt && (this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'int32.gt_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gt && (rules.lt <= this && this <= rules.gt)? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'int32.gt_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gt && (this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'int32.gt_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gt && (rules.lte < this && this <= rules.gt)? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 5,
+                name: 'gte',
+                kind: 'scalar',
+                oneof: 'greaterThan',
+                T: 5 /*ScalarType.INT32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'int32.gte',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && this < rules.gte? 'value must be greater than or equal to %s'.format([rules.gte]) : ''",
+                            },
+                            {
+                                id: 'int32.gte_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gte && (this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'int32.gte_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gte && (rules.lt <= this && this < rules.gte)? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'int32.gte_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gte && (this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'int32.gte_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gte && (rules.lte < this && this < rules.gte)? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 6,
+                name: 'in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 5 /*ScalarType.INT32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'int32.in',
+                                expression:
+                                    "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 7,
+                name: 'not_in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 5 /*ScalarType.INT32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'int32.not_in',
+                                expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 8,
+                name: 'example',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 5 /*ScalarType.INT32*/,
+                options: { 'buf.validate.predefined': { cel: [{ id: 'int32.example', expression: 'true' }] } },
+            },
         ]);
     }
     create(value?: PartialMessage<Int32Rules>): Int32Rules {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.lessThan = { oneofKind: undefined };
         message.greaterThan = { oneofKind: undefined };
         message.in = [];
         message.notIn = [];
         message.example = [];
-        if (value !== undefined)
-            reflectionMergePartial<Int32Rules>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<Int32Rules>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Int32Rules): Int32Rules {
-        let message = target ?? this.create(), end = reader.pos + length;
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -5256,52 +5965,46 @@ class Int32Rules$Type extends MessageType<Int32Rules> {
                     break;
                 case /* int32 lt */ 2:
                     message.lessThan = {
-                        oneofKind: "lt",
-                        lt: reader.int32()
+                        oneofKind: 'lt',
+                        lt: reader.int32(),
                     };
                     break;
                 case /* int32 lte */ 3:
                     message.lessThan = {
-                        oneofKind: "lte",
-                        lte: reader.int32()
+                        oneofKind: 'lte',
+                        lte: reader.int32(),
                     };
                     break;
                 case /* int32 gt */ 4:
                     message.greaterThan = {
-                        oneofKind: "gt",
-                        gt: reader.int32()
+                        oneofKind: 'gt',
+                        gt: reader.int32(),
                     };
                     break;
                 case /* int32 gte */ 5:
                     message.greaterThan = {
-                        oneofKind: "gte",
-                        gte: reader.int32()
+                        oneofKind: 'gte',
+                        gte: reader.int32(),
                     };
                     break;
                 case /* repeated int32 in */ 6:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.in.push(reader.int32());
-                    else
-                        message.in.push(reader.int32());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.in.push(reader.int32());
+                    else message.in.push(reader.int32());
                     break;
                 case /* repeated int32 not_in */ 7:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.notIn.push(reader.int32());
-                    else
-                        message.notIn.push(reader.int32());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.notIn.push(reader.int32());
+                    else message.notIn.push(reader.int32());
                     break;
                 case /* repeated int32 example */ 8:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.example.push(reader.int32());
-                    else
-                        message.example.push(reader.int32());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.example.push(reader.int32());
+                    else message.example.push(reader.int32());
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -5312,32 +6015,23 @@ class Int32Rules$Type extends MessageType<Int32Rules> {
     }
     internalBinaryWrite(message: Int32Rules, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional int32 const = 1; */
-        if (message.const !== undefined)
-            writer.tag(1, WireType.Varint).int32(message.const);
+        if (message.const !== undefined) writer.tag(1, WireType.Varint).int32(message.const);
         /* int32 lt = 2; */
-        if (message.lessThan.oneofKind === "lt")
-            writer.tag(2, WireType.Varint).int32(message.lessThan.lt);
+        if (message.lessThan.oneofKind === 'lt') writer.tag(2, WireType.Varint).int32(message.lessThan.lt);
         /* int32 lte = 3; */
-        if (message.lessThan.oneofKind === "lte")
-            writer.tag(3, WireType.Varint).int32(message.lessThan.lte);
+        if (message.lessThan.oneofKind === 'lte') writer.tag(3, WireType.Varint).int32(message.lessThan.lte);
         /* int32 gt = 4; */
-        if (message.greaterThan.oneofKind === "gt")
-            writer.tag(4, WireType.Varint).int32(message.greaterThan.gt);
+        if (message.greaterThan.oneofKind === 'gt') writer.tag(4, WireType.Varint).int32(message.greaterThan.gt);
         /* int32 gte = 5; */
-        if (message.greaterThan.oneofKind === "gte")
-            writer.tag(5, WireType.Varint).int32(message.greaterThan.gte);
+        if (message.greaterThan.oneofKind === 'gte') writer.tag(5, WireType.Varint).int32(message.greaterThan.gte);
         /* repeated int32 in = 6; */
-        for (let i = 0; i < message.in.length; i++)
-            writer.tag(6, WireType.Varint).int32(message.in[i]);
+        for (let i = 0; i < message.in.length; i++) writer.tag(6, WireType.Varint).int32(message.in[i]);
         /* repeated int32 not_in = 7; */
-        for (let i = 0; i < message.notIn.length; i++)
-            writer.tag(7, WireType.Varint).int32(message.notIn[i]);
+        for (let i = 0; i < message.notIn.length; i++) writer.tag(7, WireType.Varint).int32(message.notIn[i]);
         /* repeated int32 example = 8; */
-        for (let i = 0; i < message.example.length; i++)
-            writer.tag(8, WireType.Varint).int32(message.example[i]);
+        for (let i = 0; i < message.example.length; i++) writer.tag(8, WireType.Varint).int32(message.example[i]);
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -5348,30 +6042,203 @@ export const Int32Rules = new Int32Rules$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class Int64Rules$Type extends MessageType<Int64Rules> {
     constructor() {
-        super("buf.validate.Int64Rules", [
-            { no: 1, name: "const", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "int64.const", expression: "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''" }] } } },
-            { no: 2, name: "lt", kind: "scalar", oneof: "lessThan", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "int64.lt", expression: "!has(rules.gte) && !has(rules.gt) && this >= rules.lt? 'value must be less than %s'.format([rules.lt]) : ''" }] } } },
-            { no: 3, name: "lte", kind: "scalar", oneof: "lessThan", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "int64.lte", expression: "!has(rules.gte) && !has(rules.gt) && this > rules.lte? 'value must be less than or equal to %s'.format([rules.lte]) : ''" }] } } },
-            { no: 4, name: "gt", kind: "scalar", oneof: "greaterThan", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "int64.gt", expression: "!has(rules.lt) && !has(rules.lte) && this <= rules.gt? 'value must be greater than %s'.format([rules.gt]) : ''" }, { id: "int64.gt_lt", expression: "has(rules.lt) && rules.lt >= rules.gt && (this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "int64.gt_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gt && (rules.lt <= this && this <= rules.gt)? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "int64.gt_lte", expression: "has(rules.lte) && rules.lte >= rules.gt && (this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }, { id: "int64.gt_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gt && (rules.lte < this && this <= rules.gt)? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }] } } },
-            { no: 5, name: "gte", kind: "scalar", oneof: "greaterThan", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "int64.gte", expression: "!has(rules.lt) && !has(rules.lte) && this < rules.gte? 'value must be greater than or equal to %s'.format([rules.gte]) : ''" }, { id: "int64.gte_lt", expression: "has(rules.lt) && rules.lt >= rules.gte && (this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "int64.gte_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gte && (rules.lt <= this && this < rules.gte)? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "int64.gte_lte", expression: "has(rules.lte) && rules.lte >= rules.gte && (this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }, { id: "int64.gte_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gte && (rules.lte < this && this < rules.gte)? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }] } } },
-            { no: 6, name: "in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "int64.in", expression: "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''" }] } } },
-            { no: 7, name: "not_in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "int64.not_in", expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''" }] } } },
-            { no: 9, name: "example", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "int64.example", expression: "true" }] } } }
+        super('buf.validate.Int64Rules', [
+            {
+                no: 1,
+                name: 'const',
+                kind: 'scalar',
+                opt: true,
+                T: 3 /*ScalarType.INT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'int64.const',
+                                expression:
+                                    "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 2,
+                name: 'lt',
+                kind: 'scalar',
+                oneof: 'lessThan',
+                T: 3 /*ScalarType.INT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'int64.lt',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && this >= rules.lt? 'value must be less than %s'.format([rules.lt]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 3,
+                name: 'lte',
+                kind: 'scalar',
+                oneof: 'lessThan',
+                T: 3 /*ScalarType.INT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'int64.lte',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && this > rules.lte? 'value must be less than or equal to %s'.format([rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 4,
+                name: 'gt',
+                kind: 'scalar',
+                oneof: 'greaterThan',
+                T: 3 /*ScalarType.INT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'int64.gt',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && this <= rules.gt? 'value must be greater than %s'.format([rules.gt]) : ''",
+                            },
+                            {
+                                id: 'int64.gt_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gt && (this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'int64.gt_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gt && (rules.lt <= this && this <= rules.gt)? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'int64.gt_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gt && (this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'int64.gt_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gt && (rules.lte < this && this <= rules.gt)? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 5,
+                name: 'gte',
+                kind: 'scalar',
+                oneof: 'greaterThan',
+                T: 3 /*ScalarType.INT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'int64.gte',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && this < rules.gte? 'value must be greater than or equal to %s'.format([rules.gte]) : ''",
+                            },
+                            {
+                                id: 'int64.gte_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gte && (this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'int64.gte_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gte && (rules.lt <= this && this < rules.gte)? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'int64.gte_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gte && (this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'int64.gte_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gte && (rules.lte < this && this < rules.gte)? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 6,
+                name: 'in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 3 /*ScalarType.INT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'int64.in',
+                                expression:
+                                    "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 7,
+                name: 'not_in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 3 /*ScalarType.INT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'int64.not_in',
+                                expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 9,
+                name: 'example',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 3 /*ScalarType.INT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: { 'buf.validate.predefined': { cel: [{ id: 'int64.example', expression: 'true' }] } },
+            },
         ]);
     }
     create(value?: PartialMessage<Int64Rules>): Int64Rules {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.lessThan = { oneofKind: undefined };
         message.greaterThan = { oneofKind: undefined };
         message.in = [];
         message.notIn = [];
         message.example = [];
-        if (value !== undefined)
-            reflectionMergePartial<Int64Rules>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<Int64Rules>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Int64Rules): Int64Rules {
-        let message = target ?? this.create(), end = reader.pos + length;
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -5380,52 +6247,48 @@ class Int64Rules$Type extends MessageType<Int64Rules> {
                     break;
                 case /* int64 lt */ 2:
                     message.lessThan = {
-                        oneofKind: "lt",
-                        lt: reader.int64().toNumber()
+                        oneofKind: 'lt',
+                        lt: reader.int64().toNumber(),
                     };
                     break;
                 case /* int64 lte */ 3:
                     message.lessThan = {
-                        oneofKind: "lte",
-                        lte: reader.int64().toNumber()
+                        oneofKind: 'lte',
+                        lte: reader.int64().toNumber(),
                     };
                     break;
                 case /* int64 gt */ 4:
                     message.greaterThan = {
-                        oneofKind: "gt",
-                        gt: reader.int64().toNumber()
+                        oneofKind: 'gt',
+                        gt: reader.int64().toNumber(),
                     };
                     break;
                 case /* int64 gte */ 5:
                     message.greaterThan = {
-                        oneofKind: "gte",
-                        gte: reader.int64().toNumber()
+                        oneofKind: 'gte',
+                        gte: reader.int64().toNumber(),
                     };
                     break;
                 case /* repeated int64 in */ 6:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.in.push(reader.int64().toNumber());
-                    else
-                        message.in.push(reader.int64().toNumber());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.in.push(reader.int64().toNumber());
+                    else message.in.push(reader.int64().toNumber());
                     break;
                 case /* repeated int64 not_in */ 7:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; )
                             message.notIn.push(reader.int64().toNumber());
-                    else
-                        message.notIn.push(reader.int64().toNumber());
+                    else message.notIn.push(reader.int64().toNumber());
                     break;
                 case /* repeated int64 example */ 9:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; )
                             message.example.push(reader.int64().toNumber());
-                    else
-                        message.example.push(reader.int64().toNumber());
+                    else message.example.push(reader.int64().toNumber());
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -5436,32 +6299,23 @@ class Int64Rules$Type extends MessageType<Int64Rules> {
     }
     internalBinaryWrite(message: Int64Rules, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional int64 const = 1; */
-        if (message.const !== undefined)
-            writer.tag(1, WireType.Varint).int64(message.const);
+        if (message.const !== undefined) writer.tag(1, WireType.Varint).int64(message.const);
         /* int64 lt = 2; */
-        if (message.lessThan.oneofKind === "lt")
-            writer.tag(2, WireType.Varint).int64(message.lessThan.lt);
+        if (message.lessThan.oneofKind === 'lt') writer.tag(2, WireType.Varint).int64(message.lessThan.lt);
         /* int64 lte = 3; */
-        if (message.lessThan.oneofKind === "lte")
-            writer.tag(3, WireType.Varint).int64(message.lessThan.lte);
+        if (message.lessThan.oneofKind === 'lte') writer.tag(3, WireType.Varint).int64(message.lessThan.lte);
         /* int64 gt = 4; */
-        if (message.greaterThan.oneofKind === "gt")
-            writer.tag(4, WireType.Varint).int64(message.greaterThan.gt);
+        if (message.greaterThan.oneofKind === 'gt') writer.tag(4, WireType.Varint).int64(message.greaterThan.gt);
         /* int64 gte = 5; */
-        if (message.greaterThan.oneofKind === "gte")
-            writer.tag(5, WireType.Varint).int64(message.greaterThan.gte);
+        if (message.greaterThan.oneofKind === 'gte') writer.tag(5, WireType.Varint).int64(message.greaterThan.gte);
         /* repeated int64 in = 6; */
-        for (let i = 0; i < message.in.length; i++)
-            writer.tag(6, WireType.Varint).int64(message.in[i]);
+        for (let i = 0; i < message.in.length; i++) writer.tag(6, WireType.Varint).int64(message.in[i]);
         /* repeated int64 not_in = 7; */
-        for (let i = 0; i < message.notIn.length; i++)
-            writer.tag(7, WireType.Varint).int64(message.notIn[i]);
+        for (let i = 0; i < message.notIn.length; i++) writer.tag(7, WireType.Varint).int64(message.notIn[i]);
         /* repeated int64 example = 9; */
-        for (let i = 0; i < message.example.length; i++)
-            writer.tag(9, WireType.Varint).int64(message.example[i]);
+        for (let i = 0; i < message.example.length; i++) writer.tag(9, WireType.Varint).int64(message.example[i]);
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -5472,30 +6326,195 @@ export const Int64Rules = new Int64Rules$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UInt32Rules$Type extends MessageType<UInt32Rules> {
     constructor() {
-        super("buf.validate.UInt32Rules", [
-            { no: 1, name: "const", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.predefined": { cel: [{ id: "uint32.const", expression: "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''" }] } } },
-            { no: 2, name: "lt", kind: "scalar", oneof: "lessThan", T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.predefined": { cel: [{ id: "uint32.lt", expression: "!has(rules.gte) && !has(rules.gt) && this >= rules.lt? 'value must be less than %s'.format([rules.lt]) : ''" }] } } },
-            { no: 3, name: "lte", kind: "scalar", oneof: "lessThan", T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.predefined": { cel: [{ id: "uint32.lte", expression: "!has(rules.gte) && !has(rules.gt) && this > rules.lte? 'value must be less than or equal to %s'.format([rules.lte]) : ''" }] } } },
-            { no: 4, name: "gt", kind: "scalar", oneof: "greaterThan", T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.predefined": { cel: [{ id: "uint32.gt", expression: "!has(rules.lt) && !has(rules.lte) && this <= rules.gt? 'value must be greater than %s'.format([rules.gt]) : ''" }, { id: "uint32.gt_lt", expression: "has(rules.lt) && rules.lt >= rules.gt && (this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "uint32.gt_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gt && (rules.lt <= this && this <= rules.gt)? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "uint32.gt_lte", expression: "has(rules.lte) && rules.lte >= rules.gt && (this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }, { id: "uint32.gt_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gt && (rules.lte < this && this <= rules.gt)? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }] } } },
-            { no: 5, name: "gte", kind: "scalar", oneof: "greaterThan", T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.predefined": { cel: [{ id: "uint32.gte", expression: "!has(rules.lt) && !has(rules.lte) && this < rules.gte? 'value must be greater than or equal to %s'.format([rules.gte]) : ''" }, { id: "uint32.gte_lt", expression: "has(rules.lt) && rules.lt >= rules.gte && (this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "uint32.gte_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gte && (rules.lt <= this && this < rules.gte)? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "uint32.gte_lte", expression: "has(rules.lte) && rules.lte >= rules.gte && (this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }, { id: "uint32.gte_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gte && (rules.lte < this && this < rules.gte)? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }] } } },
-            { no: 6, name: "in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.predefined": { cel: [{ id: "uint32.in", expression: "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''" }] } } },
-            { no: 7, name: "not_in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.predefined": { cel: [{ id: "uint32.not_in", expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''" }] } } },
-            { no: 8, name: "example", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.predefined": { cel: [{ id: "uint32.example", expression: "true" }] } } }
+        super('buf.validate.UInt32Rules', [
+            {
+                no: 1,
+                name: 'const',
+                kind: 'scalar',
+                opt: true,
+                T: 13 /*ScalarType.UINT32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'uint32.const',
+                                expression:
+                                    "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 2,
+                name: 'lt',
+                kind: 'scalar',
+                oneof: 'lessThan',
+                T: 13 /*ScalarType.UINT32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'uint32.lt',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && this >= rules.lt? 'value must be less than %s'.format([rules.lt]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 3,
+                name: 'lte',
+                kind: 'scalar',
+                oneof: 'lessThan',
+                T: 13 /*ScalarType.UINT32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'uint32.lte',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && this > rules.lte? 'value must be less than or equal to %s'.format([rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 4,
+                name: 'gt',
+                kind: 'scalar',
+                oneof: 'greaterThan',
+                T: 13 /*ScalarType.UINT32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'uint32.gt',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && this <= rules.gt? 'value must be greater than %s'.format([rules.gt]) : ''",
+                            },
+                            {
+                                id: 'uint32.gt_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gt && (this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'uint32.gt_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gt && (rules.lt <= this && this <= rules.gt)? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'uint32.gt_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gt && (this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'uint32.gt_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gt && (rules.lte < this && this <= rules.gt)? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 5,
+                name: 'gte',
+                kind: 'scalar',
+                oneof: 'greaterThan',
+                T: 13 /*ScalarType.UINT32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'uint32.gte',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && this < rules.gte? 'value must be greater than or equal to %s'.format([rules.gte]) : ''",
+                            },
+                            {
+                                id: 'uint32.gte_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gte && (this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'uint32.gte_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gte && (rules.lt <= this && this < rules.gte)? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'uint32.gte_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gte && (this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'uint32.gte_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gte && (rules.lte < this && this < rules.gte)? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 6,
+                name: 'in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 13 /*ScalarType.UINT32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'uint32.in',
+                                expression:
+                                    "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 7,
+                name: 'not_in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 13 /*ScalarType.UINT32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'uint32.not_in',
+                                expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 8,
+                name: 'example',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 13 /*ScalarType.UINT32*/,
+                options: { 'buf.validate.predefined': { cel: [{ id: 'uint32.example', expression: 'true' }] } },
+            },
         ]);
     }
     create(value?: PartialMessage<UInt32Rules>): UInt32Rules {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.lessThan = { oneofKind: undefined };
         message.greaterThan = { oneofKind: undefined };
         message.in = [];
         message.notIn = [];
         message.example = [];
-        if (value !== undefined)
-            reflectionMergePartial<UInt32Rules>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<UInt32Rules>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UInt32Rules): UInt32Rules {
-        let message = target ?? this.create(), end = reader.pos + length;
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -5504,52 +6523,46 @@ class UInt32Rules$Type extends MessageType<UInt32Rules> {
                     break;
                 case /* uint32 lt */ 2:
                     message.lessThan = {
-                        oneofKind: "lt",
-                        lt: reader.uint32()
+                        oneofKind: 'lt',
+                        lt: reader.uint32(),
                     };
                     break;
                 case /* uint32 lte */ 3:
                     message.lessThan = {
-                        oneofKind: "lte",
-                        lte: reader.uint32()
+                        oneofKind: 'lte',
+                        lte: reader.uint32(),
                     };
                     break;
                 case /* uint32 gt */ 4:
                     message.greaterThan = {
-                        oneofKind: "gt",
-                        gt: reader.uint32()
+                        oneofKind: 'gt',
+                        gt: reader.uint32(),
                     };
                     break;
                 case /* uint32 gte */ 5:
                     message.greaterThan = {
-                        oneofKind: "gte",
-                        gte: reader.uint32()
+                        oneofKind: 'gte',
+                        gte: reader.uint32(),
                     };
                     break;
                 case /* repeated uint32 in */ 6:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.in.push(reader.uint32());
-                    else
-                        message.in.push(reader.uint32());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.in.push(reader.uint32());
+                    else message.in.push(reader.uint32());
                     break;
                 case /* repeated uint32 not_in */ 7:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.notIn.push(reader.uint32());
-                    else
-                        message.notIn.push(reader.uint32());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.notIn.push(reader.uint32());
+                    else message.notIn.push(reader.uint32());
                     break;
                 case /* repeated uint32 example */ 8:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.example.push(reader.uint32());
-                    else
-                        message.example.push(reader.uint32());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.example.push(reader.uint32());
+                    else message.example.push(reader.uint32());
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -5560,32 +6573,23 @@ class UInt32Rules$Type extends MessageType<UInt32Rules> {
     }
     internalBinaryWrite(message: UInt32Rules, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional uint32 const = 1; */
-        if (message.const !== undefined)
-            writer.tag(1, WireType.Varint).uint32(message.const);
+        if (message.const !== undefined) writer.tag(1, WireType.Varint).uint32(message.const);
         /* uint32 lt = 2; */
-        if (message.lessThan.oneofKind === "lt")
-            writer.tag(2, WireType.Varint).uint32(message.lessThan.lt);
+        if (message.lessThan.oneofKind === 'lt') writer.tag(2, WireType.Varint).uint32(message.lessThan.lt);
         /* uint32 lte = 3; */
-        if (message.lessThan.oneofKind === "lte")
-            writer.tag(3, WireType.Varint).uint32(message.lessThan.lte);
+        if (message.lessThan.oneofKind === 'lte') writer.tag(3, WireType.Varint).uint32(message.lessThan.lte);
         /* uint32 gt = 4; */
-        if (message.greaterThan.oneofKind === "gt")
-            writer.tag(4, WireType.Varint).uint32(message.greaterThan.gt);
+        if (message.greaterThan.oneofKind === 'gt') writer.tag(4, WireType.Varint).uint32(message.greaterThan.gt);
         /* uint32 gte = 5; */
-        if (message.greaterThan.oneofKind === "gte")
-            writer.tag(5, WireType.Varint).uint32(message.greaterThan.gte);
+        if (message.greaterThan.oneofKind === 'gte') writer.tag(5, WireType.Varint).uint32(message.greaterThan.gte);
         /* repeated uint32 in = 6; */
-        for (let i = 0; i < message.in.length; i++)
-            writer.tag(6, WireType.Varint).uint32(message.in[i]);
+        for (let i = 0; i < message.in.length; i++) writer.tag(6, WireType.Varint).uint32(message.in[i]);
         /* repeated uint32 not_in = 7; */
-        for (let i = 0; i < message.notIn.length; i++)
-            writer.tag(7, WireType.Varint).uint32(message.notIn[i]);
+        for (let i = 0; i < message.notIn.length; i++) writer.tag(7, WireType.Varint).uint32(message.notIn[i]);
         /* repeated uint32 example = 8; */
-        for (let i = 0; i < message.example.length; i++)
-            writer.tag(8, WireType.Varint).uint32(message.example[i]);
+        for (let i = 0; i < message.example.length; i++) writer.tag(8, WireType.Varint).uint32(message.example[i]);
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -5596,30 +6600,203 @@ export const UInt32Rules = new UInt32Rules$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UInt64Rules$Type extends MessageType<UInt64Rules> {
     constructor() {
-        super("buf.validate.UInt64Rules", [
-            { no: 1, name: "const", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "uint64.const", expression: "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''" }] } } },
-            { no: 2, name: "lt", kind: "scalar", oneof: "lessThan", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "uint64.lt", expression: "!has(rules.gte) && !has(rules.gt) && this >= rules.lt? 'value must be less than %s'.format([rules.lt]) : ''" }] } } },
-            { no: 3, name: "lte", kind: "scalar", oneof: "lessThan", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "uint64.lte", expression: "!has(rules.gte) && !has(rules.gt) && this > rules.lte? 'value must be less than or equal to %s'.format([rules.lte]) : ''" }] } } },
-            { no: 4, name: "gt", kind: "scalar", oneof: "greaterThan", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "uint64.gt", expression: "!has(rules.lt) && !has(rules.lte) && this <= rules.gt? 'value must be greater than %s'.format([rules.gt]) : ''" }, { id: "uint64.gt_lt", expression: "has(rules.lt) && rules.lt >= rules.gt && (this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "uint64.gt_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gt && (rules.lt <= this && this <= rules.gt)? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "uint64.gt_lte", expression: "has(rules.lte) && rules.lte >= rules.gt && (this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }, { id: "uint64.gt_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gt && (rules.lte < this && this <= rules.gt)? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }] } } },
-            { no: 5, name: "gte", kind: "scalar", oneof: "greaterThan", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "uint64.gte", expression: "!has(rules.lt) && !has(rules.lte) && this < rules.gte? 'value must be greater than or equal to %s'.format([rules.gte]) : ''" }, { id: "uint64.gte_lt", expression: "has(rules.lt) && rules.lt >= rules.gte && (this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "uint64.gte_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gte && (rules.lt <= this && this < rules.gte)? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "uint64.gte_lte", expression: "has(rules.lte) && rules.lte >= rules.gte && (this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }, { id: "uint64.gte_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gte && (rules.lte < this && this < rules.gte)? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }] } } },
-            { no: 6, name: "in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "uint64.in", expression: "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''" }] } } },
-            { no: 7, name: "not_in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "uint64.not_in", expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''" }] } } },
-            { no: 8, name: "example", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "uint64.example", expression: "true" }] } } }
+        super('buf.validate.UInt64Rules', [
+            {
+                no: 1,
+                name: 'const',
+                kind: 'scalar',
+                opt: true,
+                T: 4 /*ScalarType.UINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'uint64.const',
+                                expression:
+                                    "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 2,
+                name: 'lt',
+                kind: 'scalar',
+                oneof: 'lessThan',
+                T: 4 /*ScalarType.UINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'uint64.lt',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && this >= rules.lt? 'value must be less than %s'.format([rules.lt]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 3,
+                name: 'lte',
+                kind: 'scalar',
+                oneof: 'lessThan',
+                T: 4 /*ScalarType.UINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'uint64.lte',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && this > rules.lte? 'value must be less than or equal to %s'.format([rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 4,
+                name: 'gt',
+                kind: 'scalar',
+                oneof: 'greaterThan',
+                T: 4 /*ScalarType.UINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'uint64.gt',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && this <= rules.gt? 'value must be greater than %s'.format([rules.gt]) : ''",
+                            },
+                            {
+                                id: 'uint64.gt_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gt && (this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'uint64.gt_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gt && (rules.lt <= this && this <= rules.gt)? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'uint64.gt_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gt && (this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'uint64.gt_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gt && (rules.lte < this && this <= rules.gt)? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 5,
+                name: 'gte',
+                kind: 'scalar',
+                oneof: 'greaterThan',
+                T: 4 /*ScalarType.UINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'uint64.gte',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && this < rules.gte? 'value must be greater than or equal to %s'.format([rules.gte]) : ''",
+                            },
+                            {
+                                id: 'uint64.gte_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gte && (this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'uint64.gte_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gte && (rules.lt <= this && this < rules.gte)? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'uint64.gte_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gte && (this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'uint64.gte_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gte && (rules.lte < this && this < rules.gte)? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 6,
+                name: 'in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 4 /*ScalarType.UINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'uint64.in',
+                                expression:
+                                    "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 7,
+                name: 'not_in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 4 /*ScalarType.UINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'uint64.not_in',
+                                expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 8,
+                name: 'example',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 4 /*ScalarType.UINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: { 'buf.validate.predefined': { cel: [{ id: 'uint64.example', expression: 'true' }] } },
+            },
         ]);
     }
     create(value?: PartialMessage<UInt64Rules>): UInt64Rules {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.lessThan = { oneofKind: undefined };
         message.greaterThan = { oneofKind: undefined };
         message.in = [];
         message.notIn = [];
         message.example = [];
-        if (value !== undefined)
-            reflectionMergePartial<UInt64Rules>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<UInt64Rules>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UInt64Rules): UInt64Rules {
-        let message = target ?? this.create(), end = reader.pos + length;
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -5628,52 +6805,48 @@ class UInt64Rules$Type extends MessageType<UInt64Rules> {
                     break;
                 case /* uint64 lt */ 2:
                     message.lessThan = {
-                        oneofKind: "lt",
-                        lt: reader.uint64().toNumber()
+                        oneofKind: 'lt',
+                        lt: reader.uint64().toNumber(),
                     };
                     break;
                 case /* uint64 lte */ 3:
                     message.lessThan = {
-                        oneofKind: "lte",
-                        lte: reader.uint64().toNumber()
+                        oneofKind: 'lte',
+                        lte: reader.uint64().toNumber(),
                     };
                     break;
                 case /* uint64 gt */ 4:
                     message.greaterThan = {
-                        oneofKind: "gt",
-                        gt: reader.uint64().toNumber()
+                        oneofKind: 'gt',
+                        gt: reader.uint64().toNumber(),
                     };
                     break;
                 case /* uint64 gte */ 5:
                     message.greaterThan = {
-                        oneofKind: "gte",
-                        gte: reader.uint64().toNumber()
+                        oneofKind: 'gte',
+                        gte: reader.uint64().toNumber(),
                     };
                     break;
                 case /* repeated uint64 in */ 6:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.in.push(reader.uint64().toNumber());
-                    else
-                        message.in.push(reader.uint64().toNumber());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.in.push(reader.uint64().toNumber());
+                    else message.in.push(reader.uint64().toNumber());
                     break;
                 case /* repeated uint64 not_in */ 7:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; )
                             message.notIn.push(reader.uint64().toNumber());
-                    else
-                        message.notIn.push(reader.uint64().toNumber());
+                    else message.notIn.push(reader.uint64().toNumber());
                     break;
                 case /* repeated uint64 example */ 8:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; )
                             message.example.push(reader.uint64().toNumber());
-                    else
-                        message.example.push(reader.uint64().toNumber());
+                    else message.example.push(reader.uint64().toNumber());
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -5684,32 +6857,23 @@ class UInt64Rules$Type extends MessageType<UInt64Rules> {
     }
     internalBinaryWrite(message: UInt64Rules, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional uint64 const = 1; */
-        if (message.const !== undefined)
-            writer.tag(1, WireType.Varint).uint64(message.const);
+        if (message.const !== undefined) writer.tag(1, WireType.Varint).uint64(message.const);
         /* uint64 lt = 2; */
-        if (message.lessThan.oneofKind === "lt")
-            writer.tag(2, WireType.Varint).uint64(message.lessThan.lt);
+        if (message.lessThan.oneofKind === 'lt') writer.tag(2, WireType.Varint).uint64(message.lessThan.lt);
         /* uint64 lte = 3; */
-        if (message.lessThan.oneofKind === "lte")
-            writer.tag(3, WireType.Varint).uint64(message.lessThan.lte);
+        if (message.lessThan.oneofKind === 'lte') writer.tag(3, WireType.Varint).uint64(message.lessThan.lte);
         /* uint64 gt = 4; */
-        if (message.greaterThan.oneofKind === "gt")
-            writer.tag(4, WireType.Varint).uint64(message.greaterThan.gt);
+        if (message.greaterThan.oneofKind === 'gt') writer.tag(4, WireType.Varint).uint64(message.greaterThan.gt);
         /* uint64 gte = 5; */
-        if (message.greaterThan.oneofKind === "gte")
-            writer.tag(5, WireType.Varint).uint64(message.greaterThan.gte);
+        if (message.greaterThan.oneofKind === 'gte') writer.tag(5, WireType.Varint).uint64(message.greaterThan.gte);
         /* repeated uint64 in = 6; */
-        for (let i = 0; i < message.in.length; i++)
-            writer.tag(6, WireType.Varint).uint64(message.in[i]);
+        for (let i = 0; i < message.in.length; i++) writer.tag(6, WireType.Varint).uint64(message.in[i]);
         /* repeated uint64 not_in = 7; */
-        for (let i = 0; i < message.notIn.length; i++)
-            writer.tag(7, WireType.Varint).uint64(message.notIn[i]);
+        for (let i = 0; i < message.notIn.length; i++) writer.tag(7, WireType.Varint).uint64(message.notIn[i]);
         /* repeated uint64 example = 8; */
-        for (let i = 0; i < message.example.length; i++)
-            writer.tag(8, WireType.Varint).uint64(message.example[i]);
+        for (let i = 0; i < message.example.length; i++) writer.tag(8, WireType.Varint).uint64(message.example[i]);
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -5720,30 +6884,195 @@ export const UInt64Rules = new UInt64Rules$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class SInt32Rules$Type extends MessageType<SInt32Rules> {
     constructor() {
-        super("buf.validate.SInt32Rules", [
-            { no: 1, name: "const", kind: "scalar", opt: true, T: 17 /*ScalarType.SINT32*/, options: { "buf.validate.predefined": { cel: [{ id: "sint32.const", expression: "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''" }] } } },
-            { no: 2, name: "lt", kind: "scalar", oneof: "lessThan", T: 17 /*ScalarType.SINT32*/, options: { "buf.validate.predefined": { cel: [{ id: "sint32.lt", expression: "!has(rules.gte) && !has(rules.gt) && this >= rules.lt? 'value must be less than %s'.format([rules.lt]) : ''" }] } } },
-            { no: 3, name: "lte", kind: "scalar", oneof: "lessThan", T: 17 /*ScalarType.SINT32*/, options: { "buf.validate.predefined": { cel: [{ id: "sint32.lte", expression: "!has(rules.gte) && !has(rules.gt) && this > rules.lte? 'value must be less than or equal to %s'.format([rules.lte]) : ''" }] } } },
-            { no: 4, name: "gt", kind: "scalar", oneof: "greaterThan", T: 17 /*ScalarType.SINT32*/, options: { "buf.validate.predefined": { cel: [{ id: "sint32.gt", expression: "!has(rules.lt) && !has(rules.lte) && this <= rules.gt? 'value must be greater than %s'.format([rules.gt]) : ''" }, { id: "sint32.gt_lt", expression: "has(rules.lt) && rules.lt >= rules.gt && (this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "sint32.gt_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gt && (rules.lt <= this && this <= rules.gt)? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "sint32.gt_lte", expression: "has(rules.lte) && rules.lte >= rules.gt && (this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }, { id: "sint32.gt_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gt && (rules.lte < this && this <= rules.gt)? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }] } } },
-            { no: 5, name: "gte", kind: "scalar", oneof: "greaterThan", T: 17 /*ScalarType.SINT32*/, options: { "buf.validate.predefined": { cel: [{ id: "sint32.gte", expression: "!has(rules.lt) && !has(rules.lte) && this < rules.gte? 'value must be greater than or equal to %s'.format([rules.gte]) : ''" }, { id: "sint32.gte_lt", expression: "has(rules.lt) && rules.lt >= rules.gte && (this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "sint32.gte_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gte && (rules.lt <= this && this < rules.gte)? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "sint32.gte_lte", expression: "has(rules.lte) && rules.lte >= rules.gte && (this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }, { id: "sint32.gte_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gte && (rules.lte < this && this < rules.gte)? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }] } } },
-            { no: 6, name: "in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 17 /*ScalarType.SINT32*/, options: { "buf.validate.predefined": { cel: [{ id: "sint32.in", expression: "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''" }] } } },
-            { no: 7, name: "not_in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 17 /*ScalarType.SINT32*/, options: { "buf.validate.predefined": { cel: [{ id: "sint32.not_in", expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''" }] } } },
-            { no: 8, name: "example", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 17 /*ScalarType.SINT32*/, options: { "buf.validate.predefined": { cel: [{ id: "sint32.example", expression: "true" }] } } }
+        super('buf.validate.SInt32Rules', [
+            {
+                no: 1,
+                name: 'const',
+                kind: 'scalar',
+                opt: true,
+                T: 17 /*ScalarType.SINT32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sint32.const',
+                                expression:
+                                    "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 2,
+                name: 'lt',
+                kind: 'scalar',
+                oneof: 'lessThan',
+                T: 17 /*ScalarType.SINT32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sint32.lt',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && this >= rules.lt? 'value must be less than %s'.format([rules.lt]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 3,
+                name: 'lte',
+                kind: 'scalar',
+                oneof: 'lessThan',
+                T: 17 /*ScalarType.SINT32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sint32.lte',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && this > rules.lte? 'value must be less than or equal to %s'.format([rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 4,
+                name: 'gt',
+                kind: 'scalar',
+                oneof: 'greaterThan',
+                T: 17 /*ScalarType.SINT32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sint32.gt',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && this <= rules.gt? 'value must be greater than %s'.format([rules.gt]) : ''",
+                            },
+                            {
+                                id: 'sint32.gt_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gt && (this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'sint32.gt_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gt && (rules.lt <= this && this <= rules.gt)? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'sint32.gt_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gt && (this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'sint32.gt_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gt && (rules.lte < this && this <= rules.gt)? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 5,
+                name: 'gte',
+                kind: 'scalar',
+                oneof: 'greaterThan',
+                T: 17 /*ScalarType.SINT32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sint32.gte',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && this < rules.gte? 'value must be greater than or equal to %s'.format([rules.gte]) : ''",
+                            },
+                            {
+                                id: 'sint32.gte_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gte && (this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'sint32.gte_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gte && (rules.lt <= this && this < rules.gte)? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'sint32.gte_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gte && (this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'sint32.gte_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gte && (rules.lte < this && this < rules.gte)? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 6,
+                name: 'in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 17 /*ScalarType.SINT32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sint32.in',
+                                expression:
+                                    "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 7,
+                name: 'not_in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 17 /*ScalarType.SINT32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sint32.not_in',
+                                expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 8,
+                name: 'example',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 17 /*ScalarType.SINT32*/,
+                options: { 'buf.validate.predefined': { cel: [{ id: 'sint32.example', expression: 'true' }] } },
+            },
         ]);
     }
     create(value?: PartialMessage<SInt32Rules>): SInt32Rules {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.lessThan = { oneofKind: undefined };
         message.greaterThan = { oneofKind: undefined };
         message.in = [];
         message.notIn = [];
         message.example = [];
-        if (value !== undefined)
-            reflectionMergePartial<SInt32Rules>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<SInt32Rules>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SInt32Rules): SInt32Rules {
-        let message = target ?? this.create(), end = reader.pos + length;
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -5752,52 +7081,46 @@ class SInt32Rules$Type extends MessageType<SInt32Rules> {
                     break;
                 case /* sint32 lt */ 2:
                     message.lessThan = {
-                        oneofKind: "lt",
-                        lt: reader.sint32()
+                        oneofKind: 'lt',
+                        lt: reader.sint32(),
                     };
                     break;
                 case /* sint32 lte */ 3:
                     message.lessThan = {
-                        oneofKind: "lte",
-                        lte: reader.sint32()
+                        oneofKind: 'lte',
+                        lte: reader.sint32(),
                     };
                     break;
                 case /* sint32 gt */ 4:
                     message.greaterThan = {
-                        oneofKind: "gt",
-                        gt: reader.sint32()
+                        oneofKind: 'gt',
+                        gt: reader.sint32(),
                     };
                     break;
                 case /* sint32 gte */ 5:
                     message.greaterThan = {
-                        oneofKind: "gte",
-                        gte: reader.sint32()
+                        oneofKind: 'gte',
+                        gte: reader.sint32(),
                     };
                     break;
                 case /* repeated sint32 in */ 6:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.in.push(reader.sint32());
-                    else
-                        message.in.push(reader.sint32());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.in.push(reader.sint32());
+                    else message.in.push(reader.sint32());
                     break;
                 case /* repeated sint32 not_in */ 7:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.notIn.push(reader.sint32());
-                    else
-                        message.notIn.push(reader.sint32());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.notIn.push(reader.sint32());
+                    else message.notIn.push(reader.sint32());
                     break;
                 case /* repeated sint32 example */ 8:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.example.push(reader.sint32());
-                    else
-                        message.example.push(reader.sint32());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.example.push(reader.sint32());
+                    else message.example.push(reader.sint32());
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -5808,32 +7131,23 @@ class SInt32Rules$Type extends MessageType<SInt32Rules> {
     }
     internalBinaryWrite(message: SInt32Rules, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional sint32 const = 1; */
-        if (message.const !== undefined)
-            writer.tag(1, WireType.Varint).sint32(message.const);
+        if (message.const !== undefined) writer.tag(1, WireType.Varint).sint32(message.const);
         /* sint32 lt = 2; */
-        if (message.lessThan.oneofKind === "lt")
-            writer.tag(2, WireType.Varint).sint32(message.lessThan.lt);
+        if (message.lessThan.oneofKind === 'lt') writer.tag(2, WireType.Varint).sint32(message.lessThan.lt);
         /* sint32 lte = 3; */
-        if (message.lessThan.oneofKind === "lte")
-            writer.tag(3, WireType.Varint).sint32(message.lessThan.lte);
+        if (message.lessThan.oneofKind === 'lte') writer.tag(3, WireType.Varint).sint32(message.lessThan.lte);
         /* sint32 gt = 4; */
-        if (message.greaterThan.oneofKind === "gt")
-            writer.tag(4, WireType.Varint).sint32(message.greaterThan.gt);
+        if (message.greaterThan.oneofKind === 'gt') writer.tag(4, WireType.Varint).sint32(message.greaterThan.gt);
         /* sint32 gte = 5; */
-        if (message.greaterThan.oneofKind === "gte")
-            writer.tag(5, WireType.Varint).sint32(message.greaterThan.gte);
+        if (message.greaterThan.oneofKind === 'gte') writer.tag(5, WireType.Varint).sint32(message.greaterThan.gte);
         /* repeated sint32 in = 6; */
-        for (let i = 0; i < message.in.length; i++)
-            writer.tag(6, WireType.Varint).sint32(message.in[i]);
+        for (let i = 0; i < message.in.length; i++) writer.tag(6, WireType.Varint).sint32(message.in[i]);
         /* repeated sint32 not_in = 7; */
-        for (let i = 0; i < message.notIn.length; i++)
-            writer.tag(7, WireType.Varint).sint32(message.notIn[i]);
+        for (let i = 0; i < message.notIn.length; i++) writer.tag(7, WireType.Varint).sint32(message.notIn[i]);
         /* repeated sint32 example = 8; */
-        for (let i = 0; i < message.example.length; i++)
-            writer.tag(8, WireType.Varint).sint32(message.example[i]);
+        for (let i = 0; i < message.example.length; i++) writer.tag(8, WireType.Varint).sint32(message.example[i]);
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -5844,30 +7158,203 @@ export const SInt32Rules = new SInt32Rules$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class SInt64Rules$Type extends MessageType<SInt64Rules> {
     constructor() {
-        super("buf.validate.SInt64Rules", [
-            { no: 1, name: "const", kind: "scalar", opt: true, T: 18 /*ScalarType.SINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "sint64.const", expression: "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''" }] } } },
-            { no: 2, name: "lt", kind: "scalar", oneof: "lessThan", T: 18 /*ScalarType.SINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "sint64.lt", expression: "!has(rules.gte) && !has(rules.gt) && this >= rules.lt? 'value must be less than %s'.format([rules.lt]) : ''" }] } } },
-            { no: 3, name: "lte", kind: "scalar", oneof: "lessThan", T: 18 /*ScalarType.SINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "sint64.lte", expression: "!has(rules.gte) && !has(rules.gt) && this > rules.lte? 'value must be less than or equal to %s'.format([rules.lte]) : ''" }] } } },
-            { no: 4, name: "gt", kind: "scalar", oneof: "greaterThan", T: 18 /*ScalarType.SINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "sint64.gt", expression: "!has(rules.lt) && !has(rules.lte) && this <= rules.gt? 'value must be greater than %s'.format([rules.gt]) : ''" }, { id: "sint64.gt_lt", expression: "has(rules.lt) && rules.lt >= rules.gt && (this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "sint64.gt_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gt && (rules.lt <= this && this <= rules.gt)? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "sint64.gt_lte", expression: "has(rules.lte) && rules.lte >= rules.gt && (this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }, { id: "sint64.gt_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gt && (rules.lte < this && this <= rules.gt)? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }] } } },
-            { no: 5, name: "gte", kind: "scalar", oneof: "greaterThan", T: 18 /*ScalarType.SINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "sint64.gte", expression: "!has(rules.lt) && !has(rules.lte) && this < rules.gte? 'value must be greater than or equal to %s'.format([rules.gte]) : ''" }, { id: "sint64.gte_lt", expression: "has(rules.lt) && rules.lt >= rules.gte && (this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "sint64.gte_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gte && (rules.lt <= this && this < rules.gte)? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "sint64.gte_lte", expression: "has(rules.lte) && rules.lte >= rules.gte && (this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }, { id: "sint64.gte_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gte && (rules.lte < this && this < rules.gte)? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }] } } },
-            { no: 6, name: "in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 18 /*ScalarType.SINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "sint64.in", expression: "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''" }] } } },
-            { no: 7, name: "not_in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 18 /*ScalarType.SINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "sint64.not_in", expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''" }] } } },
-            { no: 8, name: "example", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 18 /*ScalarType.SINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "sint64.example", expression: "true" }] } } }
+        super('buf.validate.SInt64Rules', [
+            {
+                no: 1,
+                name: 'const',
+                kind: 'scalar',
+                opt: true,
+                T: 18 /*ScalarType.SINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sint64.const',
+                                expression:
+                                    "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 2,
+                name: 'lt',
+                kind: 'scalar',
+                oneof: 'lessThan',
+                T: 18 /*ScalarType.SINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sint64.lt',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && this >= rules.lt? 'value must be less than %s'.format([rules.lt]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 3,
+                name: 'lte',
+                kind: 'scalar',
+                oneof: 'lessThan',
+                T: 18 /*ScalarType.SINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sint64.lte',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && this > rules.lte? 'value must be less than or equal to %s'.format([rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 4,
+                name: 'gt',
+                kind: 'scalar',
+                oneof: 'greaterThan',
+                T: 18 /*ScalarType.SINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sint64.gt',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && this <= rules.gt? 'value must be greater than %s'.format([rules.gt]) : ''",
+                            },
+                            {
+                                id: 'sint64.gt_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gt && (this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'sint64.gt_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gt && (rules.lt <= this && this <= rules.gt)? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'sint64.gt_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gt && (this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'sint64.gt_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gt && (rules.lte < this && this <= rules.gt)? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 5,
+                name: 'gte',
+                kind: 'scalar',
+                oneof: 'greaterThan',
+                T: 18 /*ScalarType.SINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sint64.gte',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && this < rules.gte? 'value must be greater than or equal to %s'.format([rules.gte]) : ''",
+                            },
+                            {
+                                id: 'sint64.gte_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gte && (this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'sint64.gte_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gte && (rules.lt <= this && this < rules.gte)? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'sint64.gte_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gte && (this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'sint64.gte_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gte && (rules.lte < this && this < rules.gte)? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 6,
+                name: 'in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 18 /*ScalarType.SINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sint64.in',
+                                expression:
+                                    "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 7,
+                name: 'not_in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 18 /*ScalarType.SINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sint64.not_in',
+                                expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 8,
+                name: 'example',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 18 /*ScalarType.SINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: { 'buf.validate.predefined': { cel: [{ id: 'sint64.example', expression: 'true' }] } },
+            },
         ]);
     }
     create(value?: PartialMessage<SInt64Rules>): SInt64Rules {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.lessThan = { oneofKind: undefined };
         message.greaterThan = { oneofKind: undefined };
         message.in = [];
         message.notIn = [];
         message.example = [];
-        if (value !== undefined)
-            reflectionMergePartial<SInt64Rules>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<SInt64Rules>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SInt64Rules): SInt64Rules {
-        let message = target ?? this.create(), end = reader.pos + length;
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -5876,52 +7363,48 @@ class SInt64Rules$Type extends MessageType<SInt64Rules> {
                     break;
                 case /* sint64 lt */ 2:
                     message.lessThan = {
-                        oneofKind: "lt",
-                        lt: reader.sint64().toNumber()
+                        oneofKind: 'lt',
+                        lt: reader.sint64().toNumber(),
                     };
                     break;
                 case /* sint64 lte */ 3:
                     message.lessThan = {
-                        oneofKind: "lte",
-                        lte: reader.sint64().toNumber()
+                        oneofKind: 'lte',
+                        lte: reader.sint64().toNumber(),
                     };
                     break;
                 case /* sint64 gt */ 4:
                     message.greaterThan = {
-                        oneofKind: "gt",
-                        gt: reader.sint64().toNumber()
+                        oneofKind: 'gt',
+                        gt: reader.sint64().toNumber(),
                     };
                     break;
                 case /* sint64 gte */ 5:
                     message.greaterThan = {
-                        oneofKind: "gte",
-                        gte: reader.sint64().toNumber()
+                        oneofKind: 'gte',
+                        gte: reader.sint64().toNumber(),
                     };
                     break;
                 case /* repeated sint64 in */ 6:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.in.push(reader.sint64().toNumber());
-                    else
-                        message.in.push(reader.sint64().toNumber());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.in.push(reader.sint64().toNumber());
+                    else message.in.push(reader.sint64().toNumber());
                     break;
                 case /* repeated sint64 not_in */ 7:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; )
                             message.notIn.push(reader.sint64().toNumber());
-                    else
-                        message.notIn.push(reader.sint64().toNumber());
+                    else message.notIn.push(reader.sint64().toNumber());
                     break;
                 case /* repeated sint64 example */ 8:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; )
                             message.example.push(reader.sint64().toNumber());
-                    else
-                        message.example.push(reader.sint64().toNumber());
+                    else message.example.push(reader.sint64().toNumber());
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -5932,32 +7415,23 @@ class SInt64Rules$Type extends MessageType<SInt64Rules> {
     }
     internalBinaryWrite(message: SInt64Rules, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional sint64 const = 1; */
-        if (message.const !== undefined)
-            writer.tag(1, WireType.Varint).sint64(message.const);
+        if (message.const !== undefined) writer.tag(1, WireType.Varint).sint64(message.const);
         /* sint64 lt = 2; */
-        if (message.lessThan.oneofKind === "lt")
-            writer.tag(2, WireType.Varint).sint64(message.lessThan.lt);
+        if (message.lessThan.oneofKind === 'lt') writer.tag(2, WireType.Varint).sint64(message.lessThan.lt);
         /* sint64 lte = 3; */
-        if (message.lessThan.oneofKind === "lte")
-            writer.tag(3, WireType.Varint).sint64(message.lessThan.lte);
+        if (message.lessThan.oneofKind === 'lte') writer.tag(3, WireType.Varint).sint64(message.lessThan.lte);
         /* sint64 gt = 4; */
-        if (message.greaterThan.oneofKind === "gt")
-            writer.tag(4, WireType.Varint).sint64(message.greaterThan.gt);
+        if (message.greaterThan.oneofKind === 'gt') writer.tag(4, WireType.Varint).sint64(message.greaterThan.gt);
         /* sint64 gte = 5; */
-        if (message.greaterThan.oneofKind === "gte")
-            writer.tag(5, WireType.Varint).sint64(message.greaterThan.gte);
+        if (message.greaterThan.oneofKind === 'gte') writer.tag(5, WireType.Varint).sint64(message.greaterThan.gte);
         /* repeated sint64 in = 6; */
-        for (let i = 0; i < message.in.length; i++)
-            writer.tag(6, WireType.Varint).sint64(message.in[i]);
+        for (let i = 0; i < message.in.length; i++) writer.tag(6, WireType.Varint).sint64(message.in[i]);
         /* repeated sint64 not_in = 7; */
-        for (let i = 0; i < message.notIn.length; i++)
-            writer.tag(7, WireType.Varint).sint64(message.notIn[i]);
+        for (let i = 0; i < message.notIn.length; i++) writer.tag(7, WireType.Varint).sint64(message.notIn[i]);
         /* repeated sint64 example = 8; */
-        for (let i = 0; i < message.example.length; i++)
-            writer.tag(8, WireType.Varint).sint64(message.example[i]);
+        for (let i = 0; i < message.example.length; i++) writer.tag(8, WireType.Varint).sint64(message.example[i]);
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -5968,30 +7442,195 @@ export const SInt64Rules = new SInt64Rules$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class Fixed32Rules$Type extends MessageType<Fixed32Rules> {
     constructor() {
-        super("buf.validate.Fixed32Rules", [
-            { no: 1, name: "const", kind: "scalar", opt: true, T: 7 /*ScalarType.FIXED32*/, options: { "buf.validate.predefined": { cel: [{ id: "fixed32.const", expression: "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''" }] } } },
-            { no: 2, name: "lt", kind: "scalar", oneof: "lessThan", T: 7 /*ScalarType.FIXED32*/, options: { "buf.validate.predefined": { cel: [{ id: "fixed32.lt", expression: "!has(rules.gte) && !has(rules.gt) && this >= rules.lt? 'value must be less than %s'.format([rules.lt]) : ''" }] } } },
-            { no: 3, name: "lte", kind: "scalar", oneof: "lessThan", T: 7 /*ScalarType.FIXED32*/, options: { "buf.validate.predefined": { cel: [{ id: "fixed32.lte", expression: "!has(rules.gte) && !has(rules.gt) && this > rules.lte? 'value must be less than or equal to %s'.format([rules.lte]) : ''" }] } } },
-            { no: 4, name: "gt", kind: "scalar", oneof: "greaterThan", T: 7 /*ScalarType.FIXED32*/, options: { "buf.validate.predefined": { cel: [{ id: "fixed32.gt", expression: "!has(rules.lt) && !has(rules.lte) && this <= rules.gt? 'value must be greater than %s'.format([rules.gt]) : ''" }, { id: "fixed32.gt_lt", expression: "has(rules.lt) && rules.lt >= rules.gt && (this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "fixed32.gt_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gt && (rules.lt <= this && this <= rules.gt)? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "fixed32.gt_lte", expression: "has(rules.lte) && rules.lte >= rules.gt && (this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }, { id: "fixed32.gt_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gt && (rules.lte < this && this <= rules.gt)? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }] } } },
-            { no: 5, name: "gte", kind: "scalar", oneof: "greaterThan", T: 7 /*ScalarType.FIXED32*/, options: { "buf.validate.predefined": { cel: [{ id: "fixed32.gte", expression: "!has(rules.lt) && !has(rules.lte) && this < rules.gte? 'value must be greater than or equal to %s'.format([rules.gte]) : ''" }, { id: "fixed32.gte_lt", expression: "has(rules.lt) && rules.lt >= rules.gte && (this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "fixed32.gte_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gte && (rules.lt <= this && this < rules.gte)? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "fixed32.gte_lte", expression: "has(rules.lte) && rules.lte >= rules.gte && (this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }, { id: "fixed32.gte_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gte && (rules.lte < this && this < rules.gte)? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }] } } },
-            { no: 6, name: "in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 7 /*ScalarType.FIXED32*/, options: { "buf.validate.predefined": { cel: [{ id: "fixed32.in", expression: "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''" }] } } },
-            { no: 7, name: "not_in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 7 /*ScalarType.FIXED32*/, options: { "buf.validate.predefined": { cel: [{ id: "fixed32.not_in", expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''" }] } } },
-            { no: 8, name: "example", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 7 /*ScalarType.FIXED32*/, options: { "buf.validate.predefined": { cel: [{ id: "fixed32.example", expression: "true" }] } } }
+        super('buf.validate.Fixed32Rules', [
+            {
+                no: 1,
+                name: 'const',
+                kind: 'scalar',
+                opt: true,
+                T: 7 /*ScalarType.FIXED32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'fixed32.const',
+                                expression:
+                                    "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 2,
+                name: 'lt',
+                kind: 'scalar',
+                oneof: 'lessThan',
+                T: 7 /*ScalarType.FIXED32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'fixed32.lt',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && this >= rules.lt? 'value must be less than %s'.format([rules.lt]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 3,
+                name: 'lte',
+                kind: 'scalar',
+                oneof: 'lessThan',
+                T: 7 /*ScalarType.FIXED32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'fixed32.lte',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && this > rules.lte? 'value must be less than or equal to %s'.format([rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 4,
+                name: 'gt',
+                kind: 'scalar',
+                oneof: 'greaterThan',
+                T: 7 /*ScalarType.FIXED32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'fixed32.gt',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && this <= rules.gt? 'value must be greater than %s'.format([rules.gt]) : ''",
+                            },
+                            {
+                                id: 'fixed32.gt_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gt && (this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'fixed32.gt_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gt && (rules.lt <= this && this <= rules.gt)? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'fixed32.gt_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gt && (this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'fixed32.gt_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gt && (rules.lte < this && this <= rules.gt)? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 5,
+                name: 'gte',
+                kind: 'scalar',
+                oneof: 'greaterThan',
+                T: 7 /*ScalarType.FIXED32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'fixed32.gte',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && this < rules.gte? 'value must be greater than or equal to %s'.format([rules.gte]) : ''",
+                            },
+                            {
+                                id: 'fixed32.gte_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gte && (this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'fixed32.gte_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gte && (rules.lt <= this && this < rules.gte)? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'fixed32.gte_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gte && (this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'fixed32.gte_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gte && (rules.lte < this && this < rules.gte)? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 6,
+                name: 'in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 7 /*ScalarType.FIXED32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'fixed32.in',
+                                expression:
+                                    "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 7,
+                name: 'not_in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 7 /*ScalarType.FIXED32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'fixed32.not_in',
+                                expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 8,
+                name: 'example',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 7 /*ScalarType.FIXED32*/,
+                options: { 'buf.validate.predefined': { cel: [{ id: 'fixed32.example', expression: 'true' }] } },
+            },
         ]);
     }
     create(value?: PartialMessage<Fixed32Rules>): Fixed32Rules {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.lessThan = { oneofKind: undefined };
         message.greaterThan = { oneofKind: undefined };
         message.in = [];
         message.notIn = [];
         message.example = [];
-        if (value !== undefined)
-            reflectionMergePartial<Fixed32Rules>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<Fixed32Rules>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Fixed32Rules): Fixed32Rules {
-        let message = target ?? this.create(), end = reader.pos + length;
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -6000,52 +7639,46 @@ class Fixed32Rules$Type extends MessageType<Fixed32Rules> {
                     break;
                 case /* fixed32 lt */ 2:
                     message.lessThan = {
-                        oneofKind: "lt",
-                        lt: reader.fixed32()
+                        oneofKind: 'lt',
+                        lt: reader.fixed32(),
                     };
                     break;
                 case /* fixed32 lte */ 3:
                     message.lessThan = {
-                        oneofKind: "lte",
-                        lte: reader.fixed32()
+                        oneofKind: 'lte',
+                        lte: reader.fixed32(),
                     };
                     break;
                 case /* fixed32 gt */ 4:
                     message.greaterThan = {
-                        oneofKind: "gt",
-                        gt: reader.fixed32()
+                        oneofKind: 'gt',
+                        gt: reader.fixed32(),
                     };
                     break;
                 case /* fixed32 gte */ 5:
                     message.greaterThan = {
-                        oneofKind: "gte",
-                        gte: reader.fixed32()
+                        oneofKind: 'gte',
+                        gte: reader.fixed32(),
                     };
                     break;
                 case /* repeated fixed32 in */ 6:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.in.push(reader.fixed32());
-                    else
-                        message.in.push(reader.fixed32());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.in.push(reader.fixed32());
+                    else message.in.push(reader.fixed32());
                     break;
                 case /* repeated fixed32 not_in */ 7:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.notIn.push(reader.fixed32());
-                    else
-                        message.notIn.push(reader.fixed32());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.notIn.push(reader.fixed32());
+                    else message.notIn.push(reader.fixed32());
                     break;
                 case /* repeated fixed32 example */ 8:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.example.push(reader.fixed32());
-                    else
-                        message.example.push(reader.fixed32());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.example.push(reader.fixed32());
+                    else message.example.push(reader.fixed32());
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -6056,32 +7689,23 @@ class Fixed32Rules$Type extends MessageType<Fixed32Rules> {
     }
     internalBinaryWrite(message: Fixed32Rules, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional fixed32 const = 1; */
-        if (message.const !== undefined)
-            writer.tag(1, WireType.Bit32).fixed32(message.const);
+        if (message.const !== undefined) writer.tag(1, WireType.Bit32).fixed32(message.const);
         /* fixed32 lt = 2; */
-        if (message.lessThan.oneofKind === "lt")
-            writer.tag(2, WireType.Bit32).fixed32(message.lessThan.lt);
+        if (message.lessThan.oneofKind === 'lt') writer.tag(2, WireType.Bit32).fixed32(message.lessThan.lt);
         /* fixed32 lte = 3; */
-        if (message.lessThan.oneofKind === "lte")
-            writer.tag(3, WireType.Bit32).fixed32(message.lessThan.lte);
+        if (message.lessThan.oneofKind === 'lte') writer.tag(3, WireType.Bit32).fixed32(message.lessThan.lte);
         /* fixed32 gt = 4; */
-        if (message.greaterThan.oneofKind === "gt")
-            writer.tag(4, WireType.Bit32).fixed32(message.greaterThan.gt);
+        if (message.greaterThan.oneofKind === 'gt') writer.tag(4, WireType.Bit32).fixed32(message.greaterThan.gt);
         /* fixed32 gte = 5; */
-        if (message.greaterThan.oneofKind === "gte")
-            writer.tag(5, WireType.Bit32).fixed32(message.greaterThan.gte);
+        if (message.greaterThan.oneofKind === 'gte') writer.tag(5, WireType.Bit32).fixed32(message.greaterThan.gte);
         /* repeated fixed32 in = 6; */
-        for (let i = 0; i < message.in.length; i++)
-            writer.tag(6, WireType.Bit32).fixed32(message.in[i]);
+        for (let i = 0; i < message.in.length; i++) writer.tag(6, WireType.Bit32).fixed32(message.in[i]);
         /* repeated fixed32 not_in = 7; */
-        for (let i = 0; i < message.notIn.length; i++)
-            writer.tag(7, WireType.Bit32).fixed32(message.notIn[i]);
+        for (let i = 0; i < message.notIn.length; i++) writer.tag(7, WireType.Bit32).fixed32(message.notIn[i]);
         /* repeated fixed32 example = 8; */
-        for (let i = 0; i < message.example.length; i++)
-            writer.tag(8, WireType.Bit32).fixed32(message.example[i]);
+        for (let i = 0; i < message.example.length; i++) writer.tag(8, WireType.Bit32).fixed32(message.example[i]);
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -6092,30 +7716,203 @@ export const Fixed32Rules = new Fixed32Rules$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class Fixed64Rules$Type extends MessageType<Fixed64Rules> {
     constructor() {
-        super("buf.validate.Fixed64Rules", [
-            { no: 1, name: "const", kind: "scalar", opt: true, T: 6 /*ScalarType.FIXED64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "fixed64.const", expression: "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''" }] } } },
-            { no: 2, name: "lt", kind: "scalar", oneof: "lessThan", T: 6 /*ScalarType.FIXED64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "fixed64.lt", expression: "!has(rules.gte) && !has(rules.gt) && this >= rules.lt? 'value must be less than %s'.format([rules.lt]) : ''" }] } } },
-            { no: 3, name: "lte", kind: "scalar", oneof: "lessThan", T: 6 /*ScalarType.FIXED64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "fixed64.lte", expression: "!has(rules.gte) && !has(rules.gt) && this > rules.lte? 'value must be less than or equal to %s'.format([rules.lte]) : ''" }] } } },
-            { no: 4, name: "gt", kind: "scalar", oneof: "greaterThan", T: 6 /*ScalarType.FIXED64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "fixed64.gt", expression: "!has(rules.lt) && !has(rules.lte) && this <= rules.gt? 'value must be greater than %s'.format([rules.gt]) : ''" }, { id: "fixed64.gt_lt", expression: "has(rules.lt) && rules.lt >= rules.gt && (this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "fixed64.gt_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gt && (rules.lt <= this && this <= rules.gt)? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "fixed64.gt_lte", expression: "has(rules.lte) && rules.lte >= rules.gt && (this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }, { id: "fixed64.gt_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gt && (rules.lte < this && this <= rules.gt)? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }] } } },
-            { no: 5, name: "gte", kind: "scalar", oneof: "greaterThan", T: 6 /*ScalarType.FIXED64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "fixed64.gte", expression: "!has(rules.lt) && !has(rules.lte) && this < rules.gte? 'value must be greater than or equal to %s'.format([rules.gte]) : ''" }, { id: "fixed64.gte_lt", expression: "has(rules.lt) && rules.lt >= rules.gte && (this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "fixed64.gte_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gte && (rules.lt <= this && this < rules.gte)? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "fixed64.gte_lte", expression: "has(rules.lte) && rules.lte >= rules.gte && (this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }, { id: "fixed64.gte_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gte && (rules.lte < this && this < rules.gte)? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }] } } },
-            { no: 6, name: "in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 6 /*ScalarType.FIXED64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "fixed64.in", expression: "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''" }] } } },
-            { no: 7, name: "not_in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 6 /*ScalarType.FIXED64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "fixed64.not_in", expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''" }] } } },
-            { no: 8, name: "example", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 6 /*ScalarType.FIXED64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "fixed64.example", expression: "true" }] } } }
+        super('buf.validate.Fixed64Rules', [
+            {
+                no: 1,
+                name: 'const',
+                kind: 'scalar',
+                opt: true,
+                T: 6 /*ScalarType.FIXED64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'fixed64.const',
+                                expression:
+                                    "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 2,
+                name: 'lt',
+                kind: 'scalar',
+                oneof: 'lessThan',
+                T: 6 /*ScalarType.FIXED64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'fixed64.lt',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && this >= rules.lt? 'value must be less than %s'.format([rules.lt]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 3,
+                name: 'lte',
+                kind: 'scalar',
+                oneof: 'lessThan',
+                T: 6 /*ScalarType.FIXED64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'fixed64.lte',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && this > rules.lte? 'value must be less than or equal to %s'.format([rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 4,
+                name: 'gt',
+                kind: 'scalar',
+                oneof: 'greaterThan',
+                T: 6 /*ScalarType.FIXED64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'fixed64.gt',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && this <= rules.gt? 'value must be greater than %s'.format([rules.gt]) : ''",
+                            },
+                            {
+                                id: 'fixed64.gt_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gt && (this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'fixed64.gt_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gt && (rules.lt <= this && this <= rules.gt)? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'fixed64.gt_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gt && (this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'fixed64.gt_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gt && (rules.lte < this && this <= rules.gt)? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 5,
+                name: 'gte',
+                kind: 'scalar',
+                oneof: 'greaterThan',
+                T: 6 /*ScalarType.FIXED64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'fixed64.gte',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && this < rules.gte? 'value must be greater than or equal to %s'.format([rules.gte]) : ''",
+                            },
+                            {
+                                id: 'fixed64.gte_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gte && (this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'fixed64.gte_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gte && (rules.lt <= this && this < rules.gte)? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'fixed64.gte_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gte && (this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'fixed64.gte_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gte && (rules.lte < this && this < rules.gte)? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 6,
+                name: 'in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 6 /*ScalarType.FIXED64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'fixed64.in',
+                                expression:
+                                    "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 7,
+                name: 'not_in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 6 /*ScalarType.FIXED64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'fixed64.not_in',
+                                expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 8,
+                name: 'example',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 6 /*ScalarType.FIXED64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: { 'buf.validate.predefined': { cel: [{ id: 'fixed64.example', expression: 'true' }] } },
+            },
         ]);
     }
     create(value?: PartialMessage<Fixed64Rules>): Fixed64Rules {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.lessThan = { oneofKind: undefined };
         message.greaterThan = { oneofKind: undefined };
         message.in = [];
         message.notIn = [];
         message.example = [];
-        if (value !== undefined)
-            reflectionMergePartial<Fixed64Rules>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<Fixed64Rules>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Fixed64Rules): Fixed64Rules {
-        let message = target ?? this.create(), end = reader.pos + length;
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -6124,52 +7921,49 @@ class Fixed64Rules$Type extends MessageType<Fixed64Rules> {
                     break;
                 case /* fixed64 lt */ 2:
                     message.lessThan = {
-                        oneofKind: "lt",
-                        lt: reader.fixed64().toNumber()
+                        oneofKind: 'lt',
+                        lt: reader.fixed64().toNumber(),
                     };
                     break;
                 case /* fixed64 lte */ 3:
                     message.lessThan = {
-                        oneofKind: "lte",
-                        lte: reader.fixed64().toNumber()
+                        oneofKind: 'lte',
+                        lte: reader.fixed64().toNumber(),
                     };
                     break;
                 case /* fixed64 gt */ 4:
                     message.greaterThan = {
-                        oneofKind: "gt",
-                        gt: reader.fixed64().toNumber()
+                        oneofKind: 'gt',
+                        gt: reader.fixed64().toNumber(),
                     };
                     break;
                 case /* fixed64 gte */ 5:
                     message.greaterThan = {
-                        oneofKind: "gte",
-                        gte: reader.fixed64().toNumber()
+                        oneofKind: 'gte',
+                        gte: reader.fixed64().toNumber(),
                     };
                     break;
                 case /* repeated fixed64 in */ 6:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; )
                             message.in.push(reader.fixed64().toNumber());
-                    else
-                        message.in.push(reader.fixed64().toNumber());
+                    else message.in.push(reader.fixed64().toNumber());
                     break;
                 case /* repeated fixed64 not_in */ 7:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; )
                             message.notIn.push(reader.fixed64().toNumber());
-                    else
-                        message.notIn.push(reader.fixed64().toNumber());
+                    else message.notIn.push(reader.fixed64().toNumber());
                     break;
                 case /* repeated fixed64 example */ 8:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; )
                             message.example.push(reader.fixed64().toNumber());
-                    else
-                        message.example.push(reader.fixed64().toNumber());
+                    else message.example.push(reader.fixed64().toNumber());
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -6180,32 +7974,23 @@ class Fixed64Rules$Type extends MessageType<Fixed64Rules> {
     }
     internalBinaryWrite(message: Fixed64Rules, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional fixed64 const = 1; */
-        if (message.const !== undefined)
-            writer.tag(1, WireType.Bit64).fixed64(message.const);
+        if (message.const !== undefined) writer.tag(1, WireType.Bit64).fixed64(message.const);
         /* fixed64 lt = 2; */
-        if (message.lessThan.oneofKind === "lt")
-            writer.tag(2, WireType.Bit64).fixed64(message.lessThan.lt);
+        if (message.lessThan.oneofKind === 'lt') writer.tag(2, WireType.Bit64).fixed64(message.lessThan.lt);
         /* fixed64 lte = 3; */
-        if (message.lessThan.oneofKind === "lte")
-            writer.tag(3, WireType.Bit64).fixed64(message.lessThan.lte);
+        if (message.lessThan.oneofKind === 'lte') writer.tag(3, WireType.Bit64).fixed64(message.lessThan.lte);
         /* fixed64 gt = 4; */
-        if (message.greaterThan.oneofKind === "gt")
-            writer.tag(4, WireType.Bit64).fixed64(message.greaterThan.gt);
+        if (message.greaterThan.oneofKind === 'gt') writer.tag(4, WireType.Bit64).fixed64(message.greaterThan.gt);
         /* fixed64 gte = 5; */
-        if (message.greaterThan.oneofKind === "gte")
-            writer.tag(5, WireType.Bit64).fixed64(message.greaterThan.gte);
+        if (message.greaterThan.oneofKind === 'gte') writer.tag(5, WireType.Bit64).fixed64(message.greaterThan.gte);
         /* repeated fixed64 in = 6; */
-        for (let i = 0; i < message.in.length; i++)
-            writer.tag(6, WireType.Bit64).fixed64(message.in[i]);
+        for (let i = 0; i < message.in.length; i++) writer.tag(6, WireType.Bit64).fixed64(message.in[i]);
         /* repeated fixed64 not_in = 7; */
-        for (let i = 0; i < message.notIn.length; i++)
-            writer.tag(7, WireType.Bit64).fixed64(message.notIn[i]);
+        for (let i = 0; i < message.notIn.length; i++) writer.tag(7, WireType.Bit64).fixed64(message.notIn[i]);
         /* repeated fixed64 example = 8; */
-        for (let i = 0; i < message.example.length; i++)
-            writer.tag(8, WireType.Bit64).fixed64(message.example[i]);
+        for (let i = 0; i < message.example.length; i++) writer.tag(8, WireType.Bit64).fixed64(message.example[i]);
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -6216,30 +8001,200 @@ export const Fixed64Rules = new Fixed64Rules$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class SFixed32Rules$Type extends MessageType<SFixed32Rules> {
     constructor() {
-        super("buf.validate.SFixed32Rules", [
-            { no: 1, name: "const", kind: "scalar", opt: true, T: 15 /*ScalarType.SFIXED32*/, options: { "buf.validate.predefined": { cel: [{ id: "sfixed32.const", expression: "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''" }] } } },
-            { no: 2, name: "lt", kind: "scalar", oneof: "lessThan", T: 15 /*ScalarType.SFIXED32*/, options: { "buf.validate.predefined": { cel: [{ id: "sfixed32.lt", expression: "!has(rules.gte) && !has(rules.gt) && this >= rules.lt? 'value must be less than %s'.format([rules.lt]) : ''" }] } } },
-            { no: 3, name: "lte", kind: "scalar", oneof: "lessThan", T: 15 /*ScalarType.SFIXED32*/, options: { "buf.validate.predefined": { cel: [{ id: "sfixed32.lte", expression: "!has(rules.gte) && !has(rules.gt) && this > rules.lte? 'value must be less than or equal to %s'.format([rules.lte]) : ''" }] } } },
-            { no: 4, name: "gt", kind: "scalar", oneof: "greaterThan", T: 15 /*ScalarType.SFIXED32*/, options: { "buf.validate.predefined": { cel: [{ id: "sfixed32.gt", expression: "!has(rules.lt) && !has(rules.lte) && this <= rules.gt? 'value must be greater than %s'.format([rules.gt]) : ''" }, { id: "sfixed32.gt_lt", expression: "has(rules.lt) && rules.lt >= rules.gt && (this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "sfixed32.gt_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gt && (rules.lt <= this && this <= rules.gt)? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "sfixed32.gt_lte", expression: "has(rules.lte) && rules.lte >= rules.gt && (this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }, { id: "sfixed32.gt_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gt && (rules.lte < this && this <= rules.gt)? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }] } } },
-            { no: 5, name: "gte", kind: "scalar", oneof: "greaterThan", T: 15 /*ScalarType.SFIXED32*/, options: { "buf.validate.predefined": { cel: [{ id: "sfixed32.gte", expression: "!has(rules.lt) && !has(rules.lte) && this < rules.gte? 'value must be greater than or equal to %s'.format([rules.gte]) : ''" }, { id: "sfixed32.gte_lt", expression: "has(rules.lt) && rules.lt >= rules.gte && (this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "sfixed32.gte_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gte && (rules.lt <= this && this < rules.gte)? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "sfixed32.gte_lte", expression: "has(rules.lte) && rules.lte >= rules.gte && (this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }, { id: "sfixed32.gte_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gte && (rules.lte < this && this < rules.gte)? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }] } } },
-            { no: 6, name: "in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 15 /*ScalarType.SFIXED32*/, options: { "buf.validate.predefined": { cel: [{ id: "sfixed32.in", expression: "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''" }] } } },
-            { no: 7, name: "not_in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 15 /*ScalarType.SFIXED32*/, options: { "buf.validate.predefined": { cel: [{ id: "sfixed32.not_in", expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''" }] } } },
-            { no: 8, name: "example", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 15 /*ScalarType.SFIXED32*/, options: { "buf.validate.predefined": { cel: [{ id: "sfixed32.example", expression: "true" }] } } }
+        super('buf.validate.SFixed32Rules', [
+            {
+                no: 1,
+                name: 'const',
+                kind: 'scalar',
+                opt: true,
+                T: 15 /*ScalarType.SFIXED32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sfixed32.const',
+                                expression:
+                                    "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 2,
+                name: 'lt',
+                kind: 'scalar',
+                oneof: 'lessThan',
+                T: 15 /*ScalarType.SFIXED32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sfixed32.lt',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && this >= rules.lt? 'value must be less than %s'.format([rules.lt]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 3,
+                name: 'lte',
+                kind: 'scalar',
+                oneof: 'lessThan',
+                T: 15 /*ScalarType.SFIXED32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sfixed32.lte',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && this > rules.lte? 'value must be less than or equal to %s'.format([rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 4,
+                name: 'gt',
+                kind: 'scalar',
+                oneof: 'greaterThan',
+                T: 15 /*ScalarType.SFIXED32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sfixed32.gt',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && this <= rules.gt? 'value must be greater than %s'.format([rules.gt]) : ''",
+                            },
+                            {
+                                id: 'sfixed32.gt_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gt && (this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'sfixed32.gt_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gt && (rules.lt <= this && this <= rules.gt)? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'sfixed32.gt_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gt && (this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'sfixed32.gt_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gt && (rules.lte < this && this <= rules.gt)? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 5,
+                name: 'gte',
+                kind: 'scalar',
+                oneof: 'greaterThan',
+                T: 15 /*ScalarType.SFIXED32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sfixed32.gte',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && this < rules.gte? 'value must be greater than or equal to %s'.format([rules.gte]) : ''",
+                            },
+                            {
+                                id: 'sfixed32.gte_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gte && (this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'sfixed32.gte_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gte && (rules.lt <= this && this < rules.gte)? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'sfixed32.gte_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gte && (this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'sfixed32.gte_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gte && (rules.lte < this && this < rules.gte)? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 6,
+                name: 'in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 15 /*ScalarType.SFIXED32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sfixed32.in',
+                                expression:
+                                    "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 7,
+                name: 'not_in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 15 /*ScalarType.SFIXED32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sfixed32.not_in',
+                                expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 8,
+                name: 'example',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 15 /*ScalarType.SFIXED32*/,
+                options: { 'buf.validate.predefined': { cel: [{ id: 'sfixed32.example', expression: 'true' }] } },
+            },
         ]);
     }
     create(value?: PartialMessage<SFixed32Rules>): SFixed32Rules {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.lessThan = { oneofKind: undefined };
         message.greaterThan = { oneofKind: undefined };
         message.in = [];
         message.notIn = [];
         message.example = [];
-        if (value !== undefined)
-            reflectionMergePartial<SFixed32Rules>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<SFixed32Rules>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SFixed32Rules): SFixed32Rules {
-        let message = target ?? this.create(), end = reader.pos + length;
+    internalBinaryRead(
+        reader: IBinaryReader,
+        length: number,
+        options: BinaryReadOptions,
+        target?: SFixed32Rules,
+    ): SFixed32Rules {
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -6248,52 +8203,46 @@ class SFixed32Rules$Type extends MessageType<SFixed32Rules> {
                     break;
                 case /* sfixed32 lt */ 2:
                     message.lessThan = {
-                        oneofKind: "lt",
-                        lt: reader.sfixed32()
+                        oneofKind: 'lt',
+                        lt: reader.sfixed32(),
                     };
                     break;
                 case /* sfixed32 lte */ 3:
                     message.lessThan = {
-                        oneofKind: "lte",
-                        lte: reader.sfixed32()
+                        oneofKind: 'lte',
+                        lte: reader.sfixed32(),
                     };
                     break;
                 case /* sfixed32 gt */ 4:
                     message.greaterThan = {
-                        oneofKind: "gt",
-                        gt: reader.sfixed32()
+                        oneofKind: 'gt',
+                        gt: reader.sfixed32(),
                     };
                     break;
                 case /* sfixed32 gte */ 5:
                     message.greaterThan = {
-                        oneofKind: "gte",
-                        gte: reader.sfixed32()
+                        oneofKind: 'gte',
+                        gte: reader.sfixed32(),
                     };
                     break;
                 case /* repeated sfixed32 in */ 6:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.in.push(reader.sfixed32());
-                    else
-                        message.in.push(reader.sfixed32());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.in.push(reader.sfixed32());
+                    else message.in.push(reader.sfixed32());
                     break;
                 case /* repeated sfixed32 not_in */ 7:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.notIn.push(reader.sfixed32());
-                    else
-                        message.notIn.push(reader.sfixed32());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.notIn.push(reader.sfixed32());
+                    else message.notIn.push(reader.sfixed32());
                     break;
                 case /* repeated sfixed32 example */ 8:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.example.push(reader.sfixed32());
-                    else
-                        message.example.push(reader.sfixed32());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.example.push(reader.sfixed32());
+                    else message.example.push(reader.sfixed32());
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -6304,32 +8253,23 @@ class SFixed32Rules$Type extends MessageType<SFixed32Rules> {
     }
     internalBinaryWrite(message: SFixed32Rules, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional sfixed32 const = 1; */
-        if (message.const !== undefined)
-            writer.tag(1, WireType.Bit32).sfixed32(message.const);
+        if (message.const !== undefined) writer.tag(1, WireType.Bit32).sfixed32(message.const);
         /* sfixed32 lt = 2; */
-        if (message.lessThan.oneofKind === "lt")
-            writer.tag(2, WireType.Bit32).sfixed32(message.lessThan.lt);
+        if (message.lessThan.oneofKind === 'lt') writer.tag(2, WireType.Bit32).sfixed32(message.lessThan.lt);
         /* sfixed32 lte = 3; */
-        if (message.lessThan.oneofKind === "lte")
-            writer.tag(3, WireType.Bit32).sfixed32(message.lessThan.lte);
+        if (message.lessThan.oneofKind === 'lte') writer.tag(3, WireType.Bit32).sfixed32(message.lessThan.lte);
         /* sfixed32 gt = 4; */
-        if (message.greaterThan.oneofKind === "gt")
-            writer.tag(4, WireType.Bit32).sfixed32(message.greaterThan.gt);
+        if (message.greaterThan.oneofKind === 'gt') writer.tag(4, WireType.Bit32).sfixed32(message.greaterThan.gt);
         /* sfixed32 gte = 5; */
-        if (message.greaterThan.oneofKind === "gte")
-            writer.tag(5, WireType.Bit32).sfixed32(message.greaterThan.gte);
+        if (message.greaterThan.oneofKind === 'gte') writer.tag(5, WireType.Bit32).sfixed32(message.greaterThan.gte);
         /* repeated sfixed32 in = 6; */
-        for (let i = 0; i < message.in.length; i++)
-            writer.tag(6, WireType.Bit32).sfixed32(message.in[i]);
+        for (let i = 0; i < message.in.length; i++) writer.tag(6, WireType.Bit32).sfixed32(message.in[i]);
         /* repeated sfixed32 not_in = 7; */
-        for (let i = 0; i < message.notIn.length; i++)
-            writer.tag(7, WireType.Bit32).sfixed32(message.notIn[i]);
+        for (let i = 0; i < message.notIn.length; i++) writer.tag(7, WireType.Bit32).sfixed32(message.notIn[i]);
         /* repeated sfixed32 example = 8; */
-        for (let i = 0; i < message.example.length; i++)
-            writer.tag(8, WireType.Bit32).sfixed32(message.example[i]);
+        for (let i = 0; i < message.example.length; i++) writer.tag(8, WireType.Bit32).sfixed32(message.example[i]);
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -6340,30 +8280,208 @@ export const SFixed32Rules = new SFixed32Rules$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class SFixed64Rules$Type extends MessageType<SFixed64Rules> {
     constructor() {
-        super("buf.validate.SFixed64Rules", [
-            { no: 1, name: "const", kind: "scalar", opt: true, T: 16 /*ScalarType.SFIXED64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "sfixed64.const", expression: "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''" }] } } },
-            { no: 2, name: "lt", kind: "scalar", oneof: "lessThan", T: 16 /*ScalarType.SFIXED64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "sfixed64.lt", expression: "!has(rules.gte) && !has(rules.gt) && this >= rules.lt? 'value must be less than %s'.format([rules.lt]) : ''" }] } } },
-            { no: 3, name: "lte", kind: "scalar", oneof: "lessThan", T: 16 /*ScalarType.SFIXED64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "sfixed64.lte", expression: "!has(rules.gte) && !has(rules.gt) && this > rules.lte? 'value must be less than or equal to %s'.format([rules.lte]) : ''" }] } } },
-            { no: 4, name: "gt", kind: "scalar", oneof: "greaterThan", T: 16 /*ScalarType.SFIXED64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "sfixed64.gt", expression: "!has(rules.lt) && !has(rules.lte) && this <= rules.gt? 'value must be greater than %s'.format([rules.gt]) : ''" }, { id: "sfixed64.gt_lt", expression: "has(rules.lt) && rules.lt >= rules.gt && (this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "sfixed64.gt_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gt && (rules.lt <= this && this <= rules.gt)? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "sfixed64.gt_lte", expression: "has(rules.lte) && rules.lte >= rules.gt && (this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }, { id: "sfixed64.gt_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gt && (rules.lte < this && this <= rules.gt)? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }] } } },
-            { no: 5, name: "gte", kind: "scalar", oneof: "greaterThan", T: 16 /*ScalarType.SFIXED64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "sfixed64.gte", expression: "!has(rules.lt) && !has(rules.lte) && this < rules.gte? 'value must be greater than or equal to %s'.format([rules.gte]) : ''" }, { id: "sfixed64.gte_lt", expression: "has(rules.lt) && rules.lt >= rules.gte && (this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "sfixed64.gte_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gte && (rules.lt <= this && this < rules.gte)? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "sfixed64.gte_lte", expression: "has(rules.lte) && rules.lte >= rules.gte && (this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }, { id: "sfixed64.gte_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gte && (rules.lte < this && this < rules.gte)? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }] } } },
-            { no: 6, name: "in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 16 /*ScalarType.SFIXED64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "sfixed64.in", expression: "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''" }] } } },
-            { no: 7, name: "not_in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 16 /*ScalarType.SFIXED64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "sfixed64.not_in", expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''" }] } } },
-            { no: 8, name: "example", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 16 /*ScalarType.SFIXED64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "sfixed64.example", expression: "true" }] } } }
+        super('buf.validate.SFixed64Rules', [
+            {
+                no: 1,
+                name: 'const',
+                kind: 'scalar',
+                opt: true,
+                T: 16 /*ScalarType.SFIXED64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sfixed64.const',
+                                expression:
+                                    "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 2,
+                name: 'lt',
+                kind: 'scalar',
+                oneof: 'lessThan',
+                T: 16 /*ScalarType.SFIXED64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sfixed64.lt',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && this >= rules.lt? 'value must be less than %s'.format([rules.lt]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 3,
+                name: 'lte',
+                kind: 'scalar',
+                oneof: 'lessThan',
+                T: 16 /*ScalarType.SFIXED64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sfixed64.lte',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && this > rules.lte? 'value must be less than or equal to %s'.format([rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 4,
+                name: 'gt',
+                kind: 'scalar',
+                oneof: 'greaterThan',
+                T: 16 /*ScalarType.SFIXED64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sfixed64.gt',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && this <= rules.gt? 'value must be greater than %s'.format([rules.gt]) : ''",
+                            },
+                            {
+                                id: 'sfixed64.gt_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gt && (this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'sfixed64.gt_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gt && (rules.lt <= this && this <= rules.gt)? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'sfixed64.gt_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gt && (this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'sfixed64.gt_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gt && (rules.lte < this && this <= rules.gt)? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 5,
+                name: 'gte',
+                kind: 'scalar',
+                oneof: 'greaterThan',
+                T: 16 /*ScalarType.SFIXED64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sfixed64.gte',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && this < rules.gte? 'value must be greater than or equal to %s'.format([rules.gte]) : ''",
+                            },
+                            {
+                                id: 'sfixed64.gte_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gte && (this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'sfixed64.gte_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gte && (rules.lt <= this && this < rules.gte)? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'sfixed64.gte_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gte && (this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'sfixed64.gte_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gte && (rules.lte < this && this < rules.gte)? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 6,
+                name: 'in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 16 /*ScalarType.SFIXED64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sfixed64.in',
+                                expression:
+                                    "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 7,
+                name: 'not_in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 16 /*ScalarType.SFIXED64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'sfixed64.not_in',
+                                expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 8,
+                name: 'example',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 16 /*ScalarType.SFIXED64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: { 'buf.validate.predefined': { cel: [{ id: 'sfixed64.example', expression: 'true' }] } },
+            },
         ]);
     }
     create(value?: PartialMessage<SFixed64Rules>): SFixed64Rules {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.lessThan = { oneofKind: undefined };
         message.greaterThan = { oneofKind: undefined };
         message.in = [];
         message.notIn = [];
         message.example = [];
-        if (value !== undefined)
-            reflectionMergePartial<SFixed64Rules>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<SFixed64Rules>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SFixed64Rules): SFixed64Rules {
-        let message = target ?? this.create(), end = reader.pos + length;
+    internalBinaryRead(
+        reader: IBinaryReader,
+        length: number,
+        options: BinaryReadOptions,
+        target?: SFixed64Rules,
+    ): SFixed64Rules {
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -6372,52 +8490,49 @@ class SFixed64Rules$Type extends MessageType<SFixed64Rules> {
                     break;
                 case /* sfixed64 lt */ 2:
                     message.lessThan = {
-                        oneofKind: "lt",
-                        lt: reader.sfixed64().toNumber()
+                        oneofKind: 'lt',
+                        lt: reader.sfixed64().toNumber(),
                     };
                     break;
                 case /* sfixed64 lte */ 3:
                     message.lessThan = {
-                        oneofKind: "lte",
-                        lte: reader.sfixed64().toNumber()
+                        oneofKind: 'lte',
+                        lte: reader.sfixed64().toNumber(),
                     };
                     break;
                 case /* sfixed64 gt */ 4:
                     message.greaterThan = {
-                        oneofKind: "gt",
-                        gt: reader.sfixed64().toNumber()
+                        oneofKind: 'gt',
+                        gt: reader.sfixed64().toNumber(),
                     };
                     break;
                 case /* sfixed64 gte */ 5:
                     message.greaterThan = {
-                        oneofKind: "gte",
-                        gte: reader.sfixed64().toNumber()
+                        oneofKind: 'gte',
+                        gte: reader.sfixed64().toNumber(),
                     };
                     break;
                 case /* repeated sfixed64 in */ 6:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; )
                             message.in.push(reader.sfixed64().toNumber());
-                    else
-                        message.in.push(reader.sfixed64().toNumber());
+                    else message.in.push(reader.sfixed64().toNumber());
                     break;
                 case /* repeated sfixed64 not_in */ 7:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; )
                             message.notIn.push(reader.sfixed64().toNumber());
-                    else
-                        message.notIn.push(reader.sfixed64().toNumber());
+                    else message.notIn.push(reader.sfixed64().toNumber());
                     break;
                 case /* repeated sfixed64 example */ 8:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; )
                             message.example.push(reader.sfixed64().toNumber());
-                    else
-                        message.example.push(reader.sfixed64().toNumber());
+                    else message.example.push(reader.sfixed64().toNumber());
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -6428,32 +8543,23 @@ class SFixed64Rules$Type extends MessageType<SFixed64Rules> {
     }
     internalBinaryWrite(message: SFixed64Rules, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional sfixed64 const = 1; */
-        if (message.const !== undefined)
-            writer.tag(1, WireType.Bit64).sfixed64(message.const);
+        if (message.const !== undefined) writer.tag(1, WireType.Bit64).sfixed64(message.const);
         /* sfixed64 lt = 2; */
-        if (message.lessThan.oneofKind === "lt")
-            writer.tag(2, WireType.Bit64).sfixed64(message.lessThan.lt);
+        if (message.lessThan.oneofKind === 'lt') writer.tag(2, WireType.Bit64).sfixed64(message.lessThan.lt);
         /* sfixed64 lte = 3; */
-        if (message.lessThan.oneofKind === "lte")
-            writer.tag(3, WireType.Bit64).sfixed64(message.lessThan.lte);
+        if (message.lessThan.oneofKind === 'lte') writer.tag(3, WireType.Bit64).sfixed64(message.lessThan.lte);
         /* sfixed64 gt = 4; */
-        if (message.greaterThan.oneofKind === "gt")
-            writer.tag(4, WireType.Bit64).sfixed64(message.greaterThan.gt);
+        if (message.greaterThan.oneofKind === 'gt') writer.tag(4, WireType.Bit64).sfixed64(message.greaterThan.gt);
         /* sfixed64 gte = 5; */
-        if (message.greaterThan.oneofKind === "gte")
-            writer.tag(5, WireType.Bit64).sfixed64(message.greaterThan.gte);
+        if (message.greaterThan.oneofKind === 'gte') writer.tag(5, WireType.Bit64).sfixed64(message.greaterThan.gte);
         /* repeated sfixed64 in = 6; */
-        for (let i = 0; i < message.in.length; i++)
-            writer.tag(6, WireType.Bit64).sfixed64(message.in[i]);
+        for (let i = 0; i < message.in.length; i++) writer.tag(6, WireType.Bit64).sfixed64(message.in[i]);
         /* repeated sfixed64 not_in = 7; */
-        for (let i = 0; i < message.notIn.length; i++)
-            writer.tag(7, WireType.Bit64).sfixed64(message.notIn[i]);
+        for (let i = 0; i < message.notIn.length; i++) writer.tag(7, WireType.Bit64).sfixed64(message.notIn[i]);
         /* repeated sfixed64 example = 8; */
-        for (let i = 0; i < message.example.length; i++)
-            writer.tag(8, WireType.Bit64).sfixed64(message.example[i]);
+        for (let i = 0; i < message.example.length; i++) writer.tag(8, WireType.Bit64).sfixed64(message.example[i]);
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -6464,20 +8570,44 @@ export const SFixed64Rules = new SFixed64Rules$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class BoolRules$Type extends MessageType<BoolRules> {
     constructor() {
-        super("buf.validate.BoolRules", [
-            { no: 1, name: "const", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "bool.const", expression: "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''" }] } } },
-            { no: 2, name: "example", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "bool.example", expression: "true" }] } } }
+        super('buf.validate.BoolRules', [
+            {
+                no: 1,
+                name: 'const',
+                kind: 'scalar',
+                opt: true,
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'bool.const',
+                                expression:
+                                    "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 2,
+                name: 'example',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 8 /*ScalarType.BOOL*/,
+                options: { 'buf.validate.predefined': { cel: [{ id: 'bool.example', expression: 'true' }] } },
+            },
         ]);
     }
     create(value?: PartialMessage<BoolRules>): BoolRules {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.example = [];
-        if (value !== undefined)
-            reflectionMergePartial<BoolRules>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<BoolRules>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: BoolRules): BoolRules {
-        let message = target ?? this.create(), end = reader.pos + length;
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -6486,14 +8616,12 @@ class BoolRules$Type extends MessageType<BoolRules> {
                     break;
                 case /* repeated bool example */ 2:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.example.push(reader.bool());
-                    else
-                        message.example.push(reader.bool());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.example.push(reader.bool());
+                    else message.example.push(reader.bool());
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -6504,14 +8632,11 @@ class BoolRules$Type extends MessageType<BoolRules> {
     }
     internalBinaryWrite(message: BoolRules, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional bool const = 1; */
-        if (message.const !== undefined)
-            writer.tag(1, WireType.Varint).bool(message.const);
+        if (message.const !== undefined) writer.tag(1, WireType.Varint).bool(message.const);
         /* repeated bool example = 2; */
-        for (let i = 0; i < message.example.length; i++)
-            writer.tag(2, WireType.Varint).bool(message.example[i]);
+        for (let i = 0; i < message.example.length; i++) writer.tag(2, WireType.Varint).bool(message.example[i]);
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -6522,55 +8647,704 @@ export const BoolRules = new BoolRules$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class StringRules$Type extends MessageType<StringRules> {
     constructor() {
-        super("buf.validate.StringRules", [
-            { no: 1, name: "const", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.predefined": { cel: [{ id: "string.const", expression: "this != getField(rules, 'const') ? 'value must equal `%s`'.format([getField(rules, 'const')]) : ''" }] } } },
-            { no: 19, name: "len", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "string.len", expression: "uint(this.size()) != rules.len ? 'value length must be %s characters'.format([rules.len]) : ''" }] } } },
-            { no: 2, name: "min_len", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "string.min_len", expression: "uint(this.size()) < rules.min_len ? 'value length must be at least %s characters'.format([rules.min_len]) : ''" }] } } },
-            { no: 3, name: "max_len", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "string.max_len", expression: "uint(this.size()) > rules.max_len ? 'value length must be at most %s characters'.format([rules.max_len]) : ''" }] } } },
-            { no: 20, name: "len_bytes", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "string.len_bytes", expression: "uint(bytes(this).size()) != rules.len_bytes ? 'value length must be %s bytes'.format([rules.len_bytes]) : ''" }] } } },
-            { no: 4, name: "min_bytes", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "string.min_bytes", expression: "uint(bytes(this).size()) < rules.min_bytes ? 'value length must be at least %s bytes'.format([rules.min_bytes]) : ''" }] } } },
-            { no: 5, name: "max_bytes", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "string.max_bytes", expression: "uint(bytes(this).size()) > rules.max_bytes ? 'value length must be at most %s bytes'.format([rules.max_bytes]) : ''" }] } } },
-            { no: 6, name: "pattern", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.predefined": { cel: [{ id: "string.pattern", expression: "!this.matches(rules.pattern) ? 'value does not match regex pattern `%s`'.format([rules.pattern]) : ''" }] } } },
-            { no: 7, name: "prefix", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.predefined": { cel: [{ id: "string.prefix", expression: "!this.startsWith(rules.prefix) ? 'value does not have prefix `%s`'.format([rules.prefix]) : ''" }] } } },
-            { no: 8, name: "suffix", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.predefined": { cel: [{ id: "string.suffix", expression: "!this.endsWith(rules.suffix) ? 'value does not have suffix `%s`'.format([rules.suffix]) : ''" }] } } },
-            { no: 9, name: "contains", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.predefined": { cel: [{ id: "string.contains", expression: "!this.contains(rules.contains) ? 'value does not contain substring `%s`'.format([rules.contains]) : ''" }] } } },
-            { no: 23, name: "not_contains", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.predefined": { cel: [{ id: "string.not_contains", expression: "this.contains(rules.not_contains) ? 'value contains substring `%s`'.format([rules.not_contains]) : ''" }] } } },
-            { no: 10, name: "in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.predefined": { cel: [{ id: "string.in", expression: "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''" }] } } },
-            { no: 11, name: "not_in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.predefined": { cel: [{ id: "string.not_in", expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''" }] } } },
-            { no: 12, name: "email", kind: "scalar", oneof: "wellKnown", T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "string.email", message: "value must be a valid email address", expression: "!rules.email || this == '' || this.isEmail()" }, { id: "string.email_empty", message: "value is empty, which is not a valid email address", expression: "!rules.email || this != ''" }] } } },
-            { no: 13, name: "hostname", kind: "scalar", oneof: "wellKnown", T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "string.hostname", message: "value must be a valid hostname", expression: "!rules.hostname || this == '' || this.isHostname()" }, { id: "string.hostname_empty", message: "value is empty, which is not a valid hostname", expression: "!rules.hostname || this != ''" }] } } },
-            { no: 14, name: "ip", kind: "scalar", oneof: "wellKnown", T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "string.ip", message: "value must be a valid IP address", expression: "!rules.ip || this == '' || this.isIp()" }, { id: "string.ip_empty", message: "value is empty, which is not a valid IP address", expression: "!rules.ip || this != ''" }] } } },
-            { no: 15, name: "ipv4", kind: "scalar", oneof: "wellKnown", T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "string.ipv4", message: "value must be a valid IPv4 address", expression: "!rules.ipv4 || this == '' || this.isIp(4)" }, { id: "string.ipv4_empty", message: "value is empty, which is not a valid IPv4 address", expression: "!rules.ipv4 || this != ''" }] } } },
-            { no: 16, name: "ipv6", kind: "scalar", oneof: "wellKnown", T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "string.ipv6", message: "value must be a valid IPv6 address", expression: "!rules.ipv6 || this == '' || this.isIp(6)" }, { id: "string.ipv6_empty", message: "value is empty, which is not a valid IPv6 address", expression: "!rules.ipv6 || this != ''" }] } } },
-            { no: 17, name: "uri", kind: "scalar", oneof: "wellKnown", T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "string.uri", message: "value must be a valid URI", expression: "!rules.uri || this == '' || this.isUri()" }, { id: "string.uri_empty", message: "value is empty, which is not a valid URI", expression: "!rules.uri || this != ''" }] } } },
-            { no: 18, name: "uri_ref", kind: "scalar", oneof: "wellKnown", T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "string.uri_ref", message: "value must be a valid URI Reference", expression: "!rules.uri_ref || this.isUriRef()" }] } } },
-            { no: 21, name: "address", kind: "scalar", oneof: "wellKnown", T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "string.address", message: "value must be a valid hostname, or ip address", expression: "!rules.address || this == '' || this.isHostname() || this.isIp()" }, { id: "string.address_empty", message: "value is empty, which is not a valid hostname, or ip address", expression: "!rules.address || this != ''" }] } } },
-            { no: 22, name: "uuid", kind: "scalar", oneof: "wellKnown", T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "string.uuid", message: "value must be a valid UUID", expression: "!rules.uuid || this == '' || this.matches('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$')" }, { id: "string.uuid_empty", message: "value is empty, which is not a valid UUID", expression: "!rules.uuid || this != ''" }] } } },
-            { no: 33, name: "tuuid", kind: "scalar", oneof: "wellKnown", T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "string.tuuid", message: "value must be a valid trimmed UUID", expression: "!rules.tuuid || this == '' || this.matches('^[0-9a-fA-F]{32}$')" }, { id: "string.tuuid_empty", message: "value is empty, which is not a valid trimmed UUID", expression: "!rules.tuuid || this != ''" }] } } },
-            { no: 26, name: "ip_with_prefixlen", kind: "scalar", oneof: "wellKnown", T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "string.ip_with_prefixlen", message: "value must be a valid IP prefix", expression: "!rules.ip_with_prefixlen || this == '' || this.isIpPrefix()" }, { id: "string.ip_with_prefixlen_empty", message: "value is empty, which is not a valid IP prefix", expression: "!rules.ip_with_prefixlen || this != ''" }] } } },
-            { no: 27, name: "ipv4_with_prefixlen", kind: "scalar", oneof: "wellKnown", T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "string.ipv4_with_prefixlen", message: "value must be a valid IPv4 address with prefix length", expression: "!rules.ipv4_with_prefixlen || this == '' || this.isIpPrefix(4)" }, { id: "string.ipv4_with_prefixlen_empty", message: "value is empty, which is not a valid IPv4 address with prefix length", expression: "!rules.ipv4_with_prefixlen || this != ''" }] } } },
-            { no: 28, name: "ipv6_with_prefixlen", kind: "scalar", oneof: "wellKnown", T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "string.ipv6_with_prefixlen", message: "value must be a valid IPv6 address with prefix length", expression: "!rules.ipv6_with_prefixlen || this == '' || this.isIpPrefix(6)" }, { id: "string.ipv6_with_prefixlen_empty", message: "value is empty, which is not a valid IPv6 address with prefix length", expression: "!rules.ipv6_with_prefixlen || this != ''" }] } } },
-            { no: 29, name: "ip_prefix", kind: "scalar", oneof: "wellKnown", T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "string.ip_prefix", message: "value must be a valid IP prefix", expression: "!rules.ip_prefix || this == '' || this.isIpPrefix(true)" }, { id: "string.ip_prefix_empty", message: "value is empty, which is not a valid IP prefix", expression: "!rules.ip_prefix || this != ''" }] } } },
-            { no: 30, name: "ipv4_prefix", kind: "scalar", oneof: "wellKnown", T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "string.ipv4_prefix", message: "value must be a valid IPv4 prefix", expression: "!rules.ipv4_prefix || this == '' || this.isIpPrefix(4, true)" }, { id: "string.ipv4_prefix_empty", message: "value is empty, which is not a valid IPv4 prefix", expression: "!rules.ipv4_prefix || this != ''" }] } } },
-            { no: 31, name: "ipv6_prefix", kind: "scalar", oneof: "wellKnown", T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "string.ipv6_prefix", message: "value must be a valid IPv6 prefix", expression: "!rules.ipv6_prefix || this == '' || this.isIpPrefix(6, true)" }, { id: "string.ipv6_prefix_empty", message: "value is empty, which is not a valid IPv6 prefix", expression: "!rules.ipv6_prefix || this != ''" }] } } },
-            { no: 32, name: "host_and_port", kind: "scalar", oneof: "wellKnown", T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "string.host_and_port", message: "value must be a valid host (hostname or IP address) and port pair", expression: "!rules.host_and_port || this == '' || this.isHostAndPort(true)" }, { id: "string.host_and_port_empty", message: "value is empty, which is not a valid host and port pair", expression: "!rules.host_and_port || this != ''" }] } } },
-            { no: 24, name: "well_known_regex", kind: "enum", oneof: "wellKnown", T: () => ["buf.validate.KnownRegex", KnownRegex, "KNOWN_REGEX_"], options: { "buf.validate.predefined": { cel: [{ id: "string.well_known_regex.header_name", message: "value must be a valid HTTP header name", expression: "rules.well_known_regex != 1 || this == '' || this.matches(!has(rules.strict) || rules.strict ?'^:?[0-9a-zA-Z!#$%&\\'*+-.^_|~\\x60]+$' :'^[^\\u0000\\u000A\\u000D]+$')" }, { id: "string.well_known_regex.header_name_empty", message: "value is empty, which is not a valid HTTP header name", expression: "rules.well_known_regex != 1 || this != ''" }, { id: "string.well_known_regex.header_value", message: "value must be a valid HTTP header value", expression: "rules.well_known_regex != 2 || this.matches(!has(rules.strict) || rules.strict ?'^[^\\u0000-\\u0008\\u000A-\\u001F\\u007F]*$' :'^[^\\u0000\\u000A\\u000D]*$')" }] } } },
-            { no: 25, name: "strict", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 34, name: "example", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.predefined": { cel: [{ id: "string.example", expression: "true" }] } } }
+        super('buf.validate.StringRules', [
+            {
+                no: 1,
+                name: 'const',
+                kind: 'scalar',
+                opt: true,
+                T: 9 /*ScalarType.STRING*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.const',
+                                expression:
+                                    "this != getField(rules, 'const') ? 'value must equal `%s`'.format([getField(rules, 'const')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 19,
+                name: 'len',
+                kind: 'scalar',
+                opt: true,
+                T: 4 /*ScalarType.UINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.len',
+                                expression:
+                                    "uint(this.size()) != rules.len ? 'value length must be %s characters'.format([rules.len]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 2,
+                name: 'min_len',
+                kind: 'scalar',
+                opt: true,
+                T: 4 /*ScalarType.UINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.min_len',
+                                expression:
+                                    "uint(this.size()) < rules.min_len ? 'value length must be at least %s characters'.format([rules.min_len]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 3,
+                name: 'max_len',
+                kind: 'scalar',
+                opt: true,
+                T: 4 /*ScalarType.UINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.max_len',
+                                expression:
+                                    "uint(this.size()) > rules.max_len ? 'value length must be at most %s characters'.format([rules.max_len]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 20,
+                name: 'len_bytes',
+                kind: 'scalar',
+                opt: true,
+                T: 4 /*ScalarType.UINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.len_bytes',
+                                expression:
+                                    "uint(bytes(this).size()) != rules.len_bytes ? 'value length must be %s bytes'.format([rules.len_bytes]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 4,
+                name: 'min_bytes',
+                kind: 'scalar',
+                opt: true,
+                T: 4 /*ScalarType.UINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.min_bytes',
+                                expression:
+                                    "uint(bytes(this).size()) < rules.min_bytes ? 'value length must be at least %s bytes'.format([rules.min_bytes]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 5,
+                name: 'max_bytes',
+                kind: 'scalar',
+                opt: true,
+                T: 4 /*ScalarType.UINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.max_bytes',
+                                expression:
+                                    "uint(bytes(this).size()) > rules.max_bytes ? 'value length must be at most %s bytes'.format([rules.max_bytes]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 6,
+                name: 'pattern',
+                kind: 'scalar',
+                opt: true,
+                T: 9 /*ScalarType.STRING*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.pattern',
+                                expression:
+                                    "!this.matches(rules.pattern) ? 'value does not match regex pattern `%s`'.format([rules.pattern]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 7,
+                name: 'prefix',
+                kind: 'scalar',
+                opt: true,
+                T: 9 /*ScalarType.STRING*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.prefix',
+                                expression:
+                                    "!this.startsWith(rules.prefix) ? 'value does not have prefix `%s`'.format([rules.prefix]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 8,
+                name: 'suffix',
+                kind: 'scalar',
+                opt: true,
+                T: 9 /*ScalarType.STRING*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.suffix',
+                                expression:
+                                    "!this.endsWith(rules.suffix) ? 'value does not have suffix `%s`'.format([rules.suffix]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 9,
+                name: 'contains',
+                kind: 'scalar',
+                opt: true,
+                T: 9 /*ScalarType.STRING*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.contains',
+                                expression:
+                                    "!this.contains(rules.contains) ? 'value does not contain substring `%s`'.format([rules.contains]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 23,
+                name: 'not_contains',
+                kind: 'scalar',
+                opt: true,
+                T: 9 /*ScalarType.STRING*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.not_contains',
+                                expression:
+                                    "this.contains(rules.not_contains) ? 'value contains substring `%s`'.format([rules.not_contains]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 10,
+                name: 'in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 9 /*ScalarType.STRING*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.in',
+                                expression:
+                                    "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 11,
+                name: 'not_in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 9 /*ScalarType.STRING*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.not_in',
+                                expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 12,
+                name: 'email',
+                kind: 'scalar',
+                oneof: 'wellKnown',
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.email',
+                                message: 'value must be a valid email address',
+                                expression: "!rules.email || this == '' || this.isEmail()",
+                            },
+                            {
+                                id: 'string.email_empty',
+                                message: 'value is empty, which is not a valid email address',
+                                expression: "!rules.email || this != ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 13,
+                name: 'hostname',
+                kind: 'scalar',
+                oneof: 'wellKnown',
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.hostname',
+                                message: 'value must be a valid hostname',
+                                expression: "!rules.hostname || this == '' || this.isHostname()",
+                            },
+                            {
+                                id: 'string.hostname_empty',
+                                message: 'value is empty, which is not a valid hostname',
+                                expression: "!rules.hostname || this != ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 14,
+                name: 'ip',
+                kind: 'scalar',
+                oneof: 'wellKnown',
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.ip',
+                                message: 'value must be a valid IP address',
+                                expression: "!rules.ip || this == '' || this.isIp()",
+                            },
+                            {
+                                id: 'string.ip_empty',
+                                message: 'value is empty, which is not a valid IP address',
+                                expression: "!rules.ip || this != ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 15,
+                name: 'ipv4',
+                kind: 'scalar',
+                oneof: 'wellKnown',
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.ipv4',
+                                message: 'value must be a valid IPv4 address',
+                                expression: "!rules.ipv4 || this == '' || this.isIp(4)",
+                            },
+                            {
+                                id: 'string.ipv4_empty',
+                                message: 'value is empty, which is not a valid IPv4 address',
+                                expression: "!rules.ipv4 || this != ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 16,
+                name: 'ipv6',
+                kind: 'scalar',
+                oneof: 'wellKnown',
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.ipv6',
+                                message: 'value must be a valid IPv6 address',
+                                expression: "!rules.ipv6 || this == '' || this.isIp(6)",
+                            },
+                            {
+                                id: 'string.ipv6_empty',
+                                message: 'value is empty, which is not a valid IPv6 address',
+                                expression: "!rules.ipv6 || this != ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 17,
+                name: 'uri',
+                kind: 'scalar',
+                oneof: 'wellKnown',
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.uri',
+                                message: 'value must be a valid URI',
+                                expression: "!rules.uri || this == '' || this.isUri()",
+                            },
+                            {
+                                id: 'string.uri_empty',
+                                message: 'value is empty, which is not a valid URI',
+                                expression: "!rules.uri || this != ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 18,
+                name: 'uri_ref',
+                kind: 'scalar',
+                oneof: 'wellKnown',
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.uri_ref',
+                                message: 'value must be a valid URI Reference',
+                                expression: '!rules.uri_ref || this.isUriRef()',
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 21,
+                name: 'address',
+                kind: 'scalar',
+                oneof: 'wellKnown',
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.address',
+                                message: 'value must be a valid hostname, or ip address',
+                                expression: "!rules.address || this == '' || this.isHostname() || this.isIp()",
+                            },
+                            {
+                                id: 'string.address_empty',
+                                message: 'value is empty, which is not a valid hostname, or ip address',
+                                expression: "!rules.address || this != ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 22,
+                name: 'uuid',
+                kind: 'scalar',
+                oneof: 'wellKnown',
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.uuid',
+                                message: 'value must be a valid UUID',
+                                expression:
+                                    "!rules.uuid || this == '' || this.matches('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$')",
+                            },
+                            {
+                                id: 'string.uuid_empty',
+                                message: 'value is empty, which is not a valid UUID',
+                                expression: "!rules.uuid || this != ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 33,
+                name: 'tuuid',
+                kind: 'scalar',
+                oneof: 'wellKnown',
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.tuuid',
+                                message: 'value must be a valid trimmed UUID',
+                                expression: "!rules.tuuid || this == '' || this.matches('^[0-9a-fA-F]{32}$')",
+                            },
+                            {
+                                id: 'string.tuuid_empty',
+                                message: 'value is empty, which is not a valid trimmed UUID',
+                                expression: "!rules.tuuid || this != ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 26,
+                name: 'ip_with_prefixlen',
+                kind: 'scalar',
+                oneof: 'wellKnown',
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.ip_with_prefixlen',
+                                message: 'value must be a valid IP prefix',
+                                expression: "!rules.ip_with_prefixlen || this == '' || this.isIpPrefix()",
+                            },
+                            {
+                                id: 'string.ip_with_prefixlen_empty',
+                                message: 'value is empty, which is not a valid IP prefix',
+                                expression: "!rules.ip_with_prefixlen || this != ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 27,
+                name: 'ipv4_with_prefixlen',
+                kind: 'scalar',
+                oneof: 'wellKnown',
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.ipv4_with_prefixlen',
+                                message: 'value must be a valid IPv4 address with prefix length',
+                                expression: "!rules.ipv4_with_prefixlen || this == '' || this.isIpPrefix(4)",
+                            },
+                            {
+                                id: 'string.ipv4_with_prefixlen_empty',
+                                message: 'value is empty, which is not a valid IPv4 address with prefix length',
+                                expression: "!rules.ipv4_with_prefixlen || this != ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 28,
+                name: 'ipv6_with_prefixlen',
+                kind: 'scalar',
+                oneof: 'wellKnown',
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.ipv6_with_prefixlen',
+                                message: 'value must be a valid IPv6 address with prefix length',
+                                expression: "!rules.ipv6_with_prefixlen || this == '' || this.isIpPrefix(6)",
+                            },
+                            {
+                                id: 'string.ipv6_with_prefixlen_empty',
+                                message: 'value is empty, which is not a valid IPv6 address with prefix length',
+                                expression: "!rules.ipv6_with_prefixlen || this != ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 29,
+                name: 'ip_prefix',
+                kind: 'scalar',
+                oneof: 'wellKnown',
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.ip_prefix',
+                                message: 'value must be a valid IP prefix',
+                                expression: "!rules.ip_prefix || this == '' || this.isIpPrefix(true)",
+                            },
+                            {
+                                id: 'string.ip_prefix_empty',
+                                message: 'value is empty, which is not a valid IP prefix',
+                                expression: "!rules.ip_prefix || this != ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 30,
+                name: 'ipv4_prefix',
+                kind: 'scalar',
+                oneof: 'wellKnown',
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.ipv4_prefix',
+                                message: 'value must be a valid IPv4 prefix',
+                                expression: "!rules.ipv4_prefix || this == '' || this.isIpPrefix(4, true)",
+                            },
+                            {
+                                id: 'string.ipv4_prefix_empty',
+                                message: 'value is empty, which is not a valid IPv4 prefix',
+                                expression: "!rules.ipv4_prefix || this != ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 31,
+                name: 'ipv6_prefix',
+                kind: 'scalar',
+                oneof: 'wellKnown',
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.ipv6_prefix',
+                                message: 'value must be a valid IPv6 prefix',
+                                expression: "!rules.ipv6_prefix || this == '' || this.isIpPrefix(6, true)",
+                            },
+                            {
+                                id: 'string.ipv6_prefix_empty',
+                                message: 'value is empty, which is not a valid IPv6 prefix',
+                                expression: "!rules.ipv6_prefix || this != ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 32,
+                name: 'host_and_port',
+                kind: 'scalar',
+                oneof: 'wellKnown',
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.host_and_port',
+                                message: 'value must be a valid host (hostname or IP address) and port pair',
+                                expression: "!rules.host_and_port || this == '' || this.isHostAndPort(true)",
+                            },
+                            {
+                                id: 'string.host_and_port_empty',
+                                message: 'value is empty, which is not a valid host and port pair',
+                                expression: "!rules.host_and_port || this != ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 24,
+                name: 'well_known_regex',
+                kind: 'enum',
+                oneof: 'wellKnown',
+                T: () => ['buf.validate.KnownRegex', KnownRegex, 'KNOWN_REGEX_'],
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'string.well_known_regex.header_name',
+                                message: 'value must be a valid HTTP header name',
+                                expression:
+                                    "rules.well_known_regex != 1 || this == '' || this.matches(!has(rules.strict) || rules.strict ?'^:?[0-9a-zA-Z!#$%&\\'*+-.^_|~\\x60]+$' :'^[^\\u0000\\u000A\\u000D]+$')",
+                            },
+                            {
+                                id: 'string.well_known_regex.header_name_empty',
+                                message: 'value is empty, which is not a valid HTTP header name',
+                                expression: "rules.well_known_regex != 1 || this != ''",
+                            },
+                            {
+                                id: 'string.well_known_regex.header_value',
+                                message: 'value must be a valid HTTP header value',
+                                expression:
+                                    "rules.well_known_regex != 2 || this.matches(!has(rules.strict) || rules.strict ?'^[^\\u0000-\\u0008\\u000A-\\u001F\\u007F]*$' :'^[^\\u0000\\u000A\\u000D]*$')",
+                            },
+                        ],
+                    },
+                },
+            },
+            { no: 25, name: 'strict', kind: 'scalar', opt: true, T: 8 /*ScalarType.BOOL*/ },
+            {
+                no: 34,
+                name: 'example',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 9 /*ScalarType.STRING*/,
+                options: { 'buf.validate.predefined': { cel: [{ id: 'string.example', expression: 'true' }] } },
+            },
         ]);
     }
     create(value?: PartialMessage<StringRules>): StringRules {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.in = [];
         message.notIn = [];
         message.wellKnown = { oneofKind: undefined };
         message.example = [];
-        if (value !== undefined)
-            reflectionMergePartial<StringRules>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<StringRules>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: StringRules): StringRules {
-        let message = target ?? this.create(), end = reader.pos + length;
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -6618,110 +9392,110 @@ class StringRules$Type extends MessageType<StringRules> {
                     break;
                 case /* bool email */ 12:
                     message.wellKnown = {
-                        oneofKind: "email",
-                        email: reader.bool()
+                        oneofKind: 'email',
+                        email: reader.bool(),
                     };
                     break;
                 case /* bool hostname */ 13:
                     message.wellKnown = {
-                        oneofKind: "hostname",
-                        hostname: reader.bool()
+                        oneofKind: 'hostname',
+                        hostname: reader.bool(),
                     };
                     break;
                 case /* bool ip */ 14:
                     message.wellKnown = {
-                        oneofKind: "ip",
-                        ip: reader.bool()
+                        oneofKind: 'ip',
+                        ip: reader.bool(),
                     };
                     break;
                 case /* bool ipv4 */ 15:
                     message.wellKnown = {
-                        oneofKind: "ipv4",
-                        ipv4: reader.bool()
+                        oneofKind: 'ipv4',
+                        ipv4: reader.bool(),
                     };
                     break;
                 case /* bool ipv6 */ 16:
                     message.wellKnown = {
-                        oneofKind: "ipv6",
-                        ipv6: reader.bool()
+                        oneofKind: 'ipv6',
+                        ipv6: reader.bool(),
                     };
                     break;
                 case /* bool uri */ 17:
                     message.wellKnown = {
-                        oneofKind: "uri",
-                        uri: reader.bool()
+                        oneofKind: 'uri',
+                        uri: reader.bool(),
                     };
                     break;
                 case /* bool uri_ref */ 18:
                     message.wellKnown = {
-                        oneofKind: "uriRef",
-                        uriRef: reader.bool()
+                        oneofKind: 'uriRef',
+                        uriRef: reader.bool(),
                     };
                     break;
                 case /* bool address */ 21:
                     message.wellKnown = {
-                        oneofKind: "address",
-                        address: reader.bool()
+                        oneofKind: 'address',
+                        address: reader.bool(),
                     };
                     break;
                 case /* bool uuid */ 22:
                     message.wellKnown = {
-                        oneofKind: "uuid",
-                        uuid: reader.bool()
+                        oneofKind: 'uuid',
+                        uuid: reader.bool(),
                     };
                     break;
                 case /* bool tuuid */ 33:
                     message.wellKnown = {
-                        oneofKind: "tuuid",
-                        tuuid: reader.bool()
+                        oneofKind: 'tuuid',
+                        tuuid: reader.bool(),
                     };
                     break;
                 case /* bool ip_with_prefixlen */ 26:
                     message.wellKnown = {
-                        oneofKind: "ipWithPrefixlen",
-                        ipWithPrefixlen: reader.bool()
+                        oneofKind: 'ipWithPrefixlen',
+                        ipWithPrefixlen: reader.bool(),
                     };
                     break;
                 case /* bool ipv4_with_prefixlen */ 27:
                     message.wellKnown = {
-                        oneofKind: "ipv4WithPrefixlen",
-                        ipv4WithPrefixlen: reader.bool()
+                        oneofKind: 'ipv4WithPrefixlen',
+                        ipv4WithPrefixlen: reader.bool(),
                     };
                     break;
                 case /* bool ipv6_with_prefixlen */ 28:
                     message.wellKnown = {
-                        oneofKind: "ipv6WithPrefixlen",
-                        ipv6WithPrefixlen: reader.bool()
+                        oneofKind: 'ipv6WithPrefixlen',
+                        ipv6WithPrefixlen: reader.bool(),
                     };
                     break;
                 case /* bool ip_prefix */ 29:
                     message.wellKnown = {
-                        oneofKind: "ipPrefix",
-                        ipPrefix: reader.bool()
+                        oneofKind: 'ipPrefix',
+                        ipPrefix: reader.bool(),
                     };
                     break;
                 case /* bool ipv4_prefix */ 30:
                     message.wellKnown = {
-                        oneofKind: "ipv4Prefix",
-                        ipv4Prefix: reader.bool()
+                        oneofKind: 'ipv4Prefix',
+                        ipv4Prefix: reader.bool(),
                     };
                     break;
                 case /* bool ipv6_prefix */ 31:
                     message.wellKnown = {
-                        oneofKind: "ipv6Prefix",
-                        ipv6Prefix: reader.bool()
+                        oneofKind: 'ipv6Prefix',
+                        ipv6Prefix: reader.bool(),
                     };
                     break;
                 case /* bool host_and_port */ 32:
                     message.wellKnown = {
-                        oneofKind: "hostAndPort",
-                        hostAndPort: reader.bool()
+                        oneofKind: 'hostAndPort',
+                        hostAndPort: reader.bool(),
                     };
                     break;
                 case /* buf.validate.KnownRegex well_known_regex */ 24:
                     message.wellKnown = {
-                        oneofKind: "wellKnownRegex",
-                        wellKnownRegex: reader.int32()
+                        oneofKind: 'wellKnownRegex',
+                        wellKnownRegex: reader.int32(),
                     };
                     break;
                 case /* optional bool strict */ 25:
@@ -6732,7 +9506,7 @@ class StringRules$Type extends MessageType<StringRules> {
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -6743,110 +9517,79 @@ class StringRules$Type extends MessageType<StringRules> {
     }
     internalBinaryWrite(message: StringRules, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional string const = 1; */
-        if (message.const !== undefined)
-            writer.tag(1, WireType.LengthDelimited).string(message.const);
+        if (message.const !== undefined) writer.tag(1, WireType.LengthDelimited).string(message.const);
         /* optional uint64 min_len = 2; */
-        if (message.minLen !== undefined)
-            writer.tag(2, WireType.Varint).uint64(message.minLen);
+        if (message.minLen !== undefined) writer.tag(2, WireType.Varint).uint64(message.minLen);
         /* optional uint64 max_len = 3; */
-        if (message.maxLen !== undefined)
-            writer.tag(3, WireType.Varint).uint64(message.maxLen);
+        if (message.maxLen !== undefined) writer.tag(3, WireType.Varint).uint64(message.maxLen);
         /* optional uint64 min_bytes = 4; */
-        if (message.minBytes !== undefined)
-            writer.tag(4, WireType.Varint).uint64(message.minBytes);
+        if (message.minBytes !== undefined) writer.tag(4, WireType.Varint).uint64(message.minBytes);
         /* optional uint64 max_bytes = 5; */
-        if (message.maxBytes !== undefined)
-            writer.tag(5, WireType.Varint).uint64(message.maxBytes);
+        if (message.maxBytes !== undefined) writer.tag(5, WireType.Varint).uint64(message.maxBytes);
         /* optional string pattern = 6; */
-        if (message.pattern !== undefined)
-            writer.tag(6, WireType.LengthDelimited).string(message.pattern);
+        if (message.pattern !== undefined) writer.tag(6, WireType.LengthDelimited).string(message.pattern);
         /* optional string prefix = 7; */
-        if (message.prefix !== undefined)
-            writer.tag(7, WireType.LengthDelimited).string(message.prefix);
+        if (message.prefix !== undefined) writer.tag(7, WireType.LengthDelimited).string(message.prefix);
         /* optional string suffix = 8; */
-        if (message.suffix !== undefined)
-            writer.tag(8, WireType.LengthDelimited).string(message.suffix);
+        if (message.suffix !== undefined) writer.tag(8, WireType.LengthDelimited).string(message.suffix);
         /* optional string contains = 9; */
-        if (message.contains !== undefined)
-            writer.tag(9, WireType.LengthDelimited).string(message.contains);
+        if (message.contains !== undefined) writer.tag(9, WireType.LengthDelimited).string(message.contains);
         /* repeated string in = 10; */
-        for (let i = 0; i < message.in.length; i++)
-            writer.tag(10, WireType.LengthDelimited).string(message.in[i]);
+        for (let i = 0; i < message.in.length; i++) writer.tag(10, WireType.LengthDelimited).string(message.in[i]);
         /* repeated string not_in = 11; */
-        for (let i = 0; i < message.notIn.length; i++)
-            writer.tag(11, WireType.LengthDelimited).string(message.notIn[i]);
+        for (let i = 0; i < message.notIn.length; i++) writer.tag(11, WireType.LengthDelimited).string(message.notIn[i]);
         /* bool email = 12; */
-        if (message.wellKnown.oneofKind === "email")
-            writer.tag(12, WireType.Varint).bool(message.wellKnown.email);
+        if (message.wellKnown.oneofKind === 'email') writer.tag(12, WireType.Varint).bool(message.wellKnown.email);
         /* bool hostname = 13; */
-        if (message.wellKnown.oneofKind === "hostname")
-            writer.tag(13, WireType.Varint).bool(message.wellKnown.hostname);
+        if (message.wellKnown.oneofKind === 'hostname') writer.tag(13, WireType.Varint).bool(message.wellKnown.hostname);
         /* bool ip = 14; */
-        if (message.wellKnown.oneofKind === "ip")
-            writer.tag(14, WireType.Varint).bool(message.wellKnown.ip);
+        if (message.wellKnown.oneofKind === 'ip') writer.tag(14, WireType.Varint).bool(message.wellKnown.ip);
         /* bool ipv4 = 15; */
-        if (message.wellKnown.oneofKind === "ipv4")
-            writer.tag(15, WireType.Varint).bool(message.wellKnown.ipv4);
+        if (message.wellKnown.oneofKind === 'ipv4') writer.tag(15, WireType.Varint).bool(message.wellKnown.ipv4);
         /* bool ipv6 = 16; */
-        if (message.wellKnown.oneofKind === "ipv6")
-            writer.tag(16, WireType.Varint).bool(message.wellKnown.ipv6);
+        if (message.wellKnown.oneofKind === 'ipv6') writer.tag(16, WireType.Varint).bool(message.wellKnown.ipv6);
         /* bool uri = 17; */
-        if (message.wellKnown.oneofKind === "uri")
-            writer.tag(17, WireType.Varint).bool(message.wellKnown.uri);
+        if (message.wellKnown.oneofKind === 'uri') writer.tag(17, WireType.Varint).bool(message.wellKnown.uri);
         /* bool uri_ref = 18; */
-        if (message.wellKnown.oneofKind === "uriRef")
-            writer.tag(18, WireType.Varint).bool(message.wellKnown.uriRef);
+        if (message.wellKnown.oneofKind === 'uriRef') writer.tag(18, WireType.Varint).bool(message.wellKnown.uriRef);
         /* optional uint64 len = 19; */
-        if (message.len !== undefined)
-            writer.tag(19, WireType.Varint).uint64(message.len);
+        if (message.len !== undefined) writer.tag(19, WireType.Varint).uint64(message.len);
         /* optional uint64 len_bytes = 20; */
-        if (message.lenBytes !== undefined)
-            writer.tag(20, WireType.Varint).uint64(message.lenBytes);
+        if (message.lenBytes !== undefined) writer.tag(20, WireType.Varint).uint64(message.lenBytes);
         /* bool address = 21; */
-        if (message.wellKnown.oneofKind === "address")
-            writer.tag(21, WireType.Varint).bool(message.wellKnown.address);
+        if (message.wellKnown.oneofKind === 'address') writer.tag(21, WireType.Varint).bool(message.wellKnown.address);
         /* bool uuid = 22; */
-        if (message.wellKnown.oneofKind === "uuid")
-            writer.tag(22, WireType.Varint).bool(message.wellKnown.uuid);
+        if (message.wellKnown.oneofKind === 'uuid') writer.tag(22, WireType.Varint).bool(message.wellKnown.uuid);
         /* optional string not_contains = 23; */
-        if (message.notContains !== undefined)
-            writer.tag(23, WireType.LengthDelimited).string(message.notContains);
+        if (message.notContains !== undefined) writer.tag(23, WireType.LengthDelimited).string(message.notContains);
         /* buf.validate.KnownRegex well_known_regex = 24; */
-        if (message.wellKnown.oneofKind === "wellKnownRegex")
+        if (message.wellKnown.oneofKind === 'wellKnownRegex')
             writer.tag(24, WireType.Varint).int32(message.wellKnown.wellKnownRegex);
         /* optional bool strict = 25; */
-        if (message.strict !== undefined)
-            writer.tag(25, WireType.Varint).bool(message.strict);
+        if (message.strict !== undefined) writer.tag(25, WireType.Varint).bool(message.strict);
         /* bool ip_with_prefixlen = 26; */
-        if (message.wellKnown.oneofKind === "ipWithPrefixlen")
+        if (message.wellKnown.oneofKind === 'ipWithPrefixlen')
             writer.tag(26, WireType.Varint).bool(message.wellKnown.ipWithPrefixlen);
         /* bool ipv4_with_prefixlen = 27; */
-        if (message.wellKnown.oneofKind === "ipv4WithPrefixlen")
+        if (message.wellKnown.oneofKind === 'ipv4WithPrefixlen')
             writer.tag(27, WireType.Varint).bool(message.wellKnown.ipv4WithPrefixlen);
         /* bool ipv6_with_prefixlen = 28; */
-        if (message.wellKnown.oneofKind === "ipv6WithPrefixlen")
+        if (message.wellKnown.oneofKind === 'ipv6WithPrefixlen')
             writer.tag(28, WireType.Varint).bool(message.wellKnown.ipv6WithPrefixlen);
         /* bool ip_prefix = 29; */
-        if (message.wellKnown.oneofKind === "ipPrefix")
-            writer.tag(29, WireType.Varint).bool(message.wellKnown.ipPrefix);
+        if (message.wellKnown.oneofKind === 'ipPrefix') writer.tag(29, WireType.Varint).bool(message.wellKnown.ipPrefix);
         /* bool ipv4_prefix = 30; */
-        if (message.wellKnown.oneofKind === "ipv4Prefix")
-            writer.tag(30, WireType.Varint).bool(message.wellKnown.ipv4Prefix);
+        if (message.wellKnown.oneofKind === 'ipv4Prefix') writer.tag(30, WireType.Varint).bool(message.wellKnown.ipv4Prefix);
         /* bool ipv6_prefix = 31; */
-        if (message.wellKnown.oneofKind === "ipv6Prefix")
-            writer.tag(31, WireType.Varint).bool(message.wellKnown.ipv6Prefix);
+        if (message.wellKnown.oneofKind === 'ipv6Prefix') writer.tag(31, WireType.Varint).bool(message.wellKnown.ipv6Prefix);
         /* bool host_and_port = 32; */
-        if (message.wellKnown.oneofKind === "hostAndPort")
-            writer.tag(32, WireType.Varint).bool(message.wellKnown.hostAndPort);
+        if (message.wellKnown.oneofKind === 'hostAndPort') writer.tag(32, WireType.Varint).bool(message.wellKnown.hostAndPort);
         /* bool tuuid = 33; */
-        if (message.wellKnown.oneofKind === "tuuid")
-            writer.tag(33, WireType.Varint).bool(message.wellKnown.tuuid);
+        if (message.wellKnown.oneofKind === 'tuuid') writer.tag(33, WireType.Varint).bool(message.wellKnown.tuuid);
         /* repeated string example = 34; */
-        for (let i = 0; i < message.example.length; i++)
-            writer.tag(34, WireType.LengthDelimited).string(message.example[i]);
+        for (let i = 0; i < message.example.length; i++) writer.tag(34, WireType.LengthDelimited).string(message.example[i]);
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -6857,35 +9600,280 @@ export const StringRules = new StringRules$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class BytesRules$Type extends MessageType<BytesRules> {
     constructor() {
-        super("buf.validate.BytesRules", [
-            { no: 1, name: "const", kind: "scalar", opt: true, T: 12 /*ScalarType.BYTES*/, options: { "buf.validate.predefined": { cel: [{ id: "bytes.const", expression: "this != getField(rules, 'const') ? 'value must be %x'.format([getField(rules, 'const')]) : ''" }] } } },
-            { no: 13, name: "len", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "bytes.len", expression: "uint(this.size()) != rules.len ? 'value length must be %s bytes'.format([rules.len]) : ''" }] } } },
-            { no: 2, name: "min_len", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "bytes.min_len", expression: "uint(this.size()) < rules.min_len ? 'value length must be at least %s bytes'.format([rules.min_len]) : ''" }] } } },
-            { no: 3, name: "max_len", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "bytes.max_len", expression: "uint(this.size()) > rules.max_len ? 'value must be at most %s bytes'.format([rules.max_len]) : ''" }] } } },
-            { no: 4, name: "pattern", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.predefined": { cel: [{ id: "bytes.pattern", expression: "!string(this).matches(rules.pattern) ? 'value must match regex pattern `%s`'.format([rules.pattern]) : ''" }] } } },
-            { no: 5, name: "prefix", kind: "scalar", opt: true, T: 12 /*ScalarType.BYTES*/, options: { "buf.validate.predefined": { cel: [{ id: "bytes.prefix", expression: "!this.startsWith(rules.prefix) ? 'value does not have prefix %x'.format([rules.prefix]) : ''" }] } } },
-            { no: 6, name: "suffix", kind: "scalar", opt: true, T: 12 /*ScalarType.BYTES*/, options: { "buf.validate.predefined": { cel: [{ id: "bytes.suffix", expression: "!this.endsWith(rules.suffix) ? 'value does not have suffix %x'.format([rules.suffix]) : ''" }] } } },
-            { no: 7, name: "contains", kind: "scalar", opt: true, T: 12 /*ScalarType.BYTES*/, options: { "buf.validate.predefined": { cel: [{ id: "bytes.contains", expression: "!this.contains(rules.contains) ? 'value does not contain %x'.format([rules.contains]) : ''" }] } } },
-            { no: 8, name: "in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 12 /*ScalarType.BYTES*/, options: { "buf.validate.predefined": { cel: [{ id: "bytes.in", expression: "getField(rules, 'in').size() > 0 && !(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''" }] } } },
-            { no: 9, name: "not_in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 12 /*ScalarType.BYTES*/, options: { "buf.validate.predefined": { cel: [{ id: "bytes.not_in", expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''" }] } } },
-            { no: 10, name: "ip", kind: "scalar", oneof: "wellKnown", T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "bytes.ip", message: "value must be a valid IP address", expression: "!rules.ip || this.size() == 0 || this.size() == 4 || this.size() == 16" }, { id: "bytes.ip_empty", message: "value is empty, which is not a valid IP address", expression: "!rules.ip || this.size() != 0" }] } } },
-            { no: 11, name: "ipv4", kind: "scalar", oneof: "wellKnown", T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "bytes.ipv4", message: "value must be a valid IPv4 address", expression: "!rules.ipv4 || this.size() == 0 || this.size() == 4" }, { id: "bytes.ipv4_empty", message: "value is empty, which is not a valid IPv4 address", expression: "!rules.ipv4 || this.size() != 0" }] } } },
-            { no: 12, name: "ipv6", kind: "scalar", oneof: "wellKnown", T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "bytes.ipv6", message: "value must be a valid IPv6 address", expression: "!rules.ipv6 || this.size() == 0 || this.size() == 16" }, { id: "bytes.ipv6_empty", message: "value is empty, which is not a valid IPv6 address", expression: "!rules.ipv6 || this.size() != 0" }] } } },
-            { no: 14, name: "example", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 12 /*ScalarType.BYTES*/, options: { "buf.validate.predefined": { cel: [{ id: "bytes.example", expression: "true" }] } } }
+        super('buf.validate.BytesRules', [
+            {
+                no: 1,
+                name: 'const',
+                kind: 'scalar',
+                opt: true,
+                T: 12 /*ScalarType.BYTES*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'bytes.const',
+                                expression:
+                                    "this != getField(rules, 'const') ? 'value must be %x'.format([getField(rules, 'const')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 13,
+                name: 'len',
+                kind: 'scalar',
+                opt: true,
+                T: 4 /*ScalarType.UINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'bytes.len',
+                                expression:
+                                    "uint(this.size()) != rules.len ? 'value length must be %s bytes'.format([rules.len]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 2,
+                name: 'min_len',
+                kind: 'scalar',
+                opt: true,
+                T: 4 /*ScalarType.UINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'bytes.min_len',
+                                expression:
+                                    "uint(this.size()) < rules.min_len ? 'value length must be at least %s bytes'.format([rules.min_len]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 3,
+                name: 'max_len',
+                kind: 'scalar',
+                opt: true,
+                T: 4 /*ScalarType.UINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'bytes.max_len',
+                                expression:
+                                    "uint(this.size()) > rules.max_len ? 'value must be at most %s bytes'.format([rules.max_len]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 4,
+                name: 'pattern',
+                kind: 'scalar',
+                opt: true,
+                T: 9 /*ScalarType.STRING*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'bytes.pattern',
+                                expression:
+                                    "!string(this).matches(rules.pattern) ? 'value must match regex pattern `%s`'.format([rules.pattern]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 5,
+                name: 'prefix',
+                kind: 'scalar',
+                opt: true,
+                T: 12 /*ScalarType.BYTES*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'bytes.prefix',
+                                expression:
+                                    "!this.startsWith(rules.prefix) ? 'value does not have prefix %x'.format([rules.prefix]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 6,
+                name: 'suffix',
+                kind: 'scalar',
+                opt: true,
+                T: 12 /*ScalarType.BYTES*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'bytes.suffix',
+                                expression:
+                                    "!this.endsWith(rules.suffix) ? 'value does not have suffix %x'.format([rules.suffix]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 7,
+                name: 'contains',
+                kind: 'scalar',
+                opt: true,
+                T: 12 /*ScalarType.BYTES*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'bytes.contains',
+                                expression:
+                                    "!this.contains(rules.contains) ? 'value does not contain %x'.format([rules.contains]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 8,
+                name: 'in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 12 /*ScalarType.BYTES*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'bytes.in',
+                                expression:
+                                    "getField(rules, 'in').size() > 0 && !(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 9,
+                name: 'not_in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 12 /*ScalarType.BYTES*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'bytes.not_in',
+                                expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 10,
+                name: 'ip',
+                kind: 'scalar',
+                oneof: 'wellKnown',
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'bytes.ip',
+                                message: 'value must be a valid IP address',
+                                expression: '!rules.ip || this.size() == 0 || this.size() == 4 || this.size() == 16',
+                            },
+                            {
+                                id: 'bytes.ip_empty',
+                                message: 'value is empty, which is not a valid IP address',
+                                expression: '!rules.ip || this.size() != 0',
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 11,
+                name: 'ipv4',
+                kind: 'scalar',
+                oneof: 'wellKnown',
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'bytes.ipv4',
+                                message: 'value must be a valid IPv4 address',
+                                expression: '!rules.ipv4 || this.size() == 0 || this.size() == 4',
+                            },
+                            {
+                                id: 'bytes.ipv4_empty',
+                                message: 'value is empty, which is not a valid IPv4 address',
+                                expression: '!rules.ipv4 || this.size() != 0',
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 12,
+                name: 'ipv6',
+                kind: 'scalar',
+                oneof: 'wellKnown',
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'bytes.ipv6',
+                                message: 'value must be a valid IPv6 address',
+                                expression: '!rules.ipv6 || this.size() == 0 || this.size() == 16',
+                            },
+                            {
+                                id: 'bytes.ipv6_empty',
+                                message: 'value is empty, which is not a valid IPv6 address',
+                                expression: '!rules.ipv6 || this.size() != 0',
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 14,
+                name: 'example',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 12 /*ScalarType.BYTES*/,
+                options: { 'buf.validate.predefined': { cel: [{ id: 'bytes.example', expression: 'true' }] } },
+            },
         ]);
     }
     create(value?: PartialMessage<BytesRules>): BytesRules {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.in = [];
         message.notIn = [];
         message.wellKnown = { oneofKind: undefined };
         message.example = [];
-        if (value !== undefined)
-            reflectionMergePartial<BytesRules>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<BytesRules>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: BytesRules): BytesRules {
-        let message = target ?? this.create(), end = reader.pos + length;
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -6921,20 +9909,20 @@ class BytesRules$Type extends MessageType<BytesRules> {
                     break;
                 case /* bool ip */ 10:
                     message.wellKnown = {
-                        oneofKind: "ip",
-                        ip: reader.bool()
+                        oneofKind: 'ip',
+                        ip: reader.bool(),
                     };
                     break;
                 case /* bool ipv4 */ 11:
                     message.wellKnown = {
-                        oneofKind: "ipv4",
-                        ipv4: reader.bool()
+                        oneofKind: 'ipv4',
+                        ipv4: reader.bool(),
                     };
                     break;
                 case /* bool ipv6 */ 12:
                     message.wellKnown = {
-                        oneofKind: "ipv6",
-                        ipv6: reader.bool()
+                        oneofKind: 'ipv6',
+                        ipv6: reader.bool(),
                     };
                     break;
                 case /* repeated bytes example */ 14:
@@ -6942,7 +9930,7 @@ class BytesRules$Type extends MessageType<BytesRules> {
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -6953,50 +9941,35 @@ class BytesRules$Type extends MessageType<BytesRules> {
     }
     internalBinaryWrite(message: BytesRules, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional bytes const = 1; */
-        if (message.const !== undefined)
-            writer.tag(1, WireType.LengthDelimited).bytes(message.const);
+        if (message.const !== undefined) writer.tag(1, WireType.LengthDelimited).bytes(message.const);
         /* optional uint64 min_len = 2; */
-        if (message.minLen !== undefined)
-            writer.tag(2, WireType.Varint).uint64(message.minLen);
+        if (message.minLen !== undefined) writer.tag(2, WireType.Varint).uint64(message.minLen);
         /* optional uint64 max_len = 3; */
-        if (message.maxLen !== undefined)
-            writer.tag(3, WireType.Varint).uint64(message.maxLen);
+        if (message.maxLen !== undefined) writer.tag(3, WireType.Varint).uint64(message.maxLen);
         /* optional string pattern = 4; */
-        if (message.pattern !== undefined)
-            writer.tag(4, WireType.LengthDelimited).string(message.pattern);
+        if (message.pattern !== undefined) writer.tag(4, WireType.LengthDelimited).string(message.pattern);
         /* optional bytes prefix = 5; */
-        if (message.prefix !== undefined)
-            writer.tag(5, WireType.LengthDelimited).bytes(message.prefix);
+        if (message.prefix !== undefined) writer.tag(5, WireType.LengthDelimited).bytes(message.prefix);
         /* optional bytes suffix = 6; */
-        if (message.suffix !== undefined)
-            writer.tag(6, WireType.LengthDelimited).bytes(message.suffix);
+        if (message.suffix !== undefined) writer.tag(6, WireType.LengthDelimited).bytes(message.suffix);
         /* optional bytes contains = 7; */
-        if (message.contains !== undefined)
-            writer.tag(7, WireType.LengthDelimited).bytes(message.contains);
+        if (message.contains !== undefined) writer.tag(7, WireType.LengthDelimited).bytes(message.contains);
         /* repeated bytes in = 8; */
-        for (let i = 0; i < message.in.length; i++)
-            writer.tag(8, WireType.LengthDelimited).bytes(message.in[i]);
+        for (let i = 0; i < message.in.length; i++) writer.tag(8, WireType.LengthDelimited).bytes(message.in[i]);
         /* repeated bytes not_in = 9; */
-        for (let i = 0; i < message.notIn.length; i++)
-            writer.tag(9, WireType.LengthDelimited).bytes(message.notIn[i]);
+        for (let i = 0; i < message.notIn.length; i++) writer.tag(9, WireType.LengthDelimited).bytes(message.notIn[i]);
         /* bool ip = 10; */
-        if (message.wellKnown.oneofKind === "ip")
-            writer.tag(10, WireType.Varint).bool(message.wellKnown.ip);
+        if (message.wellKnown.oneofKind === 'ip') writer.tag(10, WireType.Varint).bool(message.wellKnown.ip);
         /* bool ipv4 = 11; */
-        if (message.wellKnown.oneofKind === "ipv4")
-            writer.tag(11, WireType.Varint).bool(message.wellKnown.ipv4);
+        if (message.wellKnown.oneofKind === 'ipv4') writer.tag(11, WireType.Varint).bool(message.wellKnown.ipv4);
         /* bool ipv6 = 12; */
-        if (message.wellKnown.oneofKind === "ipv6")
-            writer.tag(12, WireType.Varint).bool(message.wellKnown.ipv6);
+        if (message.wellKnown.oneofKind === 'ipv6') writer.tag(12, WireType.Varint).bool(message.wellKnown.ipv6);
         /* optional uint64 len = 13; */
-        if (message.len !== undefined)
-            writer.tag(13, WireType.Varint).uint64(message.len);
+        if (message.len !== undefined) writer.tag(13, WireType.Varint).uint64(message.len);
         /* repeated bytes example = 14; */
-        for (let i = 0; i < message.example.length; i++)
-            writer.tag(14, WireType.LengthDelimited).bytes(message.example[i]);
+        for (let i = 0; i < message.example.length; i++) writer.tag(14, WireType.LengthDelimited).bytes(message.example[i]);
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -7007,25 +9980,82 @@ export const BytesRules = new BytesRules$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class EnumRules$Type extends MessageType<EnumRules> {
     constructor() {
-        super("buf.validate.EnumRules", [
-            { no: 1, name: "const", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.predefined": { cel: [{ id: "enum.const", expression: "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''" }] } } },
-            { no: 2, name: "defined_only", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.predefined": { cel: [{ id: "enum.in", expression: "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''" }] } } },
-            { no: 4, name: "not_in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.predefined": { cel: [{ id: "enum.not_in", expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''" }] } } },
-            { no: 5, name: "example", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.predefined": { cel: [{ id: "enum.example", expression: "true" }] } } }
+        super('buf.validate.EnumRules', [
+            {
+                no: 1,
+                name: 'const',
+                kind: 'scalar',
+                opt: true,
+                T: 5 /*ScalarType.INT32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'enum.const',
+                                expression:
+                                    "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            { no: 2, name: 'defined_only', kind: 'scalar', opt: true, T: 8 /*ScalarType.BOOL*/ },
+            {
+                no: 3,
+                name: 'in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 5 /*ScalarType.INT32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'enum.in',
+                                expression:
+                                    "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 4,
+                name: 'not_in',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 5 /*ScalarType.INT32*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'enum.not_in',
+                                expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 5,
+                name: 'example',
+                kind: 'scalar',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: 5 /*ScalarType.INT32*/,
+                options: { 'buf.validate.predefined': { cel: [{ id: 'enum.example', expression: 'true' }] } },
+            },
         ]);
     }
     create(value?: PartialMessage<EnumRules>): EnumRules {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.in = [];
         message.notIn = [];
         message.example = [];
-        if (value !== undefined)
-            reflectionMergePartial<EnumRules>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<EnumRules>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: EnumRules): EnumRules {
-        let message = target ?? this.create(), end = reader.pos + length;
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -7037,28 +10067,22 @@ class EnumRules$Type extends MessageType<EnumRules> {
                     break;
                 case /* repeated int32 in */ 3:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.in.push(reader.int32());
-                    else
-                        message.in.push(reader.int32());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.in.push(reader.int32());
+                    else message.in.push(reader.int32());
                     break;
                 case /* repeated int32 not_in */ 4:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.notIn.push(reader.int32());
-                    else
-                        message.notIn.push(reader.int32());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.notIn.push(reader.int32());
+                    else message.notIn.push(reader.int32());
                     break;
                 case /* repeated int32 example */ 5:
                     if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.example.push(reader.int32());
-                    else
-                        message.example.push(reader.int32());
+                        for (let e = reader.int32() + reader.pos; reader.pos < e; ) message.example.push(reader.int32());
+                    else message.example.push(reader.int32());
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -7069,23 +10093,17 @@ class EnumRules$Type extends MessageType<EnumRules> {
     }
     internalBinaryWrite(message: EnumRules, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional int32 const = 1; */
-        if (message.const !== undefined)
-            writer.tag(1, WireType.Varint).int32(message.const);
+        if (message.const !== undefined) writer.tag(1, WireType.Varint).int32(message.const);
         /* optional bool defined_only = 2; */
-        if (message.definedOnly !== undefined)
-            writer.tag(2, WireType.Varint).bool(message.definedOnly);
+        if (message.definedOnly !== undefined) writer.tag(2, WireType.Varint).bool(message.definedOnly);
         /* repeated int32 in = 3; */
-        for (let i = 0; i < message.in.length; i++)
-            writer.tag(3, WireType.Varint).int32(message.in[i]);
+        for (let i = 0; i < message.in.length; i++) writer.tag(3, WireType.Varint).int32(message.in[i]);
         /* repeated int32 not_in = 4; */
-        for (let i = 0; i < message.notIn.length; i++)
-            writer.tag(4, WireType.Varint).int32(message.notIn[i]);
+        for (let i = 0; i < message.notIn.length; i++) writer.tag(4, WireType.Varint).int32(message.notIn[i]);
         /* repeated int32 example = 5; */
-        for (let i = 0; i < message.example.length; i++)
-            writer.tag(5, WireType.Varint).int32(message.example[i]);
+        for (let i = 0; i < message.example.length; i++) writer.tag(5, WireType.Varint).int32(message.example[i]);
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -7096,21 +10114,79 @@ export const EnumRules = new EnumRules$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class RepeatedRules$Type extends MessageType<RepeatedRules> {
     constructor() {
-        super("buf.validate.RepeatedRules", [
-            { no: 1, name: "min_items", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "repeated.min_items", expression: "uint(this.size()) < rules.min_items ? 'value must contain at least %d item(s)'.format([rules.min_items]) : ''" }] } } },
-            { no: 2, name: "max_items", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "repeated.max_items", expression: "uint(this.size()) > rules.max_items ? 'value must contain no more than %s item(s)'.format([rules.max_items]) : ''" }] } } },
-            { no: 3, name: "unique", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "repeated.unique", message: "repeated value must contain unique items", expression: "!rules.unique || this.unique()" }] } } },
-            { no: 4, name: "items", kind: "message", T: () => FieldRules }
+        super('buf.validate.RepeatedRules', [
+            {
+                no: 1,
+                name: 'min_items',
+                kind: 'scalar',
+                opt: true,
+                T: 4 /*ScalarType.UINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'repeated.min_items',
+                                expression:
+                                    "uint(this.size()) < rules.min_items ? 'value must contain at least %d item(s)'.format([rules.min_items]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 2,
+                name: 'max_items',
+                kind: 'scalar',
+                opt: true,
+                T: 4 /*ScalarType.UINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'repeated.max_items',
+                                expression:
+                                    "uint(this.size()) > rules.max_items ? 'value must contain no more than %s item(s)'.format([rules.max_items]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 3,
+                name: 'unique',
+                kind: 'scalar',
+                opt: true,
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'repeated.unique',
+                                message: 'repeated value must contain unique items',
+                                expression: '!rules.unique || this.unique()',
+                            },
+                        ],
+                    },
+                },
+            },
+            { no: 4, name: 'items', kind: 'message', T: () => FieldRules },
         ]);
     }
     create(value?: PartialMessage<RepeatedRules>): RepeatedRules {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<RepeatedRules>(this, message, value);
+        const message = globalThis.Object.create(this.messagePrototype!);
+        if (value !== undefined) reflectionMergePartial<RepeatedRules>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RepeatedRules): RepeatedRules {
-        let message = target ?? this.create(), end = reader.pos + length;
+    internalBinaryRead(
+        reader: IBinaryReader,
+        length: number,
+        options: BinaryReadOptions,
+        target?: RepeatedRules,
+    ): RepeatedRules {
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -7128,7 +10204,7 @@ class RepeatedRules$Type extends MessageType<RepeatedRules> {
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -7139,20 +10215,16 @@ class RepeatedRules$Type extends MessageType<RepeatedRules> {
     }
     internalBinaryWrite(message: RepeatedRules, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional uint64 min_items = 1; */
-        if (message.minItems !== undefined)
-            writer.tag(1, WireType.Varint).uint64(message.minItems);
+        if (message.minItems !== undefined) writer.tag(1, WireType.Varint).uint64(message.minItems);
         /* optional uint64 max_items = 2; */
-        if (message.maxItems !== undefined)
-            writer.tag(2, WireType.Varint).uint64(message.maxItems);
+        if (message.maxItems !== undefined) writer.tag(2, WireType.Varint).uint64(message.maxItems);
         /* optional bool unique = 3; */
-        if (message.unique !== undefined)
-            writer.tag(3, WireType.Varint).bool(message.unique);
+        if (message.unique !== undefined) writer.tag(3, WireType.Varint).bool(message.unique);
         /* optional buf.validate.FieldRules items = 4; */
         if (message.items)
             FieldRules.internalBinaryWrite(message.items, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -7163,21 +10235,57 @@ export const RepeatedRules = new RepeatedRules$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class MapRules$Type extends MessageType<MapRules> {
     constructor() {
-        super("buf.validate.MapRules", [
-            { no: 1, name: "min_pairs", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "map.min_pairs", expression: "uint(this.size()) < rules.min_pairs ? 'map must be at least %d entries'.format([rules.min_pairs]) : ''" }] } } },
-            { no: 2, name: "max_pairs", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.predefined": { cel: [{ id: "map.max_pairs", expression: "uint(this.size()) > rules.max_pairs ? 'map must be at most %d entries'.format([rules.max_pairs]) : ''" }] } } },
-            { no: 4, name: "keys", kind: "message", T: () => FieldRules },
-            { no: 5, name: "values", kind: "message", T: () => FieldRules }
+        super('buf.validate.MapRules', [
+            {
+                no: 1,
+                name: 'min_pairs',
+                kind: 'scalar',
+                opt: true,
+                T: 4 /*ScalarType.UINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'map.min_pairs',
+                                expression:
+                                    "uint(this.size()) < rules.min_pairs ? 'map must be at least %d entries'.format([rules.min_pairs]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 2,
+                name: 'max_pairs',
+                kind: 'scalar',
+                opt: true,
+                T: 4 /*ScalarType.UINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'map.max_pairs',
+                                expression:
+                                    "uint(this.size()) > rules.max_pairs ? 'map must be at most %d entries'.format([rules.max_pairs]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            { no: 4, name: 'keys', kind: 'message', T: () => FieldRules },
+            { no: 5, name: 'values', kind: 'message', T: () => FieldRules },
         ]);
     }
     create(value?: PartialMessage<MapRules>): MapRules {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<MapRules>(this, message, value);
+        const message = globalThis.Object.create(this.messagePrototype!);
+        if (value !== undefined) reflectionMergePartial<MapRules>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: MapRules): MapRules {
-        let message = target ?? this.create(), end = reader.pos + length;
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -7195,7 +10303,7 @@ class MapRules$Type extends MessageType<MapRules> {
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -7206,11 +10314,9 @@ class MapRules$Type extends MessageType<MapRules> {
     }
     internalBinaryWrite(message: MapRules, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional uint64 min_pairs = 1; */
-        if (message.minPairs !== undefined)
-            writer.tag(1, WireType.Varint).uint64(message.minPairs);
+        if (message.minPairs !== undefined) writer.tag(1, WireType.Varint).uint64(message.minPairs);
         /* optional uint64 max_pairs = 2; */
-        if (message.maxPairs !== undefined)
-            writer.tag(2, WireType.Varint).uint64(message.maxPairs);
+        if (message.maxPairs !== undefined) writer.tag(2, WireType.Varint).uint64(message.maxPairs);
         /* optional buf.validate.FieldRules keys = 4; */
         if (message.keys)
             FieldRules.internalBinaryWrite(message.keys, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
@@ -7218,8 +10324,7 @@ class MapRules$Type extends MessageType<MapRules> {
         if (message.values)
             FieldRules.internalBinaryWrite(message.values, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -7230,21 +10335,21 @@ export const MapRules = new MapRules$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class AnyRules$Type extends MessageType<AnyRules> {
     constructor() {
-        super("buf.validate.AnyRules", [
-            { no: 2, name: "in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "not_in", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
+        super('buf.validate.AnyRules', [
+            { no: 2, name: 'in', kind: 'scalar', repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: 'not_in', kind: 'scalar', repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
         ]);
     }
     create(value?: PartialMessage<AnyRules>): AnyRules {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.in = [];
         message.notIn = [];
-        if (value !== undefined)
-            reflectionMergePartial<AnyRules>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<AnyRules>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AnyRules): AnyRules {
-        let message = target ?? this.create(), end = reader.pos + length;
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -7256,7 +10361,7 @@ class AnyRules$Type extends MessageType<AnyRules> {
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -7267,14 +10372,11 @@ class AnyRules$Type extends MessageType<AnyRules> {
     }
     internalBinaryWrite(message: AnyRules, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* repeated string in = 2; */
-        for (let i = 0; i < message.in.length; i++)
-            writer.tag(2, WireType.LengthDelimited).string(message.in[i]);
+        for (let i = 0; i < message.in.length; i++) writer.tag(2, WireType.LengthDelimited).string(message.in[i]);
         /* repeated string not_in = 3; */
-        for (let i = 0; i < message.notIn.length; i++)
-            writer.tag(3, WireType.LengthDelimited).string(message.notIn[i]);
+        for (let i = 0; i < message.notIn.length; i++) writer.tag(3, WireType.LengthDelimited).string(message.notIn[i]);
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -7285,30 +10387,199 @@ export const AnyRules = new AnyRules$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DurationRules$Type extends MessageType<DurationRules> {
     constructor() {
-        super("buf.validate.DurationRules", [
-            { no: 2, name: "const", kind: "message", T: () => Duration, options: { "buf.validate.predefined": { cel: [{ id: "duration.const", expression: "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''" }] } } },
-            { no: 3, name: "lt", kind: "message", oneof: "lessThan", T: () => Duration, options: { "buf.validate.predefined": { cel: [{ id: "duration.lt", expression: "!has(rules.gte) && !has(rules.gt) && this >= rules.lt? 'value must be less than %s'.format([rules.lt]) : ''" }] } } },
-            { no: 4, name: "lte", kind: "message", oneof: "lessThan", T: () => Duration, options: { "buf.validate.predefined": { cel: [{ id: "duration.lte", expression: "!has(rules.gte) && !has(rules.gt) && this > rules.lte? 'value must be less than or equal to %s'.format([rules.lte]) : ''" }] } } },
-            { no: 5, name: "gt", kind: "message", oneof: "greaterThan", T: () => Duration, options: { "buf.validate.predefined": { cel: [{ id: "duration.gt", expression: "!has(rules.lt) && !has(rules.lte) && this <= rules.gt? 'value must be greater than %s'.format([rules.gt]) : ''" }, { id: "duration.gt_lt", expression: "has(rules.lt) && rules.lt >= rules.gt && (this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "duration.gt_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gt && (rules.lt <= this && this <= rules.gt)? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "duration.gt_lte", expression: "has(rules.lte) && rules.lte >= rules.gt && (this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }, { id: "duration.gt_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gt && (rules.lte < this && this <= rules.gt)? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }] } } },
-            { no: 6, name: "gte", kind: "message", oneof: "greaterThan", T: () => Duration, options: { "buf.validate.predefined": { cel: [{ id: "duration.gte", expression: "!has(rules.lt) && !has(rules.lte) && this < rules.gte? 'value must be greater than or equal to %s'.format([rules.gte]) : ''" }, { id: "duration.gte_lt", expression: "has(rules.lt) && rules.lt >= rules.gte && (this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "duration.gte_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gte && (rules.lt <= this && this < rules.gte)? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "duration.gte_lte", expression: "has(rules.lte) && rules.lte >= rules.gte && (this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }, { id: "duration.gte_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gte && (rules.lte < this && this < rules.gte)? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }] } } },
-            { no: 7, name: "in", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Duration, options: { "buf.validate.predefined": { cel: [{ id: "duration.in", expression: "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''" }] } } },
-            { no: 8, name: "not_in", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Duration, options: { "buf.validate.predefined": { cel: [{ id: "duration.not_in", expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''" }] } } },
-            { no: 9, name: "example", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Duration, options: { "buf.validate.predefined": { cel: [{ id: "duration.example", expression: "true" }] } } }
+        super('buf.validate.DurationRules', [
+            {
+                no: 2,
+                name: 'const',
+                kind: 'message',
+                T: () => Duration,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'duration.const',
+                                expression:
+                                    "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 3,
+                name: 'lt',
+                kind: 'message',
+                oneof: 'lessThan',
+                T: () => Duration,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'duration.lt',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && this >= rules.lt? 'value must be less than %s'.format([rules.lt]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 4,
+                name: 'lte',
+                kind: 'message',
+                oneof: 'lessThan',
+                T: () => Duration,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'duration.lte',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && this > rules.lte? 'value must be less than or equal to %s'.format([rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 5,
+                name: 'gt',
+                kind: 'message',
+                oneof: 'greaterThan',
+                T: () => Duration,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'duration.gt',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && this <= rules.gt? 'value must be greater than %s'.format([rules.gt]) : ''",
+                            },
+                            {
+                                id: 'duration.gt_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gt && (this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'duration.gt_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gt && (rules.lt <= this && this <= rules.gt)? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'duration.gt_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gt && (this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'duration.gt_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gt && (rules.lte < this && this <= rules.gt)? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 6,
+                name: 'gte',
+                kind: 'message',
+                oneof: 'greaterThan',
+                T: () => Duration,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'duration.gte',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && this < rules.gte? 'value must be greater than or equal to %s'.format([rules.gte]) : ''",
+                            },
+                            {
+                                id: 'duration.gte_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gte && (this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'duration.gte_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gte && (rules.lt <= this && this < rules.gte)? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'duration.gte_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gte && (this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'duration.gte_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gte && (rules.lte < this && this < rules.gte)? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 7,
+                name: 'in',
+                kind: 'message',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: () => Duration,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'duration.in',
+                                expression:
+                                    "!(this in getField(rules, 'in')) ? 'value must be in list %s'.format([getField(rules, 'in')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 8,
+                name: 'not_in',
+                kind: 'message',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: () => Duration,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'duration.not_in',
+                                expression: "this in rules.not_in ? 'value must not be in list %s'.format([rules.not_in]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 9,
+                name: 'example',
+                kind: 'message',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: () => Duration,
+                options: { 'buf.validate.predefined': { cel: [{ id: 'duration.example', expression: 'true' }] } },
+            },
         ]);
     }
     create(value?: PartialMessage<DurationRules>): DurationRules {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.lessThan = { oneofKind: undefined };
         message.greaterThan = { oneofKind: undefined };
         message.in = [];
         message.notIn = [];
         message.example = [];
-        if (value !== undefined)
-            reflectionMergePartial<DurationRules>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<DurationRules>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DurationRules): DurationRules {
-        let message = target ?? this.create(), end = reader.pos + length;
+    internalBinaryRead(
+        reader: IBinaryReader,
+        length: number,
+        options: BinaryReadOptions,
+        target?: DurationRules,
+    ): DurationRules {
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -7317,26 +10588,26 @@ class DurationRules$Type extends MessageType<DurationRules> {
                     break;
                 case /* google.protobuf.Duration lt */ 3:
                     message.lessThan = {
-                        oneofKind: "lt",
-                        lt: Duration.internalBinaryRead(reader, reader.uint32(), options, (message.lessThan as any).lt)
+                        oneofKind: 'lt',
+                        lt: Duration.internalBinaryRead(reader, reader.uint32(), options, (message.lessThan as any).lt),
                     };
                     break;
                 case /* google.protobuf.Duration lte */ 4:
                     message.lessThan = {
-                        oneofKind: "lte",
-                        lte: Duration.internalBinaryRead(reader, reader.uint32(), options, (message.lessThan as any).lte)
+                        oneofKind: 'lte',
+                        lte: Duration.internalBinaryRead(reader, reader.uint32(), options, (message.lessThan as any).lte),
                     };
                     break;
                 case /* google.protobuf.Duration gt */ 5:
                     message.greaterThan = {
-                        oneofKind: "gt",
-                        gt: Duration.internalBinaryRead(reader, reader.uint32(), options, (message.greaterThan as any).gt)
+                        oneofKind: 'gt',
+                        gt: Duration.internalBinaryRead(reader, reader.uint32(), options, (message.greaterThan as any).gt),
                     };
                     break;
                 case /* google.protobuf.Duration gte */ 6:
                     message.greaterThan = {
-                        oneofKind: "gte",
-                        gte: Duration.internalBinaryRead(reader, reader.uint32(), options, (message.greaterThan as any).gte)
+                        oneofKind: 'gte',
+                        gte: Duration.internalBinaryRead(reader, reader.uint32(), options, (message.greaterThan as any).gte),
                     };
                     break;
                 case /* repeated google.protobuf.Duration in */ 7:
@@ -7350,7 +10621,7 @@ class DurationRules$Type extends MessageType<DurationRules> {
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -7364,17 +10635,25 @@ class DurationRules$Type extends MessageType<DurationRules> {
         if (message.const)
             Duration.internalBinaryWrite(message.const, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* google.protobuf.Duration lt = 3; */
-        if (message.lessThan.oneofKind === "lt")
+        if (message.lessThan.oneofKind === 'lt')
             Duration.internalBinaryWrite(message.lessThan.lt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         /* google.protobuf.Duration lte = 4; */
-        if (message.lessThan.oneofKind === "lte")
+        if (message.lessThan.oneofKind === 'lte')
             Duration.internalBinaryWrite(message.lessThan.lte, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         /* google.protobuf.Duration gt = 5; */
-        if (message.greaterThan.oneofKind === "gt")
-            Duration.internalBinaryWrite(message.greaterThan.gt, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        if (message.greaterThan.oneofKind === 'gt')
+            Duration.internalBinaryWrite(
+                message.greaterThan.gt,
+                writer.tag(5, WireType.LengthDelimited).fork(),
+                options,
+            ).join();
         /* google.protobuf.Duration gte = 6; */
-        if (message.greaterThan.oneofKind === "gte")
-            Duration.internalBinaryWrite(message.greaterThan.gte, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        if (message.greaterThan.oneofKind === 'gte')
+            Duration.internalBinaryWrite(
+                message.greaterThan.gte,
+                writer.tag(6, WireType.LengthDelimited).fork(),
+                options,
+            ).join();
         /* repeated google.protobuf.Duration in = 7; */
         for (let i = 0; i < message.in.length; i++)
             Duration.internalBinaryWrite(message.in[i], writer.tag(7, WireType.LengthDelimited).fork(), options).join();
@@ -7385,8 +10664,7 @@ class DurationRules$Type extends MessageType<DurationRules> {
         for (let i = 0; i < message.example.length; i++)
             Duration.internalBinaryWrite(message.example[i], writer.tag(9, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -7397,29 +10675,213 @@ export const DurationRules = new DurationRules$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class TimestampRules$Type extends MessageType<TimestampRules> {
     constructor() {
-        super("buf.validate.TimestampRules", [
-            { no: 2, name: "const", kind: "message", T: () => Timestamp, options: { "buf.validate.predefined": { cel: [{ id: "timestamp.const", expression: "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''" }] } } },
-            { no: 3, name: "lt", kind: "message", oneof: "lessThan", T: () => Timestamp, options: { "buf.validate.predefined": { cel: [{ id: "timestamp.lt", expression: "!has(rules.gte) && !has(rules.gt) && this >= rules.lt? 'value must be less than %s'.format([rules.lt]) : ''" }] } } },
-            { no: 4, name: "lte", kind: "message", oneof: "lessThan", T: () => Timestamp, options: { "buf.validate.predefined": { cel: [{ id: "timestamp.lte", expression: "!has(rules.gte) && !has(rules.gt) && this > rules.lte? 'value must be less than or equal to %s'.format([rules.lte]) : ''" }] } } },
-            { no: 7, name: "lt_now", kind: "scalar", oneof: "lessThan", T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "timestamp.lt_now", expression: "(rules.lt_now && this > now) ? 'value must be less than now' : ''" }] } } },
-            { no: 5, name: "gt", kind: "message", oneof: "greaterThan", T: () => Timestamp, options: { "buf.validate.predefined": { cel: [{ id: "timestamp.gt", expression: "!has(rules.lt) && !has(rules.lte) && this <= rules.gt? 'value must be greater than %s'.format([rules.gt]) : ''" }, { id: "timestamp.gt_lt", expression: "has(rules.lt) && rules.lt >= rules.gt && (this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "timestamp.gt_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gt && (rules.lt <= this && this <= rules.gt)? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''" }, { id: "timestamp.gt_lte", expression: "has(rules.lte) && rules.lte >= rules.gt && (this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }, { id: "timestamp.gt_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gt && (rules.lte < this && this <= rules.gt)? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''" }] } } },
-            { no: 6, name: "gte", kind: "message", oneof: "greaterThan", T: () => Timestamp, options: { "buf.validate.predefined": { cel: [{ id: "timestamp.gte", expression: "!has(rules.lt) && !has(rules.lte) && this < rules.gte? 'value must be greater than or equal to %s'.format([rules.gte]) : ''" }, { id: "timestamp.gte_lt", expression: "has(rules.lt) && rules.lt >= rules.gte && (this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "timestamp.gte_lt_exclusive", expression: "has(rules.lt) && rules.lt < rules.gte && (rules.lt <= this && this < rules.gte)? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''" }, { id: "timestamp.gte_lte", expression: "has(rules.lte) && rules.lte >= rules.gte && (this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }, { id: "timestamp.gte_lte_exclusive", expression: "has(rules.lte) && rules.lte < rules.gte && (rules.lte < this && this < rules.gte)? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''" }] } } },
-            { no: 8, name: "gt_now", kind: "scalar", oneof: "greaterThan", T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.predefined": { cel: [{ id: "timestamp.gt_now", expression: "(rules.gt_now && this < now) ? 'value must be greater than now' : ''" }] } } },
-            { no: 9, name: "within", kind: "message", T: () => Duration, options: { "buf.validate.predefined": { cel: [{ id: "timestamp.within", expression: "this < now-rules.within || this > now+rules.within ? 'value must be within %s of now'.format([rules.within]) : ''" }] } } },
-            { no: 10, name: "example", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Timestamp, options: { "buf.validate.predefined": { cel: [{ id: "timestamp.example", expression: "true" }] } } }
+        super('buf.validate.TimestampRules', [
+            {
+                no: 2,
+                name: 'const',
+                kind: 'message',
+                T: () => Timestamp,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'timestamp.const',
+                                expression:
+                                    "this != getField(rules, 'const') ? 'value must equal %s'.format([getField(rules, 'const')]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 3,
+                name: 'lt',
+                kind: 'message',
+                oneof: 'lessThan',
+                T: () => Timestamp,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'timestamp.lt',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && this >= rules.lt? 'value must be less than %s'.format([rules.lt]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 4,
+                name: 'lte',
+                kind: 'message',
+                oneof: 'lessThan',
+                T: () => Timestamp,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'timestamp.lte',
+                                expression:
+                                    "!has(rules.gte) && !has(rules.gt) && this > rules.lte? 'value must be less than or equal to %s'.format([rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 7,
+                name: 'lt_now',
+                kind: 'scalar',
+                oneof: 'lessThan',
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'timestamp.lt_now',
+                                expression: "(rules.lt_now && this > now) ? 'value must be less than now' : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 5,
+                name: 'gt',
+                kind: 'message',
+                oneof: 'greaterThan',
+                T: () => Timestamp,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'timestamp.gt',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && this <= rules.gt? 'value must be greater than %s'.format([rules.gt]) : ''",
+                            },
+                            {
+                                id: 'timestamp.gt_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gt && (this >= rules.lt || this <= rules.gt)? 'value must be greater than %s and less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'timestamp.gt_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gt && (rules.lt <= this && this <= rules.gt)? 'value must be greater than %s or less than %s'.format([rules.gt, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'timestamp.gt_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gt && (this > rules.lte || this <= rules.gt)? 'value must be greater than %s and less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'timestamp.gt_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gt && (rules.lte < this && this <= rules.gt)? 'value must be greater than %s or less than or equal to %s'.format([rules.gt, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 6,
+                name: 'gte',
+                kind: 'message',
+                oneof: 'greaterThan',
+                T: () => Timestamp,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'timestamp.gte',
+                                expression:
+                                    "!has(rules.lt) && !has(rules.lte) && this < rules.gte? 'value must be greater than or equal to %s'.format([rules.gte]) : ''",
+                            },
+                            {
+                                id: 'timestamp.gte_lt',
+                                expression:
+                                    "has(rules.lt) && rules.lt >= rules.gte && (this >= rules.lt || this < rules.gte)? 'value must be greater than or equal to %s and less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'timestamp.gte_lt_exclusive',
+                                expression:
+                                    "has(rules.lt) && rules.lt < rules.gte && (rules.lt <= this && this < rules.gte)? 'value must be greater than or equal to %s or less than %s'.format([rules.gte, rules.lt]) : ''",
+                            },
+                            {
+                                id: 'timestamp.gte_lte',
+                                expression:
+                                    "has(rules.lte) && rules.lte >= rules.gte && (this > rules.lte || this < rules.gte)? 'value must be greater than or equal to %s and less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                            {
+                                id: 'timestamp.gte_lte_exclusive',
+                                expression:
+                                    "has(rules.lte) && rules.lte < rules.gte && (rules.lte < this && this < rules.gte)? 'value must be greater than or equal to %s or less than or equal to %s'.format([rules.gte, rules.lte]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 8,
+                name: 'gt_now',
+                kind: 'scalar',
+                oneof: 'greaterThan',
+                T: 8 /*ScalarType.BOOL*/,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'timestamp.gt_now',
+                                expression: "(rules.gt_now && this < now) ? 'value must be greater than now' : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 9,
+                name: 'within',
+                kind: 'message',
+                T: () => Duration,
+                options: {
+                    'buf.validate.predefined': {
+                        cel: [
+                            {
+                                id: 'timestamp.within',
+                                expression:
+                                    "this < now-rules.within || this > now+rules.within ? 'value must be within %s of now'.format([rules.within]) : ''",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                no: 10,
+                name: 'example',
+                kind: 'message',
+                repeat: 2 /*RepeatType.UNPACKED*/,
+                T: () => Timestamp,
+                options: { 'buf.validate.predefined': { cel: [{ id: 'timestamp.example', expression: 'true' }] } },
+            },
         ]);
     }
     create(value?: PartialMessage<TimestampRules>): TimestampRules {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.lessThan = { oneofKind: undefined };
         message.greaterThan = { oneofKind: undefined };
         message.example = [];
-        if (value !== undefined)
-            reflectionMergePartial<TimestampRules>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<TimestampRules>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TimestampRules): TimestampRules {
-        let message = target ?? this.create(), end = reader.pos + length;
+    internalBinaryRead(
+        reader: IBinaryReader,
+        length: number,
+        options: BinaryReadOptions,
+        target?: TimestampRules,
+    ): TimestampRules {
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -7428,38 +10890,38 @@ class TimestampRules$Type extends MessageType<TimestampRules> {
                     break;
                 case /* google.protobuf.Timestamp lt */ 3:
                     message.lessThan = {
-                        oneofKind: "lt",
-                        lt: Timestamp.internalBinaryRead(reader, reader.uint32(), options, (message.lessThan as any).lt)
+                        oneofKind: 'lt',
+                        lt: Timestamp.internalBinaryRead(reader, reader.uint32(), options, (message.lessThan as any).lt),
                     };
                     break;
                 case /* google.protobuf.Timestamp lte */ 4:
                     message.lessThan = {
-                        oneofKind: "lte",
-                        lte: Timestamp.internalBinaryRead(reader, reader.uint32(), options, (message.lessThan as any).lte)
+                        oneofKind: 'lte',
+                        lte: Timestamp.internalBinaryRead(reader, reader.uint32(), options, (message.lessThan as any).lte),
                     };
                     break;
                 case /* bool lt_now */ 7:
                     message.lessThan = {
-                        oneofKind: "ltNow",
-                        ltNow: reader.bool()
+                        oneofKind: 'ltNow',
+                        ltNow: reader.bool(),
                     };
                     break;
                 case /* google.protobuf.Timestamp gt */ 5:
                     message.greaterThan = {
-                        oneofKind: "gt",
-                        gt: Timestamp.internalBinaryRead(reader, reader.uint32(), options, (message.greaterThan as any).gt)
+                        oneofKind: 'gt',
+                        gt: Timestamp.internalBinaryRead(reader, reader.uint32(), options, (message.greaterThan as any).gt),
                     };
                     break;
                 case /* google.protobuf.Timestamp gte */ 6:
                     message.greaterThan = {
-                        oneofKind: "gte",
-                        gte: Timestamp.internalBinaryRead(reader, reader.uint32(), options, (message.greaterThan as any).gte)
+                        oneofKind: 'gte',
+                        gte: Timestamp.internalBinaryRead(reader, reader.uint32(), options, (message.greaterThan as any).gte),
                     };
                     break;
                 case /* bool gt_now */ 8:
                     message.greaterThan = {
-                        oneofKind: "gtNow",
-                        gtNow: reader.bool()
+                        oneofKind: 'gtNow',
+                        gtNow: reader.bool(),
                     };
                     break;
                 case /* optional google.protobuf.Duration within */ 9:
@@ -7470,7 +10932,7 @@ class TimestampRules$Type extends MessageType<TimestampRules> {
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -7484,23 +10946,29 @@ class TimestampRules$Type extends MessageType<TimestampRules> {
         if (message.const)
             Timestamp.internalBinaryWrite(message.const, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* google.protobuf.Timestamp lt = 3; */
-        if (message.lessThan.oneofKind === "lt")
+        if (message.lessThan.oneofKind === 'lt')
             Timestamp.internalBinaryWrite(message.lessThan.lt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         /* google.protobuf.Timestamp lte = 4; */
-        if (message.lessThan.oneofKind === "lte")
+        if (message.lessThan.oneofKind === 'lte')
             Timestamp.internalBinaryWrite(message.lessThan.lte, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         /* google.protobuf.Timestamp gt = 5; */
-        if (message.greaterThan.oneofKind === "gt")
-            Timestamp.internalBinaryWrite(message.greaterThan.gt, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        if (message.greaterThan.oneofKind === 'gt')
+            Timestamp.internalBinaryWrite(
+                message.greaterThan.gt,
+                writer.tag(5, WireType.LengthDelimited).fork(),
+                options,
+            ).join();
         /* google.protobuf.Timestamp gte = 6; */
-        if (message.greaterThan.oneofKind === "gte")
-            Timestamp.internalBinaryWrite(message.greaterThan.gte, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        if (message.greaterThan.oneofKind === 'gte')
+            Timestamp.internalBinaryWrite(
+                message.greaterThan.gte,
+                writer.tag(6, WireType.LengthDelimited).fork(),
+                options,
+            ).join();
         /* bool lt_now = 7; */
-        if (message.lessThan.oneofKind === "ltNow")
-            writer.tag(7, WireType.Varint).bool(message.lessThan.ltNow);
+        if (message.lessThan.oneofKind === 'ltNow') writer.tag(7, WireType.Varint).bool(message.lessThan.ltNow);
         /* bool gt_now = 8; */
-        if (message.greaterThan.oneofKind === "gtNow")
-            writer.tag(8, WireType.Varint).bool(message.greaterThan.gtNow);
+        if (message.greaterThan.oneofKind === 'gtNow') writer.tag(8, WireType.Varint).bool(message.greaterThan.gtNow);
         /* optional google.protobuf.Duration within = 9; */
         if (message.within)
             Duration.internalBinaryWrite(message.within, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
@@ -7508,8 +10976,7 @@ class TimestampRules$Type extends MessageType<TimestampRules> {
         for (let i = 0; i < message.example.length; i++)
             Timestamp.internalBinaryWrite(message.example[i], writer.tag(10, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -7520,19 +10987,19 @@ export const TimestampRules = new TimestampRules$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class Violations$Type extends MessageType<Violations> {
     constructor() {
-        super("buf.validate.Violations", [
-            { no: 1, name: "violations", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Violation }
+        super('buf.validate.Violations', [
+            { no: 1, name: 'violations', kind: 'message', repeat: 2 /*RepeatType.UNPACKED*/, T: () => Violation },
         ]);
     }
     create(value?: PartialMessage<Violations>): Violations {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.violations = [];
-        if (value !== undefined)
-            reflectionMergePartial<Violations>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<Violations>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Violations): Violations {
-        let message = target ?? this.create(), end = reader.pos + length;
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -7541,7 +11008,7 @@ class Violations$Type extends MessageType<Violations> {
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -7553,10 +11020,13 @@ class Violations$Type extends MessageType<Violations> {
     internalBinaryWrite(message: Violations, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* repeated buf.validate.Violation violations = 1; */
         for (let i = 0; i < message.violations.length; i++)
-            Violation.internalBinaryWrite(message.violations[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            Violation.internalBinaryWrite(
+                message.violations[i],
+                writer.tag(1, WireType.LengthDelimited).fork(),
+                options,
+            ).join();
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -7567,22 +11037,22 @@ export const Violations = new Violations$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class Violation$Type extends MessageType<Violation> {
     constructor() {
-        super("buf.validate.Violation", [
-            { no: 5, name: "field", kind: "message", T: () => FieldPath },
-            { no: 6, name: "rule", kind: "message", T: () => FieldPath },
-            { no: 2, name: "rule_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "message", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "for_key", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+        super('buf.validate.Violation', [
+            { no: 5, name: 'field', kind: 'message', T: () => FieldPath },
+            { no: 6, name: 'rule', kind: 'message', T: () => FieldPath },
+            { no: 2, name: 'rule_id', kind: 'scalar', opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: 'message', kind: 'scalar', opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: 'for_key', kind: 'scalar', opt: true, T: 8 /*ScalarType.BOOL*/ },
         ]);
     }
     create(value?: PartialMessage<Violation>): Violation {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<Violation>(this, message, value);
+        const message = globalThis.Object.create(this.messagePrototype!);
+        if (value !== undefined) reflectionMergePartial<Violation>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Violation): Violation {
-        let message = target ?? this.create(), end = reader.pos + length;
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -7603,7 +11073,7 @@ class Violation$Type extends MessageType<Violation> {
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -7614,14 +11084,11 @@ class Violation$Type extends MessageType<Violation> {
     }
     internalBinaryWrite(message: Violation, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional string rule_id = 2; */
-        if (message.ruleId !== undefined)
-            writer.tag(2, WireType.LengthDelimited).string(message.ruleId);
+        if (message.ruleId !== undefined) writer.tag(2, WireType.LengthDelimited).string(message.ruleId);
         /* optional string message = 3; */
-        if (message.message !== undefined)
-            writer.tag(3, WireType.LengthDelimited).string(message.message);
+        if (message.message !== undefined) writer.tag(3, WireType.LengthDelimited).string(message.message);
         /* optional bool for_key = 4; */
-        if (message.forKey !== undefined)
-            writer.tag(4, WireType.Varint).bool(message.forKey);
+        if (message.forKey !== undefined) writer.tag(4, WireType.Varint).bool(message.forKey);
         /* optional buf.validate.FieldPath field = 5; */
         if (message.field)
             FieldPath.internalBinaryWrite(message.field, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
@@ -7629,8 +11096,7 @@ class Violation$Type extends MessageType<Violation> {
         if (message.rule)
             FieldPath.internalBinaryWrite(message.rule, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -7641,19 +11107,19 @@ export const Violation = new Violation$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class FieldPath$Type extends MessageType<FieldPath> {
     constructor() {
-        super("buf.validate.FieldPath", [
-            { no: 1, name: "elements", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => FieldPathElement }
+        super('buf.validate.FieldPath', [
+            { no: 1, name: 'elements', kind: 'message', repeat: 2 /*RepeatType.UNPACKED*/, T: () => FieldPathElement },
         ]);
     }
     create(value?: PartialMessage<FieldPath>): FieldPath {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.elements = [];
-        if (value !== undefined)
-            reflectionMergePartial<FieldPath>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<FieldPath>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: FieldPath): FieldPath {
-        let message = target ?? this.create(), end = reader.pos + length;
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -7662,7 +11128,7 @@ class FieldPath$Type extends MessageType<FieldPath> {
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -7674,10 +11140,13 @@ class FieldPath$Type extends MessageType<FieldPath> {
     internalBinaryWrite(message: FieldPath, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* repeated buf.validate.FieldPathElement elements = 1; */
         for (let i = 0; i < message.elements.length; i++)
-            FieldPathElement.internalBinaryWrite(message.elements[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            FieldPathElement.internalBinaryWrite(
+                message.elements[i],
+                writer.tag(1, WireType.LengthDelimited).fork(),
+                options,
+            ).join();
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }
@@ -7688,28 +11157,58 @@ export const FieldPath = new FieldPath$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class FieldPathElement$Type extends MessageType<FieldPathElement> {
     constructor() {
-        super("buf.validate.FieldPathElement", [
-            { no: 1, name: "field_number", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 2, name: "field_name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "field_type", kind: "enum", opt: true, T: () => ["google.protobuf.FieldDescriptorProto.Type", FieldDescriptorProto_Type, "TYPE_"] },
-            { no: 4, name: "key_type", kind: "enum", opt: true, T: () => ["google.protobuf.FieldDescriptorProto.Type", FieldDescriptorProto_Type, "TYPE_"] },
-            { no: 5, name: "value_type", kind: "enum", opt: true, T: () => ["google.protobuf.FieldDescriptorProto.Type", FieldDescriptorProto_Type, "TYPE_"] },
-            { no: 6, name: "index", kind: "scalar", oneof: "subscript", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 7, name: "bool_key", kind: "scalar", oneof: "subscript", T: 8 /*ScalarType.BOOL*/ },
-            { no: 8, name: "int_key", kind: "scalar", oneof: "subscript", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 9, name: "uint_key", kind: "scalar", oneof: "subscript", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 10, name: "string_key", kind: "scalar", oneof: "subscript", T: 9 /*ScalarType.STRING*/ }
+        super('buf.validate.FieldPathElement', [
+            { no: 1, name: 'field_number', kind: 'scalar', opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: 'field_name', kind: 'scalar', opt: true, T: 9 /*ScalarType.STRING*/ },
+            {
+                no: 3,
+                name: 'field_type',
+                kind: 'enum',
+                opt: true,
+                T: () => ['google.protobuf.FieldDescriptorProto.Type', FieldDescriptorProto_Type, 'TYPE_'],
+            },
+            {
+                no: 4,
+                name: 'key_type',
+                kind: 'enum',
+                opt: true,
+                T: () => ['google.protobuf.FieldDescriptorProto.Type', FieldDescriptorProto_Type, 'TYPE_'],
+            },
+            {
+                no: 5,
+                name: 'value_type',
+                kind: 'enum',
+                opt: true,
+                T: () => ['google.protobuf.FieldDescriptorProto.Type', FieldDescriptorProto_Type, 'TYPE_'],
+            },
+            { no: 6, name: 'index', kind: 'scalar', oneof: 'subscript', T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 7, name: 'bool_key', kind: 'scalar', oneof: 'subscript', T: 8 /*ScalarType.BOOL*/ },
+            { no: 8, name: 'int_key', kind: 'scalar', oneof: 'subscript', T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            {
+                no: 9,
+                name: 'uint_key',
+                kind: 'scalar',
+                oneof: 'subscript',
+                T: 4 /*ScalarType.UINT64*/,
+                L: 2 /*LongType.NUMBER*/,
+            },
+            { no: 10, name: 'string_key', kind: 'scalar', oneof: 'subscript', T: 9 /*ScalarType.STRING*/ },
         ]);
     }
     create(value?: PartialMessage<FieldPathElement>): FieldPathElement {
-        const message = globalThis.Object.create((this.messagePrototype!));
+        const message = globalThis.Object.create(this.messagePrototype!);
         message.subscript = { oneofKind: undefined };
-        if (value !== undefined)
-            reflectionMergePartial<FieldPathElement>(this, message, value);
+        if (value !== undefined) reflectionMergePartial<FieldPathElement>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: FieldPathElement): FieldPathElement {
-        let message = target ?? this.create(), end = reader.pos + length;
+    internalBinaryRead(
+        reader: IBinaryReader,
+        length: number,
+        options: BinaryReadOptions,
+        target?: FieldPathElement,
+    ): FieldPathElement {
+        let message = target ?? this.create(),
+            end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -7730,37 +11229,37 @@ class FieldPathElement$Type extends MessageType<FieldPathElement> {
                     break;
                 case /* uint64 index */ 6:
                     message.subscript = {
-                        oneofKind: "index",
-                        index: reader.uint64().toNumber()
+                        oneofKind: 'index',
+                        index: reader.uint64().toNumber(),
                     };
                     break;
                 case /* bool bool_key */ 7:
                     message.subscript = {
-                        oneofKind: "boolKey",
-                        boolKey: reader.bool()
+                        oneofKind: 'boolKey',
+                        boolKey: reader.bool(),
                     };
                     break;
                 case /* int64 int_key */ 8:
                     message.subscript = {
-                        oneofKind: "intKey",
-                        intKey: reader.int64().toNumber()
+                        oneofKind: 'intKey',
+                        intKey: reader.int64().toNumber(),
                     };
                     break;
                 case /* uint64 uint_key */ 9:
                     message.subscript = {
-                        oneofKind: "uintKey",
-                        uintKey: reader.uint64().toNumber()
+                        oneofKind: 'uintKey',
+                        uintKey: reader.uint64().toNumber(),
                     };
                     break;
                 case /* string string_key */ 10:
                     message.subscript = {
-                        oneofKind: "stringKey",
-                        stringKey: reader.string()
+                        oneofKind: 'stringKey',
+                        stringKey: reader.string(),
                     };
                     break;
                 default:
                     let u = options.readUnknownField;
-                    if (u === "throw")
+                    if (u === 'throw')
                         throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
                     let d = reader.skip(wireType);
                     if (u !== false)
@@ -7771,38 +11270,28 @@ class FieldPathElement$Type extends MessageType<FieldPathElement> {
     }
     internalBinaryWrite(message: FieldPathElement, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional int32 field_number = 1; */
-        if (message.fieldNumber !== undefined)
-            writer.tag(1, WireType.Varint).int32(message.fieldNumber);
+        if (message.fieldNumber !== undefined) writer.tag(1, WireType.Varint).int32(message.fieldNumber);
         /* optional string field_name = 2; */
-        if (message.fieldName !== undefined)
-            writer.tag(2, WireType.LengthDelimited).string(message.fieldName);
+        if (message.fieldName !== undefined) writer.tag(2, WireType.LengthDelimited).string(message.fieldName);
         /* optional google.protobuf.FieldDescriptorProto.Type field_type = 3; */
-        if (message.fieldType !== undefined)
-            writer.tag(3, WireType.Varint).int32(message.fieldType);
+        if (message.fieldType !== undefined) writer.tag(3, WireType.Varint).int32(message.fieldType);
         /* optional google.protobuf.FieldDescriptorProto.Type key_type = 4; */
-        if (message.keyType !== undefined)
-            writer.tag(4, WireType.Varint).int32(message.keyType);
+        if (message.keyType !== undefined) writer.tag(4, WireType.Varint).int32(message.keyType);
         /* optional google.protobuf.FieldDescriptorProto.Type value_type = 5; */
-        if (message.valueType !== undefined)
-            writer.tag(5, WireType.Varint).int32(message.valueType);
+        if (message.valueType !== undefined) writer.tag(5, WireType.Varint).int32(message.valueType);
         /* uint64 index = 6; */
-        if (message.subscript.oneofKind === "index")
-            writer.tag(6, WireType.Varint).uint64(message.subscript.index);
+        if (message.subscript.oneofKind === 'index') writer.tag(6, WireType.Varint).uint64(message.subscript.index);
         /* bool bool_key = 7; */
-        if (message.subscript.oneofKind === "boolKey")
-            writer.tag(7, WireType.Varint).bool(message.subscript.boolKey);
+        if (message.subscript.oneofKind === 'boolKey') writer.tag(7, WireType.Varint).bool(message.subscript.boolKey);
         /* int64 int_key = 8; */
-        if (message.subscript.oneofKind === "intKey")
-            writer.tag(8, WireType.Varint).int64(message.subscript.intKey);
+        if (message.subscript.oneofKind === 'intKey') writer.tag(8, WireType.Varint).int64(message.subscript.intKey);
         /* uint64 uint_key = 9; */
-        if (message.subscript.oneofKind === "uintKey")
-            writer.tag(9, WireType.Varint).uint64(message.subscript.uintKey);
+        if (message.subscript.oneofKind === 'uintKey') writer.tag(9, WireType.Varint).uint64(message.subscript.uintKey);
         /* string string_key = 10; */
-        if (message.subscript.oneofKind === "stringKey")
+        if (message.subscript.oneofKind === 'stringKey')
             writer.tag(10, WireType.LengthDelimited).string(message.subscript.stringKey);
         let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        if (u !== false) (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
         return writer;
     }
 }

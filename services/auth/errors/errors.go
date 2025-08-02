@@ -20,5 +20,4 @@ var (
 	ErrAccountDuplicate    = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.AuthService.ErrAccountDuplicate"}, nil)
 	ErrChangeUsername      = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.AuthService.ErrChangeUsername"}, nil)
 	ErrBadUsername         = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.AuthService.ErrBadUsername"}, nil)
-	ErrCharLock            = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.AuthService.ErrCharLock.content"}, &common.I18NItem{Key: "errors.AuthService.ErrCharLock.title"})
 )

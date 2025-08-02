@@ -29,13 +29,13 @@ const faqs = [
     },
     {
         label: t('pages.about.faq.three.question'),
-        content: t('pages.about.faq.three.answer', { repoLink: repoLink }),
+        slot: 'question-3',
     },
     {
         label: t('pages.about.faq.four.question'),
-        content: t('pages.about.faq.four.answer', { discordLink: discordLink, repoLink: repoLink }),
+        slot: 'question-4',
     },
-] as { label: string; content: string }[];
+] as { label: string; content?: string; slot?: string }[];
 </script>
 
 <template>
@@ -145,6 +145,36 @@ const faqs = [
                                                     class="text-base leading-7 text-gray-900 dark:text-white"
                                                     v-html="faq.content"
                                                 ></p>
+                                            </UContainer>
+                                        </template>
+
+                                        <template #question-3>
+                                            <UContainer>
+                                                <p class="text-base leading-7 text-gray-900 dark:text-white">
+                                                    <NuxtLink class="underline" external :to="`${repoLink}/#readme`">{{
+                                                        $t('pages.about.faq.three.click_here')
+                                                    }}</NuxtLink>
+                                                </p>
+                                            </UContainer>
+                                        </template>
+
+                                        <template #question-4>
+                                            <UContainer>
+                                                <p class="text-base leading-7 text-gray-900 dark:text-white">
+                                                    <I18nT keypath="pages.about.faq.four.answer">
+                                                        <template #discordLink>
+                                                            <NuxtLink class="underline" external :to="discordLink">{{
+                                                                $t('pages.about.faq.four.discord_link')
+                                                            }}</NuxtLink>
+                                                        </template>
+
+                                                        <template #repoLink>
+                                                            <NuxtLink class="underline" external :to="repoLink">{{
+                                                                $t('pages.about.faq.four.repo_link')
+                                                            }}</NuxtLink>
+                                                        </template>
+                                                    </I18nT>
+                                                </p>
                                             </UContainer>
                                         </template>
                                     </UAccordion>

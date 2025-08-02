@@ -81,6 +81,8 @@ message SendDataRequest {
     resources.sync.DataVehicles vehicles = 4;
 
     resources.sync.DataUserLocations user_locations = 5;
+
+    resources.sync.LastCharID last_char_id = 6;
   }
 }
 

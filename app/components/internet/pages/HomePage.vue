@@ -75,7 +75,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 const searchResults = ref<undefined | SearchResponse>(undefined);
 
-const { data: ads, pending: loadingAds } = useLazyAsyncData(`internet-ads`, () =>
+const { data: ads, status: statusAds } = useLazyAsyncData(`internet-ads`, () =>
     internetStore.getAds({
         adType: AdType.SPONSORED,
         count: 3,
@@ -170,7 +170,7 @@ const { data: ads, pending: loadingAds } = useLazyAsyncData(`internet-ads`, () =
         </ULandingSection>
 
         <ULandingSection :ui="{ wrapper: 'py-6 sm:py-6' }">
-            <DataPendingBlock v-if="loadingAds" :message="$t('common.loading', [$t('common.ad', 1)])" />
+            <DataPendingBlock v-if="isRequestPending(statusAds)" :message="$t('common.loading', [$t('common.ad', 1)])" />
             <UPageGrid v-else>
                 <SponsoredAdCard v-for="(ad, idx) in ads?.ads" :key="idx" :ad="ad" />
             </UPageGrid>

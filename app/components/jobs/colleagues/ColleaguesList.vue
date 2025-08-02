@@ -45,12 +45,7 @@ const query = useSearchForm('jobs_colleagues', schema);
 const settingsStore = useSettingsStore();
 const { jobsService } = storeToRefs(settingsStore);
 
-const {
-    data,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(
+const { data, status, refresh, error } = useLazyAsyncData(
     `jobs-colleagues-${query.sort.column}:${query.sort.direction}-${query.page}-${query.name}-${query.absent}-${query.labels.join(',')}-${query.namePrefix}-${query.nameSuffix}`,
     () => listColleagues(),
     {
@@ -355,7 +350,7 @@ defineShortcuts({
             v-if="!jobsService.cardView"
             v-model:sort="query.sort"
             class="flex-1"
-            :loading="loading"
+            :loading="isRequestPending(status)"
             :columns="columns"
             :rows="data?.colleagues"
             :empty-state="{ icon: 'i-mdi-account', label: $t('common.not_found', [$t('common.colleague', 2)]) }"
@@ -619,5 +614,5 @@ defineShortcuts({
         </div>
     </template>
 
-    <Pagination v-model="query.page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+    <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
 </template>

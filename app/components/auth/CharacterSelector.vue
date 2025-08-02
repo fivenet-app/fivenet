@@ -11,7 +11,7 @@ const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
 const { chooseCharacter } = authStore;
 
-const { data: chars, pending: loading, refresh, error } = useLazyAsyncData('chars', () => getCharacters());
+const { data: chars, status, refresh, error } = useLazyAsyncData('chars', () => getCharacters());
 
 async function getCharacters(): Promise<Character[]> {
     try {
@@ -47,7 +47,7 @@ const onSubmitThrottle = useThrottleFn(async (charId: number) => {
 <template>
     <div>
         <DataPendingBlock
-            v-if="loading"
+            v-if="isRequestPending(status)"
             :message="$t('common.loading', [`${$t('common.your')} ${$t('common.character', 2)}`])"
         />
         <DataErrorBlock

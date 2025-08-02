@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { ButtonColor, ButtonVariant } from '#ui/types';
 import EmailBlock from '~/components/partials/citizens/EmailBlock.vue';
-import type { ClassProp } from '~/typings';
+import type { ClassProp } from '~/utils/types';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = withDefaults(

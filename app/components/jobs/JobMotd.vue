@@ -7,7 +7,7 @@ const { $grpc } = useNuxtApp();
 
 const { can } = useAuth();
 
-const { data, pending: loading, refresh } = useLazyAsyncData('jobs-motd', () => getMOTD());
+const { data, status, refresh } = useLazyAsyncData('jobs-motd', () => getMOTD());
 
 async function getMOTD(): Promise<GetMOTDResponse> {
     try {
@@ -95,7 +95,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
         <div class="flex">
             <template v-if="!editing">
-                <USkeleton v-if="loading" class="h-7 w-full" />
+                <USkeleton v-if="isRequestPending(status)" class="h-7 w-full" />
                 <div v-else class="w-full flex-1">
                     <p class="prose dark:prose-invert line-clamp-5 max-w-full whitespace-pre-wrap">
                         {{ state.motd }}

@@ -11,7 +11,7 @@ const { $grpc } = useNuxtApp();
 
 const { can } = useAuth();
 
-const { data: categories, pending: loading, refresh, error } = useLazyAsyncData(`documents-categories`, () => listCategories());
+const { data: categories, status, refresh, error } = useLazyAsyncData(`documents-categories`, () => listCategories());
 
 async function listCategories(): Promise<Category[]> {
     try {
@@ -73,7 +73,7 @@ const modal = useModal();
     </UDashboardNavbar>
 
     <UDashboardPanelContent>
-        <div v-if="loading" class="flex justify-center">
+        <div v-if="isRequestPending(status)" class="flex justify-center">
             <UPageGrid>
                 <UPageCard v-for="idx in 6" :key="idx">
                     <template #title>
@@ -99,5 +99,5 @@ const modal = useModal();
         </div>
     </UDashboardPanelContent>
 
-    <Pagination :loading="loading" :refresh="refresh" hide-buttons hide-text />
+    <Pagination :status="status" :refresh="refresh" hide-buttons hide-text />
 </template>

@@ -30,7 +30,7 @@ const reqs = ref<undefined | TemplateRequirements>();
 
 const {
     data: template,
-    pending: loading,
+    status,
     refresh,
     error,
 } = useLazyAsyncData(`documents-template-${props.templateId}`, () => getTemplate());
@@ -129,7 +129,7 @@ const contentAccessTypes: AccessType[] = [
 
     <UDashboardPanelContent class="p-0 sm:pb-0">
         <UContainer class="w-full">
-            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.template', 2)])" />
+            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.template', 2)])" />
             <DataErrorBlock
                 v-else-if="error"
                 :title="$t('common.unable_to_load', [$t('common.template', 2)])"

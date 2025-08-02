@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import type { ClassProp } from '~/typings';
-
 withDefaults(
     defineProps<{
         open: boolean;

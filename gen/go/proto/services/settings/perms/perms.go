@@ -4,6 +4,7 @@
 // source: services/settings/cron.proto
 // source: services/settings/laws.proto
 // source: services/settings/settings.proto
+// source: services/settings/system.proto
 
 package permssettings
 
@@ -17,6 +18,7 @@ const (
 	CronServicePerm     perms.Category = "settings.CronService"
 	LawsServicePerm     perms.Category = "settings.LawsService"
 	SettingsServicePerm perms.Category = "settings.SettingsService"
+	SystemServicePerm   perms.Category = "settings.SystemService"
 
 	LawsServiceCreateOrUpdateLawBookPerm perms.Name = "CreateOrUpdateLawBook"
 	LawsServiceDeleteLawBookPerm         perms.Name = "DeleteLawBook"

@@ -133,8 +133,6 @@ export const useAuthStore = defineStore(
                     setJobProps(response.char.jobProps);
 
                     const startpage = useSettingsStore().startpage ?? '/overview';
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore route should be valid, as we test it against a valid URL list
                     await navigateTo(startpage);
                 }
             } catch (e) {
@@ -169,7 +167,7 @@ export const useAuthStore = defineStore(
         };
 
         const chooseCharacter = async (charId?: number, redirect?: boolean): Promise<void> => {
-            if (charId === undefined) {
+            if (charId === undefined || charId <= 0) {
                 if (!lastCharID.value) {
                     const route = useRoute();
 

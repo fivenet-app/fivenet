@@ -5,6 +5,7 @@ import (
 
 	pbauth "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
+	errorsgrpcauth "github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/errors"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -17,7 +18,7 @@ func (s *Server) DeleteOAuth2Connection(ctx context.Context, req *pbauth.DeleteO
 
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
-		return nil, auth.ErrInvalidToken
+		return nil, errorsgrpcauth.ErrInvalidToken
 	}
 
 	claims, err := s.tm.ParseWithClaims(token)

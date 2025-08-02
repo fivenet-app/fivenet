@@ -18,7 +18,7 @@ const { selectedEmail } = storeToRefs(mailerStore);
 
 const {
     data: templates,
-    pending: loading,
+    status,
     error,
     refresh,
 } = useLazyAsyncData(`mailer-templates:${selectedEmail.value!.id}`, () => listTemplates());
@@ -79,7 +79,10 @@ const editing = ref(false);
 
                 <TemplateEditForm v-if="creating" @refresh="refresh" @close="creating = false" />
                 <template v-else>
-                    <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.template')])" />
+                    <DataPendingBlock
+                        v-if="isRequestPending(status)"
+                        :message="$t('common.loading', [$t('common.template')])"
+                    />
                     <DataErrorBlock
                         v-else-if="error"
                         :title="$t('common.unable_to_load', [$t('common.template')])"

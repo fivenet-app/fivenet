@@ -63,12 +63,7 @@ if (props.userId !== undefined) {
     query.colleagues = [props.userId];
 }
 
-const {
-    data,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(
+const { data, status, refresh, error } = useLazyAsyncData(
     `jobs-colleague-${query.sort.column}:${query.sort.direction}-${query.page}-${query.colleagues.join(',')}-${query.types.join(':')}-${props.userId}`,
     () => listColleagueActivity(query),
 );
@@ -204,9 +199,9 @@ watch(props, async () => refresh());
             :type="`${$t('common.colleague', 1)} ${$t('common.activity')}`"
         />
 
-        <div v-else-if="loading || data?.activity">
+        <div v-else-if="isRequestPending(status) || data?.activity">
             <ul class="divide-y divide-gray-100 dark:divide-gray-800" role="list">
-                <template v-if="loading">
+                <template v-if="isRequestPending(status)">
                     <li v-for="idx in 10" :key="idx" class="px-2 py-4">
                         <div class="flex space-x-3">
                             <div class="my-auto flex size-10 items-center justify-center rounded-full">
@@ -250,5 +245,5 @@ watch(props, async () => refresh());
         </div>
     </div>
 
-    <Pagination v-model="query.page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+    <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
 </template>

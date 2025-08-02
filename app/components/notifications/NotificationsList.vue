@@ -35,12 +35,9 @@ type Schema = z.output<typeof schema>;
 
 const query = reactive<Schema>(schema.parse({}));
 
-const {
-    data,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(`notifications-${query.page}-${query.includeRead}`, () => getNotifications());
+const { data, status, refresh, error } = useLazyAsyncData(`notifications-${query.page}-${query.includeRead}`, () =>
+    getNotifications(),
+);
 
 async function getNotifications(): Promise<GetNotificationsResponse> {
     try {
@@ -160,7 +157,7 @@ const canSubmit = ref(true);
 
     <UDashboardPanelContent class="p-0 sm:pb-0">
         <div class="flex-1">
-            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.notification', 2)])" />
+            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.notification', 2)])" />
             <DataErrorBlock
                 v-else-if="error"
                 :title="$t('common.unable_to_load', [$t('common.notification', 2)])"
@@ -260,6 +257,6 @@ const canSubmit = ref(true);
             </ul>
         </div>
 
-        <Pagination v-model="query.page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+        <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
     </UDashboardPanelContent>
 </template>

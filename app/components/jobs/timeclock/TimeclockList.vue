@@ -94,12 +94,7 @@ watch(props, setFromProps);
 
 const usersLoading = ref(false);
 
-const {
-    data,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(
+const { data, status, refresh, error } = useLazyAsyncData(
     `jobs-timeclock-${query.sort.column}:${query.sort.direction}-${query.date.start.toDateString()}-${query.date.end.toDateString()}-${query.perDay}-${query.users.join(',')}-${query.page}`,
     () => listTimeclockEntries(),
 );
@@ -539,7 +534,7 @@ const { game } = useAppConfig();
         v-else-if="query.mode !== TimeclockMode.TIMELINE"
         v-model:sort="query.sort"
         class="flex-1"
-        :loading="loading"
+        :loading="isRequestPending(status)"
         :columns="columns"
         :rows="entries"
         :empty-state="{
@@ -621,7 +616,7 @@ const { game } = useAppConfig();
             v-model="query.page"
             class="flex-1"
             :pagination="data?.pagination"
-            :loading="loading"
+            :status="status"
             :refresh="refresh"
             :hide-text="query.mode === TimeclockMode.TIMELINE"
             :hide-buttons="query.mode === TimeclockMode.TIMELINE"
@@ -653,7 +648,7 @@ const { game } = useAppConfig();
                 :stats="data?.stats"
                 :hide-header="true"
                 :failed="!!error"
-                :loading="loading"
+                :loading="isRequestPending(status)"
                 :ui="{ rounded: '' }"
             />
         </template>

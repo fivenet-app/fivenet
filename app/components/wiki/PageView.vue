@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { AsyncDataRequestStatus } from '#app';
 import { emojiBlast } from 'emoji-blast';
 import AccessBadges from '~/components/partials/access/AccessBadges.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
@@ -19,7 +20,7 @@ import PageSearch from './PageSearch.vue';
 const props = defineProps<{
     page: Page | undefined;
     pages: PageShort[];
-    loading: boolean;
+    status: AsyncDataRequestStatus;
     refresh: () => Promise<void>;
     error: Error | undefined;
 }>();
@@ -41,7 +42,7 @@ const breadcrumbs = computed(() => [
         to: '/wiki',
     },
     ...[
-        !props.page && !props.loading ? { label: t('pages.notfound.page_not_found') } : undefined,
+        !props.page && !isRequestPending(props.status) ? { label: t('pages.notfound.page_not_found') } : undefined,
         props.page && props.page?.id !== props.pages?.at(0)?.id ? { label: '...' } : undefined,
         props.page?.meta
             ? {
@@ -192,7 +193,7 @@ const scrollRef = useTemplateRef('scrollRef');
 
             <UBreadcrumb class="pb-2 pt-4" :links="breadcrumbs" />
 
-            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.page')])" />
+            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.page')])" />
             <DataErrorBlock
                 v-else-if="error"
                 :title="$t('common.unable_to_load', [$t('common.page')])"

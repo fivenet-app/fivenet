@@ -42,3 +42,8 @@ func (ui *MockUserInfoRetriever) GetUserInfoWithoutAccountId(ctx context.Context
 func (ui *MockUserInfoRetriever) SetUserInfo(ctx context.Context, accountId uint64, superuser bool, job *string, jobGrade *int32) error {
 	return nil
 }
+
+// RefreshUserInfo is a mock method that does nothing and always returns nil.
+func (ui *MockUserInfoRetriever) RefreshUserInfo(ctx context.Context, userId int32, accountId uint64) error {
+	return nil
+}

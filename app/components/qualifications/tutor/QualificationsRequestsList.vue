@@ -45,12 +45,7 @@ const sort = useRouteQueryObject<TableSortable>('sort', {
     direction: 'desc',
 });
 
-const {
-    data,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(
+const { data, status, refresh, error } = useLazyAsyncData(
     `qualifications-requests-${sort.value.column}:${sort.value.direction}-${page.value}-${props.qualification.id}`,
     () => listQualificationsRequests(props.qualification.id),
     {
@@ -155,7 +150,7 @@ defineExpose({
             <template v-else>
                 <UTable
                     v-model:sort="sort"
-                    :loading="loading"
+                    :loading="isRequestPending(status)"
                     :columns="columns"
                     :rows="data?.requests"
                     :empty-state="{ icon: 'i-mdi-account-school', label: $t('common.not_found', [$t('common.request', 2)]) }"
@@ -278,7 +273,7 @@ defineExpose({
                     </template>
                 </UTable>
 
-                <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+                <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
             </template>
         </div>
     </div>

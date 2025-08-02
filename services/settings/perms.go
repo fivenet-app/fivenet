@@ -8,6 +8,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
@@ -16,9 +17,11 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms/collections"
 	errorssettings "github.com/fivenet-app/fivenet/v2025/services/settings/errors"
+	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
+	"go.uber.org/multierr"
 )
 
 var ignoredGuardPermissions = []string{}
@@ -341,7 +344,7 @@ func (s *Server) UpdateRolePerms(ctx context.Context, req *pbsettings.UpdateRole
 	return &pbsettings.UpdateRolePermsResponse{}, nil
 }
 
-func (s *Server) handlPermissionsUpdate(ctx context.Context, role *permissions.Role, permsUpdate *pbsettings.PermsUpdate) error {
+func (s *Server) handlPermissionsUpdate(ctx context.Context, role *permissions.Role, permsUpdate *settings.PermsUpdate) error {
 	updatePermIds := make([]uint64, len(permsUpdate.ToUpdate))
 	for i := range permsUpdate.ToUpdate {
 		updatePermIds[i] = permsUpdate.ToUpdate[i].Id
@@ -401,7 +404,7 @@ func (s *Server) handlPermissionsUpdate(ctx context.Context, role *permissions.R
 	return nil
 }
 
-func (s *Server) handleAttributeUpdate(ctx context.Context, userInfo *userinfo.UserInfo, role *permissions.Role, attrUpdates *pbsettings.AttrsUpdate) error {
+func (s *Server) handleAttributeUpdate(ctx context.Context, userInfo *userinfo.UserInfo, role *permissions.Role, attrUpdates *settings.AttrsUpdate) error {
 	if len(attrUpdates.ToUpdate) > 0 {
 		if err := s.ps.UpdateRoleAttributes(ctx, userInfo.Job, role.Id, attrUpdates.ToUpdate...); err != nil {
 			return err
@@ -492,114 +495,77 @@ func (s *Server) GetEffectivePermissions(ctx context.Context, req *pbsettings.Ge
 	return resp, nil
 }
 
-func (s *Server) GetAllPermissions(ctx context.Context, req *pbsettings.GetAllPermissionsRequest) (*pbsettings.GetAllPermissionsResponse, error) {
+func (s *Server) DeleteFaction(ctx context.Context, req *pbsettings.DeleteFactionRequest) (*pbsettings.DeleteFactionResponse, error) {
 	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.settings.job", req.Job))
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
-		Method:  "GetAllPermissions",
+		Method:  "DeleteFaction",
 		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	job := s.enricher.GetJobByName(req.Job)
-	if job == nil {
-		return nil, errorssettings.ErrInvalidRequest
-	}
+	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.settings.job", req.Job))
 
-	perms, err := s.ps.GetAllPermissions(ctx)
+	roles, err := s.ps.GetJobRoles(ctx, req.Job)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	attrs, err := s.ps.GetAllAttributes(ctx)
-	if err != nil {
+	errs := multierr.Combine()
+	for _, role := range roles {
+		if err := s.ps.DeleteRole(ctx, role.Id); err != nil {
+			errs = multierr.Append(errs, err)
+			continue
+		}
+	}
+
+	if err := s.ps.ClearJobAttributes(ctx, req.Job); err != nil {
+		errs = multierr.Append(errs, err)
+		return nil, errswrap.NewError(errs, errorssettings.ErrFailedQuery)
+	}
+
+	if err := s.ps.ClearJobPermissions(ctx, req.Job); err != nil {
+		errs = multierr.Append(errs, err)
+		return nil, errswrap.NewError(errs, errorssettings.ErrFailedQuery)
+	}
+
+	if err := s.ps.ApplyJobPermissions(ctx, req.Job); err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	resp := &pbsettings.GetAllPermissionsResponse{}
-	resp.Permissions = perms
-	resp.Attributes = attrs
+	// Set job props to be deleted as last action to start the removal of a faction and it's data from the database
+	if err := s.deleteJobProps(ctx, s.db, req.Job); err != nil {
+		errs = multierr.Append(errs, err)
+	}
 
-	return resp, nil
+	if errs != nil {
+		return nil, errswrap.NewError(errs, errorssettings.ErrFailedQuery)
+	}
+
+	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
+
+	return &pbsettings.DeleteFactionResponse{}, nil
 }
 
-func (s *Server) GetJobLimits(ctx context.Context, req *pbsettings.GetJobLimitsRequest) (*pbsettings.GetJobLimitsResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.settings.job", req.Job))
+func (s *Server) deleteJobProps(ctx context.Context, tx qrm.DB, job string) error {
+	stmt := tJobProps.
+		UPDATE().
+		SET(
+			tJobProps.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+		).
+		WHERE(
+			tJobProps.Job.EQ(jet.String(job)),
+		).
+		LIMIT(1)
 
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
-		Method:  "GetJobLimits",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
-	job := s.enricher.GetJobByName(req.Job)
-	if job == nil {
-		return nil, errorssettings.ErrInvalidRequest
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		return err
 	}
 
-	resp := &pbsettings.GetJobLimitsResponse{}
-
-	perms, err := s.ps.GetJobPermissions(ctx, job.Name)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
-	}
-	resp.Permissions = perms
-
-	attrs, _ := s.ps.GetJobAttributes(ctx, job.Name)
-	resp.Attributes = attrs
-
-	resp.Job = job.Name
-	resp.JobLabel = &job.Label
-
-	return resp, nil
-}
-
-func (s *Server) UpdateJobLimits(ctx context.Context, req *pbsettings.UpdateJobLimitsRequest) (*pbsettings.UpdateJobLimitsResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.settings.job", req.Job))
-
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
-		Method:  "UpdateJobLimits",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
-	job := s.enricher.GetJobByName(req.Job)
-	if job == nil {
-		return nil, errorssettings.ErrInvalidRequest
-	}
-
-	if err := s.ps.UpdateJobPermissions(ctx, job.Name, req.Perms.ToUpdate...); err != nil {
-		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
-	}
-
-	if err := s.ps.UpdateJobAttributes(ctx, job.Name, req.Attrs.ToUpdate...); err != nil {
-		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
-	}
-
-	if err := s.ps.UpdateJobPermissions(ctx, job.Name, req.Perms.ToRemove...); err != nil {
-		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
-	}
-
-	if err := s.ps.ApplyJobPermissions(ctx, job.Name); err != nil {
-		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
-	}
-
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
-
-	return &pbsettings.UpdateJobLimitsResponse{}, nil
+	return nil
 }

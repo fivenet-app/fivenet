@@ -44,12 +44,7 @@ async function getColleagueLabels(): Promise<GetColleagueLabelsResponse> {
     }
 }
 
-const {
-    data: labels,
-    pending: loading,
-    error,
-    refresh,
-} = useLazyAsyncData('jobs-colleagues-labels', () => getColleagueLabels());
+const { data: labels, status, error, refresh } = useLazyAsyncData('jobs-colleagues-labels', () => getColleagueLabels());
 
 async function manageLabels(values: Schema): Promise<ManageLabelsResponse> {
     try {
@@ -99,7 +94,7 @@ const { moveUp, moveDown } = useListReorder(toRef(state, 'labels'));
                     </div>
                 </template>
 
-                <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.label', 2)])" />
+                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.label', 2)])" />
                 <DataErrorBlock v-else-if="error" :error="error" :retry="refresh" />
 
                 <UFormGroup v-else class="grid items-center gap-2" name="list" :ui="{ container: '' }">
@@ -181,7 +176,7 @@ const { moveUp, moveDown } = useListReorder(toRef(state, 'labels'));
                             class="flex-1"
                             type="submit"
                             block
-                            :loading="loading || !canSubmit"
+                            :loading="isRequestPending(status) || !canSubmit"
                             :disabled="!canSubmit || !!error"
                         >
                             {{ $t('common.save') }}

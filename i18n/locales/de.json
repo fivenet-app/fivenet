@@ -163,11 +163,13 @@
                 },
                 "three": {
                     "question": "Wo kann ich die Entwicklungs-Roadmap von FiveNet finden?",
-                    "answer": "<a class=\"underline\" href=\"{repoLink}/#readme\">Klicken Sie hier (GitHub galexrt/fivenet README)</a>."
+                    "click_here": "Klicken Sie hier, um zur Entwicklungs-Roadmap auf GitHub zu gelangen."
                 },
                 "four": {
                     "question": "Ich habe einen Fehler oder ein anderes Problem mit FiveNet gefunden. Wo melde ich es?",
-                    "answer": "Bitte melden Sie Probleme entweder auf <a class=\"underline\" href=\"{discordLink}\">dem Galexrt Discord-Server</a> oder auf <a class=\"underline\" href=\"{repoLink}\">dem FiveNet GitHub-Projekt</a>."
+                    "answer": "Bitte melden Sie Probleme entweder auf {discordLink} oder auf {repoLink}.",
+                    "discord_link": "dem Galexrt Discord-Server",
+                    "repo_link": "dem FiveNet GitHub-Projekt Issue Tracker"
                 }
             },
             "questions_or_issues": {
@@ -776,7 +778,8 @@
                             "with": "With-Block"
                         }
                     }
-                }
+                },
+                "invisible_characters": "Unsichtbare Zeichen anzeigen/verbergen"
             }
         },
         "clipboard": {
@@ -1549,6 +1552,25 @@
             },
             "accounts": {
                 "edit_account": "Konto bearbeiten"
+            },
+            "system_status": {
+                "title": "System-Status",
+                "database": {
+                    "title": "Datenbank",
+                    "migration_version": "Datenbank-Migrationsversion",
+                    "migration_dirty": "Datenbank-Migrationsfehler",
+                    "db_charset": "Datenbank-Zeichensatz",
+                    "db_collation": "Datenbank-Kollation",
+                    "tables_ok": "Tabellen OK"
+                },
+                "nats": {
+                    "title": "NATS"
+                },
+                "db_sync": {
+                    "title": "DB Sync",
+                    "last_data_received": "Zuletzt empfangene Daten",
+                    "last_activity_received": "Letzte empfangene Aktivität"
+                }
             }
         }
     },
@@ -2172,7 +2194,8 @@
             "ErrPropsMugshotDenied": "Sie dürfen nicht das Fahndungsfoto der Person ändern!"
         },
         "VehiclesService": {
-            "ErrFailedQuery": "Fehler beim Laden von Fahrzeug Daten!"
+            "ErrFailedQuery": "Fehler beim Laden von Fahrzeug Daten!",
+            "ErrPropsWantedDenied": "Sie haben keine Berechtigung das Fahrzeug zur Fahndung auszuschreiben!"
         },
         "DocumentsService": {
             "ErrFailedQuery": "Fehlen beim Anzeigen/ Erstellen/ Aktualisieren von Dokumenten!",
@@ -2749,7 +2772,7 @@
                 "results": {
                     "wrong_discord": {
                         "title": "Sync Befehl muss auf einem Discord Server mit FiveNet-Verbindung ausgeführt werden!",
-                        "desc": "Either you are sending a DM or this Discord isn't FiveNet enabled. Please contact the Discord server administrator."
+                        "desc": "Entweder Sie senden eine DM oder dieser Discord ist nicht FiveNet-fähig. Bitte wende dich an die Administration des Discord-Servers."
                     },
                     "permission_denied": {
                         "title": "Discord Admin Rechte benötigt",
@@ -2873,7 +2896,13 @@
                 "category": "Fahrzeuge",
                 "ListVehicles": {
                     "key": "Fahrzeuge suchen",
-                    "description": "Suchen und Finden von Fahrzeugen von Bürgern."
+                    "description": "Suchen und Finden von Fahrzeugen von Bürgern.",
+                    "attrs": {
+                        "Wanted": "Gesuchten Status"
+                    },
+                    "attrs_types": {
+                        "Fields": "Felder für Fahrzeugeigenschaften"
+                    }
                 },
                 "SetVehicleProps": {
                     "key": "Fahrzeug-Eigenschaften festlegen",

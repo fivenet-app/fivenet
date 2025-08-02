@@ -13,12 +13,9 @@ const props = defineProps<{
 
 const { $grpc } = useNuxtApp();
 
-const {
-    data,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(`qualification-${props.qualificationId}-examinfo`, () => getExamInfo(props.qualificationId));
+const { data, status, refresh, error } = useLazyAsyncData(`qualification-${props.qualificationId}-examinfo`, () =>
+    getExamInfo(props.qualificationId),
+);
 
 async function getExamInfo(qualificationId: number): Promise<GetExamInfoResponse> {
     try {
@@ -71,7 +68,7 @@ watch(data, async () => {
         </template>
     </UDashboardNavbar>
 
-    <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.exam', 1)])" />
+    <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.exam', 1)])" />
     <DataErrorBlock
         v-else-if="error"
         :title="$t('common.unable_to_load', [$t('common.exam', 1)])"

@@ -14,7 +14,7 @@ const users = computed(() => {
     <UPopover v-if="awareness" :popper="{ placement: 'top' }" :disabled="users.length === 0">
         <UButton
             :class="users.length === 0 && 'cursor-not-allowed'"
-            color="white"
+            color="gray"
             variant="link"
             trailing-icon="i-heroicons-chevron-down-20-solid"
         >

@@ -36,7 +36,7 @@ const query = useSearchForm('centrum_dispatches_archive', schema);
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
-const { data, pending: loading, refresh, error } = useLazyAsyncData(`centrum-dispatches-${page.value}`, () => listDispatches());
+const { data, status, refresh, error } = useLazyAsyncData(`centrum-dispatches-${page.value}`, () => listDispatches());
 
 async function listDispatches(): Promise<ListDispatchesResponse> {
     try {
@@ -138,7 +138,10 @@ const mount = ref(false);
                                 </UForm>
                             </div>
 
-                            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.dispatches')])" />
+                            <DataPendingBlock
+                                v-if="isRequestPending(status)"
+                                :message="$t('common.loading', [$t('common.dispatches')])"
+                            />
                             <DataErrorBlock
                                 v-else-if="error"
                                 :title="$t('common.unable_to_load', [$t('common.dispatches')])"
@@ -156,7 +159,7 @@ const mount = ref(false);
                                 />
                             </div>
 
-                            <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+                            <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
                         </div>
                     </Pane>
                 </Splitpanes>

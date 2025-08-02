@@ -37,7 +37,7 @@ const route = useRoute<'wiki-job-id-slug-edit'>();
 
 const {
     data: page,
-    pending: loading,
+    status,
     error,
     refresh,
 } = useLazyAsyncData(`wiki-page:${route.path}`, () => getPage(parseInt(route.params.id)));
@@ -460,7 +460,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
         </UDashboardNavbar>
 
         <UDashboardPanelContent class="p-0 sm:pb-0">
-            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.page', 1)])" />
+            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.page', 1)])" />
             <DataErrorBlock
                 v-else-if="error"
                 :title="$t('common.unable_to_load', [$t('common.page', 1)])"

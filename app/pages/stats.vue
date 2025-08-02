@@ -48,7 +48,7 @@ const defaultStats: Stats = {
 type StatsState = { stats: Stats; fetchedAt?: number };
 const state = useState<StatsState>('stats', () => ({ stats: defaultStats, fetchedAt: undefined }));
 
-const { data: stats, pending: loading } = useLazyAsyncData('stats', () => getStats(), {
+const { data: stats, status } = useLazyAsyncData('stats', () => getStats(), {
     transform: (input): StatsState => ({
         stats: input,
         fetchedAt: new Date().getTime(),
@@ -133,7 +133,10 @@ onBeforeMount(async () => {
                                     <p
                                         class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white"
                                     >
-                                        <USkeleton v-if="loading || stat?.value === undefined" class="h-8 w-[175px]" />
+                                        <USkeleton
+                                            v-if="isRequestPending(status) || stat?.value === undefined"
+                                            class="h-8 w-[175px]"
+                                        />
                                         <ClientOnly v-else>
                                             <CountUp
                                                 :start-val="0"

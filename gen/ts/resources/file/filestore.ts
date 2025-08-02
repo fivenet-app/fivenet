@@ -172,7 +172,7 @@ class UploadMeta$Type extends MessageType<UploadMeta> {
             { no: 3, name: "original_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
             { no: 4, name: "content_type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 5, name: "size", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 6, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_UNPOPULATED", string: { minLen: "3", maxLen: "255" } } } }
+            { no: 6, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "3", maxLen: "255" } } } }
         ]);
     }
     create(value?: PartialMessage<UploadMeta>): UploadMeta {

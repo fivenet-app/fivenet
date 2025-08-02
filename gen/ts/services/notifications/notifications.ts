@@ -279,7 +279,7 @@ class MarkNotificationsRequest$Type extends MessageType<MarkNotificationsRequest
     constructor() {
         super("services.notifications.MarkNotificationsRequest", [
             { no: 1, name: "unread", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_UNPOPULATED", repeated: { minItems: "1", maxItems: "20" } } } },
+            { no: 2, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", repeated: { minItems: "1", maxItems: "20" } } } },
             { no: 3, name: "all", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }

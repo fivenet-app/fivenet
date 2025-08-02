@@ -62,7 +62,7 @@ const state = reactive<Schema>({
 
 const {
     data: data,
-    pending: loading,
+    status,
     refresh,
     error,
 } = useLazyAsyncData(
@@ -154,7 +154,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <div>
                     <DataPendingBlock
-                        v-if="props.calendarId && loading"
+                        v-if="props.calendarId && isRequestPending(status)"
                         :message="$t('common.loading', [$t('common.calendar')])"
                     />
                     <DataErrorBlock

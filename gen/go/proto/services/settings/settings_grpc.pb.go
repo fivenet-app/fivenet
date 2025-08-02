@@ -30,15 +30,10 @@ const (
 	SettingsService_GetPermissions_FullMethodName          = "/services.settings.SettingsService/GetPermissions"
 	SettingsService_GetEffectivePermissions_FullMethodName = "/services.settings.SettingsService/GetEffectivePermissions"
 	SettingsService_ViewAuditLog_FullMethodName            = "/services.settings.SettingsService/ViewAuditLog"
-	SettingsService_GetAllPermissions_FullMethodName       = "/services.settings.SettingsService/GetAllPermissions"
-	SettingsService_GetJobLimits_FullMethodName            = "/services.settings.SettingsService/GetJobLimits"
-	SettingsService_UpdateJobLimits_FullMethodName         = "/services.settings.SettingsService/UpdateJobLimits"
-	SettingsService_DeleteFaction_FullMethodName           = "/services.settings.SettingsService/DeleteFaction"
 	SettingsService_ListDiscordChannels_FullMethodName     = "/services.settings.SettingsService/ListDiscordChannels"
 	SettingsService_ListUserGuilds_FullMethodName          = "/services.settings.SettingsService/ListUserGuilds"
 	SettingsService_UploadJobLogo_FullMethodName           = "/services.settings.SettingsService/UploadJobLogo"
 	SettingsService_DeleteJobLogo_FullMethodName           = "/services.settings.SettingsService/DeleteJobLogo"
-	SettingsService_GetStatus_FullMethodName               = "/services.settings.SettingsService/GetStatus"
 )
 
 // SettingsServiceClient is the client API for SettingsService service.
@@ -65,14 +60,6 @@ type SettingsServiceClient interface {
 	GetEffectivePermissions(ctx context.Context, in *GetEffectivePermissionsRequest, opts ...grpc.CallOption) (*GetEffectivePermissionsResponse, error)
 	// @perm
 	ViewAuditLog(ctx context.Context, in *ViewAuditLogRequest, opts ...grpc.CallOption) (*ViewAuditLogResponse, error)
-	// @perm: Name=Superuser
-	GetAllPermissions(ctx context.Context, in *GetAllPermissionsRequest, opts ...grpc.CallOption) (*GetAllPermissionsResponse, error)
-	// @perm: Name=Superuser
-	GetJobLimits(ctx context.Context, in *GetJobLimitsRequest, opts ...grpc.CallOption) (*GetJobLimitsResponse, error)
-	// @perm: Name=Superuser
-	UpdateJobLimits(ctx context.Context, in *UpdateJobLimitsRequest, opts ...grpc.CallOption) (*UpdateJobLimitsResponse, error)
-	// @perm: Name=Superuser
-	DeleteFaction(ctx context.Context, in *DeleteFactionRequest, opts ...grpc.CallOption) (*DeleteFactionResponse, error)
 	// @perm: Name=SetJobProps
 	ListDiscordChannels(ctx context.Context, in *ListDiscordChannelsRequest, opts ...grpc.CallOption) (*ListDiscordChannelsResponse, error)
 	// @perm: Name=SetJobProps
@@ -84,8 +71,6 @@ type SettingsServiceClient interface {
 	UploadJobLogo(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error)
 	// @perm: Name=SetJobProps
 	DeleteJobLogo(ctx context.Context, in *DeleteJobLogoRequest, opts ...grpc.CallOption) (*DeleteJobLogoResponse, error)
-	// @perm: Name=Superuser
-	GetStatus(ctx context.Context, in *GetStatusRequest, opts ...grpc.CallOption) (*GetStatusResponse, error)
 }
 
 type settingsServiceClient struct {
@@ -196,46 +181,6 @@ func (c *settingsServiceClient) ViewAuditLog(ctx context.Context, in *ViewAuditL
 	return out, nil
 }
 
-func (c *settingsServiceClient) GetAllPermissions(ctx context.Context, in *GetAllPermissionsRequest, opts ...grpc.CallOption) (*GetAllPermissionsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetAllPermissionsResponse)
-	err := c.cc.Invoke(ctx, SettingsService_GetAllPermissions_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *settingsServiceClient) GetJobLimits(ctx context.Context, in *GetJobLimitsRequest, opts ...grpc.CallOption) (*GetJobLimitsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetJobLimitsResponse)
-	err := c.cc.Invoke(ctx, SettingsService_GetJobLimits_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *settingsServiceClient) UpdateJobLimits(ctx context.Context, in *UpdateJobLimitsRequest, opts ...grpc.CallOption) (*UpdateJobLimitsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpdateJobLimitsResponse)
-	err := c.cc.Invoke(ctx, SettingsService_UpdateJobLimits_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *settingsServiceClient) DeleteFaction(ctx context.Context, in *DeleteFactionRequest, opts ...grpc.CallOption) (*DeleteFactionResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeleteFactionResponse)
-	err := c.cc.Invoke(ctx, SettingsService_DeleteFaction_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *settingsServiceClient) ListDiscordChannels(ctx context.Context, in *ListDiscordChannelsRequest, opts ...grpc.CallOption) (*ListDiscordChannelsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListDiscordChannelsResponse)
@@ -279,16 +224,6 @@ func (c *settingsServiceClient) DeleteJobLogo(ctx context.Context, in *DeleteJob
 	return out, nil
 }
 
-func (c *settingsServiceClient) GetStatus(ctx context.Context, in *GetStatusRequest, opts ...grpc.CallOption) (*GetStatusResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetStatusResponse)
-	err := c.cc.Invoke(ctx, SettingsService_GetStatus_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // SettingsServiceServer is the server API for SettingsService service.
 // All implementations must embed UnimplementedSettingsServiceServer
 // for forward compatibility.
@@ -313,14 +248,6 @@ type SettingsServiceServer interface {
 	GetEffectivePermissions(context.Context, *GetEffectivePermissionsRequest) (*GetEffectivePermissionsResponse, error)
 	// @perm
 	ViewAuditLog(context.Context, *ViewAuditLogRequest) (*ViewAuditLogResponse, error)
-	// @perm: Name=Superuser
-	GetAllPermissions(context.Context, *GetAllPermissionsRequest) (*GetAllPermissionsResponse, error)
-	// @perm: Name=Superuser
-	GetJobLimits(context.Context, *GetJobLimitsRequest) (*GetJobLimitsResponse, error)
-	// @perm: Name=Superuser
-	UpdateJobLimits(context.Context, *UpdateJobLimitsRequest) (*UpdateJobLimitsResponse, error)
-	// @perm: Name=Superuser
-	DeleteFaction(context.Context, *DeleteFactionRequest) (*DeleteFactionResponse, error)
 	// @perm: Name=SetJobProps
 	ListDiscordChannels(context.Context, *ListDiscordChannelsRequest) (*ListDiscordChannelsResponse, error)
 	// @perm: Name=SetJobProps
@@ -332,8 +259,6 @@ type SettingsServiceServer interface {
 	UploadJobLogo(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error
 	// @perm: Name=SetJobProps
 	DeleteJobLogo(context.Context, *DeleteJobLogoRequest) (*DeleteJobLogoResponse, error)
-	// @perm: Name=Superuser
-	GetStatus(context.Context, *GetStatusRequest) (*GetStatusResponse, error)
 	mustEmbedUnimplementedSettingsServiceServer()
 }
 
@@ -374,18 +299,6 @@ func (UnimplementedSettingsServiceServer) GetEffectivePermissions(context.Contex
 func (UnimplementedSettingsServiceServer) ViewAuditLog(context.Context, *ViewAuditLogRequest) (*ViewAuditLogResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ViewAuditLog not implemented")
 }
-func (UnimplementedSettingsServiceServer) GetAllPermissions(context.Context, *GetAllPermissionsRequest) (*GetAllPermissionsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAllPermissions not implemented")
-}
-func (UnimplementedSettingsServiceServer) GetJobLimits(context.Context, *GetJobLimitsRequest) (*GetJobLimitsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetJobLimits not implemented")
-}
-func (UnimplementedSettingsServiceServer) UpdateJobLimits(context.Context, *UpdateJobLimitsRequest) (*UpdateJobLimitsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateJobLimits not implemented")
-}
-func (UnimplementedSettingsServiceServer) DeleteFaction(context.Context, *DeleteFactionRequest) (*DeleteFactionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteFaction not implemented")
-}
 func (UnimplementedSettingsServiceServer) ListDiscordChannels(context.Context, *ListDiscordChannelsRequest) (*ListDiscordChannelsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListDiscordChannels not implemented")
 }
@@ -397,9 +310,6 @@ func (UnimplementedSettingsServiceServer) UploadJobLogo(grpc.ClientStreamingServ
 }
 func (UnimplementedSettingsServiceServer) DeleteJobLogo(context.Context, *DeleteJobLogoRequest) (*DeleteJobLogoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteJobLogo not implemented")
-}
-func (UnimplementedSettingsServiceServer) GetStatus(context.Context, *GetStatusRequest) (*GetStatusResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetStatus not implemented")
 }
 func (UnimplementedSettingsServiceServer) mustEmbedUnimplementedSettingsServiceServer() {}
 func (UnimplementedSettingsServiceServer) testEmbeddedByValue()                         {}
@@ -602,78 +512,6 @@ func _SettingsService_ViewAuditLog_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SettingsService_GetAllPermissions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAllPermissionsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SettingsServiceServer).GetAllPermissions(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: SettingsService_GetAllPermissions_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SettingsServiceServer).GetAllPermissions(ctx, req.(*GetAllPermissionsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _SettingsService_GetJobLimits_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetJobLimitsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SettingsServiceServer).GetJobLimits(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: SettingsService_GetJobLimits_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SettingsServiceServer).GetJobLimits(ctx, req.(*GetJobLimitsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _SettingsService_UpdateJobLimits_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateJobLimitsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SettingsServiceServer).UpdateJobLimits(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: SettingsService_UpdateJobLimits_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SettingsServiceServer).UpdateJobLimits(ctx, req.(*UpdateJobLimitsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _SettingsService_DeleteFaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteFactionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SettingsServiceServer).DeleteFaction(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: SettingsService_DeleteFaction_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SettingsServiceServer).DeleteFaction(ctx, req.(*DeleteFactionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _SettingsService_ListDiscordChannels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListDiscordChannelsRequest)
 	if err := dec(in); err != nil {
@@ -735,24 +573,6 @@ func _SettingsService_DeleteJobLogo_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SettingsService_GetStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetStatusRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SettingsServiceServer).GetStatus(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: SettingsService_GetStatus_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SettingsServiceServer).GetStatus(ctx, req.(*GetStatusRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // SettingsService_ServiceDesc is the grpc.ServiceDesc for SettingsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -801,22 +621,6 @@ var SettingsService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SettingsService_ViewAuditLog_Handler,
 		},
 		{
-			MethodName: "GetAllPermissions",
-			Handler:    _SettingsService_GetAllPermissions_Handler,
-		},
-		{
-			MethodName: "GetJobLimits",
-			Handler:    _SettingsService_GetJobLimits_Handler,
-		},
-		{
-			MethodName: "UpdateJobLimits",
-			Handler:    _SettingsService_UpdateJobLimits_Handler,
-		},
-		{
-			MethodName: "DeleteFaction",
-			Handler:    _SettingsService_DeleteFaction_Handler,
-		},
-		{
 			MethodName: "ListDiscordChannels",
 			Handler:    _SettingsService_ListDiscordChannels_Handler,
 		},
@@ -827,10 +631,6 @@ var SettingsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteJobLogo",
 			Handler:    _SettingsService_DeleteJobLogo_Handler,
-		},
-		{
-			MethodName: "GetStatus",
-			Handler:    _SettingsService_GetStatus_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

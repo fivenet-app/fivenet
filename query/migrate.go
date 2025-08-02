@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/dsn"
+	"github.com/fivenet-app/fivenet/v2025/pkg/reqs"
 	"github.com/golang-migrate/migrate/v4"
 	mysqlmigrate "github.com/golang-migrate/migrate/v4/database/mysql"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
@@ -38,7 +39,7 @@ func (l *MigrateLogger) Printf(format string, v ...any) {
 
 // Verbose returns true if verbose logging output is wanted for migrations.
 func (l *MigrateLogger) Verbose() bool {
-	return false
+	return l.verbose
 }
 
 // NewMigrate creates a new migrate.Migrate instance for the given DB and ESX compatibility flag.
@@ -83,30 +84,42 @@ func NewMigrate(db *sql.DB, esxCompat bool, disableLocking bool) (*migrate.Migra
 
 // MigrateDB runs database migrations using golang-migrate, logging progress and errors.
 // It prepares the DSN, connects to the DB, runs migrations, and logs the result.
-func MigrateDB(logger *zap.Logger, dbDSN string, esxCompat bool, disableLocking bool) error {
-	logger.Info("starting database migrations")
-
+func MigrateDB(logger *zap.Logger, dbDSN string, ignoreReqs bool, esxCompat bool, disableLocking bool) (*reqs.DBReqs, error) {
 	dsn, err := dsn.PrepareDSN(dbDSN, disableLocking, dsn.WithMultiStatements())
 	if err != nil {
-		return fmt.Errorf("failed to prepare DSN. %w", err)
+		return nil, fmt.Errorf("failed to prepare DSN. %w", err)
 	}
 
 	// Connect to database
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
-		return fmt.Errorf("failed to connect to database. %w", err)
+		return nil, fmt.Errorf("failed to connect to database. %w", err)
 	}
+	// Ensure the database connection is closed when done.
+	defer db.Close()
+
+	logger.Info("verifying database requirements")
+
+	req := reqs.NewDBReqs(db)
+	if err := req.ValidateVersion(); err != nil {
+		if !ignoreReqs {
+			return nil, fmt.Errorf("failed to validate database version requirement. %w", err)
+		}
+		logger.Warn("ignoring failed database version requirement", zap.Error(err))
+	}
+
+	logger.Info("starting database migrations")
 
 	m, err := NewMigrate(db, esxCompat, disableLocking)
 	if err != nil {
-		return fmt.Errorf("failed to create migration instance. %w", err)
+		return nil, fmt.Errorf("failed to create migration instance. %w", err)
 	}
 	m.Log = NewMigrateLogger(logger)
 
 	// Run migrations and handle "no change" as a non-error.
 	if err := m.Up(); err != nil {
 		if !errors.Is(err, migrate.ErrNoChange) {
-			return err
+			return nil, err
 		} else {
 			logger.Info("database migrations have caused no changes")
 		}
@@ -114,5 +127,18 @@ func MigrateDB(logger *zap.Logger, dbDSN string, esxCompat bool, disableLocking 
 		logger.Info("completed database migrations changes have been made")
 	}
 
-	return db.Close()
+	if err := req.ValidateTables(); err != nil {
+		if !ignoreReqs {
+			return nil, fmt.Errorf("failed to validate database tables requirement. %w", err)
+		}
+		logger.Warn("ignoring failed database tables requirement", zap.Error(err))
+	}
+
+	mVer, dirty, err := m.Version()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get migration version. %w", err)
+	}
+	req.SetMigrationState(mVer, dirty)
+
+	return req, db.Close()
 }

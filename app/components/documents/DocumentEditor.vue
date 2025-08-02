@@ -49,7 +49,7 @@ const documentsDocuments = useDocumentsDocuments();
 
 const {
     data: document,
-    pending: loading,
+    status,
     error,
     refresh,
 } = useLazyAsyncData(`documents-${props.documentId}-editor`, () => documentsDocuments.getDocument(props.documentId));
@@ -499,7 +499,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
         </UDashboardNavbar>
 
         <UDashboardPanelContent class="p-0 sm:pb-0">
-            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.page', 1)])" />
+            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.page', 1)])" />
             <DataErrorBlock
                 v-else-if="error"
                 :title="$t('common.unable_to_load', [$t('common.page', 1)])"

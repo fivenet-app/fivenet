@@ -30,12 +30,7 @@ const sort = useRouteQueryObject<TableSortable>('sort', {
     direction: 'desc',
 });
 
-const {
-    data,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(
+const { data, status, refresh, error } = useLazyAsyncData(
     `qualifications-results-${sort.value.column}:${sort.value.direction}-${page.value}-${props.qualificationId}-${props.userId}`,
     () => listQualificationsResults(props.qualificationId, props.userId, props.status),
     {
@@ -85,7 +80,7 @@ async function listQualificationsResults(
         </template>
 
         <div>
-            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.result', 2)])" />
+            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.result', 2)])" />
             <DataErrorBlock
                 v-else-if="error"
                 :title="$t('common.unable_to_load', [$t('common.result', 2)])"
@@ -104,7 +99,7 @@ async function listQualificationsResults(
         </div>
 
         <template #footer>
-            <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" disable-border />
+            <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" disable-border />
         </template>
     </UCard>
 </template>

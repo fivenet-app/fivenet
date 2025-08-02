@@ -20,7 +20,7 @@ const { $grpc } = useNuxtApp();
 
 const { activeChar, can } = useAuth();
 
-const { data: pages, pending: loading, refresh, error } = useLazyAsyncData(`wiki-pages`, () => listPages());
+const { data: pages, status, refresh, error } = useLazyAsyncData(`wiki-pages`, () => listPages());
 
 async function listPages(): Promise<PageShort[]> {
     try {
@@ -89,7 +89,7 @@ const wikiService = useWikiWiki();
             </UDashboardToolbar>
 
             <UDashboardPanelContent>
-                <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.page')])" />
+                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.page')])" />
                 <DataErrorBlock v-else-if="error" :retry="refresh" />
                 <DataNoDataBlock
                     v-else-if="!pages"

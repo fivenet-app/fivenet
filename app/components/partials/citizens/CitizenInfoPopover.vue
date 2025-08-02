@@ -4,7 +4,7 @@ import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vu
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import type { ClipboardUser } from '~/stores/clipboard';
-import type { ClassProp } from '~/typings';
+import type { ClassProp } from '~/utils/types';
 import type { User, UserShort } from '~~/gen/ts/resources/users/users';
 import EmailBlock from './EmailBlock.vue';
 
@@ -37,12 +37,9 @@ const { popover } = useAppConfig();
 
 const userId = computed(() => props.userId ?? props.user?.userId ?? 0);
 
-const {
-    data,
-    refresh,
-    pending: loading,
-    error,
-} = useLazyAsyncData(`citizen-info-${userId.value}`, () => getCitizen(userId.value), { immediate: !props.user });
+const { data, refresh, status, error } = useLazyAsyncData(`citizen-info-${userId.value}`, () => getCitizen(userId.value), {
+    immediate: !props.user,
+});
 
 async function getCitizen(id: number): Promise<User | undefined> {
     try {
@@ -94,11 +91,11 @@ watchOnce(opened, async () => {
             @click="opened = true"
         >
             <template v-if="showAvatarInName" #leading>
-                <USkeleton v-if="!user && loading" class="h-6 w-6" :ui="{ rounded: 'rounded-full' }" />
+                <USkeleton v-if="!user && isRequestPending(status)" class="h-6 w-6" :ui="{ rounded: 'rounded-full' }" />
                 <ProfilePictureImg v-else :src="user?.avatar" :name="`${user?.firstname} ${user?.lastname}`" size="3xs" />
             </template>
 
-            <USkeleton v-if="!user && loading" class="h-8 w-[125px]" />
+            <USkeleton v-if="!user && isRequestPending(status)" class="h-8 w-[125px]" />
             <span v-else :class="textClass">
                 <slot name="name" :user="user">
                     {{ user?.firstname }} {{ user?.lastname }}
@@ -156,7 +153,7 @@ watchOnce(opened, async () => {
                     />
                 </div>
 
-                <div v-else-if="loading && !user" class="flex flex-col gap-2 text-gray-900 dark:text-white">
+                <div v-else-if="isRequestPending(status) && !user" class="flex flex-col gap-2 text-gray-900 dark:text-white">
                     <USkeleton class="h-8 w-[250px]" />
 
                     <div class="flex flex-row items-center gap-2">

@@ -30,12 +30,10 @@ const { $grpc } = useNuxtApp();
 
 const { isOpen } = useModal();
 
-const {
-    data,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(`qualification-${props.qualificationId}-result-examinfo-${props.userId}`, () => getUserExam());
+const { data, status, refresh, error } = useLazyAsyncData(
+    `qualification-${props.qualificationId}-result-examinfo-${props.userId}`,
+    () => getUserExam(),
+);
 
 async function getUserExam(): Promise<GetUserExamResponse> {
     const call = $grpc.qualifications.qualifications.getUserExam({
@@ -98,7 +96,7 @@ const correctCount = ref(0);
             @close="isOpen = false"
         >
             <template v-if="examMode >= QualificationExamMode.REQUEST_NEEDED" #default>
-                <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.exam')])" />
+                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.exam')])" />
                 <DataErrorBlock
                     v-else-if="error"
                     :title="$t('common.unable_to_load', [$t('common.exam')])"

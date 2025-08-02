@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
-import type { Editor } from '@tiptap/core';
+import type { Editor } from '@tiptap/vue-3';
 import { z } from 'zod';
 import { remoteImageURLToBase64Data } from './helpers';
 
@@ -115,7 +115,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UPopover v-model:open="open">
         <UTooltip :text="$t('components.partials.TiptapEditor.image')" :popper="{ placement: 'top' }">
-            <UButton icon="i-mdi-image" color="white" variant="ghost" :disabled="disabled" />
+            <UButton icon="i-mdi-image" color="gray" variant="ghost" :disabled="disabled" />
         </UTooltip>
 
         <template #panel>

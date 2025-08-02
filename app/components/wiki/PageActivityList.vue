@@ -14,12 +14,9 @@ const { $grpc } = useNuxtApp();
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
-const {
-    data,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(`wiki-page:${props.pageId}-${page.value}-${page.value}`, () => listPageActivity());
+const { data, status, refresh, error } = useLazyAsyncData(`wiki-page:${props.pageId}-${page.value}-${page.value}`, () =>
+    listPageActivity(),
+);
 
 async function listPageActivity(): Promise<ListPageActivityResponse> {
     try {
@@ -41,7 +38,7 @@ async function listPageActivity(): Promise<ListPageActivityResponse> {
 
 <template>
     <div>
-        <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.activity', 2)])" />
+        <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.activity', 2)])" />
         <DataErrorBlock
             v-else-if="error"
             :title="$t('common.unable_to_load', [$t('common.activity', 2)])"
@@ -58,6 +55,6 @@ async function listPageActivity(): Promise<ListPageActivityResponse> {
             <PageActivityListEntry v-for="item in data.activity" :key="item.id" :entry="item" />
         </ul>
 
-        <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+        <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
     </div>
 </template>

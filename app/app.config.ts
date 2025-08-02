@@ -14,7 +14,9 @@ export default defineAppConfig({
     discord: {
         botEnabled: false,
     } as Discord,
-    website: {} as Website,
+    website: {
+        links: undefined,
+    } as Website,
     featureGates: {
         imageProxy: false,
     } as FeatureGates,

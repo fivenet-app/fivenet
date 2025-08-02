@@ -215,11 +215,9 @@ export default defineNuxtConfig({
     },
 
     i18n: {
-        lazy: true,
-        parallelPlugin: true,
         strategy: 'no_prefix',
-        detectBrowserLanguage: false,
         defaultLocale: 'en',
+        detectBrowserLanguage: false,
         locales: [
             {
                 code: 'en',
@@ -238,12 +236,9 @@ export default defineNuxtConfig({
             },
         ],
         baseUrl: '',
-        trailingSlash: false,
+        parallelPlugin: true,
         compilation: {
             strictMessage: false,
-        },
-        bundle: {
-            optimizeTranslationDirective: false,
         },
     },
 

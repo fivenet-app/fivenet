@@ -768,7 +768,7 @@ class SetColleaguePropsRequest$Type extends MessageType<SetColleaguePropsRequest
     constructor() {
         super("services.jobs.SetColleaguePropsRequest", [
             { no: 1, name: "props", kind: "message", T: () => ColleagueProps },
-            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_UNPOPULATED", string: { minLen: "3", maxLen: "255" } } } }
+            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "3", maxLen: "255" } } } }
         ]);
     }
     create(value?: PartialMessage<SetColleaguePropsRequest>): SetColleaguePropsRequest {

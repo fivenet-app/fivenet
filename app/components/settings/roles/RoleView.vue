@@ -9,7 +9,7 @@ import RoleViewAttr from '~/components/settings/roles/RoleViewAttr.vue';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes';
 import type { Permission, Role } from '~~/gen/ts/resources/permissions/permissions';
-import type { AttrsUpdate, PermsUpdate } from '~~/gen/ts/services/settings/settings';
+import type { AttrsUpdate, PermsUpdate } from '~~/gen/ts/resources/settings/perms';
 import EffectivePermsSlideover from './EffectivePermsSlideover.vue';
 import { isEmptyAttributes } from './helpers';
 
@@ -33,12 +33,7 @@ const slideover = useSlideover();
 
 const notifications = useNotificationsStore();
 
-const {
-    data: role,
-    pending: loading,
-    refresh,
-    error,
-} = useLazyAsyncData(`settings-roles-${props.roleId}`, () => getRole(props.roleId));
+const { data: role, status, refresh, error } = useLazyAsyncData(`settings-roles-${props.roleId}`, () => getRole(props.roleId));
 
 const changed = ref(false);
 
@@ -371,7 +366,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 <template>
     <div class="w-full">
         <div class="px-1 sm:px-2">
-            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.role', 2)])" />
+            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.role', 2)])" />
             <DataErrorBlock
                 v-else-if="error"
                 :title="$t('common.unable_to_load', [$t('common.role', 2)])"

@@ -57,7 +57,7 @@ func (m *dbServer) Setup() {
 	m.resource, err = m.pool.RunWithOptions(
 		&dockertest.RunOptions{
 			Repository: "docker.io/library/mysql",
-			Tag:        "9.3.0",
+			Tag:        "9.4.0",
 			Env: []string{
 				"MYSQL_ROOT_PASSWORD=secret",
 				"MYSQL_USER=fivenet",
@@ -140,7 +140,7 @@ func (m *dbServer) prepareDBForFirstUse() error {
 	}
 
 	// Use DB migrations to handle the rest (esx compat mode is true)
-	if err := query.MigrateDB(zap.NewNop(), m.getDSN(), true, false); err != nil {
+	if _, err := query.MigrateDB(zap.NewNop(), m.getDSN(), false, true, false); err != nil {
 		m.t.Fatalf("failed to migrate test database: %v", err)
 	}
 
