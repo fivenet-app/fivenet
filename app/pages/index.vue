@@ -88,14 +88,6 @@ const links = computed(() =>
                     </ULandingHero>
                 </div>
             </UCard>
-
-            <UButton
-                class="absolute bottom-4 z-10"
-                icon="i-mdi-information-outline"
-                :label="$t('pages.about.title')"
-                to="/about"
-                color="white"
-            />
         </div>
     </div>
 </template>

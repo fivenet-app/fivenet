@@ -15,6 +15,7 @@ async function loadConfig(): Promise<ClientConfig> {
         updateAppConfig({ ...resp });
         return resp;
     } catch (e) {
+        console.error('Failed to get FiveNet config from backend', e);
         const err = e as Error;
         throw createError({
             statusCode: 500,
