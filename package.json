@@ -128,7 +128,7 @@
         "eslint-config-prettier": "10.1.8",
         "eslint-plugin-prettier": "5.5.3",
         "nuxi": "3.27.0",
-        "nuxt": "4.0.2",
+        "nuxt": "4.0.3",
         "nuxt-tiptap-editor": "2.3.1",
         "nuxt-typed-router": "4.0.1",
         "pinia-plugin-persistedstate": "4.4.1",
@@ -153,7 +153,7 @@
     },
     "resolutions": {
         "@intlify/shared": "11.1.11",
-        "@nuxt/kit": "4.0.2",
+        "@nuxt/kit": "4.0.3",
         "@tiptap/core": "3.0.9",
         "@tiptap/pm": "3.0.9"
     },
