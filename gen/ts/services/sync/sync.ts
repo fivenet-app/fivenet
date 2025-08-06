@@ -275,6 +275,10 @@ export interface DeleteDataResponse {
  * @generated from protobuf message services.sync.StreamRequest
  */
 export interface StreamRequest {
+    /**
+     * @generated from protobuf field: optional string version = 1
+     */
+    version?: string;
 }
 /**
  * @generated from protobuf message services.sync.StreamResponse
@@ -1020,7 +1024,9 @@ export const DeleteDataResponse = new DeleteDataResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class StreamRequest$Type extends MessageType<StreamRequest> {
     constructor() {
-        super("services.sync.StreamRequest", []);
+        super("services.sync.StreamRequest", [
+            { no: 1, name: "version", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } }
+        ]);
     }
     create(value?: PartialMessage<StreamRequest>): StreamRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -1033,6 +1039,9 @@ class StreamRequest$Type extends MessageType<StreamRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
+                case /* optional string version */ 1:
+                    message.version = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1045,6 +1054,9 @@ class StreamRequest$Type extends MessageType<StreamRequest> {
         return message;
     }
     internalBinaryWrite(message: StreamRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional string version = 1; */
+        if (message.version !== undefined)
+            writer.tag(1, WireType.LengthDelimited).string(message.version);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

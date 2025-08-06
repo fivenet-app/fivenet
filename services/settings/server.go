@@ -18,6 +18,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/reqs"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
+	"github.com/fivenet-app/fivenet/v2025/pkg/updatecheck"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	syncservice "github.com/fivenet-app/fivenet/v2025/services/sync"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -63,9 +64,10 @@ type Server struct {
 	dc               *discordapi.Client
 	dcOAuth2Provider *config.OAuth2Provider
 
-	syncServer *syncservice.Server
-	dbReq      *reqs.DBReqs
-	natsReq    *reqs.NatsReqs
+	syncServer    *syncservice.Server
+	dbReq         *reqs.DBReqs
+	natsReq       *reqs.NatsReqs
+	updateChecker *updatecheck.Checker
 }
 
 type Params struct {
@@ -85,9 +87,10 @@ type Params struct {
 	Crypt     *crypt.Crypt
 	Notifi    notifi.INotifi
 
-	SyncServer *syncservice.Server
-	DBReq      *reqs.DBReqs
-	NatsReq    *reqs.NatsReqs
+	SyncServer    *syncservice.Server
+	DBReq         *reqs.DBReqs
+	NatsReq       *reqs.NatsReqs
+	UpdateChecker *updatecheck.Checker
 }
 
 func NewServer(p Params) *Server {
@@ -131,9 +134,10 @@ func NewServer(p Params) *Server {
 		dc:               dc,
 		dcOAuth2Provider: dcOAuth2Provider,
 
-		syncServer: p.SyncServer,
-		dbReq:      p.DBReq,
-		natsReq:    p.NatsReq,
+		syncServer:    p.SyncServer,
+		dbReq:         p.DBReq,
+		natsReq:       p.NatsReq,
+		updateChecker: p.UpdateChecker,
 	}
 
 	return s

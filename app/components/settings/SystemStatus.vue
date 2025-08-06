@@ -110,6 +110,11 @@ async function getStatus() {
                                 <GenericTime v-if="data.dbsync?.lastSyncedActivity" :value="data.dbsync?.lastSyncedActivity" />
                                 <span v-else>{{ $t('common.na') }}</span>
                             </li>
+                            <li class="inline-flex items-center gap-1">
+                                <strong>{{ $t('components.settings.system_status.db_sync.last_dbsync_version') }}:</strong>
+                                <span v-if="data.dbsync?.lastDbsyncVersion">{{ data.dbsync?.lastDbsyncVersion ?? '' }}</span>
+                                <span v-else>{{ $t('common.na') }}</span>
+                            </li>
                         </ul>
                     </div>
                 </template>

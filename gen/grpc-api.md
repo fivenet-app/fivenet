@@ -11440,6 +11440,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `enabled` | [bool](#bool) |  |  |
 | `last_synced_data` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `last_synced_activity` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `last_dbsync_version` | [string](#string) | optional |  |
 
 
 
@@ -11541,6 +11542,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `database` | [Database](#servicessettingsDatabase) |  |  |
 | `nats` | [Nats](#servicessettingsNats) |  |  |
 | `dbsync` | [DBSyncStatus](#servicessettingsDBSyncStatus) |  |  |
+| `version` | [VersionStatus](#servicessettingsVersionStatus) |  |  |
 
 
 
@@ -11553,6 +11555,19 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | ----- | ---- | ----- | ----------- |
 | `version` | [string](#string) |  |  |
 | `connected` | [bool](#bool) |  |  |
+
+
+
+
+
+### services.settings.NewVersionInfo
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `version` | [string](#string) |  |  |
+| `url` | [string](#string) |  |  |
+| `release_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 
 
 
@@ -11572,6 +11587,18 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 
 ### services.settings.UpdateJobLimitsResponse
+
+
+
+
+
+### services.settings.VersionStatus
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `current` | [string](#string) |  |  |
+| `new_version` | [NewVersionInfo](#servicessettingsNewVersionInfo) | optional |  |
 
 
 
@@ -11769,6 +11796,11 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 
 ### services.sync.StreamRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `version` | [string](#string) | optional |  |
 
 
 

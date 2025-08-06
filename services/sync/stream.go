@@ -15,6 +15,11 @@ import (
 func (s *Server) Stream(req *pbsync.StreamRequest, srv pbsync.SyncService_StreamServer) error {
 	ctx := srv.Context()
 
+	// Update last (seen) dbsync version when set
+	if req.Version != nil && *req.Version != "" {
+		s.lastDBSyncVersion.Store(req.Version)
+	}
+
 	// Setup consumer
 	consumer, err := s.js.CreateOrUpdateConsumer(ctx, strings.ToUpper(string(BaseSubject)), jetstream.ConsumerConfig{
 		Durable:           instance.ID() + "_sync",

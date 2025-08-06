@@ -63,6 +63,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2025/pkg/tracker/manager"
+	"github.com/fivenet-app/fivenet/v2025/pkg/updatecheck"
 	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/query"
 	centrumbot "github.com/fivenet-app/fivenet/v2025/services/centrum/bot"
@@ -144,6 +145,7 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 		fx.Provide(pkgfilestore.NewHousekeeper),
 		fx.Provide(crypt.New),
 		fx.Provide(demo.New),
+		updatecheck.Module,
 		// Discord Bot
 		discord.StateModule,
 		discord.BotModule,

@@ -173,12 +173,38 @@ func (m *GetStatusResponse) Sanitize() error {
 		}
 	}
 
+	// Field: Version
+	if m.Version != nil {
+		if v, ok := any(m.GetVersion()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 }
 
 func (m *Nats) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	return nil
+}
+
+func (m *NewVersionInfo) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: ReleaseDate
+	if m.ReleaseDate != nil {
+		if v, ok := any(m.GetReleaseDate()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil
@@ -213,6 +239,23 @@ func (m *UpdateJobLimitsRequest) Sanitize() error {
 func (m *UpdateJobLimitsResponse) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	return nil
+}
+
+func (m *VersionStatus) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: NewVersion
+	if m.NewVersion != nil {
+		if v, ok := any(m.GetNewVersion()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

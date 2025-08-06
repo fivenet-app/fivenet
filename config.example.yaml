@@ -191,3 +191,9 @@ otlp:
     headers: {}
       # Example to authenticate with an API key
       #authorization: "OTEL_API_KEY_HERE"
+
+updateCheck:
+  # If enabled, it will check for updates every interval.
+  enabled: true
+  # Interval for checking updates, e.g., "1h", "30m", "15s"
+  interval: "6h"

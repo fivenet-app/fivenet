@@ -37,6 +37,7 @@ type Server struct {
 	esxCompat bool
 	tokens    []string
 
+	lastDBSyncVersion  atomic.Pointer[string]
 	lastSyncedData     atomic.Int64
 	lastSyncedActivity atomic.Int64
 }
@@ -73,6 +74,8 @@ func NewServer(p Params) (Result, error) {
 
 		esxCompat: p.Config.Database.ESXCompat,
 		tokens:    p.Config.Sync.APITokens,
+
+		lastDBSyncVersion: atomic.Pointer[string]{},
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
@@ -129,14 +132,16 @@ func (s *Server) GetSyncTimes() *pbsettings.DBSyncStatus {
 		Enabled: s.cfg.Sync.Enabled,
 	}
 
-	lastSyncedData := s.lastSyncedData.Load()
-	if lastSyncedData > 0 {
-		st.LastSyncedData = timestamp.New(time.Unix(lastSyncedData, 0))
+	if v := s.lastSyncedData.Load(); v > 0 {
+		st.LastSyncedData = timestamp.New(time.Unix(v, 0))
 	}
 
-	lastSyncedActivity := s.lastSyncedActivity.Load()
-	if lastSyncedActivity > 0 {
-		st.LastSyncedActivity = timestamp.New(time.Unix(lastSyncedActivity, 0))
+	if v := s.lastSyncedActivity.Load(); v > 0 {
+		st.LastSyncedActivity = timestamp.New(time.Unix(v, 0))
+	}
+
+	if v := s.lastDBSyncVersion.Load(); v != nil && *v != "" {
+		st.LastDbsyncVersion = v
 	}
 
 	return st

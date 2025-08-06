@@ -38,6 +38,7 @@ type Config struct {
 	Game           Game           `yaml:"game"`
 	Sync           Sync           `yaml:"sync"`
 	OTLP           OTLPConfig     `yaml:"otlp"`
+	UpdateCheck    UpdateCheck    `yaml:"updateCheck"`
 }
 
 type LoggingComponent string
@@ -337,4 +338,9 @@ type OTLPFrontendConfig struct {
 	// Public URL for traces and other instrumentation (if set, only then instrumentation is enabled in the frontend)
 	URL     string            `yaml:"url"`
 	Headers map[string]string `yaml:"headers,omitempty"`
+}
+
+type UpdateCheck struct {
+	Enabled  bool          `default:"true" yaml:"enabled"`
+	Interval time.Duration `default:"6h" yaml:"interval"`
 }

@@ -875,6 +875,7 @@ func (x *DeleteDataResponse) GetAffectedRows() int64 {
 
 type StreamRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Version       *string                `protobuf:"bytes,1,opt,name=version,proto3,oneof" json:"version,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -907,6 +908,13 @@ func (x *StreamRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use StreamRequest.ProtoReflect.Descriptor instead.
 func (*StreamRequest) Descriptor() ([]byte, []int) {
 	return file_services_sync_sync_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *StreamRequest) GetVersion() string {
+	if x != nil && x.Version != nil {
+		return *x.Version
+	}
+	return ""
 }
 
 type StreamResponse struct {
@@ -1019,8 +1027,11 @@ const file_services_sync_sync_proto_rawDesc = "" +
 	"\bvehicles\x18\x02 \x01(\v2\x1e.resources.sync.DeleteVehiclesH\x00R\bvehiclesB\r\n" +
 	"\x04data\x12\x05\xbaH\x02\b\x01\"9\n" +
 	"\x12DeleteDataResponse\x12#\n" +
-	"\raffected_rows\x18\x01 \x01(\x03R\faffectedRows\"\x0f\n" +
-	"\rStreamRequest\")\n" +
+	"\raffected_rows\x18\x01 \x01(\x03R\faffectedRows\"C\n" +
+	"\rStreamRequest\x12&\n" +
+	"\aversion\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18 H\x00R\aversion\x88\x01\x01B\n" +
+	"\n" +
+	"\b_version\")\n" +
 	"\x0eStreamResponse\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId2\xe0\x04\n" +
 	"\vSyncService\x12N\n" +
@@ -1150,6 +1161,7 @@ func file_services_sync_sync_proto_init() {
 		(*DeleteDataRequest_Users)(nil),
 		(*DeleteDataRequest_Vehicles)(nil),
 	}
+	file_services_sync_sync_proto_msgTypes[12].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

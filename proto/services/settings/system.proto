@@ -50,6 +50,7 @@ message GetStatusResponse {
   Database database = 1;
   Nats nats = 2;
   DBSyncStatus dbsync = 3;
+  VersionStatus version = 4;
 }
 
 message Nats {
@@ -71,6 +72,18 @@ message DBSyncStatus {
   bool enabled = 1;
   optional resources.timestamp.Timestamp last_synced_data = 2;
   optional resources.timestamp.Timestamp last_synced_activity = 3;
+  optional string last_dbsync_version = 4 [(buf.validate.field).string.max_len = 32];
+}
+
+message VersionStatus {
+  string current = 1 [(buf.validate.field).string.max_len = 32];
+  optional NewVersionInfo new_version = 2;
+}
+
+message NewVersionInfo {
+  string version = 1 [(buf.validate.field).string.max_len = 32];
+  string url = 2 [(buf.validate.field).string.max_len = 256];
+  optional resources.timestamp.Timestamp release_date = 3;
 }
 
 service SystemService {

@@ -1569,7 +1569,8 @@
                 "db_sync": {
                     "title": "DB Sync",
                     "last_data_received": "Zuletzt empfangene Daten",
-                    "last_activity_received": "Letzte empfangene Aktivität"
+                    "last_activity_received": "Letzte empfangene Aktivität",
+                    "last_dbsync_version": "Letzte gesehene DB Sync Version"
                 }
             }
         }

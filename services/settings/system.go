@@ -4,9 +4,11 @@ import (
 	"context"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2025/pkg/version"
 	errorssettings "github.com/fivenet-app/fivenet/v2025/services/settings/errors"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
@@ -31,6 +33,24 @@ func (s *Server) GetStatus(ctx context.Context, req *pbsettings.GetStatusRequest
 			Connected: !s.js.Conn().IsClosed(),
 		},
 		Dbsync: s.syncServer.GetSyncTimes(),
+		Version: &pbsettings.VersionStatus{
+			Current:    version.Version,
+			NewVersion: nil,
+		},
+	}
+
+	// Get version info from the update checker if it's enabled
+	if s.updateChecker != nil {
+		current, latestVersion, url, releaseDate := s.updateChecker.GetNewVersionInfo()
+		if latestVersion != current {
+			resp.Version.NewVersion = &pbsettings.NewVersionInfo{
+				Version: latestVersion,
+				Url:     url,
+			}
+			if !releaseDate.IsZero() {
+				resp.Version.NewVersion.ReleaseDate = timestamp.New(releaseDate)
+			}
+		}
 	}
 
 	return resp, nil

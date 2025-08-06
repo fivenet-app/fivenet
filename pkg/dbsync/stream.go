@@ -6,6 +6,7 @@ import (
 	"time"
 
 	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
+	"github.com/fivenet-app/fivenet/v2025/pkg/version"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -34,7 +35,9 @@ func (s *Sync) RunStream(ctx context.Context) {
 }
 
 func (s *Sync) runStream(ctx context.Context) error {
-	stream, err := s.syncCli.Stream(ctx, &pbsync.StreamRequest{})
+	stream, err := s.syncCli.Stream(ctx, &pbsync.StreamRequest{
+		Version: &version.Version,
+	})
 	if err != nil {
 		return err
 	}
