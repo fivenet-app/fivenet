@@ -47,8 +47,10 @@ func (s *Server) ListDispatches(ctx context.Context, req *pbcentrum.ListDispatch
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	jobs := []string{userInfo.Job}
-	// TODO add other jobs based on user access
+	jobs, _, err := s.settings.GetJobAccessList(ctx, userInfo.Job, userInfo.JobGrade)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+	}
 	jobsOut, _ := json.Marshal(jobs)
 
 	condition := jet.BoolExp(dbutils.JSON_CONTAINS(tDispatch.Jobs, jet.StringExp(jet.String(string(jobsOut))))).
