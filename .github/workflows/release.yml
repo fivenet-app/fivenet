@@ -49,14 +49,6 @@ jobs:
           extra_files: LICENSE README.md VERSION config.example.yaml dbsync.example.yaml
           ldflags: '-X github.com/fivenet-app/fivenet/v2025/pkg/version.Version=${{ env.APP_VERSION }}'
 
-  update-dev-channel:
-    name: Update Dev Channel
-    needs: build-images
-    uses: ./.github/workflows/update-channel.yml
-    with:
-      channel: dev
-      image_tag: ${{ needs.build-images.outputs.image_tag }}
-
   update-stable-channel:
     name: Update Stable Channel
     needs:
