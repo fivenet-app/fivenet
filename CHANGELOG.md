@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025.8.0] - 2025-08-07
+
+### 🚀 Features
+
+- Add option to ignore empty names to users dbsync
+- Add basic system status info to settings page
+- Add last char id for dbsync api
+- Update tiptap to v3.0.7
+- Update nuxt i18n
+- Switch to useLazy*Data `status` instead of `pending`
+- Move auth server and grpc auth errors to separate package
+- Refresh user info on character choose
+- Add basic update check and last seen dbsync version
+- Add "internal" iconify api to make hosting fivenet easier
+
+### 🐛 Bug Fixes
+
+- Release channel update for release builds
+- Manually bump channels.json due to ci error
+- Banner message validation
+- Update release channels from develop branch only
+- Tweak dockerignore
+- Nil pointer due to reqs
+- Db reqs error message
+- Db reqs nil pointer
+- System status dbsync showing on wrong condition
+- Update dbsync example config vehicles columns
+- Update release channels
+- Types not being included correctly
+- Tiptap editor duplicate extensions
+- Mock userinfo retriever missing function
+- Bump fivenet chart to 0.20.1
+- Improve client app config error handling
+
 ## [2025.7.1] - 2025-07-17
 
 ### 🚀 Features
