@@ -28,6 +28,25 @@ RUN find ./public/images/livemap/ \
         ! -path '*/tiles*' -and ! -path './public/images/livemap/' \
         -exec rm -rf {} +
 
+# Iconify icon sets for backend server
+FROM docker.io/library/alpine:3.22.1 AS iconsets
+
+WORKDIR /app
+
+# Clone the icon sets repository and filter for JSON files only
+RUN apk add --no-cache git && \
+    mkdir -p icons && \
+    git init icons && \
+    cd icons && \
+    git remote add -f origin https://github.com/iconify/icon-sets.git && \
+    git config core.sparseCheckout true && \
+    echo "json/" >> .git/info/sparse-checkout  && \
+    git pull origin master && \
+    rm -rf .git && \
+    mv json/* . && \
+    rm -rf json && \
+    find . -type f ! -name '*.json' -delete
+
 # Backend Build
 FROM docker.io/library/golang:1.24.5 AS gobuilder
 
@@ -64,6 +83,7 @@ RUN apk --no-cache add ca-certificates tini tzdata && \
     mkdir -p ./.output/public
 
 ## Copy built files from the builder stages
+COPY --from=iconsets /app/icons/ ./icons/
 COPY --from=nodebuilder /app/.output/public ./.output/public
 COPY --from=gobuilder /go/src/github.com/fivenet-app/fivenet/v2025/fivenet /usr/local/bin
 

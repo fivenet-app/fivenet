@@ -163,11 +163,6 @@ export default defineNuxtConfig({
         },
         server: {
             proxy: {
-                '/api/icons': {
-                    target: 'https://api.iconify.design',
-                    rewrite: (path: string) => path.replace(/^\/api\/icons/, ''),
-                    changeOrigin: true,
-                },
                 '/api/grpc': {
                     target: 'http://127.0.0.1:8080',
                     changeOrigin: true,

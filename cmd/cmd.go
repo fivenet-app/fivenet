@@ -57,6 +57,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/api"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/filestore"
+	"github.com/fivenet-app/fivenet/v2025/pkg/server/icons"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/images"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/oauth2"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/wk"
@@ -146,6 +147,7 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 		fx.Provide(crypt.New),
 		fx.Provide(demo.New),
 		updatecheck.Module,
+
 		// Discord Bot
 		discord.StateModule,
 		discord.BotModule,
@@ -181,6 +183,7 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 			server.AsService(images.New),
 			server.AsService(oauth2.New),
 			server.AsService(wk.New),
+			server.AsService(icons.New),
 		),
 
 		// GRPC Services

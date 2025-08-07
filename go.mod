@@ -4,12 +4,14 @@ go 1.24.5
 
 require (
 	buf.build/go/protovalidate v0.14.0
+	github.com/Code-Hex/go-generics-cache v1.5.1
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/HugoSmits86/nativewebp v1.2.0
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/XSAM/otelsql v0.39.0
 	github.com/adhocore/gronx v1.19.6
 	github.com/alecthomas/kong v1.12.1
+	github.com/andyburri/iconify-go v0.1.0
 	github.com/aymanbagabas/go-udiff v0.3.1
 	github.com/blevesearch/bleve/v2 v2.5.2
 	github.com/cespare/xxhash/v2 v2.3.0

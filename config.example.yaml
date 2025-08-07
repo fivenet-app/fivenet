@@ -197,3 +197,13 @@ updateCheck:
   enabled: true
   # Interval for checking updates, e.g., "1h", "30m", "15s"
   interval: "6h"
+
+icons:
+  # If true, the Iconify API is enabled and will be served from the backend to serve icons.
+  enabled: true
+  # If true, the backend server will act as a proxy for the Iconify API (URL specified via `APIURL` setting).
+  proxy: false
+  # If you are using the proxy mode, make sure to support the Iconify project: https://iconify.design/sponsors/
+  apiUrl: "https://api.iconify.design"
+  # Path to the directory containing icon sets (used when proxy is disabled; this path works with the official FiveNet container images).
+  path: ./icons
