@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025.8.1] - 2025-08-07
+
 ## [2025.8.0] - 2025-08-07
 
 ### 🚀 Features
