@@ -16,6 +16,7 @@ import { CentrumAccessLevel } from "../../resources/centrum/access";
 import { Timestamp } from "../../resources/timestamp/timestamp";
 import { TakeDispatchResp } from "../../resources/centrum/dispatches";
 import { DispatchStatus } from "../../resources/centrum/dispatches";
+import { Job } from "../../resources/jobs/jobs";
 import { Dispatch } from "../../resources/centrum/dispatches";
 import { StatusDispatch } from "../../resources/centrum/dispatches";
 import { UnitStatus } from "../../resources/centrum/units";
@@ -360,6 +361,20 @@ export interface DeleteDispatchRequest {
  * @generated from protobuf message services.centrum.DeleteDispatchResponse
  */
 export interface DeleteDispatchResponse {
+}
+/**
+ * @generated from protobuf message services.centrum.ListDispatchTargetJobsRequest
+ */
+export interface ListDispatchTargetJobsRequest {
+}
+/**
+ * @generated from protobuf message services.centrum.ListDispatchTargetJobsResponse
+ */
+export interface ListDispatchTargetJobsResponse {
+    /**
+     * @generated from protobuf field: repeated resources.jobs.Job jobs = 1
+     */
+    jobs: Job[];
 }
 /**
  * @generated from protobuf message services.centrum.UpdateDispatchStatusRequest
@@ -2267,6 +2282,91 @@ class DeleteDispatchResponse$Type extends MessageType<DeleteDispatchResponse> {
  */
 export const DeleteDispatchResponse = new DeleteDispatchResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class ListDispatchTargetJobsRequest$Type extends MessageType<ListDispatchTargetJobsRequest> {
+    constructor() {
+        super("services.centrum.ListDispatchTargetJobsRequest", []);
+    }
+    create(value?: PartialMessage<ListDispatchTargetJobsRequest>): ListDispatchTargetJobsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<ListDispatchTargetJobsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListDispatchTargetJobsRequest): ListDispatchTargetJobsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListDispatchTargetJobsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.ListDispatchTargetJobsRequest
+ */
+export const ListDispatchTargetJobsRequest = new ListDispatchTargetJobsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListDispatchTargetJobsResponse$Type extends MessageType<ListDispatchTargetJobsResponse> {
+    constructor() {
+        super("services.centrum.ListDispatchTargetJobsResponse", [
+            { no: 1, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Job }
+        ]);
+    }
+    create(value?: PartialMessage<ListDispatchTargetJobsResponse>): ListDispatchTargetJobsResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.jobs = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListDispatchTargetJobsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListDispatchTargetJobsResponse): ListDispatchTargetJobsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.jobs.Job jobs */ 1:
+                    message.jobs.push(Job.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListDispatchTargetJobsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.jobs.Job jobs = 1; */
+        for (let i = 0; i < message.jobs.length; i++)
+            Job.internalBinaryWrite(message.jobs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.ListDispatchTargetJobsResponse
+ */
+export const ListDispatchTargetJobsResponse = new ListDispatchTargetJobsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class UpdateDispatchStatusRequest$Type extends MessageType<UpdateDispatchStatusRequest> {
     constructor() {
         super("services.centrum.UpdateDispatchStatusRequest", [
@@ -3232,6 +3332,7 @@ export const CentrumService = new ServiceType("services.centrum.CentrumService",
     { name: "CreateDispatch", options: {}, I: CreateDispatchRequest, O: CreateDispatchResponse },
     { name: "UpdateDispatch", options: {}, I: UpdateDispatchRequest, O: UpdateDispatchResponse },
     { name: "DeleteDispatch", options: {}, I: DeleteDispatchRequest, O: DeleteDispatchResponse },
+    { name: "ListDispatchTargetJobs", options: {}, I: ListDispatchTargetJobsRequest, O: ListDispatchTargetJobsResponse },
     { name: "TakeControl", options: {}, I: TakeControlRequest, O: TakeControlResponse },
     { name: "AssignDispatch", options: {}, I: AssignDispatchRequest, O: AssignDispatchResponse },
     { name: "AssignUnit", options: {}, I: AssignUnitRequest, O: AssignUnitResponse },

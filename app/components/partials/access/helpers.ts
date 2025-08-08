@@ -60,13 +60,17 @@ export type AccessLevelEnum = {
     value: number;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function enumToAccessLevelEnums(accessLevel: any, translationPrefix: string): AccessLevelEnum[] {
+export function enumToAccessLevelEnums(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    accessLevel: any,
+    translationPrefix: string,
+    filterFn?: (val: number) => boolean,
+): AccessLevelEnum[] {
     const { t } = useI18n();
 
     return [
         ...listEnumValues(accessLevel)
-            .filter((e) => e.number !== 0)
+            .filter((e) => e.number !== 0 && (!filterFn || filterFn(e.number)))
             .map((e) => {
                 return {
                     label: t(`${translationPrefix}.${e.name}`),

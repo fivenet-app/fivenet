@@ -9,6 +9,7 @@ import "resources/centrum/dispatches.proto";
 import "resources/centrum/settings.proto";
 import "resources/centrum/units.proto";
 import "resources/common/database/database.proto";
+import "resources/jobs/jobs.proto";
 import "resources/livemap/heatmap.proto";
 import "resources/timestamp/timestamp.proto";
 
@@ -154,6 +155,12 @@ message DeleteDispatchRequest {
 
 message DeleteDispatchResponse {}
 
+message ListDispatchTargetJobsRequest {}
+
+message ListDispatchTargetJobsResponse {
+  repeated resources.jobs.Job jobs = 1;
+}
+
 message UpdateDispatchStatusRequest {
   uint64 dispatch_id = 1;
   resources.centrum.StatusDispatch status = 2 [(buf.validate.field).enum.defined_only = true];
@@ -257,6 +264,9 @@ service CentrumService {
   rpc UpdateDispatch(UpdateDispatchRequest) returns (UpdateDispatchResponse);
   // @perm
   rpc DeleteDispatch(DeleteDispatchRequest) returns (DeleteDispatchResponse);
+
+  // @perm: Name=CreateDispatch
+  rpc ListDispatchTargetJobs(ListDispatchTargetJobsRequest) returns (ListDispatchTargetJobsResponse);
 
   // @perm
   rpc TakeControl(TakeControlRequest) returns (TakeControlResponse);

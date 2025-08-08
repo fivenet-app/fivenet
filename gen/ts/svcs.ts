@@ -182,6 +182,7 @@ export const grpcMethods = [
 	'centrum.CentrumService/CreateDispatch',
 	'centrum.CentrumService/UpdateDispatch',
 	'centrum.CentrumService/DeleteDispatch',
+	'centrum.CentrumService/ListDispatchTargetJobs',
 	'centrum.CentrumService/TakeControl',
 	'centrum.CentrumService/AssignDispatch',
 	'centrum.CentrumService/AssignUnit',

@@ -21,10 +21,25 @@ const { isOpen } = useSlideover();
 const livemapStore = useLivemapStore();
 const { location: storeLocation } = storeToRefs(livemapStore);
 
+const { data: dispatchTargetJobs } = useLazyAsyncData('centrum-dispatches-target-jobs', async () => {
+    try {
+        const call = $grpc.centrum.centrum.listDispatchTargetJobs({});
+        const { response } = await call;
+
+        return response.jobs ?? [];
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        throw e;
+    }
+});
+
 const schema = z.object({
     message: z.string().min(3).max(255),
     description: z.union([z.string().min(3).max(512), z.string().length(0).optional()]),
     anon: z.coerce.boolean(),
+    jobs: z.object({
+        jobs: z.array(z.string().min(1).max(32)).min(1).max(5).default([]),
+    }),
 });
 
 type Schema = z.output<typeof schema>;
@@ -33,6 +48,9 @@ const state = reactive<Schema>({
     message: '',
     description: '',
     anon: false,
+    jobs: {
+        jobs: [],
+    },
 });
 
 async function createDispatch(values: Schema): Promise<void> {
@@ -64,6 +82,13 @@ async function createDispatch(values: Schema): Promise<void> {
         throw e;
     }
 }
+
+watch(dispatchTargetJobs, (jobs) => {
+    if (!jobs || jobs?.length <= 0) {
+        state.jobs.jobs = [];
+        return;
+    }
+});
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -124,6 +149,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </UFormGroup>
                             </dd>
                         </div>
+
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
                                 <label class="block text-sm font-medium leading-6" for="description">
@@ -141,6 +167,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </UFormGroup>
                             </dd>
                         </div>
+
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
                                 <label class="block text-sm font-medium leading-6" for="anon">
@@ -150,6 +177,48 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <UFormGroup name="anon">
                                     <UCheckbox v-model="state.anon" name="anon" :placeholder="$t('common.anon')" />
+                                </UFormGroup>
+                            </dd>
+                        </div>
+
+                        <div
+                            v-if="dispatchTargetJobs && dispatchTargetJobs.length > 0"
+                            class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
+                        >
+                            <dt class="text-sm font-medium leading-6">
+                                <label class="block text-sm font-medium leading-6" for="jobs.jobs">
+                                    {{ $t('common.job') }}
+                                </label>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                                <UFormGroup name="jobs.jobs">
+                                    <USelectMenu
+                                        v-model="state.jobs.jobs"
+                                        name="jobs.jobs"
+                                        multiple
+                                        :placeholder="$t('common.job')"
+                                        option-attribute="label"
+                                        :search-attributes="['name', 'label']"
+                                        value-attribute="name"
+                                        :options="dispatchTargetJobs"
+                                        searchable
+                                        searchable-lazy
+                                        :searchable-placeholder="$t('common.search_field')"
+                                    >
+                                        <template #label="{ selected }">
+                                            <span class="truncate">{{
+                                                selected.length > 0
+                                                    ? selected.map((j: { label: string }) => j.label).join(', ')
+                                                    : '&nbsp;'
+                                            }}</span>
+                                        </template>
+
+                                        <template #option-empty="{ query: search }">
+                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        </template>
+
+                                        <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
+                                    </USelectMenu>
                                 </UFormGroup>
                             </dd>
                         </div>

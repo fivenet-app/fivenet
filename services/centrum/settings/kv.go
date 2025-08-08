@@ -68,10 +68,6 @@ func (s *SettingsDB) GetJobAccessList(ctx context.Context, userJob string, userG
 	}
 
 	for _, ja := range settings.Access.Jobs {
-		if ja.MinimumGrade > userGrade {
-			continue
-		}
-
 		js, err := s.Get(ctx, ja.Job)
 		if err != nil {
 			return nil, nil, fmt.Errorf("failed to get settings from other job %s for job list %s. %w", ja.Job, userJob, err)
@@ -83,8 +79,7 @@ func (s *SettingsDB) GetJobAccessList(ctx context.Context, userJob string, userG
 
 		// Check if the job's share their access (equal or higher level)
 		if !slices.ContainsFunc(js.Access.Jobs, func(j *centrum.CentrumJobAccess) bool {
-			return j.Job == userJob && j.MinimumGrade <= userGrade &&
-				j.Access > centrum.CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_BLOCKED && j.Access >= ja.Access
+			return j.Job == userJob && j.Access > centrum.CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_BLOCKED && j.Access >= ja.Access
 		}) {
 			continue
 		}

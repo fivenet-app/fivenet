@@ -11,18 +11,19 @@ import (
 
 var PermsRemap = map[string]string{
 	// Service: centrum.CentrumService
-	"centrum.CentrumService/AssignDispatch":       "centrum.CentrumService/TakeControl",
-	"centrum.CentrumService/AssignUnit":           "centrum.CentrumService/TakeControl",
-	"centrum.CentrumService/GetDispatch":          "centrum.CentrumService/Stream",
-	"centrum.CentrumService/GetDispatchHeatmap":   "centrum.CentrumService/TakeControl",
-	"centrum.CentrumService/GetSettings":          "centrum.CentrumService/Stream",
-	"centrum.CentrumService/JoinUnit":             "centrum.CentrumService/Stream",
-	"centrum.CentrumService/ListDispatchActivity": "centrum.CentrumService/Stream",
-	"centrum.CentrumService/ListDispatches":       "centrum.CentrumService/Stream",
-	"centrum.CentrumService/ListUnitActivity":     "centrum.CentrumService/Stream",
-	"centrum.CentrumService/ListUnits":            "centrum.CentrumService/Stream",
-	"centrum.CentrumService/UpdateDispatchStatus": "centrum.CentrumService/TakeDispatch",
-	"centrum.CentrumService/UpdateUnitStatus":     "centrum.CentrumService/TakeDispatch",
+	"centrum.CentrumService/AssignDispatch":         "centrum.CentrumService/TakeControl",
+	"centrum.CentrumService/AssignUnit":             "centrum.CentrumService/TakeControl",
+	"centrum.CentrumService/GetDispatch":            "centrum.CentrumService/Stream",
+	"centrum.CentrumService/GetDispatchHeatmap":     "centrum.CentrumService/TakeControl",
+	"centrum.CentrumService/GetSettings":            "centrum.CentrumService/Stream",
+	"centrum.CentrumService/JoinUnit":               "centrum.CentrumService/Stream",
+	"centrum.CentrumService/ListDispatchActivity":   "centrum.CentrumService/Stream",
+	"centrum.CentrumService/ListDispatchTargetJobs": "centrum.CentrumService/CreateDispatch",
+	"centrum.CentrumService/ListDispatches":         "centrum.CentrumService/Stream",
+	"centrum.CentrumService/ListUnitActivity":       "centrum.CentrumService/Stream",
+	"centrum.CentrumService/ListUnits":              "centrum.CentrumService/Stream",
+	"centrum.CentrumService/UpdateDispatchStatus":   "centrum.CentrumService/TakeDispatch",
+	"centrum.CentrumService/UpdateUnitStatus":       "centrum.CentrumService/TakeDispatch",
 }
 
 func init() {

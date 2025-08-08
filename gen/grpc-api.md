@@ -7394,6 +7394,23 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
+### services.centrum.ListDispatchTargetJobsRequest
+
+
+
+
+
+### services.centrum.ListDispatchTargetJobsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [resources.jobs.Job](#resourcesjobsJob) | repeated |  |
+
+
+
+
+
 ### services.centrum.ListDispatchesRequest
 
 
@@ -7663,6 +7680,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `CreateDispatch` | [CreateDispatchRequest](#servicescentrumCreateDispatchRequest) | [CreateDispatchResponse](#servicescentrumCreateDispatchResponse) |@perm |
 | `UpdateDispatch` | [UpdateDispatchRequest](#servicescentrumUpdateDispatchRequest) | [UpdateDispatchResponse](#servicescentrumUpdateDispatchResponse) |@perm |
 | `DeleteDispatch` | [DeleteDispatchRequest](#servicescentrumDeleteDispatchRequest) | [DeleteDispatchResponse](#servicescentrumDeleteDispatchResponse) |@perm |
+| `ListDispatchTargetJobs` | [ListDispatchTargetJobsRequest](#servicescentrumListDispatchTargetJobsRequest) | [ListDispatchTargetJobsResponse](#servicescentrumListDispatchTargetJobsResponse) |@perm: Name=CreateDispatch |
 | `TakeControl` | [TakeControlRequest](#servicescentrumTakeControlRequest) | [TakeControlResponse](#servicescentrumTakeControlResponse) |@perm |
 | `AssignDispatch` | [AssignDispatchRequest](#servicescentrumAssignDispatchRequest) | [AssignDispatchResponse](#servicescentrumAssignDispatchResponse) |@perm: Name=TakeControl |
 | `AssignUnit` | [AssignUnitRequest](#servicescentrumAssignUnitRequest) | [AssignUnitResponse](#servicescentrumAssignUnitResponse) |@perm: Name=TakeControl |

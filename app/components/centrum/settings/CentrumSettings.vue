@@ -96,6 +96,8 @@ const state = reactive<Schema>({
 });
 
 async function updateSettings(values: Schema): Promise<void> {
+    values.access.jobs.forEach((job) => job.id < 0 && (job.id = 0));
+
     try {
         const call = $grpc.centrum.centrum.updateSettings({
             settings: {
@@ -550,7 +552,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         v-model:jobs="state.access.jobs"
                                         :target-id="0"
                                         :access-roles="
-                                            enumToAccessLevelEnums(CentrumAccessLevel, 'enums.centrum.CentrumAccessLevel')
+                                            enumToAccessLevelEnums(
+                                                CentrumAccessLevel,
+                                                'enums.centrum.CentrumAccessLevel',
+                                                (val) => val > CentrumAccessLevel.BLOCKED,
+                                            )
                                         "
                                         :access-types="[{ type: 'job', name: $t('common.job', 2) }]"
                                         hide-grade

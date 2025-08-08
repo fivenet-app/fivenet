@@ -377,6 +377,34 @@ func (m *ListDispatchActivityResponse) Sanitize() error {
 	return nil
 }
 
+func (m *ListDispatchTargetJobsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *ListDispatchTargetJobsResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Jobs
+	for idx, item := range m.Jobs {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func (m *ListDispatchesRequest) Sanitize() error {
 	if m == nil {
 		return nil

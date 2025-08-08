@@ -19,28 +19,29 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CentrumService_UpdateSettings_FullMethodName       = "/services.centrum.CentrumService/UpdateSettings"
-	CentrumService_CreateDispatch_FullMethodName       = "/services.centrum.CentrumService/CreateDispatch"
-	CentrumService_UpdateDispatch_FullMethodName       = "/services.centrum.CentrumService/UpdateDispatch"
-	CentrumService_DeleteDispatch_FullMethodName       = "/services.centrum.CentrumService/DeleteDispatch"
-	CentrumService_TakeControl_FullMethodName          = "/services.centrum.CentrumService/TakeControl"
-	CentrumService_AssignDispatch_FullMethodName       = "/services.centrum.CentrumService/AssignDispatch"
-	CentrumService_AssignUnit_FullMethodName           = "/services.centrum.CentrumService/AssignUnit"
-	CentrumService_GetDispatchHeatmap_FullMethodName   = "/services.centrum.CentrumService/GetDispatchHeatmap"
-	CentrumService_UpdateDispatchers_FullMethodName    = "/services.centrum.CentrumService/UpdateDispatchers"
-	CentrumService_Stream_FullMethodName               = "/services.centrum.CentrumService/Stream"
-	CentrumService_GetSettings_FullMethodName          = "/services.centrum.CentrumService/GetSettings"
-	CentrumService_JoinUnit_FullMethodName             = "/services.centrum.CentrumService/JoinUnit"
-	CentrumService_ListUnits_FullMethodName            = "/services.centrum.CentrumService/ListUnits"
-	CentrumService_ListUnitActivity_FullMethodName     = "/services.centrum.CentrumService/ListUnitActivity"
-	CentrumService_GetDispatch_FullMethodName          = "/services.centrum.CentrumService/GetDispatch"
-	CentrumService_ListDispatches_FullMethodName       = "/services.centrum.CentrumService/ListDispatches"
-	CentrumService_ListDispatchActivity_FullMethodName = "/services.centrum.CentrumService/ListDispatchActivity"
-	CentrumService_CreateOrUpdateUnit_FullMethodName   = "/services.centrum.CentrumService/CreateOrUpdateUnit"
-	CentrumService_DeleteUnit_FullMethodName           = "/services.centrum.CentrumService/DeleteUnit"
-	CentrumService_TakeDispatch_FullMethodName         = "/services.centrum.CentrumService/TakeDispatch"
-	CentrumService_UpdateUnitStatus_FullMethodName     = "/services.centrum.CentrumService/UpdateUnitStatus"
-	CentrumService_UpdateDispatchStatus_FullMethodName = "/services.centrum.CentrumService/UpdateDispatchStatus"
+	CentrumService_UpdateSettings_FullMethodName         = "/services.centrum.CentrumService/UpdateSettings"
+	CentrumService_CreateDispatch_FullMethodName         = "/services.centrum.CentrumService/CreateDispatch"
+	CentrumService_UpdateDispatch_FullMethodName         = "/services.centrum.CentrumService/UpdateDispatch"
+	CentrumService_DeleteDispatch_FullMethodName         = "/services.centrum.CentrumService/DeleteDispatch"
+	CentrumService_ListDispatchTargetJobs_FullMethodName = "/services.centrum.CentrumService/ListDispatchTargetJobs"
+	CentrumService_TakeControl_FullMethodName            = "/services.centrum.CentrumService/TakeControl"
+	CentrumService_AssignDispatch_FullMethodName         = "/services.centrum.CentrumService/AssignDispatch"
+	CentrumService_AssignUnit_FullMethodName             = "/services.centrum.CentrumService/AssignUnit"
+	CentrumService_GetDispatchHeatmap_FullMethodName     = "/services.centrum.CentrumService/GetDispatchHeatmap"
+	CentrumService_UpdateDispatchers_FullMethodName      = "/services.centrum.CentrumService/UpdateDispatchers"
+	CentrumService_Stream_FullMethodName                 = "/services.centrum.CentrumService/Stream"
+	CentrumService_GetSettings_FullMethodName            = "/services.centrum.CentrumService/GetSettings"
+	CentrumService_JoinUnit_FullMethodName               = "/services.centrum.CentrumService/JoinUnit"
+	CentrumService_ListUnits_FullMethodName              = "/services.centrum.CentrumService/ListUnits"
+	CentrumService_ListUnitActivity_FullMethodName       = "/services.centrum.CentrumService/ListUnitActivity"
+	CentrumService_GetDispatch_FullMethodName            = "/services.centrum.CentrumService/GetDispatch"
+	CentrumService_ListDispatches_FullMethodName         = "/services.centrum.CentrumService/ListDispatches"
+	CentrumService_ListDispatchActivity_FullMethodName   = "/services.centrum.CentrumService/ListDispatchActivity"
+	CentrumService_CreateOrUpdateUnit_FullMethodName     = "/services.centrum.CentrumService/CreateOrUpdateUnit"
+	CentrumService_DeleteUnit_FullMethodName             = "/services.centrum.CentrumService/DeleteUnit"
+	CentrumService_TakeDispatch_FullMethodName           = "/services.centrum.CentrumService/TakeDispatch"
+	CentrumService_UpdateUnitStatus_FullMethodName       = "/services.centrum.CentrumService/UpdateUnitStatus"
+	CentrumService_UpdateDispatchStatus_FullMethodName   = "/services.centrum.CentrumService/UpdateDispatchStatus"
 )
 
 // CentrumServiceClient is the client API for CentrumService service.
@@ -55,6 +56,8 @@ type CentrumServiceClient interface {
 	UpdateDispatch(ctx context.Context, in *UpdateDispatchRequest, opts ...grpc.CallOption) (*UpdateDispatchResponse, error)
 	// @perm
 	DeleteDispatch(ctx context.Context, in *DeleteDispatchRequest, opts ...grpc.CallOption) (*DeleteDispatchResponse, error)
+	// @perm: Name=CreateDispatch
+	ListDispatchTargetJobs(ctx context.Context, in *ListDispatchTargetJobsRequest, opts ...grpc.CallOption) (*ListDispatchTargetJobsResponse, error)
 	// @perm
 	TakeControl(ctx context.Context, in *TakeControlRequest, opts ...grpc.CallOption) (*TakeControlResponse, error)
 	// @perm: Name=TakeControl
@@ -135,6 +138,16 @@ func (c *centrumServiceClient) DeleteDispatch(ctx context.Context, in *DeleteDis
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DeleteDispatchResponse)
 	err := c.cc.Invoke(ctx, CentrumService_DeleteDispatch_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *centrumServiceClient) ListDispatchTargetJobs(ctx context.Context, in *ListDispatchTargetJobsRequest, opts ...grpc.CallOption) (*ListDispatchTargetJobsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListDispatchTargetJobsResponse)
+	err := c.cc.Invoke(ctx, CentrumService_ListDispatchTargetJobs_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -342,6 +355,8 @@ type CentrumServiceServer interface {
 	UpdateDispatch(context.Context, *UpdateDispatchRequest) (*UpdateDispatchResponse, error)
 	// @perm
 	DeleteDispatch(context.Context, *DeleteDispatchRequest) (*DeleteDispatchResponse, error)
+	// @perm: Name=CreateDispatch
+	ListDispatchTargetJobs(context.Context, *ListDispatchTargetJobsRequest) (*ListDispatchTargetJobsResponse, error)
 	// @perm
 	TakeControl(context.Context, *TakeControlRequest) (*TakeControlResponse, error)
 	// @perm: Name=TakeControl
@@ -399,6 +414,9 @@ func (UnimplementedCentrumServiceServer) UpdateDispatch(context.Context, *Update
 }
 func (UnimplementedCentrumServiceServer) DeleteDispatch(context.Context, *DeleteDispatchRequest) (*DeleteDispatchResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteDispatch not implemented")
+}
+func (UnimplementedCentrumServiceServer) ListDispatchTargetJobs(context.Context, *ListDispatchTargetJobsRequest) (*ListDispatchTargetJobsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListDispatchTargetJobs not implemented")
 }
 func (UnimplementedCentrumServiceServer) TakeControl(context.Context, *TakeControlRequest) (*TakeControlResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TakeControl not implemented")
@@ -543,6 +561,24 @@ func _CentrumService_DeleteDispatch_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CentrumServiceServer).DeleteDispatch(ctx, req.(*DeleteDispatchRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CentrumService_ListDispatchTargetJobs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListDispatchTargetJobsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CentrumServiceServer).ListDispatchTargetJobs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CentrumService_ListDispatchTargetJobs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CentrumServiceServer).ListDispatchTargetJobs(ctx, req.(*ListDispatchTargetJobsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -886,6 +922,10 @@ var CentrumService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteDispatch",
 			Handler:    _CentrumService_DeleteDispatch_Handler,
+		},
+		{
+			MethodName: "ListDispatchTargetJobs",
+			Handler:    _CentrumService_ListDispatchTargetJobs_Handler,
 		},
 		{
 			MethodName: "TakeControl",
