@@ -43,7 +43,6 @@ func (c *SyncStatusCmd) Run(_ *kong.Context) error {
 	if err != nil {
 		return err
 	}
-
 	fmt.Println("Sync Status:\n", string(out))
 
 	return nil
