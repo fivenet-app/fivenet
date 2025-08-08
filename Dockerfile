@@ -48,7 +48,7 @@ RUN apk add --no-cache git && \
     find . -type f ! -name '*.json' -delete
 
 # Backend Build
-FROM docker.io/library/golang:1.24.5 AS gobuilder
+FROM docker.io/library/golang:1.24.6 AS gobuilder
 
 WORKDIR /go/src/github.com/fivenet-app/fivenet/v2025/
 
