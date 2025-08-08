@@ -16,6 +16,8 @@ const emit = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
+const { activeChar } = useAuth();
+
 const { isOpen } = useSlideover();
 
 const livemapStore = useLivemapStore();
@@ -88,6 +90,8 @@ watch(dispatchTargetJobs, (jobs) => {
         state.jobs.jobs = [];
         return;
     }
+
+    state.jobs.jobs = [jobs[0]?.name ?? activeChar.value!.job];
 });
 
 const canSubmit = ref(true);
@@ -204,6 +208,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         searchable
                                         searchable-lazy
                                         :searchable-placeholder="$t('common.search_field')"
+                                        :disabled="dispatchTargetJobs.length <= 1"
                                     >
                                         <template #label="{ selected }">
                                             <span class="truncate">{{
