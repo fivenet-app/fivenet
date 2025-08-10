@@ -188,24 +188,22 @@ func grpcPanicRecoveryHandler(logger *zap.Logger) recovery.RecoveryHandlerFunc {
 }
 
 // InterceptorLogger adapts zap logger to interceptor logger.
-// This code is simple enough to be copied and not imported.
 func InterceptorLogger(l *zap.Logger) logging.Logger {
 	return logging.LoggerFunc(func(ctx context.Context, lvl logging.Level, msg string, fields ...any) {
 		f := make([]zap.Field, 0, len(fields)/2)
+		i := logging.Fields(fields).Iterator()
+		for i.Next() {
+			k, v := i.At()
 
-		for i := 0; i < len(fields); i += 2 {
-			key := fields[i]
-			value := fields[i+1]
-
-			switch v := value.(type) {
+			switch v := v.(type) {
 			case string:
-				f = append(f, zap.String(key.(string), v))
+				f = append(f, zap.String(k, v))
 			case int:
-				f = append(f, zap.Int(key.(string), v))
+				f = append(f, zap.Int(k, v))
 			case bool:
-				f = append(f, zap.Bool(key.(string), v))
+				f = append(f, zap.Bool(k, v))
 			default:
-				f = append(f, zap.Any(key.(string), v))
+				f = append(f, zap.Any(k, v))
 			}
 		}
 

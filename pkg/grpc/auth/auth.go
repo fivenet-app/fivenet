@@ -84,14 +84,14 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context
 		return nil, err
 	}
 
-	ctx = logging.InjectFields(ctx, logging.Fields{
+	newCtx := logging.InjectFields(ctx, logging.Fields{
 		AuthSubCtxTag, tInfo.Subject,
 		AuthAccIDCtxTag, tInfo.CharID,
 		AuthActiveCharIDCtxTag, tInfo.CharID,
 		AuthActiveCharJobCtxTag, userInfo.Job,
 	})
 
-	trace.SpanFromContext(ctx).SetAttributes(
+	trace.SpanFromContext(newCtx).SetAttributes(
 		attribute.Int64("fivenet.auth.acc_id", int64(tInfo.AccID)),
 		attribute.Int("fivenet.auth.char_id", int(tInfo.CharID)),
 		attribute.String("fivenet.job", userInfo.Job),
@@ -103,7 +103,7 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context
 		}
 	}
 
-	return context.WithValue(ctx, userInfoCtxMarkerKey, userInfo), nil
+	return context.WithValue(newCtx, userInfoCtxMarkerKey, userInfo), nil
 }
 
 func (g *GRPCAuth) GRPCAuthFuncWithoutUserInfo(ctx context.Context, fullMethod string) (context.Context, error) {

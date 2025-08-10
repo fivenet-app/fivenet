@@ -39,6 +39,7 @@ package leaderelection
 import (
 	"context"
 	"errors"
+	"sync"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
@@ -48,6 +49,7 @@ import (
 
 type LeaderElector struct {
 	logger    *zap.Logger
+	mu        sync.Mutex
 	kv        jetstream.KeyValue
 	key       string
 	ttl       time.Duration
@@ -120,17 +122,22 @@ func (le *LeaderElector) Stop() {
 
 // demote revokes leadership if held, fires hooks & cancels ctx.
 func (le *LeaderElector) demote(reason string) {
-	if le.isLeader {
-		le.logger.Info("stepping down", zap.String("reason", reason))
-		le.isLeader = false
-		if le.leadershipCancel != nil {
-			le.leadershipCancel()
-			le.leadershipCancel = nil
-			le.leadershipCtx = nil
-		}
-		if le.onStopped != nil {
-			le.onStopped()
-		}
+	le.mu.Lock()
+	defer le.mu.Unlock()
+
+	if !le.isLeader {
+		return
+	}
+
+	le.logger.Info("stepping down", zap.String("reason", reason))
+	le.isLeader = false
+	if le.leadershipCancel != nil {
+		le.leadershipCancel()
+		le.leadershipCancel = nil
+		le.leadershipCtx = nil
+	}
+	if le.onStopped != nil {
+		le.onStopped()
 	}
 }
 
@@ -142,6 +149,7 @@ func (le *LeaderElector) retryLoop() {
 		select {
 		case <-le.ctx.Done():
 			return
+
 		case <-t.C:
 			if !le.isLeader {
 				le.tryAcquire()
@@ -197,6 +205,9 @@ func (le *LeaderElector) tryAcquire() {
 
 // promote marks this instance leader, fires callback, and starts heartbeat.
 func (le *LeaderElector) promote() {
+	le.mu.Lock()
+	defer le.mu.Unlock()
+
 	if le.isLeader {
 		return
 	}
