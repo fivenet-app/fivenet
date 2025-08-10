@@ -305,6 +305,9 @@ func (r *CollabRoom) shutdown() {
 		// Use new context with timeout to ensure cleanup doesn't hang (r.ctx has to be canceled)
 		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 		defer cancel()
-		r.js.DeleteConsumer(ctx, StreamName, r.consumer.CachedInfo().Name) // Close the JetStream consumer
+		err := r.js.DeleteConsumer(ctx, StreamName, r.consumer.CachedInfo().Name) // Close the JetStream consumer
+		if err != nil {
+			r.logger.Error("failed to delete collab room consumer", zap.Error(err))
+		}
 	}()
 }
