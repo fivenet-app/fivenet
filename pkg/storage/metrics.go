@@ -67,8 +67,8 @@ func NewMetricsCollector(p MetricsCollectorParams) *MetricsCollector {
 			ctxCancel, mc.logger, p.JS,
 			"leader_election",           // Bucket
 			"storage_metrics_collector", // Key
-			30*time.Second,              // TTL for the lock
-			15*time.Second,              // Heartbeat interval
+			32*time.Second,              // TTL for the lock
+			16*time.Second,              // Heartbeat interval
 			func(ctx context.Context) {
 				mc.logger.Info("housekeeper started", zap.String("node_name", nodeName))
 

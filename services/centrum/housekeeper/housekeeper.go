@@ -108,8 +108,8 @@ func New(p Params) Result {
 			ctxCancel, s.logger, p.JS,
 			"leader_election",     // Bucket
 			"centrum_housekeeper", // Key
-			10*time.Second,        // TTL for the lock
-			5*time.Second,         // Heartbeat interval
+			12*time.Second,        // TTL for the lock
+			6*time.Second,         // Heartbeat interval
 			func(ctx context.Context) {
 				s.logger.Info("housekeeper started", zap.String("node_name", nodeName))
 

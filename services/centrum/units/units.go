@@ -193,6 +193,10 @@ func New(p Params) *UnitDB {
 					return fmt.Errorf("failed to delete job %s mapping for unit %d. %w", unit.Job, unit.Id, err)
 				}
 
+				if err := d.KVPing.Delete(ctx, fmt.Sprintf("ping.%d", unit.Id)); err != nil {
+					d.logger.Error("failed to delete ping timer for unit", zap.Uint64("unit_id", unit.Id), zap.Error(err))
+				}
+
 				return nil
 			}),
 		)

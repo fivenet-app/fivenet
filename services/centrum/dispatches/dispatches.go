@@ -161,6 +161,10 @@ func New(p Params) *DispatchDB {
 					}
 				}
 
+				if errs != nil {
+					return nil, fmt.Errorf("failed to update dispatch %d in kv store. %w", dispatch.Id, errs)
+				}
+
 				return dispatch, nil
 			}),
 			store.WithOnDeleteFn[centrum.Dispatch, *centrum.Dispatch](func(ctx context.Context, _ string, dispatch *centrum.Dispatch) error {
@@ -174,6 +178,10 @@ func New(p Params) *DispatchDB {
 						errs = multierr.Append(errs, fmt.Errorf("failed to delete job %s mapping for dispatch %d. %w", job, dispatch.Id, err))
 						continue
 					}
+				}
+
+				if err := d.idleKV.Delete(ctx, "idle."+centrumutils.IdKey(dispatch.Id)); err != nil {
+					errs = multierr.Append(errs, fmt.Errorf("failed to delete idle key for dispatch %d. %w", dispatch.Id, err))
 				}
 
 				return errs

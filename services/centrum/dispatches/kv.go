@@ -143,6 +143,7 @@ const (
 
 )
 
+// TouchActivity updates the idle timer for a Dispatch.
 func (d *DispatchDB) TouchActivity(ctx context.Context, id uint64) error {
 	key := "idle." + centrumutils.IdKey(id)
 

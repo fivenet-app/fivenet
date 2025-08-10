@@ -78,8 +78,8 @@ func NewScheduler(p SchedulerParams) (*Scheduler, error) {
 			ctxCancel, s.logger, s.js,
 			"leader_election", // Bucket
 			"cron_scheduler",  // Key
-			10*time.Second,    // TTL for the lock
-			5*time.Second,     // Heartbeat interval
+			12*time.Second,    // TTL for the lock
+			6*time.Second,     // Heartbeat interval
 			func(ctx context.Context) {
 				s.logger.Info("scheduler started", zap.String("node_name", s.nodeName))
 
