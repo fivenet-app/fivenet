@@ -370,11 +370,12 @@ func (s *Store[T, U]) update(ctx context.Context, entry jetstream.KeyValueEntry,
 
 	var err error
 	item := s.updateFromType(entry.Key(), data, triggerHook)
+	item = proto.Clone(item).(U)
 	if triggerHook && s.onUpdate != nil {
 		item, err = s.onUpdate(ctx, oldItem, item)
 	}
 
-	return proto.Clone(item).(U), err
+	return item, err
 }
 
 func (s *Store[T, U]) updateFromType(key string, incoming U, _ bool) U {

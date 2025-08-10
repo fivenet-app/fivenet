@@ -76,10 +76,7 @@ func (s *Server) buildSubjects(ctx context.Context, userInfo *pbuserinfo.UserInf
 
 func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) error {
 	ctx := srv.Context()
-	userInfo, ok := auth.GetUserInfoFromContext(ctx)
-	if !ok {
-		return ErrFailedStream
-	}
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Track changes to user info, so we can send an updated user info to the user
 	currentUserInfo := userInfo.Clone()
@@ -119,7 +116,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 	if err != nil {
 		return fmt.Errorf("failed to create consumer. %w", err)
 	}
-	defer s.js.DeleteConsumer(ctx, notifi.StreamName, consCfg.Durable)
+	defer s.js.DeleteConsumer(s.ctx, notifi.StreamName, consCfg.Durable)
 
 	metricLastUserSession.SetToCurrentTime()
 
@@ -280,13 +277,11 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						}
 					}
 
-					if err := srv.Send(&pbnotifications.StreamResponse{
+					outCh <- &pbnotifications.StreamResponse{
 						NotificationCount: notificationCount,
 						Data: &pbnotifications.StreamResponse_UserEvent{
 							UserEvent: &dest,
 						},
-					}); err != nil {
-						return errswrap.NewError(err, ErrFailedStream)
 					}
 
 				case notifi.JobTopic:
@@ -295,13 +290,11 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
-					if err := srv.Send(&pbnotifications.StreamResponse{
+					outCh <- &pbnotifications.StreamResponse{
 						NotificationCount: notificationCount,
 						Data: &pbnotifications.StreamResponse_JobEvent{
 							JobEvent: &dest,
 						},
-					}); err != nil {
-						return errswrap.NewError(err, ErrFailedStream)
 					}
 
 				case notifi.JobGradeTopic:
@@ -321,13 +314,11 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
-					if err := srv.Send(&pbnotifications.StreamResponse{
+					outCh <- &pbnotifications.StreamResponse{
 						NotificationCount: notificationCount,
 						Data: &pbnotifications.StreamResponse_JobGradeEvent{
 							JobGradeEvent: &dest,
 						},
-					}); err != nil {
-						return errswrap.NewError(err, ErrFailedStream)
 					}
 
 				case notifi.SystemTopic:
@@ -336,13 +327,11 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
-					if err := srv.Send(&pbnotifications.StreamResponse{
+					outCh <- &pbnotifications.StreamResponse{
 						NotificationCount: notificationCount,
 						Data: &pbnotifications.StreamResponse_SystemEvent{
 							SystemEvent: &dest,
 						},
-					}); err != nil {
-						return errswrap.NewError(err, ErrFailedStream)
 					}
 
 				case notifi.ObjectTopic:
@@ -367,13 +356,11 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						}
 					}
 
-					if err := srv.Send(&pbnotifications.StreamResponse{
+					outCh <- &pbnotifications.StreamResponse{
 						NotificationCount: notificationCount,
 						Data: &pbnotifications.StreamResponse_ObjectEvent{
 							ObjectEvent: &dest,
 						},
-					}); err != nil {
-						return errswrap.NewError(err, ErrFailedStream)
 					}
 
 				case notifi.MailerTopic:
@@ -382,13 +369,11 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
-					if err := srv.Send(&pbnotifications.StreamResponse{
+					outCh <- &pbnotifications.StreamResponse{
 						NotificationCount: notificationCount,
 						Data: &pbnotifications.StreamResponse_MailerEvent{
 							MailerEvent: &dest,
 						},
-					}); err != nil {
-						return errswrap.NewError(err, ErrFailedStream)
 					}
 				}
 			}

@@ -1,6 +1,7 @@
 package notifications
 
 import (
+	"context"
 	"database/sql"
 
 	pbnotifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/notifications"
@@ -31,6 +32,7 @@ type Server struct {
 	pbnotifications.NotificationsServiceServer
 
 	logger   *zap.Logger
+	ctx      context.Context
 	db       *sql.DB
 	p        perms.Permissions
 	tm       *auth.TokenMgr
@@ -56,8 +58,11 @@ type Params struct {
 }
 
 func NewServer(p Params) *Server {
+	ctxCancel, cancel := context.WithCancel(context.Background())
+
 	s := &Server{
 		logger:   p.Logger,
+		ctx:      ctxCancel,
 		db:       p.DB,
 		p:        p.Perms,
 		tm:       p.TM,
@@ -66,6 +71,12 @@ func NewServer(p Params) *Server {
 		enricher: p.Enricher,
 		appCfg:   p.AppConfig,
 	}
+
+	p.LC.Append(fx.StopHook(func(_ context.Context) error {
+		cancel()
+
+		return nil
+	}))
 
 	return s
 }
