@@ -13,14 +13,12 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/nats-io/nats.go/jetstream"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
 )
 
@@ -116,7 +114,7 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *pbcentrum.CreateOr
 }
 
 func (s *Server) DeleteUnit(ctx context.Context, req *pbcentrum.DeleteUnitRequest) (*pbcentrum.DeleteUnitResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.centrum.unit_id", int64(req.UnitId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.centrum.unit_id", req.UnitId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -150,7 +148,7 @@ func (s *Server) DeleteUnit(ctx context.Context, req *pbcentrum.DeleteUnitReques
 }
 
 func (s *Server) UpdateUnitStatus(ctx context.Context, req *pbcentrum.UpdateUnitStatusRequest) (*pbcentrum.UpdateUnitStatusResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.centrum.unit_id", int64(req.UnitId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.centrum.unit_id", req.UnitId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -209,9 +207,11 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *pbcentrum.UpdateUnit
 }
 
 func (s *Server) AssignUnit(ctx context.Context, req *pbcentrum.AssignUnitRequest) (*pbcentrum.AssignUnitResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.centrum.unit_id", int64(req.UnitId)))
-	trace.SpanFromContext(ctx).SetAttributes(attribute.IntSlice("fivenet.centrum.users.to_add", utils.SliceInt32ToInt(req.ToAdd)))
-	trace.SpanFromContext(ctx).SetAttributes(attribute.IntSlice("fivenet.centrum.users.to_remove", utils.SliceInt32ToInt(req.ToRemove)))
+	logging.InjectFields(ctx, logging.Fields{
+		"fivenet.centrum.unit_id", req.UnitId,
+		"fivenet.centrum.users.to_add", req.ToAdd,
+		"fivenet.centrum.users.to_remove", req.ToRemove,
+	})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -260,7 +260,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *pbcentrum.JoinUnitRequest) (
 	defer cancel()
 
 	if req.UnitId != nil {
-		trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.centrum.unit_id", int64(*req.UnitId)))
+		logging.InjectFields(ctx, logging.Fields{"fivenet.centrum.unit_id", *req.UnitId})
 	}
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -345,7 +345,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *pbcentrum.JoinUnitRequest) (
 }
 
 func (s *Server) ListUnitActivity(ctx context.Context, req *pbcentrum.ListUnitActivityRequest) (*pbcentrum.ListUnitActivityResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.centrum.unit_id", int64(req.Id)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.centrum.unit_id", req.Id})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

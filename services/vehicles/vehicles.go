@@ -19,8 +19,7 @@ import (
 	errorsvehicles "github.com/fivenet-app/fivenet/v2025/services/vehicles/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 func (s *Server) ListVehicles(ctx context.Context, req *pbvehicles.ListVehiclesRequest) (*pbvehicles.ListVehiclesResponse, error) {
@@ -220,7 +219,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbvehicles.ListVehiclesR
 }
 
 func (s *Server) SetVehicleProps(ctx context.Context, req *pbvehicles.SetVehiclePropsRequest) (*pbvehicles.SetVehiclePropsResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.Vehicles.plate", req.Props.Plate))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.vehicles.plate", req.Props.Plate})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

@@ -9,12 +9,11 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 func (s *Server) GetQualificationAccess(ctx context.Context, req *pbqualifications.GetQualificationAccessRequest) (*pbqualifications.GetQualificationAccessResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.id", int64(req.QualificationId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.QualificationId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 	check, err := s.access.CanUserAccessTarget(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_VIEW)
@@ -43,7 +42,7 @@ func (s *Server) GetQualificationAccess(ctx context.Context, req *pbqualificatio
 }
 
 func (s *Server) SetQualificationAccess(ctx context.Context, req *pbqualifications.SetQualificationAccessRequest) (*pbqualifications.SetQualificationAccessResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.id", int64(req.QualificationId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.QualificationId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

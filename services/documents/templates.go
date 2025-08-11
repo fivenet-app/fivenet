@@ -18,8 +18,7 @@ import (
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 var (
@@ -86,7 +85,7 @@ func (s *Server) ListTemplates(ctx context.Context, req *pbdocuments.ListTemplat
 }
 
 func (s *Server) GetTemplate(ctx context.Context, req *pbdocuments.GetTemplateRequest) (*pbdocuments.GetTemplateResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.template_id", int64(req.TemplateId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.template_id", req.TemplateId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -330,7 +329,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *pbdocuments.CreateTemp
 }
 
 func (s *Server) UpdateTemplate(ctx context.Context, req *pbdocuments.UpdateTemplateRequest) (*pbdocuments.UpdateTemplateResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.template_id", int64(req.Template.Id)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.template_id", req.Template.Id})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -442,7 +441,7 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *pbdocuments.UpdateTemp
 }
 
 func (s *Server) DeleteTemplate(ctx context.Context, req *pbdocuments.DeleteTemplateRequest) (*pbdocuments.DeleteTemplateResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.template_id", int64(req.Id)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.template_id", req.Id})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

@@ -9,8 +9,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	errorswiki "github.com/fivenet-app/fivenet/v2025/services/wiki/errors"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	grpc "google.golang.org/grpc"
 )
 
@@ -58,8 +57,10 @@ func (s *Server) UploadFile(srv grpc.ClientStreamingServer[file.UploadFileReques
 		return err
 	}
 
-	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.file.namespace", meta.Namespace))
-	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.file.name", meta.OriginalName))
+	logging.InjectFields(ctx, logging.Fields{
+		"fivenet.file.namespace", meta.Namespace,
+		"fivenet.file.name", meta.OriginalName,
+	})
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 

@@ -13,8 +13,7 @@ import (
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 func (s *Server) createOrUpdateWorkflowState(ctx context.Context, tx qrm.DB, documentId uint64, workflow *documents.Workflow) error {
@@ -64,7 +63,7 @@ func (s *Server) createOrUpdateWorkflowState(ctx context.Context, tx qrm.DB, doc
 }
 
 func (s *Server) SetDocumentReminder(ctx context.Context, req *pbdocuments.SetDocumentReminderRequest) (*pbdocuments.SetDocumentReminderResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.id", int64(req.DocumentId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

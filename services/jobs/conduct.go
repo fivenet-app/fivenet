@@ -16,8 +16,7 @@ import (
 	errorsjobs "github.com/fivenet-app/fivenet/v2025/services/jobs/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 var tConduct = table.FivenetJobConduct.AS("conduct_entry")
@@ -271,7 +270,7 @@ func (s *Server) CreateConductEntry(ctx context.Context, req *pbjobs.CreateCondu
 }
 
 func (s *Server) UpdateConductEntry(ctx context.Context, req *pbjobs.UpdateConductEntryRequest) (*pbjobs.UpdateConductEntryResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.jobs.conduct.id", int64(req.Entry.Id)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.conduct_id", req.Entry.Id})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -347,7 +346,7 @@ func (s *Server) UpdateConductEntry(ctx context.Context, req *pbjobs.UpdateCondu
 }
 
 func (s *Server) DeleteConductEntry(ctx context.Context, req *pbjobs.DeleteConductEntryRequest) (*pbjobs.DeleteConductEntryResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.jobs.conduct.id", int64(req.Id)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.conduct_id", req.Id})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

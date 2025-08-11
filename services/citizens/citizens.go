@@ -22,8 +22,7 @@ import (
 	errorscitizens "github.com/fivenet-app/fivenet/v2025/services/citizens/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 var (
@@ -239,7 +238,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *pbcitizens.ListCitizensR
 }
 
 func (s *Server) GetUser(ctx context.Context, req *pbcitizens.GetUserRequest) (*pbcitizens.GetUserResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.citizens.user_id", int64(req.UserId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.citizens.user_id", req.UserId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -408,7 +407,7 @@ func (s *Server) GetUser(ctx context.Context, req *pbcitizens.GetUserRequest) (*
 }
 
 func (s *Server) SetUserProps(ctx context.Context, req *pbcitizens.SetUserPropsRequest) (*pbcitizens.SetUserPropsResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.citizens.user_id", int64(req.Props.UserId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.citizens.user_id", req.Props.UserId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

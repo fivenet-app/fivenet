@@ -19,8 +19,7 @@ import (
 	errorssettings "github.com/fivenet-app/fivenet/v2025/services/settings/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"go.uber.org/multierr"
 )
 
@@ -198,8 +197,10 @@ func (s *Server) GetRole(ctx context.Context, req *pbsettings.GetRoleRequest) (*
 }
 
 func (s *Server) CreateRole(ctx context.Context, req *pbsettings.CreateRoleRequest) (*pbsettings.CreateRoleResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.settings.job", req.Job))
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int("fivenet.settings.Grade", int(req.Grade)))
+	logging.InjectFields(ctx, logging.Fields{
+		"fivenet.settings.job", req.Job,
+		"fivenet.settings.grade", req.Grade,
+	})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -250,7 +251,7 @@ func (s *Server) CreateRole(ctx context.Context, req *pbsettings.CreateRoleReque
 }
 
 func (s *Server) DeleteRole(ctx context.Context, req *pbsettings.DeleteRoleRequest) (*pbsettings.DeleteRoleResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.settings.role_id", int64(req.Id)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.role_id", req.Id})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -296,7 +297,7 @@ func (s *Server) DeleteRole(ctx context.Context, req *pbsettings.DeleteRoleReque
 }
 
 func (s *Server) UpdateRolePerms(ctx context.Context, req *pbsettings.UpdateRolePermsRequest) (*pbsettings.UpdateRolePermsResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.settings.role_id", int64(req.Id)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.role_id", req.Id})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -421,7 +422,7 @@ func (s *Server) handleAttributeUpdate(ctx context.Context, userInfo *userinfo.U
 }
 
 func (s *Server) GetPermissions(ctx context.Context, req *pbsettings.GetPermissionsRequest) (*pbsettings.GetPermissionsResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.settings.role_id", int64(req.RoleId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.role_id", req.RoleId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -457,7 +458,7 @@ func (s *Server) GetPermissions(ctx context.Context, req *pbsettings.GetPermissi
 }
 
 func (s *Server) GetEffectivePermissions(ctx context.Context, req *pbsettings.GetEffectivePermissionsRequest) (*pbsettings.GetEffectivePermissionsResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.settings.role_id", int64(req.RoleId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.role_id", req.RoleId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -496,7 +497,7 @@ func (s *Server) GetEffectivePermissions(ctx context.Context, req *pbsettings.Ge
 }
 
 func (s *Server) DeleteFaction(ctx context.Context, req *pbsettings.DeleteFactionRequest) (*pbsettings.DeleteFactionResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.settings.job", req.Job))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.job", req.Job})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -509,7 +510,7 @@ func (s *Server) DeleteFaction(ctx context.Context, req *pbsettings.DeleteFactio
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.settings.job", req.Job))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.job", req.Job})
 
 	roles, err := s.ps.GetJobRoles(ctx, req.Job)
 	if err != nil {

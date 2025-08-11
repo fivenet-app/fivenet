@@ -9,9 +9,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/grpcws"
 	errorswiki "github.com/fivenet-app/fivenet/v2025/services/wiki/errors"
+	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
 )
 
 func (s *Server) JoinRoom(srv pbdocuments.CollabService_JoinRoomServer) error {
@@ -29,7 +28,7 @@ func (s *Server) JoinRoom(srv pbdocuments.CollabService_JoinRoomServer) error {
 		return err
 	}
 
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.page.id", int64(pageId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.wiki.page_id", pageId})
 
 	check, err := s.access.CanUserAccessTarget(ctx, pageId, userInfo, wiki.AccessLevel_ACCESS_LEVEL_ACCESS)
 	if err != nil {

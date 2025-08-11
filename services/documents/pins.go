@@ -17,8 +17,7 @@ import (
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 var tDPins = table.FivenetDocumentsPins.AS("pin")
@@ -140,7 +139,7 @@ func (s *Server) ListDocumentPins(ctx context.Context, req *pbdocuments.ListDocu
 }
 
 func (s *Server) ToggleDocumentPin(ctx context.Context, req *pbdocuments.ToggleDocumentPinRequest) (*pbdocuments.ToggleDocumentPinResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.id", int64(req.DocumentId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

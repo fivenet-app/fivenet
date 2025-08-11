@@ -21,8 +21,7 @@ import (
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -178,7 +177,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *pbdocuments.ListDocumen
 }
 
 func (s *Server) GetDocument(ctx context.Context, req *pbdocuments.GetDocumentRequest) (*pbdocuments.GetDocumentResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.id", int64(req.DocumentId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -470,7 +469,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *pbdocuments.CreateDocu
 }
 
 func (s *Server) UpdateDocument(ctx context.Context, req *pbdocuments.UpdateDocumentRequest) (*pbdocuments.UpdateDocumentResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.id", int64(req.DocumentId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -669,7 +668,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *pbdocuments.UpdateDocu
 }
 
 func (s *Server) DeleteDocument(ctx context.Context, req *pbdocuments.DeleteDocumentRequest) (*pbdocuments.DeleteDocumentResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.id", int64(req.DocumentId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -747,7 +746,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *pbdocuments.DeleteDocu
 }
 
 func (s *Server) ToggleDocument(ctx context.Context, req *pbdocuments.ToggleDocumentRequest) (*pbdocuments.ToggleDocumentResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.id", int64(req.DocumentId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -853,7 +852,7 @@ func (s *Server) ToggleDocument(ctx context.Context, req *pbdocuments.ToggleDocu
 }
 
 func (s *Server) ChangeDocumentOwner(ctx context.Context, req *pbdocuments.ChangeDocumentOwnerRequest) (*pbdocuments.ChangeDocumentOwnerResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.id", int64(req.DocumentId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

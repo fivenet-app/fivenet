@@ -26,8 +26,7 @@ import (
 	errorsjobs "github.com/fivenet-app/fivenet/v2025/services/jobs/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 const (
@@ -424,7 +423,7 @@ func (s *Server) getColleague(ctx context.Context, userInfo *userinfo.UserInfo, 
 }
 
 func (s *Server) GetColleague(ctx context.Context, req *pbjobs.GetColleagueRequest) (*pbjobs.GetColleagueResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.jobs.colleague.id", int64(req.UserId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.colleagues.user_id", req.UserId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -527,7 +526,7 @@ func (s *Server) GetSelf(ctx context.Context, req *pbjobs.GetSelfRequest) (*pbjo
 }
 
 func (s *Server) SetColleagueProps(ctx context.Context, req *pbjobs.SetColleaguePropsRequest) (*pbjobs.SetColleaguePropsResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.jobs.colleague.id", int64(req.Props.UserId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.colleagues.user_id", req.Props.UserId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -710,7 +709,7 @@ func (s *Server) getConditionForColleagueAccess(actTable *table.FivenetJobCollea
 }
 
 func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColleagueActivityRequest) (*pbjobs.ListColleagueActivityResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.IntSlice("fivenet.jobs.colleagues.user_ids", utils.SliceInt32ToInt(req.UserIds)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.colleagues.user_ids", req.UserIds})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

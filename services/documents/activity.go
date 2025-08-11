@@ -17,8 +17,7 @@ import (
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 const (
@@ -28,7 +27,7 @@ const (
 var tDocActivity = table.FivenetDocumentsActivity
 
 func (s *Server) ListDocumentActivity(ctx context.Context, req *pbdocuments.ListDocumentActivityRequest) (*pbdocuments.ListDocumentActivityResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.id", int64(req.DocumentId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

@@ -16,15 +16,13 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/users"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/nats-io/nats.go/jetstream"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
@@ -224,7 +222,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *pbcentrum.ListDispatch
 }
 
 func (s *Server) GetDispatch(ctx context.Context, req *pbcentrum.GetDispatchRequest) (*pbcentrum.GetDispatchResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.centrum.dispatch_id", int64(req.Id)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.centrum.dispatch_id", req.Id})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -386,7 +384,7 @@ func (s *Server) CreateDispatch(ctx context.Context, req *pbcentrum.CreateDispat
 }
 
 func (s *Server) UpdateDispatch(ctx context.Context, req *pbcentrum.UpdateDispatchRequest) (*pbcentrum.UpdateDispatchResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.centrum.dispatch_id", int64(req.Dispatch.Id)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.centrum.dispatch_id", req.Dispatch.Id})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -412,7 +410,7 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *pbcentrum.UpdateDispat
 }
 
 func (s *Server) TakeDispatch(ctx context.Context, req *pbcentrum.TakeDispatchRequest) (*pbcentrum.TakeDispatchResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64Slice("fivenet.centrum.dispatch_ids", utils.SliceUint64ToInt64(req.DispatchIds)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.centrum.dispatch_ids", req.DispatchIds})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -513,9 +511,11 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *pbcentrum.Update
 }
 
 func (s *Server) AssignDispatch(ctx context.Context, req *pbcentrum.AssignDispatchRequest) (*pbcentrum.AssignDispatchResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.centrum.dispatch_id", int64(req.DispatchId)))
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64Slice("fivenet.centrum.units.to_add", utils.SliceUint64ToInt64(req.ToAdd)))
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64Slice("fivenet.centrum.units.to_remove", utils.SliceUint64ToInt64(req.ToRemove)))
+	logging.InjectFields(ctx, logging.Fields{
+		"fivenet.centrum.dispatch_id", req.DispatchId,
+		"fivenet.centrum.units.to_add", req.ToAdd,
+		"fivenet.centrum.units.to_remove", req.ToRemove,
+	})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

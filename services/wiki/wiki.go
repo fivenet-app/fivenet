@@ -22,8 +22,7 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/gosimple/slug"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 func (s *Server) ListPages(ctx context.Context, req *pbwiki.ListPagesRequest) (*pbwiki.ListPagesResponse, error) {
@@ -181,7 +180,7 @@ func (s *Server) ListPages(ctx context.Context, req *pbwiki.ListPagesRequest) (*
 }
 
 func (s *Server) GetPage(ctx context.Context, req *pbwiki.GetPageRequest) (*pbwiki.GetPageResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.wiki.page_id", int64(req.Id)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.wiki.page_id", req.Id})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -378,12 +377,12 @@ func (s *Server) CreatePage(ctx context.Context, req *pbwiki.CreatePageRequest) 
 		// Found a potential parent page
 		if ids.ID > 0 {
 			req.ParentId = &ids.ID
-			trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.wiki.parent_id", int64(*req.ParentId)))
+			logging.InjectFields(ctx, logging.Fields{"fivenet.wiki.parent_id", *req.ParentId})
 		} else {
 			req.ParentId = nil
 		}
 	} else {
-		trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.wiki.parent_id", int64(*req.ParentId)))
+		logging.InjectFields(ctx, logging.Fields{"fivenet.wiki.parent_id", *req.ParentId})
 
 		p, err := s.getPage(ctx, *req.ParentId, false, false, nil)
 		if err != nil {
@@ -504,7 +503,7 @@ func (s *Server) CreatePage(ctx context.Context, req *pbwiki.CreatePageRequest) 
 }
 
 func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) (*pbwiki.UpdatePageResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.wiki.page_id", int64(req.Page.Id)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.wiki.page_id", req.Page.Id})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -771,7 +770,7 @@ func (s *Server) handlePageAccessChange(ctx context.Context, tx qrm.DB, pageId u
 }
 
 func (s *Server) DeletePage(ctx context.Context, req *pbwiki.DeletePageRequest) (*pbwiki.DeletePageResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.wiki.page_id", int64(req.Id)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.wiki.page_id", req.Id})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

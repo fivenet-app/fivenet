@@ -15,8 +15,7 @@ import (
 	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 const MessagesDefaultPageSize = 20
@@ -24,7 +23,7 @@ const MessagesDefaultPageSize = 20
 var tMessages = table.FivenetMailerMessages.AS("message")
 
 func (s *Server) ListThreadMessages(ctx context.Context, req *pbmailer.ListThreadMessagesRequest) (*pbmailer.ListThreadMessagesResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.mailer.thread.id", int64(req.ThreadId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.mailer.thread.id", req.ThreadId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -291,7 +290,7 @@ func (s *Server) createMessage(ctx context.Context, tx qrm.DB, msg *mailer.Messa
 }
 
 func (s *Server) DeleteMessage(ctx context.Context, req *pbmailer.DeleteMessageRequest) (*pbmailer.DeleteMessageResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.mailer.message.id", int64(req.MessageId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.mailer.message_id", req.MessageId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

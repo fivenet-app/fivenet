@@ -15,8 +15,7 @@ import (
 	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 const (
@@ -236,7 +235,7 @@ func (s *Server) GetThread(ctx context.Context, req *pbmailer.GetThreadRequest) 
 }
 
 func (s *Server) CreateThread(ctx context.Context, req *pbmailer.CreateThreadRequest) (*pbmailer.CreateThreadResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.mailer.thread.id", int64(req.Thread.Id)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.mailer.thread_id", req.Thread.Id})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -397,7 +396,7 @@ func (s *Server) updateThreadTime(ctx context.Context, tx qrm.DB, threadId uint6
 }
 
 func (s *Server) DeleteThread(ctx context.Context, req *pbmailer.DeleteThreadRequest) (*pbmailer.DeleteThreadResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.mailer.thread.id", int64(req.ThreadId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.mailer.thread_id", req.ThreadId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

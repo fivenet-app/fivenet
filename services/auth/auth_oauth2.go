@@ -9,12 +9,11 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 func (s *Server) DeleteOAuth2Connection(ctx context.Context, req *pbauth.DeleteOAuth2ConnectionRequest) (*pbauth.DeleteOAuth2ConnectionResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.auth.oauth2_provider", req.Provider))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.auth.oauth2_provider", req.Provider})
 
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {

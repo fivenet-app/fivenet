@@ -10,8 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/version"
 	errorssettings "github.com/fivenet-app/fivenet/v2025/services/settings/errors"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 func (s *Server) GetStatus(ctx context.Context, req *pbsettings.GetStatusRequest) (*pbsettings.GetStatusResponse, error) {
@@ -57,7 +56,7 @@ func (s *Server) GetStatus(ctx context.Context, req *pbsettings.GetStatusRequest
 }
 
 func (s *Server) GetAllPermissions(ctx context.Context, req *pbsettings.GetAllPermissionsRequest) (*pbsettings.GetAllPermissionsResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.settings.job", req.Job))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.job", req.Job})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -93,7 +92,7 @@ func (s *Server) GetAllPermissions(ctx context.Context, req *pbsettings.GetAllPe
 }
 
 func (s *Server) GetJobLimits(ctx context.Context, req *pbsettings.GetJobLimitsRequest) (*pbsettings.GetJobLimitsResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.settings.job", req.Job))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.job", req.Job})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -129,7 +128,7 @@ func (s *Server) GetJobLimits(ctx context.Context, req *pbsettings.GetJobLimitsR
 }
 
 func (s *Server) UpdateJobLimits(ctx context.Context, req *pbsettings.UpdateJobLimitsRequest) (*pbsettings.UpdateJobLimitsResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.settings.job", req.Job))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.job", req.Job})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

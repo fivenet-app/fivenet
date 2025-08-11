@@ -23,8 +23,7 @@ import (
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 const (
@@ -35,7 +34,7 @@ const (
 var tDComments = table.FivenetDocumentsComments
 
 func (s *Server) GetComments(ctx context.Context, req *pbdocuments.GetCommentsRequest) (*pbdocuments.GetCommentsResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.id", int64(req.DocumentId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -150,7 +149,7 @@ func (s *Server) GetComments(ctx context.Context, req *pbdocuments.GetCommentsRe
 }
 
 func (s *Server) PostComment(ctx context.Context, req *pbdocuments.PostCommentRequest) (*pbdocuments.PostCommentResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.id", int64(req.Comment.DocumentId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.Comment.DocumentId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -226,8 +225,8 @@ func (s *Server) PostComment(ctx context.Context, req *pbdocuments.PostCommentRe
 }
 
 func (s *Server) EditComment(ctx context.Context, req *pbdocuments.EditCommentRequest) (*pbdocuments.EditCommentResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.id", int64(req.Comment.DocumentId)))
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.comment_id", int64(req.Comment.Id)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.Comment.DocumentId})
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.comment_id", req.Comment.Id})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -347,7 +346,7 @@ func (s *Server) getComment(ctx context.Context, id uint64, userInfo *userinfo.U
 }
 
 func (s *Server) DeleteComment(ctx context.Context, req *pbdocuments.DeleteCommentRequest) (*pbdocuments.DeleteCommentResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.comment_id", int64(req.CommentId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.CommentId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

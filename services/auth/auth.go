@@ -26,8 +26,7 @@ import (
 	errorsauth "github.com/fivenet-app/fivenet/v2025/services/auth/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"go.uber.org/zap"
 )
 
@@ -77,7 +76,7 @@ func (s *Server) getAccountFromDB(ctx context.Context, condition jet.BoolExpress
 func (s *Server) Login(ctx context.Context, req *pbauth.LoginRequest) (*pbauth.LoginResponse, error) {
 	req.Username = normalizeUsername(req.Username)
 
-	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.auth.username", req.Username))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.auth.username", req.Username})
 
 	account, err := s.getAccountFromDB(ctx, jet.AND(
 		tAccounts.Username.EQ(jet.String(req.Username)),
@@ -545,7 +544,7 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 }
 
 func (s *Server) ChooseCharacter(ctx context.Context, req *pbauth.ChooseCharacterRequest) (*pbauth.ChooseCharacterResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.auth.char_id", int64(req.CharId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.auth.char_id", req.CharId})
 
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
@@ -674,9 +673,9 @@ func (s *Server) SetSuperuserMode(ctx context.Context, req *pbauth.SetSuperuserM
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Bool("fivenet.auth.superuser", req.Superuser))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.auth.superuser", req.Superuser})
 	if req.Job != nil {
-		trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.auth.superuser.job", *req.Job))
+		logging.InjectFields(ctx, logging.Fields{"fivenet.auth.superuser.job", *req.Job})
 	}
 
 	if !userInfo.CanBeSuperuser {

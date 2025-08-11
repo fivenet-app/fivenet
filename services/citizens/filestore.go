@@ -16,8 +16,7 @@ import (
 	errorscitizens "github.com/fivenet-app/fivenet/v2025/services/citizens/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	grpc "google.golang.org/grpc"
 )
 
@@ -26,7 +25,7 @@ func (s *Server) UploadAvatar(srv grpc.ClientStreamingServer[file.UploadFileRequ
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.citizens.user_id", int64(userInfo.UserId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.citizens.user_id", userInfo.UserId})
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbcitizens.CitizensService_ServiceDesc.ServiceName,
@@ -94,7 +93,7 @@ func (s *Server) UploadMugshot(srv grpc.ClientStreamingServer[file.UploadFileReq
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.citizens.user_id", int64(userInfo.UserId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.citizens.user_id", userInfo.UserId})
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbcitizens.CitizensService_ServiceDesc.ServiceName,

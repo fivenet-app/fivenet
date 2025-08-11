@@ -20,8 +20,7 @@ import (
 	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
@@ -111,7 +110,7 @@ func (s *Server) ListQualifications(ctx context.Context, req *pbqualifications.L
 }
 
 func (s *Server) GetQualification(ctx context.Context, req *pbqualifications.GetQualificationRequest) (*pbqualifications.GetQualificationResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.id", int64(req.QualificationId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.QualificationId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -316,7 +315,7 @@ func (s *Server) CreateQualification(ctx context.Context, req *pbqualifications.
 }
 
 func (s *Server) UpdateQualification(ctx context.Context, req *pbqualifications.UpdateQualificationRequest) (*pbqualifications.UpdateQualificationResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.id", int64(req.Qualification.Id)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.Qualification.Id})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -472,7 +471,7 @@ func (s *Server) UpdateQualification(ctx context.Context, req *pbqualifications.
 }
 
 func (s *Server) DeleteQualification(ctx context.Context, req *pbqualifications.DeleteQualificationRequest) (*pbqualifications.DeleteQualificationResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.id", int64(req.QualificationId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.QualificationId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

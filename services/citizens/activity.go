@@ -15,12 +15,11 @@ import (
 	errorscitizens "github.com/fivenet-app/fivenet/v2025/services/citizens/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 func (s *Server) ListUserActivity(ctx context.Context, req *pbcitizens.ListUserActivityRequest) (*pbcitizens.ListUserActivityResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.citizens.user_id", int64(req.UserId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.citizens.user_id", req.UserId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

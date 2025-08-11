@@ -11,8 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"google.golang.org/grpc"
 )
 
@@ -20,7 +19,7 @@ const listFilesPageSize = 50
 
 func (s *Server) ListFiles(ctx context.Context, req *pbfilestore.ListFilesRequest) (*pbfilestore.ListFilesResponse, error) {
 	if req.Path != nil {
-		trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.file.path", *req.Path))
+		logging.InjectFields(ctx, logging.Fields{"fivenet.file.path", *req.Path})
 	}
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -91,8 +90,10 @@ func (s *Server) Upload(srv grpc.ClientStreamingServer[file.UploadFileRequest, f
 		return err
 	}
 
-	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.file.namespace", meta.Namespace))
-	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.file.name", meta.OriginalName))
+	logging.InjectFields(ctx, logging.Fields{
+		"fivenet.file.namespace", meta.Namespace,
+		"fivenet.file.name", meta.OriginalName,
+	})
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 
@@ -100,8 +101,10 @@ func (s *Server) Upload(srv grpc.ClientStreamingServer[file.UploadFileRequest, f
 }
 
 func (s *Server) DeleteFile(ctx context.Context, req *file.DeleteFileRequest) (*file.DeleteFileResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.file.parent_id", int64(req.ParentId)))
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.file.file_id", int64(req.FileId)))
+	logging.InjectFields(ctx, logging.Fields{
+		"fivenet.file.parent_id", req.ParentId,
+		"fivenet.file.file_id", req.FileId,
+	})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -124,7 +127,7 @@ func (s *Server) DeleteFile(ctx context.Context, req *file.DeleteFileRequest) (*
 }
 
 func (s *Server) DeleteFileByPath(ctx context.Context, req *pbfilestore.DeleteFileByPathRequest) (*pbfilestore.DeleteFileByPathResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.file.path", req.Path))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.file.path", req.Path})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

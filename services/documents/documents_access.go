@@ -12,12 +12,11 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 func (s *Server) GetDocumentAccess(ctx context.Context, req *pbdocuments.GetDocumentAccessRequest) (*pbdocuments.GetDocumentAccessResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.id", int64(req.DocumentId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 	check, err := s.access.CanUserAccessTarget(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
@@ -52,7 +51,7 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *pbdocuments.GetDocu
 }
 
 func (s *Server) SetDocumentAccess(ctx context.Context, req *pbdocuments.SetDocumentAccessRequest) (*pbdocuments.SetDocumentAccessResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.id", int64(req.DocumentId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

@@ -12,9 +12,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/grpcws"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
 )
 
 func (s *Server) JoinRoom(srv pbdocuments.CollabService_JoinRoomServer) error {
@@ -32,7 +31,7 @@ func (s *Server) JoinRoom(srv pbdocuments.CollabService_JoinRoomServer) error {
 		return err
 	}
 
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.id", int64(docId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", docId})
 
 	check, err := s.access.CanUserAccessTarget(ctx, docId, userInfo, documents.AccessLevel_ACCESS_LEVEL_ACCESS)
 	if err != nil {

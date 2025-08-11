@@ -16,8 +16,7 @@ import (
 	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
@@ -28,7 +27,7 @@ var (
 )
 
 func (s *Server) GetExamInfo(ctx context.Context, req *pbqualifications.GetExamInfoRequest) (*pbqualifications.GetExamInfoResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.id", int64(req.QualificationId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.QualificationId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -119,7 +118,7 @@ func (s *Server) getExamUser(ctx context.Context, qualificationId uint64, userId
 }
 
 func (s *Server) TakeExam(ctx context.Context, req *pbqualifications.TakeExamRequest) (*pbqualifications.TakeExamResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.id", int64(req.QualificationId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.QualificationId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -212,7 +211,7 @@ func (s *Server) TakeExam(ctx context.Context, req *pbqualifications.TakeExamReq
 }
 
 func (s *Server) SubmitExam(ctx context.Context, req *pbqualifications.SubmitExamRequest) (*pbqualifications.SubmitExamResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.id", int64(req.QualificationId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.QualificationId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -349,8 +348,10 @@ func (s *Server) SubmitExam(ctx context.Context, req *pbqualifications.SubmitExa
 }
 
 func (s *Server) GetUserExam(ctx context.Context, req *pbqualifications.GetUserExamRequest) (*pbqualifications.GetUserExamResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.id", int64(req.QualificationId)))
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int("fivenet.user_id", int(req.UserId)))
+	logging.InjectFields(ctx, logging.Fields{
+		"fivenet.qualifications.id", req.QualificationId,
+		"fivenet.user_id", req.UserId,
+	})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

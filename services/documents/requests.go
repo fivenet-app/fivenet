@@ -22,8 +22,7 @@ import (
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 const DocRequestMinimumWaitTime = 24 * time.Hour
@@ -31,7 +30,7 @@ const DocRequestMinimumWaitTime = 24 * time.Hour
 var tDocRequest = table.FivenetDocumentsRequests.AS("doc_request")
 
 func (s *Server) ListDocumentReqs(ctx context.Context, req *pbdocuments.ListDocumentReqsRequest) (*pbdocuments.ListDocumentReqsResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.id", int64(req.DocumentId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -125,7 +124,7 @@ func (s *Server) ListDocumentReqs(ctx context.Context, req *pbdocuments.ListDocu
 }
 
 func (s *Server) CreateDocumentReq(ctx context.Context, req *pbdocuments.CreateDocumentReqRequest) (*pbdocuments.CreateDocumentReqResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.id", int64(req.DocumentId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -266,8 +265,10 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *pbdocuments.CreateD
 }
 
 func (s *Server) UpdateDocumentReq(ctx context.Context, req *pbdocuments.UpdateDocumentReqRequest) (*pbdocuments.UpdateDocumentReqResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.id", int64(req.DocumentId)))
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.request_id", int64(req.RequestId)))
+	logging.InjectFields(ctx, logging.Fields{
+		"fivenet.documents.id", req.DocumentId,
+		"fivenet.documents.request_id", req.RequestId,
+	})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -413,7 +414,7 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *pbdocuments.UpdateD
 }
 
 func (s *Server) DeleteDocumentReq(ctx context.Context, req *pbdocuments.DeleteDocumentReqRequest) (*pbdocuments.DeleteDocumentReqResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.request_id", int64(req.RequestId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.request_id", req.RequestId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

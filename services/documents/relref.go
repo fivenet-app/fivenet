@@ -20,8 +20,7 @@ import (
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 var (
@@ -30,7 +29,7 @@ var (
 )
 
 func (s *Server) GetDocumentReferences(ctx context.Context, req *pbdocuments.GetDocumentReferencesRequest) (*pbdocuments.GetDocumentReferencesResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.id", int64(req.DocumentId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -194,7 +193,7 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *pbdocuments.Get
 }
 
 func (s *Server) GetDocumentRelations(ctx context.Context, req *pbdocuments.GetDocumentRelationsRequest) (*pbdocuments.GetDocumentRelationsResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.id", int64(req.DocumentId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -217,8 +216,10 @@ func (s *Server) GetDocumentRelations(ctx context.Context, req *pbdocuments.GetD
 }
 
 func (s *Server) AddDocumentReference(ctx context.Context, req *pbdocuments.AddDocumentReferenceRequest) (*pbdocuments.AddDocumentReferenceResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.source_document_id", int64(req.Reference.SourceDocumentId)))
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.target_document_id", int64(req.Reference.TargetDocumentId)))
+	logging.InjectFields(ctx, logging.Fields{
+		"fivenet.documents.source_document_id", req.Reference.SourceDocumentId,
+		"fivenet.documents.target_document_id", req.Reference.TargetDocumentId,
+	})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -294,7 +295,7 @@ func (s *Server) addDocumentReference(ctx context.Context, db qrm.DB, ref *docum
 }
 
 func (s *Server) RemoveDocumentReference(ctx context.Context, req *pbdocuments.RemoveDocumentReferenceRequest) (*pbdocuments.RemoveDocumentReferenceResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.reference_id", int64(req.Id)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.reference_id", req.Id})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -355,9 +356,11 @@ func (s *Server) RemoveDocumentReference(ctx context.Context, req *pbdocuments.R
 }
 
 func (s *Server) AddDocumentRelation(ctx context.Context, req *pbdocuments.AddDocumentRelationRequest) (*pbdocuments.AddDocumentRelationResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.id", int64(req.Relation.DocumentId)))
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int("fivenet.documents.source_user_id", int(req.Relation.SourceUserId)))
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int("fivenet.documents.target_user_id", int(req.Relation.TargetUserId)))
+	logging.InjectFields(ctx, logging.Fields{
+		"fivenet.documents.id", req.Relation.DocumentId,
+		"fivenet.documents.source_user_id", req.Relation.SourceUserId,
+		"fivenet.documents.target_user_id", req.Relation.TargetUserId,
+	})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -472,7 +475,7 @@ func (s *Server) addDocumentRelation(ctx context.Context, tx qrm.DB, userInfo *u
 }
 
 func (s *Server) RemoveDocumentRelation(ctx context.Context, req *pbdocuments.RemoveDocumentRelationRequest) (*pbdocuments.RemoveDocumentRelationResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.id", int64(req.Id)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.Id})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

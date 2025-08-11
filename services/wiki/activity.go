@@ -17,14 +17,13 @@ import (
 	errorswiki "github.com/fivenet-app/fivenet/v2025/services/wiki/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 var tPActivity = table.FivenetWikiPagesActivity
 
 func (s *Server) ListPageActivity(ctx context.Context, req *pbwiki.ListPageActivityRequest) (*pbwiki.ListPageActivityResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.wiki.id", int64(req.PageId)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.wiki.page_id", req.PageId})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

@@ -18,15 +18,14 @@ import (
 	errorslivemap "github.com/fivenet-app/fivenet/v2025/services/livemap/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 var tMarkers = table.FivenetCentrumMarkers.AS("marker_marker")
 
 func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *pblivemap.CreateOrUpdateMarkerRequest) (*pblivemap.CreateOrUpdateMarkerResponse, error) {
 	if req.Marker != nil && req.Marker.Id > 0 {
-		trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.livemap.marker.id", int64(req.Marker.Id)))
+		logging.InjectFields(ctx, logging.Fields{"fivenet.livemap.marker_id", req.Marker.Id})
 	}
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -149,7 +148,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *pblivemap.Create
 }
 
 func (s *Server) DeleteMarker(ctx context.Context, req *pblivemap.DeleteMarkerRequest) (*pblivemap.DeleteMarkerResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.livemap.marker.id", int64(req.Id)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.livemap.marker_id", req.Id})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

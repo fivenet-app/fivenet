@@ -14,13 +14,11 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsjobs "github.com/fivenet-app/fivenet/v2025/services/jobs/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 const TimeclockMaxDays = (365 / 2) * 24 * time.Hour // Half a year
@@ -28,7 +26,7 @@ const TimeclockMaxDays = (365 / 2) * 24 * time.Hour // Half a year
 var tTimeClock = table.FivenetJobTimeclock.AS("timeclock_entry")
 
 func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockRequest) (*pbjobs.ListTimeclockResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.IntSlice("fivenet.jobs.timeclock.user_ids", utils.SliceInt32ToInt(req.UserIds)))
+	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.timeclock.user_ids", req.UserIds})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

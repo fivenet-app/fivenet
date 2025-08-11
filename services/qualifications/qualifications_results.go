@@ -21,8 +21,7 @@ import (
 	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
+	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 var (
@@ -33,10 +32,10 @@ var (
 
 func (s *Server) ListQualificationsResults(ctx context.Context, req *pbqualifications.ListQualificationsResultsRequest) (*pbqualifications.ListQualificationsResultsResponse, error) {
 	if req.QualificationId != nil {
-		trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.id", int64(*req.QualificationId)))
+		logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", *req.QualificationId})
 	}
 	if req.UserId != nil {
-		trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.user_id", int64(*req.UserId)))
+		logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.user_id", *req.UserId})
 	}
 
 	tUser := tables.User().AS("user")
