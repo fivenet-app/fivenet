@@ -17,11 +17,11 @@ const (
 )
 
 type CitizenInfoClaims struct {
+	jwt.RegisteredClaims
+
 	AccID    uint64 `json:"accid"`
 	Username string `json:"usr"`
 	CharID   int32  `json:"chrid"`
-
-	jwt.RegisteredClaims
 }
 
 type TokenMgr struct {
@@ -40,13 +40,17 @@ func (t *TokenMgr) NewWithClaims(claims *CitizenInfoClaims) (string, error) {
 }
 
 func (t *TokenMgr) ParseWithClaims(tokenString string) (*CitizenInfoClaims, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &CitizenInfoClaims{}, func(token *jwt.Token) (any, error) {
-		_, ok := token.Method.(*jwt.SigningMethodHMAC)
-		if !ok {
-			return "", errors.New("failed to verify jwt token method")
-		}
-		return t.jwtSigningKey, nil
-	})
+	token, err := jwt.ParseWithClaims(
+		tokenString,
+		&CitizenInfoClaims{},
+		func(token *jwt.Token) (any, error) {
+			_, ok := token.Method.(*jwt.SigningMethodHMAC)
+			if !ok {
+				return "", errors.New("failed to verify jwt token method")
+			}
+			return t.jwtSigningKey, nil
+		},
+	)
 	if err != nil {
 		return nil, errors.New("failed to parse jwt token")
 	}
@@ -58,21 +62,24 @@ func (t *TokenMgr) ParseWithClaims(tokenString string) (*CitizenInfoClaims, erro
 	return nil, errors.New("failed to parse token claims")
 }
 
-func BuildTokenClaimsFromAccount(account *model.FivenetAccounts, activeChar *users.User) *CitizenInfoClaims {
+func BuildTokenClaimsFromAccount(
+	account *model.FivenetAccounts,
+	activeChar *users.User,
+) *CitizenInfoClaims {
 	claims := &CitizenInfoClaims{
 		AccID:    account.ID,
 		Username: *account.Username,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:   "fivenet",
 			Subject:  account.License,
-			ID:       strconv.FormatUint(uint64(account.ID), 10),
+			ID:       strconv.FormatUint(account.ID, 10),
 			Audience: []string{"fivenet"},
 		},
 	}
 	SetTokenClaimsTimes(claims)
 
 	if activeChar != nil {
-		claims.CharID = activeChar.UserId
+		claims.CharID = activeChar.GetUserId()
 	} else {
 		claims.CharID = 0
 	}
@@ -83,7 +90,7 @@ func BuildTokenClaimsFromAccount(account *model.FivenetAccounts, activeChar *use
 func SetTokenClaimsTimes(claims *CitizenInfoClaims) {
 	now := time.Now()
 	// A usual scenario is to set the expiration time relative to the current time
-	claims.RegisteredClaims.ExpiresAt = jwt.NewNumericDate(now.Add(TokenExpireTime))
-	claims.RegisteredClaims.IssuedAt = jwt.NewNumericDate(now)
-	claims.RegisteredClaims.NotBefore = jwt.NewNumericDate(now)
+	claims.ExpiresAt = jwt.NewNumericDate(now.Add(TokenExpireTime))
+	claims.IssuedAt = jwt.NewNumericDate(now)
+	claims.NotBefore = jwt.NewNumericDate(now)
 }

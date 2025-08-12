@@ -32,7 +32,9 @@ type GRPCServerParams struct {
 	Services []grpcsvc.Service `group:"grpcservices"`
 }
 
-func TestGRPCServer(ctx context.Context) (*grpc.ClientConn, func(p GRPCServerParams) (*grpc.Server, error), error) {
+func TestGRPCServer(
+	ctx context.Context,
+) (*grpc.ClientConn, func(p GRPCServerParams) (*grpc.Server, error), error) {
 	buffer := 101024 * 1024
 	lis := bufconn.Listen(buffer)
 
@@ -43,7 +45,7 @@ func TestGRPCServer(ctx context.Context) (*grpc.ClientConn, func(p GRPCServerPar
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
-		return nil, nil, fmt.Errorf("error connecting to test grpc server: %v", err)
+		return nil, nil, fmt.Errorf("error connecting to test grpc server: %w", err)
 	}
 
 	return conn, func(p GRPCServerParams) (*grpc.Server, error) {

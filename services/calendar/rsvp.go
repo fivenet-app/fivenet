@@ -18,10 +18,13 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *pbcalendar.ListCalendarEntryRSVPRequest) (*pbcalendar.ListCalendarEntryRSVPResponse, error) {
+func (s *Server) ListCalendarEntryRSVP(
+	ctx context.Context,
+	req *pbcalendar.ListCalendarEntryRSVPRequest,
+) (*pbcalendar.ListCalendarEntryRSVPResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.EntryId)))
+	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.GetEntryId())))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -29,7 +32,14 @@ func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *pbcalendar.List
 		return nil, errorscalendar.ErrFailedQuery
 	}
 
-	check, err := s.checkIfUserHasAccessToCalendarEntry(ctx, entry.CalendarId, entry.Id, userInfo, calendar.AccessLevel_ACCESS_LEVEL_VIEW, true)
+	check, err := s.checkIfUserHasAccessToCalendarEntry(
+		ctx,
+		entry.GetCalendarId(),
+		entry.GetId(),
+		userInfo,
+		calendar.AccessLevel_ACCESS_LEVEL_VIEW,
+		true,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -40,7 +50,7 @@ func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *pbcalendar.List
 	tUser := tables.User().AS("user_short")
 	tAvatar := table.FivenetFiles.AS("avatar")
 
-	condition := tCalendarRSVP.EntryID.EQ(jet.Uint64(entry.Id)).
+	condition := tCalendarRSVP.EntryID.EQ(jet.Uint64(entry.GetId())).
 		AND(tCalendarRSVP.Response.GT(jet.Int16(int16(calendar.RsvpResponses_RSVP_RESPONSES_HIDDEN))))
 
 	countStmt := tCalendarRSVP.
@@ -61,7 +71,7 @@ func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *pbcalendar.List
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponse(count.Total)
+	pag, limit := req.GetPagination().GetResponse(count.Total)
 	resp := &pbcalendar.ListCalendarEntryRSVPResponse{
 		Pagination: pag,
 	}
@@ -99,7 +109,7 @@ func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *pbcalendar.List
 		).
 		WHERE(condition).
 		ORDER_BY(tCalendarRSVP.Response.DESC()).
-		OFFSET(req.Pagination.Offset).
+		OFFSET(req.GetPagination().GetOffset()).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
@@ -109,30 +119,37 @@ func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *pbcalendar.List
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.Entries {
-		if resp.Entries[i].User != nil {
-			jobInfoFn(resp.Entries[i].User)
+	for i := range resp.GetEntries() {
+		if resp.GetEntries()[i].GetUser() != nil {
+			jobInfoFn(resp.GetEntries()[i].GetUser())
 		}
 	}
 
-	resp.Pagination.Update(len(resp.Entries))
+	resp.GetPagination().Update(len(resp.GetEntries()))
 
 	return resp, nil
 }
 
-func (s *Server) RSVPCalendarEntry(ctx context.Context, req *pbcalendar.RSVPCalendarEntryRequest) (*pbcalendar.RSVPCalendarEntryResponse, error) {
+func (s *Server) RSVPCalendarEntry(
+	ctx context.Context,
+	req *pbcalendar.RSVPCalendarEntryRequest,
+) (*pbcalendar.RSVPCalendarEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbcalendar.CalendarService_ServiceDesc.ServiceName,
 		Method:  "RSVPCalendarEntry",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.Entry.EntryId)))
+	entry, err := s.getEntry(
+		ctx,
+		userInfo,
+		tCalendarEntry.ID.EQ(jet.Uint64(req.GetEntry().GetEntryId())),
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -140,7 +157,14 @@ func (s *Server) RSVPCalendarEntry(ctx context.Context, req *pbcalendar.RSVPCale
 		return nil, errorscalendar.ErrFailedQuery
 	}
 
-	check, err := s.checkIfUserHasAccessToCalendarEntry(ctx, entry.CalendarId, entry.Id, userInfo, calendar.AccessLevel_ACCESS_LEVEL_VIEW, true)
+	check, err := s.checkIfUserHasAccessToCalendarEntry(
+		ctx,
+		entry.GetCalendarId(),
+		entry.GetId(),
+		userInfo,
+		calendar.AccessLevel_ACCESS_LEVEL_VIEW,
+		true,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -148,11 +172,11 @@ func (s *Server) RSVPCalendarEntry(ctx context.Context, req *pbcalendar.RSVPCale
 		return nil, errorscalendar.ErrNoPerms
 	}
 
-	if entry.Closed {
+	if entry.GetClosed() {
 		return nil, errorscalendar.ErrEntryClosed
 	}
 
-	if req.Remove != nil && *req.Remove {
+	if req.Remove != nil && req.GetRemove() {
 		req.Entry.Response = calendar.RsvpResponses_RSVP_RESPONSES_HIDDEN
 	}
 
@@ -164,12 +188,12 @@ func (s *Server) RSVPCalendarEntry(ctx context.Context, req *pbcalendar.RSVPCale
 			tCalendarRSVP.Response,
 		).
 		VALUES(
-			req.Entry.EntryId,
-			userInfo.UserId,
-			req.Entry.Response,
+			req.GetEntry().GetEntryId(),
+			userInfo.GetUserId(),
+			req.GetEntry().GetResponse(),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tCalendarRSVP.Response.SET(jet.Int16(int16(req.Entry.Response))),
+			tCalendarRSVP.Response.SET(jet.Int16(int16(req.GetEntry().GetResponse()))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -178,13 +202,13 @@ func (s *Server) RSVPCalendarEntry(ctx context.Context, req *pbcalendar.RSVPCale
 		}
 	}
 
-	rsvpEntry, err := s.getRSVPCalendarEntry(ctx, req.Entry.EntryId, userInfo.UserId)
+	rsvpEntry, err := s.getRSVPCalendarEntry(ctx, req.GetEntry().GetEntryId(), userInfo.GetUserId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	if rsvpEntry.User != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, rsvpEntry.User)
+	if rsvpEntry.GetUser() != nil {
+		s.enricher.EnrichJobInfoSafe(userInfo, rsvpEntry.GetUser())
 	}
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
@@ -194,7 +218,11 @@ func (s *Server) RSVPCalendarEntry(ctx context.Context, req *pbcalendar.RSVPCale
 	}, nil
 }
 
-func (s *Server) getRSVPCalendarEntry(ctx context.Context, entryId uint64, userId int32) (*calendar.CalendarEntryRSVP, error) {
+func (s *Server) getRSVPCalendarEntry(
+	ctx context.Context,
+	entryId uint64,
+	userId int32,
+) (*calendar.CalendarEntryRSVP, error) {
 	tUser := tables.User().AS("user_short")
 	tAvatar := table.FivenetFiles.AS("avatar")
 
@@ -238,7 +266,7 @@ func (s *Server) getRSVPCalendarEntry(ctx context.Context, entryId uint64, userI
 		}
 	}
 
-	if dest.EntryId == 0 {
+	if dest.GetEntryId() == 0 {
 		return nil, nil
 	}
 

@@ -23,7 +23,7 @@ var tAudit = table.FivenetAuditLog
 // json is the configured JSON encoder/decoder for fast serialization.
 var json = jsoniter.ConfigFastest
 
-// Default values for audit system
+// Default values for audit system.
 const (
 	bufferSize  = 128
 	workerCount = 4
@@ -167,7 +167,7 @@ func (a *AuditStorer) store(ctx context.Context, in *audit.AuditEntry) error {
 
 	// Remove everything but the last part of the GRPC service name
 	// E.g., `service.centrum.CentrumService` becomes `CentrumService`
-	service := strings.Split(in.Service, ".")
+	service := strings.Split(in.GetService(), ".")
 	in.Service = service[len(service)-1]
 
 	stmt := tAudit.
@@ -181,13 +181,13 @@ func (a *AuditStorer) store(ctx context.Context, in *audit.AuditEntry) error {
 			tAudit.Data,
 		).
 		VALUES(
-			in.UserId,
-			in.UserJob,
-			in.TargetUserId,
-			in.Service,
-			in.Method,
-			in.State,
-			in.Data,
+			in.GetUserId(),
+			in.GetUserJob(),
+			in.GetTargetUserId(),
+			in.GetService(),
+			in.GetMethod(),
+			in.GetState(),
+			in.GetData(),
 		)
 
 	if _, err := stmt.ExecContext(ctx, a.db); err != nil {

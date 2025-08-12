@@ -22,12 +22,20 @@ import (
 
 var tPActivity = table.FivenetWikiPagesActivity
 
-func (s *Server) ListPageActivity(ctx context.Context, req *pbwiki.ListPageActivityRequest) (*pbwiki.ListPageActivityResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.wiki.page_id", req.PageId})
+func (s *Server) ListPageActivity(
+	ctx context.Context,
+	req *pbwiki.ListPageActivityRequest,
+) (*pbwiki.ListPageActivityResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.wiki.page_id", req.GetPageId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.PageId, userInfo, wiki.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetPageId(),
+		userInfo,
+		wiki.AccessLevel_ACCESS_LEVEL_VIEW,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
@@ -36,7 +44,7 @@ func (s *Server) ListPageActivity(ctx context.Context, req *pbwiki.ListPageActiv
 	}
 
 	tPActivity := table.FivenetWikiPagesActivity.AS("page_activity")
-	condition := tPActivity.PageID.EQ(jet.Uint64(req.PageId))
+	condition := tPActivity.PageID.EQ(jet.Uint64(req.GetPageId()))
 
 	countStmt := tPActivity.
 		SELECT(
@@ -56,7 +64,7 @@ func (s *Server) ListPageActivity(ctx context.Context, req *pbwiki.ListPageActiv
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, 10)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, 10)
 	resp := &pbwiki.ListPageActivityResponse{
 		Pagination: pag,
 		Activity:   []*wiki.PageActivity{},
@@ -91,7 +99,7 @@ func (s *Server) ListPageActivity(ctx context.Context, req *pbwiki.ListPageActiv
 		).
 		WHERE(condition).
 		OFFSET(
-			req.Pagination.Offset,
+			req.GetPagination().GetOffset(),
 		).
 		ORDER_BY(
 			tPActivity.ID.DESC(),
@@ -102,19 +110,23 @@ func (s *Server) ListPageActivity(ctx context.Context, req *pbwiki.ListPageActiv
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
-	resp.Pagination.Update(len(resp.Activity))
+	resp.GetPagination().Update(len(resp.GetActivity()))
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.Activity {
-		if resp.Activity[i].Creator != nil {
-			jobInfoFn(resp.Activity[i].Creator)
+	for i := range resp.GetActivity() {
+		if resp.GetActivity()[i].GetCreator() != nil {
+			jobInfoFn(resp.GetActivity()[i].GetCreator())
 		}
 	}
 
 	return resp, nil
 }
 
-func (s *Server) addPageActivity(ctx context.Context, tx qrm.DB, activitiy *wiki.PageActivity) (uint64, error) {
+func (s *Server) addPageActivity(
+	ctx context.Context,
+	tx qrm.DB,
+	activitiy *wiki.PageActivity,
+) (uint64, error) {
 	stmt := tPActivity.
 		INSERT(
 			tPActivity.PageID,
@@ -125,12 +137,12 @@ func (s *Server) addPageActivity(ctx context.Context, tx qrm.DB, activitiy *wiki
 			tPActivity.Data,
 		).
 		VALUES(
-			activitiy.PageId,
-			activitiy.ActivityType,
-			activitiy.CreatorId,
-			activitiy.CreatorJob,
-			activitiy.Reason,
-			activitiy.Data,
+			activitiy.GetPageId(),
+			activitiy.GetActivityType(),
+			activitiy.GetCreatorId(),
+			activitiy.GetCreatorJob(),
+			activitiy.GetReason(),
+			activitiy.GetData(),
 		)
 
 	res, err := stmt.ExecContext(ctx, tx)
@@ -148,12 +160,12 @@ func (s *Server) addPageActivity(ctx context.Context, tx qrm.DB, activitiy *wiki
 	return uint64(lastId), nil
 }
 
-// generatePageDiff Generates diff if the old and new contents are not equal, using a simple "string comparison"
+// generatePageDiff Generates diff if the old and new contents are not equal, using a simple "string comparison".
 func (s *Server) generatePageDiff(old *wiki.Page, new *wiki.Page) (*wiki.PageUpdated, error) {
 	diff := &wiki.PageUpdated{}
 
-	if !strings.EqualFold(old.Meta.Title, new.Meta.Title) {
-		titleDiff, err := s.htmlDiff.FancyDiff(old.Meta.Title, new.Meta.Title)
+	if !strings.EqualFold(old.GetMeta().GetTitle(), new.GetMeta().GetTitle()) {
+		titleDiff, err := s.htmlDiff.FancyDiff(old.GetMeta().GetTitle(), new.GetMeta().GetTitle())
 		if err != nil {
 			return nil, err
 		}
@@ -162,8 +174,11 @@ func (s *Server) generatePageDiff(old *wiki.Page, new *wiki.Page) (*wiki.PageUpd
 		}
 	}
 
-	if !strings.EqualFold(old.Meta.Description, new.Meta.Description) {
-		descriptionDiff, err := s.htmlDiff.FancyDiff(old.Meta.Description, new.Meta.Description)
+	if !strings.EqualFold(old.GetMeta().GetDescription(), new.GetMeta().GetDescription()) {
+		descriptionDiff, err := s.htmlDiff.FancyDiff(
+			old.GetMeta().GetDescription(),
+			new.GetMeta().GetDescription(),
+		)
 		if err != nil {
 			return nil, err
 		}
@@ -172,11 +187,11 @@ func (s *Server) generatePageDiff(old *wiki.Page, new *wiki.Page) (*wiki.PageUpd
 		}
 	}
 
-	newRawContent, err := content.PrettyHTML(*new.Content.RawContent)
+	newRawContent, err := content.PrettyHTML(new.GetContent().GetRawContent())
 	if err != nil {
 		return nil, err
 	}
-	if d := s.htmlDiff.PatchDiff(*old.Content.RawContent, newRawContent); d != "" {
+	if d := s.htmlDiff.PatchDiff(old.GetContent().GetRawContent(), newRawContent); d != "" {
 		diff.ContentDiff = &d
 	}
 

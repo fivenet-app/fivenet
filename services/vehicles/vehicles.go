@@ -22,7 +22,10 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
-func (s *Server) ListVehicles(ctx context.Context, req *pbvehicles.ListVehiclesRequest) (*pbvehicles.ListVehiclesResponse, error) {
+func (s *Server) ListVehicles(
+	ctx context.Context,
+	req *pbvehicles.ListVehiclesRequest,
+) (*pbvehicles.ListVehiclesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 	logRequest := false
 
@@ -31,33 +34,38 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbvehicles.ListVehiclesR
 	tUsers := tables.User().AS("user_short")
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(userInfo, permsvehicles.VehiclesServicePerm, permsvehicles.VehiclesServiceSetVehiclePropsPerm, permsvehicles.VehiclesServiceSetVehiclePropsFieldsPermField)
+	fields, err := s.ps.AttrStringList(
+		userInfo,
+		permsvehicles.VehiclesServicePerm,
+		permsvehicles.VehiclesServiceSetVehiclePropsPerm,
+		permsvehicles.VehiclesServiceSetVehiclePropsFieldsPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
 
 	condition := jet.Bool(true)
 	userCondition := tUsers.Identifier.EQ(tVehicles.Owner)
-	if req.LicensePlate != nil && *req.LicensePlate != "" {
+	if req.LicensePlate != nil && req.GetLicensePlate() != "" {
 		logRequest = true
 		condition = jet.AND(condition, tVehicles.Plate.LIKE(jet.String(
-			strings.ReplaceAll(*req.LicensePlate, "%", "")+"%",
+			strings.ReplaceAll(req.GetLicensePlate(), "%", "")+"%",
 		)))
 	}
 
 	// Make sure the model column is available
 	modelColumn := s.customDB.Columns.Vehicle.GetModel(tVehicles.Alias())
-	if modelColumn != nil && req.Model != nil && *req.Model != "" {
+	if modelColumn != nil && req.Model != nil && req.GetModel() != "" {
 		logRequest = true
 		condition = jet.AND(condition, tVehicles.Model.LIKE(jet.String(
-			strings.ReplaceAll(*req.Model, "%", "")+"%",
+			strings.ReplaceAll(req.GetModel(), "%", "")+"%",
 		)))
 	}
 
-	if len(req.UserIds) > 0 {
+	if len(req.GetUserIds()) > 0 {
 		logRequest = true
 		userIds := []jet.Expression{}
-		for _, v := range req.UserIds {
+		for _, v := range req.GetUserIds() {
 			userIds = append(userIds, jet.Int32(v))
 		}
 
@@ -66,18 +74,18 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbvehicles.ListVehiclesR
 			tUsers.ID.IN(userIds...),
 		)
 		userCondition = jet.AND(userCondition, tUsers.ID.IN(userIds...))
-	} else if req.Job != nil && *req.Job != "" && !tables.ESXCompatEnabled {
+	} else if req.Job != nil && req.GetJob() != "" && !tables.IsESXCompatEnabled() {
 		logRequest = true
 		condition = jet.AND(condition,
-			tVehicles.Job.EQ(jet.String(*req.Job)),
+			tVehicles.Job.EQ(jet.String(req.GetJob())),
 		)
 	}
 
-	if fields.Contains("Wanted") || userInfo.Superuser {
-		if req.Wanted != nil && *req.Wanted {
+	if fields.Contains("Wanted") || userInfo.GetSuperuser() {
+		if req.Wanted != nil && req.GetWanted() {
 			logRequest = true
 			condition = jet.AND(condition,
-				tVehicleProps.Wanted.EQ(jet.Bool(*req.Wanted)),
+				tVehicleProps.Wanted.EQ(jet.Bool(req.GetWanted())),
 			)
 		}
 	}
@@ -86,8 +94,8 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbvehicles.ListVehiclesR
 		defer s.aud.Log(&audit.AuditEntry{
 			Service: pbvehicles.VehiclesService_ServiceDesc.ServiceName,
 			Method:  "ListVehicles",
-			UserId:  userInfo.UserId,
-			UserJob: userInfo.Job,
+			UserId:  userInfo.GetUserId(),
+			UserJob: userInfo.GetJob(),
 			State:   audit.EventType_EVENT_TYPE_VIEWED,
 		}, req)
 	}
@@ -114,7 +122,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbvehicles.ListVehiclesR
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, 20)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, 20)
 	resp := &pbvehicles.ListVehiclesResponse{
 		Pagination: pag,
 	}
@@ -126,9 +134,9 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbvehicles.ListVehiclesR
 	orderBys := []jet.OrderByClause{
 		tVehicles.Type.ASC(),
 	}
-	if req.Sort != nil {
+	if req.GetSort() != nil {
 		var column jet.Column
-		switch req.Sort.Column {
+		switch req.GetSort().GetColumn() {
 		case "model":
 			column = tVehicles.Model
 		case "plate":
@@ -137,7 +145,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbvehicles.ListVehiclesR
 			column = tVehicles.Plate
 		}
 
-		if req.Sort.Direction == database.AscSortDirection {
+		if req.GetSort().GetDirection() == database.AscSortDirection {
 			orderBys = append(orderBys, column.ASC())
 		} else {
 			orderBys = append(orderBys, column.DESC())
@@ -157,7 +165,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbvehicles.ListVehiclesR
 		tVehicleProps.Plate,
 	}
 
-	if !tables.ESXCompatEnabled {
+	if !tables.IsESXCompatEnabled() {
 		columns = append(columns,
 			tVehicles.Job,
 			tVehicles.Data,
@@ -165,7 +173,12 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbvehicles.ListVehiclesR
 	}
 
 	// Field Permission Check
-	userFields, err := s.ps.AttrStringList(userInfo, permscitizens.CitizensServicePerm, permscitizens.CitizensServiceListCitizensPerm, permscitizens.CitizensServiceListCitizensFieldsPermField)
+	userFields, err := s.ps.AttrStringList(
+		userInfo,
+		permscitizens.CitizensServicePerm,
+		permscitizens.CitizensServiceListCitizensPerm,
+		permscitizens.CitizensServiceListCitizensFieldsPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
@@ -177,7 +190,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbvehicles.ListVehiclesR
 	if fields.Len() > 0 {
 		columns = append(columns, tVehicleProps.UpdatedAt)
 	}
-	if fields.Contains("Wanted") || userInfo.Superuser {
+	if fields.Contains("Wanted") || userInfo.GetSuperuser() {
 		columns = append(columns,
 			tVehicleProps.Wanted,
 			tVehicleProps.WantedReason,
@@ -199,7 +212,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbvehicles.ListVehiclesR
 				),
 		).
 		WHERE(condition).
-		OFFSET(req.Pagination.Offset).
+		OFFSET(req.GetPagination().GetOffset()).
 		ORDER_BY(orderBys...).
 		LIMIT(limit)
 
@@ -207,33 +220,36 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbvehicles.ListVehiclesR
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
 
-	for i := range resp.Vehicles {
-		if resp.Vehicles[i].Job != nil && *resp.Vehicles[i].Job != "" {
-			s.enricher.EnrichJobName(resp.Vehicles[i])
+	for i := range resp.GetVehicles() {
+		if resp.Vehicles[i].Job != nil && resp.GetVehicles()[i].GetJob() != "" {
+			s.enricher.EnrichJobName(resp.GetVehicles()[i])
 		}
 	}
 
-	resp.Pagination.Update(len(resp.Vehicles))
+	resp.GetPagination().Update(len(resp.GetVehicles()))
 
 	return resp, nil
 }
 
-func (s *Server) SetVehicleProps(ctx context.Context, req *pbvehicles.SetVehiclePropsRequest) (*pbvehicles.SetVehiclePropsResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.vehicles.plate", req.Props.Plate})
+func (s *Server) SetVehicleProps(
+	ctx context.Context,
+	req *pbvehicles.SetVehiclePropsRequest,
+) (*pbvehicles.SetVehiclePropsResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.vehicles.plate", req.GetProps().GetPlate()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbvehicles.VehiclesService_ServiceDesc.ServiceName,
 		Method:  "SetVehicleProps",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
 	// Get current vehicle props to be able to compare
-	props, err := s.getVehicleProps(ctx, req.Props.Plate)
+	props, err := s.getVehicleProps(ctx, req.GetProps().GetPlate())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
@@ -248,14 +264,19 @@ func (s *Server) SetVehicleProps(ctx context.Context, req *pbvehicles.SetVehicle
 	}
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(userInfo, permsvehicles.VehiclesServicePerm, permsvehicles.VehiclesServiceSetVehiclePropsPerm, permsvehicles.VehiclesServiceSetVehiclePropsFieldsPermField)
+	fields, err := s.ps.AttrStringList(
+		userInfo,
+		permsvehicles.VehiclesServicePerm,
+		permsvehicles.VehiclesServiceSetVehiclePropsPerm,
+		permsvehicles.VehiclesServiceSetVehiclePropsFieldsPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
 
 	// Generate the update sets
 	if req.Props.Wanted != nil {
-		if !fields.Contains("Wanted") && !userInfo.Superuser {
+		if !fields.Contains("Wanted") && !userInfo.GetSuperuser() {
 			return nil, errorsvehicles.ErrPropsWantedDenied
 		}
 	}
@@ -268,7 +289,7 @@ func (s *Server) SetVehicleProps(ctx context.Context, req *pbvehicles.SetVehicle
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	if err := props.HandleChanges(ctx, tx, req.Props); err != nil {
+	if err := props.HandleChanges(ctx, tx, req.GetProps()); err != nil {
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
 
@@ -279,7 +300,7 @@ func (s *Server) SetVehicleProps(ctx context.Context, req *pbvehicles.SetVehicle
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
-	resp.Props, err = s.getVehicleProps(ctx, req.Props.Plate)
+	resp.Props, err = s.getVehicleProps(ctx, req.GetProps().GetPlate())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
@@ -287,7 +308,10 @@ func (s *Server) SetVehicleProps(ctx context.Context, req *pbvehicles.SetVehicle
 	return resp, nil
 }
 
-func (s *Server) getVehicleProps(ctx context.Context, plate string) (*vehicles.VehicleProps, error) {
+func (s *Server) getVehicleProps(
+	ctx context.Context,
+	plate string,
+) (*vehicles.VehicleProps, error) {
 	tVehicleProps := table.FivenetVehiclesProps.AS("vehicle_props")
 
 	stmt := tVehicleProps.
@@ -310,7 +334,7 @@ func (s *Server) getVehicleProps(ctx context.Context, plate string) (*vehicles.V
 		}
 	}
 
-	if dest.Plate == "" {
+	if dest.GetPlate() == "" {
 		dest.Plate = plate
 	}
 

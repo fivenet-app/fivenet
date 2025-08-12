@@ -2,6 +2,7 @@ package zaputils
 
 import "go.uber.org/zap/zapcore"
 
+// StringToLevel converts a string representation of a log level to zapcore.Level.
 func StringToLevel(level string) zapcore.Level {
 	switch level {
 	case "debug":

@@ -41,7 +41,7 @@ func (m *MockProvider) GetUserInfo(ctx context.Context, code string) (*providers
 
 func createMockProvider() *MockProvider {
 	mockProvider := new(MockProvider)
-	mockProvider.BaseProvider.Name = "test-provider"
+	mockProvider.Name = "test-provider"
 	return mockProvider
 }
 
@@ -49,17 +49,31 @@ type MockUserInfoStore struct {
 	mock.Mock
 }
 
-func (m *MockUserInfoStore) storeUserInfo(ctx context.Context, accountId uint64, provider string, userInfo *providers.UserInfo) error {
+func (m *MockUserInfoStore) storeUserInfo(
+	ctx context.Context,
+	accountId uint64,
+	provider string,
+	userInfo *providers.UserInfo,
+) error {
 	args := m.Called(ctx, accountId, provider, userInfo)
 	return args.Error(0)
 }
 
-func (m *MockUserInfoStore) updateUserInfo(ctx context.Context, accountId uint64, provider string, userInfo *providers.UserInfo) error {
+func (m *MockUserInfoStore) updateUserInfo(
+	ctx context.Context,
+	accountId uint64,
+	provider string,
+	userInfo *providers.UserInfo,
+) error {
 	args := m.Called(ctx, accountId, provider, userInfo)
 	return args.Error(0)
 }
 
-func (m *MockUserInfoStore) getAccountInfo(ctx context.Context, provider string, userInfo *providers.UserInfo) (*model.FivenetAccounts, error) {
+func (m *MockUserInfoStore) getAccountInfo(
+	ctx context.Context,
+	provider string,
+	userInfo *providers.UserInfo,
+) (*model.FivenetAccounts, error) {
 	args := m.Called(ctx, provider, userInfo)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
@@ -133,7 +147,8 @@ func TestCallback_ProviderError(t *testing.T) {
 	router.Use(sess)
 
 	mockProvider := createMockProvider()
-	mockProvider.On("GetUserInfo", mock.Anything, "test-code").Return(nil, errors.New("provider error"))
+	mockProvider.On("GetUserInfo", mock.Anything, "test-code").
+		Return(nil, errors.New("provider error"))
 
 	oauth := &OAuth2{
 		logger: zaptest.NewLogger(t),
@@ -143,7 +158,11 @@ func TestCallback_ProviderError(t *testing.T) {
 	}
 	router.GET("/callback/:provider", oauth.Callback)
 
-	req := httptest.NewRequest(http.MethodGet, "/callback/test-provider?state=valid&code=test-code", nil)
+	req := httptest.NewRequest(
+		http.MethodGet,
+		"/callback/test-provider?state=valid&code=test-code",
+		nil,
+	)
 	c.Request = req
 
 	sess(c)
@@ -204,12 +223,14 @@ func TestCallback_LoginSuccess(t *testing.T) {
 	mockProvider.On("GetUserInfo", mock.Anything, "test-code").Return(mockUserInfo, nil)
 
 	mockUserInfoStore := &MockUserInfoStore{}
-	mockUserInfoStore.On("getAccountInfo", mock.Anything, "test-provider", mockUserInfo).Return(&model.FivenetAccounts{
-		ID:       123,
-		Username: &mockUserInfo.Username,
-		License:  "license",
-	}, nil)
-	mockUserInfoStore.On("updateUserInfo", mock.Anything, uint64(123), "test-provider", mockUserInfo).Return(nil)
+	mockUserInfoStore.On("getAccountInfo", mock.Anything, "test-provider", mockUserInfo).
+		Return(&model.FivenetAccounts{
+			ID:       123,
+			Username: &mockUserInfo.Username,
+			License:  "license",
+		}, nil)
+	mockUserInfoStore.On("updateUserInfo", mock.Anything, uint64(123), "test-provider", mockUserInfo).
+		Return(nil)
 
 	oauth := &OAuth2{
 		logger: zaptest.NewLogger(t),
@@ -221,7 +242,11 @@ func TestCallback_LoginSuccess(t *testing.T) {
 	}
 	router.GET("/callback/:provider", oauth.Callback)
 
-	req := httptest.NewRequest(http.MethodGet, "/callback/test-provider?state=valid&code=test-code", nil)
+	req := httptest.NewRequest(
+		http.MethodGet,
+		"/callback/test-provider?state=valid&code=test-code",
+		nil,
+	)
 	c.Request = req
 
 	sess(c)
@@ -232,7 +257,11 @@ func TestCallback_LoginSuccess(t *testing.T) {
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusTemporaryRedirect, w.Code)
-	assert.Contains(t, w.Header().Get("Location"), "/auth/login?oauth2Login=success&u=testuser&exp=")
+	assert.Contains(
+		t,
+		w.Header().Get("Location"),
+		"/auth/login?oauth2Login=success&u=testuser&exp=",
+	)
 	mockProvider.AssertExpectations(t)
 }
 
@@ -256,11 +285,12 @@ func TestCallback_ConnectError(t *testing.T) {
 	mockProvider.On("GetUserInfo", mock.Anything, "test-code").Return(mockUserInfo, nil)
 
 	mockUserInfoStore := &MockUserInfoStore{}
-	mockUserInfoStore.On("getAccountInfo", mock.Anything, "test-provider", mockUserInfo).Return(&model.FivenetAccounts{
-		ID:       123,
-		Username: &mockUserInfo.Username,
-		License:  "license",
-	}, nil)
+	mockUserInfoStore.On("getAccountInfo", mock.Anything, "test-provider", mockUserInfo).
+		Return(&model.FivenetAccounts{
+			ID:       123,
+			Username: &mockUserInfo.Username,
+			License:  "license",
+		}, nil)
 
 	oauth := &OAuth2{
 		logger: zaptest.NewLogger(t),
@@ -272,7 +302,11 @@ func TestCallback_ConnectError(t *testing.T) {
 	}
 	router.GET("/callback/:provider", oauth.Callback)
 
-	req := httptest.NewRequest(http.MethodGet, "/callback/test-provider?state=valid&code=test-code", nil)
+	req := httptest.NewRequest(
+		http.MethodGet,
+		"/callback/test-provider?state=valid&code=test-code",
+		nil,
+	)
 	c.Request = req
 
 	sess(c)
@@ -313,7 +347,8 @@ func TestCallback_ConnectErrorAlreadyInUse(t *testing.T) {
 	mockProvider.On("GetUserInfo", mock.Anything, "test-code").Return(mockUserInfo, nil)
 
 	mockUserInfoStore := &MockUserInfoStore{}
-	mockUserInfoStore.On("storeUserInfo", mock.Anything, uint64(123), "test-provider", mockUserInfo).Return(&mysql.MySQLError{Number: 1062})
+	mockUserInfoStore.On("storeUserInfo", mock.Anything, uint64(123), "test-provider", mockUserInfo).
+		Return(&mysql.MySQLError{Number: 1062})
 
 	oauth := &OAuth2{
 		logger: zaptest.NewLogger(t),
@@ -325,7 +360,11 @@ func TestCallback_ConnectErrorAlreadyInUse(t *testing.T) {
 	}
 	router.GET("/callback/:provider", oauth.Callback)
 
-	req := httptest.NewRequest(http.MethodGet, "/callback/test-provider?state=valid&code=test-code", nil)
+	req := httptest.NewRequest(
+		http.MethodGet,
+		"/callback/test-provider?state=valid&code=test-code",
+		nil,
+	)
 	c.Request = req
 
 	sess(c)
@@ -368,12 +407,14 @@ func TestCallback_ConnectFlow(t *testing.T) {
 	mockProvider.On("GetUserInfo", mock.Anything, "test-code").Return(mockUserInfo, nil)
 
 	mockUserInfoStore := &MockUserInfoStore{}
-	mockUserInfoStore.On("getAccountInfo", mock.Anything, "test-provider", mockUserInfo).Return(&model.FivenetAccounts{
-		ID:       123,
-		Username: &mockUserInfo.Username,
-		License:  "license",
-	}, nil)
-	mockUserInfoStore.On("storeUserInfo", mock.Anything, uint64(123), "test-provider", mockUserInfo).Return(nil)
+	mockUserInfoStore.On("getAccountInfo", mock.Anything, "test-provider", mockUserInfo).
+		Return(&model.FivenetAccounts{
+			ID:       123,
+			Username: &mockUserInfo.Username,
+			License:  "license",
+		}, nil)
+	mockUserInfoStore.On("storeUserInfo", mock.Anything, uint64(123), "test-provider", mockUserInfo).
+		Return(nil)
 	oauth := &OAuth2{
 		logger: zaptest.NewLogger(t),
 		oauthConfigs: map[string]providers.IProvider{
@@ -401,21 +442,26 @@ func TestCallback_ConnectFlow(t *testing.T) {
 	session := sessions.DefaultMany(c, "fivenet_oauth2_state")
 	state := session.Get("state")
 	assert.NotEmpty(t, state)
-	assert.NoError(t, session.Save())
+	require.NoError(t, session.Save())
 
 	req.AddCookie(&http.Cookie{
 		Name:  "fivenet_token",
 		Value: token,
 	})
 
-	req.URL, err = url.Parse("/callback/test-provider?state=" + state.(string) + "&code=test-code")
-	assert.NoError(t, err)
+	stateVal := state.(string)
+	req.URL, err = url.Parse("/callback/test-provider?state=" + stateVal + "&code=test-code")
+	require.NoError(t, err)
 	c.Request = req
 	sess(c)
 
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusTemporaryRedirect, w.Code)
-	assert.Equal(t, w.Header().Get("Location"), "/auth/account-info?oauth2Connect=success&tab=oauth2Connections#")
+	assert.Equal(
+		t,
+		"/auth/account-info?oauth2Connect=success&tab=oauth2Connections#",
+		w.Header().Get("Location"),
+	)
 	mockProvider.AssertExpectations(t)
 }

@@ -15,11 +15,19 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
-func (s *Server) GetDocumentAccess(ctx context.Context, req *pbdocuments.GetDocumentAccessRequest) (*pbdocuments.GetDocumentAccessResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
+func (s *Server) GetDocumentAccess(
+	ctx context.Context,
+	req *pbdocuments.GetDocumentAccessRequest,
+) (*pbdocuments.GetDocumentAccessResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	check, err := s.access.CanUserAccessTarget(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetDocumentId(),
+		userInfo,
+		documents.AccessLevel_ACCESS_LEVEL_VIEW,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -27,19 +35,19 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *pbdocuments.GetDocu
 		return nil, errorsdocuments.ErrDocAccessViewDenied
 	}
 
-	access, err := s.getDocumentAccess(ctx, req.DocumentId)
+	access, err := s.getDocumentAccess(ctx, req.GetDocumentId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	for i := range access.Jobs {
-		s.enricher.EnrichJobInfo(access.Jobs[i])
+	for i := range access.GetJobs() {
+		s.enricher.EnrichJobInfo(access.GetJobs()[i])
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range access.Users {
-		if access.Users[i].User != nil {
-			jobInfoFn(access.Users[i].User)
+	for i := range access.GetUsers() {
+		if access.GetUsers()[i].GetUser() != nil {
+			jobInfoFn(access.GetUsers()[i].GetUser())
 		}
 	}
 
@@ -50,21 +58,29 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *pbdocuments.GetDocu
 	return resp, nil
 }
 
-func (s *Server) SetDocumentAccess(ctx context.Context, req *pbdocuments.SetDocumentAccessRequest) (*pbdocuments.SetDocumentAccessResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
+func (s *Server) SetDocumentAccess(
+	ctx context.Context,
+	req *pbdocuments.SetDocumentAccessRequest,
+) (*pbdocuments.SetDocumentAccessResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
 		Method:  "SetDocumentAccess",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_ACCESS)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetDocumentId(),
+		userInfo,
+		documents.AccessLevel_ACCESS_LEVEL_ACCESS,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -80,7 +96,7 @@ func (s *Server) SetDocumentAccess(ctx context.Context, req *pbdocuments.SetDocu
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	if err := s.handleDocumentAccessChange(ctx, tx, req.DocumentId, userInfo, req.Access, true); err != nil {
+	if err := s.handleDocumentAccessChange(ctx, tx, req.GetDocumentId(), userInfo, req.GetAccess(), true); err != nil {
 		return nil, err
 	}
 
@@ -94,7 +110,10 @@ func (s *Server) SetDocumentAccess(ctx context.Context, req *pbdocuments.SetDocu
 	return &pbdocuments.SetDocumentAccessResponse{}, nil
 }
 
-func (s *Server) getDocumentAccess(ctx context.Context, documentId uint64) (*documents.DocumentAccess, error) {
+func (s *Server) getDocumentAccess(
+	ctx context.Context,
+	documentId uint64,
+) (*documents.DocumentAccess, error) {
 	jobAccess, err := s.access.Jobs.List(ctx, s.db, documentId)
 	if err != nil {
 		return nil, err
@@ -111,8 +130,22 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentId uint64) (*doc
 	}, nil
 }
 
-func (s *Server) handleDocumentAccessChange(ctx context.Context, tx qrm.DB, documentId uint64, userInfo *userinfo.UserInfo, access *documents.DocumentAccess, addActivity bool) error {
-	changes, err := s.access.HandleAccessChanges(ctx, tx, documentId, access.Jobs, access.Users, nil)
+func (s *Server) handleDocumentAccessChange(
+	ctx context.Context,
+	tx qrm.DB,
+	documentId uint64,
+	userInfo *userinfo.UserInfo,
+	access *documents.DocumentAccess,
+	addActivity bool,
+) error {
+	changes, err := s.access.HandleAccessChanges(
+		ctx,
+		tx,
+		documentId,
+		access.GetJobs(),
+		access.GetUsers(),
+		nil,
+	)
 	if err != nil {
 		if dbutils.IsDuplicateError(err) {
 			return errswrap.NewError(err, errorsdocuments.ErrDocAccessDuplicate)
@@ -125,7 +158,7 @@ func (s *Server) handleDocumentAccessChange(ctx context.Context, tx qrm.DB, docu
 			DocumentId:   documentId,
 			ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_ACCESS_UPDATED,
 			CreatorId:    &userInfo.UserId,
-			CreatorJob:   userInfo.Job,
+			CreatorJob:   userInfo.GetJob(),
 			Data: &documents.DocActivityData{
 				Data: &documents.DocActivityData_AccessUpdated{
 					AccessUpdated: &documents.DocAccessUpdated{

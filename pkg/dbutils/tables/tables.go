@@ -14,15 +14,19 @@ var (
 
 var once sync.Once
 
-var ESXCompatEnabled = false
+var esxCompatEnabled = false
 
-// Called to enable ESX compat mode, overrides the `fivenet_` prefixed tables with the ESX names
+// Called to enable ESX compat mode, overrides the `fivenet_` prefixed tables with the ESX names.
 func EnableESXCompat() {
 	once.Do(setESXTableNames)
 }
 
+func IsESXCompatEnabled() bool {
+	return esxCompatEnabled
+}
+
 func setESXTableNames() {
-	ESXCompatEnabled = true
+	esxCompatEnabled = true
 
 	jobs = newFivenetJobsTable("", "jobs", "")
 	jobGrades = newFivenetJobsGradesTable("", "job_grades", "")

@@ -20,12 +20,12 @@ func CheckIfHasOwnJobAccess(
 	creator *users.UserShort, // Short info about the creator (may be nil)
 ) bool {
 	// Superusers always have access
-	if userInfo.Superuser {
+	if userInfo.GetSuperuser() {
 		return true
 	}
 
 	// If the document creator job is not equal to the creator's current job, normal access checks need to be applied
-	if creatorJob != userInfo.Job {
+	if creatorJob != userInfo.GetJob() {
 		return true
 	}
 
@@ -36,7 +36,7 @@ func CheckIfHasOwnJobAccess(
 
 	// If no levels set, assume "Own" as a safe default
 	if levels.Len() == 0 {
-		return creator.UserId == userInfo.UserId
+		return creator.GetUserId() == userInfo.GetUserId()
 	}
 
 	// Grant access if any level is "Any"
@@ -45,19 +45,19 @@ func CheckIfHasOwnJobAccess(
 	}
 	// Grant access if user has a higher rank than the creator
 	if levels.Contains("Lower_Rank") {
-		if creator.JobGrade < userInfo.JobGrade {
+		if creator.GetJobGrade() < userInfo.GetJobGrade() {
 			return true
 		}
 	}
 	// Grant access if user has the same or higher rank than the creator
 	if levels.Contains("Same_Rank") {
-		if creator.JobGrade <= userInfo.JobGrade {
+		if creator.GetJobGrade() <= userInfo.GetJobGrade() {
 			return true
 		}
 	}
 	// Grant access if user is the creator
 	if levels.Contains("Own") {
-		if creator.UserId == userInfo.UserId {
+		if creator.GetUserId() == userInfo.GetUserId() {
 			return true
 		}
 	}

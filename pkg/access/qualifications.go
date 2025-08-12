@@ -28,9 +28,9 @@ type QualificationsAccessProtoMessage[T any, V protoutils.ProtoEnum] interface {
 	GetTargetId() uint64
 
 	GetQualificationId() uint64
-	SetQualificationId(uint64)
+	SetQualificationId(id uint64)
 	GetAccess() V
-	SetAccess(V)
+	SetAccess(access V)
 }
 
 // Qualifications provides access control logic for qualification-based permissions.
@@ -46,7 +46,12 @@ type Qualifications[U any, T QualificationsAccessProtoMessage[U, V], V protoutil
 }
 
 // NewQualifications creates a new Qualifications instance for qualification-based access control.
-func NewQualifications[U any, T QualificationsAccessProtoMessage[U, V], V protoutils.ProtoEnum](table jet.Table, columns *QualificationAccessColumns, tableAlias jet.Table, columnsAlias *QualificationAccessColumns) *Qualifications[U, T, V] {
+func NewQualifications[U any, T QualificationsAccessProtoMessage[U, V], V protoutils.ProtoEnum](
+	table jet.Table,
+	columns *QualificationAccessColumns,
+	tableAlias jet.Table,
+	columnsAlias *QualificationAccessColumns,
+) *Qualifications[U, T, V] {
 	return &Qualifications[U, T, V]{
 		table:         table,
 		columns:       columns,
@@ -57,7 +62,11 @@ func NewQualifications[U any, T QualificationsAccessProtoMessage[U, V], V protou
 
 // List returns all qualification access entries for a given targetId.
 // If user info is present in context, also joins with qualification results for that user.
-func (a *Qualifications[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId uint64) ([]T, error) {
+func (a *Qualifications[U, T, V]) List(
+	ctx context.Context,
+	tx qrm.DB,
+	targetId uint64,
+) ([]T, error) {
 	tQualiResults := tQualiResults.AS("qualification_result")
 
 	var stmt jet.SelectStatement
@@ -92,7 +101,7 @@ func (a *Qualifications[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId 
 				a.selectColumns.QualificationId.IS_NOT_NULL(),
 				tQualifications.DeletedAt.IS_NULL(),
 				tQualiResults.DeletedAt.IS_NULL(),
-				tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId)),
+				tQualiResults.UserID.EQ(jet.Int32(userInfo.GetUserId())),
 			))
 	} else {
 		stmt = a.selectTable.
@@ -129,7 +138,11 @@ func (a *Qualifications[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId 
 }
 
 // Clear deletes all qualification access entries for a given targetId.
-func (a *Qualifications[U, T, V]) Clear(ctx context.Context, tx qrm.DB, targetId uint64) (T, error) {
+func (a *Qualifications[U, T, V]) Clear(
+	ctx context.Context,
+	tx qrm.DB,
+	targetId uint64,
+) (T, error) {
 	stmt := a.table.
 		DELETE().
 		WHERE(
@@ -148,22 +161,29 @@ func (a *Qualifications[U, T, V]) Clear(ctx context.Context, tx qrm.DB, targetId
 
 // Compare compares the current qualification access entries in the database with the provided input.
 // Returns slices of entries to create, update, and delete.
-func (a *Qualifications[U, T, V]) Compare(ctx context.Context, tx qrm.DB, targetId uint64, in []T) (toCreate []T, toUpdate []T, toDelete []T, err error) {
+func (a *Qualifications[U, T, V]) Compare(
+	ctx context.Context,
+	tx qrm.DB,
+	targetId uint64,
+	in []T,
+) ([]T, []T, []T, error) {
 	current, err := a.List(ctx, tx, targetId)
 	if err != nil {
 		return nil, nil, nil, err
 	}
 
-	toCreate, toUpdate, toDelete = a.compare(current, in)
+	toCreate, toUpdate, toDelete := a.compare(current, in)
 	return toCreate, toUpdate, toDelete, nil
 }
 
 // compare performs a comparison between current and input qualification access entries.
 // Returns entries to create, update, and delete. Handles matching by qualification ID and access level.
-func (a *Qualifications[U, T, V]) compare(current, in []T) (toCreate []T, toUpdate []T, toDelete []T) {
-	toCreate = []T{}
-	toUpdate = []T{}
-	toDelete = []T{}
+func (a *Qualifications[U, T, V]) compare(
+	current, in []T,
+) ([]T, []T, []T) {
+	toCreate := []T{}
+	toUpdate := []T{}
+	toDelete := []T{}
 
 	if len(current) == 0 {
 		return in, toUpdate, toDelete
@@ -173,54 +193,55 @@ func (a *Qualifications[U, T, V]) compare(current, in []T) (toCreate []T, toUpda
 		return int(a.GetId() - b.GetId())
 	})
 
-	if len(current) == 0 {
-		toCreate = in
-	} else {
-		foundTracker := []int{}
-		for _, cj := range current {
-			var found T
-			var foundIdx int
-			for i, uj := range in {
-				if cj.GetQualificationId() != uj.GetQualificationId() {
-					continue
-				}
-				found = uj
-				foundIdx = i
-				break
-			}
-			// No match in incoming qualification access, needs to be deleted
-			if found == nil {
-				toDelete = append(toDelete, cj)
+	foundTracker := []int{}
+	for _, cj := range current {
+		var found T
+		var foundIdx int
+		for i, uj := range in {
+			if cj.GetQualificationId() != uj.GetQualificationId() {
 				continue
 			}
-
-			foundTracker = append(foundTracker, foundIdx)
-
-			changed := false
-			if cj.GetAccess().Number() != found.GetAccess().Number() {
-				cj.SetAccess(found.GetAccess())
-				changed = true
-			}
-
-			if changed {
-				toUpdate = append(toUpdate, cj)
-			}
+			found = uj
+			foundIdx = i
+			break
+		}
+		// No match in incoming qualification access, needs to be deleted
+		if found == nil {
+			toDelete = append(toDelete, cj)
+			continue
 		}
 
-		for i, uj := range in {
-			idx := slices.Index(foundTracker, i)
-			if idx == -1 {
-				toCreate = append(toCreate, uj)
-			}
+		foundTracker = append(foundTracker, foundIdx)
+
+		changed := false
+		if cj.GetAccess().Number() != found.GetAccess().Number() {
+			cj.SetAccess(found.GetAccess())
+			changed = true
+		}
+
+		if changed {
+			toUpdate = append(toUpdate, cj)
 		}
 	}
 
-	return
+	for i, uj := range in {
+		idx := slices.Index(foundTracker, i)
+		if idx == -1 {
+			toCreate = append(toCreate, uj)
+		}
+	}
+
+	return toCreate, toUpdate, toDelete
 }
 
 // HandleAccessChanges applies the necessary create, update, and delete operations for qualification access entries.
 // Returns the created, updated, and deleted entries, or an error if any operation fails.
-func (a *Qualifications[U, T, AccessLevel]) HandleAccessChanges(ctx context.Context, tx qrm.DB, targetId uint64, access []T) ([]T, []T, []T, error) {
+func (a *Qualifications[U, T, AccessLevel]) HandleAccessChanges(
+	ctx context.Context,
+	tx qrm.DB,
+	targetId uint64,
+	access []T,
+) ([]T, []T, []T, error) {
 	toCreate, toUpdate, toDelete, err := a.Compare(ctx, tx, targetId, access)
 	if err != nil {
 		return toCreate, toUpdate, toDelete, err

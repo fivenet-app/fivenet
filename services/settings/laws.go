@@ -19,27 +19,30 @@ var (
 	tLaws     = table.FivenetLawbooksLaws
 )
 
-func (s *Server) CreateOrUpdateLawBook(ctx context.Context, req *pbsettings.CreateOrUpdateLawBookRequest) (*pbsettings.CreateOrUpdateLawBookResponse, error) {
+func (s *Server) CreateOrUpdateLawBook(
+	ctx context.Context,
+	req *pbsettings.CreateOrUpdateLawBookRequest,
+) (*pbsettings.CreateOrUpdateLawBookResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbsettings.LawsService_ServiceDesc.ServiceName,
 		Method:  "CreateOrUpdateLawBook",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	if req.LawBook.Id <= 0 {
+	if req.GetLawBook().GetId() <= 0 {
 		stmt := tLawBooks.
 			INSERT(
 				tLawBooks.Name,
 				tLawBooks.Description,
 			).
 			VALUES(
-				req.LawBook.Name,
-				req.LawBook.Description,
+				req.GetLawBook().GetName(),
+				req.GetLawBook().GetDescription(),
 			)
 
 		result, err := stmt.ExecContext(ctx, s.db)
@@ -62,11 +65,11 @@ func (s *Server) CreateOrUpdateLawBook(ctx context.Context, req *pbsettings.Crea
 				tLawBooks.Description,
 			).
 			SET(
-				req.LawBook.Name,
-				req.LawBook.Description,
+				req.GetLawBook().GetName(),
+				req.GetLawBook().GetDescription(),
 			).
 			WHERE(jet.AND(
-				tLawBooks.ID.EQ(jet.Uint64(req.LawBook.Id)),
+				tLawBooks.ID.EQ(jet.Uint64(req.GetLawBook().GetId())),
 			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -76,13 +79,17 @@ func (s *Server) CreateOrUpdateLawBook(ctx context.Context, req *pbsettings.Crea
 		auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 	}
 
-	lawBook, err := s.getLawBook(ctx, req.LawBook.Id)
+	lawBook, err := s.getLawBook(ctx, req.GetLawBook().GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	if err := s.laws.Refresh(ctx, lawBook.Id); err != nil {
-		s.logger.Error("failed to refresh law book", zap.Uint64("law_book_id", lawBook.Id), zap.Error(err))
+	if err := s.laws.Refresh(ctx, lawBook.GetId()); err != nil {
+		s.logger.Error(
+			"failed to refresh law book",
+			zap.Uint64("law_book_id", lawBook.GetId()),
+			zap.Error(err),
+		)
 	}
 
 	return &pbsettings.CreateOrUpdateLawBookResponse{
@@ -90,19 +97,22 @@ func (s *Server) CreateOrUpdateLawBook(ctx context.Context, req *pbsettings.Crea
 	}, nil
 }
 
-func (s *Server) DeleteLawBook(ctx context.Context, req *pbsettings.DeleteLawBookRequest) (*pbsettings.DeleteLawBookResponse, error) {
+func (s *Server) DeleteLawBook(
+	ctx context.Context,
+	req *pbsettings.DeleteLawBookRequest,
+) (*pbsettings.DeleteLawBookResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbsettings.LawsService_ServiceDesc.ServiceName,
 		Method:  "DeleteLawBook",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	lawBook, err := s.getLawBook(ctx, req.Id)
+	lawBook, err := s.getLawBook(ctx, req.GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
@@ -112,7 +122,7 @@ func (s *Server) DeleteLawBook(ctx context.Context, req *pbsettings.DeleteLawBoo
 	stmt := tLawBooks.
 		DELETE().
 		WHERE(
-			tLawBooks.ID.EQ(jet.Uint64(req.Id)),
+			tLawBooks.ID.EQ(jet.Uint64(req.GetId())),
 		).
 		LIMIT(1)
 
@@ -120,7 +130,7 @@ func (s *Server) DeleteLawBook(ctx context.Context, req *pbsettings.DeleteLawBoo
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	if err := s.laws.Refresh(ctx, lawBook.Id); err != nil {
+	if err := s.laws.Refresh(ctx, lawBook.GetId()); err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
@@ -151,19 +161,22 @@ func (s *Server) getLawBook(ctx context.Context, lawbookId uint64) (*laws.LawBoo
 	return &dest, nil
 }
 
-func (s *Server) CreateOrUpdateLaw(ctx context.Context, req *pbsettings.CreateOrUpdateLawRequest) (*pbsettings.CreateOrUpdateLawResponse, error) {
+func (s *Server) CreateOrUpdateLaw(
+	ctx context.Context,
+	req *pbsettings.CreateOrUpdateLawRequest,
+) (*pbsettings.CreateOrUpdateLawResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbsettings.LawsService_ServiceDesc.ServiceName,
 		Method:  "CreateOrUpdateLaw",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	if req.Law.Id <= 0 {
+	if req.GetLaw().GetId() <= 0 {
 		stmt := tLaws.
 			INSERT(
 				tLaws.LawbookID,
@@ -175,13 +188,13 @@ func (s *Server) CreateOrUpdateLaw(ctx context.Context, req *pbsettings.CreateOr
 				tLaws.StvoPoints,
 			).
 			VALUES(
-				req.Law.LawbookId,
-				req.Law.Name,
-				req.Law.Description,
-				req.Law.Hint,
-				req.Law.Fine,
-				req.Law.DetentionTime,
-				req.Law.StvoPoints,
+				req.GetLaw().GetLawbookId(),
+				req.GetLaw().GetName(),
+				req.GetLaw().GetDescription(),
+				req.GetLaw().GetHint(),
+				req.GetLaw().GetFine(),
+				req.GetLaw().GetDetentionTime(),
+				req.GetLaw().GetStvoPoints(),
 			)
 
 		result, err := stmt.ExecContext(ctx, s.db)
@@ -209,16 +222,16 @@ func (s *Server) CreateOrUpdateLaw(ctx context.Context, req *pbsettings.CreateOr
 				tLaws.StvoPoints,
 			).
 			SET(
-				req.Law.LawbookId,
-				req.Law.Name,
-				req.Law.Description,
-				req.Law.Hint,
-				req.Law.Fine,
-				req.Law.DetentionTime,
-				req.Law.StvoPoints,
+				req.GetLaw().GetLawbookId(),
+				req.GetLaw().GetName(),
+				req.GetLaw().GetDescription(),
+				req.GetLaw().GetHint(),
+				req.GetLaw().GetFine(),
+				req.GetLaw().GetDetentionTime(),
+				req.GetLaw().GetStvoPoints(),
 			).
 			WHERE(jet.AND(
-				tLaws.ID.EQ(jet.Uint64(req.Law.Id)),
+				tLaws.ID.EQ(jet.Uint64(req.GetLaw().GetId())),
 			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -228,12 +241,12 @@ func (s *Server) CreateOrUpdateLaw(ctx context.Context, req *pbsettings.CreateOr
 		auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 	}
 
-	law, err := s.getLaw(ctx, req.Law.Id)
+	law, err := s.getLaw(ctx, req.GetLaw().GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	if err := s.laws.Refresh(ctx, req.Law.LawbookId); err != nil {
+	if err := s.laws.Refresh(ctx, req.GetLaw().GetLawbookId()); err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
@@ -242,19 +255,22 @@ func (s *Server) CreateOrUpdateLaw(ctx context.Context, req *pbsettings.CreateOr
 	}, nil
 }
 
-func (s *Server) DeleteLaw(ctx context.Context, req *pbsettings.DeleteLawRequest) (*pbsettings.DeleteLawResponse, error) {
+func (s *Server) DeleteLaw(
+	ctx context.Context,
+	req *pbsettings.DeleteLawRequest,
+) (*pbsettings.DeleteLawResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbsettings.LawsService_ServiceDesc.ServiceName,
 		Method:  "DeleteLaw",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	law, err := s.getLaw(ctx, req.Id)
+	law, err := s.getLaw(ctx, req.GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
@@ -264,7 +280,7 @@ func (s *Server) DeleteLaw(ctx context.Context, req *pbsettings.DeleteLawRequest
 	stmt := tLaws.
 		DELETE().
 		WHERE(
-			tLaws.ID.EQ(jet.Uint64(req.Id)),
+			tLaws.ID.EQ(jet.Uint64(req.GetId())),
 		).
 		LIMIT(1)
 
@@ -272,7 +288,7 @@ func (s *Server) DeleteLaw(ctx context.Context, req *pbsettings.DeleteLawRequest
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	s.laws.Refresh(ctx, law.LawbookId)
+	s.laws.Refresh(ctx, law.GetLawbookId())
 
 	return &pbsettings.DeleteLawResponse{}, nil
 }

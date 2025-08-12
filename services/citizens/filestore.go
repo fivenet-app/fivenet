@@ -20,29 +20,31 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
-func (s *Server) UploadAvatar(srv grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error {
+func (s *Server) UploadAvatar(
+	srv grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse],
+) error {
 	ctx := srv.Context()
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	logging.InjectFields(ctx, logging.Fields{"fivenet.citizens.user_id", userInfo.UserId})
+	logging.InjectFields(ctx, logging.Fields{"fivenet.citizens.user_id", userInfo.GetUserId()})
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbcitizens.CitizensService_ServiceDesc.ServiceName,
 		Method:  "UploadAvatar",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
+
 	meta, err := s.avatarHandler.AwaitHandshake(srv)
 	defer s.aud.Log(auditEntry, meta)
 	if err != nil {
 		return errswrap.NewError(err, filestore.ErrInvalidUploadMeta)
 	}
-	meta.Namespace = "user_avatars"
 
-	_, err = s.avatarHandler.UploadFromMeta(ctx, meta, userInfo.UserId, srv)
-	if err != nil {
+	meta.Namespace = "user_avatars"
+	if _, err := s.avatarHandler.UploadFromMeta(ctx, meta, userInfo.GetUserId(), srv); err != nil {
 		return err
 	}
 
@@ -51,21 +53,24 @@ func (s *Server) UploadAvatar(srv grpc.ClientStreamingServer[file.UploadFileRequ
 	return nil
 }
 
-func (s *Server) DeleteAvatar(ctx context.Context, req *pbcitizens.DeleteAvatarRequest) (*pbcitizens.DeleteAvatarResponse, error) {
+func (s *Server) DeleteAvatar(
+	ctx context.Context,
+	req *pbcitizens.DeleteAvatarRequest,
+) (*pbcitizens.DeleteAvatarResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbcitizens.CitizensService_ServiceDesc.ServiceName,
 		Method:  "DeleteAvatar",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, nil)
 
 	stmt := tUserProps.
 		SELECT(tUserProps.AvatarFileID.AS("avatar_file_id")).
-		WHERE(tUserProps.UserID.EQ(jet.Int32(userInfo.UserId))).
+		WHERE(tUserProps.UserID.EQ(jet.Int32(userInfo.GetUserId()))).
 		LIMIT(1)
 
 	var props struct {
@@ -81,30 +86,37 @@ func (s *Server) DeleteAvatar(ctx context.Context, req *pbcitizens.DeleteAvatarR
 		return &pbcitizens.DeleteAvatarResponse{}, nil
 	}
 
-	if err := s.avatarHandler.Delete(ctx, userInfo.UserId, *props.AvatarFileId); err != nil {
+	if err := s.avatarHandler.Delete(ctx, userInfo.GetUserId(), *props.AvatarFileId); err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
 	return &pbcitizens.DeleteAvatarResponse{}, nil
 }
 
-func (s *Server) UploadMugshot(srv grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error {
+func (s *Server) UploadMugshot(
+	srv grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse],
+) error {
 	ctx := srv.Context()
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	logging.InjectFields(ctx, logging.Fields{"fivenet.citizens.user_id", userInfo.UserId})
+	logging.InjectFields(ctx, logging.Fields{"fivenet.citizens.user_id", userInfo.GetUserId()})
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbcitizens.CitizensService_ServiceDesc.ServiceName,
 		Method:  "UploadMugshot",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(userInfo, permscitizens.CitizensServicePerm, permscitizens.CitizensServiceSetUserPropsPerm, permscitizens.CitizensServiceSetUserPropsFieldsPermField)
+	fields, err := s.ps.AttrStringList(
+		userInfo,
+		permscitizens.CitizensServicePerm,
+		permscitizens.CitizensServiceSetUserPropsPerm,
+		permscitizens.CitizensServiceSetUserPropsFieldsPermField,
+	)
 	if err != nil {
 		s.aud.Log(auditEntry, nil)
 		return errswrap.NewError(err, errorscitizens.ErrFailedQuery)
@@ -122,11 +134,11 @@ func (s *Server) UploadMugshot(srv grpc.ClientStreamingServer[file.UploadFileReq
 	}
 	meta.Namespace = "mugshot"
 
-	if meta.Reason == "" {
+	if meta.GetReason() == "" {
 		return errorscitizens.ErrReasonRequired
 	}
 
-	targetUserId := int32(meta.ParentId)
+	targetUserId := int32(meta.GetParentId())
 	if targetUserId <= 0 {
 		return errorscitizens.ErrPropsMugshotDenied
 	}
@@ -156,11 +168,11 @@ func (s *Server) UploadMugshot(srv grpc.ClientStreamingServer[file.UploadFileReq
 		return errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	if u.UserId <= 0 {
+	if u.GetUserId() <= 0 {
 		return errorscitizens.ErrJobGradeNoPermission
 	}
 
-	check, err := s.checkIfUserCanAccess(userInfo, u.Job, u.JobGrade)
+	check, err := s.checkIfUserCanAccess(userInfo, u.GetJob(), u.GetJobGrade())
 	if err != nil {
 		return err
 	}
@@ -175,8 +187,8 @@ func (s *Server) UploadMugshot(srv grpc.ClientStreamingServer[file.UploadFileReq
 		return errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	if props.MugshotFileId != nil && *props.MugshotFileId > 0 {
-		if err := s.mugshotHandler.Delete(ctx, targetUserId, *props.MugshotFileId); err != nil {
+	if props.MugshotFileId != nil && props.GetMugshotFileId() > 0 {
+		if err := s.mugshotHandler.Delete(ctx, targetUserId, props.GetMugshotFileId()); err != nil {
 			return errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 		}
 	}
@@ -186,12 +198,12 @@ func (s *Server) UploadMugshot(srv grpc.ClientStreamingServer[file.UploadFileReq
 		return err
 	}
 
-	if props.MugshotFileId == nil || resp.Id != *props.MugshotFileId {
+	if props.MugshotFileId == nil || resp.GetId() != props.GetMugshotFileId() {
 		if err := users.CreateUserActivities(ctx, s.db, &users.UserActivity{
 			SourceUserId: &userInfo.UserId,
 			TargetUserId: targetUserId,
 			Type:         users.UserActivityType_USER_ACTIVITY_TYPE_MUGSHOT,
-			Reason:       meta.Reason,
+			Reason:       meta.GetReason(),
 			Data: &users.UserActivityData{
 				Data: &users.UserActivityData_MugshotChange{
 					MugshotChange: &users.MugshotChange{},
@@ -207,19 +219,22 @@ func (s *Server) UploadMugshot(srv grpc.ClientStreamingServer[file.UploadFileReq
 	return nil
 }
 
-func (s *Server) DeleteMugshot(ctx context.Context, req *pbcitizens.DeleteMugshotRequest) (*pbcitizens.DeleteMugshotResponse, error) {
+func (s *Server) DeleteMugshot(
+	ctx context.Context,
+	req *pbcitizens.DeleteMugshotRequest,
+) (*pbcitizens.DeleteMugshotResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbcitizens.CitizensService_ServiceDesc.ServiceName,
 		Method:  "DeleteMugshot",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, nil)
 
-	if req.Reason == "" {
+	if req.GetReason() == "" {
 		return nil, errorscitizens.ErrReasonRequired
 	}
 
@@ -241,18 +256,18 @@ func (s *Server) DeleteMugshot(ctx context.Context, req *pbcitizens.DeleteMugsho
 					tFiles.ID.EQ(tUserProps.MugshotFileID),
 				),
 		).
-		WHERE(tUser.ID.EQ(jet.Int32(req.UserId))).
+		WHERE(tUser.ID.EQ(jet.Int32(req.GetUserId()))).
 		LIMIT(1)
 
 	if err := uStmt.QueryContext(ctx, s.db, u); err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	if u.UserId <= 0 {
+	if u.GetUserId() <= 0 {
 		return nil, errorscitizens.ErrJobGradeNoPermission
 	}
 
-	check, err := s.checkIfUserCanAccess(userInfo, u.Job, u.JobGrade)
+	check, err := s.checkIfUserCanAccess(userInfo, u.GetJob(), u.GetJobGrade())
 	if err != nil {
 		return nil, err
 	}
@@ -262,7 +277,7 @@ func (s *Server) DeleteMugshot(ctx context.Context, req *pbcitizens.DeleteMugsho
 
 	stmt := tUserProps.
 		SELECT(tUserProps.MugshotFileID.AS("mugshot_file_id")).
-		WHERE(tUserProps.UserID.EQ(jet.Int32(userInfo.UserId))).
+		WHERE(tUserProps.UserID.EQ(jet.Int32(userInfo.GetUserId()))).
 		LIMIT(1)
 
 	var props struct {
@@ -278,15 +293,15 @@ func (s *Server) DeleteMugshot(ctx context.Context, req *pbcitizens.DeleteMugsho
 		return &pbcitizens.DeleteMugshotResponse{}, nil
 	}
 
-	if err := s.mugshotHandler.Delete(ctx, userInfo.UserId, *props.MugshotFileId); err != nil {
+	if err := s.mugshotHandler.Delete(ctx, userInfo.GetUserId(), *props.MugshotFileId); err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
 	if err := users.CreateUserActivities(ctx, s.db, &users.UserActivity{
 		SourceUserId: &userInfo.UserId,
-		TargetUserId: req.UserId,
+		TargetUserId: req.GetUserId(),
 		Type:         users.UserActivityType_USER_ACTIVITY_TYPE_MUGSHOT,
-		Reason:       req.Reason,
+		Reason:       req.GetReason(),
 		Data: &users.UserActivityData{
 			Data: &users.UserActivityData_MugshotChange{
 				MugshotChange: &users.MugshotChange{},

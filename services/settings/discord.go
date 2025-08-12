@@ -2,6 +2,7 @@ package settings
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"slices"
 	"strconv"
@@ -19,14 +20,17 @@ import (
 	errorssettings "github.com/fivenet-app/fivenet/v2025/services/settings/errors"
 )
 
-func (s *Server) ListDiscordChannels(ctx context.Context, req *pbsettings.ListDiscordChannelsRequest) (*pbsettings.ListDiscordChannelsResponse, error) {
+func (s *Server) ListDiscordChannels(
+	ctx context.Context,
+	req *pbsettings.ListDiscordChannelsRequest,
+) (*pbsettings.ListDiscordChannelsResponse, error) {
 	if s.dc == nil {
 		return nil, errorssettings.ErrDiscordNotEnabled
 	}
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	jp, err := s.getJobProps(ctx, userInfo.Job)
+	jp, err := s.getJobProps(ctx, userInfo.GetJob())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
@@ -36,11 +40,11 @@ func (s *Server) ListDiscordChannels(ctx context.Context, req *pbsettings.ListDi
 	}
 	// No Guild Id set yet, return empty response
 	// This is the case when the job is not linked to a Discord guild yet
-	if jp.DiscordGuildId == nil || *jp.DiscordGuildId == "" {
+	if jp.DiscordGuildId == nil || jp.GetDiscordGuildId() == "" {
 		return resp, nil
 	}
 
-	jobGuildID, err := strconv.ParseUint(*jp.DiscordGuildId, 10, 64)
+	jobGuildID, err := strconv.ParseUint(jp.GetDiscordGuildId(), 10, 64)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
@@ -48,7 +52,8 @@ func (s *Server) ListDiscordChannels(ctx context.Context, req *pbsettings.ListDi
 
 	channels, err := s.dc.WithContext(ctx).Channels(guildId)
 	if err != nil {
-		if restErr, ok := err.(*httputil.HTTPError); ok {
+		var restErr *httputil.HTTPError
+		if errors.As(err, &restErr) {
 			if restErr.Status == http.StatusNotFound {
 				return resp, nil // Guild not found, return empty response
 			}
@@ -70,26 +75,43 @@ func (s *Server) ListDiscordChannels(ctx context.Context, req *pbsettings.ListDi
 		})
 	}
 
-	slices.SortStableFunc(resp.Channels, func(a, b *pbdiscord.Channel) int {
-		return int(a.Position - b.Position)
+	slices.SortStableFunc(resp.GetChannels(), func(a, b *pbdiscord.Channel) int {
+		return int(a.GetPosition() - b.GetPosition())
 	})
 
 	return resp, nil
 }
 
-func (s *Server) ListUserGuilds(ctx context.Context, req *pbsettings.ListUserGuildsRequest) (*pbsettings.ListUserGuildsResponse, error) {
+func (s *Server) ListUserGuilds(
+	ctx context.Context,
+	req *pbsettings.ListUserGuildsRequest,
+) (*pbsettings.ListUserGuildsResponse, error) {
 	if s.dc == nil {
 		return nil, errorssettings.ErrDiscordNotEnabled
 	}
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	acc, err := accounts.RetrieveOAuth2Account(ctx, s.db, s.crypt, userInfo.AccountId, "discord")
+	acc, err := accounts.RetrieveOAuth2Account(
+		ctx,
+		s.db,
+		s.crypt,
+		userInfo.GetAccountId(),
+		"discord",
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	accessToken, err := accounts.GetAccessToken(ctx, s.db, s.crypt, acc, s.dcOAuth2Provider.ClientID, s.dcOAuth2Provider.ClientSecret, s.dcOAuth2Provider.RedirectURL)
+	accessToken, err := accounts.GetAccessToken(
+		ctx,
+		s.db,
+		s.crypt,
+		acc,
+		s.dcOAuth2Provider.ClientID,
+		s.dcOAuth2Provider.ClientSecret,
+		s.dcOAuth2Provider.RedirectURL,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
@@ -114,8 +136,8 @@ func (s *Server) ListUserGuilds(ctx context.Context, req *pbsettings.ListUserGui
 		})
 	}
 
-	slices.SortFunc(resp.Guilds, func(a, b *pbdiscord.Guild) int {
-		return strings.Compare(a.Name, b.Name)
+	slices.SortFunc(resp.GetGuilds(), func(a, b *pbdiscord.Guild) int {
+		return strings.Compare(a.GetName(), b.GetName())
 	})
 
 	return resp, nil

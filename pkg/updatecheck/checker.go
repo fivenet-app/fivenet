@@ -1,8 +1,10 @@
+//nolint:tagliatelle // GitHub API JSON response uses snake_case, so we have to use it for the tags.
 package updatecheck
 
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"math/rand"
@@ -44,7 +46,9 @@ func New(cfg *config.Config, logger *zap.Logger) *Checker {
 
 	interval := cfg.UpdateCheck.Interval
 	if cfg.UpdateCheck.Interval < minInterval {
-		logger.Warn(fmt.Sprintf("update check interval is too short, using minimum %s", minInterval))
+		logger.Warn(
+			fmt.Sprintf("update check interval is too short, using minimum %s", minInterval),
+		)
 		interval = minInterval
 	}
 
@@ -61,16 +65,23 @@ func New(cfg *config.Config, logger *zap.Logger) *Checker {
 // Start launches the update loop and blocks until ctx is done.
 func (c *Checker) Start(ctx context.Context) error {
 	if version.Version == version.UnknownVersion {
-		return fmt.Errorf("version.Version is not set, cannot start update checker")
+		return errors.New("version.Version is not set, cannot start update checker")
 	}
 
 	ticker := time.NewTicker(c.interval)
 	defer ticker.Stop()
 
-	c.logger.Debug(fmt.Sprintf("checking github for updates every %s (current=%s)", c.interval, version.Version))
+	c.logger.Debug(
+		fmt.Sprintf(
+			"checking github for updates every %s (current=%s)",
+			c.interval,
+			version.Version,
+		),
+	)
 
 	for {
 		// Add a random delay (between 3 and 30 seconds) before every check to avoid thundering herd problem and "spontaneous synchronization."
+		//nolint:gosec // G404 - The random delay is not security sensitive, it's just to avoid all instances collecting metrics at the same time.
 		delay := time.Duration(3+rand.Intn(28)) * time.Second
 		c.logger.Debug("update check delay", zap.Duration("delay", delay))
 
@@ -81,7 +92,12 @@ func (c *Checker) Start(ctx context.Context) error {
 		case <-time.After(delay):
 		}
 
-		newTag, htmlURL, isPrerelease, releasedAt, err := c.retrieveLatestTag(ctx, version.Owner, version.Repo, version.Version)
+		newTag, htmlURL, isPrerelease, releasedAt, err := c.retrieveLatestTag(
+			ctx,
+			version.Owner,
+			version.Repo,
+			version.Version,
+		)
 		if err != nil {
 			c.logger.Debug(fmt.Sprintf("updatechecker fetch error: %v", err))
 		} else if isPrerelease {
@@ -113,27 +129,38 @@ func (c *Checker) Start(ctx context.Context) error {
 
 // retrieveLatestTag hits the GitHub Releases API and returns the tag + url.
 // It treats API/transport issues as errors but never panics.
-func (c *Checker) retrieveLatestTag(ctx context.Context, owner string, repo string, currentVersion string) (tag string, htmlURL string, prerelease bool, releasedAt time.Time, err error) {
+func (c *Checker) retrieveLatestTag(
+	ctx context.Context,
+	owner string,
+	repo string,
+	currentVersion string,
+) (string, string, bool, time.Time, error) {
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/releases/latest", owner, repo)
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
-		return
+		return "", "", false, time.Time{}, fmt.Errorf("failed to create request. %w", err)
 	}
 	req.Header.Set("Accept", "application/vnd.github+json")
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return
+		return "", "", false, time.Time{}, fmt.Errorf(
+			"failed to request release info. %w",
+			err,
+		)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		err = fmt.Errorf("GitHub API returned %s", resp.Status)
-		return
+		return "", "", false, time.Time{}, fmt.Errorf(
+			"failed to retrieve latest release info (status code !== 200). %w",
+			err,
+		)
 	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return
+		return "", "", false, time.Time{}, fmt.Errorf("failed to read response body. %w", err)
 	}
 	var payload struct {
 		TagName    string `json:"tag_name"`
@@ -143,7 +170,7 @@ func (c *Checker) retrieveLatestTag(ctx context.Context, owner string, repo stri
 		CreatedAt  string `json:"created_at"`
 	}
 	if err = json.Unmarshal(body, &payload); err != nil {
-		return
+		return "", "", false, time.Time{}, fmt.Errorf("failed to unmarshal response body. %w", err)
 	}
 
 	if payload.Draft {
@@ -151,6 +178,7 @@ func (c *Checker) retrieveLatestTag(ctx context.Context, owner string, repo stri
 		return currentVersion, "", false, time.Time{}, nil
 	}
 
+	releasedAt := time.Time{}
 	if payload.CreatedAt != "" {
 		if t, perr := time.Parse(time.RFC3339, payload.CreatedAt); perr == nil {
 			releasedAt = t

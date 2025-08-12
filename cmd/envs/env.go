@@ -1,3 +1,4 @@
+// Package envs provides environment variable constants for FiveNet (CLI) configuration.
 package envs
 
 const (

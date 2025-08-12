@@ -27,7 +27,7 @@ func (x *QualificationDiscordSettings) Value() (driver.Value, error) {
 		return nil, nil
 	}
 
-	out, err := protoutils.MarshalToPJSON(x)
+	out, err := protoutils.MarshalToJSON(x)
 	return string(out), err
 }
 
@@ -48,6 +48,6 @@ func (x *QualificationExamSettings) Value() (driver.Value, error) {
 		return nil, nil
 	}
 
-	out, err := protoutils.MarshalToPJSON(x)
+	out, err := protoutils.MarshalToJSON(x)
 	return string(out), err
 }

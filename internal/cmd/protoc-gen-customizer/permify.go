@@ -11,9 +11,8 @@ import (
 	"strings"
 	"text/template"
 
-	pgsgo "github.com/lyft/protoc-gen-star/v2/lang/go"
-
 	pgs "github.com/lyft/protoc-gen-star/v2"
+	pgsgo "github.com/lyft/protoc-gen-star/v2/lang/go"
 )
 
 // PermifyModule
@@ -56,7 +55,10 @@ func (p *PermifyModule) InitContext(c pgs.BuildContext) {
 // Name satisfies the generator.Plugin interface.
 func (p *PermifyModule) Name() string { return "permify" }
 
-func (p *PermifyModule) Execute(targets map[string]pgs.File, pkgs map[string]pgs.Package) []pgs.Artifact {
+func (p *PermifyModule) Execute(
+	targets map[string]pgs.File,
+	pkgs map[string]pgs.Package,
+) []pgs.Artifact {
 	visited := map[string][]pgs.File{}
 	for _, t := range targets {
 		key := t.File().InputPath().Dir().String()
@@ -88,9 +90,12 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 		PermissionRemap       map[string]map[string]*Perm
 		Attributes            map[string]map[string]*Attr
 	}{
-		FS:                    fs,
-		F:                     f,
-		GoPath:                fmt.Sprintf("github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/%s/perms", fqn[len(fqn)-1]),
+		FS: fs,
+		F:  f,
+		GoPath: fmt.Sprintf(
+			"github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/%s/perms",
+			fqn[len(fqn)-1],
+		),
 		PermissionServiceKeys: []string{},
 		Permissions:           map[string]map[string]*Perm{},
 		PermissionRemap:       map[string]map[string]*Perm{},
@@ -129,16 +134,30 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 
 				perm, err := p.parseComment(sName, mName, comment)
 				if err != nil {
-					p.Failf("failed to parse comment in %s method %s (comment: '%s'), error. %w", f.InputPath(), mName, comment, err)
+					p.Failf(
+						"failed to parse comment in %s method %s (comment: '%s'), error. %w",
+						f.InputPath(),
+						mName,
+						comment,
+						err,
+					)
 					return
 				}
 				if perm == nil {
-					p.Failf("failed to parse comment in %s method %s (comment: '%s')", f.InputPath(), mName, comment)
+					p.Failf(
+						"failed to parse comment in %s method %s (comment: '%s')",
+						f.InputPath(),
+						mName,
+						comment,
+					)
 					return
 				}
 
 				if perm.Name != mName {
-					remapServiceName := strings.TrimPrefix(string(s.FullyQualifiedName()), ".services.")
+					remapServiceName := strings.TrimPrefix(
+						string(s.FullyQualifiedName()),
+						".services.",
+					)
 
 					if _, ok := data.PermissionRemap[remapServiceName]; !ok {
 						data.PermissionRemap[remapServiceName] = map[string]*Perm{}
@@ -183,7 +202,11 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 	sort.Strings(data.PermissionServiceKeys)
 
 	name := p.ctx.OutputPath(f)
-	p.AddGeneratorTemplateFile(path.Join(filepath.Dir(name.String()), "service_perms.go"), p.tpl, data)
+	p.AddGeneratorTemplateFile(
+		path.Join(filepath.Dir(name.String()), "service_perms.go"),
+		p.tpl,
+		data,
+	)
 
 	constPath := path.Join(filepath.Dir(name.String()), "perms", "perms.go")
 	p.AddGeneratorTemplateFile(constPath, p.constTpl, data)

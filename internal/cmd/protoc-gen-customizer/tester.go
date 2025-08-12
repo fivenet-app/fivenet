@@ -32,7 +32,10 @@ func (p *TesterModule) InitContext(c pgs.BuildContext) {
 // Name satisfies the generator.Plugin interface.
 func (p *TesterModule) Name() string { return "tester" }
 
-func (p *TesterModule) Execute(targets map[string]pgs.File, pkgs map[string]pgs.Package) []pgs.Artifact {
+func (p *TesterModule) Execute(
+	targets map[string]pgs.File,
+	pkgs map[string]pgs.Package,
+) []pgs.Artifact {
 	for _, t := range targets {
 		p.generate(t)
 	}

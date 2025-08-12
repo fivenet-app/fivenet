@@ -102,8 +102,8 @@ func TestListVehicles(t *testing.T) {
 		},
 	}
 	res, err := client.ListVehicles(ctx, listReq)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, res)
-	assert.NotNil(t, res.Pagination)
-	assert.Len(t, res.Vehicles, 5)
+	assert.NotNil(t, res.GetPagination())
+	assert.Len(t, res.GetVehicles(), 5)
 }

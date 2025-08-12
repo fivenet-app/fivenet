@@ -9,7 +9,11 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 )
 
-func (s *Server) sendUpdate(ctx context.Context, event *mailer.MailerEvent, emailIds ...uint64) error {
+func (s *Server) sendUpdate(
+	ctx context.Context,
+	event *mailer.MailerEvent,
+	emailIds ...uint64,
+) error {
 	emailIds = utils.RemoveSliceDuplicates(emailIds)
 
 	for _, emailId := range emailIds {

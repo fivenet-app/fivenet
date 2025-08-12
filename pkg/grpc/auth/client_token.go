@@ -17,7 +17,14 @@ func NewClientTokenAuth(token string, requireTs bool) *ClientTokenAuth {
 }
 
 // Return value is mapped to request headers.
-func (t *ClientTokenAuth) GetRequestMetadata(ctx context.Context, in ...string) (map[string]string, error) {
+//
+//nolint:unparam // nil error return is required to fullfil the interface.
+func (t *ClientTokenAuth) GetRequestMetadata(
+	ctx context.Context,
+	in ...string,
+) (map[string]string,
+	error,
+) {
 	return map[string]string{
 		"authorization": "Bearer " + t.token,
 	}, nil

@@ -15,5 +15,5 @@ func (x *Email) SetJobGrade(grade int32) {}
 func (x *Email) SetJobGradeLabel(label string) {}
 
 func (x *Access) IsEmpty() bool {
-	return len(x.Jobs) == 0 && len(x.Users) == 0 && len(x.Qualifications) == 0
+	return len(x.GetJobs()) == 0 && len(x.GetUsers()) == 0 && len(x.GetQualifications()) == 0
 }

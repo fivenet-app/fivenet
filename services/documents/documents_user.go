@@ -20,34 +20,37 @@ import (
 
 var tUserActivity = table.FivenetUserActivity
 
-func (s *Server) ListUserDocuments(ctx context.Context, req *pbdocuments.ListUserDocumentsRequest) (*pbdocuments.ListUserDocumentsResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.user_id", req.UserId})
+func (s *Server) ListUserDocuments(
+	ctx context.Context,
+	req *pbdocuments.ListUserDocumentsRequest,
+) (*pbdocuments.ListUserDocumentsResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.user_id", req.GetUserId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	userCondition := jet.Bool(true)
-	if !userInfo.Superuser {
+	if !userInfo.GetSuperuser() {
 		userCondition = jet.OR(
-			tDAccess.UserID.EQ(jet.Int32(userInfo.UserId)),
+			tDAccess.UserID.EQ(jet.Int32(userInfo.GetUserId())),
 			jet.AND(
-				tDAccess.Job.EQ(jet.String(userInfo.Job)),
-				tDAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade)),
+				tDAccess.Job.EQ(jet.String(userInfo.GetJob())),
+				tDAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
 			),
 		)
 	}
 
 	condition := jet.AND(
 		jet.OR(
-			tDocRel.SourceUserID.EQ(jet.Int32(req.UserId)),
-			tDocRel.TargetUserID.EQ(jet.Int32(req.UserId)),
+			tDocRel.SourceUserID.EQ(jet.Int32(req.GetUserId())),
+			tDocRel.TargetUserID.EQ(jet.Int32(req.GetUserId())),
 		),
 		tDocRel.DeletedAt.IS_NULL(),
 		tDocument.DeletedAt.IS_NULL(),
 		jet.OR(
 			tDocument.Public.IS_TRUE(),
 			jet.AND(
-				tDocument.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-				tDocument.CreatorJob.EQ(jet.String(userInfo.Job)),
+				tDocument.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
+				tDocument.CreatorJob.EQ(jet.String(userInfo.GetJob())),
 			),
 			userCondition,
 		),
@@ -55,12 +58,12 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *pbdocuments.ListUse
 
 	if req.Closed != nil {
 		condition = condition.AND(tDocument.Closed.EQ(
-			jet.Bool(*req.Closed),
+			jet.Bool(req.GetClosed()),
 		))
 	}
-	if len(req.Relations) > 0 {
+	if len(req.GetRelations()) > 0 {
 		types := []jet.Expression{}
-		for _, t := range req.Relations {
+		for _, t := range req.GetRelations() {
 			types = append(types, jet.Int16(int16(*t.Enum())))
 		}
 
@@ -95,7 +98,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *pbdocuments.ListUse
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, 20)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, 20)
 	resp := &pbdocuments.ListUserDocumentsResponse{
 		Pagination: pag,
 		Relations:  []*documents.DocumentRelation{},
@@ -119,7 +122,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *pbdocuments.ListUse
 				),
 		).
 		WHERE(condition).
-		OFFSET(req.Pagination.Offset).
+		OFFSET(req.GetPagination().GetOffset()).
 		ORDER_BY(
 			tDocRel.CreatedAt.DESC(),
 		).
@@ -139,16 +142,16 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *pbdocuments.ListUse
 
 	// Convert proto sort to db sorting
 	orderBys := []jet.OrderByClause{}
-	if req.Sort != nil {
+	if req.GetSort() != nil {
 		var column jet.Column
-		switch req.Sort.Column {
+		switch req.GetSort().GetColumn() {
 		case "createdAt":
 			fallthrough
 		default:
 			column = tDocument.CreatedAt
 		}
 
-		if req.Sort.Direction == database.AscSortDirection {
+		if req.GetSort().GetDirection() == database.AscSortDirection {
 			orderBys = append(orderBys,
 				column.ASC(),
 			)
@@ -238,21 +241,30 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *pbdocuments.ListUse
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.Relations {
-		if resp.Relations[i].SourceUser != nil {
-			jobInfoFn(resp.Relations[i].SourceUser)
+	for i := range resp.GetRelations() {
+		if resp.GetRelations()[i].GetSourceUser() != nil {
+			jobInfoFn(resp.GetRelations()[i].GetSourceUser())
 		}
-		if resp.Relations[i].Document != nil && resp.Relations[i].Document.Creator != nil {
-			jobInfoFn(resp.Relations[i].Document.Creator)
+		if resp.GetRelations()[i].GetDocument() != nil &&
+			resp.GetRelations()[i].GetDocument().GetCreator() != nil {
+			jobInfoFn(resp.GetRelations()[i].GetDocument().GetCreator())
 		}
 	}
 
-	resp.Pagination.Update(len(resp.Relations))
+	resp.GetPagination().Update(len(resp.GetRelations()))
 
 	return resp, nil
 }
 
-func (s *Server) addUserActivity(ctx context.Context, tx qrm.DB, userId int32, targetUserId int32, aType users.UserActivityType, reason string, data *users.UserActivityData) error {
+func (s *Server) addUserActivity(
+	ctx context.Context,
+	tx qrm.DB,
+	userId int32,
+	targetUserId int32,
+	aType users.UserActivityType,
+	reason string,
+	data *users.UserActivityData,
+) error {
 	reasonField := jet.NULL
 	if reason != "" {
 		reasonField = jet.String(reason)

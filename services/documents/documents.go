@@ -38,62 +38,65 @@ var (
 	tDAccess       = table.FivenetDocumentsAccess.AS("job_access")
 )
 
-func (s *Server) ListDocuments(ctx context.Context, req *pbdocuments.ListDocumentsRequest) (*pbdocuments.ListDocumentsResponse, error) {
+func (s *Server) ListDocuments(
+	ctx context.Context,
+	req *pbdocuments.ListDocumentsRequest,
+) (*pbdocuments.ListDocumentsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 	logRequest := false
 
 	condition := jet.Bool(true)
-	if req.Search != nil && *req.Search != "" {
+	if req.Search != nil && req.GetSearch() != "" {
 		logRequest = true
 		condition = jet.BoolExp(
 			jet.Raw(
 				"MATCH(`title`) AGAINST ($search IN BOOLEAN MODE)",
 				jet.RawArgs{
-					"$search": *req.Search,
+					"$search": req.GetSearch(),
 				},
 			),
 		)
 	}
-	if len(req.CategoryIds) > 0 {
-		ids := make([]jet.Expression, len(req.CategoryIds))
-		for i := range req.CategoryIds {
-			ids[i] = jet.Uint64(req.CategoryIds[i])
+	if len(req.GetCategoryIds()) > 0 {
+		ids := make([]jet.Expression, len(req.GetCategoryIds()))
+		for i := range req.GetCategoryIds() {
+			ids[i] = jet.Uint64(req.GetCategoryIds()[i])
 		}
 
 		condition = condition.AND(
 			tDocumentShort.CategoryID.IN(ids...),
 		)
 	}
-	if len(req.CreatorIds) > 0 {
+	if len(req.GetCreatorIds()) > 0 {
 		logRequest = true
-		ids := make([]jet.Expression, len(req.CreatorIds))
-		for i := range req.CreatorIds {
-			ids[i] = jet.Int32(req.CreatorIds[i])
+		ids := make([]jet.Expression, len(req.GetCreatorIds()))
+		for i := range req.GetCreatorIds() {
+			ids[i] = jet.Int32(req.GetCreatorIds()[i])
 		}
 
 		condition = condition.AND(
 			tDocumentShort.CreatorID.IN(ids...),
 		)
 	}
-	if req.From != nil {
+	if req.GetFrom() != nil {
 		condition = condition.AND(tDocumentShort.CreatedAt.GT_EQ(
-			jet.TimestampT(req.From.AsTime()),
+			jet.TimestampT(req.GetFrom().AsTime()),
 		))
 	}
-	if req.To != nil {
+	if req.GetTo() != nil {
 		condition = condition.AND(tDocumentShort.CreatedAt.LT_EQ(
-			jet.TimestampT(req.To.AsTime()),
+			jet.TimestampT(req.GetTo().AsTime()),
 		))
 	}
 	if req.Closed != nil {
 		condition = condition.AND(tDocumentShort.Closed.EQ(
-			jet.Bool(*req.Closed),
+			jet.Bool(req.GetClosed()),
 		))
 	}
-	if len(req.DocumentIds) > 0 {
-		ids := make([]jet.Expression, len(req.DocumentIds))
-		for i := range req.DocumentIds {
-			ids[i] = jet.Uint64(req.DocumentIds[i])
+	if len(req.GetDocumentIds()) > 0 {
+		ids := make([]jet.Expression, len(req.GetDocumentIds()))
+		for i := range req.GetDocumentIds() {
+			ids[i] = jet.Uint64(req.GetDocumentIds()[i])
 		}
 
 		condition = condition.AND(
@@ -101,24 +104,24 @@ func (s *Server) ListDocuments(ctx context.Context, req *pbdocuments.ListDocumen
 		)
 	}
 	if req.OnlyDrafts != nil {
-		condition = condition.AND(tDocumentShort.Draft.EQ(jet.Bool(*req.OnlyDrafts)))
+		condition = condition.AND(tDocumentShort.Draft.EQ(jet.Bool(req.GetOnlyDrafts())))
 	}
 
 	if logRequest {
 		defer s.aud.Log(&audit.AuditEntry{
 			Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
 			Method:  "ListDocuments",
-			UserId:  userInfo.UserId,
-			UserJob: userInfo.Job,
+			UserId:  userInfo.GetUserId(),
+			UserJob: userInfo.GetJob(),
 			State:   audit.EventType_EVENT_TYPE_VIEWED,
 		}, req)
 	}
 
 	// Convert proto sort to db sorting
 	orderBys := []jet.OrderByClause{}
-	if req.Sort != nil {
+	if req.GetSort() != nil {
 		var column jet.Column
-		switch req.Sort.Column {
+		switch req.GetSort().GetColumn() {
 		case "title":
 			column = tDocumentShort.Title
 
@@ -128,7 +131,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *pbdocuments.ListDocumen
 			column = tDocumentShort.CreatedAt
 		}
 
-		if req.Sort.Direction == database.AscSortDirection {
+		if req.GetSort().GetDirection() == database.AscSortDirection {
 			orderBys = append(orderBys,
 				column.ASC(),
 				tDocumentShort.UpdatedAt.DESC(),
@@ -143,7 +146,8 @@ func (s *Server) ListDocuments(ctx context.Context, req *pbdocuments.ListDocumen
 		orderBys = append(orderBys, tDocumentShort.UpdatedAt.DESC())
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(database.NoTotalCount, DocsDefaultPageSize)
+	pag, limit := req.GetPagination().
+		GetResponseWithPageSize(database.NoTotalCount, DocsDefaultPageSize)
 	resp := &pbdocuments.ListDocumentsResponse{
 		Pagination: pag,
 	}
@@ -151,7 +155,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *pbdocuments.ListDocumen
 	stmt := s.listDocumentsQuery(condition, nil, nil, userInfo).
 		ORDER_BY(orderBys...).
 		GROUP_BY(tDocumentShort.ID).
-		OFFSET(req.Pagination.Offset).
+		OFFSET(req.GetPagination().GetOffset()).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Documents); err != nil {
@@ -161,69 +165,77 @@ func (s *Server) ListDocuments(ctx context.Context, req *pbdocuments.ListDocumen
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.Documents {
-		if resp.Documents[i].Creator != nil {
-			jobInfoFn(resp.Documents[i].Creator)
+	for i := range resp.GetDocuments() {
+		if resp.GetDocuments()[i].GetCreator() != nil {
+			jobInfoFn(resp.GetDocuments()[i].GetCreator())
 		}
 
-		if job := s.enricher.GetJobByName(resp.Documents[i].CreatorJob); job != nil {
+		if job := s.enricher.GetJobByName(resp.GetDocuments()[i].GetCreatorJob()); job != nil {
 			resp.Documents[i].CreatorJobLabel = &job.Label
 		}
 	}
 
-	resp.Pagination.Update(len(resp.Documents))
+	resp.GetPagination().Update(len(resp.GetDocuments()))
 
 	return resp, nil
 }
 
-func (s *Server) GetDocument(ctx context.Context, req *pbdocuments.GetDocumentRequest) (*pbdocuments.GetDocumentResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
+func (s *Server) GetDocument(
+	ctx context.Context,
+	req *pbdocuments.GetDocumentRequest,
+) (*pbdocuments.GetDocumentResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
 		Method:  "GetDocument",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetDocumentId(),
+		userInfo,
+		documents.AccessLevel_ACCESS_LEVEL_VIEW,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
 	}
-	if !check && !userInfo.Superuser {
+	if !check && !userInfo.GetSuperuser() {
 		return nil, errorsdocuments.ErrDocViewDenied
 	}
 
-	infoOnly := req.InfoOnly != nil && *req.InfoOnly
-	withContent := req.InfoOnly == nil || !*req.InfoOnly
+	infoOnly := req.InfoOnly != nil && req.GetInfoOnly()
+	withContent := req.InfoOnly == nil || !req.GetInfoOnly()
 
 	resp := &pbdocuments.GetDocumentResponse{}
 	resp.Document, err = s.getDocument(ctx,
-		tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo, withContent)
+		tDocument.ID.EQ(jet.Uint64(req.GetDocumentId())), userInfo, withContent)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if resp.Document == nil || resp.Document.Id <= 0 {
+	if resp.GetDocument() == nil || resp.GetDocument().GetId() <= 0 {
 		return nil, errorsdocuments.ErrNotFoundOrNoPerms
 	}
 
-	if resp.Document.Creator != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, resp.Document.Creator)
+	if resp.GetDocument().GetCreator() != nil {
+		s.enricher.EnrichJobInfoSafe(userInfo, resp.GetDocument().GetCreator())
 	}
 
-	resp.Document.Pin, err = s.getDocumentPin(ctx, resp.Document.Id, userInfo)
+	resp.Document.Pin, err = s.getDocumentPin(ctx, resp.GetDocument().GetId(), userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	if !infoOnly {
 		docAccess, err := s.GetDocumentAccess(ctx, &pbdocuments.GetDocumentAccessRequest{
-			DocumentId: resp.Document.Id,
+			DocumentId: resp.GetDocument().GetId(),
 		})
 		if err != nil {
 			if st, ok := status.FromError(err); !ok {
@@ -236,10 +248,10 @@ func (s *Server) GetDocument(ctx context.Context, req *pbdocuments.GetDocumentRe
 			}
 		}
 		if docAccess != nil {
-			resp.Access = docAccess.Access
+			resp.Access = docAccess.GetAccess()
 		}
 
-		files, err := s.fHandler.ListFilesForParentID(ctx, resp.Document.Id)
+		files, err := s.fHandler.ListFilesForParentID(ctx, resp.GetDocument().GetId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
@@ -251,7 +263,12 @@ func (s *Server) GetDocument(ctx context.Context, req *pbdocuments.GetDocumentRe
 	return resp, nil
 }
 
-func (s *Server) getDocument(ctx context.Context, condition jet.BoolExpression, userInfo *userinfo.UserInfo, withContent bool) (*documents.Document, error) {
+func (s *Server) getDocument(
+	ctx context.Context,
+	condition jet.BoolExpression,
+	userInfo *userinfo.UserInfo,
+	withContent bool,
+) (*documents.Document, error) {
 	var doc documents.Document
 
 	stmt := s.getDocumentQuery(condition, nil, userInfo, withContent).
@@ -263,21 +280,24 @@ func (s *Server) getDocument(ctx context.Context, condition jet.BoolExpression, 
 		}
 	}
 
-	if doc.Creator != nil {
-		s.enricher.EnrichJobInfo(doc.Creator)
+	if doc.GetCreator() != nil {
+		s.enricher.EnrichJobInfo(doc.GetCreator())
 	}
 
 	return &doc, nil
 }
 
-func (s *Server) CreateDocument(ctx context.Context, req *pbdocuments.CreateDocumentRequest) (*pbdocuments.CreateDocumentResponse, error) {
+func (s *Server) CreateDocument(
+	ctx context.Context,
+	req *pbdocuments.CreateDocumentRequest,
+) (*pbdocuments.CreateDocumentResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
 		Method:  "CreateDocument",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
@@ -293,33 +313,33 @@ func (s *Server) CreateDocument(ctx context.Context, req *pbdocuments.CreateDocu
 	var tmpl *documents.Template
 	if req.TemplateId != nil {
 		var err error
-		tmpl, err = s.getTemplate(ctx, *req.TemplateId)
+		tmpl, err = s.getTemplate(ctx, req.GetTemplateId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 
-		docTitle, docState, docContent, err = s.renderTemplate(tmpl, req.TemplateData)
+		docTitle, docState, docContent, err = s.renderTemplate(tmpl, req.GetTemplateData())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 
 		// Set access based on template
 		docAccess = &documents.DocumentAccess{
-			Jobs:  tmpl.ContentAccess.Jobs,
-			Users: tmpl.ContentAccess.Users,
+			Jobs:  tmpl.GetContentAccess().GetJobs(),
+			Users: tmpl.GetContentAccess().GetUsers(),
 		}
 
-		if tmpl.Category != nil {
+		if tmpl.GetCategory() != nil {
 			categoryId = &tmpl.Category.Id
 		}
 
 		// Add references from template data documents if not already present
-		if tmpl != nil && req.TemplateData != nil {
-			if len(req.TemplateData.Documents) > 0 {
-				for _, doc := range req.TemplateData.Documents {
+		if tmpl != nil && req.GetTemplateData() != nil {
+			if len(req.GetTemplateData().GetDocuments()) > 0 {
+				for _, doc := range req.GetTemplateData().GetDocuments() {
 					exists := false
 					for _, reference := range docReferences {
-						if reference.TargetDocumentId == doc.Id {
+						if reference.GetTargetDocumentId() == doc.GetId() {
 							exists = true
 							break
 						}
@@ -329,7 +349,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *pbdocuments.CreateDocu
 						docReferences = append(docReferences, &documents.DocumentReference{
 							// Id will be assigned by backend or can be zero for new
 							SourceDocumentId: 0, // will be set after insert
-							TargetDocumentId: doc.Id,
+							TargetDocumentId: doc.GetId(),
 							// TargetDocument can be set if needed, or left nil
 							CreatorId: &userInfo.UserId,
 							// Creator can be set if needed, or left nil
@@ -340,11 +360,11 @@ func (s *Server) CreateDocument(ctx context.Context, req *pbdocuments.CreateDocu
 			}
 
 			// Add relations from template data users if not already present
-			if len(req.TemplateData.Users) > 0 {
-				for _, user := range req.TemplateData.Users {
+			if len(req.GetTemplateData().GetUsers()) > 0 {
+				for _, user := range req.GetTemplateData().GetUsers() {
 					exists := false
 					for _, relation := range docRelations {
-						if relation.TargetUserId == user.UserId {
+						if relation.GetTargetUserId() == user.GetUserId() {
 							exists = true
 							break
 						}
@@ -354,9 +374,9 @@ func (s *Server) CreateDocument(ctx context.Context, req *pbdocuments.CreateDocu
 						docRelations = append(docRelations, &documents.DocumentRelation{
 							// Id will be assigned by backend or can be zero for new
 							DocumentId:   0, // will be set after insert
-							TargetUserId: user.UserId,
+							TargetUserId: user.GetUserId(),
 							// TargetUser can be set if needed, or left nil
-							SourceUserId: userInfo.UserId,
+							SourceUserId: userInfo.GetUserId(),
 							// SourceUser can be set if needed, or left nil
 							Relation: documents.DocRelation_DOC_RELATION_CAUSED,
 						})
@@ -367,8 +387,8 @@ func (s *Server) CreateDocument(ctx context.Context, req *pbdocuments.CreateDocu
 	} else {
 		// Add minimum access for the creator's job
 		docAccess.Jobs = append(docAccess.Jobs, &documents.DocumentJobAccess{
-			Job:          userInfo.Job,
-			MinimumGrade: userInfo.JobGrade,
+			Job:          userInfo.GetJob(),
+			MinimumGrade: userInfo.GetJobGrade(),
 			Access:       documents.AccessLevel_ACCESS_LEVEL_EDIT,
 		})
 	}
@@ -403,15 +423,15 @@ func (s *Server) CreateDocument(ctx context.Context, req *pbdocuments.CreateDocu
 			content.GetSummary(docContent, DocSummaryLength),
 			categoryId,
 			docContent,
-			req.ContentType,
+			req.GetContentType(),
 			docState,
 			jet.NULL,
 			false,
 			true,
 			false,
-			req.TemplateId,
-			userInfo.UserId,
-			userInfo.Job,
+			req.GetTemplateId(),
+			userInfo.GetUserId(),
+			userInfo.GetJob(),
 		)
 
 	result, err := stmt.ExecContext(ctx, tx)
@@ -428,7 +448,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *pbdocuments.CreateDocu
 		DocumentId:   uint64(lastId),
 		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_CREATED,
 		CreatorId:    &userInfo.UserId,
-		CreatorJob:   userInfo.Job,
+		CreatorJob:   userInfo.GetJob(),
 	}); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -438,7 +458,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *pbdocuments.CreateDocu
 	}
 
 	if tmpl != nil {
-		if err := s.createOrUpdateWorkflowState(ctx, tx, uint64(lastId), tmpl.Workflow); err != nil {
+		if err := s.createOrUpdateWorkflowState(ctx, tx, uint64(lastId), tmpl.GetWorkflow()); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	}
@@ -468,27 +488,40 @@ func (s *Server) CreateDocument(ctx context.Context, req *pbdocuments.CreateDocu
 	}, nil
 }
 
-func (s *Server) UpdateDocument(ctx context.Context, req *pbdocuments.UpdateDocumentRequest) (*pbdocuments.UpdateDocumentResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
+func (s *Server) UpdateDocument(
+	ctx context.Context,
+	req *pbdocuments.UpdateDocumentRequest,
+) (*pbdocuments.UpdateDocumentResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
 		Method:  "UpdateDocument",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetDocumentId(),
+		userInfo,
+		documents.AccessLevel_ACCESS_LEVEL_EDIT,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
 	}
 	var onlyUpdateAccess bool
-	if !check && !userInfo.Superuser {
-		onlyUpdateAccess, err = s.access.CanUserAccessTarget(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_ACCESS)
+	if !check && !userInfo.GetSuperuser() {
+		onlyUpdateAccess, err = s.access.CanUserAccessTarget(
+			ctx,
+			req.GetDocumentId(),
+			userInfo,
+			documents.AccessLevel_ACCESS_LEVEL_ACCESS,
+		)
 		if err != nil {
 			return nil, errorsdocuments.ErrPermissionDenied
 		}
@@ -498,43 +531,53 @@ func (s *Server) UpdateDocument(ctx context.Context, req *pbdocuments.UpdateDocu
 	}
 
 	oldDoc, err := s.getDocument(ctx,
-		tDocument.ID.EQ(jet.Uint64(req.DocumentId)),
+		tDocument.ID.EQ(jet.Uint64(req.GetDocumentId())),
 		userInfo, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	// Either the document is closed and the update request isn't re-opening the document
-	if oldDoc.Closed && req.Closed && !userInfo.Superuser {
+	if oldDoc.GetClosed() && req.GetClosed() && !userInfo.GetSuperuser() {
 		return nil, errorsdocuments.ErrClosedDoc
 	}
 
 	// A document can only be switched to published once
-	if !oldDoc.Draft && oldDoc.Draft != req.Draft {
+	if !oldDoc.GetDraft() && oldDoc.GetDraft() != req.GetDraft() {
 		// Allow a super user to change the draft state
-		if !userInfo.Superuser {
-			req.Draft = oldDoc.Draft
+		if !userInfo.GetSuperuser() {
+			req.Draft = oldDoc.GetDraft()
 		}
 	}
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(userInfo, permsdocuments.DocumentsServicePerm, permsdocuments.DocumentsServiceUpdateDocumentPerm, permsdocuments.DocumentsServiceUpdateDocumentAccessPermField)
+	fields, err := s.ps.AttrStringList(
+		userInfo,
+		permsdocuments.DocumentsServicePerm,
+		permsdocuments.DocumentsServiceUpdateDocumentPerm,
+		permsdocuments.DocumentsServiceUpdateDocumentAccessPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !access.CheckIfHasOwnJobAccess(fields, userInfo, oldDoc.CreatorJob, oldDoc.Creator) {
+	if !access.CheckIfHasOwnJobAccess(
+		fields,
+		userInfo,
+		oldDoc.GetCreatorJob(),
+		oldDoc.GetCreator(),
+	) {
 		return nil, errorsdocuments.ErrDocUpdateDenied
 	}
 
 	var tmpl *documents.Template
 	if oldDoc.TemplateId != nil {
 		var err error
-		tmpl, err = s.getTemplate(ctx, *oldDoc.TemplateId)
+		tmpl, err = s.getTemplate(ctx, oldDoc.GetTemplateId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 
-		if !s.checkAccessAgainstTemplate(tmpl, req.Access) {
+		if !s.checkAccessAgainstTemplate(tmpl, req.GetAccess()) {
 			return nil, errorsdocuments.ErrDocRequiredAccessTemplate
 		}
 	}
@@ -560,18 +603,18 @@ func (s *Server) UpdateDocument(ctx context.Context, req *pbdocuments.UpdateDocu
 				tDocument.Public,
 			).
 			SET(
-				req.CategoryId,
-				req.Title,
-				req.Content.GetSummary(DocSummaryLength),
-				req.Content,
+				req.GetCategoryId(),
+				req.GetTitle(),
+				req.GetContent().GetSummary(DocSummaryLength),
+				req.GetContent(),
 				jet.NULL,
-				req.State,
-				req.Closed,
-				req.Draft,
-				req.Public,
+				req.GetState(),
+				req.GetClosed(),
+				req.GetDraft(),
+				req.GetPublic(),
 			).
 			WHERE(
-				tDocument.ID.EQ(jet.Uint64(oldDoc.Id)),
+				tDocument.ID.EQ(jet.Uint64(oldDoc.GetId())),
 			)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -579,15 +622,20 @@ func (s *Server) UpdateDocument(ctx context.Context, req *pbdocuments.UpdateDocu
 		}
 
 		diff, err := s.generateDocumentDiff(oldDoc, &documents.Document{
-			Title:   req.Title,
-			Content: req.Content,
-			State:   req.State,
+			Title:   req.GetTitle(),
+			Content: req.GetContent(),
+			State:   req.GetState(),
 		})
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 
-		added, deleted, err := s.fHandler.HandleFileChangesForParent(ctx, tx, oldDoc.Id, req.Files)
+		added, deleted, err := s.fHandler.HandleFileChangesForParent(
+			ctx,
+			tx,
+			oldDoc.GetId(),
+			req.GetFiles(),
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
@@ -599,10 +647,10 @@ func (s *Server) UpdateDocument(ctx context.Context, req *pbdocuments.UpdateDocu
 		}
 
 		if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
-			DocumentId:   oldDoc.Id,
+			DocumentId:   oldDoc.GetId(),
 			ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_UPDATED,
 			CreatorId:    &userInfo.UserId,
-			CreatorJob:   userInfo.Job,
+			CreatorJob:   userInfo.GetJob(),
 			Data: &documents.DocActivityData{
 				Data: &documents.DocActivityData_Updated{
 					Updated: diff,
@@ -613,24 +661,23 @@ func (s *Server) UpdateDocument(ctx context.Context, req *pbdocuments.UpdateDocu
 		}
 
 		if tmpl != nil {
-			if err := s.createOrUpdateWorkflowState(ctx, tx, oldDoc.Id, tmpl.Workflow); err != nil {
+			if err := s.createOrUpdateWorkflowState(ctx, tx, oldDoc.GetId(), tmpl.GetWorkflow()); err != nil {
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
 		}
-
 	}
 
-	if err := s.handleDocumentAccessChange(ctx, tx, oldDoc.Id, userInfo, req.Access, true); err != nil {
+	if err := s.handleDocumentAccessChange(ctx, tx, oldDoc.GetId(), userInfo, req.GetAccess(), true); err != nil {
 		return nil, err
 	}
 
 	if !onlyUpdateAccess {
-		if oldDoc.Draft != req.Draft {
+		if oldDoc.GetDraft() != req.GetDraft() {
 			if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
-				DocumentId:   oldDoc.Id,
+				DocumentId:   oldDoc.GetId(),
 				ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_DRAFT_TOGGLED,
 				CreatorId:    &userInfo.UserId,
-				CreatorJob:   userInfo.Job,
+				CreatorJob:   userInfo.GetJob(),
 			}); err != nil {
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
@@ -645,13 +692,13 @@ func (s *Server) UpdateDocument(ctx context.Context, req *pbdocuments.UpdateDocu
 	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
 	doc, err := s.getDocument(ctx,
-		tDocument.ID.EQ(jet.Uint64(req.DocumentId)),
+		tDocument.ID.EQ(jet.Uint64(req.GetDocumentId())),
 		userInfo, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	s.collabServer.SendTargetSaved(ctx, doc.Id)
+	s.collabServer.SendTargetSaved(ctx, doc.GetId())
 
 	s.notifi.SendObjectEvent(ctx, &notifications.ObjectEvent{
 		Type:      notifications.ObjectType_OBJECT_TYPE_DOCUMENT,
@@ -667,51 +714,69 @@ func (s *Server) UpdateDocument(ctx context.Context, req *pbdocuments.UpdateDocu
 	}, nil
 }
 
-func (s *Server) DeleteDocument(ctx context.Context, req *pbdocuments.DeleteDocumentRequest) (*pbdocuments.DeleteDocumentResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
+func (s *Server) DeleteDocument(
+	ctx context.Context,
+	req *pbdocuments.DeleteDocumentRequest,
+) (*pbdocuments.DeleteDocumentResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
 		Method:  "DeleteDocument",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetDocumentId(),
+		userInfo,
+		documents.AccessLevel_ACCESS_LEVEL_EDIT,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
 	}
-	if !check && !userInfo.Superuser {
-		if !userInfo.Superuser {
+	if !check && !userInfo.GetSuperuser() {
+		if !userInfo.GetSuperuser() {
 			return nil, errorsdocuments.ErrDocDeleteDenied
 		}
 	}
 
-	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo, false)
+	doc, err := s.getDocument(
+		ctx,
+		tDocument.ID.EQ(jet.Uint64(req.GetDocumentId())),
+		userInfo,
+		false,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	// Require a reason if the document is not already deleted
-	if doc.DeletedAt == nil && req.Reason == nil {
+	if doc.GetDeletedAt() == nil && req.Reason == nil {
 		return nil, errorsdocuments.ErrDocDeleteDenied
 	}
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(userInfo, permsdocuments.DocumentsServicePerm, permsdocuments.DocumentsServiceDeleteDocumentPerm, permsdocuments.DocumentsServiceDeleteDocumentAccessPermField)
+	fields, err := s.ps.AttrStringList(
+		userInfo,
+		permsdocuments.DocumentsServicePerm,
+		permsdocuments.DocumentsServiceDeleteDocumentPerm,
+		permsdocuments.DocumentsServiceDeleteDocumentAccessPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !access.CheckIfHasOwnJobAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
+	if !access.CheckIfHasOwnJobAccess(fields, userInfo, doc.GetCreatorJob(), doc.GetCreator()) {
 		return nil, errorsdocuments.ErrDocDeleteDenied
 	}
 
 	deletedAtTime := jet.CURRENT_TIMESTAMP()
-	if doc.DeletedAt != nil && userInfo.Superuser {
+	if doc.GetDeletedAt() != nil && userInfo.GetSuperuser() {
 		deletedAtTime = jet.TimestampExp(jet.NULL)
 	}
 
@@ -723,7 +788,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *pbdocuments.DeleteDocu
 			tDocument.DeletedAt.SET(deletedAtTime),
 		).
 		WHERE(
-			tDocument.ID.EQ(jet.Uint64(req.DocumentId)),
+			tDocument.ID.EQ(jet.Uint64(req.GetDocumentId())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -731,10 +796,10 @@ func (s *Server) DeleteDocument(ctx context.Context, req *pbdocuments.DeleteDocu
 	}
 
 	if _, err := addDocumentActivity(ctx, s.db, &documents.DocActivity{
-		DocumentId:   req.DocumentId,
+		DocumentId:   req.GetDocumentId(),
 		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_DELETED,
 		CreatorId:    &userInfo.UserId,
-		CreatorJob:   userInfo.Job,
+		CreatorJob:   userInfo.GetJob(),
 		Reason:       req.Reason,
 	}); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -745,54 +810,73 @@ func (s *Server) DeleteDocument(ctx context.Context, req *pbdocuments.DeleteDocu
 	return &pbdocuments.DeleteDocumentResponse{}, nil
 }
 
-func (s *Server) ToggleDocument(ctx context.Context, req *pbdocuments.ToggleDocumentRequest) (*pbdocuments.ToggleDocumentResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
+func (s *Server) ToggleDocument(
+	ctx context.Context,
+	req *pbdocuments.ToggleDocumentRequest,
+) (*pbdocuments.ToggleDocumentResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
 		Method:  "ToggleDocument",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_STATUS)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetDocumentId(),
+		userInfo,
+		documents.AccessLevel_ACCESS_LEVEL_STATUS,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
 	}
-	if !check && !userInfo.Superuser {
-		if !userInfo.Superuser {
+	if !check && !userInfo.GetSuperuser() {
+		if !userInfo.GetSuperuser() {
 			return nil, errorsdocuments.ErrDocToggleDenied
 		}
 	}
 
-	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo, false)
+	doc, err := s.getDocument(
+		ctx,
+		tDocument.ID.EQ(jet.Uint64(req.GetDocumentId())),
+		userInfo,
+		false,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	var tmpl *documents.Template
-	if !req.Closed && doc.TemplateId != nil { // If the document is opened, get template so we can update the reminder/auto close times
-		tmpl, err = s.getTemplate(ctx, *doc.TemplateId)
+	if !req.GetClosed() &&
+		doc.TemplateId != nil { // If the document is opened, get template so we can update the reminder/auto close times
+		tmpl, err = s.getTemplate(ctx, doc.GetTemplateId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	}
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(userInfo, permsdocuments.DocumentsServicePerm, permsdocuments.DocumentsServiceToggleDocumentPerm, permsdocuments.DocumentsServiceToggleDocumentAccessPermField)
+	fields, err := s.ps.AttrStringList(
+		userInfo,
+		permsdocuments.DocumentsServicePerm,
+		permsdocuments.DocumentsServiceToggleDocumentPerm,
+		permsdocuments.DocumentsServiceToggleDocumentAccessPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !access.CheckIfHasOwnJobAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
+	if !access.CheckIfHasOwnJobAccess(fields, userInfo, doc.GetCreatorJob(), doc.GetCreator()) {
 		return nil, errorsdocuments.ErrDocToggleDenied
 	}
 
 	activityType := documents.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_CLOSED
-	if !req.Closed {
+	if !req.GetClosed() {
 		activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_OPEN
 	}
 
@@ -807,10 +891,10 @@ func (s *Server) ToggleDocument(ctx context.Context, req *pbdocuments.ToggleDocu
 			tDocument.Closed,
 		).
 		SET(
-			req.Closed,
+			req.GetClosed(),
 		).
 		WHERE(
-			tDocument.ID.EQ(jet.Uint64(doc.Id)),
+			tDocument.ID.EQ(jet.Uint64(doc.GetId())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -818,16 +902,16 @@ func (s *Server) ToggleDocument(ctx context.Context, req *pbdocuments.ToggleDocu
 	}
 
 	if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
-		DocumentId:   doc.Id,
+		DocumentId:   doc.GetId(),
 		ActivityType: activityType,
 		CreatorId:    &userInfo.UserId,
-		CreatorJob:   userInfo.Job,
+		CreatorJob:   userInfo.GetJob(),
 	}); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	if tmpl != nil {
-		if err := s.createOrUpdateWorkflowState(ctx, tx, doc.Id, tmpl.Workflow); err != nil {
+		if err := s.createOrUpdateWorkflowState(ctx, tx, doc.GetId(), tmpl.GetWorkflow()); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	}
@@ -851,49 +935,67 @@ func (s *Server) ToggleDocument(ctx context.Context, req *pbdocuments.ToggleDocu
 	return &pbdocuments.ToggleDocumentResponse{}, nil
 }
 
-func (s *Server) ChangeDocumentOwner(ctx context.Context, req *pbdocuments.ChangeDocumentOwnerRequest) (*pbdocuments.ChangeDocumentOwnerResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
+func (s *Server) ChangeDocumentOwner(
+	ctx context.Context,
+	req *pbdocuments.ChangeDocumentOwnerRequest,
+) (*pbdocuments.ChangeDocumentOwnerResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
 		Method:  "ChangeDocumentOwner",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetDocumentId(),
+		userInfo,
+		documents.AccessLevel_ACCESS_LEVEL_EDIT,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
 	}
-	if !check && !userInfo.Superuser {
+	if !check && !userInfo.GetSuperuser() {
 		return nil, errorsdocuments.ErrDocOwnerFailed
 	}
 
-	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo, false)
+	doc, err := s.getDocument(
+		ctx,
+		tDocument.ID.EQ(jet.Uint64(req.GetDocumentId())),
+		userInfo,
+		false,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	// Document must be created by the same job
-	if doc.CreatorJob != userInfo.Job {
+	if doc.GetCreatorJob() != userInfo.GetJob() {
 		return nil, errorsdocuments.ErrDocOwnerWrongJob
 	}
 
 	// If user is not a super user make sure they can only change owner to themselves
-	if req.NewUserId == nil || !userInfo.Superuser {
+	if req.NewUserId == nil || !userInfo.GetSuperuser() {
 		req.NewUserId = &userInfo.UserId
 	}
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(userInfo, permsdocuments.DocumentsServicePerm, permsdocuments.DocumentsServiceChangeDocumentOwnerPerm, permsdocuments.DocumentsServiceChangeDocumentOwnerAccessPermField)
+	fields, err := s.ps.AttrStringList(
+		userInfo,
+		permsdocuments.DocumentsServicePerm,
+		permsdocuments.DocumentsServiceChangeDocumentOwnerPerm,
+		permsdocuments.DocumentsServiceChangeDocumentOwnerAccessPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !access.CheckIfHasOwnJobAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
+	if !access.CheckIfHasOwnJobAccess(fields, userInfo, doc.GetCreatorJob(), doc.GetCreator()) {
 		return nil, errorsdocuments.ErrDocOwnerFailed
 	}
 
@@ -908,7 +1010,7 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *pbdocuments.Chang
 			tUsers.Dateofbirth,
 		).
 		FROM(tUsers).
-		WHERE(tUsers.ID.EQ(jet.Int32(*req.NewUserId))).
+		WHERE(tUsers.ID.EQ(jet.Int32(req.GetNewUserId()))).
 		LIMIT(1)
 
 	var newOwner users.UserShort
@@ -916,17 +1018,17 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *pbdocuments.Chang
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if newOwner.UserId <= 0 {
+	if newOwner.GetUserId() <= 0 {
 		return nil, errorsdocuments.ErrFailedQuery
 	}
 
 	// Allow super users to transfer documents cross jobs
-	if !userInfo.Superuser {
-		if newOwner.Job != doc.CreatorJob {
+	if !userInfo.GetSuperuser() {
+		if newOwner.GetJob() != doc.GetCreatorJob() {
 			return nil, errorsdocuments.ErrDocOwnerWrongJob
 		}
 
-		if doc.CreatorId != nil && *doc.CreatorId == userInfo.UserId {
+		if doc.CreatorId != nil && doc.GetCreatorId() == userInfo.GetUserId() {
 			return nil, errorsdocuments.ErrDocSameOwner
 		}
 	}
@@ -939,7 +1041,7 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *pbdocuments.Chang
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	if err := s.updateDocumentOwner(ctx, tx, req.DocumentId, userInfo, &newOwner); err != nil {
+	if err := s.updateDocumentOwner(ctx, tx, req.GetDocumentId(), userInfo, &newOwner); err != nil {
 		return nil, err
 	}
 

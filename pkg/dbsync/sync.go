@@ -139,14 +139,18 @@ func (s *Sync) createGRPCClient() error {
 		transportCreds := insecure.NewCredentials()
 		if !s.cfg.Load().Destination.Insecure {
 			transportCreds = credentials.NewTLS(&tls.Config{
+				MinVersion: tls.VersionTLS11,
 				ClientAuth: tls.NoClientCert,
 			})
 		}
 
-		cli, err := grpc.NewClient(s.cfg.Load().Destination.URL,
+		cli, err := grpc.NewClient(
+			s.cfg.Load().Destination.URL,
 			grpc.WithTransportCredentials(transportCreds),
 			// Require transport security for release mode
-			grpc.WithPerRPCCredentials(auth.NewClientTokenAuth(s.cfg.Load().Destination.Token, s.acfg.Mode == "release")),
+			grpc.WithPerRPCCredentials(
+				auth.NewClientTokenAuth(s.cfg.Load().Destination.Token, s.acfg.Mode == "release"),
+			),
 		)
 		if err != nil {
 			return err
@@ -316,16 +320,22 @@ func (s *Sync) syncBaseData(ctx context.Context) error {
 	return errs
 }
 
-func prepareStringQuery(query DBSyncTable, state *TableSyncState, offset uint64, limit int64) string {
+func prepareStringQuery(
+	query DBSyncTable,
+	state *TableSyncState,
+	offset uint64,
+	limit int64,
+) string {
 	offsetStr := strconv.FormatUint(offset, 10)
-	limitStr := strconv.FormatInt(int64(limit), 10)
+	limitStr := strconv.FormatInt(limit, 10)
 
 	q := strings.ReplaceAll(query.Query, "$offset", offsetStr)
 	q = strings.ReplaceAll(q, "$limit", limitStr)
 
 	where := ""
 	// Add "updatedAt" column condition if available
-	if state == nil || (query.UpdatedTimeColumn == nil || (state.LastCheck == nil || state.LastCheck.IsZero())) {
+	if state == nil ||
+		(query.UpdatedTimeColumn == nil || (state.LastCheck == nil || state.LastCheck.IsZero())) {
 		q = strings.ReplaceAll(q, "$whereCondition", "")
 	} else {
 		where = fmt.Sprintf("WHERE `%s` >= '%s'\n",

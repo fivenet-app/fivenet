@@ -40,11 +40,18 @@ func (s *SettingsDB) List(ctx context.Context) []*centrum.Settings {
 	return s.store.List()
 }
 
-func (s *SettingsDB) ListFunc(ctx context.Context, fn func(key string, val *centrum.Settings) bool) []*centrum.Settings {
+func (s *SettingsDB) ListFunc(
+	ctx context.Context,
+	fn func(key string, val *centrum.Settings) bool,
+) []*centrum.Settings {
 	return s.store.ListFiltered("", fn)
 }
 
-func (s *SettingsDB) GetJobAccessList(ctx context.Context, userJob string, userGrade int32) ([]string, *pbcentrum.JobAccess, error) {
+func (s *SettingsDB) GetJobAccessList(
+	ctx context.Context,
+	userJob string,
+	userGrade int32,
+) ([]string, *pbcentrum.JobAccess, error) {
 	settings, err := s.Get(ctx, userJob)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to get settings for job %s. %w", userJob, err)
@@ -63,35 +70,42 @@ func (s *SettingsDB) GetJobAccessList(ctx context.Context, userJob string, userG
 	jobsAccess.Dispatches = append(jobsAccess.Dispatches, jae)
 	jobs = append(jobs, userJob)
 
-	if settings == nil || settings.Access == nil {
+	if settings == nil || settings.GetAccess() == nil {
 		return jobs, jobsAccess, nil
 	}
 
-	for _, ja := range settings.Access.Jobs {
-		js, err := s.Get(ctx, ja.Job)
+	for _, ja := range settings.GetAccess().GetJobs() {
+		js, err := s.Get(ctx, ja.GetJob())
 		if err != nil {
-			return nil, nil, fmt.Errorf("failed to get settings from other job %s for job list %s. %w", ja.Job, userJob, err)
+			return nil, nil, fmt.Errorf(
+				"failed to get settings from other job %s for job list %s. %w",
+				ja.GetJob(),
+				userJob,
+				err,
+			)
 		}
 
-		if js == nil || js.Access == nil || js.Access.Jobs == nil {
+		if js == nil || js.GetAccess() == nil || js.Access.Jobs == nil {
 			continue
 		}
 
 		// Check if the job's share their access (equal or higher level)
-		if !slices.ContainsFunc(js.Access.Jobs, func(j *centrum.CentrumJobAccess) bool {
-			return j.Job == userJob && j.Access > centrum.CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_BLOCKED && j.Access >= ja.Access
+		if !slices.ContainsFunc(js.GetAccess().GetJobs(), func(j *centrum.CentrumJobAccess) bool {
+			return j.GetJob() == userJob &&
+				j.GetAccess() > centrum.CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_BLOCKED &&
+				j.GetAccess() >= ja.GetAccess()
 		}) {
 			continue
 		}
 
 		jae := &pbcentrum.JobAccessEntry{
-			Job:    ja.Job,
-			Access: ja.Access,
+			Job:    ja.GetJob(),
+			Access: ja.GetAccess(),
 		}
 		s.enricher.EnrichJobName(jae)
 
 		jobsAccess.Dispatches = append(jobsAccess.Dispatches, jae)
-		jobs = append(jobs, ja.Job)
+		jobs = append(jobs, ja.GetJob())
 	}
 
 	jobs = utils.RemoveSliceDuplicates(jobs)
@@ -99,7 +113,13 @@ func (s *SettingsDB) GetJobAccessList(ctx context.Context, userJob string, userG
 	return jobs, jobsAccess, nil
 }
 
-func (s *SettingsDB) HasAccessToJob(ctx context.Context, userJob string, userGrade int32, targetJob string, level centrum.CentrumAccessLevel) (bool, error) {
+func (s *SettingsDB) HasAccessToJob(
+	ctx context.Context,
+	userJob string,
+	userGrade int32,
+	targetJob string,
+	level centrum.CentrumAccessLevel,
+) (bool, error) {
 	// Same job, no need to check access
 	if userJob == targetJob {
 		return true, nil
@@ -110,30 +130,37 @@ func (s *SettingsDB) HasAccessToJob(ctx context.Context, userJob string, userGra
 		return false, fmt.Errorf("failed to get settings for job %s. %w", userJob, err)
 	}
 
-	if settings == nil || settings.Access == nil {
+	if settings == nil || settings.GetAccess() == nil {
 		return false, nil
 	}
 
 	// The source job can have a lower access level than the target job
-	for _, ja := range settings.Access.Jobs {
+	for _, ja := range settings.GetAccess().GetJobs() {
 		// Find the target job in the access list and ensure user has access
-		if ja.Job != targetJob || ja.MinimumGrade > userGrade {
+		if ja.GetJob() != targetJob || ja.GetMinimumGrade() > userGrade {
 			continue
 		}
 
 		// Retrieve target job settings
-		js, err := s.Get(ctx, ja.Job)
+		js, err := s.Get(ctx, ja.GetJob())
 		if err != nil {
-			return false, fmt.Errorf("failed to get settings from other job %s for job list %s. %w", ja.Job, userJob, err)
+			return false, fmt.Errorf(
+				"failed to get settings from other job %s for job list %s. %w",
+				ja.GetJob(),
+				userJob,
+				err,
+			)
 		}
 
-		if js == nil || js.Access == nil || js.Access.Jobs == nil {
+		if js == nil || js.GetAccess() == nil || js.Access.Jobs == nil {
 			continue
 		}
 
 		// Check if the target job's share their access on equal or higher level
-		if slices.ContainsFunc(js.Access.Jobs, func(j *centrum.CentrumJobAccess) bool {
-			return j.Job == userJob && j.Access > centrum.CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_BLOCKED && j.Access >= level
+		if slices.ContainsFunc(js.GetAccess().GetJobs(), func(j *centrum.CentrumJobAccess) bool {
+			return j.GetJob() == userJob &&
+				j.GetAccess() > centrum.CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_BLOCKED &&
+				j.GetAccess() >= level
 		}) {
 			return true, nil
 		}

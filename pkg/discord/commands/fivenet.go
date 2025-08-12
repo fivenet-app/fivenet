@@ -40,7 +40,10 @@ func (c *FivenetCommand) RegisterCommand(router *cmdroute.Router) api.CreateComm
 	}
 }
 
-func (c *FivenetCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandData) *api.InteractionResponseData {
+func (c *FivenetCommand) HandleCommand(
+	ctx context.Context,
+	cmd cmdroute.CommandData,
+) *api.InteractionResponseData {
 	localizer := c.l.Translator(string(cmd.Event.Locale))
 
 	return &api.InteractionResponseData{

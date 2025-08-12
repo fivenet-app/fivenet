@@ -2,6 +2,7 @@ package dbsync
 
 import (
 	"context"
+	"errors"
 	"io"
 	"time"
 
@@ -44,7 +45,7 @@ func (s *Sync) runStream(ctx context.Context) error {
 
 	for {
 		msg, err := stream.Recv()
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			return nil
 		}
 		if err != nil {
@@ -70,8 +71,12 @@ func (s *Sync) streamWorker(ctx context.Context) {
 			return
 
 		case in := <-s.streamCh:
-			if err := s.users.SyncUser(ctx, in.UserId); err != nil {
-				s.logger.Error("error during single user sync", zap.Int32("user_id", in.UserId), zap.Error(err))
+			if err := s.users.SyncUser(ctx, in.GetUserId()); err != nil {
+				s.logger.Error(
+					"error during single user sync",
+					zap.Int32("user_id", in.GetUserId()),
+					zap.Error(err),
+				)
 			}
 		}
 	}

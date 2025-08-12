@@ -40,7 +40,8 @@ func (t *templateFile) Read(p []byte) (int, error) {
 	}
 
 	// Migration-specific logic: set UsersTableName for pre-big_rename migrations if not ESXCompat.
-	if migrationNumber <= 1747999113 && !t.data["ESXCompat"].(bool) { // big_rename migration
+	esxCompat, ok := t.data["ESXCompat"].(bool)
+	if migrationNumber <= 1747999113 && (ok && !esxCompat) { // big_rename migration
 		t.data["UsersTableName"] = "fivenet_users"
 	}
 
@@ -79,6 +80,7 @@ func (t *templateFile) Stat() (fs.FileInfo, error) {
 type templateFS struct {
 	// FS is the embedded filesystem being wrapped.
 	embed.FS
+
 	// data is the template data context used for all opened files.
 	data map[string]any
 }

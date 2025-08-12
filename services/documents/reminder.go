@@ -16,23 +16,32 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
-func (s *Server) createOrUpdateWorkflowState(ctx context.Context, tx qrm.DB, documentId uint64, workflow *documents.Workflow) error {
-	if workflow == nil || (!workflow.AutoClose && !workflow.Reminder) {
+func (s *Server) createOrUpdateWorkflowState(
+	ctx context.Context,
+	tx qrm.DB,
+	documentId uint64,
+	workflow *documents.Workflow,
+) error {
+	if workflow == nil || (!workflow.GetAutoClose() && !workflow.GetReminder()) {
 		return nil
 	}
 
 	now := time.Now()
 
 	autoCloseTime := jet.TimestampExp(jet.NULL)
-	if workflow.AutoClose && workflow.AutoCloseSettings != nil && workflow.AutoCloseSettings.Duration != nil {
-		autoCloseTime = jet.TimestampT(now.Add(workflow.AutoCloseSettings.Duration.AsDuration()))
+	if workflow.GetAutoClose() && workflow.GetAutoCloseSettings() != nil &&
+		workflow.GetAutoCloseSettings().GetDuration() != nil {
+		autoCloseTime = jet.TimestampT(
+			now.Add(workflow.GetAutoCloseSettings().GetDuration().AsDuration()),
+		)
 	}
 
 	nextReminderTime := jet.TimestampExp(jet.NULL)
-	if workflow.Reminder && workflow.ReminderSettings != nil && len(workflow.ReminderSettings.Reminders) > 0 {
-		reminder := workflow.ReminderSettings.Reminders[0]
+	if workflow.GetReminder() && workflow.GetReminderSettings() != nil &&
+		len(workflow.GetReminderSettings().GetReminders()) > 0 {
+		reminder := workflow.GetReminderSettings().GetReminders()[0]
 
-		nextReminderTime = jet.TimestampT(now.Add(reminder.Duration.AsDuration()))
+		nextReminderTime = jet.TimestampT(now.Add(reminder.GetDuration().AsDuration()))
 	}
 
 	tWorkflow := table.FivenetDocumentsWorkflowState
@@ -62,21 +71,29 @@ func (s *Server) createOrUpdateWorkflowState(ctx context.Context, tx qrm.DB, doc
 	return nil
 }
 
-func (s *Server) SetDocumentReminder(ctx context.Context, req *pbdocuments.SetDocumentReminderRequest) (*pbdocuments.SetDocumentReminderResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
+func (s *Server) SetDocumentReminder(
+	ctx context.Context,
+	req *pbdocuments.SetDocumentReminderRequest,
+) (*pbdocuments.SetDocumentReminderResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
 		Method:  "SetDocumentReminder",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetDocumentId(),
+		userInfo,
+		documents.AccessLevel_ACCESS_LEVEL_VIEW,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -84,18 +101,18 @@ func (s *Server) SetDocumentReminder(ctx context.Context, req *pbdocuments.SetDo
 		return nil, errorsdocuments.ErrDocViewDenied
 	}
 
-	if req.ReminderTime == nil {
+	if req.GetReminderTime() == nil {
 		if err := deleteWorkflowUserState(ctx, s.db, &documents.WorkflowUserState{
-			DocumentId: req.DocumentId,
-			UserId:     userInfo.UserId,
+			DocumentId: req.GetDocumentId(),
+			UserId:     userInfo.GetUserId(),
 		}); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	} else {
 		if err := updateWorkflowUserState(ctx, s.db, &documents.WorkflowUserState{
-			DocumentId:            req.DocumentId,
-			UserId:                userInfo.UserId,
-			ManualReminderTime:    req.ReminderTime,
+			DocumentId:            req.GetDocumentId(),
+			UserId:                userInfo.GetUserId(),
+			ManualReminderTime:    req.GetReminderTime(),
 			ManualReminderMessage: req.Message,
 		}); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

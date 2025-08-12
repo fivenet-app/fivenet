@@ -124,18 +124,28 @@ func SetupDB(p Params) (Result, error) {
 
 	if req == nil {
 		req = reqs.NewDBReqs(db)
+
+		ctx, cancel := context.WithCancel(context.Background())
+		defer cancel()
+
 		// Collect requirement errors if any
 		var errs error
-		if err := req.ValidateVersion(); err != nil {
+		if err := req.ValidateVersion(ctx); err != nil {
 			if !p.Config.IgnoreRequirements {
-				errs = multierr.Append(errs, fmt.Errorf("failed to validate database version requirements. %w", err))
+				errs = multierr.Append(
+					errs,
+					fmt.Errorf("failed to validate database version requirements. %w", err),
+				)
 			}
 			p.Logger.Warn("ignoring failed database version requirements", zap.Error(err))
 		}
 
-		if err := req.ValidateTables(); err != nil {
+		if err := req.ValidateTables(ctx); err != nil {
 			if !p.Config.IgnoreRequirements {
-				errs = multierr.Append(errs, fmt.Errorf("failed to validate database tables requirements. %w", err))
+				errs = multierr.Append(
+					errs,
+					fmt.Errorf("failed to validate database tables requirements. %w", err),
+				)
 			}
 			p.Logger.Warn("ignoring failed database tables requirements", zap.Error(err))
 		}

@@ -19,7 +19,10 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) ListCalendars(ctx context.Context, req *pbcalendar.ListCalendarsRequest) (*pbcalendar.ListCalendarsResponse, error) {
+func (s *Server) ListCalendars(
+	ctx context.Context,
+	req *pbcalendar.ListCalendarsRequest,
+) (*pbcalendar.ListCalendarsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	tCreator := tables.User().AS("creator")
@@ -31,13 +34,13 @@ func (s *Server) ListCalendars(ctx context.Context, req *pbcalendar.ListCalendar
 		).
 		FROM(tCalendarSubs).
 		WHERE(jet.AND(
-			tCalendarSubs.UserID.EQ(jet.Int32(userInfo.UserId)),
+			tCalendarSubs.UserID.EQ(jet.Int32(userInfo.GetUserId())),
 		)),
 	)
 
 	minAccessLevel := calendar.AccessLevel_ACCESS_LEVEL_VIEW
 	if req.MinAccessLevel != nil {
-		minAccessLevel = *req.MinAccessLevel
+		minAccessLevel = req.GetMinAccessLevel()
 		subsCondition = jet.Bool(false)
 	}
 
@@ -46,27 +49,29 @@ func (s *Server) ListCalendars(ctx context.Context, req *pbcalendar.ListCalendar
 		jet.OR(
 			jet.OR(
 				subsCondition,
-				tCalendar.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+				tCalendar.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
 			),
 			jet.OR(
-				tCAccess.UserID.EQ(jet.Int32(userInfo.UserId)),
+				tCAccess.UserID.EQ(jet.Int32(userInfo.GetUserId())),
 				jet.AND(
-					tCAccess.Job.EQ(jet.String(userInfo.Job)),
-					tCAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade)),
+					tCAccess.Job.EQ(jet.String(userInfo.GetJob())),
+					tCAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
 				),
 			),
 		),
 	)
 
-	if req.OnlyPublic {
+	if req.GetOnlyPublic() {
 		condition = jet.AND(
 			tCalendar.DeletedAt.IS_NULL(),
 			tCalendar.Public.IS_TRUE(),
 		)
 	}
 
-	if req.After != nil {
-		condition = condition.AND(tCalendar.UpdatedAt.GT_EQ(jet.TimestampT(req.After.AsTime())))
+	if req.GetAfter() != nil {
+		condition = condition.AND(
+			tCalendar.UpdatedAt.GT_EQ(jet.TimestampT(req.GetAfter().AsTime())),
+		)
 	}
 
 	countStmt := tCalendar.
@@ -92,7 +97,7 @@ func (s *Server) ListCalendars(ctx context.Context, req *pbcalendar.ListCalendar
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponse(count.Total)
+	pag, limit := req.GetPagination().GetResponse(count.Total)
 	resp := &pbcalendar.ListCalendarsResponse{
 		Pagination: pag,
 	}
@@ -151,7 +156,7 @@ func (s *Server) ListCalendars(ctx context.Context, req *pbcalendar.ListCalendar
 			).
 			LEFT_JOIN(tCalendarSubs,
 				tCalendarSubs.CalendarID.EQ(tCalendar.ID).
-					AND(tCalendarSubs.UserID.EQ(jet.Int32(userInfo.UserId))),
+					AND(tCalendarSubs.UserID.EQ(jet.Int32(userInfo.GetUserId()))),
 			).
 			LEFT_JOIN(tAvatar,
 				tAvatar.ID.EQ(tUserProps.AvatarFileID),
@@ -159,11 +164,11 @@ func (s *Server) ListCalendars(ctx context.Context, req *pbcalendar.ListCalendar
 		).
 		GROUP_BY(tCalendar.ID).
 		WHERE(condition).
-		OFFSET(req.Pagination.Offset).
+		OFFSET(req.GetPagination().GetOffset()).
 		LIMIT(limit)
 
-	if req.After != nil {
-		stmt.ORDER_BY(tCalendar.UpdatedAt.GT_EQ(jet.TimestampT(req.After.AsTime())))
+	if req.GetAfter() != nil {
+		stmt.ORDER_BY(tCalendar.UpdatedAt.GT_EQ(jet.TimestampT(req.GetAfter().AsTime())))
 	}
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Calendars); err != nil {
@@ -173,22 +178,31 @@ func (s *Server) ListCalendars(ctx context.Context, req *pbcalendar.ListCalendar
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.Calendars {
-		if resp.Calendars[i].Creator != nil {
-			jobInfoFn(resp.Calendars[i].Creator)
+	for i := range resp.GetCalendars() {
+		if resp.GetCalendars()[i].GetCreator() != nil {
+			jobInfoFn(resp.GetCalendars()[i].GetCreator())
 		}
 	}
 
-	resp.Pagination.Update(len(resp.Calendars))
+	resp.GetPagination().Update(len(resp.GetCalendars()))
 
 	return resp, nil
 }
 
-func (s *Server) GetCalendar(ctx context.Context, req *pbcalendar.GetCalendarRequest) (*pbcalendar.GetCalendarResponse, error) {
+func (s *Server) GetCalendar(
+	ctx context.Context,
+	req *pbcalendar.GetCalendarRequest,
+) (*pbcalendar.GetCalendarResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Check if user has access to existing calendar
-	check, err := s.checkIfUserHasAccessToCalendar(ctx, req.CalendarId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_VIEW, true)
+	check, err := s.checkIfUserHasAccessToCalendar(
+		ctx,
+		req.GetCalendarId(),
+		userInfo,
+		calendar.AccessLevel_ACCESS_LEVEL_VIEW,
+		true,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -196,7 +210,7 @@ func (s *Server) GetCalendar(ctx context.Context, req *pbcalendar.GetCalendarReq
 		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
 	}
 
-	calendar, err := s.getCalendar(ctx, userInfo, tCalendar.ID.EQ(jet.Uint64(req.CalendarId)))
+	calendar, err := s.getCalendar(ctx, userInfo, tCalendar.ID.EQ(jet.Uint64(req.GetCalendarId())))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -204,19 +218,19 @@ func (s *Server) GetCalendar(ctx context.Context, req *pbcalendar.GetCalendarReq
 		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
 	}
 
-	access, err := s.getAccess(ctx, calendar.Id)
+	access, err := s.getAccess(ctx, calendar.GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	for i := range access.Jobs {
-		s.enricher.EnrichJobInfo(access.Jobs[i])
+	for i := range access.GetJobs() {
+		s.enricher.EnrichJobInfo(access.GetJobs()[i])
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range access.Users {
-		if access.Users[i].User != nil {
-			jobInfoFn(access.Users[i].User)
+	for i := range access.GetUsers() {
+		if access.GetUsers()[i].GetUser() != nil {
+			jobInfoFn(access.GetUsers()[i].GetUser())
 		}
 	}
 
@@ -227,7 +241,10 @@ func (s *Server) GetCalendar(ctx context.Context, req *pbcalendar.GetCalendarReq
 	}, nil
 }
 
-func (s *Server) getAccess(ctx context.Context, calendarId uint64) (*calendar.CalendarAccess, error) {
+func (s *Server) getAccess(
+	ctx context.Context,
+	calendarId uint64,
+) (*calendar.CalendarAccess, error) {
 	jobAccess, err := s.access.Jobs.List(ctx, s.db, calendarId)
 	if err != nil {
 		return nil, err
@@ -244,19 +261,27 @@ func (s *Server) getAccess(ctx context.Context, calendarId uint64) (*calendar.Ca
 	}, nil
 }
 
-func (s *Server) CreateCalendar(ctx context.Context, req *pbcalendar.CreateCalendarRequest) (*pbcalendar.CreateCalendarResponse, error) {
+func (s *Server) CreateCalendar(
+	ctx context.Context,
+	req *pbcalendar.CreateCalendarRequest,
+) (*pbcalendar.CreateCalendarResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbcalendar.CalendarService_ServiceDesc.ServiceName,
 		Method:  "CreateCalendar",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	fields, err := s.ps.AttrStringList(userInfo, permscalendar.CalendarServicePerm, permscalendar.CalendarServiceCreateCalendarPerm, permscalendar.CalendarServiceCreateCalendarFieldsPermField)
+	fields, err := s.ps.AttrStringList(
+		userInfo,
+		permscalendar.CalendarServicePerm,
+		permscalendar.CalendarServiceCreateCalendarPerm,
+		permscalendar.CalendarServiceCreateCalendarFieldsPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -264,7 +289,7 @@ func (s *Server) CreateCalendar(ctx context.Context, req *pbcalendar.CreateCalen
 	if req.Calendar.Job != nil && !fields.Contains("Job") {
 		return nil, errorscalendar.ErrFailedQuery
 	}
-	if req.Calendar.Color == "" {
+	if req.GetCalendar().GetColor() == "" {
 		req.Calendar.Color = "blue"
 	}
 
@@ -277,7 +302,7 @@ func (s *Server) CreateCalendar(ctx context.Context, req *pbcalendar.CreateCalen
 	defer tx.Rollback()
 
 	// Check if user has access to existing calendar
-	if req.Calendar.Id > 0 {
+	if req.GetCalendar().GetId() > 0 {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
@@ -285,7 +310,7 @@ func (s *Server) CreateCalendar(ctx context.Context, req *pbcalendar.CreateCalen
 	if req.Calendar.Job == nil {
 		calendar, err := s.getCalendar(ctx, userInfo, jet.AND(
 			tCalendar.DeletedAt.IS_NULL(),
-			tCalendar.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+			tCalendar.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
 			tCalendar.Job.IS_NULL(),
 		))
 		if err != nil {
@@ -312,21 +337,21 @@ func (s *Server) CreateCalendar(ctx context.Context, req *pbcalendar.CreateCalen
 			tCalendar.CreatorJob,
 		).
 		VALUES(
-			req.Calendar.Job,
-			req.Calendar.Name,
-			req.Calendar.Description,
-			req.Calendar.Public,
-			req.Calendar.Closed,
-			req.Calendar.Color,
-			userInfo.UserId,
-			userInfo.Job,
+			req.GetCalendar().GetJob(),
+			req.GetCalendar().GetName(),
+			req.GetCalendar().GetDescription(),
+			req.GetCalendar().GetPublic(),
+			req.GetCalendar().GetClosed(),
+			req.GetCalendar().GetColor(),
+			userInfo.GetUserId(),
+			userInfo.GetJob(),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tCalendar.Name.SET(jet.String(req.Calendar.Name)),
+			tCalendar.Name.SET(jet.String(req.GetCalendar().GetName())),
 			tCalendar.Description.SET(jet.String("VALUES(`description`)")),
-			tCalendar.Public.SET(jet.Bool(req.Calendar.Public)),
-			tCalendar.Closed.SET(jet.Bool(req.Calendar.Closed)),
-			tCalendar.Color.SET(jet.String(req.Calendar.Color)),
+			tCalendar.Public.SET(jet.Bool(req.GetCalendar().GetPublic())),
+			tCalendar.Closed.SET(jet.Bool(req.GetCalendar().GetClosed())),
+			tCalendar.Color.SET(jet.String(req.GetCalendar().GetColor())),
 		)
 
 	res, err := stmt.ExecContext(ctx, tx)
@@ -334,7 +359,7 @@ func (s *Server) CreateCalendar(ctx context.Context, req *pbcalendar.CreateCalen
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	if req.Calendar.Id == 0 {
+	if req.GetCalendar().GetId() == 0 {
 		lastId, err := res.LastInsertId()
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
@@ -343,7 +368,7 @@ func (s *Server) CreateCalendar(ctx context.Context, req *pbcalendar.CreateCalen
 		req.Calendar.Id = uint64(lastId)
 	}
 
-	if _, err := s.access.HandleAccessChanges(ctx, tx, req.Calendar.Id, req.Calendar.Access.Jobs, req.Calendar.Access.Users, nil); err != nil {
+	if _, err := s.access.HandleAccessChanges(ctx, tx, req.GetCalendar().GetId(), req.GetCalendar().GetAccess().GetJobs(), req.GetCalendar().GetAccess().GetUsers(), nil); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
@@ -354,7 +379,11 @@ func (s *Server) CreateCalendar(ctx context.Context, req *pbcalendar.CreateCalen
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 
-	calendar, err := s.getCalendar(ctx, userInfo, tCalendar.AS("calendar").ID.EQ(jet.Uint64(req.Calendar.Id)))
+	calendar, err := s.getCalendar(
+		ctx,
+		userInfo,
+		tCalendar.AS("calendar").ID.EQ(jet.Uint64(req.GetCalendar().GetId())),
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -364,19 +393,27 @@ func (s *Server) CreateCalendar(ctx context.Context, req *pbcalendar.CreateCalen
 	}, nil
 }
 
-func (s *Server) UpdateCalendar(ctx context.Context, req *pbcalendar.UpdateCalendarRequest) (*pbcalendar.UpdateCalendarResponse, error) {
+func (s *Server) UpdateCalendar(
+	ctx context.Context,
+	req *pbcalendar.UpdateCalendarRequest,
+) (*pbcalendar.UpdateCalendarResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbcalendar.CalendarService_ServiceDesc.ServiceName,
 		Method:  "UpdateCalendar",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	fields, err := s.ps.AttrStringList(userInfo, permscalendar.CalendarServicePerm, permscalendar.CalendarServiceCreateCalendarPerm, permscalendar.CalendarServiceCreateCalendarFieldsPermField)
+	fields, err := s.ps.AttrStringList(
+		userInfo,
+		permscalendar.CalendarServicePerm,
+		permscalendar.CalendarServiceCreateCalendarPerm,
+		permscalendar.CalendarServiceCreateCalendarFieldsPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -384,15 +421,21 @@ func (s *Server) UpdateCalendar(ctx context.Context, req *pbcalendar.UpdateCalen
 	if req.Calendar.Job != nil && !fields.Contains("Job") {
 		return nil, errorscalendar.ErrFailedQuery
 	}
-	if req.Calendar.Color == "" {
+	if req.GetCalendar().GetColor() == "" {
 		req.Calendar.Color = "blue"
 	}
 
 	// Check if user has access to existing calendar
-	if req.Calendar.Id == 0 {
+	if req.GetCalendar().GetId() == 0 {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
-	check, err := s.checkIfUserHasAccessToCalendar(ctx, req.Calendar.Id, userInfo, calendar.AccessLevel_ACCESS_LEVEL_MANAGE, false)
+	check, err := s.checkIfUserHasAccessToCalendar(
+		ctx,
+		req.GetCalendar().GetId(),
+		userInfo,
+		calendar.AccessLevel_ACCESS_LEVEL_MANAGE,
+		false,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -400,7 +443,11 @@ func (s *Server) UpdateCalendar(ctx context.Context, req *pbcalendar.UpdateCalen
 		return nil, errorscalendar.ErrNoPerms
 	}
 
-	calendar, err := s.getCalendar(ctx, userInfo, tCalendar.ID.EQ(jet.Uint64(req.Calendar.Id)))
+	calendar, err := s.getCalendar(
+		ctx,
+		userInfo,
+		tCalendar.ID.EQ(jet.Uint64(req.GetCalendar().GetId())),
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -411,7 +458,7 @@ func (s *Server) UpdateCalendar(ctx context.Context, req *pbcalendar.UpdateCalen
 		req.Calendar.Description = &empty
 	}
 
-	if !fields.Contains("Public") && calendar.Public && req.Calendar.Public {
+	if !fields.Contains("Public") && calendar.GetPublic() && req.GetCalendar().GetPublic() {
 		req.Calendar.Public = false
 	}
 
@@ -433,14 +480,14 @@ func (s *Server) UpdateCalendar(ctx context.Context, req *pbcalendar.UpdateCalen
 			tCalendar.Color,
 		).
 		SET(
-			tCalendar.Name.SET(jet.String(req.Calendar.Name)),
-			tCalendar.Description.SET(jet.String(*req.Calendar.Description)),
-			tCalendar.Public.SET(jet.Bool(req.Calendar.Public)),
-			tCalendar.Closed.SET(jet.Bool(req.Calendar.Closed)),
-			tCalendar.Color.SET(jet.String(req.Calendar.Color)),
+			tCalendar.Name.SET(jet.String(req.GetCalendar().GetName())),
+			tCalendar.Description.SET(jet.String(req.GetCalendar().GetDescription())),
+			tCalendar.Public.SET(jet.Bool(req.GetCalendar().GetPublic())),
+			tCalendar.Closed.SET(jet.Bool(req.GetCalendar().GetClosed())),
+			tCalendar.Color.SET(jet.String(req.GetCalendar().GetColor())),
 		).
 		WHERE(jet.AND(
-			tCalendar.ID.EQ(jet.Uint64(req.Calendar.Id)),
+			tCalendar.ID.EQ(jet.Uint64(req.GetCalendar().GetId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -449,7 +496,7 @@ func (s *Server) UpdateCalendar(ctx context.Context, req *pbcalendar.UpdateCalen
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
-	if _, err := s.access.HandleAccessChanges(ctx, tx, req.Calendar.Id, req.Calendar.Access.Jobs, req.Calendar.Access.Users, nil); err != nil {
+	if _, err := s.access.HandleAccessChanges(ctx, tx, req.GetCalendar().GetId(), req.GetCalendar().GetAccess().GetJobs(), req.GetCalendar().GetAccess().GetUsers(), nil); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
@@ -458,7 +505,11 @@ func (s *Server) UpdateCalendar(ctx context.Context, req *pbcalendar.UpdateCalen
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	calendar, err = s.getCalendar(ctx, userInfo, tCalendar.AS("calendar").ID.EQ(jet.Uint64(req.Calendar.Id)))
+	calendar, err = s.getCalendar(
+		ctx,
+		userInfo,
+		tCalendar.AS("calendar").ID.EQ(jet.Uint64(req.GetCalendar().GetId())),
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -468,19 +519,28 @@ func (s *Server) UpdateCalendar(ctx context.Context, req *pbcalendar.UpdateCalen
 	}, nil
 }
 
-func (s *Server) DeleteCalendar(ctx context.Context, req *pbcalendar.DeleteCalendarRequest) (*pbcalendar.DeleteCalendarResponse, error) {
+func (s *Server) DeleteCalendar(
+	ctx context.Context,
+	req *pbcalendar.DeleteCalendarRequest,
+) (*pbcalendar.DeleteCalendarResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbcalendar.CalendarService_ServiceDesc.ServiceName,
 		Method:  "DeleteCalendar",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToCalendar(ctx, req.CalendarId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_MANAGE, false)
+	check, err := s.checkIfUserHasAccessToCalendar(
+		ctx,
+		req.GetCalendarId(),
+		userInfo,
+		calendar.AccessLevel_ACCESS_LEVEL_MANAGE,
+		false,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -488,7 +548,7 @@ func (s *Server) DeleteCalendar(ctx context.Context, req *pbcalendar.DeleteCalen
 		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
 	}
 
-	calendar, err := s.getCalendar(ctx, userInfo, tCalendar.ID.EQ(jet.Uint64(req.CalendarId)))
+	calendar, err := s.getCalendar(ctx, userInfo, tCalendar.ID.EQ(jet.Uint64(req.GetCalendarId())))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -497,7 +557,7 @@ func (s *Server) DeleteCalendar(ctx context.Context, req *pbcalendar.DeleteCalen
 	}
 
 	deletedAtTime := jet.CURRENT_TIMESTAMP()
-	if calendar.DeletedAt != nil && userInfo.Superuser {
+	if calendar.GetDeletedAt() != nil && userInfo.GetSuperuser() {
 		deletedAtTime = jet.TimestampExp(jet.NULL)
 	}
 
@@ -508,7 +568,7 @@ func (s *Server) DeleteCalendar(ctx context.Context, req *pbcalendar.DeleteCalen
 		SET(
 			tCalendar.DeletedAt.SET(deletedAtTime),
 		).
-		WHERE(tCalendar.ID.EQ(jet.Uint64(req.CalendarId)))
+		WHERE(tCalendar.ID.EQ(jet.Uint64(req.GetCalendarId())))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
@@ -519,7 +579,11 @@ func (s *Server) DeleteCalendar(ctx context.Context, req *pbcalendar.DeleteCalen
 	return &pbcalendar.DeleteCalendarResponse{}, nil
 }
 
-func (s *Server) getCalendar(ctx context.Context, userInfo *userinfo.UserInfo, condition jet.BoolExpression) (*calendar.Calendar, error) {
+func (s *Server) getCalendar(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	condition jet.BoolExpression,
+) (*calendar.Calendar, error) {
 	tCreator := tables.User().AS("creator")
 	tAvatar := table.FivenetFiles.AS("avatar")
 
@@ -561,7 +625,7 @@ func (s *Server) getCalendar(ctx context.Context, userInfo *userinfo.UserInfo, c
 			).
 			LEFT_JOIN(tCalendarSubs,
 				tCalendarSubs.CalendarID.EQ(tCalendar.ID).
-					AND(tCalendarSubs.UserID.EQ(jet.Int32(userInfo.UserId))),
+					AND(tCalendarSubs.UserID.EQ(jet.Int32(userInfo.GetUserId()))),
 			).
 			LEFT_JOIN(tAvatar,
 				tAvatar.ID.EQ(tUserProps.AvatarFileID),
@@ -578,12 +642,12 @@ func (s *Server) getCalendar(ctx context.Context, userInfo *userinfo.UserInfo, c
 		}
 	}
 
-	if dest.Id == 0 {
+	if dest.GetId() == 0 {
 		return nil, nil
 	}
 
-	if dest.Creator != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, dest.Creator)
+	if dest.GetCreator() != nil {
+		s.enricher.EnrichJobInfoSafe(userInfo, dest.GetCreator())
 	}
 
 	return dest, nil

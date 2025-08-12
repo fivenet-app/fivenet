@@ -58,30 +58,33 @@ func (s *Server) destroyTokenCookie(ctx context.Context) error {
 	return grpc.SendHeader(ctx, header)
 }
 
-// Helper to fetch account from claims
-func (s *Server) getAccountFromClaims(ctx context.Context, claims *auth.CitizenInfoClaims) (*model.FivenetAccounts, error) {
+// Helper to fetch account from claims.
+func (s *Server) getAccountFromClaims(
+	ctx context.Context,
+	claims *auth.CitizenInfoClaims,
+) (*model.FivenetAccounts, error) {
 	return s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)).
 		AND(tAccounts.Username.EQ(jet.String(claims.Username))))
 }
 
-// Helper for password hashing
+// Helper for password hashing.
 func hashPassword(password string) (string, error) {
 	hashed, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return string(hashed), err
 }
 
-// Helper for password validation
+// Helper for password validation.
 func checkPassword(hashed, plain string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashed), []byte(plain))
 }
 
-// Helper for username normalization
+// Helper for username normalization.
 func normalizeUsername(username string) string {
 	return strings.TrimSpace(username)
 }
 
 // Centralized superuser/override logic for character/job selection
-// Returns updated jobProps (if any) and error
+// Returns updated jobProps (if any) and error.
 func (s *Server) handleSuperuserOverride(
 	ctx context.Context,
 	account *model.FivenetAccounts,
@@ -109,7 +112,7 @@ func (s *Server) handleSuperuserOverride(
 
 		s.enricher.EnrichJobInfo(char)
 
-		_, _, jProps_, err := s.getJobWithProps(ctx, char.Job)
+		_, _, jProps_, err := s.getJobWithProps(ctx, char.GetJob())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 		}

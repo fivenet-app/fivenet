@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	"log"
-	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
 	"github.com/kardianos/service"
@@ -17,7 +16,7 @@ var svcConfig = &service.Config{
 }
 
 type DBSyncCmd struct {
-	RunCmd struct{} `cmd:"" name:"run" default:"1" help:"Run the DBSync service (default if not subcommand is specified)"`
+	RunCmd struct{} `cmd:"" default:"1" help:"Run the DBSync service (default if not subcommand is specified)" name:"run"`
 
 	Start StartCmd `cmd:"" help:"Start the DBSync service via your OS's service manager"`
 	Stop  StopCmd  `cmd:"" help:"Stop the DBSync service via your OS's service manager"`
@@ -94,7 +93,9 @@ func (c *InstallCmd) Run(ctx *Context) error {
 		log.Fatalf("Failed to install service. %v", err)
 	}
 
-	log.Println("Service installed successfully. You can now start the service with 'fivenet dbsync start' or via your OS's service manager.")
+	log.Println(
+		"Service installed successfully. You can now start the service with 'fivenet dbsync start' or via your OS's service manager.",
+	)
 	return nil
 }
 
@@ -118,14 +119,13 @@ type dbSyncProgram struct {
 }
 
 func (p *dbSyncProgram) Start(s service.Service) error {
-	<-time.After(5 * time.Second)
 	go p.app.Run()
 
 	return nil
 }
 
 func (p *dbSyncProgram) Stop(s service.Service) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 180)
+	ctx, cancel := context.WithTimeout(context.Background(), stopTimeout)
 	defer cancel()
 
 	p.app.Stop(ctx)

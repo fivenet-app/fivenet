@@ -1,0 +1,198 @@
+version: "2"
+issues:
+  max-issues-per-linter: 150
+  max-same-issues: 0
+formatters:
+  enable:
+    - gci
+    - gofmt
+    - gofumpt
+    - goimports
+    - golines
+    - swaggo
+linters:
+  default: all
+  enable:
+    - arangolint
+    - asasalint
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - canonicalheader
+    - contextcheck
+    - copyloopvar
+    - decorder
+    - dogsled
+    - dupword
+    - durationcheck
+    - embeddedstructfieldcheck
+    - err113
+    - errcheck
+    - errchkjson
+    - errname
+    - errorlint
+    - exhaustive
+    - exptostd
+    - fatcontext
+    - forbidigo
+    - forcetypeassert
+    - ginkgolinter
+    - gocheckcompilerdirectives
+    - gochecksumtype
+    - goconst
+    - gocritic
+    - godot
+    - goheader
+    - gomoddirectives
+    - gomodguard
+    - goprintffuncname
+    - gosec
+    - gosmopolitan
+    - govet
+    - grouper
+    - iface
+    - importas
+    - inamedparam
+    - ineffassign
+    - interfacebloat
+    - intrange
+    - loggercheck
+    - maintidx
+    - makezero
+    - mirror
+    - misspell
+    - musttag
+    - nakedret
+    - nestif
+    - nilerr
+    - nilnesserr
+    - nolintlint
+    - nonamedreturns
+    - nosprintfhostport
+    - perfsprint
+    - prealloc
+    - predeclared
+    - promlinter
+    - protogetter
+    - reassign
+    - recvcheck
+    - revive
+    - rowserrcheck
+    - sloglint
+    - spancheck
+    - sqlclosecheck
+    - staticcheck
+    - tagalign
+    - tagliatelle
+    - testableexamples
+    - testifylint
+    - thelper
+    - tparallel
+    - unconvert
+    - unparam
+    - unused
+    - usestdlibvars
+    - usetesting
+    - wastedassign
+    - whitespace
+    - zerologlint
+  disable:
+    - containedctx
+    - depguard
+    - exhaustive
+    - exhaustruct
+    - funcorder
+    - funlen
+    - gochecknoglobals
+    - gochecknoinits
+    - godox
+    - ireturn
+    - lll
+    - mnd
+    - nlreturn
+    - noctx
+    - nilnil
+    - noinlineerr
+    - paralleltest
+    - testpackage
+    - varnamelen
+    - wrapcheck
+    - wsl
+    - wsl_v5
+    # Linters to be re-enabled in the future
+    - cyclop
+    - dupl
+    - gocognit
+    - gocyclo
+  settings:
+    gomoddirectives:
+      replace-allow-list:
+        - github.com/paulmach/orb
+        - github.com/grpc-ecosystem/go-grpc-middleware/v2
+    predeclared:
+      ignore:
+        - new
+        - int
+    gocritic:
+      enabled-checks:
+        - whyNoLint
+    gosec:
+      config:
+        G301: "0770" # In containers 0770 is basically required for shared volumes
+    wrapcheck:
+      extra-ignore-sigs:
+        - errswrap.NewError(
+    tagalign:
+      align: false
+      sort: true
+      order:
+        - cmd
+        - default
+        - json
+        - yaml
+        - yml
+        - toml
+        - mapstructure
+        - binding
+        - validate
+    tagliatelle:
+      case:
+        extended-rules:
+          json:
+            case: camel
+            extra-initialisms: true
+            initialism-overrides:
+              URL: true
+          yaml:
+            case: camel
+            extra-initialisms: true
+            initialism-overrides:
+              URL: true
+              TTL: true
+              SSL: true
+              ID: true
+              API: true
+    testifylint:
+      disable:
+        - go-require
+      go-require:
+        # Ignore HTTP handlers (like http.HandlerFunc).
+        ignore-http-handlers: true
+    errcheck:
+      exclude-functions:
+        - (sql.Tx).Rollback
+    unparam:
+      check-exported: true
+  exclusions:
+    rules:
+      - path: _test\.go
+        linters:
+          - errcheck
+          - funlen
+          - gosec
+          - nestif
+          - perfsprint
+          - unparam
+      - path: tests.*\.go
+        linters:
+          - funlen

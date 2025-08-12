@@ -1,6 +1,7 @@
 package reqs
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"sync"
@@ -53,8 +54,8 @@ func (r *DBReqs) SetMigrationState(version uint, dirty bool) {
 	r.migrationDirty = dirty
 }
 
-func (r *DBReqs) ValidateVersion() error {
-	err := r.db.QueryRow("SELECT VERSION()").Scan(&r.version)
+func (r *DBReqs) ValidateVersion(ctx context.Context) error {
+	err := r.db.QueryRowContext(ctx, "SELECT VERSION()").Scan(&r.version)
 	if err != nil {
 		return err
 	}
@@ -65,18 +66,21 @@ func (r *DBReqs) ValidateVersion() error {
 	var major, minor int
 	_, err = fmt.Sscanf(r.version, "%d.%d", &major, &minor)
 	if err != nil {
-		return fmt.Errorf("failed to parse DB version: %v", err)
+		return fmt.Errorf("failed to parse DB version: %w", err)
 	}
 
 	if major < 8 {
-		return fmt.Errorf("database version %s is not supported, requires at least MySQL 8.0 or MariaDB 11.4", r.version)
+		return fmt.Errorf(
+			"database version %s is not supported, requires at least MySQL 8.0 or MariaDB 11.4",
+			r.version,
+		)
 	}
 
 	return nil
 }
 
-func (r *DBReqs) ValidateTables() error {
-	tables, err := r.validateTables()
+func (r *DBReqs) ValidateTables(ctx context.Context) error {
+	tables, err := r.validateTables(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to validate database tables. %w", err)
 	}
@@ -85,7 +89,12 @@ func (r *DBReqs) ValidateTables() error {
 
 	// Check if any tables are mismatched
 	if len(tables) > 0 {
-		return fmt.Errorf("database (charset: %q, collation: %q) tables are mismatched: %v", r.dbCharset, r.dbCollation, tables)
+		return fmt.Errorf(
+			"database (charset: %q, collation: %q) tables are mismatched: %v",
+			r.dbCharset,
+			r.dbCollation,
+			tables,
+		)
 	}
 
 	return nil
@@ -97,10 +106,10 @@ func (r *DBReqs) GetTables() []Table {
 	return r.tables
 }
 
-func (r *DBReqs) validateTables() ([]Table, error) {
+func (r *DBReqs) validateTables(ctx context.Context) ([]Table, error) {
 	var dbName string
 	err := r.db.
-		QueryRow("SELECT DATABASE()").
+		QueryRowContext(ctx, "SELECT DATABASE()").
 		Scan(&dbName)
 	if err != nil {
 		return nil, err
@@ -109,7 +118,7 @@ func (r *DBReqs) validateTables() ([]Table, error) {
 	// Get database charset and collation
 	var dbCharset, dbCollation string
 	err = r.db.
-		QueryRow(`
+		QueryRowContext(ctx, `
         SELECT DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME
         FROM information_schema.SCHEMATA
         WHERE SCHEMA_NAME = ?
@@ -142,7 +151,7 @@ func (r *DBReqs) validateTables() ([]Table, error) {
 		}
 		var tableCharset string
 		err = r.db.
-			QueryRow(`
+			QueryRowContext(ctx, `
             SELECT CHARACTER_SET_NAME
             FROM information_schema.COLLATIONS
             WHERE COLLATION_NAME = ?

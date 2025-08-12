@@ -1,3 +1,4 @@
+//nolint:forbidigo // This is part of a CLI tool that uses `fmt.Println` for output
 package cmd
 
 import (
@@ -20,7 +21,7 @@ type SyncCmd struct {
 
 type SyncStatusCmd struct {
 	Host     string `help:"Host to sync with"`
-	Port     int    `default:"8080" help:"Port to sync with"`
+	Port     int    `help:"Port to sync with"            default:"8080"`
 	Insecure bool   `help:"Skip TLS verification"`
 	APIToken string `help:"API token for authentication"`
 }
@@ -48,11 +49,17 @@ func (c *SyncStatusCmd) Run(_ *kong.Context) error {
 	return nil
 }
 
-func (s *SyncStatusCmd) createGRPCClient(host string, port int, skipTlsVerify bool, apiToken string) (*grpc.ClientConn, error) {
+func (s *SyncStatusCmd) createGRPCClient(
+	host string,
+	port int,
+	skipTlsVerify bool,
+	apiToken string,
+) (*grpc.ClientConn, error) {
 	// Create GRPC client for sync if destination is given
 	transportCreds := insecure.NewCredentials()
 	if !skipTlsVerify {
 		transportCreds = credentials.NewTLS(&tls.Config{
+			MinVersion: tls.VersionTLS11,
 			ClientAuth: tls.NoClientCert,
 		})
 	}

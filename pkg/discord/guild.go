@@ -15,7 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/embeds"
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/modules"
-	"github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
+	discordtypes "github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/broker"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -56,8 +56,14 @@ type Guild struct {
 	events   *broker.Broker[any]
 }
 
-func NewGuild(c context.Context, b *Bot, guild discord.Guild, job string, lastSync time.Time) (*Guild, error) {
-	ctx, cancel := context.WithCancel(c)
+func NewGuild(
+	ctx context.Context,
+	b *Bot,
+	guild discord.Guild,
+	job string,
+	lastSync time.Time,
+) (*Guild, error) {
+	ctx, cancel := context.WithCancel(ctx)
 
 	events := broker.New[any]()
 	go events.Start(ctx)
@@ -73,7 +79,8 @@ func NewGuild(c context.Context, b *Bot, guild discord.Guild, job string, lastSy
 		job: job,
 		gid: guild.ID,
 
-		logger:  b.logger.Named("guild").With(zap.String("job", job), zap.Uint64("discord_guild_id", uint64(guild.ID))),
+		logger: b.logger.Named("guild").
+			With(zap.String("job", job), zap.Uint64("discord_guild_id", uint64(guild.ID))),
 		bot:     b,
 		guild:   guild,
 		modules: []modules.Module{},
@@ -82,7 +89,7 @@ func NewGuild(c context.Context, b *Bot, guild discord.Guild, job string, lastSy
 		events:   events,
 	}
 
-	settings, _, err := g.getSyncSettings(c)
+	settings, _, err := g.getSyncSettings(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +112,6 @@ func NewGuild(c context.Context, b *Bot, guild discord.Guild, job string, lastSy
 	g.logger.Debug("getting discord guild modules", zap.Strings("dc_modules", ms))
 	errs := multierr.Combine()
 	for _, module := range ms {
-
 		m, err := modules.GetModule(module, g.base, g.events)
 		if err != nil {
 			errs = multierr.Append(errs, fmt.Errorf("%s. %w", module, err))
@@ -119,12 +125,12 @@ func NewGuild(c context.Context, b *Bot, guild discord.Guild, job string, lastSy
 }
 
 func (g *Guild) warmupStore() error {
-	members, err := g.bot.dc.Session.AllMembers(g.gid)
+	members, err := g.bot.dc.AllMembers(g.gid)
 	if err != nil {
 		return fmt.Errorf("failed to get guild members. %w", err)
 	}
 	for _, member := range members {
-		if err := g.bot.dc.Cabinet.MemberSet(g.gid, &member, false); err != nil {
+		if err := g.bot.dc.MemberSet(g.gid, &member, false); err != nil {
 			return err
 		}
 	}
@@ -166,7 +172,7 @@ func (g *Guild) Run(ignoreCooldown bool) error {
 	// Get sync settings on run start
 	settings, planDiff, err := g.getSyncSettings(g.ctx)
 	if err != nil {
-		return fmt.Errorf("failed to get guild sync settings")
+		return errors.New("failed to get guild sync settings")
 	}
 	g.base.SetSettings(settings)
 	if planDiff == nil {
@@ -180,23 +186,26 @@ func (g *Guild) Run(ignoreCooldown bool) error {
 	errs := multierr.Combine()
 	channelId := discord.NullChannelID
 	if settings.IsStatusLogEnabled() {
-		chId, err := strconv.ParseUint(settings.StatusLogSettings.ChannelId, 10, 64)
+		chId, err := strconv.ParseUint(settings.GetStatusLogSettings().GetChannelId(), 10, 64)
 		if err != nil {
-			errs = multierr.Append(errs, fmt.Errorf("failed to parse status log channel id. %w", err))
+			errs = multierr.Append(
+				errs,
+				fmt.Errorf("failed to parse status log channel id. %w", err),
+			)
 		}
 
 		channelId = discord.ChannelID(chId)
 		if channelId != discord.NullChannelID {
-			if err := g.sendStartStatusLog(discord.ChannelID(channelId)); err != nil {
+			if err := g.sendStartStatusLog(channelId); err != nil {
 				errs = multierr.Append(errs, err)
 			}
 		}
 	}
 
 	// Run modules
-	state := &types.State{
+	state := &discordtypes.State{
 		GuildID: g.guild.ID,
-		Users:   types.Users{},
+		Users:   discordtypes.Users{},
 	}
 	logs := []discord.Embed{}
 	for _, module := range g.modules {
@@ -213,7 +222,7 @@ func (g *Guild) Run(ignoreCooldown bool) error {
 	}
 
 	// Allow config to force dry run mode
-	plan, ls, err := state.Calculate(g.ctx, g.bot.dc, g.bot.cfg.DryRun || settings.DryRun)
+	plan, ls, err := state.Calculate(g.ctx, g.bot.dc, g.bot.cfg.DryRun || settings.GetDryRun())
 	if err != nil {
 		errs = multierr.Append(errs, fmt.Errorf("error during plan calculation. %w", err))
 		return errs
@@ -273,7 +282,7 @@ func (g *Guild) sendStartStatusLog(channelId discord.ChannelID) error {
 	if _, err := g.bot.dc.SendEmbeds(channel.ID, discord.Embed{
 		Type:        discord.NormalEmbed,
 		Title:       "Starting sync...",
-		Description: fmt.Sprintf("Dry run: %t", g.settings.Load().DryRun || g.bot.cfg.DryRun),
+		Description: fmt.Sprintf("Dry run: %t", g.settings.Load().GetDryRun() || g.bot.cfg.DryRun),
 		Author:      embeds.EmbedAuthor,
 		Color:       embeds.ColorInfo,
 		Footer:      embeds.EmbedFooterVersion,
@@ -306,7 +315,11 @@ func (g *Guild) sendStatusLog(channelId discord.ChannelID, logs []discord.Embed)
 	return nil
 }
 
-func (g *Guild) sendEndStatusLog(channelId discord.ChannelID, duration time.Duration, errs error) error {
+func (g *Guild) sendEndStatusLog(
+	channelId discord.ChannelID,
+	duration time.Duration,
+	errs error,
+) error {
 	channel, err := g.bot.dc.Channel(channelId)
 	if err != nil {
 		return fmt.Errorf("failed to get status log channel. %w", err)
@@ -331,12 +344,15 @@ func (g *Guild) sendEndStatusLog(channelId discord.ChannelID, duration time.Dura
 		}
 
 		logs = append(logs, discord.Embed{
-			Title:       "Errors during sync",
-			Description: fmt.Sprintf("Following errors occurred during sync (%d total):", totalErrs),
-			Author:      embeds.EmbedAuthor,
-			Color:       embeds.ColorError,
-			Fields:      fields,
-			Footer:      embeds.EmbedFooterVersion,
+			Title: "Errors during sync",
+			Description: fmt.Sprintf(
+				"Following errors occurred during sync (%d total):",
+				totalErrs,
+			),
+			Author: embeds.EmbedAuthor,
+			Color:  embeds.ColorError,
+			Fields: fields,
+			Footer: embeds.EmbedFooterVersion,
 		})
 	}
 
@@ -355,7 +371,9 @@ func (g *Guild) sendEndStatusLog(channelId discord.ChannelID, duration time.Dura
 	return nil
 }
 
-func (g *Guild) getSyncSettings(ctx context.Context) (*jobs.DiscordSyncSettings, *jobs.DiscordSyncChanges, error) {
+func (g *Guild) getSyncSettings(
+	ctx context.Context,
+) (*jobs.DiscordSyncSettings, *jobs.DiscordSyncChanges, error) {
 	stmt := tJobProps.
 		SELECT(
 			tJobProps.DiscordSyncSettings,
@@ -377,12 +395,16 @@ func (g *Guild) getSyncSettings(ctx context.Context) (*jobs.DiscordSyncSettings,
 	// Make sure the defaults are set
 	dest.Default(g.job)
 
-	g.settings.Store(dest.DiscordSyncSettings)
+	g.settings.Store(dest.GetDiscordSyncSettings())
 
-	return dest.DiscordSyncSettings, dest.DiscordSyncChanges, nil
+	return dest.GetDiscordSyncSettings(), dest.GetDiscordSyncChanges(), nil
 }
 
-func (g *Guild) setLastSyncInterval(ctx context.Context, job string, pDiff *jobs.DiscordSyncChanges) error {
+func (g *Guild) setLastSyncInterval(
+	ctx context.Context,
+	job string,
+	pDiff *jobs.DiscordSyncChanges,
+) error {
 	t := time.Now()
 
 	tJobProps := table.FivenetJobProps

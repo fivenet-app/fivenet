@@ -120,7 +120,14 @@ func NewGrouped[
 }
 
 // HandleAccessChanges processes and categorizes access changes for jobs, users, and qualifications.
-func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) HandleAccessChanges(ctx context.Context, tx qrm.DB, targetId uint64, jobsIn []JobsT, usersIn []UsersT, qualisIn []QualiT) (*GroupedAccessChanges[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V], error) {
+func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) HandleAccessChanges(
+	ctx context.Context,
+	tx qrm.DB,
+	targetId uint64,
+	jobsIn []JobsT,
+	usersIn []UsersT,
+	qualisIn []QualiT,
+) (*GroupedAccessChanges[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V], error) {
 	changes := &GroupedAccessChanges[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]{
 		Jobs:           &AccessChangesJobs[JobsU, JobsT, V]{},
 		Users:          &AccessChangesUsers[UsersU, UsersT, V]{},
@@ -150,13 +157,23 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) HandleAccessC
 }
 
 // CanUserAccessTarget checks if a user can access a specific target based on access rights.
-func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) CanUserAccessTarget(ctx context.Context, targetId uint64, userInfo *pbuserinfo.UserInfo, access V) (bool, error) {
+func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) CanUserAccessTarget(
+	ctx context.Context,
+	targetId uint64,
+	userInfo *pbuserinfo.UserInfo,
+	access V,
+) (bool, error) {
 	out, err := g.CanUserAccessTargetIDs(ctx, userInfo, access, targetId)
 	return len(out) > 0, err
 }
 
 // CanUserAccessTargets checks if a user can access multiple targets based on access rights.
-func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) CanUserAccessTargets(ctx context.Context, userInfo *pbuserinfo.UserInfo, access V, targetIds ...uint64) (bool, error) {
+func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) CanUserAccessTargets(
+	ctx context.Context,
+	userInfo *pbuserinfo.UserInfo,
+	access V,
+	targetIds ...uint64,
+) (bool, error) {
 	out, err := g.CanUserAccessTargetIDs(ctx, userInfo, access, targetIds...)
 	return len(out) == len(targetIds), err
 }
@@ -166,13 +183,18 @@ type canAccessIdsHelper struct {
 }
 
 // CanUserAccessTargetIDs retrieves target IDs that a user can access based on access rights.
-func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) CanUserAccessTargetIDs(ctx context.Context, userInfo *pbuserinfo.UserInfo, access V, targetIds ...uint64) ([]uint64, error) {
+func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) CanUserAccessTargetIDs(
+	ctx context.Context,
+	userInfo *pbuserinfo.UserInfo,
+	access V,
+	targetIds ...uint64,
+) ([]uint64, error) {
 	if len(targetIds) == 0 {
 		return targetIds, nil
 	}
 
 	// Allow superusers access to any docs
-	if userInfo.Superuser {
+	if userInfo.GetSuperuser() {
 		return targetIds, nil
 	}
 
@@ -189,7 +211,11 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) CanUserAccess
 }
 
 // getAccessQuery constructs a query to check user access for given target IDs.
-func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) getAccessQuery(userInfo *pbuserinfo.UserInfo, targetIds []uint64, access V) jet.SelectStatement {
+func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) getAccessQuery(
+	userInfo *pbuserinfo.UserInfo,
+	targetIds []uint64,
+	access V,
+) jet.SelectStatement {
 	ids := make([]jet.Expression, len(targetIds))
 	for i := range targetIds {
 		ids[i] = jet.Uint64(targetIds[i])
@@ -204,13 +230,15 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) getAccessQuer
 	accessCheckConditions := []jet.BoolExpression{}
 	accessCheckCondition := jet.Bool(false)
 	if g.targetTableColumns.CreatorJob != nil {
-		accessCheckCondition = g.targetTableColumns.CreatorJob.EQ(jet.String(userInfo.Job))
+		accessCheckCondition = g.targetTableColumns.CreatorJob.EQ(jet.String(userInfo.GetJob()))
 	}
 	if g.targetTableColumns.CreatorID != nil {
 		if g.targetTableColumns.CreatorJob == nil {
-			accessCheckCondition = g.targetTableColumns.CreatorID.EQ(jet.Int32(userInfo.UserId))
+			accessCheckCondition = g.targetTableColumns.CreatorID.EQ(
+				jet.Int32(userInfo.GetUserId()),
+			)
 		} else {
-			accessCheckCondition = accessCheckCondition.AND(g.targetTableColumns.CreatorID.EQ(jet.Int32(userInfo.UserId)))
+			accessCheckCondition = accessCheckCondition.AND(g.targetTableColumns.CreatorID.EQ(jet.Int32(userInfo.GetUserId())))
 		}
 	}
 	accessCheckConditions = append(accessCheckConditions, accessCheckCondition)
@@ -218,14 +246,17 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) getAccessQuer
 	orderBys := []jet.OrderByClause{g.targetTableColumns.ID.DESC()}
 
 	if g.Users != nil {
-		accessCheckConditions = append(accessCheckConditions, g.Users.columns.UserId.EQ(jet.Int32(userInfo.UserId)))
+		accessCheckConditions = append(
+			accessCheckConditions,
+			g.Users.columns.UserId.EQ(jet.Int32(userInfo.GetUserId())),
+		)
 	}
 
 	if g.Jobs != nil {
 		accessCheckConditions = append(accessCheckConditions,
 			jet.AND(
-				g.Jobs.columns.Job.EQ(jet.String(userInfo.Job)),
-				g.Jobs.columns.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade)),
+				g.Jobs.columns.Job.EQ(jet.String(userInfo.GetJob())),
+				g.Jobs.columns.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
 			),
 		)
 
@@ -236,14 +267,16 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) getAccessQuer
 		from = from.
 			LEFT_JOIN(tQualiResults,
 				tQualiResults.QualificationID.EQ(g.Qualifications.columns.QualificationId).
-					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId))),
+					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.GetUserId()))),
 			)
 
 		accessCheckConditions = append(accessCheckConditions, jet.AND(
 			g.Qualifications.columns.QualificationId.IS_NOT_NULL(),
 			tQualiResults.DeletedAt.IS_NULL(),
 			tQualiResults.QualificationID.EQ(g.Qualifications.columns.QualificationId),
-			tQualiResults.Status.EQ(jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL))),
+			tQualiResults.Status.EQ(
+				jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)),
+			),
 		))
 	}
 

@@ -54,7 +54,13 @@ func TestValidateIconRequest(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			got := validateIconRequest(tc.path, tc.query)
 			if got != tc.valid {
-				t.Errorf("validateIconRequest(%q, %v) = %v; want %v", tc.path, tc.query, got, tc.valid)
+				t.Errorf(
+					"validateIconRequest(%q, %v) = %v; want %v",
+					tc.path,
+					tc.query,
+					got,
+					tc.valid,
+				)
 			}
 		})
 	}

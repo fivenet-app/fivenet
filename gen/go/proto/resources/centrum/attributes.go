@@ -5,11 +5,11 @@ import (
 )
 
 func (x *UnitAttributes) Has(attribute UnitAttribute) bool {
-	if len(x.List) == 0 {
+	if len(x.GetList()) == 0 {
 		return false
 	}
 
-	return slices.Contains(x.List, attribute)
+	return slices.Contains(x.GetList(), attribute)
 }
 
 func (x *UnitAttributes) Add(attribute UnitAttribute) bool {
@@ -31,7 +31,7 @@ func (x *UnitAttributes) Remove(attribute UnitAttribute) bool {
 		return false
 	}
 
-	x.List = slices.DeleteFunc(x.List, func(item UnitAttribute) bool {
+	x.List = slices.DeleteFunc(x.GetList(), func(item UnitAttribute) bool {
 		return item == attribute
 	})
 
@@ -39,11 +39,11 @@ func (x *UnitAttributes) Remove(attribute UnitAttribute) bool {
 }
 
 func (x *DispatchAttributes) Has(attribute DispatchAttribute) bool {
-	if len(x.List) == 0 {
+	if len(x.GetList()) == 0 {
 		return false
 	}
 
-	return slices.Contains(x.List, attribute)
+	return slices.Contains(x.GetList(), attribute)
 }
 
 func (x *DispatchAttributes) Add(attribute DispatchAttribute) bool {
@@ -65,7 +65,7 @@ func (x *DispatchAttributes) Remove(attribute DispatchAttribute) bool {
 		return false
 	}
 
-	x.List = slices.DeleteFunc(x.List, func(item DispatchAttribute) bool {
+	x.List = slices.DeleteFunc(x.GetList(), func(item DispatchAttribute) bool {
 		return item == attribute
 	})
 

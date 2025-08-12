@@ -1,7 +1,7 @@
 package documents
 
 func (x *Template) GetJob() string {
-	return x.CreatorJob
+	return x.GetCreatorJob()
 }
 
 func (x *Template) SetJobLabel(label string) {
@@ -9,7 +9,7 @@ func (x *Template) SetJobLabel(label string) {
 }
 
 func (x *TemplateShort) GetJob() string {
-	return x.CreatorJob
+	return x.GetCreatorJob()
 }
 
 func (x *TemplateShort) SetJobLabel(label string) {

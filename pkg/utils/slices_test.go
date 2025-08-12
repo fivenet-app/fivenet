@@ -64,7 +64,7 @@ func BenchmarkRemoveSliceDuplicates(b *testing.B) {
 	})
 }
 
-// Helper function to generate a random slice of integers
+// Helper function to generate a random slice of integers.
 func generateRandomSlice(size int) []int {
 	slice := make([]int, size)
 	for i := range slice {
@@ -112,16 +112,16 @@ func TestSlicesDifferenceFunc(t *testing.T) {
 	b = []string{"hello", "world", "abc"}
 
 	added, removed = SlicesDifferenceFunc(a, b, keyFn)
-	assert.Len(t, added, 0)
-	assert.Len(t, removed, 0)
+	assert.Empty(t, added)
+	assert.Empty(t, removed)
 
 	// Test with only duplicates added
 	a = []string{"hello", "world", "abc"}
 	b = []string{"hello", "hello", "world", "abc"}
 
 	added, removed = SlicesDifferenceFunc(a, b, keyFn)
-	assert.Len(t, added, 0)
-	assert.Len(t, removed, 0)
+	assert.Empty(t, added)
+	assert.Empty(t, removed)
 
 	// Test with slices having duplicates and new values
 	a = []string{"hello", "example", "example", "abc"}

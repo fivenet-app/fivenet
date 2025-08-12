@@ -122,12 +122,21 @@ func New(p Params) *DispatchDB {
 			TTL:            0,
 			LimitMarkerTTL: InactiveLimitMarkerTTL,
 		})
+		if err != nil {
+			return fmt.Errorf("failed to create kv for idle dispatches. %w", err)
+		}
 		d.idleKV = idleKV
 
-		jobSt, err := store.New[common.IDMapping, *common.IDMapping](ctxCancel, logger, p.JS, "centrum_dispatches",
+		jobSt, err := store.New[common.IDMapping, *common.IDMapping](
+			ctxCancel,
+			logger,
+			p.JS,
+			"centrum_dispatches",
 			store.WithKVPrefix[common.IDMapping, *common.IDMapping]("job"),
 			store.WithLocks[common.IDMapping, *common.IDMapping](nil),
-			store.WithKVConfig[common.IDMapping, *common.IDMapping](jetstream.KeyValueConfig{TTL: 7 * 24 * time.Hour}),
+			store.WithKVConfig[common.IDMapping, *common.IDMapping](
+				jetstream.KeyValueConfig{TTL: 7 * 24 * time.Hour},
+			),
 		)
 		if err != nil {
 			return err
@@ -138,115 +147,170 @@ func New(p Params) *DispatchDB {
 		}
 		d.jobMapping = jobSt
 
-		st, err := store.New[centrum.Dispatch, *centrum.Dispatch](ctxCancel, logger, p.JS, "centrum_dispatches",
+		st, err := store.New[centrum.Dispatch, *centrum.Dispatch](
+			ctxCancel,
+			logger,
+			p.JS,
+			"centrum_dispatches",
 			store.WithKVPrefix[centrum.Dispatch, *centrum.Dispatch]("id"),
 			// Make sure dispatches are removed from the store after 7 days of inactivity (if all other cleanup mechanisms fail)
-			store.WithKVConfig[centrum.Dispatch, *centrum.Dispatch](jetstream.KeyValueConfig{TTL: 7 * 24 * time.Hour}),
-			store.WithOnUpdateFn[centrum.Dispatch, *centrum.Dispatch](func(ctx context.Context, _ *centrum.Dispatch, dispatch *centrum.Dispatch) (*centrum.Dispatch, error) {
-				if dispatch == nil {
-					return nil, nil
-				}
-
-				var errs error
-				if err := d.TouchActivity(ctx, dispatch.Id); err != nil {
-					errs = multierr.Append(errs, fmt.Errorf("failed to touch activity for dispatch %d. %w", dispatch.Id, err))
-				}
-
-				for _, job := range dispatch.Jobs.GetJobStrings() {
-					if err := jobSt.Put(ctx, centrumutils.JobIdKey(job, dispatch.Id), &common.IDMapping{
-						Id: dispatch.Id,
-					}); err != nil {
-						errs = multierr.Append(errs, fmt.Errorf("failed to update job %s mapping for dispatch %d. %w", job, dispatch.Id, err))
-						continue
+			store.WithKVConfig[centrum.Dispatch, *centrum.Dispatch](
+				jetstream.KeyValueConfig{TTL: 7 * 24 * time.Hour},
+			),
+			store.WithOnUpdateFn[centrum.Dispatch, *centrum.Dispatch](
+				func(ctx context.Context, _ *centrum.Dispatch, dispatch *centrum.Dispatch) (*centrum.Dispatch, error) {
+					if dispatch == nil {
+						return nil, nil
 					}
-				}
 
-				if errs != nil {
-					return nil, fmt.Errorf("failed to update dispatch %d in kv store. %w", dispatch.Id, errs)
-				}
-
-				return dispatch, nil
-			}),
-			store.WithOnDeleteFn[centrum.Dispatch, *centrum.Dispatch](func(ctx context.Context, _ string, dispatch *centrum.Dispatch) error {
-				if dispatch == nil {
-					return nil
-				}
-
-				var errs error
-				for _, job := range dispatch.Jobs.GetJobStrings() {
-					if err := jobSt.Delete(ctx, centrumutils.JobIdKey(job, dispatch.Id)); err != nil {
-						errs = multierr.Append(errs, fmt.Errorf("failed to delete job %s mapping for dispatch %d. %w", job, dispatch.Id, err))
-						continue
+					var errs error
+					if err := d.TouchActivity(ctx, dispatch.GetId()); err != nil {
+						errs = multierr.Append(
+							errs,
+							fmt.Errorf(
+								"failed to touch activity for dispatch %d. %w",
+								dispatch.GetId(),
+								err,
+							),
+						)
 					}
-				}
 
-				if err := d.idleKV.Delete(ctx, "idle."+centrumutils.IdKey(dispatch.Id)); err != nil {
-					errs = multierr.Append(errs, fmt.Errorf("failed to delete idle key for dispatch %d. %w", dispatch.Id, err))
-				}
+					for _, job := range dispatch.GetJobs().GetJobStrings() {
+						if err := jobSt.Put(ctx, centrumutils.JobIdKey(job, dispatch.GetId()), &common.IDMapping{
+							Id: dispatch.GetId(),
+						}); err != nil {
+							errs = multierr.Append(
+								errs,
+								fmt.Errorf(
+									"failed to update job %s mapping for dispatch %d. %w",
+									job,
+									dispatch.GetId(),
+									err,
+								),
+							)
+							continue
+						}
+					}
 
-				return errs
-			}),
-			store.WithOnRemoteUpdatedFn[centrum.Dispatch, *centrum.Dispatch](func(ctx context.Context, _ *centrum.Dispatch, dispatch *centrum.Dispatch) (*centrum.Dispatch, error) {
-				if dispatch == nil || dispatch.Jobs == nil {
+					if errs != nil {
+						return nil, fmt.Errorf(
+							"failed to update dispatch %d in kv store. %w",
+							dispatch.GetId(),
+							errs,
+						)
+					}
+
 					return dispatch, nil
-				}
-
-				removeLoc := dispatch.Status != nil && centrumutils.IsStatusDispatchComplete(dispatch.Status.Status)
-				// Ensure the dispatch has a valid ID
-				for _, job := range dispatch.Jobs.GetJobStrings() {
-					locs := d.GetLocations(job)
-					if locs == nil {
-						continue
+				},
+			),
+			store.WithOnDeleteFn[centrum.Dispatch, *centrum.Dispatch](
+				func(ctx context.Context, _ string, dispatch *centrum.Dispatch) error {
+					if dispatch == nil {
+						return nil
 					}
 
-					if removeLoc {
-						if locs.Has(dispatch, centrum.DispatchPointMatchFn(dispatch.Id)) {
-							locs.Remove(dispatch, centrum.DispatchPointMatchFn(dispatch.Id))
-						}
-					} else {
-						if err := locs.Replace(dispatch, centrum.DispatchPointMatchFn(dispatch.Id),
-							func(p1, p2 orb.Pointer) bool {
-								return p1.Point().Equal(p2.Point())
-							}); err != nil {
-							d.logger.Error("failed to add non-existant dispatch to locations", zap.Uint64("dispatch_id", dispatch.Id))
+					var errs error
+					for _, job := range dispatch.GetJobs().GetJobStrings() {
+						if err := jobSt.Delete(ctx, centrumutils.JobIdKey(job, dispatch.GetId())); err != nil {
+							errs = multierr.Append(
+								errs,
+								fmt.Errorf(
+									"failed to delete job %s mapping for dispatch %d. %w",
+									job,
+									dispatch.GetId(),
+									err,
+								),
+							)
+							continue
 						}
 					}
-				}
 
-				return dispatch, nil
-			}),
-			store.WithOnRemoteDeletedFn[centrum.Dispatch, *centrum.Dispatch](func(ctx context.Context, key string, dispatch *centrum.Dispatch) error {
-				if dispatch != nil {
-					for _, job := range dispatch.Jobs.GetJobStrings() {
+					if err := d.idleKV.Delete(ctx, "idle."+centrumutils.IdKey(dispatch.GetId())); err != nil {
+						errs = multierr.Append(
+							errs,
+							fmt.Errorf(
+								"failed to delete idle key for dispatch %d. %w",
+								dispatch.GetId(),
+								err,
+							),
+						)
+					}
+
+					return errs
+				},
+			),
+			store.WithOnRemoteUpdatedFn[centrum.Dispatch, *centrum.Dispatch](
+				func(ctx context.Context, _ *centrum.Dispatch, dispatch *centrum.Dispatch) (*centrum.Dispatch, error) {
+					if dispatch == nil || dispatch.GetJobs() == nil {
+						return dispatch, nil
+					}
+
+					removeLoc := dispatch.GetStatus() != nil &&
+						centrumutils.IsStatusDispatchComplete(dispatch.GetStatus().GetStatus())
+					// Ensure the dispatch has a valid ID
+					for _, job := range dispatch.GetJobs().GetJobStrings() {
+						locs := d.GetLocations(job)
+						if locs == nil {
+							continue
+						}
+
+						if removeLoc {
+							if locs.Has(dispatch, centrum.DispatchPointMatchFn(dispatch.GetId())) {
+								locs.Remove(
+									dispatch,
+									centrum.DispatchPointMatchFn(dispatch.GetId()),
+								)
+							}
+						} else {
+							if err := locs.Replace(dispatch, centrum.DispatchPointMatchFn(dispatch.GetId()),
+								func(p1, p2 orb.Pointer) bool {
+									return p1.Point().Equal(p2.Point())
+								}); err != nil {
+								d.logger.Error("failed to add non-existent dispatch to locations", zap.Uint64("dispatch_id", dispatch.GetId()))
+							}
+						}
+					}
+
+					return dispatch, nil
+				},
+			),
+			store.WithOnRemoteDeletedFn[centrum.Dispatch, *centrum.Dispatch](
+				func(ctx context.Context, key string, dispatch *centrum.Dispatch) error {
+					if dispatch != nil {
+						for _, job := range dispatch.GetJobs().GetJobStrings() {
+							if locs := d.GetLocations(job); locs != nil {
+								locs.Remove(nil, centrum.DispatchPointMatchFn(dispatch.GetId()))
+							}
+						}
+
+						return nil
+					}
+
+					// Fallback to iterating over each job's locations map and delete the dispatch from the map by id
+					split := strings.Split(key, ".")
+					if len(split) < 1 {
+						d.logger.Warn(
+							"unable to delete dispatch location, invalid key",
+							zap.String("store_dispatch_key", key),
+						)
+						return fmt.Errorf("invalid key format for dispatch remote delete. %s", key)
+					}
+
+					idKey := split[1]
+					dspId, err := strconv.ParseUint(idKey, 10, 64)
+					if err != nil {
+						return fmt.Errorf("failed to parse dispatch id from key %s. %w", key, err)
+					}
+
+					for _, job := range d.GetLocationsJob() {
 						if locs := d.GetLocations(job); locs != nil {
-							locs.Remove(nil, centrum.DispatchPointMatchFn(dispatch.Id))
+							locs.Remove(nil, centrum.DispatchPointMatchFn(dspId))
 						}
 					}
 
 					return nil
-				}
-
-				// Fallback to iterating over each job's locations map and delete the dispatch from the map by id
-				split := strings.Split(key, ".")
-				if len(split) < 1 {
-					d.logger.Warn("unable to delete dispatch location, invalid key", zap.String("store_dispatch_key", key))
-					return fmt.Errorf("invalid key format for dispatch remote delete. %s", key)
-				}
-
-				idKey := split[1]
-				dspId, err := strconv.ParseUint(idKey, 10, 64)
-				if err != nil {
-					return fmt.Errorf("failed to parse dispatch id from key %s. %w", key, err)
-				}
-
-				for _, job := range d.GetLocationsJob() {
-					if locs := d.GetLocations(job); locs != nil {
-						locs.Remove(nil, centrum.DispatchPointMatchFn(dspId))
-					}
-				}
-
-				return nil
-			}),
+				},
+			),
 		)
 		if err != nil {
 			return err
@@ -276,7 +340,9 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond jet.BoolExpression) (i
 	condition := tDispatchStatus.ID.IS_NULL().OR(
 		jet.AND(
 			tDispatchStatus.ID.EQ(
-				jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
+				jet.RawInt(
+					"SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`",
+				),
 			).
 				// Don't load archived dispatches into cache
 				AND(tDispatchStatus.Status.NOT_IN(
@@ -354,23 +420,23 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond jet.BoolExpression) (i
 		return 0, nil
 	}
 
-	publicJobs := s.appCfg.Get().JobInfo.PublicJobs
+	publicJobs := s.appCfg.Get().JobInfo.GetPublicJobs()
 	for i := range dsps {
 		var err error
-		dsps[i].Units, err = s.LoadDispatchAssignments(ctx, dsps[i].Id)
+		dsps[i].Units, err = s.LoadDispatchAssignments(ctx, dsps[i].GetId())
 		if err != nil {
 			return 0, err
 		}
 
-		if dsps[i].CreatorId != nil && *dsps[i].CreatorId > 0 {
-			dsps[i].Creator, err = users.RetrieveUserById(ctx, s.db, *dsps[i].CreatorId)
+		if dsps[i].CreatorId != nil && dsps[i].GetCreatorId() > 0 {
+			dsps[i].Creator, err = users.RetrieveUserById(ctx, s.db, dsps[i].GetCreatorId())
 			if err != nil {
 				return 0, err
 			}
 
-			if dsps[i].Creator != nil {
+			if dsps[i].GetCreator() != nil {
 				// Clear dispatch creator's job info if not a visible job
-				if !slices.Contains(publicJobs, dsps[i].Creator.Job) {
+				if !slices.Contains(publicJobs, dsps[i].GetCreator().GetJob()) {
 					dsps[i].Creator.Job = ""
 				}
 				dsps[i].Creator.JobGrade = 0
@@ -378,16 +444,17 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond jet.BoolExpression) (i
 		}
 
 		if dsps[i].Postal == nil {
-			if postal, ok := s.postals.Closest(dsps[i].X, dsps[i].Y); postal != nil && ok {
+			if postal, ok := s.postals.Closest(dsps[i].GetX(), dsps[i].GetY()); postal != nil &&
+				ok {
 				dsps[i].Postal = postal.Code
 			}
 		}
 
 		// Ensure dispatch has a status
-		if dsps[i].Status == nil {
+		if dsps[i].GetStatus() == nil {
 			dsps[i].Status, err = s.AddDispatchStatus(ctx, s.db, &centrum.DispatchStatus{
 				CreatedAt:  timestamp.Now(),
-				DispatchId: dsps[i].Id,
+				DispatchId: dsps[i].GetId(),
 				Status:     centrum.StatusDispatch_STATUS_DISPATCH_NEW,
 				Postal:     dsps[i].Postal,
 				X:          &dsps[i].X,
@@ -399,17 +466,17 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond jet.BoolExpression) (i
 		}
 
 		// Ensure dispatch has a valid job list (fallback to deprecated Jobs field for old dispatches)
-		if dsps[i].Jobs == nil || len(dsps[i].Jobs.GetJobs()) == 0 {
+		if dsps[i].GetJobs() == nil || len(dsps[i].GetJobs().GetJobs()) == 0 {
 			dsps[i].Jobs = &centrum.JobList{
 				Jobs: []*centrum.Job{
 					{
-						Name: dsps[i].Job,
+						Name: dsps[i].GetJob(),
 					},
 				},
 			}
 			dsps[i].Job = ""
 		}
-		for _, job := range dsps[i].Jobs.GetJobs() {
+		for _, job := range dsps[i].GetJobs().GetJobs() {
 			s.enricher.EnrichJobName(job)
 		}
 
@@ -418,21 +485,21 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond jet.BoolExpression) (i
 			return 0, err
 		}
 
-		for _, job := range dsps[i].Jobs.GetJobStrings() {
+		for _, job := range dsps[i].GetJobs().GetJobStrings() {
 			locs := s.GetLocations(job)
 			if locs == nil {
 				continue
 			}
 
-			if !locs.Has(dsps[i], centrum.DispatchPointMatchFn(dsps[i].Id)) {
+			if !locs.Has(dsps[i], centrum.DispatchPointMatchFn(dsps[i].GetId())) {
 				locs.Add(dsps[i])
 			} else {
-				err := locs.Replace(dsps[i], centrum.DispatchPointMatchFn(dsps[i].Id),
+				err := locs.Replace(dsps[i], centrum.DispatchPointMatchFn(dsps[i].GetId()),
 					func(p1, p2 orb.Pointer) bool {
 						return p1.Point().Equal(p2.Point())
 					})
 				if err != nil {
-					s.logger.Error("failed to replace dispatch in locations", zap.Uint64("dispatch_id", dsps[i].Id), zap.Error(err))
+					s.logger.Error("failed to replace dispatch in locations", zap.Uint64("dispatch_id", dsps[i].GetId()), zap.Error(err))
 				}
 			}
 		}
@@ -441,7 +508,10 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond jet.BoolExpression) (i
 	return len(dsps), nil
 }
 
-func (s *DispatchDB) LoadDispatchAssignments(ctx context.Context, dispatchId uint64) ([]*centrum.DispatchAssignment, error) {
+func (s *DispatchDB) LoadDispatchAssignments(
+	ctx context.Context,
+	dispatchId uint64,
+) ([]*centrum.DispatchAssignment, error) {
 	tDispatchUnit := table.FivenetCentrumDispatchesAsgmts.AS("dispatch_assignment")
 
 	stmt := tDispatchUnit.
@@ -468,9 +538,13 @@ func (s *DispatchDB) LoadDispatchAssignments(ctx context.Context, dispatchId uin
 
 	// Retrieve units based on the dispatch unit assignments
 	for i := range dest {
-		unit, err := s.units.Get(ctx, dest[i].UnitId)
+		unit, err := s.units.Get(ctx, dest[i].GetUnitId())
 		if unit == nil || err != nil {
-			return nil, fmt.Errorf("no unit found for dispatch id %d with id %d", dispatchId, dest[i].UnitId)
+			return nil, fmt.Errorf(
+				"no unit found for dispatch id %d with id %d",
+				dispatchId,
+				dest[i].GetUnitId(),
+			)
 		}
 
 		dest[i].Unit = unit
@@ -495,7 +569,7 @@ func (s *DispatchDB) GetLocationsJob() []string {
 	s.dispatchLocationsMutex.Lock()
 	defer s.dispatchLocationsMutex.Unlock()
 
-	var jobs []string
+	jobs := make([]string, 0, len(s.dispatchLocations))
 	for job := range s.dispatchLocations {
 		jobs = append(jobs, job)
 	}
@@ -528,7 +602,11 @@ func (s *DispatchDB) Delete(ctx context.Context, id uint64, removeFromDB bool) e
 	return nil
 }
 
-func (s *DispatchDB) UpdateStatus(ctx context.Context, dspId uint64, in *centrum.DispatchStatus) (*centrum.DispatchStatus, error) {
+func (s *DispatchDB) UpdateStatus(
+	ctx context.Context,
+	dspId uint64,
+	in *centrum.DispatchStatus,
+) (*centrum.DispatchStatus, error) {
 	dsp, err := s.Get(ctx, dspId)
 	if err != nil {
 		if !errors.Is(err, jetstream.ErrKeyNotFound) {
@@ -536,42 +614,50 @@ func (s *DispatchDB) UpdateStatus(ctx context.Context, dspId uint64, in *centrum
 		}
 	}
 
-	if dsp != nil && dsp.Status != nil {
+	if dsp != nil && dsp.GetStatus() != nil {
 		// If the dispatch status is the same and is a status that shouldn't be duplicated, don't update the status again
-		if dsp.Status.Status == in.Status &&
-			(in.Status == centrum.StatusDispatch_STATUS_DISPATCH_NEW ||
-				in.Status == centrum.StatusDispatch_STATUS_DISPATCH_UNASSIGNED) {
-			s.logger.Debug("skipping dispatch status update due to being new or same status", zap.Uint64("dispatch_id", dsp.Id), zap.String("status", in.Status.String()))
+		if dsp.GetStatus().GetStatus() == in.GetStatus() &&
+			(in.GetStatus() == centrum.StatusDispatch_STATUS_DISPATCH_NEW ||
+				in.GetStatus() == centrum.StatusDispatch_STATUS_DISPATCH_UNASSIGNED) {
+			s.logger.Debug(
+				"skipping dispatch status update due to being new or same status",
+				zap.Uint64("dispatch_id", dsp.GetId()),
+				zap.String("status", in.GetStatus().String()),
+			)
 			return in, nil
 		}
 
 		// If the dispatch is complete, we ignore any unit unassignments/accepts/declines
-		if centrumutils.IsStatusDispatchComplete(dsp.Status.Status) &&
-			(in.Status == centrum.StatusDispatch_STATUS_DISPATCH_UNASSIGNED ||
-				in.Status == centrum.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED ||
-				in.Status == centrum.StatusDispatch_STATUS_DISPATCH_UNIT_ACCEPTED ||
-				in.Status == centrum.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED) {
+		if centrumutils.IsStatusDispatchComplete(dsp.GetStatus().GetStatus()) &&
+			(in.GetStatus() == centrum.StatusDispatch_STATUS_DISPATCH_UNASSIGNED ||
+				in.GetStatus() == centrum.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED ||
+				in.GetStatus() == centrum.StatusDispatch_STATUS_DISPATCH_UNIT_ACCEPTED ||
+				in.GetStatus() == centrum.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED) {
 			return in, nil
 		}
 	}
 
-	s.logger.Debug("updating dispatch status", zap.Uint64("dispatch_id", dspId), zap.String("status", in.Status.String()))
+	s.logger.Debug(
+		"updating dispatch status",
+		zap.Uint64("dispatch_id", dspId),
+		zap.String("status", in.GetStatus().String()),
+	)
 
 	if in.UserId != nil {
 		var err error
-		in.User, err = users.RetrieveUserShortById(ctx, s.db, s.enricher, *in.UserId)
+		in.User, err = users.RetrieveUserShortById(ctx, s.db, s.enricher, in.GetUserId())
 		if err != nil {
 			return nil, err
 		}
 
-		if um, ok := s.tracker.GetUserMarkerById(*in.UserId); ok {
+		if um, ok := s.tracker.GetUserMarkerById(in.GetUserId()); ok {
 			in.X = &um.X
 			in.Y = &um.Y
 			in.Postal = um.Postal
 		}
 	}
 
-	if in.CreatedAt == nil {
+	if in.GetCreatedAt() == nil {
 		in.CreatedAt = timestamp.Now()
 	}
 
@@ -592,16 +678,16 @@ func (s *DispatchDB) UpdateStatus(ctx context.Context, dspId uint64, in *centrum
 		).
 		VALUES(
 			jet.CURRENT_TIMESTAMP(),
-			in.DispatchId,
-			in.UnitId,
-			in.Status,
-			in.Reason,
-			in.Code,
-			in.UserId,
-			in.X,
-			in.Y,
-			in.Postal,
-			in.CreatorJob,
+			in.GetDispatchId(),
+			in.GetUnitId(),
+			in.GetStatus(),
+			in.GetReason(),
+			in.GetCode(),
+			in.GetUserId(),
+			in.GetX(),
+			in.GetY(),
+			in.GetPostal(),
+			in.GetCreatorJob(),
 		)
 
 	res, err := stmt.ExecContext(ctx, s.db)
@@ -615,7 +701,7 @@ func (s *DispatchDB) UpdateStatus(ctx context.Context, dspId uint64, in *centrum
 	}
 	in.Id = uint64(lastId)
 
-	if err := s.updateStatusInKV(ctx, in.DispatchId, in); err != nil {
+	if err := s.updateStatusInKV(ctx, in.GetDispatchId(), in); err != nil {
 		return nil, err
 	}
 
@@ -624,17 +710,35 @@ func (s *DispatchDB) UpdateStatus(ctx context.Context, dspId uint64, in *centrum
 		return nil, err
 	}
 
-	for _, job := range dsp.Jobs.GetJobStrings() {
+	for _, job := range dsp.GetJobs().GetJobStrings() {
 		if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchStatus, job), data); err != nil {
-			return nil, fmt.Errorf("failed to publish dispatch status event (size: %d, message: '%+v'). %w", len(data), in, err)
+			return nil, fmt.Errorf(
+				"failed to publish dispatch status event (size: %d, message: '%+v'). %w",
+				len(data),
+				in,
+				err,
+			)
 		}
 	}
 
 	return in, nil
 }
 
-func (s *DispatchDB) UpdateAssignments(ctx context.Context, userId *int32, dspId uint64, toAdd []uint64, toRemove []uint64, expiresAt time.Time) error {
-	s.logger.Debug("updating dispatch assignments", zap.Int32p("user_id", userId), zap.Uint64("dispatch_id", dspId), zap.Uint64s("toAdd", toAdd), zap.Uint64s("toRemove", toRemove))
+func (s *DispatchDB) UpdateAssignments(
+	ctx context.Context,
+	userId *int32,
+	dspId uint64,
+	toAdd []uint64,
+	toRemove []uint64,
+	expiresAt time.Time,
+) error {
+	s.logger.Debug(
+		"updating dispatch assignments",
+		zap.Int32p("user_id", userId),
+		zap.Uint64("dispatch_id", dspId),
+		zap.Uint64s("toAdd", toAdd),
+		zap.Uint64s("toRemove", toRemove),
+	)
 
 	if len(toAdd) == 0 && len(toRemove) == 0 {
 		return nil
@@ -693,10 +797,9 @@ func (s *DispatchDB) UpdateAssignments(ctx context.Context, userId *int32, dspId
 			return err
 		}
 		for i := range toAdd {
-
 			// Skip already added units
-			if slices.ContainsFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
-				return in.UnitId == toAdd[i]
+			if slices.ContainsFunc(dsp.GetUnits(), func(in *centrum.DispatchAssignment) bool {
+				return in.GetUnitId() == toAdd[i]
 			}) {
 				continue
 			}
@@ -707,7 +810,7 @@ func (s *DispatchDB) UpdateAssignments(ctx context.Context, userId *int32, dspId
 			}
 
 			// Skip empty units
-			if len(unit.Users) == 0 {
+			if len(unit.GetUsers()) == 0 {
 				continue
 			}
 
@@ -758,9 +861,9 @@ func (s *DispatchDB) UpdateAssignments(ctx context.Context, userId *int32, dspId
 
 		if len(toRemove) > 0 {
 			toAnnounce := []uint64{}
-			dsp.Units = slices.DeleteFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
+			dsp.Units = slices.DeleteFunc(dsp.GetUnits(), func(in *centrum.DispatchAssignment) bool {
 				for k := range toRemove {
-					if in.UnitId != toRemove[k] {
+					if in.GetUnitId() != toRemove[k] {
 						continue
 					}
 
@@ -775,14 +878,14 @@ func (s *DispatchDB) UpdateAssignments(ctx context.Context, userId *int32, dspId
 			for _, unitId := range toAnnounce {
 				if _, err := s.AddDispatchStatus(ctx, s.db, &centrum.DispatchStatus{
 					CreatedAt:  timestamp.Now(),
-					DispatchId: dsp.Id,
+					DispatchId: dsp.GetId(),
 					UnitId:     &unitId,
 					Status:     centrum.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED,
 					UserId:     userId,
 					X:          x,
 					Y:          y,
 					Postal:     postal,
-				}, true, dsp.Jobs.GetJobStrings()); err != nil {
+				}, true, dsp.GetJobs().GetJobStrings()); err != nil {
 					return nil, false, err
 				}
 			}
@@ -792,8 +895,8 @@ func (s *DispatchDB) UpdateAssignments(ctx context.Context, userId *int32, dspId
 			units := []uint64{}
 			for i := range toAdd {
 				// Skip already added units
-				if slices.ContainsFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
-					return in.UnitId == toAdd[i]
+				if slices.ContainsFunc(dsp.GetUnits(), func(in *centrum.DispatchAssignment) bool {
+					return in.GetUnitId() == toAdd[i]
 				}) {
 					continue
 				}
@@ -804,7 +907,7 @@ func (s *DispatchDB) UpdateAssignments(ctx context.Context, userId *int32, dspId
 				}
 
 				// Skip empty units
-				if len(unit.Users) == 0 {
+				if len(unit.GetUsers()) == 0 {
 					continue
 				}
 
@@ -819,8 +922,8 @@ func (s *DispatchDB) UpdateAssignments(ctx context.Context, userId *int32, dspId
 				}
 
 				dsp.Units = append(dsp.Units, &centrum.DispatchAssignment{
-					DispatchId: dsp.Id,
-					UnitId:     unit.Id,
+					DispatchId: dsp.GetId(),
+					UnitId:     unit.GetId(),
 					Unit:       unit,
 					ExpiresAt:  expiresAtTS,
 				})
@@ -829,14 +932,14 @@ func (s *DispatchDB) UpdateAssignments(ctx context.Context, userId *int32, dspId
 			for _, unitId := range units {
 				if _, err := s.AddDispatchStatus(ctx, s.db, &centrum.DispatchStatus{
 					CreatedAt:  timestamp.Now(),
-					DispatchId: dsp.Id,
+					DispatchId: dsp.GetId(),
 					UnitId:     &unitId,
 					UserId:     userId,
 					Status:     centrum.StatusDispatch_STATUS_DISPATCH_UNIT_ASSIGNED,
 					X:          x,
 					Y:          y,
 					Postal:     postal,
-				}, true, dsp.Jobs.GetJobStrings()); err != nil {
+				}, true, dsp.GetJobs().GetJobStrings()); err != nil {
 					return nil, false, err
 				}
 			}
@@ -853,9 +956,10 @@ func (s *DispatchDB) UpdateAssignments(ctx context.Context, userId *int32, dspId
 	}
 
 	// Dispatch has no units assigned anymore
-	if len(dsp.Units) == 0 {
+	if len(dsp.GetUnits()) == 0 {
 		// Check dispatch status to not be completed/archived, etc.
-		if dsp.Status != nil && !centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
+		if dsp.GetStatus() != nil &&
+			!centrumutils.IsStatusDispatchComplete(dsp.GetStatus().GetStatus()) {
 			if _, err := s.UpdateStatus(ctx, dspId, &centrum.DispatchStatus{
 				CreatedAt:  timestamp.Now(),
 				DispatchId: dspId,
@@ -875,43 +979,43 @@ func (s *DispatchDB) UpdateAssignments(ctx context.Context, userId *int32, dspId
 
 func (s *DispatchDB) Create(ctx context.Context, dsp *centrum.Dispatch) (*centrum.Dispatch, error) {
 	// Check if the dispatch has at least one job, till the Job field is removed keep using it as a fallback
-	if (dsp.Jobs == nil || len(dsp.Jobs.GetJobs()) == 0) && dsp.Job == "" {
+	if (dsp.GetJobs() == nil || len(dsp.GetJobs().GetJobs()) == 0) && dsp.GetJob() == "" {
 		return nil, errorscentrum.ErrDispatchNoJobs
 	}
 
 	// If the deprecated Job field is used, convert it to Jobs but only if the jobs list is empty
-	if dsp.Jobs == nil || len(dsp.Jobs.GetJobs()) == 0 {
+	if dsp.GetJobs() == nil || len(dsp.GetJobs().GetJobs()) == 0 {
 		dsp.Jobs = &centrum.JobList{
 			Jobs: []*centrum.Job{
 				{
-					Name: dsp.Job,
+					Name: dsp.GetJob(),
 				},
 			},
 		}
 		dsp.Job = ""
 	}
 
-	for _, job := range dsp.Jobs.GetJobs() {
+	for _, job := range dsp.GetJobs().GetJobs() {
 		s.enricher.EnrichJobName(job)
 	}
 
-	if dsp.Postal == nil || *dsp.Postal == "" {
-		if postal, ok := s.postals.Closest(dsp.X, dsp.Y); postal != nil && ok {
+	if dsp.Postal == nil || dsp.GetPostal() == "" {
+		if postal, ok := s.postals.Closest(dsp.GetX(), dsp.GetY()); postal != nil && ok {
 			dsp.Postal = postal.Code
 		}
 	}
 
 	if dsp.CreatorId != nil {
 		var err error
-		dsp.Creator, err = users.RetrieveUserById(ctx, s.db, *dsp.CreatorId)
+		dsp.Creator, err = users.RetrieveUserById(ctx, s.db, dsp.GetCreatorId())
 		if err != nil {
 			return nil, fmt.Errorf("failed to retrieve user for dispatch creator. %w", err)
 		}
 		// Unset creator in case we don't have a user
-		if dsp.Creator == nil {
+		if dsp.GetCreator() == nil {
 			dsp.Creator = nil
 			dsp.CreatorId = nil
-		} else if !slices.Contains(dsp.Jobs.GetJobStrings(), dsp.Creator.Job) {
+		} else if !slices.Contains(dsp.GetJobs().GetJobStrings(), dsp.GetCreator().GetJob()) {
 			// Remove creator props when job isn't equal
 			dsp.Creator.Props = nil
 		}
@@ -942,16 +1046,16 @@ func (s *DispatchDB) Create(ctx context.Context, dsp *centrum.Dispatch) (*centru
 		).
 		VALUES(
 			jet.CURRENT_TIMESTAMP(),
-			dsp.Jobs,
-			dsp.Message,
-			dsp.Description,
-			dsp.Attributes,
-			dsp.References,
-			dsp.X,
-			dsp.Y,
-			dsp.Postal,
-			dsp.Anon,
-			dsp.CreatorId,
+			dsp.GetJobs(),
+			dsp.GetMessage(),
+			dsp.GetDescription(),
+			dsp.GetAttributes(),
+			dsp.GetReferences(),
+			dsp.GetX(),
+			dsp.GetY(),
+			dsp.GetPostal(),
+			dsp.GetAnon(),
+			dsp.GetCreatorId(),
 		)
 
 	result, err := stmt.ExecContext(ctx, tx)
@@ -966,18 +1070,18 @@ func (s *DispatchDB) Create(ctx context.Context, dsp *centrum.Dispatch) (*centru
 	dsp.Id = uint64(lastId)
 
 	var userId *int32
-	if !dsp.Anon && dsp.CreatorId != nil {
+	if !dsp.GetAnon() && dsp.CreatorId != nil {
 		userId = dsp.CreatorId
 	}
 
 	var statusUser *jobs.Colleague
-	if dsp.Creator != nil {
-		statusUser = dsp.Creator.Colleague()
+	if dsp.GetCreator() != nil {
+		statusUser = dsp.GetCreator().Colleague()
 	}
 
 	if dsp.Status, err = s.AddDispatchStatus(ctx, tx, &centrum.DispatchStatus{
 		CreatedAt:  timestamp.Now(),
-		DispatchId: dsp.Id,
+		DispatchId: dsp.GetId(),
 		UserId:     userId,
 		User:       statusUser,
 		Status:     centrum.StatusDispatch_STATUS_DISPATCH_NEW,
@@ -993,23 +1097,27 @@ func (s *DispatchDB) Create(ctx context.Context, dsp *centrum.Dispatch) (*centru
 		return nil, err
 	}
 
-	for _, job := range dsp.Jobs.GetJobStrings() {
+	for _, job := range dsp.GetJobs().GetJobStrings() {
 		metricDispatchLastID.WithLabelValues(job).Set(float64(lastId))
 	}
 
 	// Hide user info when dispatch is anonymous
-	if dsp.Anon {
+	if dsp.GetAnon() {
 		dsp.Creator = nil
 	}
 
-	if err := s.updateInKV(ctx, dsp.Id, dsp); err != nil {
+	if err := s.updateInKV(ctx, dsp.GetId(), dsp); err != nil {
 		return nil, err
 	}
 
 	return dsp, nil
 }
 
-func (s *DispatchDB) Update(ctx context.Context, userId *int32, dsp *centrum.Dispatch) (*centrum.Dispatch, error) {
+func (s *DispatchDB) Update(
+	ctx context.Context,
+	userId *int32,
+	dsp *centrum.Dispatch,
+) (*centrum.Dispatch, error) {
 	tDispatch := table.FivenetCentrumDispatches.AS("dispatch")
 
 	dsp.UpdatedAt = timestamp.Now()
@@ -1029,19 +1137,19 @@ func (s *DispatchDB) Update(ctx context.Context, userId *int32, dsp *centrum.Dis
 		).
 		SET(
 			jet.CURRENT_TIMESTAMP(),
-			dsp.Jobs,
-			dsp.Message,
-			dsp.Description,
-			dsp.Attributes,
-			dsp.References,
-			dsp.X,
-			dsp.Y,
-			dsp.Postal,
-			dsp.Anon,
-			dsp.CreatorId,
+			dsp.GetJobs(),
+			dsp.GetMessage(),
+			dsp.GetDescription(),
+			dsp.GetAttributes(),
+			dsp.GetReferences(),
+			dsp.GetX(),
+			dsp.GetY(),
+			dsp.GetPostal(),
+			dsp.GetAnon(),
+			dsp.GetCreatorId(),
 		).
 		WHERE(jet.AND(
-			tDispatch.ID.EQ(jet.Uint64(dsp.Id)),
+			tDispatch.ID.EQ(jet.Uint64(dsp.GetId())),
 		)).
 		LIMIT(1)
 
@@ -1049,14 +1157,20 @@ func (s *DispatchDB) Update(ctx context.Context, userId *int32, dsp *centrum.Dis
 		return nil, err
 	}
 
-	if err := s.updateInKV(ctx, dsp.Id, dsp); err != nil {
+	if err := s.updateInKV(ctx, dsp.GetId(), dsp); err != nil {
 		return nil, err
 	}
 
 	return dsp, nil
 }
 
-func (s *DispatchDB) AddDispatchStatus(ctx context.Context, tx qrm.DB, status *centrum.DispatchStatus, publish bool, jobs []string) (*centrum.DispatchStatus, error) {
+func (s *DispatchDB) AddDispatchStatus(
+	ctx context.Context,
+	tx qrm.DB,
+	status *centrum.DispatchStatus,
+	publish bool,
+	jobs []string,
+) (*centrum.DispatchStatus, error) {
 	tDispatchStatus := table.FivenetCentrumDispatchesStatus
 	stmt := tDispatchStatus.
 		INSERT(
@@ -1073,17 +1187,17 @@ func (s *DispatchDB) AddDispatchStatus(ctx context.Context, tx qrm.DB, status *c
 			tDispatchStatus.CreatorJob,
 		).
 		VALUES(
-			status.CreatedAt,
-			status.DispatchId,
-			status.Status,
-			status.Reason,
-			status.Code,
-			status.UnitId,
-			status.UserId,
-			status.X,
-			status.Y,
-			status.Postal,
-			status.CreatorJob,
+			status.GetCreatedAt(),
+			status.GetDispatchId(),
+			status.GetStatus(),
+			status.GetReason(),
+			status.GetCode(),
+			status.GetUnitId(),
+			status.GetUserId(),
+			status.GetX(),
+			status.GetY(),
+			status.GetPostal(),
+			status.GetCreatorJob(),
 		)
 
 	res, err := stmt.ExecContext(ctx, tx)
@@ -1117,7 +1231,11 @@ func (s *DispatchDB) AddDispatchStatus(ctx context.Context, tx qrm.DB, status *c
 	return newStatus, nil
 }
 
-func (s *DispatchDB) GetStatus(ctx context.Context, tx qrm.DB, id uint64) (*centrum.DispatchStatus, error) {
+func (s *DispatchDB) GetStatus(
+	ctx context.Context,
+	tx qrm.DB,
+	id uint64,
+) (*centrum.DispatchStatus, error) {
 	tDispatchStatus := table.FivenetCentrumDispatchesStatus.AS("dispatch_status")
 	tUsers := tables.User().AS("colleague")
 
@@ -1165,8 +1283,8 @@ func (s *DispatchDB) GetStatus(ctx context.Context, tx qrm.DB, id uint64) (*cent
 		}
 	}
 
-	if dest.UnitId != nil && *dest.UnitId > 0 && dest.User != nil {
-		unit, err := s.units.Get(ctx, *dest.UnitId)
+	if dest.UnitId != nil && dest.GetUnitId() > 0 && dest.GetUser() != nil {
+		unit, err := s.units.Get(ctx, dest.GetUnitId())
 		if err != nil {
 			return nil, err
 		}
@@ -1177,14 +1295,21 @@ func (s *DispatchDB) GetStatus(ctx context.Context, tx qrm.DB, id uint64) (*cent
 	return &dest, nil
 }
 
-func (s *DispatchDB) TakeDispatch(ctx context.Context, userJob string, userId int32, unitId uint64, resp centrum.TakeDispatchResp, dispatchIds []uint64) error {
+func (s *DispatchDB) TakeDispatch(
+	ctx context.Context,
+	userJob string,
+	userId int32,
+	unitId uint64,
+	resp centrum.TakeDispatchResp,
+	dispatchIds []uint64,
+) error {
 	settings, err := s.settings.Get(ctx, userJob)
 	if err != nil {
 		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	// If the dispatch center is in central command mode, units can't self assign dispatches
-	if settings.Mode == centrum.CentrumMode_CENTRUM_MODE_CENTRAL_COMMAND {
+	if settings.GetMode() == centrum.CentrumMode_CENTRUM_MODE_CENTRAL_COMMAND {
 		return errorscentrum.ErrModeForbidsAction
 	}
 
@@ -1213,7 +1338,7 @@ func (s *DispatchDB) TakeDispatch(ctx context.Context, userJob string, userId in
 				).
 				VALUES(
 					dspId,
-					unit.Id,
+					unit.GetId(),
 					jet.NULL,
 				).
 				ON_DUPLICATE_KEY_UPDATE(
@@ -1230,7 +1355,7 @@ func (s *DispatchDB) TakeDispatch(ctx context.Context, userJob string, userId in
 				DELETE().
 				WHERE(jet.AND(
 					tDispatchUnit.DispatchID.EQ(jet.Uint64(dspId)),
-					tDispatchUnit.UnitID.EQ(jet.Uint64(unit.Id)),
+					tDispatchUnit.UnitID.EQ(jet.Uint64(unit.GetId())),
 				)).
 				LIMIT(1)
 
@@ -1244,11 +1369,11 @@ func (s *DispatchDB) TakeDispatch(ctx context.Context, userJob string, userId in
 		key := centrumutils.IdKey(dspId)
 		if err := s.store.ComputeUpdate(ctx, key, func(key string, dsp *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
 			// If dispatch is nil or completed, disallow to accept the dispatch
-			if dsp == nil || (dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status)) {
+			if dsp == nil || (dsp.GetStatus() != nil && centrumutils.IsStatusDispatchComplete(dsp.GetStatus().GetStatus())) {
 				return nil, false, errorscentrum.ErrDispatchAlreadyCompleted
 			}
 
-			status := centrum.StatusDispatch_STATUS_DISPATCH_UNSPECIFIED
+			var status centrum.StatusDispatch
 
 			// Dispatch accepted
 			if resp == centrum.TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED {
@@ -1257,11 +1382,11 @@ func (s *DispatchDB) TakeDispatch(ctx context.Context, userJob string, userId in
 				found := false
 				accepted := true
 				// Set unit expires at to nil
-				for _, ua := range dsp.Units {
-					if ua.UnitId == unit.Id {
+				for _, ua := range dsp.GetUnits() {
+					if ua.GetUnitId() == unit.GetId() {
 						found = true
 						// If there's no expiration time the unit has been directly assigned
-						if ua.ExpiresAt == nil {
+						if ua.GetExpiresAt() == nil {
 							accepted = false
 						}
 						ua.ExpiresAt = nil
@@ -1271,8 +1396,8 @@ func (s *DispatchDB) TakeDispatch(ctx context.Context, userJob string, userId in
 
 				if !found {
 					dsp.Units = append(dsp.Units, &centrum.DispatchAssignment{
-						DispatchId: dsp.Id,
-						UnitId:     unit.Id,
+						DispatchId: dsp.GetId(),
+						UnitId:     unit.GetId(),
 						Unit:       unit,
 						CreatedAt:  timestamp.Now(),
 					})
@@ -1280,10 +1405,10 @@ func (s *DispatchDB) TakeDispatch(ctx context.Context, userJob string, userId in
 
 				if accepted {
 					// Set unit to busy when unit accepts a dispatch
-					if unit.Status == nil || unit.Status.Status != centrum.StatusUnit_STATUS_UNIT_BUSY {
-						if _, err := s.units.UpdateStatus(ctx, unit.Id, &centrum.UnitStatus{
+					if unit.GetStatus() == nil || unit.GetStatus().GetStatus() != centrum.StatusUnit_STATUS_UNIT_BUSY {
+						if _, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrum.UnitStatus{
 							CreatedAt:  timestamp.Now(),
-							UnitId:     unit.Id,
+							UnitId:     unit.GetId(),
 							Status:     centrum.StatusUnit_STATUS_UNIT_BUSY,
 							UserId:     &userId,
 							CreatorId:  &userId,
@@ -1301,8 +1426,8 @@ func (s *DispatchDB) TakeDispatch(ctx context.Context, userJob string, userId in
 				status = centrum.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED
 
 				// Remove the unit's assignment
-				dsp.Units = slices.DeleteFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
-					return in.UnitId == unit.Id
+				dsp.Units = slices.DeleteFunc(dsp.GetUnits(), func(in *centrum.DispatchAssignment) bool {
+					return in.GetUnitId() == unit.GetId()
 				})
 			}
 
@@ -1316,7 +1441,7 @@ func (s *DispatchDB) TakeDispatch(ctx context.Context, userJob string, userId in
 				Y:          y,
 				Postal:     postal,
 				CreatorJob: &userJob,
-			}, true, dsp.Jobs.GetJobStrings()); err != nil {
+			}, true, dsp.GetJobs().GetJobStrings()); err != nil {
 				return nil, false, err
 			}
 
@@ -1332,16 +1457,20 @@ func (s *DispatchDB) TakeDispatch(ctx context.Context, userJob string, userId in
 	return nil
 }
 
-func (s *DispatchDB) AddAttributeToDispatch(ctx context.Context, dsp *centrum.Dispatch, attribute centrum.DispatchAttribute) error {
-	update := false
-	if dsp.Attributes == nil {
+func (s *DispatchDB) AddAttributeToDispatch(
+	ctx context.Context,
+	dsp *centrum.Dispatch,
+	attribute centrum.DispatchAttribute,
+) error {
+	var update bool
+	if dsp.GetAttributes() == nil {
 		dsp.Attributes = &centrum.DispatchAttributes{
 			List: []centrum.DispatchAttribute{attribute},
 		}
 
 		update = true
 	} else {
-		update = dsp.Attributes.Add(attribute)
+		update = dsp.GetAttributes().Add(attribute)
 	}
 
 	if update {
@@ -1353,9 +1482,13 @@ func (s *DispatchDB) AddAttributeToDispatch(ctx context.Context, dsp *centrum.Di
 	return nil
 }
 
-func (s *DispatchDB) AddReferencesToDispatch(ctx context.Context, dsp *centrum.Dispatch, refs ...*centrum.DispatchReference) error {
+func (s *DispatchDB) AddReferencesToDispatch(
+	ctx context.Context,
+	dsp *centrum.Dispatch,
+	refs ...*centrum.DispatchReference,
+) error {
 	update := false
-	if dsp.References == nil {
+	if dsp.GetReferences() == nil {
 		dsp.References = &centrum.DispatchReferences{
 			References: refs,
 		}
@@ -1363,7 +1496,7 @@ func (s *DispatchDB) AddReferencesToDispatch(ctx context.Context, dsp *centrum.D
 		update = true
 	} else {
 		for _, ref := range refs {
-			upd := dsp.References.Add(ref)
+			upd := dsp.GetReferences().Add(ref)
 			if upd {
 				update = true
 			}

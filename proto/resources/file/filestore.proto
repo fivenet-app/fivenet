@@ -19,7 +19,7 @@ message UploadMeta {
   uint64 parent_id = 1;
   string namespace = 2; // "documents", "wiki", …
   string original_name = 3 [(buf.validate.field).string.max_len = 255];
-  string content_type = 4; // optional – server re-validates
+  string content_type = 4; // optional - server re-validates
   int64 size = 5 [(buf.validate.field).int64.gt = 0]; // Size in bytes
 
   // @sanitize

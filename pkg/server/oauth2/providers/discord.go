@@ -3,6 +3,7 @@ package providers
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"strings"
 	"time"
 )
@@ -27,8 +28,8 @@ func (p *Discord) GetUserInfo(ctx context.Context, code string) (*UserInfo, erro
 
 	// Use the access token, here we use it to get the logged in user's info.
 	res, err := p.oauthConfig.Client(ctx, token).Get("https://discord.com/api/users/@me")
-	if err != nil || res.StatusCode != 200 {
-		return nil, fmt.Errorf("failed to get user info: %+q", err)
+	if err != nil || res.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to get user info: %+w", err)
 	}
 	defer res.Body.Close()
 
@@ -45,9 +46,13 @@ func (p *Discord) GetUserInfo(ctx context.Context, code string) (*UserInfo, erro
 	scopes := strings.Join(p.oauthConfig.Scopes, " ")
 
 	return &UserInfo{
-		ID:           dest.ID,
-		Username:     username,
-		Avatar:       fmt.Sprintf("https://cdn.discordapp.com/avatars/%s/%s.png", dest.ID, dest.Avatar),
+		ID:       dest.ID,
+		Username: username,
+		Avatar: fmt.Sprintf(
+			"https://cdn.discordapp.com/avatars/%s/%s.png",
+			dest.ID,
+			dest.Avatar,
+		),
 		TokenType:    &token.TokenType,
 		RefreshToken: &token.RefreshToken,
 		AccessToken:  &token.AccessToken,

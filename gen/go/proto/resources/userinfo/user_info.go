@@ -3,7 +3,7 @@ package userinfo
 import "google.golang.org/protobuf/proto"
 
 func (x *UserInfoChanged) GetJob() string {
-	return x.NewJob
+	return x.GetNewJob()
 }
 
 func (x *UserInfoChanged) SetJob(job string) {
@@ -15,7 +15,7 @@ func (x *UserInfoChanged) SetJobLabel(label string) {
 }
 
 func (x *UserInfoChanged) GetJobGrade() int32 {
-	return x.NewJobGrade
+	return x.GetNewJobGrade()
 }
 
 func (x *UserInfoChanged) SetJobGrade(grade int32) {
@@ -32,34 +32,34 @@ func (u *UserInfo) Equal(in *UserInfo) bool {
 		return false
 	}
 
-	if u.Enabled != in.Enabled {
+	if u.GetEnabled() != in.GetEnabled() {
 		return false
 	}
-	if u.AccountId != in.AccountId {
+	if u.GetAccountId() != in.GetAccountId() {
 		return false
 	}
-	if u.License != in.License {
+	if u.GetLicense() != in.GetLicense() {
 		return false
 	}
 	if !equalInt32Ptr(u.LastChar, in.LastChar) {
 		return false
 	}
-	if u.UserId != in.UserId {
+	if u.GetUserId() != in.GetUserId() {
 		return false
 	}
-	if u.Job != in.Job {
+	if u.GetJob() != in.GetJob() {
 		return false
 	}
-	if u.JobGrade != in.JobGrade {
+	if u.GetJobGrade() != in.GetJobGrade() {
 		return false
 	}
-	if u.Group != in.Group {
+	if u.GetGroup() != in.GetGroup() {
 		return false
 	}
-	if u.CanBeSuperuser != in.CanBeSuperuser {
+	if u.GetCanBeSuperuser() != in.GetCanBeSuperuser() {
 		return false
 	}
-	if u.Superuser != in.Superuser {
+	if u.GetSuperuser() != in.GetSuperuser() {
 		return false
 	}
 	if !equalStringPtr(u.OverrideJob, in.OverrideJob) {
@@ -95,5 +95,6 @@ func equalStringPtr(a, b *string) bool {
 
 // Clone returns a deep copy of the UserInfo struct.
 func (u *UserInfo) Clone() *UserInfo {
+	//nolint:forcetypeassert // Value type is guaranteed to be *UserInfo
 	return proto.Clone(u).(*UserInfo)
 }

@@ -1,3 +1,4 @@
+//nolint:gosec // MD5 is not used for security purposes but for simple hashing of strings.
 package utils
 
 import (

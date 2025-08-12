@@ -16,7 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
-	"github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
+	discordtypes "github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
@@ -83,9 +83,8 @@ type BotParams struct {
 }
 
 type Bot struct {
-	types.BotState
+	discordtypes.BotState
 
-	ctx      context.Context
 	logger   *zap.Logger
 	tracer   trace.Tracer
 	js       *events.JSWrapper
@@ -109,7 +108,7 @@ type Result struct {
 	fx.Out
 
 	Bot      *Bot
-	BotState types.BotState
+	BotState discordtypes.BotState
 }
 
 func New(p BotParams) Result {
@@ -121,7 +120,6 @@ func New(p BotParams) Result {
 	cancelCtx, cancel := context.WithCancel(context.Background())
 
 	b := &Bot{
-		ctx:      cancelCtx,
 		logger:   p.Logger,
 		tracer:   p.TP.Tracer("discord.bot"),
 		js:       p.JS,
@@ -140,7 +138,7 @@ func New(p BotParams) Result {
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		// Setup sync timer
-		syncInterval := b.appCfg.Get().Discord.SyncInterval.AsDuration()
+		syncInterval := b.appCfg.Get().Discord.GetSyncInterval().AsDuration()
 		b.syncTime.Store(&syncInterval)
 		b.syncTimer = time.NewTimer(syncInterval)
 
@@ -157,13 +155,17 @@ func New(p BotParams) Result {
 
 					case guild := <-b.workCh:
 						func() {
-							logger := b.logger.With(zap.String("job", guild.job), zap.Uint64("discord_guild_id", uint64(guild.gid)))
+							logger := b.logger.With(
+								zap.String("job", guild.job),
+								zap.Uint64("discord_guild_id", uint64(guild.gid)),
+							)
 
 							// Ignore the cooldown for the periodic sync
 							if err := guild.Run(true); err != nil {
 								logger.Error("error during discord sync", zap.Error(err))
 
-								metricLastSync.WithLabelValues(guild.job, "failed").SetToCurrentTime()
+								metricLastSync.WithLabelValues(guild.job, "failed").
+									SetToCurrentTime()
 							} else {
 								metricLastSync.WithLabelValues(guild.job, "success").SetToCurrentTime()
 							}
@@ -194,12 +196,12 @@ func New(p BotParams) Result {
 					if cfg == nil {
 						continue
 					}
-					b.handleAppConfigUpdate(cfg)
+					b.handleAppConfigUpdate(cancelCtx, cfg)
 				}
 			}
 		}()
 
-		go b.syncLoop()
+		go b.syncLoop(cancelCtx)
 
 		return nil
 	}))
@@ -221,13 +223,13 @@ func New(p BotParams) Result {
 	}
 }
 
-func (b *Bot) handleAppConfigUpdate(cfg *appconfig.Cfg) {
-	b.setBotPresence(cfg.Discord.BotPresence)
+func (b *Bot) handleAppConfigUpdate(ctx context.Context, cfg *appconfig.Cfg) {
+	b.setBotPresence(ctx, cfg.Discord.GetBotPresence())
 
 	// Only reset sync timer when interval has changed
 	currentSyncTime := b.syncTime.Load()
-	if currentSyncTime == nil || *currentSyncTime != cfg.Discord.SyncInterval.AsDuration() {
-		newSyncTime := cfg.Discord.SyncInterval.AsDuration()
+	if currentSyncTime == nil || *currentSyncTime != cfg.Discord.GetSyncInterval().AsDuration() {
+		newSyncTime := cfg.Discord.GetSyncInterval().AsDuration()
 		b.syncTime.Store(&newSyncTime)
 		b.syncTimer.Reset(newSyncTime)
 	}
@@ -237,7 +239,10 @@ func (b *Bot) start(ctx context.Context) error {
 	var ready atomic.Bool
 
 	b.dc.AddHandler(func(ev *gateway.ReadyEvent) {
-		b.logger.Info(fmt.Sprintf("connected to gateway, ready with %d guilds", len(ev.Guilds)), zap.String("me", ev.User.Tag()))
+		b.logger.Info(
+			fmt.Sprintf("connected to gateway, ready with %d guilds", len(ev.Guilds)),
+			zap.String("me", ev.User.Tag()),
+		)
 		ready.Store(true)
 	})
 
@@ -265,22 +270,25 @@ func (b *Bot) start(ctx context.Context) error {
 
 		select {
 		case <-ctx.Done():
-			return fmt.Errorf("discord client failed to get ready in time, version %d", b.dc.Ready().Version)
+			return fmt.Errorf(
+				"discord client failed to get ready in time, version %d",
+				b.dc.Ready().Version,
+			)
 
 		case <-time.After(750 * time.Millisecond):
 		}
 	}
 
-	b.handleAppConfigUpdate(b.appCfg.Get())
+	b.handleAppConfigUpdate(ctx, b.appCfg.Get())
 
 	return nil
 }
 
-func (b *Bot) syncLoop() {
+func (b *Bot) syncLoop(ctx context.Context) {
 	for {
 		b.logger.Info("running discord sync")
 		func() {
-			ctx, span := b.tracer.Start(b.ctx, "discord_bot")
+			ctx, span := b.tracer.Start(ctx, "discord_bot")
 			defer span.End()
 
 			if err := b.runSync(ctx); err != nil {
@@ -296,7 +304,7 @@ func (b *Bot) syncLoop() {
 		}
 
 		select {
-		case <-b.ctx.Done():
+		case <-ctx.Done():
 			return
 
 		case <-b.syncTimer.C:
@@ -304,7 +312,7 @@ func (b *Bot) syncLoop() {
 	}
 }
 
-// getGuilds Each guild is effectively associated with a Job via the JobProps
+// getGuilds Each guild is effectively associated with a Job via the JobProps.
 func (b *Bot) getGuilds(ctx context.Context) error {
 	jobGuilds, err := b.getJobGuildsFromDB(ctx)
 	if err != nil {
@@ -333,7 +341,11 @@ func (b *Bot) getGuilds(ctx context.Context) error {
 				b.activeGuilds.Delete(guildInfo.GuildID)
 			}
 
-			b.logger.Warn("didn't find bot in guild (anymore?)", zap.Uint64("discord_guild_id", uint64(guildInfo.GuildID)), zap.String("job", guildInfo.Job))
+			b.logger.Warn(
+				"didn't find bot in guild (anymore?)",
+				zap.Uint64("discord_guild_id", uint64(guildInfo.GuildID)),
+				zap.String("job", guildInfo.Job),
+			)
 			continue
 		}
 
@@ -342,7 +354,7 @@ func (b *Bot) getGuilds(ctx context.Context) error {
 			continue
 		}
 
-		g, err := NewGuild(b.ctx, b, guilds[idx], guildInfo.Job, guildInfo.LastSync.AsTime())
+		g, err := NewGuild(ctx, b, guilds[idx], guildInfo.Job, guildInfo.LastSync.AsTime())
 		if err != nil {
 			return err
 		}
@@ -353,7 +365,7 @@ func (b *Bot) getGuilds(ctx context.Context) error {
 }
 
 type jobGuild struct {
-	Job      string               `alias:"job" sql:"primary_key"`
+	Job      string               `alias:"job"       sql:"primary_key"`
 	GuildID  discord.GuildID      `alias:"guild_id"`
 	LastSync *timestamp.Timestamp `alias:"last_sync"`
 }
@@ -440,7 +452,11 @@ func (b *Bot) RunSync(guildID discord.GuildID) (bool, error) {
 	return false, nil
 }
 
-func (b *Bot) IsUserGuildAdmin(ctx context.Context, channelId discord.ChannelID, userId discord.UserID) (bool, error) {
+func (b *Bot) IsUserGuildAdmin(
+	ctx context.Context,
+	channelId discord.ChannelID,
+	userId discord.UserID,
+) (bool, error) {
 	perms, err := b.dc.Permissions(channelId, userId)
 	if err != nil {
 		return false, err

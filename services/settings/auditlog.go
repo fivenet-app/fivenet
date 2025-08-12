@@ -20,67 +20,70 @@ const AuditLogPageSize = 30
 
 var tAuditLog = table.FivenetAuditLog.AS("audit_entry")
 
-func (s *Server) ViewAuditLog(ctx context.Context, req *pbsettings.ViewAuditLogRequest) (*pbsettings.ViewAuditLogResponse, error) {
+func (s *Server) ViewAuditLog(
+	ctx context.Context,
+	req *pbsettings.ViewAuditLogRequest,
+) (*pbsettings.ViewAuditLogResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	defer s.aud.Log(&audit.AuditEntry{
 		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
 		Method:  "ViewAuditLog",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_VIEWED,
 	}, req)
 
 	condition := jet.Bool(true)
-	if !userInfo.Superuser {
+	if !userInfo.GetSuperuser() {
 		condition = jet.AND(
-			tAuditLog.UserJob.EQ(jet.String(userInfo.Job)).
-				OR(tAuditLog.TargetUserJob.EQ(jet.String(userInfo.Job))),
+			tAuditLog.UserJob.EQ(jet.String(userInfo.GetJob())).
+				OR(tAuditLog.TargetUserJob.EQ(jet.String(userInfo.GetJob()))),
 		)
 	}
 
-	if len(req.UserIds) > 0 {
-		ids := make([]jet.Expression, len(req.UserIds))
-		for i := range req.UserIds {
-			ids[i] = jet.Int32(req.UserIds[i])
+	if len(req.GetUserIds()) > 0 {
+		ids := make([]jet.Expression, len(req.GetUserIds()))
+		for i := range req.GetUserIds() {
+			ids[i] = jet.Int32(req.GetUserIds()[i])
 		}
 		condition = condition.AND(tAuditLog.UserID.IN(ids...))
 	}
-	if req.From != nil {
+	if req.GetFrom() != nil {
 		condition = condition.AND(tAuditLog.CreatedAt.GT_EQ(
-			jet.TimestampT(req.From.AsTime()),
+			jet.TimestampT(req.GetFrom().AsTime()),
 		))
 	}
-	if req.To != nil {
+	if req.GetTo() != nil {
 		condition = condition.AND(tAuditLog.CreatedAt.LT_EQ(
-			jet.TimestampT(req.To.AsTime()),
+			jet.TimestampT(req.GetTo().AsTime()),
 		))
 	}
-	if len(req.Services) > 0 {
-		svcs := make([]jet.Expression, len(req.Services))
-		for i := range req.Services {
-			svcs[i] = jet.String(req.Services[i])
+	if len(req.GetServices()) > 0 {
+		svcs := make([]jet.Expression, len(req.GetServices()))
+		for i := range req.GetServices() {
+			svcs[i] = jet.String(req.GetServices()[i])
 		}
 		condition = condition.AND(tAuditLog.Service.IN(svcs...))
 	}
-	if len(req.Methods) > 0 {
-		methods := make([]jet.Expression, len(req.Methods))
-		for i := range req.Methods {
-			methods[i] = jet.String(req.Methods[i])
+	if len(req.GetMethods()) > 0 {
+		methods := make([]jet.Expression, len(req.GetMethods()))
+		for i := range req.GetMethods() {
+			methods[i] = jet.String(req.GetMethods()[i])
 		}
 		condition = condition.AND(tAuditLog.Method.IN(methods...))
 	}
-	if len(req.States) > 0 {
-		states := make([]jet.Expression, len(req.States))
-		for i := range req.States {
-			states[i] = jet.Int32(int32(req.States[i]))
+	if len(req.GetStates()) > 0 {
+		states := make([]jet.Expression, len(req.GetStates()))
+		for i := range req.GetStates() {
+			states[i] = jet.Int32(int32(req.GetStates()[i]))
 		}
 		condition = condition.AND(tAuditLog.State.IN(states...))
 	}
-	if req.Search != nil && *req.Search != "" {
+	if req.Search != nil && req.GetSearch() != "" {
 		condition = condition.AND(jet.BoolExp(
 			jet.Raw("MATCH(`data`) AGAINST ($search IN BOOLEAN MODE)",
-				jet.RawArgs{"$search": *req.Search}),
+				jet.RawArgs{"$search": req.GetSearch()}),
 		))
 	}
 
@@ -98,7 +101,7 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *pbsettings.ViewAuditLogR
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, AuditLogPageSize)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, AuditLogPageSize)
 	resp := &pbsettings.ViewAuditLogResponse{
 		Pagination: pag,
 	}
@@ -108,9 +111,9 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *pbsettings.ViewAuditLogR
 
 	// Convert proto sort to db sorting
 	orderBys := []jet.OrderByClause{}
-	if req.Sort != nil {
+	if req.GetSort() != nil {
 		var column jet.Column
-		switch req.Sort.Column {
+		switch req.GetSort().GetColumn() {
 		case "service":
 			column = tAuditLog.Service
 		case "state":
@@ -121,7 +124,7 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *pbsettings.ViewAuditLogR
 			column = tAuditLog.CreatedAt
 		}
 
-		if req.Sort.Direction == database.AscSortDirection {
+		if req.GetSort().GetDirection() == database.AscSortDirection {
 			orderBys = append(orderBys, column.ASC())
 		} else {
 			orderBys = append(orderBys, column.DESC())
@@ -158,14 +161,14 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *pbsettings.ViewAuditLogR
 		).
 		WHERE(condition).
 		ORDER_BY(orderBys...).
-		OFFSET(req.Pagination.Offset).
+		OFFSET(req.GetPagination().GetOffset()).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Logs); err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	resp.Pagination.Update(len(resp.Logs))
+	resp.GetPagination().Update(len(resp.GetLogs()))
 
 	return resp, nil
 }

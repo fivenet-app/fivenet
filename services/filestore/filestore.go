@@ -17,9 +17,12 @@ import (
 
 const listFilesPageSize = 50
 
-func (s *Server) ListFiles(ctx context.Context, req *pbfilestore.ListFilesRequest) (*pbfilestore.ListFilesResponse, error) {
+func (s *Server) ListFiles(
+	ctx context.Context,
+	req *pbfilestore.ListFilesRequest,
+) (*pbfilestore.ListFilesResponse, error) {
 	if req.Path != nil {
-		logging.InjectFields(ctx, logging.Fields{"fivenet.file.path", *req.Path})
+		logging.InjectFields(ctx, logging.Fields{"fivenet.file.path", req.GetPath()})
 	}
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -27,25 +30,25 @@ func (s *Server) ListFiles(ctx context.Context, req *pbfilestore.ListFilesReques
 	defer s.aud.Log(&audit.AuditEntry{
 		Service: pbfilestore.FilestoreService_ServiceDesc.ServiceName,
 		Method:  "ListFiles",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_VIEWED,
 	}, req)
 
 	filePath := ""
 	if req.Path != nil {
-		filePath = filepath.Clean(*req.Path)
+		filePath = filepath.Clean(req.GetPath())
 	}
 	if filePath == "" {
 		filePath = "/"
 	}
 
-	pag, _ := req.Pagination.GetResponseWithPageSize(database.NoTotalCount, listFilesPageSize)
+	pag, _ := req.GetPagination().GetResponseWithPageSize(database.NoTotalCount, listFilesPageSize)
 	resp := &pbfilestore.ListFilesResponse{
 		Pagination: pag,
 	}
 
-	files, err := s.st.List(ctx, filePath, int(req.Pagination.Offset), listFilesPageSize)
+	files, err := s.st.List(ctx, filePath, int(req.GetPagination().GetOffset()), listFilesPageSize)
 	if err != nil {
 		return nil, err
 	}
@@ -60,12 +63,14 @@ func (s *Server) ListFiles(ctx context.Context, req *pbfilestore.ListFilesReques
 	}
 	resp.Files = fs
 
-	resp.Pagination.Update(len(resp.Files))
+	resp.GetPagination().Update(len(resp.GetFiles()))
 
 	return resp, nil
 }
 
-func (s *Server) Upload(srv grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error {
+func (s *Server) Upload(
+	srv grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse],
+) error {
 	ctx := srv.Context()
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -73,8 +78,8 @@ func (s *Server) Upload(srv grpc.ClientStreamingServer[file.UploadFileRequest, f
 	auditEntry := &audit.AuditEntry{
 		Service: pbfilestore.FilestoreService_ServiceDesc.ServiceName,
 		Method:  "Upload",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 
@@ -84,15 +89,15 @@ func (s *Server) Upload(srv grpc.ClientStreamingServer[file.UploadFileRequest, f
 		return errswrap.NewError(err, filestore.ErrInvalidUploadMeta)
 	}
 
-	_, err = s.fHandler.UploadFromMeta(ctx, meta, meta.ParentId, srv)
+	_, err = s.fHandler.UploadFromMeta(ctx, meta, meta.GetParentId(), srv)
 	defer s.aud.Log(auditEntry, meta)
 	if err != nil {
 		return err
 	}
 
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.file.namespace", meta.Namespace,
-		"fivenet.file.name", meta.OriginalName,
+		"fivenet.file.namespace", meta.GetNamespace(),
+		"fivenet.file.name", meta.GetOriginalName(),
 	})
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
@@ -100,10 +105,13 @@ func (s *Server) Upload(srv grpc.ClientStreamingServer[file.UploadFileRequest, f
 	return nil
 }
 
-func (s *Server) DeleteFile(ctx context.Context, req *file.DeleteFileRequest) (*file.DeleteFileResponse, error) {
+func (s *Server) DeleteFile(
+	ctx context.Context,
+	req *file.DeleteFileRequest,
+) (*file.DeleteFileResponse, error) {
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.file.parent_id", req.ParentId,
-		"fivenet.file.file_id", req.FileId,
+		"fivenet.file.parent_id", req.GetParentId(),
+		"fivenet.file.file_id", req.GetFileId(),
 	})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -111,13 +119,13 @@ func (s *Server) DeleteFile(ctx context.Context, req *file.DeleteFileRequest) (*
 	auditEntry := &audit.AuditEntry{
 		Service: pbfilestore.FilestoreService_ServiceDesc.ServiceName,
 		Method:  "Delete",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	if err := s.fHandler.Delete(ctx, req.ParentId, req.FileId); err != nil {
+	if err := s.fHandler.Delete(ctx, req.GetParentId(), req.GetFileId()); err != nil {
 		return nil, err
 	}
 
@@ -126,21 +134,24 @@ func (s *Server) DeleteFile(ctx context.Context, req *file.DeleteFileRequest) (*
 	return &file.DeleteFileResponse{}, nil
 }
 
-func (s *Server) DeleteFileByPath(ctx context.Context, req *pbfilestore.DeleteFileByPathRequest) (*pbfilestore.DeleteFileByPathResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.file.path", req.Path})
+func (s *Server) DeleteFileByPath(
+	ctx context.Context,
+	req *pbfilestore.DeleteFileByPathRequest,
+) (*pbfilestore.DeleteFileByPathResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.file.path", req.GetPath()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbfilestore.FilestoreService_ServiceDesc.ServiceName,
 		Method:  "DeleteFileByPath",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	if err := s.fHandler.DeleteFileByPath(ctx, 0, req.Path); err != nil {
+	if err := s.fHandler.DeleteFileByPath(ctx, 0, req.GetPath()); err != nil {
 		return nil, err
 	}
 

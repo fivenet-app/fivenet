@@ -26,12 +26,20 @@ const (
 
 var tDocActivity = table.FivenetDocumentsActivity
 
-func (s *Server) ListDocumentActivity(ctx context.Context, req *pbdocuments.ListDocumentActivityRequest) (*pbdocuments.ListDocumentActivityResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
+func (s *Server) ListDocumentActivity(
+	ctx context.Context,
+	req *pbdocuments.ListDocumentActivityRequest,
+) (*pbdocuments.ListDocumentActivityResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetDocumentId(),
+		userInfo,
+		documents.AccessLevel_ACCESS_LEVEL_VIEW,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -41,11 +49,11 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *pbdocuments.List
 
 	tDocActivity := table.FivenetDocumentsActivity.AS("doc_activity")
 
-	condition := tDocActivity.DocumentID.EQ(jet.Uint64(req.DocumentId))
-	if len(req.ActivityTypes) > 0 {
-		ids := make([]jet.Expression, len(req.ActivityTypes))
-		for i := range req.ActivityTypes {
-			ids[i] = jet.Int16(int16(*req.ActivityTypes[i].Enum()))
+	condition := tDocActivity.DocumentID.EQ(jet.Uint64(req.GetDocumentId()))
+	if len(req.GetActivityTypes()) > 0 {
+		ids := make([]jet.Expression, len(req.GetActivityTypes()))
+		for i := range req.GetActivityTypes() {
+			ids[i] = jet.Int16(int16(*req.GetActivityTypes()[i].Enum()))
 		}
 		condition = condition.AND(tDocActivity.ActivityType.IN(ids...))
 	}
@@ -68,7 +76,7 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *pbdocuments.List
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, ActivityDefaultPageSize)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, ActivityDefaultPageSize)
 	resp := &pbdocuments.ListDocumentActivityResponse{
 		Pagination: pag,
 		Activity:   []*documents.DocActivity{},
@@ -103,7 +111,7 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *pbdocuments.List
 		).
 		WHERE(condition).
 		OFFSET(
-			req.Pagination.Offset,
+			req.GetPagination().GetOffset(),
 		).
 		ORDER_BY(
 			tDocActivity.ID.DESC(),
@@ -114,19 +122,23 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *pbdocuments.List
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	resp.Pagination.Update(len(resp.Activity))
+	resp.GetPagination().Update(len(resp.GetActivity()))
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.Activity {
-		if resp.Activity[i].Creator != nil {
-			jobInfoFn(resp.Activity[i].Creator)
+	for i := range resp.GetActivity() {
+		if resp.GetActivity()[i].GetCreator() != nil {
+			jobInfoFn(resp.GetActivity()[i].GetCreator())
 		}
 	}
 
 	return resp, nil
 }
 
-func addDocumentActivity(ctx context.Context, tx qrm.DB, activitiy *documents.DocActivity) (uint64, error) {
+func addDocumentActivity(
+	ctx context.Context,
+	tx qrm.DB,
+	activitiy *documents.DocActivity,
+) (uint64, error) {
 	stmt := tDocActivity.
 		INSERT(
 			tDocActivity.DocumentID,
@@ -137,12 +149,12 @@ func addDocumentActivity(ctx context.Context, tx qrm.DB, activitiy *documents.Do
 			tDocActivity.Data,
 		).
 		VALUES(
-			activitiy.DocumentId,
-			activitiy.ActivityType,
-			activitiy.CreatorId,
-			activitiy.CreatorJob,
-			activitiy.Reason,
-			activitiy.Data,
+			activitiy.GetDocumentId(),
+			activitiy.GetActivityType(),
+			activitiy.GetCreatorId(),
+			activitiy.GetCreatorJob(),
+			activitiy.GetReason(),
+			activitiy.GetData(),
 		)
 
 	res, err := stmt.ExecContext(ctx, tx)
@@ -160,12 +172,15 @@ func addDocumentActivity(ctx context.Context, tx qrm.DB, activitiy *documents.Do
 	return uint64(lastId), nil
 }
 
-// generateDocumentDiff Generates diff if the old and new contents are not equal, using a simple "string comparison"
-func (s *Server) generateDocumentDiff(old *documents.Document, new *documents.Document) (*documents.DocUpdated, error) {
+// generateDocumentDiff Generates diff if the old and new contents are not equal, using a simple "string comparison".
+func (s *Server) generateDocumentDiff(
+	old *documents.Document,
+	new *documents.Document,
+) (*documents.DocUpdated, error) {
 	diff := &documents.DocUpdated{}
 
-	if !strings.EqualFold(old.Title, new.Title) {
-		titleDiff, err := s.htmlDiff.FancyDiff(old.Title, new.Title)
+	if !strings.EqualFold(old.GetTitle(), new.GetTitle()) {
+		titleDiff, err := s.htmlDiff.FancyDiff(old.GetTitle(), new.GetTitle())
 		if err != nil {
 			return nil, err
 		}
@@ -174,8 +189,8 @@ func (s *Server) generateDocumentDiff(old *documents.Document, new *documents.Do
 		}
 	}
 
-	if !strings.EqualFold(old.State, new.State) {
-		stateDiff, err := s.htmlDiff.FancyDiff(old.State, new.State)
+	if !strings.EqualFold(old.GetState(), new.GetState()) {
+		stateDiff, err := s.htmlDiff.FancyDiff(old.GetState(), new.GetState())
 		if err != nil {
 			return nil, err
 		}
@@ -184,11 +199,11 @@ func (s *Server) generateDocumentDiff(old *documents.Document, new *documents.Do
 		}
 	}
 
-	newRawContent, err := content.PrettyHTML(*new.Content.RawContent)
+	newRawContent, err := content.PrettyHTML(new.GetContent().GetRawContent())
 	if err != nil {
 		return nil, err
 	}
-	if d := s.htmlDiff.PatchDiff(*old.Content.RawContent, newRawContent); d != "" {
+	if d := s.htmlDiff.PatchDiff(old.GetContent().GetRawContent(), newRawContent); d != "" {
 		diff.ContentDiff = &d
 	}
 

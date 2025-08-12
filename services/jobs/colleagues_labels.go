@@ -27,7 +27,10 @@ var (
 	tColleagueLabels = table.FivenetJobColleagueLabels
 )
 
-func (s *Server) GetColleagueLabels(ctx context.Context, req *pbjobs.GetColleagueLabelsRequest) (*pbjobs.GetColleagueLabelsResponse, error) {
+func (s *Server) GetColleagueLabels(
+	ctx context.Context,
+	req *pbjobs.GetColleagueLabelsRequest,
+) (*pbjobs.GetColleagueLabelsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	resp := &pbjobs.GetColleagueLabelsResponse{
@@ -35,11 +38,16 @@ func (s *Server) GetColleagueLabels(ctx context.Context, req *pbjobs.GetColleagu
 	}
 
 	// Fields Permission Check
-	fields, err := s.ps.AttrStringList(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueTypesPermField)
+	fields, err := s.ps.AttrStringList(
+		userInfo,
+		permsjobs.JobsServicePerm,
+		permsjobs.JobsServiceGetColleaguePerm,
+		permsjobs.JobsServiceGetColleagueTypesPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	if userInfo.Superuser {
+	if userInfo.GetSuperuser() {
 		fields.Strings = []string{"Labels"}
 	}
 
@@ -50,16 +58,16 @@ func (s *Server) GetColleagueLabels(ctx context.Context, req *pbjobs.GetColleagu
 		}
 	}
 
-	condition := tJobLabels.Job.EQ(jet.String(userInfo.Job)).
+	condition := tJobLabels.Job.EQ(jet.String(userInfo.GetJob())).
 		AND(tJobLabels.DeletedAt.IS_NULL())
 
-	if req.Search != nil && *req.Search != "" {
-		*req.Search = strings.TrimSpace(*req.Search)
-		*req.Search = strings.ReplaceAll(*req.Search, "%", "")
-		*req.Search = strings.ReplaceAll(*req.Search, " ", "%")
-		*req.Search = "%" + *req.Search + "%"
+	if req.Search != nil && req.GetSearch() != "" {
+		*req.Search = strings.TrimSpace(req.GetSearch())
+		*req.Search = strings.ReplaceAll(req.GetSearch(), "%", "")
+		*req.Search = strings.ReplaceAll(req.GetSearch(), " ", "%")
+		*req.Search = "%" + req.GetSearch() + "%"
 		condition = condition.AND(jet.OR(
-			tJobLabels.Name.LIKE(jet.String(*req.Search)),
+			tJobLabels.Name.LIKE(jet.String(req.GetSearch())),
 		))
 	}
 
@@ -88,14 +96,17 @@ func (s *Server) GetColleagueLabels(ctx context.Context, req *pbjobs.GetColleagu
 	return resp, nil
 }
 
-func (s *Server) ManageLabels(ctx context.Context, req *pbjobs.ManageLabelsRequest) (*pbjobs.ManageLabelsResponse, error) {
+func (s *Server) ManageLabels(
+	ctx context.Context,
+	req *pbjobs.ManageLabelsRequest,
+) (*pbjobs.ManageLabelsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbjobs.JobsService_ServiceDesc.ServiceName,
 		Method:  "ManageLabels",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
@@ -111,7 +122,7 @@ func (s *Server) ManageLabels(ctx context.Context, req *pbjobs.ManageLabelsReque
 		).
 		FROM(tJobLabels).
 		WHERE(jet.AND(
-			tJobLabels.Job.EQ(jet.String(userInfo.Job)),
+			tJobLabels.Job.EQ(jet.String(userInfo.GetJob())),
 		))
 
 	labels := []*jobs.Label{}
@@ -121,23 +132,23 @@ func (s *Server) ManageLabels(ctx context.Context, req *pbjobs.ManageLabelsReque
 		}
 	}
 
-	_, removed := utils.SlicesDifferenceFunc(labels, req.Labels,
+	_, removed := utils.SlicesDifferenceFunc(labels, req.GetLabels(),
 		func(in *jobs.Label) uint64 {
-			return in.Id
+			return in.GetId()
 		})
 
-	for i := range req.Labels {
+	for i := range req.GetLabels() {
 		req.Labels[i].Job = &userInfo.Job
 		req.Labels[i].Order = int32(i)
 	}
 
 	tJobLabels := table.FivenetJobLabels
-	if len(req.Labels) > 0 {
+	if len(req.GetLabels()) > 0 {
 		toCreate := []*jobs.Label{}
 		toUpdate := []*jobs.Label{}
 
-		for _, label := range req.Labels {
-			if label.Id == 0 {
+		for _, label := range req.GetLabels() {
+			if label.GetId() == 0 {
 				toCreate = append(toCreate, label)
 			} else {
 				toUpdate = append(toUpdate, label)
@@ -174,14 +185,14 @@ func (s *Server) ManageLabels(ctx context.Context, req *pbjobs.ManageLabelsReque
 						tJobLabels.Order,
 					).
 					SET(
-						tJobLabels.Name.SET(jet.String(label.Name)),
-						tJobLabels.Color.SET(jet.String(label.Color)),
-						tJobLabels.Order.SET(jet.Int32(label.Order)),
+						tJobLabels.Name.SET(jet.String(label.GetName())),
+						tJobLabels.Color.SET(jet.String(label.GetColor())),
+						tJobLabels.Order.SET(jet.Int32(label.GetOrder())),
 						tJobLabels.DeletedAt.SET(jet.TimestampExp(jet.NULL)),
 					).
 					WHERE(jet.AND(
-						tJobLabels.ID.EQ(jet.Uint64(label.Id)),
-						tJobLabels.Job.EQ(jet.String(*label.Job)),
+						tJobLabels.ID.EQ(jet.Uint64(label.GetId())),
+						tJobLabels.Job.EQ(jet.String(label.GetJob())),
 					))
 
 				if _, err := updateStmt.ExecContext(ctx, s.db); err != nil {
@@ -195,7 +206,7 @@ func (s *Server) ManageLabels(ctx context.Context, req *pbjobs.ManageLabelsReque
 		ids := make([]jet.Expression, len(removed))
 
 		for i := range removed {
-			ids[i] = jet.Uint64(removed[i].Id)
+			ids[i] = jet.Uint64(removed[i].GetId())
 		}
 
 		deleteStmt := tJobLabels.
@@ -205,7 +216,7 @@ func (s *Server) ManageLabels(ctx context.Context, req *pbjobs.ManageLabelsReque
 			).
 			WHERE(jet.AND(
 				tJobLabels.ID.IN(ids...),
-				tJobLabels.Job.EQ(jet.String(userInfo.Job)),
+				tJobLabels.Job.EQ(jet.String(userInfo.GetJob())),
 			)).
 			LIMIT(int64(len(removed)))
 
@@ -228,14 +239,18 @@ func (s *Server) ManageLabels(ctx context.Context, req *pbjobs.ManageLabelsReque
 	return resp, nil
 }
 
-func (s *Server) validateLabels(ctx context.Context, userInfo *userinfo.UserInfo, labels []*jobs.Label) (bool, error) {
+func (s *Server) validateLabels(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	labels []*jobs.Label,
+) (bool, error) {
 	if len(labels) == 0 {
 		return true, nil
 	}
 
 	idsExp := make([]jet.Expression, len(labels))
 	for i := range labels {
-		idsExp[i] = jet.Uint64(labels[i].Id)
+		idsExp[i] = jet.Uint64(labels[i].GetId())
 	}
 
 	stmt := tJobLabels.
@@ -244,7 +259,7 @@ func (s *Server) validateLabels(ctx context.Context, userInfo *userinfo.UserInfo
 		).
 		FROM(tJobLabels).
 		WHERE(jet.AND(
-			tJobLabels.Job.EQ(jet.String(userInfo.Job)),
+			tJobLabels.Job.EQ(jet.String(userInfo.GetJob())),
 			tJobLabels.DeletedAt.IS_NULL(),
 			tJobLabels.ID.IN(idsExp...),
 		)).
@@ -263,7 +278,11 @@ func (s *Server) validateLabels(ctx context.Context, userInfo *userinfo.UserInfo
 	return len(labels) == int(count.Total), nil
 }
 
-func (s *Server) getUserLabels(ctx context.Context, userInfo *userinfo.UserInfo, userId int32) (*jobs.Labels, error) {
+func (s *Server) getUserLabels(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	userId int32,
+) (*jobs.Labels, error) {
 	stmt := tColleagueLabels.
 		SELECT(
 			tJobLabels.ID,
@@ -279,7 +298,7 @@ func (s *Server) getUserLabels(ctx context.Context, userInfo *userinfo.UserInfo,
 		).
 		WHERE(jet.AND(
 			tColleagueLabels.UserID.EQ(jet.Int32(userId)),
-			tJobLabels.Job.EQ(jet.String(userInfo.Job)),
+			tJobLabels.Job.EQ(jet.String(userInfo.GetJob())),
 			tJobLabels.DeletedAt.IS_NULL(),
 		)).
 		ORDER_BY(tJobLabels.Order.ASC())
@@ -296,15 +315,23 @@ func (s *Server) getUserLabels(ctx context.Context, userInfo *userinfo.UserInfo,
 	return list, nil
 }
 
-func (s *Server) GetColleagueLabelsStats(ctx context.Context, req *pbjobs.GetColleagueLabelsStatsRequest) (*pbjobs.GetColleagueLabelsStatsResponse, error) {
+func (s *Server) GetColleagueLabelsStats(
+	ctx context.Context,
+	req *pbjobs.GetColleagueLabelsStatsRequest,
+) (*pbjobs.GetColleagueLabelsStatsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Types Permission Check
-	fields, err := s.ps.AttrStringList(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueTypesPermField)
+	fields, err := s.ps.AttrStringList(
+		userInfo,
+		permsjobs.JobsServicePerm,
+		permsjobs.JobsServiceGetColleaguePerm,
+		permsjobs.JobsServiceGetColleagueTypesPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	if userInfo.Superuser {
+	if userInfo.GetSuperuser() {
 		fields.Strings = []string{"Labels"}
 	}
 
@@ -332,10 +359,10 @@ func (s *Server) GetColleagueLabelsStats(ctx context.Context, req *pbjobs.GetCol
 				),
 		).
 		WHERE(jet.AND(
-			tJobLabels.Job.EQ(jet.String(userInfo.Job)),
+			tJobLabels.Job.EQ(jet.String(userInfo.GetJob())),
 			tJobLabels.DeletedAt.IS_NULL(),
-			tColleagueLabels.Job.EQ(jet.String(userInfo.Job)),
-			tColleague.Job.EQ(jet.String(userInfo.Job)),
+			tColleagueLabels.Job.EQ(jet.String(userInfo.GetJob())),
+			tColleague.Job.EQ(jet.String(userInfo.GetJob())),
 		)).
 		GROUP_BY(tJobLabels.ID).
 		ORDER_BY(

@@ -59,12 +59,32 @@ type Params struct {
 func NewServer(p Params) *Server {
 	tUserProps := table.FivenetUserProps
 
-	avatarHandler := filestore.NewHandler(p.Storage, p.DB, tUserProps, tUserProps.UserID, tUserProps.AvatarFileID, 3<<20, func(parentId int32) jet.BoolExpression {
-		return tUserProps.UserID.EQ(jet.Int32(parentId))
-	}, filestore.UpdateJoinRow, true)
-	mugshotHandler := filestore.NewHandler(p.Storage, p.DB, tUserProps, tUserProps.UserID, tUserProps.MugshotFileID, 3<<20, func(parentId int32) jet.BoolExpression {
-		return tUserProps.UserID.EQ(jet.Int32(parentId))
-	}, filestore.UpdateJoinRow, true)
+	avatarHandler := filestore.NewHandler(
+		p.Storage,
+		p.DB,
+		tUserProps,
+		tUserProps.UserID,
+		tUserProps.AvatarFileID,
+		3<<20,
+		func(parentId int32) jet.BoolExpression {
+			return tUserProps.UserID.EQ(jet.Int32(parentId))
+		},
+		filestore.UpdateJoinRow,
+		true,
+	)
+	mugshotHandler := filestore.NewHandler(
+		p.Storage,
+		p.DB,
+		tUserProps,
+		tUserProps.UserID,
+		tUserProps.MugshotFileID,
+		3<<20,
+		func(parentId int32) jet.BoolExpression {
+			return tUserProps.UserID.EQ(jet.Int32(parentId))
+		},
+		filestore.UpdateJoinRow,
+		true,
+	)
 
 	s := &Server{
 		db:       p.DB,
@@ -83,7 +103,11 @@ func NewServer(p Params) *Server {
 
 	access.RegisterAccess("citizen", &access.GroupedAccessAdapter{
 		CanUserAccessTargetFn: func(ctx context.Context, targetId uint64, userInfo *userinfo.UserInfo, access int32) (bool, error) {
-			if !s.ps.Can(userInfo, permscitizens.CitizensServicePerm, permscitizens.CitizensServiceGetUserPerm) {
+			if !s.ps.Can(
+				userInfo,
+				permscitizens.CitizensServicePerm,
+				permscitizens.CitizensServiceGetUserPerm,
+			) {
 				return false, nil
 			}
 
@@ -108,10 +132,10 @@ func NewServer(p Params) *Server {
 				return false, err
 			}
 
-			if slices.Contains(s.appCfg.Get().JobInfo.PublicJobs, user.Job) ||
-				slices.Contains(s.appCfg.Get().JobInfo.HiddenJobs, user.Job) {
+			if slices.Contains(s.appCfg.Get().JobInfo.GetPublicJobs(), user.GetJob()) ||
+				slices.Contains(s.appCfg.Get().JobInfo.GetHiddenJobs(), user.GetJob()) {
 				// Make sure user has permission to see that grade
-				check, err := s.checkIfUserCanAccess(userInfo, user.Job, user.JobGrade)
+				check, err := s.checkIfUserCanAccess(userInfo, user.GetJob(), user.GetJobGrade())
 				if err != nil {
 					return false, err
 				}
@@ -131,6 +155,7 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbcitizens.RegisterCitizensServiceServer(srv, s)
 }
 
+// GetPermsRemap returns the permissions re-mapping for the services.
 func (s *Server) GetPermsRemap() map[string]string {
 	return pbcitizens.PermsRemap
 }

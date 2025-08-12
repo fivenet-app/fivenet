@@ -47,9 +47,9 @@ func TestBasicPerms(t *testing.T) {
 	assert.NotNil(t, ps)
 
 	userInfo := &userinfo.UserInfo{
-		UserId:    testdata.Users[0].UserId,
-		Job:       testdata.Users[0].Job,
-		JobGrade:  testdata.Users[0].JobGrade,
+		UserId:    testdata.Users[0].GetUserId(),
+		Job:       testdata.Users[0].GetJob(),
+		JobGrade:  testdata.Users[0].GetJobGrade(),
 		Superuser: true,
 	}
 	// 1. Superuser can do everything
@@ -66,12 +66,16 @@ func TestBasicPerms(t *testing.T) {
 	assert.True(t, can, "User should have permission `jobs.TimeclockService/ListTimeclock`")
 
 	can = ps.Can(userInfo, "settings.LawsService", "CreateOrUpdateLawBook")
-	assert.False(t, can, "User should not have permission `settings.LawsService/CreateOrUpdateLawBook`")
+	assert.False(
+		t,
+		can,
+		"User should not have permission `settings.LawsService/CreateOrUpdateLawBook`",
+	)
 	can = ps.Can(userInfo, "settings.LawsService", "DeleteLawBook")
 	assert.False(t, can, "User should not have permission `settings.SettingsService/DeleteLawBook`")
 
-	attributes, err := ps.FlattenRoleAttributes(userInfo.Job, userInfo.JobGrade)
-	assert.NoError(t, err, "FlattenRoleAttributes should not return an error")
+	attributes, err := ps.FlattenRoleAttributes(userInfo.GetJob(), userInfo.GetJobGrade())
+	require.NoError(t, err, "FlattenRoleAttributes should not return an error")
 	assert.NotEmpty(t, attributes, "FlattenRoleAttributes should return non-empty attributes")
 	// Check if the expected flattened role attributes are returned
 	assert.Len(t, attributes, 29, "FlattenRoleAttributes should return 29 attributes")
@@ -89,30 +93,45 @@ func TestBasicPerms(t *testing.T) {
 		"livemap-livemapservice-createorupdatemarker-access-same_rank", "livemap-livemapservice-createorupdatemarker-access-any",
 		"qualifications-qualificationsservice-createqualification-fields-public", "completor-completorservice-completedocumentcategories-jobs-ambulance",
 	} {
-		assert.Contains(t, attributes, attr, "Make sure ambulance job has the expected attributes set for ambulance rank 17")
+		assert.Contains(
+			t,
+			attributes,
+			attr,
+			"Make sure ambulance job has the expected attributes set for ambulance rank 17",
+		)
 	}
 	for _, attr := range []string{"livemap-livemapservice-stream-players-doj", "livemap-livemapservice-stream-players-police"} {
-		assert.NotContains(t, attributes, attr, "livemap-livemapservice-stream-players for doj and police should not be in the list of attributes for ambulance rank 17")
+		assert.NotContains(
+			t,
+			attributes,
+			attr,
+			"livemap-livemapservice-stream-players for doj and police should not be in the list of attributes for ambulance rank 17",
+		)
 	}
 
-	role, err := ps.GetRoleByJobAndGrade(ctx, userInfo.Job, userInfo.JobGrade)
-	assert.NoError(t, err, "GetRoleByJobAndGrade should not return an error")
+	role, err := ps.GetRoleByJobAndGrade(ctx, userInfo.GetJob(), userInfo.GetJobGrade())
+	require.NoError(t, err, "GetRoleByJobAndGrade should not return an error")
 	require.NotNil(t, role, "GetRoleByJobAndGrade should return non-nil role")
 
-	rolePerms, err := ps.GetEffectiveRolePermissions(ctx, role.Id)
-	assert.NoError(t, err, "GetEffectiveRolePermissions should not return an error")
+	rolePerms, err := ps.GetEffectiveRolePermissions(ctx, role.GetId())
+	require.NoError(t, err, "GetEffectiveRolePermissions should not return an error")
 	assert.Len(t, rolePerms, 43, "GetEffectiveRolePermissions should return 43 perms")
 
 	// 3. Non-superuser (ambulance, 20) - should have more attributes than ambulance, 17 (further player locations access)
 	userInfo = &userinfo.UserInfo{
-		Job:      testdata.Users[1].Job,
-		JobGrade: testdata.Users[1].JobGrade,
+		Job:      testdata.Users[1].GetJob(),
+		JobGrade: testdata.Users[1].GetJobGrade(),
 	}
-	attributes, err = ps.FlattenRoleAttributes(userInfo.Job, userInfo.JobGrade)
-	assert.NoError(t, err, "FlattenRoleAttributes should not return an error")
+	attributes, err = ps.FlattenRoleAttributes(userInfo.GetJob(), userInfo.GetJobGrade())
+	require.NoError(t, err, "FlattenRoleAttributes should not return an error")
 	assert.Len(t, attributes, 31, "FlattenRoleAttributes should now return 31 attributes")
 	for _, attr := range []string{"livemap-livemapservice-stream-players-ambulance", "livemap-livemapservice-stream-players-doj", "livemap-livemapservice-stream-players-police"} {
-		assert.Contains(t, attributes, attr, "livemap-livemapservice-stream-players for ambulance, doj and police should be in the list of attributes for ambulance rank 20")
+		assert.Contains(
+			t,
+			attributes,
+			attr,
+			"livemap-livemapservice-stream-players for ambulance, doj and police should be in the list of attributes for ambulance rank 20",
+		)
 	}
 
 	// 4. unemployed user - should not have any attributes but default perms
@@ -121,13 +140,13 @@ func TestBasicPerms(t *testing.T) {
 		JobGrade: 0,
 	}
 	// Retrieve the default role id (technically this is a bit of a hack, but to make `GetEffectiveRolePermissions` work)
-	role, err = ps.GetRoleByJobAndGrade(ctx, perms.DefaultRoleJob, userInfo.JobGrade)
-	assert.NoError(t, err, "GetRoleByJobAndGrade should not return an error")
+	role, err = ps.GetRoleByJobAndGrade(ctx, perms.DefaultRoleJob, userInfo.GetJobGrade())
+	require.NoError(t, err, "GetRoleByJobAndGrade should not return an error")
 	require.NotNil(t, role, "GetRoleByJobAndGrade should return non-nil role")
-	rolePerms, err = ps.GetEffectiveRolePermissions(ctx, role.Id)
-	assert.NoError(t, err, "GetEffectiveRolePermissions should not return an error")
+	rolePerms, err = ps.GetEffectiveRolePermissions(ctx, role.GetId())
+	require.NoError(t, err, "GetEffectiveRolePermissions should not return an error")
 	assert.Len(t, rolePerms, 4, "GetEffectiveRolePermissions should return 4 perms")
-	attributes, err = ps.FlattenRoleAttributes(userInfo.Job, userInfo.JobGrade)
-	assert.NoError(t, err, "FlattenRoleAttributes should not return an error")
-	assert.Len(t, attributes, 0, "FlattenRoleAttributes should now return 0 attributes")
+	attributes, err = ps.FlattenRoleAttributes(userInfo.GetJob(), userInfo.GetJobGrade())
+	require.NoError(t, err, "FlattenRoleAttributes should not return an error")
+	assert.Empty(t, attributes, "FlattenRoleAttributes should now return 0 attributes")
 }

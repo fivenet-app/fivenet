@@ -14,7 +14,10 @@ import (
 
 var tTLDs = table.FivenetInternetTlds.AS("tld")
 
-func (s *Server) ListTLDs(ctx context.Context, req *pbinternet.ListTLDsRequest) (*pbinternet.ListTLDsResponse, error) {
+func (s *Server) ListTLDs(
+	ctx context.Context,
+	req *pbinternet.ListTLDsRequest,
+) (*pbinternet.ListTLDsResponse, error) {
 	stmt := tTLDs.
 		SELECT(
 			tTLDs.ID,

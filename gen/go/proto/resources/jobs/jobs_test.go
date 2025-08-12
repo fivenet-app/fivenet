@@ -19,12 +19,12 @@ func TestDiscordSyncChanges(t *testing.T) {
 		})
 	}
 
-	assert.Len(t, c.Changes, 12)
+	assert.Len(t, c.GetChanges(), 12)
 
 	c.Add(&DiscordSyncChange{
 		Plan: "13",
 		Time: ts,
 	})
 
-	assert.Len(t, c.Changes, 12)
+	assert.Len(t, c.GetChanges(), 12)
 }

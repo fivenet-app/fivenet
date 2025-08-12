@@ -13,7 +13,9 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
-func (s *Server) UploadFile(srv grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error {
+func (s *Server) UploadFile(
+	srv grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse],
+) error {
 	ctx := srv.Context()
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -21,8 +23,8 @@ func (s *Server) UploadFile(srv grpc.ClientStreamingServer[file.UploadFileReques
 	auditEntry := &audit.AuditEntry{
 		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
 		Method:  "UploadFile",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 
@@ -31,26 +33,32 @@ func (s *Server) UploadFile(srv grpc.ClientStreamingServer[file.UploadFileReques
 	if err != nil {
 		return errswrap.NewError(err, filestore.ErrInvalidUploadMeta)
 	}
-	if meta.Namespace != "qualifications" && meta.Namespace != "qualifications-exam-questions" {
+	if meta.GetNamespace() != "qualifications" &&
+		meta.GetNamespace() != "qualifications-exam-questions" {
 		return errswrap.NewError(err, filestore.ErrInvalidUploadMeta)
 	}
 
-	check, err := s.access.CanUserAccessTarget(ctx, meta.ParentId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_EDIT)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		meta.GetParentId(),
+		userInfo,
+		qualifications.AccessLevel_ACCESS_LEVEL_EDIT,
+	)
 	if err != nil {
 		return errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
 	}
-	if !check && !userInfo.Superuser {
+	if !check && !userInfo.GetSuperuser() {
 		return errorsdocuments.ErrDocViewDenied
 	}
 
-	_, err = s.fHandler.UploadFromMeta(ctx, meta, meta.ParentId, srv)
+	_, err = s.fHandler.UploadFromMeta(ctx, meta, meta.GetParentId(), srv)
 	if err != nil {
 		return err
 	}
 
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.file.namespace", meta.Namespace,
-		"fivenet.file.name", meta.OriginalName,
+		"fivenet.file.namespace", meta.GetNamespace(),
+		"fivenet.file.name", meta.GetOriginalName(),
 	})
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED

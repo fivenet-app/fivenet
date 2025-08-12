@@ -74,9 +74,9 @@ func (stream *GrpcStream) Read(p []byte) (int, error) {
 
 	frame, more := <-stream.inputFrames
 	if more {
-		switch op := frame.Payload.(type) {
+		switch op := frame.GetPayload().(type) {
 		case *grpcws.GrpcFrame_Body:
-			stream.remainingBuffer = op.Body.Data
+			stream.remainingBuffer = op.Body.GetData()
 			return stream.Read(p)
 
 		case *grpcws.GrpcFrame_Failure:
@@ -118,7 +118,12 @@ func (stream *GrpcStream) Close() error {
 	}
 
 	stream.cancel()
-	stream.channel.write(&grpcws.GrpcFrame{StreamId: stream.id, Payload: &grpcws.GrpcFrame_Complete{Complete: &grpcws.Complete{}}})
+	stream.channel.write(
+		&grpcws.GrpcFrame{
+			StreamId: stream.id,
+			Payload:  &grpcws.GrpcFrame_Complete{Complete: &grpcws.Complete{}},
+		},
+	)
 	return nil
 }
 

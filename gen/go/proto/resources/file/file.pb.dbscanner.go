@@ -27,6 +27,6 @@ func (x *ImageMeta) Value() (driver.Value, error) {
 		return nil, nil
 	}
 
-	out, err := protoutils.MarshalToPJSON(x)
+	out, err := protoutils.MarshalToJSON(x)
 	return string(out), err
 }

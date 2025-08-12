@@ -23,7 +23,7 @@ type grpcWebResponse struct {
 	// Flush must be called on this writer before returning to ensure encoded buffer is flushed
 	wrapped http.ResponseWriter
 
-	// The standard "application/grpc" content-type will be replaced with this.
+	// The standard "application/grpc" Content-Type will be replaced with this.
 	contentType string
 }
 
@@ -72,15 +72,15 @@ func (w *grpcWebResponse) prepareHeaders() {
 	wh := w.wrapped.Header()
 	copyHeader(
 		wh, w.headers,
-		skipKeys("trailer"),
+		skipKeys("Trailer"),
 		replaceInKeys(http2.TrailerPrefix, ""),
-		replaceInVals("content-type", grpcContentType, w.contentType),
+		replaceInVals("Content-Type", grpcContentType, w.contentType),
 		keyCase(http.CanonicalHeaderKey),
 	)
 	responseHeaderKeys := headerKeys(wh)
-	responseHeaderKeys = append(responseHeaderKeys, "grpc-status", "grpc-message")
+	responseHeaderKeys = append(responseHeaderKeys, "Grpc-Status", "Grpc-Message")
 	wh.Set(
-		"access-control-expose-headers",
+		"Access-Control-Expose-Headers",
 		strings.Join(responseHeaderKeys, ", "),
 	)
 }
@@ -98,7 +98,13 @@ func (w *grpcWebResponse) copyTrailersToPayload() {
 	trailers := extractTrailingHeaders(w.headers, w.wrapped.Header())
 	trailerBuffer := new(bytes.Buffer)
 	trailers.Write(trailerBuffer)
-	trailerGrpcDataHeader := []byte{1 << 7, 0, 0, 0, 0} // MSB=1 indicates this is a trailer data frame.
+	trailerGrpcDataHeader := []byte{
+		1 << 7,
+		0,
+		0,
+		0,
+		0,
+	} // MSB=1 indicates this is a trailer data frame.
 	binary.BigEndian.PutUint32(trailerGrpcDataHeader[1:5], uint32(trailerBuffer.Len()))
 	w.wrapped.Write(trailerGrpcDataHeader)
 	w.wrapped.Write(trailerBuffer.Bytes())
@@ -109,7 +115,7 @@ func extractTrailingHeaders(src http.Header, flushed http.Header) http.Header {
 	th := make(http.Header)
 	copyHeader(
 		th, src,
-		skipKeys(append([]string{"trailer"}, headerKeys(flushed)...)...),
+		skipKeys(append([]string{"Trailer"}, headerKeys(flushed)...)...),
 		replaceInKeys(http2.TrailerPrefix, ""),
 		// gRPC-Web spec says that must use lower-case header/trailer names. See
 		// "HTTP wire protocols" section in

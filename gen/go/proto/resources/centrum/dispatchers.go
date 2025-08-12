@@ -7,15 +7,15 @@ func (x *Dispatchers) SetJobLabel(jobLabel string) {
 }
 
 func (x *Dispatchers) Merge(in *Dispatchers) *Dispatchers {
-	if len(in.Dispatchers) == 0 {
+	if len(in.GetDispatchers()) == 0 {
 		x.Dispatchers = []*jobs.Colleague{}
 	} else {
-		x.Dispatchers = in.Dispatchers
+		x.Dispatchers = in.GetDispatchers()
 	}
 
 	return x
 }
 
 func (x *Dispatchers) IsEmpty() bool {
-	return x == nil || len(x.Dispatchers) == 0
+	return x == nil || len(x.GetDispatchers()) == 0
 }

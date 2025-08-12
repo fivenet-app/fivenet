@@ -10,7 +10,14 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) checkIfUserHasAccessToCalendarEntry(ctx context.Context, calendarId uint64, entryId uint64, userInfo *userinfo.UserInfo, access calendar.AccessLevel, publicOk bool) (bool, error) {
+func (s *Server) checkIfUserHasAccessToCalendarEntry(
+	ctx context.Context,
+	calendarId uint64,
+	entryId uint64,
+	userInfo *userinfo.UserInfo,
+	access calendar.AccessLevel,
+	publicOk bool,
+) (bool, error) {
 	out, err := s.checkIfUserHasAccessToCalendarEntryIDs(ctx, userInfo, publicOk, entryId)
 	if err != nil {
 		return false, err
@@ -28,14 +35,19 @@ func (s *Server) checkIfUserHasAccessToCalendarEntry(ctx context.Context, calend
 	return check, err
 }
 
-func (s *Server) checkIfUserHasAccessToCalendarEntryIDs(ctx context.Context, userInfo *userinfo.UserInfo, publicOk bool, entryIds ...uint64) ([]uint64, error) {
+func (s *Server) checkIfUserHasAccessToCalendarEntryIDs(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	publicOk bool,
+	entryIds ...uint64,
+) ([]uint64, error) {
 	var dest []uint64
 	if len(entryIds) == 0 {
 		return dest, nil
 	}
 
 	// Allow superusers access to any docs
-	if userInfo.Superuser {
+	if userInfo.GetSuperuser() {
 		dest = append(dest, entryIds...)
 		return dest, nil
 	}
@@ -57,7 +69,7 @@ func (s *Server) checkIfUserHasAccessToCalendarEntryIDs(ctx context.Context, use
 		).
 		FROM(tCalendarEntry.
 			LEFT_JOIN(tCalendarRSVP,
-				tCalendarRSVP.UserID.EQ(jet.Int32(userInfo.UserId)),
+				tCalendarRSVP.UserID.EQ(jet.Int32(userInfo.GetUserId())),
 			).
 			INNER_JOIN(tCalendar,
 				tCalendar.ID.EQ(tCalendarEntry.CalendarID).
@@ -70,8 +82,8 @@ func (s *Server) checkIfUserHasAccessToCalendarEntryIDs(ctx context.Context, use
 			tCalendarRSVP.EntryID.IN(ids...),
 			jet.OR(
 				jet.AND(
-					tCalendarEntry.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-					tCalendarEntry.CreatorJob.EQ(jet.String(userInfo.Job)),
+					tCalendarEntry.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
+					tCalendarEntry.CreatorJob.EQ(jet.String(userInfo.GetJob())),
 				),
 				tCalendarRSVP.EntryID.IS_NOT_NULL(),
 				condition,

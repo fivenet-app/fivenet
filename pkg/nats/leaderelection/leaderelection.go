@@ -1,11 +1,11 @@
 // leader_election_example.go
 //
-// Self‑healing leader‑election helper for NATS **JetStream** Key‑Value.
+// Self-healing leader-election helper for NATS **JetStream** Key-Value.
 //
 // Public surface mirrors your original helper but now:
 //   - All JetStream calls that require a **context.Context** receive one
 //     (bucket creation, Create/Put, WatchAll…).
-//   - `onStarted(ctx)` gets a leadership‑lifetime context that is cancelled the
+//   - `onStarted(ctx)` gets a leadership-lifetime context that is cancelled the
 //     moment this instance loses leadership or Stop() is called.
 //
 // Usage:
@@ -20,7 +20,7 @@
 //	js,
 //	"leader_bucket", // bucket name
 //	"leader",        // key
-//	8*time.Second,    // per‑key TTL
+//	8*time.Second,    // per-key TTL
 //	3*time.Second,    // heartbeat
 //	logger,
 //	func(ctx context.Context) {
@@ -55,10 +55,10 @@ type LeaderElector struct {
 	ttl       time.Duration
 	heartbeat time.Duration
 
-	ctx    context.Context // parent‑lifetime
+	ctx    context.Context // parent-lifetime
 	cancel context.CancelFunc
 
-	leadershipCtx    context.Context // cancelled on step‑down
+	leadershipCtx    context.Context // cancelled on step-down
 	leadershipCancel context.CancelFunc
 
 	isLeader bool
@@ -105,7 +105,7 @@ func New(
 
 // Lifecycle
 
-// Start launches background loops – call once.
+// Start launches background loops - call once.
 func (le *LeaderElector) Start() {
 	le.tryAcquire()     // quick attempt
 	go le.watchParent() // resilient watcher
@@ -141,7 +141,7 @@ func (le *LeaderElector) demote(reason string) {
 	}
 }
 
-// retryLoop periodically re‑tries acquisition to cover missed events.
+// retryLoop periodically re-tries acquisition to cover missed events.
 func (le *LeaderElector) retryLoop() {
 	t := time.NewTicker(le.heartbeat)
 	defer t.Stop()
@@ -181,7 +181,7 @@ func (le *LeaderElector) watchParent() {
 			case jetstream.KeyValueDelete, jetstream.KeyValuePurge:
 				if entry.Key() == le.key {
 					le.demote("KV key vanished")
-					le.tryAcquire() // immediate re‑take attempt
+					le.tryAcquire() // immediate re-take attempt
 				}
 			}
 		}

@@ -10,10 +10,13 @@ import (
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
 )
 
-func (s *Server) GetSettings(ctx context.Context, req *pbcentrum.GetSettingsRequest) (*pbcentrum.GetSettingsResponse, error) {
+func (s *Server) GetSettings(
+	ctx context.Context,
+	req *pbcentrum.GetSettingsRequest,
+) (*pbcentrum.GetSettingsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	settings, err := s.settings.Get(ctx, userInfo.Job)
+	settings, err := s.settings.Get(ctx, userInfo.GetJob())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
@@ -23,19 +26,22 @@ func (s *Server) GetSettings(ctx context.Context, req *pbcentrum.GetSettingsRequ
 	}, nil
 }
 
-func (s *Server) UpdateSettings(ctx context.Context, req *pbcentrum.UpdateSettingsRequest) (*pbcentrum.UpdateSettingsResponse, error) {
+func (s *Server) UpdateSettings(
+	ctx context.Context,
+	req *pbcentrum.UpdateSettingsRequest,
+) (*pbcentrum.UpdateSettingsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
 		Method:  "UpdateSettings",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	settings, err := s.settings.Update(ctx, userInfo.Job, req.Settings)
+	settings, err := s.settings.Update(ctx, userInfo.GetJob(), req.GetSettings())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}

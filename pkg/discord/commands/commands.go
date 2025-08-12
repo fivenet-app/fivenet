@@ -11,7 +11,7 @@ import (
 	"github.com/diamondburned/arikawa/v3/state"
 	lang "github.com/fivenet-app/fivenet/v2025/i18n"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
+	discordtypes "github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/admin"
@@ -46,7 +46,7 @@ type CommandParams struct {
 	JS       *events.JSWrapper
 	DB       *sql.DB
 	L        *lang.I18n
-	BotState types.BotState
+	BotState discordtypes.BotState
 	Perms    perms.Permissions
 }
 
@@ -126,23 +126,25 @@ func (c *Cmds) registerCommands() error {
 
 func newMiddlewareLogger(logger *zap.Logger) cmdroute.Middleware {
 	return func(next cmdroute.InteractionHandler) cmdroute.InteractionHandler {
-		return cmdroute.InteractionHandlerFunc(func(ctx context.Context, ev *discord.InteractionEvent) *api.InteractionResponse {
-			switch data := ev.Data.(type) {
-			case *discord.CommandInteraction:
-				logger.Info("received interaction event", zap.Uint64("sender_id", uint64(ev.SenderID())), zap.String("command", data.Name))
-			}
+		return cmdroute.InteractionHandlerFunc(
+			func(ctx context.Context, ev *discord.InteractionEvent) *api.InteractionResponse {
+				switch data := ev.Data.(type) {
+				case *discord.CommandInteraction:
+					logger.Info("received interaction event", zap.Uint64("sender_id", uint64(ev.SenderID())), zap.String("command", data.Name))
+				}
 
-			resp := next.HandleInteraction(ctx, ev)
-			if resp == nil {
-				// Most likely command not found error
-				return nil
-			}
+				resp := next.HandleInteraction(ctx, ev)
+				if resp == nil {
+					// Most likely command not found error
+					return nil
+				}
 
-			switch data := ev.Data.(type) {
-			case *discord.CommandInteraction:
-				metricCommandCalls.WithLabelValues(data.Name).Inc()
-			}
-			return resp
-		})
+				switch data := ev.Data.(type) {
+				case *discord.CommandInteraction:
+					metricCommandCalls.WithLabelValues(data.Name).Inc()
+				}
+				return resp
+			},
+		)
 	}
 }

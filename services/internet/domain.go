@@ -18,8 +18,11 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) CheckDomainAvailability(ctx context.Context, req *pbinternet.CheckDomainAvailabilityRequest) (*pbinternet.CheckDomainAvailabilityResponse, error) {
-	domain, err := s.getDomainByTLDAndName(ctx, s.db, req.TldId, req.Name)
+func (s *Server) CheckDomainAvailability(
+	ctx context.Context,
+	req *pbinternet.CheckDomainAvailabilityRequest,
+) (*pbinternet.CheckDomainAvailabilityResponse, error) {
+	domain, err := s.getDomainByTLDAndName(ctx, s.db, req.GetTldId(), req.GetName())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
 	}
@@ -37,15 +40,18 @@ func (s *Server) CheckDomainAvailability(ctx context.Context, req *pbinternet.Ch
 	}, nil
 }
 
-func (s *Server) ListDomains(ctx context.Context, req *pbinternet.ListDomainsRequest) (*pbinternet.ListDomainsResponse, error) {
+func (s *Server) ListDomains(
+	ctx context.Context,
+	req *pbinternet.ListDomainsRequest,
+) (*pbinternet.ListDomainsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	tCreator := tables.User().AS("creator")
 
 	condition := jet.Bool(true)
-	if !userInfo.Superuser {
+	if !userInfo.GetSuperuser() {
 		condition = condition.AND(
-			tDomains.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+			tDomains.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
 		)
 	}
 
@@ -71,7 +77,7 @@ func (s *Server) ListDomains(ctx context.Context, req *pbinternet.ListDomainsReq
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponse(count.Total)
+	pag, limit := req.GetPagination().GetResponse(count.Total)
 	resp := &pbinternet.ListDomainsResponse{
 		Pagination: pag,
 		Domains:    []*internet.Domain{},
@@ -106,7 +112,7 @@ func (s *Server) ListDomains(ctx context.Context, req *pbinternet.ListDomainsReq
 				),
 		).
 		WHERE(condition).
-		OFFSET(req.Pagination.Offset).
+		OFFSET(req.GetPagination().GetOffset()).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Domains); err != nil {
@@ -115,24 +121,27 @@ func (s *Server) ListDomains(ctx context.Context, req *pbinternet.ListDomainsReq
 		}
 	}
 
-	resp.Pagination.Update(len(resp.Domains))
+	resp.GetPagination().Update(len(resp.GetDomains()))
 
 	return resp, nil
 }
 
-func (s *Server) RegisterDomain(ctx context.Context, req *pbinternet.RegisterDomainRequest) (*pbinternet.RegisterDomainResponse, error) {
+func (s *Server) RegisterDomain(
+	ctx context.Context,
+	req *pbinternet.RegisterDomainRequest,
+) (*pbinternet.RegisterDomainResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbinternet.InternetService_ServiceDesc.ServiceName,
 		Method:  "RegisterDomain",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	domain, err := s.getDomainByTLDAndName(ctx, s.db, req.TldId, req.Name)
+	domain, err := s.getDomainByTLDAndName(ctx, s.db, req.GetTldId(), req.GetName())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
 	}
@@ -142,11 +151,11 @@ func (s *Server) RegisterDomain(ctx context.Context, req *pbinternet.RegisterDom
 	domainId := uint64(0)
 	// Domain exists
 	if domain != nil {
-		if domain.CreatorId != nil && *domain.CreatorId == userInfo.UserId {
+		if domain.CreatorId != nil && domain.GetCreatorId() == userInfo.GetUserId() {
 			return nil, errorsinternet.ErrDomainNotTransferable
 		} else if domain.TransferCode == nil {
 			return nil, errorsinternet.ErrDomainNotTransferable
-		} else if req.TransferCode != nil && *domain.TransferCode != *req.TransferCode {
+		} else if req.TransferCode != nil && domain.GetTransferCode() != req.GetTransferCode() {
 			return nil, errorsinternet.ErrDomainWrongTransferCode
 		}
 
@@ -157,25 +166,25 @@ func (s *Server) RegisterDomain(ctx context.Context, req *pbinternet.RegisterDom
 			).
 			SET(
 				jet.NULL,
-				userInfo.UserId,
+				userInfo.GetUserId(),
 			).
 			WHERE(
-				tDomains.ID.EQ(jet.Uint64(domain.Id)),
+				tDomains.ID.EQ(jet.Uint64(domain.GetId())),
 			)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
 		}
 
-		domainId = domain.Id
+		domainId = domain.GetId()
 	} else {
-		tld, err := s.getTLD(ctx, s.db, req.TldId)
+		tld, err := s.getTLD(ctx, s.db, req.GetTldId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
 		}
 
 		// If TLD is not found or internal and user is not superuser
-		if tld == nil || (tld.Internal && !userInfo.Superuser) {
+		if tld == nil || (tld.GetInternal() && !userInfo.GetSuperuser()) {
 			return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
 		}
 
@@ -188,11 +197,11 @@ func (s *Server) RegisterDomain(ctx context.Context, req *pbinternet.RegisterDom
 				tDomains.CreatorID,
 			).
 			VALUES(
-				req.TldId,
-				req.Name,
-				userInfo.Superuser, // Set domain active based on if user is superuser (no approval needed)
-				userInfo.Job,
-				userInfo.UserId,
+				req.GetTldId(),
+				req.GetName(),
+				userInfo.GetSuperuser(), // Set domain active based on if user is superuser (no approval needed)
+				userInfo.GetJob(),
+				userInfo.GetUserId(),
 			)
 
 		res, err := stmt.ExecContext(ctx, s.db)
@@ -219,25 +228,29 @@ func (s *Server) RegisterDomain(ctx context.Context, req *pbinternet.RegisterDom
 	}, nil
 }
 
-func (s *Server) UpdateDomain(ctx context.Context, req *pbinternet.UpdateDomainRequest) (*pbinternet.UpdateDomainResponse, error) {
+func (s *Server) UpdateDomain(
+	ctx context.Context,
+	req *pbinternet.UpdateDomainRequest,
+) (*pbinternet.UpdateDomainResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbinternet.InternetService_ServiceDesc.ServiceName,
 		Method:  "UpdateDomain",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	domain, err := s.getDomainById(ctx, s.db, req.DomainId)
+	domain, err := s.getDomainById(ctx, s.db, req.GetDomainId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
 	}
 
 	// Check if user owns the domain or is superuser
-	if domain == nil || ((domain.CreatorId == nil && !userInfo.Superuser) || *domain.CreatorId != userInfo.UserId) {
+	if domain == nil ||
+		((domain.CreatorId == nil && !userInfo.GetSuperuser()) || domain.GetCreatorId() != userInfo.GetUserId()) {
 		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
 	}
 
@@ -246,10 +259,10 @@ func (s *Server) UpdateDomain(ctx context.Context, req *pbinternet.UpdateDomainR
 			tDomains.TransferCode,
 		).
 		SET(
-			req.Transferable,
+			req.GetTransferable(),
 		).
 		WHERE(
-			tDomains.ID.EQ(jet.Uint64(domain.Id)),
+			tDomains.ID.EQ(jet.Uint64(domain.GetId())),
 		)
 
 	res, err := stmt.ExecContext(ctx, s.db)

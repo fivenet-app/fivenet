@@ -19,7 +19,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/embeds"
-	"github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
+	discordtypes "github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/broker"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -42,11 +42,11 @@ type UserInfo struct {
 
 	mu sync.Mutex
 
-	employeeRole   *types.Role
-	unemployedRole *types.Role
-	absenceRole    *types.Role
-	jobGradeRoles  map[int32]*types.Role
-	groupRoles     map[string]*types.Role
+	employeeRole   *discordtypes.Role
+	unemployedRole *discordtypes.Role
+	absenceRole    *discordtypes.Role
+	jobGradeRoles  map[int32]*discordtypes.Role
+	groupRoles     map[string]*discordtypes.Role
 }
 
 type userRoleMapping struct {
@@ -75,8 +75,8 @@ func NewUserInfo(base *BaseModule, events *broker.Broker[any]) (Module, error) {
 
 		mu: sync.Mutex{},
 
-		jobGradeRoles: map[int32]*types.Role{},
-		groupRoles:    map[string]*types.Role{},
+		jobGradeRoles: map[int32]*discordtypes.Role{},
+		groupRoles:    map[string]*discordtypes.Role{},
 	}
 
 	eventsCh := events.Subscribe()
@@ -98,7 +98,7 @@ func (g *UserInfo) GetName() string {
 	return "userinfo"
 }
 
-func (g *UserInfo) Plan(ctx context.Context) (*types.State, []discord.Embed, error) {
+func (g *UserInfo) Plan(ctx context.Context) (*discordtypes.State, []discord.Embed, error) {
 	g.mu.Lock()
 	defer g.mu.Unlock()
 
@@ -108,36 +108,39 @@ func (g *UserInfo) Plan(ctx context.Context) (*types.State, []discord.Embed, err
 		return nil, nil, nil
 	}
 
-	roles, err := g.planRoles(job)
-	if err != nil {
-		return nil, nil, err
-	}
+	roles := g.planRoles(job)
 
 	settings := g.settings.Load()
-	handlers := []types.UserProcessorHandler{}
-	if settings.UserInfoSyncSettings.UnemployedEnabled {
-		handlers = append(handlers, func(ctx context.Context, guildId discord.GuildID, member discord.Member, user *types.User) ([]discord.Embed, error) {
-			if user.Job == g.job {
+	handlers := []discordtypes.UserProcessorHandler{}
+	if settings.GetUserInfoSyncSettings().GetUnemployedEnabled() {
+		handlers = append(
+			handlers,
+			func(ctx context.Context, guildId discord.GuildID, member discord.Member, user *discordtypes.User) ([]discord.Embed, error) {
+				if user.Job == g.job {
+					return nil, nil
+				}
+
+				if g.checkIfJobIgnored(user.Job) {
+					user.Job = g.job
+					return nil, nil
+				}
+
+				switch settings.GetUserInfoSyncSettings().GetUnemployedMode() {
+				case jobs.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE:
+					user.Roles.Sum = append(user.Roles.Sum, g.unemployedRole)
+
+				case jobs.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_KICK:
+					kick := true
+					user.Kick = &kick
+					user.KickReason = fmt.Sprintf(
+						"no longer an employee of %s job (unemployed mode: kick)",
+						g.job,
+					)
+				}
+
 				return nil, nil
-			}
-
-			if g.checkIfJobIgnored(user.Job) {
-				user.Job = g.job
-				return nil, nil
-			}
-
-			switch settings.UserInfoSyncSettings.UnemployedMode {
-			case jobs.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE:
-				user.Roles.Sum = append(user.Roles.Sum, g.unemployedRole)
-
-			case jobs.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_KICK:
-				kick := true
-				user.Kick = &kick
-				user.KickReason = fmt.Sprintf("no longer an employee of %s job (unemployed mode: kick)", g.job)
-			}
-
-			return nil, nil
-		})
+			},
+		)
 	}
 
 	users, logs, err := g.planUsers(ctx)
@@ -145,7 +148,7 @@ func (g *UserInfo) Plan(ctx context.Context) (*types.State, []discord.Embed, err
 		return nil, logs, err
 	}
 
-	return &types.State{
+	return &discordtypes.State{
 		Roles: roles,
 		Users: users,
 
@@ -153,13 +156,21 @@ func (g *UserInfo) Plan(ctx context.Context) (*types.State, []discord.Embed, err
 	}, logs, err
 }
 
-func (g *UserInfo) planRoles(job *jobs.Job) (types.Roles, error) {
-	roles := types.Roles{}
+func (g *UserInfo) planRoles(job *jobs.Job) discordtypes.Roles {
+	roles := discordtypes.Roles{}
 	settings := g.settings.Load()
 
-	if settings.UserInfoSyncSettings.EmployeeRoleEnabled {
-		g.employeeRole = &types.Role{
-			Name:   strings.ReplaceAll(strings.ReplaceAll(settings.UserInfoSyncSettings.EmployeeRoleFormat, "%job%", job.Label), "%s", job.Label),
+	if settings.GetUserInfoSyncSettings().GetEmployeeRoleEnabled() {
+		g.employeeRole = &discordtypes.Role{
+			Name: strings.ReplaceAll(
+				strings.ReplaceAll(
+					settings.GetUserInfoSyncSettings().GetEmployeeRoleFormat(),
+					"%job%",
+					job.GetLabel(),
+				),
+				"%s",
+				job.GetLabel(),
+			),
 			Module: userInfoRoleModuleEmployee,
 			Job:    g.job,
 		}
@@ -168,9 +179,9 @@ func (g *UserInfo) planRoles(job *jobs.Job) (types.Roles, error) {
 		g.employeeRole = nil
 	}
 
-	if settings.UserInfoSyncSettings.UnemployedEnabled {
-		g.unemployedRole = &types.Role{
-			Name:   settings.UserInfoSyncSettings.UnemployedRoleName,
+	if settings.GetUserInfoSyncSettings().GetUnemployedEnabled() {
+		g.unemployedRole = &discordtypes.Role{
+			Name:   settings.GetUserInfoSyncSettings().GetUnemployedRoleName(),
 			Module: userInfoRoleModuleUnemployed,
 			Job:    g.job,
 
@@ -181,9 +192,9 @@ func (g *UserInfo) planRoles(job *jobs.Job) (types.Roles, error) {
 		g.unemployedRole = nil
 	}
 
-	if settings.JobsAbsence {
-		g.absenceRole = &types.Role{
-			Name:   settings.JobsAbsenceSettings.AbsenceRole,
+	if settings.GetJobsAbsence() {
+		g.absenceRole = &discordtypes.Role{
+			Name:   settings.GetJobsAbsenceSettings().GetAbsenceRole(),
 			Module: userInfoRoleModuleAbsence,
 			Job:    g.job,
 		}
@@ -192,42 +203,49 @@ func (g *UserInfo) planRoles(job *jobs.Job) (types.Roles, error) {
 		g.absenceRole = nil
 	}
 
-	g.jobGradeRoles = make(map[int32]*types.Role, len(job.Grades))
-	for _, grade := range slices.Backward(job.Grades) {
-		name := strings.ReplaceAll(settings.UserInfoSyncSettings.GradeRoleFormat, "%grade_label%", grade.Label)
-		name = strings.ReplaceAll(name, "%grade%", fmt.Sprintf("%02d", grade.Grade))
-		name = strings.ReplaceAll(name, "%grade_single%", fmt.Sprintf("%d", grade.Grade))
+	g.jobGradeRoles = make(map[int32]*discordtypes.Role, len(job.GetGrades()))
+	for _, grade := range slices.Backward(job.GetGrades()) {
+		name := strings.ReplaceAll(
+			settings.GetUserInfoSyncSettings().GetGradeRoleFormat(),
+			"%grade_label%",
+			grade.GetLabel(),
+		)
+		name = strings.ReplaceAll(name, "%grade%", fmt.Sprintf("%02d", grade.GetGrade()))
+		name = strings.ReplaceAll(name, "%grade_single%", strconv.Itoa(int(grade.GetGrade())))
 
-		role := &types.Role{
+		role := &discordtypes.Role{
 			Name:   name,
-			Module: fmt.Sprintf(userInfoRoleModuleJobGradePrefix+"%d", grade.Grade),
+			Module: fmt.Sprintf(userInfoRoleModuleJobGradePrefix+"%d", grade.GetGrade()),
 			Job:    g.job,
 		}
-		g.jobGradeRoles[grade.Grade] = role
+		g.jobGradeRoles[grade.GetGrade()] = role
 		roles = append(roles, role)
 	}
 
-	g.groupRoles = make(map[string]*types.Role, len(settings.UserInfoSyncSettings.GroupMapping))
-	for i, mapping := range settings.UserInfoSyncSettings.GroupMapping {
-		role := &types.Role{
-			Name:   mapping.Name,
+	g.groupRoles = make(
+		map[string]*discordtypes.Role,
+		len(settings.GetUserInfoSyncSettings().GetGroupMapping()),
+	)
+	for i, mapping := range settings.GetUserInfoSyncSettings().GetGroupMapping() {
+		role := &discordtypes.Role{
+			Name:   mapping.GetName(),
 			Module: fmt.Sprintf(userInfoRoleModuleGroupMappingPrefix+"%d", i),
 			Job:    g.job,
 		}
-		g.groupRoles[mapping.Name] = role
+		g.groupRoles[mapping.GetName()] = role
 		roles = append(roles, role)
 	}
 
-	return roles, nil
+	return roles
 }
 
-func (g *UserInfo) planUsers(ctx context.Context) (types.Users, []discord.Embed, error) {
-	users := types.Users{}
+func (g *UserInfo) planUsers(ctx context.Context) (discordtypes.Users, []discord.Embed, error) {
+	users := discordtypes.Users{}
 	logs := []discord.Embed{}
 	settings := g.settings.Load()
 
 	jobs := []jet.Expression{jet.String(g.job)}
-	for _, job := range g.BaseModule.appCfg.Get().Discord.IgnoredJobs {
+	for _, job := range g.appCfg.Get().Discord.GetIgnoredJobs() {
 		jobs = append(jobs, jet.String(job))
 	}
 
@@ -278,13 +296,16 @@ func (g *UserInfo) planUsers(ctx context.Context) (types.Users, []discord.Embed,
 	for _, u := range dest {
 		externalId, err := strconv.ParseUint(u.ExternalID, 10, 64)
 		if err != nil {
-			errs = multierr.Append(errs, fmt.Errorf("failed to parse user oauth2 external id %d. %w", externalId, err))
+			errs = multierr.Append(
+				errs,
+				fmt.Errorf("failed to parse user oauth2 external id %d. %w", externalId, err),
+			)
 			continue
 		}
 
-		user := &types.User{
+		user := &discordtypes.User{
 			ID:    discord.UserID(externalId),
-			Roles: &types.UserRoles{},
+			Roles: &discordtypes.UserRoles{},
 			Job:   u.Job,
 		}
 
@@ -295,24 +316,32 @@ func (g *UserInfo) planUsers(ctx context.Context) (types.Users, []discord.Embed,
 
 		member, err := g.discord.Member(g.guild.ID, discord.UserID(externalId))
 		if err != nil {
-			if restErr, ok := err.(*httputil.HTTPError); ok {
-				if restErr.Status == http.StatusNotFound {
-					// Add log about employee not being on discord
-					logs = append(logs, discord.Embed{
-						Title:       fmt.Sprintf("UserInfo: Employee not found on Discord: %s %s", u.Firstname, u.Lastname),
-						Description: fmt.Sprintf("Discord ID: %d, Rank: %d", externalId, u.JobGrade),
-						Author:      embeds.EmbedAuthor,
-						Color:       embeds.ColorWarn,
-					})
-					continue
-				}
+			var restErr *httputil.HTTPError
+			if errors.As(err, &restErr) &&
+				restErr.Status == http.StatusNotFound {
+				// Add log about employee not being on discord
+				logs = append(logs, discord.Embed{
+					Title: fmt.Sprintf(
+						"UserInfo: Employee not found on Discord: %s %s",
+						u.Firstname,
+						u.Lastname,
+					),
+					Description: fmt.Sprintf(
+						"Discord ID: %d, Rank: %d",
+						externalId,
+						u.JobGrade,
+					),
+					Author: embeds.EmbedAuthor,
+					Color:  embeds.ColorWarn,
+				})
+				continue
 			}
 
 			errs = multierr.Append(errs, fmt.Errorf("discord API returned an error. %w", err))
 			continue
 		}
 
-		if settings.UserInfoSyncSettings.SyncNicknames {
+		if settings.GetUserInfoSyncSettings().GetSyncNicknames() {
 			if name := g.getUserNickname(member, strings.TrimSpace(u.Firstname), strings.TrimSpace(u.Lastname), u.NamePrefix, u.NameSuffix); name != nil {
 				user.Nickname = name
 			}
@@ -320,29 +349,36 @@ func (g *UserInfo) planUsers(ctx context.Context) (types.Users, []discord.Embed,
 
 		user.Roles.Sum, err = g.getUserRoles(u.Job, u.JobGrade)
 		if err != nil {
-			g.logger.Warn(fmt.Sprintf("failed to get user's job roles %d", externalId), zap.Int32("user_id", u.UserID), zap.Error(err))
+			g.logger.Warn(
+				fmt.Sprintf("failed to get user's job roles %d", externalId),
+				zap.Int32("user_id", u.UserID),
+				zap.Error(err),
+			)
 			continue
 		}
 
-		for _, mapping := range settings.UserInfoSyncSettings.GroupMapping {
-			if u.JobGrade < mapping.FromGrade || u.JobGrade > mapping.ToGrade {
+		for _, mapping := range settings.GetUserInfoSyncSettings().GetGroupMapping() {
+			if u.JobGrade < mapping.GetFromGrade() || u.JobGrade > mapping.GetToGrade() {
 				continue
 			}
 
-			role, ok := g.groupRoles[mapping.Name]
+			role, ok := g.groupRoles[mapping.GetName()]
 			if !ok {
-				return nil, logs, fmt.Errorf("failed to find role for group mapping %s", mapping.Name)
+				return nil, logs, fmt.Errorf(
+					"failed to find role for group mapping %s",
+					mapping.GetName(),
+				)
 			}
 
 			user.Roles.Sum = append(user.Roles.Sum, role)
 		}
 
-		if settings.UserInfoSyncSettings.EmployeeRoleEnabled &&
+		if settings.GetUserInfoSyncSettings().GetEmployeeRoleEnabled() &&
 			g.employeeRole != nil {
 			user.Roles.Sum = append(user.Roles.Sum, g.employeeRole)
 		}
 
-		if settings.JobsAbsence && g.absenceRole != nil &&
+		if settings.GetJobsAbsence() && g.absenceRole != nil &&
 			g.isUserAbsent(u.AbsenceBegin, u.AbsenceEnd) {
 			user.Roles.Sum = append(user.Roles.Sum, g.absenceRole)
 		}
@@ -353,7 +389,13 @@ func (g *UserInfo) planUsers(ctx context.Context) (types.Users, []discord.Embed,
 	return users, logs, errs
 }
 
-func (g *UserInfo) getUserNickname(member *discord.Member, firstname string, lastname string, prefix string, suffix string) *string {
+func (g *UserInfo) getUserNickname(
+	member *discord.Member,
+	firstname string,
+	lastname string,
+	prefix string,
+	suffix string,
+) *string {
 	if g.guild.OwnerID == member.User.ID {
 		return nil // Can't change owner's nickname
 	}
@@ -368,9 +410,15 @@ func (g *UserInfo) getUserNickname(member *discord.Member, firstname string, las
 	return &targetNickname
 }
 
-// constructUserNickname constructs a user's nickname based on the provided input and ensures that it isn't longer than what Discord allows (32 chars)
-// prefix and suffix are optional and will be trimmed of spaces, max length is 12/24
-func (g *UserInfo) constructUserNickname(firstname string, lastname string, prefix string, suffix string) string {
+// constructUserNickname constructs a user's nickname based on the provided input and
+// ensures that it isn't longer than what Discord allows (32 chars) prefix and suffix
+// are optional and will be trimmed of spaces, max length is 12/24.
+func (g *UserInfo) constructUserNickname(
+	firstname string,
+	lastname string,
+	prefix string,
+	suffix string,
+) string {
 	maxLength := DiscordNicknameMaxLength
 
 	firstname = strings.TrimSpace(firstname)
@@ -426,8 +474,8 @@ func (g *UserInfo) constructUserNickname(firstname string, lastname string, pref
 	return strings.TrimSpace(result)
 }
 
-func (g *UserInfo) getUserRoles(job string, grade int32) (types.Roles, error) {
-	userRoles := types.Roles{}
+func (g *UserInfo) getUserRoles(job string, grade int32) (discordtypes.Roles, error) {
+	userRoles := discordtypes.Roles{}
 
 	if g.checkIfJobIgnored(job) {
 		return userRoles, nil
@@ -444,14 +492,16 @@ func (g *UserInfo) getUserRoles(job string, grade int32) (types.Roles, error) {
 
 func (g *UserInfo) isUserAbsent(beginDate *timestamp.Timestamp, endDate *timestamp.Timestamp) bool {
 	// Either the user has no dates set or the absence is over (due to dates we have to think end date + 24 hours)
-	return !((beginDate == nil || endDate == nil) || (time.Since(beginDate.AsTime()) < 0*time.Hour || time.Since(endDate.AsTime()) > 24*time.Hour))
+	return (beginDate != nil && endDate != nil) &&
+		(time.Since(beginDate.AsTime()) >= 0*time.Hour &&
+			time.Since(endDate.AsTime()) <= 24*time.Hour)
 }
 
 func (g *UserInfo) watchEvents(e any) {
 	switch ev := e.(type) {
 	case *gateway.GuildMemberAddEvent:
 		settings := g.settings.Load()
-		if settings == nil || !settings.UserInfoSyncSettings.UnemployedEnabled {
+		if settings == nil || !settings.GetUserInfoSyncSettings().GetUnemployedEnabled() {
 			return
 		}
 

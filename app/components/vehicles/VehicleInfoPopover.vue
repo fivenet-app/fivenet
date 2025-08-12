@@ -41,19 +41,21 @@ const { can } = useAuth();
                     <p v-else class="font-semibold">{{ $t('common.no_actions_available') }}</p>
                 </div>
 
-                <ul v-if="vehicle.props" role="list" class="mt-1">
+                <ul role="list" class="mt-1">
                     <li v-if="vehicle.props?.updatedAt">
                         <span class="font-semibold">{{ $t('common.last_updated') }}:</span>
                         <GenericTime class="ml-1" :value="vehicle.props?.updatedAt" />
                     </li>
 
-                    <li v-if="vehicle.props?.wanted">
-                        <span class="font-semibold">{{ $t('common.reason') }}:</span>
+                    <li v-if="vehicle.props?.wanted" class="inline-flex items-center gap-2">
+                        <UBadge color="error">
+                            {{ $t('common.wanted').toUpperCase() }}
+                        </UBadge>
+
+                        <span class="line-clamp-3 font-semibold">{{ $t('common.reason') }}:</span>
                         {{ vehicle.props?.wantedReason ?? $t('common.na') }}
                     </li>
                 </ul>
-
-                <p v-else>{{ $t('common.not_found', [$t('common.propertie', 2)]) }}</p>
             </div>
         </template>
     </UPopover>

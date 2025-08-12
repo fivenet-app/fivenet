@@ -8,16 +8,17 @@ const (
 )
 
 func (x *JobSettings) Default() {
-	if x.AbsencePastDays <= 0 {
+	if x.GetAbsencePastDays() <= 0 {
 		x.AbsencePastDays = DefaultJobAbsencePastDays
 	}
-	if x.AbsenceFutureDays <= 0 {
+	if x.GetAbsenceFutureDays() <= 0 {
 		x.AbsenceFutureDays = DefaultJobAbsenceFutureDays
 	}
 }
 
 func (x *DiscordSyncSettings) IsStatusLogEnabled() bool {
-	return x.StatusLog && x.StatusLogSettings != nil && x.StatusLogSettings.ChannelId != ""
+	return x.GetStatusLog() && x.GetStatusLogSettings() != nil &&
+		x.GetStatusLogSettings().GetChannelId() != ""
 }
 
 func (x *DiscordSyncChanges) Add(change *DiscordSyncChange) {
@@ -25,17 +26,17 @@ func (x *DiscordSyncChanges) Add(change *DiscordSyncChange) {
 		x.Changes = []*DiscordSyncChange{}
 	}
 
-	if len(x.Changes) > 0 {
-		lastChange := x.Changes[len(x.Changes)-1]
+	if len(x.GetChanges()) > 0 {
+		lastChange := x.GetChanges()[len(x.GetChanges())-1]
 
-		if lastChange.Plan == change.Plan {
+		if lastChange.GetPlan() == change.GetPlan() {
 			return
 		}
 	}
 
 	x.Changes = append(x.Changes, change)
 
-	if len(x.Changes) > 12 {
-		x.Changes = slices.Delete(x.Changes, 0, 1)
+	if len(x.GetChanges()) > 12 {
+		x.Changes = slices.Delete(x.GetChanges(), 0, 1)
 	}
 }

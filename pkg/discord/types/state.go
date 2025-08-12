@@ -1,4 +1,4 @@
-package types
+package discordtypes
 
 import (
 	"github.com/diamondburned/arikawa/v3/discord"

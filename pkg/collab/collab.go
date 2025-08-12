@@ -30,9 +30,9 @@ var metricTotalCollabRooms = promauto.NewGaugeVec(prometheus.GaugeOpts{
 
 const (
 	kvBucket = "collab_state"
-	// key expires if not touched
+	// key expiration TTL if not touched.
 	keyTTL = 3 * time.Second
-	// heartbeat period (< keyTTL)
+	// heartbeat period (< keyTTL).
 	hbEvery = time.Duration(1.5 * float64(time.Second))
 )
 
@@ -59,7 +59,12 @@ type CollabServer struct {
 
 // New creates and returns a new CollabServer for the given category, logger, and JetStream wrapper.
 // Panics if the category is empty.
-func New(ctx context.Context, logger *zap.Logger, js *events.JSWrapper, category string) *CollabServer {
+func New(
+	ctx context.Context,
+	logger *zap.Logger,
+	js *events.JSWrapper,
+	category string,
+) *CollabServer {
 	if category == "" {
 		panic("collab category must not be empty")
 	}
@@ -106,7 +111,8 @@ func (s *CollabServer) Start(ctx context.Context) error {
 		return fmt.Errorf("failed to create/update stream. %w", err)
 	}
 
-	if err := s.js.DeleteKeyValue(ctx, "COLLAB_STATE"); err != nil && !errors.Is(err, jetstream.ErrBucketNotFound) {
+	if err := s.js.DeleteKeyValue(ctx, "COLLAB_STATE"); err != nil &&
+		!errors.Is(err, jetstream.ErrBucketNotFound) {
 		return fmt.Errorf("failed to delete old collab state key-value store. %w", err)
 	}
 
@@ -115,7 +121,11 @@ func (s *CollabServer) Start(ctx context.Context) error {
 
 // HandleFirstMsg waits for the first message from a client to determine the target ID.
 // Returns the target ID or an error if the message is invalid.
-func (s *CollabServer) HandleFirstMsg(ctx context.Context, clientId uint64, stream grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket]) (uint64, error) {
+func (s *CollabServer) HandleFirstMsg(
+	ctx context.Context,
+	clientId uint64,
+	stream grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket],
+) (uint64, error) {
 	// Wait for the first message to determine client/target id
 	firstMsg, err := stream.Recv()
 	if err != nil {
@@ -125,15 +135,19 @@ func (s *CollabServer) HandleFirstMsg(ctx context.Context, clientId uint64, stre
 	if hello == nil {
 		return 0, status.Error(codes.InvalidArgument, "first message must be CollabInit")
 	}
-	if hello.TargetId == 0 {
+	if hello.GetTargetId() == 0 {
 		return 0, status.Error(codes.InvalidArgument, "zero target id provided in first message")
 	}
 
-	return hello.TargetId, nil
+	return hello.GetTargetId(), nil
 }
 
 // sendHelloResponse sends a handshake response to the client with its client ID and whether it is the first in the room.
-func (s *CollabServer) sendHelloResponse(clientId uint64, first bool, stream grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket]) error {
+func (s *CollabServer) sendHelloResponse(
+	clientId uint64,
+	first bool,
+	stream grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket],
+) error {
 	if err := stream.Send(&collab.ServerPacket{
 		SenderId: clientId,
 		Msg: &collab.ServerPacket_Handshake{
@@ -174,7 +188,14 @@ func (s *CollabServer) getOrCreateRoom(targetId uint64) (*CollabRoom, bool, erro
 
 // HandleClient manages the lifecycle and message handling for a single collaborative client connection.
 // It joins the client to the room, handles sending and receiving, and cleans up when the client leaves.
-func (s *CollabServer) HandleClient(ctx context.Context, targetId uint64, userId int32, clientId uint64, role collab.ClientRole, stream grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket]) error {
+func (s *CollabServer) HandleClient(
+	ctx context.Context,
+	targetId uint64,
+	userId int32,
+	clientId uint64,
+	role collab.ClientRole,
+	stream grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket],
+) error {
 	room, created, err := s.getOrCreateRoom(targetId)
 	if err != nil {
 		return fmt.Errorf("get or create room. %w", err)
@@ -188,7 +209,7 @@ func (s *CollabServer) HandleClient(ctx context.Context, targetId uint64, userId
 	room.Join(ctx, client)
 	defer func() {
 		// If the room is empty after the client leaves, remove it
-		if room.Leave(clientId) {
+		if room.Leave(s.ctx, clientId) {
 			// Room now has zero clients
 			s.mu.Lock()
 			delete(s.rooms, targetId)
@@ -203,31 +224,31 @@ func (s *CollabServer) HandleClient(ctx context.Context, targetId uint64, userId
 	// Handle receiving
 	for {
 		msg, err := stream.Recv()
-		if err == io.EOF || errors.Is(err, context.Canceled) {
+		if errors.Is(err, io.EOF) || errors.Is(err, context.Canceled) {
 			return nil
 		}
 		if err != nil {
 			return err
 		}
 
-		switch m := msg.Msg.(type) {
+		switch m := msg.GetMsg().(type) {
 		case *collab.ClientPacket_SyncStep:
-			switch m.SyncStep.Step {
+			switch m.SyncStep.GetStep() {
 			case 1:
 				if m.SyncStep.ReceiverId != nil {
 					return status.Error(codes.InvalidArgument, "sync step 1 must not have a receiver ID")
 				}
-				room.BroadcastSyncStep1(clientId, m.SyncStep.Data)
+				room.BroadcastSyncStep1(clientId, m.SyncStep.GetData())
 
 			case 2:
 				if m.SyncStep.ReceiverId == nil {
 					return status.Error(codes.InvalidArgument, "sync step 2 must have a receiver ID")
 				}
 
-				room.ForwardSyncStep2ToClient(clientId, *m.SyncStep.ReceiverId, m.SyncStep.Data)
+				room.ForwardSyncStep2ToClient(clientId, m.SyncStep.GetReceiverId(), m.SyncStep.GetData())
 
 			default:
-				return status.Error(codes.InvalidArgument, fmt.Sprintf("invalid sync step: %d", m.SyncStep.Step))
+				return status.Error(codes.InvalidArgument, fmt.Sprintf("invalid sync step: %d", m.SyncStep.GetStep()))
 			}
 
 		case *collab.ClientPacket_YjsUpdate:
@@ -236,10 +257,10 @@ func (s *CollabServer) HandleClient(ctx context.Context, targetId uint64, userId
 				continue
 			}
 
-			room.BroadcastYjs(clientId, m.YjsUpdate.Data)
+			room.BroadcastYjs(clientId, m.YjsUpdate.GetData())
 
 		case *collab.ClientPacket_Awareness:
-			room.BroadcastAwareness(clientId, m.Awareness.Data)
+			room.BroadcastAwareness(clientId, m.Awareness.GetData())
 
 		default:
 			// ignore unknown packet types

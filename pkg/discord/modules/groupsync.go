@@ -13,7 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/embeds"
-	"github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
+	discordtypes "github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/broker"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -48,7 +48,7 @@ func (g *GroupSync) GetName() string {
 	return "groupsync"
 }
 
-func (g *GroupSync) Plan(ctx context.Context) (*types.State, []discord.Embed, error) {
+func (g *GroupSync) Plan(ctx context.Context) (*discordtypes.State, []discord.Embed, error) {
 	roles := g.planRoles()
 
 	users, logs, err := g.planUsers(ctx, roles)
@@ -56,13 +56,13 @@ func (g *GroupSync) Plan(ctx context.Context) (*types.State, []discord.Embed, er
 		return nil, logs, err
 	}
 
-	return &types.State{
+	return &discordtypes.State{
 		Roles: roles,
 		Users: users,
 	}, logs, nil
 }
 
-func (g *GroupSync) planRoles() []*types.Role {
+func (g *GroupSync) planRoles() []*discordtypes.Role {
 	dcRoles := map[string]config.DiscordGroupRole{}
 	for _, dcRole := range g.cfg.GroupSync.Mapping {
 		if _, ok := dcRoles[dcRole.RoleName]; !ok {
@@ -70,7 +70,7 @@ func (g *GroupSync) planRoles() []*types.Role {
 		}
 	}
 
-	roles := types.Roles{}
+	roles := discordtypes.Roles{}
 	for _, dcRole := range dcRoles {
 		color := defaultGroupSyncRoleColor
 		if dcRole.Color != "" {
@@ -83,7 +83,7 @@ func (g *GroupSync) planRoles() []*types.Role {
 		colorDec := int32(n.Int64())
 		dcColor := discord.Color(colorDec)
 
-		r := &types.Role{
+		r := &discordtypes.Role{
 			Name:  dcRole.RoleName,
 			Color: &dcColor,
 
@@ -100,8 +100,11 @@ func (g *GroupSync) planRoles() []*types.Role {
 	return roles
 }
 
-func (g *GroupSync) planUsers(ctx context.Context, roles types.Roles) (types.Users, []discord.Embed, error) {
-	users := types.Users{}
+func (g *GroupSync) planUsers(
+	ctx context.Context,
+	roles discordtypes.Roles,
+) (discordtypes.Users, []discord.Embed, error) {
+	users := discordtypes.Users{}
 	logs := []discord.Embed{}
 
 	serverGroups := []jet.Expression{}
@@ -149,22 +152,38 @@ func (g *GroupSync) planUsers(ctx context.Context, roles types.Roles) (types.Use
 		if groupCfg.NotSameJob {
 			has, err := g.checkIfUserIsPartOfJob(ctx, user.License, g.job)
 			if err != nil {
-				g.logger.Error(fmt.Sprintf("failed to check if user has char in job %s", user.ExternalID), zap.String("group", user.Group), zap.Error(err))
+				//nolint:perfsprint // Performance is not critical here, we just create and log the error message
+				g.logger.Error(
+					fmt.Sprintf("failed to check if user has char in job %s", user.ExternalID),
+					zap.String("group", user.Group),
+					zap.Error(err),
+				)
 				continue
 			}
 			if has {
-				g.logger.Debug(fmt.Sprintf("member %s is part of same job, not setting to group", user.ExternalID), zap.String("group", user.Group))
+				g.logger.Debug(
+					fmt.Sprintf(
+						"member %s is part of same job, not setting to group",
+						user.ExternalID,
+					),
+					zap.String("group", user.Group),
+				)
 				user.SameJob = true
 				continue
 			}
 		}
 
-		idx := slices.IndexFunc(roles, func(role *types.Role) bool {
+		idx := slices.IndexFunc(roles, func(role *discordtypes.Role) bool {
 			return role.Name == groupCfg.RoleName
 		})
 		if idx == -1 {
 			logs = append(logs, discord.Embed{
-				Title:       fmt.Sprintf("Group Sync: Failed to find dc role for group %s", groupCfg.RoleName),
+				//nolint:perfsprint // Performance is not critical here, we just create and log the error message
+				Title: fmt.Sprintf(
+					"Group Sync: Failed to find dc role for group %s",
+					groupCfg.RoleName,
+				),
+				//nolint:perfsprint // Performance is not critical here, we just create and log the error message
 				Description: fmt.Sprintf("For DC ID %s", user.ExternalID),
 				Author:      embeds.EmbedAuthor,
 				Color:       embeds.ColorInfo,
@@ -174,14 +193,17 @@ func (g *GroupSync) planUsers(ctx context.Context, roles types.Roles) (types.Use
 
 		externalId, err := strconv.ParseUint(user.ExternalID, 10, 64)
 		if err != nil {
-			errs = multierr.Append(errs, fmt.Errorf("failed to parse oauth2 external id %d. %w", externalId, err))
+			errs = multierr.Append(
+				errs,
+				fmt.Errorf("failed to parse oauth2 external id %d. %w", externalId, err),
+			)
 			continue
 		}
 
-		users.Add(&types.User{
+		users.Add(&discordtypes.User{
 			ID: discord.UserID(externalId),
-			Roles: &types.UserRoles{
-				Sum: []*types.Role{roles[idx]},
+			Roles: &discordtypes.UserRoles{
+				Sum: []*discordtypes.Role{roles[idx]},
 			},
 		})
 	}
@@ -189,7 +211,11 @@ func (g *GroupSync) planUsers(ctx context.Context, roles types.Roles) (types.Use
 	return users, logs, errs
 }
 
-func (g *GroupSync) checkIfUserIsPartOfJob(ctx context.Context, identifier string, job string) (bool, error) {
+func (g *GroupSync) checkIfUserIsPartOfJob(
+	ctx context.Context,
+	identifier string,
+	job string,
+) (bool, error) {
 	tUsers := tables.User()
 
 	stmt := tUsers.

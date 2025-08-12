@@ -30,7 +30,10 @@ import (
 )
 
 const (
-	ColleaguesDefaultPageSize = 20
+	defaultPageSize = 20
+
+	nameColumn = "name"
+	rankColumn = "rank"
 )
 
 var (
@@ -40,40 +43,48 @@ var (
 	tAvatar = table.FivenetFiles.AS("avatar")
 )
 
-func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesRequest) (*pbjobs.ListColleaguesResponse, error) {
+func (s *Server) ListColleagues(
+	ctx context.Context,
+	req *pbjobs.ListColleaguesRequest,
+) (*pbjobs.ListColleaguesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Access Permission Check
-	types, err := s.ps.AttrStringList(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueTypesPermField)
+	types, err := s.ps.AttrStringList(
+		userInfo,
+		permsjobs.JobsServicePerm,
+		permsjobs.JobsServiceGetColleaguePerm,
+		permsjobs.JobsServiceGetColleagueTypesPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	tColleague := tables.User().AS("colleague")
 
-	condition := tColleague.Job.EQ(jet.String(userInfo.Job)).
+	condition := tColleague.Job.EQ(jet.String(userInfo.GetJob())).
 		AND(s.customDB.Conditions.User.GetFilter(tColleague.Alias()))
 
 	userIds := []jet.Expression{}
-	for _, v := range req.UserIds {
+	for _, v := range req.GetUserIds() {
 		userIds = append(userIds, jet.Int32(v))
 	}
-	if len(req.UserIds) > 0 && req.UserOnly != nil && *req.UserOnly {
+	if len(userIds) > 0 && req.UserOnly != nil && req.GetUserOnly() {
 		condition = condition.AND(tColleague.ID.IN(userIds...))
 	} else {
-		req.Search = strings.TrimSpace(req.Search)
-		req.Search = strings.ReplaceAll(req.Search, "%", "")
-		req.Search = strings.ReplaceAll(req.Search, " ", "%")
-		if req.Search != "" {
-			req.Search = "%" + req.Search + "%"
+		search := strings.TrimSpace(req.GetSearch())
+		search = strings.ReplaceAll(search, "%", "")
+		search = strings.ReplaceAll(search, " ", "%")
+		if search != "" {
+			search = "%" + search + "%"
 			condition = condition.AND(
 				jet.CONCAT(tColleague.Firstname, jet.String(" "), tColleague.Lastname).
-					LIKE(jet.String(req.Search)),
+					LIKE(jet.String(search)),
 			)
 		}
 	}
 
-	if req.Absent != nil && *req.Absent {
+	if req.Absent != nil && req.GetAbsent() {
 		condition = condition.AND(
 			jet.AND(
 				tColleagueProps.AbsenceBegin.IS_NOT_NULL(),
@@ -83,9 +94,9 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 			))
 	}
 
-	if len(req.LabelIds) > 0 && (types.Contains("Labels") || userInfo.Superuser) {
+	if len(req.GetLabelIds()) > 0 && (types.Contains("Labels") || userInfo.GetSuperuser()) {
 		labelIds := []jet.Expression{}
-		for _, labelId := range req.LabelIds {
+		for _, labelId := range req.GetLabelIds() {
 			labelIds = append(labelIds, jet.Uint64(labelId))
 		}
 
@@ -94,30 +105,30 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 		)
 	}
 
-	if req.NamePrefix != nil && *req.NamePrefix != "" {
-		*req.NamePrefix = strings.TrimSpace(*req.NamePrefix)
-		*req.NamePrefix = strings.ReplaceAll(*req.NamePrefix, "%", "")
-		*req.NamePrefix = strings.ReplaceAll(*req.NamePrefix, " ", "%")
-		if *req.NamePrefix != "" {
-			*req.NamePrefix = "%" + *req.NamePrefix + "%"
+	if req.GetNamePrefix() != "" {
+		namePrefix := strings.TrimSpace(req.GetNamePrefix())
+		namePrefix = strings.ReplaceAll(namePrefix, "%", "")
+		namePrefix = strings.ReplaceAll(namePrefix, " ", "%")
+		if namePrefix != "" {
+			namePrefix = "%" + namePrefix + "%"
 
 			condition = condition.AND(jet.AND(
 				tColleagueProps.NamePrefix.IS_NOT_NULL(),
-				tColleagueProps.NamePrefix.LIKE(jet.String(*req.NamePrefix)),
+				tColleagueProps.NamePrefix.LIKE(jet.String(namePrefix)),
 			))
 		}
 	}
 
-	if req.NameSuffix != nil {
-		*req.NameSuffix = strings.TrimSpace(*req.NameSuffix)
-		*req.NameSuffix = strings.ReplaceAll(*req.NameSuffix, "%", "")
-		*req.NameSuffix = strings.ReplaceAll(*req.NameSuffix, " ", "%")
-		if *req.NameSuffix != "" {
-			*req.NameSuffix = "%" + *req.NameSuffix + "%"
+	if req.GetNameSuffix() != "" {
+		nameSuffix := strings.TrimSpace(req.GetNameSuffix())
+		nameSuffix = strings.ReplaceAll(nameSuffix, "%", "")
+		nameSuffix = strings.ReplaceAll(nameSuffix, " ", "%")
+		if nameSuffix != "" {
+			nameSuffix = "%" + nameSuffix + "%"
 
 			condition = condition.AND(jet.AND(
 				tColleagueProps.NameSuffix.IS_NOT_NULL(),
-				tColleagueProps.NameSuffix.LIKE(jet.String(*req.NameSuffix)),
+				tColleagueProps.NameSuffix.LIKE(jet.String(nameSuffix)),
 			))
 		}
 	}
@@ -129,17 +140,17 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 		).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext"))
 
-	if len(req.LabelIds) > 0 && (types.Contains("Labels") || userInfo.Superuser) {
+	if len(req.GetLabelIds()) > 0 && (types.Contains("Labels") || userInfo.GetSuperuser()) {
 		countStmt = countStmt.
 			FROM(
 				tColleague.
 					LEFT_JOIN(tColleagueProps,
 						tColleagueProps.UserID.EQ(tColleague.ID).
-							AND(tColleagueProps.Job.EQ(jet.String(userInfo.Job))),
+							AND(tColleagueProps.Job.EQ(jet.String(userInfo.GetJob()))),
 					).
 					INNER_JOIN(tColleagueLabels,
 						tColleagueLabels.UserID.EQ(tColleague.ID).
-							AND(tColleagueLabels.Job.EQ(jet.String(userInfo.Job))),
+							AND(tColleagueLabels.Job.EQ(jet.String(userInfo.GetJob()))),
 					).
 					LEFT_JOIN(tJobLabels,
 						tJobLabels.ID.EQ(tColleagueLabels.LabelID),
@@ -151,7 +162,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 				tColleague.
 					LEFT_JOIN(tColleagueProps,
 						tColleagueProps.UserID.EQ(tColleague.ID).
-							AND(tColleagueProps.Job.EQ(jet.String(userInfo.Job))),
+							AND(tColleagueProps.Job.EQ(jet.String(userInfo.GetJob()))),
 					),
 			)
 	}
@@ -166,7 +177,8 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, ColleaguesDefaultPageSize)
+	pag, limit := req.GetPagination().
+		GetResponseWithPageSize(count.Total, defaultPageSize)
 	resp := &pbjobs.ListColleaguesResponse{
 		Pagination: pag,
 	}
@@ -176,24 +188,24 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 
 	// Convert proto sort to db sorting
 	orderBys := []jet.OrderByClause{}
-	if len(req.UserIds) > 0 {
+	if len(userIds) > 0 {
 		// Make sure to sort by the user ID if provided
 		orderBys = append(orderBys, tColleague.ID.IN(userIds...).DESC())
 	}
 
-	if req.Sort != nil {
+	if req.GetSort() != nil {
 		var columns []jet.Column
-		switch req.Sort.Column {
-		case "name":
+		switch req.GetSort().GetColumn() {
+		case nameColumn:
 			columns = append(columns, tColleague.Firstname, tColleague.Lastname)
-		case "rank":
+		case rankColumn:
 			fallthrough
 		default:
 			columns = append(columns, tColleague.JobGrade)
 		}
 
 		for _, column := range columns {
-			if req.Sort.Direction == database.AscSortDirection {
+			if req.GetSort().GetDirection() == database.AscSortDirection {
 				orderBys = append(orderBys, column.ASC())
 			} else {
 				orderBys = append(orderBys, column.DESC())
@@ -228,7 +240,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 		).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext"))
 
-	if len(req.LabelIds) > 0 && (types.Contains("Labels") || userInfo.Superuser) {
+	if len(req.GetLabelIds()) > 0 && (types.Contains("Labels") || userInfo.GetSuperuser()) {
 		stmt = stmt.
 			FROM(
 				tColleague.
@@ -237,11 +249,11 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 					).
 					LEFT_JOIN(tColleagueProps,
 						tColleagueProps.UserID.EQ(tColleague.ID).
-							AND(tColleagueProps.Job.EQ(jet.String(userInfo.Job))),
+							AND(tColleagueProps.Job.EQ(jet.String(userInfo.GetJob()))),
 					).
 					INNER_JOIN(tColleagueLabels,
 						tColleagueLabels.UserID.EQ(tColleague.ID).
-							AND(tColleagueLabels.Job.EQ(jet.String(userInfo.Job))),
+							AND(tColleagueLabels.Job.EQ(jet.String(userInfo.GetJob()))),
 					).
 					LEFT_JOIN(tJobLabels,
 						tJobLabels.ID.EQ(tColleagueLabels.LabelID),
@@ -259,7 +271,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 					).
 					LEFT_JOIN(tColleagueProps,
 						tColleagueProps.UserID.EQ(tColleague.ID).
-							AND(tColleagueProps.Job.EQ(jet.String(userInfo.Job))),
+							AND(tColleagueProps.Job.EQ(jet.String(userInfo.GetJob()))),
 					).
 					LEFT_JOIN(tAvatar,
 						tAvatar.ID.EQ(tUserProps.AvatarFileID),
@@ -269,7 +281,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 
 	stmt = stmt.
 		WHERE(condition).
-		OFFSET(req.Pagination.Offset).
+		OFFSET(req.GetPagination().GetOffset()).
 		GROUP_BY(tColleague.ID).
 		ORDER_BY(orderBys...).
 		LIMIT(limit)
@@ -280,10 +292,10 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 		}
 	}
 
-	if len(resp.Colleagues) > 0 && (types.Contains("Labels") || userInfo.Superuser) {
+	if len(resp.GetColleagues()) > 0 && (types.Contains("Labels") || userInfo.GetSuperuser()) {
 		userIds := []jet.Expression{}
-		for _, colleague := range resp.Colleagues {
-			userIds = append(userIds, jet.Int32(colleague.UserId))
+		for _, colleague := range resp.GetColleagues() {
+			userIds = append(userIds, jet.Int32(colleague.GetUserId()))
 		}
 
 		labelsStmt := tColleagueLabels.
@@ -301,7 +313,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 					),
 			).
 			WHERE(jet.AND(
-				tJobLabels.Job.EQ(jet.String(userInfo.Job)),
+				tJobLabels.Job.EQ(jet.String(userInfo.GetJob())),
 				tJobLabels.DeletedAt.IS_NULL(),
 				tColleagueLabels.UserID.IN(userIds...),
 			)).
@@ -310,7 +322,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 			)
 
 		labels := []*struct {
-			UserId int32 `sql:"primary_key" alias:"userId"`
+			UserId int32 `alias:"userId" sql:"primary_key"`
 			Labels *jobs.Labels
 		}{}
 		if err := labelsStmt.QueryContext(ctx, s.db, &labels); err != nil {
@@ -320,18 +332,18 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 		}
 
 		for _, props := range labels {
-			idx := slices.IndexFunc(resp.Colleagues, func(c *jobs.Colleague) bool {
-				return c.UserId == props.UserId
+			idx := slices.IndexFunc(resp.GetColleagues(), func(c *jobs.Colleague) bool {
+				return c.GetUserId() == props.UserId
 			})
 			if idx == -1 {
 				continue
 			}
 
-			colleague := resp.Colleagues[idx]
-			if colleague.Props == nil {
+			colleague := resp.GetColleagues()[idx]
+			if colleague.GetProps() == nil {
 				colleague.Props = &jobs.ColleagueProps{
-					UserId: colleague.UserId,
-					Job:    userInfo.Job,
+					UserId: colleague.GetUserId(),
+					Job:    userInfo.GetJob(),
 				}
 			}
 
@@ -339,16 +351,22 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 		}
 	}
 
-	resp.Pagination.Update(len(resp.Colleagues))
+	resp.GetPagination().Update(len(resp.GetColleagues()))
 
-	for i := range resp.Colleagues {
-		s.enricher.EnrichJobInfo(resp.Colleagues[i])
+	for i := range resp.GetColleagues() {
+		s.enricher.EnrichJobInfo(resp.GetColleagues()[i])
 	}
 
 	return resp, nil
 }
 
-func (s *Server) getColleague(ctx context.Context, userInfo *userinfo.UserInfo, job string, userId int32, withColumns []jet.Projection) (*jobs.Colleague, error) {
+func (s *Server) getColleague(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	job string,
+	userId int32,
+	withColumns []jet.Projection,
+) (*jobs.Colleague, error) {
 	tColleague := tables.User().AS("colleague")
 
 	columns := []jet.Projection{
@@ -400,14 +418,14 @@ func (s *Server) getColleague(ctx context.Context, userInfo *userinfo.UserInfo, 
 		}
 	}
 
-	if dest.UserId == 0 {
+	if dest.GetUserId() == 0 {
 		return nil, nil
 	}
 
-	if dest.Props == nil {
+	if dest.GetProps() == nil {
 		dest.Props = &jobs.ColleagueProps{
-			UserId: dest.UserId,
-			Job:    userInfo.Job,
+			UserId: dest.GetUserId(),
+			Job:    userInfo.GetJob(),
 		}
 	}
 
@@ -422,27 +440,35 @@ func (s *Server) getColleague(ctx context.Context, userInfo *userinfo.UserInfo, 
 	return dest, nil
 }
 
-func (s *Server) GetColleague(ctx context.Context, req *pbjobs.GetColleagueRequest) (*pbjobs.GetColleagueResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.colleagues.user_id", req.UserId})
+func (s *Server) GetColleague(
+	ctx context.Context,
+	req *pbjobs.GetColleagueRequest,
+) (*pbjobs.GetColleagueResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.colleagues.user_id", req.GetUserId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbjobs.JobsService_ServiceDesc.ServiceName,
 		Method:  "GetColleague",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
 	// Access Permission Check
-	colleagueAccess, err := s.ps.AttrStringList(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueAccessPermField)
+	colleagueAccess, err := s.ps.AttrStringList(
+		userInfo,
+		permsjobs.JobsServicePerm,
+		permsjobs.JobsServiceGetColleaguePerm,
+		permsjobs.JobsServiceGetColleagueAccessPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	targetUser, err := s.getColleague(ctx, userInfo, userInfo.Job, req.UserId, nil)
+	targetUser, err := s.getColleague(ctx, userInfo, userInfo.GetJob(), req.GetUserId(), nil)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -450,15 +476,20 @@ func (s *Server) GetColleague(ctx context.Context, req *pbjobs.GetColleagueReque
 		return nil, errorsjobs.ErrNotFoundOrNoPerms
 	}
 
-	infoOnly := req.InfoOnly != nil && *req.InfoOnly
+	infoOnly := req.GetInfoOnly()
 
-	check := access.CheckIfHasOwnJobAccess(colleagueAccess, userInfo, targetUser.Job, &users.UserShort{
-		UserId:   targetUser.UserId,
-		Job:      targetUser.Job,
-		JobGrade: targetUser.JobGrade,
-	})
+	check := access.CheckIfHasOwnJobAccess(
+		colleagueAccess,
+		userInfo,
+		targetUser.GetJob(),
+		&users.UserShort{
+			UserId:   targetUser.GetUserId(),
+			Job:      targetUser.GetJob(),
+			JobGrade: targetUser.GetJobGrade(),
+		},
+	)
 	if !check {
-		if userInfo.Job != targetUser.Job || !infoOnly {
+		if userInfo.GetJob() != targetUser.GetJob() || !infoOnly {
 			return nil, errorsjobs.ErrFailedQuery
 		}
 	}
@@ -466,24 +497,35 @@ func (s *Server) GetColleague(ctx context.Context, req *pbjobs.GetColleagueReque
 	// Field Permission Check
 	fields := &permissions.StringList{}
 	if !infoOnly {
-		fields, err = s.ps.AttrStringList(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueTypesPermField)
+		fields, err = s.ps.AttrStringList(
+			userInfo,
+			permsjobs.JobsServicePerm,
+			permsjobs.JobsServiceGetColleaguePerm,
+			permsjobs.JobsServiceGetColleagueTypesPermField,
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
 	}
-	if userInfo.Superuser {
+	if userInfo.GetSuperuser() {
 		fields.Strings = []string{"Note"}
 	}
 
 	withColumns := []jet.Projection{}
-	for _, fType := range fields.Strings {
+	for _, fType := range fields.GetStrings() {
 		switch fType {
 		case "Note":
 			withColumns = append(withColumns, tColleagueProps.Note)
 		}
 	}
 
-	colleague, err := s.getColleague(ctx, userInfo, userInfo.Job, targetUser.UserId, withColumns)
+	colleague, err := s.getColleague(
+		ctx,
+		userInfo,
+		userInfo.GetJob(),
+		targetUser.GetUserId(),
+		withColumns,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -495,27 +537,41 @@ func (s *Server) GetColleague(ctx context.Context, req *pbjobs.GetColleagueReque
 	}, nil
 }
 
-func (s *Server) GetSelf(ctx context.Context, req *pbjobs.GetSelfRequest) (*pbjobs.GetSelfResponse, error) {
+func (s *Server) GetSelf(
+	ctx context.Context,
+	req *pbjobs.GetSelfRequest,
+) (*pbjobs.GetSelfResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Field Permission Check
-	types, err := s.ps.AttrStringList(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueTypesPermField)
+	types, err := s.ps.AttrStringList(
+		userInfo,
+		permsjobs.JobsServicePerm,
+		permsjobs.JobsServiceGetColleaguePerm,
+		permsjobs.JobsServiceGetColleagueTypesPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	if userInfo.Superuser {
+	if userInfo.GetSuperuser() {
 		types.Strings = append(types.Strings, "AbsenceDate", "Note")
 	}
 
 	withColumns := []jet.Projection{}
-	for _, fType := range types.Strings {
+	for _, fType := range types.GetStrings() {
 		switch fType {
 		case "Note":
 			withColumns = append(withColumns, tColleagueProps.Note)
 		}
 	}
 
-	colleague, err := s.getColleague(ctx, userInfo, userInfo.Job, userInfo.UserId, withColumns)
+	colleague, err := s.getColleague(
+		ctx,
+		userInfo,
+		userInfo.GetJob(),
+		userInfo.GetUserId(),
+		withColumns,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -525,31 +581,48 @@ func (s *Server) GetSelf(ctx context.Context, req *pbjobs.GetSelfRequest) (*pbjo
 	}, nil
 }
 
-func (s *Server) SetColleagueProps(ctx context.Context, req *pbjobs.SetColleaguePropsRequest) (*pbjobs.SetColleaguePropsResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.colleagues.user_id", req.Props.UserId})
+func (s *Server) SetColleagueProps(
+	ctx context.Context,
+	req *pbjobs.SetColleaguePropsRequest,
+) (*pbjobs.SetColleaguePropsResponse, error) {
+	logging.InjectFields(
+		ctx,
+		logging.Fields{"fivenet.jobs.colleagues.user_id", req.GetProps().GetUserId()},
+	)
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbjobs.JobsService_ServiceDesc.ServiceName,
 		Method:  "SetColleagueProps",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	if req.Reason == "" {
+	if req.GetReason() == "" {
 		return nil, errorsjobs.ErrReasonRequired
 	}
 
 	// Access Permission Check
-	colleagueAccess, err := s.ps.AttrStringList(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceSetColleaguePropsPerm, permsjobs.JobsServiceSetColleaguePropsAccessPermField)
+	colleagueAccess, err := s.ps.AttrStringList(
+		userInfo,
+		permsjobs.JobsServicePerm,
+		permsjobs.JobsServiceSetColleaguePropsPerm,
+		permsjobs.JobsServiceSetColleaguePropsAccessPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	targetUser, err := s.getColleague(ctx, userInfo, userInfo.Job, req.Props.UserId, nil)
+	targetUser, err := s.getColleague(
+		ctx,
+		userInfo,
+		userInfo.GetJob(),
+		req.GetProps().GetUserId(),
+		nil,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -557,70 +630,95 @@ func (s *Server) SetColleagueProps(ctx context.Context, req *pbjobs.SetColleague
 		return nil, errorsjobs.ErrNotFoundOrNoPerms
 	}
 
-	if !access.CheckIfHasOwnJobAccess(colleagueAccess, userInfo, targetUser.Job, &users.UserShort{
-		UserId:   targetUser.UserId,
-		Job:      targetUser.Job,
-		JobGrade: targetUser.JobGrade,
-	}) {
+	if !access.CheckIfHasOwnJobAccess(
+		colleagueAccess,
+		userInfo,
+		targetUser.GetJob(),
+		&users.UserShort{
+			UserId:   targetUser.GetUserId(),
+			Job:      targetUser.GetJob(),
+			JobGrade: targetUser.GetJobGrade(),
+		},
+	) {
 		return nil, errorsjobs.ErrFailedQuery
 	}
 
 	// Types Permission Check
-	types, err := s.ps.AttrStringList(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceSetColleaguePropsPerm, permsjobs.JobsServiceSetColleaguePropsTypesPermField)
+	types, err := s.ps.AttrStringList(
+		userInfo,
+		permsjobs.JobsServicePerm,
+		permsjobs.JobsServiceSetColleaguePropsPerm,
+		permsjobs.JobsServiceSetColleaguePropsTypesPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	if userInfo.Superuser {
+	if userInfo.GetSuperuser() {
 		types.Strings = []string{"AbsenceDate", "Note", "Labels", "Name"}
 	}
 
-	props, err := jobs.GetColleagueProps(ctx, s.db, targetUser.Job, targetUser.UserId, types.Strings)
+	props, err := jobs.GetColleagueProps(
+		ctx,
+		s.db,
+		targetUser.GetJob(),
+		targetUser.GetUserId(),
+		types.GetStrings(),
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	if req.Props.AbsenceBegin != nil && req.Props.AbsenceEnd != nil {
+	reqProps := req.GetProps()
+
+	if reqProps.GetAbsenceBegin() != nil && reqProps.GetAbsenceEnd() != nil {
 		// Allow users to set their own absence date regardless of types perms check
-		if userInfo.UserId != targetUser.UserId && !types.Contains("AbsenceDate") && !userInfo.Superuser {
+		if userInfo.GetUserId() != targetUser.GetUserId() && !types.Contains("AbsenceDate") &&
+			!userInfo.GetSuperuser() {
 			return nil, errorsjobs.ErrPropsAbsenceDenied
 		}
 
-		jobProps, err := jobs.GetJobProps(ctx, s.db, userInfo.Job)
+		jobProps, err := jobs.GetJobProps(ctx, s.db, userInfo.GetJob())
 		if err != nil {
 			return nil, err
 		}
 
-		if req.Props.AbsenceBegin.Timestamp != nil && req.Props.AbsenceEnd.Timestamp != nil {
+		if reqProps.GetAbsenceBegin().GetTimestamp() != nil &&
+			reqProps.GetAbsenceEnd().GetTimestamp() != nil {
 			// Check if absence begin and end are "valid"
-			minStart := time.Now().Add(-(time.Duration(jobProps.Settings.AbsencePastDays) * 24 * time.Hour))
-			maxEnd := time.Now().Add(time.Duration(jobProps.Settings.AbsenceFutureDays) * 24 * time.Hour)
+			minStart := time.Now().
+				Add(-(time.Duration(jobProps.GetSettings().GetAbsencePastDays()) * 24 * time.Hour))
+			maxEnd := time.Now().
+				Add(time.Duration(jobProps.GetSettings().GetAbsenceFutureDays()) * 24 * time.Hour)
 
-			if !timeutils.InTimeSpan(minStart, maxEnd, req.Props.AbsenceBegin.AsTime()) {
+			if !timeutils.InTimeSpan(minStart, maxEnd, reqProps.GetAbsenceBegin().AsTime()) {
 				return nil, errorsjobs.ErrAbsenceBeginOutOfRange
 			}
-			if !timeutils.InTimeSpan(minStart, maxEnd, req.Props.AbsenceEnd.AsTime()) {
+			if !timeutils.InTimeSpan(minStart, maxEnd, reqProps.GetAbsenceEnd().AsTime()) {
 				return nil, errorsjobs.ErrAbsenceBeginOutOfRange
 			}
 		}
 	}
 
 	// Generate the update sets
-	if req.Props.Note != nil {
-		if !types.Contains("Note") && !userInfo.Superuser {
+	if reqProps.Note != nil {
+		if !types.Contains("Note") && !userInfo.GetSuperuser() {
 			return nil, errorsjobs.ErrPropsNoteDenied
 		}
 	}
 
-	if req.Props.Labels != nil {
+	if reqProps.GetLabels() != nil {
 		// Check if user is allowed to update labels
-		if !types.Contains("Labels") && !userInfo.Superuser {
+		if !types.Contains("Labels") && !userInfo.GetSuperuser() {
 			return nil, errorsjobs.ErrPropsAbsenceDenied
 		}
 
-		added, _ := utils.SlicesDifferenceFunc(props.Labels.List, req.Props.Labels.List,
+		added, _ := utils.SlicesDifferenceFunc(
+			props.GetLabels().GetList(),
+			reqProps.GetLabels().GetList(),
 			func(in *jobs.Label) uint64 {
-				return in.Id
-			})
+				return in.GetId()
+			},
+		)
 
 		valid, err := s.validateLabels(ctx, userInfo, added)
 		if err != nil {
@@ -631,8 +729,8 @@ func (s *Server) SetColleagueProps(ctx context.Context, req *pbjobs.SetColleague
 		}
 	}
 
-	if req.Props.NamePrefix != nil || req.Props.NameSuffix != nil {
-		if !types.Contains("Name") && !userInfo.Superuser {
+	if reqProps.NamePrefix != nil || reqProps.NameSuffix != nil {
+		if !types.Contains("Name") && !userInfo.GetSuperuser() {
 			return nil, errorsjobs.ErrPropsNameDenied
 		}
 	}
@@ -645,7 +743,14 @@ func (s *Server) SetColleagueProps(ctx context.Context, req *pbjobs.SetColleague
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	activities, err := props.HandleChanges(ctx, tx, req.Props, targetUser.Job, &userInfo.UserId, req.Reason)
+	activities, err := props.HandleChanges(
+		ctx,
+		tx,
+		reqProps,
+		targetUser.GetJob(),
+		&userInfo.UserId,
+		req.GetReason(),
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -661,12 +766,18 @@ func (s *Server) SetColleagueProps(ctx context.Context, req *pbjobs.SetColleague
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
-	props, err = jobs.GetColleagueProps(ctx, s.db, targetUser.Job, targetUser.UserId, types.Strings)
+	props, err = jobs.GetColleagueProps(
+		ctx,
+		s.db,
+		targetUser.GetJob(),
+		targetUser.GetUserId(),
+		types.GetStrings(),
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	userId := uint64(targetUser.UserId)
+	userId := uint64(targetUser.GetUserId())
 	s.notifi.SendObjectEvent(ctx, &notifications.ObjectEvent{
 		Type:      notifications.ObjectType_OBJECT_TYPE_JOBS_COLLEAGUE,
 		Id:        &userId,
@@ -681,40 +792,53 @@ func (s *Server) SetColleagueProps(ctx context.Context, req *pbjobs.SetColleague
 	}, nil
 }
 
-func (s *Server) getConditionForColleagueAccess(actTable *table.FivenetJobColleagueActivityTable, usersTable *tables.FivenetUserTable, levels []string, userInfo *userinfo.UserInfo) jet.BoolExpression {
+func (s *Server) getConditionForColleagueAccess(
+	actTable *table.FivenetJobColleagueActivityTable,
+	usersTable *tables.FivenetUserTable,
+	levels []string,
+	userInfo *userinfo.UserInfo,
+) jet.BoolExpression {
 	condition := jet.Bool(true)
-	if userInfo.Superuser {
+	if userInfo.GetSuperuser() {
 		return condition
 	}
 
 	// If no levels set, assume "Own" as a safe default
 	if len(levels) == 0 {
-		return actTable.TargetUserID.EQ(jet.Int32(userInfo.UserId))
+		return actTable.TargetUserID.EQ(jet.Int32(userInfo.GetUserId()))
 	}
 
 	if slices.Contains(levels, "Any") {
 		return condition
 	}
 	if slices.Contains(levels, "Lower_Rank") {
-		return usersTable.ID.LT(jet.Int32(userInfo.JobGrade))
+		return usersTable.ID.LT(jet.Int32(userInfo.GetJobGrade()))
 	}
 	if slices.Contains(levels, "Same_Rank") {
-		return usersTable.ID.LT_EQ(jet.Int32(userInfo.JobGrade))
+		return usersTable.ID.LT_EQ(jet.Int32(userInfo.GetJobGrade()))
 	}
 	if slices.Contains(levels, "Own") {
-		return usersTable.ID.EQ(jet.Int32(userInfo.UserId))
+		return usersTable.ID.EQ(jet.Int32(userInfo.GetUserId()))
 	}
 
 	return jet.Bool(false)
 }
 
-func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColleagueActivityRequest) (*pbjobs.ListColleagueActivityResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.colleagues.user_ids", req.UserIds})
+func (s *Server) ListColleagueActivity(
+	ctx context.Context,
+	req *pbjobs.ListColleagueActivityRequest,
+) (*pbjobs.ListColleagueActivityResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.colleagues.user_ids", req.GetUserIds()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Access Field Permission Check
-	colleagueAccess, err := s.ps.AttrStringList(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueAccessPermField)
+	colleagueAccess, err := s.ps.AttrStringList(
+		userInfo,
+		permsjobs.JobsServicePerm,
+		permsjobs.JobsServiceGetColleaguePerm,
+		permsjobs.JobsServiceGetColleagueAccessPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -723,35 +847,43 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 	tTargetColleague := tables.User().AS("target_user")
 	tSourceUser := tTargetColleague.AS("source_user")
 
-	condition := tColleagueActivity.Job.EQ(jet.String(userInfo.Job))
+	condition := tColleagueActivity.Job.EQ(jet.String(userInfo.GetJob()))
 
 	resp := &pbjobs.ListColleagueActivityResponse{
 		Pagination: &database.PaginationResponse{
-			PageSize: ColleaguesDefaultPageSize,
+			PageSize: defaultPageSize,
 		},
 	}
 
-	if len(req.ActivityTypes) == 0 {
+	if len(req.GetActivityTypes()) == 0 {
 		return resp, nil
 	}
 
 	// If no user IDs given or more than 2, show all the user has access to
-	if len(req.UserIds) == 0 || len(req.UserIds) >= 2 {
-		condition = condition.AND(s.getConditionForColleagueAccess(tColleagueActivity, tTargetColleague, colleagueAccess.Strings, userInfo))
+	reqUserIds := req.GetUserIds()
+	if len(reqUserIds) == 0 || len(reqUserIds) >= 2 {
+		condition = condition.AND(
+			s.getConditionForColleagueAccess(
+				tColleagueActivity,
+				tTargetColleague,
+				colleagueAccess.GetStrings(),
+				userInfo,
+			),
+		)
 
-		if len(req.UserIds) >= 2 {
+		if len(reqUserIds) >= 2 {
 			// More than 2 user ids
-			userIds := make([]jet.Expression, len(req.UserIds))
-			for i := range req.UserIds {
-				userIds[i] = jet.Int32(req.UserIds[i])
+			userIds := make([]jet.Expression, len(reqUserIds))
+			for i := range userIds {
+				userIds[i] = jet.Int32(reqUserIds[i])
 			}
 
 			condition = condition.AND(tTargetColleague.ID.IN(userIds...))
 		}
 	} else {
-		userId := req.UserIds[0]
+		userId := reqUserIds[0]
 
-		targetUser, err := s.getColleague(ctx, userInfo, userInfo.Job, userId, nil)
+		targetUser, err := s.getColleague(ctx, userInfo, userInfo.GetJob(), userId, nil)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
@@ -759,10 +891,10 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 			return nil, errorsjobs.ErrNotFoundOrNoPerms
 		}
 
-		if !access.CheckIfHasOwnJobAccess(colleagueAccess, userInfo, targetUser.Job, &users.UserShort{
-			UserId:   targetUser.UserId,
-			Job:      targetUser.Job,
-			JobGrade: targetUser.JobGrade,
+		if !access.CheckIfHasOwnJobAccess(colleagueAccess, userInfo, targetUser.GetJob(), &users.UserShort{
+			UserId:   targetUser.GetUserId(),
+			Job:      targetUser.GetJob(),
+			JobGrade: targetUser.GetJobGrade(),
 		}) {
 			return nil, errorsjobs.ErrFailedQuery
 		}
@@ -771,28 +903,36 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 	}
 
 	// Types Field Permission Check
-	types, err := s.ps.AttrStringList(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceListColleagueActivityPerm, permsjobs.JobsServiceListColleagueActivityTypesPermField)
+	types, err := s.ps.AttrStringList(
+		userInfo,
+		permsjobs.JobsServicePerm,
+		permsjobs.JobsServiceListColleagueActivityPerm,
+		permsjobs.JobsServiceListColleagueActivityTypesPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 	if types.Len() == 0 {
-		if !userInfo.Superuser {
+		if !userInfo.GetSuperuser() {
 			return resp, nil
 		} else {
 			types.Strings = append(types.Strings, "HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME")
 		}
 	}
 
-	if len(req.ActivityTypes) > 0 {
-		req.ActivityTypes = slices.DeleteFunc(req.ActivityTypes, func(t jobs.ColleagueActivityType) bool {
-			return !slices.ContainsFunc(types.Strings, func(s string) bool {
-				return strings.Contains(t.String(), "COLLEAGUE_ACTIVITY_TYPE_"+s)
-			})
-		})
+	if len(req.GetActivityTypes()) > 0 {
+		req.ActivityTypes = slices.DeleteFunc(
+			req.GetActivityTypes(),
+			func(t jobs.ColleagueActivityType) bool {
+				return !slices.ContainsFunc(types.GetStrings(), func(s string) bool {
+					return strings.Contains(t.String(), "COLLEAGUE_ACTIVITY_TYPE_"+s)
+				})
+			},
+		)
 	}
 
 	condTypes := []jet.Expression{}
-	for _, aType := range req.ActivityTypes {
+	for _, aType := range req.GetActivityTypes() {
 		condTypes = append(condTypes, jet.Int16(int16(aType)))
 	}
 
@@ -822,7 +962,8 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, ColleaguesDefaultPageSize)
+	pag, limit := req.GetPagination().
+		GetResponseWithPageSize(count.Total, defaultPageSize)
 	resp.Pagination = pag
 	if count.Total <= 0 {
 		return resp, nil
@@ -830,16 +971,16 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 
 	// Convert proto sort to db sorting
 	orderBys := []jet.OrderByClause{}
-	if req.Sort != nil {
+	if req.GetSort() != nil {
 		var column jet.Column
-		switch req.Sort.Column {
+		switch req.GetSort().GetColumn() {
 		case "createdAt":
 			fallthrough
 		default:
 			column = tColleagueActivity.CreatedAt
 		}
 
-		if req.Sort.Direction == database.AscSortDirection {
+		if req.GetSort().GetDirection() == database.AscSortDirection {
 			orderBys = append(orderBys, column.ASC())
 		} else {
 			orderBys = append(orderBys, column.DESC())
@@ -902,7 +1043,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 				).
 				LEFT_JOIN(tTargetColleagueProps,
 					tTargetColleagueProps.UserID.EQ(tTargetColleague.ID).
-						AND(tTargetColleague.Job.EQ(jet.String(userInfo.Job))),
+						AND(tTargetColleague.Job.EQ(jet.String(userInfo.GetJob()))),
 				).
 				LEFT_JOIN(tSourceUser,
 					tSourceUser.ID.EQ(tColleagueActivity.SourceUserID),
@@ -915,7 +1056,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 				),
 		).
 		WHERE(condition).
-		OFFSET(pag.Offset).
+		OFFSET(pag.GetOffset()).
 		ORDER_BY(orderBys...).
 		LIMIT(limit)
 
@@ -925,16 +1066,16 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 		}
 	}
 
-	pag.Update(len(resp.Activity))
+	pag.Update(len(resp.GetActivity()))
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.Activity {
-		if resp.Activity[i].SourceUser != nil {
-			jobInfoFn(resp.Activity[i].SourceUser)
+	for i := range resp.GetActivity() {
+		if resp.GetActivity()[i].GetSourceUser() != nil {
+			jobInfoFn(resp.GetActivity()[i].GetSourceUser())
 		}
 
-		if resp.Activity[i].TargetUser != nil {
-			jobInfoFn(resp.Activity[i].TargetUser)
+		if resp.GetActivity()[i].GetTargetUser() != nil {
+			jobInfoFn(resp.GetActivity()[i].GetTargetUser())
 		}
 	}
 

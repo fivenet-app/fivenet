@@ -35,7 +35,10 @@ func (p *SanitizerModule) InitContext(c pgs.BuildContext) {
 // Name satisfies the generator.Plugin interface.
 func (p *SanitizerModule) Name() string { return "sanitizer" }
 
-func (p *SanitizerModule) Execute(targets map[string]pgs.File, pkgs map[string]pgs.Package) []pgs.Artifact {
+func (p *SanitizerModule) Execute(
+	targets map[string]pgs.File,
+	pkgs map[string]pgs.Package,
+) []pgs.Artifact {
 	for _, t := range targets {
 		p.generate(t)
 	}
@@ -61,7 +64,8 @@ func (p *SanitizerModule) generate(f pgs.File) {
 
 		for _, f := range m.Fields() {
 			// Skip numeric and enum fields
-			if f.Type().ProtoType().IsNumeric() || f.Type().IsEnum() || f.Type().ProtoType() == pgs.BoolT {
+			if f.Type().ProtoType().IsNumeric() || f.Type().IsEnum() ||
+				f.Type().ProtoType() == pgs.BoolT {
 				continue
 			}
 

@@ -18,14 +18,14 @@ const (
 )
 
 func (x *AppConfig) Default() {
-	if x.Auth == nil {
+	if x.GetAuth() == nil {
 		x.Auth = &Auth{
 			SignupEnabled: true,
 			LastCharLock:  false,
 		}
 	}
 
-	if x.Perms == nil {
+	if x.GetPerms() == nil {
 		x.Perms = &Perms{
 			Default: []*Perm{
 				{
@@ -52,40 +52,40 @@ func (x *AppConfig) Default() {
 		}
 	}
 
-	if x.Website == nil {
+	if x.GetWebsite() == nil {
 		x.Website = &Website{
 			Links:     &Links{},
 			StatsPage: false,
 		}
 	}
-	if x.Website.Links == nil {
+	if x.GetWebsite().GetLinks() == nil {
 		x.Website.Links = &Links{}
 	}
 
-	if x.JobInfo == nil {
+	if x.GetJobInfo() == nil {
 		x.JobInfo = &JobInfo{
 			PublicJobs: []string{},
 			HiddenJobs: []string{},
 		}
 	}
-	if x.JobInfo.UnemployedJob == nil {
+	if x.GetJobInfo().GetUnemployedJob() == nil {
 		x.JobInfo.UnemployedJob = &UnemployedJob{
 			Name:  "unemployed",
 			Grade: 1,
 		}
 	}
 
-	if x.UserTracker == nil {
+	if x.GetUserTracker() == nil {
 		x.UserTracker = &UserTracker{}
 	}
-	if x.UserTracker.RefreshTime == nil {
+	if x.GetUserTracker().GetRefreshTime() == nil {
 		x.UserTracker.RefreshTime = durationpb.New(DefaultUserTrackerRefreshTime)
 	}
-	if x.UserTracker.DbRefreshTime == nil {
+	if x.GetUserTracker().GetDbRefreshTime() == nil {
 		x.UserTracker.DbRefreshTime = durationpb.New(DefaultUserTrackerDbRefreshTime)
 	}
 
-	if x.Discord == nil {
+	if x.GetDiscord() == nil {
 		status := "FiveNet"
 		url := "https://fivenet.app"
 
@@ -99,25 +99,25 @@ func (x *AppConfig) Default() {
 			BotPermissions: DefaultDiscordBotPermissions,
 		}
 	}
-	if x.Discord.SyncInterval == nil {
+	if x.GetDiscord().GetSyncInterval() == nil {
 		x.Discord.SyncInterval = durationpb.New(DefaultDiscordSyncInterval)
 	}
-	if x.Discord.BotPresence == nil {
+	if x.GetDiscord().GetBotPresence() == nil {
 		x.Discord.BotPresence = &DiscordBotPresence{
 			Type: DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_UNSPECIFIED,
 		}
 	}
-	if x.Discord.BotPermissions == 0 {
+	if x.GetDiscord().GetBotPermissions() == 0 {
 		x.Discord.BotPermissions = DefaultDiscordBotPermissions
 	}
 
-	if x.System == nil {
+	if x.GetSystem() == nil {
 		x.System = &System{
 			BannerMessageEnabled: false,
 		}
 	}
-	if x.System.BannerMessage != nil {
-		if x.System.BannerMessage.CreatedAt == nil {
+	if x.GetSystem().GetBannerMessage() != nil {
+		if x.GetSystem().GetBannerMessage().GetCreatedAt() == nil {
 			x.System.BannerMessage.CreatedAt = timestamp.Now()
 		}
 	}

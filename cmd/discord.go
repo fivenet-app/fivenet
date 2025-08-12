@@ -7,7 +7,7 @@ import (
 )
 
 type DiscordCmd struct {
-	ModuleCronAgent bool `help:"Run the cron agent." default:"false"`
+	ModuleCronAgent bool `default:"false" help:"Run the cron agent."`
 }
 
 func (c *DiscordCmd) Run(ctx *Context) error {

@@ -1,3 +1,4 @@
+//nolint:forbidigo // This is a CLI tool that uses `fmt.Println` for output
 package main
 
 import (
@@ -60,7 +61,9 @@ func genTemplate() template.Template {
 
 						return template.DefaultTableSQLBuilder(table).
 							UseColumn(func(columnMetaData metadata.Column) template.TableSQLBuilderColumn {
-								defaultColumn := template.DefaultTableSQLBuilderColumn(columnMetaData)
+								defaultColumn := template.DefaultTableSQLBuilderColumn(
+									columnMetaData,
+								)
 								if shouldSkipField(table.Name, columnMetaData.Name) {
 									defaultColumn.Skip = true
 								}

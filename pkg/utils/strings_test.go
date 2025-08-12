@@ -1,3 +1,4 @@
+//nolint:dupword // The tests are for functions that remove duplicates
 package utils
 
 import (
@@ -17,7 +18,7 @@ var benchmarkInputs = []string{
 	"Dr. Strange",
 }
 
-// Old regex here to remind me why regex sometimes and sometimes doesn't make sense :-)
+// Old regex here to remind me why regex sometimes and sometimes doesn't make sense.
 var titlePrefixes = regexp.MustCompile(`(?i:(Prof(\.| )|Dr(\.| )|Sr(\.| ))[ ]*)+`)
 
 func removeTitlePrefixesRegex(s string) string {

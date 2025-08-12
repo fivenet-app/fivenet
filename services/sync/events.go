@@ -25,12 +25,15 @@ func splitSubject(subject string) (string, events.Topic) {
 	return split[1], events.Topic(split[2])
 }
 
-// Structure: "BASE_SUJBECT.TOPIC"
+// BuildSubject structure "BASE_SUJBECT.TOPIC".
 func BuildSubject(topic events.Topic) string {
 	return fmt.Sprintf("%s.%s", BaseSubject, topic)
 }
 
-func (s *Server) registerStream(ctx context.Context, js *events.JSWrapper) (jetstream.StreamConfig, error) {
+func (s *Server) registerStream(
+	ctx context.Context,
+	js *events.JSWrapper,
+) (jetstream.StreamConfig, error) {
 	cfg := jetstream.StreamConfig{
 		Name:        strings.ToUpper(string(BaseSubject)),
 		Description: "DBSync Events",

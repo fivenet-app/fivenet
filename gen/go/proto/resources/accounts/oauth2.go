@@ -14,9 +14,15 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-var tOauth2 = table.FivenetAccountsOauth2
+func RetrieveOAuth2Account(
+	ctx context.Context,
+	db qrm.Queryable,
+	ct *crypt.Crypt,
+	accountId uint64,
+	provider string,
+) (*model.FivenetAccountsOauth2, error) {
+	tOauth2 := table.FivenetAccountsOauth2
 
-func RetrieveOAuth2Account(ctx context.Context, db qrm.Queryable, ct *crypt.Crypt, accountId uint64, provider string) (*model.FivenetAccountsOauth2, error) {
 	stmt := tOauth2.
 		SELECT(
 			tOauth2.AccountID,
@@ -64,7 +70,13 @@ func RetrieveOAuth2Account(ctx context.Context, db qrm.Queryable, ct *crypt.Cryp
 	return acc, nil
 }
 
-func UpdateOAuth2Account(ctx context.Context, db qrm.Executable, ct *crypt.Crypt, accountId uint64, oauth2Acc *model.FivenetAccountsOauth2) error {
+func UpdateOAuth2Account(
+	ctx context.Context,
+	db qrm.Executable,
+	ct *crypt.Crypt,
+	accountId uint64,
+	oauth2Acc *model.FivenetAccountsOauth2,
+) error {
 	accessToken, err := ct.EncryptPointerString(oauth2Acc.AccessToken)
 	if err != nil {
 		return err
@@ -73,6 +85,8 @@ func UpdateOAuth2Account(ctx context.Context, db qrm.Executable, ct *crypt.Crypt
 	if err != nil {
 		return err
 	}
+
+	tOauth2 := table.FivenetAccountsOauth2
 
 	stmt := tOauth2.
 		UPDATE(
@@ -111,7 +125,15 @@ func UpdateOAuth2Account(ctx context.Context, db qrm.Executable, ct *crypt.Crypt
 	return err
 }
 
-func GetAccessToken(ctx context.Context, db qrm.Executable, cryp *crypt.Crypt, acc *model.FivenetAccountsOauth2, clientID string, clientSecret string, redirectURI string) (string, error) {
+func GetAccessToken(
+	ctx context.Context,
+	db qrm.Executable,
+	cryp *crypt.Crypt,
+	acc *model.FivenetAccountsOauth2,
+	clientID string,
+	clientSecret string,
+	redirectURI string,
+) (string, error) {
 	if acc == nil || acc.RefreshToken == nil {
 		return "", nil
 	}
@@ -119,7 +141,13 @@ func GetAccessToken(ctx context.Context, db qrm.Executable, cryp *crypt.Crypt, a
 	// Check expiry (if you store obtained_at + expires_in)
 	if time.Now().After(acc.ObtainedAt.Add(time.Duration(*acc.ExpiresIn) * time.Second)) {
 		// Token expired, refresh
-		newAT, newRT, expiresIn, err := oauth2utils.RefreshDiscordAccessToken(ctx, clientID, clientSecret, *acc.RefreshToken, redirectURI)
+		newAT, newRT, expiresIn, err := oauth2utils.RefreshDiscordAccessToken(
+			ctx,
+			clientID,
+			clientSecret,
+			*acc.RefreshToken,
+			redirectURI,
+		)
 		if err != nil {
 			return "", fmt.Errorf("refresh discord access token error. %w", err)
 		}

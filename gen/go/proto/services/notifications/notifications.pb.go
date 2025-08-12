@@ -308,7 +308,7 @@ func (*StreamRequest_ClientView) isStreamRequest_Data() {}
 
 type StreamResponse struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
-	NotificationCount int32                  `protobuf:"varint,1,opt,name=notification_count,json=notificationCount,proto3" json:"notification_count,omitempty"`
+	NotificationCount int64                  `protobuf:"varint,1,opt,name=notification_count,json=notificationCount,proto3" json:"notification_count,omitempty"`
 	Restart           *bool                  `protobuf:"varint,2,opt,name=restart,proto3,oneof" json:"restart,omitempty"`
 	// Types that are valid to be assigned to Data:
 	//
@@ -353,7 +353,7 @@ func (*StreamResponse) Descriptor() ([]byte, []int) {
 	return file_services_notifications_notifications_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *StreamResponse) GetNotificationCount() int32 {
+func (x *StreamResponse) GetNotificationCount() int64 {
 	if x != nil {
 		return x.NotificationCount
 	}
@@ -500,7 +500,7 @@ const file_services_notifications_notifications_proto_rawDesc = "" +
 	"clientViewB\r\n" +
 	"\x04data\x12\x05\xbaH\x02\b\x01\"\xac\x04\n" +
 	"\x0eStreamResponse\x12-\n" +
-	"\x12notification_count\x18\x01 \x01(\x05R\x11notificationCount\x12\x1d\n" +
+	"\x12notification_count\x18\x01 \x01(\x03R\x11notificationCount\x12\x1d\n" +
 	"\arestart\x18\x02 \x01(\bH\x01R\arestart\x88\x01\x01\x12C\n" +
 	"\n" +
 	"user_event\x18\x03 \x01(\v2\".resources.notifications.UserEventH\x00R\tuserEvent\x12@\n" +

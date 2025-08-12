@@ -80,7 +80,12 @@ func TestConstructUserNickname(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			g := &UserInfo{}
-			result := g.constructUserNickname(test.firstname, test.lastname, test.prefix, test.suffix)
+			result := g.constructUserNickname(
+				test.firstname,
+				test.lastname,
+				test.prefix,
+				test.suffix,
+			)
 			if result != test.expected {
 				t.Errorf("Expected %q, got %q", test.expected, result)
 			}

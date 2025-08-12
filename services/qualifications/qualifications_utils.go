@@ -21,23 +21,29 @@ var (
 	tQReqs   = table.FivenetQualificationsRequirements.AS("qualification_requirement")
 )
 
-func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo) jet.SelectStatement {
+func (s *Server) listQualificationsQuery(
+	where jet.BoolExpression,
+	onlyColumns jet.ProjectionList,
+	userInfo *userinfo.UserInfo,
+) jet.SelectStatement {
 	tCreator := tables.User().AS("creator")
 
 	wheres := []jet.BoolExpression{}
-	if !userInfo.Superuser {
+	if !userInfo.GetSuperuser() {
 		wheres = append(wheres,
 			jet.AND(
 				tQuali.DeletedAt.IS_NULL(),
 				jet.OR(
 					tQuali.Public.IS_TRUE(),
 					jet.AND(
-						tQuali.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-						tQuali.CreatorJob.EQ(jet.String(userInfo.Job)),
+						tQuali.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
+						tQuali.CreatorJob.EQ(jet.String(userInfo.GetJob())),
 					),
 					jet.AND(
 						tQAccess.Access.IS_NOT_NULL(),
-						tQAccess.Access.GT(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+						tQAccess.Access.GT(
+							jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED)),
+						),
 					),
 				),
 			),
@@ -47,9 +53,10 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 	// Select id of last result
 	wheres = append(wheres, tQualiResults.ID.IS_NULL().OR(
 		tQualiResults.ID.EQ(
-			jet.RawInt("SELECT MAX(`qualificationresult`.`id`) FROM `fivenet_qualifications_results` AS `qualificationresult` WHERE (qualificationresult.qualification_id = qualification.id AND qualificationresult.deleted_at IS NULL AND qualificationresult.user_id = #userid)",
+			jet.RawInt(
+				"SELECT MAX(`qualificationresult`.`id`) FROM `fivenet_qualifications_results` AS `qualificationresult` WHERE (qualificationresult.qualification_id = qualification.id AND qualificationresult.deleted_at IS NULL AND qualificationresult.user_id = #userid)",
 				jet.RawArgs{
-					"#userid": userInfo.UserId,
+					"#userid": userInfo.GetUserId(),
 				},
 			),
 		),
@@ -97,7 +104,7 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 			tQualiResults.CreatorID,
 		}
 
-		if userInfo.Superuser {
+		if userInfo.GetSuperuser() {
 			columns = append(columns, tQuali.DeletedAt)
 		}
 
@@ -112,12 +119,12 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 	}
 
 	var tables jet.ReadableTable
-	if !userInfo.Superuser {
+	if !userInfo.GetSuperuser() {
 		tables = tQuali.
 			LEFT_JOIN(tQAccess,
 				tQAccess.TargetID.EQ(tQuali.ID).
-					AND(tQAccess.Job.EQ(jet.String(userInfo.Job))).
-					AND(tQAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+					AND(tQAccess.Job.EQ(jet.String(userInfo.GetJob()))).
+					AND(tQAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade()))),
 			).
 			LEFT_JOIN(tCreator,
 				tQuali.CreatorID.EQ(tCreator.ID),
@@ -125,7 +132,7 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 			LEFT_JOIN(tQualiResults,
 				tQualiResults.QualificationID.EQ(tQuali.ID).
 					AND(tQualiResults.DeletedAt.IS_NULL()).
-					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId))),
+					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.GetUserId()))),
 			)
 	} else {
 		tables = tQuali.
@@ -135,7 +142,7 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 			LEFT_JOIN(tQualiResults,
 				tQualiResults.QualificationID.EQ(tQuali.ID).
 					AND(tQualiResults.DeletedAt.IS_NULL()).
-					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId))),
+					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.GetUserId()))),
 			)
 	}
 
@@ -150,25 +157,33 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 		)
 }
 
-func (s *Server) getQualificationQuery(qualificationId uint64, where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo, selectContent bool) jet.SelectStatement {
+func (s *Server) getQualificationQuery(
+	qualificationId uint64,
+	where jet.BoolExpression,
+	onlyColumns jet.ProjectionList,
+	userInfo *userinfo.UserInfo,
+	selectContent bool,
+) jet.SelectStatement {
 	tCreator := tables.User().AS("creator")
 
 	wheres := []jet.BoolExpression{
 		tQuali.ID.EQ(jet.Uint64(qualificationId)),
 	}
-	if !userInfo.Superuser {
+	if !userInfo.GetSuperuser() {
 		wheres = append(wheres,
 			jet.AND(
 				tQuali.DeletedAt.IS_NULL(),
 				jet.OR(
 					tQuali.Public.IS_TRUE(),
 					jet.AND(
-						tQuali.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-						tQuali.CreatorJob.EQ(jet.String(userInfo.Job)),
+						tQuali.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
+						tQuali.CreatorJob.EQ(jet.String(userInfo.GetJob())),
 					),
 					jet.AND(
 						tQAccess.Access.IS_NOT_NULL(),
-						tQAccess.Access.GT(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+						tQAccess.Access.GT(
+							jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED)),
+						),
 					),
 				),
 			),
@@ -178,10 +193,11 @@ func (s *Server) getQualificationQuery(qualificationId uint64, where jet.BoolExp
 	// Select id of last result
 	wheres = append(wheres, tQualiResults.ID.IS_NULL().OR(
 		tQualiResults.ID.EQ(
-			jet.RawInt("SELECT MAX(`qualificationresult`.`id`) FROM `fivenet_qualifications_results` AS `qualificationresult` WHERE (qualificationresult.qualification_id = #qualificationId AND qualificationresult.deleted_at IS NULL AND qualificationresult.user_id = #userid)",
+			jet.RawInt(
+				"SELECT MAX(`qualificationresult`.`id`) FROM `fivenet_qualifications_results` AS `qualificationresult` WHERE (qualificationresult.qualification_id = #qualificationId AND qualificationresult.deleted_at IS NULL AND qualificationresult.user_id = #userid)",
 				jet.RawArgs{
 					"#qualificationId": qualificationId,
-					"#userid":          userInfo.UserId,
+					"#userid":          userInfo.GetUserId(),
 				},
 			),
 		),
@@ -238,7 +254,7 @@ func (s *Server) getQualificationQuery(qualificationId uint64, where jet.BoolExp
 			columns = append(columns, tQuali.Content)
 		}
 
-		if userInfo.Superuser {
+		if userInfo.GetSuperuser() {
 			columns = append(columns, tQuali.DeletedAt)
 		}
 
@@ -253,12 +269,12 @@ func (s *Server) getQualificationQuery(qualificationId uint64, where jet.BoolExp
 	}
 
 	var tables jet.ReadableTable
-	if !userInfo.Superuser {
+	if !userInfo.GetSuperuser() {
 		tables = tQuali.
 			LEFT_JOIN(tQAccess,
 				tQAccess.TargetID.EQ(tQuali.ID).
-					AND(tQAccess.Job.EQ(jet.String(userInfo.Job))).
-					AND(tQAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+					AND(tQAccess.Job.EQ(jet.String(userInfo.GetJob()))).
+					AND(tQAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade()))),
 			).
 			LEFT_JOIN(tCreator,
 				tQuali.CreatorID.EQ(tCreator.ID),
@@ -266,12 +282,12 @@ func (s *Server) getQualificationQuery(qualificationId uint64, where jet.BoolExp
 			LEFT_JOIN(tQualiResults,
 				tQualiResults.QualificationID.EQ(tQuali.ID).
 					AND(tQualiResults.DeletedAt.IS_NULL()).
-					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId))),
+					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.GetUserId()))),
 			).
 			LEFT_JOIN(tQualiRequests,
 				tQualiRequests.QualificationID.EQ(tQuali.ID).
 					AND(tQualiRequests.DeletedAt.IS_NULL()).
-					AND(tQualiRequests.UserID.EQ(jet.Int32(userInfo.UserId))).
+					AND(tQualiRequests.UserID.EQ(jet.Int32(userInfo.GetUserId()))).
 					AND(tQualiRequests.Status.NOT_EQ(jet.Int16(int16(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED)))),
 			)
 	} else {
@@ -282,12 +298,12 @@ func (s *Server) getQualificationQuery(qualificationId uint64, where jet.BoolExp
 			LEFT_JOIN(tQualiResults,
 				tQualiResults.QualificationID.EQ(tQuali.ID).
 					AND(tQualiResults.DeletedAt.IS_NULL()).
-					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId))),
+					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.GetUserId()))),
 			).
 			LEFT_JOIN(tQualiRequests,
 				tQualiRequests.QualificationID.EQ(tQuali.ID).
 					AND(tQualiRequests.DeletedAt.IS_NULL()).
-					AND(tQualiRequests.UserID.EQ(jet.Int32(userInfo.UserId))).
+					AND(tQualiRequests.UserID.EQ(jet.Int32(userInfo.GetUserId()))).
 					AND(tQualiRequests.Status.NOT_EQ(jet.Int16(int16(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED)))),
 			)
 	}
@@ -303,7 +319,10 @@ func (s *Server) getQualificationQuery(qualificationId uint64, where jet.BoolExp
 		)
 }
 
-func (s *Server) getQualificationRequirements(ctx context.Context, qualificationId uint64) ([]*qualifications.QualificationRequirement, error) {
+func (s *Server) getQualificationRequirements(
+	ctx context.Context,
+	qualificationId uint64,
+) ([]*qualifications.QualificationRequirement, error) {
 	tQuali := tQuali.AS("target_qualification")
 
 	stmt := tQReqs.
@@ -339,7 +358,13 @@ func (s *Server) getQualificationRequirements(ctx context.Context, qualification
 	return dest, nil
 }
 
-func (s *Server) getQualification(ctx context.Context, qualificationId uint64, condition jet.BoolExpression, userInfo *userinfo.UserInfo, selectContent bool) (*qualifications.Qualification, error) {
+func (s *Server) getQualification(
+	ctx context.Context,
+	qualificationId uint64,
+	condition jet.BoolExpression,
+	userInfo *userinfo.UserInfo,
+	selectContent bool,
+) (*qualifications.Qualification, error) {
 	var quali qualifications.Qualification
 
 	stmt := s.getQualificationQuery(qualificationId, condition, nil, userInfo, selectContent)
@@ -350,7 +375,7 @@ func (s *Server) getQualification(ctx context.Context, qualificationId uint64, c
 		}
 	}
 
-	if quali.Id == 0 {
+	if quali.GetId() == 0 {
 		return nil, nil
 	}
 
@@ -362,11 +387,11 @@ func (s *Server) getQualification(ctx context.Context, qualificationId uint64, c
 	}
 	quali.Requirements = reqs
 
-	if quali.Creator != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, quali.Creator)
+	if quali.GetCreator() != nil {
+		s.enricher.EnrichJobInfoSafe(userInfo, quali.GetCreator())
 	}
 
-	request, err := s.getQualificationRequest(ctx, qualificationId, userInfo.UserId, userInfo)
+	request, err := s.getQualificationRequest(ctx, qualificationId, userInfo.GetUserId(), userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -381,7 +406,12 @@ func (s *Server) getQualification(ctx context.Context, qualificationId uint64, c
 	return &quali, nil
 }
 
-func (s *Server) getQualificationShort(ctx context.Context, qualificationId uint64, condition jet.BoolExpression, userInfo *userinfo.UserInfo) (*qualifications.QualificationShort, error) {
+func (s *Server) getQualificationShort(
+	ctx context.Context,
+	qualificationId uint64,
+	condition jet.BoolExpression,
+	userInfo *userinfo.UserInfo,
+) (*qualifications.QualificationShort, error) {
 	var quali qualifications.Qualification
 
 	stmt := s.getQualificationQuery(qualificationId, condition, nil, userInfo, false)
@@ -392,37 +422,41 @@ func (s *Server) getQualificationShort(ctx context.Context, qualificationId uint
 		}
 	}
 
-	if quali.Id == 0 {
+	if quali.GetId() == 0 {
 		return nil, nil
 	}
 
-	if quali.Creator != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, quali.Creator)
+	if quali.GetCreator() != nil {
+		s.enricher.EnrichJobInfoSafe(userInfo, quali.GetCreator())
 	}
 
 	return &qualifications.QualificationShort{
-		Id:           quali.Id,
-		CreatedAt:    quali.CreatedAt,
-		UpdatedAt:    quali.UpdatedAt,
-		DeletedAt:    quali.DeletedAt,
-		Job:          quali.Job,
-		Weight:       quali.Weight,
-		Closed:       quali.Closed,
-		Draft:        quali.Draft,
-		Public:       quali.Public,
-		Abbreviation: quali.Abbreviation,
-		Title:        quali.Title,
+		Id:           quali.GetId(),
+		CreatedAt:    quali.GetCreatedAt(),
+		UpdatedAt:    quali.GetUpdatedAt(),
+		DeletedAt:    quali.GetDeletedAt(),
+		Job:          quali.GetJob(),
+		Weight:       quali.GetWeight(),
+		Closed:       quali.GetClosed(),
+		Draft:        quali.GetDraft(),
+		Public:       quali.GetPublic(),
+		Abbreviation: quali.GetAbbreviation(),
+		Title:        quali.GetTitle(),
 		Description:  quali.Description,
 		CreatorId:    quali.CreatorId,
-		Creator:      quali.Creator,
-		ExamMode:     quali.ExamMode,
-		ExamSettings: quali.ExamSettings,
-		Requirements: quali.Requirements,
-		Result:       quali.Result,
+		Creator:      quali.GetCreator(),
+		ExamMode:     quali.GetExamMode(),
+		ExamSettings: quali.GetExamSettings(),
+		Requirements: quali.GetRequirements(),
+		Result:       quali.GetResult(),
 	}, nil
 }
 
-func (s *Server) checkRequirementsMetForQualification(ctx context.Context, qualificationId uint64, userId int32) (bool, error) {
+func (s *Server) checkRequirementsMetForQualification(
+	ctx context.Context,
+	qualificationId uint64,
+	userId int32,
+) (bool, error) {
 	stmt := tQReqs.
 		SELECT(
 			tQReqs.TargetQualificationID.AS("qualification_id"),
@@ -455,7 +489,7 @@ func (s *Server) checkRequirementsMetForQualification(ctx context.Context, quali
 		return true, nil
 	}
 
-	// Remove all requirements which the user has fullfilled
+	// Remove all requirements which the user has fulfilled
 	dest = slices.DeleteFunc(dest, func(s *struct {
 		QualificationID uint64
 		UserID          int32
@@ -467,7 +501,12 @@ func (s *Server) checkRequirementsMetForQualification(ctx context.Context, quali
 	return len(dest) == 0, nil
 }
 
-func (s *Server) handleQualificationRequirementsChanges(ctx context.Context, tx qrm.DB, qualificationId uint64, reqs []*qualifications.QualificationRequirement) error {
+func (s *Server) handleQualificationRequirementsChanges(
+	ctx context.Context,
+	tx qrm.DB,
+	qualificationId uint64,
+	reqs []*qualifications.QualificationRequirement,
+) error {
 	current, err := s.getQualificationRequirements(ctx, qualificationId)
 	if err != nil {
 		return err
@@ -481,7 +520,7 @@ func (s *Server) handleQualificationRequirementsChanges(ctx context.Context, tx 
 		stmt := tQReqs.
 			DELETE().
 			WHERE(jet.AND(
-				tQReqs.ID.EQ(jet.Uint64(req.Id)),
+				tQReqs.ID.EQ(jet.Uint64(req.GetId())),
 			)).
 			LIMIT(1)
 
@@ -498,7 +537,7 @@ func (s *Server) handleQualificationRequirementsChanges(ctx context.Context, tx 
 			).
 			VALUES(
 				qualificationId,
-				req.TargetQualificationId,
+				req.GetTargetQualificationId(),
 			)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -509,7 +548,12 @@ func (s *Server) handleQualificationRequirementsChanges(ctx context.Context, tx 
 	return nil
 }
 
-func (s *Server) compareQualificationRequirements(current, in []*qualifications.QualificationRequirement) (toCreate []*qualifications.QualificationRequirement, toDelete []*qualifications.QualificationRequirement) {
+func (s *Server) compareQualificationRequirements(
+	current, in []*qualifications.QualificationRequirement,
+) ([]*qualifications.QualificationRequirement, []*qualifications.QualificationRequirement) {
+	toCreate := []*qualifications.QualificationRequirement{}
+	toDelete := []*qualifications.QualificationRequirement{}
+
 	if current == nil {
 		return in, toDelete
 	}
@@ -522,7 +566,7 @@ func (s *Server) compareQualificationRequirements(current, in []*qualifications.
 			var found *qualifications.QualificationRequirement
 			var foundIdx int
 			for i, qj := range in {
-				if cq.TargetQualificationId != qj.TargetQualificationId {
+				if cq.GetTargetQualificationId() != qj.GetTargetQualificationId() {
 					continue
 				}
 				found = qj
@@ -546,5 +590,5 @@ func (s *Server) compareQualificationRequirements(current, in []*qualifications.
 		}
 	}
 
-	return
+	return toCreate, toDelete
 }

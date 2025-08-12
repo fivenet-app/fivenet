@@ -1,6 +1,7 @@
 package discord
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/diamondburned/arikawa/v3/discord"
@@ -9,45 +10,48 @@ import (
 	"go.uber.org/zap"
 )
 
-func (b *Bot) setBotPresence(cfg *settings.DiscordBotPresence) error {
+func (b *Bot) setBotPresence(ctx context.Context, cfg *settings.DiscordBotPresence) error {
 	var activity *discord.Activity
-	if cfg.Type == settings.DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_GAME {
+	switch cfg.GetType() {
+	case settings.DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_GAME:
 		activity = &discord.Activity{
 			Type: discord.GameActivity,
-			Name: *cfg.Status,
+			Name: cfg.GetStatus(),
 		}
-	} else if cfg.Type == settings.DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_LISTENING {
+	case settings.DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_LISTENING:
 		activity = &discord.Activity{
 			Type: discord.ListeningActivity,
-			Name: *cfg.Status,
+			Name: cfg.GetStatus(),
 		}
-	} else if cfg.Type == settings.DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_STREAMING {
+	case settings.DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_STREAMING:
 		activity = &discord.Activity{
 			Type: discord.StreamingActivity,
-			Name: *cfg.Status,
+			Name: cfg.GetStatus(),
 		}
-	} else if cfg.Type == settings.DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_WATCH {
+	case settings.DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_WATCH:
+		fallthrough
+	case settings.DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_UNSPECIFIED:
+		fallthrough
+	default:
 		activity = &discord.Activity{
 			Type:  discord.WatchingActivity,
-			Name:  *cfg.Status,
+			Name:  cfg.GetStatus(),
 			Flags: discord.JoinActivity,
 		}
 	}
 
-	if activity != nil {
-		if cfg.Url != nil {
-			activity.URL = *cfg.Url
-		}
-
-		if err := b.dc.Gateway().Send(b.ctx, &gateway.UpdatePresenceCommand{
-			Activities: []discord.Activity{*activity},
-			Status:     discord.OnlineStatus,
-		}); err != nil {
-			return fmt.Errorf("failed to set bot presence. %w", err)
-		}
+	if cfg.Url != nil {
+		activity.URL = cfg.GetUrl()
 	}
 
-	b.logger.Info("bot presence has been set", zap.Int32("presence_type", int32(cfg.Type)))
+	if err := b.dc.Gateway().Send(ctx, &gateway.UpdatePresenceCommand{
+		Activities: []discord.Activity{*activity},
+		Status:     discord.OnlineStatus,
+	}); err != nil {
+		return fmt.Errorf("failed to set bot presence. %w", err)
+	}
+
+	b.logger.Info("bot presence has been set", zap.Int32("presence_type", int32(cfg.GetType())))
 
 	return nil
 }

@@ -10,7 +10,10 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
-func (s *Server) GetStatus(ctx context.Context, req *pbsync.GetStatusRequest) (*pbsync.GetStatusResponse, error) {
+func (s *Server) GetStatus(
+	ctx context.Context,
+	req *pbsync.GetStatusRequest,
+) (*pbsync.GetStatusResponse, error) {
 	resp := &pbsync.GetStatusResponse{}
 
 	tJobs := tables.Jobs()

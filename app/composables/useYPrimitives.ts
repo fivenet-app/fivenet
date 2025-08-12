@@ -1,7 +1,7 @@
 /**
- * Shared Vue ↔ Yjs primitive bindings **without feedback‑loops**.
+ * Shared Vue ↔ Yjs primitive bindings **without feedback-loops**.
  *
- * Each composable spins up a two‑way sync between a Vue ref and a Yjs data
+ * Each composable spins up a two-way sync between a Vue ref and a Yjs data
  * structure.  To prevent infinite loops we wrap every *local* change in a Yjs
  * transaction tagged with a unique `LOCAL_ORIGIN` symbol, and observers simply
  * ignore events whose `transaction.origin` matches that symbol.

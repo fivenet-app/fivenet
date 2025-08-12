@@ -12,11 +12,19 @@ import (
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
-func (s *Server) GetQualificationAccess(ctx context.Context, req *pbqualifications.GetQualificationAccessRequest) (*pbqualifications.GetQualificationAccessResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.QualificationId})
+func (s *Server) GetQualificationAccess(
+	ctx context.Context,
+	req *pbqualifications.GetQualificationAccessRequest,
+) (*pbqualifications.GetQualificationAccessResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.GetQualificationId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	check, err := s.access.CanUserAccessTarget(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetQualificationId(),
+		userInfo,
+		qualifications.AccessLevel_ACCESS_LEVEL_VIEW,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -24,7 +32,7 @@ func (s *Server) GetQualificationAccess(ctx context.Context, req *pbqualificatio
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	access, err := s.access.Jobs.List(ctx, s.db, req.QualificationId)
+	access, err := s.access.Jobs.List(ctx, s.db, req.GetQualificationId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -41,21 +49,29 @@ func (s *Server) GetQualificationAccess(ctx context.Context, req *pbqualificatio
 	return resp, nil
 }
 
-func (s *Server) SetQualificationAccess(ctx context.Context, req *pbqualifications.SetQualificationAccessRequest) (*pbqualifications.SetQualificationAccessResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.QualificationId})
+func (s *Server) SetQualificationAccess(
+	ctx context.Context,
+	req *pbqualifications.SetQualificationAccessRequest,
+) (*pbqualifications.SetQualificationAccessResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.GetQualificationId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
 		Method:  "SetQualificationAccess",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_EDIT)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetQualificationId(),
+		userInfo,
+		qualifications.AccessLevel_ACCESS_LEVEL_EDIT,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -71,8 +87,8 @@ func (s *Server) SetQualificationAccess(ctx context.Context, req *pbqualificatio
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	if req.Access != nil {
-		if _, err := s.access.HandleAccessChanges(ctx, tx, req.QualificationId, req.Access.Jobs, nil, nil); err != nil {
+	if req.GetAccess() != nil {
+		if _, err := s.access.HandleAccessChanges(ctx, tx, req.GetQualificationId(), req.GetAccess().GetJobs(), nil, nil); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 	}

@@ -35,7 +35,12 @@ func (a *Jobs[U, T, AccessLevel]) GetEntry(ctx context.Context, tx qrm.DB, id ui
 }
 
 // CreateEntry inserts a new job access entry for a given targetId and entry.
-func (a *Jobs[U, T, AccessLevel]) CreateEntry(ctx context.Context, tx qrm.DB, targetId uint64, entry T) error {
+func (a *Jobs[U, T, AccessLevel]) CreateEntry(
+	ctx context.Context,
+	tx qrm.DB,
+	targetId uint64,
+	entry T,
+) error {
 	stmt := a.table.
 		INSERT(
 			a.columns.TargetID,
@@ -58,7 +63,12 @@ func (a *Jobs[U, T, AccessLevel]) CreateEntry(ctx context.Context, tx qrm.DB, ta
 }
 
 // UpdateEntry updates an existing job access entry for a given targetId and entry.
-func (a *Jobs[U, T, AccessLevel]) UpdateEntry(ctx context.Context, tx qrm.DB, targetId uint64, entry T) error {
+func (a *Jobs[U, T, AccessLevel]) UpdateEntry(
+	ctx context.Context,
+	tx qrm.DB,
+	targetId uint64,
+	entry T,
+) error {
 	stmt := a.table.
 		UPDATE(
 			a.columns.Access,
@@ -83,7 +93,12 @@ func (a *Jobs[U, T, AccessLevel]) UpdateEntry(ctx context.Context, tx qrm.DB, ta
 }
 
 // DeleteEntry deletes a job access entry by its ID and targetId.
-func (a *Jobs[U, T, AccessLevel]) DeleteEntry(ctx context.Context, tx qrm.DB, targetId uint64, id uint64) error {
+func (a *Jobs[U, T, AccessLevel]) DeleteEntry(
+	ctx context.Context,
+	tx qrm.DB,
+	targetId uint64,
+	id uint64,
+) error {
 	stmt := a.table.
 		DELETE().
 		WHERE(jet.AND(

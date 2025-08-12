@@ -10,6 +10,14 @@ import (
 	"golang.org/x/image/draw"
 )
 
+const (
+	PNGExt  = "png"
+	GIFExt  = "gif"
+	JPGExt  = "jpg"
+	JPEGExt = "jpeg"
+	WEBPExt = "webp"
+)
+
 var (
 	ErrUnsupportedImageType = errors.New("unsupported image type")
 	ErrZeroDimensions       = errors.New("image has zero dimensions")
@@ -26,11 +34,11 @@ func ResizeImage(ext string, input io.Reader, height uint, width uint) ([]byte, 
 
 	ext = strings.ToLower(strings.TrimPrefix(ext, "."))
 	switch ext {
-	case "png":
+	case PNGExt:
 		imgType = PNG{}
-	case "jpg", "jpeg":
+	case JPGExt, JPEGExt:
 		imgType = JPEG{}
-	case "webp":
+	case WEBPExt:
 		imgType = WebP{}
 	default:
 		return nil, ErrUnsupportedImageType
@@ -59,7 +67,7 @@ func ResizeImage(ext string, input io.Reader, height uint, width uint) ([]byte, 
 	return output.Bytes(), nil
 }
 
-// Resize condition is heavily inspired by <https://github.com/KononK/resize> code
+// Resize condition is heavily inspired by <https://github.com/KononK/resize> code.
 func resizeImageIfNecessary(src image.Image, height uint, width uint) (*image.RGBA, error) {
 	// Source image has no or "negative" pixels
 	if src.Bounds().Dx() <= 0 || src.Bounds().Dy() <= 0 {
@@ -70,7 +78,12 @@ func resizeImageIfNecessary(src image.Image, height uint, width uint) (*image.RG
 		return nil, ErrZeroResize
 	}
 
-	scaleX, scaleY := calcScaleFactors(width, height, float64(src.Bounds().Dx()), float64(src.Bounds().Dy()))
+	scaleX, scaleY := calcScaleFactors(
+		width,
+		height,
+		float64(src.Bounds().Dx()),
+		float64(src.Bounds().Dy()),
+	)
 	if width == 0 {
 		width = uint(0.7 + float64(src.Bounds().Dx())/scaleX)
 	}
@@ -93,7 +106,15 @@ func resizeImageIfNecessary(src image.Image, height uint, width uint) (*image.RG
 }
 
 // Calculates scaling factors using old and new image dimensions.
-func calcScaleFactors(width uint, height uint, oldWidth float64, oldHeight float64) (scaleX float64, scaleY float64) {
+func calcScaleFactors(
+	width uint,
+	height uint,
+	oldWidth float64,
+	oldHeight float64,
+) (float64, float64) {
+	var scaleX float64
+	var scaleY float64
+
 	if width == 0 {
 		if height == 0 {
 			scaleX = 1.0
@@ -111,5 +132,5 @@ func calcScaleFactors(width uint, height uint, oldWidth float64, oldHeight float
 		}
 	}
 
-	return
+	return scaleX, scaleY
 }

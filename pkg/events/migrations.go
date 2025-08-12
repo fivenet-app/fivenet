@@ -16,7 +16,7 @@ var (
 	registeredMigrations = []Migration{}
 )
 
-// registerMigration adds a migration to the registry; called in each migration file's init()
+// registerMigration adds a migration to the registry; called in each migration file's `init()`.
 func registerMigration(m Migration) {
 	mu.Lock()
 	defer mu.Unlock()
@@ -49,7 +49,7 @@ func runMigrations(ctx context.Context, logger *zap.Logger, js *JSWrapper) error
 
 	// Fetch the recorded latest version
 	rec, err := kv.Get(ctx, "latest")
-	if err == jetstream.ErrKeyNotFound {
+	if errors.Is(err, jetstream.ErrKeyNotFound) {
 		// Fresh install: record highest and exit
 		latest := registeredMigrations[len(registeredMigrations)-1].ID
 		if _, err := kv.Put(ctx, "latest", []byte(latest)); err != nil {

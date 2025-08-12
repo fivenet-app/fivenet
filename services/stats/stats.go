@@ -43,11 +43,11 @@ func NewServer(p Params) *Server {
 		worker: newWorker(p.Logger, p.DB),
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
-		if p.AppConfig.Get().Website.StatsPage {
-			s.worker.Start()
+		if p.AppConfig.Get().Website.GetStatsPage() {
+			s.worker.Start(ctxCancel)
 		}
 
 		go func() {
@@ -55,7 +55,7 @@ func NewServer(p Params) *Server {
 
 			for {
 				select {
-				case <-ctx.Done():
+				case <-ctxCancel.Done():
 					p.AppConfig.Unsubscribe(configUpdateCh)
 					return
 
@@ -64,8 +64,8 @@ func NewServer(p Params) *Server {
 						continue
 					}
 
-					if cfg.Website.StatsPage {
-						s.worker.Start()
+					if cfg.Website.GetStatsPage() {
+						s.worker.Start(ctxCancel)
 					} else {
 						s.worker.Stop()
 					}
@@ -88,12 +88,18 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbstats.RegisterStatsServiceServer(srv, s)
 }
 
-func (s *Server) PermissionUnaryFuncOverride(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error) {
+func (s *Server) PermissionUnaryFuncOverride(
+	ctx context.Context,
+	info *grpc.UnaryServerInfo,
+) (context.Context, error) {
 	// Skip permission check for the stats services
 	return ctx, nil
 }
 
-func (s *Server) GetStats(ctx context.Context, req *pbstats.GetStatsRequest) (*pbstats.GetStatsResponse, error) {
+func (s *Server) GetStats(
+	ctx context.Context,
+	req *pbstats.GetStatsRequest,
+) (*pbstats.GetStatsResponse, error) {
 	stats := s.worker.GetStats()
 	if stats == nil {
 		return &pbstats.GetStatsResponse{}, nil

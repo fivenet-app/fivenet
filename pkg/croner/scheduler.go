@@ -133,22 +133,27 @@ func (s *Scheduler) start(ctx context.Context) {
 					}
 
 					// Check if the cron job is already/still running and under the timeout check
-					if job.StartedTime != nil && job.State == cron.CronjobState_CRONJOB_STATE_RUNNING {
-						if time.Since(job.StartedTime.AsTime()) <= job.GetRunTimeout() {
+					if job.GetStartedTime() != nil &&
+						job.GetState() == cron.CronjobState_CRONJOB_STATE_RUNNING {
+						if time.Since(job.GetStartedTime().AsTime()) <= job.GetRunTimeout() {
 							return true
 						}
 					}
 
-					ok, err := s.gron.IsDue(job.Schedule, t)
+					ok, err := s.gron.IsDue(job.GetSchedule(), t)
 					if err != nil {
-						s.logger.Error("failed to chek cron job due time", zap.String("job_name", key), zap.String("schedule", job.Schedule))
+						s.logger.Error(
+							"failed to chek cron job due time",
+							zap.String("job_name", key),
+							zap.String("schedule", job.GetSchedule()),
+						)
 						return true
 					}
 					if !ok {
 						return true
 					}
 
-					s.logger.Debug("scheduling cron job", zap.String("name", job.Name))
+					s.logger.Debug("scheduling cron job", zap.String("name", job.GetName()))
 					wg.Add(1)
 					go func() {
 						defer wg.Done()
@@ -161,16 +166,22 @@ func (s *Scheduler) start(ctx context.Context) {
 							existing.StartedTime = timestamp.Now()
 							existing.State = cron.CronjobState_CRONJOB_STATE_RUNNING
 
-							job.StartedTime = existing.StartedTime
-							job.State = existing.State
+							job.StartedTime = existing.GetStartedTime()
+							job.State = existing.GetState()
 
 							return existing, true, nil
 						}); err != nil {
-							s.logger.Error("failed to update status of cron job", zap.String("job_name", job.Name))
+							s.logger.Error(
+								"failed to update status of cron job",
+								zap.String("job_name", job.GetName()),
+							)
 						}
 
 						if err := s.runCronjob(ctx, job); err != nil {
-							s.logger.Error("failed to trigger cron job run", zap.String("job_name", job.Name))
+							s.logger.Error(
+								"failed to trigger cron job run",
+								zap.String("job_name", job.GetName()),
+							)
 						}
 					}()
 
@@ -193,14 +204,21 @@ func (s *Scheduler) runCronjob(ctx context.Context, job *cron.Cronjob) error {
 	return nil
 }
 
-func (s *Scheduler) registerSubscriptions(ctxStartup context.Context, ctxCancel context.Context) error {
-	consumer, err := s.js.CreateOrUpdateConsumer(ctxStartup, CronScheduleStreamName, jetstream.ConsumerConfig{
-		Durable:           instance.ID() + "_cron_scheduler",
-		DeliverPolicy:     jetstream.DeliverNewPolicy,
-		FilterSubject:     fmt.Sprintf("%s.%s", CronScheduleSubject, CronCompleteTopic),
-		MaxDeliver:        3,
-		InactiveThreshold: 1 * time.Minute, // Close consumer if inactive for 1 minute
-	})
+func (s *Scheduler) registerSubscriptions(
+	ctxStartup context.Context,
+	ctxCancel context.Context,
+) error {
+	consumer, err := s.js.CreateOrUpdateConsumer(
+		ctxStartup,
+		CronScheduleStreamName,
+		jetstream.ConsumerConfig{
+			Durable:           instance.ID() + "_cron_scheduler",
+			DeliverPolicy:     jetstream.DeliverNewPolicy,
+			FilterSubject:     fmt.Sprintf("%s.%s", CronScheduleSubject, CronCompleteTopic),
+			MaxDeliver:        3,
+			InactiveThreshold: 1 * time.Minute, // Close consumer if inactive for 1 minute
+		},
+	)
 	if err != nil {
 		return err
 	}
@@ -223,20 +241,33 @@ func (s *Scheduler) registerSubscriptions(ctxStartup context.Context, ctxCancel 
 
 func (s *Scheduler) watchForCompletions(msg jetstream.Msg) {
 	event := &cron.CronjobCompletedEvent{}
-	if err := protoutils.UnmarshalPartialPJSON(msg.Data(), event); err != nil {
-		s.logger.Error("failed to unmarshal cron completion msg", zap.String("subject", msg.Subject()), zap.Error(err))
+	if err := protoutils.UnmarshalPartialJSON(msg.Data(), event); err != nil {
+		s.logger.Error(
+			"failed to unmarshal cron completion msg",
+			zap.String("subject", msg.Subject()),
+			zap.Error(err),
+		)
 
 		if err := msg.NakWithDelay(150 * time.Millisecond); err != nil {
-			s.logger.Error("failed to nack unmarshal cron completion msg", zap.String("subject", msg.Subject()), zap.Error(err))
+			s.logger.Error(
+				"failed to nack unmarshal cron completion msg",
+				zap.String("subject", msg.Subject()),
+				zap.Error(err),
+			)
 		}
 		return
 	}
 
 	if err := msg.InProgress(); err != nil {
-		s.logger.Error("failed to send in progress for cron completion msg", zap.String("subject", msg.Subject()), zap.String("job_name", event.Name), zap.Error(err))
+		s.logger.Error(
+			"failed to send in progress for cron completion msg",
+			zap.String("subject", msg.Subject()),
+			zap.String("job_name", event.GetName()),
+			zap.Error(err),
+		)
 	}
 
-	if err := s.registry.store.ComputeUpdate(s.ctxCancel, event.Name, func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
+	if err := s.registry.store.ComputeUpdate(s.ctxCancel, event.GetName(), func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
 		// No need to update the job, probably doesn't exist anymore
 		if existing == nil {
 			return existing, false, nil
@@ -244,25 +275,35 @@ func (s *Scheduler) watchForCompletions(msg jetstream.Msg) {
 
 		existing.State = cron.CronjobState_CRONJOB_STATE_WAITING
 
-		nextTime, err := gronx.NextTick(existing.Schedule, false)
+		nextTime, err := gronx.NextTick(existing.GetSchedule(), false)
 		if err != nil {
 			return existing, false, err
 		}
 		existing.NextScheduleTime = timestamp.New(nextTime)
 		existing.LastAttemptTime = timestamp.New(time.Now())
 
-		existing.Data = event.Data
+		existing.Data = event.GetData()
 
 		existing.LastCompletedEvent = event
 
 		return existing, true, nil
 	}); err != nil {
-		s.logger.Error("failed to update cronjob state after completion msg", zap.String("subject", msg.Subject()), zap.String("job_name", event.Name), zap.Error(err))
+		s.logger.Error(
+			"failed to update cronjob state after completion msg",
+			zap.String("subject", msg.Subject()),
+			zap.String("job_name", event.GetName()),
+			zap.Error(err),
+		)
 		return
 	}
 
 	if err := msg.Ack(); err != nil {
-		s.logger.Error("failed to ack cron completion msg", zap.String("subject", msg.Subject()), zap.String("job_name", event.Name), zap.Error(err))
+		s.logger.Error(
+			"failed to ack cron completion msg",
+			zap.String("subject", msg.Subject()),
+			zap.String("job_name", event.GetName()),
+			zap.Error(err),
+		)
 		return
 	}
 }

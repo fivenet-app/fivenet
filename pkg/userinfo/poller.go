@@ -28,7 +28,7 @@ type userSnapshot struct {
 	JobGrade int32
 }
 
-// Poller
+// Poller.
 type Poller struct {
 	ctx context.Context
 
@@ -113,14 +113,21 @@ func NewPoller(p PollerParams) (*Poller, error) {
 	return poller, nil
 }
 
-func (p *Poller) registerSubscriptions(ctxStartup context.Context, ctxCancel context.Context) error {
+func (p *Poller) registerSubscriptions(
+	ctxStartup context.Context,
+	ctxCancel context.Context,
+) error {
 	// Subscribe to poll requests
-	consumer, err := p.js.CreateOrUpdateConsumer(ctxStartup, PollStreamName, jetstream.ConsumerConfig{
-		Durable:           instance.ID() + "_ui_poller",
-		AckPolicy:         jetstream.AckExplicitPolicy,
-		FilterSubjects:    []string{PollSubject},
-		InactiveThreshold: 1 * time.Minute, // Close consumer if inactive for 1 minute
-	})
+	consumer, err := p.js.CreateOrUpdateConsumer(
+		ctxStartup,
+		PollStreamName,
+		jetstream.ConsumerConfig{
+			Durable:           instance.ID() + "_ui_poller",
+			AckPolicy:         jetstream.AckExplicitPolicy,
+			FilterSubjects:    []string{PollSubject},
+			InactiveThreshold: 1 * time.Minute, // Close consumer if inactive for 1 minute
+		},
+	)
 	if err != nil {
 		return fmt.Errorf("failed to create/update consumer for %s. %w", PollStreamName, err)
 	}
@@ -140,8 +147,8 @@ func (p *Poller) registerSubscriptions(ctxStartup context.Context, ctxCancel con
 
 func (p *Poller) handleMsg(m jetstream.Msg) {
 	var req pb.PollReq
-	if err := protoutils.UnmarshalPartialPJSON(m.Data(), &req); err == nil {
-		key := fmt.Sprintf("%d:%d", req.AccountId, req.UserId)
+	if err := protoutils.UnmarshalPartialJSON(m.Data(), &req); err == nil {
+		key := fmt.Sprintf("%d:%d", req.GetAccountId(), req.GetUserId())
 
 		// Try Create with TTL. ErrKeyExists means we skip.
 		if _, err := p.kv.Create(p.ctx, key, []byte("1"), jetstream.KeyTTL(p.ttl)); err == nil {
@@ -182,7 +189,7 @@ func (p *Poller) doBatch(ctx context.Context) error {
 
 	userIds := []jet.Expression{}
 	for _, req := range batch {
-		userIds = append(userIds, jet.Int32(req.UserId))
+		userIds = append(userIds, jet.Int32(req.GetUserId()))
 	}
 
 	tUser := tables.User()
@@ -198,8 +205,11 @@ func (p *Poller) doBatch(ctx context.Context) error {
 		).
 		FROM(
 			tUser.
-				INNER_JOIN(tAccount,
-					tAccount.License.LIKE(jet.RawString("SUBSTRING_INDEX(`users`.`identifier`, ':', -1)")),
+				INNER_JOIN(
+					tAccount,
+					tAccount.License.LIKE(
+						jet.RawString("SUBSTRING_INDEX(`users`.`identifier`, ':', -1)"),
+					),
 				),
 		).
 		WHERE(tUser.ID.IN(userIds...))
@@ -227,7 +237,14 @@ func (p *Poller) doBatch(ctx context.Context) error {
 	return errs
 }
 
-func (p *Poller) checkDiffAndPublish(ctx context.Context, acct uint64, uid int32, job string, grade int32, updatedAt *timestamp.Timestamp) error {
+func (p *Poller) checkDiffAndPublish(
+	ctx context.Context,
+	acct uint64,
+	uid int32,
+	job string,
+	grade int32,
+	updatedAt *timestamp.Timestamp,
+) error {
 	p.snapMu.Lock()
 	defer p.snapMu.Unlock()
 

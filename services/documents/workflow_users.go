@@ -15,7 +15,10 @@ import (
 
 var tUserWorkflow = table.FivenetDocumentsWorkflowUsers.AS("workflow_user_state")
 
-func (w *Workflow) handleDocumentsUsers(ctx context.Context, data *documents.WorkflowCronData) error {
+func (w *Workflow) handleDocumentsUsers(
+	ctx context.Context,
+	data *documents.WorkflowCronData,
+) error {
 	stmt := tUserWorkflow.
 		SELECT(
 			tUserWorkflow.DocumentID,
@@ -39,7 +42,7 @@ func (w *Workflow) handleDocumentsUsers(ctx context.Context, data *documents.Wor
 				),
 		).
 		WHERE(jet.AND(
-			tUserWorkflow.DocumentID.GT(jet.Uint64(data.LastDocId)),
+			tUserWorkflow.DocumentID.GT(jet.Uint64(data.GetLastDocId())),
 			tUserWorkflow.ManualReminderTime.LT_EQ(jet.TimestampT(time.Now())),
 		)).
 		LIMIT(100)
@@ -66,8 +69,15 @@ func (w *Workflow) handleDocumentsUsers(ctx context.Context, data *documents.Wor
 				defer wg.Done()
 
 				if err := w.handleWorkflowUserState(ctx, state); err != nil {
-					w.logger.Error("error during workflow user state handling",
-						zap.Uint64("document_id", state.DocumentId), zap.Int32("user_id", state.UserId), zap.Error(err))
+					w.logger.Error(
+						"error during workflow user state handling",
+						zap.Uint64(
+							"document_id",
+							state.GetDocumentId(),
+						),
+						zap.Int32("user_id", state.GetUserId()),
+						zap.Error(err),
+					)
 				}
 			}()
 		}
@@ -84,10 +94,14 @@ func (w *Workflow) handleDocumentsUsers(ctx context.Context, data *documents.Wor
 	return nil
 }
 
-func (w *Workflow) handleWorkflowUserState(ctx context.Context, state *documents.WorkflowUserState) error {
-	if state.ManualReminderTime != nil && time.Since(state.ManualReminderTime.AsTime()) > 0 {
+func (w *Workflow) handleWorkflowUserState(
+	ctx context.Context,
+	state *documents.WorkflowUserState,
+) error {
+	if state.GetManualReminderTime() != nil &&
+		time.Since(state.GetManualReminderTime().AsTime()) > 0 {
 		// Send reminder and null reminder time
-		if err := w.sendDocumentReminder(ctx, state.DocumentId, state.UserId, state.Document, state.ManualReminderMessage, true); err != nil {
+		if err := w.sendDocumentReminder(ctx, state.GetDocumentId(), state.GetUserId(), state.GetDocument(), state.GetManualReminderMessage(), true); err != nil {
 			return err
 		}
 
@@ -99,15 +113,19 @@ func (w *Workflow) handleWorkflowUserState(ctx context.Context, state *documents
 	return nil
 }
 
-func updateWorkflowUserState(ctx context.Context, tx qrm.DB, state *documents.WorkflowUserState) error {
+func updateWorkflowUserState(
+	ctx context.Context,
+	tx qrm.DB,
+	state *documents.WorkflowUserState,
+) error {
 	reminderTime := jet.TimestampExp(jet.NULL)
-	if state.ManualReminderTime != nil {
-		reminderTime = jet.TimestampT(state.ManualReminderTime.AsTime())
+	if state.GetManualReminderTime() != nil {
+		reminderTime = jet.TimestampT(state.GetManualReminderTime().AsTime())
 	}
 
 	reminderMessage := jet.StringExp(jet.NULL)
 	if state.ManualReminderMessage != nil {
-		reminderMessage = jet.String(*state.ManualReminderMessage)
+		reminderMessage = jet.String(state.GetManualReminderMessage())
 	}
 
 	tUserWorkflow := table.FivenetDocumentsWorkflowUsers
@@ -120,10 +138,10 @@ func updateWorkflowUserState(ctx context.Context, tx qrm.DB, state *documents.Wo
 			tUserWorkflow.ManualReminderMessage,
 		).
 		VALUES(
-			state.DocumentId,
-			state.UserId,
-			state.ManualReminderTime,
-			state.ManualReminderMessage,
+			state.GetDocumentId(),
+			state.GetUserId(),
+			state.GetManualReminderTime(),
+			state.GetManualReminderMessage(),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tUserWorkflow.ManualReminderTime.SET(reminderTime),
@@ -137,14 +155,18 @@ func updateWorkflowUserState(ctx context.Context, tx qrm.DB, state *documents.Wo
 	return nil
 }
 
-func deleteWorkflowUserState(ctx context.Context, tx qrm.DB, state *documents.WorkflowUserState) error {
+func deleteWorkflowUserState(
+	ctx context.Context,
+	tx qrm.DB,
+	state *documents.WorkflowUserState,
+) error {
 	tUserWorkflow := table.FivenetDocumentsWorkflowUsers
 
 	stmt := tUserWorkflow.
 		DELETE().
 		WHERE(jet.AND(
-			tUserWorkflow.DocumentID.EQ(jet.Uint64(state.DocumentId)),
-			tUserWorkflow.UserID.EQ(jet.Int32(state.UserId)),
+			tUserWorkflow.DocumentID.EQ(jet.Uint64(state.GetDocumentId())),
+			tUserWorkflow.UserID.EQ(jet.Int32(state.GetUserId())),
 		)).
 		LIMIT(1)
 

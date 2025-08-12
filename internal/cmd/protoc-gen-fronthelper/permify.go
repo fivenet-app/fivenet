@@ -41,7 +41,10 @@ func (p *PermifyModule) InitContext(c pgs.BuildContext) {
 // Name satisfies the generator.Plugin interface.
 func (p *PermifyModule) Name() string { return "permify" }
 
-func (p *PermifyModule) Execute(targets map[string]pgs.File, pkgs map[string]pgs.Package) []pgs.Artifact {
+func (p *PermifyModule) Execute(
+	targets map[string]pgs.File,
+	pkgs map[string]pgs.Package,
+) []pgs.Artifact {
 	visited := map[string][]pgs.File{}
 	for _, t := range targets {
 		key := t.File().InputPath().Dir().String()
@@ -86,11 +89,22 @@ func (p *PermifyModule) Execute(targets map[string]pgs.File, pkgs map[string]pgs
 
 					perm, err := p.parseComment(mName, comment)
 					if err != nil {
-						p.Failf("failed to parse comment in %s method %s (comment: '%s'), error. %w", f.InputPath(), mName, comment, err)
+						p.Failf(
+							"failed to parse comment in %s method %s (comment: '%s'), error. %w",
+							f.InputPath(),
+							mName,
+							comment,
+							err,
+						)
 						return nil
 					}
 					if perm == nil {
-						p.Failf("failed to parse comment in %s method %s (comment: '%s')", f.InputPath(), mName, comment)
+						p.Failf(
+							"failed to parse comment in %s method %s (comment: '%s')",
+							f.InputPath(),
+							mName,
+							comment,
+						)
 						return nil
 					}
 

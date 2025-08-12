@@ -8,8 +8,11 @@ import (
 	errorsinternet "github.com/fivenet-app/fivenet/v2025/services/internet/errors"
 )
 
-func (s *Server) GetPage(ctx context.Context, req *pbinternet.GetPageRequest) (*pbinternet.GetPageResponse, error) {
-	domain, err := s.getDomainByName(ctx, s.db, req.Domain)
+func (s *Server) GetPage(
+	ctx context.Context,
+	req *pbinternet.GetPageRequest,
+) (*pbinternet.GetPageResponse, error) {
+	domain, err := s.getDomainByName(ctx, s.db, req.GetDomain())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
 	}
@@ -19,7 +22,7 @@ func (s *Server) GetPage(ctx context.Context, req *pbinternet.GetPageRequest) (*
 		return resp, nil
 	}
 
-	page, err := s.getPageByDomainAndPath(ctx, domain.Id, req.Path)
+	page, err := s.getPageByDomainAndPath(ctx, domain.GetId(), req.GetPath())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
 	}

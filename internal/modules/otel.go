@@ -65,13 +65,23 @@ func NewTracerProvider(p TracingParams) (TracingResults, error) {
 
 	res, err := newAttributes(p.Config.OTLP)
 	if err != nil {
-		return TracingResults{}, fmt.Errorf("failed to create attributes for tracer provider. %w", err)
+		return TracingResults{}, fmt.Errorf(
+			"failed to create attributes for tracer provider. %w",
+			err,
+		)
 	}
 
 	// Log Exporter - set in the logger module
 
 	// Metrics
-	metricExporter, err := newMetricsExporter(ctx, p.Config.OTLP.Type, p.Config.OTLP.URL, p.Config.OTLP.Insecure, p.Config.OTLP.Timeout, p.Config.OTLP.Headers)
+	metricExporter, err := newMetricsExporter(
+		ctx,
+		p.Config.OTLP.Type,
+		p.Config.OTLP.URL,
+		p.Config.OTLP.Insecure,
+		p.Config.OTLP.Timeout,
+		p.Config.OTLP.Headers,
+	)
 	if err != nil {
 		return TracingResults{}, err
 	}
@@ -85,7 +95,15 @@ func NewTracerProvider(p TracingParams) (TracingResults, error) {
 	otel.SetMeterProvider(meterProvider)
 
 	// Tracing
-	traceExporter, err := newTraceExporter(ctx, p.Config.OTLP.Type, p.Config.OTLP.URL, p.Config.OTLP.Insecure, p.Config.OTLP.Timeout, p.Config.OTLP.Headers, p.Config.OTLP.Compression)
+	traceExporter, err := newTraceExporter(
+		ctx,
+		p.Config.OTLP.Type,
+		p.Config.OTLP.URL,
+		p.Config.OTLP.Insecure,
+		p.Config.OTLP.Timeout,
+		p.Config.OTLP.Headers,
+		p.Config.OTLP.Compression,
+	)
 	if err != nil {
 		return TracingResults{}, fmt.Errorf("failed to create trace exporter. %w", err)
 	}
@@ -97,7 +115,12 @@ func NewTracerProvider(p TracingParams) (TracingResults, error) {
 		tracesdk.WithResource(res),
 	)
 	otel.SetTracerProvider(tp)
-	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
+	otel.SetTextMapPropagator(
+		propagation.NewCompositeTextMapPropagator(
+			propagation.TraceContext{},
+			propagation.Baggage{},
+		),
+	)
 
 	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
 		ctx, cancel := context.WithTimeout(ctx, 7*time.Second)
@@ -151,7 +174,14 @@ func newAttributes(cfg config.OTLPConfig) (*resource.Resource, error) {
 	return attrs, nil
 }
 
-func newMetricsExporter(ctx context.Context, tracingType config.OtelExporter, endpoint string, insecure bool, timeout time.Duration, headers map[string]string) (metric.Exporter, error) {
+func newMetricsExporter(
+	ctx context.Context,
+	tracingType config.OtelExporter,
+	endpoint string,
+	insecure bool,
+	timeout time.Duration,
+	headers map[string]string,
+) (metric.Exporter, error) {
 	switch tracingType {
 	case config.TracingExporter_OTLPGRPC:
 		secureOption := otlpmetricgrpc.WithTLSCredentials(credentials.NewClientTLSFromCert(nil, ""))
@@ -186,7 +216,15 @@ func newMetricsExporter(ctx context.Context, tracingType config.OtelExporter, en
 	}
 }
 
-func newLoggerExporter(ctx context.Context, loggerType config.OtelExporter, endpoint string, insecure bool, timeout time.Duration, headers map[string]string, compression string) (log.Exporter, error) {
+func newLoggerExporter(
+	ctx context.Context,
+	loggerType config.OtelExporter,
+	endpoint string,
+	insecure bool,
+	timeout time.Duration,
+	headers map[string]string,
+	compression string,
+) (log.Exporter, error) {
 	switch loggerType {
 	case config.TracingExporter_OTLPGRPC:
 		secureOption := otlploggrpc.WithTLSCredentials(credentials.NewClientTLSFromCert(nil, ""))
@@ -226,7 +264,15 @@ func newLoggerExporter(ctx context.Context, loggerType config.OtelExporter, endp
 	}
 }
 
-func newTraceExporter(ctx context.Context, tracingType config.OtelExporter, endpoint string, insecure bool, timeout time.Duration, headers map[string]string, compression string) (tracesdk.SpanExporter, error) {
+func newTraceExporter(
+	ctx context.Context,
+	tracingType config.OtelExporter,
+	endpoint string,
+	insecure bool,
+	timeout time.Duration,
+	headers map[string]string,
+	compression string,
+) (tracesdk.SpanExporter, error) {
 	var err error
 	var exporter tracesdk.SpanExporter
 	switch tracingType {

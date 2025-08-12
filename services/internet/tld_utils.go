@@ -31,7 +31,7 @@ func (s *Server) getTLD(ctx context.Context, tx qrm.DB, id uint64) (*internet.TL
 		}
 	}
 
-	if dest.Id == 0 {
+	if dest.GetId() == 0 {
 		return nil, nil
 	}
 

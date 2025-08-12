@@ -32,7 +32,12 @@ func (s *Noop) Get(ctx context.Context, filePath string) (IObject, IObjectInfo, 
 }
 
 // GetURL always returns nil, simulating no URL support.
-func (s *Noop) GetURL(ctx context.Context, filePath string, expires time.Duration, reqParams url.Values) (*string, error) {
+func (s *Noop) GetURL(
+	ctx context.Context,
+	filePath string,
+	expires time.Duration,
+	reqParams url.Values,
+) (*string, error) {
 	return nil, nil
 }
 
@@ -42,7 +47,13 @@ func (s *Noop) Stat(ctx context.Context, filePath string) (IObjectInfo, error) {
 }
 
 // Put always returns an empty string, simulating a no-op upload.
-func (s *Noop) Put(ctx context.Context, filePath string, reader io.Reader, size int64, contentType string) (string, error) {
+func (s *Noop) Put(
+	ctx context.Context,
+	filePath string,
+	reader io.Reader,
+	size int64,
+	contentType string,
+) (string, error) {
 	return "", nil
 }
 
@@ -52,7 +63,12 @@ func (s *Noop) Delete(ctx context.Context, filePath string) error {
 }
 
 // List always returns nil, simulating no files in storage.
-func (s *Noop) List(ctx context.Context, filePath string, offset int, pageSize int) ([]*FileInfo, error) {
+func (s *Noop) List(
+	ctx context.Context,
+	filePath string,
+	offset int,
+	pageSize int,
+) ([]*FileInfo, error) {
 	return nil, nil
 }
 

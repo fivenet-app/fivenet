@@ -12,7 +12,6 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/testing/testpb"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"golang.org/x/oauth2"
 	"google.golang.org/grpc"
@@ -22,14 +21,17 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-var authedMarker struct{}
+var authedMarker = &struct{}{}
 
 var (
 	commonAuthToken   = "some_good_token"
 	overrideAuthToken = "override_token"
 )
 
-func buildDummyAuthFunction(expectedScheme string, expectedToken string) func(ctx context.Context, fullMethod string) (context.Context, error) {
+func buildDummyAuthFunction(
+	expectedScheme string,
+	expectedToken string,
+) func(ctx context.Context, fullMethod string) (context.Context, error) {
 	return func(ctx context.Context, fullMethod string) (context.Context, error) {
 		token, err := AuthFromMD(ctx, expectedScheme)
 		if err != nil {
@@ -43,20 +45,33 @@ func buildDummyAuthFunction(expectedScheme string, expectedToken string) func(ct
 }
 
 func assertAuthMarkerExists(t *testing.T, ctx context.Context) {
-	assert.Equal(t, "marker_exists", ctx.Value(authedMarker).(string), "auth marker from buildDummyAuthFunction must be passed around")
+	t.Helper()
+	assert.Equal(
+		t,
+		"marker_exists",
+		ctx.Value(authedMarker).(string),
+		"auth marker from buildDummyAuthFunction must be passed around",
+	)
 }
 
 type assertingPingService struct {
 	testpb.TestServiceServer
+
 	T *testing.T
 }
 
-func (s *assertingPingService) PingError(ctx context.Context, ping *testpb.PingErrorRequest) (*testpb.PingErrorResponse, error) {
+func (s *assertingPingService) PingError(
+	ctx context.Context,
+	ping *testpb.PingErrorRequest,
+) (*testpb.PingErrorResponse, error) {
 	assertAuthMarkerExists(s.T, ctx)
 	return s.TestServiceServer.PingError(ctx, ping)
 }
 
-func (s *assertingPingService) PingList(ping *testpb.PingListRequest, stream testpb.TestService_PingListServer) error {
+func (s *assertingPingService) PingList(
+	ping *testpb.PingListRequest,
+	stream testpb.TestService_PingListServer,
+) error {
 	assertAuthMarkerExists(s.T, stream.Context())
 	return s.TestServiceServer.PingList(ping, stream)
 }
@@ -86,68 +101,90 @@ type AuthTestSuite struct {
 
 func (s *AuthTestSuite) TestUnary_NoAuth() {
 	_, err := s.Client.Ping(s.SimpleCtx(), testpb.GoodPing)
-	assert.Error(s.T(), err, "there must be an error")
-	assert.Equal(s.T(), codes.Unauthenticated, status.Code(err), "must error with unauthenticated")
+	s.Require().Error(err, "there must be an error")
+	s.Equal(codes.Unauthenticated, status.Code(err), "must error with unauthenticated")
 }
 
 func (s *AuthTestSuite) TestUnary_BadAuth() {
 	_, err := s.Client.Ping(ctxWithToken(s.SimpleCtx(), "bearer", "bad_token"), testpb.GoodPing)
-	assert.Error(s.T(), err, "there must be an error")
-	assert.Equal(s.T(), codes.PermissionDenied, status.Code(err), "must error with permission denied")
+	s.Require().Error(err, "there must be an error")
+	s.Equal(
+		codes.PermissionDenied,
+		status.Code(err),
+		"must error with permission denied",
+	)
 }
 
 func (s *AuthTestSuite) TestUnary_PassesAuth() {
 	_, err := s.Client.Ping(ctxWithToken(s.SimpleCtx(), "bearer", commonAuthToken), testpb.GoodPing)
-	require.NoError(s.T(), err, "no error must occur")
+	s.Require().NoError(err, "no error must occur")
 }
 
 func (s *AuthTestSuite) TestUnary_PassesWithPerRpcCredentials() {
-	grpcCreds := oauth.TokenSource{TokenSource: &fakeOAuth2TokenSource{accessToken: commonAuthToken}}
+	grpcCreds := oauth.TokenSource{
+		TokenSource: &fakeOAuth2TokenSource{accessToken: commonAuthToken},
+	}
 	client := s.NewClient(grpc.WithPerRPCCredentials(grpcCreds))
 	_, err := client.Ping(s.SimpleCtx(), testpb.GoodPing)
-	require.NoError(s.T(), err, "no error must occur")
+	s.Require().NoError(err, "no error must occur")
 }
 
 func (s *AuthTestSuite) TestStream_NoAuth() {
 	stream, err := s.Client.PingList(s.SimpleCtx(), testpb.GoodPingList)
-	require.NoError(s.T(), err, "should not fail on establishing the stream")
+	s.Require().NoError(err, "should not fail on establishing the stream")
 	_, err = stream.Recv()
-	assert.Error(s.T(), err, "there must be an error")
-	assert.Equal(s.T(), codes.Unauthenticated, status.Code(err), "must error with unauthenticated")
+	s.Require().Error(err, "there must be an error")
+	s.Equal(codes.Unauthenticated, status.Code(err), "must error with unauthenticated")
 }
 
 func (s *AuthTestSuite) TestStream_BadAuth() {
-	stream, err := s.Client.PingList(ctxWithToken(s.SimpleCtx(), "bearer", "bad_token"), testpb.GoodPingList)
-	require.NoError(s.T(), err, "should not fail on establishing the stream")
+	stream, err := s.Client.PingList(
+		ctxWithToken(s.SimpleCtx(), "bearer", "bad_token"),
+		testpb.GoodPingList,
+	)
+	s.Require().NoError(err, "should not fail on establishing the stream")
 	_, err = stream.Recv()
-	assert.Error(s.T(), err, "there must be an error")
-	assert.Equal(s.T(), codes.PermissionDenied, status.Code(err), "must error with permission denied")
+	s.Require().Error(err, "there must be an error")
+	s.Equal(
+		codes.PermissionDenied,
+		status.Code(err),
+		"must error with permission denied",
+	)
 }
 
 func (s *AuthTestSuite) TestStream_PassesAuth() {
-	stream, err := s.Client.PingList(ctxWithToken(s.SimpleCtx(), "Bearer", commonAuthToken), testpb.GoodPingList)
-	require.NoError(s.T(), err, "should not fail on establishing the stream")
+	stream, err := s.Client.PingList(
+		ctxWithToken(s.SimpleCtx(), "Bearer", commonAuthToken),
+		testpb.GoodPingList,
+	)
+	s.Require().NoError(err, "should not fail on establishing the stream")
 	pong, err := stream.Recv()
-	require.NoError(s.T(), err, "no error must occur")
-	require.NotNil(s.T(), pong, "pong must not be nil")
+	s.Require().NoError(err, "no error must occur")
+	s.Require().NotNil(pong, "pong must not be nil")
 }
 
 func (s *AuthTestSuite) TestStream_PassesWithPerRpcCredentials() {
-	grpcCreds := oauth.TokenSource{TokenSource: &fakeOAuth2TokenSource{accessToken: commonAuthToken}}
+	grpcCreds := oauth.TokenSource{
+		TokenSource: &fakeOAuth2TokenSource{accessToken: commonAuthToken},
+	}
 	client := s.NewClient(grpc.WithPerRPCCredentials(grpcCreds))
 	stream, err := client.PingList(s.SimpleCtx(), testpb.GoodPingList)
-	require.NoError(s.T(), err, "should not fail on establishing the stream")
+	s.Require().NoError(err, "should not fail on establishing the stream")
 	pong, err := stream.Recv()
-	require.NoError(s.T(), err, "no error must occur")
-	require.NotNil(s.T(), pong, "pong must not be nil")
+	s.Require().NoError(err, "no error must occur")
+	s.Require().NotNil(pong, "pong must not be nil")
 }
 
 type authOverrideTestService struct {
 	testpb.TestServiceServer
+
 	T *testing.T
 }
 
-func (s *authOverrideTestService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
+func (s *authOverrideTestService) AuthFuncOverride(
+	ctx context.Context,
+	fullMethodName string,
+) (context.Context, error) {
 	assert.NotEmpty(s.T, fullMethodName, "method name of caller is passed around")
 	return buildDummyAuthFunction("bearer", overrideAuthToken)(ctx, fullMethodName)
 }
@@ -156,7 +193,10 @@ func TestAuthOverrideTestSuite(t *testing.T) {
 	authFunc := buildDummyAuthFunction("bearer", commonAuthToken)
 	s := &AuthOverrideTestSuite{
 		InterceptorTestSuite: &testpb.InterceptorTestSuite{
-			TestService: &authOverrideTestService{&assertingPingService{&testpb.TestPingService{}, t}, t},
+			TestService: &authOverrideTestService{
+				&assertingPingService{&testpb.TestPingService{}, t},
+				t,
+			},
 			ServerOpts: []grpc.ServerOption{
 				grpc.StreamInterceptor(StreamServerInterceptor(authFunc)),
 				grpc.UnaryInterceptor(UnaryServerInterceptor(authFunc)),
@@ -171,16 +211,22 @@ type AuthOverrideTestSuite struct {
 }
 
 func (s *AuthOverrideTestSuite) TestUnary_PassesAuth() {
-	_, err := s.Client.Ping(ctxWithToken(s.SimpleCtx(), "bearer", overrideAuthToken), testpb.GoodPing)
-	require.NoError(s.T(), err, "no error must occur")
+	_, err := s.Client.Ping(
+		ctxWithToken(s.SimpleCtx(), "bearer", overrideAuthToken),
+		testpb.GoodPing,
+	)
+	s.Require().NoError(err, "no error must occur")
 }
 
 func (s *AuthOverrideTestSuite) TestStream_PassesAuth() {
-	stream, err := s.Client.PingList(ctxWithToken(s.SimpleCtx(), "Bearer", overrideAuthToken), testpb.GoodPingList)
-	require.NoError(s.T(), err, "should not fail on establishing the stream")
+	stream, err := s.Client.PingList(
+		ctxWithToken(s.SimpleCtx(), "Bearer", overrideAuthToken),
+		testpb.GoodPingList,
+	)
+	s.Require().NoError(err, "should not fail on establishing the stream")
 	pong, err := stream.Recv()
-	require.NoError(s.T(), err, "no error must occur")
-	require.NotNil(s.T(), pong, "pong must not be nil")
+	s.Require().NoError(err, "no error must occur")
+	s.Require().NotNil(pong, "pong must not be nil")
 }
 
 // fakeOAuth2TokenSource implements a fake oauth2.TokenSource for the purpose of credentials test.

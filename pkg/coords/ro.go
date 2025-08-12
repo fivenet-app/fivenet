@@ -1,3 +1,4 @@
+//nolint:forcetypeassert // No need to check type assertions here due to generics usage
 package coords
 
 import (
@@ -8,11 +9,16 @@ import (
 )
 
 type ICoordsRO[V orb.Pointer] interface {
-	Has(orb.Pointer, quadtree.FilterFunc) bool
-	Get(orb.Pointer, quadtree.FilterFunc) V
+	Has(point orb.Pointer, fn quadtree.FilterFunc) bool
+	Get(point orb.Pointer, fn quadtree.FilterFunc) V
 
-	Closest(float64, float64) (V, bool)
-	KNearest(orb.Pointer, int, quadtree.FilterFunc, float64) []orb.Pointer
+	Closest(x float64, y float64) (V, bool)
+	KNearest(
+		point orb.Pointer,
+		maxPoints int,
+		fn quadtree.FilterFunc,
+		maxDistance float64,
+	) []orb.Pointer
 }
 
 // CoordsRO provides a read-only wrapper around a quadtree for spatial queries.
@@ -62,7 +68,12 @@ func (p *CoordsRO[V]) Closest(x, y float64) (V, bool) {
 }
 
 // KNearest returns up to max nearest points to the given point, filtered and within maxDistance.
-func (p *CoordsRO[V]) KNearest(point orb.Pointer, max int, fn quadtree.FilterFunc, maxDistance float64) []orb.Pointer {
-	points := p.tree.KNearestMatching(nil, point.Point(), max, fn, maxDistance)
+func (p *CoordsRO[V]) KNearest(
+	point orb.Pointer,
+	maxPoints int,
+	fn quadtree.FilterFunc,
+	maxDistance float64,
+) []orb.Pointer {
+	points := p.tree.KNearestMatching(nil, point.Point(), maxPoints, fn, maxDistance)
 	return points
 }

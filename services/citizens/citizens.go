@@ -33,7 +33,10 @@ var (
 
 var ZeroTrafficInfractionPoints uint32 = 0
 
-func (s *Server) ListCitizens(ctx context.Context, req *pbcitizens.ListCitizensRequest) (*pbcitizens.ListCitizensResponse, error) {
+func (s *Server) ListCitizens(
+	ctx context.Context,
+	req *pbcitizens.ListCitizensRequest,
+) (*pbcitizens.ListCitizensResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	tUser := tables.User().AS("user")
@@ -53,25 +56,34 @@ func (s *Server) ListCitizens(ctx context.Context, req *pbcitizens.ListCitizensR
 	orderBys := []jet.OrderByClause{}
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(userInfo, permscitizens.CitizensServicePerm, permscitizens.CitizensServiceListCitizensPerm, permscitizens.CitizensServiceListCitizensFieldsPermField)
+	fields, err := s.ps.AttrStringList(
+		userInfo,
+		permscitizens.CitizensServicePerm,
+		permscitizens.CitizensServiceListCitizensPerm,
+		permscitizens.CitizensServiceListCitizensFieldsPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	for _, field := range fields.Strings {
+	for _, field := range fields.GetStrings() {
 		switch field {
 		case "PhoneNumber":
 			selectors = append(selectors, tUser.PhoneNumber)
 
-			if req.PhoneNumber != nil && *req.PhoneNumber != "" {
-				phoneNumber := strings.ReplaceAll(strings.ReplaceAll(*req.PhoneNumber, "%", ""), " ", "") + "%"
+			if req.PhoneNumber != nil && req.GetPhoneNumber() != "" {
+				phoneNumber := strings.ReplaceAll(
+					strings.ReplaceAll(req.GetPhoneNumber(), "%", ""),
+					" ",
+					"",
+				) + "%"
 				condition = condition.AND(tUser.PhoneNumber.LIKE(jet.String(phoneNumber)))
 			}
 
 		case "UserProps.Wanted":
 			selectors = append(selectors, tUserProps.Wanted)
 
-			if req.Wanted != nil && *req.Wanted {
+			if req.Wanted != nil && req.GetWanted() {
 				condition = condition.AND(tUserProps.Wanted.IS_TRUE())
 
 				orderBys = append(orderBys, tUserProps.UpdatedAt.DESC())
@@ -83,15 +95,21 @@ func (s *Server) ListCitizens(ctx context.Context, req *pbcitizens.ListCitizensR
 		case "UserProps.TrafficInfractionPoints":
 			selectors = append(selectors, tUserProps.TrafficInfractionPoints)
 
-			if req.TrafficInfractionPoints != nil && *req.TrafficInfractionPoints > 0 {
-				condition = condition.AND(tUserProps.TrafficInfractionPoints.GT_EQ(jet.Uint32(*req.TrafficInfractionPoints)))
+			if req.TrafficInfractionPoints != nil && req.GetTrafficInfractionPoints() > 0 {
+				condition = condition.AND(
+					tUserProps.TrafficInfractionPoints.GT_EQ(
+						jet.Uint32(req.GetTrafficInfractionPoints()),
+					),
+				)
 			}
 
 		case "UserProps.OpenFines":
 			selectors = append(selectors, tUserProps.OpenFines)
 
-			if req.OpenFines != nil && *req.OpenFines > 0 {
-				condition = condition.AND(tUserProps.OpenFines.GT_EQ(jet.Uint64(*req.OpenFines)))
+			if req.OpenFines != nil && req.GetOpenFines() > 0 {
+				condition = condition.AND(
+					tUserProps.OpenFines.GT_EQ(jet.Uint64(req.GetOpenFines())),
+				)
 			}
 
 		case "UserProps.BloodType":
@@ -109,20 +127,24 @@ func (s *Server) ListCitizens(ctx context.Context, req *pbcitizens.ListCitizensR
 		}
 	}
 
-	req.Search = strings.TrimSpace(req.Search)
-	req.Search = strings.ReplaceAll(req.Search, "%", "")
-	req.Search = strings.ReplaceAll(req.Search, " ", "%")
-	req.Search = strings.ReplaceAll(req.Search, "\t", " ")
-	if req.Search != "" {
-		req.Search = "%" + req.Search + "%"
+	req.Search = strings.TrimSpace(req.GetSearch())
+	req.Search = strings.ReplaceAll(req.GetSearch(), "%", "")
+	req.Search = strings.ReplaceAll(req.GetSearch(), " ", "%")
+	req.Search = strings.ReplaceAll(req.GetSearch(), "\t", " ")
+	if req.GetSearch() != "" {
+		req.Search = "%" + req.GetSearch() + "%"
 		condition = condition.AND(
 			jet.CONCAT(tUser.Firstname, jet.String(" "), tUser.Lastname).
-				LIKE(jet.String(req.Search)),
+				LIKE(jet.String(req.GetSearch())),
 		)
 	}
 
-	if req.Dateofbirth != nil && *req.Dateofbirth != "" {
-		condition = condition.AND(tUser.Dateofbirth.LIKE(jet.String(strings.ReplaceAll(*req.Dateofbirth, "%", " ") + "%")))
+	if req.Dateofbirth != nil && req.GetDateofbirth() != "" {
+		condition = condition.AND(
+			tUser.Dateofbirth.LIKE(
+				jet.String(strings.ReplaceAll(req.GetDateofbirth(), "%", " ") + "%"),
+			),
+		)
 	}
 
 	// Get total count of values
@@ -146,7 +168,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *pbcitizens.ListCitizensR
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponse(count.Total)
+	pag, limit := req.GetPagination().GetResponse(count.Total)
 	resp := &pbcitizens.ListCitizensResponse{
 		Pagination: pag,
 	}
@@ -155,9 +177,9 @@ func (s *Server) ListCitizens(ctx context.Context, req *pbcitizens.ListCitizensR
 	}
 
 	// Convert proto sort to db sorting
-	if req.Sort != nil {
+	if req.GetSort() != nil {
 		var column jet.Column
-		switch req.Sort.Column {
+		switch req.GetSort().GetColumn() {
 		case "trafficInfractionPoints":
 			if fields.Contains("UserProps.TrafficInfractionPoints") {
 				column = tUserProps.TrafficInfractionPoints
@@ -175,7 +197,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *pbcitizens.ListCitizensR
 			column = tUser.Firstname
 		}
 
-		if req.Sort.Direction == database.AscSortDirection {
+		if req.GetSort().GetDirection() == database.AscSortDirection {
 			orderBys = append(orderBys,
 				column.ASC(),
 				tUser.Lastname.ASC(),
@@ -208,7 +230,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *pbcitizens.ListCitizensR
 			),
 		).
 		WHERE(condition).
-		OFFSET(req.Pagination.Offset).
+		OFFSET(req.GetPagination().GetOffset()).
 		ORDER_BY(orderBys...).
 		LIMIT(limit)
 
@@ -216,37 +238,40 @@ func (s *Server) ListCitizens(ctx context.Context, req *pbcitizens.ListCitizensR
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	resp.Pagination.Update(len(resp.Users))
+	resp.GetPagination().Update(len(resp.GetUsers()))
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.Users {
-		if resp.Users[i].Props != nil && resp.Users[i].Props.JobName != nil {
-			resp.Users[i].Job = *resp.Users[i].Props.JobName
+	for i := range resp.GetUsers() {
+		if resp.GetUsers()[i].GetProps() != nil && resp.Users[i].Props.JobName != nil {
+			resp.Users[i].Job = resp.GetUsers()[i].GetProps().GetJobName()
 			if resp.Users[i].Props.JobGradeNumber != nil {
-				resp.Users[i].JobGrade = *resp.Users[i].Props.JobGradeNumber
+				resp.Users[i].JobGrade = resp.GetUsers()[i].GetProps().GetJobGradeNumber()
 			} else {
 				resp.Users[i].JobGrade = 0
 			}
 
-			s.enricher.EnrichJobInfo(resp.Users[i])
+			s.enricher.EnrichJobInfo(resp.GetUsers()[i])
 		} else {
-			jobInfoFn(resp.Users[i])
+			jobInfoFn(resp.GetUsers()[i])
 		}
 	}
 
 	return resp, nil
 }
 
-func (s *Server) GetUser(ctx context.Context, req *pbcitizens.GetUserRequest) (*pbcitizens.GetUserResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.citizens.user_id", req.UserId})
+func (s *Server) GetUser(
+	ctx context.Context,
+	req *pbcitizens.GetUserRequest,
+) (*pbcitizens.GetUserResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.citizens.user_id", req.GetUserId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service:      pbcitizens.CitizensService_ServiceDesc.ServiceName,
 		Method:       "GetUser",
-		UserId:       userInfo.UserId,
-		UserJob:      userInfo.Job,
+		UserId:       userInfo.GetUserId(),
+		UserJob:      userInfo.GetJob(),
 		TargetUserId: &req.UserId,
 		State:        audit.EventType_EVENT_TYPE_ERRORED,
 	}
@@ -266,10 +291,15 @@ func (s *Server) GetUser(ctx context.Context, req *pbcitizens.GetUserRequest) (*
 		s.customDB.Columns.User.GetVisum(tUser.Alias()),
 	}
 
-	infoOnly := req.InfoOnly != nil && *req.InfoOnly
+	infoOnly := req.InfoOnly != nil && req.GetInfoOnly()
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(userInfo, permscitizens.CitizensServicePerm, permscitizens.CitizensServiceListCitizensPerm, permscitizens.CitizensServiceListCitizensFieldsPermField)
+	fields, err := s.ps.AttrStringList(
+		userInfo,
+		permscitizens.CitizensServicePerm,
+		permscitizens.CitizensServiceListCitizensPerm,
+		permscitizens.CitizensServiceListCitizensFieldsPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
@@ -277,7 +307,7 @@ func (s *Server) GetUser(ctx context.Context, req *pbcitizens.GetUserRequest) (*
 		selectors = append(selectors, tUserProps.UpdatedAt)
 	}
 
-	for _, field := range fields.Strings {
+	for _, field := range fields.GetStrings() {
 		switch field {
 		case "PhoneNumber":
 			selectors = append(selectors, tUser.PhoneNumber)
@@ -319,23 +349,27 @@ func (s *Server) GetUser(ctx context.Context, req *pbcitizens.GetUserRequest) (*
 					tFiles.ID.EQ(tUserProps.MugshotFileID),
 				),
 		).
-		WHERE(tUser.ID.EQ(jet.Int32(req.UserId))).
+		WHERE(tUser.ID.EQ(jet.Int32(req.GetUserId()))).
 		LIMIT(1)
 
-	if err := stmt.QueryContext(ctx, s.db, resp.User); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, resp.GetUser()); err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	if resp.User == nil || resp.User.UserId <= 0 {
+	if resp.GetUser() == nil || resp.GetUser().GetUserId() <= 0 {
 		return nil, errorscitizens.ErrJobGradeNoPermission
 	}
 
 	auditEntry.TargetUserJob = &resp.User.Job
 
-	if slices.Contains(s.appCfg.Get().JobInfo.PublicJobs, resp.User.Job) ||
-		slices.Contains(s.appCfg.Get().JobInfo.HiddenJobs, resp.User.Job) {
+	if slices.Contains(s.appCfg.Get().JobInfo.GetPublicJobs(), resp.GetUser().GetJob()) ||
+		slices.Contains(s.appCfg.Get().JobInfo.GetHiddenJobs(), resp.GetUser().GetJob()) {
 		// Make sure user has permission to see that grade
-		check, err := s.checkIfUserCanAccess(userInfo, resp.User.Job, resp.User.JobGrade)
+		check, err := s.checkIfUserCanAccess(
+			userInfo,
+			resp.GetUser().GetJob(),
+			resp.GetUser().GetJobGrade(),
+		)
 		if err != nil {
 			return nil, err
 		}
@@ -345,23 +379,23 @@ func (s *Server) GetUser(ctx context.Context, req *pbcitizens.GetUserRequest) (*
 	}
 
 	// Only let user props override the job if the person isn't in a public job
-	if resp.User.Props != nil && resp.User.Props.JobName != nil &&
-		!slices.Contains(s.appCfg.Get().JobInfo.PublicJobs, resp.User.Job) {
-		resp.User.Job = *resp.User.Props.JobName
+	if resp.GetUser().GetProps() != nil && resp.User.Props.JobName != nil &&
+		!slices.Contains(s.appCfg.Get().JobInfo.GetPublicJobs(), resp.GetUser().GetJob()) {
+		resp.User.Job = resp.GetUser().GetProps().GetJobName()
 		if resp.User.Props.JobGradeNumber != nil {
-			resp.User.JobGrade = *resp.User.Props.JobGradeNumber
+			resp.User.JobGrade = resp.GetUser().GetProps().GetJobGradeNumber()
 		} else {
 			resp.User.JobGrade = 0
 		}
 
-		s.enricher.EnrichJobInfo(resp.User)
+		s.enricher.EnrichJobInfo(resp.GetUser())
 	} else {
-		s.enricher.EnrichJobInfoSafe(userInfo, resp.User)
+		s.enricher.EnrichJobInfoSafe(userInfo, resp.GetUser())
 	}
 
-	if resp.User.Props == nil {
+	if resp.GetUser().GetProps() == nil {
 		resp.User.Props = &users.UserProps{
-			UserId: resp.User.UserId,
+			UserId: resp.GetUser().GetUserId(),
 		}
 	}
 
@@ -383,7 +417,7 @@ func (s *Server) GetUser(ctx context.Context, req *pbcitizens.GetUserRequest) (*
 					LEFT_JOIN(tLicenses,
 						tLicenses.Type.EQ(tCitizensLicenses.Type)),
 			).
-			WHERE(tUser.ID.EQ(jet.Int32(req.UserId))).
+			WHERE(tUser.ID.EQ(jet.Int32(req.GetUserId()))).
 			LIMIT(15)
 
 		if err := stmt.QueryContext(ctx, s.db, &resp.User.Licenses); err != nil {
@@ -394,7 +428,7 @@ func (s *Server) GetUser(ctx context.Context, req *pbcitizens.GetUserRequest) (*
 	}
 
 	if fields.Contains("UserProps.Labels") {
-		attributes, err := s.getUserLabels(ctx, userInfo, req.UserId)
+		attributes, err := s.getUserLabels(ctx, userInfo, req.GetUserId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 		}
@@ -406,27 +440,33 @@ func (s *Server) GetUser(ctx context.Context, req *pbcitizens.GetUserRequest) (*
 	return resp, nil
 }
 
-func (s *Server) SetUserProps(ctx context.Context, req *pbcitizens.SetUserPropsRequest) (*pbcitizens.SetUserPropsResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.citizens.user_id", req.Props.UserId})
+func (s *Server) SetUserProps(
+	ctx context.Context,
+	req *pbcitizens.SetUserPropsRequest,
+) (*pbcitizens.SetUserPropsResponse, error) {
+	logging.InjectFields(
+		ctx,
+		logging.Fields{"fivenet.citizens.user_id", req.GetProps().GetUserId()},
+	)
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service:      pbcitizens.CitizensService_ServiceDesc.ServiceName,
 		Method:       "SetUserProps",
-		UserId:       userInfo.UserId,
-		UserJob:      userInfo.Job,
+		UserId:       userInfo.GetUserId(),
+		UserJob:      userInfo.GetJob(),
 		TargetUserId: &req.Props.UserId,
 		State:        audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	if req.Reason == "" {
+	if req.GetReason() == "" {
 		return nil, errorscitizens.ErrReasonRequired
 	}
 
 	// Get current user props to be able to compare
-	props, err := s.getUserProps(ctx, userInfo, req.Props.UserId)
+	props, err := s.getUserProps(ctx, userInfo, req.GetProps().GetUserId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
@@ -435,7 +475,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizens.SetUserPropsR
 		wanted := false
 		props.Wanted = &wanted
 	}
-	unemployedJob := s.appCfg.Get().JobInfo.UnemployedJob
+	unemployedJob := s.appCfg.Get().JobInfo.GetUnemployedJob()
 	if props.JobName == nil {
 		props.JobName = &unemployedJob.Name
 	}
@@ -445,16 +485,22 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizens.SetUserPropsR
 	if props.TrafficInfractionPoints == nil {
 		props.TrafficInfractionPoints = &ZeroTrafficInfractionPoints
 	}
-	if props.Labels == nil {
+	if props.GetLabels() == nil {
 		props.Labels = &users.Labels{
 			List: []*users.Label{},
 		}
 	}
 
-	props.Job, props.JobGrade = s.enricher.GetJobGrade(*props.JobName, *props.JobGradeNumber)
+	props.Job, props.JobGrade = s.enricher.GetJobGrade(
+		props.GetJobName(),
+		props.GetJobGradeNumber(),
+	)
 	// Make sure a job is set
-	if props.Job == nil {
-		props.Job, props.JobGrade = s.enricher.GetJobGrade(unemployedJob.Name, unemployedJob.Grade)
+	if props.GetJob() == nil {
+		props.Job, props.JobGrade = s.enricher.GetJobGrade(
+			unemployedJob.GetName(),
+			unemployedJob.GetGrade(),
+		)
 	}
 
 	resp := &pbcitizens.SetUserPropsResponse{
@@ -462,7 +508,12 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizens.SetUserPropsR
 	}
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(userInfo, permscitizens.CitizensServicePerm, permscitizens.CitizensServiceSetUserPropsPerm, permscitizens.CitizensServiceSetUserPropsFieldsPermField)
+	fields, err := s.ps.AttrStringList(
+		userInfo,
+		permscitizens.CitizensServicePerm,
+		permscitizens.CitizensServiceSetUserPropsPerm,
+		permscitizens.CitizensServiceSetUserPropsFieldsPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
@@ -484,7 +535,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizens.SetUserPropsR
 					tFiles.ID.EQ(tUserProps.MugshotFileID),
 				),
 		).
-		WHERE(tUser.ID.EQ(jet.Int32(req.Props.UserId))).
+		WHERE(tUser.ID.EQ(jet.Int32(req.GetProps().GetUserId()))).
 		LIMIT(1)
 
 	u := &users.User{}
@@ -492,11 +543,11 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizens.SetUserPropsR
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	if u.UserId <= 0 {
+	if u.GetUserId() <= 0 {
 		return nil, errorscitizens.ErrJobGradeNoPermission
 	}
 
-	check, err := s.checkIfUserCanAccess(userInfo, u.Job, u.JobGrade)
+	check, err := s.checkIfUserCanAccess(userInfo, u.GetJob(), u.GetJobGrade())
 	if err != nil {
 		return nil, err
 	}
@@ -516,7 +567,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizens.SetUserPropsR
 			return nil, errorscitizens.ErrPropsJobDenied
 		}
 
-		if slices.Contains(s.appCfg.Get().JobInfo.PublicJobs, *req.Props.JobName) {
+		if slices.Contains(s.appCfg.Get().JobInfo.GetPublicJobs(), req.GetProps().GetJobName()) {
 			return nil, errorscitizens.ErrPropsJobPublic
 		}
 
@@ -525,8 +576,11 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizens.SetUserPropsR
 			req.Props.JobGradeNumber = &grade
 		}
 
-		req.Props.Job, req.Props.JobGrade = s.enricher.GetJobGrade(*req.Props.JobName, *req.Props.JobGradeNumber)
-		if req.Props.Job == nil || req.Props.JobGrade == nil {
+		req.Props.Job, req.Props.JobGrade = s.enricher.GetJobGrade(
+			req.GetProps().GetJobName(),
+			req.GetProps().GetJobGradeNumber(),
+		)
+		if req.GetProps().GetJob() == nil || req.GetProps().GetJobGrade() == nil {
 			return nil, errorscitizens.ErrPropsJobInvalid
 		}
 	}
@@ -542,7 +596,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizens.SetUserPropsR
 	req.Props.BloodType = nil
 	req.Props.Email = nil
 
-	if req.Props.Labels != nil {
+	if req.GetProps().GetLabels() != nil {
 		if !fields.Contains("Labels") {
 			return nil, errorscitizens.ErrPropsLabelsDenied
 		}
@@ -551,14 +605,17 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizens.SetUserPropsR
 			req.Props.Labels.List = []*users.Label{}
 		}
 
-		slices.SortFunc(req.Props.Labels.List, func(a, b *users.Label) int {
-			return strings.Compare(a.Name, b.Name)
+		slices.SortFunc(req.GetProps().GetLabels().GetList(), func(a, b *users.Label) int {
+			return strings.Compare(a.GetName(), b.GetName())
 		})
 
-		added, _ := utils.SlicesDifferenceFunc(props.Labels.List, req.Props.Labels.List,
+		added, _ := utils.SlicesDifferenceFunc(
+			props.GetLabels().GetList(),
+			req.GetProps().GetLabels().GetList(),
 			func(in *users.Label) uint64 {
-				return in.Id
-			})
+				return in.GetId()
+			},
+		)
 
 		valid, err := s.validateLabels(ctx, userInfo, added)
 		if err != nil {
@@ -577,7 +634,13 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizens.SetUserPropsR
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	activities, err := props.HandleChanges(ctx, tx, req.Props, &userInfo.UserId, req.Reason)
+	activities, err := props.HandleChanges(
+		ctx,
+		tx,
+		req.GetProps(),
+		&userInfo.UserId,
+		req.GetReason(),
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
@@ -593,24 +656,27 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizens.SetUserPropsR
 
 	// Get and return new user props
 	user, err := s.GetUser(ctx, &pbcitizens.GetUserRequest{
-		UserId: req.Props.UserId,
+		UserId: req.GetProps().GetUserId(),
 	})
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	resp.Props = user.User.Props
+	resp.Props = user.GetUser().GetProps()
 	// Set Job info if set
-	if resp.Props != nil && resp.Props.JobName != nil {
+	if resp.GetProps() != nil && resp.Props.JobName != nil {
 		grade := s.cfg.Game.StartJobGrade
 		if resp.Props.JobGradeNumber != nil {
-			grade = *resp.Props.JobGradeNumber
+			grade = resp.GetProps().GetJobGradeNumber()
 		}
 
-		resp.Props.Job, resp.Props.JobGrade = s.enricher.GetJobGrade(*resp.Props.JobName, grade)
+		resp.Props.Job, resp.Props.JobGrade = s.enricher.GetJobGrade(
+			resp.GetProps().GetJobName(),
+			grade,
+		)
 	}
 
-	userId := uint64(user.User.UserId)
+	userId := uint64(user.GetUser().GetUserId())
 	s.notifi.SendObjectEvent(ctx, &notifications.ObjectEvent{
 		Type:      notifications.ObjectType_OBJECT_TYPE_CITIZEN,
 		Id:        &userId,
@@ -625,7 +691,11 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizens.SetUserPropsR
 	return resp, nil
 }
 
-func (s *Server) getUserProps(ctx context.Context, userInfo *userinfo.UserInfo, userId int32) (*users.UserProps, error) {
+func (s *Server) getUserProps(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	userId int32,
+) (*users.UserProps, error) {
 	tUserProps := tUserProps.AS("user_props")
 	tFiles := table.FivenetFiles.AS("mugshot")
 
@@ -671,30 +741,40 @@ func (s *Server) getUserProps(ctx context.Context, userInfo *userinfo.UserInfo, 
 	return &dest, nil
 }
 
-func (s *Server) checkIfUserCanAccess(userInfo *userinfo.UserInfo, targetUserJob string, targetUserGrade int32) (bool, error) {
+func (s *Server) checkIfUserCanAccess(
+	userInfo *userinfo.UserInfo,
+	targetUserJob string,
+	targetUserGrade int32,
+) (bool, error) {
 	// Skip if user is job unemployed
-	unemployedJob := s.appCfg.Get().JobInfo.UnemployedJob
-	if unemployedJob.Name == targetUserJob {
+	unemployedJob := s.appCfg.Get().JobInfo.GetUnemployedJob()
+	if unemployedJob.GetName() == targetUserJob {
 		return true, nil
 	}
 
 	// If the user is not part of public or hidden jobs (e.g., police, medics), allow access
-	if !slices.Contains(s.appCfg.Get().JobInfo.PublicJobs, targetUserJob) &&
-		!slices.Contains(s.appCfg.Get().JobInfo.HiddenJobs, targetUserJob) {
+	if !slices.Contains(s.appCfg.Get().JobInfo.GetPublicJobs(), targetUserJob) &&
+		!slices.Contains(s.appCfg.Get().JobInfo.GetHiddenJobs(), targetUserJob) {
 		return true, nil
 	}
 
-	jobGrades, err := s.ps.AttrJobGradeList(userInfo, permscitizens.CitizensServicePerm, permscitizens.CitizensServiceGetUserPerm, permscitizens.CitizensServiceGetUserJobsPermField)
+	jobGrades, err := s.ps.AttrJobGradeList(
+		userInfo,
+		permscitizens.CitizensServicePerm,
+		permscitizens.CitizensServiceGetUserPerm,
+		permscitizens.CitizensServiceGetUserJobsPermField,
+	)
 	if err != nil {
 		return false, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	if jobGrades.Len() == 0 && !userInfo.Superuser {
+	if jobGrades.Len() == 0 && !userInfo.GetSuperuser() {
 		return false, errorscitizens.ErrJobGradeNoPermission
 	}
 
 	// Make sure user has permission to see that job's grade, otherwise deny access to the user
-	if ok := jobGrades.HasJobGrade(targetUserJob, targetUserGrade); !ok && !userInfo.Superuser {
+	if ok := jobGrades.HasJobGrade(targetUserJob, targetUserGrade); !ok &&
+		!userInfo.GetSuperuser() {
 		return false, errorscitizens.ErrJobGradeNoPermission
 	}
 

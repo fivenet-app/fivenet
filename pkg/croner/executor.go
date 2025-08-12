@@ -2,6 +2,7 @@ package croner
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -89,14 +90,21 @@ func NewExecutor(p ExecutorParams) (*Executor, error) {
 	return ag, nil
 }
 
-func (ag *Executor) registerSubscriptions(ctxStartup context.Context, ctxCancel context.Context) error {
-	consumer, err := ag.js.CreateOrUpdateConsumer(ctxStartup, CronScheduleStreamName, jetstream.ConsumerConfig{
-		Durable:           instance.ID() + "_cron_executor",
-		DeliverPolicy:     jetstream.DeliverNewPolicy,
-		FilterSubject:     fmt.Sprintf("%s.%s", CronScheduleSubject, CronScheduleTopic),
-		MaxDeliver:        3,
-		InactiveThreshold: 5 * time.Second,
-	})
+func (ag *Executor) registerSubscriptions(
+	ctxStartup context.Context,
+	ctxCancel context.Context,
+) error {
+	consumer, err := ag.js.CreateOrUpdateConsumer(
+		ctxStartup,
+		CronScheduleStreamName,
+		jetstream.ConsumerConfig{
+			Durable:           instance.ID() + "_cron_executor",
+			DeliverPolicy:     jetstream.DeliverNewPolicy,
+			FilterSubject:     fmt.Sprintf("%s.%s", CronScheduleSubject, CronScheduleTopic),
+			MaxDeliver:        3,
+			InactiveThreshold: 5 * time.Second,
+		},
+	)
 	if err != nil {
 		return err
 	}
@@ -119,40 +127,60 @@ func (ag *Executor) registerSubscriptions(ctxStartup context.Context, ctxCancel 
 func (ag *Executor) watchForEvents(msg jetstream.Msg) {
 	job := &cron.CronjobSchedulerEvent{}
 	if err := protojson.Unmarshal(msg.Data(), job); err != nil {
-		ag.logger.Error("failed to unmarshal cron schedule msg", zap.String("subject", msg.Subject()), zap.Error(err))
+		ag.logger.Error(
+			"failed to unmarshal cron schedule msg",
+			zap.String("subject", msg.Subject()),
+			zap.Error(err),
+		)
 
 		if err := msg.NakWithDelay(100 * time.Millisecond); err != nil {
-			ag.logger.Error("failed to nack unmarshal cron schedule msg", zap.String("subject", msg.Subject()), zap.Error(err))
+			ag.logger.Error(
+				"failed to nack unmarshal cron schedule msg",
+				zap.String("subject", msg.Subject()),
+				zap.Error(err),
+			)
 		}
 		return
 	}
 
-	fn := ag.handlers.getCronjobHandler(job.Cronjob.Name)
+	fn := ag.handlers.getCronjobHandler(job.GetCronjob().GetName())
 	if fn == nil {
 		if err := msg.NakWithDelay(100 * time.Millisecond); err != nil {
-			ag.logger.Error("failed to nack unmarshal cron schedule msg", zap.String("subject", msg.Subject()), zap.Error(err))
+			ag.logger.Error(
+				"failed to nack unmarshal cron schedule msg",
+				zap.String("subject", msg.Subject()),
+				zap.Error(err),
+			)
 		}
 		return
 	}
 
 	if err := msg.Ack(); err != nil {
-		ag.logger.Error("failed to send in progress for cron schedule msg", zap.String("subject", msg.Subject()), zap.Error(err))
+		ag.logger.Error(
+			"failed to send in progress for cron schedule msg",
+			zap.String("subject", msg.Subject()),
+			zap.Error(err),
+		)
 	}
 
-	if job.Cronjob.Data == nil {
+	if job.GetCronjob().GetData() == nil {
 		job.Cronjob.Data = &cron.CronjobData{
 			Data: &anypb.Any{},
 		}
 	}
 
 	var timeout time.Duration
-	if job.Cronjob.Timeout != nil {
-		timeout = job.Cronjob.Timeout.AsDuration()
+	if job.GetCronjob().GetTimeout() != nil {
+		timeout = job.GetCronjob().GetTimeout().AsDuration()
 	} else {
 		timeout = DefaultCronjobTimeout
 	}
 
-	ag.logger.Debug("running cron job", zap.String("name", job.Cronjob.Name), zap.Duration("timeout", timeout))
+	ag.logger.Debug(
+		"running cron job",
+		zap.String("name", job.GetCronjob().GetName()),
+		zap.Duration("timeout", timeout),
+	)
 
 	var elapsed time.Duration
 
@@ -170,13 +198,17 @@ func (ag *Executor) watchForEvents(msg jetstream.Msg) {
 				if er, ok := e.(error); ok {
 					err = fmt.Errorf("recovered from panic. %w", er)
 				} else {
-					err = fmt.Errorf("recovered from panic. %v", er)
+					err = fmt.Errorf("recovered from panic. %w", er)
 				}
 
-				ag.logger.Error("cron job panic", zap.String("name", job.Cronjob.Name), zap.Error(err))
+				ag.logger.Error(
+					"cron job panic",
+					zap.String("name", job.GetCronjob().GetName()),
+					zap.Error(err),
+				)
 			}
 		}()
-		err = fn(ctx, job.Cronjob.Data)
+		err = fn(ctx, job.GetCronjob().GetData())
 	}()
 
 	// Update timestamp in cronjob data
@@ -189,18 +221,22 @@ func (ag *Executor) watchForEvents(msg jetstream.Msg) {
 	}
 
 	if _, err := ag.js.PublishProto(ag.ctx, fmt.Sprintf("%s.%s", CronScheduleSubject, CronCompleteTopic), &cron.CronjobCompletedEvent{
-		Name:      job.Cronjob.Name,
+		Name:      job.GetCronjob().GetName(),
 		Success:   err == nil,
-		Cancelled: err != nil && err == context.Canceled,
+		Cancelled: err != nil && errors.Is(err, context.Canceled),
 		Elapsed:   durationpb.New(elapsed),
 		EndDate:   now,
 
 		NodeName: ag.nodeName,
-		Data:     job.Cronjob.Data,
+		Data:     job.GetCronjob().GetData(),
 
 		ErrorMessage: errMsg,
 	}); err != nil {
-		ag.logger.Error("failed to publish cron schedule completion msg", zap.String("subject", msg.Subject()), zap.Error(err))
+		ag.logger.Error(
+			"failed to publish cron schedule completion msg",
+			zap.String("subject", msg.Subject()),
+			zap.Error(err),
+		)
 		return
 	}
 }

@@ -48,6 +48,8 @@ func New(p Params) *IconifyAPI {
 		apiURL: p.Config.Icons.APIURL,
 
 		cache: cache.NewContext(ctxCancel, cache.AsLRU[string, []byte]()),
+
+		client: http.DefaultClient,
 	}
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
@@ -73,12 +75,13 @@ func (i *IconifyAPI) RegisterHTTP(e *gin.Engine) {
 			i.server.HandlerFunc().ServeHTTP(recorder, c.Request)
 
 			// Cache the response body
-			i.cache.Set(c.Request.URL.String(), recorder.buf.Bytes(), cache.WithExpiration(cacheExpirationDuration))
+			i.cache.Set(
+				c.Request.URL.String(),
+				recorder.buf.Bytes(),
+				cache.WithExpiration(cacheExpirationDuration),
+			)
 		})
 	} else {
-		if i.client == nil {
-			i.client = http.DefaultClient
-		}
 		// Proxy requests to iconify API if enabled (make sure the request is a valid json icon request)
 		e.GET("/api/icons/:path", func(c *gin.Context) {
 			// Validate the request and extract the target URL
@@ -102,7 +105,7 @@ func (i *IconifyAPI) RegisterHTTP(e *gin.Engine) {
 				return
 			}
 
-			req, err := http.NewRequestWithContext(c.Request.Context(), "GET", targetURL, c.Request.Body)
+			req, err := http.NewRequestWithContext(c.Request.Context(), http.MethodGet, targetURL, c.Request.Body)
 			if err != nil {
 				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to create proxy request"})
 				return
@@ -159,9 +162,10 @@ func buildTargetURL(apiURL string, path string, query url.Values) string {
 	return targetURL
 }
 
-// responseCapture wraps gin.ResponseWriter to capture output for caching
+// responseCapture wraps gin.ResponseWriter to capture output for caching icons.
 type responseCapture struct {
 	gin.ResponseWriter
+
 	buf *bytes.Buffer
 }
 

@@ -50,11 +50,22 @@ func NewLogger(p LoggerParams) (LoggerResults, error) {
 
 	res, err := newAttributes(p.Config.OTLP)
 	if err != nil {
-		return LoggerResults{}, fmt.Errorf("failed to create attributes for tracer provider. %w", err)
+		return LoggerResults{}, fmt.Errorf(
+			"failed to create attributes for tracer provider. %w",
+			err,
+		)
 	}
 
 	ctx := context.Background()
-	logExporter, err := newLoggerExporter(ctx, p.Config.OTLP.Type, p.Config.OTLP.URL, p.Config.OTLP.Insecure, p.Config.OTLP.Timeout, p.Config.OTLP.Headers, p.Config.OTLP.Compression)
+	logExporter, err := newLoggerExporter(
+		ctx,
+		p.Config.OTLP.Type,
+		p.Config.OTLP.URL,
+		p.Config.OTLP.Insecure,
+		p.Config.OTLP.Timeout,
+		p.Config.OTLP.Headers,
+		p.Config.OTLP.Compression,
+	)
 	if err != nil {
 		return LoggerResults{}, fmt.Errorf("failed to create logger exporter. %w", err)
 	}
@@ -68,7 +79,10 @@ func NewLogger(p LoggerParams) (LoggerResults, error) {
 
 		core := zapcore.NewTee(
 			logger.Core(),
-			otelzap.NewCore("github.com/fivenet-app/fivenet", otelzap.WithLoggerProvider(loggerProvider)),
+			otelzap.NewCore(
+				"github.com/fivenet-app/fivenet",
+				otelzap.WithLoggerProvider(loggerProvider),
+			),
 		)
 		logger = zap.New(core)
 

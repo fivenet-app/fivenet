@@ -8,7 +8,6 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/testing/testpb"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -25,7 +24,11 @@ func failFromMD(ctx context.Context) (bool, error) {
 	return strconv.ParseBool(val)
 }
 
-func buildDummyUnaryPermsFunction(t *testing.T, hasRemap bool) func(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error) {
+func buildDummyUnaryPermsFunction(
+	t *testing.T,
+	hasRemap bool,
+) func(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error) {
+	t.Helper()
 	return func(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error) {
 		fail, err := failFromMD(ctx)
 		if err != nil {
@@ -36,13 +39,20 @@ func buildDummyUnaryPermsFunction(t *testing.T, hasRemap bool) func(ctx context.
 		assert.Equal(t, hasRemap, ok, "expected grpc server have or have not a perms remap func")
 
 		if fail {
-			return nil, status.Error(codes.PermissionDenied, "buildDummyUnaryPermsFunction fail set in context")
+			return nil, status.Error(
+				codes.PermissionDenied,
+				"buildDummyUnaryPermsFunction fail set in context",
+			)
 		}
 		return ctx, nil
 	}
 }
 
-func buildDummyStreamPermsFunction(t *testing.T, hasRemap bool) func(ctx context.Context, srv any, info *grpc.StreamServerInfo) (context.Context, error) {
+func buildDummyStreamPermsFunction(
+	t *testing.T,
+	hasRemap bool,
+) func(ctx context.Context, srv any, info *grpc.StreamServerInfo) (context.Context, error) {
+	t.Helper()
 	return func(ctx context.Context, srv any, info *grpc.StreamServerInfo) (context.Context, error) {
 		fail, err := failFromMD(ctx)
 		if err != nil {
@@ -53,7 +63,10 @@ func buildDummyStreamPermsFunction(t *testing.T, hasRemap bool) func(ctx context
 		assert.Equal(t, hasRemap, ok)
 
 		if fail {
-			return nil, status.Error(codes.PermissionDenied, "buildDummyStreamPermsFunction fail set in context")
+			return nil, status.Error(
+				codes.PermissionDenied,
+				"buildDummyStreamPermsFunction fail set in context",
+			)
 		}
 		return ctx, nil
 	}
@@ -66,14 +79,21 @@ func ctxWithFail(ctx context.Context, fail bool) context.Context {
 
 type assertingPingService struct {
 	testpb.TestServiceServer
+
 	T *testing.T
 }
 
-func (s *assertingPingService) PingError(ctx context.Context, ping *testpb.PingErrorRequest) (*testpb.PingErrorResponse, error) {
+func (s *assertingPingService) PingError(
+	ctx context.Context,
+	ping *testpb.PingErrorRequest,
+) (*testpb.PingErrorResponse, error) {
 	return s.TestServiceServer.PingError(ctx, ping)
 }
 
-func (s *assertingPingService) PingList(ping *testpb.PingListRequest, stream testpb.TestService_PingListServer) error {
+func (s *assertingPingService) PingList(
+	ping *testpb.PingListRequest,
+	stream testpb.TestService_PingListServer,
+) error {
 	return s.TestServiceServer.PingList(ping, stream)
 }
 
@@ -82,8 +102,12 @@ func TestPermsTestSuite(t *testing.T) {
 		InterceptorTestSuite: &testpb.InterceptorTestSuite{
 			TestService: &assertingPingService{&testpb.TestPingService{}, t},
 			ServerOpts: []grpc.ServerOption{
-				grpc.StreamInterceptor(StreamServerInterceptor(buildDummyStreamPermsFunction(t, false))),
-				grpc.UnaryInterceptor(UnaryServerInterceptor(buildDummyUnaryPermsFunction(t, false))),
+				grpc.StreamInterceptor(
+					StreamServerInterceptor(buildDummyStreamPermsFunction(t, false)),
+				),
+				grpc.UnaryInterceptor(
+					UnaryServerInterceptor(buildDummyUnaryPermsFunction(t, false)),
+				),
 			},
 		},
 	}
@@ -97,56 +121,68 @@ type PermissionTestSuite struct {
 func (s *PermissionTestSuite) TestUnary_NoFail() {
 	ctx := s.SimpleCtx()
 	_, err := s.Client.Ping(ctx, testpb.GoodPing)
-	assert.Error(s.T(), err, "there must be an error")
-	assert.Equal(s.T(), codes.Internal, status.Code(err), "must error with internal")
+	s.Require().Error(err, "there must be an error")
+	s.Equal(codes.Internal, status.Code(err), "must error with internal")
 }
 
 func (s *PermissionTestSuite) TestUnary_NoPerms() {
 	ctx := ctxWithFail(s.SimpleCtx(), true)
 	_, err := s.Client.Ping(ctx, testpb.GoodPing)
-	assert.Error(s.T(), err, "there must be an error")
-	assert.Equal(s.T(), codes.PermissionDenied, status.Code(err), "must error with permission denied")
+	s.Require().Error(err, "there must be an error")
+	s.Equal(
+		codes.PermissionDenied,
+		status.Code(err),
+		"must error with permission denied",
+	)
 }
 
 func (s *PermissionTestSuite) TestUnary_HasPerms() {
 	ctx := ctxWithFail(s.SimpleCtx(), false)
 	_, err := s.Client.Ping(ctx, testpb.GoodPing)
-	require.NoError(s.T(), err, "no error must occur")
+	s.Require().NoError(err, "no error must occur")
 }
 
 func (s *PermissionTestSuite) TestStream_NoFail() {
 	ctx := s.SimpleCtx()
 	stream, err := s.Client.PingList(ctx, testpb.GoodPingList)
-	require.NoError(s.T(), err, "should not fail on establishing the stream")
+	s.Require().NoError(err, "should not fail on establishing the stream")
 	_, err = stream.Recv()
-	assert.Error(s.T(), err, "there must be an error")
-	assert.Equal(s.T(), codes.Internal, status.Code(err), "must error with internal")
+	s.Require().Error(err, "there must be an error")
+	s.Equal(codes.Internal, status.Code(err), "must error with internal")
 }
 
 func (s *PermissionTestSuite) TestStream_NoPerms() {
 	ctx := ctxWithFail(s.SimpleCtx(), true)
 	stream, err := s.Client.PingList(ctx, testpb.GoodPingList)
-	require.NoError(s.T(), err, "should not fail on establishing the stream")
+	s.Require().NoError(err, "should not fail on establishing the stream")
 	_, err = stream.Recv()
-	assert.Error(s.T(), err, "there must be an error")
-	assert.Equal(s.T(), codes.PermissionDenied, status.Code(err), "must error with permission denied")
+	s.Require().Error(err, "there must be an error")
+	s.Equal(
+		codes.PermissionDenied,
+		status.Code(err),
+		"must error with permission denied",
+	)
 }
 
 func (s *PermissionTestSuite) TestStream_HasPerms() {
 	ctx := ctxWithFail(s.SimpleCtx(), false)
 	stream, err := s.Client.PingList(ctx, testpb.GoodPingList)
-	require.NoError(s.T(), err, "should not fail on establishing the stream")
+	s.Require().NoError(err, "should not fail on establishing the stream")
 	pong, err := stream.Recv()
-	require.NoError(s.T(), err, "no error must occur")
-	require.NotNil(s.T(), pong, "pong must not be nil")
+	s.Require().NoError(err, "no error must occur")
+	s.Require().NotNil(pong, "pong must not be nil")
 }
 
 type permsOverrideTestService struct {
 	testpb.TestServiceServer
+
 	T *testing.T
 }
 
-func (s *permsOverrideTestService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
+func (s *permsOverrideTestService) AuthFuncOverride(
+	ctx context.Context,
+	fullMethodName string,
+) (context.Context, error) {
 	assert.NotEmpty(s.T, fullMethodName, "method name of caller is passed around")
 	return buildDummyUnaryPermsFunction(s.T, false)(ctx, &grpc.UnaryServerInfo{
 		Server:     s,
@@ -157,10 +193,17 @@ func (s *permsOverrideTestService) AuthFuncOverride(ctx context.Context, fullMet
 func TestPermsOverrideTestSuite(t *testing.T) {
 	s := &PermsOverrideTestSuite{
 		InterceptorTestSuite: &testpb.InterceptorTestSuite{
-			TestService: &permsOverrideTestService{&assertingPingService{&testpb.TestPingService{}, t}, t},
+			TestService: &permsOverrideTestService{
+				&assertingPingService{&testpb.TestPingService{}, t},
+				t,
+			},
 			ServerOpts: []grpc.ServerOption{
-				grpc.StreamInterceptor(StreamServerInterceptor(buildDummyStreamPermsFunction(t, false))),
-				grpc.UnaryInterceptor(UnaryServerInterceptor(buildDummyUnaryPermsFunction(t, false))),
+				grpc.StreamInterceptor(
+					StreamServerInterceptor(buildDummyStreamPermsFunction(t, false)),
+				),
+				grpc.UnaryInterceptor(
+					UnaryServerInterceptor(buildDummyUnaryPermsFunction(t, false)),
+				),
 			},
 		},
 	}
@@ -174,20 +217,21 @@ type PermsOverrideTestSuite struct {
 func (s *PermsOverrideTestSuite) TestUnary_HasPerms() {
 	ctx := ctxWithFail(s.SimpleCtx(), false)
 	_, err := s.Client.Ping(ctx, testpb.GoodPing)
-	require.NoError(s.T(), err, "no error must occur")
+	s.Require().NoError(err, "no error must occur")
 }
 
 func (s *PermsOverrideTestSuite) TestStream_HasPerms() {
 	ctx := ctxWithFail(s.SimpleCtx(), false)
 	stream, err := s.Client.PingList(ctx, testpb.GoodPingList)
-	require.NoError(s.T(), err, "should not fail on establishing the stream")
+	s.Require().NoError(err, "should not fail on establishing the stream")
 	pong, err := stream.Recv()
-	require.NoError(s.T(), err, "no error must occur")
-	require.NotNil(s.T(), pong, "pong must not be nil")
+	s.Require().NoError(err, "no error must occur")
+	s.Require().NotNil(pong, "pong must not be nil")
 }
 
 type permsRemapTestService struct {
 	testpb.TestServiceServer
+
 	T *testing.T
 }
 
@@ -200,10 +244,17 @@ func (s *permsRemapTestService) GetPermsRemap() map[string]string {
 func TestPermsRemapTestSuite(t *testing.T) {
 	s := &PermsRemapTestSuite{
 		InterceptorTestSuite: &testpb.InterceptorTestSuite{
-			TestService: &permsRemapTestService{&assertingPingService{&testpb.TestPingService{}, t}, t},
+			TestService: &permsRemapTestService{
+				&assertingPingService{&testpb.TestPingService{}, t},
+				t,
+			},
 			ServerOpts: []grpc.ServerOption{
-				grpc.StreamInterceptor(StreamServerInterceptor(buildDummyStreamPermsFunction(t, true))),
-				grpc.UnaryInterceptor(UnaryServerInterceptor(buildDummyUnaryPermsFunction(t, true))),
+				grpc.StreamInterceptor(
+					StreamServerInterceptor(buildDummyStreamPermsFunction(t, true)),
+				),
+				grpc.UnaryInterceptor(
+					UnaryServerInterceptor(buildDummyUnaryPermsFunction(t, true)),
+				),
 			},
 		},
 	}
@@ -217,14 +268,14 @@ type PermsRemapTestSuite struct {
 func (s *PermsRemapTestSuite) TestUnary_HasPerms() {
 	ctx := ctxWithFail(s.SimpleCtx(), false)
 	_, err := s.Client.Ping(ctx, testpb.GoodPing)
-	require.NoError(s.T(), err, "no error must occur")
+	s.Require().NoError(err, "no error must occur")
 }
 
 func (s *PermsRemapTestSuite) TestStream_HasPerms() {
 	ctx := ctxWithFail(s.SimpleCtx(), false)
 	stream, err := s.Client.PingList(ctx, testpb.GoodPingList)
-	require.NoError(s.T(), err, "should not fail on establishing the stream")
+	s.Require().NoError(err, "should not fail on establishing the stream")
 	pong, err := stream.Recv()
-	require.NoError(s.T(), err, "no error must occur")
-	require.NotNil(s.T(), pong, "pong must not be nil")
+	s.Require().NoError(err, "no error must occur")
+	s.Require().NotNil(pong, "pong must not be nil")
 }

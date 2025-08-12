@@ -27,5 +27,5 @@ func (x *UUID) Value() (driver.Value, error) {
 		return nil, nil
 	}
 
-	return x.Uuid, nil
+	return x.GetUuid(), nil
 }

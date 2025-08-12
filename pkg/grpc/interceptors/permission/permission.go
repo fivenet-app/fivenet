@@ -28,12 +28,19 @@ type (
 
 // ServiceUnaryPermissionFuncOverride allows a service to override the default unary permission check.
 type ServiceUnaryPermissionFuncOverride interface {
-	PermissionUnaryFuncOverride(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error)
+	PermissionUnaryFuncOverride(
+		ctx context.Context,
+		info *grpc.UnaryServerInfo,
+	) (context.Context, error)
 }
 
 // ServiceStreamPermissionFuncOverride allows a service to override the default stream permission check.
 type ServiceStreamPermissionFuncOverride interface {
-	PermissionStreamFuncOverride(ctx context.Context, srv any, info *grpc.StreamServerInfo) (context.Context, error)
+	PermissionStreamFuncOverride(
+		ctx context.Context,
+		srv any,
+		info *grpc.StreamServerInfo,
+	) (context.Context, error)
 }
 
 // GetPermsRemapFunc allows a service to remap permission names for custom logic.

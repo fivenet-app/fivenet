@@ -30,12 +30,18 @@ var (
 	tJobLabels = table.FivenetJobLabels
 )
 
-func (s *Server) ListQualificationsResults(ctx context.Context, req *pbqualifications.ListQualificationsResultsRequest) (*pbqualifications.ListQualificationsResultsResponse, error) {
+func (s *Server) ListQualificationsResults(
+	ctx context.Context,
+	req *pbqualifications.ListQualificationsResultsRequest,
+) (*pbqualifications.ListQualificationsResultsResponse, error) {
 	if req.QualificationId != nil {
-		logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", *req.QualificationId})
+		logging.InjectFields(
+			ctx,
+			logging.Fields{"fivenet.qualifications.id", req.GetQualificationId()},
+		)
 	}
 	if req.UserId != nil {
-		logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.user_id", *req.UserId})
+		logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.user_id", req.GetUserId()})
 	}
 
 	tUser := tables.User().AS("user")
@@ -48,7 +54,12 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *pbqualifica
 	condition := tQualiResults.DeletedAt.IS_NULL()
 
 	if req.QualificationId != nil {
-		check, err := s.access.CanUserAccessTarget(ctx, *req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
+		check, err := s.access.CanUserAccessTarget(
+			ctx,
+			req.GetQualificationId(),
+			userInfo,
+			qualifications.AccessLevel_ACCESS_LEVEL_GRADE,
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -56,14 +67,16 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *pbqualifica
 			return nil, errorsqualifications.ErrFailedQuery
 		}
 
-		condition = condition.AND(tQualiResults.QualificationID.EQ(jet.Uint64(*req.QualificationId)))
+		condition = condition.AND(
+			tQualiResults.QualificationID.EQ(jet.Uint64(req.GetQualificationId())),
+		)
 	} else {
 		condition = condition.AND(jet.AND(
 			tQuali.DeletedAt.IS_NULL(),
 			jet.OR(
 				jet.AND(
-					tQualiResults.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-					tQualiResults.CreatorJob.EQ(jet.String(userInfo.Job)),
+					tQualiResults.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
+					tQualiResults.CreatorJob.EQ(jet.String(userInfo.GetJob())),
 				),
 				jet.AND(
 					tQAccess.Access.IS_NOT_NULL(),
@@ -71,7 +84,7 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *pbqualifica
 						tQAccess.Access.GT_EQ(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_GRADE))),
 						jet.AND(
 							tQAccess.Access.GT(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED))),
-							tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId)),
+							tQualiResults.UserID.EQ(jet.Int32(userInfo.GetUserId())),
 						),
 					),
 				),
@@ -81,20 +94,21 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *pbqualifica
 
 	countColumn := jet.Expression(tQualiResults.QualificationID)
 	if req.UserId != nil {
-		condition = condition.AND(tUser.Job.EQ(jet.String(userInfo.Job))).AND(tQualiResults.UserID.EQ(jet.Int32(*req.UserId)))
+		condition = condition.AND(tUser.Job.EQ(jet.String(userInfo.GetJob()))).
+			AND(tQualiResults.UserID.EQ(jet.Int32(req.GetUserId())))
 	} else {
 		if req.QualificationId == nil {
-			condition = condition.AND(tUser.Job.EQ(jet.String(userInfo.Job))).AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId)))
+			condition = condition.AND(tUser.Job.EQ(jet.String(userInfo.GetJob()))).AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.GetUserId())))
 			countColumn = jet.DISTINCT(tQualiResults.QualificationID)
 		} else {
 			countColumn = jet.DISTINCT(tQualiResults.UserID)
 		}
 	}
 
-	if len(req.Status) > 0 {
+	if len(req.GetStatus()) > 0 {
 		statuses := []jet.Expression{}
-		for i := range req.Status {
-			statuses = append(statuses, jet.Int16(int16(req.Status[i])))
+		for i := range req.GetStatus() {
+			statuses = append(statuses, jet.Int16(int16(req.GetStatus()[i])))
 		}
 
 		condition = condition.AND(tQualiResults.Status.IN(statuses...))
@@ -111,8 +125,8 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *pbqualifica
 				).
 				LEFT_JOIN(tQAccess,
 					tQAccess.TargetID.EQ(tQuali.ID).
-						AND(tQAccess.Job.EQ(jet.String(userInfo.Job))).
-						AND(tQAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+						AND(tQAccess.Job.EQ(jet.String(userInfo.GetJob()))).
+						AND(tQAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade()))),
 				).
 				LEFT_JOIN(tUser,
 					tQualiResults.UserID.EQ(tUser.ID),
@@ -127,7 +141,7 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *pbqualifica
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, QualificationsPageSize)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, QualificationsPageSize)
 	resp := &pbqualifications.ListQualificationsResultsResponse{
 		Pagination: pag,
 		Results:    []*qualifications.QualificationResult{},
@@ -138,9 +152,9 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *pbqualifica
 
 	// Convert proto sort to db sorting
 	orderBys := []jet.OrderByClause{}
-	if req.Sort != nil {
+	if req.GetSort() != nil {
 		var column jet.Column
-		switch req.Sort.Column {
+		switch req.GetSort().GetColumn() {
 		case "status":
 			column = tQualiResults.Status
 		case "createdAt":
@@ -149,7 +163,7 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *pbqualifica
 			column = tQualiResults.CreatedAt
 		}
 
-		if req.Sort.Direction == database.AscSortDirection {
+		if req.GetSort().GetDirection() == database.AscSortDirection {
 			orderBys = append(orderBys, column.ASC())
 		} else {
 			orderBys = append(orderBys, column.DESC())
@@ -208,14 +222,14 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *pbqualifica
 				).
 				LEFT_JOIN(tQAccess,
 					tQAccess.TargetID.EQ(tQuali.ID).
-						AND(tQAccess.Job.EQ(jet.String(userInfo.Job))).
-						AND(tQAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+						AND(tQAccess.Job.EQ(jet.String(userInfo.GetJob()))).
+						AND(tQAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade()))),
 				),
 		).
 		GROUP_BY(tQualiResults.Status, tQualiResults.CreatedAt).
 		ORDER_BY(orderBys...).
 		WHERE(condition).
-		OFFSET(req.Pagination.Offset).
+		OFFSET(req.GetPagination().GetOffset()).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Results); err != nil {
@@ -225,32 +239,40 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *pbqualifica
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.Results {
-		if resp.Results[i].User != nil {
-			jobInfoFn(resp.Results[i].User)
+	for i := range resp.GetResults() {
+		if resp.GetResults()[i].GetUser() != nil {
+			jobInfoFn(resp.GetResults()[i].GetUser())
 		}
 
-		if resp.Results[i].Creator != nil {
-			jobInfoFn(resp.Results[i].Creator)
+		if resp.GetResults()[i].GetCreator() != nil {
+			jobInfoFn(resp.GetResults()[i].GetCreator())
 		}
 	}
 
 	return resp, nil
 }
 
-func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *pbqualifications.CreateOrUpdateQualificationResultRequest) (*pbqualifications.CreateOrUpdateQualificationResultResponse, error) {
+func (s *Server) CreateOrUpdateQualificationResult(
+	ctx context.Context,
+	req *pbqualifications.CreateOrUpdateQualificationResultRequest,
+) (*pbqualifications.CreateOrUpdateQualificationResultResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
 		Method:  "CreateOrUpdateQualificationResult",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.Result.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetResult().GetQualificationId(),
+		userInfo,
+		qualifications.AccessLevel_ACCESS_LEVEL_GRADE,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -258,12 +280,31 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *pbq
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	resultId, err := s.createOrUpdateQualificationResult(ctx, s.db, req.Result.QualificationId, req.Result.Id, userInfo, req.Result.UserId, req.Result.Status, req.Result.Score, req.Result.Summary, req.Grading)
+	resultId, err := s.createOrUpdateQualificationResult(
+		ctx,
+		s.db,
+		req.GetResult().GetQualificationId(),
+		req.GetResult().GetId(),
+		userInfo,
+		req.GetResult().GetUserId(),
+		req.GetResult().GetStatus(),
+		//nolint:protogetter // The value is needed as a pointer
+		req.GetResult().Score,
+		req.GetResult().GetSummary(),
+		req.GetGrading(),
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	result, err := s.getQualificationResult(ctx, req.Result.QualificationId, resultId, nil, userInfo, req.Result.UserId)
+	result, err := s.getQualificationResult(
+		ctx,
+		req.GetResult().GetQualificationId(),
+		resultId,
+		nil,
+		userInfo,
+		req.GetResult().GetUserId(),
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -273,25 +314,50 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *pbq
 	}, nil
 }
 
-func (s *Server) createOrUpdateQualificationResult(ctx context.Context, tx qrm.DB, qualificationId uint64, resultId uint64, userInfo *userinfo.UserInfo, userId int32, status qualifications.ResultStatus, score *float32, summary string, grading *qualifications.ExamGrading) (uint64, error) {
-	result, err := s.getQualificationResult(ctx, qualificationId, resultId, []qualifications.ResultStatus{qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL}, userInfo, userId)
+func (s *Server) createOrUpdateQualificationResult(
+	ctx context.Context,
+	tx qrm.DB,
+	qualificationId uint64,
+	resultId uint64,
+	userInfo *userinfo.UserInfo,
+	userId int32,
+	status qualifications.ResultStatus,
+	score *float32,
+	summary string,
+	grading *qualifications.ExamGrading,
+) (uint64, error) {
+	result, err := s.getQualificationResult(
+		ctx,
+		qualificationId,
+		resultId,
+		[]qualifications.ResultStatus{qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL},
+		userInfo,
+		userId,
+	)
 	if err != nil {
 		return 0, err
 	}
 
-	quali, err := s.getQualification(ctx, qualificationId, tQuali.ID.EQ(jet.Uint64(qualificationId)), userInfo, false)
+	quali, err := s.getQualification(
+		ctx,
+		qualificationId,
+		tQuali.ID.EQ(jet.Uint64(qualificationId)),
+		userInfo,
+		false,
+	)
 	if err != nil {
 		return 0, err
 	}
 
 	tQualiResults := table.FivenetQualificationsResults
 	// There is currently no result with status successful
-	if resultId <= 0 && (result == nil || (result.Status != qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL && status != qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)) {
+	if resultId <= 0 &&
+		(result == nil || (result.GetStatus() != qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL && status != qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)) {
 		var creatorId jet.Expression
-		if userInfo.UserId <= 0 {
+		if userInfo.GetUserId() <= 0 {
 			creatorId = jet.NULL
 		} else {
-			creatorId = jet.Int32(userInfo.UserId)
+			creatorId = jet.Int32(userInfo.GetUserId())
 		}
 
 		stmt := tQualiResults.
@@ -305,13 +371,13 @@ func (s *Server) createOrUpdateQualificationResult(ctx context.Context, tx qrm.D
 				tQualiResults.CreatorJob,
 			).
 			VALUES(
-				quali.Id,
+				quali.GetId(),
 				userId,
 				status,
 				score,
 				summary,
 				creatorId,
-				userInfo.Job,
+				userInfo.GetJob(),
 			)
 
 		res, err := stmt.ExecContext(ctx, tx)
@@ -326,12 +392,12 @@ func (s *Server) createOrUpdateQualificationResult(ctx context.Context, tx qrm.D
 
 		resultId = uint64(lastId)
 	} else {
-		result, err := s.getQualificationResult(ctx, quali.Id, resultId, nil, userInfo, userId)
+		result, err := s.getQualificationResult(ctx, quali.GetId(), resultId, nil, userInfo, userId)
 		if err != nil {
 			return 0, err
 		}
 
-		userId = result.UserId
+		userId = result.GetUserId()
 
 		stmt := tQualiResults.
 			UPDATE(
@@ -342,7 +408,7 @@ func (s *Server) createOrUpdateQualificationResult(ctx context.Context, tx qrm.D
 				tQualiResults.Summary,
 			).
 			SET(
-				quali.Id,
+				quali.GetId(),
 				userId,
 				status,
 				score,
@@ -358,7 +424,8 @@ func (s *Server) createOrUpdateQualificationResult(ctx context.Context, tx qrm.D
 		}
 	}
 
-	if quali.ExamMode > qualifications.QualificationExamMode_QUALIFICATION_EXAM_MODE_DISABLED && grading != nil { // Only update the exam grading info when
+	if quali.GetExamMode() > qualifications.QualificationExamMode_QUALIFICATION_EXAM_MODE_DISABLED &&
+		grading != nil { // Only update the exam grading info when
 		// Insert/update exam grading info from tutor
 		stmt := tExamResponses.
 			UPDATE(
@@ -368,7 +435,7 @@ func (s *Server) createOrUpdateQualificationResult(ctx context.Context, tx qrm.D
 				grading,
 			).
 			WHERE(jet.AND(
-				tExamResponses.QualificationID.EQ(jet.Uint64(quali.Id)),
+				tExamResponses.QualificationID.EQ(jet.Uint64(quali.GetId())),
 				tExamResponses.UserID.EQ(jet.Int32(userId)),
 			))
 
@@ -377,7 +444,7 @@ func (s *Server) createOrUpdateQualificationResult(ctx context.Context, tx qrm.D
 		}
 	}
 
-	if quali.LabelSyncEnabled {
+	if quali.GetLabelSyncEnabled() {
 		// Add/Remove label based on result status
 		if err := s.handleColleagueLabelSync(ctx, tx, userInfo, quali, userId, status == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL); err != nil {
 			return 0, err
@@ -401,7 +468,8 @@ func (s *Server) createOrUpdateQualificationResult(ctx context.Context, tx qrm.D
 	}
 
 	// Only send notification when the original result had no score and wasn't in pending status
-	if status != qualifications.ResultStatus_RESULT_STATUS_PENDING && (result == nil || (result.Status == qualifications.ResultStatus_RESULT_STATUS_PENDING || (result.Score == nil && score != nil))) {
+	if status != qualifications.ResultStatus_RESULT_STATUS_PENDING &&
+		(result == nil || (result.GetStatus() == qualifications.ResultStatus_RESULT_STATUS_PENDING || (result.Score == nil && score != nil))) {
 		if err := s.notif.NotifyUser(ctx, &notifications.Notification{
 			UserId: userId,
 			Title: &common.I18NItem{
@@ -409,7 +477,7 @@ func (s *Server) createOrUpdateQualificationResult(ctx context.Context, tx qrm.D
 			},
 			Content: &common.I18NItem{
 				Key:        "notifications.qualifications.result_updated.content",
-				Parameters: map[string]string{"abbreviation": quali.Abbreviation, "title": quali.Title},
+				Parameters: map[string]string{"abbreviation": quali.GetAbbreviation(), "title": quali.GetTitle()},
 			},
 			Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_GENERAL,
 			Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
@@ -426,7 +494,14 @@ func (s *Server) createOrUpdateQualificationResult(ctx context.Context, tx qrm.D
 	return resultId, nil
 }
 
-func (s *Server) getQualificationResult(ctx context.Context, qualificationId uint64, resultId uint64, status []qualifications.ResultStatus, userInfo *userinfo.UserInfo, userId int32) (*qualifications.QualificationResult, error) {
+func (s *Server) getQualificationResult(
+	ctx context.Context,
+	qualificationId uint64,
+	resultId uint64,
+	status []qualifications.ResultStatus,
+	userInfo *userinfo.UserInfo,
+	userId int32,
+) (*qualifications.QualificationResult, error) {
 	tUser := tables.User().AS("user")
 	tCreator := tUser.AS("creator")
 
@@ -437,7 +512,7 @@ func (s *Server) getQualificationResult(ctx context.Context, qualificationId uin
 	} else if userId > 0 {
 		condition = condition.AND(tQualiResults.UserID.EQ(jet.Int32(userId)))
 	} else {
-		condition = condition.AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId)))
+		condition = condition.AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.GetUserId())))
 	}
 	if qualificationId > 0 {
 		condition = condition.AND(tQualiResults.QualificationID.EQ(jet.Uint64(qualificationId)))
@@ -499,34 +574,37 @@ func (s *Server) getQualificationResult(ctx context.Context, qualificationId uin
 		}
 	}
 
-	if result.Id == 0 {
+	if result.GetId() == 0 {
 		return nil, nil
 	}
 
-	if result.User != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, result.User)
+	if result.GetUser() != nil {
+		s.enricher.EnrichJobInfoSafe(userInfo, result.GetUser())
 	}
 
-	if result.Creator != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, result.Creator)
+	if result.GetCreator() != nil {
+		s.enricher.EnrichJobInfoSafe(userInfo, result.GetCreator())
 	}
 
 	return &result, nil
 }
 
-func (s *Server) DeleteQualificationResult(ctx context.Context, req *pbqualifications.DeleteQualificationResultRequest) (*pbqualifications.DeleteQualificationResultResponse, error) {
+func (s *Server) DeleteQualificationResult(
+	ctx context.Context,
+	req *pbqualifications.DeleteQualificationResultRequest,
+) (*pbqualifications.DeleteQualificationResultResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
 		Method:  "DeleteQualificationResult",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	result, err := s.getQualificationResult(ctx, 0, req.ResultId, nil, userInfo, 0)
+	result, err := s.getQualificationResult(ctx, 0, req.GetResultId(), nil, userInfo, 0)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -534,7 +612,12 @@ func (s *Server) DeleteQualificationResult(ctx context.Context, req *pbqualifica
 		return &pbqualifications.DeleteQualificationResultResponse{}, nil
 	}
 
-	check, err := s.access.CanUserAccessTarget(ctx, result.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_EDIT)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		result.GetQualificationId(),
+		userInfo,
+		qualifications.AccessLevel_ACCESS_LEVEL_EDIT,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -542,7 +625,13 @@ func (s *Server) DeleteQualificationResult(ctx context.Context, req *pbqualifica
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	quali, err := s.getQualification(ctx, result.QualificationId, tQuali.ID.EQ(jet.Uint64(result.QualificationId)), userInfo, false)
+	quali, err := s.getQualification(
+		ctx,
+		result.GetQualificationId(),
+		tQuali.ID.EQ(jet.Uint64(result.GetQualificationId())),
+		userInfo,
+		false,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -565,21 +654,21 @@ func (s *Server) DeleteQualificationResult(ctx context.Context, req *pbqualifica
 			jet.CURRENT_TIMESTAMP(),
 		).
 		WHERE(jet.AND(
-			tQualiResults.ID.EQ(jet.Uint64(result.Id)),
-			tQualiResults.ID.EQ(jet.Uint64(req.ResultId)),
+			tQualiResults.ID.EQ(jet.Uint64(result.GetId())),
+			tQualiResults.ID.EQ(jet.Uint64(req.GetResultId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	if err := s.deleteExamUser(ctx, tx, result.QualificationId, result.UserId); err != nil {
+	if err := s.deleteExamUser(ctx, tx, result.GetQualificationId(), result.GetUserId()); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	if quali.LabelSyncEnabled {
+	if quali.GetLabelSyncEnabled() {
 		// Remove label as we are deleting the result
-		if err := s.handleColleagueLabelSync(ctx, tx, userInfo, quali, result.UserId, false); err != nil {
+		if err := s.handleColleagueLabelSync(ctx, tx, userInfo, quali, result.GetUserId(), false); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 	}
@@ -594,19 +683,26 @@ func (s *Server) DeleteQualificationResult(ctx context.Context, req *pbqualifica
 	return &pbqualifications.DeleteQualificationResultResponse{}, nil
 }
 
-func (s *Server) handleColleagueLabelSync(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo, quali *qualifications.Qualification, targetUserId int32, addLabel bool) error {
-	if quali.LabelSyncFormat == nil || *quali.LabelSyncFormat == "" {
+func (s *Server) handleColleagueLabelSync(
+	ctx context.Context,
+	tx qrm.DB,
+	userInfo *userinfo.UserInfo,
+	quali *qualifications.Qualification,
+	targetUserId int32,
+	addLabel bool,
+) error {
+	if quali.LabelSyncFormat == nil || quali.GetLabelSyncFormat() == "" {
 		defaultFormat := QualificationsLabelDefaultFormat
 		quali.LabelSyncFormat = &defaultFormat
 	}
 
-	labelName := strings.ReplaceAll(*quali.LabelSyncFormat, "%abbr%", quali.Abbreviation)
-	labelName = strings.ReplaceAll(labelName, "%name%", quali.Title)
+	labelName := strings.ReplaceAll(quali.GetLabelSyncFormat(), "%abbr%", quali.GetAbbreviation())
+	labelName = strings.ReplaceAll(labelName, "%name%", quali.GetTitle())
 	labelName = strings.TrimSpace(labelName)
 
 	// Make sure that the label isn't empty when all is screwed up
 	if labelName == "" {
-		labelName = fmt.Sprintf("%s: %s", quali.Abbreviation, quali.Title)
+		labelName = fmt.Sprintf("%s: %s", quali.GetAbbreviation(), quali.GetTitle())
 	}
 
 	// Create label if it doesn't exist yet
@@ -616,7 +712,7 @@ func (s *Server) handleColleagueLabelSync(ctx context.Context, tx qrm.DB, userIn
 			tJobLabels.Name,
 		).
 		VALUES(
-			userInfo.Job,
+			userInfo.GetJob(),
 			labelName,
 		)
 
@@ -636,7 +732,7 @@ func (s *Server) handleColleagueLabelSync(ctx context.Context, tx qrm.DB, userIn
 			).
 			FROM(tJobLabels).
 			WHERE(jet.AND(
-				tJobLabels.Job.EQ(jet.String(userInfo.Job)),
+				tJobLabels.Job.EQ(jet.String(userInfo.GetJob())),
 				tJobLabels.Name.EQ(jet.String(labelName)),
 			)).
 			LIMIT(1)
@@ -670,7 +766,7 @@ func (s *Server) handleColleagueLabelSync(ctx context.Context, tx qrm.DB, userIn
 			).
 			VALUES(
 				targetUserId,
-				userInfo.Job,
+				userInfo.GetJob(),
 				labelId,
 			)
 
@@ -684,7 +780,7 @@ func (s *Server) handleColleagueLabelSync(ctx context.Context, tx qrm.DB, userIn
 			DELETE().
 			WHERE(jet.AND(
 				tUserLabels.UserID.EQ(jet.Int32(targetUserId)),
-				tUserLabels.Job.EQ(jet.String(userInfo.Job)),
+				tUserLabels.Job.EQ(jet.String(userInfo.GetJob())),
 				tUserLabels.LabelID.EQ(jet.Uint64(labelId)),
 			)).
 			LIMIT(1)

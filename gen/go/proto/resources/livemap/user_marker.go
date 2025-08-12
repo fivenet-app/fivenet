@@ -7,7 +7,7 @@ import (
 )
 
 func (x *UserMarker) Point() orb.Point {
-	return orb.Point{x.X, x.Y}
+	return orb.Point{x.GetX(), x.GetY()}
 }
 
 func (x *UserMarker) SetJobLabel(label string) {
@@ -15,43 +15,44 @@ func (x *UserMarker) SetJobLabel(label string) {
 }
 
 func (x *UserMarker) Merge(in *UserMarker) *UserMarker {
-	if x.UserId != in.UserId {
-		x.UserId = in.UserId
+	if x.GetUserId() != in.GetUserId() {
+		x.UserId = in.GetUserId()
 	}
 
-	x.X = in.X
-	x.Y = in.Y
+	x.X = in.GetX()
+	x.Y = in.GetY()
 
-	if in.UpdatedAt != nil {
-		x.UpdatedAt = proto.Clone(in.UpdatedAt).(*timestamp.Timestamp)
+	if in.GetUpdatedAt() != nil {
+		//nolint:forcetypeassert // Value type is guaranteed to be timestamp.Timestamp
+		x.UpdatedAt = proto.Clone(in.GetUpdatedAt()).(*timestamp.Timestamp)
 	}
 
 	if in.Postal == nil {
 		x.Postal = nil
 	} else {
-		*x.Postal = *in.Postal
+		*x.Postal = in.GetPostal()
 	}
 
 	if in.Color == nil {
 		x.Color = nil
 	} else {
-		*x.Color = *in.Color
+		*x.Color = in.GetColor()
 	}
 
-	x.Job = in.Job
-	x.JobLabel = in.JobLabel
+	x.Job = in.GetJob()
+	x.JobLabel = in.GetJobLabel()
 	if in.JobGrade == nil {
 		x.JobGrade = nil
 	} else {
-		val := *in.JobGrade
+		val := in.GetJobGrade()
 		x.JobGrade = &val
 	}
 
-	if in.User != nil {
-		if x.User == nil {
-			x.User = in.User
+	if in.GetUser() != nil {
+		if x.GetUser() == nil {
+			x.User = in.GetUser()
 		} else {
-			proto.Merge(x.User, in.User)
+			proto.Merge(x.GetUser(), in.GetUser())
 		}
 	}
 
@@ -60,10 +61,10 @@ func (x *UserMarker) Merge(in *UserMarker) *UserMarker {
 		x.Unit = nil
 	} else {
 		x.UnitId = in.UnitId
-		x.Unit = in.Unit
+		x.Unit = in.GetUnit()
 	}
 
-	x.Hidden = in.Hidden
+	x.Hidden = in.GetHidden()
 
 	return x
 }

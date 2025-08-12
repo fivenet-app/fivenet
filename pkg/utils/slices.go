@@ -46,7 +46,10 @@ func SlicesDifference[T comparable](a, b []T) ([]T, []T) {
 
 // SlicesDifferenceFunc returns the values added and removed between two slices, using a key function for comparison.
 // Does not handle multiple additions of the same value as values are de-duplicated.
-func SlicesDifferenceFunc[T comparable, S comparable](a, b []T, keyFn func(in T) S) (added []T, removed []T) {
+func SlicesDifferenceFunc[T comparable, S comparable](
+	a, b []T,
+	keyFn func(in T) S,
+) ([]T, []T) {
 	temp := map[S]int{}
 	vals := map[S]T{}
 	for _, i := range a {
@@ -66,6 +69,8 @@ func SlicesDifferenceFunc[T comparable, S comparable](a, b []T, keyFn func(in T)
 		}
 	}
 
+	added := []T{}
+	removed := []T{}
 	for s, v := range temp {
 		if v == 0 {
 			removed = append(removed, vals[s])
@@ -74,5 +79,5 @@ func SlicesDifferenceFunc[T comparable, S comparable](a, b []T, keyFn func(in T)
 		}
 	}
 
-	return
+	return added, removed
 }

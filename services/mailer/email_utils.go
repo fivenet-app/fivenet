@@ -18,7 +18,12 @@ import (
 
 const defaultDomain = "fivenet.ls"
 
-func (s *Server) validateEmail(ctx context.Context, userInfo *userinfo.UserInfo, input string, forJob bool) error {
+func (s *Server) validateEmail(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	input string,
+	forJob bool,
+) error {
 	emails, domains, err := s.generateEmailProposals(ctx, userInfo, forJob)
 	if err != nil {
 		return errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -40,24 +45,31 @@ func (s *Server) validateEmail(ctx context.Context, userInfo *userinfo.UserInfo,
 	return nil
 }
 
-func (s *Server) generateEmailProposals(ctx context.Context, userInfo *userinfo.UserInfo, forJob bool) ([]string, []string, error) {
+func (s *Server) generateEmailProposals(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	forJob bool,
+) ([]string, []string, error) {
 	emails := []string{}
 	domains := []string{}
 
 	if forJob {
 		// Job's email
-		job := s.enricher.GetJobByName(userInfo.Job)
+		job := s.enricher.GetJobByName(userInfo.GetJob())
 		if job == nil {
 			return nil, nil, errorsmailer.ErrFailedQuery
 		}
 
-		domains = append(domains, fmt.Sprintf("%s.%s", utils.Slug(job.Name), defaultDomain))
-		domains = append(domains, fmt.Sprintf("%s.%s", utils.Slug(job.Label), defaultDomain))
-		if strings.Contains(job.Label, " ") {
-			labelSplit := strings.Split(job.Label, " ")
+		domains = append(domains, fmt.Sprintf("%s.%s", utils.Slug(job.GetName()), defaultDomain))
+		domains = append(domains, fmt.Sprintf("%s.%s", utils.Slug(job.GetLabel()), defaultDomain))
+		if strings.Contains(job.GetLabel(), " ") {
+			labelSplit := strings.Split(job.GetLabel(), " ")
 			if len(labelSplit) < 3 {
 				for _, split := range labelSplit {
-					domains = append(domains, fmt.Sprintf("%s.%s", utils.Slug(split), defaultDomain))
+					domains = append(
+						domains,
+						fmt.Sprintf("%s.%s", utils.Slug(split), defaultDomain),
+					)
 				}
 			} else {
 				for idx, split := range labelSplit {
@@ -81,7 +93,7 @@ func (s *Server) generateEmailProposals(ctx context.Context, userInfo *userinfo.
 			).
 			FROM(tUsers).
 			WHERE(
-				tUsers.ID.EQ(jet.Int32(userInfo.UserId)),
+				tUsers.ID.EQ(jet.Int32(userInfo.GetUserId())),
 			).
 			LIMIT(1)
 
@@ -91,20 +103,20 @@ func (s *Server) generateEmailProposals(ctx context.Context, userInfo *userinfo.
 		}
 
 		// Cleanup name
-		user.Firstname = strings.TrimSpace(user.Firstname)
-		user.Lastname = strings.TrimSpace(user.Lastname)
+		user.Firstname = strings.TrimSpace(user.GetFirstname())
+		user.Lastname = strings.TrimSpace(user.GetLastname())
 
 		domains = append(domains, defaultDomain)
-		emails = append(emails, getBasicNameEmails(user.Firstname, user.Lastname)...)
+		emails = append(emails, getBasicNameEmails(user.GetFirstname(), user.GetLastname())...)
 
 		// Generate version with "prefixes" (e.g., `Dr.`) removed
-		firstname := utils.RemoveTitlePrefixes(user.Firstname)
-		if firstname != user.Firstname {
-			emails = append(emails, getBasicNameEmails(firstname, user.Lastname)...)
+		firstname := utils.RemoveTitlePrefixes(user.GetFirstname())
+		if firstname != user.GetFirstname() {
+			emails = append(emails, getBasicNameEmails(firstname, user.GetLastname())...)
 		}
 
 		// Generate names with birth year added
-		dateOfBirth, err := time.Parse("02.01.2006", user.Dateofbirth)
+		dateOfBirth, err := time.Parse("02.01.2006", user.GetDateofbirth())
 		if err == nil {
 			for _, email := range emails {
 				emails = append(emails, fmt.Sprintf("%s%d", email, dateOfBirth.Year()))
@@ -126,8 +138,14 @@ func getBasicNameEmails(firstname string, lastname string) []string {
 		utils.Slug(fmt.Sprintf("%s.%s", firstname, lastname)), // erika.mustermann
 		utils.Slug(firstname), // erika
 		utils.Slug(lastname),  // mustermann
-		utils.Slug(fmt.Sprintf("%s%s", utils.StringFirstN(firstname, 1), lastname)),                         // emustermann
-		utils.Slug(fmt.Sprintf("%s%s", firstname, utils.StringFirstN(lastname, 1))),                         // erikam
-		utils.Slug(fmt.Sprintf("%s.%s", utils.StringFirstN(firstname, 1), utils.StringFirstN(lastname, 3))), // eri.mus
+		utils.Slug(
+			fmt.Sprintf("%s%s", utils.StringFirstN(firstname, 1), lastname),
+		), // emustermann
+		utils.Slug(
+			fmt.Sprintf("%s%s", firstname, utils.StringFirstN(lastname, 1)),
+		), // erikam
+		utils.Slug(
+			fmt.Sprintf("%s.%s", utils.StringFirstN(firstname, 1), utils.StringFirstN(lastname, 3)),
+		), // eri.mus
 	}
 }

@@ -13,7 +13,10 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) getAccount(ctx context.Context, identifier string) (*accounts.Account, *string, error) {
+func (s *Server) getAccount(
+	ctx context.Context,
+	identifier string,
+) (*accounts.Account, *string, error) {
 	tAccounts := table.FivenetAccounts.AS("account")
 	// Check if an account already exists
 	selectStmt := tAccounts.
@@ -30,6 +33,7 @@ func (s *Server) getAccount(ctx context.Context, identifier string) (*accounts.A
 
 	acc := &struct {
 		*accounts.Account
+
 		RegToken *string
 	}{
 		Account: &accounts.Account{},
@@ -43,15 +47,18 @@ func (s *Server) getAccount(ctx context.Context, identifier string) (*accounts.A
 	return acc.Account, acc.RegToken, nil
 }
 
-func (s *Server) RegisterAccount(ctx context.Context, req *pbsync.RegisterAccountRequest) (*pbsync.RegisterAccountResponse, error) {
-	acc, accToken, err := s.getAccount(ctx, req.Identifier)
+func (s *Server) RegisterAccount(
+	ctx context.Context,
+	req *pbsync.RegisterAccountRequest,
+) (*pbsync.RegisterAccountResponse, error) {
+	acc, accToken, err := s.getAccount(ctx, req.GetIdentifier())
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve account. %w", err)
 	}
 
-	if acc == nil || acc.Id > 0 {
+	if acc == nil || acc.GetId() > 0 {
 		// Account exists and no token reset has been requested
-		if !req.ResetToken {
+		if !req.GetResetToken() {
 			return &pbsync.RegisterAccountResponse{
 				Username: &acc.Username,
 				RegToken: accToken,
@@ -70,7 +77,7 @@ func (s *Server) RegisterAccount(ctx context.Context, req *pbsync.RegisterAccoun
 	tAccounts := table.FivenetAccounts
 
 	// No account found, insert new account
-	if acc.Id == 0 {
+	if acc.GetId() == 0 {
 		stmt = tAccounts.
 			INSERT(
 				tAccounts.Enabled,
@@ -80,9 +87,9 @@ func (s *Server) RegisterAccount(ctx context.Context, req *pbsync.RegisterAccoun
 			).
 			VALUES(
 				true,
-				req.Identifier,
+				req.GetIdentifier(),
 				regToken,
-				req.LastCharId,
+				req.GetLastCharId(),
 			)
 	} else {
 		// Account exists, and token reset requested
@@ -93,9 +100,9 @@ func (s *Server) RegisterAccount(ctx context.Context, req *pbsync.RegisterAccoun
 				tAccounts.RegToken.SET(jet.String(regToken)),
 			).
 			WHERE(jet.AND(
-				tAccounts.ID.EQ(jet.Uint64(acc.Id)),
+				tAccounts.ID.EQ(jet.Uint64(acc.GetId())),
 				// Make sure the license is (still) the same
-				tAccounts.License.EQ(jet.String(req.Identifier)),
+				tAccounts.License.EQ(jet.String(req.GetIdentifier())),
 			))
 	}
 
@@ -107,24 +114,27 @@ func (s *Server) RegisterAccount(ctx context.Context, req *pbsync.RegisterAccoun
 		RegToken: &regToken,
 	}
 	// Set account info if it is set
-	if acc.Id != 0 {
+	if acc.GetId() != 0 {
 		resp.AccountId = &acc.Id
 	}
-	if acc.Username != "" {
+	if acc.GetUsername() != "" {
 		resp.Username = &acc.Username
 	}
 
 	return resp, nil
 }
 
-func (s *Server) TransferAccount(ctx context.Context, req *pbsync.TransferAccountRequest) (*pbsync.TransferAccountResponse, error) {
-	acc, _, err := s.getAccount(ctx, req.OldLicense)
+func (s *Server) TransferAccount(
+	ctx context.Context,
+	req *pbsync.TransferAccountRequest,
+) (*pbsync.TransferAccountResponse, error) {
+	acc, _, err := s.getAccount(ctx, req.GetOldLicense())
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve account with old license. %w", err)
 	}
 
 	resp := &pbsync.TransferAccountResponse{}
-	if acc.Id == 0 {
+	if acc.GetId() == 0 {
 		return resp, nil
 	}
 
@@ -133,7 +143,7 @@ func (s *Server) TransferAccount(ctx context.Context, req *pbsync.TransferAccoun
 	// Delete new account
 	delStmt := tAccounts.
 		DELETE().
-		WHERE(tAccounts.ID.EQ(jet.Uint64(acc.Id))).
+		WHERE(tAccounts.ID.EQ(jet.Uint64(acc.GetId()))).
 		LIMIT(1)
 
 	if _, err := delStmt.ExecContext(ctx, s.db); err != nil {
@@ -146,10 +156,10 @@ func (s *Server) TransferAccount(ctx context.Context, req *pbsync.TransferAccoun
 			tAccounts.License,
 		).
 		SET(
-			tAccounts.License.SET(jet.String(req.NewLicense)),
+			tAccounts.License.SET(jet.String(req.GetNewLicense())),
 		).
 		WHERE(
-			tAccounts.ID.EQ(jet.Uint64(acc.Id)),
+			tAccounts.ID.EQ(jet.Uint64(acc.GetId())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

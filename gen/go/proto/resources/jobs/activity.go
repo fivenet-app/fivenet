@@ -7,7 +7,11 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func CreateColleagueActivity(ctx context.Context, tx qrm.DB, activities ...*ColleagueActivity) error {
+func CreateColleagueActivity(
+	ctx context.Context,
+	tx qrm.DB,
+	activities ...*ColleagueActivity,
+) error {
 	if len(activities) == 0 {
 		return nil
 	}
@@ -27,12 +31,12 @@ func CreateColleagueActivity(ctx context.Context, tx qrm.DB, activities ...*Coll
 	for _, activity := range activities {
 		stmt = stmt.
 			VALUES(
-				activity.Job,
-				activity.SourceUserId,
-				activity.TargetUserId,
-				activity.ActivityType,
-				activity.Reason,
-				activity.Data,
+				activity.GetJob(),
+				activity.GetSourceUserId(),
+				activity.GetTargetUserId(),
+				activity.GetActivityType(),
+				activity.GetReason(),
+				activity.GetData(),
 			)
 	}
 

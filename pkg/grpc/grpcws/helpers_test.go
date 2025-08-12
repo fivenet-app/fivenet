@@ -7,9 +7,8 @@ import (
 	"sort"
 	"testing"
 
-	testproto "github.com/improbable-eng/grpc-web/integration_test/go/_proto/improbable/grpcweb/test"
-
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
+	testproto "github.com/improbable-eng/grpc-web/integration_test/go/_proto/improbable/grpcweb/test"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 )
@@ -29,7 +28,7 @@ func TestListGRPCResources(t *testing.T) {
 	actual := grpcweb.ListGRPCResources(server)
 	sort.Strings(expected)
 	sort.Strings(actual)
-	assert.EqualValues(t,
+	assert.Equal(t,
 		expected,
 		actual,
 		"list grpc resources must provide an exhaustive list of all registered handlers")

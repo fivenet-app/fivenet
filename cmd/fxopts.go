@@ -17,6 +17,8 @@ import (
 	"go.uber.org/fx"
 )
 
+const stopTimeout = 180 // seconds
+
 // Option groups for fx modules, to be reused across commands.
 
 func FxServerOpts() []fx.Option {

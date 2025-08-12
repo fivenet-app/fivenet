@@ -1,4 +1,4 @@
-package types
+package discordtypes
 
 import (
 	"context"
@@ -10,7 +10,11 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/embeds"
 )
 
-func (s *State) Calculate(ctx context.Context, dc *state.State, dryRun bool) (*Plan, []discord.Embed, error) {
+func (s *State) Calculate(
+	ctx context.Context,
+	dc *state.State,
+	dryRun bool,
+) (*Plan, []discord.Embed, error) {
 	plan := NewPlan(s.GuildID, dryRun)
 	logs := []discord.Embed{}
 
@@ -44,7 +48,8 @@ func (s *State) Calculate(ctx context.Context, dc *state.State, dryRun bool) (*P
 	}
 
 	plan.Users = slices.DeleteFunc(plan.Users, func(u *User) bool {
-		return u.ID == discord.NullUserID || ((u.Kick == nil || !*u.Kick) && (u.Roles == nil || (len(u.Roles.ToAdd) == 0 && len(u.Roles.ToRemove) == 0)))
+		return u.ID == discord.NullUserID ||
+			((u.Kick == nil || !*u.Kick) && (u.Roles == nil || (len(u.Roles.ToAdd) == 0 && len(u.Roles.ToRemove) == 0)))
 	})
 
 	return plan, logs, nil
@@ -107,7 +112,11 @@ func (s *State) calculateRoles(dc *state.State) (*PlanRoles, []discord.Embed, er
 	return pr, logs, nil
 }
 
-func (s *State) calculateUserUpdates(ctx context.Context, member discord.Member, user *User) (*User, error) {
+func (s *State) calculateUserUpdates(
+	ctx context.Context,
+	member discord.Member,
+	user *User,
+) (*User, error) {
 	if user == nil {
 		user = &User{
 			ID:    member.User.ID,
@@ -118,7 +127,11 @@ func (s *State) calculateUserUpdates(ctx context.Context, member discord.Member,
 	for _, fn := range s.UserProcessors {
 		_, err := fn(ctx, s.GuildID, member, user)
 		if err != nil {
-			return nil, fmt.Errorf("error in user processor (dc member id %d). %w", member.User.ID, err)
+			return nil, fmt.Errorf(
+				"error in user processor (dc member id %d). %w",
+				member.User.ID,
+				err,
+			)
 		}
 	}
 

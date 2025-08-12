@@ -125,15 +125,15 @@ type UsersDBSyncTable struct {
 	DBSyncTable `yaml:",inline" mapstructure:",squash"`
 
 	SplitName    bool                  `default:"false" yaml:"splitName"`
-	DateOfBirth  DateOfBirthNormalizer `yaml:"dateOfBirth"`
-	ValueMapping *UsersValueMappings   `yaml:"valueMapping"`
+	DateOfBirth  DateOfBirthNormalizer `                yaml:"dateOfBirth"`
+	ValueMapping *UsersValueMappings   `                yaml:"valueMapping"`
 
 	IgnoreEmptyName bool `default:"true" yaml:"ignoreEmptyName"`
 }
 
 type DateOfBirthNormalizer struct {
 	Formats      []string `yaml:"formats"`
-	OutputFormat string   `default:"" yaml:"output"`
+	OutputFormat string   `yaml:"output"  default:""`
 }
 
 type UsersValueMappings struct {

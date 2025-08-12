@@ -20,9 +20,9 @@ type JobsAccessProtoMessage[T any, V protoutils.ProtoEnum] interface {
 	GetJob() string
 
 	GetMinimumGrade() int32
-	SetMinimumGrade(int32)
+	SetMinimumGrade(grade int32)
 	GetAccess() V
-	SetAccess(V)
+	SetAccess(access V)
 }
 
 // Jobs provides access control logic for job-based permissions.
@@ -38,7 +38,12 @@ type Jobs[U any, T JobsAccessProtoMessage[U, V], V protoutils.ProtoEnum] struct 
 }
 
 // NewJobs creates a new Jobs instance for job-based access control.
-func NewJobs[U any, T JobsAccessProtoMessage[U, V], V protoutils.ProtoEnum](table jet.Table, columns *JobAccessColumns, tableAlias jet.Table, columnsAlias *JobAccessColumns) *Jobs[U, T, V] {
+func NewJobs[U any, T JobsAccessProtoMessage[U, V], V protoutils.ProtoEnum](
+	table jet.Table,
+	columns *JobAccessColumns,
+	tableAlias jet.Table,
+	columnsAlias *JobAccessColumns,
+) *Jobs[U, T, V] {
 	return &Jobs[U, T, V]{
 		table:         table,
 		columns:       columns,
@@ -94,22 +99,27 @@ func (a *Jobs[U, T, V]) Clear(ctx context.Context, tx qrm.DB, targetId uint64) (
 
 // Compare compares the current job access entries in the database with the provided input.
 // Returns slices of entries to create, update, and delete.
-func (a *Jobs[U, T, V]) Compare(ctx context.Context, tx qrm.DB, targetId uint64, in []T) (toCreate []T, toUpdate []T, toDelete []T, err error) {
+func (a *Jobs[U, T, V]) Compare(
+	ctx context.Context,
+	tx qrm.DB,
+	targetId uint64,
+	in []T,
+) ([]T, []T, []T, error) {
 	current, err := a.List(ctx, tx, targetId)
 	if err != nil {
 		return nil, nil, nil, err
 	}
 
-	toCreate, toUpdate, toDelete = a.compare(current, in)
+	toCreate, toUpdate, toDelete := a.compare(current, in)
 	return toCreate, toUpdate, toDelete, nil
 }
 
 // compare performs a comparison between current and input job access entries.
 // Returns entries to create, update, and delete. Handles matching by job and minimum grade.
-func (a *Jobs[U, T, V]) compare(current, in []T) (toCreate []T, toUpdate []T, toDelete []T) {
-	toCreate = []T{}
-	toUpdate = []T{}
-	toDelete = []T{}
+func (a *Jobs[U, T, V]) compare(current, in []T) ([]T, []T, []T) {
+	toCreate := []T{}
+	toUpdate := []T{}
+	toDelete := []T{}
 
 	if len(current) == 0 {
 		return in, toUpdate, toDelete
@@ -119,83 +129,84 @@ func (a *Jobs[U, T, V]) compare(current, in []T) (toCreate []T, toUpdate []T, to
 		return int(a.GetId() - b.GetId())
 	})
 
-	if len(current) == 0 {
-		toCreate = in
-	} else {
-		foundTracker := []int{}
-		for _, cj := range current {
-			var found T
-			var foundIdx int
-			for i, uj := range in {
-				if cj.GetJob() != uj.GetJob() {
-					continue
-				}
-				if cj.GetMinimumGrade() != uj.GetMinimumGrade() {
-					continue
-				}
-				found = uj
-				foundIdx = i
-				break
-			}
-			// No match in incoming job access, needs to be deleted
-			if found == nil {
-				toDelete = append(toDelete, cj)
+	foundTracker := []int{}
+	for _, cj := range current {
+		var found T
+		var foundIdx int
+		for i, uj := range in {
+			if cj.GetJob() != uj.GetJob() {
 				continue
 			}
-
-			foundTracker = append(foundTracker, foundIdx)
-
-			changed := false
-			if cj.GetMinimumGrade() != found.GetMinimumGrade() {
-				cj.SetMinimumGrade(found.GetMinimumGrade())
-				changed = true
+			if cj.GetMinimumGrade() != uj.GetMinimumGrade() {
+				continue
 			}
-			if cj.GetAccess().Number() != found.GetAccess().Number() {
-				cj.SetAccess(found.GetAccess())
-				changed = true
-			}
-
-			if changed {
-				toUpdate = append(toUpdate, cj)
-			}
+			found = uj
+			foundIdx = i
+			break
+		}
+		// No match in incoming job access, needs to be deleted
+		if found == nil {
+			toDelete = append(toDelete, cj)
+			continue
 		}
 
-		for i, uj := range in {
-			idx := slices.Index(foundTracker, i)
-			if idx == -1 {
-				toCreate = append(toCreate, uj)
-			}
+		foundTracker = append(foundTracker, foundIdx)
+
+		changed := false
+		if cj.GetMinimumGrade() != found.GetMinimumGrade() {
+			cj.SetMinimumGrade(found.GetMinimumGrade())
+			changed = true
+		}
+		if cj.GetAccess().Number() != found.GetAccess().Number() {
+			cj.SetAccess(found.GetAccess())
+			changed = true
+		}
+
+		if changed {
+			toUpdate = append(toUpdate, cj)
 		}
 	}
 
-	return
+	for i, uj := range in {
+		idx := slices.Index(foundTracker, i)
+		if idx == -1 {
+			toCreate = append(toCreate, uj)
+		}
+	}
+
+	return toCreate, toUpdate, toDelete
 }
 
 // HandleAccessChanges applies the necessary create, update, and delete operations for job access entries.
 // Returns the created, updated, and deleted entries, or an error if any operation fails.
-func (a *Jobs[U, T, AccessLevel]) HandleAccessChanges(ctx context.Context, tx qrm.DB, targetId uint64, access []T) (toCreate []T, toUpdate []T, toDelete []T, err error) {
-	toCreate, toUpdate, toDelete, err = a.Compare(ctx, tx, targetId, access)
+func (a *Jobs[U, T, AccessLevel]) HandleAccessChanges(
+	ctx context.Context,
+	tx qrm.DB,
+	targetId uint64,
+	access []T,
+) ([]T, []T, []T, error) {
+	toCreate, toUpdate, toDelete, err := a.Compare(ctx, tx, targetId, access)
 	if err != nil {
-		return
+		return nil, nil, nil, err
 	}
 
 	for _, entry := range toCreate {
 		if err = a.CreateEntry(ctx, tx, targetId, entry); err != nil {
-			return
+			return nil, nil, nil, err
 		}
 	}
 
 	for _, entry := range toUpdate {
 		if err = a.UpdateEntry(ctx, tx, targetId, entry); err != nil {
-			return
+			return nil, nil, nil, err
 		}
 	}
 
 	for _, entry := range toDelete {
 		if err = a.DeleteEntry(ctx, tx, targetId, entry.GetId()); err != nil {
-			return
+			return nil, nil, nil, err
 		}
 	}
 
-	return
+	return toCreate, toUpdate, toDelete, nil
 }

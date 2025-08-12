@@ -1,6 +1,7 @@
 package cron
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -11,50 +12,50 @@ import (
 const DefaultCronTimeout = 10 * time.Second
 
 func (x *Cronjob) Merge(in *Cronjob) *Cronjob {
-	x.Schedule = in.Schedule
+	x.Schedule = in.GetSchedule()
 
-	if in.State > CronjobState_CRONJOB_STATE_UNSPECIFIED {
-		x.State = in.State
+	if in.GetState() > CronjobState_CRONJOB_STATE_UNSPECIFIED {
+		x.State = in.GetState()
 	}
 
-	if in.NextScheduleTime != nil {
-		x.NextScheduleTime = in.NextScheduleTime
+	if in.GetNextScheduleTime() != nil {
+		x.NextScheduleTime = in.GetNextScheduleTime()
 	}
 
-	if in.LastAttemptTime != nil {
-		x.LastAttemptTime = in.LastAttemptTime
+	if in.GetLastAttemptTime() != nil {
+		x.LastAttemptTime = in.GetLastAttemptTime()
 	}
 
-	if in.StartedTime != nil {
-		x.StartedTime = in.StartedTime
+	if in.GetStartedTime() != nil {
+		x.StartedTime = in.GetStartedTime()
 	}
 
-	x.Timeout = in.Timeout
+	x.Timeout = in.GetTimeout()
 
-	if in.Data != nil {
-		x.Data.Merge(in.Data)
+	if in.GetData() != nil {
+		x.GetData().Merge(in.GetData())
 	}
 
-	if in.LastCompletedEvent != nil {
-		x.LastCompletedEvent = in.LastCompletedEvent
+	if in.GetLastCompletedEvent() != nil {
+		x.LastCompletedEvent = in.GetLastCompletedEvent()
 	}
 
 	return x
 }
 
 func (x *Cronjob) GetRunTimeout() time.Duration {
-	if x.Timeout == nil {
+	if x.GetTimeout() == nil {
 		return DefaultCronTimeout
 	}
 
-	return x.Timeout.AsDuration()
+	return x.GetTimeout().AsDuration()
 }
 
 func (x *CronjobData) Merge(in *CronjobData) *CronjobData {
 	if x == nil {
 		x = in
 	} else {
-		x.Data = in.Data
+		x.Data = in.GetData()
 	}
 
 	return x
@@ -65,7 +66,7 @@ func (x *GenericCronData) HasAttribute(key string) bool {
 		return false
 	}
 
-	_, ok := x.Attributes[key]
+	_, ok := x.GetAttributes()[key]
 	return ok
 }
 
@@ -74,7 +75,7 @@ func (x *GenericCronData) GetAttribute(key string) string {
 		return ""
 	}
 
-	return x.Attributes[key]
+	return x.GetAttributes()[key]
 }
 
 func (x *GenericCronData) SetAttribute(key string, value string) {
@@ -90,19 +91,19 @@ func (x *GenericCronData) DeleteAttribute(key string) {
 		return
 	}
 
-	delete(x.Attributes, key)
+	delete(x.GetAttributes(), key)
 }
 
 func (x *CronjobData) Unmarshal(dest proto.Message) error {
 	if x == nil || dest == nil {
-		return fmt.Errorf("invalid input: CronjobData or destination is nil")
+		return errors.New("invalid input: CronjobData or destination is nil")
 	}
 
 	expectedTypeURL := "type.googleapis.com/" + string(proto.MessageName(dest))
 
-	if x.Data != nil && x.Data.TypeUrl == expectedTypeURL {
+	if x.GetData() != nil && x.GetData().GetTypeUrl() == expectedTypeURL {
 		// Valid type - attempt to unmarshal
-		if err := x.Data.UnmarshalTo(dest); err != nil {
+		if err := x.GetData().UnmarshalTo(dest); err != nil {
 			return fmt.Errorf("failed to unmarshal cron data. %w", err)
 		}
 	} else {
@@ -119,7 +120,7 @@ func (x *CronjobData) Unmarshal(dest proto.Message) error {
 
 func (x *CronjobData) MarshalFrom(src proto.Message) error {
 	if x == nil || src == nil {
-		return fmt.Errorf("invalid input: CronjobData or source is nil")
+		return errors.New("invalid input: CronjobData or source is nil")
 	}
 
 	anyMsg, err := anypb.New(src)

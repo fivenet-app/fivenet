@@ -17,9 +17,23 @@ import (
 
 // userInfoStore defines the interface for storing, updating, and retrieving OAuth2 user info.
 type userInfoStore interface {
-	storeUserInfo(ctx context.Context, accountId uint64, provider string, userInfo *providers.UserInfo) error
-	updateUserInfo(ctx context.Context, accountId uint64, provider string, userInfo *providers.UserInfo) error
-	getAccountInfo(ctx context.Context, provider string, userInfo *providers.UserInfo) (*model.FivenetAccounts, error)
+	storeUserInfo(
+		ctx context.Context,
+		accountId uint64,
+		provider string,
+		userInfo *providers.UserInfo,
+	) error
+	updateUserInfo(
+		ctx context.Context,
+		accountId uint64,
+		provider string,
+		userInfo *providers.UserInfo,
+	) error
+	getAccountInfo(
+		ctx context.Context,
+		provider string,
+		userInfo *providers.UserInfo,
+	) (*model.FivenetAccounts, error)
 }
 
 // oauth2UserInfo implements userInfoStore for handling OAuth2 user info in the database.
@@ -31,7 +45,11 @@ type oauth2UserInfo struct {
 }
 
 // getAccountInfo retrieves the account info for a given provider and user info.
-func (o *oauth2UserInfo) getAccountInfo(ctx context.Context, provider string, userInfo *providers.UserInfo) (*model.FivenetAccounts, error) {
+func (o *oauth2UserInfo) getAccountInfo(
+	ctx context.Context,
+	provider string,
+	userInfo *providers.UserInfo,
+) (*model.FivenetAccounts, error) {
 	stmt := tOauth2.
 		SELECT(
 			tAccs.ID,
@@ -64,7 +82,12 @@ func (o *oauth2UserInfo) getAccountInfo(ctx context.Context, provider string, us
 
 // storeUserInfo stores new OAuth2 user info or updates it if a duplicate exists.
 // If a duplicate is found, it checks the external ID before updating.
-func (o *oauth2UserInfo) storeUserInfo(ctx context.Context, accountId uint64, provider string, userInfo *providers.UserInfo) error {
+func (o *oauth2UserInfo) storeUserInfo(
+	ctx context.Context,
+	accountId uint64,
+	provider string,
+	userInfo *providers.UserInfo,
+) error {
 	accessToken, err := o.crypt.EncryptPointerString(userInfo.AccessToken)
 	if err != nil {
 		return err
@@ -129,7 +152,12 @@ func (o *oauth2UserInfo) storeUserInfo(ctx context.Context, accountId uint64, pr
 }
 
 // updateUserInfo updates the OAuth2 user info for the given account and provider.
-func (o *oauth2UserInfo) updateUserInfo(ctx context.Context, accountId uint64, provider string, userInfo *providers.UserInfo) error {
+func (o *oauth2UserInfo) updateUserInfo(
+	ctx context.Context,
+	accountId uint64,
+	provider string,
+	userInfo *providers.UserInfo,
+) error {
 	expiresIn := int32(0)
 	if userInfo.ExpiresIn != nil {
 		expiresIn = int32(*userInfo.ExpiresIn)

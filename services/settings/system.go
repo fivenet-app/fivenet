@@ -13,7 +13,10 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
-func (s *Server) GetStatus(ctx context.Context, req *pbsettings.GetStatusRequest) (*pbsettings.GetStatusResponse, error) {
+func (s *Server) GetStatus(
+	ctx context.Context,
+	req *pbsettings.GetStatusRequest,
+) (*pbsettings.GetStatusResponse, error) {
 	dbCharset, dbCollation := s.dbReq.GetDBCharsetAndCollation()
 	migrationVersion, migrationDirty := s.dbReq.GetMigrationState()
 
@@ -55,21 +58,24 @@ func (s *Server) GetStatus(ctx context.Context, req *pbsettings.GetStatusRequest
 	return resp, nil
 }
 
-func (s *Server) GetAllPermissions(ctx context.Context, req *pbsettings.GetAllPermissionsRequest) (*pbsettings.GetAllPermissionsResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.job", req.Job})
+func (s *Server) GetAllPermissions(
+	ctx context.Context,
+	req *pbsettings.GetAllPermissionsRequest,
+) (*pbsettings.GetAllPermissionsResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.job", req.GetJob()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
 		Method:  "GetAllPermissions",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	job := s.enricher.GetJobByName(req.Job)
+	job := s.enricher.GetJobByName(req.GetJob())
 	if job == nil {
 		return nil, errorssettings.ErrInvalidRequest
 	}
@@ -91,74 +97,80 @@ func (s *Server) GetAllPermissions(ctx context.Context, req *pbsettings.GetAllPe
 	return resp, nil
 }
 
-func (s *Server) GetJobLimits(ctx context.Context, req *pbsettings.GetJobLimitsRequest) (*pbsettings.GetJobLimitsResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.job", req.Job})
+func (s *Server) GetJobLimits(
+	ctx context.Context,
+	req *pbsettings.GetJobLimitsRequest,
+) (*pbsettings.GetJobLimitsResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.job", req.GetJob()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
 		Method:  "GetJobLimits",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	job := s.enricher.GetJobByName(req.Job)
+	job := s.enricher.GetJobByName(req.GetJob())
 	if job == nil {
 		return nil, errorssettings.ErrInvalidRequest
 	}
 
 	resp := &pbsettings.GetJobLimitsResponse{}
 
-	perms, err := s.ps.GetJobPermissions(ctx, job.Name)
+	perms, err := s.ps.GetJobPermissions(ctx, job.GetName())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 	resp.Permissions = perms
 
-	attrs, _ := s.ps.GetJobAttributes(ctx, job.Name)
+	attrs, _ := s.ps.GetJobAttributes(ctx, job.GetName())
 	resp.Attributes = attrs
 
-	resp.Job = job.Name
+	resp.Job = job.GetName()
 	resp.JobLabel = &job.Label
 
 	return resp, nil
 }
 
-func (s *Server) UpdateJobLimits(ctx context.Context, req *pbsettings.UpdateJobLimitsRequest) (*pbsettings.UpdateJobLimitsResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.job", req.Job})
+func (s *Server) UpdateJobLimits(
+	ctx context.Context,
+	req *pbsettings.UpdateJobLimitsRequest,
+) (*pbsettings.UpdateJobLimitsResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.job", req.GetJob()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
 		Method:  "UpdateJobLimits",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	job := s.enricher.GetJobByName(req.Job)
+	job := s.enricher.GetJobByName(req.GetJob())
 	if job == nil {
 		return nil, errorssettings.ErrInvalidRequest
 	}
 
-	if err := s.ps.UpdateJobPermissions(ctx, job.Name, req.Perms.ToUpdate...); err != nil {
+	if err := s.ps.UpdateJobPermissions(ctx, job.GetName(), req.GetPerms().GetToUpdate()...); err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	if err := s.ps.UpdateJobAttributes(ctx, job.Name, req.Attrs.ToUpdate...); err != nil {
+	if err := s.ps.UpdateJobAttributes(ctx, job.GetName(), req.GetAttrs().GetToUpdate()...); err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	if err := s.ps.UpdateJobPermissions(ctx, job.Name, req.Perms.ToRemove...); err != nil {
+	if err := s.ps.UpdateJobPermissions(ctx, job.GetName(), req.GetPerms().GetToRemove()...); err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	if err := s.ps.ApplyJobPermissions(ctx, job.Name); err != nil {
+	if err := s.ps.ApplyJobPermissions(ctx, job.GetName()); err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 

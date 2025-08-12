@@ -11,7 +11,7 @@ func (x *PageJobAccess) SetJobLabel(label string) {
 // pkg/access compatibility
 
 func (x *PageJobAccess) GetJobGrade() int32 {
-	return x.MinimumGrade
+	return x.GetMinimumGrade()
 }
 
 func (x *PageJobAccess) SetJobGrade(grade int32) {

@@ -4,6 +4,7 @@
 package grpcws
 
 import (
+	"net/http"
 	"net/http/httptest"
 	"testing"
 
@@ -17,14 +18,26 @@ func TestGetGRPCEndpoint(t *testing.T) {
 	}{
 		{input: "/", output: "/"},
 		{input: "/resource", output: "/resource"},
-		{input: "/improbable.grpcweb.test.TestService/PingEmpty", output: "/improbable.grpcweb.test.TestService/PingEmpty"},
-		{input: "/improbable.grpcweb.test.TestService/PingEmpty/", output: "/improbable.grpcweb.test.TestService/PingEmpty"},
-		{input: "/a/b/c/improbable.grpcweb.test.TestService/PingEmpty", output: "/improbable.grpcweb.test.TestService/PingEmpty"},
-		{input: "/a/b/c/improbable.grpcweb.test.TestService/PingEmpty/", output: "/improbable.grpcweb.test.TestService/PingEmpty"},
+		{
+			input:  "/improbable.grpcweb.test.TestService/PingEmpty",
+			output: "/improbable.grpcweb.test.TestService/PingEmpty",
+		},
+		{
+			input:  "/improbable.grpcweb.test.TestService/PingEmpty/",
+			output: "/improbable.grpcweb.test.TestService/PingEmpty",
+		},
+		{
+			input:  "/a/b/c/improbable.grpcweb.test.TestService/PingEmpty",
+			output: "/improbable.grpcweb.test.TestService/PingEmpty",
+		},
+		{
+			input:  "/a/b/c/improbable.grpcweb.test.TestService/PingEmpty/",
+			output: "/improbable.grpcweb.test.TestService/PingEmpty",
+		},
 	}
 
 	for _, c := range cases {
-		req := httptest.NewRequest("GET", c.input, nil)
+		req := httptest.NewRequest(http.MethodGet, c.input, nil)
 		result := getGRPCEndpoint(req)
 
 		assert.Equal(t, c.output, result)

@@ -30,7 +30,12 @@ func NewTransaction(js *JSWrapper) *Transaction {
 	}
 }
 
-func (t *Transaction) Publish(ctx context.Context, subject string, payload []byte, opts ...jetstream.PublishOpt) error {
+func (t *Transaction) Publish(
+	ctx context.Context,
+	subject string,
+	payload []byte,
+	opts ...jetstream.PublishOpt,
+) error {
 	t.txs = append(t.txs, &tx{
 		Subject: subject,
 		Payload: payload,

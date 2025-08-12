@@ -41,7 +41,10 @@ type svcClientInfo struct {
 	Import string
 }
 
-func (p *ClientsModule) Execute(targets map[string]pgs.File, pkgs map[string]pgs.Package) []pgs.Artifact {
+func (p *ClientsModule) Execute(
+	targets map[string]pgs.File,
+	pkgs map[string]pgs.Package,
+) []pgs.Artifact {
 	visited := map[string][]pgs.File{}
 	for _, t := range targets {
 		key := t.File().InputPath().Dir().String()

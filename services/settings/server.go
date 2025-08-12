@@ -95,11 +95,19 @@ type Params struct {
 
 func NewServer(p Params) *Server {
 	tJobProps := table.FivenetJobProps
-	fHandler := filestore.NewHandler(p.Storage, p.DB, tJobProps, tJobProps.Job, tJobProps.LogoFileID, 2<<20,
+	fHandler := filestore.NewHandler(
+		p.Storage,
+		p.DB,
+		tJobProps,
+		tJobProps.Job,
+		tJobProps.LogoFileID,
+		2<<20,
 		func(parentID string) jet.BoolExpression {
 			return tJobProps.Job.EQ(jet.String(parentID))
 		},
-		filestore.UpdateJoinRow, true)
+		filestore.UpdateJoinRow,
+		true,
+	)
 
 	var dcOAuth2Provider *config.OAuth2Provider
 	var dc *discordapi.Client
@@ -152,6 +160,7 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbsettings.RegisterSystemServiceServer(srv, s)
 }
 
+// GetPermsRemap returns the permissions re-mapping for the services.
 func (s *Server) GetPermsRemap() map[string]string {
 	return pbsettings.PermsRemap
 }

@@ -61,7 +61,13 @@ type EntryWrapper[T any, U protoutils.ProtoMessage[T]] struct {
 type Option[T any, U protoutils.ProtoMessage[T]] func(s *Cache[T, U])
 
 // New creates a new Cache instance with the given options and bucket.
-func New[T any, U protoutils.ProtoMessage[T]](ctx context.Context, logger *zap.Logger, js *events.JSWrapper, bucket string, opts ...Option[T, U]) (*Cache[T, U], error) {
+func New[T any, U protoutils.ProtoMessage[T]](
+	ctx context.Context,
+	logger *zap.Logger,
+	js *events.JSWrapper,
+	bucket string,
+	opts ...Option[T, U],
+) (*Cache[T, U], error) {
 	c := &Cache[T, U]{
 		logger: logger.Named("cache").With(zap.String("bucket", bucket)),
 		bucket: bucket,
@@ -75,7 +81,7 @@ func New[T any, U protoutils.ProtoMessage[T]](ctx context.Context, logger *zap.L
 	if c.kv == nil {
 		storeKV, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
 			Bucket:      bucket,
-			Description: fmt.Sprintf("%s Cache", bucket),
+			Description: bucket + " Cache",
 			History:     1,
 			Storage:     jetstream.MemoryStorage,
 		})
@@ -131,7 +137,11 @@ func (c *Cache[T, U]) Start(ctx context.Context, wait bool) error {
 				case jetstream.KeyValueDelete, jetstream.KeyValuePurge:
 					c.handleWatcherDelete(key)
 				default:
-					c.logger.Error("unknown key operation received", zap.String("key", key), zap.Uint8("op", uint8(entry.Operation())))
+					c.logger.Error(
+						"unknown key operation received",
+						zap.String("key", key),
+						zap.Uint8("op", uint8(entry.Operation())),
+					)
 				}
 			}
 		}
@@ -253,6 +263,7 @@ func (c *Cache[T, U]) List() []U {
 			return true
 		}
 
+		//nolint:forcetypeassert // Value type is guaranteed to be U (generics type)
 		list = append(list, proto.Clone(value.Data).(U))
 		return true
 	})

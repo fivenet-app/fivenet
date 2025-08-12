@@ -83,12 +83,15 @@ func (c *HelpCommand) RegisterCommand(router *cmdroute.Router) api.CreateCommand
 	return cmdData
 }
 
-func (c *HelpCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandData) *api.InteractionResponseData {
+func (c *HelpCommand) HandleCommand(
+	ctx context.Context,
+	cmd cmdroute.CommandData,
+) *api.InteractionResponseData {
 	localizer := c.l.Translator(string(cmd.Event.Locale))
 
 	messageId := "discord.commands.help.empty"
 
-	options := cmd.CommandInteractionOption.Options
+	options := cmd.Options
 	if len(options) > 0 {
 		option := strings.ReplaceAll(strings.ToLower(options[0].Value.String()), "\"", "")
 

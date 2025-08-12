@@ -23,10 +23,18 @@ var (
 	tSettingsBlocks = table.FivenetMailerSettingsBlocked
 )
 
-func (s *Server) GetEmailSettings(ctx context.Context, req *pbmailer.GetEmailSettingsRequest) (*pbmailer.GetEmailSettingsResponse, error) {
+func (s *Server) GetEmailSettings(
+	ctx context.Context,
+	req *pbmailer.GetEmailSettingsRequest,
+) (*pbmailer.GetEmailSettingsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.EmailId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_MANAGE)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetEmailId(),
+		userInfo,
+		mailer.AccessLevel_ACCESS_LEVEL_MANAGE,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -34,7 +42,7 @@ func (s *Server) GetEmailSettings(ctx context.Context, req *pbmailer.GetEmailSet
 		return nil, errorsmailer.ErrNoPerms
 	}
 
-	settings, err := s.getEmailSettings(ctx, s.db, req.EmailId)
+	settings, err := s.getEmailSettings(ctx, s.db, req.GetEmailId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -44,7 +52,11 @@ func (s *Server) GetEmailSettings(ctx context.Context, req *pbmailer.GetEmailSet
 	}, nil
 }
 
-func (s *Server) getEmailSettings(ctx context.Context, tx qrm.DB, emailId uint64) (*mailer.EmailSettings, error) {
+func (s *Server) getEmailSettings(
+	ctx context.Context,
+	tx qrm.DB,
+	emailId uint64,
+) (*mailer.EmailSettings, error) {
 	tSettings := tSettings.AS("email_settings")
 	stmt := tSettings.
 		SELECT(
@@ -75,19 +87,27 @@ func (s *Server) getEmailSettings(ctx context.Context, tx qrm.DB, emailId uint64
 	return dest, nil
 }
 
-func (s *Server) SetEmailSettings(ctx context.Context, req *pbmailer.SetEmailSettingsRequest) (*pbmailer.SetEmailSettingsResponse, error) {
+func (s *Server) SetEmailSettings(
+	ctx context.Context,
+	req *pbmailer.SetEmailSettingsRequest,
+) (*pbmailer.SetEmailSettingsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
 		Method:  "SetEmailSettings",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.Settings.EmailId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_MANAGE)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetSettings().GetEmailId(),
+		userInfo,
+		mailer.AccessLevel_ACCESS_LEVEL_MANAGE,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -95,24 +115,27 @@ func (s *Server) SetEmailSettings(ctx context.Context, req *pbmailer.SetEmailSet
 		return nil, errorsmailer.ErrNoPerms
 	}
 
-	email, err := s.getEmail(ctx, req.Settings.EmailId, false, false)
+	email, err := s.getEmail(ctx, req.GetSettings().GetEmailId(), false, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
 	signature := jet.StringExp(jet.NULL)
 	if req.Settings.Signature != nil {
-		signature = jet.String(*req.Settings.Signature)
+		signature = jet.String(req.GetSettings().GetSignature())
 	}
 
 	// Make all emails lowercase, remove own email, and remove duplicates
-	for idx := range req.Settings.BlockedEmails {
-		req.Settings.BlockedEmails[idx] = strings.ToLower(req.Settings.BlockedEmails[idx])
+	for idx := range req.GetSettings().GetBlockedEmails() {
+		req.Settings.BlockedEmails[idx] = strings.ToLower(req.GetSettings().GetBlockedEmails()[idx])
 	}
-	req.Settings.BlockedEmails = slices.DeleteFunc(req.Settings.BlockedEmails, func(e string) bool {
-		return e == email.Email
-	})
-	utils.RemoveSliceDuplicates(req.Settings.BlockedEmails)
+	req.Settings.BlockedEmails = slices.DeleteFunc(
+		req.GetSettings().GetBlockedEmails(),
+		func(e string) bool {
+			return e == email.GetEmail()
+		},
+	)
+	utils.RemoveSliceDuplicates(req.GetSettings().GetBlockedEmails())
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -128,8 +151,8 @@ func (s *Server) SetEmailSettings(ctx context.Context, req *pbmailer.SetEmailSet
 			tSettings.Signature,
 		).
 		VALUES(
-			req.Settings.EmailId,
-			req.Settings.Signature,
+			req.GetSettings().GetEmailId(),
+			req.GetSettings().GetSignature(),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tSettings.Signature.SET(signature),
@@ -139,17 +162,17 @@ func (s *Server) SetEmailSettings(ctx context.Context, req *pbmailer.SetEmailSet
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	settings, err := s.getEmailSettings(ctx, tx, req.Settings.EmailId)
+	settings, err := s.getEmailSettings(ctx, tx, req.GetSettings().GetEmailId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
 	// Handle blocked users changes
-	if len(req.Settings.BlockedEmails) == 0 {
-		if len(settings.BlockedEmails) > 0 {
+	if len(req.GetSettings().GetBlockedEmails()) == 0 {
+		if len(settings.GetBlockedEmails()) > 0 {
 			stmt := tSettingsBlocks.
 				DELETE().
-				WHERE(tSettingsBlocks.EmailID.EQ(jet.Int32(userInfo.UserId)))
+				WHERE(tSettingsBlocks.EmailID.EQ(jet.Int32(userInfo.GetUserId())))
 
 			if _, err := stmt.ExecContext(ctx, tx); err != nil {
 				return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -159,16 +182,16 @@ func (s *Server) SetEmailSettings(ctx context.Context, req *pbmailer.SetEmailSet
 		toCreate := []string{}
 		toDelete := []string{}
 
-		for _, be := range req.Settings.BlockedEmails {
-			if !slices.ContainsFunc(settings.BlockedEmails, func(a string) bool {
+		for _, be := range req.GetSettings().GetBlockedEmails() {
+			if !slices.ContainsFunc(settings.GetBlockedEmails(), func(a string) bool {
 				return a == be
 			}) {
 				toCreate = append(toCreate, be)
 			}
 		}
 
-		for _, be := range settings.BlockedEmails {
-			if !slices.ContainsFunc(req.Settings.BlockedEmails, func(a string) bool {
+		for _, be := range settings.GetBlockedEmails() {
+			if !slices.ContainsFunc(req.GetSettings().GetBlockedEmails(), func(a string) bool {
 				return a == be
 			}) {
 				toDelete = append(toDelete, be)
@@ -185,7 +208,7 @@ func (s *Server) SetEmailSettings(ctx context.Context, req *pbmailer.SetEmailSet
 			for _, be := range toCreate {
 				stmt = stmt.
 					VALUES(
-						req.Settings.EmailId,
+						req.GetSettings().GetEmailId(),
 						be,
 					)
 			}
@@ -201,7 +224,7 @@ func (s *Server) SetEmailSettings(ctx context.Context, req *pbmailer.SetEmailSet
 			stmt := tSettingsBlocks.
 				DELETE().
 				WHERE(jet.AND(
-					tSettingsBlocks.EmailID.EQ(jet.Uint64(req.Settings.EmailId)),
+					tSettingsBlocks.EmailID.EQ(jet.Uint64(req.GetSettings().GetEmailId())),
 					tSettingsBlocks.TargetEmail.IN(targets...),
 				))
 
@@ -216,7 +239,7 @@ func (s *Server) SetEmailSettings(ctx context.Context, req *pbmailer.SetEmailSet
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	settings, err = s.getEmailSettings(ctx, s.db, req.Settings.EmailId)
+	settings, err = s.getEmailSettings(ctx, s.db, req.GetSettings().GetEmailId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -225,7 +248,7 @@ func (s *Server) SetEmailSettings(ctx context.Context, req *pbmailer.SetEmailSet
 		Data: &mailer.MailerEvent_EmailSettingsUpdated{
 			EmailSettingsUpdated: settings,
 		},
-	}, req.Settings.EmailId)
+	}, req.GetSettings().GetEmailId())
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 

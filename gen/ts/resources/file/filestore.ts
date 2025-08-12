@@ -56,7 +56,7 @@ export interface UploadMeta {
     /**
      * @generated from protobuf field: string content_type = 4
      */
-    contentType: string; // optional – server re-validates
+    contentType: string; // optional - server re-validates
     /**
      * @generated from protobuf field: int64 size = 5
      */

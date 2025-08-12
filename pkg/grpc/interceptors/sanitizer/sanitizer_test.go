@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -75,7 +76,7 @@ func TestUnaryServerInterceptor(t *testing.T) {
 		for range 3 {
 			_, err := interceptor(ctx, test.req, nil, unaryHandler)
 			if test.err == nil {
-				assert.NoError(t, err, test.msg)
+				require.NoError(t, err, test.msg)
 			} else {
 				assert.Equal(t, test.err.Error(), err.Error(), test.msg)
 			}

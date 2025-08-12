@@ -32,13 +32,13 @@ func TestBasicFunctionality(t *testing.T) {
 		Y: -123.456,
 	}
 	err := cs.Add(point1)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	point2 := &TestPointer{
 		X: 789.001,
 		Y: -789.001,
 	}
 	err = cs.Add(point2)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	result = cs.Has(point1, nil)
 	assert.True(t, result)
@@ -55,7 +55,7 @@ func TestBasicFunctionality(t *testing.T) {
 	// Radius is 1, no points should be returned
 	closeBys := cs.KNearest(point3.Point(), 3, nil, 1)
 	assert.Nil(t, closeBys)
-	assert.Len(t, closeBys, 0)
+	assert.Empty(t, closeBys)
 	// Just crank up the radius, so we should get all 2 added points back
 	closeBys = cs.KNearest(point3.Point(), 3, nil, 1500)
 	assert.NotNil(t, closeBys)
@@ -63,7 +63,7 @@ func TestBasicFunctionality(t *testing.T) {
 
 	// Test 3: Add a new point and remove old one
 	err = cs.Add(point3)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	result = cs.Remove(point1, nil)
 	assert.True(t, result)
 

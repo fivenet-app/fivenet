@@ -95,10 +95,18 @@ type Params struct {
 
 func NewServer(p Params) *Server {
 	// 3 MiB limit
-	qualiFileHandler := filestore.NewHandler(p.Storage, p.DB, tQualiFiles, tQualiFiles.QualificationID, tQualiFiles.FileID, 3<<20,
+	qualiFileHandler := filestore.NewHandler(
+		p.Storage,
+		p.DB,
+		tQualiFiles,
+		tQualiFiles.QualificationID,
+		tQualiFiles.FileID,
+		3<<20,
 		func(parentId uint64) jet.BoolExpression {
 			return tQualiFiles.QualificationID.EQ(jet.Uint64(parentId))
-		}, filestore.InsertJoinRow, false,
+		},
+		filestore.InsertJoinRow,
+		false,
 	)
 
 	s := &Server{
@@ -134,12 +142,22 @@ func NewServer(p Params) *Server {
 				table.FivenetQualificationsAccess.AS("qualification_job_access"),
 				&access.JobAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetQualificationsAccess.AS("qualification_job_access").ID,
-						TargetID: table.FivenetQualificationsAccess.AS("qualification_job_access").TargetID,
-						Access:   table.FivenetQualificationsAccess.AS("qualification_job_access").Access,
+						ID: table.FivenetQualificationsAccess.AS(
+							"qualification_job_access",
+						).ID,
+						TargetID: table.FivenetQualificationsAccess.AS(
+							"qualification_job_access",
+						).TargetID,
+						Access: table.FivenetQualificationsAccess.AS(
+							"qualification_job_access",
+						).Access,
 					},
-					Job:          table.FivenetQualificationsAccess.AS("qualification_job_access").Job,
-					MinimumGrade: table.FivenetQualificationsAccess.AS("qualification_job_access").MinimumGrade,
+					Job: table.FivenetQualificationsAccess.AS(
+						"qualification_job_access",
+					).Job,
+					MinimumGrade: table.FivenetQualificationsAccess.AS(
+						"qualification_job_access",
+					).MinimumGrade,
 				},
 			),
 			nil,
@@ -156,6 +174,7 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbqualifications.RegisterQualificationsServiceServer(srv, s)
 }
 
+// GetPermsRemap returns the permissions re-mapping for the services.
 func (s *Server) GetPermsRemap() map[string]string {
 	return pbqualifications.PermsRemap
 }

@@ -2,8 +2,10 @@ package tracker
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
@@ -25,8 +27,13 @@ type ITracker interface {
 	ListTrackedJobs() []string
 	GetUserMarkerById(id int32) (*livemap.UserMarker, bool)
 	IsUserOnDuty(userId int32) bool
-	Subscribe(ctx context.Context) (chan *store.KeyValueEntry[livemap.UserMarker, *livemap.UserMarker], error)
-	GetFilteredUserMarkers(acl *permissions.JobGradeList, userInfo *userinfo.UserInfo) []*livemap.UserMarker
+	Subscribe(
+		ctx context.Context,
+	) (chan *store.KeyValueEntry[livemap.UserMarker, *livemap.UserMarker], error)
+	GetFilteredUserMarkers(
+		acl *permissions.JobGradeList,
+		userInfo *userinfo.UserInfo,
+	) []*livemap.UserMarker
 
 	GetUserMapping(userId int32) (*tracker.UserMapping, error)
 	SetUserMapping(ctx context.Context, mapping *tracker.UserMapping) error
@@ -69,7 +76,11 @@ func New(p Params) (ITracker, error) {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		storeLogger := logger.WithOptions(zap.IncreaseLevel(p.Cfg.LogLevelOverrides.Get(config.LoggingComponentKVStore, p.Cfg.LogLevel)))
+		storeLogger := logger.WithOptions(
+			zap.IncreaseLevel(
+				p.Cfg.LogLevelOverrides.Get(config.LoggingComponentKVStore, p.Cfg.LogLevel),
+			),
+		)
 
 		userMappingsStore, err := store.New[tracker.UserMapping, *tracker.UserMapping](
 			ctxStartup, storeLogger, p.JS, BucketUserMappingsMap,
@@ -83,7 +94,11 @@ func New(p Params) (ITracker, error) {
 		}
 		t.userMappingsStore = userMappingsStore
 
-		userLocStore, err := store.New[livemap.UserMarker, *livemap.UserMarker](ctxStartup, storeLogger, p.JS, BucketUserLoc,
+		userLocStore, err := store.New[livemap.UserMarker, *livemap.UserMarker](
+			ctxStartup,
+			storeLogger,
+			p.JS,
+			BucketUserLoc,
 			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
 		)
 		if err != nil {
@@ -148,7 +163,7 @@ func (t *Tracker) ListTrackedJobs() []string {
 }
 
 func (t *Tracker) GetUserMarkerById(id int32) (*livemap.UserMarker, bool) {
-	marker, err := t.userByIDStore.Get(fmt.Sprint(id))
+	marker, err := t.userByIDStore.Get(strconv.Itoa(int(id)))
 	if err != nil {
 		return nil, false
 	}
@@ -156,26 +171,31 @@ func (t *Tracker) GetUserMarkerById(id int32) (*livemap.UserMarker, bool) {
 }
 
 func (t *Tracker) IsUserOnDuty(id int32) bool {
-	um, err := t.userByIDStore.Get(fmt.Sprint(id))
-	return err == nil && um != nil && !um.Hidden
+	um, err := t.userByIDStore.Get(strconv.Itoa(int(id)))
+	return err == nil && um != nil && !um.GetHidden()
 }
 
-func (t *Tracker) Subscribe(ctx context.Context) (chan *store.KeyValueEntry[livemap.UserMarker, *livemap.UserMarker], error) {
+func (t *Tracker) Subscribe(
+	ctx context.Context,
+) (chan *store.KeyValueEntry[livemap.UserMarker, *livemap.UserMarker], error) {
 	return t.userLocStore.WatchAll(ctx)
 }
 
-func (t *Tracker) GetFilteredUserMarkers(acl *permissions.JobGradeList, userInfo *userinfo.UserInfo) []*livemap.UserMarker {
+func (t *Tracker) GetFilteredUserMarkers(
+	acl *permissions.JobGradeList,
+	userInfo *userinfo.UserInfo,
+) []*livemap.UserMarker {
 	return t.userLocStore.ListFiltered("", func(key string, um *livemap.UserMarker) bool {
-		if um == nil || um.Hidden {
+		if um == nil || um.GetHidden() {
 			return false
 		}
 
-		jg := um.User.JobGrade
+		jg := um.GetUser().GetJobGrade()
 		if um.JobGrade != nil {
-			jg = *um.JobGrade
+			jg = um.GetJobGrade()
 		}
 
-		if !userInfo.Superuser && !acl.HasJobGrade(um.Job, jg) {
+		if !userInfo.GetSuperuser() && !acl.HasJobGrade(um.GetJob(), jg) {
 			return false
 		}
 
@@ -193,23 +213,23 @@ func (t *Tracker) GetUserMapping(userId int32) (*tracker.UserMapping, error) {
 
 func (t *Tracker) SetUserMapping(ctx context.Context, mapping *tracker.UserMapping) error {
 	if mapping == nil {
-		return fmt.Errorf("mapping cannot be nil")
+		return errors.New("mapping cannot be nil")
 	}
 
-	if mapping.UserId <= 0 {
-		return fmt.Errorf("invalid user ID: %d", mapping.UserId)
+	if mapping.GetUserId() <= 0 {
+		return fmt.Errorf("invalid user ID: %d", mapping.GetUserId())
 	}
 
-	if mapping.UnitId != nil && *mapping.UnitId == 0 {
+	if mapping.UnitId != nil && mapping.GetUnitId() == 0 {
 		mapping.UnitId = nil // unset if zero
 	}
 
-	if mapping.CreatedAt == nil {
+	if mapping.GetCreatedAt() == nil {
 		mapping.CreatedAt = timestamp.Now()
 	}
 
-	if err := t.userMappingsStore.Put(ctx, UserIdKey(mapping.UserId), mapping); err != nil {
-		return fmt.Errorf("failed to set unit mapping for user %d. %w", mapping.UserId, err)
+	if err := t.userMappingsStore.Put(ctx, UserIdKey(mapping.GetUserId()), mapping); err != nil {
+		return fmt.Errorf("failed to set unit mapping for user %d. %w", mapping.GetUserId(), err)
 	}
 
 	return nil
@@ -241,7 +261,7 @@ func (t *Tracker) ListUserMappings(ctx context.Context) (map[int32]*tracker.User
 	mappings := t.userMappingsStore.List()
 	ids := map[int32]*tracker.UserMapping{}
 	for _, m := range mappings {
-		ids[m.UserId] = m
+		ids[m.GetUserId()] = m
 	}
 
 	return ids, nil

@@ -28,9 +28,13 @@ func (s *Housekeeper) runTTLWatcher(
 				e.Operation() != jetstream.KeyValuePurge) {
 				continue
 			}
-			id, _ := strconv.ParseUint(strings.TrimPrefix(string(e.Key()), prefix+"."), 10, 64)
+			id, _ := strconv.ParseUint(strings.TrimPrefix(e.Key(), prefix+"."), 10, 64)
 			if err := handler(s.ctx, id); err != nil {
-				s.logger.Error("failed to handle TTL event", zap.Error(err), zap.Uint64("unit_id", id))
+				s.logger.Error(
+					"failed to handle TTL event",
+					zap.Error(err),
+					zap.Uint64("unit_id", id),
+				)
 			}
 		}
 	}
@@ -44,9 +48,9 @@ func (s *Housekeeper) handleUnitKVPing(ctx context.Context, id uint64) error {
 	}
 
 	// Fast check if unit is already unavailable and empty
-	if unit.Status != nil &&
-		unit.Status.Status == centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE &&
-		len(unit.Users) == 0 {
+	if unit.GetStatus() != nil &&
+		unit.GetStatus().GetStatus() == centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE &&
+		len(unit.GetUsers()) == 0 {
 		return nil
 	}
 
@@ -58,13 +62,14 @@ func (s *Housekeeper) handleUnitKVPing(ctx context.Context, id uint64) error {
 	stillAvailable := changed
 
 	// If all users are still valid (toRemove is empty) and status checks pass, keep the unit available
-	if len(unit.Users) > 0 && len(toRemove) == 0 {
-		if unit.Attributes == nil || !unit.Attributes.Has(centrum.UnitAttribute_UNIT_ATTRIBUTE_STATIC) {
+	if len(unit.GetUsers()) > 0 && len(toRemove) == 0 {
+		if unit.GetAttributes() == nil ||
+			!unit.GetAttributes().Has(centrum.UnitAttribute_UNIT_ATTRIBUTE_STATIC) {
 			stillAvailable = true
-		} else if unit.Status != nil &&
-			(unit.Status.Status == centrum.StatusUnit_STATUS_UNIT_BUSY ||
-				unit.Status.Status == centrum.StatusUnit_STATUS_UNIT_ON_BREAK ||
-				unit.Status.Status == centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE) {
+		} else if unit.GetStatus() != nil &&
+			(unit.GetStatus().GetStatus() == centrum.StatusUnit_STATUS_UNIT_BUSY ||
+				unit.GetStatus().GetStatus() == centrum.StatusUnit_STATUS_UNIT_ON_BREAK ||
+				unit.GetStatus().GetStatus() == centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE) {
 			stillAvailable = true
 		}
 	}
@@ -75,21 +80,25 @@ func (s *Housekeeper) handleUnitKVPing(ctx context.Context, id uint64) error {
 	}
 
 	var userId *int32
-	if unit.Status != nil && unit.Status.UserId != nil {
-		userId = unit.Status.UserId
+	if unit.GetStatus() != nil && unit.Status.UserId != nil {
+		userId = unit.GetStatus().UserId
 	}
 
-	s.logger.Debug("setting unit status to unavailable it is empty or static attribute (wrong status)",
-		zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Int32p("user_id", userId))
-	if _, err := s.units.UpdateStatus(ctx, unit.Id, &centrum.UnitStatus{
+	s.logger.Debug(
+		"setting unit status to unavailable it is empty or static attribute (wrong status)",
+		zap.String("job", unit.GetJob()),
+		zap.Uint64("unit_id", unit.GetId()),
+		zap.Int32p("user_id", userId),
+	)
+	if _, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrum.UnitStatus{
 		CreatedAt:  timestamp.Now(),
-		UnitId:     unit.Id,
+		UnitId:     unit.GetId(),
 		Status:     centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE,
 		UserId:     userId,
 		CreatorJob: &unit.Job,
 	}); err != nil {
 		s.logger.Error("failed to update empty unit status to unavailable",
-			zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Error(err))
+			zap.String("job", unit.GetJob()), zap.Uint64("unit_id", unit.GetId()), zap.Error(err))
 		return nil
 	}
 

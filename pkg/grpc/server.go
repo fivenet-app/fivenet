@@ -38,9 +38,13 @@ import (
 	"google.golang.org/grpc/stats/opentelemetry"
 )
 
-var ErrInternalServer = common.NewI18nErr(codes.Internal, &common.I18NItem{Key: "errors.general.internal_error.content"}, &common.I18NItem{Key: "errors.general.internal_error.title"})
+var ErrInternalServer = common.NewI18nErr(
+	codes.Internal,
+	&common.I18NItem{Key: "errors.general.internal_error.content"},
+	&common.I18NItem{Key: "errors.general.internal_error.title"},
+)
 
-// Setup metric for panic recoveries
+// Setup metric for panic recoveries.
 var panicsTotal = promauto.With(prometheus.DefaultRegisterer).NewCounter(prometheus.CounterOpts{
 	Name: "grpc_req_panics_recovered_total",
 	Help: "Total number of gRPC requests recovered from internal panic.",
@@ -92,7 +96,9 @@ func NewServer(p ServerParams) (ServerResult, error) {
 	// Setup metrics
 	srvMetrics := grpcprom.NewServerMetrics(
 		grpcprom.WithServerHandlingTimeHistogram(
-			grpcprom.WithHistogramBuckets([]float64{0.001, 0.01, 0.1, 0.3, 0.6, 1, 3, 6, 9, 20, 30, 60, 90, 120}),
+			grpcprom.WithHistogramBuckets(
+				[]float64{0.001, 0.01, 0.1, 0.3, 0.6, 1, 3, 6, 9, 20, 30, 60, 90, 120},
+			),
 		),
 	)
 	prometheus.MustRegister(srvMetrics)
@@ -113,7 +119,10 @@ func NewServer(p ServerParams) (ServerResult, error) {
 	textMapPropagator := otelpropagation.TraceContext{}
 	so := opentelemetry.ServerOption(opentelemetry.Options{
 		MetricsOptions: opentelemetry.MetricsOptions{MeterProvider: p.MeterProvider},
-		TraceOptions:   oteltracing.TraceOptions{TracerProvider: p.TP, TextMapPropagator: textMapPropagator},
+		TraceOptions: oteltracing.TraceOptions{
+			TracerProvider:    p.TP,
+			TextMapPropagator: textMapPropagator,
+		},
 	})
 
 	// Setup GRPC server with custom options interceptors, and tracing
@@ -128,7 +137,9 @@ func NewServer(p ServerParams) (ServerResult, error) {
 		grpc.MaxConcurrentStreams(1024),
 
 		grpc.ChainUnaryInterceptor(
-			srvMetrics.UnaryServerInterceptor(grpcprom.WithExemplarFromContext(exemplarFromContext)),
+			srvMetrics.UnaryServerInterceptor(
+				grpcprom.WithExemplarFromContext(exemplarFromContext),
+			),
 			logging.UnaryServerInterceptor(InterceptorLogger(p.Logger),
 				logging.WithFieldsFromContext(extraLogFields),
 				logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
@@ -143,7 +154,9 @@ func NewServer(p ServerParams) (ServerResult, error) {
 			),
 		),
 		grpc.ChainStreamInterceptor(
-			srvMetrics.StreamServerInterceptor(grpcprom.WithExemplarFromContext(exemplarFromContext)),
+			srvMetrics.StreamServerInterceptor(
+				grpcprom.WithExemplarFromContext(exemplarFromContext),
+			),
 			logging.StreamServerInterceptor(InterceptorLogger(p.Logger),
 				logging.WithFieldsFromContext(extraLogFields),
 				logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
@@ -173,7 +186,7 @@ func NewServer(p ServerParams) (ServerResult, error) {
 }
 
 func grpcPanicRecoveryHandler(logger *zap.Logger) recovery.RecoveryHandlerFunc {
-	return func(pa any) (err error) {
+	return func(pa any) error {
 		panicsTotal.Inc()
 
 		if e, ok := pa.(error); ok {
@@ -189,37 +202,39 @@ func grpcPanicRecoveryHandler(logger *zap.Logger) recovery.RecoveryHandlerFunc {
 
 // InterceptorLogger adapts zap logger to interceptor logger.
 func InterceptorLogger(l *zap.Logger) logging.Logger {
-	return logging.LoggerFunc(func(ctx context.Context, lvl logging.Level, msg string, fields ...any) {
-		f := make([]zap.Field, 0, len(fields)/2)
-		i := logging.Fields(fields).Iterator()
-		for i.Next() {
-			k, v := i.At()
+	return logging.LoggerFunc(
+		func(ctx context.Context, lvl logging.Level, msg string, fields ...any) {
+			f := make([]zap.Field, 0, len(fields)/2)
+			i := logging.Fields(fields).Iterator()
+			for i.Next() {
+				k, v := i.At()
 
-			switch v := v.(type) {
-			case string:
-				f = append(f, zap.String(k, v))
-			case int:
-				f = append(f, zap.Int(k, v))
-			case bool:
-				f = append(f, zap.Bool(k, v))
-			default:
-				f = append(f, zap.Any(k, v))
+				switch v := v.(type) {
+				case string:
+					f = append(f, zap.String(k, v))
+				case int:
+					f = append(f, zap.Int(k, v))
+				case bool:
+					f = append(f, zap.Bool(k, v))
+				default:
+					f = append(f, zap.Any(k, v))
+				}
 			}
-		}
 
-		logger := l.WithOptions(zap.AddCallerSkip(1)).With(f...)
+			logger := l.WithOptions(zap.AddCallerSkip(1)).With(f...)
 
-		switch lvl {
-		case logging.LevelDebug:
-			logger.Debug(msg)
-		case logging.LevelInfo:
-			logger.Info(msg)
-		case logging.LevelWarn:
-			logger.Warn(msg)
-		case logging.LevelError:
-			logger.Error(msg)
-		default:
-			panic(fmt.Sprintf("unknown level %v", lvl))
-		}
-	})
+			switch lvl {
+			case logging.LevelDebug:
+				logger.Debug(msg)
+			case logging.LevelInfo:
+				logger.Info(msg)
+			case logging.LevelWarn:
+				logger.Warn(msg)
+			case logging.LevelError:
+				logger.Error(msg)
+			default:
+				panic(fmt.Sprintf("unknown level %v", lvl))
+			}
+		},
+	)
 }

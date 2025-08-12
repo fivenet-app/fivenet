@@ -34,7 +34,10 @@ func (p *DBScannerModule) InitContext(c pgs.BuildContext) {
 // Name satisfies the generator.Plugin interface.
 func (p *DBScannerModule) Name() string { return "dbscanner" }
 
-func (p *DBScannerModule) Execute(targets map[string]pgs.File, pkgs map[string]pgs.Package) []pgs.Artifact {
+func (p *DBScannerModule) Execute(
+	targets map[string]pgs.File,
+	pkgs map[string]pgs.Package,
+) []pgs.Artifact {
 	visited := map[string][]pgs.File{}
 	for _, t := range targets {
 		key := t.File().InputPath().Dir().String()
@@ -89,11 +92,22 @@ func (p *DBScannerModule) generate(fs []pgs.File) {
 
 			dbscanner, err := p.parseComment(mName, comment)
 			if err != nil {
-				p.Failf("failed to parse comment for %s message in file %s (comment: '%s'), error. %w", mName, f.InputPath(), comment, err)
+				p.Failf(
+					"failed to parse comment for %s message in file %s (comment: '%s'), error. %w",
+					mName,
+					f.InputPath(),
+					comment,
+					err,
+				)
 				return
 			}
 			if dbscanner == nil {
-				p.Failf("failed to parse comment for %s message in file %s (comment: '%s')", mName, f.InputPath(), comment)
+				p.Failf(
+					"failed to parse comment for %s message in file %s (comment: '%s')",
+					mName,
+					f.InputPath(),
+					comment,
+				)
 				return
 			}
 
@@ -130,12 +144,12 @@ func (p *DBScannerModule) parseComment(_ string, comment string) (*DBScannerInfo
 		switch strings.ToLower(k) {
 		case "json":
 			perm.Unmarshal = "protojson.Unmarshal"
-			perm.Marshal = "protoutils.MarshalToPJSON"
+			perm.Marshal = "protoutils.MarshalToJSON"
 			continue
 
 		case "partial":
-			perm.Unmarshal = "protoutils.UnmarshalPartialPJSON"
-			perm.Marshal = "protoutils.MarshalToPJSON"
+			perm.Unmarshal = "protoutils.UnmarshalPartialJSON"
+			perm.Marshal = "protoutils.MarshalToJSON"
 			continue
 		}
 	}

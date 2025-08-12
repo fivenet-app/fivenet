@@ -93,7 +93,7 @@ func (p *Perms) loadAttributes(ctx context.Context) error {
 	}
 
 	for _, attr := range dest {
-		if err := p.addOrUpdateAttributeInMap(attr.PermissionId, attr.AttrId, Key(attr.Key), permissions.AttributeTypes(attr.Type), attr.ValidValues); err != nil {
+		if err := p.addOrUpdateAttributeInMap(attr.GetPermissionId(), attr.GetAttrId(), Key(attr.GetKey()), permissions.AttributeTypes(attr.GetType()), attr.GetValidValues()); err != nil {
 			return fmt.Errorf("failed to add/update attribute in map. %w", err)
 		}
 	}
@@ -123,12 +123,15 @@ func (p *Perms) loadRoles(ctx context.Context, id uint64) error {
 	}
 
 	for _, role := range dest {
-		grades, _ := p.permsJobsRoleMap.LoadOrCompute(role.Job, func() (*xsync.Map[int32, uint64], bool) {
-			return xsync.NewMap[int32, uint64](), false
-		})
-		grades.Store(role.Grade, role.Id)
+		grades, _ := p.permsJobsRoleMap.LoadOrCompute(
+			role.GetJob(),
+			func() (*xsync.Map[int32, uint64], bool) {
+				return xsync.NewMap[int32, uint64](), false
+			},
+		)
+		grades.Store(role.GetGrade(), role.GetId())
 
-		p.roleIDToJobMap.Store(role.Id, role.Job)
+		p.roleIDToJobMap.Store(role.GetId(), role.GetJob())
 	}
 
 	return nil
@@ -170,9 +173,12 @@ func (p *Perms) loadRolePermissions(ctx context.Context, roleId uint64) error {
 
 	found := map[uint64][]uint64{}
 	for _, rolePerms := range dest {
-		perms, _ := p.permsRoleMap.LoadOrCompute(rolePerms.RoleID, func() (*xsync.Map[uint64, bool], bool) {
-			return xsync.NewMap[uint64, bool](), false
-		})
+		perms, _ := p.permsRoleMap.LoadOrCompute(
+			rolePerms.RoleID,
+			func() (*xsync.Map[uint64, bool], bool) {
+				return xsync.NewMap[uint64, bool](), false
+			},
+		)
 		perms.Store(rolePerms.ID, rolePerms.Val)
 
 		if _, ok := found[rolePerms.RoleID]; !ok {
@@ -233,13 +239,20 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
 
 	found := map[uint64][]uint64{}
 	for _, ra := range dest {
-		ra.Value.Default(permissions.AttributeTypes(ra.Type))
-		p.updateRoleAttributeInMap(ra.RoleId, ra.PermissionId, ra.AttrId, Key(ra.Key), permissions.AttributeTypes(ra.Type), ra.Value)
+		ra.GetValue().Default(permissions.AttributeTypes(ra.GetType()))
+		p.updateRoleAttributeInMap(
+			ra.GetRoleId(),
+			ra.GetPermissionId(),
+			ra.GetAttrId(),
+			Key(ra.GetKey()),
+			permissions.AttributeTypes(ra.GetType()),
+			ra.GetValue(),
+		)
 
-		if _, ok := found[ra.RoleId]; !ok {
-			found[ra.RoleId] = []uint64{}
+		if _, ok := found[ra.GetRoleId()]; !ok {
+			found[ra.GetRoleId()] = []uint64{}
 		}
-		found[ra.RoleId] = append(found[ra.RoleId], ra.AttrId)
+		found[ra.GetRoleId()] = append(found[ra.GetRoleId()], ra.GetAttrId())
 	}
 
 	// Check if any role attrs that don't exist anymore in the db and need to be deleted
@@ -279,12 +292,22 @@ func (p *Perms) loadJobRoles(ctx context.Context, job string) error {
 	}
 
 	for _, role := range roles {
-		if err := p.loadRolePermissions(ctx, role.Id); err != nil {
-			return fmt.Errorf("failed to load role permissions for job %s, role %d. %w", job, role.Id, err)
+		if err := p.loadRolePermissions(ctx, role.GetId()); err != nil {
+			return fmt.Errorf(
+				"failed to load role permissions for job %s, role %d. %w",
+				job,
+				role.GetId(),
+				err,
+			)
 		}
 
-		if err := p.loadRoleAttributes(ctx, role.Id); err != nil {
-			return fmt.Errorf("failed to load role attributes for job %s, role %d. %w", job, role.Id, err)
+		if err := p.loadRoleAttributes(ctx, role.GetId()); err != nil {
+			return fmt.Errorf(
+				"failed to load role attributes for job %s, role %d. %w",
+				job,
+				role.GetId(),
+				err,
+			)
 		}
 	}
 

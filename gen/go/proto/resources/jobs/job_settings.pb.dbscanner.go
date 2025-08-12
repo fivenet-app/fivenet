@@ -27,7 +27,7 @@ func (x *DiscordSyncChanges) Value() (driver.Value, error) {
 		return nil, nil
 	}
 
-	out, err := protoutils.MarshalToPJSON(x)
+	out, err := protoutils.MarshalToJSON(x)
 	return string(out), err
 }
 
@@ -48,7 +48,7 @@ func (x *DiscordSyncSettings) Value() (driver.Value, error) {
 		return nil, nil
 	}
 
-	out, err := protoutils.MarshalToPJSON(x)
+	out, err := protoutils.MarshalToJSON(x)
 	return string(out), err
 }
 
@@ -69,6 +69,6 @@ func (x *JobSettings) Value() (driver.Value, error) {
 		return nil, nil
 	}
 
-	out, err := protoutils.MarshalToPJSON(x)
+	out, err := protoutils.MarshalToJSON(x)
 	return string(out), err
 }

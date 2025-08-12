@@ -152,17 +152,30 @@ func NewServer(p Params) (*Server, error) {
 	tDocFiles := table.FivenetDocumentsFiles
 
 	// 3 MiB limit
-	fHandler := filestore.NewHandler(p.Storage, p.DB, tDocFiles, tDocFiles.DocumentID, tDocFiles.FileID, 3<<20,
+	fHandler := filestore.NewHandler(
+		p.Storage,
+		p.DB,
+		tDocFiles,
+		tDocFiles.DocumentID,
+		tDocFiles.FileID,
+		3<<20,
 		func(parentId uint64) jet.BoolExpression {
 			return tDocFiles.DocumentID.EQ(jet.Uint64(parentId))
-		}, filestore.InsertJoinRow, false,
+		},
+		filestore.InsertJoinRow,
+		false,
 	)
 
 	docAccess := newAccess(p.DB)
 	access.RegisterAccess("documents", &access.GroupedAccessAdapter{
 		CanUserAccessTargetFn: func(ctx context.Context, targetId uint64, userInfo *pbuserinfo.UserInfo, access int32) (bool, error) {
 			// Type assert access to the correct enum type
-			return docAccess.CanUserAccessTarget(ctx, targetId, userInfo, documents.AccessLevel(access))
+			return docAccess.CanUserAccessTarget(
+				ctx,
+				targetId,
+				userInfo,
+				documents.AccessLevel(access),
+			)
 		},
 	})
 
@@ -204,12 +217,22 @@ func NewServer(p Params) (*Server, error) {
 				table.FivenetDocumentsTemplatesAccess.AS("template_job_access"),
 				&access.JobAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetDocumentsTemplatesAccess.AS("template_job_access").ID,
-						TargetID: table.FivenetDocumentsTemplatesAccess.AS("template_job_access").TargetID,
-						Access:   table.FivenetDocumentsTemplatesAccess.AS("template_job_access").Access,
+						ID: table.FivenetDocumentsTemplatesAccess.AS(
+							"template_job_access",
+						).ID,
+						TargetID: table.FivenetDocumentsTemplatesAccess.AS(
+							"template_job_access",
+						).TargetID,
+						Access: table.FivenetDocumentsTemplatesAccess.AS(
+							"template_job_access",
+						).Access,
 					},
-					Job:          table.FivenetDocumentsTemplatesAccess.AS("template_job_access").Job,
-					MinimumGrade: table.FivenetDocumentsTemplatesAccess.AS("template_job_access").MinimumGrade,
+					Job: table.FivenetDocumentsTemplatesAccess.AS(
+						"template_job_access",
+					).Job,
+					MinimumGrade: table.FivenetDocumentsTemplatesAccess.AS(
+						"template_job_access",
+					).MinimumGrade,
 				},
 			),
 			nil,
@@ -232,7 +255,9 @@ func NewServer(p Params) (*Server, error) {
 	return s, nil
 }
 
-func newAccess(db *sql.DB) *access.Grouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel] {
+func newAccess(
+	db *sql.DB,
+) *access.Grouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel] {
 	return access.NewGrouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel](
 		db,
 		table.FivenetDocuments,
@@ -293,6 +318,7 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbdocuments.RegisterCollabServiceServer(srv, s)
 }
 
+// GetPermsRemap returns the permissions re-mapping for the services.
 func (s *Server) GetPermsRemap() map[string]string {
 	return pbdocuments.PermsRemap
 }

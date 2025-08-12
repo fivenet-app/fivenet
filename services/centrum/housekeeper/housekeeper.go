@@ -244,7 +244,10 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 
 func (s *Housekeeper) RegisterCronjobHandlers(h *croner.Handlers) error {
 	h.Add("centrum.housekeeper.load_new_dispatches", s.loadNewDispatches)
-	h.Add("centrum.housekeeper.dispatch_assignment_expiration", s.runHandleDispatchAssignmentExpiration)
+	h.Add(
+		"centrum.housekeeper.dispatch_assignment_expiration",
+		s.runHandleDispatchAssignmentExpiration,
+	)
 	h.Add("centrum.housekeeper.cleanup_units", s.runCleanupUnits)
 	h.Add("centrum.housekeeper.cancel_old_dispatches", s.runCancelOldDispatches)
 	h.Add("centrum.housekeeper.delete_old_dispatches", s.runDeleteOldDispatches)

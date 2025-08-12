@@ -5,9 +5,9 @@ func (x *SimpleObject) Merge(in *SimpleObject) *SimpleObject {
 		return x
 	}
 
-	x.Field1 = in.Field1
+	x.Field1 = in.GetField1()
 
-	x.Field2 = in.Field2
+	x.Field2 = in.GetField2()
 
 	return x
 }

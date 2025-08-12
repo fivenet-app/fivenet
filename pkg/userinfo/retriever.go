@@ -3,6 +3,7 @@ package userinfo
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"slices"
 	"time"
@@ -26,14 +27,20 @@ import (
 
 const cacheTTL = 20 * time.Second
 
-var ErrAccountError = fmt.Errorf("failed to retrieve account data")
+var ErrAccountError = errors.New("failed to retrieve account data")
 
 var tFivenetAccounts = table.FivenetAccounts
 
 type UserInfoRetriever interface {
 	GetUserInfo(ctx context.Context, userId int32, accountId uint64) (*pbuserinfo.UserInfo, error)
 	GetUserInfoWithoutAccountId(ctx context.Context, userId int32) (*pbuserinfo.UserInfo, error)
-	SetUserInfo(ctx context.Context, accountId uint64, superuser bool, job *string, jobGrade *int32) error
+	SetUserInfo(
+		ctx context.Context,
+		accountId uint64,
+		superuser bool,
+		job *string,
+		jobGrade *int32,
+	) error
 	RefreshUserInfo(ctx context.Context, userId int32, accountId uint64) error
 }
 
@@ -116,16 +123,27 @@ func NewRetriever(p Params) UserInfoRetriever {
 	return retriever
 }
 
-func (r *Retriever) registerSubscriptions(ctxStartup context.Context, ctxCancel context.Context) error {
+func (r *Retriever) registerSubscriptions(
+	ctxStartup context.Context,
+	ctxCancel context.Context,
+) error {
 	// Subscribe to the userinfo diffs stream
-	consumer, err := r.js.CreateOrUpdateConsumer(ctxStartup, UserInfoStreamName, jetstream.ConsumerConfig{
-		Durable:           instance.ID() + "_ui_retriever",
-		AckPolicy:         jetstream.AckExplicitPolicy,
-		FilterSubjects:    []string{UserInfoSubject},
-		InactiveThreshold: 1 * time.Minute, // Close consumer if inactive for 1 minute
-	})
+	consumer, err := r.js.CreateOrUpdateConsumer(
+		ctxStartup,
+		UserInfoStreamName,
+		jetstream.ConsumerConfig{
+			Durable:           instance.ID() + "_ui_retriever",
+			AckPolicy:         jetstream.AckExplicitPolicy,
+			FilterSubjects:    []string{UserInfoSubject},
+			InactiveThreshold: 1 * time.Minute, // Close consumer if inactive for 1 minute
+		},
+	)
 	if err != nil {
-		return fmt.Errorf("failed to create/update consumer for stream %q. %w", UserInfoStreamName, err)
+		return fmt.Errorf(
+			"failed to create/update consumer for stream %q. %w",
+			UserInfoStreamName,
+			err,
+		)
 	}
 
 	if r.jsCons != nil {
@@ -144,19 +162,23 @@ func (r *Retriever) registerSubscriptions(ctxStartup context.Context, ctxCancel 
 func (r *Retriever) handleMsg(m jetstream.Msg) {
 	var evt pbuserinfo.UserInfoChanged
 	if err := proto.Unmarshal(m.Data(), &evt); err == nil {
-		key := userAccountKey{UserID: evt.UserId, AccountID: evt.AccountId}
+		key := userAccountKey{UserID: evt.GetUserId(), AccountID: evt.GetAccountId()}
 		if userInfo, ok := r.userCache.Get(key); ok {
 			// If we already have this user in cache, clone the current user info and update it
 			clone := userInfo.Clone()
-			clone.Job = evt.NewJob
-			clone.JobGrade = evt.NewJobGrade
+			clone.Job = evt.GetNewJob()
+			clone.JobGrade = evt.GetNewJobGrade()
 			r.userCache.Put(key, clone, r.userCacheTTL)
 		}
 
 		// Notify UI about the user info change
-		r.logger.Debug("User info changed, notifying user", zap.Int32("userId", evt.UserId), zap.Uint64("accountId", evt.AccountId))
+		r.logger.Debug(
+			"User info changed, notifying user",
+			zap.Int32("userId", evt.GetUserId()),
+			zap.Uint64("accountId", evt.GetAccountId()),
+		)
 
-		r.notifi.SendUserEvent(r.ctx, evt.UserId, &notifications.UserEvent{
+		r.notifi.SendUserEvent(r.ctx, evt.GetUserId(), &notifications.UserEvent{
 			Data: &notifications.UserEvent_UserInfoChanged{
 				UserInfoChanged: &evt,
 			},
@@ -167,7 +189,11 @@ func (r *Retriever) handleMsg(m jetstream.Msg) {
 }
 
 // GetUserInfo retrieves user info for a given userId and accountId, using cache for performance.
-func (r *Retriever) GetUserInfo(ctx context.Context, userId int32, accountId uint64) (*pbuserinfo.UserInfo, error) {
+func (r *Retriever) GetUserInfo(
+	ctx context.Context,
+	userId int32,
+	accountId uint64,
+) (*pbuserinfo.UserInfo, error) {
 	key := userAccountKey{UserID: userId, AccountID: accountId}
 	if dest, ok := r.userCache.Get(key); ok {
 		return dest, nil
@@ -179,7 +205,7 @@ func (r *Retriever) GetUserInfo(ctx context.Context, userId int32, accountId uin
 	}
 
 	// If account is not enabled, fail here
-	if !dest.Enabled {
+	if !dest.GetEnabled() {
 		return nil, ErrAccountError
 	}
 
@@ -191,7 +217,11 @@ func (r *Retriever) GetUserInfo(ctx context.Context, userId int32, accountId uin
 	return dest, nil
 }
 
-func (r *Retriever) getUserInfo(ctx context.Context, userId int32, accountId uint64) (*pbuserinfo.UserInfo, error) {
+func (r *Retriever) getUserInfo(
+	ctx context.Context,
+	userId int32,
+	accountId uint64,
+) (*pbuserinfo.UserInfo, error) {
 	dest := &pbuserinfo.UserInfo{}
 	tUsers := tables.User().AS("user_info")
 
@@ -227,7 +257,10 @@ func (r *Retriever) getUserInfo(ctx context.Context, userId int32, accountId uin
 }
 
 // GetUserInfoWithoutAccountId retrieves user info for a userId without account context.
-func (r *Retriever) GetUserInfoWithoutAccountId(ctx context.Context, userId int32) (*pbuserinfo.UserInfo, error) {
+func (r *Retriever) GetUserInfoWithoutAccountId(
+	ctx context.Context,
+	userId int32,
+) (*pbuserinfo.UserInfo, error) {
 	tUsers := tables.User().AS("user_info")
 
 	stmt := tUsers.
@@ -262,18 +295,24 @@ func (r *Retriever) setSuperuserStatus(dest *pbuserinfo.UserInfo) {
 	}
 
 	// Check if user is superuser by group or license
-	isSuperGroup := slices.Contains(r.superuserGroups, dest.Group)
-	if isSuperGroup || slices.Contains(r.superuserUsers, dest.License) {
+	isSuperGroup := slices.Contains(r.superuserGroups, dest.GetGroup())
+	if isSuperGroup || slices.Contains(r.superuserUsers, dest.GetLicense()) {
 		dest.CanBeSuperuser = true
 		// Only override if both are non-nil and OverrideJob is not empty
-		if dest.OverrideJob != nil && *dest.OverrideJob != "" && dest.OverrideJobGrade != nil {
-			dest.Job = *dest.OverrideJob
-			dest.JobGrade = *dest.OverrideJobGrade
+		if dest.OverrideJob != nil && dest.GetOverrideJob() != "" && dest.OverrideJobGrade != nil {
+			dest.Job = dest.GetOverrideJob()
+			dest.JobGrade = dest.GetOverrideJobGrade()
 		}
 	}
 }
 
-func (r *Retriever) SetUserInfo(ctx context.Context, accountId uint64, superuser bool, job *string, jobGrade *int32) error {
+func (r *Retriever) SetUserInfo(
+	ctx context.Context,
+	accountId uint64,
+	superuser bool,
+	job *string,
+	jobGrade *int32,
+) error {
 	stmt := tFivenetAccounts.
 		UPDATE(
 			tFivenetAccounts.Superuser,

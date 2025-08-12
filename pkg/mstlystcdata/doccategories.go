@@ -21,6 +21,9 @@ import (
 
 // DocumentCategories manages document category data, including caching and enrichment.
 type DocumentCategories struct {
+	// Cache provides a cache for document categories keyed by string.
+	*cache.Cache[documents.Category, *documents.Category]
+
 	// logger is used for logging within the DocumentCategories service.
 	logger *zap.Logger
 	// db is the SQL database connection used for queries.
@@ -28,9 +31,6 @@ type DocumentCategories struct {
 
 	// tracer is used for distributed tracing of operations.
 	tracer trace.Tracer
-
-	// Cache provides a cache for document categories keyed by string.
-	*cache.Cache[documents.Category, *documents.Category]
 }
 
 // DocumentCategoriesResult is the result struct for dependency injection, providing
@@ -92,7 +92,10 @@ func NewDocumentCategories(p Params) DocumentCategoriesResult {
 }
 
 // RegisterCronjobs registers the cron job for refreshing document categories.
-func (c *DocumentCategories) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
+func (c *DocumentCategories) RegisterCronjobs(
+	ctx context.Context,
+	registry croner.IRegistry,
+) error {
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
 		Name:     "mstlystcdata.doccategories",
 		Schedule: "* * * * *", // Every minute
@@ -153,15 +156,15 @@ func (c *DocumentCategories) loadCategories(ctx context.Context) error {
 	errs := multierr.Combine()
 	categoriesPerJob := map[string][]*documents.Category{}
 	for _, d := range dest {
-		key := strconv.FormatUint(d.Id, 10)
+		key := strconv.FormatUint(d.GetId(), 10)
 		if err := c.Put(ctx, key, d); err != nil {
 			errs = multierr.Append(errs, err)
 		}
 
-		if _, ok := categoriesPerJob[*d.Job]; !ok {
-			categoriesPerJob[*d.Job] = []*documents.Category{}
+		if _, ok := categoriesPerJob[d.GetJob()]; !ok {
+			categoriesPerJob[d.GetJob()] = []*documents.Category{}
 		}
-		categoriesPerJob[*d.Job] = append(categoriesPerJob[*d.Job], d)
+		categoriesPerJob[d.GetJob()] = append(categoriesPerJob[d.GetJob()], d)
 	}
 
 	return errs

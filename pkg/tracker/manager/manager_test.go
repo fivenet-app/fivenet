@@ -85,116 +85,179 @@ func TestRefreshUserLocations(t *testing.T) {
 
 	// Run the refreshUserLocations method to make sure the database state has been loaded
 	err = manager.refreshUserLocations(ctx, true)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	list := manager.userLocStore.List()
-	assert.Len(t, list, 0)
+	assert.Empty(t, list)
 
 	db, err := dbServer.DB()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	// Insert user locations
-	assert.NoError(t, insertCitizenLocations(ctx, db, "char1:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4", "ambulance", 3, 1.0, 1.0, false))
-	assert.NoError(t, insertCitizenLocations(ctx, db, "char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57", "ambulance", 3, 1.0, 1.0, true))
+	require.NoError(
+		t,
+		insertCitizenLocations(
+			ctx,
+			db,
+			"char1:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4",
+			"ambulance",
+			3,
+			1.0,
+			1.0,
+			false,
+		),
+	)
+	require.NoError(
+		t,
+		insertCitizenLocations(
+			ctx,
+			db,
+			"char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57",
+			"ambulance",
+			3,
+			1.0,
+			1.0,
+			true,
+		),
+	)
 
 	// Wait for users to appear (an event is sent for this)
-	err = retry.Do(ctx, retry.WithMaxRetries(10, retry.NewConstant(1*time.Second)), func(ctx context.Context) error {
-		select {
-		case count := <-msgCh:
-			if count < 2 {
-				return retry.RetryableError(fmt.Errorf("not enough user events received yet %d", count))
-			}
-			return nil
+	err = retry.Do(
+		ctx,
+		retry.WithMaxRetries(10, retry.NewConstant(1*time.Second)),
+		func(ctx context.Context) error {
+			select {
+			case count := <-msgCh:
+				if count < 2 {
+					return retry.RetryableError(
+						fmt.Errorf("not enough user events received yet %d", count),
+					)
+				}
+				return nil
 
-		case <-time.After(1 * time.Second):
-			list := manager.userLocStore.List()
-			return retry.RetryableError(fmt.Errorf("no user event received (event count: %d). %v", eventCount, list))
-		}
-	})
+			case <-time.After(1 * time.Second):
+				list := manager.userLocStore.List()
+				return retry.RetryableError(
+					fmt.Errorf("no user event received (event count: %d). %v", eventCount, list),
+				)
+			}
+		},
+	)
 	require.NoError(t, err)
 
 	user1, err := manager.userLocStore.Get(userMarkerKey(int32(1), "ambulance", 3))
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, user1)
-	assert.Equal(t, 1.0, user1.X)
-	assert.Equal(t, 1.0, user1.Y)
+	assert.InEpsilon(t, 1.0, user1.GetX(), 0.0001)
+	assert.InEpsilon(t, 1.0, user1.GetY(), 0.0001)
 
 	user2, err := manager.userLocStore.Get(userMarkerKey(int32(2), "ambulance", 3))
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, user2)
-	assert.Equal(t, 1.0, user2.X)
-	assert.Equal(t, 1.0, user2.Y)
+	assert.InEpsilon(t, 1.0, user2.GetX(), 0.0001)
+	assert.InEpsilon(t, 1.0, user2.GetY(), 0.0001)
 
 	list = manager.userLocStore.List()
 	assert.Len(t, list, 2)
 
 	// Update user location (no event is sent for updates)
-	assert.NoError(t, insertCitizenLocations(ctx, db, "char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57", "ambulance", 3, 5.0, 5.0, true))
+	require.NoError(
+		t,
+		insertCitizenLocations(
+			ctx,
+			db,
+			"char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57",
+			"ambulance",
+			3,
+			5.0,
+			5.0,
+			true,
+		),
+	)
 
 	// Wait for user2 to be updated
-	err = retry.Do(ctx, retry.WithMaxRetries(10, retry.NewConstant(1*time.Second)), func(ctx context.Context) error {
-		user2, err := manager.userLocStore.Get(userMarkerKey(int32(2), "ambulance", 3))
-		if err != nil {
-			return fmt.Errorf("user2 is nil in retry")
-		}
+	err = retry.Do(
+		ctx,
+		retry.WithMaxRetries(10, retry.NewConstant(1*time.Second)),
+		func(ctx context.Context) error {
+			user2, err := manager.userLocStore.Get(userMarkerKey(int32(2), "ambulance", 3))
+			if err != nil {
+				return fmt.Errorf("user2 is nil in retry")
+			}
 
-		if user2.X == 5.0 && user2.Y == 5.0 {
-			return nil
-		}
+			if user2.GetX() == 5.0 && user2.GetY() == 5.0 {
+				return nil
+			}
 
-		return retry.RetryableError(fmt.Errorf("user2 location not updated"))
-	})
+			return retry.RetryableError(fmt.Errorf("user2 location not updated"))
+		},
+	)
 	require.NoError(t, err)
 
 	user1, err = manager.userLocStore.Get(userMarkerKey(int32(1), "ambulance", 3))
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, user1)
-	assert.Equal(t, 1.0, user1.X)
-	assert.Equal(t, 1.0, user1.Y)
+	assert.InEpsilon(t, 1.0, user1.GetX(), 0.0001)
+	assert.InEpsilon(t, 1.0, user1.GetY(), 0.0001)
 
 	user2, err = manager.userLocStore.Get(userMarkerKey(int32(2), "ambulance", 3))
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, user2)
-	assert.Equal(t, 5.0, user2.X)
-	assert.Equal(t, 5.0, user2.Y)
+	assert.InEpsilon(t, 5.0, user2.GetX(), 0.0001)
+	assert.InEpsilon(t, 5.0, user2.GetY(), 0.0001)
 
-	assert.NoError(t, removeUserLocations(ctx, db))
+	require.NoError(t, removeUserLocations(ctx, db))
 
 	// Wait for users to be removed (it takes at least 15 seconds from the updatedAt time of each user location)
-	err = retry.Do(ctx, retry.WithMaxRetries(45, retry.NewConstant(1*time.Second)), func(ctx context.Context) error {
-		list := manager.userLocStore.List()
-		if len(list) == 0 {
-			return nil
-		}
+	err = retry.Do(
+		ctx,
+		retry.WithMaxRetries(45, retry.NewConstant(1*time.Second)),
+		func(ctx context.Context) error {
+			list := manager.userLocStore.List()
+			if len(list) == 0 {
+				return nil
+			}
 
-		stmt := tLocs.SELECT(jet.COUNT(tLocs.Identifier).AS("total_count"))
-		var dest database.DataCount
-		if err := stmt.QueryContext(ctx, db, &dest); err != nil {
-			return err
-		}
+			stmt := tLocs.SELECT(jet.COUNT(tLocs.Identifier).AS("total_count"))
+			var dest database.DataCount
+			if err := stmt.QueryContext(ctx, db, &dest); err != nil {
+				return err
+			}
 
-		return retry.RetryableError(fmt.Errorf("user list isn't empty yet. count %d", dest.Total))
-	})
+			return retry.RetryableError(
+				fmt.Errorf("user list isn't empty yet. count %d", dest.Total),
+			)
+		},
+	)
 	require.NoError(t, err)
 
 	list = manager.userLocStore.List()
-	assert.Len(t, list, 0)
+	assert.Empty(t, list)
 
 	user1, err = manager.userLocStore.Get(userMarkerKey(int32(1), "ambulance", 3))
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Nil(t, user1)
 
 	user2, err = manager.userLocStore.Get(userMarkerKey(int32(2), "ambulance", 3))
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Nil(t, user2)
 
 	// Check that a snapshot entry exists in the KeyValue store
 	kv, err := manager.js.KeyValue(ctx, tracker.BucketUserLoc)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, kv)
 }
 
-func insertCitizenLocations(ctx context.Context, db *sql.DB, identifier string, job string, grade int32, x float64, y float64, hidden bool) error {
+func insertCitizenLocations(
+	ctx context.Context,
+	db *sql.DB,
+	identifier string,
+	job string,
+	grade int32,
+	x float64,
+	y float64,
+	hidden bool,
+) error {
 	stmt := tLocs.
 		INSERT(
 			tLocs.Identifier,

@@ -14,14 +14,17 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) GetThreadState(ctx context.Context, req *pbmailer.GetThreadStateRequest) (*pbmailer.GetThreadStateResponse, error) {
+func (s *Server) GetThreadState(
+	ctx context.Context,
+	req *pbmailer.GetThreadStateRequest,
+) (*pbmailer.GetThreadStateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.ThreadId, req.EmailId, mailer.AccessLevel_ACCESS_LEVEL_READ); err != nil {
+	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.GetThreadId(), req.GetEmailId(), mailer.AccessLevel_ACCESS_LEVEL_READ); err != nil {
 		return nil, err
 	}
 
-	state, err := s.getThreadState(ctx, req.ThreadId, req.EmailId)
+	state, err := s.getThreadState(ctx, req.GetThreadId(), req.GetEmailId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -31,10 +34,13 @@ func (s *Server) GetThreadState(ctx context.Context, req *pbmailer.GetThreadStat
 	}, nil
 }
 
-func (s *Server) SetThreadState(ctx context.Context, req *pbmailer.SetThreadStateRequest) (*pbmailer.SetThreadStateResponse, error) {
+func (s *Server) SetThreadState(
+	ctx context.Context,
+	req *pbmailer.SetThreadStateRequest,
+) (*pbmailer.SetThreadStateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.State.ThreadId, req.State.EmailId, mailer.AccessLevel_ACCESS_LEVEL_WRITE); err != nil {
+	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.GetState().GetThreadId(), req.GetState().GetEmailId(), mailer.AccessLevel_ACCESS_LEVEL_WRITE); err != nil {
 		return nil, err
 	}
 
@@ -42,20 +48,32 @@ func (s *Server) SetThreadState(ctx context.Context, req *pbmailer.SetThreadStat
 	if req.State.Unread != nil {
 		updateSets = append(updateSets, tThreadsState.Unread.SET(jet.RawBool("VALUES(`unread`)")))
 	}
-	if req.State.LastRead != nil {
-		updateSets = append(updateSets, tThreadsState.LastRead.SET(jet.RawTimestamp("VALUES(`last_read`)")))
+	if req.GetState().GetLastRead() != nil {
+		updateSets = append(
+			updateSets,
+			tThreadsState.LastRead.SET(jet.RawTimestamp("VALUES(`last_read`)")),
+		)
 	}
 	if req.State.Important != nil {
-		updateSets = append(updateSets, tThreadsState.Important.SET(jet.RawBool("VALUES(`important`)")))
+		updateSets = append(
+			updateSets,
+			tThreadsState.Important.SET(jet.RawBool("VALUES(`important`)")),
+		)
 	}
 	if req.State.Favorite != nil {
-		updateSets = append(updateSets, tThreadsState.Favorite.SET(jet.RawBool("VALUES(`favorite`)")))
+		updateSets = append(
+			updateSets,
+			tThreadsState.Favorite.SET(jet.RawBool("VALUES(`favorite`)")),
+		)
 	}
 	if req.State.Muted != nil {
 		updateSets = append(updateSets, tThreadsState.Muted.SET(jet.RawBool("VALUES(`muted`)")))
 	}
 	if req.State.Archived != nil {
-		updateSets = append(updateSets, tThreadsState.Archived.SET(jet.RawBool("VALUES(`archived`)")))
+		updateSets = append(
+			updateSets,
+			tThreadsState.Archived.SET(jet.RawBool("VALUES(`archived`)")),
+		)
 	}
 
 	if len(updateSets) > 0 {
@@ -72,14 +90,14 @@ func (s *Server) SetThreadState(ctx context.Context, req *pbmailer.SetThreadStat
 				tThreadsState.Archived,
 			).
 			VALUES(
-				req.State.ThreadId,
-				req.State.EmailId,
-				req.State.Unread,
-				req.State.LastRead,
-				req.State.Important,
-				req.State.Favorite,
-				req.State.Muted,
-				req.State.Archived,
+				req.GetState().GetThreadId(),
+				req.GetState().GetEmailId(),
+				req.GetState().GetUnread(),
+				req.GetState().GetLastRead(),
+				req.GetState().GetImportant(),
+				req.GetState().GetFavorite(),
+				req.GetState().GetMuted(),
+				req.GetState().GetArchived(),
 			).
 			ON_DUPLICATE_KEY_UPDATE(updateSets...)
 
@@ -88,7 +106,7 @@ func (s *Server) SetThreadState(ctx context.Context, req *pbmailer.SetThreadStat
 		}
 	}
 
-	state, err := s.getThreadState(ctx, req.State.ThreadId, req.State.EmailId)
+	state, err := s.getThreadState(ctx, req.GetState().GetThreadId(), req.GetState().GetEmailId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -97,14 +115,18 @@ func (s *Server) SetThreadState(ctx context.Context, req *pbmailer.SetThreadStat
 		Data: &mailer.MailerEvent_ThreadStateUpdate{
 			ThreadStateUpdate: state,
 		},
-	}, req.State.EmailId)
+	}, req.GetState().GetEmailId())
 
 	return &pbmailer.SetThreadStateResponse{
 		State: state,
 	}, nil
 }
 
-func (s *Server) getThreadState(ctx context.Context, threadId uint64, emaildId uint64) (*mailer.ThreadState, error) {
+func (s *Server) getThreadState(
+	ctx context.Context,
+	threadId uint64,
+	emaildId uint64,
+) (*mailer.ThreadState, error) {
 	stmt := tThreadsState.
 		SELECT(
 			tThreadsState.ThreadID,
@@ -129,14 +151,20 @@ func (s *Server) getThreadState(ctx context.Context, threadId uint64, emaildId u
 		}
 	}
 
-	if dest.ThreadId == 0 || dest.EmailId == 0 {
+	if dest.GetThreadId() == 0 || dest.GetEmailId() == 0 {
 		return nil, nil
 	}
 
 	return dest, nil
 }
 
-func (s *Server) setUnreadState(ctx context.Context, tx qrm.DB, threadId uint64, senderId uint64, emailIds []uint64) error {
+func (s *Server) setUnreadState(
+	ctx context.Context,
+	tx qrm.DB,
+	threadId uint64,
+	senderId uint64,
+	emailIds []uint64,
+) error {
 	if len(emailIds) == 0 {
 		return nil
 	}

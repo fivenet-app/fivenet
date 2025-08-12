@@ -40,5 +40,5 @@ func (ts *Timestamp) Value() (driver.Value, error) {
 	if ts == nil {
 		return nil, nil
 	}
-	return ts.Timestamp.AsTime(), nil
+	return ts.GetTimestamp().AsTime(), nil
 }

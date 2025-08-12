@@ -2,7 +2,7 @@ import { Extension } from '@tiptap/core';
 import type { Node } from 'prosemirror-model';
 import { Plugin, PluginKey } from 'prosemirror-state';
 
-// Helper – collect current <image> fileIds in the document
+// Helper - collect current <image> fileIds in the document
 function collectImageIds(doc: Node): Set<number> {
     const out = new Set<number>();
     doc.descendants((node) => {

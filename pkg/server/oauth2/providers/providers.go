@@ -12,8 +12,8 @@ import (
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 type IProvider interface {
-	SetOauthConfig(*oauth2.Config)
-	SetMapping(*config.OAuth2Mapping)
+	SetOauthConfig(cfg *oauth2.Config)
+	SetMapping(mapping *config.OAuth2Mapping)
 
 	GetName() string
 

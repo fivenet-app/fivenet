@@ -26,11 +26,11 @@ func CreateUserActivities(ctx context.Context, tx qrm.DB, activities ...*UserAct
 	for _, activity := range activities {
 		stmt = stmt.
 			VALUES(
-				activity.SourceUserId,
-				activity.TargetUserId,
-				activity.Type,
-				activity.Reason,
-				activity.Data,
+				activity.GetSourceUserId(),
+				activity.GetTargetUserId(),
+				activity.GetType(),
+				activity.GetReason(),
+				activity.GetData(),
 			)
 	}
 

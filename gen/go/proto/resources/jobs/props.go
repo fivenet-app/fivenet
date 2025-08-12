@@ -14,7 +14,13 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func GetColleagueProps(ctx context.Context, tx qrm.DB, job string, userId int32, fields []string) (*ColleagueProps, error) {
+func GetColleagueProps(
+	ctx context.Context,
+	tx qrm.DB,
+	job string,
+	userId int32,
+	fields []string,
+) (*ColleagueProps, error) {
 	tColleagueProps := table.FivenetJobColleagueProps.AS("colleague_props")
 
 	columns := []jet.Projection{
@@ -30,6 +36,7 @@ func GetColleagueProps(ctx context.Context, tx qrm.DB, job string, userId int32,
 	}
 
 	for _, field := range fields {
+		//nolint:gocritic // In the future there might be more fields, so we use a switch statement to future proof this.
 		switch field {
 		case "Note":
 			columns = append(columns, tColleagueProps.Note)
@@ -104,24 +111,31 @@ func GetUserLabels(ctx context.Context, tx qrm.DB, job string, userId int32) (*L
 	return list, nil
 }
 
-func (x *ColleagueProps) HandleChanges(ctx context.Context, tx qrm.DB, in *ColleagueProps, job string, sourceUserId *int32, reason string) ([]*ColleagueActivity, error) {
+func (x *ColleagueProps) HandleChanges(
+	ctx context.Context,
+	tx qrm.DB,
+	in *ColleagueProps,
+	job string,
+	sourceUserId *int32,
+	reason string,
+) ([]*ColleagueActivity, error) {
 	absenceBegin := jet.DateExp(jet.NULL)
 	absenceEnd := jet.DateExp(jet.NULL)
-	if in.AbsenceBegin != nil && in.AbsenceEnd != nil {
-		if in.AbsenceBegin.Timestamp == nil {
+	if in.GetAbsenceBegin() != nil && in.GetAbsenceEnd() != nil {
+		if in.GetAbsenceBegin().GetTimestamp() == nil {
 			in.AbsenceBegin = nil
 		} else {
-			absenceBegin = jet.DateT(in.AbsenceBegin.AsTime())
+			absenceBegin = jet.DateT(in.GetAbsenceBegin().AsTime())
 		}
 
-		if in.AbsenceEnd.Timestamp == nil {
+		if in.GetAbsenceEnd().GetTimestamp() == nil {
 			in.AbsenceEnd = nil
 		} else {
-			absenceEnd = jet.DateT(in.AbsenceEnd.AsTime())
+			absenceEnd = jet.DateT(in.GetAbsenceEnd().AsTime())
 		}
 	} else {
-		in.AbsenceBegin = x.AbsenceBegin
-		in.AbsenceEnd = x.AbsenceEnd
+		in.AbsenceBegin = x.GetAbsenceBegin()
+		in.AbsenceEnd = x.GetAbsenceEnd()
 	}
 
 	tColleagueProps := table.FivenetJobColleagueProps
@@ -134,29 +148,35 @@ func (x *ColleagueProps) HandleChanges(ctx context.Context, tx qrm.DB, in *Colle
 	// Generate the update sets
 	if in.Note != nil {
 		// Set empty note to null
-		if *in.Note == "" {
+		if in.GetNote() == "" {
 			updateSets = append(updateSets, tColleagueProps.Note.SET(jet.StringExp(jet.NULL)))
 		} else {
-			updateSets = append(updateSets, tColleagueProps.Note.SET(jet.String(*in.Note)))
+			updateSets = append(updateSets, tColleagueProps.Note.SET(jet.String(in.GetNote())))
 		}
 	} else {
 		in.Note = x.Note
 	}
 
-	if in.Labels == nil {
-		in.Labels = x.Labels
+	if in.GetLabels() == nil {
+		in.Labels = x.GetLabels()
 	}
 
 	if in.NamePrefix != nil || in.NameSuffix != nil {
 		if in.NamePrefix != nil {
-			*in.NamePrefix = strings.TrimSpace(*in.NamePrefix) // Trim spaces
-			updateSets = append(updateSets, tColleagueProps.NamePrefix.SET(jet.String(*in.NamePrefix)))
+			*in.NamePrefix = strings.TrimSpace(in.GetNamePrefix()) // Trim spaces
+			updateSets = append(
+				updateSets,
+				tColleagueProps.NamePrefix.SET(jet.String(in.GetNamePrefix())),
+			)
 		} else {
 			in.NamePrefix = x.NamePrefix
 		}
 		if in.NameSuffix != nil {
-			*in.NameSuffix = strings.TrimSpace(*in.NameSuffix) // Trim spaces
-			updateSets = append(updateSets, tColleagueProps.NameSuffix.SET(jet.String(*in.NameSuffix)))
+			*in.NameSuffix = strings.TrimSpace(in.GetNameSuffix()) // Trim spaces
+			updateSets = append(
+				updateSets,
+				tColleagueProps.NameSuffix.SET(jet.String(in.GetNameSuffix())),
+			)
 		} else {
 			in.NameSuffix = x.NameSuffix
 		}
@@ -176,13 +196,13 @@ func (x *ColleagueProps) HandleChanges(ctx context.Context, tx qrm.DB, in *Colle
 			tColleagueProps.NameSuffix,
 		).
 		VALUES(
-			x.UserId,
+			x.GetUserId(),
 			job,
 			absenceBegin,
 			absenceEnd,
-			in.Note,
-			in.NamePrefix,
-			in.NameSuffix,
+			in.GetNote(),
+			in.GetNamePrefix(),
+			in.GetNameSuffix(),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			updateSets...,
@@ -195,20 +215,23 @@ func (x *ColleagueProps) HandleChanges(ctx context.Context, tx qrm.DB, in *Colle
 	activities := []*ColleagueActivity{}
 
 	// Create user activity entries
-	if in.Labels != nil && !proto.Equal(in.Labels, x.Labels) {
-		added, removed := utils.SlicesDifferenceFunc(x.Labels.List, in.Labels.List,
+	if in.GetLabels() != nil && !proto.Equal(in.GetLabels(), x.GetLabels()) {
+		added, removed := utils.SlicesDifferenceFunc(
+			x.GetLabels().GetList(),
+			in.GetLabels().GetList(),
 			func(in *Label) uint64 {
-				return in.Id
-			})
+				return in.GetId()
+			},
+		)
 
-		if err := x.updateLabels(ctx, tx, x.UserId, job, added, removed); err != nil {
+		if err := x.updateLabels(ctx, tx, x.GetUserId(), job, added, removed); err != nil {
 			return nil, err
 		}
 
 		activities = append(activities, &ColleagueActivity{
 			Job:          job,
 			SourceUserId: sourceUserId,
-			TargetUserId: x.UserId,
+			TargetUserId: x.GetUserId(),
 			ActivityType: ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_LABELS,
 			Reason:       reason,
 			Data: &ColleagueActivityData{
@@ -223,42 +246,42 @@ func (x *ColleagueProps) HandleChanges(ctx context.Context, tx qrm.DB, in *Colle
 	}
 
 	// Compare absence dates if any were set
-	if (in.AbsenceBegin == nil && in.AbsenceEnd == nil && x.AbsenceBegin != nil && x.AbsenceEnd != nil) ||
-		(in.AbsenceBegin != nil && (x.AbsenceBegin == nil || in.AbsenceBegin.AsTime().Compare(x.AbsenceBegin.AsTime()) != 0) ||
-			in.AbsenceEnd != nil && (x.AbsenceEnd == nil || in.AbsenceEnd.AsTime().Compare(x.AbsenceEnd.AsTime()) != 0)) {
+	if (in.GetAbsenceBegin() == nil && in.GetAbsenceEnd() == nil && x.GetAbsenceBegin() != nil && x.GetAbsenceEnd() != nil) ||
+		(in.GetAbsenceBegin() != nil && (x.GetAbsenceBegin() == nil || in.GetAbsenceBegin().AsTime().Compare(x.GetAbsenceBegin().AsTime()) != 0) ||
+			in.GetAbsenceEnd() != nil && (x.GetAbsenceEnd() == nil || in.GetAbsenceEnd().AsTime().Compare(x.GetAbsenceEnd().AsTime()) != 0)) {
 		activities = append(activities, &ColleagueActivity{
 			Job:          job,
 			SourceUserId: sourceUserId,
-			TargetUserId: x.UserId,
+			TargetUserId: x.GetUserId(),
 			ActivityType: ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_ABSENCE_DATE,
 			Reason:       reason,
 			Data: &ColleagueActivityData{
 				Data: &ColleagueActivityData_AbsenceDate{
 					AbsenceDate: &AbsenceDateChange{
-						AbsenceBegin: in.AbsenceBegin,
-						AbsenceEnd:   in.AbsenceEnd,
+						AbsenceBegin: in.GetAbsenceBegin(),
+						AbsenceEnd:   in.GetAbsenceEnd(),
 					},
 				},
 			},
 		})
 	}
 
-	if in.Note != nil && (x.Note == nil || *in.Note != *x.Note) {
+	if in.Note != nil && (x.Note == nil || in.GetNote() != x.GetNote()) {
 		activities = append(activities, &ColleagueActivity{
 			Job:          job,
 			SourceUserId: sourceUserId,
-			TargetUserId: x.UserId,
+			TargetUserId: x.GetUserId(),
 			ActivityType: ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_NOTE,
 			Reason:       reason,
 		})
 	}
 
-	if in.NamePrefix != nil && (x.NamePrefix == nil || *in.NamePrefix != *x.NamePrefix) ||
-		in.NameSuffix != nil && (x.NameSuffix == nil || *in.NameSuffix != *x.NameSuffix) {
+	if in.NamePrefix != nil && (x.NamePrefix == nil || in.GetNamePrefix() != x.GetNamePrefix()) ||
+		in.NameSuffix != nil && (x.NameSuffix == nil || in.GetNameSuffix() != x.GetNameSuffix()) {
 		activities = append(activities, &ColleagueActivity{
 			Job:          job,
 			SourceUserId: sourceUserId,
-			TargetUserId: x.UserId,
+			TargetUserId: x.GetUserId(),
 			ActivityType: ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_NAME,
 			Reason:       reason,
 			Data: &ColleagueActivityData{
@@ -275,7 +298,14 @@ func (x *ColleagueProps) HandleChanges(ctx context.Context, tx qrm.DB, in *Colle
 	return activities, nil
 }
 
-func (x *ColleagueProps) updateLabels(ctx context.Context, tx qrm.DB, userId int32, job string, added []*Label, removed []*Label) error {
+func (x *ColleagueProps) updateLabels(
+	ctx context.Context,
+	tx qrm.DB,
+	userId int32,
+	job string,
+	added []*Label,
+	removed []*Label,
+) error {
 	tUserLabels := table.FivenetJobColleagueLabels
 
 	if len(added) > 0 {
@@ -284,7 +314,7 @@ func (x *ColleagueProps) updateLabels(ctx context.Context, tx qrm.DB, userId int
 			addedLabels[i] = &model.FivenetJobColleagueLabels{
 				UserID:  userId,
 				Job:     job,
-				LabelID: label.Id,
+				LabelID: label.GetId(),
 			}
 		}
 
@@ -307,7 +337,7 @@ func (x *ColleagueProps) updateLabels(ctx context.Context, tx qrm.DB, userId int
 		ids := make([]jet.Expression, len(removed))
 
 		for i := range removed {
-			ids[i] = jet.Uint64(removed[i].Id)
+			ids[i] = jet.Uint64(removed[i].GetId())
 		}
 
 		stmt := tUserLabels.

@@ -51,11 +51,14 @@ var (
 	})
 )
 
-func (s *Server) buildSubjects(ctx context.Context, userInfo *pbuserinfo.UserInfo) ([]string, []string, error) {
+func (s *Server) buildSubjects(
+	ctx context.Context,
+	userInfo *pbuserinfo.UserInfo,
+) ([]string, []string, error) {
 	baseSubjects := []string{
-		fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserTopic, userInfo.UserId),
-		fmt.Sprintf("%s.%s.%s", notifi.BaseSubject, notifi.JobTopic, userInfo.Job),
-		fmt.Sprintf("%s.%s.%s.>", notifi.BaseSubject, notifi.JobGradeTopic, userInfo.Job),
+		fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserTopic, userInfo.GetUserId()),
+		fmt.Sprintf("%s.%s.%s", notifi.BaseSubject, notifi.JobTopic, userInfo.GetJob()),
+		fmt.Sprintf("%s.%s.%s.>", notifi.BaseSubject, notifi.JobGradeTopic, userInfo.GetJob()),
 		fmt.Sprintf("%s.%s", notifi.BaseSubject, notifi.SystemTopic),
 	}
 
@@ -68,7 +71,10 @@ func (s *Server) buildSubjects(ctx context.Context, userInfo *pbuserinfo.UserInf
 
 	additionalSubjects := []string{}
 	for _, email := range emails {
-		additionalSubjects = append(additionalSubjects, fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.MailerTopic, email.Id))
+		additionalSubjects = append(
+			additionalSubjects,
+			fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.MailerTopic, email.GetId()),
+		)
 	}
 
 	return baseSubjects, additionalSubjects, nil
@@ -82,10 +88,14 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 	currentUserInfo := userInfo.Clone()
 
 	if _, err := s.js.PublishAsyncProto(ctx, userinfo.PollSubject, &pbuserinfo.PollReq{
-		AccountId: currentUserInfo.AccountId,
-		UserId:    currentUserInfo.UserId,
+		AccountId: currentUserInfo.GetAccountId(),
+		UserId:    currentUserInfo.GetUserId(),
 	}); err != nil {
-		s.logger.Error("failed to publish userinfo.poll.request", zap.Int32("user_id", currentUserInfo.UserId), zap.Error(err))
+		s.logger.Error(
+			"failed to publish userinfo.poll.request",
+			zap.Int32("user_id", currentUserInfo.GetUserId()),
+			zap.Error(err),
+		)
 	}
 
 	subjectsMu := &sync.Mutex{}
@@ -95,7 +105,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 	}
 	clientViewSubject := []string{}
 
-	notificationCount, err := s.getNotificationCount(ctx, userInfo.UserId)
+	notificationCount, err := s.getNotificationCount(ctx, userInfo.GetUserId())
 	if err != nil {
 		return errswrap.NewError(err, ErrFailedStream)
 	}
@@ -105,7 +115,11 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 
 	// Create durable pull consumer with multi-filter, required to update filter subjects dynamically
 	consCfg := jetstream.ConsumerConfig{
-		Durable:           natsutils.GenerateConsumerName(userInfo.AccountId, userInfo.UserId, connId),
+		Durable: natsutils.GenerateConsumerName(
+			userInfo.GetAccountId(),
+			userInfo.GetUserId(),
+			connId,
+		),
 		FilterSubjects:    append(baseSubjects, additionalSubjects...),
 		DeliverPolicy:     jetstream.DeliverNewPolicy,
 		AckPolicy:         jetstream.AckNonePolicy,
@@ -131,7 +145,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 	g.Go(func() error {
 		for {
 			msg, err := srv.Recv()
-			if err == io.EOF {
+			if errors.Is(err, io.EOF) {
 				return err
 			}
 			if err != nil {
@@ -141,7 +155,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 				continue // Skip nil messages
 			}
 
-			switch d := msg.Data.(type) {
+			switch d := msg.GetData().(type) {
 			case *pbnotifications.StreamRequest_ClientView:
 				clientView := d.ClientView
 				if clientView == nil {
@@ -155,10 +169,10 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 				cfg := info.Config
 
 				// If client view is not "unspecified", add specific subject for it
-				if clientView.Id != nil && clientView.Type > notifications.ObjectType_OBJECT_TYPE_UNSPECIFIED {
-					gAccess := access.GetAccess(clientView.Type.ToAccessKey())
+				if clientView.Id != nil && clientView.GetType() > notifications.ObjectType_OBJECT_TYPE_UNSPECIFIED {
+					gAccess := access.GetAccess(clientView.GetType().ToAccessKey())
 					if gAccess != nil {
-						check, err := gAccess.CanUserAccessTarget(gctx, *clientView.Id, userInfo, 2)
+						check, err := gAccess.CanUserAccessTarget(gctx, clientView.GetId(), userInfo, 2)
 						if err != nil {
 							if !errors.Is(err, qrm.ErrNoRows) {
 								return errswrap.NewError(err, ErrFailedStream)
@@ -166,14 +180,18 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						}
 
 						if !check {
-							s.logger.Warn("user does not have access to the object", zap.Int32("user_id", userInfo.UserId), zap.String("object_type", clientView.Type.String()), zap.Uint64p("object_id", clientView.Id))
+							s.logger.Warn("user does not have access to the object",
+								zap.Int32("user_id", userInfo.GetUserId()),
+								zap.String("object_type", clientView.GetType().String()),
+								zap.Uint64("object_id", clientView.GetId()),
+							)
 							continue
 						}
 					}
 
 					// Generate subject for the client view
 					clientViewSubject = []string{
-						fmt.Sprintf("%s.%s.%s.%d", notifi.BaseSubject, notifi.ObjectTopic, clientView.Type.ToNatsKey(), *clientView.Id),
+						fmt.Sprintf("%s.%s.%s.%d", notifi.BaseSubject, notifi.ObjectTopic, clientView.GetType().ToNatsKey(), clientView.GetId()),
 					}
 				}
 
@@ -190,7 +208,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 		}
 	})
 
-	// Writer goroutine – single gRPC send loop
+	// Writer goroutine - single gRPC send loop
 	g.Go(func() error {
 		for {
 			select {
@@ -224,7 +242,10 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 			for m := range batch.Messages() {
 				// Publish notifications sent directly to user via the message queue
 				if m == nil {
-					s.logger.Warn("nil notification message received via message queue", zap.Int32("user_id", currentUserInfo.UserId))
+					s.logger.Warn(
+						"nil notification message received via message queue",
+						zap.Int32("user_id", currentUserInfo.GetUserId()),
+					)
 					continue
 				}
 
@@ -236,11 +257,11 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 				switch topic {
 				case notifi.UserTopic:
 					var dest notifications.UserEvent
-					if err := protoutils.UnmarshalPartialPJSON(m.Data(), &dest); err != nil {
+					if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
-					switch d := dest.Data.(type) {
+					switch d := dest.GetData().(type) {
 					case *notifications.UserEvent_Notification:
 						notificationCount++
 
@@ -252,8 +273,8 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						}
 
 					case *notifications.UserEvent_UserInfoChanged:
-						currentUserInfo.Job = d.UserInfoChanged.NewJob
-						currentUserInfo.JobGrade = d.UserInfoChanged.NewJobGrade
+						currentUserInfo.Job = d.UserInfoChanged.GetNewJob()
+						currentUserInfo.JobGrade = d.UserInfoChanged.GetNewJobGrade()
 
 						baseSubjects, additionalSubjects, err = s.buildSubjects(ctx, currentUserInfo)
 						if err != nil {
@@ -286,7 +307,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 
 				case notifi.JobTopic:
 					var dest notifications.JobEvent
-					if err := protoutils.UnmarshalPartialPJSON(m.Data(), &dest); err != nil {
+					if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
@@ -306,11 +327,11 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					if err != nil {
 						continue
 					}
-					if currentUserInfo.JobGrade < int32(grade) {
+					if currentUserInfo.GetJobGrade() < int32(grade) {
 						continue
 					}
 					var dest notifications.JobGradeEvent
-					if err := protoutils.UnmarshalPartialPJSON(m.Data(), &dest); err != nil {
+					if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
@@ -323,7 +344,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 
 				case notifi.SystemTopic:
 					var dest notifications.SystemEvent
-					if err := protoutils.UnmarshalPartialPJSON(m.Data(), &dest); err != nil {
+					if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
@@ -336,22 +357,24 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 
 				case notifi.ObjectTopic:
 					var dest notifications.ObjectEvent
-					if err := protoutils.UnmarshalPartialPJSON(m.Data(), &dest); err != nil {
+					if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
 					// Skip if the object event is from the current user
-					if dest.UserId != nil && *dest.UserId == currentUserInfo.UserId {
+					if dest.UserId != nil && dest.GetUserId() == currentUserInfo.GetUserId() {
 						continue
 					}
 
 					// Check if the user has access to the object for job specific objects
-					if dest.Type != notifications.ObjectType_OBJECT_TYPE_UNSPECIFIED && dest.Type != notifications.ObjectType_OBJECT_TYPE_DOCUMENT && dest.Type != notifications.ObjectType_OBJECT_TYPE_WIKI_PAGE {
+					if dest.GetType() != notifications.ObjectType_OBJECT_TYPE_UNSPECIFIED &&
+						dest.GetType() != notifications.ObjectType_OBJECT_TYPE_DOCUMENT &&
+						dest.GetType() != notifications.ObjectType_OBJECT_TYPE_WIKI_PAGE {
 						if dest.Job == nil {
 							continue
 						}
 						// Job doesn't match the user's job
-						if userInfo.Job != *dest.Job {
+						if userInfo.GetJob() != dest.GetJob() {
 							continue
 						}
 					}
@@ -365,7 +388,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 
 				case notifi.MailerTopic:
 					var dest mailer.MailerEvent
-					if err := protoutils.UnmarshalPartialPJSON(m.Data(), &dest); err != nil {
+					if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 

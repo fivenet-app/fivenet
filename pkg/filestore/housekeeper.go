@@ -224,20 +224,28 @@ func (h *Housekeeper) Run(ctx context.Context) (int64, error) {
 
 		for _, c := range files {
 			// A) Delete from storage
-			if err := h.storage.Delete(ctx, c.FilePath); err != nil {
-				h.logger.Error("delete storage key failed (skipping DB removal)", zap.String("file_path", c.FilePath), zap.Error(err))
+			if err := h.storage.Delete(ctx, c.GetFilePath()); err != nil {
+				h.logger.Error(
+					"delete storage key failed (skipping DB removal)",
+					zap.String("file_path", c.GetFilePath()),
+					zap.Error(err),
+				)
 				continue
 			}
 
 			// B) Delete row from fivenet_files
 			if _, err := tFiles.
 				DELETE().
-				WHERE(tFiles.ID.EQ(jet.Uint64(c.Id))).
+				WHERE(tFiles.ID.EQ(jet.Uint64(c.GetId()))).
 				ExecContext(ctx, tx); err != nil {
 				tx.Rollback()
-				return 0, fmt.Errorf("delete fivenet_files id=%d. %w", c.Id, err)
+				return 0, fmt.Errorf("delete fivenet_files id=%d. %w", c.GetId(), err)
 			}
-			h.logger.Debug("deleted file", zap.Uint64("file_id", c.Id), zap.String("file_path", c.FilePath))
+			h.logger.Debug(
+				"deleted file",
+				zap.Uint64("file_id", c.GetId()),
+				zap.String("file_path", c.GetFilePath()),
+			)
 		}
 
 		if err := tx.Commit(); err != nil {

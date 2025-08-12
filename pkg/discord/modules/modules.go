@@ -12,7 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
-	"github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
+	discordtypes "github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/broker"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
@@ -31,7 +31,7 @@ type NewModuleFunc func(*BaseModule, *broker.Broker[any]) (Module, error)
 
 type Module interface {
 	GetName() string
-	Plan(ctx context.Context) (*types.State, []discord.Embed, error)
+	Plan(ctx context.Context) (*discordtypes.State, []discord.Embed, error)
 }
 
 func GetModule(name string, base *BaseModule, events *broker.Broker[any]) (Module, error) {
@@ -60,7 +60,18 @@ type BaseModule struct {
 	settings atomic.Pointer[jobs.DiscordSyncSettings]
 }
 
-func NewBaseModule(ctx context.Context, logger *zap.Logger, db *sql.DB, discord *state.State, guild discord.Guild, job string, cfg *config.Discord, appCfg appconfig.IConfig, enricher *mstlystcdata.Enricher, settings *jobs.DiscordSyncSettings) *BaseModule {
+func NewBaseModule(
+	ctx context.Context,
+	logger *zap.Logger,
+	db *sql.DB,
+	discord *state.State,
+	guild discord.Guild,
+	job string,
+	cfg *config.Discord,
+	appCfg appconfig.IConfig,
+	enricher *mstlystcdata.Enricher,
+	settings *jobs.DiscordSyncSettings,
+) *BaseModule {
 	bm := &BaseModule{
 		ctx:      ctx,
 		logger:   logger,
@@ -79,17 +90,17 @@ func NewBaseModule(ctx context.Context, logger *zap.Logger, db *sql.DB, discord 
 	return bm
 }
 
+func (m *BaseModule) SetSettings(settings *jobs.DiscordSyncSettings) {
+	m.settings.Store(settings)
+}
+
 func (m *BaseModule) checkIfJobIgnored(job string) bool {
 	// Ignore certain jobs when syncing (e.g., "temporary" jobs), example:
 	// "ambulance" job Discord, and an user is currently in the ignored job, e.g., "army".
-	ignoredJobs := m.appCfg.Get().Discord.IgnoredJobs
+	ignoredJobs := m.appCfg.Get().Discord.GetIgnoredJobs()
 	if m.job != job && slices.Contains(ignoredJobs, job) {
 		return true
 	}
 
 	return false
-}
-
-func (m *BaseModule) SetSettings(settings *jobs.DiscordSyncSettings) {
-	m.settings.Store(settings)
 }

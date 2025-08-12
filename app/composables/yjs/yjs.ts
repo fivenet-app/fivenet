@@ -13,7 +13,7 @@ interface GrpcProviderOpts {
     targetId: number;
 
     /**
-     * Reconnect function – called with {attempt}. Return delay (ms).
+     * Reconnect function - called with {attempt}. Return delay (ms).
      * Default: exponential back-off 1 s → 32 s.
      */
     reconnectDelay?: (attempt: number) => number;

@@ -15,22 +15,31 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) SubscribeToCalendar(ctx context.Context, req *pbcalendar.SubscribeToCalendarRequest) (*pbcalendar.SubscribeToCalendarResponse, error) {
+func (s *Server) SubscribeToCalendar(
+	ctx context.Context,
+	req *pbcalendar.SubscribeToCalendarRequest,
+) (*pbcalendar.SubscribeToCalendarResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbcalendar.CalendarService_ServiceDesc.ServiceName,
 		Method:  "SubscribeToCalendar",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	req.Sub.UserId = userInfo.UserId
+	req.Sub.UserId = userInfo.GetUserId()
 
 	// Check if user has access to existing calendar
-	check, err := s.checkIfUserHasAccessToCalendar(ctx, req.Sub.CalendarId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_VIEW, true)
+	check, err := s.checkIfUserHasAccessToCalendar(
+		ctx,
+		req.GetSub().GetCalendarId(),
+		userInfo,
+		calendar.AccessLevel_ACCESS_LEVEL_VIEW,
+		true,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -38,11 +47,11 @@ func (s *Server) SubscribeToCalendar(ctx context.Context, req *pbcalendar.Subscr
 		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
 	}
 
-	if err := s.createOrDeleteSubscription(ctx, req.Sub.CalendarId, userInfo.UserId, !req.Delete, true, req.Sub.Muted); err != nil {
+	if err := s.createOrDeleteSubscription(ctx, req.GetSub().GetCalendarId(), userInfo.GetUserId(), !req.GetDelete(), true, req.GetSub().GetMuted()); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	sub, err := s.getCalendarSub(ctx, userInfo.UserId, req.Sub.CalendarId)
+	sub, err := s.getCalendarSub(ctx, userInfo.GetUserId(), req.GetSub().GetCalendarId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -54,7 +63,14 @@ func (s *Server) SubscribeToCalendar(ctx context.Context, req *pbcalendar.Subscr
 	}, nil
 }
 
-func (s *Server) createOrDeleteSubscription(ctx context.Context, calendarId uint64, userId int32, subscribe bool, confirmed bool, muted bool) error {
+func (s *Server) createOrDeleteSubscription(
+	ctx context.Context,
+	calendarId uint64,
+	userId int32,
+	subscribe bool,
+	confirmed bool,
+	muted bool,
+) error {
 	tCalendarSubs := table.FivenetCalendarSubs
 
 	if subscribe {
@@ -96,7 +112,11 @@ func (s *Server) createOrDeleteSubscription(ctx context.Context, calendarId uint
 	return nil
 }
 
-func (s *Server) getCalendarSub(ctx context.Context, userId int32, calendarId uint64) (*calendar.CalendarSub, error) {
+func (s *Server) getCalendarSub(
+	ctx context.Context,
+	userId int32,
+	calendarId uint64,
+) (*calendar.CalendarSub, error) {
 	stmt := tCalendarSubs.
 		SELECT(
 			tCalendarSubs.CalendarID,
@@ -118,7 +138,7 @@ func (s *Server) getCalendarSub(ctx context.Context, userId int32, calendarId ui
 		}
 	}
 
-	if dest.CalendarId == 0 || dest.UserId == 0 {
+	if dest.GetCalendarId() == 0 || dest.GetUserId() == 0 {
 		return nil, nil
 	}
 

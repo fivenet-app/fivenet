@@ -24,7 +24,11 @@ func cleanupPath(in string) string {
 	return in
 }
 
-func (s *Server) getPageByDomainAndPath(ctx context.Context, domainId uint64, path string) (*internet.Page, error) {
+func (s *Server) getPageByDomainAndPath(
+	ctx context.Context,
+	domainId uint64,
+	path string,
+) (*internet.Page, error) {
 	path = cleanupPath(path)
 
 	return s.getPageByCondition(ctx,
@@ -33,7 +37,10 @@ func (s *Server) getPageByDomainAndPath(ctx context.Context, domainId uint64, pa
 	)
 }
 
-func (s *Server) getPageByCondition(ctx context.Context, condition jet.BoolExpression) (*internet.Page, error) {
+func (s *Server) getPageByCondition(
+	ctx context.Context,
+	condition jet.BoolExpression,
+) (*internet.Page, error) {
 	stmt := tPage.
 		SELECT(
 			tPage.ID,
@@ -59,7 +66,7 @@ func (s *Server) getPageByCondition(ctx context.Context, condition jet.BoolExpre
 		}
 	}
 
-	if dest.Id == 0 || dest.DomainId == 0 {
+	if dest.GetId() == 0 || dest.GetDomainId() == 0 {
 		return nil, nil
 	}
 

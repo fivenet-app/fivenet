@@ -7,37 +7,41 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/version"
 )
 
-func BuildClientConfig(cfg *config.Config, providers []*ProviderConfig, appCfg *appconfig.Cfg) *ClientConfig {
+func BuildClientConfig(
+	cfg *config.Config,
+	providers []*ProviderConfig,
+	appCfg *appconfig.Cfg,
+) *ClientConfig {
 	clientCfg := &ClientConfig{
 		Version: version.Version,
 
 		DefaultLocale: appCfg.DefaultLocale,
 
 		Login: &LoginConfig{
-			SignupEnabled: appCfg.Auth.SignupEnabled,
-			LastCharLock:  appCfg.Auth.LastCharLock,
+			SignupEnabled: appCfg.Auth.GetSignupEnabled(),
+			LastCharLock:  appCfg.Auth.GetLastCharLock(),
 			Providers:     providers,
 		},
 		Discord: &Discord{
-			BotEnabled: appCfg.Discord.BotId != nil && *appCfg.Discord.BotId != "",
+			BotEnabled: appCfg.Discord.BotId != nil && appCfg.Discord.GetBotId() != "",
 		},
 		Website: &Website{
 			Links: &Links{
-				Imprint:       appCfg.Website.Links.Imprint,
-				PrivacyPolicy: appCfg.Website.Links.PrivacyPolicy,
+				Imprint:       appCfg.Website.GetLinks().Imprint,
+				PrivacyPolicy: appCfg.Website.GetLinks().PrivacyPolicy,
 			},
-			StatsPage: appCfg.Website.StatsPage,
+			StatsPage: appCfg.Website.GetStatsPage(),
 		},
 		FeatureGates: &FeatureGates{
 			ImageProxy: cfg.ImageProxy.Enabled,
 		},
 		Game: &Game{
-			UnemployedJobName: appCfg.JobInfo.UnemployedJob.Name,
+			UnemployedJobName: appCfg.JobInfo.GetUnemployedJob().GetName(),
 			StartJobGrade:     cfg.Game.StartJobGrade,
 		},
 		System: &System{
-			BannerMessageEnabled: appCfg.System.BannerMessageEnabled,
-			BannerMessage:        appCfg.System.BannerMessage,
+			BannerMessageEnabled: appCfg.System.GetBannerMessageEnabled(),
+			BannerMessage:        appCfg.System.GetBannerMessage(),
 			Otlp: &OTLPFrontend{
 				Enabled: cfg.OTLP.Enabled,
 				Url:     cfg.OTLP.Frontend.URL,
@@ -46,14 +50,14 @@ func BuildClientConfig(cfg *config.Config, providers []*ProviderConfig, appCfg *
 		},
 	}
 
-	if appCfg.System.BannerMessage != nil {
+	if appCfg.System.GetBannerMessage() != nil {
 		clientCfg.System.BannerMessage = &settings.BannerMessage{
-			Id:        appCfg.System.BannerMessage.Id,
-			Title:     appCfg.System.BannerMessage.Title,
-			Icon:      appCfg.System.BannerMessage.Icon,
-			Color:     appCfg.System.BannerMessage.Color,
-			CreatedAt: appCfg.System.BannerMessage.CreatedAt,
-			ExpiresAt: appCfg.System.BannerMessage.ExpiresAt,
+			Id:        appCfg.System.GetBannerMessage().GetId(),
+			Title:     appCfg.System.GetBannerMessage().GetTitle(),
+			Icon:      appCfg.System.GetBannerMessage().Icon,
+			Color:     appCfg.System.GetBannerMessage().Color,
+			CreatedAt: appCfg.System.GetBannerMessage().GetCreatedAt(),
+			ExpiresAt: appCfg.System.GetBannerMessage().GetExpiresAt(),
 		}
 	}
 

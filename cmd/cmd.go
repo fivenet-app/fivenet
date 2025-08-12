@@ -4,33 +4,7 @@ import (
 	"time"
 
 	"github.com/alecthomas/kong"
-	"github.com/microcosm-cc/bluemonday"
-	"go.uber.org/fx"
-	"go.uber.org/fx/fxevent"
-	"go.uber.org/zap"
-
-	// GRPC Services
-
-	pbauth "github.com/fivenet-app/fivenet/v2025/services/auth"
-	pbcalendar "github.com/fivenet-app/fivenet/v2025/services/calendar"
-	pbcentrum "github.com/fivenet-app/fivenet/v2025/services/centrum"
-	pbcitizens "github.com/fivenet-app/fivenet/v2025/services/citizens"
-	pbcompletor "github.com/fivenet-app/fivenet/v2025/services/completor"
-	pbdocuments "github.com/fivenet-app/fivenet/v2025/services/documents"
-	pbfilestore "github.com/fivenet-app/fivenet/v2025/services/filestore"
-	pbinternet "github.com/fivenet-app/fivenet/v2025/services/internet"
-	pbjobs "github.com/fivenet-app/fivenet/v2025/services/jobs"
-	pblivemap "github.com/fivenet-app/fivenet/v2025/services/livemap"
-	pbmailer "github.com/fivenet-app/fivenet/v2025/services/mailer"
-	pbnotifications "github.com/fivenet-app/fivenet/v2025/services/notifications"
-	pbqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications"
-	pbsettings "github.com/fivenet-app/fivenet/v2025/services/settings"
-	pbstats "github.com/fivenet-app/fivenet/v2025/services/stats"
-	pbsync "github.com/fivenet-app/fivenet/v2025/services/sync"
-	pbvehicles "github.com/fivenet-app/fivenet/v2025/services/vehicles"
-	pbwiki "github.com/fivenet-app/fivenet/v2025/services/wiki"
-
-	// Modules
+	// fx Modules imports.
 	"github.com/fivenet-app/fivenet/v2025/i18n"
 	"github.com/fivenet-app/fivenet/v2025/internal/modules"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
@@ -67,6 +41,9 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/updatecheck"
 	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/query"
+	pbauth "github.com/fivenet-app/fivenet/v2025/services/auth"
+	pbcalendar "github.com/fivenet-app/fivenet/v2025/services/calendar"
+	pbcentrum "github.com/fivenet-app/fivenet/v2025/services/centrum"
 	centrumbot "github.com/fivenet-app/fivenet/v2025/services/centrum/bot"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/converter"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatchers"
@@ -75,6 +52,25 @@ import (
 	centrumhousekeeper "github.com/fivenet-app/fivenet/v2025/services/centrum/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/settings"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/units"
+	pbcitizens "github.com/fivenet-app/fivenet/v2025/services/citizens"
+	pbcompletor "github.com/fivenet-app/fivenet/v2025/services/completor"
+	pbdocuments "github.com/fivenet-app/fivenet/v2025/services/documents"
+	pbfilestore "github.com/fivenet-app/fivenet/v2025/services/filestore"
+	pbinternet "github.com/fivenet-app/fivenet/v2025/services/internet"
+	pbjobs "github.com/fivenet-app/fivenet/v2025/services/jobs"
+	pblivemap "github.com/fivenet-app/fivenet/v2025/services/livemap"
+	pbmailer "github.com/fivenet-app/fivenet/v2025/services/mailer"
+	pbnotifications "github.com/fivenet-app/fivenet/v2025/services/notifications"
+	pbqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications"
+	pbsettings "github.com/fivenet-app/fivenet/v2025/services/settings"
+	pbstats "github.com/fivenet-app/fivenet/v2025/services/stats"
+	pbsync "github.com/fivenet-app/fivenet/v2025/services/sync"
+	pbvehicles "github.com/fivenet-app/fivenet/v2025/services/vehicles"
+	pbwiki "github.com/fivenet-app/fivenet/v2025/services/wiki"
+	"github.com/microcosm-cc/bluemonday"
+	"go.uber.org/fx"
+	"go.uber.org/fx/fxevent"
+	"go.uber.org/zap"
 )
 
 type Context struct{}
@@ -82,16 +78,16 @@ type Context struct{}
 var Cli struct {
 	Version kong.VersionFlag `help:"Print version information and quit"`
 
-	Config             string        `help:"Config file path" env:"FIVENET_CONFIG_FILE"`
-	StartTimeout       time.Duration `help:"App start timeout duration" default:"180s" env:"FIVENET_START_TIMEOUT"`
-	SkipMigrations     *bool         `help:"Disable the automatic DB migrations on startup." env:"FIVENET_SKIP_DB_MIGRATIONS"`
-	IgnoreRequirements *bool         `help:"Ignore database and Nats requirements on startup." env:"FIVENET_IGNORE_REQUIREMENTS"`
+	Config             string        `env:"FIVENET_CONFIG_FILE"         help:"Config file path"`
+	StartTimeout       time.Duration `default:"180s"                    env:"FIVENET_START_TIMEOUT"                              help:"App start timeout duration"`
+	SkipMigrations     *bool         `env:"FIVENET_SKIP_DB_MIGRATIONS"  help:"Disable the automatic DB migrations on startup."`
+	IgnoreRequirements *bool         `env:"FIVENET_IGNORE_REQUIREMENTS" help:"Ignore database and Nats requirements on startup."`
 
 	Server   ServerCmd   `cmd:"" help:"Run FiveNet server."`
 	Worker   WorkerCmd   `cmd:"" help:"Run FiveNet worker."`
 	Discord  DiscordCmd  `cmd:"" help:"Run FiveNet Discord bot."`
-	DBSync   DBSyncCmd   `cmd:"" name:"dbsync" help:"Run FiveNet database sync."`
-	AllInOne AllInOneCmd `cmd:"" name:"allinone" alias:"aio" help:"Run FiveNet server and worker in one."`
+	DBSync   DBSyncCmd   `cmd:"" help:"Run FiveNet database sync." name:"dbsync"`
+	AllInOne AllInOneCmd `cmd:"" alias:"aio"                       help:"Run FiveNet server and worker in one." name:"allinone"`
 
 	Tools      ToolsCmd      `cmd:"" help:"Run FiveNet tools/helpers."`
 	Migrations MigrationsCmd `cmd:"" help:"Run FiveNet migrations."`

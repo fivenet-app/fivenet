@@ -18,14 +18,17 @@ import (
 
 var tDCategory = table.FivenetDocumentsCategories.AS("category")
 
-func (s *Server) ListCategories(ctx context.Context, req *pbdocuments.ListCategoriesRequest) (*pbdocuments.ListCategoriesResponse, error) {
+func (s *Server) ListCategories(
+	ctx context.Context,
+	req *pbdocuments.ListCategoriesRequest,
+) (*pbdocuments.ListCategoriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	condition := tDCategory.Job.EQ(jet.String(userInfo.Job))
-	if !userInfo.Superuser {
+	condition := tDCategory.Job.EQ(jet.String(userInfo.GetJob()))
+	if !userInfo.GetSuperuser() {
 		condition = jet.AND(
 			tDCategory.DeletedAt.IS_NULL(),
-			tDCategory.Job.EQ(jet.String(userInfo.Job)),
+			tDCategory.Job.EQ(jet.String(userInfo.GetJob())),
 		)
 	}
 
@@ -76,7 +79,7 @@ func (s *Server) getCategory(ctx context.Context, id uint64) (*documents.Categor
 			tDCategory,
 		).
 		WHERE(jet.AND(
-			tDCategory.Job.EQ(jet.String(userInfo.Job)),
+			tDCategory.Job.EQ(jet.String(userInfo.GetJob())),
 			tDCategory.ID.EQ(jet.Uint64(id)),
 		)).
 		LIMIT(1)
@@ -86,28 +89,31 @@ func (s *Server) getCategory(ctx context.Context, id uint64) (*documents.Categor
 		return nil, err
 	}
 
-	if dest.Id == 0 {
+	if dest.GetId() == 0 {
 		return nil, nil
 	}
 
 	return &dest, nil
 }
 
-func (s *Server) CreateOrUpdateCategory(ctx context.Context, req *pbdocuments.CreateOrUpdateCategoryRequest) (*pbdocuments.CreateOrUpdateCategoryResponse, error) {
+func (s *Server) CreateOrUpdateCategory(
+	ctx context.Context,
+	req *pbdocuments.CreateOrUpdateCategoryRequest,
+) (*pbdocuments.CreateOrUpdateCategoryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
 		Method:  "CreateOrUpdateCategory",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
 	tDCategory := table.FivenetDocumentsCategories
 
-	if req.Category.Id == 0 {
+	if req.GetCategory().GetId() == 0 {
 		stmt := tDCategory.
 			INSERT(
 				tDCategory.Name,
@@ -117,11 +123,11 @@ func (s *Server) CreateOrUpdateCategory(ctx context.Context, req *pbdocuments.Cr
 				tDCategory.Icon,
 			).
 			VALUES(
-				req.Category.Name,
-				req.Category.Description,
-				userInfo.Job,
-				req.Category.Color,
-				req.Category.Icon,
+				req.GetCategory().GetName(),
+				req.GetCategory().GetDescription(),
+				userInfo.GetJob(),
+				req.GetCategory().GetColor(),
+				req.GetCategory().GetIcon(),
 			)
 
 		res, err := stmt.ExecContext(ctx, s.db)
@@ -147,15 +153,15 @@ func (s *Server) CreateOrUpdateCategory(ctx context.Context, req *pbdocuments.Cr
 				tDCategory.Icon,
 			).
 			SET(
-				req.Category.Name,
-				req.Category.Description,
-				userInfo.Job,
-				req.Category.Color,
-				req.Category.Icon,
+				req.GetCategory().GetName(),
+				req.GetCategory().GetDescription(),
+				userInfo.GetJob(),
+				req.GetCategory().GetColor(),
+				req.GetCategory().GetIcon(),
 			).
 			WHERE(jet.AND(
-				tDCategory.ID.EQ(jet.Uint64(req.Category.Id)),
-				tDCategory.Job.EQ(jet.String(userInfo.Job)),
+				tDCategory.ID.EQ(jet.Uint64(req.GetCategory().GetId())),
+				tDCategory.Job.EQ(jet.String(userInfo.GetJob())),
 			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -165,7 +171,7 @@ func (s *Server) CreateOrUpdateCategory(ctx context.Context, req *pbdocuments.Cr
 		auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 	}
 
-	category, err := s.getCategory(ctx, req.Category.Id)
+	category, err := s.getCategory(ctx, req.GetCategory().GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -175,27 +181,30 @@ func (s *Server) CreateOrUpdateCategory(ctx context.Context, req *pbdocuments.Cr
 	}, nil
 }
 
-func (s *Server) DeleteCategory(ctx context.Context, req *pbdocuments.DeleteCategoryRequest) (*pbdocuments.DeleteCategoryResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.category_id", req.Id})
+func (s *Server) DeleteCategory(
+	ctx context.Context,
+	req *pbdocuments.DeleteCategoryRequest,
+) (*pbdocuments.DeleteCategoryResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.category_id", req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
 		Method:  "DeleteCategory",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	category, err := s.getCategory(ctx, req.Id)
+	category, err := s.getCategory(ctx, req.GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	deletedAtTime := jet.CURRENT_TIMESTAMP()
-	if category.DeletedAt != nil && userInfo.Superuser {
+	if category.GetDeletedAt() != nil && userInfo.GetSuperuser() {
 		deletedAtTime = jet.TimestampExp(jet.NULL)
 	}
 
@@ -208,8 +217,8 @@ func (s *Server) DeleteCategory(ctx context.Context, req *pbdocuments.DeleteCate
 			tDCategory.DeletedAt.SET(deletedAtTime),
 		).
 		WHERE(jet.AND(
-			tDCategory.Job.EQ(jet.String(userInfo.Job)),
-			tDCategory.ID.EQ(jet.Uint64(req.Id)),
+			tDCategory.Job.EQ(jet.String(userInfo.GetJob())),
+			tDCategory.ID.EQ(jet.Uint64(req.GetId())),
 		)).
 		LIMIT(1)
 

@@ -8,19 +8,29 @@ import (
 )
 
 type GroupedAccess interface {
-	CanUserAccessTarget(ctx context.Context, targetId uint64, userInfo *userinfo.UserInfo, access int32) (bool, error)
+	CanUserAccessTarget(
+		ctx context.Context,
+		targetId uint64,
+		userInfo *userinfo.UserInfo,
+		access int32,
+	) (bool, error)
 }
 
 type GroupedAccessAdapter struct {
 	CanUserAccessTargetFn func(ctx context.Context, targetId uint64, userInfo *userinfo.UserInfo, access int32) (bool, error)
 }
 
-func (a *GroupedAccessAdapter) CanUserAccessTarget(ctx context.Context, targetId uint64, userInfo *userinfo.UserInfo, access int32) (bool, error) {
+func (a *GroupedAccessAdapter) CanUserAccessTarget(
+	ctx context.Context,
+	targetId uint64,
+	userInfo *userinfo.UserInfo,
+	access int32,
+) (bool, error) {
 	return a.CanUserAccessTargetFn(ctx, targetId, userInfo, access)
 }
 
 var (
-	groupedAccessesMu = &sync.RWMutex{}
+	groupedAccessesMu = sync.RWMutex{}
 	groupedAccesses   = map[string]GroupedAccess{}
 )
 

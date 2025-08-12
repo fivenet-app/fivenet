@@ -36,7 +36,7 @@ var Module = fx.Module("centrum_bot_manager",
 
 type Manager struct {
 	logger *zap.Logger
-	mutex  *sync.RWMutex
+	mu     *sync.RWMutex
 	wg     sync.WaitGroup
 
 	tracer trace.Tracer
@@ -72,7 +72,7 @@ func NewManager(p Params) *Manager {
 
 	b := &Manager{
 		logger: p.Logger.Named("centrum.bot.manager"),
-		mutex:  &sync.RWMutex{},
+		mu:     &sync.RWMutex{},
 		wg:     sync.WaitGroup{},
 
 		tracer: p.TP.Tracer("centrum.cache"),
@@ -110,6 +110,7 @@ func NewManager(p Params) *Manager {
 
 func (s *Manager) Run(ctx context.Context) {
 	s.logger.Info("started centrum bot manager")
+
 	for {
 		select {
 		case <-ctx.Done():
@@ -120,17 +121,15 @@ func (s *Manager) Run(ctx context.Context) {
 				ctx, span := s.tracer.Start(ctx, "centrum.bots-check")
 				defer span.End()
 
-				if err := s.checkIfBotsAreNeeded(ctx); err != nil {
-					s.logger.Error("failed to check if bots need to be (de-)activated", zap.Error(err))
-				}
+				s.checkIfBotsAreNeeded(ctx)
 			}()
 		}
 	}
 }
 
 func (b *Manager) startBot(ctx context.Context, job string) error {
-	b.mutex.Lock()
-	defer b.mutex.Unlock()
+	b.mu.Lock()
+	defer b.mu.Unlock()
 
 	// Already a bot active
 	if _, ok := b.bots.Load(job); ok {
@@ -153,8 +152,8 @@ func (b *Manager) startBot(ctx context.Context, job string) error {
 }
 
 func (b *Manager) stopBot(job string) error {
-	b.mutex.Lock()
-	defer b.mutex.Unlock()
+	b.mu.Lock()
+	defer b.mu.Unlock()
 
 	bot, ok := b.bots.Load(job)
 	if !ok {
@@ -172,20 +171,24 @@ func (b *Manager) stopBot(job string) error {
 	return nil
 }
 
-func (s *Manager) checkIfBotsAreNeeded(ctx context.Context) error {
+func (s *Manager) checkIfBotsAreNeeded(ctx context.Context) {
 	for _, settings := range s.settings.List(ctx) {
-		if !s.helpers.CheckIfBotNeeded(ctx, settings.Job) {
-			if err := s.stopBot(settings.Job); err != nil {
-				s.logger.Error("failed to stop dispatch center bot for job", zap.String("job", settings.Job))
+		if !s.helpers.CheckIfBotNeeded(ctx, settings.GetJob()) {
+			if err := s.stopBot(settings.GetJob()); err != nil {
+				s.logger.Error(
+					"failed to stop dispatch center bot for job",
+					zap.String("job", settings.GetJob()),
+				)
 			}
 
 			continue
 		}
 
-		if err := s.startBot(ctx, settings.Job); err != nil {
-			s.logger.Error("failed to start dispatch center bot for job", zap.String("job", settings.Job))
+		if err := s.startBot(ctx, settings.GetJob()); err != nil {
+			s.logger.Error(
+				"failed to start dispatch center bot for job",
+				zap.String("job", settings.GetJob()),
+			)
 		}
 	}
-
-	return nil
 }

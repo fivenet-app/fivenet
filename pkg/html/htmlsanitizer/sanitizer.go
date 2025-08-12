@@ -28,9 +28,13 @@ var (
 
 var (
 	// colorRegex matches valid color values for style attributes.
-	colorRegex = regexp.MustCompile(`(?mi)^(#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})|rgb\(\d{1,3},[ ]*\d{1,3},[ ]*\d{1,3}\))$`)
+	colorRegex = regexp.MustCompile(
+		`(?mi)^(#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})|rgb\(\d{1,3},[ ]*\d{1,3},[ ]*\d{1,3}\))$`,
+	)
 	// fontFamilyRegex matches valid font family names for style attributes.
-	fontFamilyRegex = regexp.MustCompile(`(?mi)^(arial,\shelvetica,\ssans-serif|times new roman,\stimes,\sserif|Comic Sans MS,\sComic Sans|serif|monospace|DM Sans)$`)
+	fontFamilyRegex = regexp.MustCompile(
+		`(?mi)^(arial,\shelvetica,\ssans-serif|times new roman,\stimes,\sserif|Comic Sans MS,\sComic Sans|serif|monospace|DM Sans)$`,
+	)
 
 	// prosemirrorClassRegex matches ProseMirror class names for editor compatibility.
 	prosemirrorClassRegex = regexp.MustCompile(`(?m)^ProseMirror-[A-Za-z]+$`)
@@ -86,10 +90,12 @@ func setupSanitizer() {
 
 	// Allow the 'text-decoration' property to be set to 'underline', 'line-through' or 'none'
 	// on 'span' and 'p' elements only
-	sanitizer.AllowStyles("text-decoration").MatchingEnum("underline", "line-through", "none").OnElements("span", "p")
+	sanitizer.AllowStyles("text-decoration").
+		MatchingEnum("underline", "line-through", "none").
+		OnElements("span", "p")
 
 	// Links
-	// Custom policy based on the origional "AllowStandardURLs" helper func
+	// Custom policy based on the original "AllowStandardURLs" helper func
 	// URLs must be parseable by net/url.Parse()
 	sanitizer.RequireParseableURLs(true)
 
@@ -127,36 +133,39 @@ func setupSanitizer() {
 func New(cfg *config.Config) (*bluemonday.Policy, error) {
 	sanitizerOnce.Do(setupSanitizer)
 
-	// Use Image Proxy if enabled
-	if cfg.ImageProxy.Enabled {
-		proxyUrl, err := url.Parse(imageproxy.Path)
-		if err != nil {
-			return nil, err
+	if !cfg.ImageProxy.Enabled {
+		return sanitizer, nil
+	}
+
+	// Use Image Proxy if enabled using the rewrite src function
+	proxyUrl, err := url.Parse(imageproxy.Path)
+	if err != nil {
+		return nil, err
+	}
+
+	sanitizer.RewriteSrc(func(u *url.URL) {
+		// Rewrite URLs to image proxy to proxy all requests through a single URL.
+		imgUrl, _ := url.PathUnescape(u.String())
+
+		if u.Scheme == "data" {
+			return
 		}
 
-		sanitizer.RewriteSrc(func(u *url.URL) {
-			// Rewrite URLs to image proxy to proxy all requests through a single URL.
-			imgUrl, _ := url.PathUnescape(u.String())
+		if u.Scheme != proxyUrl.Scheme {
+			u.Scheme = proxyUrl.Scheme
+		}
+		if u.Host != proxyUrl.Host {
+			u.Host = proxyUrl.Host
+		}
+		if !strings.HasPrefix(u.Path, proxyUrl.Path) &&
+			!strings.HasPrefix(u.Path, "/api/filestore/") {
+			// Base64 encode the image URL to ensure it is safe for use in the proxy path
+			imgUrl = base64.RawURLEncoding.EncodeToString([]byte(imgUrl))
 
-			if u.Scheme == "data" {
-				return
-			}
-
-			if u.Scheme != proxyUrl.Scheme {
-				u.Scheme = proxyUrl.Scheme
-			}
-			if u.Host != proxyUrl.Host {
-				u.Host = proxyUrl.Host
-			}
-			if !strings.HasPrefix(u.Path, proxyUrl.Path) && !strings.HasPrefix(u.Path, "/api/filestore/") {
-				// Base64 encode the image URL to ensure it is safe for use in the proxy path
-				imgUrl = base64.RawURLEncoding.EncodeToString([]byte(imgUrl))
-
-				u.Path = proxyUrl.Path + imgUrl
-			}
-			u.RawQuery = ""
-		})
-	}
+			u.Path = proxyUrl.Path + imgUrl
+		}
+		u.RawQuery = ""
+	})
 
 	return sanitizer, nil
 }

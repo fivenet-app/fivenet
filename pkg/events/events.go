@@ -17,7 +17,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// Default `defaultAsyncPubAckInflight` is `4000` (`nats.go`)
+// Default `defaultAsyncPubAckInflight` is `4000` (`nats.go`).
 const DefaultDefaultAsyncPubAckInflight = 256
 
 var Module = fx.Module("events",
@@ -76,7 +76,10 @@ func New(p Params) (res Result, err error) {
 				logger.Error("nats: connection closed", zap.Error(err))
 
 				if err := p.Shutdowner.Shutdown(fx.ExitCode(1)); err != nil {
-					logger.Fatal("failed to shutdown app after nats connection close", zap.Error(err))
+					logger.Fatal(
+						"failed to shutdown app after nats connection close",
+						zap.Error(err),
+					)
 				}
 			}
 		}),
@@ -102,7 +105,10 @@ func New(p Params) (res Result, err error) {
 	res.NC = nc
 
 	// Create JetStream context
-	js, err := jetstream.New(nc, jetstream.WithPublishAsyncMaxPending(DefaultDefaultAsyncPubAckInflight))
+	js, err := jetstream.New(
+		nc,
+		jetstream.WithPublishAsyncMaxPending(DefaultDefaultAsyncPubAckInflight),
+	)
 	if err != nil {
 		return res, err
 	}

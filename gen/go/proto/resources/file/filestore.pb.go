@@ -109,7 +109,7 @@ type UploadMeta struct {
 	ParentId     uint64                 `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
 	Namespace    string                 `protobuf:"bytes,2,opt,name=namespace,proto3" json:"namespace,omitempty"` // "documents", "wiki", …
 	OriginalName string                 `protobuf:"bytes,3,opt,name=original_name,json=originalName,proto3" json:"original_name,omitempty"`
-	ContentType  string                 `protobuf:"bytes,4,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"` // optional – server re-validates
+	ContentType  string                 `protobuf:"bytes,4,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"` // optional - server re-validates
 	Size         int64                  `protobuf:"varint,5,opt,name=size,proto3" json:"size,omitempty"`                                 // Size in bytes
 	// @sanitize
 	Reason        string `protobuf:"bytes,6,opt,name=reason,proto3" json:"reason,omitempty"`

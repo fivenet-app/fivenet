@@ -53,12 +53,12 @@ func (p *Perms) handleMessageFunc(ctx context.Context) nats.MsgHandler {
 				return
 			}
 
-			if err := p.loadRoles(ctx, event.RoleId); err != nil {
+			if err := p.loadRoles(ctx, event.GetRoleId()); err != nil {
 				p.logger.Error("failed to load role for role data load", zap.Error(err))
 				return
 			}
 
-			if err := p.loadRolePermissions(ctx, event.RoleId); err != nil {
+			if err := p.loadRolePermissions(ctx, event.GetRoleId()); err != nil {
 				p.logger.Error("failed to load updated role permissions", zap.Error(err))
 				return
 			}
@@ -70,12 +70,12 @@ func (p *Perms) handleMessageFunc(ctx context.Context) nats.MsgHandler {
 				return
 			}
 
-			if err := p.loadRoles(ctx, event.RoleId); err != nil {
+			if err := p.loadRoles(ctx, event.GetRoleId()); err != nil {
 				p.logger.Error("failed to load role for role data load", zap.Error(err))
 				return
 			}
 
-			if err := p.loadRoleAttributes(ctx, event.RoleId); err != nil {
+			if err := p.loadRoleAttributes(ctx, event.GetRoleId()); err != nil {
 				p.logger.Error("failed to load updated role permissions", zap.Error(err))
 				return
 			}
@@ -88,7 +88,7 @@ func (p *Perms) handleMessageFunc(ctx context.Context) nats.MsgHandler {
 			}
 
 			// Remove role from local state
-			p.deleteRole(event.RoleId, event.Job, event.Grade)
+			p.deleteRole(event.GetRoleId(), event.GetJob(), event.GetGrade())
 
 		case JobLimitsUpdatedSubject:
 			event := &permissions.JobLimitsUpdatedEvent{}
@@ -97,7 +97,7 @@ func (p *Perms) handleMessageFunc(ctx context.Context) nats.MsgHandler {
 				return
 			}
 
-			if err := p.loadJobRoles(ctx, event.Job); err != nil {
+			if err := p.loadJobRoles(ctx, event.GetJob()); err != nil {
 				p.logger.Error("failed to load job role permissions and attributes", zap.Error(err))
 				return
 			}
@@ -109,13 +109,17 @@ func (p *Perms) handleMessageFunc(ctx context.Context) nats.MsgHandler {
 }
 
 func (p *Perms) publishMessage(_ context.Context, subj events.Type, msg proto.Message) error {
-	out, err := protoutils.MarshalToPJSON(msg)
+	out, err := protoutils.MarshalToJSON(msg)
 	if err != nil {
 		return fmt.Errorf("failed to marshal data. %w", err)
 	}
 
 	if err := p.nc.Publish(string(BaseSubject)+"."+string(subj), out); err != nil {
-		return fmt.Errorf("failed to publish message to subject %s. %w", string(BaseSubject)+"."+string(subj), err)
+		return fmt.Errorf(
+			"failed to publish message to subject %s. %w",
+			string(BaseSubject)+"."+string(subj),
+			err,
+		)
 	}
 
 	return nil

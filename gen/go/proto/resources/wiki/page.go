@@ -9,5 +9,5 @@ func (x *PageShort) SetJobLabel(label string) {
 }
 
 func (x *PageAccess) IsEmpty() bool {
-	return len(x.Jobs) == 0 && len(x.Users) == 0
+	return len(x.GetJobs()) == 0 && len(x.GetUsers()) == 0
 }

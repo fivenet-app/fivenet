@@ -69,7 +69,8 @@ func NewServer(p Params) (Result, error) {
 
 	// Prometheus Metrics endpoint
 	e.GET("/metrics", gin.WrapH(promhttp.InstrumentMetricHandler(
-		prometheus.DefaultRegisterer, promhttp.HandlerFor(prometheus.DefaultGatherer, promhttp.HandlerOpts{
+		prometheus.DefaultRegisterer,
+		promhttp.HandlerFor(prometheus.DefaultGatherer, promhttp.HandlerOpts{
 			// Opt into OpenMetrics e.g. to support exemplars
 			EnableOpenMetrics: true,
 		}),
@@ -85,8 +86,9 @@ func NewServer(p Params) (Result, error) {
 
 	// Create HTTP Server for graceful shutdown handling
 	srv := &http.Server{
-		Addr:    p.Config.HTTP.AdminListen,
-		Handler: e,
+		ReadHeaderTimeout: 5 * time.Second,
+		Addr:              p.Config.HTTP.AdminListen,
+		Handler:           e,
 	}
 
 	// Register lifecycle hooks for server start and stop

@@ -78,7 +78,7 @@ func (s *vehiclesSync) Sync(ctx context.Context) error {
 		s.state.SyncedUp = true
 	}
 
-	lastPlate := vehicles[len(vehicles)-1].Plate
+	lastPlate := vehicles[len(vehicles)-1].GetPlate()
 	s.state.Set(uint64(limit)+offset, &lastPlate)
 
 	return nil

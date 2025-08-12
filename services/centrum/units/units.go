@@ -107,8 +107,10 @@ func New(p Params) *UnitDB {
 						TargetID: table.FivenetCentrumUnitsAccess.AS("unit_job_access").TargetID,
 						Access:   table.FivenetCentrumUnitsAccess.AS("unit_job_access").Access,
 					},
-					Job:          table.FivenetCentrumUnitsAccess.AS("unit_job_access").Job,
-					MinimumGrade: table.FivenetCentrumUnitsAccess.AS("unit_job_access").MinimumGrade,
+					Job: table.FivenetCentrumUnitsAccess.AS("unit_job_access").Job,
+					MinimumGrade: table.FivenetCentrumUnitsAccess.AS(
+						"unit_job_access",
+					).MinimumGrade,
 				},
 			),
 			nil,
@@ -125,18 +127,30 @@ func New(p Params) *UnitDB {
 				table.FivenetCentrumUnitsAccess.AS("unit_qualification_access"),
 				&access.QualificationAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetCentrumUnitsAccess.AS("unit_qualification_access").ID,
-						TargetID: table.FivenetCentrumUnitsAccess.AS("unit_qualification_access").TargetID,
-						Access:   table.FivenetCentrumUnitsAccess.AS("unit_qualification_access").Access,
+						ID: table.FivenetCentrumUnitsAccess.AS(
+							"unit_qualification_access",
+						).ID,
+						TargetID: table.FivenetCentrumUnitsAccess.AS(
+							"unit_qualification_access",
+						).TargetID,
+						Access: table.FivenetCentrumUnitsAccess.AS(
+							"unit_qualification_access",
+						).Access,
 					},
-					QualificationId: table.FivenetCentrumUnitsAccess.AS("unit_qualification_access").QualificationID,
+					QualificationId: table.FivenetCentrumUnitsAccess.AS(
+						"unit_qualification_access",
+					).QualificationID,
 				},
 			),
 		),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		storeLogger := logger.WithOptions(zap.IncreaseLevel(p.Cfg.LogLevelOverrides.Get(config.LoggingComponentKVStore, p.Cfg.LogLevel)))
+		storeLogger := logger.WithOptions(
+			zap.IncreaseLevel(
+				p.Cfg.LogLevelOverrides.Get(config.LoggingComponentKVStore, p.Cfg.LogLevel),
+			),
+		)
 
 		kvPing, err := d.js.CreateOrUpdateKeyValue(ctxStartup, jetstream.KeyValueConfig{
 			Bucket:         "unit_ping",
@@ -151,7 +165,11 @@ func New(p Params) *UnitDB {
 		}
 		d.KVPing = kvPing
 
-		jobSt, err := store.New[common.IDMapping, *common.IDMapping](ctxCancel, storeLogger, p.JS, "centrum_units",
+		jobSt, err := store.New[common.IDMapping, *common.IDMapping](
+			ctxCancel,
+			storeLogger,
+			p.JS,
+			"centrum_units",
 			store.WithKVPrefix[common.IDMapping, *common.IDMapping]("job"),
 			store.WithLocks[common.IDMapping, *common.IDMapping](nil),
 		)
@@ -164,37 +182,57 @@ func New(p Params) *UnitDB {
 		}
 		d.jobMapping = jobSt
 
-		st, err := store.New[centrum.Unit, *centrum.Unit](ctxCancel, storeLogger, p.JS, "centrum_units",
+		st, err := store.New[centrum.Unit, *centrum.Unit](
+			ctxCancel,
+			storeLogger,
+			p.JS,
+			"centrum_units",
 			store.WithKVPrefix[centrum.Unit, *centrum.Unit]("id"),
-			store.WithOnUpdateFn[centrum.Unit, *centrum.Unit](func(ctx context.Context, _ *centrum.Unit, unit *centrum.Unit) (*centrum.Unit, error) {
-				if unit == nil {
-					return nil, nil
-				}
+			store.WithOnUpdateFn[centrum.Unit, *centrum.Unit](
+				func(ctx context.Context, _ *centrum.Unit, unit *centrum.Unit) (*centrum.Unit, error) {
+					if unit == nil {
+						return nil, nil
+					}
 
-				if err := jobSt.Put(ctx, centrumutils.JobIdKey(unit.Job, unit.Id), &common.IDMapping{
-					Id: unit.Id,
-				}); err != nil {
-					return nil, fmt.Errorf("failed to update job %s mapping for unit %d. %w", unit.Job, unit.Id, err)
-				}
+					if err := jobSt.Put(ctx, centrumutils.JobIdKey(unit.GetJob(), unit.GetId()), &common.IDMapping{
+						Id: unit.GetId(),
+					}); err != nil {
+						return nil, fmt.Errorf(
+							"failed to update job %s mapping for unit %d. %w",
+							unit.GetJob(),
+							unit.GetId(),
+							err,
+						)
+					}
 
-				// Reset unit ping timer
-				if err := d.UpsertWithTTL(ctx, d.KVPing, fmt.Sprintf("ping.%d", unit.Id), PingTTL); err != nil {
-					return nil, fmt.Errorf("failed to upsert ping unit timer. %w", err)
-				}
+					// Reset unit ping timer
+					if err := d.UpsertWithTTL(ctx, d.KVPing, fmt.Sprintf("ping.%d", unit.GetId()), PingTTL); err != nil {
+						return nil, fmt.Errorf("failed to upsert ping unit timer. %w", err)
+					}
 
-				return unit, nil
-			}),
+					return unit, nil
+				},
+			),
 			store.WithOnDeleteFn(func(ctx context.Context, _ string, unit *centrum.Unit) error {
 				if unit == nil {
 					return nil
 				}
 
-				if err := jobSt.Delete(ctx, centrumutils.JobIdKey(unit.Job, unit.Id)); err != nil {
-					return fmt.Errorf("failed to delete job %s mapping for unit %d. %w", unit.Job, unit.Id, err)
+				if err := jobSt.Delete(ctx, centrumutils.JobIdKey(unit.GetJob(), unit.GetId())); err != nil {
+					return fmt.Errorf(
+						"failed to delete job %s mapping for unit %d. %w",
+						unit.GetJob(),
+						unit.GetId(),
+						err,
+					)
 				}
 
-				if err := d.KVPing.Delete(ctx, fmt.Sprintf("ping.%d", unit.Id)); err != nil {
-					d.logger.Error("failed to delete ping timer for unit", zap.Uint64("unit_id", unit.Id), zap.Error(err))
+				if err := d.KVPing.Delete(ctx, fmt.Sprintf("ping.%d", unit.GetId())); err != nil {
+					d.logger.Error(
+						"failed to delete ping timer for unit",
+						zap.Uint64("unit_id", unit.GetId()),
+						zap.Error(err),
+					)
 				}
 
 				return nil
@@ -269,13 +307,13 @@ func (s *UnitDB) LoadFromDB(ctx context.Context, id uint64) error {
 	}
 
 	for i := range units {
-		access, err := s.ListAccess(ctx, units[i].Id)
+		access, err := s.ListAccess(ctx, units[i].GetId())
 		if err != nil {
 			return err
 		}
 		units[i].Access = access
 
-		status, err := s.GetLastStatus(ctx, s.db, units[i].Id)
+		status, err := s.GetLastStatus(ctx, s.db, units[i].GetId())
 		if err != nil {
 			return err
 		}
@@ -287,12 +325,12 @@ func (s *UnitDB) LoadFromDB(ctx context.Context, id uint64) error {
 
 		s.enricher.EnrichJobName(units[i])
 
-		if err := s.updateInKV(ctx, units[i].Id, units[i]); err != nil {
+		if err := s.updateInKV(ctx, units[i].GetId(), units[i]); err != nil {
 			return err
 		}
 
-		for _, user := range units[i].Users {
-			if err := s.tracker.SetUserMappingForUser(ctx, user.UserId, &units[i].Id); err != nil {
+		for _, user := range units[i].GetUsers() {
+			if err := s.tracker.SetUserMappingForUser(ctx, user.GetUserId(), &units[i].Id); err != nil {
 				s.logger.Error("failed to set user's unit id", zap.Error(err))
 			}
 		}
@@ -328,44 +366,57 @@ func (s *UnitDB) LoadUnitIDForUserID(ctx context.Context, userId int32) (uint64,
 	return dest.UnitID, nil
 }
 
-func (s *UnitDB) UpdateStatus(ctx context.Context, unitId uint64, in *centrum.UnitStatus) (*centrum.UnitStatus, error) {
+func (s *UnitDB) UpdateStatus(
+	ctx context.Context,
+	unitId uint64,
+	in *centrum.UnitStatus,
+) (*centrum.UnitStatus, error) {
 	unit, err := s.Get(ctx, unitId)
 	if err != nil {
 		return nil, err
 	}
 
 	// If the unit status is the same and is a status that shouldn't be duplicated, don't update the status again
-	if unit.Status != nil &&
-		unit.Status.Status == in.Status &&
-		(in.Status == centrum.StatusUnit_STATUS_UNIT_ON_BREAK ||
-			in.Status == centrum.StatusUnit_STATUS_UNIT_BUSY ||
-			in.Status == centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE ||
-			in.Status == centrum.StatusUnit_STATUS_UNIT_AVAILABLE) &&
+	if unit.GetStatus() != nil &&
+		unit.GetStatus().GetStatus() == in.GetStatus() &&
+		(in.GetStatus() == centrum.StatusUnit_STATUS_UNIT_ON_BREAK ||
+			in.GetStatus() == centrum.StatusUnit_STATUS_UNIT_BUSY ||
+			in.GetStatus() == centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE ||
+			in.GetStatus() == centrum.StatusUnit_STATUS_UNIT_AVAILABLE) &&
 		// Additionally if the status is under 2 minutes disallow the same status update
-		(unit.Status.CreatedAt == nil || time.Since(unit.Status.CreatedAt.AsTime()) < 2*time.Minute) {
-		s.logger.Debug("skipping unit status update due to same status or time", zap.Uint64("unit_id", unitId), zap.String("status", in.Status.String()))
+		(unit.GetStatus().GetCreatedAt() == nil || time.Since(unit.GetStatus().GetCreatedAt().AsTime()) < 2*time.Minute) {
+		s.logger.Debug(
+			"skipping unit status update due to same status or time",
+			zap.Uint64("unit_id", unitId),
+			zap.String("status", in.GetStatus().String()),
+		)
 		return nil, nil
 	}
 
-	if unit.Attributes != nil && unit.Attributes.Has(centrum.UnitAttribute_UNIT_ATTRIBUTE_STATIC) {
+	if unit.GetAttributes() != nil &&
+		unit.GetAttributes().Has(centrum.UnitAttribute_UNIT_ATTRIBUTE_STATIC) {
 		// Only allow a static unit to be set busy, on break or unavailable
-		if in.Status != centrum.StatusUnit_STATUS_UNIT_BUSY &&
-			in.Status != centrum.StatusUnit_STATUS_UNIT_ON_BREAK &&
-			in.Status != centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE {
+		if in.GetStatus() != centrum.StatusUnit_STATUS_UNIT_BUSY &&
+			in.GetStatus() != centrum.StatusUnit_STATUS_UNIT_ON_BREAK &&
+			in.GetStatus() != centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE {
 			return nil, nil
 		}
 	}
 
-	s.logger.Debug("updating unit status", zap.Uint64("unit_id", unitId), zap.String("status", in.Status.String()))
+	s.logger.Debug(
+		"updating unit status",
+		zap.Uint64("unit_id", unitId),
+		zap.String("status", in.GetStatus().String()),
+	)
 
 	if in.UserId != nil {
 		var err error
-		in.User, err = users.RetrieveUserShortById(ctx, s.db, s.enricher, *in.UserId)
+		in.User, err = users.RetrieveUserShortById(ctx, s.db, s.enricher, in.GetUserId())
 		if err != nil {
 			return nil, err
 		}
 
-		if um, ok := s.tracker.GetUserMarkerById(*in.UserId); ok {
+		if um, ok := s.tracker.GetUserMarkerById(in.GetUserId()); ok {
 			in.X = &um.X
 			in.Y = &um.Y
 			in.Postal = um.Postal
@@ -373,18 +424,18 @@ func (s *UnitDB) UpdateStatus(ctx context.Context, unitId uint64, in *centrum.Un
 	}
 	if in.CreatorId != nil {
 		// If the creator of the status is the same as the user, no need to query the db
-		if in.UserId != nil && *in.CreatorId == *in.UserId {
-			in.Creator = in.User
+		if in.UserId != nil && in.GetCreatorId() == in.GetUserId() {
+			in.Creator = in.GetUser()
 		} else {
 			var err error
-			in.Creator, err = users.RetrieveUserShortById(ctx, s.db, s.enricher, *in.CreatorId)
+			in.Creator, err = users.RetrieveUserShortById(ctx, s.db, s.enricher, in.GetCreatorId())
 			if err != nil {
 				return nil, err
 			}
 		}
 	}
 
-	if in.CreatedAt == nil {
+	if in.GetCreatedAt() == nil {
 		in.CreatedAt = timestamp.Now()
 	}
 
@@ -404,17 +455,17 @@ func (s *UnitDB) UpdateStatus(ctx context.Context, unitId uint64, in *centrum.Un
 			tUnitStatus.CreatorJob,
 		).
 		VALUES(
-			in.CreatedAt,
-			in.UnitId,
-			in.Status,
-			in.Reason,
-			in.Code,
-			in.UserId,
-			in.X,
-			in.Y,
-			in.Postal,
-			in.CreatorId,
-			in.CreatorJob,
+			in.GetCreatedAt(),
+			in.GetUnitId(),
+			in.GetStatus(),
+			in.GetReason(),
+			in.GetCode(),
+			in.GetUserId(),
+			in.GetX(),
+			in.GetY(),
+			in.GetPostal(),
+			in.GetCreatorId(),
+			in.GetCreatorJob(),
 		)
 
 	res, err := stmt.ExecContext(ctx, s.db)
@@ -428,15 +479,27 @@ func (s *UnitDB) UpdateStatus(ctx context.Context, unitId uint64, in *centrum.Un
 	}
 	in.Id = uint64(lastId)
 
-	if err := s.updateStatusInKV(ctx, in.UnitId, in); err != nil {
+	if err := s.updateStatusInKV(ctx, in.GetUnitId(), in); err != nil {
 		return nil, err
 	}
 
 	return in, nil
 }
 
-func (s *UnitDB) UpdateUnitAssignments(ctx context.Context, job string, userId *int32, unitId uint64, toAdd []int32, toRemove []int32) error {
-	s.logger.Debug("updating unit assignments", zap.Uint64("unit_id", unitId), zap.Int32s("toAdd", toAdd), zap.Int32s("toRemove", toRemove))
+func (s *UnitDB) UpdateUnitAssignments(
+	ctx context.Context,
+	job string,
+	userId *int32,
+	unitId uint64,
+	toAdd []int32,
+	toRemove []int32,
+) error {
+	s.logger.Debug(
+		"updating unit assignments",
+		zap.Uint64("unit_id", unitId),
+		zap.Int32s("toAdd", toAdd),
+		zap.Int32s("toRemove", toRemove),
+	)
 
 	if len(toAdd) == 0 && len(toRemove) == 0 {
 		return nil
@@ -485,7 +548,7 @@ func (s *UnitDB) UpdateUnitAssignments(ctx context.Context, job string, userId *
 	if len(toAdd) > 0 {
 		addIds := []int32{}
 		for i := range toAdd {
-			if um, ok := s.tracker.GetUserMarkerById(toAdd[i]); !ok || um.Hidden {
+			if um, ok := s.tracker.GetUserMarkerById(toAdd[i]); !ok || um.GetHidden() {
 				continue
 			}
 
@@ -494,8 +557,8 @@ func (s *UnitDB) UpdateUnitAssignments(ctx context.Context, job string, userId *
 				return err
 			}
 			// Skip already added units
-			if slices.ContainsFunc(unit.Users, func(in *centrum.UnitAssignment) bool {
-				return in.UserId == toAdd[i]
+			if slices.ContainsFunc(unit.GetUsers(), func(in *centrum.UnitAssignment) bool {
+				return in.GetUserId() == toAdd[i]
 			}) {
 				continue
 			}
@@ -546,13 +609,13 @@ func (s *UnitDB) UpdateUnitAssignments(ctx context.Context, job string, userId *
 		if len(toRemove) > 0 {
 			toAnnounce := []int32{}
 
-			if len(unit.Users) == 0 {
+			if len(unit.GetUsers()) == 0 {
 				// No users in unit? Make sure to announce all users that should be removed just in case
 				toAnnounce = append(toAnnounce, toRemove...)
 			} else {
-				unit.Users = slices.DeleteFunc(unit.Users, func(in *centrum.UnitAssignment) bool {
+				unit.Users = slices.DeleteFunc(unit.GetUsers(), func(in *centrum.UnitAssignment) bool {
 					for k := range toRemove {
-						if in.UserId != toRemove[k] {
+						if in.GetUserId() != toRemove[k] {
 							continue
 						}
 
@@ -568,14 +631,14 @@ func (s *UnitDB) UpdateUnitAssignments(ctx context.Context, job string, userId *
 			for _, user := range toAnnounce {
 				if _, err := s.AddStatus(ctx, s.db, &centrum.UnitStatus{
 					CreatedAt: timestamp.Now(),
-					UnitId:    unit.Id,
+					UnitId:    unit.GetId(),
 					Status:    centrum.StatusUnit_STATUS_UNIT_USER_REMOVED,
 					UserId:    &user,
 					CreatorId: userId,
 					X:         x,
 					Y:         y,
 					Postal:    postal,
-				}, true, unit.Job); err != nil {
+				}, true, unit.GetJob()); err != nil {
 					return nil, false, err
 				}
 
@@ -586,32 +649,16 @@ func (s *UnitDB) UpdateUnitAssignments(ctx context.Context, job string, userId *
 		}
 
 		if len(toAddUsers) > 0 {
-			notFound := []int32{}
-			for i := range toAdd {
-				if um, ok := s.tracker.GetUserMarkerById(toAdd[i]); !ok || um.Hidden {
-					continue
-				}
-
-				// Skip already added units
-				if slices.ContainsFunc(unit.Users, func(in *centrum.UnitAssignment) bool {
-					return in.UserId == toAdd[i]
-				}) {
-					continue
-				}
-
-				notFound = append(notFound, toAdd[i])
-			}
-
 			for _, user := range toAddUsers {
 				unit.Users = append(unit.Users, &centrum.UnitAssignment{
-					UnitId: unit.Id,
-					UserId: user.UserId,
+					UnitId: unit.GetId(),
+					UserId: user.GetUserId(),
 					User:   user,
 				})
 
 				if _, err := s.AddStatus(ctx, s.db, &centrum.UnitStatus{
 					CreatedAt:  timestamp.Now(),
-					UnitId:     unit.Id,
+					UnitId:     unit.GetId(),
 					Status:     centrum.StatusUnit_STATUS_UNIT_USER_ADDED,
 					UserId:     &user.UserId,
 					CreatorId:  userId,
@@ -619,28 +666,28 @@ func (s *UnitDB) UpdateUnitAssignments(ctx context.Context, job string, userId *
 					Y:          y,
 					Postal:     postal,
 					CreatorJob: &user.Job,
-				}, true, unit.Job); err != nil {
+				}, true, unit.GetJob()); err != nil {
 					return nil, false, err
 				}
 
-				if err := s.tracker.SetUserMappingForUser(ctx, user.UserId, &unit.Id); err != nil {
+				if err := s.tracker.SetUserMappingForUser(ctx, user.GetUserId(), &unit.Id); err != nil {
 					return nil, false, err
 				}
 			}
 		}
 
 		// Unit is empty now, set unit status to be unavailable automatically
-		if len(unit.Users) == 0 {
+		if len(unit.GetUsers()) == 0 {
 			if unit.Status, err = s.AddStatus(ctx, s.db, &centrum.UnitStatus{
 				CreatedAt: timestamp.Now(),
-				UnitId:    unit.Id,
+				UnitId:    unit.GetId(),
 				Status:    centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE,
 				UserId:    userId,
 				CreatorId: userId,
 				X:         x,
 				Y:         y,
 				Postal:    postal,
-			}, true, unit.Job); err != nil {
+			}, true, unit.GetJob()); err != nil {
 				return nil, false, err
 			}
 		}
@@ -653,11 +700,15 @@ func (s *UnitDB) UpdateUnitAssignments(ctx context.Context, job string, userId *
 	return nil
 }
 
-func (s *UnitDB) CreateUnit(ctx context.Context, creatorJob string, unit *centrum.Unit) (*centrum.Unit, error) {
-	if unit.Access == nil {
+func (s *UnitDB) CreateUnit(
+	ctx context.Context,
+	creatorJob string,
+	unit *centrum.Unit,
+) (*centrum.Unit, error) {
+	if unit.GetAccess() == nil {
 		unit.Access = &centrum.UnitAccess{}
 	}
-	unit.Access.ClearQualificationResults()
+	unit.GetAccess().ClearQualificationResults()
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -681,13 +732,13 @@ func (s *UnitDB) CreateUnit(ctx context.Context, creatorJob string, unit *centru
 		).
 		VALUES(
 			creatorJob,
-			unit.Name,
-			unit.Initials,
-			unit.Color,
-			unit.Icon,
-			unit.Description,
-			unit.Attributes,
-			unit.HomePostal,
+			unit.GetName(),
+			unit.GetInitials(),
+			unit.GetColor(),
+			unit.GetIcon(),
+			unit.GetDescription(),
+			unit.GetAttributes(),
+			unit.GetHomePostal(),
 		)
 
 	result, err := stmt.ExecContext(ctx, tx)
@@ -705,13 +756,13 @@ func (s *UnitDB) CreateUnit(ctx context.Context, creatorJob string, unit *centru
 	// A new unit shouldn't have a status, so we make sure we add one
 	if unit.Status, err = s.AddStatus(ctx, tx, &centrum.UnitStatus{
 		CreatedAt: timestamp.Now(),
-		UnitId:    unit.Id,
+		UnitId:    unit.GetId(),
 		Status:    centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE,
 	}, false, ""); err != nil {
 		return nil, err
 	}
 
-	if _, err := s.unitAccess.HandleAccessChanges(ctx, tx, unit.Id, unit.Access.Jobs, nil, unit.Access.Qualifications); err != nil {
+	if _, err := s.unitAccess.HandleAccessChanges(ctx, tx, unit.GetId(), unit.GetAccess().GetJobs(), nil, unit.GetAccess().GetQualifications()); err != nil {
 		return nil, err
 	}
 
@@ -721,7 +772,7 @@ func (s *UnitDB) CreateUnit(ctx context.Context, creatorJob string, unit *centru
 	}
 
 	// Load new/updated unit from database
-	if err := s.LoadFromDB(ctx, unit.Id); err != nil {
+	if err := s.LoadFromDB(ctx, unit.GetId()); err != nil {
 		return nil, err
 	}
 
@@ -729,10 +780,10 @@ func (s *UnitDB) CreateUnit(ctx context.Context, creatorJob string, unit *centru
 }
 
 func (s *UnitDB) Update(ctx context.Context, unit *centrum.Unit) (*centrum.Unit, error) {
-	if unit.Access == nil {
+	if unit.GetAccess() == nil {
 		unit.Access = &centrum.UnitAccess{}
 	}
-	unit.Access.ClearQualificationResults()
+	unit.GetAccess().ClearQualificationResults()
 
 	tUnits := table.FivenetCentrumUnits
 
@@ -755,23 +806,23 @@ func (s *UnitDB) Update(ctx context.Context, unit *centrum.Unit) (*centrum.Unit,
 			tUnits.HomePostal,
 		).
 		SET(
-			unit.Name,
-			unit.Initials,
-			unit.Color,
-			unit.Icon,
-			unit.Description,
-			unit.Attributes,
-			unit.HomePostal,
+			unit.GetName(),
+			unit.GetInitials(),
+			unit.GetColor(),
+			unit.GetIcon(),
+			unit.GetDescription(),
+			unit.GetAttributes(),
+			unit.GetHomePostal(),
 		).
 		WHERE(jet.AND(
-			tUnits.ID.EQ(jet.Uint64(unit.Id)),
+			tUnits.ID.EQ(jet.Uint64(unit.GetId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, err
 	}
 
-	if _, err := s.unitAccess.HandleAccessChanges(ctx, tx, unit.Id, unit.Access.Jobs, nil, unit.Access.Qualifications); err != nil {
+	if _, err := s.unitAccess.HandleAccessChanges(ctx, tx, unit.GetId(), unit.GetAccess().GetJobs(), nil, unit.GetAccess().GetQualifications()); err != nil {
 		return nil, err
 	}
 
@@ -781,18 +832,24 @@ func (s *UnitDB) Update(ctx context.Context, unit *centrum.Unit) (*centrum.Unit,
 	}
 
 	// Load new/updated unit from database
-	if err := s.LoadFromDB(ctx, unit.Id); err != nil {
+	if err := s.LoadFromDB(ctx, unit.GetId()); err != nil {
 		return nil, err
 	}
 
-	if err := s.updateInKV(ctx, unit.Id, unit); err != nil {
+	if err := s.updateInKV(ctx, unit.GetId(), unit); err != nil {
 		return nil, err
 	}
 
 	return unit, nil
 }
 
-func (s *UnitDB) AddStatus(ctx context.Context, tx qrm.DB, status *centrum.UnitStatus, publish bool, job string) (*centrum.UnitStatus, error) {
+func (s *UnitDB) AddStatus(
+	ctx context.Context,
+	tx qrm.DB,
+	status *centrum.UnitStatus,
+	publish bool,
+	job string,
+) (*centrum.UnitStatus, error) {
 	tUnitStatus := table.FivenetCentrumUnitsStatus
 	stmt := tUnitStatus.
 		INSERT(
@@ -810,16 +867,16 @@ func (s *UnitDB) AddStatus(ctx context.Context, tx qrm.DB, status *centrum.UnitS
 		).
 		VALUES(
 			jet.CURRENT_TIMESTAMP(),
-			status.UnitId,
-			status.Status,
-			status.Reason,
-			status.Code,
-			status.UserId,
-			status.X,
-			status.Y,
-			status.Postal,
-			status.CreatorId,
-			status.CreatorJob,
+			status.GetUnitId(),
+			status.GetStatus(),
+			status.GetReason(),
+			status.GetCode(),
+			status.GetUserId(),
+			status.GetX(),
+			status.GetY(),
+			status.GetPostal(),
+			status.GetCreatorId(),
+			status.GetCreatorJob(),
 		)
 
 	res, err := stmt.ExecContext(ctx, tx)
@@ -851,7 +908,11 @@ func (s *UnitDB) AddStatus(ctx context.Context, tx qrm.DB, status *centrum.UnitS
 	return newStatus, nil
 }
 
-func (s *UnitDB) GetStatusByID(ctx context.Context, tx qrm.DB, id uint64) (*centrum.UnitStatus, error) {
+func (s *UnitDB) GetStatusByID(
+	ctx context.Context,
+	tx qrm.DB,
+	id uint64,
+) (*centrum.UnitStatus, error) {
 	tUnitStatus := table.FivenetCentrumUnitsStatus.AS("unit_status")
 	tColleagueProps := table.FivenetJobColleagueProps.AS("colleague_props")
 	tUsers := tables.User().AS("colleague")
@@ -921,7 +982,11 @@ func (s *UnitDB) GetStatusByID(ctx context.Context, tx qrm.DB, id uint64) (*cent
 	return &dest, nil
 }
 
-func (s *UnitDB) GetLastStatus(ctx context.Context, tx qrm.DB, unitId uint64) (*centrum.UnitStatus, error) {
+func (s *UnitDB) GetLastStatus(
+	ctx context.Context,
+	tx qrm.DB,
+	unitId uint64,
+) (*centrum.UnitStatus, error) {
 	tUnitStatus := table.FivenetCentrumUnitsStatus.AS("unit_status")
 	tColleagueProps := table.FivenetJobColleagueProps.AS("colleague_props")
 	tUsers := tables.User().AS("colleague")
@@ -1025,8 +1090,8 @@ func (s *UnitDB) ListAccess(ctx context.Context, id uint64) (*centrum.UnitAccess
 	}
 	access.Jobs = jobsAccess
 
-	for i := range access.Jobs {
-		s.enricher.EnrichJobInfo(access.Jobs[i])
+	for i := range access.GetJobs() {
+		s.enricher.EnrichJobInfo(access.GetJobs()[i])
 	}
 
 	qualificationsccess, err := s.unitAccess.Qualifications.List(ctx, s.db, id)

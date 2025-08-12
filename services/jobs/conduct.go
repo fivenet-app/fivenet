@@ -21,13 +21,21 @@ import (
 
 var tConduct = table.FivenetJobConduct.AS("conduct_entry")
 
-func (s *Server) ListConductEntries(ctx context.Context, req *pbjobs.ListConductEntriesRequest) (*pbjobs.ListConductEntriesResponse, error) {
+func (s *Server) ListConductEntries(
+	ctx context.Context,
+	req *pbjobs.ListConductEntriesRequest,
+) (*pbjobs.ListConductEntriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	condition := tConduct.Job.EQ(jet.String(userInfo.Job))
+	condition := tConduct.Job.EQ(jet.String(userInfo.GetJob()))
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(userInfo, permsjobs.ConductServicePerm, permsjobs.ConductServiceListConductEntriesPerm, permsjobs.ConductServiceListConductEntriesAccessPermField)
+	fields, err := s.ps.AttrStringList(
+		userInfo,
+		permsjobs.ConductServicePerm,
+		permsjobs.ConductServiceListConductEntriesPerm,
+		permsjobs.ConductServiceListConductEntriesAccessPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -35,28 +43,28 @@ func (s *Server) ListConductEntries(ctx context.Context, req *pbjobs.ListConduct
 	// "All" is a pass, but if no fields or "Own" is given, return user's created conduct entries
 	if fields.Contains("All") {
 	} else if fields.Len() == 0 || fields.Contains("Own") {
-		condition = condition.AND(tConduct.CreatorID.EQ(jet.Int32(userInfo.UserId)))
+		condition = condition.AND(tConduct.CreatorID.EQ(jet.Int32(userInfo.GetUserId())))
 	} else {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	if len(req.Ids) > 0 {
-		ids := make([]jet.Expression, len(req.Ids))
-		for i := range req.Ids {
-			ids[i] = jet.Uint64(req.Ids[i])
+	if len(req.GetIds()) > 0 {
+		ids := make([]jet.Expression, len(req.GetIds()))
+		for i := range req.GetIds() {
+			ids[i] = jet.Uint64(req.GetIds()[i])
 		}
 
 		condition = condition.AND(tConduct.ID.IN(ids...))
 	}
-	if len(req.Types) > 0 {
-		ts := make([]jet.Expression, len(req.Types))
-		for i := range req.Types {
-			ts[i] = jet.Int16(int16(req.Types[i].Number()))
+	if len(req.GetTypes()) > 0 {
+		ts := make([]jet.Expression, len(req.GetTypes()))
+		for i := range req.GetTypes() {
+			ts[i] = jet.Int16(int16(req.GetTypes()[i].Number()))
 		}
 
 		condition = condition.AND(tConduct.Type.IN(ts...))
 	}
-	if len(req.Ids) == 0 && (req.ShowExpired == nil || !*req.ShowExpired) {
+	if len(req.GetIds()) == 0 && (req.ShowExpired == nil || !req.GetShowExpired()) {
 		condition = condition.AND(jet.OR(
 			tConduct.ExpiresAt.IS_NULL(),
 			tConduct.ExpiresAt.GT_EQ(
@@ -64,10 +72,10 @@ func (s *Server) ListConductEntries(ctx context.Context, req *pbjobs.ListConduct
 			),
 		))
 	}
-	if len(req.UserIds) > 0 {
-		ids := make([]jet.Expression, len(req.UserIds))
-		for i := range req.UserIds {
-			ids[i] = jet.Int32(req.UserIds[i])
+	if len(req.GetUserIds()) > 0 {
+		ids := make([]jet.Expression, len(req.GetUserIds()))
+		for i := range req.GetUserIds() {
+			ids[i] = jet.Int32(req.GetUserIds()[i])
 		}
 
 		condition = condition.AND(
@@ -87,7 +95,7 @@ func (s *Server) ListConductEntries(ctx context.Context, req *pbjobs.ListConduct
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponse(count.Total)
+	pag, limit := req.GetPagination().GetResponse(count.Total)
 	resp := &pbjobs.ListConductEntriesResponse{
 		Pagination: pag,
 	}
@@ -97,9 +105,9 @@ func (s *Server) ListConductEntries(ctx context.Context, req *pbjobs.ListConduct
 
 	// Convert proto sort to db sorting
 	orderBys := []jet.OrderByClause{}
-	if req.Sort != nil {
+	if req.GetSort() != nil {
 		var columns []jet.Column
-		switch req.Sort.Column {
+		switch req.GetSort().GetColumn() {
 		case "type":
 			columns = append(columns, tConduct.Type, tConduct.ID)
 		case "id":
@@ -109,7 +117,7 @@ func (s *Server) ListConductEntries(ctx context.Context, req *pbjobs.ListConduct
 		}
 
 		for _, column := range columns {
-			if req.Sort.Direction == database.AscSortDirection {
+			if req.GetSort().GetDirection() == database.AscSortDirection {
 				orderBys = append(orderBys, column.ASC())
 			} else {
 				orderBys = append(orderBys, column.DESC())
@@ -172,7 +180,7 @@ func (s *Server) ListConductEntries(ctx context.Context, req *pbjobs.ListConduct
 				).
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tConduct.TargetUserID).
-						AND(tColleague.Job.EQ(jet.String(userInfo.Job))),
+						AND(tColleague.Job.EQ(jet.String(userInfo.GetJob()))),
 				).
 				LEFT_JOIN(tCreator,
 					tCreator.ID.EQ(tConduct.CreatorID),
@@ -188,7 +196,7 @@ func (s *Server) ListConductEntries(ctx context.Context, req *pbjobs.ListConduct
 				),
 		).
 		WHERE(condition).
-		OFFSET(req.Pagination.Offset).
+		OFFSET(req.GetPagination().GetOffset()).
 		ORDER_BY(orderBys...).
 		LIMIT(limit)
 
@@ -199,33 +207,36 @@ func (s *Server) ListConductEntries(ctx context.Context, req *pbjobs.ListConduct
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.Entries {
-		if resp.Entries[i].TargetUser != nil {
-			jobInfoFn(resp.Entries[i].TargetUser)
+	for i := range resp.GetEntries() {
+		if resp.GetEntries()[i].GetTargetUser() != nil {
+			jobInfoFn(resp.GetEntries()[i].GetTargetUser())
 		}
-		if resp.Entries[i].Creator != nil {
-			jobInfoFn(resp.Entries[i].Creator)
+		if resp.GetEntries()[i].GetCreator() != nil {
+			jobInfoFn(resp.GetEntries()[i].GetCreator())
 		}
 	}
 
-	resp.Pagination.Update(len(resp.Entries))
+	resp.GetPagination().Update(len(resp.GetEntries()))
 
 	return resp, nil
 }
 
-func (s *Server) CreateConductEntry(ctx context.Context, req *pbjobs.CreateConductEntryRequest) (*pbjobs.CreateConductEntryResponse, error) {
+func (s *Server) CreateConductEntry(
+	ctx context.Context,
+	req *pbjobs.CreateConductEntryRequest,
+) (*pbjobs.CreateConductEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbjobs.ConductService_ServiceDesc.ServiceName,
 		Method:  "CreateConductEntry",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	req.Entry.Job = userInfo.Job
+	req.Entry.Job = userInfo.GetJob()
 
 	tConduct := table.FivenetJobConduct
 	stmt := tConduct.
@@ -238,12 +249,12 @@ func (s *Server) CreateConductEntry(ctx context.Context, req *pbjobs.CreateCondu
 			tConduct.CreatorID,
 		).
 		VALUES(
-			userInfo.Job,
-			req.Entry.Type,
-			req.Entry.Message,
-			req.Entry.ExpiresAt,
-			req.Entry.TargetUserId,
-			userInfo.UserId,
+			userInfo.GetJob(),
+			req.GetEntry().GetType(),
+			req.GetEntry().GetMessage(),
+			req.GetEntry().GetExpiresAt(),
+			req.GetEntry().GetTargetUserId(),
+			userInfo.GetUserId(),
 		)
 
 	res, err := stmt.ExecContext(ctx, s.db)
@@ -257,7 +268,7 @@ func (s *Server) CreateConductEntry(ctx context.Context, req *pbjobs.CreateCondu
 	}
 	req.Entry.Id = uint64(lastId)
 
-	entry, err := s.getConductEntry(ctx, req.Entry.Id)
+	entry, err := s.getConductEntry(ctx, req.GetEntry().GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -269,36 +280,39 @@ func (s *Server) CreateConductEntry(ctx context.Context, req *pbjobs.CreateCondu
 	}, nil
 }
 
-func (s *Server) UpdateConductEntry(ctx context.Context, req *pbjobs.UpdateConductEntryRequest) (*pbjobs.UpdateConductEntryResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.conduct_id", req.Entry.Id})
+func (s *Server) UpdateConductEntry(
+	ctx context.Context,
+	req *pbjobs.UpdateConductEntryRequest,
+) (*pbjobs.UpdateConductEntryResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.conduct_id", req.GetEntry().GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbjobs.ConductService_ServiceDesc.ServiceName,
 		Method:  "UpdateConductEntry",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	entry, err := s.getConductEntry(ctx, req.Entry.Id)
+	entry, err := s.getConductEntry(ctx, req.GetEntry().GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	if entry == nil || entry.Job != userInfo.Job {
+	if entry == nil || entry.GetJob() != userInfo.GetJob() {
 		return nil, errorsjobs.ErrFailedQuery
 	}
 
-	if req.Entry.Type <= 0 {
-		req.Entry.Type = entry.Type
+	if req.GetEntry().GetType() <= 0 {
+		req.Entry.Type = entry.GetType()
 	}
-	if req.Entry.TargetUserId == 0 {
-		req.Entry.TargetUserId = entry.TargetUserId
+	if req.GetEntry().GetTargetUserId() == 0 {
+		req.Entry.TargetUserId = entry.GetTargetUserId()
 	}
-	req.Entry.Job = userInfo.Job
+	req.Entry.Job = userInfo.GetJob()
 
 	tConduct := table.FivenetJobConduct
 	stmt := tConduct.
@@ -309,14 +323,14 @@ func (s *Server) UpdateConductEntry(ctx context.Context, req *pbjobs.UpdateCondu
 			tConduct.TargetUserID,
 		).
 		SET(
-			req.Entry.Type,
-			req.Entry.Message,
-			req.Entry.ExpiresAt,
-			req.Entry.TargetUserId,
+			req.GetEntry().GetType(),
+			req.GetEntry().GetMessage(),
+			req.GetEntry().GetExpiresAt(),
+			req.GetEntry().GetTargetUserId(),
 		).
 		WHERE(jet.AND(
-			tConduct.Job.EQ(jet.String(req.Entry.Job)),
-			tConduct.ID.EQ(jet.Uint64(req.Entry.Id)),
+			tConduct.Job.EQ(jet.String(req.GetEntry().GetJob())),
+			tConduct.ID.EQ(jet.Uint64(req.GetEntry().GetId())),
 		)).
 		LIMIT(1)
 
@@ -324,7 +338,7 @@ func (s *Server) UpdateConductEntry(ctx context.Context, req *pbjobs.UpdateCondu
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	entry, err = s.getConductEntry(ctx, entry.Id)
+	entry, err = s.getConductEntry(ctx, entry.GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -345,27 +359,30 @@ func (s *Server) UpdateConductEntry(ctx context.Context, req *pbjobs.UpdateCondu
 	}, nil
 }
 
-func (s *Server) DeleteConductEntry(ctx context.Context, req *pbjobs.DeleteConductEntryRequest) (*pbjobs.DeleteConductEntryResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.conduct_id", req.Id})
+func (s *Server) DeleteConductEntry(
+	ctx context.Context,
+	req *pbjobs.DeleteConductEntryRequest,
+) (*pbjobs.DeleteConductEntryResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.conduct_id", req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbjobs.ConductService_ServiceDesc.ServiceName,
 		Method:  "DeleteConductEntry",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	entry, err := s.getConductEntry(ctx, req.Id)
+	entry, err := s.getConductEntry(ctx, req.GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	deletedAtTime := jet.CURRENT_TIMESTAMP()
-	if entry != nil && entry.DeletedAt != nil && userInfo.Superuser {
+	if entry != nil && entry.GetDeletedAt() != nil && userInfo.GetSuperuser() {
 		deletedAtTime = jet.TimestampExp(jet.NULL)
 	}
 
@@ -378,8 +395,8 @@ func (s *Server) DeleteConductEntry(ctx context.Context, req *pbjobs.DeleteCondu
 			tConduct.DeletedAt.SET(deletedAtTime),
 		).
 		WHERE(jet.AND(
-			tConduct.Job.EQ(jet.String(userInfo.Job)),
-			tConduct.ID.EQ(jet.Uint64(req.Id)),
+			tConduct.Job.EQ(jet.String(userInfo.GetJob())),
+			tConduct.ID.EQ(jet.Uint64(req.GetId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

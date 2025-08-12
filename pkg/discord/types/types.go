@@ -1,4 +1,4 @@
-package types
+package discordtypes
 
 import (
 	"github.com/diamondburned/arikawa/v3/discord"
@@ -52,7 +52,7 @@ func (u Users) ToSlice() []*User {
 
 type User struct {
 	ID       discord.UserID `yaml:"userDiscordId"`
-	Nickname *string        `yaml:",omitempty"`
+	Nickname *string        `yaml:"nickname,omitempty"`
 	Job      string         `yaml:"-"`
 
 	Roles *UserRoles `yaml:"roles"`

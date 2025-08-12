@@ -21,7 +21,7 @@ func (s *Server) JoinRoom(srv pbdocuments.CollabService_JoinRoomServer) error {
 	// Prepare Client Id from user and connection info
 	meta := metadata.ExtractIncoming(ctx)
 	connId := meta.Get(grpcws.ConnectionIdHeader)
-	clientId := collab.MakeClientID(userInfo.UserId, connId)
+	clientId := collab.MakeClientID(userInfo.GetUserId(), connId)
 
 	pageId, err := s.collabServer.HandleFirstMsg(ctx, clientId, srv)
 	if err != nil {
@@ -30,13 +30,25 @@ func (s *Server) JoinRoom(srv pbdocuments.CollabService_JoinRoomServer) error {
 
 	logging.InjectFields(ctx, logging.Fields{"fivenet.wiki.page_id", pageId})
 
-	check, err := s.access.CanUserAccessTarget(ctx, pageId, userInfo, wiki.AccessLevel_ACCESS_LEVEL_ACCESS)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		pageId,
+		userInfo,
+		wiki.AccessLevel_ACCESS_LEVEL_ACCESS,
+	)
 	if err != nil {
 		return errswrap.NewError(err, errorswiki.ErrPageDenied)
 	}
-	if !check && !userInfo.Superuser {
+	if !check && !userInfo.GetSuperuser() {
 		return errorswiki.ErrPageDenied
 	}
 
-	return s.collabServer.HandleClient(ctx, pageId, userInfo.UserId, clientId, pbcollab.ClientRole_CLIENT_ROLE_WRITER, srv)
+	return s.collabServer.HandleClient(
+		ctx,
+		pageId,
+		userInfo.GetUserId(),
+		clientId,
+		pbcollab.ClientRole_CLIENT_ROLE_WRITER,
+		srv,
+	)
 }

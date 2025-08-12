@@ -1,3 +1,4 @@
+// Package errswrap provides utilities for wrapping errors with gRPC status and original error information.
 package errswrap
 
 import (

@@ -24,14 +24,17 @@ var (
 	tUserLabels        = table.FivenetUserLabels
 )
 
-func (s *Server) ManageLabels(ctx context.Context, req *pbcitizens.ManageLabelsRequest) (*pbcitizens.ManageLabelsResponse, error) {
+func (s *Server) ManageLabels(
+	ctx context.Context,
+	req *pbcitizens.ManageLabelsRequest,
+) (*pbcitizens.ManageLabelsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbcitizens.CitizensService_ServiceDesc.ServiceName,
 		Method:  "ManageLabels",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
@@ -49,7 +52,7 @@ func (s *Server) ManageLabels(ctx context.Context, req *pbcitizens.ManageLabelsR
 		).
 		FROM(tCitizensLabelsJob).
 		WHERE(
-			tCitizensLabelsJob.Job.EQ(jet.String(userInfo.Job)),
+			tCitizensLabelsJob.Job.EQ(jet.String(userInfo.GetJob())),
 		)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Labels); err != nil {
@@ -58,23 +61,23 @@ func (s *Server) ManageLabels(ctx context.Context, req *pbcitizens.ManageLabelsR
 		}
 	}
 
-	_, removed := utils.SlicesDifferenceFunc(resp.Labels, req.Labels,
+	_, removed := utils.SlicesDifferenceFunc(resp.GetLabels(), req.GetLabels(),
 		func(in *users.Label) string {
-			return in.Name
+			return in.GetName()
 		})
 
-	for i := range req.Labels {
+	for i := range req.GetLabels() {
 		req.Labels[i].Job = &userInfo.Job
 	}
 
 	tCitizensLabelsJob := table.FivenetUserLabelsJob
 
-	if len(req.Labels) > 0 {
+	if len(req.GetLabels()) > 0 {
 		toCreate := []*users.Label{}
 		toUpdate := []*users.Label{}
 
-		for _, attribute := range req.Labels {
-			if attribute.Id == 0 {
+		for _, attribute := range req.GetLabels() {
+			if attribute.GetId() == 0 {
 				toCreate = append(toCreate, attribute)
 			} else {
 				toUpdate = append(toUpdate, attribute)
@@ -107,12 +110,12 @@ func (s *Server) ManageLabels(ctx context.Context, req *pbcitizens.ManageLabelsR
 						tCitizensLabelsJob.Color,
 					).
 					SET(
-						tCitizensLabelsJob.Name.SET(jet.String(attribute.Name)),
-						tCitizensLabelsJob.Color.SET(jet.String(attribute.Color)),
+						tCitizensLabelsJob.Name.SET(jet.String(attribute.GetName())),
+						tCitizensLabelsJob.Color.SET(jet.String(attribute.GetColor())),
 					).
 					WHERE(jet.AND(
-						tCitizensLabelsJob.ID.EQ(jet.Uint64(attribute.Id)),
-						tCitizensLabelsJob.Job.EQ(jet.String(*attribute.Job)),
+						tCitizensLabelsJob.ID.EQ(jet.Uint64(attribute.GetId())),
+						tCitizensLabelsJob.Job.EQ(jet.String(attribute.GetJob())),
 					))
 
 				if _, err := updateStmt.ExecContext(ctx, s.db); err != nil {
@@ -126,14 +129,14 @@ func (s *Server) ManageLabels(ctx context.Context, req *pbcitizens.ManageLabelsR
 		ids := make([]jet.Expression, len(removed))
 
 		for i := range removed {
-			ids[i] = jet.Uint64(removed[i].Id)
+			ids[i] = jet.Uint64(removed[i].GetId())
 		}
 
 		deleteStmt := tCitizensLabelsJob.
 			DELETE().
 			WHERE(jet.AND(
 				tCitizensLabelsJob.ID.IN(ids...),
-				tCitizensLabelsJob.Job.EQ(jet.String(userInfo.Job)),
+				tCitizensLabelsJob.Job.EQ(jet.String(userInfo.GetJob())),
 			)).
 			LIMIT(int64(len(removed)))
 
@@ -154,28 +157,37 @@ func (s *Server) ManageLabels(ctx context.Context, req *pbcitizens.ManageLabelsR
 	return resp, nil
 }
 
-func (s *Server) validateLabels(ctx context.Context, userInfo *userinfo.UserInfo, attributes []*users.Label) (bool, error) {
+func (s *Server) validateLabels(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	attributes []*users.Label,
+) (bool, error) {
 	if len(attributes) == 0 {
 		return true, nil
 	}
 
-	jobs, err := s.ps.AttrStringList(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteCitizenLabelsPerm, permscompletor.CompletorServiceCompleteCitizenLabelsJobsPermField)
+	jobs, err := s.ps.AttrStringList(
+		userInfo,
+		permscompletor.CompletorServicePerm,
+		permscompletor.CompletorServiceCompleteCitizenLabelsPerm,
+		permscompletor.CompletorServiceCompleteCitizenLabelsJobsPermField,
+	)
 	if err != nil {
 		return false, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
 	if jobs.Len() == 0 {
-		jobs.Strings = append(jobs.Strings, userInfo.Job)
+		jobs.Strings = append(jobs.Strings, userInfo.GetJob())
 	}
 
-	jobsExp := make([]jet.Expression, len(jobs.Strings))
-	for i := range jobs.Strings {
-		jobsExp[i] = jet.String(jobs.Strings[i])
+	jobsExp := make([]jet.Expression, len(jobs.GetStrings()))
+	for i := range jobs.GetStrings() {
+		jobsExp[i] = jet.String(jobs.GetStrings()[i])
 	}
 
 	idsExp := make([]jet.Expression, len(attributes))
 	for i := range attributes {
-		idsExp[i] = jet.Uint64(attributes[i].Id)
+		idsExp[i] = jet.Uint64(attributes[i].GetId())
 	}
 
 	stmt := tCitizensLabelsJob.
@@ -199,19 +211,28 @@ func (s *Server) validateLabels(ctx context.Context, userInfo *userinfo.UserInfo
 	return len(attributes) == int(count.Total), nil
 }
 
-func (s *Server) getUserLabels(ctx context.Context, userInfo *userinfo.UserInfo, userId int32) (*users.Labels, error) {
-	jobs, err := s.ps.AttrStringList(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteCitizenLabelsPerm, permscompletor.CompletorServiceCompleteCitizenLabelsJobsPermField)
+func (s *Server) getUserLabels(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	userId int32,
+) (*users.Labels, error) {
+	jobs, err := s.ps.AttrStringList(
+		userInfo,
+		permscompletor.CompletorServicePerm,
+		permscompletor.CompletorServiceCompleteCitizenLabelsPerm,
+		permscompletor.CompletorServiceCompleteCitizenLabelsJobsPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
 	if jobs.Len() == 0 {
-		jobs.Strings = append(jobs.Strings, userInfo.Job)
+		jobs.Strings = append(jobs.Strings, userInfo.GetJob())
 	}
 
 	jobsExp := make([]jet.Expression, jobs.Len())
-	for i := range jobs.Strings {
-		jobsExp[i] = jet.String(jobs.Strings[i])
+	for i := range jobs.GetStrings() {
+		jobsExp[i] = jet.String(jobs.GetStrings()[i])
 	}
 
 	stmt := tUserLabels.

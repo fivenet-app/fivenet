@@ -8,22 +8,26 @@ import (
 type Roles []*permissions.Role
 
 // Origin convert the collection to role array.
-// @return []models.ArpanetRoles
+//
+//	@return	[]models.ArpanetRoles
 func (r Roles) Origin() []*permissions.Role {
 	return []*permissions.Role(r)
 }
 
 // Len returns the number of elements of the array.
-// @return int64
-func (u Roles) Len() (length int64) {
+//
+//	@return	int64
+func (u Roles) Len() int64 {
 	return int64(len(u))
 }
 
 // IDs returns an array of the role array's ids.
-// @return []uint
-func (r Roles) IDs() (IDs []uint64) {
+//
+//	@return	[]uint
+func (r Roles) IDs() []uint64 {
+	ids := make([]uint64, 0, len(r))
 	for _, role := range r {
-		IDs = append(IDs, role.Id)
+		ids = append(ids, role.GetId())
 	}
-	return IDs
+	return ids
 }

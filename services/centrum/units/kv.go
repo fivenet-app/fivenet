@@ -70,22 +70,29 @@ func (s *UnitDB) List(ctx context.Context, jobs []string) []*centrum.Unit {
 	}
 
 	slices.SortFunc(us, func(a, b *centrum.Unit) int {
-		return strings.Compare(a.Name, b.Name)
+		return strings.Compare(a.GetName(), b.GetName())
 	})
 
 	return us
 }
 
-func (s *UnitDB) Filter(ctx context.Context, jobs []string, statuses []centrum.StatusUnit, notStatuses []centrum.StatusUnit, filterFn func(unit *centrum.Unit) bool) []*centrum.Unit {
+func (s *UnitDB) Filter(
+	ctx context.Context,
+	jobs []string,
+	statuses []centrum.StatusUnit,
+	notStatuses []centrum.StatusUnit,
+	filterFn func(unit *centrum.Unit) bool,
+) []*centrum.Unit {
 	us := s.List(ctx, jobs)
 
 	us = slices.DeleteFunc(us, func(unit *centrum.Unit) bool {
 		// Include statuses that should be listed
-		if len(statuses) > 0 && unit.Status != nil && !slices.Contains(statuses, unit.Status.Status) {
+		if len(statuses) > 0 && unit.GetStatus() != nil &&
+			!slices.Contains(statuses, unit.GetStatus().GetStatus()) {
 			return true
-		} else if len(notStatuses) > 0 && unit.Status != nil {
+		} else if len(notStatuses) > 0 && unit.GetStatus() != nil {
 			// Which statuses to ignore
-			if slices.Contains(notStatuses, unit.Status.Status) {
+			if slices.Contains(notStatuses, unit.GetStatus().GetStatus()) {
 				return true
 			}
 		}
@@ -100,7 +107,11 @@ func (s *UnitDB) Filter(ctx context.Context, jobs []string, statuses []centrum.S
 	return us
 }
 
-func (s *UnitDB) updateStatusInKV(ctx context.Context, id uint64, status *centrum.UnitStatus) error {
+func (s *UnitDB) updateStatusInKV(
+	ctx context.Context,
+	id uint64,
+	status *centrum.UnitStatus,
+) error {
 	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), func(key string, existing *centrum.Unit) (*centrum.Unit, bool, error) {
 		if existing == nil {
 			return existing, false, nil

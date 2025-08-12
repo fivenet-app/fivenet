@@ -1,8 +1,8 @@
-// Extended Vue ↔ Yjs array & object helpers – **complete file**
+// Extended Vue ↔ Yjs array & object helpers - **complete file**
 // ---------------------------------------------------------------------------
-//  This module complements `useYPrimitives.ts` by adding higher‑level helpers
+//  This module complements `useYPrimitives.ts` by adding higher-level helpers
 //  that bind Vue arrays / nested objects to Yjs containers.  All helpers use
-//  the unified fallback‑to‑local initialisation controlled through
+//  the unified fallback-to-local initialisation controlled through
 //  `YjsSyncOptions` (authoritative client + provider with `synced` event).
 // ---------------------------------------------------------------------------
 
@@ -359,10 +359,10 @@ export function useYMap<T extends Record<string, any>>(
 const isDoc = (c: Y.Doc | Y.Map<unknown>): c is Y.Doc => (c as Y.Doc).clientID !== undefined;
 
 const ensureText = (c: Y.Doc | Y.Map<unknown>, key: string): Y.Text => {
-    // Always return a Y.Text. If a primitive was stored, upgrade in‑place.
+    // Always return a Y.Text. If a primitive was stored, upgrade in-place.
     const replace = (txt: Y.Text) => {
         if (isDoc(c))
-            c.getMap('root')?.set?.(key, txt); // doc root edge‑case
+            c.getMap('root')?.set?.(key, txt); // doc root edge-case
         else c.set(key, txt);
         return txt;
     };

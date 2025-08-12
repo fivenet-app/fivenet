@@ -1,7 +1,8 @@
-package types
+package discordtypes
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -90,7 +91,15 @@ func (p *Plan) applyUsers(dc *state.State) ([]discord.Embed, error) {
 			}
 
 			if err := dc.Kick(p.GuildID, user.ID, api.AuditLogReason(user.KickReason)); err != nil {
-				errs = multierr.Append(errs, fmt.Errorf("failed to kick user %s (reason: %q). %w", user.ID, user.KickReason, err))
+				errs = multierr.Append(
+					errs,
+					fmt.Errorf(
+						"failed to kick user %s (reason: %q). %w",
+						user.ID,
+						user.KickReason,
+						err,
+					),
+				)
 				continue
 			}
 			continue
@@ -101,13 +110,20 @@ func (p *Plan) applyUsers(dc *state.State) ([]discord.Embed, error) {
 			if err := dc.ModifyMember(p.GuildID, user.ID, api.ModifyMemberData{
 				Nick: user.Nickname,
 			}); err != nil {
-				if restErr, ok := err.(*httputil.HTTPError); ok && restErr.Status == http.StatusForbidden {
+				var restErr *httputil.HTTPError
+				if errors.As(err, &restErr) &&
+					restErr.Status == http.StatusForbidden {
 					logs = append(logs, discord.Embed{
-						Title:       "Error while setting user nickname",
-						Description: fmt.Sprintf("Failed to set user %s nickanem (%q). %q", user.ID, *user.Nickname, err),
-						Author:      embeds.EmbedAuthor,
-						Color:       embeds.ColorWarn,
-						Footer:      embeds.EmbedFooterVersion,
+						Title: "Error while setting user nickname",
+						Description: fmt.Sprintf(
+							"Failed to set user %s nickanem (%q). %q",
+							user.ID,
+							*user.Nickname,
+							err,
+						),
+						Author: embeds.EmbedAuthor,
+						Color:  embeds.ColorWarn,
+						Footer: embeds.EmbedFooterVersion,
 					})
 				} else {
 					errs = multierr.Append(errs, fmt.Errorf("failed to set user %s nickname (%q). %w", user.ID, *user.Nickname, err))
@@ -122,7 +138,16 @@ func (p *Plan) applyUsers(dc *state.State) ([]discord.Embed, error) {
 			}
 
 			if err := dc.RemoveRole(p.GuildID, user.ID, role.ID, api.AuditLogReason(role.Module)); err != nil {
-				errs = multierr.Append(errs, fmt.Errorf("failed to remove user %s from role %q (%s). %w", user.ID, role.Name, role.ID, err))
+				errs = multierr.Append(
+					errs,
+					fmt.Errorf(
+						"failed to remove user %s from role %q (%s). %w",
+						user.ID,
+						role.Name,
+						role.ID,
+						err,
+					),
+				)
 				continue
 			}
 		}
@@ -131,7 +156,16 @@ func (p *Plan) applyUsers(dc *state.State) ([]discord.Embed, error) {
 			if err := dc.AddRole(p.GuildID, user.ID, role.ID, api.AddRoleData{
 				AuditLogReason: api.AuditLogReason(role.Module),
 			}); err != nil {
-				errs = multierr.Append(errs, fmt.Errorf("failed to add user %s to role %q (%s). %w", user.ID, role.Name, role.ID, err))
+				errs = multierr.Append(
+					errs,
+					fmt.Errorf(
+						"failed to add user %s to role %q (%s). %w",
+						user.ID,
+						role.Name,
+						role.ID,
+						err,
+					),
+				)
 				continue
 			}
 		}

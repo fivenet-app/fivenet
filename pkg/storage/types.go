@@ -2,7 +2,7 @@ package storage
 
 import (
 	"context"
-	"crypto/sha1"
+	"crypto/sha256"
 	"encoding/base64"
 	"errors"
 	"fmt"
@@ -29,7 +29,13 @@ type IStorage interface {
 	// Stat returns object info for the given key.
 	Stat(ctx context.Context, key string) (IObjectInfo, error)
 	// Put uploads a file; size and content type must be accurate.
-	Put(ctx context.Context, key string, reader io.Reader, size int64, contentType string) (string, error)
+	Put(
+		ctx context.Context,
+		key string,
+		reader io.Reader,
+		size int64,
+		contentType string,
+	) (string, error)
 	// Delete removes a file from storage.
 	Delete(ctx context.Context, key string) error
 
@@ -127,7 +133,7 @@ type FileInfo struct {
 // GetFilename generates a deterministic storage filename based on user ID, file name, and extension.
 // The file is sharded by a hash of the file name for better distribution.
 func GetFilename(uid string, fileName string, fileExtension string) string {
-	hasher := sha1.New()
+	hasher := sha256.New()
 	hasher.Write([]byte(fileName))
 	fileHash := base64.URLEncoding.EncodeToString(hasher.Sum(nil))
 

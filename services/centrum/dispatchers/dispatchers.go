@@ -59,7 +59,12 @@ func New(p Params) *DispatchersDB {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		st, err := store.New[centrum.Dispatchers, *centrum.Dispatchers](ctxCancel, logger, p.JS, "centrum_dispatchers")
+		st, err := store.New[centrum.Dispatchers, *centrum.Dispatchers](
+			ctxCancel,
+			logger,
+			p.JS,
+			"centrum_dispatchers",
+		)
 		if err != nil {
 			return err
 		}
@@ -137,13 +142,13 @@ func (s *DispatchersDB) LoadFromDB(ctx context.Context, job string) error {
 
 	perJob := map[string][]*jobs.Colleague{}
 	for _, user := range dest {
-		if _, ok := perJob[user.Job]; !ok {
-			perJob[user.Job] = []*jobs.Colleague{}
+		if _, ok := perJob[user.GetJob()]; !ok {
+			perJob[user.GetJob()] = []*jobs.Colleague{}
 		}
 
 		s.enricher.EnrichJobName(user)
 
-		perJob[user.Job] = append(perJob[user.Job], user)
+		perJob[user.GetJob()] = append(perJob[user.GetJob()], user)
 	}
 
 	if job != "" {
@@ -161,11 +166,16 @@ func (s *DispatchersDB) LoadFromDB(ctx context.Context, job string) error {
 	return nil
 }
 
-func (s *DispatchersDB) SetUserState(ctx context.Context, job string, userId int32, signon bool) error {
+func (s *DispatchersDB) SetUserState(
+	ctx context.Context,
+	job string,
+	userId int32,
+	signon bool,
+) error {
 	tCentrumDispatchers := table.FivenetCentrumDispatchers
 
 	if signon {
-		if um, ok := s.tracker.GetUserMarkerById(userId); !ok || um.Hidden {
+		if um, ok := s.tracker.GetUserMarkerById(userId); !ok || um.GetHidden() {
 			return errorscentrum.ErrNotOnDuty
 		}
 

@@ -14,29 +14,29 @@ var json = jsoniter.ConfigCompatibleWithStandardLibrary
 func (x *Settings) Default(job string) {
 	x.Job = job
 
-	if x.Mode <= CentrumMode_CENTRUM_MODE_UNSPECIFIED {
+	if x.GetMode() <= CentrumMode_CENTRUM_MODE_UNSPECIFIED {
 		x.Mode = CentrumMode_CENTRUM_MODE_MANUAL
 	}
 
-	if x.FallbackMode <= CentrumMode_CENTRUM_MODE_UNSPECIFIED {
+	if x.GetFallbackMode() <= CentrumMode_CENTRUM_MODE_UNSPECIFIED {
 		x.FallbackMode = CentrumMode_CENTRUM_MODE_MANUAL
 	}
 
-	if x.PredefinedStatus == nil {
+	if x.GetPredefinedStatus() == nil {
 		x.PredefinedStatus = &PredefinedStatus{}
 	}
 
-	if x.Timings == nil {
+	if x.GetTimings() == nil {
 		x.Timings = &Timings{}
 	}
-	if x.Timings.DispatchMaxWait <= 0 {
+	if x.GetTimings().GetDispatchMaxWait() <= 0 {
 		x.Timings.DispatchMaxWait = 900
 	}
-	if x.Timings.RequireUnitReminderSeconds <= 0 {
+	if x.GetTimings().GetRequireUnitReminderSeconds() <= 0 {
 		x.Timings.RequireUnitReminderSeconds = 180
 	}
 
-	if x.Configuration == nil {
+	if x.GetConfiguration() == nil {
 		x.Configuration = &Configuration{
 			DeduplicationEnabled:  true,
 			DeduplicationRadius:   45,
@@ -46,56 +46,56 @@ func (x *Settings) Default(job string) {
 }
 
 func (x *Settings) Merge(in *Settings) *Settings {
-	x.Job = in.Job
-	x.Enabled = in.Enabled
+	x.Job = in.GetJob()
+	x.Enabled = in.GetEnabled()
 
-	x.Mode = in.Mode
-	x.FallbackMode = in.FallbackMode
+	x.Mode = in.GetMode()
+	x.FallbackMode = in.GetFallbackMode()
 
-	x.Public = in.Public
+	x.Public = in.GetPublic()
 
-	if in.PredefinedStatus == nil {
+	if in.GetPredefinedStatus() == nil {
 		x.PredefinedStatus = &PredefinedStatus{}
 	} else {
-		x.PredefinedStatus = in.PredefinedStatus
+		x.PredefinedStatus = in.GetPredefinedStatus()
 	}
 
-	if in.Timings == nil {
+	if in.GetTimings() == nil {
 		x.Timings = &Timings{}
 	} else {
-		x.Timings = in.Timings
+		x.Timings = in.GetTimings()
 	}
 
-	if in.Access == nil {
+	if in.GetAccess() == nil {
 		x.Access = &CentrumAccess{}
 	} else {
-		x.Access = in.Access
+		x.Access = in.GetAccess()
 	}
 
-	if in.Configuration == nil {
+	if in.GetConfiguration() == nil {
 		x.Configuration = &Configuration{
 			DeduplicationEnabled:  true,
 			DeduplicationRadius:   45,
 			DeduplicationDuration: durationpb.New(3 * time.Minute),
 		}
 	} else {
-		x.Configuration = in.Configuration
+		x.Configuration = in.GetConfiguration()
 	}
 
 	return x
 }
 
 func (x *Settings) JobHasAccess(job string, access CentrumAccessLevel) bool {
-	if x.Access == nil || x.Access.Jobs == nil {
-		return x.Job == job // No access restrictions defined, only the job itself is allowed
+	if x.GetAccess() == nil || x.Access.Jobs == nil {
+		return x.GetJob() == job // No access restrictions defined, only the job itself is allowed
 	}
 
-	if x.Job == job {
+	if x.GetJob() == job {
 		return true // Job is explicitly allowed
 	}
 
-	for _, j := range x.Access.Jobs {
-		if j.Job == job && j.Access >= access {
+	for _, j := range x.GetAccess().GetJobs() {
+		if j.GetJob() == job && j.GetAccess() >= access {
 			return true // Job is explicitly allowed in the access list
 		}
 	}
@@ -138,26 +138,26 @@ func (x *JobList) Value() (driver.Value, error) {
 }
 
 func (x *JobList) IsEmpty() bool {
-	return x == nil || len(x.Jobs) == 0
+	return x == nil || len(x.GetJobs()) == 0
 }
 
 func (x *JobList) ContainsJob(job string) bool {
-	return slices.ContainsFunc(x.Jobs, func(in *Job) bool {
-		return in.Name == job
+	return slices.ContainsFunc(x.GetJobs(), func(in *Job) bool {
+		return in.GetName() == job
 	})
 }
 
 func (x *JobList) GetJobStrings() []string {
 	jobs := []string{}
-	for _, job := range x.Jobs {
-		jobs = append(jobs, job.Name)
+	for _, job := range x.GetJobs() {
+		jobs = append(jobs, job.GetName())
 	}
 
 	return jobs
 }
 
 func (x *Job) GetJob() string {
-	return x.Name
+	return x.GetName()
 }
 
 func (x *Job) SetJob(job string) {

@@ -147,11 +147,15 @@ func NewServer(p Params) *Server {
 				table.FivenetMailerEmailsAccess.AS("qualification_access"),
 				&access.QualificationAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetMailerEmailsAccess.AS("qualification_access").ID,
-						TargetID: table.FivenetMailerEmailsAccess.AS("qualification_access").TargetID,
-						Access:   table.FivenetMailerEmailsAccess.AS("qualification_access").Access,
+						ID: table.FivenetMailerEmailsAccess.AS("qualification_access").ID,
+						TargetID: table.FivenetMailerEmailsAccess.AS(
+							"qualification_access",
+						).TargetID,
+						Access: table.FivenetMailerEmailsAccess.AS("qualification_access").Access,
 					},
-					QualificationId: table.FivenetMailerEmailsAccess.AS("qualification_access").QualificationID,
+					QualificationId: table.FivenetMailerEmailsAccess.AS(
+						"qualification_access",
+					).QualificationID,
 				},
 			),
 		),
@@ -162,6 +166,7 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbmailer.RegisterMailerServiceServer(srv, s)
 }
 
+// GetPermsRemap returns the permissions re-mapping for the services.
 func (s *Server) GetPermsRemap() map[string]string {
 	return pbmailer.PermsRemap
 }

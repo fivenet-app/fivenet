@@ -47,7 +47,12 @@ func AddTable(tbl *Table) {
 
 	// Ensure the table has at least one column for soft delete logic.
 	if tbl.DeletedAtColumn == nil && tbl.TimestampColumn == nil && tbl.DateColumn == nil {
-		panic(fmt.Sprintf("table %s must have a DeletedAt, TimestampColumn, or DateColumn column set for soft delete!", tbl.Table.TableName()))
+		panic(
+			fmt.Sprintf(
+				"table %s must have a DeletedAt, TimestampColumn, or DateColumn column set for soft delete!",
+				tbl.Table.TableName(),
+			),
+		)
 	}
 
 	// Ensure minimum days is set for the table and its dependants.

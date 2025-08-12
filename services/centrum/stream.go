@@ -24,7 +24,12 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func (s *Server) sendHandshakre(ctx context.Context, srv pbcentrum.CentrumService_StreamServer, userJob string, aclJobs *pbcentrum.JobAccess) error {
+func (s *Server) sendHandshakre(
+	ctx context.Context,
+	srv pbcentrum.CentrumService_StreamServer,
+	userJob string,
+	aclJobs *pbcentrum.JobAccess,
+) error {
 	settings, err := s.settings.Get(ctx, userJob)
 	if err != nil {
 		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
@@ -45,11 +50,17 @@ func (s *Server) sendHandshakre(ctx context.Context, srv pbcentrum.CentrumServic
 	return nil
 }
 
-func (s *Server) sendLatestState(ctx context.Context, srv pbcentrum.CentrumService_StreamServer, userInfo *userinfo.UserInfo, aclJobs *pbcentrum.JobAccess, jobList []string) error {
+func (s *Server) sendLatestState(
+	ctx context.Context,
+	srv pbcentrum.CentrumService_StreamServer,
+	userInfo *userinfo.UserInfo,
+	aclJobs *pbcentrum.JobAccess,
+	jobList []string,
+) error {
 	// Dispatchers
 	dispatchers := &pbcentrum.Dispatchers{}
-	for _, j := range aclJobs.Dispatches {
-		dispos, err := s.dispatchers.Get(ctx, j.Job)
+	for _, j := range aclJobs.GetDispatches() {
+		dispos, err := s.dispatchers.Get(ctx, j.GetJob())
 		if err != nil {
 			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
@@ -57,9 +68,9 @@ func (s *Server) sendLatestState(ctx context.Context, srv pbcentrum.CentrumServi
 	}
 
 	// Own unit ID
-	ownUnitMapping, _ := s.tracker.GetUserMapping(userInfo.UserId)
+	ownUnitMapping, _ := s.tracker.GetUserMapping(userInfo.GetUserId())
 	var pOwnUnitId *uint64
-	if ownUnitMapping != nil && ownUnitMapping.UnitId != nil && *ownUnitMapping.UnitId > 0 {
+	if ownUnitMapping != nil && ownUnitMapping.UnitId != nil && ownUnitMapping.GetUnitId() > 0 {
 		pOwnUnitId = ownUnitMapping.UnitId
 	}
 
@@ -90,17 +101,24 @@ func (s *Server) sendLatestState(ctx context.Context, srv pbcentrum.CentrumServi
 	return nil
 }
 
-func (s *Server) Stream(req *pbcentrum.StreamRequest, srv pbcentrum.CentrumService_StreamServer) error {
+func (s *Server) Stream(
+	req *pbcentrum.StreamRequest,
+	srv pbcentrum.CentrumService_StreamServer,
+) error {
 	userInfo := auth.MustGetUserInfoFromContext(srv.Context()).Clone()
 
 	// Check if user has access to other job's centrum
-	jobList, jobAcls, err := s.settings.GetJobAccessList(srv.Context(), userInfo.Job, userInfo.JobGrade)
+	jobList, jobAcls, err := s.settings.GetJobAccessList(
+		srv.Context(),
+		userInfo.GetJob(),
+		userInfo.GetJobGrade(),
+	)
 	if err != nil {
 		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	for {
-		if err := s.sendHandshakre(srv.Context(), srv, userInfo.Job, jobAcls); err != nil {
+		if err := s.sendHandshakre(srv.Context(), srv, userInfo.GetJob(), jobAcls); err != nil {
 			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
@@ -140,7 +158,9 @@ var feeds = []feedCfg{
 			return &u, proto.Unmarshal(b, &u)
 		},
 		WrapPut: func(m proto.Message) *pbcentrum.StreamResponse {
-			return &pbcentrum.StreamResponse{Change: &pbcentrum.StreamResponse_Settings{Settings: m.(*centrum.Settings)}}
+			return &pbcentrum.StreamResponse{
+				Change: &pbcentrum.StreamResponse_Settings{Settings: m.(*centrum.Settings)},
+			}
 		},
 	},
 	{
@@ -152,7 +172,11 @@ var feeds = []feedCfg{
 			return &u, proto.Unmarshal(b, &u)
 		},
 		WrapPut: func(m proto.Message) *pbcentrum.StreamResponse {
-			return &pbcentrum.StreamResponse{Change: &pbcentrum.StreamResponse_Dispatchers{Dispatchers: m.(*centrum.Dispatchers)}}
+			return &pbcentrum.StreamResponse{
+				Change: &pbcentrum.StreamResponse_Dispatchers{
+					Dispatchers: m.(*centrum.Dispatchers),
+				},
+			}
 		},
 	},
 	{
@@ -163,10 +187,12 @@ var feeds = []feedCfg{
 			if err := proto.Unmarshal(b, &d); err != nil {
 				return nil, fmt.Errorf("failed to unmarshal unit id mapping. %w", err)
 			}
-			return s.units.Get(ctx, d.Id)
+			return s.units.Get(ctx, d.GetId())
 		},
 		WrapPut: func(m proto.Message) *pbcentrum.StreamResponse {
-			return &pbcentrum.StreamResponse{Change: &pbcentrum.StreamResponse_UnitUpdated{UnitUpdated: m.(*centrum.Unit)}}
+			return &pbcentrum.StreamResponse{
+				Change: &pbcentrum.StreamResponse_UnitUpdated{UnitUpdated: m.(*centrum.Unit)},
+			}
 		},
 		WrapDelete: func(key string) *pbcentrum.StreamResponse {
 			id, err := centrumutils.ExtractID(key)
@@ -189,10 +215,14 @@ var feeds = []feedCfg{
 			if err := proto.Unmarshal(b, &d); err != nil {
 				return nil, fmt.Errorf("failed to unmarshal dispatch id mapping. %w", err)
 			}
-			return s.dispatches.Get(ctx, d.Id)
+			return s.dispatches.Get(ctx, d.GetId())
 		},
 		WrapPut: func(m proto.Message) *pbcentrum.StreamResponse {
-			return &pbcentrum.StreamResponse{Change: &pbcentrum.StreamResponse_DispatchUpdated{DispatchUpdated: m.(*centrum.Dispatch)}}
+			return &pbcentrum.StreamResponse{
+				Change: &pbcentrum.StreamResponse_DispatchUpdated{
+					DispatchUpdated: m.(*centrum.Dispatch),
+				},
+			}
 		},
 		WrapDelete: func(key string) *pbcentrum.StreamResponse {
 			id, err := centrumutils.ExtractID(key)
@@ -209,10 +239,20 @@ var feeds = []feedCfg{
 	},
 }
 
-func (s *Server) stream(ctx context.Context, srv pbcentrum.CentrumService_StreamServer, userInfo *userinfo.UserInfo, additionalJobs []string) error {
-	s.logger.Debug("starting centrum stream", zap.String("job_main", userInfo.Job), zap.Int32("user_id", userInfo.UserId), zap.Strings("additional_jobs", additionalJobs))
+func (s *Server) stream(
+	ctx context.Context,
+	srv pbcentrum.CentrumService_StreamServer,
+	userInfo *userinfo.UserInfo,
+	additionalJobs []string,
+) error {
+	s.logger.Debug(
+		"starting centrum stream",
+		zap.String("job_main", userInfo.GetJob()),
+		zap.Int32("user_id", userInfo.GetUserId()),
+		zap.Strings("additional_jobs", additionalJobs),
+	)
 
-	jobs := []string{userInfo.Job}
+	jobs := []string{userInfo.GetJob()}
 	jobs = append(jobs, additionalJobs...)
 	jobs = utils.RemoveSliceDuplicates(jobs)
 
@@ -257,7 +297,11 @@ func (s *Server) stream(ctx context.Context, srv pbcentrum.CentrumService_Stream
 
 					var d centrum.DispatchStatus
 					if err := proto.Unmarshal(m.Data(), &d); err != nil {
-						s.logger.Error("failed to unmarshal dispatch status", zap.Error(err), zap.String("subject", m.Subject()))
+						s.logger.Error(
+							"failed to unmarshal dispatch status",
+							zap.Error(err),
+							zap.String("subject", m.Subject()),
+						)
 					}
 
 					r = &pbcentrum.StreamResponse{
@@ -272,7 +316,11 @@ func (s *Server) stream(ctx context.Context, srv pbcentrum.CentrumService_Stream
 					}
 					var u centrum.UnitStatus
 					if err := proto.Unmarshal(m.Data(), &u); err != nil {
-						s.logger.Error("failed to unmarshal unit status", zap.Error(err), zap.String("subject", m.Subject()))
+						s.logger.Error(
+							"failed to unmarshal unit status",
+							zap.Error(err),
+							zap.String("subject", m.Subject()),
+						)
 					}
 
 					r = &pbcentrum.StreamResponse{
@@ -283,7 +331,11 @@ func (s *Server) stream(ctx context.Context, srv pbcentrum.CentrumService_Stream
 				}
 
 				if r == nil {
-					s.logger.Warn("received unknown centrum event", zap.String("subject", m.Subject()), zap.String("type", string(tType)))
+					s.logger.Warn(
+						"received unknown centrum event",
+						zap.String("subject", m.Subject()),
+						zap.String("type", string(tType)),
+					)
 					continue
 				}
 
@@ -343,7 +395,7 @@ func (s *Server) stream(ctx context.Context, srv pbcentrum.CentrumService_Stream
 
 					obj, err := f.Unmarshal(gctx, s, m.Data())
 					if err != nil {
-						// Bad payload – skip
+						// Bad payload - skip
 						continue
 					}
 

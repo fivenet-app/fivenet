@@ -22,30 +22,39 @@ var (
 	tOauth2   = table.FivenetAccountsOauth2.AS("oauth2account")
 )
 
-func (s *Server) ListAccounts(ctx context.Context, req *pbsettings.ListAccountsRequest) (*pbsettings.ListAccountsResponse, error) {
+func (s *Server) ListAccounts(
+	ctx context.Context,
+	req *pbsettings.ListAccountsRequest,
+) (*pbsettings.ListAccountsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	defer s.aud.Log(&audit.AuditEntry{
 		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
 		Method:  "ListAccounts",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_VIEWED,
 	}, req)
 
 	var t jet.ReadableTable = tAccounts
 	condition := jet.Bool(true)
-	if req.License != nil && *req.License != "" {
-		condition = condition.AND(tAccounts.License.LIKE(jet.String(fmt.Sprintf("%%%s%%", *req.License))))
+	if req.License != nil && req.GetLicense() != "" {
+		condition = condition.AND(
+			tAccounts.License.LIKE(jet.String(fmt.Sprintf("%%%s%%", req.GetLicense()))),
+		)
 	}
 	if req.Enabled != nil {
-		condition = condition.AND(tAccounts.Enabled.EQ(jet.Bool(*req.Enabled)))
+		condition = condition.AND(tAccounts.Enabled.EQ(jet.Bool(req.GetEnabled())))
 	}
-	if req.Username != nil && *req.Username != "" {
-		condition = condition.AND(tAccounts.Username.LIKE(jet.String(fmt.Sprintf("%%%s%%", *req.Username))))
+	if req.Username != nil && req.GetUsername() != "" {
+		condition = condition.AND(
+			tAccounts.Username.LIKE(jet.String(fmt.Sprintf("%%%s%%", req.GetUsername()))),
+		)
 	}
-	if req.ExternalId != nil && *req.ExternalId != "" {
-		condition = condition.AND(tOauth2.ExternalID.LIKE(jet.String(fmt.Sprintf("%%%s%%", *req.ExternalId))))
+	if req.ExternalId != nil && req.GetExternalId() != "" {
+		condition = condition.AND(
+			tOauth2.ExternalID.LIKE(jet.String(fmt.Sprintf("%%%s%%", req.GetExternalId()))),
+		)
 		t = t.INNER_JOIN(tOauth2,
 			tOauth2.AccountID.EQ(tAccounts.ID),
 		)
@@ -65,7 +74,7 @@ func (s *Server) ListAccounts(ctx context.Context, req *pbsettings.ListAccountsR
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, 30)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, 30)
 	resp := &pbsettings.ListAccountsResponse{
 		Pagination: pag,
 	}
@@ -75,9 +84,9 @@ func (s *Server) ListAccounts(ctx context.Context, req *pbsettings.ListAccountsR
 
 	// Convert proto sort to db sorting
 	orderBys := []jet.OrderByClause{}
-	if req.Sort != nil {
+	if req.GetSort() != nil {
 		var column jet.Column
-		switch req.Sort.Column {
+		switch req.GetSort().GetColumn() {
 		case "license":
 			column = tAccounts.License
 		case "username":
@@ -88,7 +97,7 @@ func (s *Server) ListAccounts(ctx context.Context, req *pbsettings.ListAccountsR
 			column = tAccounts.ID
 		}
 
-		if req.Sort.Direction == database.AscSortDirection {
+		if req.GetSort().GetDirection() == database.AscSortDirection {
 			orderBys = append(orderBys, column.ASC())
 		} else {
 			orderBys = append(orderBys, column.DESC())
@@ -106,7 +115,7 @@ func (s *Server) ListAccounts(ctx context.Context, req *pbsettings.ListAccountsR
 		FROM(t).
 		WHERE(condition).
 		ORDER_BY(orderBys...).
-		OFFSET(req.Pagination.Offset).
+		OFFSET(req.GetPagination().GetOffset()).
 		LIMIT(limit)
 
 	if err := idStmt.QueryContext(ctx, s.db, &accountIDs); err != nil {
@@ -118,9 +127,9 @@ func (s *Server) ListAccounts(ctx context.Context, req *pbsettings.ListAccountsR
 		return resp, nil
 	}
 
-	var ids []jet.Expression
-	for _, id := range accountIDs {
-		ids = append(ids, jet.Uint64(id))
+	ids := make([]jet.Expression, len(accountIDs))
+	for i, id := range accountIDs {
+		ids[i] = jet.Uint64(id)
 	}
 
 	// Now, fetch all accounts and their oauth2 connections for these IDs
@@ -154,7 +163,7 @@ func (s *Server) ListAccounts(ctx context.Context, req *pbsettings.ListAccountsR
 		}
 	}
 
-	resp.Pagination.Update(len(resp.Accounts))
+	resp.GetPagination().Update(len(resp.GetAccounts()))
 
 	return resp, nil
 }
@@ -182,21 +191,24 @@ func (s *Server) getAccount(ctx context.Context, id uint64) (*accounts.Account, 
 		}
 	}
 
-	if account.Id == 0 {
+	if account.GetId() == 0 {
 		return nil, nil
 	}
 
 	return &account, nil
 }
 
-func (s *Server) UpdateAccount(ctx context.Context, req *pbsettings.UpdateAccountRequest) (*pbsettings.UpdateAccountResponse, error) {
+func (s *Server) UpdateAccount(
+	ctx context.Context,
+	req *pbsettings.UpdateAccountRequest,
+) (*pbsettings.UpdateAccountResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
 		Method:  "UpdateAccount",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
@@ -206,11 +218,11 @@ func (s *Server) UpdateAccount(ctx context.Context, req *pbsettings.UpdateAccoun
 	updateSets := []interface{}{}
 
 	if req.Enabled != nil {
-		updateSets = append(updateSets, tAccounts.Enabled.SET(jet.Bool(*req.Enabled)))
+		updateSets = append(updateSets, tAccounts.Enabled.SET(jet.Bool(req.GetEnabled())))
 	}
 
-	if req.LastChar != nil && *req.LastChar > 0 {
-		updateSets = append(updateSets, tAccounts.LastChar.SET(jet.Int32(*req.LastChar)))
+	if req.LastChar != nil && req.GetLastChar() > 0 {
+		updateSets = append(updateSets, tAccounts.LastChar.SET(jet.Int32(req.GetLastChar())))
 	}
 
 	if len(updateSets) > 0 {
@@ -224,14 +236,14 @@ func (s *Server) UpdateAccount(ctx context.Context, req *pbsettings.UpdateAccoun
 
 		stmt = stmt.
 			WHERE(
-				tAccounts.ID.EQ(jet.Uint64(req.Id)),
+				tAccounts.ID.EQ(jet.Uint64(req.GetId())),
 			)
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 		}
 	}
 
-	acc, err := s.getAccount(ctx, req.Id)
+	acc, err := s.getAccount(ctx, req.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -243,14 +255,17 @@ func (s *Server) UpdateAccount(ctx context.Context, req *pbsettings.UpdateAccoun
 	}, nil
 }
 
-func (s *Server) DisconnectOAuth2Connection(ctx context.Context, req *pbsettings.DisconnectOAuth2ConnectionRequest) (*pbsettings.DisconnectOAuth2ConnectionResponse, error) {
+func (s *Server) DisconnectOAuth2Connection(
+	ctx context.Context,
+	req *pbsettings.DisconnectOAuth2ConnectionRequest,
+) (*pbsettings.DisconnectOAuth2ConnectionResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
 		Method:  "DisconnectOAuth2Connection",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
@@ -260,8 +275,8 @@ func (s *Server) DisconnectOAuth2Connection(ctx context.Context, req *pbsettings
 	stmt := tOauth2.
 		DELETE().
 		WHERE(jet.AND(
-			tOauth2.AccountID.EQ(jet.Uint64(req.Id)),
-			tOauth2.Provider.EQ(jet.String(req.ProviderName)),
+			tOauth2.AccountID.EQ(jet.Uint64(req.GetId())),
+			tOauth2.Provider.EQ(jet.String(req.GetProviderName())),
 		)).
 		LIMIT(1)
 
@@ -274,14 +289,17 @@ func (s *Server) DisconnectOAuth2Connection(ctx context.Context, req *pbsettings
 	return nil, nil
 }
 
-func (s *Server) DeleteAccount(ctx context.Context, req *pbsettings.DeleteAccountRequest) (*pbsettings.DeleteAccountResponse, error) {
+func (s *Server) DeleteAccount(
+	ctx context.Context,
+	req *pbsettings.DeleteAccountRequest,
+) (*pbsettings.DeleteAccountResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
 		Method:  "DeleteAccount",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
@@ -290,7 +308,7 @@ func (s *Server) DeleteAccount(ctx context.Context, req *pbsettings.DeleteAccoun
 
 	stmt := tAccounts.
 		DELETE().
-		WHERE(tAccounts.ID.EQ(jet.Uint64(req.Id))).
+		WHERE(tAccounts.ID.EQ(jet.Uint64(req.GetId()))).
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

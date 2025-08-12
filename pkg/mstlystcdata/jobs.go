@@ -28,6 +28,9 @@ import (
 
 // Jobs provides methods for loading, caching, searching, and updating job data.
 type Jobs struct {
+	// Cache is the in-memory and NATS-backed cache for jobs
+	*cache.Cache[jobs.Job, *jobs.Job]
+
 	// logger for logging
 	logger *zap.Logger
 	// db is the database connection
@@ -35,9 +38,6 @@ type Jobs struct {
 
 	// tracer is the OpenTelemetry tracer for this component
 	tracer trace.Tracer
-
-	// Cache is the in-memory and NATS-backed cache for jobs
-	*cache.Cache[jobs.Job, *jobs.Job]
 
 	// updateCallbacks is a list of functions to call after jobs are updated
 	updateCallbacks []updateCallbackFn
@@ -66,7 +66,7 @@ type JobsResult struct {
 }
 
 // NewJobs creates a new Jobs instance, sets up lifecycle hooks, and returns a JobsResult.
-func NewJobs(p Params) (JobsResult, error) {
+func NewJobs(p Params) JobsResult {
 	c := &Jobs{
 		logger: p.Logger,
 		db:     p.DB,
@@ -106,7 +106,7 @@ func NewJobs(p Params) (JobsResult, error) {
 	return JobsResult{
 		Jobs:         c,
 		CronRegister: c,
-	}, nil
+	}
 }
 
 // RegisterCronjobs registers the job refresh cronjob with the given registry.
@@ -177,7 +177,7 @@ func (c *Jobs) loadJobs(ctx context.Context) error {
 
 	// No jobs found in database, remove all from cache
 	if len(dest) == 0 {
-		if err := c.Cache.Clear(ctx); err != nil {
+		if err := c.Clear(ctx); err != nil {
 			return err
 		}
 
@@ -189,9 +189,9 @@ func (c *Jobs) loadJobs(ctx context.Context) error {
 	// Check which jobs exist and which don't for deletion later
 	found := []string{}
 	for _, job := range dest {
-		jobName := strings.ToLower(job.Name)
+		jobName := strings.ToLower(job.GetName())
 
-		if err := c.Cache.Put(ctx, jobName, job); err != nil {
+		if err := c.Put(ctx, jobName, job); err != nil {
 			errs = multierr.Append(errs, err)
 		}
 
@@ -203,7 +203,7 @@ func (c *Jobs) loadJobs(ctx context.Context) error {
 		if !slices.ContainsFunc(found, func(in string) bool {
 			return in == key
 		}) {
-			if err := c.Cache.Delete(ctx, key); err != nil {
+			if err := c.Delete(ctx, key); err != nil {
 				errs = multierr.Append(errs, err)
 			}
 		}
@@ -228,11 +228,11 @@ func (c *Jobs) GetHighestJobGrade(job string) *jobs.JobGrade {
 		return nil
 	}
 
-	if len(j.Grades) == 0 {
+	if len(j.GetGrades()) == 0 {
 		return nil
 	}
 
-	return j.Grades[len(j.Grades)-1]
+	return j.GetGrades()[len(j.GetGrades())-1]
 }
 
 // JobsSearchParams contains dependencies for constructing a JobsSearch instance.
@@ -248,6 +248,9 @@ type JobsSearchParams struct {
 
 // JobsSearch provides full-text search capabilities for jobs using Bleve.
 type JobsSearch struct {
+	// Jobs is the underlying Jobs instance
+	*Jobs
+
 	// logger for logging
 	logger *zap.Logger
 
@@ -255,9 +258,6 @@ type JobsSearch struct {
 	mu sync.Mutex
 	// index is the Bleve search index
 	index bleve.Index
-
-	// Jobs is the underlying Jobs instance
-	*Jobs
 }
 
 // NewJobsSearch creates a new JobsSearch instance and sets up lifecycle hooks.
@@ -282,7 +282,7 @@ func NewJobsSearch(p JobsSearchParams) (*JobsSearch, error) {
 			return err
 		}
 
-		c.Jobs.addUpdateCallback(c.loadDataIntoIndex)
+		c.addUpdateCallback(c.loadDataIntoIndex)
 
 		return nil
 	}))
@@ -329,7 +329,11 @@ func (c *JobsSearch) loadDataIntoIndex(ctx context.Context) error {
 }
 
 // Search performs a full-text search for jobs using the given query string and match mode.
-func (c *JobsSearch) Search(ctx context.Context, search string, exactMatch bool) ([]*jobs.Job, error) {
+func (c *JobsSearch) Search(
+	ctx context.Context,
+	search string,
+	exactMatch bool,
+) ([]*jobs.Job, error) {
 	var searchQuery query.Query
 	if search == "" {
 		searchQuery = bleve.NewMatchAllQuery()

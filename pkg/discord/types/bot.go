@@ -1,4 +1,4 @@
-package types
+package discordtypes
 
 import (
 	"context"
@@ -11,5 +11,9 @@ type BotState interface {
 
 	RunSync(guildID discord.GuildID) (bool, error)
 
-	IsUserGuildAdmin(ctx context.Context, channelId discord.ChannelID, userId discord.UserID) (bool, error)
+	IsUserGuildAdmin(
+		ctx context.Context,
+		channelId discord.ChannelID,
+		userId discord.UserID,
+	) (bool, error)
 }

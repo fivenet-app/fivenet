@@ -9,7 +9,11 @@ import (
 	"github.com/nats-io/nats.go/jetstream"
 )
 
-func (s *DispatchersDB) updateDispatchersInKV(ctx context.Context, job string, dispatchers []*jobs.Colleague) error {
+func (s *DispatchersDB) updateDispatchersInKV(
+	ctx context.Context,
+	job string,
+	dispatchers []*jobs.Colleague,
+) error {
 	if err := s.store.Put(ctx, job, &centrum.Dispatchers{
 		Job:         job,
 		Dispatchers: dispatchers,

@@ -21,16 +21,16 @@ func IsDispatchUnassigned(in *centrum.Dispatch) bool {
 	}
 
 	// Ignore dispatches with no status
-	if in.Status == nil {
+	if in.GetStatus() == nil {
 		return false
 	}
 
 	// Ignore completed dispatches
-	if IsStatusDispatchComplete(in.Status.Status) {
+	if IsStatusDispatchComplete(in.GetStatus().GetStatus()) {
 		return false
 	}
 
 	// Dispatch is "new" or unassgined, and no units assigned to it
-	return (IsStatusDispatchUnassigned(in.Status.Status) || in.Status.Status == centrum.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED) &&
-		len(in.Units) == 0
+	return (IsStatusDispatchUnassigned(in.GetStatus().GetStatus()) || in.GetStatus().GetStatus() == centrum.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED) &&
+		len(in.GetUnits()) == 0
 }

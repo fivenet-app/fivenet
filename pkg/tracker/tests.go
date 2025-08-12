@@ -82,9 +82,11 @@ func (s *TestTracker) GetUserMarkerById(id int32) (*livemap.UserMarker, bool) {
 		return nil, false
 	}
 
-	return s.GetUserByJobAndID(info.Job, id)
+	return s.GetUserByJobAndID(info.GetJob(), id)
 }
 
-func (s *TestTracker) Subscribe(ctx context.Context) (chan *store.KeyValueEntry[livemap.UserMarker, *livemap.UserMarker], error) {
+func (s *TestTracker) Subscribe(
+	ctx context.Context,
+) (chan *store.KeyValueEntry[livemap.UserMarker, *livemap.UserMarker], error) {
 	return s.broker.Subscribe(), nil
 }

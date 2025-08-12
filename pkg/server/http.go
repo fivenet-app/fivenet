@@ -87,7 +87,8 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func New(p Params) (Result, error) {
 	// Create HTTP Server for graceful shutdown handling and h2c wrapped handler
 	srv := &http.Server{
-		Addr: p.Config.HTTP.Listen,
+		ReadHeaderTimeout: 5 * time.Second,
+		Addr:              p.Config.HTTP.Listen,
 		Handler: h2c.NewHandler(
 			&handler{
 				gin:  p.Engine,
@@ -164,8 +165,20 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 
 			// Log trace and span ID
 			if trace.SpanFromContext(c.Request.Context()).SpanContext().IsValid() {
-				fields = append(fields, zap.String("traceId", trace.SpanFromContext(c.Request.Context()).SpanContext().TraceID().String()))
-				fields = append(fields, zap.String("spanId", trace.SpanFromContext(c.Request.Context()).SpanContext().SpanID().String()))
+				fields = append(
+					fields,
+					zap.String(
+						"traceId",
+						trace.SpanFromContext(c.Request.Context()).SpanContext().TraceID().String(),
+					),
+				)
+				fields = append(
+					fields,
+					zap.String(
+						"spanId",
+						trace.SpanFromContext(c.Request.Context()).SpanContext().SpanID().String(),
+					),
+				)
 			}
 
 			return fields

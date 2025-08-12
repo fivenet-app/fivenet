@@ -33,28 +33,36 @@ const (
 
 var tDComments = table.FivenetDocumentsComments
 
-func (s *Server) GetComments(ctx context.Context, req *pbdocuments.GetCommentsRequest) (*pbdocuments.GetCommentsResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
+func (s *Server) GetComments(
+	ctx context.Context,
+	req *pbdocuments.GetCommentsRequest,
+) (*pbdocuments.GetCommentsResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetDocumentId(),
+		userInfo,
+		documents.AccessLevel_ACCESS_LEVEL_VIEW,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !check && !userInfo.Superuser {
+	if !check && !userInfo.GetSuperuser() {
 		return nil, errorsdocuments.ErrCommentViewDenied
 	}
 
 	tDComments := tDComments.AS("comment")
 	var condition jet.BoolExpression
-	if userInfo.Superuser {
+	if userInfo.GetSuperuser() {
 		condition = jet.AND(
-			tDComments.DocumentID.EQ(jet.Uint64(req.DocumentId)),
+			tDComments.DocumentID.EQ(jet.Uint64(req.GetDocumentId())),
 		)
 	} else {
 		condition = jet.AND(
-			tDComments.DocumentID.EQ(jet.Uint64(req.DocumentId)),
+			tDComments.DocumentID.EQ(jet.Uint64(req.GetDocumentId())),
 			tDComments.DeletedAt.IS_NULL(),
 		)
 	}
@@ -75,7 +83,7 @@ func (s *Server) GetComments(ctx context.Context, req *pbdocuments.GetCommentsRe
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, CommentsDefaultPageSize)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, CommentsDefaultPageSize)
 	resp := &pbdocuments.GetCommentsResponse{
 		Pagination: pag,
 		Comments:   []*documents.Comment{},
@@ -102,7 +110,7 @@ func (s *Server) GetComments(ctx context.Context, req *pbdocuments.GetCommentsRe
 		tUserProps.AvatarFileID.AS("creator.avatar_file_id"),
 		tAvatar.FilePath.AS("creator.avatar"),
 	}
-	if userInfo.Superuser {
+	if userInfo.GetSuperuser() {
 		columns = append(columns, tDComments.DeletedAt)
 	}
 
@@ -125,7 +133,7 @@ func (s *Server) GetComments(ctx context.Context, req *pbdocuments.GetCommentsRe
 		).
 		WHERE(condition).
 		OFFSET(
-			req.Pagination.Offset,
+			req.GetPagination().GetOffset(),
 		).
 		ORDER_BY(
 			tDComments.CreatedAt.DESC(),
@@ -136,41 +144,52 @@ func (s *Server) GetComments(ctx context.Context, req *pbdocuments.GetCommentsRe
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	resp.Pagination.Update(len(resp.Comments))
+	resp.GetPagination().Update(len(resp.GetComments()))
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.Comments {
-		if resp.Comments[i].Creator != nil {
-			jobInfoFn(resp.Comments[i].Creator)
+	for i := range resp.GetComments() {
+		if resp.GetComments()[i].GetCreator() != nil {
+			jobInfoFn(resp.GetComments()[i].GetCreator())
 		}
 	}
 
 	return resp, nil
 }
 
-func (s *Server) PostComment(ctx context.Context, req *pbdocuments.PostCommentRequest) (*pbdocuments.PostCommentResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.Comment.DocumentId})
+func (s *Server) PostComment(
+	ctx context.Context,
+	req *pbdocuments.PostCommentRequest,
+) (*pbdocuments.PostCommentResponse, error) {
+	logging.InjectFields(
+		ctx,
+		logging.Fields{"fivenet.documents.id", req.GetComment().GetDocumentId()},
+	)
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
 		Method:  "PostComment",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.Comment.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_COMMENT)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetComment().GetDocumentId(),
+		userInfo,
+		documents.AccessLevel_ACCESS_LEVEL_COMMENT,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !check && !userInfo.Superuser {
+	if !check && !userInfo.GetSuperuser() {
 		return nil, errorsdocuments.ErrCommentPostDenied
 	}
 
-	if len(*req.Comment.Content.RawContent) > CommentsMaxLength {
+	if len(req.GetComment().GetContent().GetRawContent()) > CommentsMaxLength {
 		return nil, errorsdocuments.ErrCommentPostDenied
 	}
 
@@ -182,10 +201,10 @@ func (s *Server) PostComment(ctx context.Context, req *pbdocuments.PostCommentRe
 			tDComments.CreatorJob,
 		).
 		VALUES(
-			req.Comment.DocumentId,
-			req.Comment.Content,
-			userInfo.UserId,
-			userInfo.Job,
+			req.GetComment().GetDocumentId(),
+			req.GetComment().GetContent(),
+			userInfo.GetUserId(),
+			userInfo.GetJob(),
 		)
 
 	result, err := stmt.ExecContext(ctx, s.db)
@@ -199,15 +218,15 @@ func (s *Server) PostComment(ctx context.Context, req *pbdocuments.PostCommentRe
 	}
 
 	if _, err := addDocumentActivity(ctx, s.db, &documents.DocActivity{
-		DocumentId:   req.Comment.DocumentId,
+		DocumentId:   req.GetComment().GetDocumentId(),
 		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_ADDED,
 		CreatorId:    &userInfo.UserId,
-		CreatorJob:   userInfo.Job,
+		CreatorJob:   userInfo.GetJob(),
 	}); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if err := s.notifyUsersNewComment(ctx, req.Comment.DocumentId, userInfo.UserId); err != nil {
+	if err := s.notifyUsersNewComment(ctx, req.GetComment().GetDocumentId(), userInfo.GetUserId()); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
@@ -224,38 +243,52 @@ func (s *Server) PostComment(ctx context.Context, req *pbdocuments.PostCommentRe
 	}, nil
 }
 
-func (s *Server) EditComment(ctx context.Context, req *pbdocuments.EditCommentRequest) (*pbdocuments.EditCommentResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.Comment.DocumentId})
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.comment_id", req.Comment.Id})
+func (s *Server) EditComment(
+	ctx context.Context,
+	req *pbdocuments.EditCommentRequest,
+) (*pbdocuments.EditCommentResponse, error) {
+	logging.InjectFields(
+		ctx,
+		logging.Fields{"fivenet.documents.id", req.GetComment().GetDocumentId()},
+	)
+	logging.InjectFields(
+		ctx,
+		logging.Fields{"fivenet.documents.comment_id", req.GetComment().GetId()},
+	)
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
 		Method:  "EditComment",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.Comment.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_COMMENT)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetComment().GetDocumentId(),
+		userInfo,
+		documents.AccessLevel_ACCESS_LEVEL_COMMENT,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !check && !userInfo.Superuser {
+	if !check && !userInfo.GetSuperuser() {
 		return nil, errorsdocuments.ErrCommentEditDenied
 	}
 
-	comment, err := s.getComment(ctx, req.Comment.Id, userInfo)
+	comment, err := s.getComment(ctx, req.GetComment().GetId(), userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !userInfo.Superuser && *comment.CreatorId != userInfo.UserId {
+	if !userInfo.GetSuperuser() && comment.GetCreatorId() != userInfo.GetUserId() {
 		return nil, errorsdocuments.ErrCommentEditDenied
 	}
 
-	if len(*req.Comment.Content.RawContent) > CommentsMaxLength {
+	if len(req.GetComment().GetContent().GetRawContent()) > CommentsMaxLength {
 		return nil, errorsdocuments.ErrCommentPostDenied
 	}
 
@@ -264,10 +297,10 @@ func (s *Server) EditComment(ctx context.Context, req *pbdocuments.EditCommentRe
 			tDComments.Comment,
 		).
 		SET(
-			tDComments.Comment.SET(jet.String(*req.Comment.Content.RawContent)),
+			tDComments.Comment.SET(jet.String(req.GetComment().GetContent().GetRawContent())),
 		).
 		WHERE(jet.AND(
-			tDComments.ID.EQ(jet.Uint64(req.Comment.Id)),
+			tDComments.ID.EQ(jet.Uint64(req.GetComment().GetId())),
 			tDComments.DeletedAt.IS_NULL(),
 		))
 
@@ -275,13 +308,13 @@ func (s *Server) EditComment(ctx context.Context, req *pbdocuments.EditCommentRe
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	comment.Content = req.Comment.Content
+	comment.Content = req.GetComment().GetContent()
 
 	if _, err := addDocumentActivity(ctx, s.db, &documents.DocActivity{
-		DocumentId:   req.Comment.DocumentId,
+		DocumentId:   req.GetComment().GetDocumentId(),
 		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_UPDATED,
 		CreatorId:    &userInfo.UserId,
-		CreatorJob:   userInfo.Job,
+		CreatorJob:   userInfo.GetJob(),
 	}); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -293,7 +326,11 @@ func (s *Server) EditComment(ctx context.Context, req *pbdocuments.EditCommentRe
 	}, nil
 }
 
-func (s *Server) getComment(ctx context.Context, id uint64, userInfo *userinfo.UserInfo) (*documents.Comment, error) {
+func (s *Server) getComment(
+	ctx context.Context,
+	id uint64,
+	userInfo *userinfo.UserInfo,
+) (*documents.Comment, error) {
 	tDComments := tDComments.AS("comment")
 	tCreator := tables.User().AS("creator")
 	tAvatar := table.FivenetFiles.AS("avatar")
@@ -338,49 +375,67 @@ func (s *Server) getComment(ctx context.Context, id uint64, userInfo *userinfo.U
 		return nil, err
 	}
 
-	if comment.Creator != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, comment.Creator)
+	if comment.GetCreator() != nil {
+		s.enricher.EnrichJobInfoSafe(userInfo, comment.GetCreator())
 	}
 
 	return comment, nil
 }
 
-func (s *Server) DeleteComment(ctx context.Context, req *pbdocuments.DeleteCommentRequest) (*pbdocuments.DeleteCommentResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.CommentId})
+func (s *Server) DeleteComment(
+	ctx context.Context,
+	req *pbdocuments.DeleteCommentRequest,
+) (*pbdocuments.DeleteCommentResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetCommentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
 		Method:  "DeleteComment",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	comment, err := s.getComment(ctx, req.CommentId, userInfo)
+	comment, err := s.getComment(ctx, req.GetCommentId(), userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if comment.CreatorJob == "" {
-		comment.CreatorJob = userInfo.Job
+	if comment.GetCreatorJob() == "" {
+		comment.CreatorJob = userInfo.GetJob()
 	}
 
-	check, err := s.access.CanUserAccessTarget(ctx, comment.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_COMMENT)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		comment.GetDocumentId(),
+		userInfo,
+		documents.AccessLevel_ACCESS_LEVEL_COMMENT,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !check && !userInfo.Superuser {
+	if !check && !userInfo.GetSuperuser() {
 		return nil, errorsdocuments.ErrCommentDeleteDenied
 	}
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(userInfo, permsdocuments.DocumentsServicePerm, permsdocuments.DocumentsServiceDeleteCommentPerm, permsdocuments.DocumentsServiceDeleteCommentAccessPermField)
+	fields, err := s.ps.AttrStringList(
+		userInfo,
+		permsdocuments.DocumentsServicePerm,
+		permsdocuments.DocumentsServiceDeleteCommentPerm,
+		permsdocuments.DocumentsServiceDeleteCommentAccessPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !access.CheckIfHasOwnJobAccess(fields, userInfo, comment.CreatorJob, comment.Creator) {
+	if !access.CheckIfHasOwnJobAccess(
+		fields,
+		userInfo,
+		comment.GetCreatorJob(),
+		comment.GetCreator(),
+	) {
 		return nil, errorsdocuments.ErrCommentDeleteDenied
 	}
 
@@ -392,7 +447,7 @@ func (s *Server) DeleteComment(ctx context.Context, req *pbdocuments.DeleteComme
 			tDComments.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
 		).
 		WHERE(jet.AND(
-			tDComments.ID.EQ(jet.Uint64(req.CommentId)),
+			tDComments.ID.EQ(jet.Uint64(req.GetCommentId())),
 			tDComments.DeletedAt.IS_NULL(),
 		))
 
@@ -401,10 +456,10 @@ func (s *Server) DeleteComment(ctx context.Context, req *pbdocuments.DeleteComme
 	}
 
 	if _, err := addDocumentActivity(ctx, s.db, &documents.DocActivity{
-		DocumentId:   uint64(comment.DocumentId),
+		DocumentId:   comment.GetDocumentId(),
 		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_DELETED,
 		CreatorId:    &userInfo.UserId,
-		CreatorJob:   userInfo.Job,
+		CreatorJob:   userInfo.GetJob(),
 	}); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -414,7 +469,11 @@ func (s *Server) DeleteComment(ctx context.Context, req *pbdocuments.DeleteComme
 	return &pbdocuments.DeleteCommentResponse{}, nil
 }
 
-func (s *Server) notifyUsersNewComment(ctx context.Context, documentId uint64, sourceUserId int32) error {
+func (s *Server) notifyUsersNewComment(
+	ctx context.Context,
+	documentId uint64,
+	sourceUserId int32,
+) error {
 	userInfo, err := s.ui.GetUserInfoWithoutAccountId(ctx, sourceUserId)
 	if err != nil {
 		return err
@@ -424,7 +483,7 @@ func (s *Server) notifyUsersNewComment(ctx context.Context, documentId uint64, s
 	if err != nil {
 		return err
 	}
-	if doc == nil || doc.DeletedAt != nil {
+	if doc == nil || doc.GetDeletedAt() != nil {
 		return nil
 	}
 
@@ -442,7 +501,7 @@ func (s *Server) notifyUsersNewComment(ctx context.Context, documentId uint64, s
 				),
 		).
 		WHERE(jet.AND(
-			tDComments.DocumentID.EQ(jet.Uint64(doc.Id)),
+			tDComments.DocumentID.EQ(jet.Uint64(doc.GetId())),
 			tDComments.CreatorID.NOT_EQ(jet.Int32(sourceUserId)),
 		)).
 		GROUP_BY(tDComments.CreatorID).
@@ -459,18 +518,24 @@ func (s *Server) notifyUsersNewComment(ctx context.Context, documentId uint64, s
 	}
 
 	// If we have a document creator, make sure to inform the creator if necessary
-	if doc.CreatorId != nil && sourceUserId != *doc.CreatorId && !slices.Contains(targetUserIds, *doc.CreatorId) {
+	if doc.CreatorId != nil && sourceUserId != doc.GetCreatorId() &&
+		!slices.Contains(targetUserIds, doc.GetCreatorId()) {
 		userInfo, err := s.ui.GetUserInfoWithoutAccountId(ctx, sourceUserId)
 		if err != nil {
 			return err
 		}
 
-		check, err := s.access.CanUserAccessTarget(ctx, doc.Id, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+		check, err := s.access.CanUserAccessTarget(
+			ctx,
+			doc.GetId(),
+			userInfo,
+			documents.AccessLevel_ACCESS_LEVEL_VIEW,
+		)
 		if err != nil {
 			return err
 		}
 		if check {
-			targetUserIds = append(targetUserIds, *doc.CreatorId)
+			targetUserIds = append(targetUserIds, doc.GetCreatorId())
 		}
 	}
 
@@ -486,7 +551,12 @@ func (s *Server) notifyUsersNewComment(ctx context.Context, documentId uint64, s
 			return err
 		}
 
-		check, err := s.access.CanUserAccessTarget(ctx, doc.Id, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+		check, err := s.access.CanUserAccessTarget(
+			ctx,
+			doc.GetId(),
+			userInfo,
+			documents.AccessLevel_ACCESS_LEVEL_VIEW,
+		)
 		if err != nil {
 			return err
 		}
@@ -501,13 +571,13 @@ func (s *Server) notifyUsersNewComment(ctx context.Context, documentId uint64, s
 			},
 			Content: &common.I18NItem{
 				Key:        "notifications.documents.document_comment_added.content",
-				Parameters: map[string]string{"title": doc.Title},
+				Parameters: map[string]string{"title": doc.GetTitle()},
 			},
 			Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
 			Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
 			Data: &notifications.Data{
 				Link: &notifications.Link{
-					To: fmt.Sprintf("/documents/%d#comments", doc.Id),
+					To: fmt.Sprintf("/documents/%d#comments", doc.GetId()),
 				},
 				CausedBy: &users.UserShort{
 					UserId: sourceUserId,

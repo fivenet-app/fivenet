@@ -38,13 +38,13 @@ func (x *UserShort) SetJobGradeLabel(label string) {
 
 func (x *User) UserShort() *UserShort {
 	return &UserShort{
-		UserId:        x.UserId,
+		UserId:        x.GetUserId(),
 		Identifier:    x.Identifier,
-		Job:           x.Job,
-		JobGrade:      x.JobGrade,
-		Firstname:     x.Firstname,
-		Lastname:      x.Lastname,
-		Dateofbirth:   x.Dateofbirth,
+		Job:           x.GetJob(),
+		JobGrade:      x.GetJobGrade(),
+		Firstname:     x.GetFirstname(),
+		Lastname:      x.GetLastname(),
+		Dateofbirth:   x.GetDateofbirth(),
 		PhoneNumber:   x.PhoneNumber,
 		JobLabel:      x.JobLabel,
 		JobGradeLabel: x.JobGradeLabel,
@@ -53,13 +53,13 @@ func (x *User) UserShort() *UserShort {
 
 func (x *User) Colleague() *jobs.Colleague {
 	return &jobs.Colleague{
-		UserId:        x.UserId,
+		UserId:        x.GetUserId(),
 		Identifier:    x.Identifier,
-		Job:           x.Job,
-		JobGrade:      x.JobGrade,
-		Firstname:     x.Firstname,
-		Lastname:      x.Lastname,
-		Dateofbirth:   x.Dateofbirth,
+		Job:           x.GetJob(),
+		JobGrade:      x.GetJobGrade(),
+		Firstname:     x.GetFirstname(),
+		Lastname:      x.GetLastname(),
+		Dateofbirth:   x.GetDateofbirth(),
 		PhoneNumber:   x.PhoneNumber,
 		JobLabel:      x.JobLabel,
 		JobGradeLabel: x.JobGradeLabel,

@@ -96,7 +96,7 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbsync.RegisterSyncServiceServer(srv, s)
 }
 
-// AuthFuncOverride is called instead of the original auth func
+// AuthFuncOverride is called instead of the original auth func so the sync API can use tokens.
 func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (context.Context, error) {
 	if fullMethod == "/services.sync.SyncService/GetStatus" {
 		c, _ := s.auth.GRPCAuthFunc(ctx, fullMethod)
@@ -117,12 +117,19 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (conte
 	return ctx, nil
 }
 
-func (s *Server) PermissionUnaryFuncOverride(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error) {
+func (s *Server) PermissionUnaryFuncOverride(
+	ctx context.Context,
+	info *grpc.UnaryServerInfo,
+) (context.Context, error) {
 	// Skip permission check for the sync service
 	return ctx, nil
 }
 
-func (s *Server) PermissionStreamFuncOverride(ctx context.Context, srv any, info *grpc.StreamServerInfo) (context.Context, error) {
+func (s *Server) PermissionStreamFuncOverride(
+	ctx context.Context,
+	srv any,
+	info *grpc.StreamServerInfo,
+) (context.Context, error) {
 	// Skip permission check for the sync service
 	return ctx, nil
 }

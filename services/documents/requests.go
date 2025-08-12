@@ -29,12 +29,20 @@ const DocRequestMinimumWaitTime = 24 * time.Hour
 
 var tDocRequest = table.FivenetDocumentsRequests.AS("doc_request")
 
-func (s *Server) ListDocumentReqs(ctx context.Context, req *pbdocuments.ListDocumentReqsRequest) (*pbdocuments.ListDocumentReqsResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
+func (s *Server) ListDocumentReqs(
+	ctx context.Context,
+	req *pbdocuments.ListDocumentReqsRequest,
+) (*pbdocuments.ListDocumentReqsResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetDocumentId(),
+		userInfo,
+		documents.AccessLevel_ACCESS_LEVEL_VIEW,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -42,7 +50,7 @@ func (s *Server) ListDocumentReqs(ctx context.Context, req *pbdocuments.ListDocu
 		return nil, errorsdocuments.ErrDocViewDenied
 	}
 
-	condition := tDocRequest.DocumentID.EQ(jet.Uint64(req.DocumentId))
+	condition := tDocRequest.DocumentID.EQ(jet.Uint64(req.GetDocumentId()))
 
 	countStmt := tDocRequest.
 		SELECT(
@@ -60,7 +68,7 @@ func (s *Server) ListDocumentReqs(ctx context.Context, req *pbdocuments.ListDocu
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, ActivityDefaultPageSize)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, ActivityDefaultPageSize)
 	resp := &pbdocuments.ListDocumentReqsResponse{
 		Pagination: pag,
 		Requests:   []*documents.DocRequest{},
@@ -98,7 +106,7 @@ func (s *Server) ListDocumentReqs(ctx context.Context, req *pbdocuments.ListDocu
 		).
 		WHERE(condition).
 		OFFSET(
-			req.Pagination.Offset,
+			req.GetPagination().GetOffset(),
 		).
 		ORDER_BY(
 			tDocRequest.ID.DESC(),
@@ -111,54 +119,69 @@ func (s *Server) ListDocumentReqs(ctx context.Context, req *pbdocuments.ListDocu
 		}
 	}
 
-	resp.Pagination.Update(len(resp.Requests))
+	resp.GetPagination().Update(len(resp.GetRequests()))
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.Requests {
-		if resp.Requests[i].Creator != nil {
-			jobInfoFn(resp.Requests[i].Creator)
+	for i := range resp.GetRequests() {
+		if resp.GetRequests()[i].GetCreator() != nil {
+			jobInfoFn(resp.GetRequests()[i].GetCreator())
 		}
 	}
 
 	return resp, nil
 }
 
-func (s *Server) CreateDocumentReq(ctx context.Context, req *pbdocuments.CreateDocumentReqRequest) (*pbdocuments.CreateDocumentReqResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
+func (s *Server) CreateDocumentReq(
+	ctx context.Context,
+	req *pbdocuments.CreateDocumentReqRequest,
+) (*pbdocuments.CreateDocumentReqResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
 		Method:  "CreateDocumentReq",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetDocumentId(),
+		userInfo,
+		documents.AccessLevel_ACCESS_LEVEL_VIEW,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !check && req.RequestType != documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_ACCESS {
+	if !check &&
+		req.GetRequestType() != documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_ACCESS {
 		return nil, errorsdocuments.ErrDocViewDenied
 	}
 
-	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo, false)
+	doc, err := s.getDocument(
+		ctx,
+		tDocument.ID.EQ(jet.Uint64(req.GetDocumentId())),
+		userInfo,
+		false,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if doc.Id <= 0 {
-		doc.Id = req.DocumentId
+	if doc.GetId() <= 0 {
+		doc.Id = req.GetDocumentId()
 	}
 
 	// Owner override hatch for when a colleague isn't part of the job anymore and the document should be taken over
-	if doc.CreatorJob == userInfo.Job && (doc.Creator == nil || doc.Creator.Job != doc.CreatorJob) &&
-		req.RequestType == documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE {
-		if err := s.updateDocumentOwner(ctx, s.db, doc.Id, userInfo, &users.UserShort{
-			UserId: userInfo.UserId,
-			Job:    userInfo.Job,
+	if doc.GetCreatorJob() == userInfo.GetJob() &&
+		(doc.GetCreator() == nil || doc.GetCreator().GetJob() != doc.GetCreatorJob()) &&
+		req.GetRequestType() == documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE {
+		if err := s.updateDocumentOwner(ctx, s.db, doc.GetId(), userInfo, &users.UserShort{
+			UserId: userInfo.GetUserId(),
+			Job:    userInfo.GetJob(),
 		}); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
@@ -166,10 +189,10 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *pbdocuments.CreateD
 		accepted := true
 		return &pbdocuments.CreateDocumentReqResponse{
 			Request: &documents.DocRequest{
-				DocumentId:  doc.Id,
+				DocumentId:  doc.GetId(),
 				RequestType: documents.DocActivityType_DOC_ACTIVITY_TYPE_OWNER_CHANGED,
 				CreatorId:   &userInfo.UserId,
-				CreatorJob:  userInfo.Job,
+				CreatorJob:  userInfo.GetJob(),
 				Reason:      req.Reason,
 				Accepted:    &accepted,
 			},
@@ -177,8 +200,8 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *pbdocuments.CreateD
 	}
 
 	request, err := s.getDocumentReq(ctx, s.db,
-		tDocRequest.DocumentID.EQ(jet.Uint64(doc.Id)).AND(
-			tDocRequest.RequestType.EQ(jet.Int16(int16(req.RequestType))),
+		tDocRequest.DocumentID.EQ(jet.Uint64(doc.GetId())).AND(
+			tDocRequest.RequestType.EQ(jet.Int16(int16(req.GetRequestType()))),
 		),
 	)
 	if err != nil {
@@ -188,8 +211,9 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *pbdocuments.CreateD
 	if request != nil {
 		// If a request of that type exists and is less than wait time old and by the same person,
 		// make sure that we let the user know
-		if request.CreatedAt != nil && time.Since(request.CreatedAt.AsTime()) <= DocRequestMinimumWaitTime {
-			if request.CreatorId != nil && *request.CreatorId == userInfo.UserId {
+		if request.GetCreatedAt() != nil &&
+			time.Since(request.GetCreatedAt().AsTime()) <= DocRequestMinimumWaitTime {
+			if request.CreatorId != nil && request.GetCreatorId() == userInfo.GetUserId() {
 				return nil, errorsdocuments.ErrDocReqAlreadyCreated
 			}
 		}
@@ -204,12 +228,12 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *pbdocuments.CreateD
 	defer tx.Rollback()
 
 	if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
-		DocumentId:   doc.Id,
-		ActivityType: req.RequestType,
+		DocumentId:   doc.GetId(),
+		ActivityType: req.GetRequestType(),
 		CreatorId:    &userInfo.UserId,
-		CreatorJob:   userInfo.Job,
+		CreatorJob:   userInfo.GetJob(),
 		Reason:       req.Reason,
-		Data:         req.Data,
+		Data:         req.GetData(),
 	}); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -217,26 +241,26 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *pbdocuments.CreateD
 	// If no request of that type exists yet, create one, otherwise udpate the existing with the new requestors info
 	if request == nil {
 		request, err = s.addAndGetDocumentReq(ctx, tx, &documents.DocRequest{
-			DocumentId:  doc.Id,
+			DocumentId:  doc.GetId(),
 			CreatorId:   &userInfo.UserId,
-			CreatorJob:  userInfo.Job,
-			RequestType: req.RequestType,
+			CreatorJob:  userInfo.GetJob(),
+			RequestType: req.GetRequestType(),
 			Reason:      req.Reason,
-			Data:        req.Data,
+			Data:        req.GetData(),
 		})
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	} else {
 		accepted := false
-		if err := s.updateDocumentReq(ctx, tx, request.Id, &documents.DocRequest{
-			Id:          request.Id,
-			DocumentId:  doc.Id,
+		if err := s.updateDocumentReq(ctx, tx, request.GetId(), &documents.DocRequest{
+			Id:          request.GetId(),
+			DocumentId:  doc.GetId(),
 			CreatorId:   &userInfo.UserId,
-			CreatorJob:  userInfo.Job,
-			RequestType: req.RequestType,
+			CreatorJob:  userInfo.GetJob(),
+			RequestType: req.GetRequestType(),
 			Reason:      req.Reason,
-			Data:        req.Data,
+			Data:        req.GetData(),
 			Accepted:    &accepted,
 		}); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -256,7 +280,7 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *pbdocuments.CreateD
 
 	// If the document has no creator anymore, nothing we can do here
 	if doc.CreatorId != nil {
-		if err := s.notifyUserAboutRequest(ctx, doc, userInfo.UserId, int32(*doc.CreatorId)); err != nil {
+		if err := s.notifyUserAboutRequest(ctx, doc, userInfo.GetUserId(), doc.GetCreatorId()); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	}
@@ -264,10 +288,13 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *pbdocuments.CreateD
 	return resp, nil
 }
 
-func (s *Server) UpdateDocumentReq(ctx context.Context, req *pbdocuments.UpdateDocumentReqRequest) (*pbdocuments.UpdateDocumentReqResponse, error) {
+func (s *Server) UpdateDocumentReq(
+	ctx context.Context,
+	req *pbdocuments.UpdateDocumentReqRequest,
+) (*pbdocuments.UpdateDocumentReqResponse, error) {
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.documents.id", req.DocumentId,
-		"fivenet.documents.request_id", req.RequestId,
+		"fivenet.documents.id", req.GetDocumentId(),
+		"fivenet.documents.request_id", req.GetRequestId(),
 	})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -275,15 +302,15 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *pbdocuments.UpdateD
 	auditEntry := &audit.AuditEntry{
 		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
 		Method:  "UpdateDocumentReq",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
 	request, err := s.getDocumentReq(ctx, s.db,
-		tDocRequest.ID.EQ(jet.Uint64(req.RequestId)).
-			AND(tDocRequest.DocumentID.EQ(jet.Uint64(req.DocumentId))),
+		tDocRequest.ID.EQ(jet.Uint64(req.GetRequestId())).
+			AND(tDocRequest.DocumentID.EQ(jet.Uint64(req.GetDocumentId()))),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -292,7 +319,12 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *pbdocuments.UpdateD
 		return nil, errorsdocuments.ErrFailedQuery
 	}
 
-	check, err := s.access.CanUserAccessTarget(ctx, request.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		request.GetDocumentId(),
+		userInfo,
+		documents.AccessLevel_ACCESS_LEVEL_EDIT,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -300,17 +332,23 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *pbdocuments.UpdateD
 		return nil, errorsdocuments.ErrDocViewDenied
 	}
 
-	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo, false)
+	doc, err := s.getDocument(
+		ctx,
+		tDocument.ID.EQ(jet.Uint64(req.GetDocumentId())),
+		userInfo,
+		false,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if (doc.CreatorId != nil && *doc.CreatorId != userInfo.UserId) && !userInfo.Superuser {
+	if (doc.CreatorId != nil && doc.GetCreatorId() != userInfo.GetUserId()) &&
+		!userInfo.GetSuperuser() {
 		return nil, errorsdocuments.ErrDocUpdateDenied
 	}
 
 	// Skip already accepted or declined document requests
-	if request.Accepted != nil && *request.Accepted {
+	if request.Accepted != nil && request.GetAccepted() {
 		return nil, errorsdocuments.ErrDocReqAlreadyCompleted
 	}
 
@@ -322,22 +360,22 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *pbdocuments.UpdateD
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	accepted := req.Accepted
+	accepted := req.GetAccepted()
 	request.Accepted = &accepted
 	request.UpdatedAt = timestamp.Now()
-	if err := s.updateDocumentReq(ctx, tx, request.Id, request); err != nil {
+	if err := s.updateDocumentReq(ctx, tx, request.GetId(), request); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	// Accepted the change
-	if req.Accepted {
+	if req.GetAccepted() {
 		activityType := documents.DocActivityType_DOC_ACTIVITY_TYPE_ACCESS_UPDATED
-		switch request.RequestType {
+		switch request.GetRequestType() {
 		case documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE:
 			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_CLOSED
 
 			if _, err := s.ToggleDocument(ctx, &pbdocuments.ToggleDocumentRequest{
-				DocumentId: request.DocumentId,
+				DocumentId: request.GetDocumentId(),
 				Closed:     true,
 			}); err != nil {
 				return nil, err
@@ -347,7 +385,7 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *pbdocuments.UpdateD
 			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_OPEN
 
 			if _, err := s.ToggleDocument(ctx, &pbdocuments.ToggleDocumentRequest{
-				DocumentId: request.DocumentId,
+				DocumentId: request.GetDocumentId(),
 				Closed:     false,
 			}); err != nil {
 				return nil, err
@@ -360,7 +398,7 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *pbdocuments.UpdateD
 		case documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE:
 			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_OWNER_CHANGED
 
-			if err := s.updateDocumentOwner(ctx, tx, request.DocumentId, userInfo, request.Creator); err != nil {
+			if err := s.updateDocumentOwner(ctx, tx, request.GetDocumentId(), userInfo, request.GetCreator()); err != nil {
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
 
@@ -368,7 +406,7 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *pbdocuments.UpdateD
 			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_DELETED
 
 			if _, err := s.DeleteDocument(ctx, &pbdocuments.DeleteDocumentRequest{
-				DocumentId: request.DocumentId,
+				DocumentId: request.GetDocumentId(),
 				Reason:     request.Reason,
 			}); err != nil {
 				return nil, err
@@ -377,24 +415,25 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *pbdocuments.UpdateD
 		case documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_ACCESS:
 			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_ACCESS_UPDATED
 
-			if request.CreatorId == nil || request.Data == nil || request.Data.GetAccessRequested() == nil {
+			if request.CreatorId == nil || request.GetData() == nil ||
+				request.GetData().GetAccessRequested() == nil {
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
 
-			if err := s.access.Users.CreateEntry(ctx, tx, request.DocumentId, &documents.DocumentUserAccess{
-				UserId:   *request.CreatorId,
-				TargetId: request.DocumentId,
-				Access:   request.Data.GetAccessRequested().Level,
+			if err := s.access.Users.CreateEntry(ctx, tx, request.GetDocumentId(), &documents.DocumentUserAccess{
+				UserId:   request.GetCreatorId(),
+				TargetId: request.GetDocumentId(),
+				Access:   request.GetData().GetAccessRequested().GetLevel(),
 			}); err != nil {
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
 		}
 
 		if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
-			DocumentId:   request.DocumentId,
+			DocumentId:   request.GetDocumentId(),
 			ActivityType: activityType,
 			CreatorId:    &userInfo.UserId,
-			CreatorJob:   userInfo.Job,
+			CreatorJob:   userInfo.GetJob(),
 			Reason:       req.Reason,
 		}); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -413,22 +452,25 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *pbdocuments.UpdateD
 	}, nil
 }
 
-func (s *Server) DeleteDocumentReq(ctx context.Context, req *pbdocuments.DeleteDocumentReqRequest) (*pbdocuments.DeleteDocumentReqResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.request_id", req.RequestId})
+func (s *Server) DeleteDocumentReq(
+	ctx context.Context,
+	req *pbdocuments.DeleteDocumentReqRequest,
+) (*pbdocuments.DeleteDocumentReqResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.request_id", req.GetRequestId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
 		Method:  "DeleteDocumentReq",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
 	request, err := s.getDocumentReq(ctx, s.db,
-		tDocRequest.ID.EQ(jet.Uint64(req.RequestId)),
+		tDocRequest.ID.EQ(jet.Uint64(req.GetRequestId())),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -437,7 +479,12 @@ func (s *Server) DeleteDocumentReq(ctx context.Context, req *pbdocuments.DeleteD
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	check, err := s.access.CanUserAccessTarget(ctx, request.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		request.GetDocumentId(),
+		userInfo,
+		documents.AccessLevel_ACCESS_LEVEL_EDIT,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -445,7 +492,7 @@ func (s *Server) DeleteDocumentReq(ctx context.Context, req *pbdocuments.DeleteD
 		return nil, errorsdocuments.ErrDocViewDenied
 	}
 
-	if err := s.deleteDocumentReq(ctx, s.db, req.RequestId); err != nil {
+	if err := s.deleteDocumentReq(ctx, s.db, req.GetRequestId()); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
@@ -454,14 +501,24 @@ func (s *Server) DeleteDocumentReq(ctx context.Context, req *pbdocuments.DeleteD
 	return &pbdocuments.DeleteDocumentReqResponse{}, nil
 }
 
-func (s *Server) notifyUserAboutRequest(ctx context.Context, doc *documents.Document, sourceUserId int32, targetUserId int32) error {
+func (s *Server) notifyUserAboutRequest(
+	ctx context.Context,
+	doc *documents.Document,
+	sourceUserId int32,
+	targetUserId int32,
+) error {
 	userInfo, err := s.ui.GetUserInfoWithoutAccountId(ctx, targetUserId)
 	if err != nil {
 		return err
 	}
 
 	// Make sure target user has access to document
-	check, err := s.access.CanUserAccessTarget(ctx, doc.Id, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		doc.GetId(),
+		userInfo,
+		documents.AccessLevel_ACCESS_LEVEL_VIEW,
+	)
 	if err != nil {
 		return err
 	}
@@ -476,13 +533,13 @@ func (s *Server) notifyUserAboutRequest(ctx context.Context, doc *documents.Docu
 		},
 		Content: &common.I18NItem{
 			Key:        "notifications.documents.document_request_added.content",
-			Parameters: map[string]string{"title": doc.Title},
+			Parameters: map[string]string{"title": doc.GetTitle()},
 		},
 		Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
 		Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
 		Data: &notifications.Data{
 			Link: &notifications.Link{
-				To: fmt.Sprintf("/documents/%d#requests", doc.Id),
+				To: fmt.Sprintf("/documents/%d#requests", doc.GetId()),
 			},
 			CausedBy: &users.UserShort{
 				UserId: sourceUserId,
@@ -496,7 +553,11 @@ func (s *Server) notifyUserAboutRequest(ctx context.Context, doc *documents.Docu
 	return nil
 }
 
-func (s *Server) addDocumentReq(ctx context.Context, tx qrm.DB, request *documents.DocRequest) (uint64, error) {
+func (s *Server) addDocumentReq(
+	ctx context.Context,
+	tx qrm.DB,
+	request *documents.DocRequest,
+) (uint64, error) {
 	tDocRequest := table.FivenetDocumentsRequests
 	stmt := tDocRequest.
 		INSERT(
@@ -509,13 +570,13 @@ func (s *Server) addDocumentReq(ctx context.Context, tx qrm.DB, request *documen
 			tDocRequest.Accepted,
 		).
 		VALUES(
-			request.DocumentId,
-			request.RequestType,
-			request.CreatorId,
-			request.CreatorJob,
-			request.Reason,
-			request.Data,
-			request.Accepted,
+			request.GetDocumentId(),
+			request.GetRequestType(),
+			request.GetCreatorId(),
+			request.GetCreatorJob(),
+			request.GetReason(),
+			request.GetData(),
+			request.GetAccepted(),
 		)
 
 	res, err := stmt.ExecContext(ctx, tx)
@@ -533,7 +594,11 @@ func (s *Server) addDocumentReq(ctx context.Context, tx qrm.DB, request *documen
 	return uint64(lastId), nil
 }
 
-func (s *Server) addAndGetDocumentReq(ctx context.Context, tx qrm.DB, activitiy *documents.DocRequest) (*documents.DocRequest, error) {
+func (s *Server) addAndGetDocumentReq(
+	ctx context.Context,
+	tx qrm.DB,
+	activitiy *documents.DocRequest,
+) (*documents.DocRequest, error) {
 	id, err := s.addDocumentReq(ctx, tx, activitiy)
 	if err != nil {
 		return nil, err
@@ -542,7 +607,12 @@ func (s *Server) addAndGetDocumentReq(ctx context.Context, tx qrm.DB, activitiy 
 	return s.getDocumentReqById(ctx, tx, id)
 }
 
-func (s *Server) updateDocumentReq(ctx context.Context, tx qrm.DB, id uint64, request *documents.DocRequest) error {
+func (s *Server) updateDocumentReq(
+	ctx context.Context,
+	tx qrm.DB,
+	id uint64,
+	request *documents.DocRequest,
+) error {
 	tDocRequest := table.FivenetDocumentsRequests
 	stmt := tDocRequest.
 		UPDATE(
@@ -555,13 +625,13 @@ func (s *Server) updateDocumentReq(ctx context.Context, tx qrm.DB, id uint64, re
 			tDocRequest.Accepted,
 		).
 		SET(
-			request.DocumentId,
-			request.RequestType,
-			request.CreatorId,
-			request.CreatorJob,
-			request.Reason,
-			request.Data,
-			request.Accepted,
+			request.GetDocumentId(),
+			request.GetRequestType(),
+			request.GetCreatorId(),
+			request.GetCreatorJob(),
+			request.GetReason(),
+			request.GetData(),
+			request.GetAccepted(),
 		).
 		WHERE(
 			tDocRequest.ID.EQ(jet.Uint64(id)),
@@ -576,11 +646,19 @@ func (s *Server) updateDocumentReq(ctx context.Context, tx qrm.DB, id uint64, re
 	return nil
 }
 
-func (s *Server) getDocumentReqById(ctx context.Context, tx qrm.DB, id uint64) (*documents.DocRequest, error) {
+func (s *Server) getDocumentReqById(
+	ctx context.Context,
+	tx qrm.DB,
+	id uint64,
+) (*documents.DocRequest, error) {
 	return s.getDocumentReq(ctx, tx, tDocRequest.ID.EQ(jet.Uint64(id)))
 }
 
-func (s *Server) getDocumentReq(ctx context.Context, tx qrm.DB, condition jet.BoolExpression) (*documents.DocRequest, error) {
+func (s *Server) getDocumentReq(
+	ctx context.Context,
+	tx qrm.DB,
+	condition jet.BoolExpression,
+) (*documents.DocRequest, error) {
 	tCreator := tables.User().AS("creator")
 
 	stmt := tDocRequest.

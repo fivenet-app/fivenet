@@ -1,13 +1,14 @@
+//nolint:forcetypeassert // This is a generic cache implementation, so there should "never" be a wrong type assertion.
 package cache
 
-// An LRU (least‑recently‑used) cache that stores up to N key/value pairs.
-// It uses github.com/puzpuzpuz/xsync to provide a lock‑free concurrent map for
-// data storage and a classic doubly‑linked list (container/list) to track
+// An LRU (least-recently-used) cache that stores up to N key/value pairs.
+// It uses github.com/puzpuzpuz/xsync to provide a lock-free concurrent map for
+// data storage and a classic doubly-linked list (container/list) to track
 // recency of use. All list manipulations are protected by a small mutex, while
-// the xsync.MapOf shard‑based structure allows high read/write throughput on
+// the xsync.MapOf shard-based structure allows high read/write throughput on
 // the key/value store itself.
 //
-// The implementation is generic – it works with any comparable key type and
+// The implementation is generic - it works with any comparable key type and
 // any value type. Example:
 //   cache := lrucache.New[string, int](100) // capacity 100
 //   cache.Put("foo", 42)
@@ -17,8 +18,8 @@ package cache
 // The zero allocation behaviour of xsync.MapOf keeps the fast path hot, and
 // locking is only taken when we have to update the recency list.
 //
-// NOTE: This implementation focuses purely on size‑bounded eviction. If you
-// need additional features such as per‑item TTL, metrics, or callbacks on
+// NOTE: This implementation focuses purely on size-bounded eviction. If you
+// need additional features such as per-item TTL, metrics, or callbacks on
 // eviction, they can be layered on top.
 
 import (
@@ -62,7 +63,7 @@ func NewLRUCache[K comparable, V any](capacity int) *LRUCache[K, V] {
 
 // Put inserts or updates a key/value pair with an optional TTL. A ttl of 0
 // means the item never expires (except by LRU eviction). If inserting causes
-// the cache to exceed its capacity the least‑recently‑used element is evicted.
+// the cache to exceed its capacity the least-recently-used element is evicted.
 func (c *LRUCache[K, V]) Put(key K, value V, ttl time.Duration) {
 	var exp time.Time
 	if ttl > 0 {
@@ -91,7 +92,7 @@ func (c *LRUCache[K, V]) Put(key K, value V, ttl time.Duration) {
 
 // Get retrieves a value if present and not expired. The boolean result tells
 // whether the key was found and valid. A successful Get promotes the item to
-// most‑recently‑used.
+// most-recently-used.
 func (c *LRUCache[K, V]) Get(key K) (V, bool) {
 	var zero V
 	elem, ok := c.store.Load(key)
@@ -121,7 +122,7 @@ func (c *LRUCache[K, V]) Delete(key K) {
 	c.deleteElement(elem)
 }
 
-// Len reports the current number of items, including any yet‑uncollected
+// Len reports the current number of items, including any yet-uncollected
 // expired ones (Cheap O(1)).
 func (c *LRUCache[K, V]) Len() int { return c.list.Len() }
 
@@ -180,7 +181,7 @@ func (c *LRUCache[K, V]) deleteElement(elem *list.Element) {
 	c.store.Delete(p.key)
 }
 
-// evictLRU drops the least‑recently‑used list element. Callers must hold c.mu.
+// evictLRU drops the least-recently-used list element. Callers must hold c.mu.
 func (c *LRUCache[K, V]) evictLRU() {
 	tail := c.list.Back()
 	if tail == nil {

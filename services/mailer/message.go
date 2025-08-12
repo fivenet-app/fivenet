@@ -22,12 +22,15 @@ const MessagesDefaultPageSize = 20
 
 var tMessages = table.FivenetMailerMessages.AS("message")
 
-func (s *Server) ListThreadMessages(ctx context.Context, req *pbmailer.ListThreadMessagesRequest) (*pbmailer.ListThreadMessagesResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.mailer.thread.id", req.ThreadId})
+func (s *Server) ListThreadMessages(
+	ctx context.Context,
+	req *pbmailer.ListThreadMessagesRequest,
+) (*pbmailer.ListThreadMessagesResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.mailer.thread.id", req.GetThreadId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.ThreadId, req.EmailId, mailer.AccessLevel_ACCESS_LEVEL_READ); err != nil {
+	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.GetThreadId(), req.GetEmailId(), mailer.AccessLevel_ACCESS_LEVEL_READ); err != nil {
 		return nil, err
 	}
 
@@ -38,7 +41,7 @@ func (s *Server) ListThreadMessages(ctx context.Context, req *pbmailer.ListThrea
 		FROM(tMessages).
 		WHERE(jet.AND(
 			tMessages.DeletedAt.IS_NULL(),
-			tMessages.ThreadID.EQ(jet.Uint64(req.ThreadId)),
+			tMessages.ThreadID.EQ(jet.Uint64(req.GetThreadId())),
 		))
 
 	var count database.DataCount
@@ -48,7 +51,7 @@ func (s *Server) ListThreadMessages(ctx context.Context, req *pbmailer.ListThrea
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, MessagesDefaultPageSize)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, MessagesDefaultPageSize)
 	resp := &pbmailer.ListThreadMessagesResponse{
 		Pagination: pag,
 		Messages:   []*mailer.Message{},
@@ -80,10 +83,10 @@ func (s *Server) ListThreadMessages(ctx context.Context, req *pbmailer.ListThrea
 		).
 		WHERE(jet.AND(
 			tMessages.DeletedAt.IS_NULL(),
-			tMessages.ThreadID.EQ(jet.Uint64(req.ThreadId)),
+			tMessages.ThreadID.EQ(jet.Uint64(req.GetThreadId())),
 			tEmails.DeletedAt.IS_NULL(),
 		)).
-		OFFSET(req.Pagination.Offset).
+		OFFSET(req.GetPagination().GetOffset()).
 		ORDER_BY(tMessages.CreatedAt.DESC()).
 		LIMIT(limit)
 
@@ -94,13 +97,13 @@ func (s *Server) ListThreadMessages(ctx context.Context, req *pbmailer.ListThrea
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.Messages {
-		if resp.Messages[i].Sender != nil {
-			jobInfoFn(resp.Messages[i].Sender)
+	for i := range resp.GetMessages() {
+		if resp.GetMessages()[i].GetSender() != nil {
+			jobInfoFn(resp.GetMessages()[i].GetSender())
 		}
 	}
 
-	resp.Pagination.Update(len(resp.Messages))
+	resp.GetPagination().Update(len(resp.GetMessages()))
 
 	return resp, nil
 }
@@ -134,42 +137,45 @@ func (s *Server) getMessage(ctx context.Context, messageId uint64) (*mailer.Mess
 		}
 	}
 
-	if message.Id == 0 {
+	if message.GetId() == 0 {
 		return nil, nil
 	}
 
 	return message, nil
 }
 
-func (s *Server) PostMessage(ctx context.Context, req *pbmailer.PostMessageRequest) (*pbmailer.PostMessageResponse, error) {
+func (s *Server) PostMessage(
+	ctx context.Context,
+	req *pbmailer.PostMessageRequest,
+) (*pbmailer.PostMessageResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
 		Method:  "PostMessage",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.Message.ThreadId, req.Message.SenderId, mailer.AccessLevel_ACCESS_LEVEL_WRITE); err != nil {
+	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.GetMessage().GetThreadId(), req.GetMessage().GetSenderId(), mailer.AccessLevel_ACCESS_LEVEL_WRITE); err != nil {
 		return nil, err
 	}
 
-	senderEmail, err := s.getEmail(ctx, req.Message.SenderId, false, false)
+	senderEmail, err := s.getEmail(ctx, req.GetMessage().GetSenderId(), false, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
 	// Prevent disabled emails from sending messages
-	if !userInfo.Superuser && senderEmail.Deactivated {
+	if !userInfo.GetSuperuser() && senderEmail.GetDeactivated() {
 		return nil, errorsmailer.ErrEmailDisabled
 	}
 
 	var emails []*mailer.ThreadRecipientEmail
-	if len(req.Recipients) > 0 {
-		emails, err = s.retrieveRecipientsToEmails(ctx, senderEmail, req.Recipients)
+	if len(req.GetRecipients()) > 0 {
+		emails, err = s.retrieveRecipientsToEmails(ctx, senderEmail, req.GetRecipients())
 		if err != nil {
 			return nil, err
 		}
@@ -180,8 +186,8 @@ func (s *Server) PostMessage(ctx context.Context, req *pbmailer.PostMessageReque
 	req.Message.CreatorJob = &userInfo.Job
 
 	// Remove titles from attached documents
-	for _, attachment := range req.Message.Data.Attachments {
-		if a, ok := attachment.Data.(*mailer.MessageAttachment_Document); ok {
+	for _, attachment := range req.GetMessage().GetData().GetAttachments() {
+		if a, ok := attachment.GetData().(*mailer.MessageAttachment_Document); ok {
 			a.Document.Title = nil
 		}
 	}
@@ -194,23 +200,23 @@ func (s *Server) PostMessage(ctx context.Context, req *pbmailer.PostMessageReque
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	lastId, err := s.createMessage(ctx, tx, req.Message)
+	lastId, err := s.createMessage(ctx, tx, req.GetMessage())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
-	req.Message.Id = uint64(lastId)
+	req.Message.Id = lastId
 
 	if len(emails) > 0 {
-		if err := s.handleRecipientsChanges(ctx, tx, req.Message.ThreadId, emails); err != nil {
+		if err := s.handleRecipientsChanges(ctx, tx, req.GetMessage().GetThreadId(), emails); err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
 	}
 
-	if err := s.updateThreadTime(ctx, tx, req.Message.ThreadId); err != nil {
+	if err := s.updateThreadTime(ctx, tx, req.GetMessage().GetThreadId()); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	recipients, err := s.getThreadRecipients(ctx, tx, req.Message.ThreadId)
+	recipients, err := s.getThreadRecipients(ctx, tx, req.GetMessage().GetThreadId())
 	if err != nil {
 		return nil, errorsmailer.ErrFailedQuery
 	}
@@ -218,14 +224,14 @@ func (s *Server) PostMessage(ctx context.Context, req *pbmailer.PostMessageReque
 	emailIds := []uint64{}
 	for _, ua := range recipients {
 		// Skip sender email id
-		if ua.EmailId == senderEmail.Id {
+		if ua.GetEmailId() == senderEmail.GetId() {
 			continue
 		}
 
-		emailIds = append(emailIds, ua.EmailId)
+		emailIds = append(emailIds, ua.GetEmailId())
 	}
 
-	if err := s.setUnreadState(ctx, tx, req.Message.ThreadId, senderEmail.Id, emailIds); err != nil {
+	if err := s.setUnreadState(ctx, tx, req.GetMessage().GetThreadId(), senderEmail.GetId(), emailIds); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
@@ -234,7 +240,7 @@ func (s *Server) PostMessage(ctx context.Context, req *pbmailer.PostMessageReque
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	message, err := s.getMessage(ctx, req.Message.Id)
+	message, err := s.getMessage(ctx, req.GetMessage().GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -252,7 +258,11 @@ func (s *Server) PostMessage(ctx context.Context, req *pbmailer.PostMessageReque
 	}, nil
 }
 
-func (s *Server) createMessage(ctx context.Context, tx qrm.DB, msg *mailer.Message) (uint64, error) {
+func (s *Server) createMessage(
+	ctx context.Context,
+	tx qrm.DB,
+	msg *mailer.Message,
+) (uint64, error) {
 	tMessages := table.FivenetMailerMessages
 	stmt := tMessages.
 		INSERT(
@@ -266,14 +276,14 @@ func (s *Server) createMessage(ctx context.Context, tx qrm.DB, msg *mailer.Messa
 			tMessages.CreatorEmail,
 		).
 		VALUES(
-			msg.ThreadId,
-			msg.SenderId,
-			msg.Title,
-			msg.Content,
-			msg.Data,
-			msg.CreatorId,
-			msg.CreatorJob,
-			msg.Sender.Email,
+			msg.GetThreadId(),
+			msg.GetSenderId(),
+			msg.GetTitle(),
+			msg.GetContent(),
+			msg.GetData(),
+			msg.GetCreatorId(),
+			msg.GetCreatorJob(),
+			msg.GetSender().GetEmail(),
 		)
 
 	res, err := stmt.ExecContext(ctx, tx)
@@ -289,31 +299,34 @@ func (s *Server) createMessage(ctx context.Context, tx qrm.DB, msg *mailer.Messa
 	return uint64(lastId), nil
 }
 
-func (s *Server) DeleteMessage(ctx context.Context, req *pbmailer.DeleteMessageRequest) (*pbmailer.DeleteMessageResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.mailer.message_id", req.MessageId})
+func (s *Server) DeleteMessage(
+	ctx context.Context,
+	req *pbmailer.DeleteMessageRequest,
+) (*pbmailer.DeleteMessageResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.mailer.message_id", req.GetMessageId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
 		Method:  "DeleteMessage",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	if !userInfo.Superuser {
+	if !userInfo.GetSuperuser() {
 		return nil, errorsmailer.ErrFailedQuery
 	}
 
-	message, err := s.getMessage(ctx, req.MessageId)
+	message, err := s.getMessage(ctx, req.GetMessageId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
 	deletedAtTime := jet.CURRENT_TIMESTAMP()
-	if message != nil && message.DeletedAt != nil && userInfo.Superuser {
+	if message != nil && message.GetDeletedAt() != nil && userInfo.GetSuperuser() {
 		deletedAtTime = jet.TimestampExp(jet.NULL)
 	}
 
@@ -326,28 +339,28 @@ func (s *Server) DeleteMessage(ctx context.Context, req *pbmailer.DeleteMessageR
 			tMessages.DeletedAt.SET(deletedAtTime),
 		).
 		WHERE(jet.AND(
-			tMessages.ThreadID.EQ(jet.Uint64(req.ThreadId)),
-			tMessages.ID.EQ(jet.Uint64(req.MessageId)),
+			tMessages.ThreadID.EQ(jet.Uint64(req.GetThreadId())),
+			tMessages.ID.EQ(jet.Uint64(req.GetMessageId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	thread, err := s.getThread(ctx, req.ThreadId, req.EmailId, userInfo, true)
+	thread, err := s.getThread(ctx, req.GetThreadId(), req.GetEmailId(), userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	if thread != nil && thread.Recipients != nil && len(thread.Recipients) > 0 {
+	if thread != nil && thread.Recipients != nil && len(thread.GetRecipients()) > 0 {
 		emailIds := []uint64{}
-		for _, ua := range thread.Recipients {
-			emailIds = append(emailIds, ua.EmailId)
+		for _, ua := range thread.GetRecipients() {
+			emailIds = append(emailIds, ua.GetEmailId())
 		}
 
 		s.sendUpdate(ctx, &mailer.MailerEvent{
 			Data: &mailer.MailerEvent_MessageDelete{
-				MessageDelete: req.MessageId,
+				MessageDelete: req.GetMessageId(),
 			},
 		}, emailIds...)
 	}
@@ -357,20 +370,23 @@ func (s *Server) DeleteMessage(ctx context.Context, req *pbmailer.DeleteMessageR
 	return &pbmailer.DeleteMessageResponse{}, nil
 }
 
-func (s *Server) SearchThreads(ctx context.Context, req *pbmailer.SearchThreadsRequest) (*pbmailer.SearchThreadsResponse, error) {
+func (s *Server) SearchThreads(
+	ctx context.Context,
+	req *pbmailer.SearchThreadsRequest,
+) (*pbmailer.SearchThreadsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
 		Method:  "SearchThreads",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	req.Search = strings.TrimRight(req.Search, "*")
-	if req.Search == "" {
+	req.Search = strings.TrimRight(req.GetSearch(), "*")
+	if req.GetSearch() == "" {
 		return &pbmailer.SearchThreadsResponse{
 			Pagination: &database.PaginationResponse{
 				PageSize: 15,
@@ -387,15 +403,15 @@ func (s *Server) SearchThreads(ctx context.Context, req *pbmailer.SearchThreadsR
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
-	if listEmailsResp == nil || len(listEmailsResp.Emails) == 0 {
+	if listEmailsResp == nil || len(listEmailsResp.GetEmails()) == 0 {
 		return &pbmailer.SearchThreadsResponse{
 			Pagination: &database.PaginationResponse{},
 		}, nil
 	}
 
 	ids := []jet.Expression{}
-	for _, email := range listEmailsResp.Emails {
-		ids = append(ids, jet.Uint64(email.Id))
+	for _, email := range listEmailsResp.GetEmails() {
+		ids = append(ids, jet.Uint64(email.GetId()))
 	}
 
 	// Get Thread ids via threads recipients list
@@ -413,11 +429,11 @@ func (s *Server) SearchThreads(ctx context.Context, req *pbmailer.SearchThreadsR
 		AND(jet.OR(
 			jet.BoolExp(
 				jet.Raw("MATCH(`title`) AGAINST ($search IN BOOLEAN MODE)",
-					jet.RawArgs{"$search": req.Search}),
+					jet.RawArgs{"$search": req.GetSearch()}),
 			),
 			jet.BoolExp(
 				jet.Raw("MATCH(`content`) AGAINST ($search IN BOOLEAN MODE)",
-					jet.RawArgs{"$search": req.Search}),
+					jet.RawArgs{"$search": req.GetSearch()}),
 			),
 		))
 
@@ -435,7 +451,7 @@ func (s *Server) SearchThreads(ctx context.Context, req *pbmailer.SearchThreadsR
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, 15)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, 15)
 	resp := &pbmailer.SearchThreadsResponse{
 		Pagination: pag,
 	}
@@ -455,7 +471,7 @@ func (s *Server) SearchThreads(ctx context.Context, req *pbmailer.SearchThreadsR
 		).
 		FROM(tMessages).
 		WHERE(condition).
-		OFFSET(req.Pagination.Offset).
+		OFFSET(req.GetPagination().GetOffset()).
 		ORDER_BY(tMessages.CreatedAt.DESC()).
 		LIMIT(limit)
 
@@ -466,13 +482,13 @@ func (s *Server) SearchThreads(ctx context.Context, req *pbmailer.SearchThreadsR
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.Messages {
-		if resp.Messages[i].Sender != nil {
-			jobInfoFn(resp.Messages[i].Sender)
+	for i := range resp.GetMessages() {
+		if resp.GetMessages()[i].GetSender() != nil {
+			jobInfoFn(resp.GetMessages()[i].GetSender())
 		}
 	}
 
-	resp.Pagination.Update(len(resp.Messages))
+	resp.GetPagination().Update(len(resp.GetMessages()))
 
 	return resp, nil
 }

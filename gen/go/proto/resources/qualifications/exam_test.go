@@ -90,11 +90,21 @@ func TestGrade(t *testing.T) {
 	}
 
 	score, grading := questions.Grade(AutoGradeMode_AUTO_GRADE_MODE_STRICT, responses)
-	assert.Equal(t, float32(30), score, "Expected score to be 30")
+	assert.InEpsilon(t, float32(30), score, 0.0001, "Expected score to be 30")
 	assert.NotNil(t, grading, "Expected grading to be not nil")
-	assert.Len(t, grading.Responses, len(questions.Questions), "Expected grading responses to be equal to the number of questions")
+	assert.Len(
+		t,
+		grading.GetResponses(),
+		len(questions.GetQuestions()),
+		"Expected grading responses to be equal to the number of questions",
+	)
 
 	score, grading = questions.Grade(AutoGradeMode_AUTO_GRADE_MODE_PARTIAL_CREDIT, responses)
-	assert.Equal(t, float32(45), score, "Expected score to be 45 (partial credit)")
-	assert.Len(t, grading.Responses, len(questions.Questions), "Expected grading responses to be equal to the number of questions")
+	assert.InEpsilon(t, float32(45), score, 0.0001, "Expected score to be 45 (partial credit)")
+	assert.Len(
+		t,
+		grading.GetResponses(),
+		len(questions.GetQuestions()),
+		"Expected grading responses to be equal to the number of questions",
+	)
 }

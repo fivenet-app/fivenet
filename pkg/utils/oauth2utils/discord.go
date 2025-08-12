@@ -1,3 +1,4 @@
+//nolint:tagliatelle // GitHub API JSON response uses snake_case, so we have to use it for the tags.
 package oauth2utils
 
 import (
@@ -12,7 +13,10 @@ import (
 
 // RefreshDiscordAccessToken refreshes a Discord OAuth2 access token using the provided credentials and refresh token.
 // Returns the new access token, new refresh token, expiration (in seconds), or an error if the refresh fails.
-func RefreshDiscordAccessToken(ctx context.Context, clientID, clientSecret, refreshToken, redirectURI string) (newAccessToken, newRefreshToken string, expiresIn int32, err error) {
+func RefreshDiscordAccessToken(
+	ctx context.Context,
+	clientID, clientSecret, refreshToken, redirectURI string,
+) (string, string, int32, error) {
 	data := url.Values{}
 	data.Set("client_id", clientID)
 	data.Set("client_secret", clientSecret)
@@ -20,7 +24,12 @@ func RefreshDiscordAccessToken(ctx context.Context, clientID, clientSecret, refr
 	data.Set("refresh_token", refreshToken)
 	data.Set("redirect_uri", redirectURI)
 
-	req, err := http.NewRequestWithContext(ctx, "POST", "https://discord.com/api/oauth2/token", strings.NewReader(data.Encode()))
+	req, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodPost,
+		"https://discord.com/api/oauth2/token",
+		strings.NewReader(data.Encode()),
+	)
 	if err != nil {
 		return "", "", 0, err
 	}
@@ -34,7 +43,11 @@ func RefreshDiscordAccessToken(ctx context.Context, clientID, clientSecret, refr
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
-		return "", "", 0, fmt.Errorf("discord token refresh error %d: %s", resp.StatusCode, string(body))
+		return "", "", 0, fmt.Errorf(
+			"discord token refresh error %d: %s",
+			resp.StatusCode,
+			string(body),
+		)
 	}
 
 	// Inline struct for decoding Discord's token response
@@ -49,5 +62,5 @@ func RefreshDiscordAccessToken(ctx context.Context, clientID, clientSecret, refr
 		return "", "", 0, err
 	}
 
-	return respData.AccessToken, respData.RefreshToken, int32(respData.ExpiresIn), nil
+	return respData.AccessToken, respData.RefreshToken, respData.ExpiresIn, nil
 }

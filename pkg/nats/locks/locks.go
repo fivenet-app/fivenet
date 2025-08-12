@@ -1,9 +1,11 @@
 /*
- * Modified version of https://github.com/HeavyHorst/certmagic-nats/blob/b27fd6c010166e396b6f9e1c651ba7b02ce6c01f/nats.go#L114
- * which is licensed under [MIT License](https://github.com/HeavyHorst/certmagic-nats/blob/b27fd6c010166e396b6f9e1c651ba7b02ce6c01f/LICENSE)
- *
- * The code has been modified to use the per-key TTL feature of NATS JetStream KeyValue store that was added in NATS 2.11.0.
- */
+- Modified version of https://github.com/HeavyHorst/certmagic-nats/blob/b27fd6c010166e396b6f9e1c651ba7b02ce6c01f/nats.go#L114
+
+  - which is licensed under [MIT License](https://github.com/HeavyHorst/certmagic-nats/blob/b27fd6c010166e396b6f9e1c651ba7b02ce6c01f/LICENSE)
+    *
+
+- The code has been modified to use the per-key TTL feature of NATS JetStream KeyValue store that was added in NATS 2.11.0.
+*/
 package locks
 
 import (
@@ -25,22 +27,22 @@ import (
 )
 
 const (
-	// LockTimeout is the default timeout for acquiring a lock
+	// LockTimeout is the default timeout for acquiring a lock.
 	LockTimeout = 750 * time.Millisecond
 
-	// KeyPrefix is the prefix used for all lock keys in the KV store
+	// KeyPrefix is the prefix used for all lock keys in the KV store.
 	KeyPrefix = "LOCK."
 )
 
 var (
-	// Prometheus metric: total number of lock acquisition attempts
+	// Prometheus metric: total number of lock acquisition attempts.
 	lockAcquireTotal = promauto.NewCounterVec(prometheus.CounterOpts{
 		Namespace: "nats_locks",
 		Name:      "acquire_total",
 		Help:      "Total number of lock acquisition attempts.",
 	}, []string{"bucket", "result"})
 
-	// Prometheus metric: histogram of lock held durations
+	// Prometheus metric: histogram of lock held durations.
 	lockHeldDuration = promauto.NewHistogramVec(prometheus.HistogramOpts{
 		Namespace: "nats_locks",
 		Name:      "held_duration_seconds",
@@ -71,10 +73,18 @@ type Locks struct {
 }
 
 // New creates a new Locks instance for a given bucket and max lock age (`_locks` is automatically added to the bucket).
-func New(ctx context.Context, logger *zap.Logger, js *events.JSWrapper, bucket string, maxLockAge time.Duration) (*Locks, error) {
+func New(
+	ctx context.Context,
+	logger *zap.Logger,
+	js *events.JSWrapper,
+	bucket string,
+	maxLockAge time.Duration,
+) (*Locks, error) {
+	//nolint:perfsprint // Not in critical path, so no need to optimize
 	lBucket := fmt.Sprintf("%s_locks", bucket)
 	kv, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
-		Bucket:         lBucket,
+		Bucket: lBucket,
+		//nolint:perfsprint // Not in critical path, so no need to optimize
 		Description:    fmt.Sprintf("%s Locks", bucket),
 		History:        1,
 		MaxBytes:       -1,
@@ -90,7 +100,13 @@ func New(ctx context.Context, logger *zap.Logger, js *events.JSWrapper, bucket s
 
 // NewWithKV creates a new Locks instance using an existing KeyValue store.
 // This is useful for testing or when you already have a KeyValue store set up.
-func NewWithKV(logger *zap.Logger, kv jetstream.KeyValue, bucket string, maxLockAge time.Duration) *Locks {
+func NewWithKV(
+	logger *zap.Logger,
+	kv jetstream.KeyValue,
+	bucket string,
+	maxLockAge time.Duration,
+) *Locks {
+	//nolint:perfsprint // Not in critical path, so no need to optimize
 	lBucket := fmt.Sprintf("%s_locks", bucket)
 	if kv.Bucket() != lBucket {
 		logger.Warn("using Locks with a KeyValue store that does not match the expected bucket",
@@ -105,8 +121,7 @@ func NewWithKV(logger *zap.Logger, kv jetstream.KeyValue, bucket string, maxLock
 
 		maxLockAge: maxLockAge,
 
-		revMap:  map[string]uint64{},
-		maplock: sync.RWMutex{},
+		revMap: map[string]uint64{},
 	}
 }
 
@@ -116,10 +131,13 @@ type lockInfo struct {
 }
 
 func (l *Locks) debugPayload() []byte {
-	b, _ := json.Marshal(lockInfo{
+	b, err := json.Marshal(lockInfo{
 		Owner: l.instanceName,
 		TS:    time.Now().UnixNano(),
 	})
+	if err != nil {
+		l.logger.Error("failed to marshal lock debug payload", zap.Error(err))
+	}
 	return b
 }
 
@@ -247,8 +265,9 @@ func (l *Locks) getRev(key string) uint64 {
 
 // isWrongSequence checks if the error is due to a wrong last sequence in JetStream.
 func isWrongSequence(err error) bool {
-	if err, ok := err.(*jetstream.APIError); ok {
-		if err.ErrorCode == jetstream.JSErrCodeStreamWrongLastSequence {
+	var apiErr *jetstream.APIError
+	if errors.As(err, &apiErr) {
+		if apiErr.ErrorCode == jetstream.JSErrCodeStreamWrongLastSequence {
 			return true
 		}
 	}

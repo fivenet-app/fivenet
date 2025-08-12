@@ -36,13 +36,19 @@ var (
 	tJobProps  = table.FivenetJobProps.AS("job_props")
 )
 
-func (s *Server) createTokenFromAccountAndChar(account *model.FivenetAccounts, activeChar *users.User) (string, *auth.CitizenInfoClaims, error) {
+func (s *Server) createTokenFromAccountAndChar(
+	account *model.FivenetAccounts,
+	activeChar *users.User,
+) (string, *auth.CitizenInfoClaims, error) {
 	claims := auth.BuildTokenClaimsFromAccount(account, activeChar)
 	token, err := s.tm.NewWithClaims(claims)
 	return token, claims, err
 }
 
-func (s *Server) getAccountFromDB(ctx context.Context, condition jet.BoolExpression) (*model.FivenetAccounts, error) {
+func (s *Server) getAccountFromDB(
+	ctx context.Context,
+	condition jet.BoolExpression,
+) (*model.FivenetAccounts, error) {
 	stmt := tAccounts.
 		SELECT(
 			tAccounts.ID,
@@ -73,13 +79,16 @@ func (s *Server) getAccountFromDB(ctx context.Context, condition jet.BoolExpress
 	return acc, nil
 }
 
-func (s *Server) Login(ctx context.Context, req *pbauth.LoginRequest) (*pbauth.LoginResponse, error) {
-	req.Username = normalizeUsername(req.Username)
+func (s *Server) Login(
+	ctx context.Context,
+	req *pbauth.LoginRequest,
+) (*pbauth.LoginResponse, error) {
+	req.Username = normalizeUsername(req.GetUsername())
 
-	logging.InjectFields(ctx, logging.Fields{"fivenet.auth.username", req.Username})
+	logging.InjectFields(ctx, logging.Fields{"fivenet.auth.username", req.GetUsername()})
 
 	account, err := s.getAccountFromDB(ctx, jet.AND(
-		tAccounts.Username.EQ(jet.String(req.Username)),
+		tAccounts.Username.EQ(jet.String(req.GetUsername())),
 		tAccounts.RegToken.IS_NULL(),
 		tAccounts.Password.IS_NOT_NULL(),
 	))
@@ -94,7 +103,7 @@ func (s *Server) Login(ctx context.Context, req *pbauth.LoginRequest) (*pbauth.L
 
 	// Password check logic
 
-	if err := checkPassword(*account.Password, req.Password); err != nil {
+	if err := checkPassword(*account.Password, req.GetPassword()); err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrInvalidLogin)
 	}
 
@@ -104,7 +113,7 @@ func (s *Server) Login(ctx context.Context, req *pbauth.LoginRequest) (*pbauth.L
 	}
 
 	var chooseCharResp *pbauth.ChooseCharacterResponse
-	if s.appCfg.Get().Auth.LastCharLock && account.LastChar != nil {
+	if s.appCfg.Get().Auth.GetLastCharLock() && account.LastChar != nil {
 		ctx = auth.SetTokenInGRPCContext(ctx, token)
 		chooseCharResp, err = s.ChooseCharacter(ctx, &pbauth.ChooseCharacterRequest{
 			CharId: *account.LastChar,
@@ -128,7 +137,10 @@ func (s *Server) Login(ctx context.Context, req *pbauth.LoginRequest) (*pbauth.L
 	}, nil
 }
 
-func (s *Server) Logout(ctx context.Context, req *pbauth.LogoutRequest) (*pbauth.LogoutResponse, error) {
+func (s *Server) Logout(
+	ctx context.Context,
+	req *pbauth.LogoutRequest,
+) (*pbauth.LogoutResponse, error) {
 	s.destroyTokenCookie(ctx)
 
 	return &pbauth.LogoutResponse{
@@ -136,14 +148,21 @@ func (s *Server) Logout(ctx context.Context, req *pbauth.LogoutRequest) (*pbauth
 	}, nil
 }
 
-func (s *Server) CreateAccount(ctx context.Context, req *pbauth.CreateAccountRequest) (*pbauth.CreateAccountResponse, error) {
-	if !s.appCfg.Get().Auth.SignupEnabled {
+func (s *Server) CreateAccount(
+	ctx context.Context,
+	req *pbauth.CreateAccountRequest,
+) (*pbauth.CreateAccountResponse, error) {
+	if !s.appCfg.Get().Auth.GetSignupEnabled() {
 		return nil, errorsauth.ErrSignupDisabled
 	}
 
-	acc, err := s.getAccountFromDB(ctx, tAccounts.RegToken.EQ(jet.String(req.RegToken)))
+	acc, err := s.getAccountFromDB(ctx, tAccounts.RegToken.EQ(jet.String(req.GetRegToken())))
 	if err != nil {
-		s.logger.Error("failed to get account from database by registration token", zap.Error(err), zap.String("reg_token", req.RegToken))
+		s.logger.Error(
+			"failed to get account from database by registration token",
+			zap.Error(err),
+			zap.String("reg_token", req.GetRegToken()),
+		)
 		return nil, errswrap.NewError(err, errorsauth.ErrAccountCreateFailed)
 	}
 
@@ -151,9 +170,9 @@ func (s *Server) CreateAccount(ctx context.Context, req *pbauth.CreateAccountReq
 		return nil, errorsauth.ErrAccountExistsFailed
 	}
 
-	req.Username = normalizeUsername(req.Username)
+	req.Username = normalizeUsername(req.GetUsername())
 
-	hashedPassword, err := hashPassword(req.Password)
+	hashedPassword, err := hashPassword(req.GetPassword())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrAccountCreateFailed)
 	}
@@ -165,13 +184,13 @@ func (s *Server) CreateAccount(ctx context.Context, req *pbauth.CreateAccountReq
 			tAccounts.RegToken,
 		).
 		SET(
-			tAccounts.Username.SET(jet.String(req.Username)),
+			tAccounts.Username.SET(jet.String(req.GetUsername())),
 			tAccounts.Password.SET(jet.String(hashedPassword)),
 			tAccounts.RegToken.SET(jet.StringExp(jet.NULL)),
 		).
 		WHERE(jet.AND(
 			tAccounts.ID.EQ(jet.Uint64(acc.ID)),
-			tAccounts.RegToken.EQ(jet.String(req.RegToken)),
+			tAccounts.RegToken.EQ(jet.String(req.GetRegToken())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -179,7 +198,10 @@ func (s *Server) CreateAccount(ctx context.Context, req *pbauth.CreateAccountReq
 			return nil, errswrap.NewError(err, errorsauth.ErrAccountDuplicate)
 		}
 
-		s.logger.Error("failed to update account in database during account creation", zap.Error(err))
+		s.logger.Error(
+			"failed to update account in database during account creation",
+			zap.Error(err),
+		)
 		return nil, errswrap.NewError(err, errorsauth.ErrAccountCreateFailed)
 	}
 
@@ -188,7 +210,10 @@ func (s *Server) CreateAccount(ctx context.Context, req *pbauth.CreateAccountReq
 	}, nil
 }
 
-func (s *Server) ChangePassword(ctx context.Context, req *pbauth.ChangePasswordRequest) (*pbauth.ChangePasswordResponse, error) {
+func (s *Server) ChangePassword(
+	ctx context.Context,
+	req *pbauth.ChangePasswordRequest,
+) (*pbauth.ChangePasswordResponse, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
@@ -211,11 +236,11 @@ func (s *Server) ChangePassword(ctx context.Context, req *pbauth.ChangePasswordR
 
 	// Password check logic
 
-	if err := checkPassword(*acc.Password, req.Current); err != nil {
+	if err := checkPassword(*acc.Password, req.GetCurrent()); err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrChangePassword)
 	}
 
-	hashedPassword, err := hashPassword(req.New)
+	hashedPassword, err := hashPassword(req.GetNew())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrAccountCreateFailed)
 	}
@@ -260,7 +285,10 @@ func (s *Server) ChangePassword(ctx context.Context, req *pbauth.ChangePasswordR
 	}, nil
 }
 
-func (s *Server) ChangeUsername(ctx context.Context, req *pbauth.ChangeUsernameRequest) (*pbauth.ChangeUsernameResponse, error) {
+func (s *Server) ChangeUsername(
+	ctx context.Context,
+	req *pbauth.ChangeUsernameRequest,
+) (*pbauth.ChangeUsernameResponse, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
@@ -282,12 +310,12 @@ func (s *Server) ChangeUsername(ctx context.Context, req *pbauth.ChangeUsernameR
 	}
 
 	// Make sure current username matches the sent current username
-	if !strings.EqualFold(*acc.Username, req.Current) {
+	if !strings.EqualFold(*acc.Username, req.GetCurrent()) {
 		return nil, errorsauth.ErrBadUsername
 	}
 
-	req.New = normalizeUsername(req.New)
-	username := req.New
+	req.New = normalizeUsername(req.GetNew())
+	username := req.GetNew()
 
 	// New username is same as current username.. just return here.
 	resp := &pbauth.ChangeUsernameResponse{}
@@ -326,9 +354,12 @@ func (s *Server) ChangeUsername(ctx context.Context, req *pbauth.ChangeUsernameR
 	return resp, nil
 }
 
-func (s *Server) ForgotPassword(ctx context.Context, req *pbauth.ForgotPasswordRequest) (*pbauth.ForgotPasswordResponse, error) {
+func (s *Server) ForgotPassword(
+	ctx context.Context,
+	req *pbauth.ForgotPasswordRequest,
+) (*pbauth.ForgotPasswordResponse, error) {
 	acc, err := s.getAccountFromDB(ctx, jet.AND(
-		tAccounts.RegToken.EQ(jet.String(req.RegToken)),
+		tAccounts.RegToken.EQ(jet.String(req.GetRegToken())),
 		tAccounts.Username.IS_NOT_NULL(),
 		tAccounts.Password.IS_NULL(),
 	))
@@ -341,7 +372,7 @@ func (s *Server) ForgotPassword(ctx context.Context, req *pbauth.ForgotPasswordR
 		return nil, errorsauth.ErrNoAccount
 	}
 
-	hashedPassword, err := hashPassword(req.New)
+	hashedPassword, err := hashPassword(req.GetNew())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrForgotPassword)
 	}
@@ -369,7 +400,10 @@ func (s *Server) ForgotPassword(ctx context.Context, req *pbauth.ForgotPasswordR
 	return &pbauth.ForgotPasswordResponse{}, nil
 }
 
-func (s *Server) GetCharacters(ctx context.Context, req *pbauth.GetCharactersRequest) (*pbauth.GetCharactersResponse, error) {
+func (s *Server) GetCharacters(
+	ctx context.Context,
+	req *pbauth.GetCharactersRequest,
+) (*pbauth.GetCharactersResponse, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
@@ -438,31 +472,34 @@ func (s *Server) GetCharacters(ctx context.Context, req *pbauth.GetCharactersReq
 	}
 
 	// If last char lock is enabled ensure to mark the one char as available only
-	if s.appCfg.Get().Auth.LastCharLock && acc.LastChar != nil {
-		for i := range resp.Chars {
-			s.enricher.EnrichJobInfo(resp.Chars[i].Char)
+	if s.appCfg.Get().Auth.GetLastCharLock() && acc.LastChar != nil {
+		for i := range resp.GetChars() {
+			s.enricher.EnrichJobInfo(resp.GetChars()[i].GetChar())
 
-			if resp.Chars[i].Char.UserId == *acc.LastChar ||
-				slices.Contains(s.superuserGroups, resp.Chars[i].Group) || slices.Contains(s.superuserUsers, claims.Subject) {
+			if resp.GetChars()[i].GetChar().GetUserId() == *acc.LastChar ||
+				slices.Contains(
+					s.superuserGroups,
+					resp.GetChars()[i].GetGroup(),
+				) || slices.Contains(s.superuserUsers, claims.Subject) {
 				resp.Chars[i].Available = true
 				continue
 			}
 		}
 
 		// Sort chars for convience of the user
-		slices.SortFunc(resp.Chars, func(a, b *accounts.Character) int {
+		slices.SortFunc(resp.GetChars(), func(a, b *accounts.Character) int {
 			switch {
-			case !a.Available && b.Available:
+			case !a.GetAvailable() && b.GetAvailable():
 				return +1
-			case a.Available && !b.Available:
+			case a.GetAvailable() && !b.GetAvailable():
 				return -1
 			default:
 				return 0
 			}
 		})
 	} else {
-		for i := range resp.Chars {
-			s.enricher.EnrichJobInfo(resp.Chars[i].Char)
+		for i := range resp.GetChars() {
+			s.enricher.EnrichJobInfo(resp.GetChars()[i].GetChar())
 
 			resp.Chars[i].Available = true
 		}
@@ -475,7 +512,10 @@ func buildCharSearchIdentifier(license string) string {
 	return "%" + license
 }
 
-func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *jobs.JobProps, string, error) {
+func (s *Server) getCharacter(
+	ctx context.Context,
+	charId int32,
+) (*users.User, *jobs.JobProps, string, error) {
 	tUsers := tables.User().AS("user")
 	tLogo := table.FivenetFiles.AS("logo_file")
 	tAvatar := table.FivenetFiles.AS("avatar")
@@ -524,6 +564,7 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 
 	var dest struct {
 		*users.User
+
 		Group    string
 		JobProps *jobs.JobProps
 	}
@@ -543,8 +584,11 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 	return dest.User, dest.JobProps, dest.Group, nil
 }
 
-func (s *Server) ChooseCharacter(ctx context.Context, req *pbauth.ChooseCharacterRequest) (*pbauth.ChooseCharacterResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.auth.char_id", req.CharId})
+func (s *Server) ChooseCharacter(
+	ctx context.Context,
+	req *pbauth.ChooseCharacterRequest,
+) (*pbauth.ChooseCharacterResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.auth.char_id", req.GetCharId()})
 
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
@@ -562,29 +606,38 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *pbauth.ChooseCharacte
 		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
 	}
 
-	char, jProps, userGroup, err := s.getCharacter(ctx, req.CharId)
+	char, jProps, userGroup, err := s.getCharacter(ctx, req.GetCharId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
 	}
 
 	// Make sure the user isn't sending us a different char ID than their own
-	if !strings.HasSuffix(*char.Identifier, claims.Subject) {
-		s.logger.Error("user sent bad char!", zap.String("expected", *char.Identifier), zap.String("current", claims.Subject))
+	if !strings.HasSuffix(char.GetIdentifier(), claims.Subject) {
+		s.logger.Error(
+			"user sent bad char!",
+			zap.String("expected", char.GetIdentifier()),
+			zap.String("current", claims.Subject),
+		)
 		return nil, errorsauth.ErrUnableToChooseChar
 	}
 
-	isSuperuser := slices.Contains(s.superuserGroups, userGroup) || slices.Contains(s.superuserUsers, claims.Subject)
+	isSuperuser := slices.Contains(s.superuserGroups, userGroup) ||
+		slices.Contains(s.superuserUsers, claims.Subject)
 
-	if err := s.ui.RefreshUserInfo(ctx, char.UserId, claims.AccID); err != nil {
-		s.logger.Error("failed to refresh user info", zap.Error(err), zap.Int32("user_id", char.UserId))
+	if err := s.ui.RefreshUserInfo(ctx, char.GetUserId(), claims.AccID); err != nil {
+		s.logger.Error(
+			"failed to refresh user info",
+			zap.Error(err),
+			zap.Int32("user_id", char.GetUserId()),
+		)
 		return nil, errswrap.NewError(err, errorsauth.ErrUnableToChooseChar)
 	}
 
 	// If char lock is active, make sure that the user is choosing the active char
 	if !isSuperuser &&
-		s.appCfg.Get().Auth.LastCharLock &&
+		s.appCfg.Get().Auth.GetLastCharLock() &&
 		account.LastChar != nil &&
-		*account.LastChar != req.CharId {
+		*account.LastChar != req.GetCharId() {
 		return nil, errorsgrpcauth.ErrCharLock
 	}
 
@@ -605,17 +658,18 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *pbauth.ChooseCharacte
 		return nil, err
 	}
 
-	if len(ps) == 0 || (!isSuperuser && !slices.ContainsFunc(ps, func(p *permissions.Permission) bool {
-		return p.Category == string(permsauth.AuthServicePerm) && p.Name == string(permsauth.AuthServiceChooseCharacterPerm)
-	})) {
+	if len(ps) == 0 ||
+		(!isSuperuser && !slices.ContainsFunc(ps, func(p *permissions.Permission) bool {
+			return p.GetCategory() == string(permsauth.AuthServicePerm) && p.GetName() == string(permsauth.AuthServiceChooseCharacterPerm)
+		})) {
 		return nil, errorsauth.ErrUnableToChooseChar
 	}
 
 	defer s.aud.Log(&audit.AuditEntry{
 		Service: pbauth.AuthService_ServiceDesc.ServiceName,
 		Method:  "ChooseCharacter",
-		UserId:  char.UserId,
-		UserJob: char.Job,
+		UserId:  char.GetUserId(),
+		UserJob: char.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_VIEWED,
 	}, char.UserShort())
 
@@ -633,12 +687,17 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *pbauth.ChooseCharacte
 	}, nil
 }
 
-func (s *Server) listUserPerms(ctx context.Context, account *model.FivenetAccounts, char *users.User, isSuperuser bool) ([]*permissions.Permission, []*permissions.RoleAttribute, error) {
+func (s *Server) listUserPerms(
+	ctx context.Context,
+	account *model.FivenetAccounts,
+	char *users.User,
+	isSuperuser bool,
+) ([]*permissions.Permission, []*permissions.RoleAttribute, error) {
 	// Load permissions of user
 	userPs, err := s.ps.GetPermissionsOfUser(&userinfo.UserInfo{
-		UserId:   char.UserId,
-		Job:      char.Job,
-		JobGrade: char.JobGrade,
+		UserId:   char.GetUserId(),
+		Job:      char.GetJob(),
+		JobGrade: char.GetJobGrade(),
 	})
 	if err != nil {
 		return nil, nil, errswrap.NewError(err, errorsauth.ErrUnableToChooseChar)
@@ -652,7 +711,7 @@ func (s *Server) listUserPerms(ctx context.Context, account *model.FivenetAccoun
 		}
 	}
 
-	attrs, err := s.ps.GetEffectiveRoleAttributes(ctx, char.Job, char.JobGrade)
+	attrs, err := s.ps.GetEffectiveRoleAttributes(ctx, char.GetJob(), char.GetJobGrade())
 	if err != nil {
 		return nil, nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
@@ -660,7 +719,10 @@ func (s *Server) listUserPerms(ctx context.Context, account *model.FivenetAccoun
 	return userPs, attrs, nil
 }
 
-func (s *Server) SetSuperuserMode(ctx context.Context, req *pbauth.SetSuperuserModeRequest) (*pbauth.SetSuperuserModeResponse, error) {
+func (s *Server) SetSuperuserMode(
+	ctx context.Context,
+	req *pbauth.SetSuperuserModeRequest,
+) (*pbauth.SetSuperuserModeResponse, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
 		return nil, errorsgrpcauth.ErrInvalidToken
@@ -673,12 +735,12 @@ func (s *Server) SetSuperuserMode(ctx context.Context, req *pbauth.SetSuperuserM
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	logging.InjectFields(ctx, logging.Fields{"fivenet.auth.superuser", req.Superuser})
+	logging.InjectFields(ctx, logging.Fields{"fivenet.auth.superuser", req.GetSuperuser()})
 	if req.Job != nil {
-		logging.InjectFields(ctx, logging.Fields{"fivenet.auth.superuser.job", *req.Job})
+		logging.InjectFields(ctx, logging.Fields{"fivenet.auth.superuser.job", req.GetJob()})
 	}
 
-	if !userInfo.CanBeSuperuser {
+	if !userInfo.GetCanBeSuperuser() {
 		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
 	}
 
@@ -689,7 +751,10 @@ func (s *Server) SetSuperuserMode(ctx context.Context, req *pbauth.SetSuperuserM
 
 	char, _, _, err := s.getCharacter(ctx, claims.CharID)
 	if err != nil {
-		return nil, errswrap.NewError(fmt.Errorf("failed to get char %d. %w", claims.CharID, err), errorsauth.ErrNoCharFound)
+		return nil, errswrap.NewError(
+			fmt.Errorf("failed to get char %d. %w", claims.CharID, err),
+			errorsauth.ErrNoCharFound,
+		)
 	}
 
 	var jobProps *jobs.JobProps
@@ -697,11 +762,14 @@ func (s *Server) SetSuperuserMode(ctx context.Context, req *pbauth.SetSuperuserM
 	var attrs []*permissions.RoleAttribute
 
 	// Reset override job when switching off superuser mode using centralized helper
-	if !req.Superuser {
+	if !req.GetSuperuser() {
 		// Fetch the account for the current user
 		account, err := s.getAccountFromDB(ctx, tAccounts.Username.EQ(jet.String(claims.Username)))
 		if err != nil {
-			return nil, errswrap.NewError(fmt.Errorf("failed to get account from db. %w", err), errorsauth.ErrGenericLogin)
+			return nil, errswrap.NewError(
+				fmt.Errorf("failed to get account from db. %w", err),
+				errorsauth.ErrGenericLogin,
+			)
 		}
 
 		jPropsOverride, err := s.handleSuperuserOverride(ctx, account, char, claims, false)
@@ -712,8 +780,8 @@ func (s *Server) SetSuperuserMode(ctx context.Context, req *pbauth.SetSuperuserM
 			jobProps = jPropsOverride
 		}
 
-		userInfo.Job = char.Job
-		userInfo.JobGrade = char.JobGrade
+		userInfo.Job = char.GetJob()
+		userInfo.JobGrade = char.GetJobGrade()
 		userInfo.OverrideJob = nil
 		userInfo.OverrideJobGrade = nil
 
@@ -726,34 +794,41 @@ func (s *Server) SetSuperuserMode(ctx context.Context, req *pbauth.SetSuperuserM
 		}
 	} else {
 		// Only set job if requested
-		job, jobGrade, jProps, err := s.getJobWithProps(ctx, *req.Job)
+		job, jobGrade, jProps, err := s.getJobWithProps(ctx, req.GetJob())
 		if err != nil {
-			return nil, errswrap.NewError(fmt.Errorf("failed to get job props for '%s' job. %w", *req.Job, err), errorsauth.ErrGenericLogin)
+			return nil, errswrap.NewError(fmt.Errorf("failed to get job props for '%s' job. %w", req.GetJob(), err), errorsauth.ErrGenericLogin)
 		}
 		jobProps = jProps
 
-		userInfo.Job = job.Name
+		userInfo.Job = job.GetName()
 		userInfo.JobGrade = jobGrade
 		userInfo.OverrideJob = &job.Name
 		userInfo.OverrideJobGrade = &jobGrade
 
-		char.Job = job.Name
+		char.Job = job.GetName()
 		char.JobGrade = jobGrade
 		s.enricher.EnrichJobInfo(char)
 
 		ps = []*permissions.Permission{auth.PermCanBeSuperuser, auth.PermSuperuser}
 	}
 
-	if err := s.ui.SetUserInfo(ctx, claims.AccID, req.Superuser, userInfo.OverrideJob, userInfo.OverrideJobGrade); err != nil {
-		return nil, errswrap.NewError(fmt.Errorf("failed to set user info. %w", err), errorsauth.ErrGenericLogin)
+	//nolint:protogetter // The values are needed as pointers
+	if err := s.ui.SetUserInfo(ctx, claims.AccID, req.GetSuperuser(), userInfo.OverrideJob, userInfo.OverrideJobGrade); err != nil {
+		return nil, errswrap.NewError(
+			fmt.Errorf("failed to set user info. %w", err),
+			errorsauth.ErrGenericLogin,
+		)
 	}
 
-	userInfo.Superuser = req.Superuser
+	userInfo.Superuser = req.GetSuperuser()
 
 	// Load account data for token creation
 	account, err := s.getAccountFromDB(ctx, tAccounts.Username.EQ(jet.String(claims.Username)))
 	if err != nil {
-		return nil, errswrap.NewError(fmt.Errorf("failed to get account from db. %w", err), errorsauth.ErrGenericLogin)
+		return nil, errswrap.NewError(
+			fmt.Errorf("failed to get account from db. %w", err),
+			errorsauth.ErrGenericLogin,
+		)
 	}
 
 	newToken, newClaims, err := s.createTokenFromAccountAndChar(account, char)
@@ -774,7 +849,10 @@ func (s *Server) SetSuperuserMode(ctx context.Context, req *pbauth.SetSuperuserM
 	}, nil
 }
 
-func (s *Server) getJobWithProps(ctx context.Context, jobName string) (*jobs.Job, int32, *jobs.JobProps, error) {
+func (s *Server) getJobWithProps(
+	ctx context.Context,
+	jobName string,
+) (*jobs.Job, int32, *jobs.JobProps, error) {
 	tJobs := tables.Jobs().AS("job")
 	tJobsGrades := tables.JobsGrades()
 	tFiles := table.FivenetFiles.AS("logo_file")

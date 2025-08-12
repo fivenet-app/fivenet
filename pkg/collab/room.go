@@ -57,7 +57,14 @@ type CollabRoom struct {
 }
 
 // NewCollabRoom wires the room to NATS JetStream using the modern API and starts the consume loop.
-func NewCollabRoom(ctx context.Context, logger *zap.Logger, stateKV jetstream.KeyValue, roomId uint64, js jetstream.JetStream, category string) (*CollabRoom, error) {
+func NewCollabRoom(
+	ctx context.Context,
+	logger *zap.Logger,
+	stateKV jetstream.KeyValue,
+	roomId uint64,
+	js jetstream.JetStream,
+	category string,
+) (*CollabRoom, error) {
 	ctx, cancel := context.WithCancel(ctx)
 
 	// Create consumer
@@ -108,23 +115,27 @@ func (r *CollabRoom) Join(ctx context.Context, c *Client) {
 
 // Leave removes a client from the room, closes its send channel, and decrements the metric.
 // If the room becomes empty, it is shut down. Returns true if the room is now empty.
-func (r *CollabRoom) Leave(clientId uint64) bool {
+func (r *CollabRoom) Leave(ctx context.Context, clientId uint64) bool {
 	r.mu.Lock()
 	if c, ok := r.clients[clientId]; ok {
 		close(c.SendCh)
 
-		c.StopPresence()
+		c.StopPresence(ctx)
 		delete(r.clients, clientId)
 	}
 	clientCount := len(r.clients)
 	empty := clientCount == 0
 
 	if empty {
-		r.shutdown()
+		r.shutdown(ctx)
 	}
 	r.mu.Unlock()
 
-	r.logger.Debug("client left", zap.Uint64("client_id", clientId), zap.Int("clients", clientCount))
+	r.logger.Debug(
+		"client left",
+		zap.Uint64("client_id", clientId),
+		zap.Int("clients", clientCount),
+	)
 
 	metricTotalConnectedClients.WithLabelValues(r.category).Dec()
 
@@ -135,7 +146,8 @@ func (r *CollabRoom) Leave(clientId uint64) bool {
 // Ignores packets with no useful data.
 func (r *CollabRoom) Broadcast(fromId uint64, msg *collab.ServerPacket) {
 	// Ignore "hello" packets that carry no useful data
-	if (msg.GetYjsUpdate() != nil && len(msg.GetYjsUpdate().Data) == 0) || (msg.GetAwareness() != nil && len(msg.GetAwareness().Data) == 0) {
+	if (msg.GetYjsUpdate() != nil && len(msg.GetYjsUpdate().GetData()) == 0) ||
+		(msg.GetAwareness() != nil && len(msg.GetAwareness().GetData()) == 0) {
 		return
 	}
 
@@ -159,7 +171,8 @@ func (r *CollabRoom) Broadcast(fromId uint64, msg *collab.ServerPacket) {
 // Ignores packets with no useful data.
 func (r *CollabRoom) SendToClient(fromId uint64, toId uint64, msg *collab.ServerPacket) {
 	// Ignore "hello" packets that carry no useful data
-	if (msg.GetYjsUpdate() != nil && len(msg.GetYjsUpdate().Data) == 0) || (msg.GetAwareness() != nil && len(msg.GetAwareness().Data) == 0) {
+	if (msg.GetYjsUpdate() != nil && len(msg.GetYjsUpdate().GetData()) == 0) ||
+		(msg.GetAwareness() != nil && len(msg.GetAwareness().GetData()) == 0) {
 		return
 	}
 
@@ -297,15 +310,21 @@ func (r *CollabRoom) notifyFirst(id uint64) {
 }
 
 // shutdown gracefully tears down the room and stops the consume loop.
-func (r *CollabRoom) shutdown() {
+func (r *CollabRoom) shutdown(ctx context.Context) {
 	r.logger.Debug("shutting down")
 	r.cancel() // Stop consumeLoop
 
 	defer func() {
 		// Use new context with timeout to ensure cleanup doesn't hang (r.ctx has to be canceled)
-		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+		ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 		defer cancel()
-		err := r.js.DeleteConsumer(ctx, StreamName, r.consumer.CachedInfo().Name) // Close the JetStream consumer
+
+		// Close the JetStream consumer
+		err := r.js.DeleteConsumer(
+			ctx,
+			StreamName,
+			r.consumer.CachedInfo().Name,
+		)
 		if err != nil {
 			r.logger.Error("failed to delete collab room consumer", zap.Error(err))
 		}

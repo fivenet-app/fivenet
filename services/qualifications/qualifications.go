@@ -30,24 +30,30 @@ const (
 	QualificationsLabelDefaultFormat = "%abbr%: %name%"
 )
 
-func (s *Server) ListQualifications(ctx context.Context, req *pbqualifications.ListQualificationsRequest) (*pbqualifications.ListQualificationsResponse, error) {
+func (s *Server) ListQualifications(
+	ctx context.Context,
+	req *pbqualifications.ListQualificationsRequest,
+) (*pbqualifications.ListQualificationsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	condition := jet.Bool(true)
 
-	if req.Search != nil && *req.Search != "" {
-		*req.Search = strings.TrimSpace(*req.Search)
-		*req.Search = strings.ReplaceAll(*req.Search, "%", "")
-		*req.Search = strings.ReplaceAll(*req.Search, " ", "%")
-		*req.Search = "%" + *req.Search + "%"
+	if req.Search != nil && req.GetSearch() != "" {
+		*req.Search = strings.TrimSpace(req.GetSearch())
+		*req.Search = strings.ReplaceAll(req.GetSearch(), "%", "")
+		*req.Search = strings.ReplaceAll(req.GetSearch(), " ", "%")
+		*req.Search = "%" + req.GetSearch() + "%"
 		condition = condition.AND(jet.OR(
-			tQuali.Abbreviation.LIKE(jet.String(*req.Search)),
-			tQuali.Title.LIKE(jet.String(*req.Search)),
+			tQuali.Abbreviation.LIKE(jet.String(req.GetSearch())),
+			tQuali.Title.LIKE(jet.String(req.GetSearch())),
 		))
 	}
 
 	countStmt := s.listQualificationsQuery(
-		condition, jet.ProjectionList{jet.COUNT(jet.DISTINCT(tQuali.ID)).AS("data_count.total")}, userInfo)
+		condition,
+		jet.ProjectionList{jet.COUNT(jet.DISTINCT(tQuali.ID)).AS("data_count.total")},
+		userInfo,
+	)
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -56,7 +62,7 @@ func (s *Server) ListQualifications(ctx context.Context, req *pbqualifications.L
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, QualificationsPageSize)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, QualificationsPageSize)
 	resp := &pbqualifications.ListQualificationsResponse{
 		Pagination:     pag,
 		Qualifications: []*qualifications.Qualification{},
@@ -67,9 +73,9 @@ func (s *Server) ListQualifications(ctx context.Context, req *pbqualifications.L
 
 	// Convert proto sort to db sorting
 	orderBys := []jet.OrderByClause{tQuali.Draft.ASC()}
-	if req.Sort != nil {
+	if req.GetSort() != nil {
 		var column jet.Column
-		switch req.Sort.Column {
+		switch req.GetSort().GetColumn() {
 		case "abbreviation":
 			column = tQuali.Abbreviation
 		case "id":
@@ -78,7 +84,7 @@ func (s *Server) ListQualifications(ctx context.Context, req *pbqualifications.L
 			column = tQualiResults.ID
 		}
 
-		if req.Sort.Direction == database.AscSortDirection {
+		if req.GetSort().GetDirection() == database.AscSortDirection {
 			orderBys = append(orderBys, column.ASC())
 		} else {
 			orderBys = append(orderBys, column.DESC())
@@ -88,7 +94,7 @@ func (s *Server) ListQualifications(ctx context.Context, req *pbqualifications.L
 	}
 
 	stmt := s.listQualificationsQuery(condition, nil, userInfo).
-		OFFSET(req.Pagination.Offset).
+		OFFSET(req.GetPagination().GetOffset()).
 		GROUP_BY(tQuali.ID).
 		ORDER_BY(orderBys...).
 		LIMIT(limit)
@@ -98,46 +104,59 @@ func (s *Server) ListQualifications(ctx context.Context, req *pbqualifications.L
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.Qualifications {
-		if resp.Qualifications[i].Creator != nil {
-			jobInfoFn(resp.Qualifications[i].Creator)
+	for i := range resp.GetQualifications() {
+		if resp.GetQualifications()[i].GetCreator() != nil {
+			jobInfoFn(resp.GetQualifications()[i].GetCreator())
 		}
 	}
 
-	resp.Pagination.Update(len(resp.Qualifications))
+	resp.GetPagination().Update(len(resp.GetQualifications()))
 
 	return resp, nil
 }
 
-func (s *Server) GetQualification(ctx context.Context, req *pbqualifications.GetQualificationRequest) (*pbqualifications.GetQualificationResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.QualificationId})
+func (s *Server) GetQualification(
+	ctx context.Context,
+	req *pbqualifications.GetQualificationRequest,
+) (*pbqualifications.GetQualificationResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.GetQualificationId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
 		Method:  "GetQualification",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetQualificationId(),
+		userInfo,
+		qualifications.AccessLevel_ACCESS_LEVEL_VIEW,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	quali, err := s.getQualificationShort(ctx, req.QualificationId, nil, userInfo)
+	quali, err := s.getQualificationShort(ctx, req.GetQualificationId(), nil, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	if !check && !userInfo.Superuser && !quali.Public {
+	if !check && !userInfo.GetSuperuser() && !quali.GetPublic() {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	request, err := s.getQualificationRequest(ctx, req.QualificationId, userInfo.UserId, userInfo)
+	request, err := s.getQualificationRequest(
+		ctx,
+		req.GetQualificationId(),
+		userInfo.GetUserId(),
+		userInfo,
+	)
 	if err != nil {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
@@ -146,10 +165,16 @@ func (s *Server) GetQualification(ctx context.Context, req *pbqualifications.Get
 
 	// If user's request is accepted or user has GRADE or higher perm to qualification, show content
 	if request != nil {
-		canContent = request.Status != nil && *request.Status >= qualifications.RequestStatus_REQUEST_STATUS_ACCEPTED
+		canContent = request.Status != nil &&
+			request.GetStatus() >= qualifications.RequestStatus_REQUEST_STATUS_ACCEPTED
 	}
 
-	canGrade, err := s.access.CanUserAccessTarget(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
+	canGrade, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetQualificationId(),
+		userInfo,
+		qualifications.AccessLevel_ACCESS_LEVEL_GRADE,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -158,59 +183,68 @@ func (s *Server) GetQualification(ctx context.Context, req *pbqualifications.Get
 	}
 
 	// Allow content if the qualification has the exam mode enabled and the user has the access to take the qualification
-	canTake, err := s.access.CanUserAccessTarget(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_TAKE)
+	canTake, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetQualificationId(),
+		userInfo,
+		qualifications.AccessLevel_ACCESS_LEVEL_TAKE,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if canTake && quali.ExamMode == qualifications.QualificationExamMode_QUALIFICATION_EXAM_MODE_ENABLED {
+	if canTake &&
+		quali.GetExamMode() == qualifications.QualificationExamMode_QUALIFICATION_EXAM_MODE_ENABLED {
 		canContent = true
 	}
 
 	resp := &pbqualifications.GetQualificationResponse{}
-	resp.Qualification, err = s.getQualification(ctx, req.QualificationId,
-		tQuali.ID.EQ(jet.Uint64(req.QualificationId)), userInfo, canContent)
+	resp.Qualification, err = s.getQualification(ctx, req.GetQualificationId(),
+		tQuali.ID.EQ(jet.Uint64(req.GetQualificationId())), userInfo, canContent)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	if resp.Qualification == nil || resp.Qualification.Id <= 0 {
+	if resp.GetQualification() == nil || resp.GetQualification().GetId() <= 0 {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	if resp.Qualification.Exam == nil {
+	if resp.GetQualification().GetExam() == nil {
 		resp.Qualification.Exam = &qualifications.ExamQuestions{
 			Questions: []*qualifications.ExamQuestion{},
 		}
 	}
-	if resp.Qualification.ExamSettings == nil {
+	if resp.GetQualification().GetExamSettings() == nil {
 		resp.Qualification.ExamSettings = &qualifications.QualificationExamSettings{
 			Time:          durationpb.New(10 * time.Minute),
 			AutoGradeMode: qualifications.AutoGradeMode_AUTO_GRADE_MODE_STRICT,
 		}
 	}
 
-	if resp.Qualification.Creator != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, resp.Qualification.Creator)
+	if resp.GetQualification().GetCreator() != nil {
+		s.enricher.EnrichJobInfoSafe(userInfo, resp.GetQualification().GetCreator())
 	}
 
-	qualiAccess, err := s.GetQualificationAccess(ctx, &pbqualifications.GetQualificationAccessRequest{
-		QualificationId: req.QualificationId,
-	})
+	qualiAccess, err := s.GetQualificationAccess(
+		ctx,
+		&pbqualifications.GetQualificationAccessRequest{
+			QualificationId: req.GetQualificationId(),
+		},
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	if qualiAccess != nil {
-		resp.Qualification.Access = qualiAccess.Access
+		resp.Qualification.Access = qualiAccess.GetAccess()
 	}
 
-	files, err := s.fHandler.ListFilesForParentID(ctx, req.QualificationId)
+	files, err := s.fHandler.ListFilesForParentID(ctx, req.GetQualificationId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	resp.Qualification.Files = files
 
-	if canGrade && req.WithExam != nil && *req.WithExam {
-		exam, err := s.getExamQuestions(ctx, s.db, req.QualificationId, canGrade)
+	if canGrade && req.WithExam != nil && req.GetWithExam() {
+		exam, err := s.getExamQuestions(ctx, s.db, req.GetQualificationId(), canGrade)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -222,14 +256,17 @@ func (s *Server) GetQualification(ctx context.Context, req *pbqualifications.Get
 	return resp, nil
 }
 
-func (s *Server) CreateQualification(ctx context.Context, req *pbqualifications.CreateQualificationRequest) (*pbqualifications.CreateQualificationResponse, error) {
+func (s *Server) CreateQualification(
+	ctx context.Context,
+	req *pbqualifications.CreateQualificationRequest,
+) (*pbqualifications.CreateQualificationResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
 		Method:  "CreateQualification",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
@@ -258,7 +295,7 @@ func (s *Server) CreateQualification(ctx context.Context, req *pbqualifications.
 			tQuali.CreatorJob,
 		).
 		VALUES(
-			userInfo.Job,
+			userInfo.GetJob(),
 			false,
 			true,
 			false,
@@ -267,8 +304,8 @@ func (s *Server) CreateQualification(ctx context.Context, req *pbqualifications.
 			"",
 			content.ContentType_CONTENT_TYPE_HTML,
 			"",
-			userInfo.UserId,
-			userInfo.Job,
+			userInfo.GetUserId(),
+			userInfo.GetJob(),
 		)
 
 	result, err := stmt.ExecContext(ctx, tx)
@@ -283,16 +320,16 @@ func (s *Server) CreateQualification(ctx context.Context, req *pbqualifications.
 
 	jobAccess := []*qualifications.QualificationJobAccess{}
 
-	job := s.enricher.GetJobByName(userInfo.Job)
+	job := s.enricher.GetJobByName(userInfo.GetJob())
 	if job != nil {
 		highestGrade := int32(-1)
-		if len(job.Grades) > 0 {
-			highestGrade = job.Grades[len(job.Grades)-1].Grade
+		if len(job.GetGrades()) > 0 {
+			highestGrade = job.GetGrades()[len(job.GetGrades())-1].GetGrade()
 		}
 
 		jobAccess = append(jobAccess, &qualifications.QualificationJobAccess{
 			TargetId:     uint64(lastId),
-			Job:          job.Name,
+			Job:          job.GetName(),
 			MinimumGrade: highestGrade,
 			Access:       qualifications.AccessLevel_ACCESS_LEVEL_EDIT,
 		})
@@ -314,66 +351,92 @@ func (s *Server) CreateQualification(ctx context.Context, req *pbqualifications.
 	}, nil
 }
 
-func (s *Server) UpdateQualification(ctx context.Context, req *pbqualifications.UpdateQualificationRequest) (*pbqualifications.UpdateQualificationResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.Qualification.Id})
+func (s *Server) UpdateQualification(
+	ctx context.Context,
+	req *pbqualifications.UpdateQualificationRequest,
+) (*pbqualifications.UpdateQualificationResponse, error) {
+	logging.InjectFields(
+		ctx,
+		logging.Fields{"fivenet.qualifications.id", req.GetQualification().GetId()},
+	)
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
 		Method:  "UpdateQualification",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.Qualification.Id, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_EDIT)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetQualification().GetId(),
+		userInfo,
+		qualifications.AccessLevel_ACCESS_LEVEL_EDIT,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !check && !userInfo.Superuser {
+	if !check && !userInfo.GetSuperuser() {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	oldQuali, err := s.getQualification(ctx, req.Qualification.Id,
-		tQuali.ID.EQ(jet.Uint64(req.Qualification.Id)),
+	oldQuali, err := s.getQualification(ctx, req.GetQualification().GetId(),
+		tQuali.ID.EQ(jet.Uint64(req.GetQualification().GetId())),
 		userInfo, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	// Field Permission Check
-	ownAccess, err := s.perms.AttrStringList(userInfo, permsqualifications.QualificationsServicePerm, permsqualifications.QualificationsServiceUpdateQualificationPerm, permsqualifications.QualificationsServiceUpdateQualificationAccessPermField)
+	ownAccess, err := s.perms.AttrStringList(
+		userInfo,
+		permsqualifications.QualificationsServicePerm,
+		permsqualifications.QualificationsServiceUpdateQualificationPerm,
+		permsqualifications.QualificationsServiceUpdateQualificationAccessPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !access.CheckIfHasOwnJobAccess(ownAccess, userInfo, oldQuali.CreatorJob, oldQuali.Creator) {
+	if !access.CheckIfHasOwnJobAccess(
+		ownAccess,
+		userInfo,
+		oldQuali.GetCreatorJob(),
+		oldQuali.GetCreator(),
+	) {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	fields, err := s.perms.AttrStringList(userInfo, permsqualifications.QualificationsServicePerm, permsqualifications.QualificationsServiceUpdateQualificationPerm, permsqualifications.QualificationsServiceUpdateQualificationFieldsPermField)
+	fields, err := s.perms.AttrStringList(
+		userInfo,
+		permsqualifications.QualificationsServicePerm,
+		permsqualifications.QualificationsServiceUpdateQualificationPerm,
+		permsqualifications.QualificationsServiceUpdateQualificationFieldsPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	if !fields.Contains("Public") {
-		req.Qualification.Public = oldQuali.Public
+		req.Qualification.Public = oldQuali.GetPublic()
 	}
 
 	// Make sure that the qualification doesn't require itself
-	if len(req.Qualification.Requirements) > 0 {
-		for _, req := range req.Qualification.Requirements {
-			if req.TargetQualificationId == oldQuali.Id {
+	if len(req.GetQualification().GetRequirements()) > 0 {
+		for _, req := range req.GetQualification().GetRequirements() {
+			if req.GetTargetQualificationId() == oldQuali.GetId() {
 				return nil, errorsqualifications.ErrRequirementSelfRef
 			}
 		}
 	}
 
 	// A qualification can only be switched to published once
-	if !oldQuali.Draft && oldQuali.Draft != req.Qualification.Draft {
+	if !oldQuali.GetDraft() && oldQuali.GetDraft() != req.GetQualification().GetDraft() {
 		// Allow a super user to change the draft state
-		if !userInfo.Superuser {
-			req.Qualification.Draft = oldQuali.Draft
+		if !userInfo.GetSuperuser() {
+			req.Qualification.Draft = oldQuali.GetDraft()
 		}
 	}
 
@@ -384,7 +447,10 @@ func (s *Server) UpdateQualification(ctx context.Context, req *pbqualifications.
 	}
 
 	if req.Qualification.Description != nil {
-		*req.Qualification.Description = strings.TrimSuffix(*req.Qualification.Description, "<br>")
+		*req.Qualification.Description = strings.TrimSuffix(
+			req.GetQualification().GetDescription(),
+			"<br>",
+		)
 	}
 
 	tQuali := table.FivenetQualifications
@@ -407,54 +473,59 @@ func (s *Server) UpdateQualification(ctx context.Context, req *pbqualifications.
 			tQuali.LabelSyncFormat,
 		).
 		SET(
-			req.Qualification.Weight,
-			req.Qualification.Closed,
-			req.Qualification.Draft,
-			req.Qualification.Public,
-			req.Qualification.Abbreviation,
-			req.Qualification.Title,
-			req.Qualification.Description,
+			req.GetQualification().GetWeight(),
+			req.GetQualification().GetClosed(),
+			req.GetQualification().GetDraft(),
+			req.GetQualification().GetPublic(),
+			req.GetQualification().GetAbbreviation(),
+			req.GetQualification().GetTitle(),
+			req.GetQualification().GetDescription(),
 			content.ContentType_CONTENT_TYPE_HTML,
-			req.Qualification.Content,
-			req.Qualification.DiscordSyncEnabled,
-			req.Qualification.DiscordSettings,
-			req.Qualification.ExamMode,
-			req.Qualification.ExamSettings,
-			req.Qualification.LabelSyncEnabled,
-			req.Qualification.LabelSyncFormat,
+			req.GetQualification().GetContent(),
+			req.GetQualification().GetDiscordSyncEnabled(),
+			req.GetQualification().GetDiscordSettings(),
+			req.GetQualification().GetExamMode(),
+			req.GetQualification().GetExamSettings(),
+			req.GetQualification().GetLabelSyncEnabled(),
+			req.GetQualification().GetLabelSyncFormat(),
 		).
 		WHERE(
-			tQuali.ID.EQ(jet.Uint64(req.Qualification.Id)),
+			tQuali.ID.EQ(jet.Uint64(req.GetQualification().GetId())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	if req.Qualification.Access != nil {
-		if _, err := s.access.HandleAccessChanges(ctx, tx, req.Qualification.Id, req.Qualification.Access.Jobs, nil, nil); err != nil {
+	if req.GetQualification().GetAccess() != nil {
+		if _, err := s.access.HandleAccessChanges(ctx, tx, req.GetQualification().GetId(), req.GetQualification().GetAccess().GetJobs(), nil, nil); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 	}
 
 	files := []*file.File{}
 	if req.Qualification.Files != nil {
-		files = append(files, req.Qualification.Files...)
+		files = append(files, req.GetQualification().GetFiles()...)
 	}
 
-	if err := s.handleQualificationRequirementsChanges(ctx, tx, req.Qualification.Id, req.Qualification.Requirements); err != nil {
+	if err := s.handleQualificationRequirementsChanges(ctx, tx, req.GetQualification().GetId(), req.GetQualification().GetRequirements()); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	if req.Qualification.Exam != nil {
-		questFiles, err := s.handleExamQuestionsChanges(ctx, tx, req.Qualification.Id, req.Qualification.Exam)
+	if req.GetQualification().GetExam() != nil {
+		questFiles, err := s.handleExamQuestionsChanges(
+			ctx,
+			tx,
+			req.GetQualification().GetId(),
+			req.GetQualification().GetExam(),
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 		files = append(files, questFiles...)
 	}
 
-	if _, _, err := s.fHandler.HandleFileChangesForParent(ctx, tx, req.Qualification.Id, files); err != nil {
+	if _, _, err := s.fHandler.HandleFileChangesForParent(ctx, tx, req.GetQualification().GetId(), files); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
@@ -466,51 +537,64 @@ func (s *Server) UpdateQualification(ctx context.Context, req *pbqualifications.
 	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
 	return &pbqualifications.UpdateQualificationResponse{
-		QualificationId: req.Qualification.Id,
+		QualificationId: req.GetQualification().GetId(),
 	}, nil
 }
 
-func (s *Server) DeleteQualification(ctx context.Context, req *pbqualifications.DeleteQualificationRequest) (*pbqualifications.DeleteQualificationResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.QualificationId})
+func (s *Server) DeleteQualification(
+	ctx context.Context,
+	req *pbqualifications.DeleteQualificationRequest,
+) (*pbqualifications.DeleteQualificationResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.GetQualificationId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
 		Method:  "DeleteQualification",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_EDIT)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetQualificationId(),
+		userInfo,
+		qualifications.AccessLevel_ACCESS_LEVEL_EDIT,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !check && !userInfo.Superuser {
-		if !userInfo.Superuser {
+	if !check && !userInfo.GetSuperuser() {
+		if !userInfo.GetSuperuser() {
 			return nil, errorsqualifications.ErrFailedQuery
 		}
 	}
 
-	quali, err := s.getQualification(ctx, req.QualificationId,
-		tQuali.ID.EQ(jet.Uint64(req.QualificationId)), userInfo, true)
+	quali, err := s.getQualification(ctx, req.GetQualificationId(),
+		tQuali.ID.EQ(jet.Uint64(req.GetQualificationId())), userInfo, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	// Field Permission Check
-	fields, err := s.perms.AttrStringList(userInfo, permsqualifications.QualificationsServicePerm, permsqualifications.QualificationsServiceDeleteQualificationPerm, permsqualifications.QualificationsServiceDeleteQualificationAccessPermField)
+	fields, err := s.perms.AttrStringList(
+		userInfo,
+		permsqualifications.QualificationsServicePerm,
+		permsqualifications.QualificationsServiceDeleteQualificationPerm,
+		permsqualifications.QualificationsServiceDeleteQualificationAccessPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !access.CheckIfHasOwnJobAccess(fields, userInfo, quali.CreatorJob, quali.Creator) {
+	if !access.CheckIfHasOwnJobAccess(fields, userInfo, quali.GetCreatorJob(), quali.GetCreator()) {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
 	deletedAtTime := jet.CURRENT_TIMESTAMP()
-	if quali.DeletedAt != nil && userInfo.Superuser {
+	if quali.GetDeletedAt() != nil && userInfo.GetSuperuser() {
 		deletedAtTime = jet.TimestampExp(jet.NULL)
 	}
 
@@ -523,7 +607,7 @@ func (s *Server) DeleteQualification(ctx context.Context, req *pbqualifications.
 			tQuali.DeletedAt.SET(deletedAtTime),
 		).
 		WHERE(
-			tQuali.ID.EQ(jet.Uint64(req.QualificationId)),
+			tQuali.ID.EQ(jet.Uint64(req.GetQualificationId())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

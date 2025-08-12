@@ -2,6 +2,7 @@ package servers
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -94,9 +95,14 @@ func (m *dbServer) Setup() {
 			return fmt.Errorf("failed to ping database. %w", err)
 		}
 
-		if _, err := db.Query("SELECT 1;"); err != nil {
+		rows, err := db.Query("SELECT 1;")
+		if err != nil {
 			return fmt.Errorf("failed to execute test query on database. %w", err)
 		}
+		if err := rows.Err(); err != nil {
+			return fmt.Errorf("error in rows: %w", err)
+		}
+		defer rows.Close()
 
 		return nil
 	}); err != nil {
@@ -122,7 +128,9 @@ func (m *dbServer) Setup() {
 
 func (m *dbServer) DB() (*sql.DB, error) {
 	if m.db == nil {
-		return nil, fmt.Errorf("test DB connection has not been established! You are accessing DB() method too early")
+		return nil, errors.New(
+			"test DB connection has not been established! You are accessing DB() method too early",
+		)
 	}
 
 	return m.db, nil
@@ -130,7 +138,10 @@ func (m *dbServer) DB() (*sql.DB, error) {
 
 func (m *dbServer) getDSN() string {
 	// Using `root` isn't cool, but a workaround for now to create triggers in the database
-	return fmt.Sprintf("root:secret@(127.0.0.1:%s)/fivenettest?collation=utf8mb4_unicode_ci&loc=Local&parseTime=true", m.resource.GetPort("3306/tcp"))
+	return fmt.Sprintf(
+		"root:secret@(127.0.0.1:%s)/fivenettest?collation=utf8mb4_unicode_ci&loc=Local&parseTime=true",
+		m.resource.GetPort("3306/tcp"),
+	)
 }
 
 func (m *dbServer) prepareDBForFirstUse() error {
@@ -151,7 +162,10 @@ func (m *dbServer) getMultiStatementDB() (*sql.DB, error) {
 	// Open db connection with multiStatements param so we can apply sql files
 	initDB, err := sql.Open("mysql", m.getDSN()+"&parseTime=true&multiStatements=true")
 	if err != nil {
-		return nil, fmt.Errorf("failed to open test database connection for multi statement exec: %v", err)
+		return nil, fmt.Errorf(
+			"failed to open test database connection for multi statement exec. %w",
+			err,
+		)
 	}
 
 	return initDB, nil
@@ -160,7 +174,7 @@ func (m *dbServer) getMultiStatementDB() (*sql.DB, error) {
 func (m *dbServer) loadSQLFile(file string) error {
 	initDB, err := m.getMultiStatementDB()
 	if err != nil {
-		m.t.Fatalf("failed to get mult istatement db: %v", err)
+		m.t.Fatalf("failed to get multi statement db: %v", err)
 	}
 
 	c, ioErr := os.ReadFile(file)

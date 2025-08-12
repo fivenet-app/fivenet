@@ -15,7 +15,7 @@ func (x *DocumentJobAccess) SetJobLabel(label string) {
 // pkg/access compatibility
 
 func (x *DocumentJobAccess) GetJobGrade() int32 {
-	return x.MinimumGrade
+	return x.GetMinimumGrade()
 }
 
 func (x *DocumentJobAccess) SetJobGrade(grade int32) {
@@ -44,7 +44,7 @@ func (x *DocumentUserAccess) SetAccess(access AccessLevel) {
 
 func DocumentAccessHasDuplicates(access *DocumentAccess) bool {
 	jobKeys := map[string]any{}
-	for _, ja := range access.Jobs {
+	for _, ja := range access.GetJobs() {
 		key := fmt.Sprintf("%s-%d", ja.GetJob(), ja.GetMinimumGrade())
 		if _, ok := jobKeys[key]; ok {
 			return true
@@ -53,7 +53,7 @@ func DocumentAccessHasDuplicates(access *DocumentAccess) bool {
 	}
 
 	userKeys := map[int32]any{}
-	for _, ja := range access.Users {
+	for _, ja := range access.GetUsers() {
 		if _, ok := userKeys[ja.GetUserId()]; ok {
 			return true
 		}

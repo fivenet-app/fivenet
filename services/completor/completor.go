@@ -23,42 +23,42 @@ var (
 	tCitizensLabelsJob = table.FivenetUserLabelsJob.AS("label")
 )
 
-func (s *Server) CompleteCitizens(ctx context.Context, req *pbcompletor.CompleteCitizensRequest) (*pbcompletor.CompleteCitizensResponse, error) {
+func (s *Server) CompleteCitizens(
+	ctx context.Context,
+	req *pbcompletor.CompleteCitizensRequest,
+) (*pbcompletor.CompleteCitizensResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	tUsers := tables.User().AS("user_short")
 
 	condition := s.customDB.Conditions.User.GetFilter(tUsers.Alias())
 
-	currentJob := false
-	if req.CurrentJob != nil && *req.CurrentJob {
-		currentJob = true
-	}
+	currentJob := req.CurrentJob != nil && req.GetCurrentJob()
 
 	orderBys := []jet.OrderByClause{}
-	if len(req.UserIds) == 0 {
+	if len(req.GetUserIds()) == 0 {
 		if currentJob {
 			condition = condition.AND(
-				tUsers.Job.EQ(jet.String(userInfo.Job)),
+				tUsers.Job.EQ(jet.String(userInfo.GetJob())),
 			)
 		}
 
-		req.Search = strings.TrimSpace(req.Search)
-		req.Search = strings.ReplaceAll(req.Search, "%", "")
-		req.Search = strings.ReplaceAll(req.Search, " ", "%")
+		req.Search = strings.TrimSpace(req.GetSearch())
+		req.Search = strings.ReplaceAll(req.GetSearch(), "%", "")
+		req.Search = strings.ReplaceAll(req.GetSearch(), " ", "%")
 
-		if req.Search != "" {
-			req.Search = "%" + req.Search + "%"
+		if req.GetSearch() != "" {
+			req.Search = "%" + req.GetSearch() + "%"
 			condition = jet.CONCAT(tUsers.Firstname, jet.String(" "), tUsers.Lastname).
-				LIKE(jet.String(req.Search))
+				LIKE(jet.String(req.GetSearch()))
 		}
 	} else {
 		userIds := []jet.Expression{}
-		for _, v := range req.UserIds {
+		for _, v := range req.GetUserIds() {
 			userIds = append(userIds, jet.Int32(v))
 		}
 
-		if req.UserIdsOnly != nil && *req.UserIdsOnly {
+		if req.UserIdsOnly != nil && req.GetUserIdsOnly() {
 			condition = condition.AND(tUsers.ID.IN(userIds...))
 		}
 
@@ -96,9 +96,9 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *pbcompletor.Complete
 		}
 	}
 
-	if req.OnDuty != nil && *req.OnDuty {
+	if req.OnDuty != nil && req.GetOnDuty() {
 		dest = slices.DeleteFunc(dest, func(us *users.UserShort) bool {
-			return !s.tracker.IsUserOnDuty(us.UserId)
+			return !s.tracker.IsUserOnDuty(us.GetUserId())
 		})
 	}
 
@@ -114,18 +114,21 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *pbcompletor.Complete
 	}, nil
 }
 
-func (s *Server) CompleteJobs(ctx context.Context, req *pbcompletor.CompleteJobsRequest) (*pbcompletor.CompleteJobsResponse, error) {
+func (s *Server) CompleteJobs(
+	ctx context.Context,
+	req *pbcompletor.CompleteJobsRequest,
+) (*pbcompletor.CompleteJobsResponse, error) {
 	var search string
-	if req.Search != nil && *req.Search != "" {
-		search = *req.Search
+	if req.Search != nil && req.GetSearch() != "" {
+		search = req.GetSearch()
 	}
-	if req.CurrentJob != nil && *req.CurrentJob {
+	if req.CurrentJob != nil && req.GetCurrentJob() {
 		userInfo := auth.MustGetUserInfoFromContext(ctx)
-		search = userInfo.Job
+		search = userInfo.GetJob()
 	}
 	exactMatch := false
 	if req.ExactMatch != nil {
-		exactMatch = *req.ExactMatch
+		exactMatch = req.GetExactMatch()
 	}
 
 	resp := &pbcompletor.CompleteJobsResponse{}
@@ -142,31 +145,39 @@ func (s *Server) CompleteJobs(ctx context.Context, req *pbcompletor.CompleteJobs
 	return resp, nil
 }
 
-func (s *Server) CompleteDocumentCategories(ctx context.Context, req *pbcompletor.CompleteDocumentCategoriesRequest) (*pbcompletor.CompleteDocumentCategoriesResponse, error) {
+func (s *Server) CompleteDocumentCategories(
+	ctx context.Context,
+	req *pbcompletor.CompleteDocumentCategoriesRequest,
+) (*pbcompletor.CompleteDocumentCategoriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	jobs, err := s.p.AttrJobList(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteDocumentCategoriesPerm, permscompletor.CompletorServiceCompleteDocumentCategoriesJobsPermField)
+	jobs, err := s.p.AttrJobList(
+		userInfo,
+		permscompletor.CompletorServicePerm,
+		permscompletor.CompletorServiceCompleteDocumentCategoriesPerm,
+		permscompletor.CompletorServiceCompleteDocumentCategoriesJobsPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
 	}
 	if jobs.Len() == 0 {
-		jobs.Strings = append(jobs.Strings, userInfo.Job)
+		jobs.Strings = append(jobs.Strings, userInfo.GetJob())
 	}
 
-	req.Search = strings.TrimSpace(req.Search)
-	req.Search = strings.ReplaceAll(req.Search, "%", "")
-	req.Search = strings.ReplaceAll(req.Search, " ", "%")
+	req.Search = strings.TrimSpace(req.GetSearch())
+	req.Search = strings.ReplaceAll(req.GetSearch(), "%", "")
+	req.Search = strings.ReplaceAll(req.GetSearch(), " ", "%")
 
 	jobsExp := make([]jet.Expression, jobs.Len())
-	for i := range jobs.Strings {
-		jobsExp[i] = jet.String(jobs.Strings[i])
+	for i := range jobs.GetStrings() {
+		jobsExp[i] = jet.String(jobs.GetStrings()[i])
 	}
 
 	condition := tDCategory.Job.IN(jobsExp...)
-	if req.Search != "" {
-		req.Search = "%" + req.Search + "%"
+	if req.GetSearch() != "" {
+		req.Search = "%" + req.GetSearch() + "%"
 		condition = condition.AND(
-			tDCategory.Name.LIKE(jet.String(req.Search)),
+			tDCategory.Name.LIKE(jet.String(req.GetSearch())),
 		)
 	}
 
@@ -196,37 +207,48 @@ func (s *Server) CompleteDocumentCategories(ctx context.Context, req *pbcompleto
 	return resp, nil
 }
 
-func (s *Server) ListLawBooks(ctx context.Context, req *pbcompletor.ListLawBooksRequest) (*pbcompletor.ListLawBooksResponse, error) {
+func (s *Server) ListLawBooks(
+	ctx context.Context,
+	req *pbcompletor.ListLawBooksRequest,
+) (*pbcompletor.ListLawBooksResponse, error) {
 	return &pbcompletor.ListLawBooksResponse{
 		Books: s.laws.GetLawBooks(),
 	}, nil
 }
 
-func (s *Server) CompleteCitizenLabels(ctx context.Context, req *pbcompletor.CompleteCitizenLabelsRequest) (*pbcompletor.CompleteCitizenLabelsResponse, error) {
+func (s *Server) CompleteCitizenLabels(
+	ctx context.Context,
+	req *pbcompletor.CompleteCitizenLabelsRequest,
+) (*pbcompletor.CompleteCitizenLabelsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	jobs, err := s.p.AttrJobList(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteCitizenLabelsPerm, permscompletor.CompletorServiceCompleteCitizenLabelsJobsPermField)
+	jobs, err := s.p.AttrJobList(
+		userInfo,
+		permscompletor.CompletorServicePerm,
+		permscompletor.CompletorServiceCompleteCitizenLabelsPerm,
+		permscompletor.CompletorServiceCompleteCitizenLabelsJobsPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
 	}
 	if jobs.Len() == 0 {
-		jobs.Strings = append(jobs.Strings, userInfo.Job)
+		jobs.Strings = append(jobs.Strings, userInfo.GetJob())
 	}
 
-	req.Search = strings.TrimSpace(req.Search)
-	req.Search = strings.ReplaceAll(req.Search, "%", "")
-	req.Search = strings.ReplaceAll(req.Search, " ", "%")
+	req.Search = strings.TrimSpace(req.GetSearch())
+	req.Search = strings.ReplaceAll(req.GetSearch(), "%", "")
+	req.Search = strings.ReplaceAll(req.GetSearch(), " ", "%")
 
 	jobsExp := make([]jet.Expression, jobs.Len())
-	for i := range jobs.Strings {
-		jobsExp[i] = jet.String(jobs.Strings[i])
+	for i := range jobs.GetStrings() {
+		jobsExp[i] = jet.String(jobs.GetStrings()[i])
 	}
 
 	condition := tCitizensLabelsJob.Job.IN(jobsExp...)
 
-	if req.Search != "" {
-		req.Search = "%" + req.Search + "%"
-		condition = condition.AND(tCitizensLabelsJob.Name.LIKE(jet.String(req.Search)))
+	if req.GetSearch() != "" {
+		req.Search = "%" + req.GetSearch() + "%"
+		condition = condition.AND(tCitizensLabelsJob.Name.LIKE(jet.String(req.GetSearch())))
 	}
 
 	stmt := tCitizensLabelsJob.

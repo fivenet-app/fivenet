@@ -3,9 +3,7 @@ package internet
 import (
 	"database/sql"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/internet"
 	pbinternet "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/internet"
-	"github.com/fivenet-app/fivenet/v2025/pkg/access"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
@@ -38,8 +36,6 @@ type Server struct {
 
 	db  *sql.DB
 	aud audit.IAuditer
-
-	access *access.Grouped[internet.PageJobAccess, *internet.PageJobAccess, internet.PageUserAccess, *internet.PageUserAccess, access.DummyQualificationAccess[internet.AccessLevel], *access.DummyQualificationAccess[internet.AccessLevel], internet.AccessLevel]
 }
 
 type Params struct {
@@ -64,6 +60,7 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbinternet.RegisterAdsServiceServer(srv, s)
 }
 
+// GetPermsRemap returns the permissions re-mapping for the services.
 func (s *Server) GetPermsRemap() map[string]string {
 	return pbinternet.PermsRemap
 }

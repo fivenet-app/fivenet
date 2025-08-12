@@ -6,7 +6,7 @@ import (
 )
 
 type ServerCmd struct {
-	ModuleCronAgent bool `help:"Run the cron agent, should only be used for single container/binary deployments." default:"false"`
+	ModuleCronAgent bool `default:"false" help:"Run the cron agent, should only be used for single container/binary deployments."`
 }
 
 func (c *ServerCmd) Run(ctx *Context) error {

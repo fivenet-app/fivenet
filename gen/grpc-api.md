@@ -3674,7 +3674,7 @@ Dummy - DO NOT USE!
 | `parent_id` | [uint64](#uint64) |  |  |
 | `namespace` | [string](#string) |  | "documents", "wiki", … |
 | `original_name` | [string](#string) |  |  |
-| `content_type` | [string](#string) |  | optional – server re-validates |
+| `content_type` | [string](#string) |  | optional - server re-validates |
 | `size` | [int64](#int64) |  | Size in bytes |
 | `reason` | [string](#string) |  | @sanitize |
 
@@ -5269,7 +5269,7 @@ User related events
 | ----- | ---- | ----- | ----------- |
 | `refresh_token` | [bool](#bool) |  |  |
 | `notification` | [Notification](#resourcesnotificationsNotification) |  | Notifications |
-| `notifications_read_count` | [int32](#int32) |  |  |
+| `notifications_read_count` | [int64](#int64) |  |  |
 | `user_info_changed` | [resources.userinfo.UserInfoChanged](#resourcesuserinfoUserInfoChanged) |  |  |
 
 
@@ -10399,7 +10399,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `notification_count` | [int32](#int32) |  |  |
+| `notification_count` | [int64](#int64) |  |  |
 | `restart` | [bool](#bool) | optional |  |
 | `user_event` | [resources.notifications.UserEvent](#resourcesnotificationsUserEvent) |  |  |
 | `job_event` | [resources.notifications.JobEvent](#resourcesnotificationsJobEvent) |  |  |

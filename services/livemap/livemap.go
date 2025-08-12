@@ -30,22 +30,35 @@ const (
 	feedFetch = 32
 )
 
-func (s *Server) getAndSendACL(srv pblivemap.LivemapService_StreamServer, userInfo *userinfo.UserInfo) (*permissions.StringList, *permissions.JobGradeList, bool, error) {
-	markerJobs, err := s.ps.AttrJobList(userInfo, permslivemap.LivemapServicePerm, permslivemap.LivemapServiceStreamPerm, permslivemap.LivemapServiceStreamMarkersPermField)
+func (s *Server) getAndSendACL(
+	srv pblivemap.LivemapService_StreamServer,
+	userInfo *userinfo.UserInfo,
+) (*permissions.StringList, *permissions.JobGradeList, bool, error) {
+	markerJobs, err := s.ps.AttrJobList(
+		userInfo,
+		permslivemap.LivemapServicePerm,
+		permslivemap.LivemapServiceStreamPerm,
+		permslivemap.LivemapServiceStreamMarkersPermField,
+	)
 	if err != nil {
 		return nil, nil, false, errswrap.NewError(err, errorslivemap.ErrStreamFailed)
 	}
-	usersJobs, err := s.ps.AttrJobGradeList(userInfo, permslivemap.LivemapServicePerm, permslivemap.LivemapServiceStreamPerm, permslivemap.LivemapServiceStreamPlayersPermField)
+	usersJobs, err := s.ps.AttrJobGradeList(
+		userInfo,
+		permslivemap.LivemapServicePerm,
+		permslivemap.LivemapServiceStreamPerm,
+		permslivemap.LivemapServiceStreamPlayersPermField,
+	)
 	if err != nil {
 		return nil, nil, false, errswrap.NewError(err, errorslivemap.ErrStreamFailed)
 	}
 
-	if userInfo.Superuser {
+	if userInfo.GetSuperuser() {
 		s.markersCache.Range(func(job string, _ []*livemap.MarkerMarker) bool {
 			markerJobs.Strings = append(markerJobs.Strings, job)
 			return true
 		})
-		markerJobs.Strings = utils.RemoveSliceDuplicates(markerJobs.Strings)
+		markerJobs.Strings = utils.RemoveSliceDuplicates(markerJobs.GetStrings())
 
 		if usersJobs.Jobs == nil {
 			usersJobs.Jobs = make(map[string]int32)
@@ -65,9 +78,9 @@ func (s *Server) getAndSendACL(srv pblivemap.LivemapService_StreamServer, userIn
 		},
 	}
 
-	for i := range markerJobs.Strings {
+	for i := range markerJobs.GetStrings() {
 		jm := &jobs.Job{
-			Name: markerJobs.Strings[i],
+			Name: markerJobs.GetStrings()[i],
 		}
 		s.enricher.EnrichJobName(jm)
 		js.Jobs.Markers = append(js.Jobs.Markers, jm)
@@ -82,9 +95,9 @@ func (s *Server) getAndSendACL(srv pblivemap.LivemapService_StreamServer, userIn
 
 	// Check if the user is on duty (superuser is always on duty)
 	userOnDuty := false
-	if userInfo.Superuser {
+	if userInfo.GetSuperuser() {
 		userOnDuty = true
-	} else if um, ok := s.tracker.GetUserMarkerById(userInfo.UserId); ok && !um.Hidden {
+	} else if um, ok := s.tracker.GetUserMarkerById(userInfo.GetUserId()); ok && !um.GetHidden() {
 		userOnDuty = true
 	}
 
@@ -102,7 +115,7 @@ func (s *Server) getAndSendACL(srv pblivemap.LivemapService_StreamServer, userIn
 func buildFilters(jobs *permissions.JobGradeList) []string {
 	var f []string
 	for job, grades := range jobs.Iter() {
-		if jobs.FineGrained {
+		if jobs.GetFineGrained() {
 			for _, g := range grades {
 				f = append(f, fmt.Sprintf("$KV.%s.%s.%d", tracker.BucketUserLoc, job, g))
 			}
@@ -114,7 +127,11 @@ func buildFilters(jobs *permissions.JobGradeList) []string {
 	return f
 }
 
-func (s *Server) sendUserMarkers(srv pblivemap.LivemapService_StreamServer, usersJobs *permissions.JobGradeList, userInfo *userinfo.UserInfo) error {
+func (s *Server) sendUserMarkers(
+	srv pblivemap.LivemapService_StreamServer,
+	usersJobs *permissions.JobGradeList,
+	userInfo *userinfo.UserInfo,
+) error {
 	// Get user markers
 	markers := s.tracker.GetFilteredUserMarkers(usersJobs, userInfo)
 
@@ -132,12 +149,15 @@ func (s *Server) sendUserMarkers(srv pblivemap.LivemapService_StreamServer, user
 	return nil
 }
 
-func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapService_StreamServer) error {
+func (s *Server) Stream(
+	req *pblivemap.StreamRequest,
+	srv pblivemap.LivemapService_StreamServer,
+) error {
 	ctx := srv.Context()
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx).Clone()
 
-	s.logger.Debug("starting livemap stream", zap.Int32("user_id", userInfo.UserId))
+	s.logger.Debug("starting livemap stream", zap.Int32("user_id", userInfo.GetUserId()))
 
 	markerJobs, usersJobs, userOnDuty, err := s.getAndSendACL(srv, userInfo)
 	if err != nil {
@@ -168,7 +188,7 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 	defer close(outCh)
 	g, gctx := errgroup.WithContext(ctx)
 
-	// Writer goroutine – single gRPC send loop
+	// Writer goroutine - single gRPC send loop
 	g.Go(func() error {
 		for {
 			select {
@@ -187,7 +207,7 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 		}
 	})
 
-	// Marker updates goroutine – listens for marker updates and sends them to outCh
+	// Marker updates goroutine - listens for marker updates and sends them to outCh
 	g.Go(func() error {
 		markerUpdateCh := s.broker.Subscribe()
 		defer s.broker.Unsubscribe(markerUpdateCh)
@@ -203,7 +223,8 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 				}
 
 				if event.MarkerUpdate != nil {
-					if event.MarkerUpdate.Job != userInfo.Job && !userInfo.Superuser {
+					if event.MarkerUpdate.GetJob() != userInfo.GetJob() &&
+						!userInfo.GetSuperuser() {
 						continue // Ignore updates for other jobs
 					}
 
@@ -232,7 +253,7 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 		}
 	})
 
-	// User markers goroutine – listens for user marker updates and sends them to outCh
+	// User markers goroutine - listens for user marker updates and sends them to outCh
 	g.Go(func() error {
 		// Upsert pull consumer with multi-filter
 		consCfg := jetstream.ConsumerConfig{
@@ -273,7 +294,8 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 						return errswrap.NewError(err, errorslivemap.ErrStreamFailed)
 					}
 
-					if userId == userInfo.UserId && job == userInfo.Job && jobGrade == userInfo.JobGrade {
+					if userId == userInfo.GetUserId() && job == userInfo.GetJob() &&
+						jobGrade == userInfo.GetJobGrade() {
 						userOnDuty = false
 					}
 
@@ -300,9 +322,10 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 				}
 
 				// Marker is hidden, send delete event
-				if um.Hidden {
+				if um.GetHidden() {
 					// If the user is hidden, we toggle the on duty state and "drop" any message not related to the user
-					if um.UserId == userInfo.UserId && um.Job == userInfo.Job && (um.JobGrade == nil || *um.JobGrade == userInfo.JobGrade) {
+					if um.GetUserId() == userInfo.GetUserId() && um.GetJob() == userInfo.GetJob() &&
+						(um.JobGrade == nil || um.GetJobGrade() == userInfo.GetJobGrade()) {
 						userOnDuty = false
 					}
 
@@ -314,8 +337,8 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 						UserOnDuty: &userOnDuty,
 						Data: &pblivemap.StreamResponse_UserDelete{
 							UserDelete: &pblivemap.UserDelete{
-								Id:  um.UserId,
-								Job: um.Job,
+								Id:  um.GetUserId(),
+								Job: um.GetJob(),
 							},
 						},
 					}:
@@ -324,7 +347,7 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 				}
 
 				if !userOnDuty {
-					if um.UserId == userInfo.UserId {
+					if um.GetUserId() == userInfo.GetUserId() {
 						userOnDuty = true
 						// If the user is (back) on duty, we send the user markers snapshot
 						if err := s.sendUserMarkers(srv, usersJobs, userInfo); err != nil {
@@ -336,16 +359,16 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 					}
 				}
 
-				job := um.Job
-				if um.Job == "" {
-					job = um.User.Job
+				job := um.GetJob()
+				if um.GetJob() == "" {
+					job = um.GetUser().GetJob()
 				}
-				jg := um.User.JobGrade
+				jg := um.GetUser().GetJobGrade()
 				if um.JobGrade != nil {
-					jg = *um.JobGrade
+					jg = um.GetJobGrade()
 				}
 
-				if !userInfo.Superuser && !usersJobs.HasJobGrade(job, jg) {
+				if !userInfo.GetSuperuser() && !usersJobs.HasJobGrade(job, jg) {
 					continue
 				}
 
@@ -360,7 +383,6 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 					},
 				}:
 				}
-
 			}
 		}
 	})
@@ -368,12 +390,12 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 	return g.Wait()
 }
 
-// Send out chunked current marker markers
-func (s *Server) sendMarkerMarkers(srv pblivemap.LivemapService_StreamServer, jobs *permissions.StringList) (bool, error) {
-	updatedMarkers, deletedMarkers, err := s.getMarkerMarkers(jobs)
-	if err != nil {
-		return true, errswrap.NewError(err, errorslivemap.ErrStreamFailed)
-	}
+// Send out chunked current marker markers.
+func (s *Server) sendMarkerMarkers(
+	srv pblivemap.LivemapService_StreamServer,
+	jobs *permissions.StringList,
+) (bool, error) {
+	updatedMarkers, deletedMarkers := s.getMarkerMarkers(jobs)
 
 	// Less than chunk size or no markers, no need to chunk the response early return
 	if len(updatedMarkers) <= markerMarkerChunkSize {

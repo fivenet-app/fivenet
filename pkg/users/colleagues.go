@@ -16,7 +16,12 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func RetrieveColleagueById(ctx context.Context, db *sql.DB, enricher *mstlystcdata.Enricher, u ...int32) ([]*jobs.Colleague, error) {
+func RetrieveColleagueById(
+	ctx context.Context,
+	db *sql.DB,
+	enricher *mstlystcdata.Enricher,
+	u ...int32,
+) ([]*jobs.Colleague, error) {
 	if len(u) == 0 {
 		return nil, nil
 	}
@@ -79,7 +84,12 @@ func RetrieveColleagueById(ctx context.Context, db *sql.DB, enricher *mstlystcda
 	return dest, nil
 }
 
-func RetrieveUserShortById(ctx context.Context, db *sql.DB, enricher *mstlystcdata.Enricher, u int32) (*jobs.Colleague, error) {
+func RetrieveUserShortById(
+	ctx context.Context,
+	db *sql.DB,
+	enricher *mstlystcdata.Enricher,
+	u int32,
+) (*jobs.Colleague, error) {
 	us, err := RetrieveColleagueById(ctx, db, enricher, u)
 	if err != nil {
 		return nil, err
@@ -88,10 +98,15 @@ func RetrieveUserShortById(ctx context.Context, db *sql.DB, enricher *mstlystcda
 	return us[0], nil
 }
 
-func RetrieveUsersForUnit(ctx context.Context, db *sql.DB, enricher *mstlystcdata.Enricher, u *[]*centrum.UnitAssignment) error {
+func RetrieveUsersForUnit(
+	ctx context.Context,
+	db *sql.DB,
+	enricher *mstlystcdata.Enricher,
+	u *[]*centrum.UnitAssignment,
+) error {
 	userIds := make([]int32, len(*u))
-	for i := 0; i < len(*u); i++ {
-		userIds[i] = (*u)[i].UserId
+	for i := range *u {
+		userIds[i] = (*u)[i].GetUserId()
 	}
 
 	if len(userIds) == 0 {
@@ -103,7 +118,7 @@ func RetrieveUsersForUnit(ctx context.Context, db *sql.DB, enricher *mstlystcdat
 		return err
 	}
 
-	for i := 0; i < len(*u); i++ {
+	for i := range *u {
 		(*u)[i].User = us[i]
 	}
 
@@ -151,7 +166,7 @@ func RetrieveUserById(ctx context.Context, db *sql.DB, u int32) (*users.User, er
 		return nil, nil
 	}
 
-	if dest.UserId == 0 {
+	if dest.GetUserId() == 0 {
 		return nil, nil
 	}
 

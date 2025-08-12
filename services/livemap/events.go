@@ -24,7 +24,10 @@ const (
 	MarkerDelete events.Type = "delete"
 )
 
-func (s *Server) registerStreamAndConsumer(ctxStartup context.Context, ctxCancel context.Context) error {
+func (s *Server) registerStreamAndConsumer(
+	ctxStartup context.Context,
+	ctxCancel context.Context,
+) error {
 	cfg := jetstream.StreamConfig{
 		Name:        "LIVEMAP",
 		Description: "Livemapper Service events",
@@ -61,7 +64,13 @@ func (s *Server) registerStreamAndConsumer(ctxStartup context.Context, ctxCancel
 	return nil
 }
 
-func (s *Server) sendUpdateEvent(ctx context.Context, topic events.Topic, tType events.Type, job string, msg proto.Message) error {
+func (s *Server) sendUpdateEvent(
+	ctx context.Context,
+	topic events.Topic,
+	tType events.Type,
+	job string,
+	msg proto.Message,
+) error {
 	if _, err := s.js.PublishProto(ctx, fmt.Sprintf("%s.%s.%s.%s", BaseSubject, topic, tType, job), msg); err != nil {
 		return err
 	}
@@ -93,7 +102,7 @@ func (s *Server) watchForEventsFunc(msg jetstream.Msg) {
 			}
 
 			marker := &livemap.MarkerMarker{}
-			if err := protoutils.UnmarshalPartialPJSON(msg.Data(), marker); err != nil {
+			if err := protoutils.UnmarshalPartialJSON(msg.Data(), marker); err != nil {
 				s.logger.Error("failed to unmarshal livemap marker update data", zap.Error(err))
 				return
 			}
@@ -109,7 +118,7 @@ func (s *Server) watchForEventsFunc(msg jetstream.Msg) {
 			}
 
 			marker := &livemap.MarkerMarker{}
-			if err := protoutils.UnmarshalPartialPJSON(msg.Data(), marker); err != nil {
+			if err := protoutils.UnmarshalPartialJSON(msg.Data(), marker); err != nil {
 				s.logger.Error("failed to unmarshal livemap marker update data", zap.Error(err))
 				return
 			}

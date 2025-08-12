@@ -23,19 +23,22 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) ShareCalendarEntry(ctx context.Context, req *pbcalendar.ShareCalendarEntryRequest) (*pbcalendar.ShareCalendarEntryResponse, error) {
+func (s *Server) ShareCalendarEntry(
+	ctx context.Context,
+	req *pbcalendar.ShareCalendarEntryRequest,
+) (*pbcalendar.ShareCalendarEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbcalendar.CalendarService_ServiceDesc.ServiceName,
 		Method:  "ShareCalendarEntry",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.EntryId)))
+	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.GetEntryId())))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -43,7 +46,13 @@ func (s *Server) ShareCalendarEntry(ctx context.Context, req *pbcalendar.ShareCa
 		return nil, errorscalendar.ErrNoPerms
 	}
 
-	check, err := s.checkIfUserHasAccessToCalendar(ctx, entry.CalendarId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_SHARE, false)
+	check, err := s.checkIfUserHasAccessToCalendar(
+		ctx,
+		entry.GetCalendarId(),
+		userInfo,
+		calendar.AccessLevel_ACCESS_LEVEL_SHARE,
+		false,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -51,14 +60,14 @@ func (s *Server) ShareCalendarEntry(ctx context.Context, req *pbcalendar.ShareCa
 		return nil, errorscalendar.ErrNoPerms
 	}
 
-	if entry.Closed {
+	if entry.GetClosed() {
 		return nil, errorscalendar.ErrEntryClosed
 	}
 
-	req.UserIds = utils.RemoveSliceDuplicates(req.UserIds)
+	req.UserIds = utils.RemoveSliceDuplicates(req.GetUserIds())
 
 	resp := &pbcalendar.ShareCalendarEntryResponse{}
-	if len(req.UserIds) == 0 {
+	if len(req.GetUserIds()) == 0 {
 		return resp, nil
 	}
 
@@ -70,7 +79,7 @@ func (s *Server) ShareCalendarEntry(ctx context.Context, req *pbcalendar.ShareCa
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	newUsers, err := s.shareCalendarEntry(ctx, tx, req.EntryId, req.UserIds)
+	newUsers, err := s.shareCalendarEntry(ctx, tx, req.GetEntryId(), req.GetUserIds())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -81,7 +90,7 @@ func (s *Server) ShareCalendarEntry(ctx context.Context, req *pbcalendar.ShareCa
 	}
 
 	if len(newUsers) > 0 {
-		if err := s.sendShareNotifications(ctx, userInfo.UserId, entry, newUsers); err != nil {
+		if err := s.sendShareNotifications(ctx, userInfo.GetUserId(), entry, newUsers); err != nil {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
 	}
@@ -91,7 +100,12 @@ func (s *Server) ShareCalendarEntry(ctx context.Context, req *pbcalendar.ShareCa
 	return resp, nil
 }
 
-func (s *Server) shareCalendarEntry(ctx context.Context, tx qrm.DB, entryId uint64, inUserIds []int32) ([]int32, error) {
+func (s *Server) shareCalendarEntry(
+	ctx context.Context,
+	tx qrm.DB,
+	entryId uint64,
+	inUserIds []int32,
+) ([]int32, error) {
 	userIds := make([]jet.Expression, len(inUserIds))
 	for i := range inUserIds {
 		userIds[i] = jet.Int32(inUserIds[i])
@@ -119,8 +133,8 @@ func (s *Server) shareCalendarEntry(ctx context.Context, tx qrm.DB, entryId uint
 		newUsers = append(newUsers, inUserIds...)
 	} else {
 		for _, rsvp := range currentRSVPs {
-			if !slices.Contains(inUserIds, rsvp.UserId) {
-				newUsers = append(newUsers, rsvp.UserId)
+			if !slices.Contains(inUserIds, rsvp.GetUserId()) {
+				newUsers = append(newUsers, rsvp.GetUserId())
 			}
 		}
 	}
@@ -149,7 +163,12 @@ func (s *Server) shareCalendarEntry(ctx context.Context, tx qrm.DB, entryId uint
 	return newUsers, nil
 }
 
-func (s *Server) sendShareNotifications(ctx context.Context, sourceUserId int32, entry *calendar.CalendarEntry, targetCitizens []int32) error {
+func (s *Server) sendShareNotifications(
+	ctx context.Context,
+	sourceUserId int32,
+	entry *calendar.CalendarEntry,
+	targetCitizens []int32,
+) error {
 	tUsers := tables.User().AS("user_short")
 
 	stmt := tUsers.
@@ -177,24 +196,24 @@ func (s *Server) sendShareNotifications(ctx context.Context, sourceUserId int32,
 			Title: &common.I18NItem{
 				Key: "notifications.calendar.entry_shared_with_you.title",
 				Parameters: map[string]string{
-					"title": entry.Title,
-					"name":  fmt.Sprintf("%s %s", sourceUser.Firstname, sourceUser.Lastname),
+					"title": entry.GetTitle(),
+					"name":  fmt.Sprintf("%s %s", sourceUser.GetFirstname(), sourceUser.GetLastname()),
 				},
 			},
 			Content: &common.I18NItem{
 				Key:        "notifications.calendar.entry_shared_with_you.content",
-				Parameters: map[string]string{"title": entry.Title},
+				Parameters: map[string]string{"title": entry.GetTitle()},
 			},
 			Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_CALENDAR,
 			Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
 			Data: &notifications.Data{
 				Link: &notifications.Link{
-					To: fmt.Sprintf("/calendar?entry_id=%d", entry.Id),
+					To: fmt.Sprintf("/calendar?entry_id=%d", entry.GetId()),
 				},
 				CausedBy: &users.UserShort{
 					UserId:      sourceUserId,
-					Firstname:   sourceUser.Firstname,
-					Lastname:    sourceUser.Lastname,
+					Firstname:   sourceUser.GetFirstname(),
+					Lastname:    sourceUser.GetLastname(),
 					PhoneNumber: sourceUser.PhoneNumber,
 				},
 				Calendar: &notifications.CalendarData{

@@ -22,7 +22,7 @@ func TestGRPCAuthFunc(t *testing.T) {
 	tm := NewTokenMgr(jwtTokenTestSecret)
 	assert.NotNil(t, tm)
 	token, err := tm.NewWithClaims(basicCitizenInfoClaim)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	ui := userinfo.NewMockUserInfoRetriever(map[int32]*pbuserinfo.UserInfo{
 		basicCitizenInfoClaim.CharID: {
 			AccountId: basicCitizenInfoClaim.AccID,
@@ -65,7 +65,7 @@ func TestGRPCAuthFunc(t *testing.T) {
 		if run.errCode != codes.OK {
 			assert.Equal(t, run.errCode, status.Code(err), run.msg)
 		} else {
-			assert.NoError(t, err, run.msg)
+			require.NoError(t, err, run.msg)
 		}
 		if run.outputNil {
 			assert.Nil(t, out, run.msg)

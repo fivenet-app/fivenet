@@ -92,7 +92,7 @@ func TestTranslateWithFallback(t *testing.T) {
 			if tt.err != "" {
 				assert.EqualError(t, err, tt.err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				assert.Equal(t, tt.expected, result)
 			}
 		})
@@ -149,7 +149,7 @@ func TestTranslateViaTranslatorFunc(t *testing.T) {
 	assert.Equal(t, "3 computers", result)
 }
 
-// Unit test for missing variables
+// Unit test for missing variables.
 func TestReplaceVars_MissingVariables(t *testing.T) {
 	s := "Hello, {name}!"
 	vars := map[string]any{}

@@ -22,7 +22,9 @@ func WithTTL[T any, U protoutils.ProtoMessageWithMerge[T]](ttl time.Duration) Op
 }
 
 // WithJetstreamKV sets a custom NATS JetStream KeyValue store instance for the cache.
-func WithJetstreamKV[T any, U protoutils.ProtoMessageWithMerge[T]](kv jetstream.KeyValue) Option[T, U] {
+func WithJetstreamKV[T any, U protoutils.ProtoMessageWithMerge[T]](
+	kv jetstream.KeyValue,
+) Option[T, U] {
 	return func(c *Cache[T, U]) {
 		c.kv = kv
 	}

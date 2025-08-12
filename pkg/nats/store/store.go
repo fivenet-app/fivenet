@@ -25,7 +25,7 @@ import (
 )
 
 // ErrPrefixAmbiguous is returned when more than one key matches the prefix.
-var ErrPrefixAmbiguous = fmt.Errorf("multiple keys found with given prefix")
+var ErrPrefixAmbiguous = errors.New("multiple keys found with given prefix")
 
 // metricDataMapCount is a Prometheus gauge for tracking the number of entries in the store data map.
 var metricDataMapCount = promauto.NewGaugeVec(prometheus.GaugeOpts{
@@ -106,7 +106,13 @@ func mutexCompute() (*sync.Mutex, bool) {
 }
 
 // New creates a new Store instance with the given options and bucket.
-func New[T any, U protoutils.ProtoMessageWithMerge[T]](ctx context.Context, logger *zap.Logger, js *events.JSWrapper, bucket string, opts ...Option[T, U]) (*Store[T, U], error) {
+func New[T any, U protoutils.ProtoMessageWithMerge[T]](
+	ctx context.Context,
+	logger *zap.Logger,
+	js *events.JSWrapper,
+	bucket string,
+	opts ...Option[T, U],
+) (*Store[T, U], error) {
 	s := &Store[T, U]{
 		logger: logger.Named("store").With(zap.String("bucket", bucket)),
 		bucket: bucket,
@@ -118,7 +124,8 @@ func New[T any, U protoutils.ProtoMessageWithMerge[T]](ctx context.Context, logg
 	}
 
 	kvConfig := jetstream.KeyValueConfig{
-		Bucket:      bucket,
+		Bucket: bucket,
+		//nolint:perfsprint // Not in critical path, so no need to optimize
 		Description: fmt.Sprintf("%s Store", bucket),
 		History:     1,
 		Storage:     jetstream.MemoryStorage,
@@ -137,7 +144,7 @@ func New[T any, U protoutils.ProtoMessageWithMerge[T]](ctx context.Context, logg
 		s.kv = storeKV
 	}
 
-	// Create locks only if not overriden by option
+	// Create locks only if not overridden by option
 	if s.cl && s.l == nil {
 		l, err := locks.New(ctx, logger, js, bucket, 2*locks.LockTimeout)
 		if err != nil {
@@ -223,7 +230,11 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 	return nil
 }
 
-func (s *Store[T, U]) handleWatcherDelete(ctx context.Context, key string, _ jetstream.KeyValueEntry) {
+func (s *Store[T, U]) handleWatcherDelete(
+	ctx context.Context,
+	key string,
+	_ jetstream.KeyValueEntry,
+) {
 	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
 	mu.Lock()
 	defer mu.Unlock()
@@ -231,7 +242,11 @@ func (s *Store[T, U]) handleWatcherDelete(ctx context.Context, key string, _ jet
 	if s.onRemoteDeletion != nil {
 		item, _ := s.data.Load(key)
 		if err := s.onRemoteDeletion(ctx, key, item); err != nil {
-			s.logger.Error("failed to react to remote delete event from watcher", zap.String("key", key), zap.Error(err))
+			s.logger.Error(
+				"failed to react to remote delete event from watcher",
+				zap.String("key", key),
+				zap.Error(err),
+			)
 		}
 	}
 
@@ -241,19 +256,31 @@ func (s *Store[T, U]) handleWatcherDelete(ctx context.Context, key string, _ jet
 	// Do NOT trigger onDelete hook — watcher = remote change
 }
 
-func (s *Store[T, U]) handleWatcherPut(ctx context.Context, key string, entry jetstream.KeyValueEntry) {
+func (s *Store[T, U]) handleWatcherPut(
+	ctx context.Context,
+	key string,
+	entry jetstream.KeyValueEntry,
+) {
 	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
 	mu.Lock()
 	defer mu.Unlock()
 
 	oldItem, err := s.get(key)
 	if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
-		s.logger.Error("failed to get old item for watcher update", zap.String("key", key), zap.Error(err))
+		s.logger.Error(
+			"failed to get old item for watcher update",
+			zap.String("key", key),
+			zap.Error(err),
+		)
 	}
 
 	item, err := s.update(ctx, entry, oldItem, false)
 	if err != nil {
-		s.logger.Error("failed to apply update from watcher", zap.String("key", key), zap.Error(err))
+		s.logger.Error(
+			"failed to apply update from watcher",
+			zap.String("key", key),
+			zap.Error(err),
+		)
 	}
 
 	if s.onRemoteUpdate != nil {
@@ -261,7 +288,7 @@ func (s *Store[T, U]) handleWatcherPut(ctx context.Context, key string, entry je
 	}
 }
 
-// Get copy of data from local data
+// Get copy of data from local data.
 func (s *Store[T, U]) Get(key string) (U, error) {
 	key = s.prefixed(key)
 
@@ -290,7 +317,7 @@ func (s *Store[T, U]) GetBySegmentOne(prefix string) (U, error) {
 	//   ""          → "" (no prefix => match everything)
 	seg := prefix
 	if seg != "" && !strings.HasSuffix(seg, ".") {
-		seg = seg + "."
+		seg += "."
 	}
 
 	// 1) find matching keys in-memory
@@ -362,7 +389,12 @@ func (s *Store[T, U]) load(ctx context.Context, key string, oldItem U) (U, error
 	return s.update(ctx, entry, oldItem, true)
 }
 
-func (s *Store[T, U]) update(ctx context.Context, entry jetstream.KeyValueEntry, oldItem U, triggerHook bool) (U, error) {
+func (s *Store[T, U]) update(
+	ctx context.Context,
+	entry jetstream.KeyValueEntry,
+	oldItem U,
+	triggerHook bool,
+) (U, error) {
 	data := U(new(T))
 	if err := proto.Unmarshal(entry.Value(), data); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal store watcher update. %w", err)
@@ -561,7 +593,7 @@ func (s *Store[T, U]) Range(fn func(key string, value U) bool) {
 	})
 }
 
-// Put upload the message to kv and local
+// Put upload the message to kv and local.
 func (s *Store[T, U]) Put(ctx context.Context, key string, msg U) error {
 	key = s.prefixed(key)
 	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
@@ -580,7 +612,11 @@ func (s *Store[T, U]) Put(ctx context.Context, key string, msg U) error {
 
 	oldItem, err := s.get(key)
 	if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
-		s.logger.Error("failed to get old item for watcher update", zap.String("key", key), zap.Error(err))
+		s.logger.Error(
+			"failed to get old item for watcher update",
+			zap.String("key", key),
+			zap.Error(err),
+		)
 	}
 
 	if err := s.put(ctx, key, msg, oldItem); err != nil {
@@ -630,7 +666,11 @@ func (s *Store[T, U]) put(ctx context.Context, key string, msg U, oldItem U) err
 	return nil
 }
 
-func (s *Store[T, U]) ComputeUpdate(ctx context.Context, key string, fn func(key string, existing U) (U, bool, error)) error {
+func (s *Store[T, U]) ComputeUpdate(
+	ctx context.Context,
+	key string,
+	fn func(key string, existing U) (U, bool, error),
+) error {
 	key = s.prefixed(key)
 
 	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)

@@ -11,7 +11,13 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) checkIfUserHasAccessToCalendar(ctx context.Context, calendarId uint64, userInfo *userinfo.UserInfo, access calendar.AccessLevel, publicOk bool) (bool, error) {
+func (s *Server) checkIfUserHasAccessToCalendar(
+	ctx context.Context,
+	calendarId uint64,
+	userInfo *userinfo.UserInfo,
+	access calendar.AccessLevel,
+	publicOk bool,
+) (bool, error) {
 	out, err := s.checkIfUserHasAccessToCalendarIDs(ctx, userInfo, access, publicOk, calendarId)
 	return len(out) > 0, err
 }
@@ -21,14 +27,20 @@ type calendarAccessEntry struct {
 	Public bool   `alias:"calendar.public"`
 }
 
-func (s *Server) checkIfUserHasAccessToCalendarIDs(ctx context.Context, userInfo *userinfo.UserInfo, access calendar.AccessLevel, publicOk bool, calendarIds ...uint64) ([]*calendarAccessEntry, error) {
+func (s *Server) checkIfUserHasAccessToCalendarIDs(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	access calendar.AccessLevel,
+	publicOk bool,
+	calendarIds ...uint64,
+) ([]*calendarAccessEntry, error) {
 	var dest []*calendarAccessEntry
 	if len(calendarIds) == 0 {
 		return dest, nil
 	}
 
 	// Allow superusers access to any docs
-	if userInfo.Superuser {
+	if userInfo.GetSuperuser() {
 		for i := range calendarIds {
 			dest = append(dest, &calendarAccessEntry{
 				ID: calendarIds[i],
@@ -67,12 +79,12 @@ func (s *Server) checkIfUserHasAccessToCalendarIDs(ctx context.Context, userInfo
 			tCalendar.ID.IN(ids...),
 			tCalendar.DeletedAt.IS_NULL(),
 			jet.OR(
-				tCalendar.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-				tCalendar.CreatorJob.EQ(jet.String(userInfo.Job)),
-				tCAccess.UserID.EQ(jet.Int32(userInfo.UserId)),
+				tCalendar.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
+				tCalendar.CreatorJob.EQ(jet.String(userInfo.GetJob())),
+				tCAccess.UserID.EQ(jet.Int32(userInfo.GetUserId())),
 				jet.AND(
-					tCAccess.Job.EQ(jet.String(userInfo.Job)),
-					tCAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade)),
+					tCAccess.Job.EQ(jet.String(userInfo.GetJob())),
+					tCAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
 				),
 				condition,
 			),

@@ -138,6 +138,7 @@ const { moveUp, moveDown } = useListReorder(toRef(questions.value.questions));
                         v-model="questions.questions[idx]"
                         :qualification-id="props.qualificationId"
                         :question="question"
+                        :index="idx"
                         :disabled="disabled"
                         @delete="questions.questions.splice(idx, 1)"
                         @file-uploaded="(file) => $emit('fileUploaded', file)"

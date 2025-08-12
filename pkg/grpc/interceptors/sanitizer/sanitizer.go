@@ -16,7 +16,7 @@ type ISanitize interface {
 // UnaryServerInterceptor returns a gRPC UnaryServerInterceptor that applies the sanitize logic
 // to every incoming request that implements ISanitize. If sanitization fails, the request is rejected.
 func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
-	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+	return func(ctx context.Context, req any, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 		if err := sanitize(ctx, req); err != nil {
 			return nil, err
 		}
@@ -27,7 +27,9 @@ func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 
 // sanitize checks if the request or response implements ISanitize and calls its Sanitize method.
 // If an error is returned, it is converted to a gRPC InvalidArgument error.
-func sanitize(_ context.Context, reqOrRes any) (err error) {
+func sanitize(_ context.Context, reqOrRes any) error {
+	var err error
+
 	switch v := reqOrRes.(type) {
 	case ISanitize:
 		err = v.Sanitize()

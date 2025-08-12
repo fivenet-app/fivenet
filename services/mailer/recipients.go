@@ -13,7 +13,12 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) handleRecipientsChanges(ctx context.Context, tx qrm.DB, threadId uint64, recipients []*mailer.ThreadRecipientEmail) error {
+func (s *Server) handleRecipientsChanges(
+	ctx context.Context,
+	tx qrm.DB,
+	threadId uint64,
+	recipients []*mailer.ThreadRecipientEmail,
+) error {
 	if len(recipients) == 0 {
 		return nil
 	}
@@ -27,8 +32,8 @@ func (s *Server) handleRecipientsChanges(ctx context.Context, tx qrm.DB, threadI
 			).
 			VALUES(
 				threadId,
-				recipient.EmailId,
-				recipient.Email.Email,
+				recipient.GetEmailId(),
+				recipient.GetEmail().GetEmail(),
 			)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -41,7 +46,11 @@ func (s *Server) handleRecipientsChanges(ctx context.Context, tx qrm.DB, threadI
 	return nil
 }
 
-func (s *Server) getThreadRecipients(ctx context.Context, tx qrm.DB, threadId uint64) ([]*mailer.ThreadRecipientEmail, error) {
+func (s *Server) getThreadRecipients(
+	ctx context.Context,
+	tx qrm.DB,
+	threadId uint64,
+) ([]*mailer.ThreadRecipientEmail, error) {
 	tThreadsRecipients := tThreadsRecipients.AS("thread_recipient_email")
 	stmt := tThreadsRecipients.
 		SELECT(
@@ -73,7 +82,11 @@ func (s *Server) getThreadRecipients(ctx context.Context, tx qrm.DB, threadId ui
 	return recipients, nil
 }
 
-func (s *Server) retrieveRecipientsToEmails(ctx context.Context, senderEmail *mailer.Email, recipients []string) ([]*mailer.ThreadRecipientEmail, error) {
+func (s *Server) retrieveRecipientsToEmails(
+	ctx context.Context,
+	senderEmail *mailer.Email,
+	recipients []string,
+) ([]*mailer.ThreadRecipientEmail, error) {
 	if len(recipients) == 0 {
 		return nil, errorsmailer.ErrRecipientMinium
 	}
@@ -109,20 +122,20 @@ func (s *Server) retrieveRecipientsToEmails(ctx context.Context, senderEmail *ma
 
 	// Add email "name" to thread recipient by matching the email via the recipients list
 	for _, recipient := range dest {
-		if senderEmail.Id == recipient.EmailId {
+		if senderEmail.GetId() == recipient.GetEmailId() {
 			return nil, errorsmailer.ErrSameAddress
 		}
 
 		idx := slices.IndexFunc(recipients, func(in string) bool {
-			return in == recipient.Email.Email
+			return in == recipient.GetEmail().GetEmail()
 		})
 		if idx == -1 {
 			return nil, errorsmailer.ErrInvalidRecipients
 		}
 
 		recipient.Email = &mailer.Email{
-			Id:    recipient.EmailId,
-			Email: recipient.Email.Email,
+			Id:    recipient.GetEmailId(),
+			Email: recipient.GetEmail().GetEmail(),
 		}
 	}
 

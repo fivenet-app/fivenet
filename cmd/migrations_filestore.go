@@ -1,3 +1,4 @@
+//nolint:dupl,forbidigo // Migrations are similar to each other, but not identical. This is part of a CLI tool that uses `fmt.Println` for output
 package cmd
 
 import (
@@ -30,25 +31,28 @@ func (c *FilestoreCmd) Run() error {
 		return err
 	}
 
-	fxOpts = append(fxOpts,
-		fx.Invoke(func(lifecycle fx.Lifecycle, cfg *config.Config, db *sql.DB, storage storage.IStorage, shutdowner fx.Shutdowner) {
-			lifecycle.Append(fx.Hook{
-				OnStart: func(ctx context.Context) error {
-					go func() {
-						exitCode := 0
-						c.db = db
-						c.storage = storage
-						if err := c.run(ctx); err != nil {
-							// handle error, set non-zero exit code so caller knows the job failed
-							exitCode = 1
-							fmt.Println("Error running filestore command:", err)
-						}
-						_ = shutdowner.Shutdown(fx.ExitCode(exitCode))
-					}()
-					return nil
-				},
-			})
-		}),
+	fxOpts = append(
+		fxOpts,
+		fx.Invoke(
+			func(lifecycle fx.Lifecycle, cfg *config.Config, db *sql.DB, storage storage.IStorage, shutdowner fx.Shutdowner) {
+				lifecycle.Append(fx.Hook{
+					OnStart: func(ctx context.Context) error {
+						go func() {
+							exitCode := 0
+							c.db = db
+							c.storage = storage
+							if err := c.run(ctx); err != nil {
+								// handle error, set non-zero exit code so caller knows the job failed
+								exitCode = 1
+								fmt.Println("Error running filestore command:", err)
+							}
+							_ = shutdowner.Shutdown(fx.ExitCode(exitCode))
+						}()
+						return nil
+					},
+				})
+			},
+		),
 	)
 
 	app := fx.New(fxOpts...)
@@ -102,7 +106,10 @@ func (c *FilestoreCmd) migrateJobLogos(ctx context.Context) error {
 
 		objectInfo, err := c.storage.Stat(ctx, row.LogoURL)
 		if err != nil {
-			errs = multierr.Append(errs, fmt.Errorf("failed to stat logo file %q. %w", row.LogoURL, err))
+			errs = multierr.Append(
+				errs,
+				fmt.Errorf("failed to stat logo file %q. %w", row.LogoURL, err),
+			)
 			continue
 		}
 
@@ -124,12 +131,28 @@ func (c *FilestoreCmd) migrateJobLogos(ctx context.Context) error {
 
 		res, err := insertStmt.ExecContext(ctx, c.db)
 		if err != nil {
-			errs = multierr.Append(errs, fmt.Errorf("failed to insert file %q for job %q. %w", objectInfo.GetName(), row.Job, err))
+			errs = multierr.Append(
+				errs,
+				fmt.Errorf(
+					"failed to insert file %q for job %q. %w",
+					objectInfo.GetName(),
+					row.Job,
+					err,
+				),
+			)
 			continue
 		}
 		lastInsertID, err := res.LastInsertId()
 		if err != nil {
-			errs = multierr.Append(errs, fmt.Errorf("failed to get last insert ID for file %q for job %q. %w", objectInfo.GetName(), row.Job, err))
+			errs = multierr.Append(
+				errs,
+				fmt.Errorf(
+					"failed to get last insert ID for file %q for job %q. %w",
+					objectInfo.GetName(),
+					row.Job,
+					err,
+				),
+			)
 			continue
 		}
 
@@ -147,7 +170,15 @@ func (c *FilestoreCmd) migrateJobLogos(ctx context.Context) error {
 			)
 
 		if _, err := updateStmt.ExecContext(ctx, c.db); err != nil {
-			errs = multierr.Append(errs, fmt.Errorf("failed to update job %q with new logo file ID %d. %w", row.Job, lastInsertID, err))
+			errs = multierr.Append(
+				errs,
+				fmt.Errorf(
+					"failed to update job %q with new logo file ID %d. %w",
+					row.Job,
+					lastInsertID,
+					err,
+				),
+			)
 			continue
 		}
 
@@ -186,7 +217,10 @@ func (c FilestoreCmd) migrateAvatars(ctx context.Context) error {
 
 		objectInfo, err := c.storage.Stat(ctx, row.Avatar)
 		if err != nil {
-			errs = multierr.Append(errs, fmt.Errorf("failed to stat avatar file %q. %w", row.Avatar, err))
+			errs = multierr.Append(
+				errs,
+				fmt.Errorf("failed to stat avatar file %q. %w", row.Avatar, err),
+			)
 			continue
 		}
 
@@ -206,12 +240,28 @@ func (c FilestoreCmd) migrateAvatars(ctx context.Context) error {
 
 		res, err := insertStmt.ExecContext(ctx, c.db)
 		if err != nil {
-			errs = multierr.Append(errs, fmt.Errorf("failed to insert avatar file %q for user %d. %w", objectInfo.GetName(), row.UserId, err))
+			errs = multierr.Append(
+				errs,
+				fmt.Errorf(
+					"failed to insert avatar file %q for user %d. %w",
+					objectInfo.GetName(),
+					row.UserId,
+					err,
+				),
+			)
 			continue
 		}
 		lastInsertID, err := res.LastInsertId()
 		if err != nil {
-			errs = multierr.Append(errs, fmt.Errorf("failed to get last insert ID for avatar file %q for job %q. %w", objectInfo.GetName(), row.UserId, err))
+			errs = multierr.Append(
+				errs,
+				fmt.Errorf(
+					"failed to get last insert ID for avatar file %q for job %q. %w",
+					objectInfo.GetName(),
+					row.UserId,
+					err,
+				),
+			)
 			continue
 		}
 
@@ -229,7 +279,15 @@ func (c FilestoreCmd) migrateAvatars(ctx context.Context) error {
 			)
 
 		if _, err := updateStmt.ExecContext(ctx, c.db); err != nil {
-			errs = multierr.Append(errs, fmt.Errorf("failed to update user %d with new avatar file ID %d. %w", row.UserId, lastInsertID, err))
+			errs = multierr.Append(
+				errs,
+				fmt.Errorf(
+					"failed to update user %d with new avatar file ID %d. %w",
+					row.UserId,
+					lastInsertID,
+					err,
+				),
+			)
 			continue
 		}
 
@@ -268,7 +326,10 @@ func (c FilestoreCmd) migrateMugshots(ctx context.Context) error {
 
 		objectInfo, err := c.storage.Stat(ctx, row.Mugshot)
 		if err != nil {
-			errs = multierr.Append(errs, fmt.Errorf("failed to stat mugshot file %q. %w", row.Mugshot, err))
+			errs = multierr.Append(
+				errs,
+				fmt.Errorf("failed to stat mugshot file %q. %w", row.Mugshot, err),
+			)
 			continue
 		}
 
@@ -288,12 +349,28 @@ func (c FilestoreCmd) migrateMugshots(ctx context.Context) error {
 
 		res, err := insertStmt.ExecContext(ctx, c.db)
 		if err != nil {
-			errs = multierr.Append(errs, fmt.Errorf("failed to insert mugshot file %q for user %d. %w", objectInfo.GetName(), row.UserId, err))
+			errs = multierr.Append(
+				errs,
+				fmt.Errorf(
+					"failed to insert mugshot file %q for user %d. %w",
+					objectInfo.GetName(),
+					row.UserId,
+					err,
+				),
+			)
 			continue
 		}
 		lastInsertID, err := res.LastInsertId()
 		if err != nil {
-			errs = multierr.Append(errs, fmt.Errorf("failed to get last insert ID for mugshot file %q for job %q. %w", objectInfo.GetName(), row.UserId, err))
+			errs = multierr.Append(
+				errs,
+				fmt.Errorf(
+					"failed to get last insert ID for mugshot file %q for job %q. %w",
+					objectInfo.GetName(),
+					row.UserId,
+					err,
+				),
+			)
 			continue
 		}
 
@@ -311,7 +388,15 @@ func (c FilestoreCmd) migrateMugshots(ctx context.Context) error {
 			)
 
 		if _, err := updateStmt.ExecContext(ctx, c.db); err != nil {
-			errs = multierr.Append(errs, fmt.Errorf("failed to update user %d with new mugshot file ID %d. %w", row.UserId, lastInsertID, err))
+			errs = multierr.Append(
+				errs,
+				fmt.Errorf(
+					"failed to update user %d with new mugshot file ID %d. %w",
+					row.UserId,
+					lastInsertID,
+					err,
+				),
+			)
 			continue
 		}
 

@@ -21,23 +21,34 @@ import (
 var tNotifications = table.FivenetNotifications
 
 var (
-	ErrFailedRequest = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.NotificationsService.ErrFailedRequest"}, nil)
-	ErrFailedStream  = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.NotificationsService.ErrFailedStream"}, nil)
+	ErrFailedRequest = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{Key: "errors.NotificationsService.ErrFailedRequest"},
+		nil,
+	)
+	ErrFailedStream = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{Key: "errors.NotificationsService.ErrFailedStream"},
+		nil,
+	)
 )
 
-func (s *Server) GetNotifications(ctx context.Context, req *pbnotifications.GetNotificationsRequest) (*pbnotifications.GetNotificationsResponse, error) {
+func (s *Server) GetNotifications(
+	ctx context.Context,
+	req *pbnotifications.GetNotificationsRequest,
+) (*pbnotifications.GetNotificationsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	tNotifications := tNotifications.AS("notification")
-	condition := tNotifications.UserID.EQ(jet.Int32(userInfo.UserId))
-	if req.IncludeRead != nil && !*req.IncludeRead {
+	condition := tNotifications.UserID.EQ(jet.Int32(userInfo.GetUserId()))
+	if req.IncludeRead != nil && !req.GetIncludeRead() {
 		condition = condition.AND(tNotifications.ReadAt.IS_NULL())
 	}
 
-	if len(req.Categories) > 0 {
-		categoryIds := make([]jet.Expression, len(req.Categories))
-		for i := range req.Categories {
-			categoryIds[i] = jet.Int16(int16(req.Categories[i]))
+	if len(req.GetCategories()) > 0 {
+		categoryIds := make([]jet.Expression, len(req.GetCategories()))
+		for i := range req.GetCategories() {
+			categoryIds[i] = jet.Int16(int16(req.GetCategories()[i]))
 		}
 
 		condition = condition.AND(tNotifications.Category.IN(categoryIds...))
@@ -57,7 +68,7 @@ func (s *Server) GetNotifications(ctx context.Context, req *pbnotifications.GetN
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponse(count.Total)
+	pag, limit := req.GetPagination().GetResponse(count.Total)
 	resp := &pbnotifications.GetNotificationsResponse{
 		Pagination: pag,
 	}
@@ -81,7 +92,7 @@ func (s *Server) GetNotifications(ctx context.Context, req *pbnotifications.GetN
 		WHERE(
 			condition,
 		).
-		OFFSET(req.Pagination.Offset).
+		OFFSET(req.GetPagination().GetOffset()).
 		ORDER_BY(tNotifications.ID.DESC()).
 		LIMIT(limit)
 
@@ -91,32 +102,35 @@ func (s *Server) GetNotifications(ctx context.Context, req *pbnotifications.GetN
 		}
 	}
 
-	resp.Pagination.Update(len(resp.Notifications))
+	resp.GetPagination().Update(len(resp.GetNotifications()))
 
 	return resp, nil
 }
 
-func (s *Server) MarkNotifications(ctx context.Context, req *pbnotifications.MarkNotificationsRequest) (*pbnotifications.MarkNotificationsResponse, error) {
+func (s *Server) MarkNotifications(
+	ctx context.Context,
+	req *pbnotifications.MarkNotificationsRequest,
+) (*pbnotifications.MarkNotificationsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	condition := tNotifications.UserID.EQ(
-		jet.Int32(userInfo.UserId)).AND(
+		jet.Int32(userInfo.GetUserId())).AND(
 		tNotifications.ReadAt.IS_NULL(),
 	)
 
 	// If not all
-	if len(req.Ids) > 0 {
-		ids := make([]jet.Expression, len(req.Ids))
-		for i := range req.Ids {
-			ids[i] = jet.Uint64(req.Ids[i])
+	if len(req.GetIds()) > 0 {
+		ids := make([]jet.Expression, len(req.GetIds()))
+		for i := range req.GetIds() {
+			ids[i] = jet.Uint64(req.GetIds()[i])
 		}
 		condition = condition.AND(tNotifications.ID.IN(ids...))
-	} else if req.All == nil || !*req.All {
+	} else if req.All == nil || !req.GetAll() {
 		return &pbnotifications.MarkNotificationsResponse{}, nil
 	}
 
 	readAt := jet.CURRENT_TIMESTAMP()
-	if req.Unread {
+	if req.GetUnread() {
 		// Allow users to mark notifications as unread
 		readAt = jet.TimestampExp(jet.NULL)
 	}
@@ -141,14 +155,16 @@ func (s *Server) MarkNotifications(ctx context.Context, req *pbnotifications.Mar
 	}
 
 	if affected > 0 {
-		if req.Unread {
+		if req.GetUnread() {
 			affected = -affected
 		}
 
-		s.js.PublishProto(ctx, fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserTopic, userInfo.UserId),
+		s.js.PublishProto(
+			ctx,
+			fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserTopic, userInfo.GetUserId()),
 			&notifications.UserEvent{
 				Data: &notifications.UserEvent_NotificationsReadCount{
-					NotificationsReadCount: int32(affected),
+					NotificationsReadCount: affected,
 				},
 			},
 		)
@@ -159,7 +175,7 @@ func (s *Server) MarkNotifications(ctx context.Context, req *pbnotifications.Mar
 	}, nil
 }
 
-func (s *Server) getNotificationCount(ctx context.Context, userId int32) (int32, error) {
+func (s *Server) getNotificationCount(ctx context.Context, userId int32) (int64, error) {
 	stmt := tNotifications.
 		SELECT(
 			jet.COUNT(tNotifications.ID).AS("count"),
@@ -172,7 +188,7 @@ func (s *Server) getNotificationCount(ctx context.Context, userId int32) (int32,
 		ORDER_BY(tNotifications.ID.DESC())
 
 	var dest struct {
-		Count int32
+		Count int64
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

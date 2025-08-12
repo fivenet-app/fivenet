@@ -142,7 +142,7 @@ func WithWebsocketOriginFunc(websocketOriginFunc func(req *http.Request) bool) O
 
 // WithWebsocketsMessageReadLimit sets the maximum message read limit on the underlying websocket.
 //
-// The default message read limit is 32,768 bytes
+// The default message read limit is 32,768 bytes.
 func WithWebsocketsMessageReadLimit(websocketReadLimit int64) Option {
 	return func(o *options) {
 		o.websocketReadLimit = websocketReadLimit
@@ -171,7 +171,7 @@ func WithWebsocketChannelMaxStreamCount(websocketChannelMaxStreamCount int) Opti
 
 // WithWebsocketCompressionMode sets compression mode for websocket requests
 //
-// The default mode is CompressionNoContextTakeover
+// The default mode is `CompressionNoContextTakeover`.
 func WithWebsocketCompressionMode(compressionMode websocket.CompressionMode) Option {
 	return func(o *options) {
 		o.websocketCompressionMode = compressionMode

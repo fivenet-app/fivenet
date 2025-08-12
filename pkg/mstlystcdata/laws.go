@@ -156,8 +156,8 @@ func (c *Laws) loadLaws(ctx context.Context, lawBookId uint64) error {
 		// Update cache
 		found := []uint64{}
 		for _, lawbook := range dest {
-			c.lawBooks.Store(lawbook.Id, lawbook)
-			found = append(found, lawbook.Id)
+			c.lawBooks.Store(lawbook.GetId(), lawbook)
+			found = append(found, lawbook.GetId())
 		}
 
 		// Delete non-existing law books, based on which are in the database
@@ -183,7 +183,7 @@ func (c *Laws) GetLawBooks() []*laws.LawBook {
 	})
 
 	sort.Slice(lawBooks, func(i, j int) bool {
-		return natural.Less(lawBooks[i].Name, lawBooks[j].Name)
+		return natural.Less(lawBooks[i].GetName(), lawBooks[j].GetName())
 	})
 
 	return lawBooks

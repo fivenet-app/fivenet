@@ -24,12 +24,18 @@ import (
 
 var tQualiRequests = table.FivenetQualificationsRequests.AS("qualification_request")
 
-func (s *Server) ListQualificationRequests(ctx context.Context, req *pbqualifications.ListQualificationRequestsRequest) (*pbqualifications.ListQualificationRequestsResponse, error) {
+func (s *Server) ListQualificationRequests(
+	ctx context.Context,
+	req *pbqualifications.ListQualificationRequestsRequest,
+) (*pbqualifications.ListQualificationRequestsResponse, error) {
 	if req.QualificationId != nil {
-		logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", *req.QualificationId})
+		logging.InjectFields(
+			ctx,
+			logging.Fields{"fivenet.qualifications.id", req.GetQualificationId()},
+		)
 	}
 	if req.UserId != nil {
-		logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.user_id", *req.UserId})
+		logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.user_id", req.GetUserId()})
 	}
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -42,7 +48,12 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *pbqualifica
 		AND(tQualiRequests.Status.NOT_EQ(jet.Int16(int16(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED))))
 
 	if req.QualificationId != nil {
-		check, err := s.access.CanUserAccessTarget(ctx, *req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
+		check, err := s.access.CanUserAccessTarget(
+			ctx,
+			req.GetQualificationId(),
+			userInfo,
+			qualifications.AccessLevel_ACCESS_LEVEL_GRADE,
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -50,19 +61,21 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *pbqualifica
 			return nil, errorsqualifications.ErrFailedQuery
 		}
 
-		condition = condition.AND(tQualiRequests.QualificationID.EQ(jet.Uint64(*req.QualificationId)))
+		condition = condition.AND(
+			tQualiRequests.QualificationID.EQ(jet.Uint64(req.GetQualificationId())),
+		)
 	} else {
 		condition = condition.AND(jet.AND(
 			tQuali.DeletedAt.IS_NULL(),
 			jet.OR(
-				tQualiRequests.UserID.EQ(jet.Int32(userInfo.UserId)),
+				tQualiRequests.UserID.EQ(jet.Int32(userInfo.GetUserId())),
 				jet.AND(
 					tQAccess.Access.IS_NOT_NULL(),
 					jet.OR(
 						tQAccess.Access.GT(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_GRADE))),
 						jet.AND(
 							tQAccess.Access.GT(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED))),
-							tQualiRequests.UserID.EQ(jet.Int32(userInfo.UserId)),
+							tQualiRequests.UserID.EQ(jet.Int32(userInfo.GetUserId())),
 						),
 					),
 				),
@@ -72,20 +85,21 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *pbqualifica
 
 	countColumn := jet.Expression(tQualiRequests.QualificationID)
 	if req.UserId != nil {
-		condition = condition.AND(tUser.Job.EQ(jet.String(userInfo.Job))).AND(tQualiRequests.UserID.EQ(jet.Int32(*req.UserId)))
+		condition = condition.AND(tUser.Job.EQ(jet.String(userInfo.GetJob()))).
+			AND(tQualiRequests.UserID.EQ(jet.Int32(req.GetUserId())))
 	} else {
 		if req.QualificationId == nil {
-			condition = condition.AND(tUser.Job.EQ(jet.String(userInfo.Job))).AND(tQualiRequests.UserID.EQ(jet.Int32(userInfo.UserId)))
+			condition = condition.AND(tUser.Job.EQ(jet.String(userInfo.GetJob()))).AND(tQualiRequests.UserID.EQ(jet.Int32(userInfo.GetUserId())))
 			countColumn = jet.DISTINCT(tQualiRequests.QualificationID)
 		} else {
 			countColumn = jet.DISTINCT(tQualiRequests.UserID)
 		}
 	}
 
-	if len(req.Status) > 0 {
+	if len(req.GetStatus()) > 0 {
 		statuses := []jet.Expression{}
-		for i := range req.Status {
-			statuses = append(statuses, jet.Int16(int16(req.Status[i])))
+		for i := range req.GetStatus() {
+			statuses = append(statuses, jet.Int16(int16(req.GetStatus()[i])))
 		}
 
 		condition = condition.AND(tQualiRequests.Status.IN(statuses...))
@@ -104,8 +118,8 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *pbqualifica
 				).
 				LEFT_JOIN(tQAccess,
 					tQAccess.TargetID.EQ(tQuali.ID).
-						AND(tQAccess.Job.EQ(jet.String(userInfo.Job))).
-						AND(tQAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+						AND(tQAccess.Job.EQ(jet.String(userInfo.GetJob()))).
+						AND(tQAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade()))),
 				).
 				LEFT_JOIN(tUser,
 					tQualiRequests.UserID.EQ(tUser.ID),
@@ -120,7 +134,7 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *pbqualifica
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, QualificationsPageSize)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, QualificationsPageSize)
 	resp := &pbqualifications.ListQualificationRequestsResponse{
 		Pagination: pag,
 		Requests:   []*qualifications.QualificationRequest{},
@@ -131,9 +145,9 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *pbqualifica
 
 	// Convert proto sort to db sorting
 	orderBys := []jet.OrderByClause{}
-	if req.Sort != nil {
+	if req.GetSort() != nil {
 		var column jet.Column
-		switch req.Sort.Column {
+		switch req.GetSort().GetColumn() {
 		case "status":
 			column = tQualiRequests.Status
 		case "approvedAt":
@@ -144,7 +158,7 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *pbqualifica
 			column = tQualiRequests.CreatedAt
 		}
 
-		if req.Sort.Direction == database.AscSortDirection {
+		if req.GetSort().GetDirection() == database.AscSortDirection {
 			orderBys = append(orderBys, column.ASC())
 		} else {
 			orderBys = append(orderBys, column.DESC())
@@ -202,14 +216,14 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *pbqualifica
 				).
 				LEFT_JOIN(tQAccess,
 					tQAccess.TargetID.EQ(tQuali.ID).
-						AND(tQAccess.Job.EQ(jet.String(userInfo.Job))).
-						AND(tQAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+						AND(tQAccess.Job.EQ(jet.String(userInfo.GetJob()))).
+						AND(tQAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade()))),
 				),
 		).
 		GROUP_BY(tQualiRequests.QualificationID, tQualiRequests.UserID).
 		ORDER_BY(orderBys...).
 		WHERE(condition).
-		OFFSET(req.Pagination.Offset).
+		OFFSET(req.GetPagination().GetOffset()).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Requests); err != nil {
@@ -219,48 +233,62 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *pbqualifica
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.Requests {
-		if resp.Requests[i].User != nil {
-			jobInfoFn(resp.Requests[i].User)
+	for i := range resp.GetRequests() {
+		if resp.GetRequests()[i].GetUser() != nil {
+			jobInfoFn(resp.GetRequests()[i].GetUser())
 		}
 
-		if resp.Requests[i].Approver != nil {
-			jobInfoFn(resp.Requests[i].Approver)
+		if resp.GetRequests()[i].GetApprover() != nil {
+			jobInfoFn(resp.GetRequests()[i].GetApprover())
 		}
 	}
 
 	return resp, nil
 }
 
-func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *pbqualifications.CreateOrUpdateQualificationRequestRequest) (*pbqualifications.CreateOrUpdateQualificationRequestResponse, error) {
+func (s *Server) CreateOrUpdateQualificationRequest(
+	ctx context.Context,
+	req *pbqualifications.CreateOrUpdateQualificationRequestRequest,
+) (*pbqualifications.CreateOrUpdateQualificationRequestResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
 		Method:  "CreateOrUpdateQualificationRequest",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	canGrade, err := s.access.CanUserAccessTarget(ctx, req.Request.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
+	canGrade, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetRequest().GetQualificationId(),
+		userInfo,
+		qualifications.AccessLevel_ACCESS_LEVEL_GRADE,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	quali, err := s.getQualification(ctx, req.Request.QualificationId, tQuali.ID.EQ(jet.Uint64(req.Request.QualificationId)), userInfo, false)
+	quali, err := s.getQualification(
+		ctx,
+		req.GetRequest().GetQualificationId(),
+		tQuali.ID.EQ(jet.Uint64(req.GetRequest().GetQualificationId())),
+		userInfo,
+		false,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	// If the qualification is closed and user is not a grade tutor
-	if !canGrade && quali.Closed {
+	if !canGrade && quali.GetClosed() {
 		return nil, errorsqualifications.ErrQualificationClosed
 	}
 
 	// If user can grade a qualification, they are treated as an "approver" of requests
-	if canGrade && req.Request.UserId > 0 {
+	if canGrade && req.GetRequest().GetUserId() > 0 {
 		stmt := tQualiRequests.
 			UPDATE(
 				tQualiRequests.Status,
@@ -270,42 +298,50 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *pb
 				tQualiRequests.ApproverJob,
 			).
 			SET(
-				req.Request.Status,
+				req.GetRequest().GetStatus(),
 				jet.CURRENT_TIMESTAMP(),
-				req.Request.ApproverComment,
-				userInfo.UserId,
-				userInfo.Job,
+				req.GetRequest().GetApproverComment(),
+				userInfo.GetUserId(),
+				userInfo.GetJob(),
 			).
 			WHERE(jet.AND(
-				tQualiRequests.QualificationID.EQ(jet.Uint64(req.Request.QualificationId)),
-				tQualiRequests.UserID.EQ(jet.Int32(req.Request.UserId)),
+				tQualiRequests.QualificationID.EQ(
+					jet.Uint64(req.GetRequest().GetQualificationId()),
+				),
+				tQualiRequests.UserID.EQ(jet.Int32(req.GetRequest().GetUserId())),
 			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 
-		request, err := s.getQualificationRequest(ctx, req.Request.QualificationId, req.Request.UserId, userInfo)
+		request, err := s.getQualificationRequest(
+			ctx,
+			req.GetRequest().GetQualificationId(),
+			req.GetRequest().GetUserId(),
+			userInfo,
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 
 		// Only send notification when it wasn't already in the same status
-		if request == nil || request.Status == nil || request.Status.Enum() != req.Request.Status.Enum() {
+		if request == nil || request.Status == nil ||
+			request.GetStatus().Enum() != req.GetRequest().GetStatus().Enum() {
 			if err := s.notif.NotifyUser(ctx, &notifications.Notification{
-				UserId: request.UserId,
+				UserId: request.GetUserId(),
 				Title: &common.I18NItem{
 					Key: "notifications.qualifications.request_updated.title",
 				},
 				Content: &common.I18NItem{
 					Key:        "notifications.qualifications.request_updated.content",
-					Parameters: map[string]string{"abbreviation": quali.Abbreviation, "title": quali.Title},
+					Parameters: map[string]string{"abbreviation": quali.GetAbbreviation(), "title": quali.GetTitle()},
 				},
 				Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_GENERAL,
 				Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
 				Data: &notifications.Data{
 					Link: &notifications.Link{
-						To: fmt.Sprintf("/qualifications/%d", request.QualificationId),
+						To: fmt.Sprintf("/qualifications/%d", request.GetQualificationId()),
 					},
 				},
 			}); err != nil {
@@ -315,7 +351,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *pb
 
 		auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 	} else {
-		canRequest, err := s.access.CanUserAccessTarget(ctx, req.Request.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_REQUEST)
+		canRequest, err := s.access.CanUserAccessTarget(ctx, req.GetRequest().GetQualificationId(), userInfo, qualifications.AccessLevel_ACCESS_LEVEL_REQUEST)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -324,7 +360,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *pb
 		}
 
 		// Make sure the requirements of the qualification are fullfiled by the user, ErrRequirementsMissing
-		reqsFullfilled, err := s.checkRequirementsMetForQualification(ctx, req.Request.QualificationId, userInfo.UserId)
+		reqsFullfilled, err := s.checkRequirementsMetForQualification(ctx, req.GetRequest().GetQualificationId(), userInfo.GetUserId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -332,14 +368,14 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *pb
 			return nil, errorsqualifications.ErrRequirementsMissing
 		}
 
-		request, err := s.getQualificationRequest(ctx, req.Request.QualificationId, userInfo.UserId, userInfo)
+		request, err := s.getQualificationRequest(ctx, req.GetRequest().GetQualificationId(), userInfo.GetUserId(), userInfo)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 
 		if request != nil &&
-			(request.Status == nil || (*request.Status != qualifications.RequestStatus_REQUEST_STATUS_PENDING &&
-				*request.Status != qualifications.RequestStatus_REQUEST_STATUS_COMPLETED)) {
+			(request.Status == nil || (request.GetStatus() != qualifications.RequestStatus_REQUEST_STATUS_PENDING &&
+				request.GetStatus() != qualifications.RequestStatus_REQUEST_STATUS_COMPLETED)) {
 			return nil, errorsqualifications.ErrFailedQuery
 		}
 
@@ -352,9 +388,9 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *pb
 				tQualiRequests.Status,
 			).
 			VALUES(
-				req.Request.QualificationId,
-				userInfo.UserId,
-				req.Request.UserComment,
+				req.GetRequest().GetQualificationId(),
+				userInfo.GetUserId(),
+				req.GetRequest().GetUserComment(),
 				qualifications.RequestStatus_REQUEST_STATUS_PENDING,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
@@ -374,7 +410,12 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *pb
 		auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 	}
 
-	request, err := s.getQualificationRequest(ctx, req.Request.QualificationId, userInfo.UserId, userInfo)
+	request, err := s.getQualificationRequest(
+		ctx,
+		req.GetRequest().GetQualificationId(),
+		userInfo.GetUserId(),
+		userInfo,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -384,7 +425,12 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *pb
 	}, nil
 }
 
-func (s *Server) getQualificationRequest(ctx context.Context, qualificationId uint64, userId int32, userInfo *userinfo.UserInfo) (*qualifications.QualificationRequest, error) {
+func (s *Server) getQualificationRequest(
+	ctx context.Context,
+	qualificationId uint64,
+	userId int32,
+	userInfo *userinfo.UserInfo,
+) (*qualifications.QualificationRequest, error) {
 	tQuali := tQuali.AS("qualificationshort")
 	tUser := tables.User().AS("user")
 	tApprover := tUser.AS("approver")
@@ -453,34 +499,37 @@ func (s *Server) getQualificationRequest(ctx context.Context, qualificationId ui
 		}
 	}
 
-	if request.QualificationId == 0 {
+	if request.GetQualificationId() == 0 {
 		return nil, nil
 	}
 
-	if request.User != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, request.User)
+	if request.GetUser() != nil {
+		s.enricher.EnrichJobInfoSafe(userInfo, request.GetUser())
 	}
 
-	if request.Approver != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, request.Approver)
+	if request.GetApprover() != nil {
+		s.enricher.EnrichJobInfoSafe(userInfo, request.GetApprover())
 	}
 
 	return &request, nil
 }
 
-func (s *Server) DeleteQualificationReq(ctx context.Context, req *pbqualifications.DeleteQualificationReqRequest) (*pbqualifications.DeleteQualificationReqResponse, error) {
+func (s *Server) DeleteQualificationReq(
+	ctx context.Context,
+	req *pbqualifications.DeleteQualificationReqRequest,
+) (*pbqualifications.DeleteQualificationReqResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
 		Method:  "DeleteQualificationReq",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	re, err := s.getQualificationRequest(ctx, req.QualificationId, req.UserId, userInfo)
+	re, err := s.getQualificationRequest(ctx, req.GetQualificationId(), req.GetUserId(), userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -489,7 +538,12 @@ func (s *Server) DeleteQualificationReq(ctx context.Context, req *pbqualificatio
 		return &pbqualifications.DeleteQualificationReqResponse{}, nil
 	}
 
-	check, err := s.access.CanUserAccessTarget(ctx, re.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_EDIT)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		re.GetQualificationId(),
+		userInfo,
+		qualifications.AccessLevel_ACCESS_LEVEL_EDIT,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -497,7 +551,7 @@ func (s *Server) DeleteQualificationReq(ctx context.Context, req *pbqualificatio
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	if err := s.deleteQualificationRequest(ctx, s.db, re.QualificationId, re.UserId); err != nil {
+	if err := s.deleteQualificationRequest(ctx, s.db, re.GetQualificationId(), re.GetUserId()); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
@@ -506,7 +560,12 @@ func (s *Server) DeleteQualificationReq(ctx context.Context, req *pbqualificatio
 	return &pbqualifications.DeleteQualificationReqResponse{}, nil
 }
 
-func (s *Server) deleteQualificationRequest(ctx context.Context, tx qrm.DB, qualificationId uint64, userId int32) error {
+func (s *Server) deleteQualificationRequest(
+	ctx context.Context,
+	tx qrm.DB,
+	qualificationId uint64,
+	userId int32,
+) error {
 	stmt := tQualiRequests.
 		UPDATE(
 			tQualiRequests.DeletedAt,
@@ -530,7 +589,13 @@ func (s *Server) deleteQualificationRequest(ctx context.Context, tx qrm.DB, qual
 	return nil
 }
 
-func (s *Server) updateRequestStatus(ctx context.Context, tx qrm.DB, qualificationId uint64, userId int32, status qualifications.RequestStatus) error {
+func (s *Server) updateRequestStatus(
+	ctx context.Context,
+	tx qrm.DB,
+	qualificationId uint64,
+	userId int32,
+	status qualifications.RequestStatus,
+) error {
 	tQualiRequests := table.FivenetQualificationsRequests
 	stmt := tQualiRequests.
 		INSERT(

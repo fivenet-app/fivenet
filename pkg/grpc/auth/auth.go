@@ -8,8 +8,6 @@ import (
 	errorsgrpcauth "github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/errors"
 	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
 )
 
 const (
@@ -55,7 +53,11 @@ type GRPCAuth struct {
 	appCfg appconfig.IConfig
 }
 
-func NewGRPCAuth(ui userinfo.UserInfoRetriever, tm *TokenMgr, appConfig appconfig.IConfig) *GRPCAuth {
+func NewGRPCAuth(
+	ui userinfo.UserInfoRetriever,
+	tm *TokenMgr,
+	appConfig appconfig.IConfig,
+) *GRPCAuth {
 	return &GRPCAuth{
 		ui:     ui,
 		tm:     tm,
@@ -88,17 +90,12 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context
 		AuthSubCtxTag, tInfo.Subject,
 		AuthAccIDCtxTag, tInfo.CharID,
 		AuthActiveCharIDCtxTag, tInfo.CharID,
-		AuthActiveCharJobCtxTag, userInfo.Job,
+		AuthActiveCharJobCtxTag, userInfo.GetJob(),
 	})
 
-	trace.SpanFromContext(newCtx).SetAttributes(
-		attribute.Int64("fivenet.auth.acc_id", int64(tInfo.AccID)),
-		attribute.Int("fivenet.auth.char_id", int(tInfo.CharID)),
-		attribute.String("fivenet.job", userInfo.Job),
-	)
-
-	if userInfo.LastChar != nil && *userInfo.LastChar != userInfo.UserId && g.appCfg.Get().Auth.LastCharLock {
-		if !userInfo.CanBeSuperuser && !userInfo.Superuser {
+	if userInfo.LastChar != nil && userInfo.GetLastChar() != userInfo.GetUserId() &&
+		g.appCfg.Get().Auth.GetLastCharLock() {
+		if !userInfo.GetCanBeSuperuser() && !userInfo.GetSuperuser() {
 			return nil, errorsgrpcauth.ErrCharLock
 		}
 	}
@@ -106,7 +103,10 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context
 	return context.WithValue(newCtx, userInfoCtxMarkerKey, userInfo), nil
 }
 
-func (g *GRPCAuth) GRPCAuthFuncWithoutUserInfo(ctx context.Context, fullMethod string) (context.Context, error) {
+func (g *GRPCAuth) GRPCAuthFuncWithoutUserInfo(
+	ctx context.Context,
+	fullMethod string,
+) (context.Context, error) {
 	t, err := GetTokenFromGRPCContext(ctx)
 	if err != nil {
 		return nil, err

@@ -80,7 +80,7 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbauth.RegisterAuthServiceServer(srv, s)
 }
 
-// AuthFuncOverride is called instead of the original auth func
+// AuthFuncOverride is called instead of the original auth func.
 func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (context.Context, error) {
 	// Skip authentication for the anon accessible endpoints
 	if fullMethod == "/services.auth.AuthService/CreateAccount" ||
@@ -104,7 +104,10 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (conte
 	return s.auth.GRPCAuthFuncWithoutUserInfo(ctx, fullMethod)
 }
 
-func (s *Server) PermissionUnaryFuncOverride(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error) {
+func (s *Server) PermissionUnaryFuncOverride(
+	ctx context.Context,
+	info *grpc.UnaryServerInfo,
+) (context.Context, error) {
 	// Skip permission check for the auth services
 	return ctx, nil
 }

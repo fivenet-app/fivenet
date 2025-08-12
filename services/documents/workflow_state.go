@@ -174,7 +174,7 @@ func (w *Workflow) handleDocuments(ctx context.Context, data *documents.Workflow
 					),
 			).
 			WHERE(jet.AND(
-				tWorkflow.DocumentID.GT(jet.Uint64(data.LastDocId)),
+				tWorkflow.DocumentID.GT(jet.Uint64(data.GetLastDocId())),
 				jet.AND( // Only auto close and auto remind docs that aren't closed and have an owner
 					tDocumentShort.Closed.IS_FALSE(),
 					jet.OR(
@@ -191,7 +191,7 @@ func (w *Workflow) handleDocuments(ctx context.Context, data *documents.Workflow
 			}
 		}
 
-		if data.LastDocId == 0 && len(dest) == 0 {
+		if data.GetLastDocId() == 0 && len(dest) == 0 {
 			// No entries match condition
 			break
 		} else {
@@ -225,7 +225,7 @@ func (w *Workflow) handleDocuments(ctx context.Context, data *documents.Workflow
 
 				if err := w.handleWorkflowState(ctx, state); err != nil {
 					w.logger.Error("error during workflow state handling",
-						zap.Uint64("document_id", state.DocumentId), zap.Error(err))
+						zap.Uint64("document_id", state.GetDocumentId()), zap.Error(err))
 				}
 			}()
 		}
@@ -243,25 +243,27 @@ func (w *Workflow) handleDocuments(ctx context.Context, data *documents.Workflow
 }
 
 func (w *Workflow) handleWorkflowState(ctx context.Context, state *documents.WorkflowState) error {
-	if state.AutoCloseTime != nil && time.Since(state.AutoCloseTime.AsTime()) > 0 {
-		if state.Workflow != nil && state.Workflow.AutoCloseSettings != nil && state.Workflow.AutoClose && state.Workflow.AutoCloseSettings.Message != "" {
+	if state.GetAutoCloseTime() != nil && time.Since(state.GetAutoCloseTime().AsTime()) > 0 {
+		if state.GetWorkflow() != nil && state.GetWorkflow().GetAutoCloseSettings() != nil &&
+			state.GetWorkflow().GetAutoClose() &&
+			state.GetWorkflow().GetAutoCloseSettings().GetMessage() != "" {
 			// Auto close document and null "next reminder time"
-			if err := w.autoCloseDocument(ctx, state, state.Workflow.AutoCloseSettings.Message); err != nil {
+			if err := w.autoCloseDocument(ctx, state, state.GetWorkflow().GetAutoCloseSettings().GetMessage()); err != nil {
 				return fmt.Errorf("failed to auto close document. %w", err)
 			}
 		}
 
 		// Delete document workflow state, auto reminders are not sent for a closed document
 		return w.deleteWorkflowState(ctx, state)
-	} else if state.NextReminderTime != nil && time.Since(state.NextReminderTime.AsTime()) > 0 {
-		if state.Document != nil && state.Document.CreatorId != nil {
-			var reminderMessage *string
-			if reminder := w.getAutoReminder(state); reminder != nil && reminder.Message != "" {
-				reminderMessage = &reminder.Message
+	} else if state.GetNextReminderTime() != nil && time.Since(state.GetNextReminderTime().AsTime()) > 0 {
+		if state.GetDocument() != nil && state.Document.CreatorId != nil {
+			var reminderMessage string
+			if reminder := w.getAutoReminder(state); reminder != nil && reminder.GetMessage() != "" {
+				reminderMessage = reminder.GetMessage()
 			}
 
 			// Send notification when the document has a creator that is still part of the document's job
-			if err := w.sendDocumentReminder(ctx, state.DocumentId, *state.Document.CreatorId, state.Document, reminderMessage, false); err != nil {
+			if err := w.sendDocumentReminder(ctx, state.GetDocumentId(), state.GetDocument().GetCreatorId(), state.GetDocument(), reminderMessage, false); err != nil {
 				return fmt.Errorf("failed to send document reminder. %w", err)
 			}
 
@@ -273,7 +275,7 @@ func (w *Workflow) handleWorkflowState(ctx context.Context, state *documents.Wor
 	}
 
 	// Make sure to delete the document workflow state as we don't have a creator anymore
-	if state.Document == nil || state.Document.CreatorId == nil {
+	if state.GetDocument() == nil || state.Document.CreatorId == nil {
 		return w.deleteWorkflowState(ctx, state)
 	}
 
@@ -287,18 +289,21 @@ func (w *Workflow) handleWorkflowState(ctx context.Context, state *documents.Wor
 func (w *Workflow) getAutoReminder(state *documents.WorkflowState) *documents.Reminder {
 	count := int32(0)
 	if state.NextReminderCount != nil {
-		count = *state.NextReminderCount
+		count = state.GetNextReminderCount()
 	}
 
-	if state.Workflow == nil || state.Workflow.ReminderSettings == nil || len(state.Workflow.ReminderSettings.Reminders) <= int(count) {
+	if state.GetWorkflow() == nil || state.GetWorkflow().GetReminderSettings() == nil ||
+		len(state.GetWorkflow().GetReminderSettings().GetReminders()) <= int(count) {
 		return nil
 	}
 
-	return state.Workflow.ReminderSettings.Reminders[count]
+	return state.GetWorkflow().GetReminderSettings().GetReminders()[count]
 }
 
 func (w *Workflow) updateAutoReminderTime(state *documents.WorkflowState) {
-	if state.Workflow == nil || state.Workflow.ReminderSettings == nil || !state.Workflow.Reminder || len(state.Workflow.ReminderSettings.Reminders) == 0 {
+	if state.GetWorkflow() == nil || state.GetWorkflow().GetReminderSettings() == nil ||
+		!state.GetWorkflow().GetReminder() ||
+		len(state.GetWorkflow().GetReminderSettings().GetReminders()) == 0 {
 		state.NextReminderTime = nil
 		state.NextReminderCount = nil
 		return
@@ -308,22 +313,27 @@ func (w *Workflow) updateAutoReminderTime(state *documents.WorkflowState) {
 		zero := int32(0)
 		state.NextReminderCount = &zero
 	} else {
+		//nolint:protogetter // The value is updated via the pointer
 		*state.NextReminderCount++
 	}
 
-	if len(state.Workflow.ReminderSettings.Reminders) <= int(*state.NextReminderCount) {
+	if len(
+		state.GetWorkflow().GetReminderSettings().GetReminders(),
+	) <= int(
+		state.GetNextReminderCount(),
+	) {
 		*state.NextReminderCount = 0
 	}
 
 	// No reminders? How did we end up here? Unset reminder time
-	if len(state.Workflow.ReminderSettings.Reminders) == 0 {
+	if len(state.GetWorkflow().GetReminderSettings().GetReminders()) == 0 {
 		state.NextReminderTime = nil
 	}
 
-	reminder := state.Workflow.ReminderSettings.Reminders[*state.NextReminderCount]
+	reminder := state.GetWorkflow().GetReminderSettings().GetReminders()[state.GetNextReminderCount()]
 
 	// Now + reminder duration = next reminder time
-	state.NextReminderTime = timestamp.New(time.Now().Add(reminder.Duration.AsDuration()))
+	state.NextReminderTime = timestamp.New(time.Now().Add(reminder.GetDuration().AsDuration()))
 }
 
 func (w *Workflow) updateWorkflowState(ctx context.Context, state *documents.WorkflowState) error {
@@ -336,12 +346,12 @@ func (w *Workflow) updateWorkflowState(ctx context.Context, state *documents.Wor
 			tWorkflow.AutoCloseTime,
 		).
 		SET(
-			state.NextReminderTime,
-			state.NextReminderCount,
-			state.AutoCloseTime,
+			state.GetNextReminderTime(),
+			state.GetNextReminderCount(),
+			state.GetAutoCloseTime(),
 		).
 		WHERE(jet.AND(
-			tWorkflow.DocumentID.EQ(jet.Uint64(state.DocumentId)),
+			tWorkflow.DocumentID.EQ(jet.Uint64(state.GetDocumentId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, w.db); err != nil {
@@ -357,7 +367,7 @@ func (w *Workflow) deleteWorkflowState(ctx context.Context, state *documents.Wor
 	stmt := tWorkflow.
 		DELETE().
 		WHERE(jet.AND(
-			tWorkflow.DocumentID.EQ(jet.Uint64(state.DocumentId)),
+			tWorkflow.DocumentID.EQ(jet.Uint64(state.GetDocumentId())),
 		)).
 		LIMIT(1)
 
@@ -368,7 +378,11 @@ func (w *Workflow) deleteWorkflowState(ctx context.Context, state *documents.Wor
 	return nil
 }
 
-func (w *Workflow) autoCloseDocument(ctx context.Context, state *documents.WorkflowState, message string) error {
+func (w *Workflow) autoCloseDocument(
+	ctx context.Context,
+	state *documents.WorkflowState,
+	message string,
+) error {
 	// Begin transaction
 	tx, err := w.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -384,7 +398,7 @@ func (w *Workflow) autoCloseDocument(ctx context.Context, state *documents.Workf
 			tDocument.Closed.SET(jet.Bool(true)),
 		).
 		WHERE(jet.AND(
-			tDocument.ID.EQ(jet.Uint64(state.DocumentId)),
+			tDocument.ID.EQ(jet.Uint64(state.GetDocumentId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -392,11 +406,11 @@ func (w *Workflow) autoCloseDocument(ctx context.Context, state *documents.Workf
 	}
 
 	if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
-		DocumentId:   state.DocumentId,
+		DocumentId:   state.GetDocumentId(),
 		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_CLOSED,
 		Reason:       &message,
-		CreatorId:    state.Document.CreatorId,
-		CreatorJob:   state.Document.CreatorJob,
+		CreatorId:    state.GetDocument().CreatorId,
+		CreatorJob:   state.GetDocument().GetCreatorJob(),
 	}); err != nil {
 		return err
 	}
@@ -406,22 +420,27 @@ func (w *Workflow) autoCloseDocument(ctx context.Context, state *documents.Workf
 		return err
 	}
 
-	if state.Document == nil || state.Document.CreatorId == nil {
+	if state.GetDocument() == nil || state.Document.CreatorId == nil {
 		return nil
 	}
 
 	// Make sure user has access to document
-	userInfo, err := w.ui.GetUserInfoWithoutAccountId(ctx, *state.Document.CreatorId)
+	userInfo, err := w.ui.GetUserInfoWithoutAccountId(ctx, state.GetDocument().GetCreatorId())
 	if err != nil {
 		return err
 	}
 
 	// Don't send "auto reminders" if job doesn't match document
-	if state.Document.CreatorJob != userInfo.Job {
+	if state.GetDocument().GetCreatorJob() != userInfo.GetJob() {
 		return nil
 	}
 
-	check, err := w.access.CanUserAccessTarget(ctx, state.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := w.access.CanUserAccessTarget(
+		ctx,
+		state.GetDocumentId(),
+		userInfo,
+		documents.AccessLevel_ACCESS_LEVEL_VIEW,
+	)
 	if err != nil {
 		return err
 	}
@@ -430,16 +449,16 @@ func (w *Workflow) autoCloseDocument(ctx context.Context, state *documents.Workf
 	}
 
 	not := &notifications.Notification{
-		UserId: userInfo.UserId,
+		UserId: userInfo.GetUserId(),
 		Title: &common.I18NItem{
 			Key:        "notifications.documents.document_auto_closed.title",
-			Parameters: map[string]string{"id": strconv.FormatUint(state.DocumentId, 10)},
+			Parameters: map[string]string{"id": strconv.FormatUint(state.GetDocumentId(), 10)},
 		},
 		Content: &common.I18NItem{
 			Key: "notifications.documents.document_auto_closed.content",
 			Parameters: map[string]string{
-				"id":      strconv.FormatUint(state.DocumentId, 10),
-				"title":   state.Document.Title,
+				"id":      strconv.FormatUint(state.GetDocumentId(), 10),
+				"title":   state.GetDocument().GetTitle(),
 				"message": message,
 			},
 		},
@@ -447,7 +466,7 @@ func (w *Workflow) autoCloseDocument(ctx context.Context, state *documents.Workf
 		Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
 		Data: &notifications.Data{
 			Link: &notifications.Link{
-				To: fmt.Sprintf("/documents/%d", state.DocumentId),
+				To: fmt.Sprintf("/documents/%d", state.GetDocumentId()),
 			},
 		},
 	}
@@ -459,7 +478,14 @@ func (w *Workflow) autoCloseDocument(ctx context.Context, state *documents.Workf
 	return nil
 }
 
-func (w *Workflow) sendDocumentReminder(ctx context.Context, documentId uint64, userId int32, document *documents.DocumentShort, message *string, singleReminder bool) error {
+func (w *Workflow) sendDocumentReminder(
+	ctx context.Context,
+	documentId uint64,
+	userId int32,
+	document *documents.DocumentShort,
+	message string,
+	singleReminder bool,
+) error {
 	// Make sure user has access to document
 	userInfo, err := w.ui.GetUserInfoWithoutAccountId(ctx, userId)
 	if err != nil {
@@ -467,11 +493,16 @@ func (w *Workflow) sendDocumentReminder(ctx context.Context, documentId uint64, 
 	}
 
 	// Don't send "auto reminders" if job doesn't match document
-	if !singleReminder && document.CreatorJob != userInfo.Job {
+	if !singleReminder && document.GetCreatorJob() != userInfo.GetJob() {
 		return nil
 	}
 
-	check, err := w.access.CanUserAccessTarget(ctx, documentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := w.access.CanUserAccessTarget(
+		ctx,
+		documentId,
+		userInfo,
+		documents.AccessLevel_ACCESS_LEVEL_VIEW,
+	)
 	if err != nil {
 		return err
 	}
@@ -489,7 +520,7 @@ func (w *Workflow) sendDocumentReminder(ctx context.Context, documentId uint64, 
 			Key: "notifications.documents.document_reminder.content",
 			Parameters: map[string]string{
 				"id":    strconv.FormatUint(documentId, 10),
-				"title": document.Title,
+				"title": document.GetTitle(),
 			},
 		},
 		Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
@@ -500,11 +531,11 @@ func (w *Workflow) sendDocumentReminder(ctx context.Context, documentId uint64, 
 			},
 		},
 	}
-	if message != nil {
+	if message != "" {
 		not.Title.Key = "notifications.documents.document_reminder_with_message.title"
 
 		not.Content.Key = "notifications.documents.document_reminder_with_message.content"
-		not.Content.Parameters["message"] = *message
+		not.Content.Parameters["message"] = message
 	}
 
 	if err := w.notif.NotifyUser(ctx, not); err != nil {

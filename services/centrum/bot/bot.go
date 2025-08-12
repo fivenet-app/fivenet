@@ -40,7 +40,16 @@ type Bot struct {
 	lastAssignedUnits map[uint64]time.Time
 }
 
-func NewBot(ctx context.Context, logger *zap.Logger, tracker tracker.ITracker, helpers *helpers.Helpers, settings *settings.SettingsDB, units *units.UnitDB, dispatches *dispatches.DispatchDB, job string) *Bot {
+func NewBot(
+	ctx context.Context,
+	logger *zap.Logger,
+	tracker tracker.ITracker,
+	helpers *helpers.Helpers,
+	settings *settings.SettingsDB,
+	units *units.UnitDB,
+	dispatches *dispatches.DispatchDB,
+	job string,
+) *Bot {
 	ctx, cancel := context.WithCancel(ctx)
 
 	return &Bot{
@@ -82,31 +91,42 @@ func (b *Bot) Run() {
 			centrum.StatusDispatch_STATUS_DISPATCH_DELETED,
 		})
 
-		b.logger.Debug("trying to auto assign dispatches", zap.Int("dispatch_count", len(dispatches)))
+		b.logger.Debug(
+			"trying to auto assign dispatches",
+			zap.Int("dispatch_count", len(dispatches)),
+		)
 
 		sort.Slice(dispatches, func(i, j int) bool {
-			return dispatches[i].Id < dispatches[j].Id
+			return dispatches[i].GetId() < dispatches[j].GetId()
 		})
 
 		for _, dsp := range dispatches {
 			// Dispatch should be at least 7 seconds old to ensure deduplication has happened
-			if (dsp.CreatedAt != nil && time.Since(dsp.CreatedAt.AsTime()) <= 7*time.Second) ||
+			if (dsp.GetCreatedAt() != nil && time.Since(dsp.GetCreatedAt().AsTime()) <= 7*time.Second) ||
 				!centrumutils.IsDispatchUnassigned(dsp) {
 				continue
 			}
 
-			b.logger.Debug("trying to auto assign dispatch", zap.Uint64("dispatch_id", dsp.Id))
+			b.logger.Debug("trying to auto assign dispatch", zap.Uint64("dispatch_id", dsp.GetId()))
 
-			unit, ok := b.getAvailableUnit(b.ctx, dsp.Jobs)
+			unit, ok := b.getAvailableUnit(b.ctx, dsp.GetJobs())
 			if !ok {
 				// No unit available
-				b.logger.Warn("no available units for dispatch", zap.Uint64("dispatch_id", dsp.Id))
+				b.logger.Warn(
+					"no available units for dispatch",
+					zap.Uint64("dispatch_id", dsp.GetId()),
+				)
 				break
 			}
 
-			if err := b.dispatches.UpdateAssignments(b.ctx, nil, dsp.Id, []uint64{unit.Id}, nil,
+			if err := b.dispatches.UpdateAssignments(b.ctx, nil, dsp.GetId(), []uint64{unit.GetId()}, nil,
 				b.settings.DispatchAssignmentExpirationTime()); err != nil {
-				b.logger.Error("failed to assgin unit to dispatch", zap.Uint64("dispatch_id", dsp.Id), zap.Uint64("unit_id", unit.Id), zap.Error(err))
+				b.logger.Error(
+					"failed to assgin unit to dispatch",
+					zap.Uint64("dispatch_id", dsp.GetId()),
+					zap.Uint64("unit_id", unit.GetId()),
+					zap.Error(err),
+				)
 				break
 			}
 		}
@@ -120,9 +140,15 @@ func (b *Bot) Stop() {
 }
 
 func (b *Bot) getAvailableUnit(ctx context.Context, jobs *centrum.JobList) (*centrum.Unit, bool) {
-	units := b.units.Filter(ctx, jobs.GetJobStrings(), []centrum.StatusUnit{centrum.StatusUnit_STATUS_UNIT_AVAILABLE}, nil,
+	units := b.units.Filter(
+		ctx,
+		jobs.GetJobStrings(),
+		[]centrum.StatusUnit{centrum.StatusUnit_STATUS_UNIT_AVAILABLE},
+		nil,
 		func(unit *centrum.Unit) bool {
-			return unit.Attributes == nil || !unit.Attributes.Has(centrum.UnitAttribute_UNIT_ATTRIBUTE_NO_DISPATCH_AUTO_ASSIGN)
+			return unit.GetAttributes() == nil ||
+				!unit.GetAttributes().
+					Has(centrum.UnitAttribute_UNIT_ATTRIBUTE_NO_DISPATCH_AUTO_ASSIGN)
 		},
 	)
 
@@ -139,10 +165,11 @@ func (b *Bot) getAvailableUnit(ctx context.Context, jobs *centrum.JobList) (*cen
 
 	var selectedUnit *centrum.Unit
 	for _, unit := range units {
-		t, ok := b.lastAssignedUnits[unit.Id]
+		t, ok := b.lastAssignedUnits[unit.GetId()]
 		if !ok || time.Now().After(t) {
 			// Double check if unit is still available
-			if unit.Status == nil || unit.Status.Status != centrum.StatusUnit_STATUS_UNIT_AVAILABLE {
+			if unit.GetStatus() == nil ||
+				unit.GetStatus().GetStatus() != centrum.StatusUnit_STATUS_UNIT_AVAILABLE {
 				continue
 			}
 
@@ -161,7 +188,7 @@ func (b *Bot) getAvailableUnit(ctx context.Context, jobs *centrum.JobList) (*cen
 		delay = min(time.Duration(unitCount*PerUnitDelaySeconds)*time.Second, MaxAssignmentDelayCap)
 	}
 
-	b.lastAssignedUnits[selectedUnit.Id] = time.Now().Add(DelayBetweenAssignments).Add(delay)
+	b.lastAssignedUnits[selectedUnit.GetId()] = time.Now().Add(DelayBetweenAssignments).Add(delay)
 
 	return selectedUnit, true
 }

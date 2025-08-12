@@ -9,7 +9,11 @@ import (
 )
 
 // GetEntry retrieves a single qualification access entry by its ID, joining with the qualifications table for additional info.
-func (a *Qualifications[U, T, AccessLevel]) GetEntry(ctx context.Context, tx qrm.DB, id uint64) (T, error) {
+func (a *Qualifications[U, T, AccessLevel]) GetEntry(
+	ctx context.Context,
+	tx qrm.DB,
+	id uint64,
+) (T, error) {
 	stmt := a.selectTable.
 		SELECT(
 			a.selectColumns.ID,
@@ -44,7 +48,12 @@ func (a *Qualifications[U, T, AccessLevel]) GetEntry(ctx context.Context, tx qrm
 }
 
 // CreateEntry inserts a new qualification access entry for a given targetId and entry.
-func (a *Qualifications[U, T, AccessLevel]) CreateEntry(ctx context.Context, tx qrm.DB, targetId uint64, entry T) error {
+func (a *Qualifications[U, T, AccessLevel]) CreateEntry(
+	ctx context.Context,
+	tx qrm.DB,
+	targetId uint64,
+	entry T,
+) error {
 	stmt := a.table.
 		INSERT(
 			a.columns.TargetID,
@@ -65,7 +74,12 @@ func (a *Qualifications[U, T, AccessLevel]) CreateEntry(ctx context.Context, tx 
 }
 
 // UpdateEntry updates an existing qualification access entry for a given targetId and entry.
-func (a *Qualifications[U, T, AccessLevel]) UpdateEntry(ctx context.Context, tx qrm.DB, targetId uint64, entry T) error {
+func (a *Qualifications[U, T, AccessLevel]) UpdateEntry(
+	ctx context.Context,
+	tx qrm.DB,
+	targetId uint64,
+	entry T,
+) error {
 	stmt := a.table.
 		UPDATE(
 			a.columns.Access,
@@ -88,7 +102,12 @@ func (a *Qualifications[U, T, AccessLevel]) UpdateEntry(ctx context.Context, tx 
 }
 
 // DeleteEntry deletes a qualification access entry by its ID and targetId.
-func (a *Qualifications[U, T, AccessLevel]) DeleteEntry(ctx context.Context, tx qrm.DB, targetId uint64, id uint64) error {
+func (a *Qualifications[U, T, AccessLevel]) DeleteEntry(
+	ctx context.Context,
+	tx qrm.DB,
+	targetId uint64,
+	id uint64,
+) error {
 	stmt := a.table.
 		DELETE().
 		WHERE(jet.AND(
@@ -107,7 +126,12 @@ func (a *Qualifications[U, T, AccessLevel]) DeleteEntry(ctx context.Context, tx 
 }
 
 // DeleteEntryWithCondition deletes a qualification access entry matching a custom condition and targetId.
-func (a *Qualifications[U, T, AccessLevel]) DeleteEntryWithCondition(ctx context.Context, tx qrm.DB, condition jet.BoolExpression, targetId uint64) error {
+func (a *Qualifications[U, T, AccessLevel]) DeleteEntryWithCondition(
+	ctx context.Context,
+	tx qrm.DB,
+	condition jet.BoolExpression,
+	targetId uint64,
+) error {
 	stmt := a.table.
 		DELETE().
 		WHERE(jet.AND(

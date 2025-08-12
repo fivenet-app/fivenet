@@ -11,7 +11,10 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) getTimeclockStats(ctx context.Context, condition jet.BoolExpression) (*jobs.TimeclockStats, error) {
+func (s *Server) getTimeclockStats(
+	ctx context.Context,
+	condition jet.BoolExpression,
+) (*jobs.TimeclockStats, error) {
 	stmt := tTimeClock.
 		SELECT(
 			tTimeClock.Job.AS("timeclock_stats.job"),
@@ -22,7 +25,10 @@ func (s *Server) getTimeclockStats(ctx context.Context, condition jet.BoolExpres
 		FROM(tTimeClock).
 		WHERE(jet.AND(
 			condition,
-			tTimeClock.Date.BETWEEN(jet.DateExp(jet.CURRENT_DATE().SUB(jet.INTERVAL(7, jet.DAY))), jet.CURRENT_DATE()),
+			tTimeClock.Date.BETWEEN(
+				jet.DateExp(jet.CURRENT_DATE().SUB(jet.INTERVAL(7, jet.DAY))),
+				jet.CURRENT_DATE(),
+			),
 		))
 
 	var dest jobs.TimeclockStats
@@ -35,11 +41,15 @@ func (s *Server) getTimeclockStats(ctx context.Context, condition jet.BoolExpres
 	return &dest, nil
 }
 
-func (s *Server) getTimeclockWeeklyStats(ctx context.Context, condition jet.BoolExpression) ([]*jobs.TimeclockWeeklyStats, error) {
+func (s *Server) getTimeclockWeeklyStats(
+	ctx context.Context,
+	condition jet.BoolExpression,
+) ([]*jobs.TimeclockWeeklyStats, error) {
 	stmt := tTimeClock.
 		SELECT(
 			jet.RawString("YEAR(timeclock_entry.`date`)").AS("timeclock_weekly_stats.year"),
-			jet.RawString("WEEK(timeclock_entry.`date`)").AS("timeclock_weekly_stats.calendar_week"),
+			jet.RawString("WEEK(timeclock_entry.`date`)").
+				AS("timeclock_weekly_stats.calendar_week"),
 			jet.SUM(tTimeClock.SpentTime).AS("timeclock_weekly_stats.sum"),
 			jet.AVG(tTimeClock.SpentTime).AS("timeclock_weekly_stats.avg"),
 			jet.MAX(tTimeClock.SpentTime).AS("timeclock_weekly_stats.max"),
@@ -70,25 +80,25 @@ func (s *Server) getTimeclockWeeklyStats(ctx context.Context, condition jet.Bool
 	// Add "null" values at the begin of the stats for better UX
 	if len(dest) > 0 {
 		last := dest[len(dest)-1]
-		lastCalendarWeek := last.CalendarWeek
+		lastCalendarWeek := last.GetCalendarWeek()
 
 		for i, s := range slices.Backward(dest) {
-			if last.Year != s.Year {
+			if last.GetYear() != s.GetYear() {
 				continue
 			}
 
 			if len(dest) >= i {
-				if dest[i].CalendarWeek == lastCalendarWeek-1 {
+				if dest[i].GetCalendarWeek() == lastCalendarWeek-1 {
 					lastCalendarWeek--
 					continue
 				}
 			}
 
-			for lastCalendarWeek-s.CalendarWeek > 1 {
+			for lastCalendarWeek-s.GetCalendarWeek() > 1 {
 				lastCalendarWeek--
 				dest = append([]*jobs.TimeclockWeeklyStats{
 					{
-						Year:         last.Year,
+						Year:         last.GetYear(),
 						CalendarWeek: lastCalendarWeek,
 						Sum:          0,
 						Avg:          0,
@@ -99,14 +109,14 @@ func (s *Server) getTimeclockWeeklyStats(ctx context.Context, condition jet.Bool
 		}
 
 		slices.SortFunc(dest, func(a, b *jobs.TimeclockWeeklyStats) int {
-			return int(a.Year - b.Year + a.CalendarWeek - b.CalendarWeek)
+			return int(a.GetYear() - b.GetYear() + a.GetCalendarWeek() - b.GetCalendarWeek())
 		})
 
-		if dest[0].Year == last.Year && dest[0].CalendarWeek > 1 {
+		if dest[0].GetYear() == last.GetYear() && dest[0].GetCalendarWeek() > 1 {
 			dest = append([]*jobs.TimeclockWeeklyStats{
 				{
-					Year:         last.Year,
-					CalendarWeek: dest[0].CalendarWeek - 1,
+					Year:         last.GetYear(),
+					CalendarWeek: dest[0].GetCalendarWeek() - 1,
 					Sum:          0,
 					Avg:          0,
 					Max:          0,

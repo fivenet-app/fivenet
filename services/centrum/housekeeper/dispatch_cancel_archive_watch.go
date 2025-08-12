@@ -48,13 +48,13 @@ func (s *Housekeeper) idleWatcher(ctx context.Context) error {
 				continue // we only care about expiry events
 			}
 
-			idStr := strings.TrimPrefix(string(e.Key()), "idle.")
+			idStr := strings.TrimPrefix(e.Key(), "idle.")
 			id, _ := strconv.ParseUint(idStr, 10, 64)
 
 			// double-check it is still open, then cancel & archive
 			dsp, err := s.dispatches.Get(ctx, id)
 			if err != nil || dsp == nil ||
-				centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
+				centrumutils.IsStatusDispatchComplete(dsp.GetStatus().GetStatus()) {
 				continue // Already handled elsewhere
 			}
 
@@ -63,15 +63,27 @@ func (s *Housekeeper) idleWatcher(ctx context.Context) error {
 				DispatchId: id,
 				Status:     centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
 			}); err != nil {
-				s.logger.Error("failed to update dispatch status to cancelled", zap.Uint64("dispatch_id", id), zap.Error(err))
+				s.logger.Error(
+					"failed to update dispatch status to cancelled",
+					zap.Uint64("dispatch_id", id),
+					zap.Error(err),
+				)
 			}
 			if err := s.dispatches.AddAttributeToDispatch(ctx, dsp, centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_TOO_OLD); err != nil {
-				s.logger.Error("failed to add too old attribute to cancelled dispatch", zap.Uint64("dispatch_id", id), zap.Error(err))
+				s.logger.Error(
+					"failed to add too old attribute to cancelled dispatch",
+					zap.Uint64("dispatch_id", id),
+					zap.Error(err),
+				)
 			}
 
 			// Remove from kv so the UI gets the event
 			if err := s.dispatches.Delete(ctx, id, false); err != nil {
-				s.logger.Error("failed to delete idle dispatch", zap.Uint64("dispatch_id", id), zap.Error(err))
+				s.logger.Error(
+					"failed to delete idle dispatch",
+					zap.Uint64("dispatch_id", id),
+					zap.Error(err),
+				)
 			}
 		}
 	}

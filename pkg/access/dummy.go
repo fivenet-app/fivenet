@@ -1,3 +1,4 @@
+//nolint:protogetter // Package access provides dummy implementations of access-related types for testing or placeholder purposes. Direct proto field access is needed.
 package access
 
 import (

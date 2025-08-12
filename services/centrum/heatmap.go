@@ -14,14 +14,17 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) GetDispatchHeatmap(ctx context.Context, req *pbcentrum.GetDispatchHeatmapRequest) (*pbcentrum.GetDispatchHeatmapResponse, error) {
+func (s *Server) GetDispatchHeatmap(
+	ctx context.Context,
+	req *pbcentrum.GetDispatchHeatmapRequest,
+) (*pbcentrum.GetDispatchHeatmapResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
 		Method:  "GetDispatchHeatmap",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
@@ -36,7 +39,7 @@ func (s *Server) GetDispatchHeatmap(ctx context.Context, req *pbcentrum.GetDispa
 		).
 		FROM(tDispatchHeatmap).
 		WHERE(
-			tDispatchHeatmap.Job.EQ(jet.String(userInfo.Job)),
+			tDispatchHeatmap.Job.EQ(jet.String(userInfo.GetJob())),
 		).
 		LIMIT(1)
 

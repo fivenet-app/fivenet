@@ -13,9 +13,9 @@ import (
 func (x *AppConfig) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
-		return protoutils.UnmarshalPartialPJSON([]byte(t), x)
+		return protoutils.UnmarshalPartialJSON([]byte(t), x)
 	case []byte:
-		return protoutils.UnmarshalPartialPJSON(t, x)
+		return protoutils.UnmarshalPartialJSON(t, x)
 	}
 	return nil
 }
@@ -26,6 +26,6 @@ func (x *AppConfig) Value() (driver.Value, error) {
 		return nil, nil
 	}
 
-	out, err := protoutils.MarshalToPJSON(x)
+	out, err := protoutils.MarshalToJSON(x)
 	return string(out), err
 }

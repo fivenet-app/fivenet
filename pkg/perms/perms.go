@@ -26,14 +26,31 @@ type Permissions interface {
 	SetDefaultRolePerms(ctx context.Context, defaultPerms []string) error
 	GetAllPermissions(ctx context.Context) ([]*permissions.Permission, error)
 	GetPermissionsByIDs(ctx context.Context, ids ...uint64) ([]*permissions.Permission, error)
-	GetPermission(ctx context.Context, category Category, name Name) (*permissions.Permission, error)
+	GetPermission(
+		ctx context.Context,
+		category Category,
+		name Name,
+	) (*permissions.Permission, error)
 	CreatePermission(ctx context.Context, category Category, name Name) (uint64, error)
 	GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.Permissions, error)
 
 	// Attributes management
 	GetAllAttributes(ctx context.Context) ([]*permissions.RoleAttribute, error)
-	CreateAttribute(ctx context.Context, permId uint64, key Key, aType permissions.AttributeTypes, validValues *permissions.AttributeValues) (uint64, error)
-	UpdateAttribute(ctx context.Context, attributeId uint64, permId uint64, key Key, aType permissions.AttributeTypes, validValues *permissions.AttributeValues) error
+	CreateAttribute(
+		ctx context.Context,
+		permId uint64,
+		key Key,
+		aType permissions.AttributeTypes,
+		validValues *permissions.AttributeValues,
+	) (uint64, error)
+	UpdateAttribute(
+		ctx context.Context,
+		attributeId uint64,
+		permId uint64,
+		key Key,
+		aType permissions.AttributeTypes,
+		validValues *permissions.AttributeValues,
+	) error
 
 	// Roles management
 	GetRoles(ctx context.Context, excludeSystem bool) (collections.Roles, error)
@@ -51,12 +68,33 @@ type Permissions interface {
 	RemovePermissionsFromRole(ctx context.Context, id uint64, perms ...uint64) error
 
 	// Role Attributes management
-	GetRoleAttributes(ctx context.Context, job string, grade int32) ([]*permissions.RoleAttribute, error)
+	GetRoleAttributes(
+		ctx context.Context,
+		job string,
+		grade int32,
+	) ([]*permissions.RoleAttribute, error)
 	FlattenRoleAttributes(job string, grade int32) ([]string, error)
-	GetEffectiveRoleAttributes(ctx context.Context, job string, grade int32) ([]*permissions.RoleAttribute, error)
-	UpdateRoleAttributes(ctx context.Context, job string, roleId uint64, attrs ...*permissions.RoleAttribute) error
-	RemoveAttributesFromRole(ctx context.Context, roleId uint64, attrs ...*permissions.RoleAttribute) error
-	RemoveAttributesFromRoleByPermission(ctx context.Context, roleId uint64, permissionId uint64) error
+	GetEffectiveRoleAttributes(
+		ctx context.Context,
+		job string,
+		grade int32,
+	) ([]*permissions.RoleAttribute, error)
+	UpdateRoleAttributes(
+		ctx context.Context,
+		job string,
+		roleId uint64,
+		attrs ...*permissions.RoleAttribute,
+	) error
+	RemoveAttributesFromRole(
+		ctx context.Context,
+		roleId uint64,
+		attrs ...*permissions.RoleAttribute,
+	) error
+	RemoveAttributesFromRoleByPermission(
+		ctx context.Context,
+		roleId uint64,
+		permissionId uint64,
+	) error
 
 	// Limit - Job permissions
 	GetJobPermissions(ctx context.Context, job string) ([]*permissions.Permission, error)
@@ -72,10 +110,30 @@ type Permissions interface {
 	// Perms Check
 	Can(userInfo *userinfo.UserInfo, category Category, name Name) bool
 	// Attribute retrieval/"check"
-	Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (*permissions.AttributeValues, error)
-	AttrStringList(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (*permissions.StringList, error)
-	AttrJobList(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (*permissions.StringList, error)
-	AttrJobGradeList(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (*permissions.JobGradeList, error)
+	Attr(
+		userInfo *userinfo.UserInfo,
+		category Category,
+		name Name,
+		key Key,
+	) (*permissions.AttributeValues, error)
+	AttrStringList(
+		userInfo *userinfo.UserInfo,
+		category Category,
+		name Name,
+		key Key,
+	) (*permissions.StringList, error)
+	AttrJobList(
+		userInfo *userinfo.UserInfo,
+		category Category,
+		name Name,
+		key Key,
+	) (*permissions.StringList, error)
+	AttrJobGradeList(
+		userInfo *userinfo.UserInfo,
+		category Category,
+		name Name,
+		key Key,
+	) (*permissions.JobGradeList, error)
 }
 
 type userCacheKey struct {
@@ -139,7 +197,11 @@ func New(p Params) (Permissions, error) {
 
 	userCanCache := cache.NewLRUCache[userCacheKey, bool](p.Cfg.Auth.PermsCacheSize)
 
-	logger := p.Logger.WithOptions(zap.IncreaseLevel(p.Cfg.LogLevelOverrides.Get(config.LoggingComponentPerms, p.Cfg.LogLevel)))
+	logger := p.Logger.WithOptions(
+		zap.IncreaseLevel(
+			p.Cfg.LogLevelOverrides.Get(config.LoggingComponentPerms, p.Cfg.LogLevel),
+		),
+	)
 
 	ps := &Perms{
 		logger: logger,
@@ -217,10 +279,13 @@ type cacheRoleAttr struct {
 }
 
 func (p *Perms) init(ctxCancel context.Context, ctxStartup context.Context, params Params) error {
-	cfgDefaultPerms := params.AppConfig.Get().Perms.Default
+	cfgDefaultPerms := params.AppConfig.Get().Perms.GetDefault()
 	defaultPerms := make([]string, len(cfgDefaultPerms))
 	for i := range cfgDefaultPerms {
-		defaultPerms[i] = BuildGuard(Category(cfgDefaultPerms[i].Category), Name(cfgDefaultPerms[i].Name))
+		defaultPerms[i] = BuildGuard(
+			Category(cfgDefaultPerms[i].GetCategory()),
+			Name(cfgDefaultPerms[i].GetName()),
+		)
 	}
 
 	if err := p.loadData(ctxStartup); err != nil {

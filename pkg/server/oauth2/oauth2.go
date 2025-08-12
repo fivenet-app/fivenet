@@ -2,6 +2,7 @@ package oauth2
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -30,7 +31,7 @@ const (
 	// ReasonInternalError is used for generic internal error reasons.
 	ReasonInternalError string = "internal_error"
 
-	// Session keys
+	// Session keys used for OAuth2 state handling.
 	SessionKeyOAuth2State = "fivenet_oauth2_state"
 	SessionKeyConnectOnly = "connect-only"
 	SessionKeyState       = "state"
@@ -115,6 +116,8 @@ func New(p Params) *OAuth2 {
 				},
 			}
 
+		case config.OAuth2ProviderGeneric:
+			fallthrough
 		default:
 			provider = &providers.Generic{
 				BaseProvider: providers.BaseProvider{
@@ -159,12 +162,12 @@ func containsDotDot(path string) bool {
 func (o *OAuth2) GetProvider(c *gin.Context) (providers.IProvider, error) {
 	param, ok := c.Params.Get("provider")
 	if !ok {
-		return nil, fmt.Errorf("no provider found")
+		return nil, errors.New("no provider found")
 	}
 
 	provider, ok := o.oauthConfigs[param]
 	if !ok {
-		return nil, fmt.Errorf("no provider found")
+		return nil, errors.New("no provider found")
 	}
 
 	return provider, nil
@@ -172,7 +175,7 @@ func (o *OAuth2) GetProvider(c *gin.Context) (providers.IProvider, error) {
 
 // handleRedirect redirects the user to the appropriate URL based on the outcome of the OAuth2 flow.
 func (o *OAuth2) handleRedirect(c *gin.Context, connectOnly bool, success bool, reason string) {
-	redirURL := ""
+	var redirURL string
 	if !success {
 		if connectOnly {
 			redirURL = AccountInfoRedirBase + "?oauth2Connect=failed&tab=oauth2Connections"
@@ -211,7 +214,11 @@ func (o *OAuth2) Login(c *gin.Context) {
 	if customRedirectVal != "" {
 		u, err := url.Parse(customRedirectVal)
 		if err != nil || !isValidRedirectPath(u.Path) {
-			o.logger.Error("failed to parse or validate redirect url", zap.String("redirect", customRedirectVal), zap.Error(err))
+			o.logger.Error(
+				"failed to parse or validate redirect url",
+				zap.String("redirect", customRedirectVal),
+				zap.Error(err),
+			)
 			o.handleRedirect(c, false, false, "invalid_request_redirect")
 			return
 		}
@@ -253,7 +260,11 @@ func (o *OAuth2) Login(c *gin.Context) {
 
 	provider, err := o.GetProviderImproved(c)
 	if err != nil {
-		o.logger.Error("failed to get provider", zap.String("provider", c.Param("provider")), zap.Error(err))
+		o.logger.Error(
+			"failed to get provider",
+			zap.String("provider", c.Param("provider")),
+			zap.Error(err),
+		)
 		o.handleRedirect(c, connectOnly, false, "invalid_provider")
 		return
 	}
@@ -266,7 +277,7 @@ func (o *OAuth2) Login(c *gin.Context) {
 func (o *OAuth2) GetProviderImproved(c *gin.Context) (providers.IProvider, error) {
 	param := c.Param("provider")
 	if param == "" {
-		return nil, fmt.Errorf("no provider found in path")
+		return nil, errors.New("no provider found in path")
 	}
 	for name, provider := range o.oauthConfigs {
 		if name == param {
@@ -325,7 +336,11 @@ func (o *OAuth2) Callback(c *gin.Context) {
 
 	provider, err := o.GetProviderImproved(c)
 	if err != nil {
-		o.logger.Error("failed to get provider in callback", zap.String("provider", c.Param("provider")), zap.Error(err))
+		o.logger.Error(
+			"failed to get provider in callback",
+			zap.String("provider", c.Param("provider")),
+			zap.Error(err),
+		)
 		o.handleRedirect(c, connectOnly, false, "invalid_provider")
 		return
 	}
@@ -334,7 +349,11 @@ func (o *OAuth2) Callback(c *gin.Context) {
 
 	userInfo, err := provider.GetUserInfo(ctx, c.Request.FormValue("code"))
 	if err != nil {
-		o.logger.Error("failed to get userinfo from provider", zap.String("provider", provider.GetName()), zap.Error(err))
+		o.logger.Error(
+			"failed to get userinfo from provider",
+			zap.String("provider", provider.GetName()),
+			zap.Error(err),
+		)
 		o.handleRedirect(c, connectOnly, false, "provider_failed")
 		return
 	}
@@ -347,10 +366,20 @@ func (o *OAuth2) Callback(c *gin.Context) {
 }
 
 // handleConnectOnlyCallback processes the connect-only OAuth2 callback logic.
-func (o *OAuth2) handleConnectOnlyCallback(c *gin.Context, sess sessions.Session, token string, provider providers.IProvider, userInfo *providers.UserInfo, redirect string) {
+func (o *OAuth2) handleConnectOnlyCallback(
+	c *gin.Context,
+	sess sessions.Session,
+	token string,
+	provider providers.IProvider,
+	userInfo *providers.UserInfo,
+	redirect string,
+) {
 	claims, err := o.tm.ParseWithClaims(token)
 	if err != nil {
-		c.Redirect(http.StatusTemporaryRedirect, LoginRedirBase+"?oauth2Connect=failed&reason=token_invalid&tab=oauth2Connections#")
+		c.Redirect(
+			http.StatusTemporaryRedirect,
+			LoginRedirBase+"?oauth2Connect=failed&reason=token_invalid&tab=oauth2Connections#",
+		)
 		return
 	}
 
@@ -372,23 +401,39 @@ func (o *OAuth2) handleConnectOnlyCallback(c *gin.Context, sess sessions.Session
 }
 
 // handleLoginCallback processes the login OAuth2 callback logic.
-func (o *OAuth2) handleLoginCallback(c *gin.Context, sess sessions.Session, provider providers.IProvider, userInfo interface{}, connectOnly bool) {
+func (o *OAuth2) handleLoginCallback(
+	c *gin.Context,
+	sess sessions.Session,
+	provider providers.IProvider,
+	userInfo interface{},
+	connectOnly bool,
+) {
 	uInfo, ok := userInfo.(*providers.UserInfo)
 	if !ok {
-		o.logger.Error("userInfo type assertion failed in handleLoginCallback", zap.String("provider", provider.GetName()))
+		o.logger.Error(
+			"userInfo type assertion failed in handleLoginCallback",
+			zap.String("provider", provider.GetName()),
+		)
 		o.handleRedirect(c, connectOnly, false, ReasonInternalError)
 		return
 	}
 
 	account, err := o.userInfoStore.getAccountInfo(c.Request.Context(), provider.GetName(), uInfo)
 	if err != nil {
-		o.logger.Error("failed to get/store userinfo in database", zap.String("provider", provider.GetName()), zap.Error(err))
+		o.logger.Error(
+			"failed to get/store userinfo in database",
+			zap.String("provider", provider.GetName()),
+			zap.Error(err),
+		)
 		o.handleRedirect(c, connectOnly, false, ReasonInternalError)
 		return
 	}
 
 	if account == nil {
-		c.Redirect(http.StatusTemporaryRedirect, LoginRedirBase+"?oauth2Login=failed&reason=unconnected")
+		c.Redirect(
+			http.StatusTemporaryRedirect,
+			LoginRedirBase+"?oauth2Login=failed&reason=unconnected",
+		)
 		return
 	} else if account.ID == 0 {
 		o.logger.Error("invalid account id from userinfo", zap.String("provider", provider.GetName()), zap.Error(err))
@@ -397,7 +442,12 @@ func (o *OAuth2) handleLoginCallback(c *gin.Context, sess sessions.Session, prov
 	}
 
 	if err := o.userInfoStore.updateUserInfo(c.Request.Context(), account.ID, provider.GetName(), uInfo); err != nil {
-		o.logger.Error("failed to update oauth2 user info for account id", zap.Uint64("account_id", account.ID), zap.String("provider", provider.GetName()), zap.Error(err))
+		o.logger.Error(
+			"failed to update oauth2 user info for account id",
+			zap.Uint64("account_id", account.ID),
+			zap.String("provider", provider.GetName()),
+			zap.Error(err),
+		)
 		o.handleRedirect(c, connectOnly, true, ReasonInternalError)
 		return
 	}
@@ -405,15 +455,22 @@ func (o *OAuth2) handleLoginCallback(c *gin.Context, sess sessions.Session, prov
 	claims := auth.BuildTokenClaimsFromAccount(account, nil)
 	newToken, err := o.tm.NewWithClaims(claims)
 	if err != nil {
-		o.logger.Error("failed to create token from account", zap.String("provider", provider.GetName()), zap.Error(err))
+		o.logger.Error(
+			"failed to create token from account",
+			zap.String("provider", provider.GetName()),
+			zap.Error(err),
+		)
 		o.handleRedirect(c, connectOnly, true, ReasonInternalError)
 		return
 	}
 
 	c.SetCookie(auth.TokenCookieName, newToken, 6*24*60*60, "/", o.domain, false, true)
 
-	c.Redirect(http.StatusTemporaryRedirect, fmt.Sprintf(LoginRedirBase+"?oauth2Login=success&u=%s&exp=%d",
-		url.QueryEscape(*account.Username),
-		claims.ExpiresAt.Time.UTC().UnixNano()/1e6,
-	))
+	c.Redirect(
+		http.StatusTemporaryRedirect,
+		fmt.Sprintf(LoginRedirBase+"?oauth2Login=success&u=%s&exp=%d",
+			url.QueryEscape(*account.Username),
+			claims.ExpiresAt.Time.UTC().UnixNano()/1e6,
+		),
+	)
 }

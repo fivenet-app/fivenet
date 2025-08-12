@@ -12,6 +12,7 @@ import QuestionSingleChoice from './QuestionSingleChoice.vue';
 const props = defineProps<{
     qualificationId: number;
     modelValue?: ExamQuestion;
+    index: number;
     disabled?: boolean;
 }>();
 
@@ -92,8 +93,12 @@ function handleQuestionChange(): void {
                     oneofKind: undefined,
                 },
             },
-            order: 0,
+            order: props.index + 1,
         };
+    } else {
+        if (question.value.order <= 0) {
+            question.value.order = props.index + 1; // Ensure order is always positive and starts from 1
+        }
     }
 
     if (question.value.answer?.answer.oneofKind === undefined) {
@@ -161,6 +166,16 @@ function handleQuestionChange(): void {
 
 watch(question, () => handleQuestionChange());
 handleQuestionChange();
+
+// Make sure to set the order of the question based on the index prop
+watch(
+    () => props.index,
+    () => {
+        if (!question.value) return;
+
+        question.value.order = props.index + 1;
+    },
+);
 
 const { resizeAndUpload } = useFileUploader(
     (opts) => $grpc.qualifications.qualifications.uploadFile(opts),

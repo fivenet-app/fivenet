@@ -1,6 +1,7 @@
 package query
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -84,7 +85,13 @@ func NewMigrate(db *sql.DB, esxCompat bool, disableLocking bool) (*migrate.Migra
 
 // MigrateDB runs database migrations using golang-migrate, logging progress and errors.
 // It prepares the DSN, connects to the DB, runs migrations, and logs the result.
-func MigrateDB(logger *zap.Logger, dbDSN string, ignoreReqs bool, esxCompat bool, disableLocking bool) (*reqs.DBReqs, error) {
+func MigrateDB(
+	logger *zap.Logger,
+	dbDSN string,
+	ignoreReqs bool,
+	esxCompat bool,
+	disableLocking bool,
+) (*reqs.DBReqs, error) {
 	dsn, err := dsn.PrepareDSN(dbDSN, disableLocking, dsn.WithMultiStatements())
 	if err != nil {
 		return nil, fmt.Errorf("failed to prepare DSN. %w", err)
@@ -100,8 +107,11 @@ func MigrateDB(logger *zap.Logger, dbDSN string, ignoreReqs bool, esxCompat bool
 
 	logger.Info("verifying database requirements")
 
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	req := reqs.NewDBReqs(db)
-	if err := req.ValidateVersion(); err != nil {
+	if err := req.ValidateVersion(ctx); err != nil {
 		if !ignoreReqs {
 			return nil, fmt.Errorf("failed to validate database version requirement. %w", err)
 		}
@@ -127,7 +137,7 @@ func MigrateDB(logger *zap.Logger, dbDSN string, ignoreReqs bool, esxCompat bool
 		logger.Info("completed database migrations changes have been made")
 	}
 
-	if err := req.ValidateTables(); err != nil {
+	if err := req.ValidateTables(ctx); err != nil {
 		if !ignoreReqs {
 			return nil, fmt.Errorf("failed to validate database tables requirement. %w", err)
 		}

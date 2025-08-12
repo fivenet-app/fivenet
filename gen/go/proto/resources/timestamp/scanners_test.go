@@ -16,18 +16,24 @@ import (
 func Test_TimestampValue(t *testing.T) {
 	t.Parallel()
 	t.Run("valid", func(t *testing.T) {
+		t.Parallel()
+
 		ts := Timestamp{Timestamp: &timestamppb.Timestamp{Seconds: 0, Nanos: 0}}
 		v, err := ts.Value()
-		require.Nil(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, v, utcDate(1970, 1, 1))
 	})
 	t.Run("valid nil ts", func(t *testing.T) {
+		t.Parallel()
+
 		var ts *Timestamp
 		v, err := ts.Value()
-		require.Nil(t, err)
-		assert.Equal(t, v, nil)
+		require.NoError(t, err)
+		assert.Nil(t, v)
 	})
 	t.Run("invalid ts", func(t *testing.T) {
+		t.Parallel()
+
 		ts := Timestamp{Timestamp: &timestamppb.Timestamp{Seconds: maxValidSeconds, Nanos: 0}}
 		v, err := ts.Value()
 		require.NoError(t, err)
@@ -39,31 +45,46 @@ func Test_TimestampScan(t *testing.T) {
 	t.Parallel()
 	assert, require := assert.New(t), require.New(t)
 	t.Run("valid", func(t *testing.T) {
+		t.Parallel()
+
 		v := time.Unix(0, 0)
 		ts := Timestamp{}
 		err := ts.Scan(v)
-		require.Nil(err)
-		assert.True(reflect.DeepEqual(ts.Timestamp, &timestamppb.Timestamp{Seconds: 0, Nanos: 0}))
+		require.NoError(err)
+		assert.True(
+			reflect.DeepEqual(ts.GetTimestamp(), &timestamppb.Timestamp{Seconds: 0, Nanos: 0}),
+		)
 	})
 	t.Run("valid default time", func(t *testing.T) {
+		t.Parallel()
+
 		var v time.Time
 		ts := Timestamp{}
 		err := ts.Scan(v)
-		require.Nil(err)
-		assert.True(reflect.DeepEqual(ts.Timestamp, &timestamppb.Timestamp{Seconds: -62135596800, Nanos: 0}))
+		require.NoError(err)
+		assert.True(
+			reflect.DeepEqual(
+				ts.GetTimestamp(),
+				&timestamppb.Timestamp{Seconds: -62135596800, Nanos: 0},
+			),
+		)
 	})
 	t.Run("invalid type", func(t *testing.T) {
+		t.Parallel()
+
 		v := 1
 		ts := Timestamp{}
 		err := ts.Scan(v)
-		assert.True(err != nil)
+		require.Error(err)
 		assert.Equal("not a protobuf Timestamp", err.Error())
 	})
 	t.Run("invalid time", func(t *testing.T) {
+		t.Parallel()
+
 		v := time.Unix(maxValidSeconds, 0)
 		ts := Timestamp{}
 		err := ts.Scan(v)
-		require.Nil(err)
+		require.NoError(err)
 	})
 }
 

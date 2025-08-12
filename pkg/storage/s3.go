@@ -49,7 +49,11 @@ func NewS3(p Params) (IStorage, error) {
 
 	// Initialize minio client object.
 	mc, err := minio.New(p.Cfg.Storage.S3.Endpoint, &minio.Options{
-		Creds:      credentials.NewStaticV4(p.Cfg.Storage.S3.AccessKeyID, p.Cfg.Storage.S3.SecretAccessKey, ""),
+		Creds: credentials.NewStaticV4(
+			p.Cfg.Storage.S3.AccessKeyID,
+			p.Cfg.Storage.S3.SecretAccessKey,
+			"",
+		),
 		Secure:     p.Cfg.Storage.S3.UseSSL,
 		Region:     p.Cfg.Storage.S3.Region,
 		MaxRetries: p.Cfg.Storage.S3.Retries,
@@ -72,7 +76,10 @@ func NewS3(p Params) (IStorage, error) {
 				return err
 			}
 			if !exists {
-				return fmt.Errorf("storage: s3 bucket '%s' doesn't exist/can't access", s.bucketName)
+				return fmt.Errorf(
+					"storage: s3 bucket '%s' doesn't exist/can't access",
+					s.bucketName,
+				)
 			}
 
 			return nil
@@ -102,7 +109,7 @@ func (s *S3) Get(ctx context.Context, keyIn string) (IObject, IObjectInfo, error
 
 	object, err := s.s3.GetObject(ctx, s.bucketName, key, minio.GetObjectOptions{})
 	if err != nil {
-		if minio.ToErrorResponse(err).Code == "NoSuchKey" {
+		if minio.ToErrorResponse(err).Code == minio.NoSuchKey {
 			return nil, nil, ErrNotFound
 		}
 		return nil, nil, err
@@ -111,7 +118,7 @@ func (s *S3) Get(ctx context.Context, keyIn string) (IObject, IObjectInfo, error
 	// Retrieve object info
 	info, err := object.Stat()
 	if err != nil {
-		if minio.ToErrorResponse(err).Code == "NoSuchKey" {
+		if minio.ToErrorResponse(err).Code == minio.NoSuchKey {
 			return nil, nil, ErrNotFound
 		}
 
@@ -138,7 +145,7 @@ func (s *S3) Stat(ctx context.Context, keyIn string) (IObjectInfo, error) {
 
 	info, err := s.s3.StatObject(ctx, s.bucketName, key, minio.GetObjectOptions{})
 	if err != nil {
-		if minio.ToErrorResponse(err).Code == "NoSuchKey" {
+		if minio.ToErrorResponse(err).Code == minio.NoSuchKey {
 			return nil, ErrNotFound
 		}
 
@@ -155,12 +162,25 @@ func (s *S3) Stat(ctx context.Context, keyIn string) (IObjectInfo, error) {
 }
 
 // Put uploads an object to S3 storage. The file path must end with a file extension (e.g., `jpg`, `png`).
-func (s *S3) Put(ctx context.Context, keyIn string, reader io.Reader, size int64, contentType string) (string, error) {
+func (s *S3) Put(
+	ctx context.Context,
+	keyIn string,
+	reader io.Reader,
+	size int64,
+	contentType string,
+) (string, error) {
 	return s.PutWithTTL(ctx, keyIn, reader, size, contentType, time.Time{})
 }
 
 // PutWithTTL uploads an object to S3 storage with an optional expiration time (TTL).
-func (s *S3) PutWithTTL(ctx context.Context, keyIn string, reader io.Reader, size int64, contentType string, ttl time.Time) (string, error) {
+func (s *S3) PutWithTTL(
+	ctx context.Context,
+	keyIn string,
+	reader io.Reader,
+	size int64,
+	contentType string,
+	ttl time.Time,
+) (string, error) {
 	key, ok := utils.CleanFilePath(keyIn)
 	if !ok {
 		return "", ErrInvalidPath
@@ -200,7 +220,12 @@ func (s *S3) Delete(ctx context.Context, keyIn string) error {
 
 // List returns a list of objects and their metadata from S3 storage, supporting offset and page size.
 // Returns an error if the prefix is invalid or listing fails.
-func (s *S3) List(ctx context.Context, keyIn string, offset int, pageSize int) ([]*FileInfo, error) {
+func (s *S3) List(
+	ctx context.Context,
+	keyIn string,
+	offset int,
+	pageSize int,
+) ([]*FileInfo, error) {
 	key, ok := utils.CleanFilePath(keyIn)
 	if !ok {
 		return nil, ErrInvalidPath

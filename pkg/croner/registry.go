@@ -87,7 +87,7 @@ func NewRegistry(p RegistryParams) (RegistryResult, error) {
 
 		storeKV, err := r.js.CreateOrUpdateKeyValue(ctxStartup, jetstream.KeyValueConfig{
 			Bucket:      BucketName,
-			Description: fmt.Sprintf("%s Store", BucketName),
+			Description: BucketName + " Store",
 			History:     2,
 			Storage:     jetstream.MemoryStorage,
 		})
@@ -142,40 +142,38 @@ func (r *Registry) ListCronjobs(ctx context.Context) []*cron.Cronjob {
 }
 
 func (r *Registry) RegisterCronjob(ctx context.Context, job *cron.Cronjob) error {
-	if job.Name == "" {
-		return fmt.Errorf("cron job name is required or uses reserved name: %s", job.Name)
+	if job.GetName() == "" {
+		return fmt.Errorf("cron job name is required or uses reserved name: %s", job.GetName())
 	}
 
 	// Validate the cron schedule
-	if !gronx.IsValid(job.Schedule) {
+	if !gronx.IsValid(job.GetSchedule()) {
 		return ErrInvalidCronSyntax
 	}
 
-	r.logger.Debug("registering cronjob", zap.String("name", job.Name))
+	r.logger.Debug("registering cronjob", zap.String("name", job.GetName()))
 
-	if job.Timeout == nil {
+	if job.GetTimeout() == nil {
 		job.Timeout = durationpb.New(DefaultCronjobTimeout)
-	} else {
+	} else if job.GetTimeout().AsDuration() < 0 || job.GetTimeout().AsDuration() > 30*time.Minute {
 		// Ensure the timeout is not negative and not bigger than 30 minutes
-		if job.Timeout.AsDuration() < 0 || job.Timeout.AsDuration() > 30*time.Minute {
-			return fmt.Errorf("cron job %s has negative timeout", job.Name)
-		}
+		return fmt.Errorf("cron job %s has negative timeout", job.GetName())
 	}
 
-	if job.State == cron.CronjobState_CRONJOB_STATE_UNSPECIFIED {
+	if job.GetState() == cron.CronjobState_CRONJOB_STATE_UNSPECIFIED {
 		job.State = cron.CronjobState_CRONJOB_STATE_WAITING
 	}
 
-	nextTime, err := gronx.NextTick(job.Schedule, false)
+	nextTime, err := gronx.NextTick(job.GetSchedule(), false)
 	if err != nil {
 		return err
 	}
 
-	if job.NextScheduleTime == nil || job.NextScheduleTime.AsTime() != nextTime {
+	if job.GetNextScheduleTime() == nil || job.GetNextScheduleTime().AsTime() != nextTime {
 		job.NextScheduleTime = timestamp.New(nextTime)
 	}
 
-	if err := r.store.ComputeUpdate(ctx, strings.ToLower(job.Name), func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
+	if err := r.store.ComputeUpdate(ctx, strings.ToLower(job.GetName()), func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
 		if existing == nil {
 			return job, true, nil
 		}
@@ -184,7 +182,7 @@ func (r *Registry) RegisterCronjob(ctx context.Context, job *cron.Cronjob) error
 
 		return existing, true, nil
 	}); err != nil {
-		return fmt.Errorf("failed to register cron job %s in store. %w", job.Name, err)
+		return fmt.Errorf("failed to register cron job %s in store. %w", job.GetName(), err)
 	}
 
 	return nil

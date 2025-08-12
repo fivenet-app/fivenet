@@ -40,7 +40,7 @@ LOCK TABLES `fivenet_documents_categories` WRITE;
 /*!40000 ALTER TABLE `fivenet_documents_categories` DISABLE KEYS */;
 INSERT INTO `fivenet_documents_categories` (`id`, `name`, `description`, `job`) VALUES (1,'Patient / File','Patient files (e.g., reports, results)','ambulance'),
 (2,'Criminal Record','Criminal record of a citizen','police'),
-(3,'Non-Existant','Document Category for a non-existant job, no person should see it.','non-existant'),
+(3,'Non-Existant','Document Category for a non-existent job, no person should see it.','non-existent'),
 (4,'Patient / Unused','Unused category for testing','ambulance');
 /*!40000 ALTER TABLE `fivenet_documents_categories` ENABLE KEYS */;
 UNLOCK TABLES;

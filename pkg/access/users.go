@@ -20,9 +20,9 @@ type UsersAccessProtoMessage[T any, V protoutils.ProtoEnum] interface {
 	GetTargetId() uint64
 
 	GetUserId() int32
-	SetUserId(int32)
+	SetUserId(userId int32)
 	GetAccess() V
-	SetAccess(V)
+	SetAccess(access V)
 }
 
 // Users provides access control logic for user-based permissions.
@@ -38,7 +38,12 @@ type Users[U any, T UsersAccessProtoMessage[U, V], V protoutils.ProtoEnum] struc
 }
 
 // NewUsers creates a new Users instance for user-based access control.
-func NewUsers[U any, T UsersAccessProtoMessage[U, V], V protoutils.ProtoEnum](table jet.Table, columns *UserAccessColumns, tableAlias jet.Table, columnsAlias *UserAccessColumns) *Users[U, T, V] {
+func NewUsers[U any, T UsersAccessProtoMessage[U, V], V protoutils.ProtoEnum](
+	table jet.Table,
+	columns *UserAccessColumns,
+	tableAlias jet.Table,
+	columnsAlias *UserAccessColumns,
+) *Users[U, T, V] {
 	return &Users[U, T, V]{
 		table:         table,
 		columns:       columns,
@@ -106,22 +111,27 @@ func (a *Users[U, T, V]) Clear(ctx context.Context, tx qrm.DB, targetId uint64) 
 
 // Compare compares the current user access entries in the database with the provided input.
 // Returns slices of entries to create, update, and delete.
-func (a *Users[U, T, V]) Compare(ctx context.Context, tx qrm.DB, targetId uint64, in []T) (toCreate []T, toUpdate []T, toDelete []T, err error) {
+func (a *Users[U, T, V]) Compare(
+	ctx context.Context,
+	tx qrm.DB,
+	targetId uint64,
+	in []T,
+) ([]T, []T, []T, error) {
 	current, err := a.List(ctx, tx, targetId)
 	if err != nil {
 		return nil, nil, nil, err
 	}
 
-	toCreate, toUpdate, toDelete = a.compare(current, in)
+	toCreate, toUpdate, toDelete := a.compare(current, in)
 	return toCreate, toUpdate, toDelete, nil
 }
 
 // compare performs a comparison between current and input user access entries.
 // Returns entries to create, update, and delete. Handles matching by user ID and access level.
-func (a *Users[U, T, V]) compare(current, in []T) (toCreate []T, toUpdate []T, toDelete []T) {
-	toCreate = []T{}
-	toUpdate = []T{}
-	toDelete = []T{}
+func (a *Users[U, T, V]) compare(current, in []T) ([]T, []T, []T) {
+	toCreate := []T{}
+	toUpdate := []T{}
+	toDelete := []T{}
 
 	if len(current) == 0 {
 		return in, toUpdate, toDelete
@@ -131,54 +141,55 @@ func (a *Users[U, T, V]) compare(current, in []T) (toCreate []T, toUpdate []T, t
 		return int(a.GetId() - b.GetId())
 	})
 
-	if len(current) == 0 {
-		toCreate = in
-	} else {
-		foundTracker := []int{}
-		for _, cj := range current {
-			var found T
-			var foundIdx int
-			for i, uj := range in {
-				if cj.GetUserId() != uj.GetUserId() {
-					continue
-				}
-				found = uj
-				foundIdx = i
-				break
-			}
-			// No match in incoming job access, needs to be deleted
-			if found == nil {
-				toDelete = append(toDelete, cj)
+	foundTracker := []int{}
+	for _, cj := range current {
+		var found T
+		var foundIdx int
+		for i, uj := range in {
+			if cj.GetUserId() != uj.GetUserId() {
 				continue
 			}
-
-			foundTracker = append(foundTracker, foundIdx)
-
-			changed := false
-			if cj.GetAccess().Number() != found.GetAccess().Number() {
-				cj.SetAccess(found.GetAccess())
-				changed = true
-			}
-
-			if changed {
-				toUpdate = append(toUpdate, cj)
-			}
+			found = uj
+			foundIdx = i
+			break
+		}
+		// No match in incoming job access, needs to be deleted
+		if found == nil {
+			toDelete = append(toDelete, cj)
+			continue
 		}
 
-		for i, uj := range in {
-			idx := slices.Index(foundTracker, i)
-			if idx == -1 {
-				toCreate = append(toCreate, uj)
-			}
+		foundTracker = append(foundTracker, foundIdx)
+
+		changed := false
+		if cj.GetAccess().Number() != found.GetAccess().Number() {
+			cj.SetAccess(found.GetAccess())
+			changed = true
+		}
+
+		if changed {
+			toUpdate = append(toUpdate, cj)
 		}
 	}
 
-	return
+	for i, uj := range in {
+		idx := slices.Index(foundTracker, i)
+		if idx == -1 {
+			toCreate = append(toCreate, uj)
+		}
+	}
+
+	return toCreate, toUpdate, toDelete
 }
 
 // HandleAccessChanges applies the necessary create, update, and delete operations for user access entries.
 // Returns the created, updated, and deleted entries, or an error if any operation fails.
-func (a *Users[U, T, AccessLevel]) HandleAccessChanges(ctx context.Context, tx qrm.DB, targetId uint64, access []T) ([]T, []T, []T, error) {
+func (a *Users[U, T, AccessLevel]) HandleAccessChanges(
+	ctx context.Context,
+	tx qrm.DB,
+	targetId uint64,
+	access []T,
+) ([]T, []T, []T, error) {
 	toCreate, toUpdate, toDelete, err := a.Compare(ctx, tx, targetId, access)
 	if err != nil {
 		return toCreate, toUpdate, toDelete, err

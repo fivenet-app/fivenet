@@ -7,12 +7,12 @@ import (
 )
 
 type WorkerCmd struct {
-	ModuleCentrum        bool `help:"Start Centrum bot and housekeeper module" default:"true"`
-	ModuleUserTracker    bool `help:"Start User tracker module" default:"true"`
-	ModuleJobsTimeclock  bool `help:"Start Jobs timeclock housekeeper module" default:"true"`
-	ModuleDocsWorkflow   bool `help:"Start Docstore Workflow module" default:"true"`
-	ModuleHousekeeper    bool `help:"Start Housekeepr module" default:"true"`
-	ModuleUserInfoPoller bool `help:"Start UserInfo poller module" default:"true"`
+	ModuleCentrum        bool `default:"true" help:"Start Centrum bot and housekeeper module"`
+	ModuleUserTracker    bool `default:"true" help:"Start User tracker module"`
+	ModuleJobsTimeclock  bool `default:"true" help:"Start Jobs timeclock housekeeper module"`
+	ModuleDocsWorkflow   bool `default:"true" help:"Start Docstore Workflow module"`
+	ModuleHousekeeper    bool `default:"true" help:"Start Housekeepr module"`
+	ModuleUserInfoPoller bool `default:"true" help:"Start UserInfo poller module"`
 }
 
 func (c *WorkerCmd) Run(ctx *Context) error {

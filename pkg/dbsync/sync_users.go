@@ -71,12 +71,15 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		for k := range us {
 			identifier := ""
 			if us[k].Identifier != nil {
-				identifier = *us[k].Identifier
+				identifier = us[k].GetIdentifier()
 			}
 
-			us[k].Licenses, err = s.retrieveLicenses(ctx, us[k].UserId, identifier)
+			us[k].Licenses, err = s.retrieveLicenses(ctx, us[k].GetUserId(), identifier)
 			if err != nil {
-				errs = multierr.Append(errs, fmt.Errorf("failed to retrieve users %s licenses. %w", identifier, err))
+				errs = multierr.Append(
+					errs,
+					fmt.Errorf("failed to retrieve users %s licenses. %w", identifier, err),
+				)
 			}
 		}
 
@@ -88,7 +91,7 @@ func (s *usersSync) Sync(ctx context.Context) error {
 	if s.cfg.Tables.Users.IgnoreEmptyName {
 		us = slices.DeleteFunc(us, func(in *users.User) bool {
 			// If the user has no firstname and lastname, skip it
-			return in == nil || (in.Firstname == "" && in.Lastname == "")
+			return in == nil || (in.GetFirstname() == "" && in.GetLastname() == "")
 		})
 	}
 
@@ -96,25 +99,31 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		// Value mapping logic
 		if s.cfg.Tables.Users.ValueMapping != nil {
 			if us[k].Sex != nil && !s.cfg.Tables.Users.ValueMapping.Sex.IsEmpty() {
+				//nolint:protogetter // The value is updated via the pointer
 				s.cfg.Tables.Users.ValueMapping.Sex.Process(us[k].Sex)
 			}
 		}
 
 		// Split names if only one field is used by the source data structure and only if we get 2 names out of it
 		if s.cfg.Tables.Users.SplitName {
-			if us[k].Lastname == "" {
-				ss := strings.Split(us[k].Firstname, " ")
+			if us[k].GetLastname() == "" {
+				ss := strings.Split(us[k].GetFirstname(), " ")
 				if len(ss) > 1 {
 					us[k].Lastname = ss[len(ss)-1]
 
-					us[k].Firstname = strings.Replace(us[k].Firstname, " "+us[k].Lastname, "", 1)
+					us[k].Firstname = strings.Replace(
+						us[k].GetFirstname(),
+						" "+us[k].GetLastname(),
+						"",
+						1,
+					)
 				}
 			}
 		}
 
 		// Attempt to parse date of birth via list of input formats
 		for _, format := range s.cfg.Tables.Users.DateOfBirth.Formats {
-			parsedTime, err := time.Parse(format, us[k].Dateofbirth)
+			parsedTime, err := time.Parse(format, us[k].GetDateofbirth())
 			if err != nil {
 				continue
 			}
@@ -145,13 +154,17 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		s.state.SyncedUp = true
 	}
 
-	lastUserId := strconv.FormatInt(int64(us[len(us)-1].UserId), 10)
+	lastUserId := strconv.FormatInt(int64(us[len(us)-1].GetUserId()), 10)
 	s.state.Set(uint64(limit)+offset, &lastUserId)
 
 	return nil
 }
 
-func (s *usersSync) retrieveLicenses(ctx context.Context, userId int32, identifier string) ([]*users.License, error) {
+func (s *usersSync) retrieveLicenses(
+	ctx context.Context,
+	userId int32,
+	identifier string,
+) ([]*users.License, error) {
 	sQuery := s.cfg.Tables.CitizensLicenses
 	query := prepareStringQuery(sQuery, s.state, 0, 100)
 
@@ -172,7 +185,7 @@ func (s *usersSync) retrieveLicenses(ctx context.Context, userId int32, identifi
 	return licenses, nil
 }
 
-// Sync an individual user/char info
+// Sync an individual user's info.
 func (s *usersSync) SyncUser(ctx context.Context, userId int32) error {
 	sQuery := s.cfg.Tables.Users.DBSyncTable
 	query := prepareStringQuery(sQuery, s.state, 0, 1)
@@ -186,11 +199,11 @@ func (s *usersSync) SyncUser(ctx context.Context, userId int32) error {
 		// Retrieve user's licenses
 		identifier := ""
 		if user.Identifier != nil {
-			identifier = *user.Identifier
+			identifier = user.GetIdentifier()
 		}
 
 		var err error
-		user.Licenses, err = s.retrieveLicenses(ctx, user.UserId, identifier)
+		user.Licenses, err = s.retrieveLicenses(ctx, user.GetUserId(), identifier)
 		if err != nil {
 			return err
 		}
@@ -198,11 +211,11 @@ func (s *usersSync) SyncUser(ctx context.Context, userId int32) error {
 
 	// Split names if only one field is used by the framework
 	if s.cfg.Tables.Users.SplitName {
-		if user.Lastname == "" {
-			ss := strings.Split(user.Firstname, " ")
+		if user.GetLastname() == "" {
+			ss := strings.Split(user.GetFirstname(), " ")
 			user.Lastname = ss[len(ss)-1]
 
-			user.Firstname = strings.Replace(user.Firstname, " "+user.Lastname, "", 1)
+			user.Firstname = strings.Replace(user.GetFirstname(), " "+user.GetLastname(), "", 1)
 		}
 	}
 

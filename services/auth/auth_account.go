@@ -17,9 +17,16 @@ import (
 	"google.golang.org/grpc/codes"
 )
 
-var ErrGenericAccount = common.NewI18nErr(codes.Internal, &common.I18NItem{Key: "errors.AuthService.ErrGenericAccount"}, nil)
+var ErrGenericAccount = common.NewI18nErr(
+	codes.Internal,
+	&common.I18NItem{Key: "errors.AuthService.ErrGenericAccount"},
+	nil,
+)
 
-func (s *Server) GetAccountInfo(ctx context.Context, req *pbauth.GetAccountInfoRequest) (*pbauth.GetAccountInfoResponse, error) {
+func (s *Server) GetAccountInfo(
+	ctx context.Context,
+	req *pbauth.GetAccountInfoRequest,
+) (*pbauth.GetAccountInfoResponse, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
@@ -79,7 +86,7 @@ func (s *Server) GetAccountInfo(ctx context.Context, req *pbauth.GetAccountInfoR
 	// Set provider in the connections
 	i := range oauth2Conns {
 		idx := slices.IndexFunc(oauth2Providers, func(p *accounts.OAuth2Provider) bool {
-			return p.Name == oauth2Conns[i].GetProviderName()
+			return p.GetName() == oauth2Conns[i].GetProviderName()
 		})
 		if idx > -1 {
 			oauth2Conns[i].Provider = oauth2Providers[idx]

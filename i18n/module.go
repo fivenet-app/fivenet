@@ -19,7 +19,7 @@ var Module = fx.Module("lang",
 //go:embed locales/*.json
 var langFS embed.FS
 
-var defaultLanguage = "en"
+const defaultLanguage = "en"
 
 func New() (*I18n, error) {
 	i := &I18n{}

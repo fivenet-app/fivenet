@@ -34,7 +34,10 @@ func (p *ListSvcMethodsModule) InitContext(c pgs.BuildContext) {
 // Name satisfies the generator.Plugin interface.
 func (p *ListSvcMethodsModule) Name() string { return "listsvcmethods" }
 
-func (p *ListSvcMethodsModule) Execute(targets map[string]pgs.File, pkgs map[string]pgs.Package) []pgs.Artifact {
+func (p *ListSvcMethodsModule) Execute(
+	targets map[string]pgs.File,
+	pkgs map[string]pgs.Package,
+) []pgs.Artifact {
 	visited := map[string][]pgs.File{}
 	for _, t := range targets {
 		key := t.File().InputPath().Dir().String()

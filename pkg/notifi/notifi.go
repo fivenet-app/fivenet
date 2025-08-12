@@ -3,6 +3,7 @@ package notifi
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
@@ -12,9 +13,6 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
-
-// tNots is a reference to the notifications table in the database.
-var tNots = table.FivenetNotifications
 
 // INotifi defines the interface for sending notifications to users.
 type INotifi interface {
@@ -85,7 +83,7 @@ func (n *Notifi) NotifyUser(ctx context.Context, not *notifications.Notification
 		return fmt.Errorf("failed to proto marshal notification. %w", err)
 	}
 
-	if _, err := n.js.PublishAsync(ctx, fmt.Sprintf("%s.%s.%d", BaseSubject, UserTopic, not.UserId), data); err != nil {
+	if _, err := n.js.PublishAsync(ctx, fmt.Sprintf("%s.%s.%d", BaseSubject, UserTopic, not.GetUserId()), data); err != nil {
 		return fmt.Errorf("failed to publish notification message. %w", err)
 	}
 
@@ -93,7 +91,12 @@ func (n *Notifi) NotifyUser(ctx context.Context, not *notifications.Notification
 }
 
 // insertNotification inserts a notification into the database and returns the new notification ID.
-func (n *Notifi) insertNotification(ctx context.Context, not *notifications.Notification) (int64, error) {
+func (n *Notifi) insertNotification(
+	ctx context.Context,
+	not *notifications.Notification,
+) (int64, error) {
+	tNots := table.FivenetNotifications
+
 	stmt := tNots.
 		INSERT(
 			tNots.UserID,
@@ -104,12 +107,12 @@ func (n *Notifi) insertNotification(ctx context.Context, not *notifications.Noti
 			tNots.Data,
 		).
 		VALUES(
-			not.UserId,
-			not.Title,
-			not.Type,
-			not.Content,
-			not.Category,
-			not.Data,
+			not.GetUserId(),
+			not.GetTitle(),
+			not.GetType(),
+			not.GetContent(),
+			not.GetCategory(),
+			not.GetData(),
 		)
 
 	res, err := stmt.ExecContext(ctx, n.db)
@@ -127,19 +130,27 @@ func (n *Notifi) insertNotification(ctx context.Context, not *notifications.Noti
 
 func (n *Notifi) SendObjectEvent(ctx context.Context, event *notifications.ObjectEvent) error {
 	if event.Id == nil {
-		return fmt.Errorf("object event ID is required")
+		return errors.New("object event ID is required")
 	}
 
-	if _, err := n.js.PublishAsyncProto(ctx, fmt.Sprintf("%s.%s.%s.%d", BaseSubject, ObjectTopic, event.Type.ToNatsKey(), *event.Id), event); err != nil {
-		return fmt.Errorf("failed to publish object %s event message. %w", event.Type.String(), err)
+	if _, err := n.js.PublishAsyncProto(ctx, fmt.Sprintf("%s.%s.%s.%d", BaseSubject, ObjectTopic, event.GetType().ToNatsKey(), event.GetId()), event); err != nil {
+		return fmt.Errorf(
+			"failed to publish object %s event message. %w",
+			event.GetType().String(),
+			err,
+		)
 	}
 
 	return nil
 }
 
-func (n *Notifi) SendUserEvent(ctx context.Context, userId int32, event *notifications.UserEvent) error {
+func (n *Notifi) SendUserEvent(
+	ctx context.Context,
+	userId int32,
+	event *notifications.UserEvent,
+) error {
 	if event == nil || event.Data == nil {
-		return fmt.Errorf("user event data is required")
+		return errors.New("user event data is required")
 	}
 
 	if _, err := n.js.PublishAsyncProto(ctx, fmt.Sprintf("%s.%s.%d", BaseSubject, UserTopic, userId), event); err != nil {
@@ -151,7 +162,7 @@ func (n *Notifi) SendUserEvent(ctx context.Context, userId int32, event *notific
 
 func (n *Notifi) SendSystemEvent(ctx context.Context, event *notifications.SystemEvent) error {
 	if event == nil || event.Data == nil {
-		return fmt.Errorf("system event data is required")
+		return errors.New("system event data is required")
 	}
 
 	if _, err := n.js.PublishAsyncProto(ctx, fmt.Sprintf("%s.%s", BaseSubject, SystemTopic), event); err != nil {

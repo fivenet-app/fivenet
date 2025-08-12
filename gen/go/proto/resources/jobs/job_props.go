@@ -69,23 +69,23 @@ func (x *JobProps) SetJobLabel(label string) {
 }
 
 func (x *JobProps) Default(job string) {
-	if x.Job == "" {
+	if x.GetJob() == "" {
 		x.Job = job
 	}
 
-	if x.QuickButtons == nil {
+	if x.GetQuickButtons() == nil {
 		x.QuickButtons = &QuickButtons{
 			PenaltyCalculator: false,
 			MathCalculator:    false,
 		}
 	}
 
-	if x.LivemapMarkerColor == "" {
+	if x.GetLivemapMarkerColor() == "" {
 		x.LivemapMarkerColor = DefaultLivemapMarkerColor
 	}
 
 	// Discord Sync Settings
-	if x.DiscordSyncSettings == nil {
+	if x.GetDiscordSyncSettings() == nil {
 		x.DiscordSyncSettings = &DiscordSyncSettings{
 			DryRun:                   false,
 			UserInfoSync:             false,
@@ -93,7 +93,7 @@ func (x *JobProps) Default(job string) {
 		}
 	}
 
-	if x.DiscordSyncSettings.UserInfoSyncSettings == nil {
+	if x.GetDiscordSyncSettings().GetUserInfoSyncSettings() == nil {
 		x.DiscordSyncSettings.UserInfoSyncSettings = &UserInfoSyncSettings{
 			EmployeeRoleEnabled: true,
 			UnemployedEnabled:   false,
@@ -104,46 +104,46 @@ func (x *JobProps) Default(job string) {
 	}
 
 	employeeRoleFormat := DefaultEmployeeRoleFormat
-	if x.DiscordSyncSettings.UserInfoSyncSettings.EmployeeRoleFormat == "" {
+	if x.GetDiscordSyncSettings().GetUserInfoSyncSettings().GetEmployeeRoleFormat() == "" {
 		x.DiscordSyncSettings.UserInfoSyncSettings.EmployeeRoleFormat = employeeRoleFormat
 	}
 
 	gradeRoleFormat := DefaultGradeRoleFormat
-	if x.DiscordSyncSettings.UserInfoSyncSettings.GradeRoleFormat == "" {
+	if x.GetDiscordSyncSettings().GetUserInfoSyncSettings().GetGradeRoleFormat() == "" {
 		x.DiscordSyncSettings.UserInfoSyncSettings.GradeRoleFormat = gradeRoleFormat
 	}
 
 	unemployedRoleName := DefaultUnemployedRoleName
-	if x.DiscordSyncSettings.UserInfoSyncSettings.UnemployedRoleName == "" {
+	if x.GetDiscordSyncSettings().GetUserInfoSyncSettings().GetUnemployedRoleName() == "" {
 		x.DiscordSyncSettings.UserInfoSyncSettings.UnemployedRoleName = unemployedRoleName
 	}
 
 	// Status Log Settings
-	if x.DiscordSyncSettings.StatusLogSettings == nil {
+	if x.GetDiscordSyncSettings().GetStatusLogSettings() == nil {
 		x.DiscordSyncSettings.StatusLogSettings = &StatusLogSettings{}
 	}
 
 	// Jobs Abscene Role
-	if x.DiscordSyncSettings.JobsAbsenceSettings == nil {
+	if x.GetDiscordSyncSettings().GetJobsAbsenceSettings() == nil {
 		x.DiscordSyncSettings.JobsAbsenceSettings = &JobsAbsenceSettings{
 			AbsenceRole: DefaultJobsAbsenceRoleName,
 		}
 	}
 
 	// Group Sync Settings
-	if x.DiscordSyncSettings.GroupSyncSettings == nil {
+	if x.GetDiscordSyncSettings().GetGroupSyncSettings() == nil {
 		x.DiscordSyncSettings.GroupSyncSettings = &GroupSyncSettings{
 			IgnoredRoleIds: []string{},
 		}
 	}
 
-	if x.DiscordSyncSettings.QualificationsRoleFormat == "" {
+	if x.GetDiscordSyncSettings().GetQualificationsRoleFormat() == "" {
 		x.DiscordSyncSettings.QualificationsRoleFormat = DefaultQualificationsRoleFormat
 	}
 
 	// Job Settings
-	if x.Settings == nil {
+	if x.GetSettings() == nil {
 		x.Settings = &JobSettings{}
 	}
-	x.Settings.Default()
+	x.GetSettings().Default()
 }

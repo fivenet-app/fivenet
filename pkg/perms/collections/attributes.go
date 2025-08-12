@@ -8,25 +8,30 @@ import (
 type Attributes []*permissions.RoleAttribute
 
 // Len returns the number of elements of the array.
-// @return int64
-func (u Attributes) Len() (length int64) {
+//
+//	@return	int64
+func (u Attributes) Len() int64 {
 	return int64(len(u))
 }
 
 // IDs returns an array of the attribute array's ids.
-// @return []uint
-func (u Attributes) IDs() (IDs []uint64) {
+//
+//	@return	[]uint64
+func (u Attributes) IDs() []uint64 {
+	ids := make([]uint64, 0, len(u))
 	for _, attribute := range u {
-		IDs = append(IDs, attribute.AttrId)
+		ids = append(ids, attribute.GetAttrId())
 	}
-	return IDs
+	return ids
 }
 
 // Names returns an array of the attribute array's key names.
-// @return []string
-func (u Attributes) Names() (names []string) {
+//
+//	@return	[]string
+func (u Attributes) Names() []string {
+	names := make([]string, 0, len(u))
 	for _, attribute := range u {
-		names = append(names, attribute.Key)
+		names = append(names, attribute.GetKey())
 	}
 	return names
 }

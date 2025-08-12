@@ -79,7 +79,7 @@ func replaceInKeys(old, new string) copyOption {
 
 // keyCase returns an option to unconditionally modify the case of the
 // destination header keys with function fn. Typically fn can be
-// strings.ToLower, strings.ToUpper, http.CanonicalHeaderKey
+// `strings.ToLower`, `strings.ToUpper`, `http.CanonicalHeaderKey`.
 func keyCase(fn func(string) string) copyOption {
 	return func(opts *copyOptions) {
 		opts.replacers = append(

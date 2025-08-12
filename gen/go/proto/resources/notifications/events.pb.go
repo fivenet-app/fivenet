@@ -93,7 +93,7 @@ func (x *UserEvent) GetNotification() *Notification {
 	return nil
 }
 
-func (x *UserEvent) GetNotificationsReadCount() int32 {
+func (x *UserEvent) GetNotificationsReadCount() int64 {
 	if x != nil {
 		if x, ok := x.Data.(*UserEvent_NotificationsReadCount); ok {
 			return x.NotificationsReadCount
@@ -125,7 +125,7 @@ type UserEvent_Notification struct {
 }
 
 type UserEvent_NotificationsReadCount struct {
-	NotificationsReadCount int32 `protobuf:"varint,3,opt,name=notifications_read_count,json=notificationsReadCount,proto3,oneof"`
+	NotificationsReadCount int64 `protobuf:"varint,3,opt,name=notifications_read_count,json=notificationsReadCount,proto3,oneof"`
 }
 
 type UserEvent_UserInfoChanged struct {
@@ -350,7 +350,7 @@ const file_resources_notifications_events_proto_rawDesc = "" +
 	"\tUserEvent\x12%\n" +
 	"\rrefresh_token\x18\x01 \x01(\bH\x00R\frefreshToken\x12K\n" +
 	"\fnotification\x18\x02 \x01(\v2%.resources.notifications.NotificationH\x00R\fnotification\x12:\n" +
-	"\x18notifications_read_count\x18\x03 \x01(\x05H\x00R\x16notificationsReadCount\x12Q\n" +
+	"\x18notifications_read_count\x18\x03 \x01(\x03H\x00R\x16notificationsReadCount\x12Q\n" +
 	"\x11user_info_changed\x18\x04 \x01(\v2#.resources.userinfo.UserInfoChangedH\x00R\x0fuserInfoChangedB\r\n" +
 	"\x04data\x12\x05\xbaH\x02\b\x01\"R\n" +
 	"\bJobEvent\x127\n" +

@@ -11,7 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/embeds"
-	"github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
+	discordtypes "github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/broker"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -61,7 +61,9 @@ func (g *QualificationsSync) GetName() string {
 	return "qualifications"
 }
 
-func (g *QualificationsSync) Plan(ctx context.Context) (*types.State, []discord.Embed, error) {
+func (g *QualificationsSync) Plan(
+	ctx context.Context,
+) (*discordtypes.State, []discord.Embed, error) {
 	errs := multierr.Combine()
 
 	stmt := tQualifications.
@@ -98,23 +100,31 @@ func (g *QualificationsSync) Plan(ctx context.Context) (*types.State, []discord.
 		return nil, logs, errs
 	}
 
-	return &types.State{
+	return &discordtypes.State{
 		Roles: roles,
 		Users: users,
 	}, logs, nil
 }
 
-func (g *QualificationsSync) planRoles(qualifications []*qualificationsEntry) ([]*types.Role, []discord.Embed, error) {
+func (g *QualificationsSync) planRoles(
+	qualifications []*qualificationsEntry,
+) ([]*discordtypes.Role, []discord.Embed, error) {
 	logs := []discord.Embed{}
-	roles := types.Roles{}
+	roles := discordtypes.Roles{}
 
 	syncSettings := g.settings.Load()
 
 	errs := multierr.Combine()
 	for _, entry := range qualifications {
-		if entry.DiscordSettings.RoleName == nil || strings.TrimSpace(*entry.DiscordSettings.RoleName) == "" {
+		if entry.DiscordSettings.RoleName == nil ||
+			strings.TrimSpace(entry.DiscordSettings.GetRoleName()) == "" {
 			logs = append(logs, discord.Embed{
-				Title:       fmt.Sprintf("Qualifications: Empty role name in qualification's discord sync settings \"%s: %s\" (ID: %d)", entry.Abbreviation, entry.QualificationTitle, entry.ID),
+				Title: fmt.Sprintf(
+					"Qualifications: Empty role name in qualification's discord sync settings \"%s: %s\" (ID: %d)",
+					entry.Abbreviation,
+					entry.QualificationTitle,
+					entry.ID,
+				),
 				Description: fmt.Sprintf("Qualification ID: %d", entry.ID),
 				Author:      embeds.EmbedAuthor,
 				Color:       embeds.ColorWarn,
@@ -122,10 +132,11 @@ func (g *QualificationsSync) planRoles(qualifications []*qualificationsEntry) ([
 			continue
 		}
 
-		roleFormat := strings.TrimSpace(syncSettings.QualificationsRoleFormat)
-		roleName := strings.TrimSpace(*entry.DiscordSettings.RoleName)
-		if entry.DiscordSettings.RoleFormat != nil && strings.TrimSpace(*entry.DiscordSettings.RoleFormat) != "" {
-			rf := strings.TrimSpace(*entry.DiscordSettings.RoleFormat)
+		roleFormat := strings.TrimSpace(syncSettings.GetQualificationsRoleFormat())
+		roleName := strings.TrimSpace(entry.DiscordSettings.GetRoleName())
+		if entry.DiscordSettings.RoleFormat != nil &&
+			strings.TrimSpace(entry.DiscordSettings.GetRoleFormat()) != "" {
+			rf := strings.TrimSpace(entry.DiscordSettings.GetRoleFormat())
 			if strings.Contains(roleFormat, "%abbr%") || strings.Contains(roleFormat, "%name%") {
 				roleFormat = rf
 			}
@@ -134,7 +145,7 @@ func (g *QualificationsSync) planRoles(qualifications []*qualificationsEntry) ([
 		entry.RoleName = strings.ReplaceAll(roleFormat, "%abbr%", entry.Abbreviation)
 		entry.RoleName = strings.ReplaceAll(entry.RoleName, "%name%", roleName)
 
-		roles = append(roles, &types.Role{
+		roles = append(roles, &discordtypes.Role{
 			Name:   entry.RoleName,
 			Module: fmt.Sprintf(qualificationsRoleModulePrefix+"%d", entry.ID),
 			Job:    g.job,
@@ -144,10 +155,13 @@ func (g *QualificationsSync) planRoles(qualifications []*qualificationsEntry) ([
 	return roles, logs, errs
 }
 
-func (g *QualificationsSync) planUsers(ctx context.Context, roles types.Roles) (types.Users, []discord.Embed, error) {
+func (g *QualificationsSync) planUsers(
+	ctx context.Context,
+	roles discordtypes.Roles,
+) (discordtypes.Users, []discord.Embed, error) {
 	logs := []discord.Embed{}
 
-	qualificationRoles := map[uint64]*types.Role{}
+	qualificationRoles := map[uint64]*discordtypes.Role{}
 	for _, role := range roles {
 		if strings.HasPrefix(role.Module, qualificationsRoleModulePrefix) {
 			sGroup, found := strings.CutPrefix(role.Module, qualificationsRoleModulePrefix)
@@ -165,13 +179,13 @@ func (g *QualificationsSync) planUsers(ctx context.Context, roles types.Roles) (
 	errs := multierr.Combine()
 
 	jobs := []jet.Expression{jet.String(g.job)}
-	for _, job := range g.BaseModule.appCfg.Get().Discord.IgnoredJobs {
+	for _, job := range g.appCfg.Get().Discord.GetIgnoredJobs() {
 		jobs = append(jobs, jet.String(job))
 	}
 
 	tUsers := tables.User().AS("users")
 
-	users := types.Users{}
+	users := discordtypes.Users{}
 	for qualificationId, role := range qualificationRoles {
 		stmt := tAccsOauth2.
 			SELECT(
@@ -198,7 +212,9 @@ func (g *QualificationsSync) planUsers(ctx context.Context, roles types.Roles) (
 			WHERE(jet.AND(
 				tQualificationsResults.QualificationID.EQ(jet.Uint64(qualificationId)),
 				tQualificationsResults.DeletedAt.IS_NULL(),
-				tQualificationsResults.Status.EQ(jet.Int16(int16(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL))),
+				tQualificationsResults.Status.EQ(
+					jet.Int16(int16(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)),
+				),
 				tQualifications.Job.IN(jobs...),
 				tAccsOauth2.Provider.EQ(jet.String("discord")),
 			))
@@ -213,13 +229,16 @@ func (g *QualificationsSync) planUsers(ctx context.Context, roles types.Roles) (
 		for _, u := range dest {
 			externalId, err := strconv.ParseUint(u.ExternalID, 10, 64)
 			if err != nil {
-				errs = multierr.Append(errs, fmt.Errorf("failed to parse user oauth2 external id %d. %w", externalId, err))
+				errs = multierr.Append(
+					errs,
+					fmt.Errorf("failed to parse user oauth2 external id %d. %w", externalId, err),
+				)
 				continue
 			}
 
-			user := &types.User{
+			user := &discordtypes.User{
 				ID:    discord.UserID(externalId),
-				Roles: &types.UserRoles{},
+				Roles: &discordtypes.UserRoles{},
 				Job:   u.Job,
 			}
 

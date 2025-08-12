@@ -35,7 +35,11 @@ func WebsocketRequestOrigin(req *http.Request) (string, error) {
 	origin := req.Header.Get("Origin")
 	parsed, err := url.ParseRequestURI(origin)
 	if err != nil {
-		return "", fmt.Errorf("failed to parse url for grpc-websocket origin check: %q. error: %v", origin, err)
+		return "", fmt.Errorf(
+			"failed to parse url for grpc-websocket origin check: %q. error. %w",
+			origin,
+			err,
+		)
 	}
 	return parsed.Host, nil
 }
@@ -50,7 +54,7 @@ func getGRPCEndpoint(req *http.Request) string {
 }
 
 // IsGrpcWebSocketRequest determines if a request is a gRPC-Web request by checking that the "Upgrade" header is set and
-// "Sec-Websocket-Protocol" header value is "grpc-websocket-channel" and that the "root" path is requested
+// "Sec-Websocket-Protocol" header value is "grpc-websocket-channel" and that the "root" path is requested.
 func IsGrpcWebSocketChannelRequest(req *http.Request) bool {
 	if strings.ToLower(req.Header.Get("Upgrade")) != "websocket" {
 		return false
@@ -68,8 +72,9 @@ func IsGrpcWebSocketChannelRequest(req *http.Request) bool {
 	return false
 }
 
-// IsGrpcWebRequest determines if a request is a gRPC-Web request by checking that the "content-type" is
+// IsGrpcWebRequest determines if a request is a gRPC-Web request by checking that the "Content-Type" is
 // "application/grpc-web" and that the method is POST.
 func IsGrpcWebRequest(req *http.Request) bool {
-	return req.Method == http.MethodPost && strings.HasPrefix(req.Header.Get("content-type"), grpcWebContentType)
+	return req.Method == http.MethodPost &&
+		strings.HasPrefix(req.Header.Get("Content-Type"), grpcWebContentType)
 }

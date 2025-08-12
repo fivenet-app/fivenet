@@ -41,7 +41,10 @@ func (r *NatsReqs) ValidateVersion() error {
 
 	// Example: Check if the version is at least "2.11.4"
 	if r.version < "2.11.4" {
-		return fmt.Errorf("NATS version %s is not supported, requires at least NATS 2.11.4", r.version)
+		return fmt.Errorf(
+			"NATS version %s is not supported, requires at least NATS 2.11.4",
+			r.version,
+		)
 	}
 
 	return nil

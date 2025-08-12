@@ -52,7 +52,7 @@ message StreamRequest {
 }
 
 message StreamResponse {
-  int32 notification_count = 1;
+  int64 notification_count = 1;
   optional bool restart = 2;
 
   oneof data {

@@ -22,9 +22,15 @@ import (
 
 const defaultUserGroupFallback = "user"
 
-var ErrSendDataDisabled = status.Error(codes.FailedPrecondition, "Sync API: SendData is disabled due to ESXCompat being enabled")
+var ErrSendDataDisabled = status.Error(
+	codes.FailedPrecondition,
+	"Sync API: SendData is disabled due to ESXCompat being enabled",
+)
 
-func (s *Server) SendData(ctx context.Context, req *pbsync.SendDataRequest) (*pbsync.SendDataResponse, error) {
+func (s *Server) SendData(
+	ctx context.Context,
+	req *pbsync.SendDataRequest,
+) (*pbsync.SendDataResponse, error) {
 	resp := &pbsync.SendDataResponse{
 		AffectedRows: 0,
 	}
@@ -32,7 +38,7 @@ func (s *Server) SendData(ctx context.Context, req *pbsync.SendDataRequest) (*pb
 	s.lastSyncedData.Store(time.Now().Unix())
 
 	var err error
-	switch d := req.Data.(type) {
+	switch d := req.GetData().(type) {
 	case *pbsync.SendDataRequest_Jobs:
 		if s.esxCompat {
 			return nil, ErrSendDataDisabled
@@ -83,8 +89,11 @@ func (s *Server) SendData(ctx context.Context, req *pbsync.SendDataRequest) (*pb
 	return resp, nil
 }
 
-func (s *Server) handleJobsData(ctx context.Context, data *pbsync.SendDataRequest_Jobs) (int64, error) {
-	if len(data.Jobs.Jobs) == 0 {
+func (s *Server) handleJobsData(
+	ctx context.Context,
+	data *pbsync.SendDataRequest_Jobs,
+) (int64, error) {
+	if len(data.Jobs.GetJobs()) == 0 {
 		return 0, nil
 	}
 
@@ -100,10 +109,10 @@ func (s *Server) handleJobsData(ctx context.Context, data *pbsync.SendDataReques
 			tJobs.Label.SET(jet.StringExp(jet.Raw("VALUES(`label`)"))),
 		)
 
-	for _, job := range data.Jobs.Jobs {
+	for _, job := range data.Jobs.GetJobs() {
 		stmt = stmt.VALUES(
-			job.Name,
-			job.Label,
+			job.GetName(),
+			job.GetLabel(),
 		)
 	}
 
@@ -118,10 +127,10 @@ func (s *Server) handleJobsData(ctx context.Context, data *pbsync.SendDataReques
 		return 0, fmt.Errorf("failed to retrieve rows affected for job insert. %w", err)
 	}
 
-	for _, job := range data.Jobs.Jobs {
+	for _, job := range data.Jobs.GetJobs() {
 		rowCounts, err := s.handleJobGrades(ctx, job)
 		if err != nil {
-			return 0, fmt.Errorf("failed to handle job grades for job %s. %w", job.Name, err)
+			return 0, fmt.Errorf("failed to handle job grades for job %s. %w", job.GetName(), err)
 		}
 
 		rowsAffected += rowCounts
@@ -131,7 +140,7 @@ func (s *Server) handleJobsData(ctx context.Context, data *pbsync.SendDataReques
 }
 
 func (s *Server) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, error) {
-	if len(job.Grades) == 0 {
+	if len(job.GetGrades()) == 0 {
 		return 0, nil
 	}
 
@@ -149,18 +158,22 @@ func (s *Server) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, err
 		ORDER_BY(
 			tJobsGrades.Grade.ASC(),
 		).
-		WHERE(tJobsGrades.JobName.EQ(jet.String(job.Name)))
+		WHERE(tJobsGrades.JobName.EQ(jet.String(job.GetName())))
 
 	currentGrades := []*jobs.JobGrade{}
 	if err := selectStmt.QueryContext(ctx, s.db, &currentGrades); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return 0, fmt.Errorf("failed to query current job grades for job %s. %w", job.Name, err)
+			return 0, fmt.Errorf(
+				"failed to query current job grades for job %s. %w",
+				job.GetName(),
+				err,
+			)
 		}
 	}
 
 	toCreate, toUpdate, toDelete := []*jobs.JobGrade{}, []*jobs.JobGrade{}, []*jobs.JobGrade{}
 	if len(currentGrades) == 0 {
-		toCreate = job.Grades
+		toCreate = job.GetGrades()
 	} else {
 		// Update cache
 		foundTracker := []int{}
@@ -168,8 +181,8 @@ func (s *Server) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, err
 			var found *jobs.JobGrade
 			var foundIdx int
 
-			for i, ug := range job.Grades {
-				if cg.Grade != ug.Grade {
+			for i, ug := range job.GetGrades() {
+				if cg.GetGrade() != ug.GetGrade() {
 					continue
 				}
 
@@ -186,8 +199,8 @@ func (s *Server) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, err
 			foundTracker = append(foundTracker, foundIdx)
 
 			changed := false
-			if cg.Label != found.Label {
-				cg.Label = found.Label
+			if cg.GetLabel() != found.GetLabel() {
+				cg.Label = found.GetLabel()
 				changed = true
 			}
 
@@ -196,7 +209,7 @@ func (s *Server) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, err
 			}
 		}
 
-		for i, uj := range job.Grades {
+		for i, uj := range job.GetGrades() {
 			idx := slices.Index(foundTracker, i)
 			if idx == -1 {
 				toCreate = append(toCreate, uj)
@@ -221,9 +234,9 @@ func (s *Server) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, err
 
 		for _, grade := range toCreate {
 			stmt = stmt.VALUES(
-				grade.JobName,
-				grade.Grade,
-				grade.Label,
+				grade.GetJobName(),
+				grade.GetGrade(),
+				grade.GetLabel(),
 			)
 		}
 
@@ -248,22 +261,29 @@ func (s *Server) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, err
 					tJobsGrades.Label,
 				).
 				SET(
-					grade.JobName,
-					grade.Grade,
-					grade.Label,
+					grade.GetJobName(),
+					grade.GetGrade(),
+					grade.GetLabel(),
 				).
 				WHERE(jet.AND(
-					tJobsGrades.JobName.EQ(jet.String(job.Name)),
-					tJobsGrades.Grade.EQ(jet.Int32(grade.Grade)),
+					tJobsGrades.JobName.EQ(jet.String(job.GetName())),
+					tJobsGrades.Grade.EQ(jet.Int32(grade.GetGrade())),
 				))
 
 			res, err := stmt.ExecContext(ctx, s.db)
 			if err != nil {
-				return 0, fmt.Errorf("failed to execute job grades update statement for grade %d. %w", grade.Grade, err)
+				return 0, fmt.Errorf(
+					"failed to execute job grades update statement for grade %d. %w",
+					grade.GetGrade(),
+					err,
+				)
 			}
 			rowsAffected, err := res.RowsAffected()
 			if err != nil {
-				return 0, fmt.Errorf("failed to retrieve rows affected for job grades update. %w", err)
+				return 0, fmt.Errorf(
+					"failed to retrieve rows affected for job grades update. %w",
+					err,
+				)
 			}
 
 			rowsAffectedCount += rowsAffected
@@ -275,18 +295,25 @@ func (s *Server) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, err
 			stmt := tJobsGrades.
 				DELETE().
 				WHERE(jet.AND(
-					tJobsGrades.JobName.EQ(jet.String(job.Name)),
-					tJobsGrades.Grade.EQ(jet.Int32(grade.Grade)),
+					tJobsGrades.JobName.EQ(jet.String(job.GetName())),
+					tJobsGrades.Grade.EQ(jet.Int32(grade.GetGrade())),
 				)).
 				LIMIT(1)
 
 			res, err := stmt.ExecContext(ctx, s.db)
 			if err != nil {
-				return 0, fmt.Errorf("failed to execute job grades delete statement for grade %d. %w", grade.Grade, err)
+				return 0, fmt.Errorf(
+					"failed to execute job grades delete statement for grade %d. %w",
+					grade.GetGrade(),
+					err,
+				)
 			}
 			rowsAffected, err := res.RowsAffected()
 			if err != nil {
-				return 0, fmt.Errorf("failed to retrieve rows affected for job grades delete. %w", err)
+				return 0, fmt.Errorf(
+					"failed to retrieve rows affected for job grades delete. %w",
+					err,
+				)
 			}
 
 			rowsAffectedCount += rowsAffected
@@ -296,8 +323,11 @@ func (s *Server) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, err
 	return rowsAffectedCount, nil
 }
 
-func (s *Server) handleLicensesData(ctx context.Context, data *pbsync.SendDataRequest_Licenses) (int64, error) {
-	if len(data.Licenses.Licenses) == 0 {
+func (s *Server) handleLicensesData(
+	ctx context.Context,
+	data *pbsync.SendDataRequest_Licenses,
+) (int64, error) {
+	if len(data.Licenses.GetLicenses()) == 0 {
 		return 0, nil
 	}
 
@@ -312,10 +342,10 @@ func (s *Server) handleLicensesData(ctx context.Context, data *pbsync.SendDataRe
 			tLicenses.Label.SET(jet.StringExp(jet.Raw("VALUES(`label`)"))),
 		)
 
-	for _, license := range data.Licenses.Licenses {
+	for _, license := range data.Licenses.GetLicenses() {
 		stmt = stmt.VALUES(
-			license.Type,
-			license.Label,
+			license.GetType(),
+			license.GetLabel(),
 		)
 	}
 
@@ -331,14 +361,17 @@ func (s *Server) handleLicensesData(ctx context.Context, data *pbsync.SendDataRe
 	return rowsAffected, nil
 }
 
-func (s *Server) handleUsersData(ctx context.Context, data *pbsync.SendDataRequest_Users) (int64, error) {
+func (s *Server) handleUsersData(
+	ctx context.Context,
+	data *pbsync.SendDataRequest_Users,
+) (int64, error) {
 	tUsers := tables.User()
 
 	defaultUserGroup := defaultUserGroupFallback
 
 	userIds := []jet.Expression{}
-	for _, user := range data.Users.Users {
-		userIds = append(userIds, jet.Int32(user.UserId))
+	for _, user := range data.Users.GetUsers() {
+		userIds = append(userIds, jet.Int32(user.GetUserId()))
 
 		if user.Group == nil {
 			user.Group = &defaultUserGroup
@@ -364,11 +397,11 @@ func (s *Server) handleUsersData(ctx context.Context, data *pbsync.SendDataReque
 	toCreate, toUpdate := []*users.User{}, []*users.User{}
 	// Check which user ids already exist in the database and create/update them accordingly
 	if len(existing) == 0 {
-		toCreate = data.Users.Users
+		toCreate = data.Users.GetUsers()
 	} else {
-		for _, user := range data.Users.Users {
+		for _, user := range data.Users.GetUsers() {
 			if idx := slices.IndexFunc(existing, func(userId int32) bool {
-				return userId == user.UserId
+				return userId == user.GetUserId()
 			}); idx == -1 {
 				toCreate = append(toCreate, user)
 			} else {
@@ -399,19 +432,19 @@ func (s *Server) handleUsersData(ctx context.Context, data *pbsync.SendDataReque
 		for _, user := range toCreate {
 			insertStmt := stmt.
 				VALUES(
-					user.UserId,
-					user.Identifier,
-					user.Group,
-					user.Firstname,
-					user.Lastname,
-					user.Dateofbirth,
-					user.Job,
-					user.JobGrade,
-					user.Sex,
-					user.PhoneNumber,
-					user.Height,
-					user.Visum,
-					user.Playtime,
+					user.GetUserId(),
+					user.GetIdentifier(),
+					user.GetGroup(),
+					user.GetFirstname(),
+					user.GetLastname(),
+					user.GetDateofbirth(),
+					user.GetJob(),
+					user.GetJobGrade(),
+					user.GetSex(),
+					user.GetPhoneNumber(),
+					user.GetHeight(),
+					user.GetVisum(),
+					user.GetPlaytime(),
 				).
 				ON_DUPLICATE_KEY_UPDATE(
 					tUsers.Group.SET(jet.StringExp(jet.Raw("VALUES(`group`)"))),
@@ -438,8 +471,12 @@ func (s *Server) handleUsersData(ctx context.Context, data *pbsync.SendDataReque
 
 			rowsAffected += rows
 
-			if err := s.handleCitizensLicenses(ctx, *user.Identifier, user.Licenses); err != nil {
-				return 0, fmt.Errorf("failed to handle user licenses for user %s. %w", *user.Identifier, err)
+			if err := s.handleCitizensLicenses(ctx, user.GetIdentifier(), user.GetLicenses()); err != nil {
+				return 0, fmt.Errorf(
+					"failed to handle user licenses for user %s. %w",
+					user.GetIdentifier(),
+					err,
+				)
 			}
 		}
 	}
@@ -462,21 +499,21 @@ func (s *Server) handleUsersData(ctx context.Context, data *pbsync.SendDataReque
 					tUsers.Playtime,
 				).
 				SET(
-					user.Identifier,
-					user.Group,
-					user.Firstname,
-					user.Lastname,
-					user.Dateofbirth,
-					user.Job,
-					user.JobGrade,
-					user.Sex,
-					user.PhoneNumber,
-					user.Height,
-					user.Visum,
-					user.Playtime,
+					user.GetIdentifier(),
+					user.GetGroup(),
+					user.GetFirstname(),
+					user.GetLastname(),
+					user.GetDateofbirth(),
+					user.GetJob(),
+					user.GetJobGrade(),
+					user.GetSex(),
+					user.GetPhoneNumber(),
+					user.GetHeight(),
+					user.GetVisum(),
+					user.GetPlaytime(),
 				).
 				WHERE(
-					tUsers.ID.EQ(jet.Int32(user.UserId)),
+					tUsers.ID.EQ(jet.Int32(user.GetUserId())),
 				)
 
 			res, err := stmt.ExecContext(ctx, s.db)
@@ -495,7 +532,11 @@ func (s *Server) handleUsersData(ctx context.Context, data *pbsync.SendDataReque
 	return rowsAffected, nil
 }
 
-func (s *Server) handleCitizensLicenses(ctx context.Context, identifier string, licenses []*users.License) error {
+func (s *Server) handleCitizensLicenses(
+	ctx context.Context,
+	identifier string,
+	licenses []*users.License,
+) error {
 	tCitizensLicenses := tables.UserLicenses()
 
 	if len(licenses) == 0 {
@@ -522,13 +563,17 @@ func (s *Server) handleCitizensLicenses(ctx context.Context, identifier string, 
 	currentLicenses := []string{}
 	if err := selectStmt.QueryContext(ctx, s.db, &currentLicenses); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return fmt.Errorf("failed to query current user licenses for identifier %s. %w", identifier, err)
+			return fmt.Errorf(
+				"failed to query current user licenses for identifier %s. %w",
+				identifier,
+				err,
+			)
 		}
 	}
 
 	licensesList := []string{}
 	for _, license := range licenses {
-		licensesList = append(licensesList, license.Type)
+		licensesList = append(licensesList, license.GetType())
 	}
 
 	toAdd, toRemove := utils.SlicesDifference(currentLicenses, licensesList)
@@ -578,15 +623,18 @@ func (s *Server) handleCitizensLicenses(ctx context.Context, identifier string, 
 	return nil
 }
 
-func (s *Server) handleVehiclesData(ctx context.Context, data *pbsync.SendDataRequest_Vehicles) (int64, error) {
-	if len(data.Vehicles.Vehicles) == 0 {
+func (s *Server) handleVehiclesData(
+	ctx context.Context,
+	data *pbsync.SendDataRequest_Vehicles,
+) (int64, error) {
+	if len(data.Vehicles.GetVehicles()) == 0 {
 		return 0, nil
 	}
 
 	tVehicles := tables.OwnedVehicles()
 
 	var stmt jet.InsertStatement
-	if !tables.ESXCompatEnabled {
+	if !tables.IsESXCompatEnabled() {
 		stmt = tVehicles.
 			INSERT(
 				tVehicles.Owner,
@@ -606,29 +654,29 @@ func (s *Server) handleVehiclesData(ctx context.Context, data *pbsync.SendDataRe
 			)
 	}
 
-	for _, vehicle := range data.Vehicles.Vehicles {
+	for _, vehicle := range data.Vehicles.GetVehicles() {
 		var ownerId jet.Expression
-		if vehicle.OwnerIdentifier != nil && *vehicle.OwnerIdentifier != "" {
-			ownerId = jet.String(*vehicle.OwnerIdentifier)
+		if vehicle.OwnerIdentifier != nil && vehicle.GetOwnerIdentifier() != "" {
+			ownerId = jet.String(vehicle.GetOwnerIdentifier())
 		} else if vehicle.OwnerId != nil {
-			ownerId = jet.Int32(*vehicle.OwnerId)
+			ownerId = jet.Int32(vehicle.GetOwnerId())
 		}
 
-		if !tables.ESXCompatEnabled {
+		if !tables.IsESXCompatEnabled() {
 			stmt = stmt.VALUES(
 				ownerId,
-				vehicle.Plate,
-				vehicle.Model,
-				vehicle.Type,
-				vehicle.Job,
+				vehicle.GetPlate(),
+				vehicle.GetModel(),
+				vehicle.GetType(),
+				vehicle.GetJob(),
 				jet.NULL,
 			)
 		} else {
 			stmt = stmt.VALUES(
 				ownerId,
-				vehicle.Plate,
-				vehicle.Model,
-				vehicle.Type,
+				vehicle.GetPlate(),
+				vehicle.GetModel(),
+				vehicle.GetType(),
 			)
 		}
 	}
@@ -640,7 +688,7 @@ func (s *Server) handleVehiclesData(ctx context.Context, data *pbsync.SendDataRe
 		tVehicles.Type.SET(jet.StringExp(jet.Raw("VALUES(`type`)"))),
 	}
 
-	if !tables.ESXCompatEnabled {
+	if !tables.IsESXCompatEnabled() {
 		assignments = append(assignments,
 			tVehicles.Job.SET(jet.StringExp(jet.Raw("VALUES(`job`)"))),
 			tVehicles.Data.SET(jet.StringExp(jet.Raw("VALUES(`data`)"))),
@@ -662,11 +710,14 @@ func (s *Server) handleVehiclesData(ctx context.Context, data *pbsync.SendDataRe
 	return rowsAffected, nil
 }
 
-func (s *Server) handleUserLocations(ctx context.Context, data *pbsync.SendDataRequest_UserLocations) (int64, error) {
+func (s *Server) handleUserLocations(
+	ctx context.Context,
+	data *pbsync.SendDataRequest_UserLocations,
+) (int64, error) {
 	tLocations := table.FivenetCentrumUserLocations
 
 	// Handle clear all
-	if data.UserLocations.ClearAll != nil && *data.UserLocations.ClearAll {
+	if data.UserLocations.ClearAll != nil && data.UserLocations.GetClearAll() {
 		stmt := tLocations.
 			DELETE().
 			WHERE(tLocations.Identifier.IS_NOT_NULL().OR(tLocations.Identifier.IS_NULL()))
@@ -687,20 +738,20 @@ func (s *Server) handleUserLocations(ctx context.Context, data *pbsync.SendDataR
 
 	atLeastOne := false
 	toDelete := []string{}
-	for _, location := range data.UserLocations.Users {
+	for _, location := range data.UserLocations.GetUsers() {
 		// Collect user locations are marked for removal
-		if location.Remove {
-			toDelete = append(toDelete, location.Identifier)
+		if location.GetRemove() {
+			toDelete = append(toDelete, location.GetIdentifier())
 			continue
 		}
 
 		stmt = stmt.
 			VALUES(
-				location.Identifier,
-				location.Job,
-				location.Coords.X,
-				location.Coords.Y,
-				location.Hidden,
+				location.GetIdentifier(),
+				location.GetJob(),
+				location.GetCoords().GetX(),
+				location.GetCoords().GetY(),
+				location.GetHidden(),
 			)
 		atLeastOne = true
 	}
@@ -717,13 +768,20 @@ func (s *Server) handleUserLocations(ctx context.Context, data *pbsync.SendDataR
 	if atLeastOne {
 		res, err := stmt.ExecContext(ctx, s.db)
 		if err != nil {
-			s.logger.Debug("failed to execute user locations insert statement", zap.Any("data", data), zap.Error(err))
+			s.logger.Debug(
+				"failed to execute user locations insert statement",
+				zap.Any("data", data),
+				zap.Error(err),
+			)
 			return 0, fmt.Errorf("failed to execute user locations insert statement. %w", err)
 		}
 
 		rowsAffected, err = res.RowsAffected()
 		if err != nil {
-			return 0, fmt.Errorf("failed to retrieve rows affected for user locations insert. %w", err)
+			return 0, fmt.Errorf(
+				"failed to retrieve rows affected for user locations insert. %w",
+				err,
+			)
 		}
 	}
 
@@ -745,7 +803,10 @@ func (s *Server) handleUserLocations(ctx context.Context, data *pbsync.SendDataR
 		}
 		rows, err := res.RowsAffected()
 		if err != nil {
-			return 0, fmt.Errorf("failed to retrieve rows affected for user locations delete. %w", err)
+			return 0, fmt.Errorf(
+				"failed to retrieve rows affected for user locations delete. %w",
+				err,
+			)
 		}
 		rowsAffected += rows
 	}
@@ -753,9 +814,17 @@ func (s *Server) handleUserLocations(ctx context.Context, data *pbsync.SendDataR
 	return rowsAffected, nil
 }
 
-func (s *Server) handleLastCharId(ctx context.Context, data *pbsync.SendDataRequest_LastCharId) (int64, error) {
-	if data.LastCharId == nil || data.LastCharId.Identifier == "" || data.LastCharId.LastCharId == nil || *data.LastCharId.LastCharId == 0 {
-		return 0, status.Error(codes.InvalidArgument, "LastCharId must contain UserId and CharacterId")
+func (s *Server) handleLastCharId(
+	ctx context.Context,
+	data *pbsync.SendDataRequest_LastCharId,
+) (int64, error) {
+	if data.LastCharId == nil || data.LastCharId.GetIdentifier() == "" ||
+		data.LastCharId.LastCharId == nil ||
+		data.LastCharId.GetLastCharId() == 0 {
+		return 0, status.Error(
+			codes.InvalidArgument,
+			"LastCharId must contain UserId and CharacterId",
+		)
 	}
 
 	tAccounts := table.FivenetAccounts
@@ -765,10 +834,10 @@ func (s *Server) handleLastCharId(ctx context.Context, data *pbsync.SendDataRequ
 			tAccounts.LastChar,
 		).
 		SET(
-			tAccounts.LastChar.SET(jet.Int32(*data.LastCharId.LastCharId)),
+			tAccounts.LastChar.SET(jet.Int32(data.LastCharId.GetLastCharId())),
 		).
 		WHERE(
-			tAccounts.License.EQ(jet.String(data.LastCharId.Identifier)),
+			tAccounts.License.EQ(jet.String(data.LastCharId.GetIdentifier())),
 		).
 		LIMIT(1)
 
@@ -784,17 +853,20 @@ func (s *Server) handleLastCharId(ctx context.Context, data *pbsync.SendDataRequ
 	return rowsAffected, nil
 }
 
-func (s *Server) DeleteData(ctx context.Context, req *pbsync.DeleteDataRequest) (*pbsync.DeleteDataResponse, error) {
+func (s *Server) DeleteData(
+	ctx context.Context,
+	req *pbsync.DeleteDataRequest,
+) (*pbsync.DeleteDataResponse, error) {
 	if s.esxCompat {
 		return nil, ErrSendDataDisabled
 	}
 
 	rowsAffected := int64(0)
 
-	switch d := req.Data.(type) {
+	switch d := req.GetData().(type) {
 	case *pbsync.DeleteDataRequest_Users:
 		userIds := []jet.Expression{}
-		for _, identifier := range d.Users.UserIds {
+		for _, identifier := range d.Users.GetUserIds() {
 			userIds = append(userIds, jet.Int32(identifier))
 		}
 
@@ -803,7 +875,7 @@ func (s *Server) DeleteData(ctx context.Context, req *pbsync.DeleteDataRequest) 
 		delStmt := tUsers.
 			DELETE().
 			WHERE(tUsers.ID.IN(userIds...)).
-			LIMIT(int64(len(d.Users.UserIds)))
+			LIMIT(int64(len(d.Users.GetUserIds())))
 
 		res, err := delStmt.ExecContext(ctx, s.db)
 		if err != nil {
@@ -818,7 +890,7 @@ func (s *Server) DeleteData(ctx context.Context, req *pbsync.DeleteDataRequest) 
 
 	case *pbsync.DeleteDataRequest_Vehicles:
 		plates := []jet.Expression{}
-		for _, plate := range d.Vehicles.Plates {
+		for _, plate := range d.Vehicles.GetPlates() {
 			plates = append(plates, jet.String(plate))
 		}
 
@@ -827,7 +899,7 @@ func (s *Server) DeleteData(ctx context.Context, req *pbsync.DeleteDataRequest) 
 		delStmt := tVehicles.
 			DELETE().
 			WHERE(tVehicles.Plate.IN(plates...)).
-			LIMIT(int64(len(d.Vehicles.Plates)))
+			LIMIT(int64(len(d.Vehicles.GetPlates())))
 
 		res, err := delStmt.ExecContext(ctx, s.db)
 		if err != nil {

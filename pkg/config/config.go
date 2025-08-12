@@ -1,3 +1,4 @@
+//nolint:tagliatelle // To prevent linting issues with the tagliatelle linter (due to, e.g., `URL`, `TTL`).
 package config
 
 import (
@@ -11,9 +12,9 @@ import (
 type Config struct {
 	Mode string `default:"release" yaml:"mode"`
 
-	LogLevel string `default:"DEBUG" enum:"" yaml:"logLevel"`
+	LogLevel string `default:"DEBUG" yaml:"logLevel"          enum:""`
 	// Any empty log level will be set to the `.LogLevel`
-	LogLevelOverrides LogLevelOverrides `yaml:"logLevelOverrides"`
+	LogLevelOverrides LogLevelOverrides `                yaml:"logLevelOverrides"`
 
 	// Secret used to encrypt/decrypt data in, e.g., the database
 	Secret string `yaml:"secret"`
@@ -31,7 +32,7 @@ type Config struct {
 	ImageProxy     ImageProxy     `yaml:"imageProxy"`
 	Audit          Audit          `yaml:"audit"`
 	OAuth2         OAuth2         `yaml:"oauth2"`
-	PostalsFile    string         `default:".output/public/data/postals.json" yaml:"postalsFile"`
+	PostalsFile    string         `yaml:"postalsFile"    default:".output/public/data/postals.json"`
 	Auth           Auth           `yaml:"auth"`
 	DispatchCenter DispatchCenter `yaml:"dispatchCenter"`
 	Discord        Discord        `yaml:"discord"`
@@ -44,7 +45,7 @@ type Config struct {
 
 type LoggingComponent string
 
-var (
+const (
 	LoggingComponentKVStore     LoggingComponent = "kvstore"
 	LoggingComponentCron        LoggingComponent = "cron"
 	LoggingComponentPerms       LoggingComponent = "perms"
@@ -62,24 +63,24 @@ func (l LogLevelOverrides) Get(component LoggingComponent, defaultLevel string) 
 }
 
 type Demo struct {
-	Enabled   bool     `default:"false" yaml:"enabled"`
+	Enabled   bool     `default:"false"  yaml:"enabled"`
 	TargetJob string   `default:"police" yaml:"targetJob"`
-	Users     []string `yaml:"users"`
+	Users     []string `                 yaml:"users"`
 }
 
 type HTTP struct {
 	Listen         string   `default:":8080" yaml:"listen"`
 	AdminListen    string   `default:":7070" yaml:"adminListen"`
-	Sessions       Sessions `yaml:"sessions"`
-	Links          Links    `yaml:"links"`
-	PublicURL      string   `yaml:"publicURL"`
-	Origins        []string `default:"" yaml:"origins"`
-	TrustedProxies []string `yaml:"trustedProxies"`
+	Sessions       Sessions `                yaml:"sessions"`
+	Links          Links    `                yaml:"links"`
+	PublicURL      string   `                yaml:"publicURL"`
+	Origins        []string `default:""      yaml:"origins"`
+	TrustedProxies []string `                yaml:"trustedProxies"`
 }
 
 type Sessions struct {
 	CookieSecret string `yaml:"cookieSecret"`
-	Domain       string `default:"localhost" yaml:"domain"`
+	Domain       string `yaml:"domain"       default:"localhost"`
 }
 
 type Links struct {
@@ -147,9 +148,9 @@ type CustomDB struct {
 
 type NATS struct {
 	URL      string  `default:"nats://localhost:4222" yaml:"url"`
-	Replicas int     `default:"1" yaml:"replicas"`
-	NKey     *string `yaml:"nKey"`
-	Creds    *string `yaml:"creds"`
+	Replicas int     `default:"1"                     yaml:"replicas"`
+	NKey     *string `                                yaml:"nKey"`
+	Creds    *string `                                yaml:"creds"`
 }
 
 type JWT struct {
@@ -166,11 +167,11 @@ const (
 
 type Storage struct {
 	Type       StorageType       `default:"filesystem" yaml:"type"`
-	Filesystem FilesystemStorage `yaml:"filesystem"`
-	S3         S3Storage         `yaml:"s3"`
+	Filesystem FilesystemStorage `                     yaml:"filesystem"`
+	S3         S3Storage         `                     yaml:"s3"`
 
 	MetricsEnabled  bool          `default:"true" yaml:"metricsEnabled"`
-	MetricsInterval time.Duration `default:"15m" yaml:"metricsInterval"`
+	MetricsInterval time.Duration `default:"15m"  yaml:"metricsInterval"`
 }
 
 type FilesystemStorage struct {
@@ -180,20 +181,20 @@ type FilesystemStorage struct {
 
 type S3Storage struct {
 	Endpoint        string `yaml:"endpoint"`
-	Region          string `default:"us-east-1" yaml:"region"`
+	Region          string `yaml:"region"          default:"us-east-1"`
 	AccessKeyID     string `yaml:"accessKeyID"`
 	SecretAccessKey string `yaml:"secretAccessKey"`
-	UseSSL          bool   `default:"true" yaml:"useSSL"`
+	UseSSL          bool   `yaml:"useSSL"          default:"true"`
 	BucketName      string `yaml:"bucketName"`
 	Prefix          string `yaml:"prefix"`
-	Retries         int    `default:"3" yaml:"retries"`
-	CheckOnStartup  bool   `default:"false" yaml:"checkOnStartup"`
+	Retries         int    `yaml:"retries"         default:"3"`
+	CheckOnStartup  bool   `yaml:"checkOnStartup"  default:"false"`
 }
 
 type ImageProxy struct {
-	Enabled     bool              `default:"true" yaml:"enabled"`
+	Enabled     bool              `default:"true"    yaml:"enabled"`
 	CachePrefix string            `default:"images/" yaml:"cachePrefix"`
-	Options     ImageProxyOptions `yaml:"options"`
+	Options     ImageProxyOptions `                  yaml:"options"`
 }
 
 type ImageProxyOptions struct {
@@ -252,21 +253,21 @@ type Auth struct {
 	SuperuserUsers  []string `yaml:"superuserUsers"`
 
 	PermsCacheSize int           `default:"1024" yaml:"permsCacheSize"`
-	PermsCacheTTL  time.Duration `default:"30s" yaml:"permsCacheTTL"`
+	PermsCacheTTL  time.Duration `default:"30s"  yaml:"permsCacheTTL"`
 }
 
 type DispatchCenter struct {
 	Type        string   `default:"gksphone" yaml:"type"`
-	ConvertJobs []string `yaml:"convertJobs"`
+	ConvertJobs []string `                   yaml:"convertJobs"`
 }
 
 type Discord struct {
 	Enabled      bool                `default:"false" yaml:"enabled"`
 	DryRun       bool                `default:"false" yaml:"dryRun"`
-	Token        string              `yaml:"token"`
-	UserInfoSync DiscordUserInfoSync `yaml:"userInfoSync"`
-	GroupSync    DiscordGroupSync    `yaml:"groupSync"`
-	Commands     DiscordCommands     `yaml:"commands"`
+	Token        string              `                yaml:"token"`
+	UserInfoSync DiscordUserInfoSync `                yaml:"userInfoSync"`
+	GroupSync    DiscordGroupSync    `                yaml:"groupSync"`
+	Commands     DiscordCommands     `                yaml:"commands"`
 }
 
 type DiscordPresence struct {
@@ -278,16 +279,16 @@ type DiscordPresence struct {
 }
 
 type DiscordUserInfoSync struct {
-	Enabled             bool   `default:"false" yaml:"enabled"`
+	Enabled             bool   `default:"false"                   yaml:"enabled"`
 	GradeRoleFormat     string `default:"[%grade%] %grade_label%" yaml:"gradeRoleFormat"`
-	EmployeeRoleFormat  string `default:"%s Personal" yaml:"employeeRoleFormat"`
-	UnemployedRoleName  string `default:"Citizen" yaml:"unemployedRoleName"`
-	JobsAbsceneRoleName string `default:"Absent" yaml:"jobsAbsceneRoleName"`
+	EmployeeRoleFormat  string `default:"%s Personal"             yaml:"employeeRoleFormat"`
+	UnemployedRoleName  string `default:"Citizen"                 yaml:"unemployedRoleName"`
+	JobsAbsceneRoleName string `default:"Absent"                  yaml:"jobsAbsceneRoleName"`
 }
 
 type DiscordGroupSync struct {
 	Enabled bool                        `default:"false" yaml:"enabled"`
-	Mapping map[string]DiscordGroupRole `yaml:"omitempty,mapping"`
+	Mapping map[string]DiscordGroupRole `                yaml:"omitempty,mapping"`
 }
 
 type DiscordGroupRole struct {
@@ -302,7 +303,7 @@ type DiscordCommands struct {
 }
 
 type Game struct {
-	StartJobGrade              int32 `default:"0" yaml:"startJobGrade"`
+	StartJobGrade              int32 `default:"0"     yaml:"startJobGrade"`
 	CleanupRolesForMissingJobs bool  `default:"false" yaml:"cleanupRolesForMissingJobs"`
 }
 
@@ -320,19 +321,19 @@ const (
 )
 
 type OTLPConfig struct {
-	Enabled     bool          `default:"false" yaml:"enabled"`
+	Enabled     bool          `default:"false"  yaml:"enabled"`
 	Type        OtelExporter  `default:"stdout" yaml:"type"`
-	URL         string        `yaml:"url"`
-	Insecure    bool          `yaml:"insecure"`
-	Timeout     time.Duration `default:"10s" yaml:"timeout"`
-	Environment string        `default:"dev" yaml:"environment"`
-	Ratio       float64       `default:"0.1" yaml:"ratio"`
-	Attributes  []string      `yaml:"attributes"`
+	URL         string        `                 yaml:"url"`
+	Insecure    bool          `                 yaml:"insecure"`
+	Timeout     time.Duration `default:"10s"    yaml:"timeout"`
+	Environment string        `default:"dev"    yaml:"environment"`
+	Ratio       float64       `default:"0.1"    yaml:"ratio"`
+	Attributes  []string      `                 yaml:"attributes"`
 	// Headers to send with OTLP HTTP requests
-	Headers map[string]string `yaml:"headers,omitempty"`
+	Headers map[string]string `                 yaml:"headers,omitempty"`
 	// Compression type for OTLP HTTP requests
-	Compression string             `default:"none" yaml:"compression"`
-	Frontend    OTLPFrontendConfig `yaml:"frontend"`
+	Compression string             `default:"none"   yaml:"compression"`
+	Frontend    OTLPFrontendConfig `                 yaml:"frontend"`
 }
 
 type OTLPFrontendConfig struct {
@@ -343,16 +344,16 @@ type OTLPFrontendConfig struct {
 
 type UpdateCheck struct {
 	Enabled  bool          `default:"true" yaml:"enabled"`
-	Interval time.Duration `default:"6h" yaml:"interval"`
+	Interval time.Duration `default:"6h"   yaml:"interval"`
 }
 
 type Icons struct {
 	// If true, the Iconify API is enabled and will be served from the backend to serve icons.
-	Enabled bool `default:"true" yaml:"enabled"`
+	Enabled bool `default:"true"                       yaml:"enabled"`
 	// If true, the backend server will act as a proxy for the Iconify API (URL specified via `APIURL` setting).
-	Proxy bool `default:"false" yaml:"proxy"`
+	Proxy bool `default:"false"                      yaml:"proxy"`
 	// If you are using the proxy mode, make sure to support the Iconify project: https://iconify.design/sponsors/
 	APIURL string `default:"https://api.iconify.design" yaml:"apiUrl"`
 	// Path to the directory containing icon sets (used when proxy is disabled; this path works with the official FiveNet container images).
-	Path string `default:"./icons" yaml:"path"`
+	Path string `default:"./icons"                    yaml:"path"`
 }

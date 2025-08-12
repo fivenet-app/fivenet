@@ -24,10 +24,13 @@ import (
 
 var tJobProps = table.FivenetJobProps
 
-func (s *Server) GetJobProps(ctx context.Context, req *pbsettings.GetJobPropsRequest) (*pbsettings.GetJobPropsResponse, error) {
+func (s *Server) GetJobProps(
+	ctx context.Context,
+	req *pbsettings.GetJobPropsRequest,
+) (*pbsettings.GetJobPropsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	jobProps, err := s.getJobProps(ctx, userInfo.Job)
+	jobProps, err := s.getJobProps(ctx, userInfo.GetJob())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrInvalidRequest)
 	}
@@ -48,26 +51,29 @@ func (s *Server) getJobProps(ctx context.Context, job string) (*jobs.JobProps, e
 	return props, nil
 }
 
-func (s *Server) SetJobProps(ctx context.Context, req *pbsettings.SetJobPropsRequest) (*pbsettings.SetJobPropsResponse, error) {
+func (s *Server) SetJobProps(
+	ctx context.Context,
+	req *pbsettings.SetJobPropsRequest,
+) (*pbsettings.SetJobPropsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
 		Method:  "SetJobProps",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	jobProps, err := s.getJobProps(ctx, userInfo.Job)
+	jobProps, err := s.getJobProps(ctx, userInfo.GetJob())
 	if err != nil {
 		return nil, err
 	}
 
 	// Ensure that the job is the user's job
-	req.JobProps.Job = userInfo.Job
-	req.JobProps.LivemapMarkerColor = strings.ToLower(req.JobProps.LivemapMarkerColor)
+	req.JobProps.Job = userInfo.GetJob()
+	req.JobProps.LivemapMarkerColor = strings.ToLower(req.GetJobProps().GetLivemapMarkerColor())
 
 	stmt := tJobProps.
 		INSERT(
@@ -80,16 +86,16 @@ func (s *Server) SetJobProps(ctx context.Context, req *pbsettings.SetJobPropsReq
 			tJobProps.Settings,
 		).
 		VALUES(
-			req.JobProps.Job,
-			req.JobProps.LivemapMarkerColor,
-			req.JobProps.RadioFrequency,
-			req.JobProps.QuickButtons,
-			req.JobProps.DiscordGuildId,
-			req.JobProps.DiscordSyncSettings,
-			req.JobProps.Settings,
+			req.GetJobProps().GetJob(),
+			req.GetJobProps().GetLivemapMarkerColor(),
+			req.GetJobProps().GetRadioFrequency(),
+			req.GetJobProps().GetQuickButtons(),
+			req.GetJobProps().GetDiscordGuildId(),
+			req.GetJobProps().GetDiscordSyncSettings(),
+			req.GetJobProps().GetSettings(),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tJobProps.LivemapMarkerColor.SET(jet.String(req.JobProps.LivemapMarkerColor)),
+			tJobProps.LivemapMarkerColor.SET(jet.String(req.GetJobProps().GetLivemapMarkerColor())),
 			tJobProps.RadioFrequency.SET(jet.StringExp(jet.Raw("VALUES(`radio_frequency`)"))),
 			tJobProps.QuickButtons.SET(jet.StringExp(jet.Raw("VALUES(`quick_buttons`)"))),
 			tJobProps.DiscordGuildID.SET(jet.StringExp(jet.Raw("VALUES(`discord_guild_id`)"))),
@@ -103,14 +109,14 @@ func (s *Server) SetJobProps(ctx context.Context, req *pbsettings.SetJobPropsReq
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
-	newJobProps, err := s.getJobProps(ctx, userInfo.Job)
+	newJobProps, err := s.getJobProps(ctx, userInfo.GetJob())
 	if err != nil {
 		return nil, err
 	}
 
-	if !proto.Equal(req.JobProps, jobProps) {
+	if !proto.Equal(req.GetJobProps(), jobProps) {
 		if _, err := s.js.PublishAsyncProto(ctx,
-			fmt.Sprintf("%s.%s.%s", notifi.BaseSubject, notifi.JobTopic, userInfo.Job),
+			fmt.Sprintf("%s.%s.%s", notifi.BaseSubject, notifi.JobTopic, userInfo.GetJob()),
 			&notifications.JobEvent{
 				Data: &notifications.JobEvent_JobProps{
 					JobProps: newJobProps,
@@ -125,7 +131,9 @@ func (s *Server) SetJobProps(ctx context.Context, req *pbsettings.SetJobPropsReq
 	}, nil
 }
 
-func (s *Server) UploadJobLogo(srv grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error {
+func (s *Server) UploadJobLogo(
+	srv grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse],
+) error {
 	ctx := srv.Context()
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -133,19 +141,19 @@ func (s *Server) UploadJobLogo(srv grpc.ClientStreamingServer[file.UploadFileReq
 	auditEntry := &audit.AuditEntry{
 		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
 		Method:  "UploadJobLogo",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, nil)
 
-	props, err := s.getJobProps(ctx, userInfo.Job)
+	props, err := s.getJobProps(ctx, userInfo.GetJob())
 	if err != nil {
 		return errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	if props.LogoFileId != nil && *props.LogoFileId > 0 {
-		if err := s.jobPropsFileHandler.Delete(ctx, userInfo.Job, *props.LogoFileId); err != nil {
+	if props.LogoFileId != nil && props.GetLogoFileId() > 0 {
+		if err := s.jobPropsFileHandler.Delete(ctx, userInfo.GetJob(), props.GetLogoFileId()); err != nil {
 			return errswrap.NewError(err, errorssettings.ErrFailedQuery)
 		}
 	}
@@ -157,21 +165,28 @@ func (s *Server) UploadJobLogo(srv grpc.ClientStreamingServer[file.UploadFileReq
 
 	name := filepath.Base(meta.GetOriginalName())
 	ext := filepath.Ext(name)
-	key := fmt.Sprintf("joblogos/%s%s", userInfo.Job, ext)
+	key := fmt.Sprintf("joblogos/%s%s", userInfo.GetJob(), ext)
 
-	resp, err := s.jobPropsFileHandler.UploadFile(ctx, userInfo.Job, key, meta.GetSize(), meta.GetContentType(), srv)
+	resp, err := s.jobPropsFileHandler.UploadFile(
+		ctx,
+		userInfo.GetJob(),
+		key,
+		meta.GetSize(),
+		meta.GetContentType(),
+		srv,
+	)
 	if err != nil {
 		return err
 	}
 
-	if resp.Id != *props.LogoFileId {
-		newJobProps, err := s.getJobProps(ctx, userInfo.Job)
+	if resp.GetId() != props.GetLogoFileId() {
+		newJobProps, err := s.getJobProps(ctx, userInfo.GetJob())
 		if err != nil {
 			return errswrap.NewError(err, errorssettings.ErrFailedQuery)
 		}
 
 		if _, err := s.js.PublishAsyncProto(ctx,
-			fmt.Sprintf("%s.%s.%s", notifi.BaseSubject, notifi.JobTopic, userInfo.Job),
+			fmt.Sprintf("%s.%s.%s", notifi.BaseSubject, notifi.JobTopic, userInfo.GetJob()),
 			&notifications.JobEvent{
 				Data: &notifications.JobEvent_JobProps{
 					JobProps: newJobProps,
@@ -186,38 +201,41 @@ func (s *Server) UploadJobLogo(srv grpc.ClientStreamingServer[file.UploadFileReq
 	return nil
 }
 
-func (s *Server) DeleteJobLogo(ctx context.Context, req *pbsettings.DeleteJobLogoRequest) (*pbsettings.DeleteJobLogoResponse, error) {
+func (s *Server) DeleteJobLogo(
+	ctx context.Context,
+	req *pbsettings.DeleteJobLogoRequest,
+) (*pbsettings.DeleteJobLogoResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
 		Method:  "DeleteJobLogo",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, nil)
 
-	props, err := s.getJobProps(ctx, userInfo.Job)
+	props, err := s.getJobProps(ctx, userInfo.GetJob())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	if props.LogoFileId == nil || *props.LogoFileId == 0 {
+	if props.LogoFileId == nil || props.GetLogoFileId() == 0 {
 		return &pbsettings.DeleteJobLogoResponse{}, nil
 	}
 
-	if err := s.jobPropsFileHandler.Delete(ctx, userInfo.Job, *props.LogoFileId); err != nil {
+	if err := s.jobPropsFileHandler.Delete(ctx, userInfo.GetJob(), props.GetLogoFileId()); err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	newJobProps, err := s.getJobProps(ctx, userInfo.Job)
+	newJobProps, err := s.getJobProps(ctx, userInfo.GetJob())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
 	if _, err := s.js.PublishAsyncProto(ctx,
-		fmt.Sprintf("%s.%s.%s", notifi.BaseSubject, notifi.JobTopic, userInfo.Job),
+		fmt.Sprintf("%s.%s.%s", notifi.BaseSubject, notifi.JobTopic, userInfo.GetJob()),
 		&notifications.JobEvent{
 			Data: &notifications.JobEvent_JobProps{
 				JobProps: newJobProps,

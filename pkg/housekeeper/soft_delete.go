@@ -71,7 +71,12 @@ func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCr
 
 	rowsAffected, err := h.SoftDeleteJobData(ctx, tbl, jobName)
 	if err != nil {
-		return fmt.Errorf("failed to soft delete rows for table %s (job: %s). %w", tbl.Table.TableName(), jobName, err)
+		return fmt.Errorf(
+			"failed to soft delete rows for table %s (job: %s). %w",
+			tbl.Table.TableName(),
+			jobName,
+			err,
+		)
 	}
 
 	metricSoftDeleteAffectedRows.Set(float64(rowsAffected))
@@ -108,8 +113,16 @@ func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCr
 
 // SoftDeleteJobData marks rows as deleted in the main table and its dependant tables
 // by setting the DeletedAt column to the current timestamp for the given job.
-func (h *Housekeeper) SoftDeleteJobData(ctx context.Context, table *Table, jobName string) (int64, error) {
-	h.logger.Debug("starting soft delete", zap.String("table", table.Table.TableName()), zap.String("job", jobName))
+func (h *Housekeeper) SoftDeleteJobData(
+	ctx context.Context,
+	table *Table,
+	jobName string,
+) (int64, error) {
+	h.logger.Debug(
+		"starting soft delete",
+		zap.String("table", table.Table.TableName()),
+		zap.String("job", jobName),
+	)
 
 	rowsAffected := int64(0)
 
@@ -117,7 +130,11 @@ func (h *Housekeeper) SoftDeleteJobData(ctx context.Context, table *Table, jobNa
 		// Mark rows as deleted in the current table for the given job
 		r, err := h.markRowsAsDeletedInJob(ctx, table, jobName)
 		if err != nil {
-			return rowsAffected, fmt.Errorf("failed to soft delete rows from main table %s. %w", table.Table.TableName(), err)
+			return rowsAffected, fmt.Errorf(
+				"failed to soft delete rows from main table %s. %w",
+				table.Table.TableName(),
+				err,
+			)
 		}
 		rowsAffected += r
 	}
@@ -130,24 +147,42 @@ func (h *Housekeeper) SoftDeleteJobData(ctx context.Context, table *Table, jobNa
 
 		r, err := h.softDeleteJobData(ctx, table, dep, jobName)
 		if err != nil {
-			return rowsAffected, fmt.Errorf("failed to soft delete rows from dependant table %s. %w", dep.Table.TableName(), err)
+			return rowsAffected, fmt.Errorf(
+				"failed to soft delete rows from dependant table %s. %w",
+				dep.Table.TableName(),
+				err,
+			)
 		}
 		rowsAffected += r
 	}
 
-	h.logger.Debug("soft delete completed", zap.String("table", table.Table.TableName()), zap.String("job", jobName), zap.Int64("rows", rowsAffected))
+	h.logger.Debug(
+		"soft delete completed",
+		zap.String("table", table.Table.TableName()),
+		zap.String("job", jobName),
+		zap.Int64("rows", rowsAffected),
+	)
 	return rowsAffected, nil
 }
 
 // softDeleteJobData recursively marks rows as deleted in dependant tables for the given job.
-func (h *Housekeeper) softDeleteJobData(ctx context.Context, parent *Table, table *Table, jobName string) (int64, error) {
+func (h *Housekeeper) softDeleteJobData(
+	ctx context.Context,
+	parent *Table,
+	table *Table,
+	jobName string,
+) (int64, error) {
 	rowsAffected := int64(0)
 
 	if table.DeletedAtColumn != nil && parent.JobColumn != nil {
 		// Mark rows as deleted in the current table for the given job
 		r, err := h.markRowsAsDeleted(ctx, parent, table, jobName)
 		if err != nil {
-			return rowsAffected, fmt.Errorf("failed to soft delete rows from dependant table %s. %w", parent.Table.TableName(), err)
+			return rowsAffected, fmt.Errorf(
+				"failed to soft delete rows from dependant table %s. %w",
+				parent.Table.TableName(),
+				err,
+			)
 		}
 		rowsAffected += r
 	}
@@ -160,7 +195,11 @@ func (h *Housekeeper) softDeleteJobData(ctx context.Context, parent *Table, tabl
 
 		r, err := h.markRowsAsDeleted(ctx, table, child, jobName)
 		if err != nil {
-			return rowsAffected, fmt.Errorf("failed to soft delete dependant rows from dependant table %s. %w", child.Table.TableName(), err)
+			return rowsAffected, fmt.Errorf(
+				"failed to soft delete dependant rows from dependant table %s. %w",
+				child.Table.TableName(),
+				err,
+			)
 		}
 		rowsAffected += r
 	}
@@ -170,7 +209,11 @@ func (h *Housekeeper) softDeleteJobData(ctx context.Context, parent *Table, tabl
 
 // markRowsAsDeletedInJob sets the DeletedAt column to the current timestamp for all rows in the table
 // matching the given job name and not already deleted.
-func (h *Housekeeper) markRowsAsDeletedInJob(ctx context.Context, table *Table, jobName string) (rowsAffected int64, err error) {
+func (h *Housekeeper) markRowsAsDeletedInJob(
+	ctx context.Context,
+	table *Table,
+	jobName string,
+) (int64, error) {
 	condition := jet.AND(
 		table.JobColumn.EQ(jet.String(jobName)),
 		table.DeletedAtColumn.IS_NULL(),
@@ -184,6 +227,7 @@ func (h *Housekeeper) markRowsAsDeletedInJob(ctx context.Context, table *Table, 
 		WHERE(condition).
 		LIMIT(DefaultDeleteLimit)
 
+	var rowsAffected int64
 	if !h.dryRun {
 		res, err := stmt.ExecContext(ctx, h.db)
 		if err != nil {
@@ -198,13 +242,22 @@ func (h *Housekeeper) markRowsAsDeletedInJob(ctx context.Context, table *Table, 
 		h.logger.Debug("dry run markRowsAsDeleted statement", zap.String("query", stmt.DebugSql()))
 	}
 
-	h.logger.Debug("soft deleted rows", zap.String("table", table.Table.TableName()), zap.Int64("rows", rowsAffected))
+	h.logger.Debug(
+		"soft deleted rows",
+		zap.String("table", table.Table.TableName()),
+		zap.Int64("rows", rowsAffected),
+	)
 	return rowsAffected, nil
 }
 
 // markRowsAsDeleted sets the DeletedAt column to the current timestamp for all rows in the table
 // matching the given job name and not already deleted, filtered by parent table.
-func (h *Housekeeper) markRowsAsDeleted(ctx context.Context, parentTable *Table, table *Table, jobName string) (rowsAffected int64, err error) {
+func (h *Housekeeper) markRowsAsDeleted(
+	ctx context.Context,
+	parentTable *Table,
+	table *Table,
+	jobName string,
+) (int64, error) {
 	var condition jet.BoolExpression
 	if table.JobColumn != nil {
 		condition = table.JobColumn.EQ(jet.String(jobName))
@@ -232,6 +285,7 @@ func (h *Housekeeper) markRowsAsDeleted(ctx context.Context, parentTable *Table,
 		WHERE(condition).
 		LIMIT(DefaultDeleteLimit)
 
+	var rowsAffected int64
 	if !h.dryRun {
 		res, err := stmt.ExecContext(ctx, h.db)
 		if err != nil {
@@ -246,6 +300,10 @@ func (h *Housekeeper) markRowsAsDeleted(ctx context.Context, parentTable *Table,
 		h.logger.Debug("dry run markRowsAsDeleted statement", zap.String("query", stmt.DebugSql()))
 	}
 
-	h.logger.Debug("soft deleted rows", zap.String("table", table.Table.TableName()), zap.Int64("rows", rowsAffected))
+	h.logger.Debug(
+		"soft deleted rows",
+		zap.String("table", table.Table.TableName()),
+		zap.Int64("rows", rowsAffected),
+	)
 	return rowsAffected, nil
 }

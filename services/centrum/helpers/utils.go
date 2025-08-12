@@ -2,19 +2,10 @@ package helpers
 
 import (
 	"context"
-	"database/sql"
 	"errors"
-	"sync"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
-	"github.com/fivenet-app/fivenet/v2025/pkg/coords"
-	"github.com/fivenet-app/fivenet/v2025/pkg/coords/postals"
-	"github.com/fivenet-app/fivenet/v2025/pkg/events"
-	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
-	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatchers"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/settings"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/units"
@@ -26,21 +17,9 @@ import (
 type Helpers struct {
 	logger *zap.Logger
 
-	db       *sql.DB
-	js       *events.JSWrapper
-	enricher *mstlystcdata.Enricher
-	tracker  tracker.ITracker
-	postals  postals.Postals
-	appCfg   appconfig.IConfig
-
 	settings    *settings.SettingsDB
 	dispatchers *dispatchers.DispatchersDB
 	units       *units.UnitDB
-
-	dispatchLocationsMutex *sync.Mutex
-	dispatchLocations      map[string]*coords.Coords[*centrum.Dispatch]
-
-	store *store.Store[centrum.Dispatch, *centrum.Dispatch]
 }
 
 type Params struct {
@@ -74,11 +53,11 @@ func (s *Helpers) CheckIfBotNeeded(ctx context.Context, job string) bool {
 	}
 
 	// If centrum is disabled, why bother with the bot
-	if !settings.Enabled {
+	if !settings.GetEnabled() {
 		return false
 	}
 
-	if settings.Mode == centrum.CentrumMode_CENTRUM_MODE_AUTO_ROUND_ROBIN {
+	if settings.GetMode() == centrum.CentrumMode_CENTRUM_MODE_AUTO_ROUND_ROBIN {
 		return true
 	}
 
@@ -88,7 +67,7 @@ func (s *Helpers) CheckIfBotNeeded(ctx context.Context, job string) bool {
 	}
 
 	if dispatchers.IsEmpty() {
-		if settings.FallbackMode == centrum.CentrumMode_CENTRUM_MODE_AUTO_ROUND_ROBIN {
+		if settings.GetFallbackMode() == centrum.CentrumMode_CENTRUM_MODE_AUTO_ROUND_ROBIN {
 			return true
 		}
 	}
@@ -105,8 +84,8 @@ func (s *Helpers) CheckIfUserIsDispatcher(ctx context.Context, job string, userI
 	if dispatchers.IsEmpty() {
 		return false
 	}
-	for i := range dispatchers.Dispatchers {
-		if userId == dispatchers.Dispatchers[i].UserId {
+	for i := range dispatchers.GetDispatchers() {
+		if userId == dispatchers.GetDispatchers()[i].GetUserId() {
 			return true
 		}
 	}
@@ -114,20 +93,31 @@ func (s *Helpers) CheckIfUserIsDispatcher(ctx context.Context, job string, userI
 	return false
 }
 
-func (s *Helpers) CheckIfUserIsPartOfDispatch(ctx context.Context, userInfo *userinfo.UserInfo, dsp *centrum.Dispatch, dispatcherOkay bool) bool {
+func (s *Helpers) CheckIfUserIsPartOfDispatch(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	dsp *centrum.Dispatch,
+	dispatcherOkay bool,
+) bool {
 	// Check if user is a dispatcher
-	if dispatcherOkay && s.CheckIfUserIsDispatcher(ctx, userInfo.Job, userInfo.UserId) {
+	if dispatcherOkay && s.CheckIfUserIsDispatcher(ctx, userInfo.GetJob(), userInfo.GetUserId()) {
 		return true
 	}
 
 	// Iterate over units of dispatch and check if the user is in one of the units
-	for i := range dsp.Units {
-		unit, err := s.units.Get(ctx, dsp.Units[i].UnitId)
+	for i := range dsp.GetUnits() {
+		unit, err := s.units.Get(ctx, dsp.GetUnits()[i].GetUnitId())
 		if unit == nil || err != nil {
 			continue
 		}
 
-		if s.CheckIfUserPartOfUnit(ctx, userInfo.Job, userInfo.UserId, unit, dispatcherOkay) {
+		if s.CheckIfUserPartOfUnit(
+			ctx,
+			userInfo.GetJob(),
+			userInfo.GetUserId(),
+			unit,
+			dispatcherOkay,
+		) {
 			return true
 		}
 	}
@@ -135,14 +125,21 @@ func (s *Helpers) CheckIfUserIsPartOfDispatch(ctx context.Context, userInfo *use
 	return false
 }
 
-func (s *Helpers) CheckIfUserPartOfUnit(ctx context.Context, job string, userId int32, unit *centrum.Unit, dispatcherOkay bool) bool {
+func (s *Helpers) CheckIfUserPartOfUnit(
+	ctx context.Context,
+	job string,
+	userId int32,
+	unit *centrum.Unit,
+	dispatcherOkay bool,
+) bool {
 	// Check if user is a dispatcher
 	if dispatcherOkay && s.CheckIfUserIsDispatcher(ctx, job, userId) {
 		return true
 	}
 
-	for i := range unit.Users {
-		if (unit.Users[i].User != nil && unit.Users[i].User.UserId == userId) || unit.Users[i].UserId == userId {
+	for i := range unit.GetUsers() {
+		if (unit.GetUsers()[i].GetUser() != nil && unit.GetUsers()[i].GetUser().GetUserId() == userId) ||
+			unit.GetUsers()[i].GetUserId() == userId {
 			return true
 		}
 	}

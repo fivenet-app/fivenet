@@ -49,7 +49,12 @@ func (a *Users[U, T, AccessLevel]) GetEntry(ctx context.Context, tx qrm.DB, id u
 }
 
 // CreateEntry inserts a new user access entry for a given targetId and entry.
-func (a *Users[U, T, AccessLevel]) CreateEntry(ctx context.Context, tx qrm.DB, targetId uint64, entry T) error {
+func (a *Users[U, T, AccessLevel]) CreateEntry(
+	ctx context.Context,
+	tx qrm.DB,
+	targetId uint64,
+	entry T,
+) error {
 	stmt := a.table.
 		INSERT(
 			a.columns.TargetID,
@@ -70,7 +75,12 @@ func (a *Users[U, T, AccessLevel]) CreateEntry(ctx context.Context, tx qrm.DB, t
 }
 
 // UpdateEntry updates an existing user access entry for a given targetId and entry.
-func (a *Users[U, T, AccessLevel]) UpdateEntry(ctx context.Context, tx qrm.DB, targetId uint64, entry T) error {
+func (a *Users[U, T, AccessLevel]) UpdateEntry(
+	ctx context.Context,
+	tx qrm.DB,
+	targetId uint64,
+	entry T,
+) error {
 	stmt := a.table.
 		UPDATE(
 			a.columns.Access,
@@ -93,7 +103,12 @@ func (a *Users[U, T, AccessLevel]) UpdateEntry(ctx context.Context, tx qrm.DB, t
 }
 
 // DeleteEntry deletes a user access entry by its ID and targetId.
-func (a *Users[U, T, AccessLevel]) DeleteEntry(ctx context.Context, tx qrm.DB, targetId uint64, id uint64) error {
+func (a *Users[U, T, AccessLevel]) DeleteEntry(
+	ctx context.Context,
+	tx qrm.DB,
+	targetId uint64,
+	id uint64,
+) error {
 	stmt := a.table.
 		DELETE().
 		WHERE(jet.AND(
@@ -112,7 +127,12 @@ func (a *Users[U, T, AccessLevel]) DeleteEntry(ctx context.Context, tx qrm.DB, t
 }
 
 // DeleteEntryWithCondition deletes a user access entry matching a custom condition and targetId.
-func (a *Users[U, T, AccessLevel]) DeleteEntryWithCondition(ctx context.Context, tx qrm.DB, condition jet.BoolExpression, targetId uint64) error {
+func (a *Users[U, T, AccessLevel]) DeleteEntryWithCondition(
+	ctx context.Context,
+	tx qrm.DB,
+	condition jet.BoolExpression,
+	targetId uint64,
+) error {
 	stmt := a.table.
 		DELETE().
 		WHERE(jet.AND(

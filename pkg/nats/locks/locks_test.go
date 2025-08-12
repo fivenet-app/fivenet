@@ -16,7 +16,11 @@ import (
 	"go.uber.org/zap"
 )
 
-func getNatsClient(t *testing.T, ctx context.Context, js jetstream.JetStream, bucket string) *Locks {
+func getNatsClient(
+	ctx context.Context,
+	js jetstream.JetStream,
+	bucket string,
+) (*Locks, error) {
 	lBucket := fmt.Sprintf("%s_locks", bucket)
 	kv, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
 		Bucket:         lBucket,
@@ -27,11 +31,11 @@ func getNatsClient(t *testing.T, ctx context.Context, js jetstream.JetStream, bu
 		LimitMarkerTTL: 3 * time.Minute, // Set a limit marker TTL to avoid stale locks
 	})
 	if err != nil {
-		require.NoError(t, err)
+		return nil, err
 	}
 
 	n := NewWithKV(zap.NewNop(), kv, bucket, 6*time.Second)
-	return n
+	return n, nil
 }
 
 func TestNats_LockUnlock(t *testing.T) {
@@ -39,11 +43,12 @@ func TestNats_LockUnlock(t *testing.T) {
 	js := natsServer.GetJS()
 
 	ctx := t.Context()
-	n := getNatsClient(t, ctx, js, "basic")
+	n, err := getNatsClient(ctx, js, "basic")
+	require.NoError(t, err)
 
 	lockKey := path.Join("acme", "example.com", "sites", "example.com")
 
-	err := n.Lock(ctx, lockKey)
+	err = n.Lock(ctx, lockKey)
 	if err != nil {
 		t.Errorf("Unlock() error = %v", err)
 	}
@@ -61,11 +66,14 @@ func TestNats_MultipleLocks(t *testing.T) {
 	lockKey := path.Join("acme", "example.com", "sites", "example.com")
 
 	ctx := t.Context()
-	n1 := getNatsClient(t, ctx, js, "basic")
-	n2 := getNatsClient(t, ctx, js, "basic")
-	n3 := getNatsClient(t, ctx, js, "basic")
+	n1, err := getNatsClient(ctx, js, "basic")
+	require.NoError(t, err)
+	n2, err := getNatsClient(ctx, js, "basic")
+	require.NoError(t, err)
+	n3, err := getNatsClient(ctx, js, "basic")
+	require.NoError(t, err)
 
-	err := n1.Lock(ctx, lockKey)
+	err = n1.Lock(ctx, lockKey)
 	if err != nil {
 		t.Errorf("Lock() error = %v", err)
 	}
@@ -97,10 +105,11 @@ func TestNats_MultipleLocks(t *testing.T) {
 		go func(i int) {
 			defer wg.Done()
 			<-time.After(time.Duration(200+rand.Float64()*(2000-200+1)) * time.Millisecond)
-			n := getNatsClient(t, ctx, js, "basic")
+			n, err := getNatsClient(ctx, js, "basic")
+			require.NoError(t, err)
 			connName := fmt.Sprintf("nats-%d", i)
 
-			err := n.Lock(ctx, lockKey)
+			err = n.Lock(ctx, lockKey)
 			if err != nil {
 				t.Errorf("Lock() %s error = %v: %d", connName, err, n.getRev("LOCK."+lockKey))
 			}

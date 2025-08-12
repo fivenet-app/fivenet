@@ -9,7 +9,7 @@ func (x *PageJobAccess) SetJobLabel(label string) {
 }
 
 func (x *PageJobAccess) GetJobGrade() int32 {
-	return x.MinimumGrade
+	return x.GetMinimumGrade()
 }
 
 func (x *PageJobAccess) SetJobGrade(grade int32) {

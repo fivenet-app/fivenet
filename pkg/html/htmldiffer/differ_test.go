@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestFancyDiff(t *testing.T) {
@@ -50,9 +51,9 @@ func TestFancyDiff(t *testing.T) {
 	} {
 		out, err := differ.FancyDiff(run.old, run.new)
 		if run.error {
-			assert.Error(t, err)
+			require.Error(t, err)
 		} else {
-			assert.NoError(t, err)
+			require.NoError(t, err)
 		}
 		assert.Equal(t, run.result, out, run.msg)
 	}

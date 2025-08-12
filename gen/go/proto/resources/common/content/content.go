@@ -3,6 +3,7 @@ package content
 import (
 	"bytes"
 	"database/sql/driver"
+	"errors"
 	"fmt"
 	"slices"
 	"strings"
@@ -72,7 +73,7 @@ func (x *Content) Scan(value any) error {
 		x.RawContent = &hRaw
 
 	default:
-		return fmt.Errorf("invalid format for content")
+		return errors.New("invalid format for content")
 	}
 
 	return nil
@@ -85,8 +86,8 @@ func (x *Content) Value() (driver.Value, error) {
 	}
 
 	// If the raw content isn't nil, need to "encode" it to `JSONNode` for the `Content` field
-	if x.RawContent != nil && *x.RawContent != "" {
-		h, err := ParseHTML(*x.RawContent)
+	if x.RawContent != nil && x.GetRawContent() != "" {
+		h, err := ParseHTML(x.GetRawContent())
 		if err != nil {
 			return nil, err
 		}
@@ -97,14 +98,14 @@ func (x *Content) Value() (driver.Value, error) {
 		}
 	}
 
-	return protoutils.MarshalToPJSON(&Content{
+	return protoutils.MarshalToJSON(&Content{
 		Version: x.Version,
-		Content: x.Content,
+		Content: x.GetContent(),
 	})
 }
 
 func (x *Content) Populate() error {
-	out, err := x.Content.ToHTMLP()
+	out, err := x.GetContent().ToHTMLP()
 	if err != nil {
 		return err
 	}
@@ -128,7 +129,7 @@ func (n *JSONNode) populateFrom(htmlNode *html.Node) error {
 	case html.DocumentNode:
 
 	default:
-		return fmt.Errorf("given node needs to be an element or document")
+		return errors.New("given node needs to be an element or document")
 	}
 
 	if len(htmlNode.Attr) > 0 {
@@ -205,14 +206,14 @@ func (n *JSONNode) populateFrom(htmlNode *html.Node) error {
 		e = e.NextSibling
 	}
 
-	if len(n.Tag) == 2 && utils.IsHeaderTag(n.Tag) {
+	if len(n.GetTag()) == 2 && utils.IsHeaderTag(n.GetTag()) {
 		// Either empty id or "broken" id tag
-		if n.Id == nil || *n.Id == "" || utils.IsHeaderTag(*n.Id) {
-			if n.Text != nil && *n.Text != "" {
-				id := utils.SlugNoDots(fmt.Sprintf("%s-%s", n.Tag, *n.Text))
+		if n.Id == nil || n.GetId() == "" || utils.IsHeaderTag(n.GetId()) {
+			if n.Text != nil && n.GetText() != "" {
+				id := utils.SlugNoDots(fmt.Sprintf("%s-%s", n.GetTag(), n.GetText()))
 				n.Id = &id
-			} else if len(n.Content) > 0 {
-				id := utils.SlugNoDots(fmt.Sprintf("%s-%s", n.Tag, walkContentForText(n.Content)))
+			} else if len(n.GetContent()) > 0 {
+				id := utils.SlugNoDots(fmt.Sprintf("%s-%s", n.GetTag(), walkContentForText(n.GetContent())))
 				n.Id = &id
 			}
 		}
@@ -225,10 +226,10 @@ func walkContentForText(ns []*JSONNode) string {
 	text := ""
 	for i := range ns {
 		element := ns[i]
-		if element.Text == nil || *element.Text == "" {
-			text += walkContentForText(element.Content)
+		if element.Text == nil || element.GetText() == "" {
+			text += walkContentForText(element.GetContent())
 		} else {
-			text += *element.Text
+			text += element.GetText()
 			break
 		}
 	}
@@ -237,23 +238,23 @@ func walkContentForText(ns []*JSONNode) string {
 }
 
 func (n *JSONNode) populateTo(htmlNode *html.Node) {
-	if n.Tag != "" {
-		htmlNode.Data = n.Tag
+	if n.GetTag() != "" {
+		htmlNode.Data = n.GetTag()
 		htmlNode.Type = html.ElementNode
 	} else {
 		htmlNode.Type = html.DocumentNode
 	}
 
-	if n.Id != nil && *n.Id != "" {
+	if n.Id != nil && n.GetId() != "" {
 		// Make sure that headers have id
-		if len(n.Tag) == 2 && utils.IsHeaderTag(n.Tag) {
+		if len(n.GetTag()) == 2 && utils.IsHeaderTag(n.GetTag()) {
 			// Either empty id or "broken" id tag
-			if *n.Id == "" || utils.IsHeaderTag(*n.Id) {
-				if n.Text != nil && *n.Text != "" {
-					id := utils.SlugNoDots(fmt.Sprintf("%s-%s", n.Tag, *n.Text))
+			if n.GetId() == "" || utils.IsHeaderTag(n.GetId()) {
+				if n.Text != nil && n.GetText() != "" {
+					id := utils.SlugNoDots(fmt.Sprintf("%s-%s", n.GetTag(), n.GetText()))
 					n.Id = &id
-				} else if len(n.Content) > 0 {
-					id := utils.SlugNoDots(fmt.Sprintf("%s-%s", n.Tag, walkContentForText(n.Content)))
+				} else if len(n.GetContent()) > 0 {
+					id := utils.SlugNoDots(fmt.Sprintf("%s-%s", n.GetTag(), walkContentForText(n.GetContent())))
 					n.Id = &id
 				}
 			}
@@ -261,30 +262,30 @@ func (n *JSONNode) populateTo(htmlNode *html.Node) {
 
 		htmlNode.Attr = append(htmlNode.Attr, html.Attribute{
 			Key: "id",
-			Val: *n.Id,
+			Val: n.GetId(),
 		})
 	}
 
-	keys := make([]string, 0, len(n.Attrs))
-	for k := range n.Attrs {
+	keys := make([]string, 0, len(n.GetAttrs()))
+	for k := range n.GetAttrs() {
 		keys = append(keys, k)
 	}
 	slices.Sort(keys)
 	for _, k := range keys {
 		htmlNode.Attr = append(htmlNode.Attr, html.Attribute{
 			Key: k,
-			Val: n.Attrs[k],
+			Val: n.GetAttrs()[k],
 		})
 	}
 
-	if n.Text != nil && *n.Text != "" {
+	if n.Text != nil && n.GetText() != "" {
 		htmlNode.AppendChild(&html.Node{
 			Type: html.TextNode,
-			Data: *n.Text,
+			Data: n.GetText(),
 		})
 	}
 
-	for _, e := range n.Content {
+	for _, e := range n.GetContent() {
 		htmlElem := &html.Node{}
 		e.populateTo(htmlElem)
 		htmlNode.AppendChild(htmlElem)
@@ -323,7 +324,7 @@ func ParseHTML(in string) (*html.Node, error) {
 	return d, nil
 }
 
-// FromHTMLNode
+// FromHTMLNode converts html.Node to JSONNode.
 func FromHTMLNode(node *html.Node) (*JSONNode, error) {
 	jNode := &JSONNode{}
 	if err := jNode.populateFrom(node); err != nil {
@@ -333,7 +334,7 @@ func FromHTMLNode(node *html.Node) (*JSONNode, error) {
 	return jNode, nil
 }
 
-// ToHTMLNode
+// ToHTMLNode converts JSONNode to html.Node.
 func (n *JSONNode) ToHTMLNode() (*html.Node, error) {
 	node := &html.Node{}
 
@@ -342,7 +343,7 @@ func (n *JSONNode) ToHTMLNode() (*html.Node, error) {
 	return node, nil
 }
 
-// ToHTML HTML potentially not pretty
+// ToHTML HTML potentially not pretty.
 func (n *JSONNode) ToHTML() (string, error) {
 	h, err := n.ToHTMLNode()
 	if err != nil {
@@ -361,7 +362,7 @@ func (n *JSONNode) ToHTML() (string, error) {
 	return out, nil
 }
 
-// ToHTMLP Pretty HTML
+// ToHTMLP Pretty print HTML.
 func (n *JSONNode) ToHTMLP() (string, error) {
 	h, err := n.ToHTML()
 	if err != nil {
@@ -386,7 +387,7 @@ func (c *Content) GetSummary(length int) string {
 		return ""
 	}
 
-	return GetSummary(*c.RawContent, length)
+	return GetSummary(c.GetRawContent(), length)
 }
 
 func GetSummary(in string, length int) string {

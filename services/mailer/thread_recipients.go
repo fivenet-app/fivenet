@@ -16,26 +16,36 @@ type canAccessIdsHelper struct {
 	IDs []uint64 `alias:"id"`
 }
 
-func (s *Server) checkIfEmailPartOfThread(ctx context.Context, userInfo *userinfo.UserInfo, threadId uint64, emailId uint64, accessLevel mailer.AccessLevel) error {
+func (s *Server) checkIfEmailPartOfThread(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	threadId uint64,
+	emailId uint64,
+	accessLevel mailer.AccessLevel,
+) error {
 	check, err := s.access.CanUserAccessTarget(ctx, emailId, userInfo, accessLevel)
 	if err != nil {
 		return errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
-	if !check && !userInfo.Superuser {
+	if !check && !userInfo.GetSuperuser() {
 		return errorsmailer.ErrThreadAccessDenied
 	}
 	check, err = s.checkIfEmailIdPartOfThread(ctx, threadId, emailId)
 	if err != nil {
 		return errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
-	if !check && !userInfo.Superuser {
+	if !check && !userInfo.GetSuperuser() {
 		return errorsmailer.ErrThreadAccessDenied
 	}
 
 	return nil
 }
 
-func (s *Server) checkIfEmailIdPartOfThread(ctx context.Context, threadId uint64, emailId uint64) (bool, error) {
+func (s *Server) checkIfEmailIdPartOfThread(
+	ctx context.Context,
+	threadId uint64,
+	emailId uint64,
+) (bool, error) {
 	stmt := tThreadsRecipients.
 		SELECT(
 			tThreadsRecipients.ID.AS("id"),

@@ -43,7 +43,17 @@ type Params struct {
 }
 
 func NewServer(p Params) *Server {
-	fHandler := filestore.NewHandler[uint64](p.Storage, p.DB, nil, nil, nil, -1, nil, filestore.InsertJoinRow, false)
+	fHandler := filestore.NewHandler[uint64](
+		p.Storage,
+		p.DB,
+		nil,
+		nil,
+		nil,
+		-1,
+		nil,
+		filestore.InsertJoinRow,
+		false,
+	)
 
 	return &Server{
 		logger:   p.Logger,
@@ -58,6 +68,7 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbfilestore.RegisterFilestoreServiceServer(srv, s)
 }
 
+// GetPermsRemap returns the permissions re-mapping for the services.
 func (s *Server) GetPermsRemap() map[string]string {
 	return pbfilestore.PermsRemap
 }

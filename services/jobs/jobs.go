@@ -19,7 +19,10 @@ var (
 	tJobProps  = table.FivenetJobProps
 )
 
-func (s *Server) GetMOTD(ctx context.Context, req *pbjobs.GetMOTDRequest) (*pbjobs.GetMOTDResponse, error) {
+func (s *Server) GetMOTD(
+	ctx context.Context,
+	req *pbjobs.GetMOTDRequest,
+) (*pbjobs.GetMOTDResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	stmt := tJobProps.
@@ -28,7 +31,7 @@ func (s *Server) GetMOTD(ctx context.Context, req *pbjobs.GetMOTDRequest) (*pbjo
 		).
 		FROM(tJobProps).
 		WHERE(
-			tJobProps.Job.EQ(jet.String(userInfo.Job)),
+			tJobProps.Job.EQ(jet.String(userInfo.GetJob())),
 		).
 		LIMIT(1)
 
@@ -42,14 +45,17 @@ func (s *Server) GetMOTD(ctx context.Context, req *pbjobs.GetMOTDRequest) (*pbjo
 	return resp, nil
 }
 
-func (s *Server) SetMOTD(ctx context.Context, req *pbjobs.SetMOTDRequest) (*pbjobs.SetMOTDResponse, error) {
+func (s *Server) SetMOTD(
+	ctx context.Context,
+	req *pbjobs.SetMOTDRequest,
+) (*pbjobs.SetMOTDResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbjobs.JobsService_ServiceDesc.ServiceName,
 		Method:  "SetMOTD",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
@@ -60,11 +66,11 @@ func (s *Server) SetMOTD(ctx context.Context, req *pbjobs.SetMOTDRequest) (*pbjo
 			tJobProps.Motd,
 		).
 		VALUES(
-			userInfo.Job,
-			req.Motd,
+			userInfo.GetJob(),
+			req.GetMotd(),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tJobProps.Motd.SET(jet.String(req.Motd)),
+			tJobProps.Motd.SET(jet.String(req.GetMotd())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -72,6 +78,6 @@ func (s *Server) SetMOTD(ctx context.Context, req *pbjobs.SetMOTDRequest) (*pbjo
 	}
 
 	return &pbjobs.SetMOTDResponse{
-		Motd: req.Motd,
+		Motd: req.GetMotd(),
 	}, nil
 }

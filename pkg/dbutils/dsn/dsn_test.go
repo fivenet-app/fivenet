@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 var prepareDSNTests = []struct {
@@ -27,7 +28,7 @@ var prepareDSNTests = []struct {
 		Expected:       "username:password@tcp(localhost:3306)/fivenet?charset=utf8mb4&loc=Europe%2FBerlin&parseTime=true",
 	},
 	{
-		// Make sure parseTime is overriden
+		// Make sure parseTime is overridden
 		Input:          "tcp(localhost:3306)/fivenet?loc=Europe%2FBerlin&parseTime=false",
 		DisableLocking: false,
 		Expected:       "tcp(localhost:3306)/fivenet?loc=Europe%2FBerlin&parseTime=true",
@@ -52,9 +53,9 @@ func TestPrepareDSN(t *testing.T) {
 	for _, test := range prepareDSNTests {
 		out, err := PrepareDSN(test.Input, test.DisableLocking, test.Opts...)
 		if test.Error {
-			assert.Error(t, err)
+			require.Error(t, err)
 		} else {
-			assert.NoError(t, err)
+			require.NoError(t, err)
 		}
 
 		assert.Equal(t, test.Expected, out)

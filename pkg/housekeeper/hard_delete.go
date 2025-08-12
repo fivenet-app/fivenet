@@ -71,7 +71,11 @@ func (h *Housekeeper) HardDelete(ctx context.Context, table *Table) (int64, erro
 	for _, dep := range table.DependantTables {
 		r, err := h.hardDelete(ctx, table, dep, table.MinDays)
 		if err != nil {
-			return rowsAffected, fmt.Errorf("failed to hard delete rows from dependant table %s. %w", dep.Table.TableName(), err)
+			return rowsAffected, fmt.Errorf(
+				"failed to hard delete rows from dependant table %s. %w",
+				dep.Table.TableName(),
+				err,
+			)
 		}
 		rowsAffected += r
 	}
@@ -79,23 +83,40 @@ func (h *Housekeeper) HardDelete(ctx context.Context, table *Table) (int64, erro
 	// Delete rows in the current table.
 	r, err := h.deleteRows(ctx, nil, table, table.MinDays)
 	if err != nil {
-		return rowsAffected, fmt.Errorf("failed to hard delete rows from main table %s. %w", table.Table.TableName(), err)
+		return rowsAffected, fmt.Errorf(
+			"failed to hard delete rows from main table %s. %w",
+			table.Table.TableName(),
+			err,
+		)
 	}
 	rowsAffected += r
 
-	h.logger.Debug("hard delete completed", zap.String("table", table.Table.TableName()), zap.Int64("rows", rowsAffected))
+	h.logger.Debug(
+		"hard delete completed",
+		zap.String("table", table.Table.TableName()),
+		zap.Int64("rows", rowsAffected),
+	)
 	return rowsAffected, nil
 }
 
 // hardDelete recursively performs hard delete operations on dependant tables and then on the current table.
-func (h *Housekeeper) hardDelete(ctx context.Context, parent *Table, table *Table, minDays int) (int64, error) {
+func (h *Housekeeper) hardDelete(
+	ctx context.Context,
+	parent *Table,
+	table *Table,
+	minDays int,
+) (int64, error) {
 	rowsAffected := int64(0)
 
 	// Traverse dependencies and delete rows from child tables first.
 	for _, child := range table.DependantTables {
 		r, err := h.deleteRows(ctx, table, child, minDays)
 		if err != nil {
-			return rowsAffected, fmt.Errorf("failed to hard delete dependant rows from dependant table %s. %w", child.Table.TableName(), err)
+			return rowsAffected, fmt.Errorf(
+				"failed to hard delete dependant rows from dependant table %s. %w",
+				child.Table.TableName(),
+				err,
+			)
 		}
 		rowsAffected += r
 	}
@@ -103,7 +124,11 @@ func (h *Housekeeper) hardDelete(ctx context.Context, parent *Table, table *Tabl
 	// Delete rows in the current dependant table.
 	r, err := h.deleteRows(ctx, parent, table, minDays)
 	if err != nil {
-		return rowsAffected, fmt.Errorf("failed to hard delete rows from dependant table %s. %w", parent.Table.TableName(), err)
+		return rowsAffected, fmt.Errorf(
+			"failed to hard delete rows from dependant table %s. %w",
+			parent.Table.TableName(),
+			err,
+		)
 	}
 	rowsAffected += r
 
@@ -112,7 +137,12 @@ func (h *Housekeeper) hardDelete(ctx context.Context, parent *Table, table *Tabl
 
 // deleteRows deletes rows from the specified table (optionally filtered by parent) that are older than minDays.
 // Returns the number of affected rows. If dryRun is enabled, no rows are actually deleted.
-func (h *Housekeeper) deleteRows(ctx context.Context, parent *Table, table *Table, minDays int) (rowsAffected int64, err error) {
+func (h *Housekeeper) deleteRows(
+	ctx context.Context,
+	parent *Table,
+	table *Table,
+	minDays int,
+) (int64, error) {
 	var condition jet.BoolExpression
 
 	if parent != nil {
@@ -167,6 +197,8 @@ func (h *Housekeeper) deleteRows(ctx context.Context, parent *Table, table *Tabl
 		WHERE(condition).
 		LIMIT(DefaultDeleteLimit)
 
+	var rowsAffected int64
+
 	if !h.dryRun {
 		// Execute the delete statement if not in dry run mode.
 		res, err := stmt.ExecContext(ctx, h.db)
@@ -182,6 +214,10 @@ func (h *Housekeeper) deleteRows(ctx context.Context, parent *Table, table *Tabl
 		h.logger.Debug("dry run deleteRows statement", zap.String("query", stmt.DebugSql()))
 	}
 
-	h.logger.Debug("hard deleted rows", zap.String("table", table.Table.TableName()), zap.Int64("rows", rowsAffected))
+	h.logger.Debug(
+		"hard deleted rows",
+		zap.String("table", table.Table.TableName()),
+		zap.Int64("rows", rowsAffected),
+	)
 	return rowsAffected, nil
 }

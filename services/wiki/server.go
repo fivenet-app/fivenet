@@ -96,10 +96,18 @@ func NewServer(p Params) *Server {
 	collabServer := collab.New(ctxCancel, p.Logger, p.JS, "wiki_pages")
 
 	tPageFiles := table.FivenetWikiPagesFiles
-	fHandler := filestore.NewHandler(p.Storage, p.DB, tPageFiles, tPageFiles.PageID, tPageFiles.FileID, 3<<20,
+	fHandler := filestore.NewHandler(
+		p.Storage,
+		p.DB,
+		tPageFiles,
+		tPageFiles.PageID,
+		tPageFiles.FileID,
+		3<<20,
 		func(parentID uint64) jet.BoolExpression {
 			return tPageFiles.PageID.EQ(jet.Uint64(parentID))
-		}, filestore.InsertJoinRow, false,
+		},
+		filestore.InsertJoinRow,
+		false,
 	)
 
 	objAccess := access.NewGrouped[wiki.PageJobAccess, *wiki.PageJobAccess, wiki.PageUserAccess, *wiki.PageUserAccess, access.DummyQualificationAccess[wiki.AccessLevel]](
@@ -195,6 +203,7 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbwiki.RegisterCollabServiceServer(srv, s)
 }
 
+// GetPermsRemap returns the permissions re-mapping for the services.
 func (s *Server) GetPermsRemap() map[string]string {
 	return pbwiki.PermsRemap
 }

@@ -14,7 +14,7 @@ const (
 )
 
 func (x *AttributeValues) Default(aType AttributeTypes) {
-	switch AttributeTypes(aType) {
+	switch aType {
 	case StringListAttributeType:
 		if x.GetStringList() == nil || x.GetStringList().Strings == nil {
 			x.ValidValues = &AttributeValues_StringList{
@@ -59,7 +59,7 @@ func (x *StringList) Contains(items ...string) bool {
 
 	// Check if all items are in the list
 	for _, item := range items {
-		if !slices.Contains(x.Strings, item) {
+		if !slices.Contains(x.GetStrings(), item) {
 			return false
 		}
 	}
@@ -72,7 +72,7 @@ func (x *StringList) Len() int {
 		return 0
 	}
 
-	return len(x.Strings)
+	return len(x.GetStrings())
 }
 
 func (x *JobGradeList) HasJobGrade(job string, grade int32) bool {
@@ -80,28 +80,28 @@ func (x *JobGradeList) HasJobGrade(job string, grade int32) bool {
 		return false
 	}
 
-	if x.FineGrained {
+	if x.GetFineGrained() {
 		if x.Grades == nil {
 			return false
 		}
 
 		// Check if the job exists in the list and the grade is allowed in the fine grained list
-		grades, ok := x.Grades[job]
+		grades, ok := x.GetGrades()[job]
 		if !ok {
 			return false
 		}
-		if grades == nil || len(grades.Grades) == 0 {
+		if grades == nil || len(grades.GetGrades()) == 0 {
 			return false
 		}
 
-		return slices.Contains(grades.Grades, grade)
+		return slices.Contains(grades.GetGrades(), grade)
 	} else {
 		if x.Jobs == nil {
 			return false
 		}
 
 		// Check if the job exists in the list and the grade is "in range"
-		if g, ok := x.Jobs[job]; ok {
+		if g, ok := x.GetJobs()[job]; ok {
 			if g >= grade {
 				return true
 			}
@@ -116,23 +116,23 @@ func (x *JobGradeList) Len() int {
 		return 0
 	}
 
-	if x.FineGrained {
-		return len(x.Grades)
+	if x.GetFineGrained() {
+		return len(x.GetGrades())
 	}
 
-	return len(x.Jobs)
+	return len(x.GetJobs())
 }
 
 func (x *JobGradeList) Iter() iter.Seq2[string, []int32] {
 	return func(yield func(string, []int32) bool) {
-		if x.FineGrained {
-			for job, v := range x.Grades {
-				if !yield(job, v.Grades) {
+		if x.GetFineGrained() {
+			for job, v := range x.GetGrades() {
+				if !yield(job, v.GetGrades()) {
 					return
 				}
 			}
 		} else {
-			for job, v := range x.Jobs {
+			for job, v := range x.GetJobs() {
 				if !yield(job, []int32{v}) {
 					return
 				}
@@ -141,48 +141,57 @@ func (x *JobGradeList) Iter() iter.Seq2[string, []int32] {
 	}
 }
 
-func (x *AttributeValues) Check(aType AttributeTypes, validVals *AttributeValues, maxVals *AttributeValues) (bool, bool) {
+func (x *AttributeValues) Check(
+	aType AttributeTypes,
+	validVals *AttributeValues,
+	maxVals *AttributeValues,
+) (bool, bool) {
 	if validVals == nil && maxVals == nil {
 		return true, false
 	}
 
-	switch AttributeTypes(aType) {
+	switch aType {
 	case StringListAttributeType:
 		var valid []string
-		if validVals != nil && validVals.GetStringList() != nil && validVals.GetStringList().Strings != nil {
-			valid = validVals.GetStringList().Strings
+		if validVals != nil && validVals.GetStringList() != nil &&
+			validVals.GetStringList().Strings != nil {
+			valid = validVals.GetStringList().GetStrings()
 		}
-		var max []string
-		if maxVals != nil && maxVals.GetStringList() != nil && maxVals.GetStringList().Strings != nil {
-			max = maxVals.GetStringList().Strings
+		var maxV []string
+		if maxVals != nil && maxVals.GetStringList() != nil &&
+			maxVals.GetStringList().Strings != nil {
+			maxV = maxVals.GetStringList().GetStrings()
 		}
 
-		return ValidateStringList(x.GetStringList(), valid, max)
+		return ValidateStringList(x.GetStringList(), valid, maxV)
 
 	case JobListAttributeType:
 		var valid []string
-		if validVals != nil && validVals.GetJobList() != nil && validVals.GetJobList().Strings != nil {
-			valid = validVals.GetJobList().Strings
+		if validVals != nil && validVals.GetJobList() != nil &&
+			validVals.GetJobList().Strings != nil {
+			valid = validVals.GetJobList().GetStrings()
 		}
-		var max []string
+		var maxV []string
 		if maxVals != nil && maxVals.GetJobList() != nil && maxVals.GetJobList().Strings != nil {
-			max = maxVals.GetJobList().Strings
+			maxV = maxVals.GetJobList().GetStrings()
 		}
 
-		return ValidateJobList(x.GetJobList(), valid, max)
+		return ValidateJobList(x.GetJobList(), valid, maxV)
 
 	case JobGradeListAttributeType:
 		var valid map[string]int32
 
-		if validVals != nil && validVals.GetJobGradeList() != nil && validVals.GetJobGradeList().Jobs != nil {
-			valid = validVals.GetJobGradeList().Jobs
+		if validVals != nil && validVals.GetJobGradeList() != nil &&
+			validVals.GetJobGradeList().Jobs != nil {
+			valid = validVals.GetJobGradeList().GetJobs()
 		}
-		var max map[string]int32
-		if maxVals != nil && maxVals.GetJobGradeList() != nil && maxVals.GetJobGradeList().Jobs != nil {
-			max = maxVals.GetJobGradeList().Jobs
+		var maxV map[string]int32
+		if maxVals != nil && maxVals.GetJobGradeList() != nil &&
+			maxVals.GetJobGradeList().Jobs != nil {
+			maxV = maxVals.GetJobGradeList().GetJobs()
 		}
 
-		return ValidateJobGradeList(x.GetJobGradeList(), valid, max)
+		return ValidateJobGradeList(x.GetJobGradeList(), valid, maxV)
 
 	default:
 		return false, false
@@ -191,21 +200,22 @@ func (x *AttributeValues) Check(aType AttributeTypes, validVals *AttributeValues
 
 func ValidateStringList(in *StringList, validVals []string, maxVals []string) (bool, bool) {
 	// If more values than valid/max values in the list, it can't be valid
-	if len(in.Strings) > len(maxVals) || (len(validVals) > 0 && len(in.Strings) > len(validVals)) {
+	if len(in.GetStrings()) > len(maxVals) ||
+		(len(validVals) > 0 && len(in.GetStrings()) > len(validVals)) {
 		in.Strings = []string{}
 		return true, true
 	}
 
 	changed := false
-	for i := len(in.Strings) - 1; i >= 0; i-- {
-		if !slices.Contains(maxVals, in.Strings[i]) {
-			in.Strings = slices.Delete(in.Strings, i, i+1)
+	for i := len(in.GetStrings()) - 1; i >= 0; i-- {
+		if !slices.Contains(maxVals, in.GetStrings()[i]) {
+			in.Strings = slices.Delete(in.GetStrings(), i, i+1)
 			changed = true
 			continue
 		}
 
-		if len(validVals) > 0 && !slices.Contains(validVals, in.Strings[i]) {
-			in.Strings = slices.Delete(in.Strings, i, i+1)
+		if len(validVals) > 0 && !slices.Contains(validVals, in.GetStrings()[i]) {
+			in.Strings = slices.Delete(in.GetStrings(), i, i+1)
 			changed = true
 			continue
 		}
@@ -215,40 +225,22 @@ func ValidateStringList(in *StringList, validVals []string, maxVals []string) (b
 }
 
 func ValidateJobList(in *StringList, validVals []string, maxVals []string) (bool, bool) {
-	// If more values than valid/max values in the list, it can't be valid
-	if len(in.Strings) > len(maxVals) || (len(validVals) > 0 && len(in.Strings) > len(validVals)) {
-		in.Strings = []string{}
-		return true, true
-	}
-
-	changed := false
-	for i := len(in.Strings) - 1; i >= 0; i-- {
-		if !slices.Contains(maxVals, in.Strings[i]) {
-			in.Strings = slices.Delete(in.Strings, i, i+1)
-			changed = true
-			continue
-		}
-
-		if len(validVals) > 0 && !slices.Contains(validVals, in.Strings[i]) {
-			// Remove invalid jobs from list
-			in.Strings = slices.Delete(in.Strings, i, i+1)
-			changed = true
-			continue
-		}
-	}
-
-	return true, changed
+	return ValidateStringList(in, validVals, maxVals)
 }
 
-func ValidateJobGradeList(in *JobGradeList, validVals map[string]int32, maxVals map[string]int32) (bool, bool) {
+func ValidateJobGradeList(
+	in *JobGradeList,
+	validVals map[string]int32,
+	maxVals map[string]int32,
+) (bool, bool) {
 	changed := false
-	if !in.FineGrained {
-		if len(in.Grades) > 0 {
+	if !in.GetFineGrained() {
+		if len(in.GetGrades()) > 0 {
 			in.Grades = map[string]*JobGrades{}
 			changed = true
 		}
 
-		for job, grade := range in.Jobs {
+		for job, grade := range in.GetJobs() {
 			if vg, ok := maxVals[job]; ok {
 				if vg > 0 {
 					if grade > vg {
@@ -257,11 +249,11 @@ func ValidateJobGradeList(in *JobGradeList, validVals map[string]int32, maxVals 
 					}
 				} else {
 					// Valid grade for job is less than 0, remove job (invalid input case)
-					delete(in.Jobs, job)
+					delete(in.GetJobs(), job)
 					changed = true
 				}
 			} else {
-				delete(in.Jobs, job)
+				delete(in.GetJobs(), job)
 				changed = true
 			}
 
@@ -275,57 +267,57 @@ func ValidateJobGradeList(in *JobGradeList, validVals map[string]int32, maxVals 
 						}
 					} else {
 						// Valid grade for job is less than 0, remove job (invalid input case)
-						delete(in.Jobs, job)
+						delete(in.GetJobs(), job)
 						changed = true
 					}
 				} else {
-					delete(in.Jobs, job)
+					delete(in.GetJobs(), job)
 					changed = true
 				}
 			}
 		}
 	} else {
-		if len(in.Jobs) > 0 {
+		if len(in.GetJobs()) > 0 {
 			in.Jobs = map[string]int32{}
 		}
 
-		for job, grades := range in.Grades {
-			if grades == nil || len(grades.Grades) == 0 {
-				delete(in.Grades, job)
+		for job, grades := range in.GetGrades() {
+			if grades == nil || len(grades.GetGrades()) == 0 {
+				delete(in.GetGrades(), job)
 				changed = true
 				continue
 			}
 
-			for _, grade := range grades.Grades {
+			for _, grade := range grades.GetGrades() {
 				if vg, ok := maxVals[job]; ok {
-					currentLen := len(in.Grades[job].Grades)
+					currentLen := len(in.GetGrades()[job].GetGrades())
 					// Remove all grades that are greater than the max grade
-					in.Grades[job].Grades = slices.DeleteFunc(in.Grades[job].Grades, func(ig int32) bool {
+					in.Grades[job].Grades = slices.DeleteFunc(in.GetGrades()[job].GetGrades(), func(ig int32) bool {
 						return grade > vg
 					})
 
-					if currentLen != len(in.Grades[job].Grades) {
+					if currentLen != len(in.GetGrades()[job].GetGrades()) {
 						changed = true
 					}
 				} else {
-					delete(in.Grades, job)
+					delete(in.GetGrades(), job)
 					changed = true
 				}
 
 				// If valid vals are empty/ nil, don't check them
 				if len(validVals) > 0 {
 					if vg, ok := validVals[job]; ok {
-						currentLen := len(in.Grades[job].Grades)
+						currentLen := len(in.GetGrades()[job].GetGrades())
 						// Remove all grades that are greater than the max grade
-						in.Grades[job].Grades = slices.DeleteFunc(in.Grades[job].Grades, func(ig int32) bool {
+						in.Grades[job].Grades = slices.DeleteFunc(in.GetGrades()[job].GetGrades(), func(ig int32) bool {
 							return grade > vg
 						})
 
-						if currentLen != len(in.Grades[job].Grades) {
+						if currentLen != len(in.GetGrades()[job].GetGrades()) {
 							changed = true
 						}
 					} else {
-						delete(in.Grades, job)
+						delete(in.GetGrades(), job)
 						changed = true
 					}
 				}

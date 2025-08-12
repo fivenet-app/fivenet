@@ -9,15 +9,15 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-var errFailedMarshal = []byte("Failed to marshal error")
+var ErrFailedMarshal = []byte("Failed to marshal error")
 
 func NewI18nErr(c codes.Code, content *I18NItem, title *I18NItem) error {
-	out, err := protoutils.MarshalToPJSON(&Error{
+	out, err := protoutils.MarshalToJSON(&Error{
 		Title:   title,
 		Content: content,
 	})
 	if err != nil {
-		out = errFailedMarshal
+		out = ErrFailedMarshal
 	}
 
 	return status.Error(c, string(out))
@@ -30,14 +30,14 @@ type I18nErrFunc func(params map[string]any) error
 func NewI18nErrFunc(c codes.Code, content *I18NItem, title *I18NItem) I18nErrFunc {
 	return func(params map[string]any) error {
 		merged := make(map[string]string)
-		if len(content.Parameters) > 0 {
-			maps.Copy(merged, content.Parameters)
+		if len(content.GetParameters()) > 0 {
+			maps.Copy(merged, content.GetParameters())
 		}
 		maps.Copy(merged, utils.ToStringMap(params))
 
 		return NewI18nErr(
 			c,
-			NewI18NItemWithParams(content.Key, merged),
+			NewI18NItemWithParams(content.GetKey(), merged),
 			title,
 		)
 	}

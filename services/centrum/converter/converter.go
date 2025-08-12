@@ -21,19 +21,17 @@ import (
 )
 
 var (
-	// GKSPhone Converter
+	// GKSPhone Converter.
 	tGksPhoneJMsg     = table.GksphoneJobMessage
 	tGksPhoneSettings = table.GksphoneSettings
 
-	// LBPhone Converter
+	// LBPhone Converter.
 	tPhonePhones           = table.PhonePhones
 	tPhoneServicesChannels = table.PhoneServicesChannels
 	tPhoneServicesMessages = table.PhoneServicesMessages
 )
 
 type Converter struct {
-	ctx context.Context
-
 	logger *zap.Logger
 	db     *sql.DB
 
@@ -83,15 +81,15 @@ func New(p Params) *Converter {
 	return c
 }
 
-func (s *Converter) convertPhoneJobMsgToDispatch(ctx context.Context) error {
+func (s *Converter) convertPhoneJobMsgToDispatch(ctx context.Context) {
 	if len(s.convertJobs) == 0 {
-		return nil
+		return
 	}
 
 	for {
 		select {
 		case <-ctx.Done():
-			return nil
+			return
 
 		case <-time.After(2 * time.Second):
 		}
@@ -99,16 +97,25 @@ func (s *Converter) convertPhoneJobMsgToDispatch(ctx context.Context) error {
 		switch s.converterType {
 		case "lbphone":
 			if err := s.convertLBPhoneJobMsgToDispatch(ctx); err != nil {
-				s.logger.Error("failed to convert lbphone job messages to dispatches", zap.Error(err))
+				s.logger.Error(
+					"failed to convert lbphone job messages to dispatches",
+					zap.Error(err),
+				)
 			}
 
 		case "gksphone":
 			if err := s.convertGKSPhoneJobMsgToDispatch(ctx); err != nil {
-				s.logger.Error("failed to convert gksphone job messages to dispatches", zap.Error(err))
+				s.logger.Error(
+					"failed to convert gksphone job messages to dispatches",
+					zap.Error(err),
+				)
 			}
 
 		default:
-			s.logger.Error("unknown phone dispatch converter type", zap.String("converter_type", s.converterType))
+			s.logger.Error(
+				"unknown phone dispatch converter type",
+				zap.String("converter_type", s.converterType),
+			)
 		}
 	}
 }
@@ -135,13 +142,16 @@ func (s *Converter) convertGKSPhoneJobMsgToDispatch(ctx context.Context) error {
 				),
 		).
 		WHERE(jet.AND(
-			tGksPhoneJMsg.Jobm.REGEXP_LIKE(jet.String("\\[\"("+strings.Join(s.convertJobs, "|")+")\"\\]")),
+			tGksPhoneJMsg.Jobm.REGEXP_LIKE(
+				jet.String("\\[\"("+strings.Join(s.convertJobs, "|")+")\"\\]"),
+			),
 			tGksPhoneJMsg.Owner.EQ(jet.Int32(0)),
 		)).
 		LIMIT(15)
 
 	var dest []struct {
 		*model.GksphoneJobMessage
+
 		UserId int32
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
@@ -193,7 +203,12 @@ func (s *Converter) convertGKSPhoneJobMsgToDispatch(ctx context.Context) error {
 			CreatorId: &msg.UserId,
 		}
 
-		s.logger.Debug("converted gksphone dispatch to fivenet", zap.String("job", job), zap.Int32("creator_id", msg.UserId), zap.Int32("phone_dsp_id", msg.ID))
+		s.logger.Debug(
+			"converted gksphone dispatch to fivenet",
+			zap.String("job", job),
+			zap.Int32("creator_id", msg.UserId),
+			zap.Int32("phone_dsp_id", msg.ID),
+		)
 		if _, err := s.dispatches.Create(ctx, dsp); err != nil {
 			return err
 		}
@@ -251,7 +266,9 @@ func (s *Converter) convertLBPhoneJobMsgToDispatch(ctx context.Context) error {
 				),
 		).
 		WHERE(jet.AND(
-			tPhoneServicesChannels.Company.REGEXP_LIKE(jet.String("\\[\"(" + strings.Join(s.convertJobs, "|") + ")\"\\]")),
+			tPhoneServicesChannels.Company.REGEXP_LIKE(
+				jet.String("\\[\"(" + strings.Join(s.convertJobs, "|") + ")\"\\]"),
+			),
 		)).
 		LIMIT(15)
 
@@ -296,7 +313,12 @@ func (s *Converter) convertLBPhoneJobMsgToDispatch(ctx context.Context) error {
 			CreatorId: &msg.UserId,
 		}
 
-		s.logger.Debug("converted lbphone dispatch to fivenet", zap.String("job", msg.Job), zap.Int32("creator_id", msg.UserId), zap.Int32("phone_dsp_id", msg.ID))
+		s.logger.Debug(
+			"converted lbphone dispatch to fivenet",
+			zap.String("job", msg.Job),
+			zap.Int32("creator_id", msg.UserId),
+			zap.Int32("phone_dsp_id", msg.ID),
+		)
 		if _, err := s.dispatches.Create(ctx, dsp); err != nil {
 			return err
 		}

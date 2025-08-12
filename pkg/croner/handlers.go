@@ -63,7 +63,11 @@ func (h *Handlers) Add(name string, fn CronjobHandlerFn) {
 
 	if _, ok := h.handlers[name]; ok {
 		// Getting the stacktrace is expensive but should help tracking down any duplicate cron handlers in no time
-		h.logger.Warn("duplicate cron handler override detected", zap.String("name", name), zap.Stack("trace"))
+		h.logger.Warn(
+			"duplicate cron handler override detected",
+			zap.String("name", name),
+			zap.Stack("trace"),
+		)
 	}
 
 	h.handlers[name] = fn

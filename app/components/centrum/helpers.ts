@@ -171,16 +171,16 @@ export function isStatusDispatchCompleted(status: StatusDispatch): boolean {
 
 // "Color stops" with optional ping
 const steps: { variant: BadgeVariant; color?: BadgeColor; class: string; animation?: string; ping: boolean }[] = [
-    { variant: 'solid', class: '', ping: false }, // 0–10%
-    { variant: 'solid', color: 'green', class: '!bg-green-200', ping: false }, // 10–20%
-    { variant: 'solid', color: 'yellow', class: '!bg-yellow-200', ping: false }, // 20–30%
-    { variant: 'solid', color: 'yellow', class: '!bg-yellow-400', ping: false }, // 30–40%
-    { variant: 'solid', color: 'orange', class: '!bg-orange-300', ping: false }, // 40–50%
-    { variant: 'solid', color: 'orange', class: '!bg-orange-500', ping: false }, // 50–60%
-    { variant: 'solid', color: 'red', class: '!bg-red-400', ping: true }, // 60–70%
-    { variant: 'solid', color: 'red', class: '!bg-red-600', ping: true }, // 70–80%
-    { variant: 'solid', color: 'red', class: '!bg-red-700', ping: true }, // 80–90%
-    { variant: 'solid', color: 'red', class: '!bg-red-800', ping: true }, // 90–100%
+    { variant: 'solid', class: '', ping: false }, // 0-10%
+    { variant: 'solid', color: 'green', class: '!bg-green-200', ping: false }, // 10-20%
+    { variant: 'solid', color: 'yellow', class: '!bg-yellow-200', ping: false }, // 20-30%
+    { variant: 'solid', color: 'yellow', class: '!bg-yellow-400', ping: false }, // 30-40%
+    { variant: 'solid', color: 'orange', class: '!bg-orange-300', ping: false }, // 40-50%
+    { variant: 'solid', color: 'orange', class: '!bg-orange-500', ping: false }, // 50-60%
+    { variant: 'solid', color: 'red', class: '!bg-red-400', ping: true }, // 60-70%
+    { variant: 'solid', color: 'red', class: '!bg-red-600', ping: true }, // 70-80%
+    { variant: 'solid', color: 'red', class: '!bg-red-700', ping: true }, // 80-90%
+    { variant: 'solid', color: 'red', class: '!bg-red-800', ping: true }, // 90-100%
     { variant: 'solid', color: 'red', class: '!bg-red-700', animation: 'animate-bounce', ping: true }, // caps at 100%
 ];
 

@@ -14,7 +14,11 @@ import (
 
 var tPerms = table.FivenetRbacPermissions
 
-func (p *Perms) CreatePermission(ctx context.Context, category Category, name Name) (uint64, error) {
+func (p *Perms) CreatePermission(
+	ctx context.Context,
+	category Category,
+	name Name,
+) (uint64, error) {
 	guard := BuildGuard(category, name)
 	stmt := tPerms.
 		INSERT(
@@ -36,7 +40,7 @@ func (p *Perms) CreatePermission(ctx context.Context, category Category, name Na
 
 		permId, ok := p.lookupPermIDByGuard(guard)
 		if !ok {
-			return 0, fmt.Errorf("created permission not found in our cache")
+			return 0, errors.New("created permission not found in our cache")
 		}
 
 		return permId, nil
@@ -50,7 +54,11 @@ func (p *Perms) CreatePermission(ctx context.Context, category Category, name Na
 	return uint64(lastId), nil
 }
 
-func (p *Perms) loadPermissionFromDatabaseByCategoryName(ctx context.Context, category Category, name Name) (*permissions.Permission, error) {
+func (p *Perms) loadPermissionFromDatabaseByCategoryName(
+	ctx context.Context,
+	category Category,
+	name Name,
+) (*permissions.Permission, error) {
 	stmt := tPerms.
 		SELECT(
 			tPerms.ID,
@@ -74,14 +82,19 @@ func (p *Perms) loadPermissionFromDatabaseByCategoryName(ctx context.Context, ca
 		}
 	}
 
-	if dest.Id == 0 {
+	if dest.GetId() == 0 {
 		return nil, nil
 	}
 
 	return dest, nil
 }
 
-func (p *Perms) UpdatePermission(ctx context.Context, id uint64, category Category, name Name) error {
+func (p *Perms) UpdatePermission(
+	ctx context.Context,
+	id uint64,
+	category Category,
+	name Name,
+) error {
 	guard := Guard(string(category) + "-" + string(name))
 
 	stmt := tPerms.
@@ -156,7 +169,10 @@ func (p *Perms) RemovePermissionsByIDs(ctx context.Context, ids ...uint64) error
 	return nil
 }
 
-func (p *Perms) GetPermissionsByIDs(ctx context.Context, ids ...uint64) ([]*permissions.Permission, error) {
+func (p *Perms) GetPermissionsByIDs(
+	ctx context.Context,
+	ids ...uint64,
+) ([]*permissions.Permission, error) {
 	if len(ids) == 0 {
 		return nil, nil
 	}
@@ -194,7 +210,11 @@ func (p *Perms) GetPermissionsByIDs(ctx context.Context, ids ...uint64) ([]*perm
 	return dest, nil
 }
 
-func (p *Perms) GetPermission(ctx context.Context, category Category, name Name) (*permissions.Permission, error) {
+func (p *Perms) GetPermission(
+	ctx context.Context,
+	category Category,
+	name Name,
+) (*permissions.Permission, error) {
 	tPerms := tPerms.AS("permission")
 
 	stmt := tPerms.
@@ -219,7 +239,7 @@ func (p *Perms) GetPermission(ctx context.Context, category Category, name Name)
 		}
 	}
 
-	if dest.Id == 0 {
+	if dest.GetId() == 0 {
 		return nil, nil
 	}
 

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"path"
 	"path/filepath"
+	"strconv"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
@@ -66,7 +67,8 @@ func isPathSafe(p string) bool {
 	if p == "" || p == "." || p == "/" {
 		return false
 	}
-	if p == ".." || len(p) >= 3 && p[:3] == "../" || len(p) >= 3 && p[len(p)-3:] == "/.." || p == "." {
+	if p == ".." || len(p) >= 3 && p[:3] == "../" || len(p) >= 3 && p[len(p)-3:] == "/.." ||
+		p == "." {
 		return false
 	}
 	if len(p) >= 2 && (p[:2] == ".." || p[len(p)-2:] == "..") {
@@ -81,11 +83,11 @@ func (s *FilestoreHTTP) HEAD(c *gin.Context) {
 	prefix := filepath.Clean(c.Param("prefix"))
 	fileName := filepath.Clean(c.Param("fileName"))
 	if !isPathSafe(prefix) || !isPathSafe(fileName) {
-		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("invalid file requested (unsafe path)"))
+		c.AbortWithError(http.StatusBadRequest, errors.New("invalid file requested (unsafe path)"))
 		return
 	}
 	if prefix == "" || fileName == "" {
-		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("invalid file requested (empty)"))
+		c.AbortWithError(http.StatusBadRequest, errors.New("invalid file requested (empty)"))
 		return
 	}
 
@@ -109,7 +111,7 @@ func (s *FilestoreHTTP) HEAD(c *gin.Context) {
 		mimeVal = mimeType.MIME.Value
 	}
 	c.Header("Content-Type", mimeVal)
-	c.Header("Content-Length", fmt.Sprintf("%d", objInfo.GetSize()))
+	c.Header("Content-Length", strconv.FormatInt(objInfo.GetSize(), 10))
 	// No body for HEAD
 	c.Status(http.StatusOK)
 }
@@ -120,11 +122,11 @@ func (s *FilestoreHTTP) GET(c *gin.Context) {
 	prefix := filepath.Clean(c.Param("prefix"))
 	fileName := filepath.Clean(c.Param("fileName"))
 	if !isPathSafe(prefix) || !isPathSafe(fileName) {
-		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("invalid file requested (unsafe path)"))
+		c.AbortWithError(http.StatusBadRequest, errors.New("invalid file requested (unsafe path)"))
 		return
 	}
 	if prefix == "" || fileName == "" {
-		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("invalid file requested (empty)"))
+		c.AbortWithError(http.StatusBadRequest, errors.New("invalid file requested (empty)"))
 		return
 	}
 
@@ -140,7 +142,10 @@ func (s *FilestoreHTTP) GET(c *gin.Context) {
 			return
 		}
 		c.Error(err)
-		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("failed to retrieve file from store. %w", err))
+		c.AbortWithError(
+			http.StatusBadRequest,
+			fmt.Errorf("failed to retrieve file from store. %w", err),
+		)
 		return
 	}
 	defer object.Close()

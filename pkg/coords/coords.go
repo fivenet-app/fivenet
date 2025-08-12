@@ -1,3 +1,4 @@
+//nolint:forcetypeassert // No need to check type assertions here due to generics usage
 package coords
 
 import (
@@ -12,9 +13,9 @@ import (
 type ICoords[V orb.Pointer] interface {
 	ICoordsRO[V]
 
-	Add(orb.Pointer) error
-	Remove(orb.Pointer, quadtree.FilterFunc) bool
-	Replace(orb.Pointer, quadtree.FilterFunc) error
+	Add(point orb.Pointer) error
+	Remove(point orb.Pointer, fn quadtree.FilterFunc) bool
+	Replace(point orb.Pointer, fn quadtree.FilterFunc) error
 }
 
 // Coords provides a thread-safe wrapper around a quadtree for storing and querying coordinates.
@@ -33,15 +34,16 @@ type CoordsEqualFn = func(orb.Pointer, orb.Pointer) bool
 
 // New creates a new Coords instance with default bounds.
 func New[V orb.Pointer]() *Coords[V] {
-	return NewWithBounds[V](orb.Bound{Min: orb.Point{-9_000, -9_000}, Max: orb.Point{11_000, 11_000}})
+	return NewWithBounds[V](
+		orb.Bound{Min: orb.Point{-9_000, -9_000}, Max: orb.Point{11_000, 11_000}},
+	)
 }
 
 // NewWithBounds creates a new Coords instance with the specified bounds.
 func NewWithBounds[V orb.Pointer](bounds orb.Bound) *Coords[V] {
 	tree := quadtree.New(bounds)
 	return &Coords[V]{
-		mutex: sync.RWMutex{},
-		tree:  tree,
+		tree: tree,
 	}
 }
 
@@ -82,7 +84,11 @@ func (p *Coords[V]) Remove(point orb.Pointer, fn quadtree.FilterFunc) bool {
 }
 
 // Replace removes a point if it exists (and is not equal according to equalFn), then adds the new point.
-func (p *Coords[V]) Replace(point orb.Pointer, fn quadtree.FilterFunc, equalFn CoordsEqualFn) error {
+func (p *Coords[V]) Replace(
+	point orb.Pointer,
+	fn quadtree.FilterFunc,
+	equalFn CoordsEqualFn,
+) error {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
 
@@ -113,10 +119,15 @@ func (p *Coords[V]) Closest(x, y float64) (V, bool) {
 }
 
 // KNearest returns up to max nearest points to the given point, filtered and within maxDistance.
-func (p *Coords[V]) KNearest(point orb.Point, max int, fn quadtree.FilterFunc, maxDistance float64) []orb.Pointer {
+func (p *Coords[V]) KNearest(
+	point orb.Point,
+	maxPoints int,
+	fn quadtree.FilterFunc,
+	maxDistance float64,
+) []orb.Pointer {
 	p.mutex.RLock()
 	defer p.mutex.RUnlock()
 
-	points := p.tree.KNearestMatching(nil, point.Point(), max, fn, maxDistance)
+	points := p.tree.KNearestMatching(nil, point.Point(), maxPoints, fn, maxDistance)
 	return points
 }

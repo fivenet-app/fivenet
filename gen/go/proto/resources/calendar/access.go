@@ -9,7 +9,7 @@ func (x *CalendarJobAccess) SetJobLabel(label string) {
 }
 
 func (x *CalendarJobAccess) GetJobGrade() int32 {
-	return x.MinimumGrade
+	return x.GetMinimumGrade()
 }
 
 func (x *CalendarJobAccess) SetJobGrade(grade int32) {

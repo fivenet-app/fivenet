@@ -12,8 +12,11 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
-func (s *Server) DeleteOAuth2Connection(ctx context.Context, req *pbauth.DeleteOAuth2ConnectionRequest) (*pbauth.DeleteOAuth2ConnectionResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.auth.oauth2_provider", req.Provider})
+func (s *Server) DeleteOAuth2Connection(
+	ctx context.Context,
+	req *pbauth.DeleteOAuth2ConnectionRequest,
+) (*pbauth.DeleteOAuth2ConnectionResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.auth.oauth2_provider", req.GetProvider()})
 
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
@@ -31,7 +34,7 @@ func (s *Server) DeleteOAuth2Connection(ctx context.Context, req *pbauth.DeleteO
 		DELETE().
 		WHERE(jet.AND(
 			tOAuth2Accs.AccountID.EQ(jet.Uint64(claims.AccID)),
-			tOAuth2Accs.Provider.EQ(jet.String(req.Provider)),
+			tOAuth2Accs.Provider.EQ(jet.String(req.GetProvider())),
 		)).
 		LIMIT(1)
 

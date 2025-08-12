@@ -11,12 +11,15 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) Search(ctx context.Context, req *pbinternet.SearchRequest) (*pbinternet.SearchResponse, error) {
+func (s *Server) Search(
+	ctx context.Context,
+	req *pbinternet.SearchRequest,
+) (*pbinternet.SearchResponse, error) {
 	resp := &pbinternet.SearchResponse{
 		Results: []*internet.SearchResult{},
 	}
 
-	if req.Search == "" {
+	if req.GetSearch() == "" {
 		return resp, nil
 	}
 
@@ -26,17 +29,17 @@ func (s *Server) Search(ctx context.Context, req *pbinternet.SearchRequest) (*pb
 		// Search title and description fields
 		jet.BoolExp(
 			jet.Raw("MATCH(`title`) AGAINST ($search IN BOOLEAN MODE)",
-				jet.RawArgs{"$search": req.Search}),
+				jet.RawArgs{"$search": req.GetSearch()}),
 		),
 		jet.BoolExp(
 			jet.Raw("MATCH(`description`) AGAINST ($search IN BOOLEAN MODE)",
-				jet.RawArgs{"$search": req.Search}),
+				jet.RawArgs{"$search": req.GetSearch()}),
 		),
 	)
 
-	if req.DomainId != nil && *req.DomainId > 0 {
+	if req.DomainId != nil && req.GetDomainId() > 0 {
 		condition = condition.AND(
-			tPage.DomainID.EQ(jet.Uint64(*req.DomainId)),
+			tPage.DomainID.EQ(jet.Uint64(req.GetDomainId())),
 		)
 	}
 

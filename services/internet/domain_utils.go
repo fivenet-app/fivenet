@@ -31,7 +31,11 @@ func cleanAndSplitDomain(in string) (string, string) {
 	return domain, tld
 }
 
-func (s *Server) getDomainByCondition(ctx context.Context, tx *sql.DB, condition jet.BoolExpression) (*internet.Domain, error) {
+func (s *Server) getDomainByCondition(
+	ctx context.Context,
+	tx *sql.DB,
+	condition jet.BoolExpression,
+) (*internet.Domain, error) {
 	tCreator := tables.User().AS("creator")
 
 	stmt := tDomains.
@@ -72,14 +76,19 @@ func (s *Server) getDomainByCondition(ctx context.Context, tx *sql.DB, condition
 		}
 	}
 
-	if dest.Id == 0 {
+	if dest.GetId() == 0 {
 		return nil, nil
 	}
 
 	return dest, nil
 }
 
-func (s *Server) getDomainByTLDAndName(ctx context.Context, tx *sql.DB, tldId uint64, name string) (*internet.Domain, error) {
+func (s *Server) getDomainByTLDAndName(
+	ctx context.Context,
+	tx *sql.DB,
+	tldId uint64,
+	name string,
+) (*internet.Domain, error) {
 	domain, _ := cleanAndSplitDomain(name)
 	return s.getDomainByCondition(ctx, tx,
 		jet.AND(
@@ -90,7 +99,11 @@ func (s *Server) getDomainByTLDAndName(ctx context.Context, tx *sql.DB, tldId ui
 	)
 }
 
-func (s *Server) getDomainByName(ctx context.Context, tx *sql.DB, name string) (*internet.Domain, error) {
+func (s *Server) getDomainByName(
+	ctx context.Context,
+	tx *sql.DB,
+	name string,
+) (*internet.Domain, error) {
 	domain, tld := cleanAndSplitDomain(name)
 	return s.getDomainByCondition(ctx, tx,
 		jet.AND(
@@ -101,7 +114,11 @@ func (s *Server) getDomainByName(ctx context.Context, tx *sql.DB, name string) (
 	)
 }
 
-func (s *Server) getDomainById(ctx context.Context, tx *sql.DB, id uint64) (*internet.Domain, error) {
+func (s *Server) getDomainById(
+	ctx context.Context,
+	tx *sql.DB,
+	id uint64,
+) (*internet.Domain, error) {
 	return s.getDomainByCondition(ctx, tx,
 		tDomains.ID.EQ(jet.Uint64(id)).
 			AND(tDomains.DeletedAt.IS_NULL()),

@@ -103,7 +103,11 @@ func Load() (Result, error) {
 	if val := os.Getenv(envs.IgnoreRequirementsEnv); val != "" {
 		skip, err := strconv.ParseBool(val)
 		if err != nil {
-			return res, fmt.Errorf("failed to parse %q as bool. %w", envs.IgnoreRequirementsEnv, err)
+			return res, fmt.Errorf(
+				"failed to parse %q as bool. %w",
+				envs.IgnoreRequirementsEnv,
+				err,
+			)
 		}
 		c.IgnoreRequirements = skip
 	}

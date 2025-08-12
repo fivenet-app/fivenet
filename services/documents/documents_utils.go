@@ -14,25 +14,30 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, additionalColumns jet.ProjectionList, userInfo *userinfo.UserInfo) jet.SelectStatement {
+func (s *Server) listDocumentsQuery(
+	where jet.BoolExpression,
+	onlyColumns jet.ProjectionList,
+	additionalColumns jet.ProjectionList,
+	userInfo *userinfo.UserInfo,
+) jet.SelectStatement {
 	tCreator := tables.User().AS("creator")
 
 	wheres := []jet.BoolExpression{}
-	if !userInfo.Superuser {
+	if !userInfo.GetSuperuser() {
 		wheres = []jet.BoolExpression{
 			jet.AND(
 				tDocumentShort.DeletedAt.IS_NULL(),
 				jet.OR(
 					tDocumentShort.Public.IS_TRUE(),
 					jet.AND(
-						tDocumentShort.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-						tDocumentShort.CreatorJob.EQ(jet.String(userInfo.Job)),
+						tDocumentShort.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
+						tDocumentShort.CreatorJob.EQ(jet.String(userInfo.GetJob())),
 					),
 					jet.OR(
-						tDAccess.UserID.EQ(jet.Int32(userInfo.UserId)),
+						tDAccess.UserID.EQ(jet.Int32(userInfo.GetUserId())),
 						jet.AND(
-							tDAccess.Job.EQ(jet.String(userInfo.Job)),
-							tDAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade)),
+							tDAccess.Job.EQ(jet.String(userInfo.GetJob())),
+							tDAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
 						),
 					),
 				),
@@ -85,7 +90,7 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 			tWorkflow.NextReminderTime,
 		}
 
-		if userInfo.Superuser {
+		if userInfo.GetSuperuser() {
 			columns = append(columns, tDocumentShort.DeletedAt)
 		}
 
@@ -103,7 +108,7 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 	}
 
 	var tables jet.ReadableTable
-	if !userInfo.Superuser {
+	if !userInfo.GetSuperuser() {
 		tables = tDocumentShort.
 			LEFT_JOIN(tDAccess,
 				tDAccess.TargetID.EQ(tDocumentShort.ID).
@@ -140,24 +145,29 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 		))
 }
 
-func (s *Server) getDocumentQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo, withContent bool) jet.SelectStatement {
+func (s *Server) getDocumentQuery(
+	where jet.BoolExpression,
+	onlyColumns jet.ProjectionList,
+	userInfo *userinfo.UserInfo,
+	withContent bool,
+) jet.SelectStatement {
 	tCreator := tables.User().AS("creator")
 
 	var wheres []jet.BoolExpression
-	if !userInfo.Superuser {
+	if !userInfo.GetSuperuser() {
 		wheres = []jet.BoolExpression{
 			jet.AND(
 				tDocument.DeletedAt.IS_NULL(),
 				jet.OR(
 					jet.OR(
 						tDocument.Public.IS_TRUE(),
-						tDocument.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+						tDocument.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
 					),
 					jet.OR(
-						tDAccess.UserID.EQ(jet.Int32(userInfo.UserId)),
+						tDAccess.UserID.EQ(jet.Int32(userInfo.GetUserId())),
 						jet.AND(
-							tDAccess.Job.EQ(jet.String(userInfo.Job)),
-							tDAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade)),
+							tDAccess.Job.EQ(jet.String(userInfo.GetJob())),
+							tDAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
 						),
 					),
 				),
@@ -222,7 +232,7 @@ func (s *Server) getDocumentQuery(where jet.BoolExpression, onlyColumns jet.Proj
 			)
 		}
 
-		if userInfo.Superuser {
+		if userInfo.GetSuperuser() {
 			columns = append(columns, tDocument.DeletedAt)
 		}
 
@@ -236,7 +246,7 @@ func (s *Server) getDocumentQuery(where jet.BoolExpression, onlyColumns jet.Proj
 	}
 
 	var tables jet.ReadableTable
-	if !userInfo.Superuser {
+	if !userInfo.GetSuperuser() {
 		tables = tDocument.
 			LEFT_JOIN(tDAccess,
 				tDAccess.TargetID.EQ(tDocument.ID).
@@ -257,7 +267,7 @@ func (s *Server) getDocumentQuery(where jet.BoolExpression, onlyColumns jet.Proj
 			).
 			LEFT_JOIN(tUserWorkflow,
 				tUserWorkflow.DocumentID.EQ(tDocument.ID).
-					AND(tUserWorkflow.UserID.EQ(jet.Int32(userInfo.UserId))),
+					AND(tUserWorkflow.UserID.EQ(jet.Int32(userInfo.GetUserId()))),
 			)
 	} else {
 		tables = tDocument.
@@ -276,7 +286,7 @@ func (s *Server) getDocumentQuery(where jet.BoolExpression, onlyColumns jet.Proj
 			).
 			LEFT_JOIN(tUserWorkflow,
 				tUserWorkflow.DocumentID.EQ(tDocument.ID).
-					AND(tUserWorkflow.UserID.EQ(jet.Int32(userInfo.UserId))),
+					AND(tUserWorkflow.UserID.EQ(jet.Int32(userInfo.GetUserId()))),
 			)
 	}
 
@@ -291,13 +301,19 @@ func (s *Server) getDocumentQuery(where jet.BoolExpression, onlyColumns jet.Proj
 		)
 }
 
-func (s *Server) updateDocumentOwner(ctx context.Context, tx qrm.DB, documentId uint64, userInfo *userinfo.UserInfo, newOwner *users.UserShort) error {
+func (s *Server) updateDocumentOwner(
+	ctx context.Context,
+	tx qrm.DB,
+	documentId uint64,
+	userInfo *userinfo.UserInfo,
+	newOwner *users.UserShort,
+) error {
 	stmt := tDocument.
 		UPDATE(
 			tDocument.CreatorID,
 		).
 		SET(
-			newOwner.UserId,
+			newOwner.GetUserId(),
 		).
 		WHERE(
 			tDocument.ID.EQ(jet.Uint64(documentId)),
@@ -311,11 +327,11 @@ func (s *Server) updateDocumentOwner(ctx context.Context, tx qrm.DB, documentId 
 		DocumentId:   documentId,
 		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_OWNER_CHANGED,
 		CreatorId:    &userInfo.UserId,
-		CreatorJob:   userInfo.Job,
+		CreatorJob:   userInfo.GetJob(),
 		Data: &documents.DocActivityData{
 			Data: &documents.DocActivityData_OwnerChanged{
 				OwnerChanged: &documents.DocOwnerChanged{
-					NewOwnerId: newOwner.UserId,
+					NewOwnerId: newOwner.GetUserId(),
 					NewOwner:   newOwner,
 				},
 			},

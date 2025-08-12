@@ -34,7 +34,7 @@ type ParentColBoolExpFn[P ParentID] func(parentId P) jet.BoolExpression
 // JoinRowInserterFn is a function type for inserting a join row into a table linking parent and file.
 type JoinRowInserterFn[P ParentID] func(ctx context.Context, tx *sql.Tx, join jet.Table, parentCol jet.Column, fileCol jet.ColumnInteger, parentId P, _ jet.BoolExpression, fileID uint64) error
 
-// Generic, embeddable file‑upload helper.
+// Generic, embeddable file-upload helper.
 type Handler[P ParentID] struct {
 	// store is the storage adapter (e.g. S3, filesystem).
 	store storage.IStorage
@@ -89,7 +89,9 @@ func NewHandler[P ParentID](
 }
 
 // AwaitHandshake reads the first upload packet to extract metadata. No handshake logic is required for this handler.
-func (h *Handler[P]) AwaitHandshake(srv pbfilestore.FilestoreService_UploadServer) (*file.UploadMeta, error) {
+func (h *Handler[P]) AwaitHandshake(
+	srv pbfilestore.FilestoreService_UploadServer,
+) (*file.UploadMeta, error) {
 	// First packet must be metadata
 	first, err := srv.Recv()
 	if err != nil {
@@ -101,16 +103,30 @@ func (h *Handler[P]) AwaitHandshake(srv pbfilestore.FilestoreService_UploadServe
 	}
 
 	if h.sizeLimit > 0 && meta.GetSize() > h.sizeLimit {
-		return nil, status.Errorf(codes.ResourceExhausted, "file size exceeds limit: %d > %d", meta.GetSize(), h.sizeLimit)
+		return nil, status.Errorf(
+			codes.ResourceExhausted,
+			"file size exceeds limit: %d > %d",
+			meta.GetSize(),
+			h.sizeLimit,
+		)
 	}
 
 	return meta, nil
 }
 
 // UploadFile streams file data from the gRPC server to storage, then records metadata and associations in the database.
-func (h *Handler[P]) UploadFile(ctx context.Context, parentID P, key string, size int64, ctype string, srv pbfilestore.FilestoreService_UploadServer) (*file.UploadFileResponse, error) {
+func (h *Handler[P]) UploadFile(
+	ctx context.Context,
+	parentID P,
+	key string,
+	size int64,
+	ctype string,
+	srv pbfilestore.FilestoreService_UploadServer,
+) (*file.UploadFileResponse, error) {
 	if h.sizeLimit > 0 && size > h.sizeLimit {
-		return nil, ErrUploadFileTooLarge(map[string]any{"maxSize": h.sizeLimit / 8}) // Convert bytes to megabytes
+		return nil, ErrUploadFileTooLarge(
+			map[string]any{"maxSize": h.sizeLimit / 8},
+		) // Convert bytes to megabytes
 	}
 
 	// pipe chunks to the storage backend
@@ -118,7 +134,7 @@ func (h *Handler[P]) UploadFile(ctx context.Context, parentID P, key string, siz
 	go func() {
 		for {
 			pkt, err := srv.Recv()
-			if err == io.EOF {
+			if errors.Is(err, io.EOF) {
 				pw.Close()
 				return
 			}
@@ -135,7 +151,7 @@ func (h *Handler[P]) UploadFile(ctx context.Context, parentID P, key string, siz
 		}
 	}()
 
-	// Size – if client sent one, honour it; otherwise -1 (unknown)
+	// Size - if client sent one, honour it; otherwise -1 (unknown)
 	szHint := int64(-1)
 	if size > 0 {
 		szHint = size
@@ -236,7 +252,12 @@ func (h *Handler[P]) GetFileByPath(ctx context.Context, path string) (uint64, st
 }
 
 // deleteJoinRow removes or nulls the join row for a parent/file association, depending on nullOnlyParentRow.
-func (h *Handler[P]) deleteJoinRow(ctx context.Context, tx *sql.Tx, parentID P, fileID uint64) error {
+func (h *Handler[P]) deleteJoinRow(
+	ctx context.Context,
+	tx *sql.Tx,
+	parentID P,
+	fileID uint64,
+) error {
 	if h.nullOnlyParentRow {
 		_, err := h.joinTable.
 			UPDATE(
@@ -355,8 +376,8 @@ func upsertFileRow(ctx context.Context, tx *sql.Tx, key, ctype string, size int6
 		FOR(jet.UPDATE()). // ← row-lock
 		QueryContext(ctx, tx, &fileId)
 
-	switch err {
-	case qrm.ErrNoRows:
+	switch {
+	case errors.Is(err, qrm.ErrNoRows):
 		// 2a) insert fresh row
 		res, err := tFiles.
 			INSERT(
@@ -373,8 +394,8 @@ func upsertFileRow(ctx context.Context, tx *sql.Tx, key, ctype string, size int6
 		newID, _ := res.LastInsertId()
 		return uint64(newID), nil
 
-	case nil:
-		// 2b) Row exists – overwrite metadata
+	case err == nil:
+		// 2b) Row exists - overwrite metadata
 		if _, err := tFiles.
 			UPDATE().
 			SET(
@@ -394,7 +415,16 @@ func upsertFileRow(ctx context.Context, tx *sql.Tx, key, ctype string, size int6
 }
 
 // InsertJoinRow inserts a new join row for a parent and file.
-func InsertJoinRow[P ParentID](ctx context.Context, tx *sql.Tx, join jet.Table, parentCol jet.Column, fileCol jet.ColumnInteger, parentId P, _ jet.BoolExpression, fileID uint64) error {
+func InsertJoinRow[P ParentID](
+	ctx context.Context,
+	tx *sql.Tx,
+	join jet.Table,
+	parentCol jet.Column,
+	fileCol jet.ColumnInteger,
+	parentId P,
+	_ jet.BoolExpression,
+	fileID uint64,
+) error {
 	_, err := join.
 		INSERT(
 			parentCol,
@@ -409,7 +439,16 @@ func InsertJoinRow[P ParentID](ctx context.Context, tx *sql.Tx, join jet.Table, 
 }
 
 // UpdateJoinRow updates the join row for a parent and file.
-func UpdateJoinRow[P ParentID](ctx context.Context, tx *sql.Tx, join jet.Table, parentCol jet.Column, fileCol jet.ColumnInteger, parentId P, parentIdBoolExp jet.BoolExpression, fileID uint64) error {
+func UpdateJoinRow[P ParentID](
+	ctx context.Context,
+	tx *sql.Tx,
+	join jet.Table,
+	parentCol jet.Column,
+	fileCol jet.ColumnInteger,
+	parentId P,
+	parentIdBoolExp jet.BoolExpression,
+	fileID uint64,
+) error {
 	_, err := join.
 		UPDATE(
 			fileCol,
@@ -424,7 +463,14 @@ func UpdateJoinRow[P ParentID](ctx context.Context, tx *sql.Tx, join jet.Table, 
 }
 
 // putToStorage writes file data to the storage backend and returns the key and size.
-func putToStorage(ctx context.Context, st storage.IStorage, key string, r io.Reader, ctype string, userSize int64) (url string, size int64, err error) {
+func putToStorage(
+	ctx context.Context,
+	st storage.IStorage,
+	key string,
+	r io.Reader,
+	ctype string,
+	userSize int64,
+) (string, int64, error) {
 	cr := &countingReader{Reader: r}
 
 	// Unknown total size: pass -1, backend switches to multipart automatically
@@ -433,7 +479,7 @@ func putToStorage(ctx context.Context, st storage.IStorage, key string, r io.Rea
 	if userSize > 0 {
 		s = userSize
 	}
-	if _, err = st.Put(ctx, key, cr, s, ctype); err != nil {
+	if _, err := st.Put(ctx, key, cr, s, ctype); err != nil {
 		return "", 0, err
 	}
 
@@ -489,7 +535,12 @@ func (h *Handler[P]) ListFilesForParentID(ctx context.Context, parentID P) ([]*f
 
 // HandleFileChangesForParent synchronizes the join table for a parent with the provided list of files.
 // It deletes associations for files no longer present and returns the number of added and deleted files.
-func (h *Handler[P]) HandleFileChangesForParent(ctx context.Context, tx *sql.Tx, parentID P, updatedFiles []*file.File) (int64, int64, error) {
+func (h *Handler[P]) HandleFileChangesForParent(
+	ctx context.Context,
+	tx *sql.Tx,
+	parentID P,
+	updatedFiles []*file.File,
+) (int64, int64, error) {
 	current, err := h.ListFilesForParentID(ctx, parentID)
 	if err != nil {
 		return 0, 0, err
@@ -497,12 +548,12 @@ func (h *Handler[P]) HandleFileChangesForParent(ctx context.Context, tx *sql.Tx,
 
 	currentMap := make(map[uint64]*file.File)
 	for _, f := range current {
-		currentMap[f.Id] = f
+		currentMap[f.GetId()] = f
 	}
 
 	updatedMap := make(map[uint64]*file.File)
 	for _, f := range updatedFiles {
-		updatedMap[f.Id] = f
+		updatedMap[f.GetId()] = f
 	}
 
 	var added []*file.File
@@ -525,7 +576,7 @@ func (h *Handler[P]) HandleFileChangesForParent(ctx context.Context, tx *sql.Tx,
 	}
 
 	for _, f := range deleted {
-		if err := h.deleteJoinRow(ctx, tx, parentID, f.Id); err != nil {
+		if err := h.deleteJoinRow(ctx, tx, parentID, f.GetId()); err != nil {
 			return 0, 0, err
 		}
 	}

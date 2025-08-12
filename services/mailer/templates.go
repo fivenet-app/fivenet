@@ -18,10 +18,18 @@ import (
 
 var tTemplates = table.FivenetMailerTemplates.AS("template")
 
-func (s *Server) ListTemplates(ctx context.Context, req *pbmailer.ListTemplatesRequest) (*pbmailer.ListTemplatesResponse, error) {
+func (s *Server) ListTemplates(
+	ctx context.Context,
+	req *pbmailer.ListTemplatesRequest,
+) (*pbmailer.ListTemplatesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.EmailId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_READ)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetEmailId(),
+		userInfo,
+		mailer.AccessLevel_ACCESS_LEVEL_READ,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -41,7 +49,7 @@ func (s *Server) ListTemplates(ctx context.Context, req *pbmailer.ListTemplatesR
 		).
 		FROM(tTemplates).
 		WHERE(jet.AND(
-			tTemplates.EmailID.EQ(jet.Uint64(req.EmailId)),
+			tTemplates.EmailID.EQ(jet.Uint64(req.GetEmailId())),
 		)).
 		LIMIT(25)
 
@@ -55,7 +63,11 @@ func (s *Server) ListTemplates(ctx context.Context, req *pbmailer.ListTemplatesR
 	return resp, nil
 }
 
-func (s *Server) getTemplate(ctx context.Context, id uint64, emailId *uint64) (*mailer.Template, error) {
+func (s *Server) getTemplate(
+	ctx context.Context,
+	id uint64,
+	emailId *uint64,
+) (*mailer.Template, error) {
 	condition := tTemplates.ID.EQ(jet.Uint64(id))
 
 	if emailId == nil || *emailId <= 0 {
@@ -91,26 +103,34 @@ func (s *Server) getTemplate(ctx context.Context, id uint64, emailId *uint64) (*
 		}
 	}
 
-	if dest.Id == 0 {
+	if dest.GetId() == 0 {
 		return nil, nil
 	}
 
 	return dest, nil
 }
 
-func (s *Server) GetTemplate(ctx context.Context, req *pbmailer.GetTemplateRequest) (*pbmailer.GetTemplateResponse, error) {
+func (s *Server) GetTemplate(
+	ctx context.Context,
+	req *pbmailer.GetTemplateRequest,
+) (*pbmailer.GetTemplateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
 		Method:  "GetTemplate",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.EmailId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_READ)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetEmailId(),
+		userInfo,
+		mailer.AccessLevel_ACCESS_LEVEL_READ,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -119,7 +139,7 @@ func (s *Server) GetTemplate(ctx context.Context, req *pbmailer.GetTemplateReque
 	}
 
 	resp := &pbmailer.GetTemplateResponse{}
-	resp.Template, err = s.getTemplate(ctx, req.TemplateId, &req.EmailId)
+	resp.Template, err = s.getTemplate(ctx, req.GetTemplateId(), &req.EmailId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -129,19 +149,27 @@ func (s *Server) GetTemplate(ctx context.Context, req *pbmailer.GetTemplateReque
 	return resp, nil
 }
 
-func (s *Server) CreateOrUpdateTemplate(ctx context.Context, req *pbmailer.CreateOrUpdateTemplateRequest) (*pbmailer.CreateOrUpdateTemplateResponse, error) {
+func (s *Server) CreateOrUpdateTemplate(
+	ctx context.Context,
+	req *pbmailer.CreateOrUpdateTemplateRequest,
+) (*pbmailer.CreateOrUpdateTemplateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
 		Method:  "CreateOrUpdateTemplate",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.Template.EmailId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_MANAGE)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetTemplate().GetEmailId(),
+		userInfo,
+		mailer.AccessLevel_ACCESS_LEVEL_MANAGE,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -150,14 +178,14 @@ func (s *Server) CreateOrUpdateTemplate(ctx context.Context, req *pbmailer.Creat
 	}
 
 	tTemplates := table.FivenetMailerTemplates
-	if req.Template.Id <= 0 {
+	if req.GetTemplate().GetId() <= 0 {
 		countStmt := tTemplates.
 			SELECT(
 				jet.COUNT(tTemplates.ID).AS("data_count.total"),
 			).
 			FROM(tTemplates).
 			WHERE(
-				tTemplates.CreatorJob.EQ(jet.String(userInfo.Job)),
+				tTemplates.CreatorJob.EQ(jet.String(userInfo.GetJob())),
 			)
 
 		var count database.DataCount
@@ -185,11 +213,11 @@ func (s *Server) CreateOrUpdateTemplate(ctx context.Context, req *pbmailer.Creat
 				tTemplates.CreatorID,
 			).
 			VALUES(
-				req.Template.EmailId,
-				req.Template.Title,
-				req.Template.Content,
-				req.Template.CreatorJob,
-				userInfo.UserId,
+				req.GetTemplate().GetEmailId(),
+				req.GetTemplate().GetTitle(),
+				req.GetTemplate().GetContent(),
+				req.GetTemplate().GetCreatorJob(),
+				userInfo.GetUserId(),
 			)
 
 		res, err := stmt.ExecContext(ctx, s.db)
@@ -205,7 +233,7 @@ func (s *Server) CreateOrUpdateTemplate(ctx context.Context, req *pbmailer.Creat
 
 		auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 	} else {
-		template, err := s.getTemplate(ctx, req.Template.Id, &req.Template.EmailId)
+		template, err := s.getTemplate(ctx, req.GetTemplate().GetId(), &req.Template.EmailId)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
@@ -217,11 +245,11 @@ func (s *Server) CreateOrUpdateTemplate(ctx context.Context, req *pbmailer.Creat
 		stmt := tTemplates.
 			UPDATE().
 			SET(
-				tTemplates.Title.SET(jet.String(req.Template.Title)),
-				tTemplates.Content.SET(jet.String(req.Template.Content)),
+				tTemplates.Title.SET(jet.String(req.GetTemplate().GetTitle())),
+				tTemplates.Content.SET(jet.String(req.GetTemplate().GetContent())),
 			).
 			WHERE(jet.AND(
-				tTemplates.ID.EQ(jet.Uint64(req.Template.Id)),
+				tTemplates.ID.EQ(jet.Uint64(req.GetTemplate().GetId())),
 			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -231,7 +259,7 @@ func (s *Server) CreateOrUpdateTemplate(ctx context.Context, req *pbmailer.Creat
 		auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 	}
 
-	template, err := s.getTemplate(ctx, req.Template.Id, &req.Template.EmailId)
+	template, err := s.getTemplate(ctx, req.GetTemplate().GetId(), &req.Template.EmailId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -241,19 +269,27 @@ func (s *Server) CreateOrUpdateTemplate(ctx context.Context, req *pbmailer.Creat
 	}, nil
 }
 
-func (s *Server) DeleteTemplate(ctx context.Context, req *pbmailer.DeleteTemplateRequest) (*pbmailer.DeleteTemplateResponse, error) {
+func (s *Server) DeleteTemplate(
+	ctx context.Context,
+	req *pbmailer.DeleteTemplateRequest,
+) (*pbmailer.DeleteTemplateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
 		Method:  "DeleteTemplate",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.Id, userInfo, mailer.AccessLevel_ACCESS_LEVEL_MANAGE)
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetId(),
+		userInfo,
+		mailer.AccessLevel_ACCESS_LEVEL_MANAGE,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -267,7 +303,7 @@ func (s *Server) DeleteTemplate(ctx context.Context, req *pbmailer.DeleteTemplat
 			tTemplates.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
 		).
 		WHERE(jet.AND(
-			tTemplates.ID.EQ(jet.Uint64(req.Id)),
+			tTemplates.ID.EQ(jet.Uint64(req.GetId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

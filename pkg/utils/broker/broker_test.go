@@ -11,6 +11,8 @@ import (
 )
 
 func TestBrokerStart(t *testing.T) {
+	assert, require := assert.New(t), require.New(t)
+
 	type testMessage struct {
 		ID   int
 		Data string
@@ -27,7 +29,7 @@ func TestBrokerStart(t *testing.T) {
 	sub1 := broker.Subscribe()
 	sub2 := broker.Subscribe()
 
-	assert.Equal(t, int64(2), broker.SubCount())
+	assert.Equal(int64(2), broker.SubCount())
 
 	// Test publishing
 	var wg sync.WaitGroup
@@ -37,8 +39,8 @@ func TestBrokerStart(t *testing.T) {
 		defer wg.Done()
 		select {
 		case msg := <-sub1:
-			require.Equal(t, 1, msg.ID, "unexpected ID received on sub1")
-			require.Equal(t, "test", msg.Data, "unexpected Data received on sub1")
+			require.Equal(1, msg.ID, "unexpected ID received on sub1")
+			require.Equal("test", msg.Data, "unexpected Data received on sub1")
 
 		case <-time.After(1 * time.Second):
 			t.Error("timeout waiting for message on sub1")
@@ -49,8 +51,9 @@ func TestBrokerStart(t *testing.T) {
 		defer wg.Done()
 		select {
 		case msg := <-sub2:
-			require.Equal(t, 1, msg.ID, "unexpected ID received on sub2")
-			require.Equal(t, "test", msg.Data, "unexpected Data received on sub2")
+			require.NotNil(msg)
+			require.Equal(1, msg.ID, "unexpected ID received on sub2")
+			require.Equal("test", msg.Data, "unexpected Data received on sub2")
 
 		case <-time.After(1 * time.Second):
 			t.Error("timeout waiting for message on sub2")
@@ -64,7 +67,7 @@ func TestBrokerStart(t *testing.T) {
 	broker.Unsubscribe(sub1)
 	// Wait for the broker to process the unsubscribe
 	time.Sleep(100 * time.Millisecond)
-	assert.Equal(t, int64(1), broker.SubCount(), "expected 1 subscriber after unsubscribing")
+	assert.Equal(int64(1), broker.SubCount(), "expected 1 subscriber after unsubscribing")
 
 	// Ensure unsubscribed channel is closed
 	select {

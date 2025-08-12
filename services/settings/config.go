@@ -17,14 +17,17 @@ import (
 
 var tConfig = table.FivenetConfig
 
-func (s *Server) GetAppConfig(ctx context.Context, req *pbsettings.GetAppConfigRequest) (*pbsettings.GetAppConfigResponse, error) {
+func (s *Server) GetAppConfig(
+	ctx context.Context,
+	req *pbsettings.GetAppConfigRequest,
+) (*pbsettings.GetAppConfigResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbsettings.ConfigService_ServiceDesc.ServiceName,
 		Method:  "GetAppConfig",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
@@ -41,26 +44,31 @@ func (s *Server) GetAppConfig(ctx context.Context, req *pbsettings.GetAppConfigR
 	}, nil
 }
 
-func (s *Server) UpdateAppConfig(ctx context.Context, req *pbsettings.UpdateAppConfigRequest) (*pbsettings.UpdateAppConfigResponse, error) {
+func (s *Server) UpdateAppConfig(
+	ctx context.Context,
+	req *pbsettings.UpdateAppConfigRequest,
+) (*pbsettings.UpdateAppConfigResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbsettings.ConfigService_ServiceDesc.ServiceName,
 		Method:  "UpdateAppConfig",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	req.Config.Default()
-	if req.Config.System.BannerMessage != nil {
+	req.GetConfig().Default()
+	if req.GetConfig().GetSystem().GetBannerMessage() != nil {
 		var expiresAt time.Time
-		if req.Config.System.BannerMessage.ExpiresAt != nil {
-			expiresAt = req.Config.System.BannerMessage.ExpiresAt.AsTime()
+		if req.GetConfig().GetSystem().GetBannerMessage().GetExpiresAt() != nil {
+			expiresAt = req.GetConfig().GetSystem().GetBannerMessage().GetExpiresAt().AsTime()
 		}
 
-		req.Config.System.BannerMessage.Id = utils.GetMD5HashFromString(req.Config.System.BannerMessage.Title + "-" + expiresAt.String())
+		req.Config.System.BannerMessage.Id = utils.GetMD5HashFromString(
+			req.GetConfig().GetSystem().GetBannerMessage().GetTitle() + "-" + expiresAt.String(),
+		)
 	}
 
 	stmt := tConfig.
@@ -70,7 +78,7 @@ func (s *Server) UpdateAppConfig(ctx context.Context, req *pbsettings.UpdateAppC
 		).
 		VALUES(
 			1,
-			req.Config,
+			req.GetConfig(),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tConfig.AppConfig.SET(jet.RawString("VALUES(`app_config`)")),
@@ -81,16 +89,19 @@ func (s *Server) UpdateAppConfig(ctx context.Context, req *pbsettings.UpdateAppC
 	}
 
 	// Update default perms
-	defaultPerms := make([]string, len(req.Config.Perms.Default))
-	for i := range req.Config.Perms.Default {
-		defaultPerms[i] = perms.BuildGuard(perms.Category(req.Config.Perms.Default[i].Category), perms.Name(req.Config.Perms.Default[i].Name))
+	defaultPerms := make([]string, len(req.GetConfig().GetPerms().GetDefault()))
+	for i := range req.GetConfig().GetPerms().GetDefault() {
+		defaultPerms[i] = perms.BuildGuard(
+			perms.Category(req.GetConfig().GetPerms().GetDefault()[i].GetCategory()),
+			perms.Name(req.GetConfig().GetPerms().GetDefault()[i].GetName()),
+		)
 	}
 	if err := s.ps.SetDefaultRolePerms(ctx, defaultPerms); err != nil {
 		return nil, err
 	}
 
 	// Update config state
-	if err := s.appCfg.Update(ctx, req.Config); err != nil {
+	if err := s.appCfg.Update(ctx, req.GetConfig()); err != nil {
 		return nil, err
 	}
 
@@ -101,7 +112,11 @@ func (s *Server) UpdateAppConfig(ctx context.Context, req *pbsettings.UpdateAppC
 		return nil, err
 	}
 
-	clientCfg := clientconfig.BuildClientConfig(s.cfg, clientconfig.BuildProviderList(s.cfg), s.appCfg.Get())
+	clientCfg := clientconfig.BuildClientConfig(
+		s.cfg,
+		clientconfig.BuildProviderList(s.cfg),
+		s.appCfg.Get(),
+	)
 
 	s.notifi.SendSystemEvent(ctx, &notifications.SystemEvent{
 		Data: &notifications.SystemEvent_ClientConfig{

@@ -15,8 +15,11 @@ func (x *VehicleProps) HandleChanges(ctx context.Context, tx *sql.Tx, in *Vehicl
 
 	// Generate the update sets
 	if in.Wanted != nil {
-		updateSets = append(updateSets, tUserProps.Wanted.SET(jet.Bool(*in.Wanted)))
-		updateSets = append(updateSets, tUserProps.WantedReason.SET(jet.String(*in.WantedReason)))
+		updateSets = append(updateSets, tUserProps.Wanted.SET(jet.Bool(in.GetWanted())))
+		updateSets = append(
+			updateSets,
+			tUserProps.WantedReason.SET(jet.String(in.GetWantedReason())),
+		)
 	} else {
 		in.Wanted = x.Wanted
 		in.WantedReason = x.WantedReason
@@ -31,10 +34,10 @@ func (x *VehicleProps) HandleChanges(ctx context.Context, tx *sql.Tx, in *Vehicl
 				tUserProps.WantedReason,
 			).
 			VALUES(
-				in.Plate,
+				in.GetPlate(),
 				jet.CURRENT_TIMESTAMP(),
-				in.Wanted,
-				in.WantedReason,
+				in.GetWanted(),
+				in.GetWantedReason(),
 			).
 			ON_DUPLICATE_KEY_UPDATE(
 				updateSets...,

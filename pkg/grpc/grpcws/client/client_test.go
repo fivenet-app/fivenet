@@ -17,13 +17,14 @@ type Client struct {
 }
 
 func New(ctx context.Context, url string, headers http.Header) (*Client, error) {
-	con, _, err := websocket.Dial(ctx, url, &websocket.DialOptions{
+	con, resp, err := websocket.Dial(ctx, url, &websocket.DialOptions{
 		Subprotocols: []string{"grpc-websocket-channel"},
 		HTTPHeader:   headers,
 	})
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
 	c := &Client{
 		c:        con,
@@ -72,15 +73,14 @@ func (c *Client) NewChannel(headers map[string]*grpcws.HeaderValue) *WSChannel {
 }
 
 type WSChannel struct {
-	c  *websocket.Conn
-	in chan grpcws.GrpcFrame
+	c *websocket.Conn
 
 	streamId uint32
 
 	headers map[string]*grpcws.HeaderValue
 }
 
-func (w *WSChannel) sendBody(ctx context.Context, msg proto.Message, complete bool) error {
+func (w *WSChannel) SendBody(ctx context.Context, msg proto.Message, complete bool) error {
 	out, err := proto.Marshal(msg)
 	if err != nil {
 		return err
@@ -108,7 +108,7 @@ func (w *WSChannel) sendBody(ctx context.Context, msg proto.Message, complete bo
 	return nil
 }
 
-func (w *WSChannel) sendHeaders(ctx context.Context, operation string) error {
+func (w *WSChannel) SendHeaders(ctx context.Context, operation string) error {
 	header := &grpcws.GrpcFrame{
 		StreamId: 1,
 		Payload: &grpcws.GrpcFrame_Header{
@@ -140,5 +140,6 @@ func (w *WSChannel) wrapBodyData(out []byte) []byte {
 	o[3] = byte(msgLen >> 8)
 	o[4] = byte(msgLen)
 
+	//nolint:makezero // This is intentional to have append auto allocate the slice as needed
 	return append(o, out...)
 }

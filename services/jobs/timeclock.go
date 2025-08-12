@@ -25,18 +25,26 @@ const TimeclockMaxDays = (365 / 2) * 24 * time.Hour // Half a year
 
 var tTimeClock = table.FivenetJobTimeclock.AS("timeclock_entry")
 
-func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockRequest) (*pbjobs.ListTimeclockResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.timeclock.user_ids", req.UserIds})
+func (s *Server) ListTimeclock(
+	ctx context.Context,
+	req *pbjobs.ListTimeclockRequest,
+) (*pbjobs.ListTimeclockResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.timeclock.user_ids", req.GetUserIds()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	tColleague := tables.User().AS("colleague")
 
-	condition := tColleague.Job.EQ(jet.String(userInfo.Job))
-	statsCondition := tTimeClock.Job.EQ(jet.String(userInfo.Job))
+	condition := tColleague.Job.EQ(jet.String(userInfo.GetJob()))
+	statsCondition := tTimeClock.Job.EQ(jet.String(userInfo.GetJob()))
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(userInfo, permsjobs.TimeclockServicePerm, permsjobs.TimeclockServiceListTimeclockPerm, permsjobs.TimeclockServiceListTimeclockAccessPermField)
+	fields, err := s.ps.AttrStringList(
+		userInfo,
+		permsjobs.TimeclockServicePerm,
+		permsjobs.TimeclockServiceListTimeclockPerm,
+		permsjobs.TimeclockServiceListTimeclockAccessPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -45,14 +53,14 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 		req.UserMode = jobs.TimeclockViewMode_TIMECLOCK_VIEW_MODE_SELF
 	}
 
-	if req.UserMode <= jobs.TimeclockViewMode_TIMECLOCK_VIEW_MODE_SELF {
-		condition = condition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.UserId)))
-		statsCondition = statsCondition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.UserId)))
+	if req.GetUserMode() <= jobs.TimeclockViewMode_TIMECLOCK_VIEW_MODE_SELF {
+		condition = condition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.GetUserId())))
+		statsCondition = statsCondition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.GetUserId())))
 	} else {
-		if len(req.UserIds) > 0 {
-			ids := make([]jet.Expression, len(req.UserIds))
-			for i := range req.UserIds {
-				ids[i] = jet.Int32(req.UserIds[i])
+		if len(req.GetUserIds()) > 0 {
+			ids := make([]jet.Expression, len(req.GetUserIds()))
+			for i := range req.GetUserIds() {
+				ids[i] = jet.Int32(req.GetUserIds()[i])
 			}
 
 			condition = condition.AND(
@@ -64,57 +72,62 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 		}
 	}
 
-	if req.Date != nil {
-		if req.Mode <= jobs.TimeclockMode_TIMECLOCK_MODE_DAILY {
-			if req.Date.End == nil {
+	if req.GetDate() != nil {
+		if req.GetMode() <= jobs.TimeclockMode_TIMECLOCK_MODE_DAILY {
+			if req.GetDate().GetEnd() == nil {
 				req.Date.End = timestamp.Now()
 			}
 
 			condition = condition.AND(tTimeClock.Date.EQ(
-				jet.DateT(req.Date.End.AsTime()),
+				jet.DateT(req.GetDate().GetEnd().AsTime()),
 			))
-		} else if req.Mode == jobs.TimeclockMode_TIMECLOCK_MODE_WEEKLY {
-			if req.Date.End != nil {
+		} else if req.GetMode() == jobs.TimeclockMode_TIMECLOCK_MODE_WEEKLY {
+			if req.GetDate().GetEnd() != nil {
 				condition = condition.AND(jet.BoolExp(jet.Raw("YEARWEEK(`timeclock_entry`.`date`, 1) = YEARWEEK($date, 1)",
-					jet.RawArgs{"$date": req.Date.End.AsTime()},
+					jet.RawArgs{"$date": req.GetDate().GetEnd().AsTime()},
 				)),
 				)
 			}
 		} else {
-			if req.Date.Start != nil {
+			if req.GetDate().GetStart() != nil {
 				condition = condition.AND(tTimeClock.Date.GT_EQ(
-					jet.DateT(req.Date.Start.AsTime()),
+					jet.DateT(req.GetDate().GetStart().AsTime()),
 				))
 			}
-			if req.Date.End != nil {
+			if req.GetDate().GetEnd() != nil {
 				condition = condition.AND(tTimeClock.Date.LT_EQ(
-					jet.DateT(req.Date.End.AsTime()),
+					jet.DateT(req.GetDate().GetEnd().AsTime()),
 				))
 			}
 		}
 
 		// Make sure the provided dates are not "out of range"
 		now := time.Now()
-		if req.Date.Start != nil && now.Sub(req.Date.Start.AsTime()) >= TimeclockMaxDays {
+		if req.GetDate().GetStart() != nil &&
+			now.Sub(req.GetDate().GetStart().AsTime()) >= TimeclockMaxDays {
 			return nil, errorsjobs.ErrTimeclockOutOfRange
 		}
-		if req.Date.End != nil && now.Sub(req.Date.End.AsTime()) >= TimeclockMaxDays {
+		if req.GetDate().GetEnd() != nil &&
+			now.Sub(req.GetDate().GetEnd().AsTime()) >= TimeclockMaxDays {
 			return nil, errorsjobs.ErrTimeclockOutOfRange
 		}
 	}
 
 	groupBys := []jet.GroupByClause{}
-	if req.PerDay {
+	if req.GetPerDay() {
 		groupBys = append(groupBys, tTimeClock.Date, tTimeClock.UserID)
 	} else {
 		groupBys = append(groupBys, tTimeClock.UserID)
 	}
 
 	var countStmt jet.SelectStatement
-	if req.UserMode == jobs.TimeclockViewMode_TIMECLOCK_VIEW_MODE_ALL {
-		if req.PerDay {
+	if req.GetUserMode() == jobs.TimeclockViewMode_TIMECLOCK_VIEW_MODE_ALL {
+		if req.GetPerDay() {
 			countStmt = tTimeClock.
-				SELECT(jet.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").AS("data_count.total")).
+				SELECT(
+					jet.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").
+						AS("data_count.total"),
+				).
 				FROM(
 					tTimeClock.
 						INNER_JOIN(tColleague,
@@ -152,7 +165,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, 30)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, 30)
 	resp := &pbjobs.ListTimeclockResponse{
 		Pagination: pag,
 	}
@@ -174,16 +187,16 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 	spentTimeColumn := jet.StringColumn("timeclock_entry.spent_time")
 	// Convert proto sort to db sorting
 	orderBys := []jet.OrderByClause{}
-	if req.Sort != nil {
+	if req.GetSort() != nil {
 		var staticColumns []jet.OrderByClause
 		var columns []jet.Column
-		switch req.Sort.Column {
+		switch req.GetSort().GetColumn() {
 		case "date":
 			columns = append(columns, tTimeClock.Date)
-		case "rank":
+		case rankColumn:
 			staticColumns = append(staticColumns, tTimeClock.Date.DESC())
 			columns = append(columns, tColleague.JobGrade)
-		case "name":
+		case nameColumn:
 			staticColumns = append(staticColumns, tTimeClock.Date.DESC())
 			columns = append(columns, tColleague.Firstname)
 		case "time":
@@ -193,7 +206,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 		}
 
 		for _, column := range columns {
-			if req.Sort.Direction == database.AscSortDirection {
+			if req.GetSort().GetDirection() == database.AscSortDirection {
 				if column == spentTimeColumn {
 					orderBys = append(orderBys, column.ASC())
 				} else {
@@ -217,7 +230,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 
-	if req.Mode <= jobs.TimeclockMode_TIMECLOCK_MODE_DAILY {
+	if req.GetMode() <= jobs.TimeclockMode_TIMECLOCK_MODE_DAILY {
 		resp.Entries = &pbjobs.ListTimeclockResponse_Daily{
 			Daily: &pbjobs.TimeclockDay{},
 		}
@@ -254,14 +267,14 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 					).
 					LEFT_JOIN(tColleagueProps,
 						tColleagueProps.UserID.EQ(tColleague.ID).
-							AND(tColleague.Job.EQ(jet.String(userInfo.Job))),
+							AND(tColleague.Job.EQ(jet.String(userInfo.GetJob()))),
 					).
 					LEFT_JOIN(tAvatar,
 						tAvatar.ID.EQ(tUserProps.AvatarFileID),
 					),
 			).
 			WHERE(condition).
-			OFFSET(req.Pagination.Offset).
+			OFFSET(req.GetPagination().GetOffset()).
 			GROUP_BY(groupBys...).
 			ORDER_BY(orderBys...).
 			LIMIT(limit)
@@ -273,20 +286,20 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 			}
 		}
 
-		data.Date = req.Date.End
-		for i := range data.Entries {
-			if data.Entries[i].User != nil {
-				if data.Entries[i].User.Job != userInfo.Job {
-					jobInfoFn(data.Entries[i].User)
+		data.Date = req.GetDate().GetEnd()
+		for i := range data.GetEntries() {
+			if data.GetEntries()[i].GetUser() != nil {
+				if data.GetEntries()[i].GetUser().GetJob() != userInfo.GetJob() {
+					jobInfoFn(data.GetEntries()[i].GetUser())
 				} else {
-					s.enricher.EnrichJobInfo(data.Entries[i].User)
+					s.enricher.EnrichJobInfo(data.GetEntries()[i].GetUser())
 				}
 			}
-			data.Sum += int64(math.Round(float64(data.Entries[i].SpentTime * 60 * 60)))
+			data.Sum += int64(math.Round(float64(data.GetEntries()[i].GetSpentTime() * 60 * 60)))
 		}
 
-		resp.Pagination.Update(len(data.Entries))
-	} else if req.Mode == jobs.TimeclockMode_TIMECLOCK_MODE_WEEKLY {
+		resp.GetPagination().Update(len(data.GetEntries()))
+	} else if req.GetMode() == jobs.TimeclockMode_TIMECLOCK_MODE_WEEKLY {
 		resp.Entries = &pbjobs.ListTimeclockResponse_Weekly{
 			Weekly: &pbjobs.TimeclockWeekly{},
 		}
@@ -324,14 +337,14 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 					).
 					LEFT_JOIN(tColleagueProps,
 						tColleagueProps.UserID.EQ(tColleague.ID).
-							AND(tColleague.Job.EQ(jet.String(userInfo.Job))),
+							AND(tColleague.Job.EQ(jet.String(userInfo.GetJob()))),
 					).
 					LEFT_JOIN(tAvatar,
 						tAvatar.ID.EQ(tUserProps.AvatarFileID),
 					),
 			).
 			WHERE(condition).
-			OFFSET(req.Pagination.Offset).
+			OFFSET(req.GetPagination().GetOffset()).
 			GROUP_BY(groupBys...).
 			ORDER_BY(orderBys...).
 			LIMIT(limit)
@@ -343,19 +356,19 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 			}
 		}
 
-		for i := range data.Entries {
-			if data.Entries[i].User != nil {
-				if data.Entries[i].User.Job != userInfo.Job {
-					jobInfoFn(data.Entries[i].User)
+		for i := range data.GetEntries() {
+			if data.GetEntries()[i].GetUser() != nil {
+				if data.GetEntries()[i].GetUser().GetJob() != userInfo.GetJob() {
+					jobInfoFn(data.GetEntries()[i].GetUser())
 				} else {
-					s.enricher.EnrichJobInfo(data.Entries[i].User)
+					s.enricher.EnrichJobInfo(data.GetEntries()[i].GetUser())
 				}
 			}
-			data.Sum += int64(math.Round(float64(data.Entries[i].SpentTime * 60 * 60)))
+			data.Sum += int64(math.Round(float64(data.GetEntries()[i].GetSpentTime() * 60 * 60)))
 		}
 
-		resp.Pagination.Update(len(data.Entries))
-	} else if req.Mode == jobs.TimeclockMode_TIMECLOCK_MODE_RANGE {
+		resp.GetPagination().Update(len(data.GetEntries()))
+	} else if req.GetMode() == jobs.TimeclockMode_TIMECLOCK_MODE_RANGE {
 		resp.Entries = &pbjobs.ListTimeclockResponse_Range{
 			Range: &pbjobs.TimeclockRange{},
 		}
@@ -393,14 +406,14 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 					).
 					LEFT_JOIN(tColleagueProps,
 						tColleagueProps.UserID.EQ(tColleague.ID).
-							AND(tColleague.Job.EQ(jet.String(userInfo.Job))),
+							AND(tColleague.Job.EQ(jet.String(userInfo.GetJob()))),
 					).
 					LEFT_JOIN(tAvatar,
 						tAvatar.ID.EQ(tUserProps.AvatarFileID),
 					),
 			).
 			WHERE(condition).
-			OFFSET(req.Pagination.Offset).
+			OFFSET(req.GetPagination().GetOffset()).
 			GROUP_BY(groupBys...).
 			ORDER_BY(orderBys...).
 			LIMIT(limit)
@@ -412,17 +425,17 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 			}
 		}
 
-		data.Date = req.Date.End
-		for i := range data.Entries {
-			if data.Entries[i].User != nil {
-				jobInfoFn(data.Entries[i].User)
+		data.Date = req.GetDate().GetEnd()
+		for i := range data.GetEntries() {
+			if data.GetEntries()[i].GetUser() != nil {
+				jobInfoFn(data.GetEntries()[i].GetUser())
 			}
 
-			data.Sum += int64(math.Round(float64(data.Entries[i].SpentTime * 60 * 60)))
+			data.Sum += int64(math.Round(float64(data.GetEntries()[i].GetSpentTime() * 60 * 60)))
 		}
 
-		resp.Pagination.Update(len(data.Entries))
-	} else if req.Mode == jobs.TimeclockMode_TIMECLOCK_MODE_TIMELINE {
+		resp.GetPagination().Update(len(data.GetEntries()))
+	} else if req.GetMode() == jobs.TimeclockMode_TIMECLOCK_MODE_TIMELINE {
 		resp.Entries = &pbjobs.ListTimeclockResponse_Range{
 			Range: &pbjobs.TimeclockRange{},
 		}
@@ -460,7 +473,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 					).
 					LEFT_JOIN(tColleagueProps,
 						tColleagueProps.UserID.EQ(tColleague.ID).
-							AND(tColleague.Job.EQ(jet.String(userInfo.Job))),
+							AND(tColleague.Job.EQ(jet.String(userInfo.GetJob()))),
 					).
 					LEFT_JOIN(tAvatar,
 						tAvatar.ID.EQ(tUserProps.AvatarFileID),
@@ -476,37 +489,45 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 			}
 		}
 
-		data.Date = req.Date.End
-		for i := range data.Entries {
-			if data.Entries[i].User != nil {
-				jobInfoFn(data.Entries[i].User)
+		data.Date = req.GetDate().GetEnd()
+		for i := range data.GetEntries() {
+			if data.GetEntries()[i].GetUser() != nil {
+				jobInfoFn(data.GetEntries()[i].GetUser())
 			}
 
-			data.Sum += int64(math.Round(float64(data.Entries[i].SpentTime * 60 * 60)))
+			data.Sum += int64(math.Round(float64(data.GetEntries()[i].GetSpentTime() * 60 * 60)))
 		}
 
-		resp.Pagination.Update(len(data.Entries))
+		resp.GetPagination().Update(len(data.GetEntries()))
 	}
 
 	return resp, nil
 }
 
-func (s *Server) GetTimeclockStats(ctx context.Context, req *pbjobs.GetTimeclockStatsRequest) (*pbjobs.GetTimeclockStatsResponse, error) {
+func (s *Server) GetTimeclockStats(
+	ctx context.Context,
+	req *pbjobs.GetTimeclockStatsRequest,
+) (*pbjobs.GetTimeclockStatsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	userId := userInfo.UserId
-	if req.UserId != nil && *req.UserId > 0 && *req.UserId != userInfo.UserId {
+	userId := userInfo.GetUserId()
+	if req.UserId != nil && req.GetUserId() > 0 && req.GetUserId() != userInfo.GetUserId() {
 		// Field Permission Check
-		fields, err := s.ps.AttrStringList(userInfo, permsjobs.TimeclockServicePerm, permsjobs.TimeclockServiceListTimeclockPerm, permsjobs.TimeclockServiceListTimeclockAccessPermField)
+		fields, err := s.ps.AttrStringList(
+			userInfo,
+			permsjobs.TimeclockServicePerm,
+			permsjobs.TimeclockServiceListTimeclockPerm,
+			permsjobs.TimeclockServiceListTimeclockAccessPermField,
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
 		if fields.Contains("All") {
-			userId = *req.UserId
+			userId = req.GetUserId()
 		}
 	}
 
-	condition := tTimeClock.Job.EQ(jet.String(userInfo.Job)).
+	condition := tTimeClock.Job.EQ(jet.String(userInfo.GetJob())).
 		AND(tTimeClock.UserID.EQ(jet.Int32(userId)))
 
 	stats, err := s.getTimeclockStats(ctx, condition)
@@ -525,24 +546,27 @@ func (s *Server) GetTimeclockStats(ctx context.Context, req *pbjobs.GetTimeclock
 	}, nil
 }
 
-func (s *Server) ListInactiveEmployees(ctx context.Context, req *pbjobs.ListInactiveEmployeesRequest) (*pbjobs.ListInactiveEmployeesResponse, error) {
+func (s *Server) ListInactiveEmployees(
+	ctx context.Context,
+	req *pbjobs.ListInactiveEmployeesRequest,
+) (*pbjobs.ListInactiveEmployeesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	tColleague := tables.User().AS("colleague")
 
 	condition := jet.AND(
-		tTimeClock.Job.EQ(jet.String(userInfo.Job)),
-		tColleague.Job.EQ(jet.String(userInfo.Job)),
+		tTimeClock.Job.EQ(jet.String(userInfo.GetJob())),
+		tColleague.Job.EQ(jet.String(userInfo.GetJob())),
 		jet.OR(
 			jet.AND(
 				tColleagueProps.AbsenceBegin.IS_NULL(),
 				tColleagueProps.AbsenceEnd.IS_NULL(),
 			),
 			tColleagueProps.AbsenceBegin.LT_EQ(
-				jet.DateExp(jet.CURRENT_DATE().SUB(jet.INTERVAL(req.Days, jet.DAY))),
+				jet.DateExp(jet.CURRENT_DATE().SUB(jet.INTERVAL(req.GetDays(), jet.DAY))),
 			),
 			tColleagueProps.AbsenceEnd.LT_EQ(
-				jet.DateExp(jet.CURRENT_DATE().SUB(jet.INTERVAL(req.Days, jet.DAY))),
+				jet.DateExp(jet.CURRENT_DATE().SUB(jet.INTERVAL(req.GetDays(), jet.DAY))),
 			),
 		),
 		tTimeClock.UserID.NOT_IN(
@@ -552,8 +576,10 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *pbjobs.ListInac
 				).
 				FROM(tTimeClock).
 				WHERE(jet.AND(
-					tTimeClock.Job.EQ(jet.String(userInfo.Job)),
-					tTimeClock.Date.GT_EQ(jet.DateExp(jet.CURRENT_DATE().SUB(jet.INTERVAL(req.Days, jet.DAY)))),
+					tTimeClock.Job.EQ(jet.String(userInfo.GetJob())),
+					tTimeClock.Date.GT_EQ(
+						jet.DateExp(jet.CURRENT_DATE().SUB(jet.INTERVAL(req.GetDays(), jet.DAY))),
+					),
 				)).
 				GROUP_BY(tTimeClock.UserID),
 		),
@@ -573,7 +599,7 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *pbjobs.ListInac
 				).
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tTimeClock.UserID).
-						AND(tColleague.Job.EQ(jet.String(userInfo.Job))),
+						AND(tColleague.Job.EQ(jet.String(userInfo.GetJob()))),
 				),
 		).
 		WHERE(condition)
@@ -585,7 +611,7 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *pbjobs.ListInac
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, 20)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, 20)
 	resp := &pbjobs.ListInactiveEmployeesResponse{
 		Pagination: pag,
 		Colleagues: []*jobs.Colleague{},
@@ -596,19 +622,19 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *pbjobs.ListInac
 
 	// Convert proto sort to db sorting
 	orderBys := []jet.OrderByClause{}
-	if req.Sort != nil {
+	if req.GetSort() != nil {
 		var columns []jet.Column
-		switch req.Sort.Column {
-		case "name":
+		switch req.GetSort().GetColumn() {
+		case nameColumn:
 			columns = append(columns, tColleague.Firstname, tColleague.Lastname)
-		case "rank":
+		case rankColumn:
 			fallthrough
 		default:
 			columns = append(columns, tColleague.JobGrade)
 		}
 
 		for _, column := range columns {
-			if req.Sort.Direction == database.AscSortDirection {
+			if req.GetSort().GetDirection() == database.AscSortDirection {
 				orderBys = append(orderBys, column.ASC())
 			} else {
 				orderBys = append(orderBys, column.DESC())
@@ -647,7 +673,7 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *pbjobs.ListInac
 				).
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tTimeClock.UserID).
-						AND(tColleague.Job.EQ(jet.String(userInfo.Job))),
+						AND(tColleague.Job.EQ(jet.String(userInfo.GetJob()))),
 				).
 				LEFT_JOIN(tAvatar,
 					tAvatar.ID.EQ(tUserProps.AvatarFileID),
@@ -656,7 +682,7 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *pbjobs.ListInac
 		WHERE(condition).
 		ORDER_BY(orderBys...).
 		GROUP_BY(tTimeClock.UserID).
-		OFFSET(req.Pagination.Offset).
+		OFFSET(req.GetPagination().GetOffset()).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Colleagues); err != nil {
@@ -666,11 +692,11 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *pbjobs.ListInac
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.Colleagues {
-		jobInfoFn(resp.Colleagues[i])
+	for i := range resp.GetColleagues() {
+		jobInfoFn(resp.GetColleagues()[i])
 	}
 
-	resp.Pagination.Update(len(resp.Colleagues))
+	resp.GetPagination().Update(len(resp.GetColleagues()))
 
 	return resp, nil
 }

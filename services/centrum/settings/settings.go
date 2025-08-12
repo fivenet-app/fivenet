@@ -51,7 +51,12 @@ func New(p Params) *SettingsDB {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		st, err := store.New[centrum.Settings, *centrum.Settings](ctxCancel, logger, p.JS, "centrum_settings")
+		st, err := store.New[centrum.Settings, *centrum.Settings](
+			ctxCancel,
+			logger,
+			p.JS,
+			"centrum_settings",
+		)
 		if err != nil {
 			return err
 		}
@@ -107,9 +112,9 @@ func (s *SettingsDB) LoadFromDB(ctx context.Context, job string) error {
 	}
 
 	for _, settings := range dest {
-		settings.Default(settings.Job)
+		settings.Default(settings.GetJob())
 
-		if err := s.updateInKV(ctx, settings.Job, settings); err != nil {
+		if err := s.updateInKV(ctx, settings.GetJob(), settings); err != nil {
 			return err
 		}
 	}
@@ -135,22 +140,22 @@ func (s *SettingsDB) updateDB(ctx context.Context, job string, settings *centrum
 		).
 		VALUES(
 			job,
-			settings.Enabled,
-			settings.Type,
-			settings.Public,
-			settings.Mode,
-			settings.FallbackMode,
-			settings.PredefinedStatus,
-			settings.Timings,
-			settings.Access,
-			settings.Configuration,
+			settings.GetEnabled(),
+			settings.GetType(),
+			settings.GetPublic(),
+			settings.GetMode(),
+			settings.GetFallbackMode(),
+			settings.GetPredefinedStatus(),
+			settings.GetTimings(),
+			settings.GetAccess(),
+			settings.GetConfiguration(),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tCentrumSettings.Enabled.SET(jet.Bool(settings.Enabled)),
-			tCentrumSettings.Type.SET(jet.Int32(int32(settings.Type))),
-			tCentrumSettings.Public.SET(jet.Bool(settings.Public)),
-			tCentrumSettings.Mode.SET(jet.Int32(int32(settings.Mode))),
-			tCentrumSettings.FallbackMode.SET(jet.Int32(int32(settings.FallbackMode))),
+			tCentrumSettings.Enabled.SET(jet.Bool(settings.GetEnabled())),
+			tCentrumSettings.Type.SET(jet.Int32(int32(settings.GetType()))),
+			tCentrumSettings.Public.SET(jet.Bool(settings.GetPublic())),
+			tCentrumSettings.Mode.SET(jet.Int32(int32(settings.GetMode()))),
+			tCentrumSettings.FallbackMode.SET(jet.Int32(int32(settings.GetFallbackMode()))),
 			tCentrumSettings.PredefinedStatus.SET(jet.StringExp(jet.Raw("VALUES(`predefined_status`)"))),
 			tCentrumSettings.Timings.SET(jet.StringExp(jet.Raw("VALUES(`timings`)"))),
 			tCentrumSettings.Access.SET(jet.StringExp(jet.Raw("VALUES(`access`)"))),
@@ -169,7 +174,11 @@ func (s *SettingsDB) updateDB(ctx context.Context, job string, settings *centrum
 	return nil
 }
 
-func (s *SettingsDB) Update(ctx context.Context, job string, in *centrum.Settings) (*centrum.Settings, error) {
+func (s *SettingsDB) Update(
+	ctx context.Context,
+	job string,
+	in *centrum.Settings,
+) (*centrum.Settings, error) {
 	current, err := s.Get(ctx, job)
 	if err != nil {
 		return nil, err

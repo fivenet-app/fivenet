@@ -1,21 +1,21 @@
 package perms
 
 import (
-	"fmt"
 	"slices"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms/collections"
+	"github.com/pkg/errors"
 )
 
 func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.Permissions, error) {
 	defaultRoleId, ok := p.lookupRoleIDForJobAndGrade(DefaultRoleJob, p.startJobGrade)
 	if !ok {
-		return nil, fmt.Errorf("failed to fallback to default role")
+		return nil, errors.New("failed to fallback to default role")
 	}
 
-	roleIds, ok := p.lookupRoleIDsForJobUpToGrade(userInfo.Job, userInfo.JobGrade)
+	roleIds, ok := p.lookupRoleIDsForJobUpToGrade(userInfo.GetJob(), userInfo.GetJobGrade())
 	if !ok {
 		// Fallback to default role
 		roleIds = []uint64{defaultRoleId}
@@ -84,12 +84,12 @@ func (p *Perms) Can(userInfo *userinfo.UserInfo, category Category, name Name) b
 	}
 
 	// Don't check permissions for superusers and don't cache the result
-	if userInfo.Superuser {
+	if userInfo.GetSuperuser() {
 		return true
 	}
 
 	cacheKey := userCacheKey{
-		userId: userInfo.UserId,
+		userId: userInfo.GetUserId(),
 		permId: permId,
 	}
 	result, ok := p.userCanCache.Get(cacheKey)
@@ -105,7 +105,7 @@ func (p *Perms) Can(userInfo *userinfo.UserInfo, category Category, name Name) b
 }
 
 func (p *Perms) checkIfCan(permId uint64, userInfo *userinfo.UserInfo) bool {
-	if check, ok := p.checkRoleJob(userInfo.Job, userInfo.JobGrade, permId); ok {
+	if check, ok := p.checkRoleJob(userInfo.GetJob(), userInfo.GetJobGrade(), permId); ok {
 		return check
 	}
 

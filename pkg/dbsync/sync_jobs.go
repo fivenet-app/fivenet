@@ -51,7 +51,7 @@ func (s *jobsSync) Sync(ctx context.Context) error {
 	// Retrieve grades per job
 	var err error
 	for k := range jobs {
-		jobs[k].Grades, err = s.getGrades(ctx, jobs[k].Name)
+		jobs[k].Grades, err = s.getGrades(ctx, jobs[k].GetName())
 		if err != nil {
 			return err
 		}

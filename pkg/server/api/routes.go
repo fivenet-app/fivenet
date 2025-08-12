@@ -80,23 +80,26 @@ func New(p Params) *Routes {
 	return r
 }
 
-func (r *Routes) handleAppConfigUpdate(providers []*clientconfig.ProviderConfig, appCfg *appconfig.Cfg) {
+func (r *Routes) handleAppConfigUpdate(
+	providers []*clientconfig.ProviderConfig,
+	appCfg *appconfig.Cfg,
+) {
 	clientCfg := clientconfig.BuildClientConfig(r.cfg, providers, appCfg)
 	r.clientCfg.Store(clientCfg)
 
-	if appCfg.Discord.BotId == nil || *appCfg.Discord.BotId == "" {
+	if appCfg.Discord.BotId == nil || appCfg.Discord.GetBotId() == "" {
 		r.discordInviteUrl.Store(nil)
 		return
 	}
 
 	clientId := appCfg.Discord.BotId
-	permissions := strconv.FormatInt(appCfg.Discord.BotPermissions, 10)
+	permissions := strconv.FormatInt(appCfg.Discord.GetBotPermissions(), 10)
 	redirectUri, err := url.JoinPath(r.cfg.HTTP.PublicURL, "/settings/props")
 	if err != nil {
 		r.logger.Warn("failed to build redirect URI for discord invite", zap.Error(err))
 		return
 	}
-	redirectUri = redirectUri + "?tab=discord#"
+	redirectUri += "?tab=discord#"
 	scopes := "bot identify"
 
 	u, err := url.Parse("https://discord.com/oauth2/authorize")
@@ -134,7 +137,10 @@ func (r *Routes) RegisterHTTP(e *gin.Engine) {
 
 		g.GET("/clear-site-data", func(c *gin.Context) {
 			c.Header("Clear-Site-Data", "\"cache\", \"cookies\", \"storage\"")
-			c.String(http.StatusOK, "Your local site data should be cleared now, please go back to the FiveNet homepage yourself.")
+			c.String(
+				http.StatusOK,
+				"Your local site data should be cleared now, please go back to the FiveNet homepage yourself.",
+			)
 		})
 
 		g.GET("/version", func(c *gin.Context) {

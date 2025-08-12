@@ -1,7 +1,6 @@
 package images
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
@@ -46,7 +45,7 @@ func (p *ImageProxy) RegisterHTTP(e *gin.Engine) {
 
 	proxy.AllowHosts = p.config.Options.AllowHosts
 	proxy.DenyHosts = p.config.Options.DenyHosts
-	proxy.UserAgent = fmt.Sprintf("FiveNet Image Proxy %s", version.Version)
+	proxy.UserAgent = "FiveNet Image Proxy " + version.Version
 	proxy.ContentTypes = []string{"image/*"}
 	proxy.ScaleUp = false
 

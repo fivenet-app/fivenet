@@ -68,15 +68,15 @@ func TestFullAuthFlow(t *testing.T) {
 	loginReq.Username = ""
 	loginReq.Password = ""
 	res, err := client.Login(ctx, loginReq)
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Nil(t, res)
 	proto.CompareGRPCStatusCode(t, codes.InvalidArgument, err)
 
 	// Login with invalid credentials
-	loginReq.Username = "non-existant-username"
-	loginReq.Password = "non-existant-password"
+	loginReq.Username = "non-existent-username"
+	loginReq.Password = "non-existent-password"
 	res, err = client.Login(ctx, loginReq)
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Nil(t, res)
 	proto.CompareGRPCError(t, errorsauth.ErrInvalidLogin, err)
 
@@ -85,7 +85,7 @@ func TestFullAuthFlow(t *testing.T) {
 	loginReq.Password = "password"
 	mdUser1 := metadata.New(map[string]string{})
 	res, err = client.Login(ctx, loginReq, grpc.Header(&mdUser1))
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, res)
 	if res == nil {
 		assert.FailNow(t, "user-3: Login with valid account failed, response is nil")
@@ -101,10 +101,13 @@ func TestFullAuthFlow(t *testing.T) {
 	ctx = metadata.NewOutgoingContext(ctx, md)
 	getCharsReq := &pbauth.GetCharactersRequest{}
 	getCharsRes, err := client.GetCharacters(ctx, getCharsReq)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, getCharsRes)
 	if getCharsRes == nil {
-		assert.FailNow(t, "user-3: Empty char list returned for valid account that should have 2 chars")
+		assert.FailNow(
+			t,
+			"user-3: Empty char list returned for valid account that should have 2 chars",
+		)
 	}
 	assert.Len(t, getCharsRes.GetChars(), 1)
 
@@ -113,7 +116,7 @@ func TestFullAuthFlow(t *testing.T) {
 	loginReq.Password = "password"
 	mdUser2 := metadata.New(map[string]string{})
 	res, err = client.Login(ctx, loginReq, grpc.Header(&mdUser2))
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, res)
 	if res == nil {
 		assert.FailNow(t, "user-1: Login with valid account failed, response is nil")
@@ -129,10 +132,13 @@ func TestFullAuthFlow(t *testing.T) {
 	ctx = metadata.NewOutgoingContext(ctx, md)
 	getCharsReq = &pbauth.GetCharactersRequest{}
 	getCharsRes, err = client.GetCharacters(ctx, getCharsReq)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, getCharsRes)
 	if getCharsRes == nil {
-		assert.FailNow(t, "user-1: Empty char list returned for valid account that should have 2 chars")
+		assert.FailNow(
+			t,
+			"user-1: Empty char list returned for valid account that should have 2 chars",
+		)
 	}
 	assert.Len(t, getCharsRes.GetChars(), 2)
 
@@ -140,43 +146,47 @@ func TestFullAuthFlow(t *testing.T) {
 	chooseCharReq := &pbauth.ChooseCharacterRequest{}
 	chooseCharReq.CharId = 2 // Char id 2 is `user-2`'s char
 	chooseCharRes, err := client.ChooseCharacter(ctx, chooseCharReq)
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Nil(t, chooseCharRes)
 	proto.CompareGRPCError(t, errorsauth.ErrUnableToChooseChar, err)
 
 	role, err := srv.ps.GetRoleByJobAndGrade(ctx, "ambulance", 1)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	require.NotNil(t, role)
 
-	perm, err := srv.ps.GetPermission(ctx, permsauth.AuthServicePerm, permsauth.AuthServiceChooseCharacterPerm)
-	assert.NoError(t, err)
+	perm, err := srv.ps.GetPermission(
+		ctx,
+		permsauth.AuthServicePerm,
+		permsauth.AuthServiceChooseCharacterPerm,
+	)
+	require.NoError(t, err)
 	assert.NotNil(t, perm)
 
 	// user-1: Choose valid character, the job role doesn't have permissions but the **default permissions** should still allow us to login
-	err = srv.ps.RemovePermissionsFromRole(ctx, role.Id, perm.Id)
-	assert.NoError(t, err)
+	err = srv.ps.RemovePermissionsFromRole(ctx, role.GetId(), perm.GetId())
+	require.NoError(t, err)
 	// Disable choose char perm but the **default permissions** will still allow us to login
-	err = srv.ps.UpdateRolePermissions(ctx, role.Id, perms.AddPerm{
-		Id:  perm.Id,
+	err = srv.ps.UpdateRolePermissions(ctx, role.GetId(), perms.AddPerm{
+		Id:  perm.GetId(),
 		Val: false,
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	chooseCharReq.CharId = 1
 	chooseCharRes, err = client.ChooseCharacter(ctx, chooseCharReq)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, chooseCharRes)
 
 	// user-1: Choose valid character, now we allow "choose char" perm for the job role
-	err = srv.ps.UpdateRolePermissions(ctx, role.Id, perms.AddPerm{
-		Id:  perm.Id,
+	err = srv.ps.UpdateRolePermissions(ctx, role.GetId(), perms.AddPerm{
+		Id:  perm.GetId(),
 		Val: true,
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	chooseCharReq.CharId = 1
 	chooseCharRes, err = client.ChooseCharacter(ctx, chooseCharReq)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, chooseCharRes)
 	if chooseCharRes != nil {
-		assert.NotNil(t, chooseCharRes.Char)
+		assert.NotNil(t, chooseCharRes.GetChar())
 	}
 }

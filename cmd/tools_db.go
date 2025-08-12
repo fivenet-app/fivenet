@@ -1,3 +1,4 @@
+//nolint:forbidigo // This is part of a CLI tool that uses `fmt.Println` for output
 package cmd
 
 import (
@@ -56,7 +57,11 @@ func (c *VersionCmd) Run(ctx *kong.Context) error {
 }
 
 func (c *VersionCmd) run(_ context.Context, cfg *config.Config) error {
-	dsn, err := dsn.PrepareDSN(cfg.Database.DSN, cfg.Database.DisableLocking, dsn.WithMultiStatements())
+	dsn, err := dsn.PrepareDSN(
+		cfg.Database.DSN,
+		cfg.Database.DisableLocking,
+		dsn.WithMultiStatements(),
+	)
 	if err != nil {
 		return err
 	}
@@ -91,24 +96,27 @@ func (c *UpCmd) Run(ctx *kong.Context) error {
 		return err
 	}
 
-	fxOpts = append(fxOpts,
-		fx.Invoke(func(logger *zap.Logger, lifecycle fx.Lifecycle, cfg *config.Config, shutdowner fx.Shutdowner) {
-			lifecycle.Append(fx.Hook{
-				OnStart: func(ctx context.Context) error {
-					go func() {
-						exitCode := 0
-						if err := c.run(ctx, logger, cfg); err != nil {
-							logger.Error("Failed to run migrations", zap.Error(err))
-							// handle error, set non-zero exit code so caller knows the job failed
+	fxOpts = append(
+		fxOpts,
+		fx.Invoke(
+			func(logger *zap.Logger, lifecycle fx.Lifecycle, cfg *config.Config, shutdowner fx.Shutdowner) {
+				lifecycle.Append(fx.Hook{
+					OnStart: func(ctx context.Context) error {
+						go func() {
+							exitCode := 0
+							if err := c.run(ctx, logger, cfg); err != nil {
+								logger.Error("Failed to run migrations", zap.Error(err))
+								// handle error, set non-zero exit code so caller knows the job failed
 
-							exitCode = 1
-						}
-						_ = shutdowner.Shutdown(fx.ExitCode(exitCode))
-					}()
-					return nil
-				},
-			})
-		}),
+								exitCode = 1
+							}
+							_ = shutdowner.Shutdown(fx.ExitCode(exitCode))
+						}()
+						return nil
+					},
+				})
+			},
+		),
 	)
 
 	app := fx.New(fxOpts...)
@@ -118,7 +126,11 @@ func (c *UpCmd) Run(ctx *kong.Context) error {
 }
 
 func (c *UpCmd) run(_ context.Context, logger *zap.Logger, cfg *config.Config) error {
-	dsn, err := dsn.PrepareDSN(cfg.Database.DSN, cfg.Database.DisableLocking, dsn.WithMultiStatements())
+	dsn, err := dsn.PrepareDSN(
+		cfg.Database.DSN,
+		cfg.Database.DisableLocking,
+		dsn.WithMultiStatements(),
+	)
 	if err != nil {
 		return fmt.Errorf("failed to prepare dsn. %w", err)
 	}

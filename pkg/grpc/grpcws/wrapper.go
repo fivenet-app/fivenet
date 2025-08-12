@@ -66,7 +66,11 @@ func WrapHandler(handler http.Handler, options ...Option) *WrappedGrpcServer {
 	})
 }
 
-func wrapGrpc(options []Option, handler http.Handler, endpointsFunc func() []string) *WrappedGrpcServer {
+func wrapGrpc(
+	options []Option,
+	handler http.Handler,
+	endpointsFunc func() []string,
+) *WrappedGrpcServer {
 	opts := evaluateOptions(options)
 	allowedHeaders := append(opts.allowedRequestHeaders, internalRequestHeadersWhitelist...)
 	corsWrapper := cors.New(cors.Options{
@@ -148,7 +152,10 @@ func (w *WrappedGrpcServer) HandleGrpcWebRequest(resp http.ResponseWriter, req *
 
 // HandleGrpcWebsocketChannelRequest takes a HTTP request that is assumed to be a gRPC-Websocket-channel request and starts a
 // duplexed grpc-websocket-channel which will create multiple virtual streams over a single websocket.
-func (w *WrappedGrpcServer) HandleGrpcWebsocketChannelRequest(resp http.ResponseWriter, req *http.Request) {
+func (w *WrappedGrpcServer) HandleGrpcWebsocketChannelRequest(
+	resp http.ResponseWriter,
+	req *http.Request,
+) {
 	grpclog.Infof("handle grpc channel request %s", req.Host)
 
 	c, err := websocket.Accept(resp, req, &websocket.AcceptOptions{
@@ -175,7 +182,13 @@ func (w *WrappedGrpcServer) HandleGrpcWebsocketChannelRequest(resp http.Response
 	req.Header = headers
 
 	ctx := req.Context() // Use the request context
-	websocketChannel := NewWebsocketChannel(ctx, c, w.handler.ServeHTTP, w.opts.websocketChannelMaxStreamCount, req)
+	websocketChannel := NewWebsocketChannel(
+		ctx,
+		c,
+		w.handler.ServeHTTP,
+		w.opts.websocketChannelMaxStreamCount,
+		req,
+	)
 	if w.opts.websocketPingInterval >= time.Second {
 		websocketChannel.enablePing(w.opts.websocketPingInterval)
 	}
@@ -208,12 +221,12 @@ func makeGrpcRequest(req *http.Request) *http.Request {
 	req.ProtoMajor = 2
 	req.ProtoMinor = 0
 
-	req.Header.Set("content-type", "application/grpc+proto")
+	req.Header.Set("Content-Type", "application/grpc+proto")
 
-	// Remove content-length header since it represents http1.1 payload size, not the sum of the h2
+	// Remove Content-Length header since it represents http1.1 payload size, not the sum of the h2
 	// DATA frame payload lengths. https://http2.github.io/http2-spec/#malformed This effectively
 	// switches to chunked encoding which is the default for h2
-	req.Header.Del("content-length")
+	req.Header.Del("Content-Length")
 	return req
 }
 
@@ -236,7 +249,7 @@ func hackIntoNormalGrpcRequest(req *http.Request) (*http.Request, bool) {
 	req.ProtoMajor = 2
 	req.ProtoMinor = 0
 
-	contentType := req.Header.Get("content-type")
+	contentType := req.Header.Get("Content-Type")
 	incomingContentType := grpcWebContentType
 	isTextFormat := strings.HasPrefix(contentType, grpcWebTextContentType)
 	if isTextFormat {
@@ -245,12 +258,15 @@ func hackIntoNormalGrpcRequest(req *http.Request) (*http.Request, bool) {
 		req.Body = &readerCloser{reader: decoder, closer: req.Body}
 		incomingContentType = grpcWebTextContentType
 	}
-	req.Header.Set("content-type", strings.Replace(contentType, incomingContentType, grpcContentType, 1))
+	req.Header.Set(
+		"Content-Type",
+		strings.Replace(contentType, incomingContentType, grpcContentType, 1),
+	)
 
-	// Remove content-length header since it represents http1.1 payload size, not the sum of the h2
+	// Remove Content-Length header since it represents http1.1 payload size, not the sum of the h2
 	// DATA frame payload lengths. https://http2.github.io/http2-spec/#malformed This effectively
 	// switches to chunked encoding which is the default for h2
-	req.Header.Del("content-length")
+	req.Header.Del("Content-Length")
 
 	return req, isTextFormat
 }

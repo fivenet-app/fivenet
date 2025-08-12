@@ -35,7 +35,14 @@ type Client struct {
 }
 
 // NewClient creates and returns a new Client instance with the provided parameters and a buffered send channel.
-func NewClient(logger *zap.Logger, clientId uint64, room *CollabRoom, UserId int32, role collab.ClientRole, stream grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket]) *Client {
+func NewClient(
+	logger *zap.Logger,
+	clientId uint64,
+	room *CollabRoom,
+	UserId int32,
+	role collab.ClientRole,
+	stream grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket],
+) *Client {
 	return &Client{
 		logger: logger,
 		Id:     clientId,
@@ -70,13 +77,13 @@ func (c *Client) StartPresence(ctx context.Context) {
 	go firstWatch(hbCtx, c.room, c.firstKey, cid, c.Id)
 }
 
-func (c *Client) StopPresence() {
+func (c *Client) StopPresence(ctx context.Context) {
 	if c.hbCancel != nil {
 		c.hbCancel()
 	}
 	kv := c.room.stateKV
-	kv.Delete(context.Background(), c.presenceKey)
-	kv.Delete(context.Background(), c.firstKey)
+	kv.Delete(ctx, c.presenceKey)
+	kv.Delete(ctx, c.firstKey)
 }
 
 // Send attempts to enqueue a message for the client. If the channel is full, the message is dropped and a debug log is emitted.
@@ -95,7 +102,11 @@ func (c *Client) Send(msg *collab.ServerPacket) {
 func (c *Client) SendLoop() error {
 	for msg := range c.SendCh {
 		if err := c.Stream.Send(msg); err != nil {
-			c.logger.Error("error sending to client", zap.Int32("user_id", c.UserId), zap.Error(err))
+			c.logger.Error(
+				"error sending to client",
+				zap.Int32("user_id", c.UserId),
+				zap.Error(err),
+			)
 			return err
 		}
 	}
@@ -103,7 +114,7 @@ func (c *Client) SendLoop() error {
 	return nil
 }
 
-// hbLoop – resets TTL every 2 s
+// hbLoop - resets TTL every 2s.
 func hbLoop(ctx context.Context, room *CollabRoom, pKey, fKey, cid string) {
 	t := time.NewTicker(hbEvery)
 	defer t.Stop()
@@ -117,7 +128,11 @@ func hbLoop(ctx context.Context, room *CollabRoom, pKey, fKey, cid string) {
 		case <-t.C:
 			// Refresh our presence key
 			if _, err := room.stateKV.Put(ctx, pKey, nil); err != nil {
-				room.logger.Warn("hbLoop: failed to refresh presence key", zap.String("key", pKey), zap.Error(err))
+				room.logger.Warn(
+					"hbLoop: failed to refresh presence key",
+					zap.String("key", pKey),
+					zap.Error(err),
+				)
 				continue
 			}
 
@@ -125,7 +140,11 @@ func hbLoop(ctx context.Context, room *CollabRoom, pKey, fKey, cid string) {
 			entry, err := room.stateKV.Get(ctx, fKey)
 			if err != nil {
 				if !errors.Is(err, jetstream.ErrKeyNotFound) {
-					room.logger.Warn("hbLoop: error fetching first key", zap.String("key", fKey), zap.Error(err))
+					room.logger.Warn(
+						"hbLoop: error fetching first key",
+						zap.String("key", fKey),
+						zap.Error(err),
+					)
 				}
 				// Either not found or error → skip update this round
 				continue
@@ -135,13 +154,17 @@ func hbLoop(ctx context.Context, room *CollabRoom, pKey, fKey, cid string) {
 				continue
 			}
 			if _, err := room.stateKV.Update(ctx, fKey, []byte(cid), entry.Revision()); err != nil {
-				room.logger.Warn("hbLoop: failed to refresh first-owner key", zap.String("key", fKey), zap.Error(err))
+				room.logger.Warn(
+					"hbLoop: failed to refresh first-owner key",
+					zap.String("key", fKey),
+					zap.Error(err),
+				)
 			}
 		}
 	}
 }
 
-// firstWatch – auto-promotion when "first" key disappears
+// firstWatch - auto-promotion when "first" key disappears.
 func firstWatch(ctx context.Context, room *CollabRoom, fKey, cid string, myID uint64) {
 	sub, err := room.stateKV.Watch(ctx, fKey, jetstream.UpdatesOnly())
 	if err != nil {

@@ -22,18 +22,21 @@ import (
 
 var tDPins = table.FivenetDocumentsPins.AS("pin")
 
-func (s *Server) ListDocumentPins(ctx context.Context, req *pbdocuments.ListDocumentPinsRequest) (*pbdocuments.ListDocumentPinsResponse, error) {
+func (s *Server) ListDocumentPins(
+	ctx context.Context,
+	req *pbdocuments.ListDocumentPinsRequest,
+) (*pbdocuments.ListDocumentPinsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	tDPins := table.FivenetDocumentsPins.AS("document_pin")
 
 	var idCondition jet.BoolExpression
-	if req.Personal != nil && *req.Personal {
-		idCondition = tDPins.UserID.EQ(jet.Int32(userInfo.UserId))
+	if req.Personal != nil && req.GetPersonal() {
+		idCondition = tDPins.UserID.EQ(jet.Int32(userInfo.GetUserId()))
 	} else {
 		idCondition = jet.OR(
-			tDPins.Job.EQ(jet.String(userInfo.Job)),
-			tDPins.UserID.EQ(jet.Int32(userInfo.UserId)),
+			tDPins.Job.EQ(jet.String(userInfo.GetJob())),
+			tDPins.UserID.EQ(jet.Int32(userInfo.GetUserId())),
 		)
 	}
 
@@ -52,7 +55,7 @@ func (s *Server) ListDocumentPins(ctx context.Context, req *pbdocuments.ListDocu
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, 50)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, 50)
 	resp := &pbdocuments.ListDocumentPinsResponse{
 		Pagination: pag,
 	}
@@ -83,7 +86,7 @@ func (s *Server) ListDocumentPins(ctx context.Context, req *pbdocuments.ListDocu
 
 	docIdsExpr := make([]jet.Expression, len(docPins))
 	for k, pin := range docPins {
-		docIdsExpr[k] = jet.Uint64(pin.DocumentId)
+		docIdsExpr[k] = jet.Uint64(pin.GetDocumentId())
 	}
 	condition := tDocumentShort.ID.IN(docIdsExpr...)
 
@@ -93,7 +96,7 @@ func (s *Server) ListDocumentPins(ctx context.Context, req *pbdocuments.ListDocu
 			tDocumentShort.CreatedAt.DESC(),
 			tDocumentShort.UpdatedAt.DESC(),
 		).
-		OFFSET(req.Pagination.Offset).
+		OFFSET(req.GetPagination().GetOffset()).
 		GROUP_BY(tDocumentShort.ID).
 		LIMIT(limit)
 
@@ -102,18 +105,18 @@ func (s *Server) ListDocumentPins(ctx context.Context, req *pbdocuments.ListDocu
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.Documents {
-		if resp.Documents[i].Creator != nil {
-			jobInfoFn(resp.Documents[i].Creator)
+	for i := range resp.GetDocuments() {
+		if resp.GetDocuments()[i].GetCreator() != nil {
+			jobInfoFn(resp.GetDocuments()[i].GetCreator())
 		}
 	}
 
 	for i := range docPins {
-		idx := slices.IndexFunc(resp.Documents, func(doc *documents.DocumentShort) bool {
-			return doc.Id == docPins[i].DocumentId
+		idx := slices.IndexFunc(resp.GetDocuments(), func(doc *documents.DocumentShort) bool {
+			return doc.GetId() == docPins[i].GetDocumentId()
 		})
 		if idx > -1 {
-			if resp.Documents[idx].Pin != nil {
+			if resp.GetDocuments()[idx].GetPin() != nil {
 				if docPins[i].Job != nil {
 					resp.Documents[idx].Pin.Job = docPins[i].Job
 				}
@@ -126,52 +129,59 @@ func (s *Server) ListDocumentPins(ctx context.Context, req *pbdocuments.ListDocu
 		} else {
 			// If the document is not found in the response, add it as a placeholder to the response
 			resp.Documents = append(resp.Documents, &documents.DocumentShort{
-				Id:  docPins[i].DocumentId,
+				Id:  docPins[i].GetDocumentId(),
 				Pin: docPins[i],
 			})
 		}
-
 	}
 
-	resp.Pagination.Update(len(resp.Documents))
+	resp.GetPagination().Update(len(resp.GetDocuments()))
 
 	return resp, nil
 }
 
-func (s *Server) ToggleDocumentPin(ctx context.Context, req *pbdocuments.ToggleDocumentPinRequest) (*pbdocuments.ToggleDocumentPinResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.DocumentId})
+func (s *Server) ToggleDocumentPin(
+	ctx context.Context,
+	req *pbdocuments.ToggleDocumentPinRequest,
+) (*pbdocuments.ToggleDocumentPinResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
 		Method:  "ToggleDocumentPin",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
 	// Adding a pin requires view access to the document, but removing a pin does not
-	if req.State {
-		check, err := s.access.CanUserAccessTarget(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	if req.GetState() {
+		check, err := s.access.CanUserAccessTarget(
+			ctx,
+			req.GetDocumentId(),
+			userInfo,
+			documents.AccessLevel_ACCESS_LEVEL_VIEW,
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
 		}
-		if !check && !userInfo.Superuser {
+		if !check && !userInfo.GetSuperuser() {
 			return nil, errorsdocuments.ErrDocViewDenied
 		}
 	}
 
 	tDPins := table.FivenetDocumentsPins
 
-	if req.State {
+	if req.GetState() {
 		job := jet.NULL
 		userId := jet.NULL
-		if req.Personal != nil && *req.Personal {
-			userId = jet.Int32(userInfo.UserId)
+		if req.Personal != nil && req.GetPersonal() {
+			userId = jet.Int32(userInfo.GetUserId())
 		} else {
-			job = jet.String(userInfo.Job)
+			job = jet.String(userInfo.GetJob())
 		}
 
 		stmt := tDPins.
@@ -182,10 +192,10 @@ func (s *Server) ToggleDocumentPin(ctx context.Context, req *pbdocuments.ToggleD
 				tDPins.CreatorID,
 			).
 			VALUES(
-				req.DocumentId,
+				req.GetDocumentId(),
 				job,
 				userId,
-				userInfo.UserId,
+				userInfo.GetUserId(),
 			)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -194,15 +204,15 @@ func (s *Server) ToggleDocumentPin(ctx context.Context, req *pbdocuments.ToggleD
 			}
 		}
 	} else {
-		condition := tDPins.DocumentID.EQ(jet.Uint64(req.DocumentId))
-		if req.Personal != nil && *req.Personal {
+		condition := tDPins.DocumentID.EQ(jet.Uint64(req.GetDocumentId()))
+		if req.Personal != nil && req.GetPersonal() {
 			condition = condition.AND(jet.AND(
-				tDPins.UserID.EQ(jet.Int32(userInfo.UserId)),
+				tDPins.UserID.EQ(jet.Int32(userInfo.GetUserId())),
 				tDPins.Job.IS_NULL(),
 			))
 		} else {
 			condition = condition.AND(jet.AND(
-				tDPins.Job.EQ(jet.String(userInfo.Job)),
+				tDPins.Job.EQ(jet.String(userInfo.GetJob())),
 				tDPins.UserID.IS_NULL(),
 			))
 		}
@@ -217,7 +227,7 @@ func (s *Server) ToggleDocumentPin(ctx context.Context, req *pbdocuments.ToggleD
 		}
 	}
 
-	pin, err := s.getDocumentPin(ctx, req.DocumentId, userInfo)
+	pin, err := s.getDocumentPin(ctx, req.GetDocumentId(), userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -227,18 +237,22 @@ func (s *Server) ToggleDocumentPin(ctx context.Context, req *pbdocuments.ToggleD
 	}, nil
 }
 
-func (s *Server) getDocumentPin(ctx context.Context, documentId uint64, userInfo *userinfo.UserInfo) (*documents.DocumentPin, error) {
+func (s *Server) getDocumentPin(
+	ctx context.Context,
+	documentId uint64,
+	userInfo *userinfo.UserInfo,
+) (*documents.DocumentPin, error) {
 	tDPins := table.FivenetDocumentsPins.AS("document_pin")
 
 	condition := jet.AND(
 		tDPins.DocumentID.EQ(jet.Uint64(documentId)),
 		jet.OR(
 			jet.AND(
-				tDPins.Job.EQ(jet.String(userInfo.Job)),
+				tDPins.Job.EQ(jet.String(userInfo.GetJob())),
 				tDPins.UserID.IS_NULL(),
 			),
 			jet.AND(
-				tDPins.UserID.EQ(jet.Int32(userInfo.UserId)),
+				tDPins.UserID.EQ(jet.Int32(userInfo.GetUserId())),
 				tDPins.Job.IS_NULL(),
 			),
 		),
@@ -278,9 +292,9 @@ func (s *Server) getDocumentPin(ctx context.Context, documentId uint64, userInfo
 		if p.UserId != nil {
 			pin.UserId = p.UserId
 		}
-		pin.State = p.State
-		pin.CreatedAt = p.CreatedAt
-		pin.CreatorId = p.CreatorId
+		pin.State = p.GetState()
+		pin.CreatedAt = p.GetCreatedAt()
+		pin.CreatorId = p.GetCreatorId()
 	}
 
 	return pin, nil

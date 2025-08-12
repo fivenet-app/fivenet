@@ -1,12 +1,12 @@
 package centrum
 
 func (x *UnitAccess) IsEmpty() bool {
-	return len(x.Jobs) == 0 && len(x.Qualifications) == 0
+	return len(x.GetJobs()) == 0 && len(x.GetQualifications()) == 0
 }
 
 func (x *UnitAccess) ClearQualificationResults() {
-	for _, quali := range x.Qualifications {
-		if quali.Qualification != nil && quali.Qualification.Result != nil {
+	for _, quali := range x.GetQualifications() {
+		if quali.GetQualification() != nil && quali.GetQualification().GetResult() != nil {
 			quali.Qualification.Result = nil
 		}
 	}
@@ -17,7 +17,7 @@ func (x *UnitJobAccess) SetJobLabel(label string) {
 }
 
 func (x *UnitJobAccess) GetJobGrade() int32 {
-	return x.MinimumGrade
+	return x.GetMinimumGrade()
 }
 
 func (x *UnitJobAccess) SetJobGrade(grade int32) {

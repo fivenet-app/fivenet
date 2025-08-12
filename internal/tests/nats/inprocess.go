@@ -14,11 +14,11 @@ import (
 )
 
 // Based on a-h "Adrian Hesketh" code from <https://github.com/nats-io/nats.go/issues/467#issuecomment-1771424369>
-func NewInProcessNATSServer() (conn *nats.Conn, js *events.JSWrapper, cleanup func(), err error) {
+func NewInProcessNATSServer() (*nats.Conn, *events.JSWrapper, func(), error) {
 	tmp, err := os.MkdirTemp("", "nats_test")
 	if err != nil {
 		err = fmt.Errorf("failed to create temp directory for NATS storage. %w", err)
-		return
+		return nil, nil, nil, err
 	}
 	server, err := server.NewServer(&server.Options{
 		DontListen: true, // Don't make a TCP socket.
@@ -27,38 +27,38 @@ func NewInProcessNATSServer() (conn *nats.Conn, js *events.JSWrapper, cleanup fu
 	})
 	if err != nil {
 		err = fmt.Errorf("failed to create NATS server. %w", err)
-		return
+		return nil, nil, nil, err
 	}
 	// Add logs to stdout.
 	// server.ConfigureLogger()
 	server.Start()
-	cleanup = func() {
+	cleanup := func() {
 		server.Shutdown()
 		os.RemoveAll(tmp)
 	}
 
 	if !server.ReadyForConnections(time.Second * 5) {
 		err = errors.New("failed to start server after 5 seconds")
-		return
+		return nil, nil, nil, err
 	}
 
 	// Create a connection.
-	conn, err = nats.Connect("", nats.InProcessServer(server))
+	conn, err := nats.Connect("", nats.InProcessServer(server))
 	if err != nil {
 		err = fmt.Errorf("failed to connect to server. %w", err)
-		return
+		return nil, nil, nil, err
 	}
 
 	// Create a JetStream client.
 	rawJs, err := jetstream.New(conn)
 	if err != nil {
 		err = fmt.Errorf("failed to create jetstream. %w", err)
-		return
+		return nil, nil, nil, err
 	}
 
-	js = events.NewJSWrapper(rawJs, config.NATS{
+	js := events.NewJSWrapper(rawJs, config.NATS{
 		Replicas: 1,
 	}, nil)
 
-	return
+	return conn, js, cleanup, err
 }

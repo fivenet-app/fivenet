@@ -8,7 +8,11 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
-func (s *Server) listCalendarEntriesQuery(condition jet.BoolExpression, userInfo *userinfo.UserInfo, access calendar.AccessLevel) jet.SelectStatement {
+func (s *Server) listCalendarEntriesQuery(
+	condition jet.BoolExpression,
+	userInfo *userinfo.UserInfo,
+	access calendar.AccessLevel,
+) jet.SelectStatement {
 	tCreator := tables.User().AS("creator")
 	tAvatar := table.FivenetFiles.AS("avatar")
 
@@ -64,7 +68,7 @@ func (s *Server) listCalendarEntriesQuery(condition jet.BoolExpression, userInfo
 				tUserProps.UserID.EQ(tCreator.ID),
 			).
 			LEFT_JOIN(tCalendarRSVP,
-				tCalendarRSVP.UserID.EQ(jet.Int32(userInfo.UserId)).
+				tCalendarRSVP.UserID.EQ(jet.Int32(userInfo.GetUserId())).
 					AND(tCalendarRSVP.EntryID.EQ(tCalendarEntry.ID)),
 			).
 			LEFT_JOIN(tAvatar,

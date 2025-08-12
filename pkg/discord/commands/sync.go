@@ -8,12 +8,12 @@ import (
 	"github.com/diamondburned/arikawa/v3/discord"
 	lang "github.com/fivenet-app/fivenet/v2025/i18n"
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/embeds"
-	"github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
+	discordtypes "github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
 )
 
 type SyncCommand struct {
 	l *lang.I18n
-	b types.BotState
+	b discordtypes.BotState
 
 	url string
 }
@@ -65,14 +65,24 @@ func (c *SyncCommand) getBaseResponse() *api.InteractionResponseData {
 	}
 }
 
-func (c *SyncCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandData) *api.InteractionResponseData {
+func (c *SyncCommand) HandleCommand(
+	ctx context.Context,
+	cmd cmdroute.CommandData,
+) *api.InteractionResponseData {
 	localizer := c.l.Translator(string(cmd.Event.Locale))
 	resp := c.getBaseResponse()
 
 	// Make sure command is used on a guild's channel
-	if cmd.Event.GuildID == discord.NullGuildID || cmd.Event.Member == nil || cmd.Event.Channel == nil {
-		(*resp.Embeds)[0].Title = localizer("discord.commands.sync.results.wrong_discord.title", nil)
-		(*resp.Embeds)[0].Description = localizer("discord.commands.sync.results.wrong_discord.desc", nil)
+	if cmd.Event.GuildID == discord.NullGuildID || cmd.Event.Member == nil ||
+		cmd.Event.Channel == nil {
+		(*resp.Embeds)[0].Title = localizer(
+			"discord.commands.sync.results.wrong_discord.title",
+			nil,
+		)
+		(*resp.Embeds)[0].Description = localizer(
+			"discord.commands.sync.results.wrong_discord.desc",
+			nil,
+		)
 		(*resp.Embeds)[0].Color = embeds.ColorInfo
 		return resp
 	}
@@ -80,8 +90,14 @@ func (c *SyncCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandDat
 	// Check if user has admin perms to guild server
 	channelAdmin, err := c.b.IsUserGuildAdmin(ctx, cmd.Event.ChannelID, cmd.Event.Member.User.ID)
 	if err != nil {
-		(*resp.Embeds)[0].Title = localizer("discord.commands.sync.results.permission_denied.title", nil)
-		(*resp.Embeds)[0].Description = localizer("discord.commands.sync.results.permission_denied.desc", nil)
+		(*resp.Embeds)[0].Title = localizer(
+			"discord.commands.sync.results.permission_denied.title",
+			nil,
+		)
+		(*resp.Embeds)[0].Description = localizer(
+			"discord.commands.sync.results.permission_denied.desc",
+			nil,
+		)
 		return resp
 	}
 	if !channelAdmin {
@@ -92,14 +108,23 @@ func (c *SyncCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandDat
 	running, err := c.b.RunSync(cmd.Event.GuildID)
 	if err != nil {
 		(*resp.Embeds)[0].Title = localizer("discord.commands.sync.results.start_error.title", nil)
-		(*resp.Embeds)[0].Description = localizer("discord.commands.sync.results.start_error.desc", nil)
+		(*resp.Embeds)[0].Description = localizer(
+			"discord.commands.sync.results.start_error.desc",
+			nil,
+		)
 		return resp
 	}
 
 	(*resp.Embeds)[0].Color = embeds.ColorInfo
 	if running {
-		(*resp.Embeds)[0].Title = localizer("discord.commands.sync.results.already_running.title", nil)
-		(*resp.Embeds)[0].Description = localizer("discord.commands.sync.results.already_running.desc", nil)
+		(*resp.Embeds)[0].Title = localizer(
+			"discord.commands.sync.results.already_running.title",
+			nil,
+		)
+		(*resp.Embeds)[0].Description = localizer(
+			"discord.commands.sync.results.already_running.desc",
+			nil,
+		)
 		(*resp.Embeds)[0].Color = embeds.ColorWarn
 	} else {
 		(*resp.Embeds)[0].Title = localizer("discord.commands.sync.results.started.title", nil)

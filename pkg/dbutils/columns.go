@@ -12,7 +12,7 @@ type CustomColumns struct {
 }
 
 type UserColumns struct {
-	Visum    string `default:"visum" yaml:"visum"`
+	Visum    string `default:"visum"    yaml:"visum"`
 	Playtime string `default:"playtime" yaml:"playtime"`
 }
 

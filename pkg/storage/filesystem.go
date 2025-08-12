@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"errors"
 	"io"
 	"os"
 	"path/filepath"
@@ -109,7 +110,13 @@ func (s *Filesystem) Stat(ctx context.Context, keyIn string) (IObjectInfo, error
 
 // Put writes a file to the filesystem, creating directories as needed.
 // Returns the relative path or an error.
-func (s *Filesystem) Put(ctx context.Context, keyIn string, reader io.Reader, size int64, contentType string) (string, error) {
+func (s *Filesystem) Put(
+	ctx context.Context,
+	keyIn string,
+	reader io.Reader,
+	size int64,
+	contentType string,
+) (string, error) {
 	key, ok := utils.CleanFilePath(keyIn)
 	if !ok {
 		return "", ErrInvalidPath
@@ -143,8 +150,7 @@ func (s *Filesystem) Delete(ctx context.Context, keyIn string) error {
 	keyIn = filepath.Join(s.basePath, s.prefix, key)
 
 	if err := os.Remove(keyIn); err != nil {
-		e, ok := err.(*os.PathError)
-		if ok && e.Err != syscall.ENOENT {
+		if !errors.Is(err, syscall.ENOENT) {
 			return err
 		}
 	}
@@ -154,7 +160,12 @@ func (s *Filesystem) Delete(ctx context.Context, keyIn string) error {
 
 // List returns a list of files and their metadata in the given directory.
 // Returns an error if the directory is invalid or cannot be read.
-func (s *Filesystem) List(ctx context.Context, keyIn string, offset int, pageSize int) ([]*FileInfo, error) {
+func (s *Filesystem) List(
+	ctx context.Context,
+	keyIn string,
+	offset int,
+	pageSize int,
+) ([]*FileInfo, error) {
 	key, ok := utils.CleanFilePath(keyIn)
 	if !ok {
 		return nil, ErrInvalidPath
@@ -193,19 +204,22 @@ func (s *Filesystem) List(ctx context.Context, keyIn string, offset int, pageSiz
 func (s *Filesystem) GetSpaceUsage(ctx context.Context) (int64, error) {
 	var totalSize int64
 
-	err := filepath.Walk(filepath.Join(s.basePath, s.prefix), func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if ctx.Err() != nil {
-			return ctx.Err()
-		}
+	err := filepath.Walk(
+		filepath.Join(s.basePath, s.prefix),
+		func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+			if ctx.Err() != nil {
+				return ctx.Err()
+			}
 
-		if !info.IsDir() {
-			totalSize += info.Size()
-		}
-		return nil
-	})
+			if !info.IsDir() {
+				totalSize += info.Size()
+			}
+			return nil
+		},
+	)
 	if err != nil {
 		return 0, err
 	}

@@ -16,10 +16,15 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-var tFiles = table.FivenetFiles.AS("mugshot")
-
-func GetUserProps(ctx context.Context, tx qrm.DB, userId int32, attrJobs []string) (*UserProps, error) {
+func GetUserProps(
+	ctx context.Context,
+	tx qrm.DB,
+	userId int32,
+	attrJobs []string,
+) (*UserProps, error) {
 	tUserProps := table.FivenetUserProps.AS("user_props")
+	tFiles := table.FivenetFiles.AS("mugshot")
+
 	stmt := tUserProps.
 		SELECT(
 			tUserProps.UserID,
@@ -128,12 +133,18 @@ func (x *UserProps) Default() {
 		x.OpenFines = &v
 	}
 
-	if x.Labels == nil {
+	if x.GetLabels() == nil {
 		x.Labels = &Labels{}
 	}
 }
 
-func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps, sourceUserId *int32, reason string) ([]*UserActivity, error) {
+func (x *UserProps) HandleChanges(
+	ctx context.Context,
+	tx qrm.DB,
+	in *UserProps,
+	sourceUserId *int32,
+	reason string,
+) ([]*UserActivity, error) {
 	x.Default()
 
 	tUserProps := table.FivenetUserProps
@@ -142,7 +153,7 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 
 	// Generate the update sets
 	if in.Wanted != nil {
-		updateSets = append(updateSets, tUserProps.Wanted.SET(jet.Bool(*in.Wanted)))
+		updateSets = append(updateSets, tUserProps.Wanted.SET(jet.Bool(in.GetWanted())))
 	} else {
 		in.Wanted = x.Wanted
 	}
@@ -153,26 +164,29 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 			in.JobGradeNumber = &grade
 		}
 
-		if in.Job == nil || in.JobGrade == nil {
+		if in.GetJob() == nil || in.GetJobGrade() == nil {
 			return nil, errors.New("invalid job")
 		}
 
 		updateSets = append(updateSets,
-			tUserProps.Job.SET(jet.String(*in.JobName)),
-			tUserProps.JobGrade.SET(jet.Int32(*in.JobGradeNumber)),
+			tUserProps.Job.SET(jet.String(in.GetJobName())),
+			tUserProps.JobGrade.SET(jet.Int32(in.GetJobGradeNumber())),
 		)
 	} else {
 		in.JobName = x.JobName
-		in.Job = x.Job
+		in.Job = x.GetJob()
 		in.JobGradeNumber = x.JobGradeNumber
-		in.JobGrade = x.JobGrade
+		in.JobGrade = x.GetJobGrade()
 	}
 
 	if in.TrafficInfractionPoints != nil {
-		updateSets = append(updateSets, tUserProps.TrafficInfractionPoints.SET(jet.Uint32(*in.TrafficInfractionPoints)))
+		updateSets = append(
+			updateSets,
+			tUserProps.TrafficInfractionPoints.SET(jet.Uint32(in.GetTrafficInfractionPoints())),
+		)
 
 		// Update the timestamp if points are added
-		if *in.TrafficInfractionPoints > 0 {
+		if in.GetTrafficInfractionPoints() > 0 {
 			in.TrafficInfractionPointsUpdatedAt = timestamp.Now()
 		} else {
 			// Reset the timestamp if points are "reset" (0)
@@ -180,7 +194,7 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 		}
 	} else {
 		in.TrafficInfractionPoints = x.TrafficInfractionPoints
-		in.TrafficInfractionPointsUpdatedAt = x.TrafficInfractionPointsUpdatedAt
+		in.TrafficInfractionPointsUpdatedAt = x.GetTrafficInfractionPointsUpdatedAt()
 	}
 
 	if in.OpenFines != nil {
@@ -188,7 +202,7 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 			jet.IntExp(jet.Raw(
 				"CASE WHEN COALESCE(`open_fines`, 0) + $amount < 0 THEN 0 ELSE COALESCE(`open_fines`, 0) + $amount END",
 				jet.RawArgs{
-					"$amount": *in.OpenFines,
+					"$amount": in.GetOpenFines(),
 				},
 			)),
 		))
@@ -197,21 +211,24 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 	}
 
 	if in.MugshotFileId != nil {
-		updateSets = append(updateSets, tUserProps.MugShot.SET(jet.StringExp(jet.Raw("VALUES(`mug_shot`)"))))
+		updateSets = append(
+			updateSets,
+			tUserProps.MugShot.SET(jet.StringExp(jet.Raw("VALUES(`mug_shot`)"))),
+		)
 	} else {
 		in.MugshotFileId = x.MugshotFileId
 	}
 
-	if in.Labels != nil {
+	if in.GetLabels() != nil {
 		if in.Labels.List == nil {
 			in.Labels.List = []*Label{}
 		}
 
-		slices.SortFunc(in.Labels.List, func(a, b *Label) int {
-			return strings.Compare(a.Name, b.Name)
+		slices.SortFunc(in.GetLabels().GetList(), func(a, b *Label) int {
+			return strings.Compare(a.GetName(), b.GetName())
 		})
 	} else {
-		in.Labels = x.Labels
+		in.Labels = x.GetLabels()
 	}
 
 	if len(updateSets) > 0 {
@@ -227,14 +244,14 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 				tUserProps.MugshotFileID,
 			).
 			VALUES(
-				in.UserId,
-				in.Wanted,
-				in.JobName,
-				in.JobGradeNumber,
-				in.TrafficInfractionPoints,
-				in.TrafficInfractionPointsUpdatedAt,
-				in.OpenFines,
-				in.MugshotFileId,
+				in.GetUserId(),
+				in.GetWanted(),
+				in.GetJobName(),
+				in.GetJobGradeNumber(),
+				in.GetTrafficInfractionPoints(),
+				in.GetTrafficInfractionPointsUpdatedAt(),
+				in.GetOpenFines(),
+				in.GetMugshotFileId(),
 			).
 			ON_DUPLICATE_KEY_UPDATE(
 				updateSets...,
@@ -249,15 +266,16 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 
 	// Create user activity entries
 
-	if x.Wanted != in.Wanted && (x.Wanted == nil || in.Wanted == nil || *x.Wanted != *in.Wanted) {
+	if x.GetWanted() != in.GetWanted() &&
+		(x.Wanted == nil || in.Wanted == nil || x.GetWanted() != in.GetWanted()) {
 		var wanted bool
 		if in.Wanted != nil {
-			wanted = *in.Wanted
+			wanted = in.GetWanted()
 		}
 
 		activities = append(activities, &UserActivity{
 			SourceUserId: sourceUserId,
-			TargetUserId: x.UserId,
+			TargetUserId: x.GetUserId(),
 			Type:         UserActivityType_USER_ACTIVITY_TYPE_WANTED,
 			Reason:       reason,
 			Data: &UserActivityData{
@@ -269,21 +287,22 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 			},
 		})
 	}
-	if (x.JobName != in.JobName && (x.JobName == nil || in.JobName == nil || *x.JobName != *in.JobName)) || (x.JobGradeNumber != in.JobGradeNumber &&
-		(x.JobGradeNumber == nil || in.JobGradeNumber == nil || *x.JobGradeNumber != *in.JobGradeNumber)) {
+	if (x.GetJobName() != in.GetJobName() && (x.JobName == nil || in.JobName == nil || x.GetJobName() != in.GetJobName())) ||
+		(x.GetJobGradeNumber() != in.GetJobGradeNumber() &&
+			(x.JobGradeNumber == nil || in.JobGradeNumber == nil || x.GetJobGradeNumber() != in.GetJobGradeNumber())) {
 		var jobLabel *string
-		if in.Job != nil {
+		if in.GetJob() != nil {
 			jobLabel = &in.Job.Label
 		}
 
 		var gradeLabel *string
-		if in.Job != nil {
+		if in.GetJob() != nil {
 			gradeLabel = &in.JobGrade.Label
 		}
 
 		activities = append(activities, &UserActivity{
 			SourceUserId: sourceUserId,
-			TargetUserId: x.UserId,
+			TargetUserId: x.GetUserId(),
 			Type:         UserActivityType_USER_ACTIVITY_TYPE_JOB,
 			Reason:       reason,
 			Data: &UserActivityData{
@@ -298,20 +317,21 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 			},
 		})
 	}
-	if x.TrafficInfractionPoints != in.TrafficInfractionPoints && (x.TrafficInfractionPoints == nil || in.TrafficInfractionPoints == nil ||
-		*x.TrafficInfractionPoints != *in.TrafficInfractionPoints) {
+	if x.GetTrafficInfractionPoints() != in.GetTrafficInfractionPoints() &&
+		(x.TrafficInfractionPoints == nil || in.TrafficInfractionPoints == nil ||
+			x.GetTrafficInfractionPoints() != in.GetTrafficInfractionPoints()) {
 		old := uint32(0)
 		if x.TrafficInfractionPoints != nil {
-			old = *x.TrafficInfractionPoints
+			old = x.GetTrafficInfractionPoints()
 		}
 		new := uint32(0)
 		if in.TrafficInfractionPoints != nil {
-			new = *in.TrafficInfractionPoints
+			new = in.GetTrafficInfractionPoints()
 		}
 
 		activities = append(activities, &UserActivity{
 			SourceUserId: sourceUserId,
-			TargetUserId: x.UserId,
+			TargetUserId: x.GetUserId(),
 			Type:         UserActivityType_USER_ACTIVITY_TYPE_TRAFFIC_INFRACTION_POINTS,
 			Reason:       reason,
 			Data: &UserActivityData{
@@ -324,10 +344,11 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 			},
 		})
 	}
-	if x.MugshotFileId != in.MugshotFileId && (x.MugshotFileId == nil || in.MugshotFileId == nil || x.MugshotFileId != in.MugshotFileId) {
+	if x.GetMugshotFileId() != in.GetMugshotFileId() &&
+		(x.MugshotFileId == nil || in.MugshotFileId == nil || x.GetMugshotFileId() != in.GetMugshotFileId()) {
 		activities = append(activities, &UserActivity{
 			SourceUserId: sourceUserId,
-			TargetUserId: x.UserId,
+			TargetUserId: x.GetUserId(),
 			Type:         UserActivityType_USER_ACTIVITY_TYPE_MUGSHOT,
 			Reason:       reason,
 			Data: &UserActivityData{
@@ -337,23 +358,26 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 			},
 		})
 	}
-	if x.Labels != in.Labels && !proto.Equal(in.Labels, x.Labels) {
-		if in.Labels == nil {
+	if x.GetLabels() != in.GetLabels() && !proto.Equal(in.GetLabels(), x.GetLabels()) {
+		if in.GetLabels() == nil {
 			in.Labels = &Labels{}
 		}
 
-		added, removed := utils.SlicesDifferenceFunc(x.Labels.List, in.Labels.List,
+		added, removed := utils.SlicesDifferenceFunc(
+			x.GetLabels().GetList(),
+			in.GetLabels().GetList(),
 			func(in *Label) uint64 {
-				return in.Id
-			})
+				return in.GetId()
+			},
+		)
 
-		if err := x.updateLabels(ctx, tx, in.UserId, added, removed); err != nil {
+		if err := x.updateLabels(ctx, tx, in.GetUserId(), added, removed); err != nil {
 			return nil, err
 		}
 
 		activities = append(activities, &UserActivity{
 			SourceUserId: sourceUserId,
-			TargetUserId: x.UserId,
+			TargetUserId: x.GetUserId(),
 			Type:         UserActivityType_USER_ACTIVITY_TYPE_LABELS,
 			Reason:       reason,
 			Data: &UserActivityData{
@@ -370,7 +394,13 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 	return activities, nil
 }
 
-func (s *UserProps) updateLabels(ctx context.Context, tx qrm.DB, userId int32, added []*Label, removed []*Label) error {
+func (s *UserProps) updateLabels(
+	ctx context.Context,
+	tx qrm.DB,
+	userId int32,
+	added []*Label,
+	removed []*Label,
+) error {
 	tUserLabels := table.FivenetUserLabels
 
 	if len(added) > 0 {
@@ -378,7 +408,7 @@ func (s *UserProps) updateLabels(ctx context.Context, tx qrm.DB, userId int32, a
 		for i, label := range added {
 			addedLabels[i] = &model.FivenetUserLabels{
 				UserID:  userId,
-				LabelID: label.Id,
+				LabelID: label.GetId(),
 			}
 		}
 
@@ -400,7 +430,7 @@ func (s *UserProps) updateLabels(ctx context.Context, tx qrm.DB, userId int32, a
 		ids := make([]jet.Expression, len(removed))
 
 		for i := range removed {
-			ids[i] = jet.Uint64(removed[i].Id)
+			ids[i] = jet.Uint64(removed[i].GetId())
 		}
 
 		stmt := tUserLabels.

@@ -1,3 +1,6 @@
+// Package i18n provides internationalization support for translations in multiple languages.
+// It allows loading translations from JSON, setting fallback languages, and translating keys with variable replacements.
+// The translations can include plural forms and variable replacements.
 package i18n
 
 import (
@@ -8,6 +11,7 @@ import (
 	"strings"
 )
 
+// I18n is a struct that holds translations for multiple languages and handles the translation.
 type I18n struct {
 	fallbackLang   string
 	availableLangs []string
@@ -15,6 +19,7 @@ type I18n struct {
 	translations map[string]map[string]any
 }
 
+// Returns the available languages as a string slice.
 func (i *I18n) Langs() []string {
 	return i.availableLangs
 }
@@ -51,7 +56,7 @@ func (i *I18n) SetFallbackLanguage(lang string) {
 //
 // The map of variables can contain:
 // - "n": a number for pluralization
-// - Any other key-value pairs for variable replacement
+// - Any other key-value pairs for variable replacement.
 func (i *I18n) Translator(lang string) func(string, map[string]any) string {
 	return func(key string, vars map[string]any) string {
 		t, _ := i.translateWithFallback(lang, key, vars)
@@ -144,20 +149,20 @@ func selectPluralForm(text string, vars map[string]any) string {
 			return forms[0]
 		}
 		return forms[1]
-	} else {
-		if n == 0 {
-			return forms[0]
-		} else if n == 1 {
-			return forms[1]
-		} else if len(forms) > 2 {
-			return forms[2]
-		}
+	}
+
+	if n == 0 {
+		return forms[0]
+	} else if n == 1 {
+		return forms[1]
+	} else if len(forms) > 2 {
+		return forms[2]
 	}
 
 	return forms[len(forms)-1]
 }
 
-// Optimized expandLangFallbacks for readability and performance
+// Optimized expandLangFallbacks for readability and performance.
 func expandLangFallbacks(lang, fallbackLang string) []string {
 	seen := make(map[string]struct{})
 	langs := []string{}

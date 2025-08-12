@@ -2,7 +2,7 @@ package userinfo
 
 import (
 	"context"
-	"fmt"
+	"errors"
 
 	pbuserinfo "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 )
@@ -21,29 +21,46 @@ func NewMockUserInfoRetriever(userInfo map[int32]*pbuserinfo.UserInfo) *MockUser
 }
 
 // GetUserInfo retrieves the UserInfo for a given userId and accountId.
-func (ui *MockUserInfoRetriever) GetUserInfo(ctx context.Context, userId int32, accountId uint64) (*pbuserinfo.UserInfo, error) {
+func (ui *MockUserInfoRetriever) GetUserInfo(
+	ctx context.Context,
+	userId int32,
+	accountId uint64,
+) (*pbuserinfo.UserInfo, error) {
 	if userInfo, ok := ui.UserInfo[userId]; ok {
 		return userInfo, nil
 	}
 
-	return nil, fmt.Errorf("no user info found")
+	return nil, errors.New("no user info found")
 }
 
 // GetUserInfoWithoutAccountId retrieves the UserInfo for a given userId without requiring an accountId.
-func (ui *MockUserInfoRetriever) GetUserInfoWithoutAccountId(ctx context.Context, userId int32) (*pbuserinfo.UserInfo, error) {
+func (ui *MockUserInfoRetriever) GetUserInfoWithoutAccountId(
+	ctx context.Context,
+	userId int32,
+) (*pbuserinfo.UserInfo, error) {
 	if userInfo, ok := ui.UserInfo[userId]; ok {
 		return userInfo, nil
 	}
 
-	return nil, fmt.Errorf("no user info found")
+	return nil, errors.New("no user info found")
 }
 
 // SetUserInfo is a mock method that does nothing and always returns nil.
-func (ui *MockUserInfoRetriever) SetUserInfo(ctx context.Context, accountId uint64, superuser bool, job *string, jobGrade *int32) error {
+func (ui *MockUserInfoRetriever) SetUserInfo(
+	ctx context.Context,
+	accountId uint64,
+	superuser bool,
+	job *string,
+	jobGrade *int32,
+) error {
 	return nil
 }
 
 // RefreshUserInfo is a mock method that does nothing and always returns nil.
-func (ui *MockUserInfoRetriever) RefreshUserInfo(ctx context.Context, userId int32, accountId uint64) error {
+func (ui *MockUserInfoRetriever) RefreshUserInfo(
+	ctx context.Context,
+	userId int32,
+	accountId uint64,
+) error {
 	return nil
 }

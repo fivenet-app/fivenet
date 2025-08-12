@@ -7,7 +7,10 @@ import (
 	pbinternet "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/internet"
 )
 
-func (s *Server) GetAds(ctx context.Context, req *pbinternet.GetAdsRequest) (*pbinternet.GetAdsResponse, error) {
+func (s *Server) GetAds(
+	ctx context.Context,
+	req *pbinternet.GetAdsRequest,
+) (*pbinternet.GetAdsResponse, error) {
 	// TODO
 
 	resp := &pbinternet.GetAdsResponse{

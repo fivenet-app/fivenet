@@ -38,7 +38,13 @@ var framePingResponse = &grpcws.GrpcFrame{
 	},
 }
 
-func NewWebsocketChannel(ctx context.Context, websocket *websocket.Conn, grpcHandler func(resp http.ResponseWriter, req *http.Request), maxStreamCount int, req *http.Request) *WebsocketChannel {
+func NewWebsocketChannel(
+	ctx context.Context,
+	websocket *websocket.Conn,
+	grpcHandler func(resp http.ResponseWriter, req *http.Request),
+	maxStreamCount int,
+	req *http.Request,
+) *WebsocketChannel {
 	return &WebsocketChannel{
 		mu:             sync.Mutex{},
 		ctx:            ctx,
@@ -90,7 +96,7 @@ func (ws *WebsocketChannel) deleteStream(streamId uint32) {
 
 func (ws *WebsocketChannel) poll() error {
 	frame, err := ws.readFrame()
-	if err == io.EOF {
+	if errors.Is(err, io.EOF) {
 		ws.Close()
 	}
 
@@ -98,12 +104,12 @@ func (ws *WebsocketChannel) poll() error {
 		return err
 	}
 
-	stream := ws.getStream(frame.StreamId)
+	stream := ws.getStream(frame.GetStreamId())
 
-	switch frame.Payload.(type) {
+	switch payload := frame.GetPayload().(type) {
 	case *grpcws.GrpcFrame_Ping:
 		return ws.write(&grpcws.GrpcFrame{
-			StreamId: frame.StreamId,
+			StreamId: frame.GetStreamId(),
 			Payload: &grpcws.GrpcFrame_Ping{
 				Ping: &grpcws.Ping{
 					Pong: true,
@@ -113,7 +119,7 @@ func (ws *WebsocketChannel) poll() error {
 
 	case *grpcws.GrpcFrame_Header:
 		if stream != nil {
-			return ws.writeError(frame.StreamId, "stream already exists")
+			return ws.writeError(frame.GetStreamId(), "stream already exists")
 		}
 
 		stream, err := func() (*GrpcStream, error) {
@@ -121,11 +127,11 @@ func (ws *WebsocketChannel) poll() error {
 			defer ws.mu.Unlock()
 
 			if ws.maxStreamCount > 0 && len(ws.activeStreams) > ws.maxStreamCount {
-				return nil, ws.writeError(frame.StreamId, "rejecting max number of streams reached for this channel")
+				return nil, ws.writeError(frame.GetStreamId(), "rejecting max number of streams reached for this channel")
 			}
 
-			stream := newGrpcStream(frame.StreamId, ws, ws.maxStreamCount)
-			ws.activeStreams[frame.StreamId] = stream
+			stream := newGrpcStream(frame.GetStreamId(), ws, ws.maxStreamCount)
+			ws.activeStreams[frame.GetStreamId()] = stream
 
 			return stream, nil
 		}()
@@ -135,11 +141,11 @@ func (ws *WebsocketChannel) poll() error {
 
 		url, err := url.Parse("http://localhost/")
 		if err != nil {
-			return ws.writeError(frame.StreamId, err.Error())
+			return ws.writeError(frame.GetStreamId(), err.Error())
 		}
 		url.Scheme = ws.req.URL.Scheme
 		url.Host = ws.req.URL.Host
-		url.Path = "/" + frame.GetHeader().Operation
+		url.Path = "/" + frame.GetHeader().GetOperation()
 
 		req := &http.Request{
 			Method:     http.MethodPost,
@@ -148,8 +154,8 @@ func (ws *WebsocketChannel) poll() error {
 			Body:       stream,
 			RemoteAddr: ws.req.RemoteAddr,
 		}
-		for key, element := range frame.GetHeader().Headers {
-			req.Header[key] = element.Value
+		for key, element := range frame.GetHeader().GetHeaders() {
+			req.Header[key] = element.GetValue()
 		}
 
 		interceptedReq := makeGrpcRequest(req.WithContext(stream.ctx))
@@ -162,14 +168,13 @@ func (ws *WebsocketChannel) poll() error {
 
 	case *grpcws.GrpcFrame_Body:
 		if stream == nil || stream.inputClosed {
-			return ws.writeError(frame.StreamId, "stream does not exist")
+			return ws.writeError(frame.GetStreamId(), "stream does not exist")
 		}
 
 		stream.inputFrames <- frame
 
 		// Close channel if body frame says so
-		body := frame.Payload.(*grpcws.GrpcFrame_Body)
-		if body.Body.Complete && !stream.inputClosed {
+		if payload.Body.GetComplete() && !stream.inputClosed {
 			stream.inputClosed = true
 			close(stream.inputFrames)
 		}
@@ -185,11 +190,11 @@ func (ws *WebsocketChannel) poll() error {
 			stream.inputClosed = true
 			close(stream.inputFrames)
 		}
-		ws.deleteStream(frame.StreamId)
+		ws.deleteStream(frame.GetStreamId())
 
 	case *grpcws.GrpcFrame_Complete:
 		if stream == nil {
-			return ws.writeError(frame.StreamId, "stream does not exist")
+			return ws.writeError(frame.GetStreamId(), "stream does not exist")
 		}
 
 		if !stream.inputClosed {
@@ -199,7 +204,7 @@ func (ws *WebsocketChannel) poll() error {
 
 	case *grpcws.GrpcFrame_Failure:
 		if stream == nil {
-			return ws.writeError(frame.StreamId, "stream does not exist")
+			return ws.writeError(frame.GetStreamId(), "stream does not exist")
 		}
 
 		stream.inputFrames <- frame
@@ -207,10 +212,10 @@ func (ws *WebsocketChannel) poll() error {
 			stream.inputClosed = true
 			close(stream.inputFrames)
 		}
-		ws.deleteStream(frame.StreamId)
+		ws.deleteStream(frame.GetStreamId())
 
 	default:
-		return ws.writeError(frame.StreamId, "unknown frame type")
+		return ws.writeError(frame.GetStreamId(), "unknown frame type")
 	}
 
 	return nil

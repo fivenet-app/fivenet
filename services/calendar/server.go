@@ -126,8 +126,10 @@ func NewServer(p Params) *Server {
 						TargetID: table.FivenetCalendarAccess.AS("calendar_job_access").TargetID,
 						Access:   table.FivenetCalendarAccess.AS("calendar_job_access").Access,
 					},
-					Job:          table.FivenetCalendarAccess.AS("calendar_job_access").Job,
-					MinimumGrade: table.FivenetCalendarAccess.AS("calendar_job_access").MinimumGrade,
+					Job: table.FivenetCalendarAccess.AS("calendar_job_access").Job,
+					MinimumGrade: table.FivenetCalendarAccess.AS(
+						"calendar_job_access",
+					).MinimumGrade,
 				},
 			),
 			access.NewUsers[calendar.CalendarUserAccess, *calendar.CalendarUserAccess, calendar.AccessLevel](
@@ -159,6 +161,7 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbcalendar.RegisterCalendarServiceServer(srv, s)
 }
 
+// GetPermsRemap returns the permissions re-mapping for the services.
 func (s *Server) GetPermsRemap() map[string]string {
 	return pbcalendar.PermsRemap
 }

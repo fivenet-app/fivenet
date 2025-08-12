@@ -41,13 +41,14 @@ func New() *Differ {
 
 // FancyDiff computes a highlighted HTML diff between oldContent and newContent.
 // If no changes are detected, returns an empty string. Falls back to newContent on error.
-func (d *Differ) FancyDiff(oldContent string, newContent string) (string, error) {
-	oldContent = brFixer.ReplaceAllString(oldContent, "<br/>")
-	newContent = brFixer.ReplaceAllString(newContent, "<br/>")
-	res, err := d.htmldiff.HTMLdiff([]string{oldContent, newContent})
+func (d *Differ) FancyDiff(old string, new string) (string, error) {
+	old = brFixer.ReplaceAllString(old, "<br/>")
+	new = brFixer.ReplaceAllString(new, "<br/>")
+	res, err := d.htmldiff.HTMLdiff([]string{old, new})
 	if err != nil {
 		// Fallback to the new content
-		return newContent, nil
+		//nolint:nilerr // If diffing fails, return the new content as is so no data is lost.
+		return new, nil
 	}
 
 	out := res[0]

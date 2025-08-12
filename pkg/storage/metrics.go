@@ -93,10 +93,11 @@ func NewMetricsCollector(p MetricsCollectorParams) *MetricsCollector {
 	return mc
 }
 
-func (mc *MetricsCollector) start(ctx context.Context, interval time.Duration) error {
+func (mc *MetricsCollector) start(ctx context.Context, interval time.Duration) {
 	mc.logger.Info("Starting metrics collector")
 
 	// Wait for a random delay before collecting the first metrics
+	//nolint:gosec // G404 - The random delay is not security sensitive, it's just to avoid all instances collecting metrics at the same time.
 	delay := time.Duration(1+rand.Intn(15)) * time.Second
 	time.Sleep(delay)
 
@@ -108,7 +109,7 @@ func (mc *MetricsCollector) start(ctx context.Context, interval time.Duration) e
 
 		select {
 		case <-ctx.Done():
-			return nil
+			return
 
 		case <-time.After(interval):
 		}

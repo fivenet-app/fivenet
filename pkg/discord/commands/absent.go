@@ -18,7 +18,7 @@ import (
 	lang "github.com/fivenet-app/fivenet/v2025/i18n"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/embeds"
-	"github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
+	discordtypes "github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/timeutils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
@@ -38,7 +38,7 @@ const absentDateFormat = "2006-01-02"
 type AbsentCommand struct {
 	l     *lang.I18n
 	db    *sql.DB
-	b     types.BotState
+	b     discordtypes.BotState
 	perms perms.Permissions
 }
 
@@ -122,7 +122,10 @@ func (c *AbsentCommand) getBaseResponse() *api.InteractionResponseData {
 	}
 }
 
-func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandData) *api.InteractionResponseData {
+func (c *AbsentCommand) HandleCommand(
+	ctx context.Context,
+	cmd cmdroute.CommandData,
+) *api.InteractionResponseData {
 	localizer := c.l.Translator(string(cmd.Event.Locale))
 	resp := c.getBaseResponse()
 
@@ -131,29 +134,53 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 	}
 
 	if cmd.Event.Member == nil {
-		(*resp.Embeds)[0].Title = localizer("discord.commands.absent.results.wrong_discord.title", nil)
-		(*resp.Embeds)[0].Description = localizer("discord.commands.absent.results.wrong_discord.desc", nil)
+		(*resp.Embeds)[0].Title = localizer(
+			"discord.commands.absent.results.wrong_discord.title",
+			nil,
+		)
+		(*resp.Embeds)[0].Description = localizer(
+			"discord.commands.absent.results.wrong_discord.desc",
+			nil,
+		)
 		(*resp.Embeds)[0].Color = embeds.ColorInfo
 		return resp
 	}
 
 	job, ok := c.b.GetJobFromGuildID(cmd.Event.GuildID)
 	if !ok {
-		(*resp.Embeds)[0].Title = localizer("discord.commands.absent.results.wrong_discord.title", nil)
-		(*resp.Embeds)[0].Description = localizer("discord.commands.absent.results.wrong_discord.desc", nil)
+		(*resp.Embeds)[0].Title = localizer(
+			"discord.commands.absent.results.wrong_discord.title",
+			nil,
+		)
+		(*resp.Embeds)[0].Description = localizer(
+			"discord.commands.absent.results.wrong_discord.desc",
+			nil,
+		)
 		(*resp.Embeds)[0].Color = embeds.ColorInfo
 		return resp
 	}
 
 	userId, jobGrade, err := c.getUserIDByJobAndDiscordID(ctx, job, cmd.Event.Member.User.ID)
 	if err != nil {
-		(*resp.Embeds)[0].Title = localizer("discord.commands.absent.results.no_user_found.title", nil)
-		(*resp.Embeds)[0].Description = localizer("discord.commands.absent.results.no_user_found.desc", nil)
+		(*resp.Embeds)[0].Title = localizer(
+			"discord.commands.absent.results.no_user_found.title",
+			nil,
+		)
+		(*resp.Embeds)[0].Description = localizer(
+			"discord.commands.absent.results.no_user_found.desc",
+			nil,
+		)
 		return resp
 	}
 	if userId <= 0 || jobGrade < 0 {
-		(*resp.Embeds)[0].Title = localizer("discord.commands.absent.results.no_user_found.title", nil)
-		(*resp.Embeds)[0].Description = localizer("discord.commands.absent.results.no_user_found.desc", nil)
+		(*resp.Embeds)[0].Title = localizer(
+			"discord.commands.absent.results.no_user_found.title",
+			nil,
+		)
+		(*resp.Embeds)[0].Description = localizer(
+			"discord.commands.absent.results.no_user_found.desc",
+			nil,
+		)
 		return resp
 	}
 
@@ -163,7 +190,11 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 		Job:      job,
 		JobGrade: jobGrade,
 	}
-	if !c.perms.Can(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceSetColleaguePropsPerm) {
+	if !c.perms.Can(
+		userInfo,
+		permsjobs.JobsServicePerm,
+		permsjobs.JobsServiceSetColleaguePropsPerm,
+	) {
 		(*resp.Embeds)[0].Title = localizer("discord.commands.absent.results.no_perms.title", nil)
 		(*resp.Embeds)[0].Description = localizer("discord.commands.absent.results.no_perms.desc",
 			map[string]any{"code": "perm"})
@@ -178,15 +209,27 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 	if startDateValue != "today" {
 		parsed, err := time.Parse(absentDateFormat, startDateValue)
 		if err != nil {
-			(*resp.Embeds)[0].Title = localizer("discord.commands.absent.results.invalid_date.title", nil)
-			(*resp.Embeds)[0].Description = localizer("discord.commands.absent.results.invalid_date.desc", nil)
+			(*resp.Embeds)[0].Title = localizer(
+				"discord.commands.absent.results.invalid_date.title",
+				nil,
+			)
+			(*resp.Embeds)[0].Description = localizer(
+				"discord.commands.absent.results.invalid_date.desc",
+				nil,
+			)
 			return resp
 		}
 		startDate = parsed
 
-		if !(now.Equal(startDate) || startDate.After(now)) {
-			(*resp.Embeds)[0].Title = localizer("discord.commands.absent.results.invalid_date.title", nil)
-			(*resp.Embeds)[0].Description = localizer("discord.commands.absent.results.invalid_date.desc", nil)
+		if !now.Equal(startDate) && !startDate.After(now) {
+			(*resp.Embeds)[0].Title = localizer(
+				"discord.commands.absent.results.invalid_date.title",
+				nil,
+			)
+			(*resp.Embeds)[0].Description = localizer(
+				"discord.commands.absent.results.invalid_date.desc",
+				nil,
+			)
 			return resp
 		}
 	}
@@ -237,7 +280,11 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 	return resp
 }
 
-func (c *AbsentCommand) getUserIDByJobAndDiscordID(ctx context.Context, job string, discordId discord.UserID) (int32, int32, error) {
+func (c *AbsentCommand) getUserIDByJobAndDiscordID(
+	ctx context.Context,
+	job string,
+	discordId discord.UserID,
+) (int32, int32, error) {
 	tUsers := tables.User().AS("user")
 
 	stmt := tAccsOauth2.
@@ -273,7 +320,14 @@ func (c *AbsentCommand) getUserIDByJobAndDiscordID(ctx context.Context, job stri
 	return dest.UserID, dest.JobGrade, nil
 }
 
-func (c *AbsentCommand) createAbsenceForUser(ctx context.Context, charId int32, job string, absenceBegin time.Time, absenceEnd time.Time, reason string) (bool, error) {
+func (c *AbsentCommand) createAbsenceForUser(
+	ctx context.Context,
+	charId int32,
+	job string,
+	absenceBegin time.Time,
+	absenceEnd time.Time,
+	reason string,
+) (bool, error) {
 	checkStmt := tColleagueProps.
 		SELECT(
 			tColleagueProps.AbsenceBegin,
@@ -293,9 +347,9 @@ func (c *AbsentCommand) createAbsenceForUser(ctx context.Context, charId int32, 
 		}
 	}
 
-	if props.AbsenceBegin != nil && props.AbsenceEnd != nil {
-		begin := props.AbsenceBegin.AsTime()
-		end := props.AbsenceEnd.AsTime()
+	if props.GetAbsenceBegin() != nil && props.GetAbsenceEnd() != nil {
+		begin := props.GetAbsenceBegin().AsTime()
+		end := props.GetAbsenceEnd().AsTime()
 
 		// Check if current absence is equal to the requested one
 		if begin.Equal(absenceBegin) && end.Equal(absenceEnd) {

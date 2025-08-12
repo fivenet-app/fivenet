@@ -19,6 +19,7 @@ const FilestoreURLPrefix = "/api/filestore/"
 type countingReader struct {
 	// Reader is the underlying io.Reader.
 	io.Reader
+
 	// n is the total number of bytes read so far.
 	n int64
 }

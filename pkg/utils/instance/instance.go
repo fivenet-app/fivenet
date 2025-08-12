@@ -31,7 +31,9 @@ func setID() {
 
 	// Fallback to random ID generation
 	b := make([]byte, 4)
-	rand.Read(b)
+	if _, err := rand.Read(b); err != nil {
+		panic("failed to generate random instance ID. " + err.Error())
+	}
 	instanceId = component + "_" + hex.EncodeToString(b)
 }
 

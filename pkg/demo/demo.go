@@ -23,7 +23,7 @@ import (
 var tLocs = table.FivenetCentrumUserLocations
 
 var (
-	// Define clamp bounds outside the loop for configurability
+	// Define clamp bounds outside the loop for configurability.
 	xBounds = []float64{-2750, 2500}
 	yBounds = []float64{-3000, 6000}
 
@@ -94,7 +94,9 @@ func New(p Params) *Demo {
 		cfg:        p.Cfg,
 	}
 
-	d.logger.Warn("Demo mode is enabled. This will generate random dispatches and user locations!!!")
+	d.logger.Warn(
+		"Demo mode is enabled. This will generate random dispatches and user locations!!!",
+	)
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
 		go d.Start(ctxCancel)
@@ -143,9 +145,7 @@ func (d *Demo) Start(ctx context.Context) error {
 			d.logger.Error("failed to update dispatches", zap.Error(err))
 		}
 
-		if err := d.generateDispatches(ctx); err != nil {
-			d.logger.Error("failed to generate dispatches", zap.Error(err))
-		}
+		d.generateDispatches(ctx)
 
 		randWait := rand.Intn(300) + 30 // Random wait between 30 and 270 seconds
 
@@ -159,7 +159,7 @@ func (d *Demo) Start(ctx context.Context) error {
 }
 
 // generateDispatches creates up to 2 random dispatches per run with random positions and messages.
-func (d *Demo) generateDispatches(ctx context.Context) error {
+func (d *Demo) generateDispatches(ctx context.Context) {
 	numDispatches := rand.Intn(2) // Up to 2 dispatches per run
 
 	for range numDispatches {
@@ -184,8 +184,6 @@ func (d *Demo) generateDispatches(ctx context.Context) error {
 			d.logger.Error("failed to create dispatch", zap.Error(err))
 		}
 	}
-
-	return nil
 }
 
 // updateDispatches randomly updates the status and position of up to 2 existing dispatches.
@@ -203,11 +201,11 @@ func (d *Demo) updateDispatches(ctx context.Context) error {
 		dsp := dsps[perm[i]]
 
 		// Randomize position slightly
-		x := dsp.X + rand.Float64()*700 - 350
-		y := dsp.Y + rand.Float64()*700 - 350
+		x := dsp.GetX() + rand.Float64()*700 - 350
+		y := dsp.GetY() + rand.Float64()*700 - 350
 
 		// Pick a new status based on the status progression
-		currStatus := dsp.Status.Status
+		currStatus := dsp.GetStatus().GetStatus()
 		newStatusValue := currStatus
 		for i, s := range dispatchStatusProgression {
 			if s == currStatus && i+1 < len(dispatchStatusProgression) {
@@ -216,7 +214,7 @@ func (d *Demo) updateDispatches(ctx context.Context) error {
 			}
 		}
 		newStatus := &centrum.DispatchStatus{
-			DispatchId: dsp.Id,
+			DispatchId: dsp.GetId(),
 			Status:     newStatusValue,
 
 			X: &x,
@@ -224,7 +222,7 @@ func (d *Demo) updateDispatches(ctx context.Context) error {
 
 			CreatorJob: &d.cfg.Demo.TargetJob,
 		}
-		if _, err := d.dispatches.UpdateStatus(ctx, dsp.Id, newStatus); err != nil {
+		if _, err := d.dispatches.UpdateStatus(ctx, dsp.GetId(), newStatus); err != nil {
 			d.logger.Error("failed to update dispatch status", zap.Error(err))
 		}
 	}
@@ -233,13 +231,13 @@ func (d *Demo) updateDispatches(ctx context.Context) error {
 }
 
 // moveUserMarkers periodically updates user locations, randomizing or moving them within bounds.
-func (d *Demo) moveUserMarkers(ctx context.Context) error {
+func (d *Demo) moveUserMarkers(ctx context.Context) {
 	firstRun := true
 
 	for {
 		select {
 		case <-ctx.Done():
-			return nil
+			return
 
 		case <-time.After(2 * time.Second):
 		}
@@ -261,7 +259,11 @@ func (d *Demo) moveUserMarkers(ctx context.Context) error {
 
 			err := stmt.QueryContext(ctx, d.db, &curr)
 			if err != nil && !errors.Is(err, qrm.ErrNoRows) {
-				d.logger.Error("failed to select user location", zap.String("user", user), zap.Error(err))
+				d.logger.Error(
+					"failed to select user location",
+					zap.String("user", user),
+					zap.Error(err),
+				)
 				continue
 			}
 
@@ -316,7 +318,11 @@ func (d *Demo) moveUserMarkers(ctx context.Context) error {
 				)
 
 			if _, err := insertStmt.ExecContext(ctx, d.db); err != nil {
-				d.logger.Error("failed to update user location", zap.String("user", user), zap.Error(err))
+				d.logger.Error(
+					"failed to update user location",
+					zap.String("user", user),
+					zap.Error(err),
+				)
 				continue
 			}
 		}

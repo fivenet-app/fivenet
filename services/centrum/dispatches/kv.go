@@ -83,34 +83,39 @@ func (s *DispatchDB) List(ctx context.Context, jobs []string) []*centrum.Dispatc
 			continue
 		}
 		// Skip any broken dispatches (e.g. missing job or ID)
-		if dsp == nil || dsp.Id == 0 || len(dsp.Jobs.GetJobs()) == 0 {
+		if dsp == nil || dsp.GetId() == 0 || len(dsp.GetJobs().GetJobs()) == 0 {
 			continue
 		}
 		ds = append(ds, dsp)
 	}
 
 	slices.SortFunc(ds, func(a, b *centrum.Dispatch) int {
-		return int(a.Id - b.Id)
+		return int(a.GetId() - b.GetId())
 	})
 
 	return ds
 }
 
-func (s *DispatchDB) Filter(ctx context.Context, jobs []string, statuses []centrum.StatusDispatch, notStatuses []centrum.StatusDispatch) []*centrum.Dispatch {
+func (s *DispatchDB) Filter(
+	ctx context.Context,
+	jobs []string,
+	statuses []centrum.StatusDispatch,
+	notStatuses []centrum.StatusDispatch,
+) []*centrum.Dispatch {
 	ds := s.List(ctx, jobs)
 
 	ds = slices.DeleteFunc(ds, func(dispatch *centrum.Dispatch) bool {
 		// Hide user info when dispatch is anonymous
-		if dispatch.Anon {
+		if dispatch.GetAnon() {
 			dispatch.Creator = nil
 		}
 
 		// Include statuses that should be listed
-		if len(statuses) > 0 && !slices.Contains(statuses, dispatch.Status.Status) {
+		if len(statuses) > 0 && !slices.Contains(statuses, dispatch.GetStatus().GetStatus()) {
 			return true
-		} else if len(notStatuses) > 0 && dispatch.Status != nil {
+		} else if len(notStatuses) > 0 && dispatch.GetStatus() != nil {
 			// Which statuses to ignore
-			if slices.Contains(notStatuses, dispatch.Status.Status) {
+			if slices.Contains(notStatuses, dispatch.GetStatus().GetStatus()) {
 				return true
 			}
 		}
@@ -121,7 +126,11 @@ func (s *DispatchDB) Filter(ctx context.Context, jobs []string, statuses []centr
 	return ds
 }
 
-func (s *DispatchDB) updateStatusInKV(ctx context.Context, id uint64, status *centrum.DispatchStatus) error {
+func (s *DispatchDB) updateStatusInKV(
+	ctx context.Context,
+	id uint64,
+	status *centrum.DispatchStatus,
+) error {
 	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
 		if existing == nil {
 			return existing, false, nil

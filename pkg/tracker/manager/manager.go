@@ -102,7 +102,7 @@ func New(p Params) (*Manager, error) {
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		appCfg := p.AppConfig.Get()
-		m.refreshTicker = time.NewTicker(appCfg.UserTracker.DbRefreshTime.AsDuration())
+		m.refreshTicker = time.NewTicker(appCfg.UserTracker.GetDbRefreshTime().AsDuration())
 
 		go func() {
 			configUpdateCh := p.AppConfig.Subscribe()
@@ -122,25 +122,34 @@ func New(p Params) (*Manager, error) {
 			}
 		}()
 
-		storeLogger := logger.WithOptions(zap.IncreaseLevel(p.Cfg.LogLevelOverrides.Get(config.LoggingComponentKVStore, p.Cfg.LogLevel)))
+		storeLogger := logger.WithOptions(
+			zap.IncreaseLevel(
+				p.Cfg.LogLevelOverrides.Get(config.LoggingComponentKVStore, p.Cfg.LogLevel),
+			),
+		)
 
 		userMappingsStore, err := store.New[pbtracker.UserMapping, *pbtracker.UserMapping](
-			ctxStartup, storeLogger, p.JS, tracker.BucketUserMappingsMap,
+			ctxStartup,
+			storeLogger,
+			p.JS,
+			tracker.BucketUserMappingsMap,
 			store.WithLocks[pbtracker.UserMapping, *pbtracker.UserMapping](nil),
-			store.WithOnDeleteFn(func(ctx context.Context, key string, um *pbtracker.UserMapping) error {
-				if um == nil {
-					return nil
-				}
-
-				// Remove user from unit if it has a unit_id
-				if um.UnitId != nil && *um.UnitId > 0 {
-					if err := m.units.UpdateUnitAssignments(ctx, "", &um.UserId, *um.UnitId, nil, []int32{um.UserId}); err != nil {
-						m.logger.Error("failed to remove user from unit", zap.Error(err))
+			store.WithOnDeleteFn(
+				func(ctx context.Context, key string, um *pbtracker.UserMapping) error {
+					if um == nil {
+						return nil
 					}
-				}
 
-				return nil
-			}),
+					// Remove user from unit if it has a unit_id
+					if um.UnitId != nil && um.GetUnitId() > 0 {
+						if err := m.units.UpdateUnitAssignments(ctx, "", &um.UserId, um.GetUnitId(), nil, []int32{um.GetUserId()}); err != nil {
+							m.logger.Error("failed to remove user from unit", zap.Error(err))
+						}
+					}
+
+					return nil
+				},
+			),
 		)
 		if err != nil {
 			return fmt.Errorf("failed to create user mappings store. %w", err)
@@ -150,7 +159,11 @@ func New(p Params) (*Manager, error) {
 		}
 		m.userMappingsStore = userMappingsStore
 
-		userLocStore, err := store.New[livemap.UserMarker, *livemap.UserMarker](ctxStartup, storeLogger, p.JS, tracker.BucketUserLoc,
+		userLocStore, err := store.New[livemap.UserMarker, *livemap.UserMarker](
+			ctxStartup,
+			storeLogger,
+			p.JS,
+			tracker.BucketUserLoc,
 			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
 		)
 		if err != nil {
@@ -162,33 +175,38 @@ func New(p Params) (*Manager, error) {
 		m.userLocStore = userLocStore
 
 		byID, err := store.New[livemap.UserMarker, *livemap.UserMarker](
-			ctxStartup, storeLogger, p.JS, tracker.BucketUserLocByID,
+			ctxStartup,
+			storeLogger,
+			p.JS,
+			tracker.BucketUserLocByID,
 			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
-			store.WithOnUpdateFn(func(ctx context.Context, _ *livemap.UserMarker, newValue *livemap.UserMarker) (*livemap.UserMarker, error) {
-				if newValue == nil {
-					return nil, nil
-				}
-
-				if !m.userMappingsStore.Has(tracker.UserIdKey(newValue.UserId)) {
-					// Upsert mapping (unit_id may be nil/0 = no unit)
-					if err := m.userMappingsStore.Put(ctx, tracker.UserIdKey(newValue.UserId), &pbtracker.UserMapping{
-						UserId:    newValue.UserId,
-						UnitId:    newValue.UnitId,
-						Hidden:    newValue.Hidden,
-						CreatedAt: timestamp.Now(),
-					}); err != nil {
-						return nil, fmt.Errorf("failed to upsert user unit mapping. %w", err)
+			store.WithOnUpdateFn(
+				func(ctx context.Context, _ *livemap.UserMarker, newValue *livemap.UserMarker) (*livemap.UserMarker, error) {
+					if newValue == nil {
+						return nil, nil
 					}
-				}
 
-				if newValue.JobGrade != nil {
-					if err := m.userLocStore.Put(ctx, userMarkerKey(newValue.UserId, newValue.Job, *newValue.JobGrade), newValue); err != nil {
-						return nil, fmt.Errorf("failed to upsert user marker in store. %w", err)
+					if !m.userMappingsStore.Has(tracker.UserIdKey(newValue.GetUserId())) {
+						// Upsert mapping (unit_id may be nil/0 = no unit)
+						if err := m.userMappingsStore.Put(ctx, tracker.UserIdKey(newValue.GetUserId()), &pbtracker.UserMapping{
+							UserId:    newValue.GetUserId(),
+							UnitId:    newValue.UnitId,
+							Hidden:    newValue.GetHidden(),
+							CreatedAt: timestamp.Now(),
+						}); err != nil {
+							return nil, fmt.Errorf("failed to upsert user unit mapping. %w", err)
+						}
 					}
-				}
 
-				return newValue, nil
-			}),
+					if newValue.JobGrade != nil {
+						if err := m.userLocStore.Put(ctx, userMarkerKey(newValue.GetUserId(), newValue.GetJob(), newValue.GetJobGrade()), newValue); err != nil {
+							return nil, fmt.Errorf("failed to upsert user marker in store. %w", err)
+						}
+					}
+
+					return newValue, nil
+				},
+			),
 			store.WithOnDeleteFn(func(ctx context.Context,
 				key string, um *livemap.UserMarker,
 			) error {
@@ -198,20 +216,35 @@ func New(p Params) (*Manager, error) {
 
 				// Remove user marker if we have the info we need
 				if um.JobGrade != nil {
-					if err := m.userLocStore.Delete(ctx, userMarkerKey(um.UserId, um.Job, *um.JobGrade)); err != nil {
-						m.logger.Error("failed to remove user marker from store", zap.Error(err), zap.Int32("user_id", um.UserId), zap.String("job", um.Job))
+					if err := m.userLocStore.Delete(ctx, userMarkerKey(um.GetUserId(), um.GetJob(), um.GetJobGrade())); err != nil {
+						m.logger.Error(
+							"failed to remove user marker from store",
+							zap.Error(err),
+							zap.Int32("user_id", um.GetUserId()),
+							zap.String("job", um.GetJob()),
+						)
 					}
 				}
 
 				// Remove user mapping
 				if err := m.userMappingsStore.Delete(ctx, key); err != nil {
-					m.logger.Error("failed to remove user unit mapping", zap.Error(err), zap.Int32("user_id", um.UserId), zap.String("job", um.Job))
+					m.logger.Error(
+						"failed to remove user unit mapping",
+						zap.Error(err),
+						zap.Int32("user_id", um.GetUserId()),
+						zap.String("job", um.GetJob()),
+					)
 				}
 
 				// Sign-off user from dispatchers
-				if m.helpers.CheckIfUserIsDispatcher(ctx, um.Job, um.UserId) {
-					if err := m.dispatchers.SetUserState(ctx, um.Job, um.UserId, false); err != nil {
-						m.logger.Error("failed to remove user from dispatchers", zap.Error(err), zap.Int32("user_id", um.UserId), zap.String("job", um.Job))
+				if m.helpers.CheckIfUserIsDispatcher(ctx, um.GetJob(), um.GetUserId()) {
+					if err := m.dispatchers.SetUserState(ctx, um.GetJob(), um.GetUserId(), false); err != nil {
+						m.logger.Error(
+							"failed to remove user from dispatchers",
+							zap.Error(err),
+							zap.Int32("user_id", um.GetUserId()),
+							zap.String("job", um.GetJob()),
+						)
 					}
 				}
 
@@ -243,7 +276,7 @@ func New(p Params) (*Manager, error) {
 }
 
 func (m *Manager) handleAppConfigUpdate(appCfg *appconfig.Cfg) {
-	dbRefreshTime := appCfg.UserTracker.DbRefreshTime.AsDuration()
+	dbRefreshTime := appCfg.UserTracker.GetDbRefreshTime().AsDuration()
 	m.refreshTicker.Reset(dbRefreshTime)
 }
 
@@ -355,24 +388,24 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 
 	errs := multierr.Combine()
 	for i := range dest {
-		if dest[i].User == nil {
+		if dest[i].GetUser() == nil {
 			continue
 		}
 
-		foundUserIds[dest[i].UserId] = nil
+		foundUserIds[dest[i].GetUserId()] = nil
 
 		// Use (override) job and job grade if set
-		job := dest[i].User.Job
-		if dest[i].Job != "" {
-			job = dest[i].Job // Use the job from the marker, not the user if set
-			dest[i].User.Job = dest[i].Job
+		job := dest[i].GetUser().GetJob()
+		if dest[i].GetJob() != "" {
+			job = dest[i].GetJob() // Use the job from the marker, not the user if set
+			dest[i].User.Job = dest[i].GetJob()
 		} else {
 			dest[i].Job = job
 		}
-		jg := dest[i].User.JobGrade
+		jg := dest[i].GetUser().GetJobGrade()
 		if dest[i].JobGrade != nil {
-			jg = *dest[i].JobGrade
-			dest[i].User.JobGrade = *dest[i].JobGrade
+			jg = dest[i].GetJobGrade()
+			dest[i].User.JobGrade = dest[i].GetJobGrade()
 		} else {
 			dest[i].JobGrade = &jg // Ensure JobGrade is set, even if it is 0
 		}
@@ -382,15 +415,15 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 			dest[i].Color = &defaultColor
 		}
 
-		postal, ok := m.postals.Closest(dest[i].X, dest[i].Y)
+		postal, ok := m.postals.Closest(dest[i].GetX(), dest[i].GetY())
 		if postal != nil && ok {
 			dest[i].Postal = postal.Code
 		}
 
-		unitMapping, err := m.userMappingsStore.Get(tracker.UserIdKey(dest[i].UserId))
-		if err == nil && unitMapping.UnitId != nil && *unitMapping.UnitId > 0 {
+		unitMapping, err := m.userMappingsStore.Get(tracker.UserIdKey(dest[i].GetUserId()))
+		if err == nil && unitMapping.UnitId != nil && unitMapping.GetUnitId() > 0 {
 			dest[i].UnitId = unitMapping.UnitId
-			if unit, err := m.units.Get(ctx, *unitMapping.UnitId); err == nil {
+			if unit, err := m.units.Get(ctx, unitMapping.GetUnitId()); err == nil {
 				dest[i].Unit = unit
 			}
 		} else {
@@ -399,13 +432,13 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 		}
 
 		m.enricher.EnrichJobName(dest[i])
-		m.enricher.EnrichJobInfo(dest[i].User)
+		m.enricher.EnrichJobInfo(dest[i].GetUser())
 
-		um, err := m.userByIDStore.Get(tracker.UserIdKey(dest[i].UserId))
+		um, err := m.userByIDStore.Get(tracker.UserIdKey(dest[i].GetUserId()))
 		// No user marker in key value store nor locally
 		if um == nil || err != nil {
 			added++
-			if err := m.userByIDStore.Put(ctx, tracker.UserIdKey(dest[i].UserId), dest[i]); err != nil {
+			if err := m.userByIDStore.Put(ctx, tracker.UserIdKey(dest[i].GetUserId()), dest[i]); err != nil {
 				errs = multierr.Append(errs, err)
 				continue
 			}
@@ -416,16 +449,16 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 			}
 			updated++
 
-			uj := um.User.Job
-			if um.Job != "" {
-				uj = um.Job
+			uj := um.GetUser().GetJob()
+			if um.GetJob() != "" {
+				uj = um.GetJob()
 			}
-			ujg := um.User.JobGrade
+			ujg := um.GetUser().GetJobGrade()
 			if um.JobGrade != nil {
-				ujg = *um.JobGrade // Use the job grade from the existing marker
+				ujg = um.GetJobGrade() // Use the job grade from the existing marker
 			}
-			oldKey := userMarkerKey(dest[i].UserId, uj, ujg) // uj/jg are the *previous* ones
-			newKey := userMarkerKey(dest[i].UserId, job, jg)
+			oldKey := userMarkerKey(dest[i].GetUserId(), uj, ujg) // uj/jg are the *previous* ones
+			newKey := userMarkerKey(dest[i].GetUserId(), job, jg)
 			if oldKey != newKey {
 				if err := m.userLocStore.Delete(ctx, oldKey); err != nil {
 					errs = multierr.Append(errs, err)
@@ -434,7 +467,7 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 
 			um.Merge(dest[i])
 
-			if err := m.userByIDStore.Put(ctx, tracker.UserIdKey(dest[i].UserId), um); err != nil {
+			if err := m.userByIDStore.Put(ctx, tracker.UserIdKey(dest[i].GetUserId()), um); err != nil {
 				errs = multierr.Append(errs, err)
 				continue
 			}
@@ -446,7 +479,12 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 		return err
 	}
 
-	m.logger.Debug("completed user tracker cache refresh", zap.Int("added", added), zap.Int("updated", updated), zap.Int("removed", removed))
+	m.logger.Debug(
+		"completed user tracker cache refresh",
+		zap.Int("added", added),
+		zap.Int("updated", updated),
+		zap.Int("removed", removed),
+	)
 
 	return nil
 }
@@ -458,7 +496,11 @@ func (m *Manager) cleanupUserIDs(ctx context.Context, foundUserIds map[int32]any
 	for _, key := range keys {
 		userIdKey, err := extractUserID(key)
 		if err != nil {
-			m.logger.Warn("failed to extract user ID from key", zap.String("key", key), zap.Error(err))
+			m.logger.Warn(
+				"failed to extract user ID from key",
+				zap.String("key", key),
+				zap.Error(err),
+			)
 			continue
 		}
 
@@ -481,9 +523,9 @@ func (m *Manager) cleanupUserIDs(ctx context.Context, foundUserIds map[int32]any
 		if marker != nil {
 			jg := int32(0)
 			if marker.JobGrade != nil {
-				jg = *marker.JobGrade
+				jg = marker.GetJobGrade()
 			}
-			oldKey := userMarkerKey(marker.UserId, marker.Job, jg)
+			oldKey := userMarkerKey(marker.GetUserId(), marker.GetJob(), jg)
 			if key == oldKey {
 				continue
 			}
@@ -513,7 +555,7 @@ func userMarkerKey(id int32, job string, grade int32) string {
 	return fmt.Sprintf("%s.%d.%d", job, grade, id)
 }
 
-// extractUserID takes a key like "police.3.123"  ➜  123
+// extractUserID takes a key like "police.3.123"  ➜  123.
 func extractUserID(key string) (int32, error) {
 	idx := strings.LastIndexByte(key, '.')
 	if idx < 0 || idx+1 >= len(key) {

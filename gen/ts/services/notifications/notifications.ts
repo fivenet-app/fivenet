@@ -101,7 +101,7 @@ export interface StreamRequest {
  */
 export interface StreamResponse {
     /**
-     * @generated from protobuf field: int32 notification_count = 1
+     * @generated from protobuf field: int64 notification_count = 1
      */
     notificationCount: number;
     /**
@@ -445,7 +445,7 @@ export const StreamRequest = new StreamRequest$Type();
 class StreamResponse$Type extends MessageType<StreamResponse> {
     constructor() {
         super("services.notifications.StreamResponse", [
-            { no: 1, name: "notification_count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 1, name: "notification_count", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "restart", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "user_event", kind: "message", oneof: "data", T: () => UserEvent },
             { no: 4, name: "job_event", kind: "message", oneof: "data", T: () => JobEvent },
@@ -468,8 +468,8 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int32 notification_count */ 1:
-                    message.notificationCount = reader.int32();
+                case /* int64 notification_count */ 1:
+                    message.notificationCount = reader.int64().toNumber();
                     break;
                 case /* optional bool restart */ 2:
                     message.restart = reader.bool();
@@ -522,9 +522,9 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         return message;
     }
     internalBinaryWrite(message: StreamResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int32 notification_count = 1; */
+        /* int64 notification_count = 1; */
         if (message.notificationCount !== 0)
-            writer.tag(1, WireType.Varint).int32(message.notificationCount);
+            writer.tag(1, WireType.Varint).int64(message.notificationCount);
         /* optional bool restart = 2; */
         if (message.restart !== undefined)
             writer.tag(2, WireType.Varint).bool(message.restart);

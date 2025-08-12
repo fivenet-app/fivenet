@@ -12,14 +12,17 @@ func mapPagesToNavItems(pages []*wiki.PageShort) map[uint64]*wiki.PageShort {
 	var root *wiki.PageShort
 	mapping := map[uint64]*wiki.PageShort{}
 	for _, page := range pages {
-		mapping[page.Id] = page
+		mapping[page.GetId()] = page
 
 		if page.ParentId != nil {
-			_, ok := mapping[*page.ParentId]
+			_, ok := mapping[page.GetParentId()]
 			if !ok {
 				continue
 			}
-			mapping[*page.ParentId].Children = append(mapping[*page.ParentId].Children, page)
+			mapping[page.GetParentId()].Children = append(
+				mapping[page.GetParentId()].Children,
+				page,
+			)
 		} else {
 			root = page
 		}
@@ -31,7 +34,7 @@ func mapPagesToNavItems(pages []*wiki.PageShort) map[uint64]*wiki.PageShort {
 		root = &wiki.PageShort{
 			Id:       0,
 			Title:    "",
-			Job:      firstPage.Job,
+			Job:      firstPage.GetJob(),
 			JobLabel: firstPage.JobLabel,
 			Children: []*wiki.PageShort{},
 		}
@@ -42,56 +45,56 @@ func mapPagesToNavItems(pages []*wiki.PageShort) map[uint64]*wiki.PageShort {
 			// Only delete pages for which we have the parent,
 			// cause it might be a singular page from a "different" wiki
 			// that we add to the root page
-			if _, ok := mapping[*page.ParentId]; !ok {
+			if _, ok := mapping[page.GetParentId()]; !ok {
 				root.Children = append(root.Children, page)
 			}
 		}
 
-		if len(page.Children) > 0 && page.Id != root.Id {
+		if len(page.GetChildren()) > 0 && page.GetId() != root.GetId() {
 			// Duplicate page to have an entry without children as a clone
 			page.Children = append([]*wiki.PageShort{{
-				Id:          page.Id,
+				Id:          page.GetId(),
 				ParentId:    page.ParentId,
-				Job:         page.Job,
+				Job:         page.GetJob(),
 				JobLabel:    page.JobLabel,
 				Slug:        page.Slug,
-				Title:       page.Title,
-				Description: page.Description,
+				Title:       page.GetTitle(),
+				Description: page.GetDescription(),
 				Children:    nil,
-			}}, page.Children...)
+			}}, page.GetChildren()...)
 		}
 	}
 
-	rootTitle := root.Title
+	rootTitle := root.GetTitle()
 	if root.JobLabel != nil && rootTitle != "" {
-		rootTitle = *root.JobLabel + ": " + rootTitle
+		rootTitle = root.GetJobLabel() + ": " + rootTitle
 	}
 
 	// Make sure to prepend root page (if it isn't our dummy)
-	if root.Id != 0 {
+	if root.GetId() != 0 {
 		root.Children = append([]*wiki.PageShort{
 			{
-				Id:          root.Id,
+				Id:          root.GetId(),
 				ParentId:    root.ParentId,
-				Job:         root.Job,
+				Job:         root.GetJob(),
 				JobLabel:    root.JobLabel,
 				Slug:        root.Slug,
-				Title:       root.Title,
-				Description: root.Description,
+				Title:       root.GetTitle(),
+				Description: root.GetDescription(),
 				Children:    nil,
 			},
-		}, root.Children...)
+		}, root.GetChildren()...)
 	}
 
 	return map[uint64]*wiki.PageShort{
-		root.Id: {
-			Id:          root.Id,
-			Job:         root.Job,
+		root.GetId(): {
+			Id:          root.GetId(),
+			Job:         root.GetJob(),
 			JobLabel:    root.JobLabel,
 			Slug:        root.Slug,
 			Title:       rootTitle,
-			Description: root.Description,
-			Children:    root.Children,
+			Description: root.GetDescription(),
+			Children:    root.GetChildren(),
 		},
 	}
 }

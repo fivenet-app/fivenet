@@ -41,7 +41,7 @@ export interface UserEvent {
     } | {
         oneofKind: "notificationsReadCount";
         /**
-         * @generated from protobuf field: int32 notifications_read_count = 3
+         * @generated from protobuf field: int64 notifications_read_count = 3
          */
         notificationsReadCount: number;
     } | {
@@ -119,7 +119,7 @@ class UserEvent$Type extends MessageType<UserEvent> {
         super("resources.notifications.UserEvent", [
             { no: 1, name: "refresh_token", kind: "scalar", oneof: "data", T: 8 /*ScalarType.BOOL*/ },
             { no: 2, name: "notification", kind: "message", oneof: "data", T: () => Notification },
-            { no: 3, name: "notifications_read_count", kind: "scalar", oneof: "data", T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "notifications_read_count", kind: "scalar", oneof: "data", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "user_info_changed", kind: "message", oneof: "data", T: () => UserInfoChanged }
         ]);
     }
@@ -147,10 +147,10 @@ class UserEvent$Type extends MessageType<UserEvent> {
                         notification: Notification.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).notification)
                     };
                     break;
-                case /* int32 notifications_read_count */ 3:
+                case /* int64 notifications_read_count */ 3:
                     message.data = {
                         oneofKind: "notificationsReadCount",
-                        notificationsReadCount: reader.int32()
+                        notificationsReadCount: reader.int64().toNumber()
                     };
                     break;
                 case /* resources.userinfo.UserInfoChanged user_info_changed */ 4:
@@ -177,9 +177,9 @@ class UserEvent$Type extends MessageType<UserEvent> {
         /* resources.notifications.Notification notification = 2; */
         if (message.data.oneofKind === "notification")
             Notification.internalBinaryWrite(message.data.notification, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* int32 notifications_read_count = 3; */
+        /* int64 notifications_read_count = 3; */
         if (message.data.oneofKind === "notificationsReadCount")
-            writer.tag(3, WireType.Varint).int32(message.data.notificationsReadCount);
+            writer.tag(3, WireType.Varint).int64(message.data.notificationsReadCount);
         /* resources.userinfo.UserInfoChanged user_info_changed = 4; */
         if (message.data.oneofKind === "userInfoChanged")
             UserInfoChanged.internalBinaryWrite(message.data.userInfoChanged, writer.tag(4, WireType.LengthDelimited).fork(), options).join();

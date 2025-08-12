@@ -18,8 +18,11 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
-func (s *Server) ListUserActivity(ctx context.Context, req *pbcitizens.ListUserActivityRequest) (*pbcitizens.ListUserActivityResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.citizens.user_id", req.UserId})
+func (s *Server) ListUserActivity(
+	ctx context.Context,
+	req *pbcitizens.ListUserActivityRequest,
+) (*pbcitizens.ListUserActivityResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.citizens.user_id", req.GetUserId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -28,25 +31,30 @@ func (s *Server) ListUserActivity(ctx context.Context, req *pbcitizens.ListUserA
 	}
 
 	// User can't see their own activities, unless they have "Own" perm attribute, or are a superuser
-	fields, err := s.ps.AttrStringList(userInfo, permscitizens.CitizensServicePerm, permscitizens.CitizensServiceListUserActivityPerm, permscitizens.CitizensServiceListUserActivityFieldsPermField)
+	fields, err := s.ps.AttrStringList(
+		userInfo,
+		permscitizens.CitizensServicePerm,
+		permscitizens.CitizensServiceListUserActivityPerm,
+		permscitizens.CitizensServiceListUserActivityFieldsPermField,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	if userInfo.UserId == req.UserId {
+	if userInfo.GetUserId() == req.GetUserId() {
 		// If isn't superuser or doesn't have 'Own' activity feed access
-		if !userInfo.Superuser && !fields.Contains("Own") {
+		if !userInfo.GetSuperuser() && !fields.Contains("Own") {
 			return resp, nil
 		}
 	}
 
 	tUserActivity := table.FivenetUserActivity.AS("user_activity")
 
-	condition := tUserActivity.TargetUserID.EQ(jet.Int32(req.UserId))
+	condition := tUserActivity.TargetUserID.EQ(jet.Int32(req.GetUserId()))
 
-	if len(req.Types) > 0 {
+	if len(req.GetTypes()) > 0 {
 		types := []jet.Expression{}
-		for _, t := range req.Types {
+		for _, t := range req.GetTypes() {
 			types = append(types, jet.Int16(int16(*t.Enum())))
 		}
 
@@ -68,7 +76,7 @@ func (s *Server) ListUserActivity(ctx context.Context, req *pbcitizens.ListUserA
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, 20)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, 20)
 	resp.Pagination = pag
 	if count.Total <= 0 {
 		return resp, nil
@@ -79,16 +87,16 @@ func (s *Server) ListUserActivity(ctx context.Context, req *pbcitizens.ListUserA
 
 	// Convert proto sort to db sorting
 	orderBys := []jet.OrderByClause{}
-	if req.Sort != nil {
+	if req.GetSort() != nil {
 		var column jet.Column
-		switch req.Sort.Column {
+		switch req.GetSort().GetColumn() {
 		case "createdAt":
 			fallthrough
 		default:
 			column = tUserActivity.CreatedAt
 		}
 
-		if req.Sort.Direction == database.AscSortDirection {
+		if req.GetSort().GetDirection() == database.AscSortDirection {
 			orderBys = append(orderBys, column.ASC())
 		} else {
 			orderBys = append(orderBys, column.DESC())
@@ -127,7 +135,7 @@ func (s *Server) ListUserActivity(ctx context.Context, req *pbcitizens.ListUserA
 				),
 		).
 		WHERE(condition).
-		OFFSET(req.Pagination.Offset).
+		OFFSET(req.GetPagination().GetOffset()).
 		ORDER_BY(orderBys...).
 		LIMIT(limit)
 
@@ -138,16 +146,16 @@ func (s *Server) ListUserActivity(ctx context.Context, req *pbcitizens.ListUserA
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.Activity {
-		if resp.Activity[i].SourceUser != nil {
-			jobInfoFn(resp.Activity[i].SourceUser)
+	for i := range resp.GetActivity() {
+		if resp.GetActivity()[i].GetSourceUser() != nil {
+			jobInfoFn(resp.GetActivity()[i].GetSourceUser())
 		}
-		if resp.Activity[i].TargetUser != nil {
-			jobInfoFn(resp.Activity[i].TargetUser)
+		if resp.GetActivity()[i].GetTargetUser() != nil {
+			jobInfoFn(resp.GetActivity()[i].GetTargetUser())
 		}
 	}
 
-	resp.Pagination.Update(len(resp.Activity))
+	resp.GetPagination().Update(len(resp.GetActivity()))
 
 	return resp, nil
 }

@@ -11,23 +11,26 @@ import (
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
 )
 
-func (s *Server) TakeControl(ctx context.Context, req *pbcentrum.TakeControlRequest) (*pbcentrum.TakeControlResponse, error) {
+func (s *Server) TakeControl(
+	ctx context.Context,
+	req *pbcentrum.TakeControlRequest,
+) (*pbcentrum.TakeControlResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
 		Method:  "TakeControl",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	if err := s.dispatchers.SetUserState(ctx, userInfo.Job, userInfo.UserId, req.Signon); err != nil {
+	if err := s.dispatchers.SetUserState(ctx, userInfo.GetJob(), userInfo.GetUserId(), req.GetSignon()); err != nil {
 		return nil, err
 	}
 
-	if req.Signon {
+	if req.GetSignon() {
 		auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 	} else {
 		auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
@@ -38,21 +41,24 @@ func (s *Server) TakeControl(ctx context.Context, req *pbcentrum.TakeControlRequ
 	return &pbcentrum.TakeControlResponse{}, nil
 }
 
-func (s *Server) UpdateDispatchers(ctx context.Context, req *pbcentrum.UpdateDispatchersRequest) (*pbcentrum.UpdateDispatchersResponse, error) {
+func (s *Server) UpdateDispatchers(
+	ctx context.Context,
+	req *pbcentrum.UpdateDispatchersRequest,
+) (*pbcentrum.UpdateDispatchersResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &audit.AuditEntry{
 		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
 		Method:  "UpdateDispatchers",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
+		UserId:  userInfo.GetUserId(),
+		UserJob: userInfo.GetJob(),
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
 	// Sign off any requested dispatchers
-	for _, userId := range req.ToRemove {
-		if err := s.dispatchers.SetUserState(ctx, userInfo.Job, userId, false); err != nil {
+	for _, userId := range req.GetToRemove() {
+		if err := s.dispatchers.SetUserState(ctx, userInfo.GetJob(), userId, false); err != nil {
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 	}
@@ -60,15 +66,15 @@ func (s *Server) UpdateDispatchers(ctx context.Context, req *pbcentrum.UpdateDis
 	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
 	// Retrieve the updated dispatchers list
-	dispatchers, err := s.dispatchers.Get(ctx, userInfo.Job)
+	dispatchers, err := s.dispatchers.Get(ctx, userInfo.GetJob())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	return &pbcentrum.UpdateDispatchersResponse{
 		Dispatchers: &centrum.Dispatchers{
-			Job:         userInfo.Job,
-			Dispatchers: dispatchers.Dispatchers,
+			Job:         userInfo.GetJob(),
+			Dispatchers: dispatchers.GetDispatchers(),
 		},
 	}, nil
 }

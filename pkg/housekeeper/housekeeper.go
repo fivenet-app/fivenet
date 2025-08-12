@@ -138,30 +138,36 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 // RegisterCronjobHandlers registers the handlers for housekeeper cronjobs with the croner system.
 func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
 	// Handler for the soft delete job.
-	hand.Add("housekeeper.soft_delete_job", func(ctx context.Context, data *cron.CronjobData) error {
-		ctx, span := h.tracer.Start(ctx, "housekeeper.soft_delete_job")
-		defer span.End()
+	hand.Add(
+		"housekeeper.soft_delete_job",
+		func(ctx context.Context, data *cron.CronjobData) error {
+			ctx, span := h.tracer.Start(ctx, "housekeeper.soft_delete_job")
+			defer span.End()
 
-		// Prepare and unmarshal the cron data structure
-		dest := &cron.GenericCronData{
-			Attributes: map[string]string{},
-		}
-		if err := data.Unmarshal(dest); err != nil {
-			h.logger.Warn("failed to unmarshal housekeeper cron data", zap.Error(err))
-		}
+			// Prepare and unmarshal the cron data structure
+			dest := &cron.GenericCronData{
+				Attributes: map[string]string{},
+			}
+			if err := data.Unmarshal(dest); err != nil {
+				h.logger.Warn("failed to unmarshal housekeeper cron data", zap.Error(err))
+			}
 
-		// Run the soft delete job logic
-		if err := h.runJobSoftDelete(ctx, dest); err != nil {
-			return fmt.Errorf("error during housekeeper (soft delete). %w", err)
-		}
+			// Run the soft delete job logic
+			if err := h.runJobSoftDelete(ctx, dest); err != nil {
+				return fmt.Errorf("error during housekeeper (soft delete). %w", err)
+			}
 
-		// Marshal the updated cron data
-		if err := data.MarshalFrom(dest); err != nil {
-			return fmt.Errorf("failed to marshal updated housekeeper (soft delete) cron data. %w", err)
-		}
+			// Marshal the updated cron data
+			if err := data.MarshalFrom(dest); err != nil {
+				return fmt.Errorf(
+					"failed to marshal updated housekeeper (soft delete) cron data. %w",
+					err,
+				)
+			}
 
-		return nil
-	})
+			return nil
+		},
+	)
 
 	// Handler for the hard delete job.
 	hand.Add("housekeeper.hard_delete", func(ctx context.Context, data *cron.CronjobData) error {
@@ -183,7 +189,10 @@ func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
 
 		// Marshal the updated cron data
 		if err := data.MarshalFrom(dest); err != nil {
-			return fmt.Errorf("failed to marshal updated housekeeper (hard delete) cron data. %w", err)
+			return fmt.Errorf(
+				"failed to marshal updated housekeeper (hard delete) cron data. %w",
+				err,
+			)
 		}
 
 		return nil
