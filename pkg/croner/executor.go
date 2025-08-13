@@ -198,7 +198,7 @@ func (ag *Executor) watchForEvents(msg jetstream.Msg) {
 				if er, ok := e.(error); ok {
 					err = fmt.Errorf("recovered from panic. %w", er)
 				} else {
-					err = fmt.Errorf("recovered from panic. %w", er)
+					err = fmt.Errorf("recovered from panic. %v", er)
 				}
 
 				ag.logger.Error(

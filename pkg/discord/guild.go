@@ -61,7 +61,7 @@ func NewGuild(
 	b *Bot,
 	guild discord.Guild,
 	job string,
-	lastSync time.Time,
+	_ time.Time,
 ) (*Guild, error) {
 	ctx, cancel := context.WithCancel(ctx)
 

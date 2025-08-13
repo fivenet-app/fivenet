@@ -15,7 +15,7 @@ type WorkerCmd struct {
 	ModuleUserInfoPoller bool `default:"true" help:"Start UserInfo poller module"`
 }
 
-func (c *WorkerCmd) Run(ctx *Context) error {
+func (c *WorkerCmd) Run(_ *Context) error {
 	instance.SetComponent("worker")
 
 	fxOpts := getFxBaseOpts(Cli.StartTimeout, true)

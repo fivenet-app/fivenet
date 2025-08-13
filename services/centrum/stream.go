@@ -1,3 +1,4 @@
+//nolint:forcetypeassert // We know the type is correct as it is validated and unmarshaled from/to the type.
 package centrum
 
 import (

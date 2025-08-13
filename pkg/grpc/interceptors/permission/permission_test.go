@@ -51,9 +51,9 @@ func buildDummyUnaryPermsFunction(
 func buildDummyStreamPermsFunction(
 	t *testing.T,
 	hasRemap bool,
-) func(ctx context.Context, srv any, info *grpc.StreamServerInfo) (context.Context, error) {
+) func(ctx context.Context, srv any, _ *grpc.StreamServerInfo) (context.Context, error) {
 	t.Helper()
-	return func(ctx context.Context, srv any, info *grpc.StreamServerInfo) (context.Context, error) {
+	return func(ctx context.Context, srv any, _ *grpc.StreamServerInfo) (context.Context, error) {
 		fail, err := failFromMD(ctx)
 		if err != nil {
 			return nil, err

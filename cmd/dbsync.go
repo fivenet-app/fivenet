@@ -42,7 +42,7 @@ func getService() service.Service {
 	return s
 }
 
-func (c *DBSyncCmd) Run(ctx *Context) error {
+func (c *DBSyncCmd) Run(_ *Context) error {
 	instance.SetComponent("dbsync")
 
 	s := getService()
@@ -55,7 +55,7 @@ func (c *DBSyncCmd) Run(ctx *Context) error {
 
 type StartCmd struct{}
 
-func (c *StartCmd) Run(ctx *Context) error {
+func (c *StartCmd) Run(_ *Context) error {
 	log.Println("Starting FiveNet DBSync service")
 
 	s := getService()
@@ -70,7 +70,7 @@ func (c *StartCmd) Run(ctx *Context) error {
 
 type StopCmd struct{}
 
-func (c *StopCmd) Run(ctx *Context) error {
+func (c *StopCmd) Run(_ *Context) error {
 	log.Println("Stopping FiveNet DBSync service")
 
 	s := getService()
@@ -85,7 +85,7 @@ func (c *StopCmd) Run(ctx *Context) error {
 
 type InstallCmd struct{}
 
-func (c *InstallCmd) Run(ctx *Context) error {
+func (c *InstallCmd) Run(_ *Context) error {
 	log.Println("Installing FiveNet DBSync service")
 
 	s := getService()
@@ -101,7 +101,7 @@ func (c *InstallCmd) Run(ctx *Context) error {
 
 type UninstallCmd struct{}
 
-func (c *UninstallCmd) Run(ctx *Context) error {
+func (c *UninstallCmd) Run(_ *Context) error {
 	log.Println("Uninstalling FiveNet DBSync service")
 
 	s := getService()

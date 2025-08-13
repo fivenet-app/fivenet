@@ -315,9 +315,9 @@ type Sync struct {
 type OtelExporter string
 
 const (
-	TracingExporter_StdoutTrace OtelExporter = "stdout"
-	TracingExporter_OTLPGRPC    OtelExporter = "grpc"
-	TracingExporter_OTLPHTTP    OtelExporter = "http"
+	TracingExporterStdoutTrace OtelExporter = "stdout"
+	TracingExporterOTLPGRPC    OtelExporter = "grpc"
+	TracingExporterOTLPHTTP    OtelExporter = "http"
 )
 
 type OTLPConfig struct {

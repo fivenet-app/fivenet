@@ -33,7 +33,7 @@ type GRPCServerParams struct {
 }
 
 func TestGRPCServer(
-	ctx context.Context,
+	_ context.Context,
 ) (*grpc.ClientConn, func(p GRPCServerParams) (*grpc.Server, error), error) {
 	buffer := 101024 * 1024
 	lis := bufconn.Listen(buffer)

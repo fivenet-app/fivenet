@@ -188,6 +188,7 @@ func (s *usersSync) retrieveLicenses(
 // Sync an individual user's info.
 func (s *usersSync) SyncUser(ctx context.Context, userId int32) error {
 	sQuery := s.cfg.Tables.Users.DBSyncTable
+	// TODO implement adding the where condition for the user id
 	query := prepareStringQuery(sQuery, s.state, 0, 1)
 
 	user := &users.User{}

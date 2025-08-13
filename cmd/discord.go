@@ -10,7 +10,7 @@ type DiscordCmd struct {
 	ModuleCronAgent bool `default:"false" help:"Run the cron agent."`
 }
 
-func (c *DiscordCmd) Run(ctx *Context) error {
+func (c *DiscordCmd) Run(_ *Context) error {
 	instance.SetComponent("discord")
 
 	fxOpts := getFxBaseOpts(Cli.StartTimeout, true)

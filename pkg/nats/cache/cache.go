@@ -1,3 +1,6 @@
+// Package cache provides a generic, in-memory and NATS-backed cache for protobuf messages.
+//
+//nolint:forcetypeassert // This package uses generics to allow caching of any protobuf message type that implements
 package cache
 
 import (

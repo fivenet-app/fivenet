@@ -148,7 +148,7 @@ func (s *Server) RegisterDomain(
 
 	tDomains := table.FivenetInternetDomains
 
-	domainId := uint64(0)
+	var domainId uint64
 	// Domain exists
 	if domain != nil {
 		if domain.CreatorId != nil && domain.GetCreatorId() == userInfo.GetUserId() {

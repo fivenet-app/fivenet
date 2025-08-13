@@ -9,7 +9,7 @@ type ServerCmd struct {
 	ModuleCronAgent bool `default:"false" help:"Run the cron agent, should only be used for single container/binary deployments."`
 }
 
-func (c *ServerCmd) Run(ctx *Context) error {
+func (c *ServerCmd) Run(_ *Context) error {
 	instance.SetComponent("server")
 
 	fxOpts := getFxBaseOpts(Cli.StartTimeout, true)

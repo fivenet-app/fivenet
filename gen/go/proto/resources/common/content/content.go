@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	Version_v0 = "v0"
+	VersionV0 = "v0"
 )
 
 // Scan implements driver.Valuer for protobuf Content.
@@ -42,7 +42,7 @@ func (x *Content) Scan(value any) error {
 			return err
 		}
 
-		v := Version_v0
+		v := VersionV0
 		x.Version = &v
 		x.Content = out
 		x.RawContent = &t
@@ -67,7 +67,7 @@ func (x *Content) Scan(value any) error {
 			return err
 		}
 
-		v := Version_v0
+		v := VersionV0
 		x.Version = &v
 		x.Content = out
 		x.RawContent = &hRaw

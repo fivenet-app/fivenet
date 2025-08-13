@@ -29,6 +29,8 @@ type dbServer struct {
 }
 
 func NewDBServer(t *testing.T, setup bool) *dbServer {
+	t.Helper()
+
 	s := &dbServer{
 		t: t,
 	}

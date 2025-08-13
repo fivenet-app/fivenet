@@ -183,11 +183,34 @@ linters:
         - (sql.Tx).Rollback
     unparam:
       check-exported: true
+    revive:
+      rules:
+        - name: var-naming
+          severity: warning
+          disabled: false
+          exclude: [""]
+          arguments:
+            - ["ID"] # AllowList
+            - ["VM"] # DenyList
+            - - skip-initialism-name-checks: true
+                upper-case-const: true
+                skip-package-name-checks: true
+                extra-bad-package-names:
+                  - helpers
+                  - models
+    unused:
+      field-writes-are-uses: true
+      post-statements-are-reads: true
+      exported-fields-are-used: true
+      parameters-are-used: true
+      local-variables-are-used: true
+      generated-is-used: true
   exclusions:
     rules:
       - path: _test\.go
         linters:
           - errcheck
+          - forcetypeassert
           - funlen
           - gosec
           - nestif

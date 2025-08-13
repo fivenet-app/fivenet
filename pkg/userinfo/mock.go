@@ -22,9 +22,9 @@ func NewMockUserInfoRetriever(userInfo map[int32]*pbuserinfo.UserInfo) *MockUser
 
 // GetUserInfo retrieves the UserInfo for a given userId and accountId.
 func (ui *MockUserInfoRetriever) GetUserInfo(
-	ctx context.Context,
+	_ context.Context,
 	userId int32,
-	accountId uint64,
+	_ uint64,
 ) (*pbuserinfo.UserInfo, error) {
 	if userInfo, ok := ui.UserInfo[userId]; ok {
 		return userInfo, nil
@@ -35,7 +35,7 @@ func (ui *MockUserInfoRetriever) GetUserInfo(
 
 // GetUserInfoWithoutAccountId retrieves the UserInfo for a given userId without requiring an accountId.
 func (ui *MockUserInfoRetriever) GetUserInfoWithoutAccountId(
-	ctx context.Context,
+	_ context.Context,
 	userId int32,
 ) (*pbuserinfo.UserInfo, error) {
 	if userInfo, ok := ui.UserInfo[userId]; ok {

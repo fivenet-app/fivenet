@@ -1,9 +1,9 @@
-// leader_election_example.go
+// Package leaderelection provides a self-healing leader-election helper for NATS JetStream Key-Value.
 //
-// Self-healing leader-election helper for NATS **JetStream** Key-Value.
+// Self-healing leader-election helper for NATS JetStream Key-Value.
 //
 // Public surface mirrors your original helper but now:
-//   - All JetStream calls that require a **context.Context** receive one
+//   - All JetStream calls that require a context.Context receive one
 //     (bucket creation, Create/Put, WatchAll…).
 //   - `onStarted(ctx)` gets a leadership-lifetime context that is cancelled the
 //     moment this instance loses leadership or Stop() is called.

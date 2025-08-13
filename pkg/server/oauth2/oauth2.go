@@ -368,7 +368,7 @@ func (o *OAuth2) Callback(c *gin.Context) {
 // handleConnectOnlyCallback processes the connect-only OAuth2 callback logic.
 func (o *OAuth2) handleConnectOnlyCallback(
 	c *gin.Context,
-	sess sessions.Session,
+	_ sessions.Session,
 	token string,
 	provider providers.IProvider,
 	userInfo *providers.UserInfo,
@@ -403,7 +403,7 @@ func (o *OAuth2) handleConnectOnlyCallback(
 // handleLoginCallback processes the login OAuth2 callback logic.
 func (o *OAuth2) handleLoginCallback(
 	c *gin.Context,
-	sess sessions.Session,
+	_ sessions.Session,
 	provider providers.IProvider,
 	userInfo interface{},
 	connectOnly bool,

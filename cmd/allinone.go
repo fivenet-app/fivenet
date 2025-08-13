@@ -7,7 +7,7 @@ import (
 
 type AllInOneCmd struct{}
 
-func (c *AllInOneCmd) Run(ctx *Context) error {
+func (c *AllInOneCmd) Run(_ *Context) error {
 	instance.SetComponent("allinone")
 
 	fxOpts := getFxBaseOpts(Cli.StartTimeout, true)

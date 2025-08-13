@@ -21,6 +21,12 @@ import (
 	"go.uber.org/zap"
 )
 
+// Permissions defines the interface for permissions management.
+//
+// It provides methods for managing permissions, attributes, and roles,
+// as well as checking permissions and attributes for users.
+//
+//nolint:interfacebloat // This interface is designed to be implemented by a concrete type.
 type Permissions interface {
 	// Permissions management
 	SetDefaultRolePerms(ctx context.Context, defaultPerms []string) error

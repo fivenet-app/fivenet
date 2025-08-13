@@ -60,11 +60,12 @@ func (j *JSWrapper) PublishMsgAsync(
 	return j.JetStream.PublishMsgAsync(msg, opts...)
 }
 
-func GetJetstreamMsgContext(msg jetstream.Msg) (spanContext trace.SpanContext, err error) {
+func GetJetstreamMsgContext(msg jetstream.Msg) (trace.SpanContext, error) {
 	headers := msg.Headers()
 
+	var spanContext trace.SpanContext
 	var traceID trace.TraceID
-	traceID, err = trace.TraceIDFromHex(headers.Get(traceIdHeader))
+	traceID, err := trace.TraceIDFromHex(headers.Get(traceIdHeader))
 	if err != nil {
 		return spanContext, err
 	}
@@ -84,9 +85,10 @@ func GetJetstreamMsgContext(msg jetstream.Msg) (spanContext trace.SpanContext, e
 	return spanContext, nil
 }
 
-func GetNatsMsgContext(msg *nats.Msg) (spanContext trace.SpanContext, err error) {
+func GetNatsMsgContext(msg *nats.Msg) (trace.SpanContext, error) {
+	var spanContext trace.SpanContext
 	var traceID trace.TraceID
-	traceID, err = trace.TraceIDFromHex(msg.Header.Get(traceIdHeader))
+	traceID, err := trace.TraceIDFromHex(msg.Header.Get(traceIdHeader))
 	if err != nil {
 		return spanContext, err
 	}

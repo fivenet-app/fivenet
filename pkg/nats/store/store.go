@@ -1,3 +1,6 @@
+// Package store provides a distributed, concurrent, and optionally lock-protected key-value store for protobuf messages.
+//
+//nolint:forcetypeassert // This package uses generics to allow caching of any protobuf message type that implements
 package store
 
 import (

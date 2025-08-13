@@ -1,3 +1,4 @@
+// Package sanitizer provides a gRPC interceptor that sanitizes incoming requests.
 package sanitizer
 
 import (

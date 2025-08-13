@@ -1,11 +1,11 @@
-/*
-- Modified version of https://github.com/HeavyHorst/certmagic-nats/blob/b27fd6c010166e396b6f9e1c651ba7b02ce6c01f/nats.go#L114
-
-  - which is licensed under [MIT License](https://github.com/HeavyHorst/certmagic-nats/blob/b27fd6c010166e396b6f9e1c651ba7b02ce6c01f/LICENSE)
-    *
-
-- The code has been modified to use the per-key TTL feature of NATS JetStream KeyValue store that was added in NATS 2.11.0.
-*/
+// Package locks provides distributed locking using NATS JetStream KeyValue store
+//
+// This package implements a distributed locking mechanism using NATS JetStream KeyValue store.
+// It allows multiple instances to safely acquire and release locks on shared resources.
+//
+// Modified version of https://github.com/HeavyHorst/certmagic-nats/blob/b27fd6c010166e396b6f9e1c651ba7b02ce6c01f/nats.go#L114
+// This code is licensed under the [MIT License](https://github.com/HeavyHorst/certmagic-nats/blob/b27fd6c010166e396b6f9e1c651ba7b02ce6c01f/LICENSE)
+// The code has been modified to use the per-key TTL feature of NATS JetStream KeyValue store that was added in NATS 2.11.0.
 package locks
 
 import (

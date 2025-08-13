@@ -10,6 +10,8 @@ import (
 type DummyAccessLevel int32
 
 // DummyAccessLevel_DUMMY_ACCESS_LEVEL_UNSPECIFIED is the default dummy value.
+//
+//nolint:revive // Enum name is all uppercase to be equal with generated proto enum naming conventions.
 const DummyAccessLevel_DUMMY_ACCESS_LEVEL_UNSPECIFIED DummyAccessLevel = 0
 
 // Number returns the dummy enum number (always 0).

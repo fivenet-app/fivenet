@@ -1,3 +1,6 @@
+// Package grpc_permission provides gRPC interceptors for permission checks.
+// It includes functionality for unary and stream permission checks, allowing
+// services to implement custom logic as well.
 package grpc_permission
 
 import (

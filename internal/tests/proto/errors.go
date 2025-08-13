@@ -9,6 +9,8 @@ import (
 )
 
 func CompareGRPCError(t *testing.T, expected error, err error) {
+	t.Helper()
+
 	expectedStatus := status.FromContextError(expected)
 	errStatus := status.FromContextError(err)
 	assert.Equal(t, expectedStatus.Code(), errStatus.Code())
@@ -16,6 +18,8 @@ func CompareGRPCError(t *testing.T, expected error, err error) {
 }
 
 func CompareGRPCStatusCode(t *testing.T, code codes.Code, err error) {
+	t.Helper()
+
 	errStatus, ok := status.FromError(err)
 	if !ok {
 		errStatus = status.FromContextError(err)

@@ -14,12 +14,12 @@ type Generic struct {
 func (p *Generic) GetUserInfo(ctx context.Context, code string) (*UserInfo, error) {
 	token, err := p.oauthConfig.Exchange(ctx, code)
 	if err != nil {
-		return nil, fmt.Errorf("code exchange failed: %s", err.Error())
+		return nil, fmt.Errorf("code exchange failed. %w", err)
 	}
 
 	res, err := p.oauthConfig.Client(ctx, token).Get(p.UserInfoURL)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get user info: %+w", err)
+		return nil, fmt.Errorf("failed to get user info. %+w", err)
 	}
 	defer res.Body.Close()
 	var dest map[string]any
@@ -32,7 +32,10 @@ func (p *Generic) GetUserInfo(ctx context.Context, code string) (*UserInfo, erro
 	if !ok {
 		return nil, errors.New("failed to get id from user info")
 	}
-	subId := sub.(float64)
+	subId, ok := sub.(float64)
+	if !ok {
+		return nil, errors.New("failed to convert id to float64")
+	}
 	if subId <= 0 {
 		return nil, errors.New("invalid external user id given")
 	}
@@ -50,11 +53,18 @@ func (p *Generic) GetUserInfo(ctx context.Context, code string) (*UserInfo, erro
 		return nil, errors.New("failed to get avatar from user info")
 	}
 
-	username := usernameRaw.(string)
 	if avatarRaw == nil {
 		avatarRaw = p.DefaultAvatar
 	}
-	avatar := avatarRaw.(string)
+	avatar, ok := avatarRaw.(string)
+	if !ok {
+		return nil, errors.New("failed to get avatar from user info")
+	}
+
+	username, ok := usernameRaw.(string)
+	if !ok {
+		return nil, errors.New("failed to get username from user info")
+	}
 
 	user := &UserInfo{
 		ID:       strconv.FormatInt(int64(subId), 10),

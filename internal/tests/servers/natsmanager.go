@@ -18,6 +18,8 @@ type natsServer struct {
 }
 
 func NewNATSServer(t *testing.T, setup bool) *natsServer {
+	t.Helper()
+
 	s := &natsServer{
 		t: t,
 	}

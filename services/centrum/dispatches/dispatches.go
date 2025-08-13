@@ -470,10 +470,12 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond jet.BoolExpression) (i
 			dsps[i].Jobs = &centrum.JobList{
 				Jobs: []*centrum.Job{
 					{
+						//nolint:staticcheck // This is a fallback for old dispatches.
 						Name: dsps[i].GetJob(),
 					},
 				},
 			}
+			//nolint:staticcheck // Clear old job info. This is a fallback for old dispatches.
 			dsps[i].Job = ""
 		}
 		for _, job := range dsps[i].GetJobs().GetJobs() {
@@ -979,6 +981,7 @@ func (s *DispatchDB) UpdateAssignments(
 
 func (s *DispatchDB) Create(ctx context.Context, dsp *centrum.Dispatch) (*centrum.Dispatch, error) {
 	// Check if the dispatch has at least one job, till the Job field is removed keep using it as a fallback
+	//nolint:staticcheck // Check old job info. This is a fallback for old dispatches.
 	if (dsp.GetJobs() == nil || len(dsp.GetJobs().GetJobs()) == 0) && dsp.GetJob() == "" {
 		return nil, errorscentrum.ErrDispatchNoJobs
 	}
@@ -988,10 +991,12 @@ func (s *DispatchDB) Create(ctx context.Context, dsp *centrum.Dispatch) (*centru
 		dsp.Jobs = &centrum.JobList{
 			Jobs: []*centrum.Job{
 				{
+					//nolint:staticcheck // This is a fallback for old dispatches.
 					Name: dsp.GetJob(),
 				},
 			},
 		}
+		//nolint:staticcheck // Clear old job info. This is a fallback for old dispatches.
 		dsp.Job = ""
 	}
 
@@ -1115,7 +1120,7 @@ func (s *DispatchDB) Create(ctx context.Context, dsp *centrum.Dispatch) (*centru
 
 func (s *DispatchDB) Update(
 	ctx context.Context,
-	userId *int32,
+	_ *int32,
 	dsp *centrum.Dispatch,
 ) (*centrum.Dispatch, error) {
 	tDispatch := table.FivenetCentrumDispatches.AS("dispatch")

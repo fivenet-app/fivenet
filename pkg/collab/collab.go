@@ -122,8 +122,8 @@ func (s *CollabServer) Start(ctx context.Context) error {
 // HandleFirstMsg waits for the first message from a client to determine the target ID.
 // Returns the target ID or an error if the message is invalid.
 func (s *CollabServer) HandleFirstMsg(
-	ctx context.Context,
-	clientId uint64,
+	_ context.Context,
+	_ uint64,
 	stream grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket],
 ) (uint64, error) {
 	// Wait for the first message to determine client/target id
@@ -269,7 +269,7 @@ func (s *CollabServer) HandleClient(
 }
 
 // SendTargetSaved notifies the room for the given targetId that the target has been saved.
-func (s *CollabServer) SendTargetSaved(ctx context.Context, targetId uint64) {
+func (s *CollabServer) SendTargetSaved(_ context.Context, targetId uint64) {
 	s.mu.Lock()
 	room, exists := s.rooms[targetId]
 	s.mu.Unlock()

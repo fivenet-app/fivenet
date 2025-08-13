@@ -25,7 +25,7 @@ type DBCmd struct {
 
 type VersionCmd struct{}
 
-func (c *VersionCmd) Run(ctx *kong.Context) error {
+func (c *VersionCmd) Run(_ *kong.Context) error {
 	fxOpts := getFxBaseOpts(Cli.StartTimeout, false)
 
 	if err := os.Setenv(envs.SkipDBMigrationsEnv, "true"); err != nil {
@@ -89,7 +89,7 @@ func (c *VersionCmd) run(_ context.Context, cfg *config.Config) error {
 
 type UpCmd struct{}
 
-func (c *UpCmd) Run(ctx *kong.Context) error {
+func (c *UpCmd) Run(_ *kong.Context) error {
 	fxOpts := getFxBaseOpts(Cli.StartTimeout, false)
 
 	if err := os.Setenv(envs.SkipDBMigrationsEnv, "true"); err != nil {

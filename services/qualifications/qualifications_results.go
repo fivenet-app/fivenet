@@ -716,7 +716,7 @@ func (s *Server) handleColleagueLabelSync(
 			labelName,
 		)
 
-	labelId := uint64(0)
+	var labelId uint64
 	res, err := createStmt.ExecContext(ctx, tx)
 	if err != nil {
 		if !dbutils.IsDuplicateError(err) {

@@ -188,7 +188,7 @@ func (c *FilestoreCmd) migrateJobLogos(ctx context.Context) error {
 	return nil
 }
 
-func (c FilestoreCmd) migrateAvatars(ctx context.Context) error {
+func (c *FilestoreCmd) migrateAvatars(ctx context.Context) error {
 	var errs error
 
 	// Query for users with non-null avatar columns
@@ -297,7 +297,7 @@ func (c FilestoreCmd) migrateAvatars(ctx context.Context) error {
 	return errs
 }
 
-func (c FilestoreCmd) migrateMugshots(ctx context.Context) error {
+func (c *FilestoreCmd) migrateMugshots(ctx context.Context) error {
 	var errs error
 
 	// Query for users with non-null avatar columns

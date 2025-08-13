@@ -392,6 +392,7 @@ func (p *Perms) Attr(
 		return nil, nil
 	}
 
+	//nolint:forcetypeassert // We know that rAttr.Value is of type permissions.AttributeValues as we just clone it.
 	return proto.Clone(rAttr.Value).(*permissions.AttributeValues), nil
 }
 

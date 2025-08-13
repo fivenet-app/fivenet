@@ -217,10 +217,12 @@ func (s *Server) ListDispatches(
 			resp.Dispatches[i].Jobs = &centrum.JobList{
 				Jobs: []*centrum.Job{
 					{
+						//nolint:staticcheck // This is a fallback for old dispatches.
 						Name: dsps[i].GetJob(),
 					},
 				},
 			}
+			//nolint:staticcheck // Clear old job info. This is a fallback for old dispatches.
 			resp.Dispatches[i].Job = ""
 		}
 		for _, job := range dsps[i].GetJobs().GetJobs() {

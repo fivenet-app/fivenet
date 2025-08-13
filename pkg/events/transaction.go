@@ -31,7 +31,7 @@ func NewTransaction(js *JSWrapper) *Transaction {
 }
 
 func (t *Transaction) Publish(
-	ctx context.Context,
+	_ context.Context,
 	subject string,
 	payload []byte,
 	opts ...jetstream.PublishOpt,

@@ -112,11 +112,11 @@ func (s *Server) handleSuperuserOverride(
 
 		s.enricher.EnrichJobInfo(char)
 
-		_, _, jProps_, err := s.getJobWithProps(ctx, char.GetJob())
+		_, _, jp, err := s.getJobWithProps(ctx, char.GetJob())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 		}
-		jProps = jProps_
+		jProps = jp
 	}
 
 	return jProps, nil

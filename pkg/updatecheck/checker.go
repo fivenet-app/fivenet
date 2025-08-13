@@ -188,7 +188,7 @@ func (c *Checker) retrieveLatestTag(
 	return payload.TagName, payload.HTMLURL, payload.Prerelease, releasedAt, nil
 }
 
-func (c *Checker) GetNewVersionInfo() (current string, latestVersion string, url string, releasedAt time.Time) {
+func (c *Checker) GetNewVersionInfo() (string, string, string, time.Time) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 

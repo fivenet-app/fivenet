@@ -183,7 +183,7 @@ func newMetricsExporter(
 	headers map[string]string,
 ) (metric.Exporter, error) {
 	switch tracingType {
-	case config.TracingExporter_OTLPGRPC:
+	case config.TracingExporterOTLPGRPC:
 		secureOption := otlpmetricgrpc.WithTLSCredentials(credentials.NewClientTLSFromCert(nil, ""))
 		if insecure {
 			secureOption = otlpmetricgrpc.WithInsecure()
@@ -196,7 +196,7 @@ func newMetricsExporter(
 			otlpmetricgrpc.WithHeaders(headers),
 		)
 
-	case config.TracingExporter_OTLPHTTP:
+	case config.TracingExporterOTLPHTTP:
 		opts := []otlpmetrichttp.Option{
 			otlpmetrichttp.WithEndpointURL(endpoint),
 			otlpmetrichttp.WithTimeout(timeout),
@@ -209,7 +209,7 @@ func newMetricsExporter(
 
 		return otlpmetrichttp.New(ctx, opts...)
 
-	case config.TracingExporter_StdoutTrace:
+	case config.TracingExporterStdoutTrace:
 		fallthrough
 	default:
 		return stdoutmetric.New()
@@ -226,7 +226,7 @@ func newLoggerExporter(
 	compression string,
 ) (log.Exporter, error) {
 	switch loggerType {
-	case config.TracingExporter_OTLPGRPC:
+	case config.TracingExporterOTLPGRPC:
 		secureOption := otlploggrpc.WithTLSCredentials(credentials.NewClientTLSFromCert(nil, ""))
 		if insecure {
 			secureOption = otlploggrpc.WithInsecure()
@@ -245,7 +245,7 @@ func newLoggerExporter(
 
 		return logExporter, nil
 
-	case config.TracingExporter_OTLPHTTP:
+	case config.TracingExporterOTLPHTTP:
 		opts := []otlploghttp.Option{
 			otlploghttp.WithEndpointURL(endpoint),
 			otlploghttp.WithTimeout(timeout),
@@ -276,7 +276,7 @@ func newTraceExporter(
 	var err error
 	var exporter tracesdk.SpanExporter
 	switch tracingType {
-	case config.TracingExporter_OTLPGRPC:
+	case config.TracingExporterOTLPGRPC:
 		secureOption := otlptracegrpc.WithTLSCredentials(credentials.NewClientTLSFromCert(nil, ""))
 		if insecure {
 			secureOption = otlptracegrpc.WithInsecure()
@@ -292,7 +292,7 @@ func newTraceExporter(
 
 		exporter, err = otlptracegrpc.New(ctx, opts...)
 
-	case config.TracingExporter_OTLPHTTP:
+	case config.TracingExporterOTLPHTTP:
 		comp := otlptracehttp.NoCompression
 		if compression == "gzip" {
 			comp = otlptracehttp.GzipCompression
@@ -310,7 +310,7 @@ func newTraceExporter(
 
 		exporter, err = otlptracehttp.New(ctx, opts...)
 
-	case config.TracingExporter_StdoutTrace:
+	case config.TracingExporterStdoutTrace:
 		fallthrough
 	default:
 		exporter, err = stdouttrace.New()

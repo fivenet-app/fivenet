@@ -58,7 +58,7 @@ type Result struct {
 	Req *reqs.NatsReqs
 }
 
-func New(p Params) (res Result, err error) {
+func New(p Params) (Result, error) {
 	logger := p.Logger.Named("events")
 
 	connOpts := []nats.Option{
@@ -88,7 +88,7 @@ func New(p Params) (res Result, err error) {
 	if p.Config.NATS.NKey != nil {
 		nKeyOpt, err := nats.NkeyOptionFromSeed(*p.Config.NATS.NKey)
 		if err != nil {
-			return res, fmt.Errorf("failed to read nats nkey. %w", err)
+			return Result{}, fmt.Errorf("failed to read nats nkey. %w", err)
 		}
 
 		connOpts = append(connOpts, nKeyOpt)
@@ -100,9 +100,8 @@ func New(p Params) (res Result, err error) {
 	// Connect to NATS
 	nc, err := nats.Connect(p.Config.NATS.URL, connOpts...)
 	if err != nil {
-		return res, err
+		return Result{}, err
 	}
-	res.NC = nc
 
 	// Create JetStream context
 	js, err := jetstream.New(
@@ -110,12 +109,15 @@ func New(p Params) (res Result, err error) {
 		jetstream.WithPublishAsyncMaxPending(DefaultDefaultAsyncPubAckInflight),
 	)
 	if err != nil {
-		return res, err
+		return Result{}, err
 	}
 
-	res.JS = NewJSWrapper(js, p.Config.NATS, p.Shutdowner)
+	res := Result{
+		NC:  nc,
+		JS:  NewJSWrapper(js, p.Config.NATS, p.Shutdowner),
+		Req: reqs.NewNatsReqs(nc),
+	}
 
-	res.Req = reqs.NewNatsReqs(nc)
 	if err := res.Req.ValidateAll(); err != nil {
 		if !p.Config.IgnoreRequirements {
 			return res, fmt.Errorf("failed to validate nats requirements. %w", err)
