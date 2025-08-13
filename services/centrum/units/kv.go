@@ -37,7 +37,7 @@ func (s *UnitDB) Get(ctx context.Context, id uint64) (*centrum.Unit, error) {
 	return s.store.GetOrLoad(ctx, centrumutils.IdKey(id))
 }
 
-func (s *UnitDB) List(ctx context.Context, jobs []string) []*centrum.Unit {
+func (s *UnitDB) List(_ context.Context, jobs []string) []*centrum.Unit {
 	if jobs == nil {
 		jobs = []string{""}
 	}

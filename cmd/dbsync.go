@@ -128,6 +128,5 @@ func (p *dbSyncProgram) Stop(s service.Service) error {
 	ctx, cancel := context.WithTimeout(context.Background(), stopTimeout)
 	defer cancel()
 
-	p.app.Stop(ctx)
-	return nil
+	return p.app.Stop(ctx)
 }

@@ -36,7 +36,10 @@ type TableSyncState struct {
 
 func NewDBSyncState(logger *zap.Logger, filepath string) *DBSyncState {
 	d := &DBSyncState{
-		mu:       sync.Mutex{},
+		mu: sync.Mutex{},
+
+		logger: logger.Named("dbsync.state"),
+
 		filepath: filepath,
 	}
 

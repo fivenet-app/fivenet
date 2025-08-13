@@ -59,7 +59,7 @@ type WorkflowResult struct {
 	CronRegister croner.CronRegister `group:"cronjobregister"`
 }
 
-func NewWorkflow(p WorkflowParams) (WorkflowResult, error) {
+func NewWorkflow(p WorkflowParams) WorkflowResult {
 	w := &Workflow{
 		logger: p.Logger.Named("documents.workflow"),
 		tracer: p.TP.Tracer("documents.workflow"),
@@ -73,7 +73,7 @@ func NewWorkflow(p WorkflowParams) (WorkflowResult, error) {
 	return WorkflowResult{
 		Workflow:     w,
 		CronRegister: w,
-	}, nil
+	}
 }
 
 func (w *Workflow) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {

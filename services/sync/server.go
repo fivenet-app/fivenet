@@ -62,7 +62,7 @@ type Result struct {
 	Service pkggrpc.Service `group:"grpcservices"`
 }
 
-func NewServer(p Params) (Result, error) {
+func NewServer(p Params) Result {
 	s := &Server{
 		logger: p.Logger.Named("sync"),
 		db:     p.DB,
@@ -89,7 +89,7 @@ func NewServer(p Params) (Result, error) {
 	return Result{
 		Server:  s,
 		Service: s,
-	}, nil
+	}
 }
 
 func (s *Server) RegisterServer(srv *grpc.Server) {

@@ -65,7 +65,7 @@ func NewGRPCAuth(
 	}
 }
 
-func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context.Context, error) {
+func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, _ string) (context.Context, error) {
 	t, err := GetTokenFromGRPCContext(ctx)
 	if err != nil {
 		return nil, err

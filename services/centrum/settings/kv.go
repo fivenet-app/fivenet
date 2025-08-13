@@ -36,12 +36,12 @@ func (s *SettingsDB) Get(ctx context.Context, job string) (*centrum.Settings, er
 	return settings, nil
 }
 
-func (s *SettingsDB) List(ctx context.Context) []*centrum.Settings {
+func (s *SettingsDB) List(_ context.Context) []*centrum.Settings {
 	return s.store.List()
 }
 
 func (s *SettingsDB) ListFunc(
-	ctx context.Context,
+	_ context.Context,
 	fn func(key string, val *centrum.Settings) bool,
 ) []*centrum.Settings {
 	return s.store.ListFiltered("", fn)
@@ -50,7 +50,7 @@ func (s *SettingsDB) ListFunc(
 func (s *SettingsDB) GetJobAccessList(
 	ctx context.Context,
 	userJob string,
-	userGrade int32,
+	_ int32,
 ) ([]string, *pbcentrum.JobAccess, error) {
 	settings, err := s.Get(ctx, userJob)
 	if err != nil {

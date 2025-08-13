@@ -144,7 +144,7 @@ type Params struct {
 	JS            *events.JSWrapper
 }
 
-func NewServer(p Params) (*Server, error) {
+func NewServer(p Params) *Server {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	collabServer := collab.New(ctxCancel, p.Logger, p.JS, "documents")
@@ -252,7 +252,7 @@ func NewServer(p Params) (*Server, error) {
 		return nil
 	}))
 
-	return s, nil
+	return s
 }
 
 func newAccess(

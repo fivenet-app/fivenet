@@ -61,7 +61,7 @@ type PollerParams struct {
 	JS       *events.JSWrapper
 }
 
-func NewPoller(p PollerParams) (*Poller, error) {
+func NewPoller(p PollerParams) *Poller {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	poller := &Poller{
@@ -110,7 +110,7 @@ func NewPoller(p PollerParams) (*Poller, error) {
 		return nil
 	}))
 
-	return poller, nil
+	return poller
 }
 
 func (p *Poller) registerSubscriptions(

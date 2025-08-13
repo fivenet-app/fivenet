@@ -56,20 +56,18 @@ func (s *Server) ListTimeclock(
 	if req.GetUserMode() <= jobs.TimeclockViewMode_TIMECLOCK_VIEW_MODE_SELF {
 		condition = condition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.GetUserId())))
 		statsCondition = statsCondition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.GetUserId())))
-	} else {
-		if len(req.GetUserIds()) > 0 {
-			ids := make([]jet.Expression, len(req.GetUserIds()))
-			for i := range req.GetUserIds() {
-				ids[i] = jet.Int32(req.GetUserIds()[i])
-			}
-
-			condition = condition.AND(
-				tTimeClock.UserID.IN(ids...),
-			)
-			statsCondition = statsCondition.AND(
-				tTimeClock.UserID.IN(ids...),
-			)
+	} else if len(req.GetUserIds()) > 0 {
+		ids := make([]jet.Expression, len(req.GetUserIds()))
+		for i := range req.GetUserIds() {
+			ids[i] = jet.Int32(req.GetUserIds()[i])
 		}
+
+		condition = condition.AND(
+			tTimeClock.UserID.IN(ids...),
+		)
+		statsCondition = statsCondition.AND(
+			tTimeClock.UserID.IN(ids...),
+		)
 	}
 
 	if req.GetDate() != nil {
@@ -122,30 +120,22 @@ func (s *Server) ListTimeclock(
 
 	var countStmt jet.SelectStatement
 	if req.GetUserMode() == jobs.TimeclockViewMode_TIMECLOCK_VIEW_MODE_ALL {
+		var countCol jet.Projection
 		if req.GetPerDay() {
-			countStmt = tTimeClock.
-				SELECT(
-					jet.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").
-						AS("data_count.total"),
-				).
-				FROM(
-					tTimeClock.
-						INNER_JOIN(tColleague,
-							tColleague.ID.EQ(tTimeClock.UserID),
-						),
-				).
-				WHERE(condition)
+			countCol = jet.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").
+				AS("data_count.total")
 		} else {
-			countStmt = tTimeClock.
-				SELECT(jet.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").AS("data_count.total")).
-				FROM(
-					tTimeClock.
-						INNER_JOIN(tColleague,
-							tColleague.ID.EQ(tTimeClock.UserID),
-						),
-				).
-				WHERE(condition)
+			countCol = jet.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").AS("data_count.total")
 		}
+		countStmt = tTimeClock.
+			SELECT(countCol).
+			FROM(
+				tTimeClock.
+					INNER_JOIN(tColleague,
+						tColleague.ID.EQ(tTimeClock.UserID),
+					),
+			).
+			WHERE(condition)
 	} else {
 		countStmt = tTimeClock.
 			SELECT(jet.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").AS("data_count.total")).

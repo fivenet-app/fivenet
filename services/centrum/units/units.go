@@ -488,7 +488,7 @@ func (s *UnitDB) UpdateStatus(
 
 func (s *UnitDB) UpdateUnitAssignments(
 	ctx context.Context,
-	job string,
+	_ string,
 	userId *int32,
 	unitId uint64,
 	toAdd []int32,

@@ -1,6 +1,5 @@
 // Copyright 2017 Improbable. All Rights Reserved.
 // See LICENSE for licensing terms.
-
 package grpcws_test
 
 import (
@@ -231,7 +230,12 @@ func (s *GrpcWebWrapperTestSuite) makeGrpcRequest(
 	if err != nil {
 		return nil, grpcws.Trailer{}, nil, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err == nil {
+			return
+		}
+		resp.Body.Close()
+	}()
 	contents, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, grpcws.Trailer{}, nil, err
@@ -447,7 +451,12 @@ func (s *GrpcWebWrapperTestSuite) TestCORSPreflight_DeniedByDefault() {
 		nil,
 		false,
 	)
-	defer corsResp.Body.Close()
+	defer func() {
+		if err == nil {
+			return
+		}
+		corsResp.Body.Close()
+	}()
 	s.Require().NoError(err, "cors preflight should not return errors")
 
 	preflight := corsResp.Header
@@ -495,7 +504,12 @@ func (s *GrpcWebWrapperTestSuite) TestCORSPreflight_AllowedByOriginFunc() {
 		nil,
 		false,
 	)
-	defer corsResp.Body.Close()
+	defer func() {
+		if err == nil {
+			return
+		}
+		corsResp.Body.Close()
+	}()
 	s.Require().NoError(err, "cors preflight should not return errors")
 
 	preflight := corsResp.Header
@@ -527,7 +541,12 @@ func (s *GrpcWebWrapperTestSuite) TestCORSPreflight_AllowedByOriginFunc() {
 		nil,
 		false,
 	)
-	defer corsResp.Body.Close()
+	defer func() {
+		if err == nil {
+			return
+		}
+		corsResp.Body.Close()
+	}()
 	s.Require().NoError(err, "cors preflight should not return errors")
 	s.Equal(
 		http.StatusMethodNotAllowed,
@@ -563,7 +582,12 @@ func (s *GrpcWebWrapperTestSuite) TestCORSPreflight_CorsMaxAge() {
 		nil,
 		false,
 	)
-	defer corsResp.Body.Close()
+	defer func() {
+		if err == nil {
+			return
+		}
+		corsResp.Body.Close()
+	}()
 	s.Require().NoError(err, "cors preflight should not return errors")
 
 	preflight := corsResp.Header
@@ -606,7 +630,12 @@ func (s *GrpcWebWrapperTestSuite) TestCORSPreflight_EndpointsOnlyTrueWithHandler
 	)
 
 	corsResp, err := s.makeRequest("OPTIONS", pingMethod, headers, nil, false)
-	defer corsResp.Body.Close()
+	defer func() {
+		if err == nil {
+			return
+		}
+		corsResp.Body.Close()
+	}()
 	s.Require().NoError(err, "cors preflight should not return errors")
 
 	preflight := corsResp.Header
@@ -632,7 +661,12 @@ func (s *GrpcWebWrapperTestSuite) TestCORSPreflight_EndpointsOnlyTrueWithHandler
 	)
 
 	corsResp, err = s.makeRequest("OPTIONS", badMethod, headers, nil, false)
-	defer corsResp.Body.Close()
+	defer func() {
+		if err == nil {
+			return
+		}
+		corsResp.Body.Close()
+	}()
 	s.Require().NoError(err, "cors preflight should not return errors")
 	s.Equal(401, corsResp.StatusCode, "cors should return 403 as mocked")
 }

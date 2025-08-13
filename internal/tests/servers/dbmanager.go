@@ -1,3 +1,4 @@
+//nolint:gosec // G304: This code is used for testing purposes only.
 package servers
 
 import (

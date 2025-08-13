@@ -15,7 +15,11 @@ func TestBasicStoreCreateAndUse(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer shutdown()
+	defer func() {
+		if err := shutdown(); err != nil {
+			t.Error(err)
+		}
+	}()
 
 	logger := zaptest.NewLogger(t)
 	ctx := t.Context()

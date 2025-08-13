@@ -39,7 +39,7 @@ func NewClient(
 	logger *zap.Logger,
 	clientId uint64,
 	room *CollabRoom,
-	UserId int32,
+	_ int32,
 	role collab.ClientRole,
 	stream grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket],
 ) *Client {

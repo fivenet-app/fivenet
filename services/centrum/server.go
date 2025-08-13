@@ -143,7 +143,7 @@ type Result struct {
 	CronRegister croner.CronRegister `group:"cronjobregister"`
 }
 
-func NewServer(p Params) (Result, error) {
+func NewServer(p Params) Result {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	s := &Server{
@@ -203,7 +203,7 @@ func NewServer(p Params) (Result, error) {
 		Server:       s,
 		Service:      s,
 		CronRegister: s,
-	}, nil
+	}
 }
 
 func (s *Server) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {

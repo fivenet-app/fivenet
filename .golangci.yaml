@@ -26,8 +26,6 @@ linters:
     - dupword
     - durationcheck
     - embeddedstructfieldcheck
-    - err113
-    - errcheck
     - errchkjson
     - errname
     - errorlint
@@ -57,13 +55,11 @@ linters:
     - interfacebloat
     - intrange
     - loggercheck
-    - maintidx
     - makezero
     - mirror
     - misspell
     - musttag
     - nakedret
-    - nestif
     - nilerr
     - nilnesserr
     - nolintlint
@@ -122,8 +118,12 @@ linters:
     # Linters to be re-enabled in the future
     - cyclop
     - dupl
+    - err113
+    - errcheck
     - gocognit
     - gocyclo
+    - maintidx
+    - nestif
   settings:
     gomoddirectives:
       replace-allow-list:
@@ -139,11 +139,12 @@ linters:
     gosec:
       config:
         G301: "0770" # In containers 0770 is basically required for shared volumes
+        G306: "0640" # In containers 0640 is basically required for shared volumes
     wrapcheck:
       extra-ignore-sigs:
         - errswrap.NewError(
     tagalign:
-      align: false
+      align: true
       sort: true
       order:
         - cmd

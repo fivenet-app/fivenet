@@ -58,6 +58,7 @@ func (s *SyncStatusCmd) createGRPCClient(
 	// Create GRPC client for sync if destination is given
 	transportCreds := insecure.NewCredentials()
 	if !skipTlsVerify {
+		//nolint:gosec // G402: TLS MinVersion is set to TLS 1.1 for compatibility (gameservers may not support TLS 1.2 and higher)
 		transportCreds = credentials.NewTLS(&tls.Config{
 			MinVersion: tls.VersionTLS11,
 			ClientAuth: tls.NoClientCert,

@@ -137,9 +137,11 @@ func (s *Server) ManageLabels(
 			return in.GetId()
 		})
 
-	for i := range req.GetLabels() {
-		req.Labels[i].Job = &userInfo.Job
-		req.Labels[i].Order = int32(i)
+	var i int32
+	for _, label := range req.GetLabels() {
+		label.Job = &userInfo.Job
+		label.Order = i
+		i++
 	}
 
 	tJobLabels := table.FivenetJobLabels

@@ -240,11 +240,9 @@ func (s *Server) GetDocument(
 		if err != nil {
 			if st, ok := status.FromError(err); !ok {
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-			} else {
+			} else if st.Code() != codes.PermissionDenied {
 				// Ignore permission denied as we are simply getting the document
-				if st.Code() != codes.PermissionDenied {
-					return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-				}
+				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
 		}
 		if docAccess != nil {

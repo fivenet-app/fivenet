@@ -198,6 +198,7 @@ func (ag *Executor) watchForEvents(msg jetstream.Msg) {
 				if er, ok := e.(error); ok {
 					err = fmt.Errorf("recovered from panic. %w", er)
 				} else {
+					//nolint:errorlint // `er` is not guaranteed to be an error type, so we want it to be treated as a "string" here.
 					err = fmt.Errorf("recovered from panic. %v", er)
 				}
 

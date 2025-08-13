@@ -1,3 +1,7 @@
+// Package demo provides functionality for generating random dispatches and user locations
+// in demo mode, allowing for testing and demonstration of the centrum service.
+//
+//nolint:gosec // G404: rand.Intn is not cryptographically secure, but we don't need it to be here.
 package demo
 
 import (
@@ -134,8 +138,9 @@ func (d *Demo) Start(ctx context.Context) error {
 			return fmt.Errorf("failed to query users. %w", err)
 		}
 	}
-	d.users = append(users, d.cfg.Demo.Users...)
-	utils.RemoveSliceDuplicates(d.users)
+	users = append(users, d.cfg.Demo.Users...)
+	utils.RemoveSliceDuplicates(users)
+	d.users = users
 
 	go d.moveUserMarkers(ctx)
 

@@ -14,7 +14,7 @@ import (
 )
 
 // Based on a-h "Adrian Hesketh" code from <https://github.com/nats-io/nats.go/issues/467#issuecomment-1771424369>
-func NewInProcessNATSServer() (*nats.Conn, *events.JSWrapper, func(), error) {
+func NewInProcessNATSServer() (*nats.Conn, *events.JSWrapper, func() error, error) {
 	tmp, err := os.MkdirTemp("", "nats_test")
 	if err != nil {
 		err = fmt.Errorf("failed to create temp directory for NATS storage. %w", err)
@@ -32,9 +32,12 @@ func NewInProcessNATSServer() (*nats.Conn, *events.JSWrapper, func(), error) {
 	// Add logs to stdout.
 	// server.ConfigureLogger()
 	server.Start()
-	cleanup := func() {
+	cleanup := func() error {
 		server.Shutdown()
-		os.RemoveAll(tmp)
+		if err := os.RemoveAll(tmp); err != nil {
+			return fmt.Errorf("failed to remove temp directory for NATS storage. %w", err)
+		}
+		return nil
 	}
 
 	if !server.ReadyForConnections(time.Second * 5) {

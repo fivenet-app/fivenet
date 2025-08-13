@@ -82,11 +82,14 @@ func TestResizeImage(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// Encode the test image to a buffer
 			var buf bytes.Buffer
-			if tt.inputImage == nil {
-			} else if tt.ext == PNGExt {
+			switch {
+			case tt.inputImage == nil:
+
+			case tt.ext == PNGExt:
 				err := png.Encode(&buf, tt.inputImage)
 				require.NoError(t, err)
-			} else if tt.ext == JPEGExt {
+
+			case tt.ext == JPEGExt:
 				err := jpeg.Encode(&buf, tt.inputImage, nil)
 				require.NoError(t, err)
 			}
@@ -104,18 +107,22 @@ func TestResizeImage(t *testing.T) {
 				assert.NotNil(t, output)
 
 				// Make sure the image was resized accordingly
-				if tt.inputImage == nil {
-				} else if tt.ext == PNGExt {
+				switch {
+				case tt.inputImage == nil:
+
+				case tt.ext == PNGExt:
 					img, err := png.Decode(bytes.NewBuffer(output))
 					require.NoError(t, err)
 					assert.Equal(t, int(tt.height), img.Bounds().Dy())
 					assert.Equal(t, int(tt.width), img.Bounds().Dx())
-				} else if tt.ext == "jpeg" {
+
+				case tt.ext == "jpeg":
 					img, err := jpeg.Decode(bytes.NewBuffer(output))
 					require.NoError(t, err)
 					assert.Equal(t, int(tt.height), img.Bounds().Dy())
 					assert.Equal(t, int(tt.width), img.Bounds().Dx())
-				} else if tt.ext == "webp" {
+
+				case tt.ext == "webp":
 					img, err := webp.Decode(bytes.NewBuffer(output))
 					require.NoError(t, err)
 					assert.Equal(t, int(tt.height), img.Bounds().Dy())

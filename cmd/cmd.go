@@ -90,7 +90,7 @@ var Cli struct {
 	AllInOne AllInOneCmd `cmd:"" alias:"aio"                       help:"Run FiveNet server and worker in one." name:"allinone"`
 
 	Tools      ToolsCmd      `cmd:"" help:"Run FiveNet tools/helpers."`
-	Migrations MigrationsCmd `cmd:"" help:"Run FiveNet migrations."`
+	Migrations MigrationsCmd `cmd:"" help:"Run FiveNet migration helpers."`
 }
 
 func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {

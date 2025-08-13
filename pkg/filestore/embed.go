@@ -135,7 +135,7 @@ func (h *Handler[P]) UploadFile(
 		for {
 			pkt, err := srv.Recv()
 			if errors.Is(err, io.EOF) {
-				pw.Close()
+				_ = pw.Close()
 				return
 			}
 			if err != nil {
@@ -443,9 +443,9 @@ func UpdateJoinRow[P ParentID](
 	ctx context.Context,
 	tx *sql.Tx,
 	join jet.Table,
-	parentCol jet.Column,
+	_ jet.Column,
 	fileCol jet.ColumnInteger,
-	parentId P,
+	_ P,
 	parentIdBoolExp jet.BoolExpression,
 	fileID uint64,
 ) error {

@@ -51,10 +51,10 @@ func TestBasicCentrumFlow(t *testing.T) {
 			fx.Provide(units.New),
 			fx.Provide(dispatches.New),
 			fx.Provide(grpcSrvModule),
-			fx.Provide(func(p Params) (Result, error) {
-				r, err := NewServer(p)
+			fx.Provide(func(p Params) Result {
+				r := NewServer(p)
 				srv = r.Server
-				return r, err
+				return r
 			}),
 
 			fx.Invoke(func(*grpc.Server) {}),

@@ -72,6 +72,7 @@ func wrapGrpc(
 	endpointsFunc func() []string,
 ) *WrappedGrpcServer {
 	opts := evaluateOptions(options)
+	//nolint:gocritic // It is okay to use append without assignment to the same slice here, as allowedHeaders should be a new slice.
 	allowedHeaders := append(opts.allowedRequestHeaders, internalRequestHeadersWhitelist...)
 	corsWrapper := cors.New(cors.Options{
 		AllowOriginFunc:  opts.originFunc,
