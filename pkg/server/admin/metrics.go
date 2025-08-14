@@ -94,6 +94,7 @@ func NewServer(p Params) (Result, error) {
 	// Register lifecycle hooks for server start and stop
 	p.LC.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
+			//nolint:noctx // net.Listen is shutdown via the server's Shutdown method
 			ln, err := net.Listen("tcp", srv.Addr)
 			if err != nil {
 				return err

@@ -9,7 +9,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"math/rand"
+	"math/rand/v2"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
@@ -152,7 +152,7 @@ func (d *Demo) Start(ctx context.Context) error {
 
 		d.generateDispatches(ctx)
 
-		randWait := rand.Intn(300) + 30 // Random wait between 30 and 270 seconds
+		randWait := rand.IntN(300) + 30 // Random wait between 30 and 270 seconds
 
 		select {
 		case <-ctx.Done():
@@ -165,13 +165,13 @@ func (d *Demo) Start(ctx context.Context) error {
 
 // generateDispatches creates up to 2 random dispatches per run with random positions and messages.
 func (d *Demo) generateDispatches(ctx context.Context) {
-	numDispatches := rand.Intn(2) // Up to 2 dispatches per run
+	numDispatches := rand.IntN(2) // Up to 2 dispatches per run
 
 	for range numDispatches {
 		x := rand.Float64()*(xBounds[1]-xBounds[0]) + xBounds[0]
 		y := rand.Float64()*(yBounds[1]-yBounds[0]) + yBounds[0]
-		desc := dispatchDescriptions[rand.Intn(len(dispatchDescriptions))]
-		msg := dispatchMessages[rand.Intn(len(dispatchMessages))]
+		desc := dispatchDescriptions[rand.IntN(len(dispatchDescriptions))]
+		msg := dispatchMessages[rand.IntN(len(dispatchMessages))]
 		if _, err := d.dispatches.Create(ctx, &centrum.Dispatch{
 			Jobs: &centrum.JobList{
 				Jobs: []*centrum.Job{

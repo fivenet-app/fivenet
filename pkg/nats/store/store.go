@@ -127,8 +127,7 @@ func New[T any, U protoutils.ProtoMessageWithMerge[T]](
 	}
 
 	kvConfig := jetstream.KeyValueConfig{
-		Bucket: bucket,
-		//nolint:perfsprint // Not in critical path, so no need to optimize
+		Bucket:      bucket,
 		Description: fmt.Sprintf("%s Store", bucket),
 		History:     1,
 		Storage:     jetstream.MemoryStorage,
@@ -287,7 +286,13 @@ func (s *Store[T, U]) handleWatcherPut(
 	}
 
 	if s.onRemoteUpdate != nil {
-		s.onRemoteUpdate(ctx, oldItem, item)
+		if _, err := s.onRemoteUpdate(ctx, oldItem, item); err != nil {
+			s.logger.Error(
+				"failed to call onRemoteUpdate",
+				zap.String("key", key),
+				zap.Error(err),
+			)
+		}
 	}
 }
 

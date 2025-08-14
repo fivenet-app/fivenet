@@ -441,7 +441,7 @@ func (s *Server) CreateOrUpdateEmail(
 		tEmails := table.FivenetMailerEmails
 
 		label := jet.NULL
-		if req.Email.Label != nil {
+		if req.Email.Label != nil && *req.Email.Label != "" {
 			label = jet.String(req.GetEmail().GetLabel())
 		}
 
@@ -569,7 +569,7 @@ func (s *Server) createEmail(
 			email.GetJob(),
 			email.GetUserId(),
 			email.GetEmail(),
-			email.GetLabel(),
+			email.Label,
 			userInfo.GetUserId(),
 		)
 

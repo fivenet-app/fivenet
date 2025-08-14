@@ -92,12 +92,12 @@ func (s *Server) SetThreadState(
 			VALUES(
 				req.GetState().GetThreadId(),
 				req.GetState().GetEmailId(),
-				req.GetState().GetUnread(),
+				req.GetState().Unread,
 				req.GetState().GetLastRead(),
-				req.GetState().GetImportant(),
-				req.GetState().GetFavorite(),
-				req.GetState().GetMuted(),
-				req.GetState().GetArchived(),
+				req.GetState().Important,
+				req.GetState().Favorite,
+				req.GetState().Muted,
+				req.GetState().Archived,
 			).
 			ON_DUPLICATE_KEY_UPDATE(updateSets...)
 

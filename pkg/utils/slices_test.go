@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"math/rand"
+	"math/rand/v2"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -68,7 +68,7 @@ func BenchmarkRemoveSliceDuplicates(b *testing.B) {
 func generateRandomSlice(size int) []int {
 	slice := make([]int, size)
 	for i := range slice {
-		slice[i] = rand.Intn(size / 2) // Introduce duplicates
+		slice[i] = rand.IntN(size / 2) // Introduce duplicates
 	}
 	return slice
 }

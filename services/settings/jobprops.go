@@ -88,9 +88,9 @@ func (s *Server) SetJobProps(
 		VALUES(
 			req.GetJobProps().GetJob(),
 			req.GetJobProps().GetLivemapMarkerColor(),
-			req.GetJobProps().GetRadioFrequency(),
+			req.GetJobProps().RadioFrequency,
 			req.GetJobProps().GetQuickButtons(),
-			req.GetJobProps().GetDiscordGuildId(),
+			req.GetJobProps().DiscordGuildId,
 			req.GetJobProps().GetDiscordSyncSettings(),
 			req.GetJobProps().GetSettings(),
 		).

@@ -42,7 +42,7 @@ func (s *Server) CreateOrUpdateLawBook(
 			).
 			VALUES(
 				req.GetLawBook().GetName(),
-				req.GetLawBook().GetDescription(),
+				req.GetLawBook().Description,
 			)
 
 		result, err := stmt.ExecContext(ctx, s.db)
@@ -66,7 +66,7 @@ func (s *Server) CreateOrUpdateLawBook(
 			).
 			SET(
 				req.GetLawBook().GetName(),
-				req.GetLawBook().GetDescription(),
+				req.GetLawBook().Description,
 			).
 			WHERE(jet.AND(
 				tLawBooks.ID.EQ(jet.Uint64(req.GetLawBook().GetId())),
@@ -190,11 +190,11 @@ func (s *Server) CreateOrUpdateLaw(
 			VALUES(
 				req.GetLaw().GetLawbookId(),
 				req.GetLaw().GetName(),
-				req.GetLaw().GetDescription(),
-				req.GetLaw().GetHint(),
-				req.GetLaw().GetFine(),
-				req.GetLaw().GetDetentionTime(),
-				req.GetLaw().GetStvoPoints(),
+				req.GetLaw().Description,
+				req.GetLaw().Hint,
+				req.GetLaw().Fine,
+				req.GetLaw().DetentionTime,
+				req.GetLaw().StvoPoints,
 			)
 
 		result, err := stmt.ExecContext(ctx, s.db)
@@ -224,11 +224,11 @@ func (s *Server) CreateOrUpdateLaw(
 			SET(
 				req.GetLaw().GetLawbookId(),
 				req.GetLaw().GetName(),
-				req.GetLaw().GetDescription(),
-				req.GetLaw().GetHint(),
-				req.GetLaw().GetFine(),
-				req.GetLaw().GetDetentionTime(),
-				req.GetLaw().GetStvoPoints(),
+				req.GetLaw().Description,
+				req.GetLaw().Hint,
+				req.GetLaw().Fine,
+				req.GetLaw().DetentionTime,
+				req.GetLaw().StvoPoints,
 			).
 			WHERE(jet.AND(
 				tLaws.ID.EQ(jet.Uint64(req.GetLaw().GetId())),

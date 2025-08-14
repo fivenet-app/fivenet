@@ -7,7 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"math/rand"
+	"math/rand/v2"
 	"net/http"
 	"sync"
 	"time"
@@ -82,7 +82,7 @@ func (c *Checker) Start(ctx context.Context) error {
 	for {
 		// Add a random delay (between 3 and 30 seconds) before every check to avoid thundering herd problem and "spontaneous synchronization."
 		//nolint:gosec // G404 - The random delay is not security sensitive, it's just to avoid all instances collecting metrics at the same time.
-		delay := time.Duration(3+rand.Intn(28)) * time.Second
+		delay := time.Duration(3+rand.IntN(28)) * time.Second
 		c.logger.Debug("update check delay", zap.Duration("delay", delay))
 
 		select {

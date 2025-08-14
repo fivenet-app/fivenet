@@ -89,7 +89,7 @@ func (s *Server) RegisterAccount(
 				true,
 				req.GetIdentifier(),
 				regToken,
-				req.GetLastCharId(),
+				req.LastCharId,
 			)
 	} else {
 		// Account exists, and token reset requested

@@ -461,7 +461,11 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond jet.BoolExpression) (i
 				Y:          &dsps[i].Y,
 			}, false, nil)
 			if err != nil {
-				return 0, err
+				return 0, fmt.Errorf(
+					"failed to add dispatch (id: %d) status. %w",
+					dsps[i].GetId(),
+					err,
+				)
 			}
 		}
 
@@ -681,15 +685,15 @@ func (s *DispatchDB) UpdateStatus(
 		VALUES(
 			jet.CURRENT_TIMESTAMP(),
 			in.GetDispatchId(),
-			in.GetUnitId(),
+			in.UnitId,
 			in.GetStatus(),
-			in.GetReason(),
-			in.GetCode(),
-			in.GetUserId(),
-			in.GetX(),
-			in.GetY(),
-			in.GetPostal(),
-			in.GetCreatorJob(),
+			in.Reason,
+			in.Code,
+			in.UserId,
+			in.X,
+			in.Y,
+			in.Postal,
+			in.CreatorJob,
 		)
 
 	res, err := stmt.ExecContext(ctx, s.db)
@@ -1010,7 +1014,7 @@ func (s *DispatchDB) Create(ctx context.Context, dsp *centrum.Dispatch) (*centru
 		}
 	}
 
-	if dsp.CreatorId != nil {
+	if dsp.GetCreatorId() > 0 {
 		var err error
 		dsp.Creator, err = users.RetrieveUserById(ctx, s.db, dsp.GetCreatorId())
 		if err != nil {
@@ -1053,14 +1057,14 @@ func (s *DispatchDB) Create(ctx context.Context, dsp *centrum.Dispatch) (*centru
 			jet.CURRENT_TIMESTAMP(),
 			dsp.GetJobs(),
 			dsp.GetMessage(),
-			dsp.GetDescription(),
+			dsp.Description,
 			dsp.GetAttributes(),
 			dsp.GetReferences(),
 			dsp.GetX(),
 			dsp.GetY(),
-			dsp.GetPostal(),
+			dsp.Postal,
 			dsp.GetAnon(),
-			dsp.GetCreatorId(),
+			dsp.CreatorId,
 		)
 
 	result, err := stmt.ExecContext(ctx, tx)
@@ -1144,14 +1148,14 @@ func (s *DispatchDB) Update(
 			jet.CURRENT_TIMESTAMP(),
 			dsp.GetJobs(),
 			dsp.GetMessage(),
-			dsp.GetDescription(),
+			dsp.Description,
 			dsp.GetAttributes(),
 			dsp.GetReferences(),
 			dsp.GetX(),
 			dsp.GetY(),
-			dsp.GetPostal(),
+			dsp.Postal,
 			dsp.GetAnon(),
-			dsp.GetCreatorId(),
+			dsp.CreatorId,
 		).
 		WHERE(jet.AND(
 			tDispatch.ID.EQ(jet.Uint64(dsp.GetId())),
@@ -1195,14 +1199,14 @@ func (s *DispatchDB) AddDispatchStatus(
 			status.GetCreatedAt(),
 			status.GetDispatchId(),
 			status.GetStatus(),
-			status.GetReason(),
-			status.GetCode(),
-			status.GetUnitId(),
-			status.GetUserId(),
-			status.GetX(),
-			status.GetY(),
-			status.GetPostal(),
-			status.GetCreatorJob(),
+			status.Reason,
+			status.Code,
+			status.UnitId,
+			status.UserId,
+			status.X,
+			status.Y,
+			status.Postal,
+			status.CreatorJob,
 		)
 
 	res, err := stmt.ExecContext(ctx, tx)

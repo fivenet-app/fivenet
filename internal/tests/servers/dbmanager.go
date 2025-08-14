@@ -1,7 +1,7 @@
-//nolint:gosec // G304: This code is used for testing purposes only.
 package servers
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -37,13 +37,13 @@ func NewDBServer(t *testing.T, setup bool) *dbServer {
 	}
 
 	if setup {
-		s.Setup()
+		s.Setup(t.Context())
 	}
 
 	return s
 }
 
-func (m *dbServer) Setup() {
+func (m *dbServer) Setup(ctx context.Context) {
 	// uses a sensible default on windows (tcp/http) and linux/osx (socket)
 	var err error
 	m.pool, err = dockertest.NewPool("")
@@ -98,7 +98,7 @@ func (m *dbServer) Setup() {
 			return fmt.Errorf("failed to ping database. %w", err)
 		}
 
-		rows, err := db.Query("SELECT 1;")
+		rows, err := db.QueryContext(ctx, "SELECT 1;")
 		if err != nil {
 			return fmt.Errorf("failed to execute test query on database. %w", err)
 		}
@@ -112,11 +112,11 @@ func (m *dbServer) Setup() {
 		m.t.Fatalf("could not connect to database: %q", err)
 	}
 
-	if err := m.prepareDBForFirstUse(); err != nil {
+	if err := m.prepareDBForFirstUse(ctx); err != nil {
 		m.t.Fatalf("failed to prepare database for first use: %q", err)
 	}
 
-	if err := m.LoadBaseData(); err != nil {
+	if err := m.LoadBaseData(ctx); err != nil {
 		m.t.Fatalf("failed to load base data into database: %q", err)
 	}
 
@@ -147,9 +147,9 @@ func (m *dbServer) getDSN() string {
 	)
 }
 
-func (m *dbServer) prepareDBForFirstUse() error {
+func (m *dbServer) prepareDBForFirstUse(ctx context.Context) error {
 	// Load and apply premigrate.sql file
-	if err := m.loadSQLFile(filepath.Join(tests.TestDataSQLPath, "initial_esx.sql")); err != nil {
+	if err := m.loadSQLFile(ctx, filepath.Join(tests.TestDataSQLPath, "initial_esx.sql")); err != nil {
 		return err
 	}
 
@@ -174,7 +174,7 @@ func (m *dbServer) getMultiStatementDB() (*sql.DB, error) {
 	return initDB, nil
 }
 
-func (m *dbServer) loadSQLFile(file string) error {
+func (m *dbServer) loadSQLFile(ctx context.Context, file string) error {
 	initDB, err := m.getMultiStatementDB()
 	if err != nil {
 		m.t.Fatalf("failed to get multi statement db: %v", err)
@@ -185,14 +185,14 @@ func (m *dbServer) loadSQLFile(file string) error {
 		m.t.Fatalf("failed to read %s for tests: %v", file, ioErr)
 	}
 	sqlBase := string(c)
-	if _, err := initDB.Exec(sqlBase); err != nil {
+	if _, err := initDB.ExecContext(ctx, sqlBase); err != nil {
 		m.t.Fatalf("failed to apply %s for tests: %v", file, err)
 	}
 
 	return nil
 }
 
-func (m *dbServer) LoadBaseData() error {
+func (m *dbServer) LoadBaseData(ctx context.Context) error {
 	path := filepath.Join(tests.TestDataSQLPath, "base_*.sql")
 	files, err := filepath.Glob(path)
 	if err != nil {
@@ -203,7 +203,7 @@ func (m *dbServer) LoadBaseData() error {
 	sort.Strings(files)
 
 	for _, file := range files {
-		if err := m.loadSQLFile(file); err != nil {
+		if err := m.loadSQLFile(ctx, file); err != nil {
 			return err
 		}
 	}

@@ -281,8 +281,8 @@ func (s *Server) createMessage(
 			msg.GetTitle(),
 			msg.GetContent(),
 			msg.GetData(),
-			msg.GetCreatorId(),
-			msg.GetCreatorJob(),
+			msg.CreatorId,
+			msg.CreatorJob,
 			msg.GetSender().GetEmail(),
 		)
 

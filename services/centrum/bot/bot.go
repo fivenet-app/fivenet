@@ -2,7 +2,7 @@ package centrumbot
 
 import (
 	"context"
-	"math/rand"
+	"math/rand/v2"
 	"sort"
 	"time"
 
@@ -160,7 +160,7 @@ func (b *Bot) getAvailableUnit(ctx context.Context, jobs *centrum.JobList) (*cen
 	// Randomize unit ids
 	for i := range units {
 		//nolint:gosec // G404: rand.Intn is not cryptographically secure, but we don't need it to be here.
-		j := rand.Intn(i + 1)
+		j := rand.IntN(i + 1)
 		units[i], units[j] = units[j], units[i]
 	}
 

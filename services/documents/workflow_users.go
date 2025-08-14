@@ -124,7 +124,7 @@ func updateWorkflowUserState(
 	}
 
 	reminderMessage := jet.StringExp(jet.NULL)
-	if state.ManualReminderMessage != nil {
+	if state.ManualReminderMessage != nil && state.GetManualReminderMessage() != "" {
 		reminderMessage = jet.String(state.GetManualReminderMessage())
 	}
 
@@ -141,7 +141,7 @@ func updateWorkflowUserState(
 			state.GetDocumentId(),
 			state.GetUserId(),
 			state.GetManualReminderTime(),
-			state.GetManualReminderMessage(),
+			state.ManualReminderMessage,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tUserWorkflow.ManualReminderTime.SET(reminderTime),

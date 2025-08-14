@@ -101,6 +101,7 @@ func New(p Params) (Result, error) {
 
 	p.LC.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
+			//nolint:noctx // net.Listen is shutdown via the server's Shutdown method
 			ln, err := net.Listen("tcp", srv.Addr)
 			if err != nil {
 				return err

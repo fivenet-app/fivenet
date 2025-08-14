@@ -476,7 +476,7 @@ func (s *Server) CreatePage(
 		).
 		VALUES(
 			userInfo.GetJob(),
-			req.GetParentId(),
+			req.ParentId,
 			req.GetContentType(),
 			true,
 			true,
@@ -669,9 +669,9 @@ func (s *Server) UpdatePage(
 			tPage.Data,
 		).
 		SET(
-			req.GetPage().GetParentId(),
+			req.GetPage().ParentId,
 			req.GetPage().GetMeta().GetContentType(),
-			req.GetPage().GetMeta().GetToc(),
+			req.GetPage().GetMeta().Toc,
 			req.GetPage().GetMeta().GetDraft(),
 			req.GetPage().GetMeta().GetPublic(),
 			slug.Make(utils.StringFirstN(req.GetPage().GetMeta().GetTitle(), 100)),

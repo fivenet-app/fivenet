@@ -152,7 +152,6 @@ func (g *GroupSync) planUsers(
 		if groupCfg.NotSameJob {
 			has, err := g.checkIfUserIsPartOfJob(ctx, user.License, g.job)
 			if err != nil {
-				//nolint:perfsprint // Performance is not critical here, we just create and log the error message
 				g.logger.Error(
 					fmt.Sprintf("failed to check if user has char in job %s", user.ExternalID),
 					zap.String("group", user.Group),
@@ -178,12 +177,10 @@ func (g *GroupSync) planUsers(
 		})
 		if idx == -1 {
 			logs = append(logs, discord.Embed{
-				//nolint:perfsprint // Performance is not critical here, we just create and log the error message
 				Title: fmt.Sprintf(
 					"Group Sync: Failed to find dc role for group %s",
 					groupCfg.RoleName,
 				),
-				//nolint:perfsprint // Performance is not critical here, we just create and log the error message
 				Description: fmt.Sprintf("For DC ID %s", user.ExternalID),
 				Author:      embeds.EmbedAuthor,
 				Color:       embeds.ColorInfo,

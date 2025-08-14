@@ -458,14 +458,14 @@ func (s *UnitDB) UpdateStatus(
 			in.GetCreatedAt(),
 			in.GetUnitId(),
 			in.GetStatus(),
-			in.GetReason(),
-			in.GetCode(),
-			in.GetUserId(),
-			in.GetX(),
-			in.GetY(),
-			in.GetPostal(),
-			in.GetCreatorId(),
-			in.GetCreatorJob(),
+			in.Reason,
+			in.Code,
+			in.UserId,
+			in.X,
+			in.Y,
+			in.Postal,
+			in.CreatorId,
+			in.CreatorJob,
 		)
 
 	res, err := stmt.ExecContext(ctx, s.db)
@@ -735,10 +735,10 @@ func (s *UnitDB) CreateUnit(
 			unit.GetName(),
 			unit.GetInitials(),
 			unit.GetColor(),
-			unit.GetIcon(),
-			unit.GetDescription(),
+			unit.Icon,
+			unit.Description,
 			unit.GetAttributes(),
-			unit.GetHomePostal(),
+			unit.HomePostal,
 		)
 
 	result, err := stmt.ExecContext(ctx, tx)
@@ -869,14 +869,14 @@ func (s *UnitDB) AddStatus(
 			jet.CURRENT_TIMESTAMP(),
 			status.GetUnitId(),
 			status.GetStatus(),
-			status.GetReason(),
-			status.GetCode(),
-			status.GetUserId(),
-			status.GetX(),
-			status.GetY(),
-			status.GetPostal(),
-			status.GetCreatorId(),
-			status.GetCreatorJob(),
+			status.Reason,
+			status.Code,
+			status.UserId,
+			status.X,
+			status.Y,
+			status.Postal,
+			status.CreatorId,
+			status.CreatorJob,
 		)
 
 	res, err := stmt.ExecContext(ctx, tx)

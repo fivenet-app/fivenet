@@ -199,9 +199,9 @@ func (x *ColleagueProps) HandleChanges(
 			job,
 			absenceBegin,
 			absenceEnd,
-			in.GetNote(),
-			in.GetNamePrefix(),
-			in.GetNameSuffix(),
+			in.Note,
+			in.NamePrefix,
+			in.NameSuffix,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			updateSets...,

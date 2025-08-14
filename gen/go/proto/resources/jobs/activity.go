@@ -32,11 +32,11 @@ func CreateColleagueActivity(
 		stmt = stmt.
 			VALUES(
 				activity.GetJob(),
-				activity.GetSourceUserId(),
-				activity.GetTargetUserId(),
+				activity.SourceUserId,
+				activity.TargetUserId,
 				activity.GetActivityType(),
 				activity.GetReason(),
-				activity.GetData(),
+				activity.Data,
 			)
 	}
 

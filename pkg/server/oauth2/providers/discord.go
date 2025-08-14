@@ -27,6 +27,7 @@ func (p *Discord) GetUserInfo(ctx context.Context, code string) (*UserInfo, erro
 	}
 
 	// Use the access token, here we use it to get the logged in user's info.
+	//nolint:noctx // The context is already passed in to the oauth2 http client during creation.
 	res, err := p.oauthConfig.Client(ctx, token).Get("https://discord.com/api/users/@me")
 	if err != nil || res.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("failed to get user info: %+w", err)

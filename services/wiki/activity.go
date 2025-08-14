@@ -139,9 +139,9 @@ func (s *Server) addPageActivity(
 		VALUES(
 			activitiy.GetPageId(),
 			activitiy.GetActivityType(),
-			activitiy.GetCreatorId(),
-			activitiy.GetCreatorJob(),
-			activitiy.GetReason(),
+			activitiy.CreatorId,
+			activitiy.CreatorJob,
+			activitiy.Reason,
 			activitiy.GetData(),
 		)
 

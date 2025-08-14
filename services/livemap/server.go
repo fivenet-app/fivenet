@@ -10,6 +10,7 @@ import (
 	pblivemap "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/livemap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
+	"github.com/fivenet-app/fivenet/v2025/pkg/coords/postals"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
@@ -70,6 +71,7 @@ type Server struct {
 	tracker  tracker.ITracker
 	aud      audit.IAuditer
 	appCfg   appconfig.IConfig
+	postals  postals.Postals
 
 	markersCache        *xsync.Map[string, []*livemap.MarkerMarker]
 	markersDeletedCache *xsync.Map[string, []uint64]
@@ -92,6 +94,7 @@ type Params struct {
 	Tracker   tracker.ITracker
 	Audit     audit.IAuditer
 	AppConfig appconfig.IConfig
+	Postals   postals.Postals
 }
 
 type brokerEvent struct {
@@ -113,6 +116,7 @@ func NewServer(p Params) *Server {
 		tracker:  p.Tracker,
 		aud:      p.Audit,
 		appCfg:   p.AppConfig,
+		postals:  p.Postals,
 
 		markersCache:        xsync.NewMap[string, []*livemap.MarkerMarker](),
 		markersDeletedCache: xsync.NewMap[string, []uint64](),

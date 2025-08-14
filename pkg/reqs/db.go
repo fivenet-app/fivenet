@@ -133,7 +133,7 @@ func (r *DBReqs) validateTables(ctx context.Context) ([]Table, error) {
 	// Get tables and their charsets/collations
 	prefix := "fivenet_"
 	rows, err := r.db.
-		Query(`
+		QueryContext(ctx, `
         SELECT TABLE_NAME, TABLE_COLLATION
         FROM information_schema.TABLES
         WHERE TABLE_SCHEMA = ? AND TABLE_NAME LIKE ?

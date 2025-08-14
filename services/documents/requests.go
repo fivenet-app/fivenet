@@ -574,9 +574,9 @@ func (s *Server) addDocumentReq(
 			request.GetRequestType(),
 			request.GetCreatorId(),
 			request.GetCreatorJob(),
-			request.GetReason(),
+			request.Reason,
 			request.GetData(),
-			request.GetAccepted(),
+			request.Accepted,
 		)
 
 	res, err := stmt.ExecContext(ctx, tx)
@@ -629,9 +629,9 @@ func (s *Server) updateDocumentReq(
 			request.GetRequestType(),
 			request.GetCreatorId(),
 			request.GetCreatorJob(),
-			request.GetReason(),
+			request.Reason,
 			request.GetData(),
-			request.GetAccepted(),
+			request.Accepted,
 		).
 		WHERE(
 			tDocRequest.ID.EQ(jet.Uint64(id)),

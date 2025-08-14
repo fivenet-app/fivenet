@@ -13,7 +13,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"math/rand"
+	"math/rand/v2"
 	"strings"
 	"sync"
 	"time"
@@ -80,11 +80,9 @@ func New(
 	bucket string,
 	maxLockAge time.Duration,
 ) (*Locks, error) {
-	//nolint:perfsprint // Not in critical path, so no need to optimize
 	lBucket := fmt.Sprintf("%s_locks", bucket)
 	kv, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
-		Bucket: lBucket,
-		//nolint:perfsprint // Not in critical path, so no need to optimize
+		Bucket:         lBucket,
 		Description:    fmt.Sprintf("%s Locks", bucket),
 		History:        1,
 		MaxBytes:       -1,
@@ -106,7 +104,6 @@ func NewWithKV(
 	bucket string,
 	maxLockAge time.Duration,
 ) *Locks {
-	//nolint:perfsprint // Not in critical path, so no need to optimize
 	lBucket := fmt.Sprintf("%s_locks", bucket)
 	if kv.Bucket() != lBucket {
 		logger.Warn("using Locks with a KeyValue store that does not match the expected bucket",

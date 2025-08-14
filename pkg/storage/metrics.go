@@ -3,7 +3,7 @@ package storage
 import (
 	"context"
 	"fmt"
-	"math/rand"
+	"math/rand/v2"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
@@ -98,7 +98,7 @@ func (mc *MetricsCollector) start(ctx context.Context, interval time.Duration) {
 
 	// Wait for a random delay before collecting the first metrics
 	//nolint:gosec // G404 - The random delay is not security sensitive, it's just to avoid all instances collecting metrics at the same time.
-	delay := time.Duration(1+rand.Intn(15)) * time.Second
+	delay := time.Duration(1+rand.IntN(15)) * time.Second
 	time.Sleep(delay)
 
 	for {

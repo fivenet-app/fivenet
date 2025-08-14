@@ -245,13 +245,13 @@ func (x *UserProps) HandleChanges(
 			).
 			VALUES(
 				in.GetUserId(),
-				in.GetWanted(),
-				in.GetJobName(),
-				in.GetJobGradeNumber(),
-				in.GetTrafficInfractionPoints(),
-				in.GetTrafficInfractionPointsUpdatedAt(),
-				in.GetOpenFines(),
-				in.GetMugshotFileId(),
+				in.Wanted,
+				in.JobName,
+				in.JobGradeNumber,
+				in.TrafficInfractionPoints,
+				in.TrafficInfractionPointsUpdatedAt,
+				in.OpenFines,
+				in.MugshotFileId,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
 				updateSets...,

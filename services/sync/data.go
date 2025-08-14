@@ -433,18 +433,18 @@ func (s *Server) handleUsersData(
 			insertStmt := stmt.
 				VALUES(
 					user.GetUserId(),
-					user.GetIdentifier(),
-					user.GetGroup(),
-					user.GetFirstname(),
-					user.GetLastname(),
-					user.GetDateofbirth(),
-					user.GetJob(),
-					user.GetJobGrade(),
-					user.GetSex(),
-					user.GetPhoneNumber(),
-					user.GetHeight(),
-					user.GetVisum(),
-					user.GetPlaytime(),
+					user.Identifier,
+					user.Group,
+					user.Firstname,
+					user.Lastname,
+					user.Dateofbirth,
+					user.Job,
+					user.JobGrade,
+					user.Sex,
+					user.PhoneNumber,
+					user.Height,
+					user.Visum,
+					user.Playtime,
 				).
 				ON_DUPLICATE_KEY_UPDATE(
 					tUsers.Group.SET(jet.StringExp(jet.Raw("VALUES(`group`)"))),
@@ -499,18 +499,18 @@ func (s *Server) handleUsersData(
 					tUsers.Playtime,
 				).
 				SET(
-					user.GetIdentifier(),
-					user.GetGroup(),
-					user.GetFirstname(),
-					user.GetLastname(),
-					user.GetDateofbirth(),
-					user.GetJob(),
-					user.GetJobGrade(),
-					user.GetSex(),
-					user.GetPhoneNumber(),
-					user.GetHeight(),
-					user.GetVisum(),
-					user.GetPlaytime(),
+					user.Identifier,
+					user.Group,
+					user.Firstname,
+					user.Lastname,
+					user.Dateofbirth,
+					user.Job,
+					user.JobGrade,
+					user.Sex,
+					user.PhoneNumber,
+					user.Height,
+					user.Visum,
+					user.Playtime,
 				).
 				WHERE(
 					tUsers.ID.EQ(jet.Int32(user.GetUserId())),
@@ -666,16 +666,16 @@ func (s *Server) handleVehiclesData(
 			stmt = stmt.VALUES(
 				ownerId,
 				vehicle.GetPlate(),
-				vehicle.GetModel(),
+				vehicle.Model,
 				vehicle.GetType(),
-				vehicle.GetJob(),
+				vehicle.Job,
 				jet.NULL,
 			)
 		} else {
 			stmt = stmt.VALUES(
 				ownerId,
 				vehicle.GetPlate(),
-				vehicle.GetModel(),
+				vehicle.Model,
 				vehicle.GetType(),
 			)
 		}
@@ -731,6 +731,7 @@ func (s *Server) handleUserLocations(
 		INSERT(
 			tLocations.Identifier,
 			tLocations.Job,
+			tLocations.JobGrade,
 			tLocations.X,
 			tLocations.Y,
 			tLocations.Hidden,
@@ -749,6 +750,7 @@ func (s *Server) handleUserLocations(
 			VALUES(
 				location.GetIdentifier(),
 				location.GetJob(),
+				nil, // TODO add job grade to user locations sync api
 				location.GetCoords().GetX(),
 				location.GetCoords().GetY(),
 				location.GetHidden(),
@@ -759,6 +761,7 @@ func (s *Server) handleUserLocations(
 	stmt = stmt.
 		ON_DUPLICATE_KEY_UPDATE(
 			tLocations.Job.SET(jet.StringExp(jet.Raw("VALUES(`job`)"))),
+			tLocations.JobGrade.SET(jet.IntExp(jet.Raw("VALUES(`job_grade`)"))),
 			tLocations.X.SET(jet.FloatExp(jet.Raw("VALUES(`x`)"))),
 			tLocations.Y.SET(jet.FloatExp(jet.Raw("VALUES(`y`)"))),
 			tLocations.Hidden.SET(jet.BoolExp(jet.Raw("VALUES(`hidden`)"))),

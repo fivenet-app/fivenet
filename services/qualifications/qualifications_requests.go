@@ -300,7 +300,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 			SET(
 				req.GetRequest().GetStatus(),
 				jet.CURRENT_TIMESTAMP(),
-				req.GetRequest().GetApproverComment(),
+				req.GetRequest().ApproverComment,
 				userInfo.GetUserId(),
 				userInfo.GetJob(),
 			).
@@ -390,7 +390,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 			VALUES(
 				req.GetRequest().GetQualificationId(),
 				userInfo.GetUserId(),
-				req.GetRequest().GetUserComment(),
+				req.GetRequest().UserComment,
 				qualifications.RequestStatus_REQUEST_STATUS_PENDING,
 			).
 			ON_DUPLICATE_KEY_UPDATE(

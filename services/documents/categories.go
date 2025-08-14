@@ -124,10 +124,10 @@ func (s *Server) CreateOrUpdateCategory(
 			).
 			VALUES(
 				req.GetCategory().GetName(),
-				req.GetCategory().GetDescription(),
+				req.GetCategory().Description,
 				userInfo.GetJob(),
-				req.GetCategory().GetColor(),
-				req.GetCategory().GetIcon(),
+				req.GetCategory().Color,
+				req.GetCategory().Icon,
 			)
 
 		res, err := stmt.ExecContext(ctx, s.db)
@@ -154,10 +154,10 @@ func (s *Server) CreateOrUpdateCategory(
 			).
 			SET(
 				req.GetCategory().GetName(),
-				req.GetCategory().GetDescription(),
+				req.GetCategory().Description,
 				userInfo.GetJob(),
-				req.GetCategory().GetColor(),
-				req.GetCategory().GetIcon(),
+				req.GetCategory().Color,
+				req.GetCategory().Icon,
 			).
 			WHERE(jet.AND(
 				tDCategory.ID.EQ(jet.Uint64(req.GetCategory().GetId())),

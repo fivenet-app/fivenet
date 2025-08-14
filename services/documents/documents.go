@@ -601,7 +601,7 @@ func (s *Server) UpdateDocument(
 				tDocument.Public,
 			).
 			SET(
-				req.GetCategoryId(),
+				req.CategoryId,
 				req.GetTitle(),
 				req.GetContent().GetSummary(DocSummaryLength),
 				req.GetContent(),

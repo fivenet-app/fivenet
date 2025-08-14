@@ -36,8 +36,8 @@ func (x *VehicleProps) HandleChanges(ctx context.Context, tx *sql.Tx, in *Vehicl
 			VALUES(
 				in.GetPlate(),
 				jet.CURRENT_TIMESTAMP(),
-				in.GetWanted(),
-				in.GetWantedReason(),
+				in.Wanted,
+				in.WantedReason,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
 				updateSets...,

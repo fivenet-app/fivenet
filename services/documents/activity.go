@@ -151,9 +151,9 @@ func addDocumentActivity(
 		VALUES(
 			activitiy.GetDocumentId(),
 			activitiy.GetActivityType(),
-			activitiy.GetCreatorId(),
+			activitiy.CreatorId,
 			activitiy.GetCreatorJob(),
-			activitiy.GetReason(),
+			activitiy.Reason,
 			activitiy.GetData(),
 		)
 

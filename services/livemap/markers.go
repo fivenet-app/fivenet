@@ -45,6 +45,12 @@ func (s *Server) CreateOrUpdateMarker(
 	}
 	defer s.aud.Log(auditEntry, req)
 
+	if req.Marker.Postal == nil || *req.Marker.Postal == "" {
+		if postal, ok := s.postals.Closest(req.Marker.X, req.Marker.Y); postal != nil && ok {
+			req.Marker.Postal = postal.Code
+		}
+	}
+
 	// No marker id set
 	if req.GetMarker().GetId() <= 0 {
 		tMarkers := table.FivenetCentrumMarkers
@@ -66,11 +72,11 @@ func (s *Server) CreateOrUpdateMarker(
 				req.GetMarker().GetExpiresAt(),
 				userInfo.GetJob(),
 				req.GetMarker().GetName(),
-				req.GetMarker().GetDescription(),
+				req.GetMarker().Description,
 				req.GetMarker().GetX(),
 				req.GetMarker().GetY(),
-				req.GetMarker().GetPostal(),
-				req.GetMarker().GetColor(),
+				req.GetMarker().Postal,
+				req.GetMarker().Color,
 				req.GetMarker().GetType(),
 				req.GetMarker().GetData(),
 				userInfo.GetUserId(),
@@ -119,11 +125,11 @@ func (s *Server) CreateOrUpdateMarker(
 			SET(
 				req.GetMarker().GetExpiresAt(),
 				req.GetMarker().GetName(),
-				req.GetMarker().GetDescription(),
+				req.GetMarker().Description,
 				req.GetMarker().GetX(),
 				req.GetMarker().GetY(),
-				req.GetMarker().GetPostal(),
-				req.GetMarker().GetColor(),
+				req.GetMarker().Postal,
+				req.GetMarker().Color,
 				req.GetMarker().GetType(),
 				req.GetMarker().GetData(),
 			).

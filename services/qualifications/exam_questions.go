@@ -134,7 +134,7 @@ func (s *Server) handleExamQuestionsChanges(
 			VALUES(
 				qualificationId,
 				question.GetTitle(),
-				question.GetDescription(),
+				question.Description,
 				question.GetData(),
 				question.GetAnswer(),
 				question.GetPoints(),
@@ -169,10 +169,10 @@ func (s *Server) handleExamQuestionsChanges(
 			).
 			SET(
 				question.GetTitle(),
-				question.GetDescription(),
+				question.Description,
 				question.GetData(),
 				question.GetAnswer(),
-				question.GetPoints(),
+				question.Points,
 				question.GetOrder(),
 			).
 			WHERE(jet.AND(

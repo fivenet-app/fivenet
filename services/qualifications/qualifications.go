@@ -479,7 +479,7 @@ func (s *Server) UpdateQualification(
 			req.GetQualification().GetPublic(),
 			req.GetQualification().GetAbbreviation(),
 			req.GetQualification().GetTitle(),
-			req.GetQualification().GetDescription(),
+			req.GetQualification().Description,
 			content.ContentType_CONTENT_TYPE_HTML,
 			req.GetQualification().GetContent(),
 			req.GetQualification().GetDiscordSyncEnabled(),
@@ -487,7 +487,7 @@ func (s *Server) UpdateQualification(
 			req.GetQualification().GetExamMode(),
 			req.GetQualification().GetExamSettings(),
 			req.GetQualification().GetLabelSyncEnabled(),
-			req.GetQualification().GetLabelSyncFormat(),
+			req.GetQualification().LabelSyncFormat,
 		).
 		WHERE(
 			tQuali.ID.EQ(jet.Uint64(req.GetQualification().GetId())),

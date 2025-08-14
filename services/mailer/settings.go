@@ -121,7 +121,7 @@ func (s *Server) SetEmailSettings(
 	}
 
 	signature := jet.StringExp(jet.NULL)
-	if req.Settings.Signature != nil {
+	if req.Settings.Signature != nil && *req.Settings.Signature != "" {
 		signature = jet.String(req.GetSettings().GetSignature())
 	}
 
@@ -152,7 +152,7 @@ func (s *Server) SetEmailSettings(
 		).
 		VALUES(
 			req.GetSettings().GetEmailId(),
-			req.GetSettings().GetSignature(),
+			signature,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tSettings.Signature.SET(signature),
