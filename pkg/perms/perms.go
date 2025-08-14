@@ -247,7 +247,9 @@ func New(p Params) (Permissions, error) {
 		ps.wg.Wait()
 
 		if ps.ncSub != nil {
-			ps.ncSub.Unsubscribe()
+			if err := ps.ncSub.Unsubscribe(); err != nil {
+				ps.logger.Error("failed to unsubscribe from previous perms subject", zap.Error(err))
+			}
 			ps.ncSub = nil
 		}
 

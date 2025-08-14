@@ -206,7 +206,10 @@ func (s *CollabServer) HandleClient(
 	}
 
 	client := NewClient(s.logger.Named("client"), clientId, room, userId, role, stream)
-	room.Join(ctx, client)
+	if err := room.Join(ctx, client); err != nil {
+		return fmt.Errorf("failed to join room for client %d. %w", clientId, err)
+	}
+
 	defer func() {
 		// If the room is empty after the client leaves, remove it
 		if room.Leave(s.ctx, clientId) {

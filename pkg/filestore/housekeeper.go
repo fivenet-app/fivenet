@@ -73,7 +73,7 @@ type HousekeeperParams struct {
 }
 
 // NewHousekeeper constructs a new Housekeeper and registers it for cron jobs.
-func NewHousekeeper(p HousekeeperParams) (Result, error) {
+func NewHousekeeper(p HousekeeperParams) Result {
 	h := &Housekeeper{
 		logger: p.Logger.Named("housekeeper"),
 		tracer: p.TP.Tracer("mstlystcdata-cache"),
@@ -93,7 +93,7 @@ func NewHousekeeper(p HousekeeperParams) (Result, error) {
 	return Result{
 		Housekeeper:  h,
 		CronRegister: h,
-	}, nil
+	}
 }
 
 // RegisterCronjobs registers the housekeeper as a cron job to run every 2 minutes.
@@ -238,7 +238,12 @@ func (h *Housekeeper) Run(ctx context.Context) (int64, error) {
 				DELETE().
 				WHERE(tFiles.ID.EQ(jet.Uint64(c.GetId()))).
 				ExecContext(ctx, tx); err != nil {
-				tx.Rollback()
+				if err := tx.Rollback(); err != nil {
+					h.logger.Error(
+						"failed to rollback transaction after delete error",
+						zap.Error(err),
+					)
+				}
 				return 0, fmt.Errorf("delete fivenet_files id=%d. %w", c.GetId(), err)
 			}
 			h.logger.Debug(

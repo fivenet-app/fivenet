@@ -74,7 +74,7 @@ func TestRefreshUserLocations(t *testing.T) {
 			case <-ctx.Done():
 				return
 
-			case <-watchCh:
+			case <-watchCh.Updates():
 			}
 
 			eventCount++

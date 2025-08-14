@@ -6,6 +6,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/broker"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
 	"github.com/puzpuzpuz/xsync/v4"
 	"go.uber.org/fx"
 )
@@ -86,7 +87,26 @@ func (s *TestTracker) GetUserMarkerById(id int32) (*livemap.UserMarker, bool) {
 }
 
 func (s *TestTracker) Subscribe(
-	ctx context.Context,
-) (chan *store.KeyValueEntry[livemap.UserMarker, *livemap.UserMarker], error) {
-	return s.broker.Subscribe(), nil
+	_ context.Context,
+) (store.IKVWatcher[livemap.UserMarker, *livemap.UserMarker], error) {
+	return &TestKVWatcher[livemap.UserMarker, *livemap.UserMarker]{
+		broker: s.broker,
+	}, nil
+}
+
+type TestKVWatcher[T any, U protoutils.ProtoMessageWithMerge[T]] struct {
+	broker *broker.Broker[*store.KeyValueEntry[livemap.UserMarker, *livemap.UserMarker]]
+}
+
+func (w *TestKVWatcher[T, U]) Stop() error {
+	return nil
+}
+
+func (w *TestKVWatcher[T, U]) Updates() <-chan *store.KeyValueEntry[livemap.UserMarker, *livemap.UserMarker] {
+	return w.broker.Subscribe()
+}
+
+func (w *TestKVWatcher[T, U]) Unsubscribe() error {
+	w.broker.Unsubscribe(w.broker.Subscribe())
+	return nil
 }

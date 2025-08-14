@@ -101,7 +101,7 @@ func (i *IconifyAPI) RegisterHTTP(e *gin.Engine) {
 
 			if cachedResponse, ok := i.cache.Get(targetURL); ok {
 				c.Writer.Header().Set("Content-Type", "application/json")
-				c.Writer.Write([]byte(cachedResponse))
+				c.Writer.Write(cachedResponse)
 				return
 			}
 

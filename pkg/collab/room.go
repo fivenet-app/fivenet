@@ -101,16 +101,20 @@ func NewCollabRoom(
 }
 
 // Join adds a client to the room and increments the connected client metric.
-func (r *CollabRoom) Join(ctx context.Context, c *Client) {
+func (r *CollabRoom) Join(ctx context.Context, c *Client) error {
 	r.mu.Lock()
 	r.clients[c.Id] = c
 	clientCount := len(r.clients)
 	r.mu.Unlock()
 
-	c.StartPresence(ctx)
+	if err := c.StartPresence(ctx); err != nil {
+		return fmt.Errorf("failed to start presence for client %d. %w", c.Id, err)
+	}
 
 	metricTotalConnectedClients.WithLabelValues(r.category).Inc()
 	r.logger.Debug("client joined", zap.Uint64("client_id", c.Id), zap.Int("clients", clientCount))
+
+	return nil
 }
 
 // Leave removes a client from the room, closes its send channel, and decrements the metric.

@@ -196,7 +196,9 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 				}
 
 				subjectsMu.Lock()
-				cfg.FilterSubjects = append(baseSubjects, additionalSubjects...)
+				cfg.FilterSubjects = []string{}
+				cfg.FilterSubjects = append(cfg.FilterSubjects, baseSubjects...)
+				cfg.FilterSubjects = append(cfg.FilterSubjects, additionalSubjects...)
 				cfg.FilterSubjects = append(cfg.FilterSubjects, clientViewSubject...)
 				subjectsMu.Unlock()
 
@@ -288,7 +290,10 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 
 						cfg := info.Config
 						subjectsMu.Lock()
-						cfg.FilterSubjects = append(baseSubjects, additionalSubjects...)
+						cfg.FilterSubjects = []string{}
+						// Rebuild filter subjects with the new user info
+						cfg.FilterSubjects = append(cfg.FilterSubjects, baseSubjects...)
+						cfg.FilterSubjects = append(cfg.FilterSubjects, additionalSubjects...)
 						cfg.FilterSubjects = append(cfg.FilterSubjects, clientViewSubject...)
 						subjectsMu.Unlock()
 

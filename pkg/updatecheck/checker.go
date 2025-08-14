@@ -100,9 +100,8 @@ func (c *Checker) Start(ctx context.Context) error {
 		)
 		if err != nil {
 			c.logger.Debug(fmt.Sprintf("updatechecker fetch error: %v", err))
-		} else if isPrerelease {
 			// Ignore pre-releases
-		} else if newTag != c.currentTag {
+		} else if !isPrerelease && newTag != c.currentTag {
 			c.mu.Lock()
 			c.currentTag = newTag
 			c.releaseUrl = htmlURL

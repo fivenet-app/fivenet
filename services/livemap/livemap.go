@@ -222,7 +222,8 @@ func (s *Server) Stream(
 					continue
 				}
 
-				if event.MarkerUpdate != nil {
+				switch {
+				case event.MarkerUpdate != nil:
 					if event.MarkerUpdate.GetJob() != userInfo.GetJob() &&
 						!userInfo.GetSuperuser() {
 						continue // Ignore updates for other jobs
@@ -237,7 +238,8 @@ func (s *Server) Stream(
 							},
 						},
 					}
-				} else if event.MarkerDelete != nil {
+
+				case event.MarkerDelete != nil:
 					// Send delete marker event to client
 					outCh <- &pblivemap.StreamResponse{
 						Data: &pblivemap.StreamResponse_Markers{
@@ -246,8 +248,12 @@ func (s *Server) Stream(
 							},
 						},
 					}
-				} else {
-					s.logger.Warn("received unknown event type in livemap stream", zap.Any("event", event))
+
+				default:
+					s.logger.Warn(
+						"received unknown event type in livemap stream",
+						zap.Any("event", event),
+					)
 				}
 			}
 		}
@@ -280,7 +286,10 @@ func (s *Server) Stream(
 
 			for m := range batch.Messages() {
 				op := m.Headers().Get("KV-Operation")
-				m.Ack()
+				if err := m.Ack(); err != nil {
+					s.logger.Error("failed to ack message", zap.Error(err))
+					continue
+				}
 
 				if op == "DEL" || op == "PURGE" {
 					// Ignore delete and purge operations when not on duty

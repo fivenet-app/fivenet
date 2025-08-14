@@ -76,4 +76,9 @@ var (
 		&common.I18NItem{Key: "errors.AuthService.ErrBadUsername"},
 		nil,
 	)
+	ErrNotSuperuser = common.NewI18nErr(
+		codes.PermissionDenied,
+		&common.I18NItem{Key: "errors.AuthService.ErrNotSuperuser"},
+		nil,
+	)
 )

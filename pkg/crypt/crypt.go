@@ -62,7 +62,9 @@ func (c *Crypt) Encrypt(input string) (string, error) {
 	ciphertext := aesgcm.Seal(nil, nonce, []byte(input), nil)
 
 	// Store as salt + nonce + ciphertext, all base64-encoded for DB storage
-	out := append(salt, nonce...)
+	out := make([]byte, 0, saltLength+nonceLength+len(ciphertext))
+	out = append(out, salt...)
+	out = append(out, nonce...)
 	out = append(out, ciphertext...)
 	return base64.StdEncoding.EncodeToString(out), nil
 }

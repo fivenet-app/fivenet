@@ -160,6 +160,10 @@ func (r *Retriever) registerSubscriptions(
 }
 
 func (r *Retriever) handleMsg(m jetstream.Msg) {
+	if err := m.Ack(); err != nil {
+		r.logger.Error("failed to ack message", zap.Error(err), zap.String("subject", m.Subject()))
+	}
+
 	var evt pbuserinfo.UserInfoChanged
 	if err := proto.Unmarshal(m.Data(), &evt); err == nil {
 		key := userAccountKey{UserID: evt.GetUserId(), AccountID: evt.GetAccountId()}
@@ -184,8 +188,6 @@ func (r *Retriever) handleMsg(m jetstream.Msg) {
 			},
 		})
 	}
-
-	m.Ack()
 }
 
 // GetUserInfo retrieves user info for a given userId and accountId, using cache for performance.

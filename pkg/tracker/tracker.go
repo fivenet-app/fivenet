@@ -29,7 +29,7 @@ type ITracker interface {
 	IsUserOnDuty(userId int32) bool
 	Subscribe(
 		ctx context.Context,
-	) (chan *store.KeyValueEntry[livemap.UserMarker, *livemap.UserMarker], error)
+	) (store.IKVWatcher[livemap.UserMarker, *livemap.UserMarker], error)
 	GetFilteredUserMarkers(
 		acl *permissions.JobGradeList,
 		userInfo *userinfo.UserInfo,
@@ -177,7 +177,7 @@ func (t *Tracker) IsUserOnDuty(id int32) bool {
 
 func (t *Tracker) Subscribe(
 	ctx context.Context,
-) (chan *store.KeyValueEntry[livemap.UserMarker, *livemap.UserMarker], error) {
+) (store.IKVWatcher[livemap.UserMarker, *livemap.UserMarker], error) {
 	return t.userLocStore.WatchAll(ctx)
 }
 

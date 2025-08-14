@@ -141,10 +141,13 @@ func (s *Server) Logout(
 	ctx context.Context,
 	req *pbauth.LogoutRequest,
 ) (*pbauth.LogoutResponse, error) {
-	s.destroyTokenCookie(ctx)
+	err := s.destroyTokenCookie(ctx)
+	if err != nil {
+		s.logger.Error("failed to destroy token cookie", zap.Error(err))
+	}
 
 	return &pbauth.LogoutResponse{
-		Success: true,
+		Success: err == nil,
 	}, nil
 }
 
@@ -741,7 +744,7 @@ func (s *Server) SetSuperuserMode(
 	}
 
 	if !userInfo.GetCanBeSuperuser() {
-		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
+		return nil, errorsauth.ErrNotSuperuser
 	}
 
 	// Set user's job as requested job when superuser mode is turned on

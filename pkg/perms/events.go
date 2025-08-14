@@ -26,7 +26,9 @@ const (
 
 func (p *Perms) registerSubscriptions(ctxCancel context.Context) error {
 	if p.ncSub != nil {
-		p.ncSub.Unsubscribe()
+		if err := p.ncSub.Unsubscribe(); err != nil {
+			p.logger.Error("failed to unsubscribe from previous perms subject", zap.Error(err))
+		}
 		p.ncSub = nil
 	}
 

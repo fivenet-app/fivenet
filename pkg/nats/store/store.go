@@ -52,7 +52,7 @@ type StoreRO[T any, U protoutils.ProtoMessageWithMerge[T]] interface {
 	Range(fn func(key string, value U) bool)
 	Count() int
 
-	WatchAll(ctx context.Context) (chan *KeyValueEntry[T, U], error)
+	WatchAll(ctx context.Context) (IKVWatcher[T, U], error)
 }
 
 // Store provides a distributed, concurrent, and optionally lock-protected key-value store for protobuf messages.
@@ -780,13 +780,16 @@ func (s *Store[T, U]) ReadOnly() StoreRO[T, U] {
 	return s
 }
 
-func (s *Store[T, U]) WatchAll(ctx context.Context) (chan *KeyValueEntry[T, U], error) {
+func (s *Store[T, U]) WatchAll(ctx context.Context) (IKVWatcher[T, U], error) {
 	watcher, err := s.kv.Watch(ctx, s.prefix+">", jetstream.UpdatesOnly())
 	if err != nil {
 		return nil, fmt.Errorf("failed to start kv watch in store. %w", err)
 	}
 
-	ch := make(chan *KeyValueEntry[T, U], 128)
+	w := &KVWatcher[T, U]{
+		watcher: watcher,
+		ch:      make(chan *KeyValueEntry[T, U], 128),
+	}
 
 	go func() {
 		updateCh := watcher.Updates()
@@ -808,7 +811,7 @@ func (s *Store[T, U]) WatchAll(ctx context.Context) (chan *KeyValueEntry[T, U], 
 					continue
 				}
 
-				ch <- &KeyValueEntry[T, U]{
+				w.ch <- &KeyValueEntry[T, U]{
 					key:       key,
 					operation: entry.Operation(),
 					value:     entry.Value(),
@@ -818,7 +821,7 @@ func (s *Store[T, U]) WatchAll(ctx context.Context) (chan *KeyValueEntry[T, U], 
 		}
 	}()
 
-	return ch, nil
+	return w, nil
 }
 
 func (s *Store[T, U]) prefixed(key string) string {
@@ -827,6 +830,24 @@ func (s *Store[T, U]) prefixed(key string) string {
 
 func (s *Store[T, U]) KV() jetstream.KeyValue {
 	return s.kv
+}
+
+type IKVWatcher[T any, U protoutils.ProtoMessageWithMerge[T]] interface {
+	Stop() error
+	Updates() <-chan *KeyValueEntry[T, U]
+}
+
+type KVWatcher[T any, U protoutils.ProtoMessageWithMerge[T]] struct {
+	watcher jetstream.KeyWatcher
+	ch      chan *KeyValueEntry[T, U]
+}
+
+func (k *KVWatcher[T, U]) Stop() error {
+	return k.watcher.Stop()
+}
+
+func (k *KVWatcher[T, U]) Updates() <-chan *KeyValueEntry[T, U] {
+	return k.ch
 }
 
 type KeyValueEntry[T any, U protoutils.ProtoMessageWithMerge[T]] struct {

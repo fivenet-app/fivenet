@@ -18,7 +18,9 @@ const (
 
 func (c *Config) registerSubscriptions(ctxCancel context.Context) error {
 	if c.ncSub != nil {
-		c.ncSub.Unsubscribe()
+		if err := c.ncSub.Unsubscribe(); err != nil {
+			c.logger.Error("failed to unsubscribe from previous app config subject", zap.Error(err))
+		}
 		c.ncSub = nil
 	}
 

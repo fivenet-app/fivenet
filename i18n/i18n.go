@@ -140,22 +140,21 @@ func selectPluralForm(text string, vars map[string]any) string {
 		}
 	}
 
-	if len(forms) == 0 {
+	switch {
+	case len(forms) == 0:
 		return ""
-	} else if len(forms) == 1 {
+	case len(forms) == 1:
 		return forms[0]
-	} else if len(forms) == 2 {
+	case len(forms) == 2:
 		if n == 0 {
 			return forms[0]
 		}
 		return forms[1]
-	}
-
-	if n == 0 {
+	case n == 0:
 		return forms[0]
-	} else if n == 1 {
+	case n == 1:
 		return forms[1]
-	} else if len(forms) > 2 {
+	case len(forms) > 2:
 		return forms[2]
 	}
 

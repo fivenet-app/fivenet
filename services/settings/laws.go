@@ -288,7 +288,9 @@ func (s *Server) DeleteLaw(
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	s.laws.Refresh(ctx, law.GetLawbookId())
+	if err := s.laws.Refresh(ctx, law.GetLawbookId()); err != nil {
+		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
+	}
 
 	return &pbsettings.DeleteLawResponse{}, nil
 }

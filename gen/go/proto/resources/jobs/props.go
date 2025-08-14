@@ -36,7 +36,6 @@ func GetColleagueProps(
 	}
 
 	for _, field := range fields {
-		//nolint:gocritic // In the future there might be more fields, so we use a switch statement to future proof this.
 		switch field {
 		case "Note":
 			columns = append(columns, tColleagueProps.Note)

@@ -85,7 +85,6 @@ linters:
     - thelper
     - tparallel
     - unconvert
-    - unparam
     - unused
     - usestdlibvars
     - usetesting
@@ -111,6 +110,7 @@ linters:
     - noinlineerr
     - paralleltest
     - testpackage
+    - unparam # Too "aggressive" but not enough settings to make it more useful in this project
     - varnamelen
     - wrapcheck
     - wsl
@@ -136,6 +136,11 @@ linters:
     gocritic:
       enabled-checks:
         - whyNoLint
+      disabled-checks:
+        - singleCaseSwitch
+      settings:
+        ifElseChain:
+          minThreshold: 4
     gosec:
       config:
         G301: "0770" # In containers 0770 is basically required for shared volumes

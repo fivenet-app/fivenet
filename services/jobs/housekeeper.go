@@ -56,8 +56,12 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 		return err
 	}
 
-	registry.UnregisterCronjob(ctx, "jobs.timeclock_handling")
-	registry.UnregisterCronjob(ctx, "jobs-timeclock-handling")
+	if err := registry.UnregisterCronjob(ctx, "jobs.timeclock_handling"); err != nil {
+		s.logger.Error("failed to unregister jobs.timeclock_handling", zap.Error(err))
+	}
+	if err := registry.UnregisterCronjob(ctx, "jobs-timeclock-handling"); err != nil {
+		s.logger.Error("failed to unregister jobs.timeclock_handling", zap.Error(err))
+	}
 
 	return nil
 }

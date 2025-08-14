@@ -38,7 +38,7 @@ func (s *Housekeeper) watchUserChanges(ctx context.Context) error {
 		case <-ctx.Done():
 			return nil
 
-		case event := <-userCh:
+		case event := <-userCh.Updates():
 			if event == nil {
 				s.logger.Error("received nil user changes event, skipping")
 				continue

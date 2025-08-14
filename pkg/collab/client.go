@@ -3,6 +3,7 @@ package collab
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -54,7 +55,7 @@ func NewClient(
 	}
 }
 
-func (c *Client) StartPresence(ctx context.Context) {
+func (c *Client) StartPresence(ctx context.Context) error {
 	stateKV := c.room.stateKV
 
 	cid := strconv.FormatUint(c.Id, 10)
@@ -63,7 +64,11 @@ func (c *Client) StartPresence(ctx context.Context) {
 	c.firstKey = "first." + c.room.category + "." + roomId
 
 	// Announce this client
-	stateKV.Put(ctx, c.presenceKey, nil)
+	_, err := stateKV.Put(ctx, c.presenceKey, nil)
+	if err != nil {
+		c.logger.Error("failed to announce presence", zap.Error(err))
+		return fmt.Errorf("failed to announce presence for client %d. %w", c.Id, err)
+	}
 
 	// Try to become FIRST (atomic Create)
 	if _, err := stateKV.Create(ctx, c.firstKey, []byte(cid), jetstream.KeyTTL(keyTTL)); err == nil {
@@ -75,6 +80,8 @@ func (c *Client) StartPresence(ctx context.Context) {
 	c.hbCancel = cancel
 	go hbLoop(hbCtx, c.room, c.presenceKey, c.firstKey, cid)
 	go firstWatch(hbCtx, c.room, c.firstKey, cid, c.Id)
+
+	return nil
 }
 
 func (c *Client) StopPresence(ctx context.Context) {

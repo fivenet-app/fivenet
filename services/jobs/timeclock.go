@@ -118,35 +118,19 @@ func (s *Server) ListTimeclock(
 		groupBys = append(groupBys, tTimeClock.UserID)
 	}
 
-	var countStmt jet.SelectStatement
-	if req.GetUserMode() == jobs.TimeclockViewMode_TIMECLOCK_VIEW_MODE_ALL {
-		var countCol jet.Projection
-		if req.GetPerDay() {
-			countCol = jet.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").
-				AS("data_count.total")
-		} else {
-			countCol = jet.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").AS("data_count.total")
-		}
-		countStmt = tTimeClock.
-			SELECT(countCol).
-			FROM(
-				tTimeClock.
-					INNER_JOIN(tColleague,
-						tColleague.ID.EQ(tTimeClock.UserID),
-					),
-			).
-			WHERE(condition)
-	} else {
-		countStmt = tTimeClock.
-			SELECT(jet.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").AS("data_count.total")).
-			FROM(
-				tTimeClock.
-					INNER_JOIN(tColleague,
-						tColleague.ID.EQ(tTimeClock.UserID),
-					),
-			).
-			WHERE(condition)
-	}
+	// User mode doesn't change the count query
+	countStmt := tTimeClock.
+		SELECT(
+			jet.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").
+				AS("data_count.total"),
+		).
+		FROM(
+			tTimeClock.
+				INNER_JOIN(tColleague,
+					tColleague.ID.EQ(tTimeClock.UserID),
+				),
+		).
+		WHERE(condition)
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -220,7 +204,10 @@ func (s *Server) ListTimeclock(
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 
-	if req.GetMode() <= jobs.TimeclockMode_TIMECLOCK_MODE_DAILY {
+	switch req.GetMode() {
+	case jobs.TimeclockMode_TIMECLOCK_MODE_UNSPECIFIED:
+		fallthrough
+	case jobs.TimeclockMode_TIMECLOCK_MODE_DAILY:
 		resp.Entries = &pbjobs.ListTimeclockResponse_Daily{
 			Daily: &pbjobs.TimeclockDay{},
 		}
@@ -289,7 +276,8 @@ func (s *Server) ListTimeclock(
 		}
 
 		resp.GetPagination().Update(len(data.GetEntries()))
-	} else if req.GetMode() == jobs.TimeclockMode_TIMECLOCK_MODE_WEEKLY {
+
+	case jobs.TimeclockMode_TIMECLOCK_MODE_WEEKLY:
 		resp.Entries = &pbjobs.ListTimeclockResponse_Weekly{
 			Weekly: &pbjobs.TimeclockWeekly{},
 		}
@@ -358,7 +346,8 @@ func (s *Server) ListTimeclock(
 		}
 
 		resp.GetPagination().Update(len(data.GetEntries()))
-	} else if req.GetMode() == jobs.TimeclockMode_TIMECLOCK_MODE_RANGE {
+
+	case jobs.TimeclockMode_TIMECLOCK_MODE_RANGE:
 		resp.Entries = &pbjobs.ListTimeclockResponse_Range{
 			Range: &pbjobs.TimeclockRange{},
 		}
@@ -425,7 +414,8 @@ func (s *Server) ListTimeclock(
 		}
 
 		resp.GetPagination().Update(len(data.GetEntries()))
-	} else if req.GetMode() == jobs.TimeclockMode_TIMECLOCK_MODE_TIMELINE {
+
+	case jobs.TimeclockMode_TIMECLOCK_MODE_TIMELINE:
 		resp.Entries = &pbjobs.ListTimeclockResponse_Range{
 			Range: &pbjobs.TimeclockRange{},
 		}

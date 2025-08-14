@@ -47,7 +47,7 @@ func (s *Housekeeper) watchDispatches(ctx context.Context) error {
 		case <-ctx.Done():
 			return nil
 
-		case e := <-eventCh:
+		case e := <-eventCh.Updates():
 			if e == nil { // heartbeat
 				continue
 			}
