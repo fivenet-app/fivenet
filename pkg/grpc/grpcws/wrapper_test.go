@@ -174,7 +174,7 @@ func (s *GrpcWebWrapperTestSuite) makeRequest(
 	s.Require().NoError(err, "failed creating a request")
 	req.Header = headers
 
-	req.Header.Set("Content-Type", contentType)
+	req.Header.Set("content-type", contentType)
 	client := &http.Client{
 		Transport: &http2.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}},
 	}
@@ -314,7 +314,7 @@ func (s *GrpcWebWrapperTestSuite) TestPing() {
 }
 
 func (s *GrpcWebWrapperTestSuite) TestPingError_WithTrailersInData() {
-	// gRPC-Web spec says that if there is no payload to an answer, the trailers (including Grpc-Status) must be in the
+	// gRPC-Web spec says that if there is no payload to an answer, the trailers (including grpc-status) must be in the
 	// headers and not in trailers. However, that's not true if SendHeaders are pushed before. This tests this.
 	headers, trailers, responses, err := s.makeGrpcRequest(
 		"/improbable.grpcweb.test.TestService/PingError",
@@ -332,7 +332,7 @@ func (s *GrpcWebWrapperTestSuite) TestPingError_WithTrailersInData() {
 }
 
 func (s *GrpcWebWrapperTestSuite) TestPingError_WithTrailersInHeaders() {
-	// gRPC-Web spec says that if there is no payload to an answer, the trailers (including Grpc-Status) must be in the
+	// gRPC-Web spec says that if there is no payload to an answer, the trailers (including grpc-status) must be in the
 	// headers and not in trailers.
 	headers, _, responses, err := s.makeGrpcRequest(
 		"/improbable.grpcweb.test.TestService/PingError",
@@ -399,8 +399,8 @@ func (s *GrpcWebWrapperTestSuite) TestPingList_NormalGrpcWorks() {
 	recvTrailers := pingListClient.Trailer()
 	allExpectedHeaders := metadata.Join(
 		metadata.MD{
-			"Content-Type": []string{"application/grpc"},
-			"Trailer":      []string{"Grpc-Status", "Grpc-Message", "Grpc-Status-Details-Bin"},
+			"content-type": []string{"application/grpc"},
+			"trailer":      []string{"Grpc-Status", "Grpc-Message", "Grpc-Status-Details-Bin"},
 		}, expectedHeaders)
 	s.Equal(allExpectedHeaders, recvHeaders, "expected headers must be received")
 	s.Equal(expectedTrailers, recvTrailers, "expected trailers must be received")
@@ -425,8 +425,8 @@ func (s *GrpcWebWrapperTestSuite) TestPingStream_NormalGrpcWorks() {
 	recvTrailers := bidiClient.Trailer()
 	allExpectedHeaders := metadata.Join(
 		metadata.MD{
-			"Content-Type": []string{"application/grpc"},
-			"Trailer":      []string{"Grpc-Status", "Grpc-Message", "Grpc-Status-Details-Bin"},
+			"content-type": []string{"application/grpc"},
+			"trailer":      []string{"Grpc-Status", "Grpc-Message", "Grpc-Status-Details-Bin"},
 		}, expectedHeaders)
 	s.Equal(allExpectedHeaders, recvHeaders, "expected headers must be received")
 	s.Equal(expectedTrailers, recvTrailers, "expected trailers must be received")
@@ -692,8 +692,8 @@ func (s *GrpcWebWrapperTestSuite) assertHeadersContainMetadata(
 func (s *GrpcWebWrapperTestSuite) assertContentTypeSet(headers http.Header, contentType string) {
 	s.Equal(
 		contentType,
-		headers.Get("Content-Type"),
-		`Expected there to be Content-Type=%v`,
+		headers.Get("content-type"),
+		`Expected there to be content-type=%v`,
 		contentType,
 	)
 }
@@ -732,14 +732,14 @@ func (s *GrpcWebWrapperTestSuite) assertHeadersGrpcCode(
 	code codes.Code,
 	desc string,
 ) {
-	s.Require().NotEmpty(headers.Get("Grpc-Status"), "Grpc-Status must not be empty in trailers")
-	statusCode, err := strconv.Atoi(headers.Get("Grpc-Status"))
-	s.Require().NoError(err, "no error parsing Grpc-Status")
-	s.EqualValues(code, statusCode, "Grpc-Status must match expected code")
+	s.Require().NotEmpty(headers.Get("grpc-status"), "grpc-status must not be empty in trailers")
+	statusCode, err := strconv.Atoi(headers.Get("grpc-status"))
+	s.Require().NoError(err, "no error parsing grpc-status")
+	s.EqualValues(code, statusCode, "grpc-status must match expected code")
 	s.Equal(
 		desc,
-		headers.Get("Grpc-Message"),
-		"Grpc-Message is expected to match",
+		headers.Get("grpc-message"),
+		"grpc-message is expected to match",
 	)
 }
 
@@ -749,16 +749,16 @@ func (s *GrpcWebWrapperTestSuite) assertTrailerGrpcCode(
 	desc string,
 ) {
 	s.Require().NotEmpty(
-		trailers.Get("Grpc-Status"),
-		"Grpc-Status must not be empty in trailers",
+		trailers.Get("grpc-status"),
+		"grpc-status must not be empty in trailers",
 	)
-	statusCode, err := strconv.Atoi(trailers.Get("Grpc-Status"))
-	s.Require().NoError(err, "no error parsing Grpc-Status")
-	s.EqualValues(code, statusCode, "Grpc-Status must match expected code")
+	statusCode, err := strconv.Atoi(trailers.Get("grpc-status"))
+	s.Require().NoError(err, "no error parsing grpc-status")
+	s.EqualValues(code, statusCode, "grpc-status must match expected code")
 	s.Equal(
 		desc,
-		trailers.Get("Grpc-Message"),
-		"Grpc-Message is expected to match",
+		trailers.Get("grpc-message"),
+		"grpc-message is expected to match",
 	)
 }
 

@@ -72,13 +72,13 @@ func (w *grpcWebResponse) prepareHeaders() {
 	wh := w.wrapped.Header()
 	copyHeader(
 		wh, w.headers,
-		skipKeys("Trailer"),
+		skipKeys("trailer"),
 		replaceInKeys(http2.TrailerPrefix, ""),
 		replaceInVals("Content-Type", grpcContentType, w.contentType),
 		keyCase(http.CanonicalHeaderKey),
 	)
 	responseHeaderKeys := headerKeys(wh)
-	responseHeaderKeys = append(responseHeaderKeys, "Grpc-Status", "Grpc-Message")
+	responseHeaderKeys = append(responseHeaderKeys, "grpc-status", "grpc-message")
 	wh.Set(
 		"Access-Control-Expose-Headers",
 		strings.Join(responseHeaderKeys, ", "),
@@ -115,7 +115,7 @@ func extractTrailingHeaders(src http.Header, flushed http.Header) http.Header {
 	th := make(http.Header)
 	copyHeader(
 		th, src,
-		skipKeys(append([]string{"Trailer"}, headerKeys(flushed)...)...),
+		skipKeys(append([]string{"trailer"}, headerKeys(flushed)...)...),
 		replaceInKeys(http2.TrailerPrefix, ""),
 		// gRPC-Web spec says that must use lower-case header/trailer names. See
 		// "HTTP wire protocols" section in
