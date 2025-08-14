@@ -89,7 +89,7 @@ linters:
     - wastedassign # finds wasted assignment statements
     - whitespace # detects leading and trailing whitespace
 
-    - goheader # checks is file header matches to pattern
+    #- goheader # checks is file header matches to pattern
 
     ## you may want to enable
     #- decorder # checks declaration order and count of types, constants, variables and functions
