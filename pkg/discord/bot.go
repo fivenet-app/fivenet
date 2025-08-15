@@ -36,8 +36,6 @@ import (
 
 const botWorkerCount = 3
 
-var tJobProps = table.FivenetJobProps.AS("job_props")
-
 func wrapLogger(log *zap.Logger) *zap.Logger {
 	return log.Named("discord.bot")
 }
@@ -371,6 +369,8 @@ type jobGuild struct {
 }
 
 func (b *Bot) getJobGuildsFromDB(ctx context.Context) ([]*jobGuild, error) {
+	tJobProps := table.FivenetJobProps.AS("job_props")
+
 	stmt := tJobProps.
 		SELECT(
 			tJobProps.Job.AS("jobguild.job"),

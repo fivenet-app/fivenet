@@ -13,7 +13,7 @@ require (
 	github.com/alecthomas/kong v1.12.1
 	github.com/andyburri/iconify-go v0.1.0
 	github.com/aymanbagabas/go-udiff v0.3.1
-	github.com/blevesearch/bleve/v2 v2.5.2
+	github.com/blevesearch/bleve/v2 v2.5.3
 	github.com/cespare/xxhash/v2 v2.3.0
 	github.com/coder/websocket v1.8.13
 	github.com/creasty/defaults v1.8.0
@@ -43,7 +43,7 @@ require (
 	github.com/microcosm-cc/bluemonday v1.0.27
 	github.com/minio/minio-go/v7 v7.0.95
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f
-	github.com/nats-io/nats-server/v2 v2.11.7
+	github.com/nats-io/nats-server/v2 v2.11.8
 	github.com/nats-io/nats.go v1.44.0
 	github.com/ory/dockertest/v3 v3.12.0
 	github.com/paulmach/orb v0.11.1
@@ -80,9 +80,9 @@ require (
 	go.uber.org/fx v1.24.0
 	go.uber.org/multierr v1.11.0
 	go.uber.org/zap v1.27.0
-	golang.org/x/crypto v0.40.0
-	golang.org/x/image v0.29.0
-	golang.org/x/net v0.42.0
+	golang.org/x/crypto v0.41.0
+	golang.org/x/image v0.30.0
+	golang.org/x/net v0.43.0
 	golang.org/x/oauth2 v0.30.0
 	golang.org/x/sync v0.16.0
 	google.golang.org/grpc v1.74.2
@@ -109,7 +109,7 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bits-and-blooms/bitset v1.22.0 // indirect
 	github.com/blevesearch/bleve_index_api v1.2.8 // indirect
-	github.com/blevesearch/geo v0.2.3 // indirect
+	github.com/blevesearch/geo v0.2.4 // indirect
 	github.com/blevesearch/go-faiss v1.0.25 // indirect
 	github.com/blevesearch/go-porterstemmer v1.0.3 // indirect
 	github.com/blevesearch/gtreap v0.1.1 // indirect
@@ -229,8 +229,8 @@ require (
 	go.uber.org/dig v1.19.0 // indirect
 	golang.org/x/arch v0.19.0 // indirect
 	golang.org/x/exp v0.0.0-20250718183923-645b1fa84792 // indirect
-	golang.org/x/sys v0.34.0 // indirect
-	golang.org/x/text v0.27.0 // indirect
+	golang.org/x/sys v0.35.0 // indirect
+	golang.org/x/text v0.28.0 // indirect
 	golang.org/x/time v0.12.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250603155806-513f23925822 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250603155806-513f23925822 // indirect

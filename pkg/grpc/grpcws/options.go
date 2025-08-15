@@ -52,7 +52,7 @@ type Option func(*options)
 // availability of the APIs based on the domain name of the calling website (Origin). You can provide a function that
 // filters the allowed Origin values.
 //
-// The default behaviour is to deny all requests from remote origins.
+// The default behavior is to deny all requests from remote origins.
 //
 // The relevant CORS pre-flight docs:
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin
@@ -67,7 +67,7 @@ func WithOriginFunc(originFunc func(origin string) bool) Option {
 //
 // This should be set to false to allow handling gRPC requests for unknown endpoints (e.g. for proxying).
 //
-// The default behaviour is `true`, i.e. only allows CORS requests for registered endpoints.
+// The default behavior is `true`, i.e. only allows CORS requests for registered endpoints.
 func WithCorsForRegisteredEndpointsOnly(onlyRegistered bool) Option {
 	return func(o *options) {
 		o.corsForRegisteredEndpointsOnly = onlyRegistered
@@ -107,7 +107,7 @@ func WithEndpointsFunc(endpointsFunc func() []string) Option {
 // the browser client to provide *any* header, by explicitly whitelisting all `Access-Control-Request-Headers` of the
 // pre-flight request.
 //
-// The default behaviour is `[]string{'*'}`, allowing all browser client headers. This option overrides that default,
+// The default behavior is `[]string{'*'}`, allowing all browser client headers. This option overrides that default,
 // while maintaining a whitelist for gRPC-internal headers.
 //
 // Unfortunately, since the CORS pre-flight happens independently from gRPC handler execution, it is impossible to
@@ -123,7 +123,7 @@ func WithAllowedRequestHeaders(headers []string) Option {
 
 // WithWebsocketPingInterval enables websocket keepalive pinging with the configured timeout.
 //
-// The default behaviour is to disable websocket pinging.
+// The default behavior is to disable websocket pinging.
 func WithWebsocketPingInterval(websocketPingInterval time.Duration) Option {
 	return func(o *options) {
 		o.websocketPingInterval = websocketPingInterval
@@ -133,7 +133,7 @@ func WithWebsocketPingInterval(websocketPingInterval time.Duration) Option {
 // WithWebsocketOriginFunc allows for customizing the acceptance of Websocket requests - usually to check that the origin
 // is valid.
 //
-// The default behaviour is to check that the origin of the request matches the host of the request and deny all requests from remote origins.
+// The default behavior is to check that the origin of the request matches the host of the request and deny all requests from remote origins.
 func WithWebsocketOriginFunc(websocketOriginFunc func(req *http.Request) bool) Option {
 	return func(o *options) {
 		o.websocketOriginFunc = websocketOriginFunc
@@ -155,7 +155,7 @@ func WithWebsocketsMessageReadLimit(websocketReadLimit int64) Option {
 // This should be set to false when exposing the endpoint as the root resource, to avoid
 // the performance cost of path processing for every request.
 //
-// The default behaviour is `false`, i.e. always serves requests assuming there is no prefix to the gRPC endpoint.
+// The default behavior is `false`, i.e. always serves requests assuming there is no prefix to the gRPC endpoint.
 func WithAllowNonRootResource(allowNonRootResources bool) Option {
 	return func(o *options) {
 		o.allowNonRootResources = allowNonRootResources

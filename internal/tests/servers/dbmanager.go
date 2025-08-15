@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"sort"
 	"testing"
+	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/internal/tests"
 	"github.com/fivenet-app/fivenet/v2025/query"
@@ -90,11 +91,14 @@ func (m *dbServer) Setup(ctx context.Context) {
 
 	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
 	if err := m.pool.Retry(func() error {
+		ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+		defer cancel()
+
 		db, err := sql.Open("mysql", m.getDSN())
 		if err != nil {
 			return fmt.Errorf("failed to open database connection. %w", err)
 		}
-		if err := db.Ping(); err != nil {
+		if err := db.PingContext(ctx); err != nil {
 			return fmt.Errorf("failed to ping database. %w", err)
 		}
 

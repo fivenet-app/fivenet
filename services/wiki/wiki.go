@@ -56,6 +56,10 @@ func (s *Server) ListPages(
 		)
 	}
 
+	tPageShort := table.FivenetWikiPages.AS("page_short")
+	tPAccess := table.FivenetWikiPagesAccess.AS("access")
+	tJobProps := table.FivenetJobProps
+
 	groupBys := []jet.GroupByClause{tPageShort.ID}
 	if req.RootOnly != nil && req.GetRootOnly() {
 		groupBys = []jet.GroupByClause{tPageShort.Job}
@@ -285,6 +289,7 @@ func (s *Server) getPage(
 	withAccess bool,
 	userInfo *userinfo.UserInfo,
 ) (*wiki.Page, error) {
+	tPage := table.FivenetWikiPages.AS("page")
 	tCreator := tables.User().AS("creator")
 
 	columns := []jet.Projection{
@@ -376,6 +381,8 @@ func (s *Server) CreatePage(
 	// No parent ID?
 	// If so, check if there are any existing pages for the user's job and use one as the parent.
 	if req.ParentId == nil || req.GetParentId() <= 0 {
+		tPageShort := table.FivenetWikiPages.AS("page_short")
+
 		parentStmt := tPageShort.
 			SELECT(
 				tPageShort.ID.AS("id"),
@@ -459,6 +466,7 @@ func (s *Server) CreatePage(
 	defer tx.Rollback()
 
 	tPage := table.FivenetWikiPages
+
 	stmt := tPage.
 		INSERT(
 			tPage.Job,
@@ -557,6 +565,8 @@ func (s *Server) UpdatePage(
 	}
 
 	if req.Page.ParentId == nil || req.GetPage().GetParentId() <= 0 {
+		tPage := table.FivenetWikiPages.AS("page")
+
 		stmt := tPage.
 			SELECT(
 				tPage.ID.AS("id"),

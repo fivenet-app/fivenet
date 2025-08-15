@@ -151,7 +151,7 @@ func (h *Handler[P]) UploadFile(
 		}
 	}()
 
-	// Size - if client sent one, honour it; otherwise -1 (unknown)
+	// Size - if client sent one, honor it; otherwise -1 (unknown)
 	szHint := int64(-1)
 	if size > 0 {
 		szHint = size

@@ -374,6 +374,8 @@ func (g *Guild) sendEndStatusLog(
 func (g *Guild) getSyncSettings(
 	ctx context.Context,
 ) (*jobs.DiscordSyncSettings, *jobs.DiscordSyncChanges, error) {
+	tJobProps := table.FivenetJobProps.AS("job_props")
+
 	stmt := tJobProps.
 		SELECT(
 			tJobProps.DiscordSyncSettings,
@@ -408,6 +410,7 @@ func (g *Guild) setLastSyncInterval(
 	t := time.Now()
 
 	tJobProps := table.FivenetJobProps
+
 	stmt := tJobProps.
 		UPDATE(
 			tJobProps.DiscordLastSync,

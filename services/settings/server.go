@@ -95,6 +95,7 @@ type Params struct {
 
 func NewServer(p Params) *Server {
 	tJobProps := table.FivenetJobProps
+
 	fHandler := filestore.NewHandler(
 		p.Storage,
 		p.DB,

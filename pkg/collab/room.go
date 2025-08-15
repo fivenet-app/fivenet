@@ -319,7 +319,7 @@ func (r *CollabRoom) shutdown(ctx context.Context) {
 	r.cancel() // Stop consumeLoop
 
 	defer func() {
-		// Use new context with timeout to ensure cleanup doesn't hang (r.ctx has to be canceled)
+		// Use new context with timeout to ensure cleanup doesn't hang (r.ctx has to be cancelled)
 		ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 		defer cancel()
 

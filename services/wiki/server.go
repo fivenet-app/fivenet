@@ -47,13 +47,6 @@ func init() {
 	)
 }
 
-var (
-	tPage      = table.FivenetWikiPages.AS("page")
-	tPageShort = table.FivenetWikiPages.AS("page_short")
-	tPAccess   = table.FivenetWikiPagesAccess.AS("access")
-	tJobProps  = table.FivenetJobProps
-)
-
 type Server struct {
 	pbwiki.WikiServiceServer
 	pbwiki.CollabServiceServer

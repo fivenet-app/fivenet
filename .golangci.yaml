@@ -54,7 +54,8 @@ linters:
     - loggercheck # checks key value pairs for common logger libraries (kitlog,klog,logr,zap)
     - makezero # finds slice declarations with non-zero initial length
     - mirror # reports wrong mirror patterns of bytes/strings usage
-    - mnd # detects magic numbers
+    - misspell # finds commonly misspelled words in identifiers
+    #- mnd # detects magic numbers # Too aggressive in our codebase
     - musttag # enforces field tags in (un)marshaled structs
     - nakedret # finds naked returns in functions greater than a specified function length
     - nestif # reports deeply nested if statements
@@ -301,6 +302,18 @@ linters:
       # Default: false
       skip-single-param: true
 
+    misspell:
+      locale: US
+      ignore-rules:
+        # GRPC's status code is called "Cancelled" and not "Canceled". Easier to disable for the whole project
+        # than to accidentally break things.
+        - canceled
+        - cancelled
+      extra-words:
+        - typo: "cancelation"
+          correction: "cancellation"
+      mode: default
+
     mnd:
       # List of function patterns to exclude from analysis.
       # Values always ignored: `time.Date`,
@@ -320,8 +333,13 @@ linters:
         - os.WriteFile
         - prometheus.ExponentialBuckets.*
         - prometheus.LinearBuckets
+        # Additional ignored functions
         - time.After
         - time.Sleep
+        - rand.IntN
+        - jetstream.FetchMaxWait
+        - utils.StringFirstN
+        # go-jet - Not working
         - SelectStatement.SELECT
         - SelectStatement.UPDATE
         - SelectStatement.DELETE
@@ -493,6 +511,9 @@ linters:
       - text: 'comment on exported \S+ \S+ should be of the form ".+"'
         source: '// ?(nolint|TODO)'
         linters: [ revive, staticcheck ]
+      - linters:
+          - govet
+        text: 'shadow: declaration of .(err|ctx). shadows declaration'
       - path: '_test\.go'
         linters:
           - bodyclose
@@ -505,6 +526,10 @@ linters:
           - perfsprint
           - unparam
           - wrapcheck
+      - path: '_test\.go'
+        linters:
+          - govet
+        text: 'shadow: declaration of .(err|ctx). shadows declaration'
       - path: tests.*\.go
         linters:
           - funlen

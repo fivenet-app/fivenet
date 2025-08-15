@@ -15,7 +15,7 @@ package cache
 //   v, ok := cache.Get("foo")
 //   cache.Delete("foo")
 //
-// The zero allocation behaviour of xsync.MapOf keeps the fast path hot, and
+// The zero allocation behavior of xsync.MapOf keeps the fast path hot, and
 // locking is only taken when we have to update the recency list.
 //
 // NOTE: This implementation focuses purely on size-bounded eviction. If you

@@ -4,7 +4,7 @@ const props = withDefaults(
         // Whether to show the legend
         show?: boolean;
         max?: number;
-        // Optional colour ramp; keys 0‒1 → colour strings
+        // Optional color ramp; keys 0‒1 → color strings
         gradient?: Record<number, string>;
     }>(),
     {
@@ -19,11 +19,11 @@ const gradient = computed<Record<number, string>>(
     () => props.gradient ?? { 0.2: 'blue', 0.4: 'lime', 0.6: 'orange', 0.8: 'red' },
 );
 
-// CSS style for the coloured bar
+// CSS style for the colored bar
 const barStyle = computed(() => {
     const stops = Object.entries(gradient.value)
         .sort((a, b) => Number(a[0]) - Number(b[0]))
-        .map(([stop, colour]) => `${colour} ${Number(stop) * 100}%`)
+        .map(([stop, color]) => `${color} ${Number(stop) * 100}%`)
         .join(',');
     return {
         background: `linear-gradient(to right, ${stops})`,

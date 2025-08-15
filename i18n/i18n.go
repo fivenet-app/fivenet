@@ -135,8 +135,8 @@ func selectPluralForm(text string, vars map[string]any) string {
 		case float64:
 			n = int(v)
 		case string:
-			if num, err := strconv.Atoi(v); err == nil {
-				n = num
+			if num, err := strconv.ParseInt(v, 10, 32); err == nil {
+				n = int(num)
 			}
 		}
 	}

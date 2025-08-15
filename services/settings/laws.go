@@ -14,11 +14,6 @@ import (
 	"go.uber.org/zap"
 )
 
-var (
-	tLawBooks = table.FivenetLawbooks
-	tLaws     = table.FivenetLawbooksLaws
-)
-
 func (s *Server) CreateOrUpdateLawBook(
 	ctx context.Context,
 	req *pbsettings.CreateOrUpdateLawBookRequest,
@@ -33,6 +28,8 @@ func (s *Server) CreateOrUpdateLawBook(
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
+
+	tLawBooks := table.FivenetLawbooks
 
 	if req.GetLawBook().GetId() <= 0 {
 		stmt := tLawBooks.
@@ -138,7 +135,8 @@ func (s *Server) DeleteLawBook(
 }
 
 func (s *Server) getLawBook(ctx context.Context, lawbookId uint64) (*laws.LawBook, error) {
-	tLawBooks := tLawBooks.AS("law_book")
+	tLawBooks := table.FivenetLawbooks.AS("law_book")
+
 	stmt := tLawBooks.
 		SELECT(
 			tLawBooks.ID,
@@ -175,6 +173,8 @@ func (s *Server) CreateOrUpdateLaw(
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
+
+	tLaws := table.FivenetLawbooksLaws
 
 	if req.GetLaw().GetId() <= 0 {
 		stmt := tLaws.
@@ -296,7 +296,8 @@ func (s *Server) DeleteLaw(
 }
 
 func (s *Server) getLaw(ctx context.Context, lawId uint64) (*laws.Law, error) {
-	tLaws := tLaws.AS("law")
+	tLaws := table.FivenetLawbooksLaws.AS("law")
+
 	stmt := tLaws.
 		SELECT(
 			tLaws.ID,

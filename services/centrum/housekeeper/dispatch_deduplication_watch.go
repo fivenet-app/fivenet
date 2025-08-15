@@ -111,7 +111,7 @@ func (s *Housekeeper) tryDeduplicate(ctx context.Context, dsp *centrum.Dispatch)
 	closeBy := locs.KNearest(dsp.Point(), 8, func(p orb.Pointer) bool {
 		//nolint:forcetypeassert // We know that p is a *centrum.Dispatch because locs is a generics spatial index
 		return p.(*centrum.Dispatch).GetId() != dsp.GetId()
-	}, radius) // metres
+	}, radius) // meters
 	if len(closeBy) == 0 {
 		return nil
 	}
