@@ -66,7 +66,7 @@ func (r *DBReqs) ValidateVersion(ctx context.Context) error {
 	var major, minor int
 	_, err = fmt.Sscanf(r.version, "%d.%d", &major, &minor)
 	if err != nil {
-		return fmt.Errorf("failed to parse DB version: %w", err)
+		return fmt.Errorf("failed to parse DB version. %w", err)
 	}
 
 	if major < 8 {

@@ -270,7 +270,7 @@ func (s *GrpcWebWrapperTestSuite) makeGrpcRequest(
 
 		readCount, err = reader.Read(payloadBytes)
 		if uint32(readCount) != payloadLength || err != nil {
-			return nil, grpcws.Trailer{}, nil, fmt.Errorf("Unexpected end of msg: %w", err)
+			return nil, grpcws.Trailer{}, nil, fmt.Errorf("Unexpected end of msg. %w", err)
 		}
 		if grpcPreamble[0]&(1<<7) == (1 << 7) { // MSB signifies the trailer parser
 			trailers = readTrailersFromBytes(s.T(), payloadBytes)

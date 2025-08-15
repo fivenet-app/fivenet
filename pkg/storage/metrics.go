@@ -121,7 +121,7 @@ func (mc *MetricsCollector) CollectMetrics(ctx context.Context) error {
 
 	usage, err := mc.storage.GetSpaceUsage(ctx)
 	if err != nil {
-		return fmt.Errorf("failed to get space usage: %w", err)
+		return fmt.Errorf("failed to get space usage. %w", err)
 	}
 
 	mc.logger.Info("Collected storage metrics", zap.Int64("space_usage", usage))

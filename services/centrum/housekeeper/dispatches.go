@@ -127,6 +127,7 @@ func (s *Housekeeper) runCancelOldDispatches(ctx context.Context, data *cron.Cro
 
 	if err := s.cancelOldDispatches(ctx); err != nil {
 		s.logger.Error("failed to archive dispatches", zap.Error(err))
+		return fmt.Errorf("failed to archive dispatches. %w", err)
 	}
 
 	return nil

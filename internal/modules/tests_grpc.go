@@ -45,7 +45,7 @@ func TestGRPCServer(
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
-		return nil, nil, fmt.Errorf("error connecting to test grpc server: %w", err)
+		return nil, nil, fmt.Errorf("error connecting to test grpc server. %w", err)
 	}
 
 	return conn, func(p GRPCServerParams) (*grpc.Server, error) {

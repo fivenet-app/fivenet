@@ -3,6 +3,7 @@ package citizens
 import (
 	context "context"
 	"errors"
+	"math"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
@@ -138,10 +139,11 @@ func (s *Server) UploadMugshot(
 		return errorscitizens.ErrReasonRequired
 	}
 
-	targetUserId := int32(meta.GetParentId())
-	if targetUserId <= 0 {
+	parentId := meta.GetParentId()
+	if parentId <= 0 || parentId > math.MaxInt32 {
 		return errorscitizens.ErrPropsMugshotDenied
 	}
+	targetUserId := int32(parentId)
 
 	tUser := tables.User().AS("user")
 

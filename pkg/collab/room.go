@@ -223,7 +223,14 @@ func (r *CollabRoom) consumeLoop() {
 			if err := proto.Unmarshal(msg.Data(), &sp); err == nil {
 				r.forwardToLocal(sp.GetSenderId(), &sp)
 			}
-			msg.Ack()
+
+			if err := msg.Ack(); err != nil {
+				r.logger.Error(
+					"failed to ack message",
+					zap.String("subject", msg.Subject()),
+					zap.Error(err),
+				)
+			}
 		}
 	}
 }

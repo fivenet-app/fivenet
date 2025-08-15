@@ -107,7 +107,7 @@ func (m *dbServer) Setup(ctx context.Context) {
 			return fmt.Errorf("failed to execute test query on database. %w", err)
 		}
 		if err := rows.Err(); err != nil {
-			return fmt.Errorf("error in rows: %w", err)
+			return fmt.Errorf("error in rows. %w", err)
 		}
 		defer rows.Close()
 
