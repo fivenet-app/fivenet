@@ -2,8 +2,8 @@ package natsutils
 
 import "strconv"
 
-func GenerateConsumerName(accountId uint64, userId int32, connId string) string {
-	return "acc_" + strconv.FormatUint(
+func GenerateConsumerName(accountId int64, userId int32, connId string) string {
+	return "acc_" + strconv.FormatInt(
 		accountId,
 		10,
 	) + "_usr_" + strconv.FormatInt(

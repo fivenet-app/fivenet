@@ -114,7 +114,7 @@ func (s *Server) ManageLabels(
 						tCitizensLabelsJob.Color.SET(jet.String(attribute.GetColor())),
 					).
 					WHERE(jet.AND(
-						tCitizensLabelsJob.ID.EQ(jet.Uint64(attribute.GetId())),
+						tCitizensLabelsJob.ID.EQ(jet.Int64(attribute.GetId())),
 						tCitizensLabelsJob.Job.EQ(jet.String(attribute.GetJob())),
 					))
 
@@ -129,7 +129,7 @@ func (s *Server) ManageLabels(
 		ids := make([]jet.Expression, len(removed))
 
 		for i := range removed {
-			ids[i] = jet.Uint64(removed[i].GetId())
+			ids[i] = jet.Int64(removed[i].GetId())
 		}
 
 		deleteStmt := tCitizensLabelsJob.
@@ -187,7 +187,7 @@ func (s *Server) validateLabels(
 
 	idsExp := make([]jet.Expression, len(attributes))
 	for i := range attributes {
-		idsExp[i] = jet.Uint64(attributes[i].GetId())
+		idsExp[i] = jet.Int64(attributes[i].GetId())
 	}
 
 	stmt := tCitizensLabelsJob.

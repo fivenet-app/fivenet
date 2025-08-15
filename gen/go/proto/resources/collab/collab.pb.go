@@ -187,7 +187,7 @@ func (*ClientPacket_Awareness) isClientPacket_Msg() {}
 
 type CollabInit struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TargetId      uint64                 `protobuf:"varint,1,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
+	TargetId      int64                  `protobuf:"varint,1,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -222,7 +222,7 @@ func (*CollabInit) Descriptor() ([]byte, []int) {
 	return file_resources_collab_collab_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *CollabInit) GetTargetId() uint64 {
+func (x *CollabInit) GetTargetId() int64 {
 	if x != nil {
 		return x.TargetId
 	}
@@ -602,7 +602,7 @@ func (x *CollabHandshake) GetFirst() bool {
 
 type TargetSaved struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TargetId      uint64                 `protobuf:"varint,1,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
+	TargetId      int64                  `protobuf:"varint,1,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -637,7 +637,7 @@ func (*TargetSaved) Descriptor() ([]byte, []int) {
 	return file_resources_collab_collab_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *TargetSaved) GetTargetId() uint64 {
+func (x *TargetSaved) GetTargetId() int64 {
 	if x != nil {
 		return x.TargetId
 	}
@@ -754,7 +754,7 @@ const file_resources_collab_collab_proto_rawDesc = "" +
 	"\x03msg\x12\x05\xbaH\x02\b\x01\"2\n" +
 	"\n" +
 	"CollabInit\x12$\n" +
-	"\ttarget_id\x18\x01 \x01(\x04B\a\xbaH\x042\x02 \x00R\btargetId\"|\n" +
+	"\ttarget_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\btargetId\"|\n" +
 	"\bSyncStep\x12\x1d\n" +
 	"\x04step\x18\x01 \x01(\x05B\t\xbaH\x06\x1a\x040\x010\x02R\x04step\x12\x12\n" +
 	"\x04data\x18\x02 \x01(\fR\x04data\x12-\n" +
@@ -780,7 +780,7 @@ const file_resources_collab_collab_proto_rawDesc = "" +
 	"\tclient_id\x18\x01 \x01(\x04R\bclientId\x12\x14\n" +
 	"\x05first\x18\x02 \x01(\bR\x05first\"3\n" +
 	"\vTargetSaved\x12$\n" +
-	"\ttarget_id\x18\x01 \x01(\x04B\a\xbaH\x042\x02 \x00R\btargetId\"\x0e\n" +
+	"\ttarget_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\btargetId\"\x0e\n" +
 	"\fFirstPromote\"{\n" +
 	"\fClientUpdate\x12\x16\n" +
 	"\x06joined\x18\x01 \x01(\bR\x06joined\x12$\n" +

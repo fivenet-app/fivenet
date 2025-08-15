@@ -22,8 +22,8 @@ type FivenetUserProps struct {
 	OpenFines                        *int64     `json:"open_fines"`
 	BloodType                        *string    `json:"blood_type"`
 	Avatar                           *string    `json:"avatar"`
-	AvatarFileID                     *uint64    `json:"avatar_file_id"`
+	AvatarFileID                     *int64     `json:"avatar_file_id"`
 	MugShot                          *string    `json:"mug_shot"`
-	MugshotFileID                    *uint64    `json:"mugshot_file_id"`
+	MugshotFileID                    *int64     `json:"mugshot_file_id"`
 	Email                            *string    `json:"email"`
 }

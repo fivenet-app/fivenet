@@ -16,7 +16,7 @@ import { MessageType } from "@protobuf-ts/runtime";
  */
 export interface EmailSettings {
     /**
-     * @generated from protobuf field: uint64 email_id = 1
+     * @generated from protobuf field: int64 email_id = 1
      */
     emailId: number;
     /**
@@ -36,7 +36,7 @@ export interface EmailSettings {
 class EmailSettings$Type extends MessageType<EmailSettings> {
     constructor() {
         super("resources.mailer.EmailSettings", [
-            { no: 1, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "email_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "signature", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "1024" } } } },
             { no: 3, name: "blocked_emails", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "25" } } } }
         ]);
@@ -54,8 +54,8 @@ class EmailSettings$Type extends MessageType<EmailSettings> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 email_id */ 1:
-                    message.emailId = reader.uint64().toNumber();
+                case /* int64 email_id */ 1:
+                    message.emailId = reader.int64().toNumber();
                     break;
                 case /* optional string signature */ 2:
                     message.signature = reader.string();
@@ -75,9 +75,9 @@ class EmailSettings$Type extends MessageType<EmailSettings> {
         return message;
     }
     internalBinaryWrite(message: EmailSettings, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 email_id = 1; */
+        /* int64 email_id = 1; */
         if (message.emailId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.emailId);
+            writer.tag(1, WireType.Varint).int64(message.emailId);
         /* optional string signature = 2; */
         if (message.signature !== undefined)
             writer.tag(2, WireType.LengthDelimited).string(message.signature);

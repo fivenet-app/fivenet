@@ -22,7 +22,7 @@ func (s *DispatchDB) IdleStore() jetstream.KeyValue {
 	return s.idleKV
 }
 
-func (s *DispatchDB) updateInKV(ctx context.Context, id uint64, dsp *centrum.Dispatch) error {
+func (s *DispatchDB) updateInKV(ctx context.Context, id int64, dsp *centrum.Dispatch) error {
 	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
 		if existing == nil {
 			return dsp, dsp != nil, nil
@@ -41,11 +41,11 @@ func (s *DispatchDB) updateInKV(ctx context.Context, id uint64, dsp *centrum.Dis
 	return nil
 }
 
-func (s *DispatchDB) deleteInKV(ctx context.Context, id uint64) error {
+func (s *DispatchDB) deleteInKV(ctx context.Context, id int64) error {
 	return s.store.Delete(ctx, centrumutils.IdKey(id))
 }
 
-func (s *DispatchDB) Get(ctx context.Context, id uint64) (*centrum.Dispatch, error) {
+func (s *DispatchDB) Get(ctx context.Context, id int64) (*centrum.Dispatch, error) {
 	dsp, err := s.store.GetOrLoad(ctx, centrumutils.IdKey(id))
 	if err != nil {
 		return nil, err
@@ -128,7 +128,7 @@ func (s *DispatchDB) Filter(
 
 func (s *DispatchDB) updateStatusInKV(
 	ctx context.Context,
-	id uint64,
+	id int64,
 	status *centrum.DispatchStatus,
 ) error {
 	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
@@ -153,7 +153,7 @@ const (
 )
 
 // TouchActivity updates the idle timer for a Dispatch.
-func (d *DispatchDB) TouchActivity(ctx context.Context, id uint64) error {
+func (d *DispatchDB) TouchActivity(ctx context.Context, id int64) error {
 	key := "idle." + centrumutils.IdKey(id)
 
 	// First try to create the timer key with TTL.

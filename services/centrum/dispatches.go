@@ -81,7 +81,7 @@ func (s *Server) ListDispatches(
 	if len(req.GetIds()) > 0 {
 		ids := make([]jet.Expression, len(req.GetIds()))
 		for i := range req.GetIds() {
-			ids[i] = jet.Uint64(req.GetIds()[i])
+			ids[i] = jet.Int64(req.GetIds()[i])
 		}
 
 		condition = condition.AND(tDispatch.ID.IN(ids...))
@@ -261,7 +261,7 @@ func (s *Server) GetDispatch(
 			jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
 		),
 	).
-		AND(tDispatch.ID.EQ(jet.Uint64(req.GetId()))).
+		AND(tDispatch.ID.EQ(jet.Int64(req.GetId()))).
 		AND(jet.BoolExp(dbutils.JSON_CONTAINS(tDispatch.Jobs, jet.StringExp(jet.String(string(jobsOut))))))
 
 	resp := &pbcentrum.GetDispatchResponse{
@@ -493,7 +493,7 @@ func (s *Server) UpdateDispatchStatus(
 		return nil, errorscentrum.ErrNotPartOfDispatch
 	}
 
-	var statusUnitId *uint64
+	var statusUnitId *int64
 	userMapping, err := s.tracker.GetUserMapping(userInfo.GetUserId())
 	if err != nil {
 		if !s.helpers.CheckIfUserIsDispatcher(ctx, userInfo.GetJob(), userInfo.GetUserId()) {
@@ -603,7 +603,7 @@ func (s *Server) ListDispatchActivity(
 				),
 		).
 		WHERE(jet.AND(
-			tDispatchStatus.DispatchID.EQ(jet.Uint64(req.GetId())),
+			tDispatchStatus.DispatchID.EQ(jet.Int64(req.GetId())),
 		))
 
 	var count database.DataCount
@@ -670,7 +670,7 @@ func (s *Server) ListDispatchActivity(
 				),
 		).
 		WHERE(
-			tDispatchStatus.DispatchID.EQ(jet.Uint64(req.GetId())),
+			tDispatchStatus.DispatchID.EQ(jet.Int64(req.GetId())),
 		).
 		ORDER_BY(tDispatchStatus.ID.DESC()).
 		OFFSET(req.GetPagination().GetOffset()).

@@ -90,7 +90,7 @@ func (StatusUnit) EnumDescriptor() ([]byte, []int) {
 
 type Unit struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	Job       string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
@@ -144,7 +144,7 @@ func (*Unit) Descriptor() ([]byte, []int) {
 	return file_resources_centrum_units_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Unit) GetId() uint64 {
+func (x *Unit) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -251,7 +251,7 @@ func (x *Unit) GetAccess() *UnitAccess {
 
 type UnitAssignments struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UnitId        uint64                 `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
+	UnitId        int64                  `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
 	Job           string                 `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
 	Users         []*UnitAssignment      `protobuf:"bytes,3,rep,name=users,proto3" json:"users,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -288,7 +288,7 @@ func (*UnitAssignments) Descriptor() ([]byte, []int) {
 	return file_resources_centrum_units_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *UnitAssignments) GetUnitId() uint64 {
+func (x *UnitAssignments) GetUnitId() int64 {
 	if x != nil {
 		return x.UnitId
 	}
@@ -311,7 +311,7 @@ func (x *UnitAssignments) GetUsers() []*UnitAssignment {
 
 type UnitAssignment struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UnitId        uint64                 `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty" alias:"unit_id" sql:"primary_key"`
+	UnitId        int64                  `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty" alias:"unit_id" sql:"primary_key"`
 	UserId        int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"user_id" sql:"primary_key"`
 	User          *jobs.Colleague        `protobuf:"bytes,3,opt,name=user,proto3,oneof" json:"user,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -348,7 +348,7 @@ func (*UnitAssignment) Descriptor() ([]byte, []int) {
 	return file_resources_centrum_units_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *UnitAssignment) GetUnitId() uint64 {
+func (x *UnitAssignment) GetUnitId() int64 {
 	if x != nil {
 		return x.UnitId
 	}
@@ -371,9 +371,9 @@ func (x *UnitAssignment) GetUser() *jobs.Colleague {
 
 type UnitStatus struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UnitId    uint64                 `protobuf:"varint,3,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
+	UnitId    int64                  `protobuf:"varint,3,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
 	Unit      *Unit                  `protobuf:"bytes,4,opt,name=unit,proto3,oneof" json:"unit,omitempty"`
 	Status    StatusUnit             `protobuf:"varint,5,opt,name=status,proto3,enum=resources.centrum.StatusUnit" json:"status,omitempty"`
 	// @sanitize
@@ -423,7 +423,7 @@ func (*UnitStatus) Descriptor() ([]byte, []int) {
 	return file_resources_centrum_units_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *UnitStatus) GetId() uint64 {
+func (x *UnitStatus) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -437,7 +437,7 @@ func (x *UnitStatus) GetCreatedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *UnitStatus) GetUnitId() uint64 {
+func (x *UnitStatus) GetUnitId() int64 {
 	if x != nil {
 		return x.UnitId
 	}
@@ -534,7 +534,7 @@ const file_resources_centrum_units_proto_rawDesc = "" +
 	"\n" +
 	"\x1dresources/centrum/units.proto\x12\x11resources.centrum\x1a\"resources/centrum/attributes.proto\x1a$resources/centrum/units_access.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xec\x06\n" +
 	"\x04Unit\x121\n" +
-	"\x02id\x18\x01 \x01(\x04B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
+	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
@@ -564,20 +564,20 @@ const file_resources_centrum_units_proto_rawDesc = "" +
 	"\v_attributesB\x0e\n" +
 	"\f_home_postal\"~\n" +
 	"\x0fUnitAssignments\x12\x17\n" +
-	"\aunit_id\x18\x01 \x01(\x04R\x06unitId\x12\x19\n" +
+	"\aunit_id\x18\x01 \x01(\x03R\x06unitId\x12\x19\n" +
 	"\x03job\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x127\n" +
 	"\x05users\x18\x03 \x03(\v2!.resources.centrum.UnitAssignmentR\x05users\"\xd6\x01\n" +
 	"\x0eUnitAssignment\x12?\n" +
-	"\aunit_id\x18\x01 \x01(\x04B&\x9a\x84\x9e\x03!sql:\"primary_key\" alias:\"unit_id\"R\x06unitId\x12F\n" +
+	"\aunit_id\x18\x01 \x01(\x03B&\x9a\x84\x9e\x03!sql:\"primary_key\" alias:\"unit_id\"R\x06unitId\x12F\n" +
 	"\auser_id\x18\x02 \x01(\x05B-\x9a\x84\x9e\x03!sql:\"primary_key\" alias:\"user_id\"\xbaH\x04\x1a\x02(\x00R\x06userId\x122\n" +
 	"\x04user\x18\x03 \x01(\v2\x19.resources.jobs.ColleagueH\x00R\x04user\x88\x01\x01B\a\n" +
 	"\x05_user\"\x98\x06\n" +
 	"\n" +
 	"UnitStatus\x121\n" +
-	"\x02id\x18\x01 \x01(\x04B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
+	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x17\n" +
-	"\aunit_id\x18\x03 \x01(\x04R\x06unitId\x120\n" +
+	"\aunit_id\x18\x03 \x01(\x03R\x06unitId\x120\n" +
 	"\x04unit\x18\x04 \x01(\v2\x17.resources.centrum.UnitH\x01R\x04unit\x88\x01\x01\x12?\n" +
 	"\x06status\x18\x05 \x01(\x0e2\x1d.resources.centrum.StatusUnitB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12%\n" +
 	"\x06reason\x18\x06 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x02R\x06reason\x88\x01\x01\x12 \n" +

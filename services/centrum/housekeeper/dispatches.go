@@ -85,21 +85,21 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(ctx context.Context) er
 		))
 
 	var dest []*struct {
-		DispatchID uint64
-		UnitID     uint64
+		DispatchID int64
+		UnitID     int64
 		Job        string
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return err
 	}
 
-	assignments := map[string]map[uint64][]uint64{}
+	assignments := map[string]map[int64][]int64{}
 	for _, ua := range dest {
 		if _, ok := assignments[ua.Job]; !ok {
-			assignments[ua.Job] = map[uint64][]uint64{}
+			assignments[ua.Job] = map[int64][]int64{}
 		}
 		if _, ok := assignments[ua.Job][ua.DispatchID]; !ok {
-			assignments[ua.Job][ua.DispatchID] = []uint64{}
+			assignments[ua.Job][ua.DispatchID] = []int64{}
 		}
 
 		assignments[ua.Job][ua.DispatchID] = append(assignments[ua.Job][ua.DispatchID], ua.UnitID)
@@ -175,7 +175,7 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 		LIMIT(200)
 
 	var dest []*struct {
-		DispatchID uint64
+		DispatchID int64
 		Jobs       []string
 		Status     centrum.StatusDispatch
 	}
@@ -195,7 +195,7 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 			if err := s.dispatches.AddAttributeToDispatch(ctx, dsp, centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_TOO_OLD); err != nil {
 				s.logger.Error(
 					"failed to add too old attribute to cancelled dispatch",
-					zap.Uint64("dispatch_id", ds.DispatchID),
+					zap.Int64("dispatch_id", ds.DispatchID),
 					zap.Error(err),
 				)
 			}
@@ -208,7 +208,7 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 		}); err != nil {
 			s.logger.Error(
 				"failed to cancel dispatch",
-				zap.Uint64("dispatch_id", ds.DispatchID),
+				zap.Int64("dispatch_id", ds.DispatchID),
 				zap.Error(err),
 			)
 			continue
@@ -218,7 +218,7 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 		if err := s.dispatches.Delete(ctx, ds.DispatchID, false); err != nil {
 			s.logger.Error(
 				"failed to delete cancelled dispatch",
-				zap.Uint64("dispatch_id", ds.DispatchID),
+				zap.Int64("dispatch_id", ds.DispatchID),
 				zap.Error(err),
 			)
 			continue
@@ -261,7 +261,7 @@ func (s *Housekeeper) deleteOldDispatches(ctx context.Context) error {
 		LIMIT(75)
 
 	var dest []*struct {
-		DispatchID uint64
+		DispatchID int64
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return err
@@ -343,7 +343,7 @@ func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) error {
 			// "Completed" dispatches with their status being older than 15 minutes
 			(centrumutils.IsStatusDispatchComplete(dsp.GetStatus().GetStatus()) &&
 				time.Since(dsp.GetStatus().GetCreatedAt().AsTime()) > 15*time.Minute) {
-			s.logger.Debug("old dispatch deleted from kv", zap.Uint64("dispatch_id", dsp.GetId()))
+			s.logger.Debug("old dispatch deleted from kv", zap.Int64("dispatch_id", dsp.GetId()))
 
 			if err := s.dispatches.Delete(ctx, dsp.GetId(), false); err != nil {
 				errs = multierr.Append(

@@ -24,7 +24,7 @@ var tFiles = table.FivenetFiles
 // ParentID is a type constraint that matches any type that can be a parent ID.
 // It can be an unsigned 64-bit integer, a 32-bit integer, or a string.
 type ParentID interface {
-	~uint64 | ~int32 | ~string
+	~int64 | ~int32 | ~string
 	comparable
 }
 
@@ -32,7 +32,7 @@ type ParentID interface {
 type ParentColBoolExpFn[P ParentID] func(parentId P) jet.BoolExpression
 
 // JoinRowInserterFn is a function type for inserting a join row into a table linking parent and file.
-type JoinRowInserterFn[P ParentID] func(ctx context.Context, tx *sql.Tx, join jet.Table, parentCol jet.Column, fileCol jet.ColumnInteger, parentId P, _ jet.BoolExpression, fileID uint64) error
+type JoinRowInserterFn[P ParentID] func(ctx context.Context, tx *sql.Tx, join jet.Table, parentCol jet.Column, fileCol jet.ColumnInteger, parentId P, _ jet.BoolExpression, fileID int64) error
 
 // Handler is a generic, embeddable file-upload helper.
 type Handler[P ParentID] struct {
@@ -218,7 +218,7 @@ func (h *Handler[P]) UploadFromMeta(
 }
 
 // GetFileByPath retrieves the file ID and path for a given file path string.
-func (h *Handler[P]) GetFileByPath(ctx context.Context, path string) (uint64, string, error) {
+func (h *Handler[P]) GetFileByPath(ctx context.Context, path string) (int64, string, error) {
 	path = strings.TrimPrefix(path, FilestoreURLPrefix)
 
 	tFiles := table.FivenetFiles.AS("file")
@@ -234,7 +234,7 @@ func (h *Handler[P]) GetFileByPath(ctx context.Context, path string) (uint64, st
 		LIMIT(1)
 
 	f := &struct {
-		ID       uint64 `jet:"id"`
+		ID       int64  `jet:"id"`
 		ParentID P      `jet:"parent_id"`
 		FilePath string `jet:"file_path"`
 	}{}
@@ -256,7 +256,7 @@ func (h *Handler[P]) deleteJoinRow(
 	ctx context.Context,
 	tx *sql.Tx,
 	parentID P,
-	fileID uint64,
+	fileID int64,
 ) error {
 	if h.nullOnlyParentRow {
 		_, err := h.joinTable.
@@ -270,7 +270,7 @@ func (h *Handler[P]) deleteJoinRow(
 			).
 			WHERE(jet.AND(
 				h.parentColBoolExp(parentID),
-				h.fileCol.EQ(jet.Uint64(fileID)),
+				h.fileCol.EQ(jet.Int64(fileID)),
 			)).
 			ExecContext(ctx, tx)
 		return err
@@ -280,14 +280,14 @@ func (h *Handler[P]) deleteJoinRow(
 		DELETE().
 		WHERE(jet.AND(
 			h.parentColBoolExp(parentID),
-			h.fileCol.EQ(jet.Uint64(fileID)),
+			h.fileCol.EQ(jet.Int64(fileID)),
 		)).
 		ExecContext(ctx, tx)
 	return err
 }
 
 // Delete removes the association between a parent and a file, and deletes the file if it is orphaned.
-func (h *Handler[P]) Delete(ctx context.Context, parentID P, fileID uint64) error {
+func (h *Handler[P]) Delete(ctx context.Context, parentID P, fileID int64) error {
 	tx, err := h.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err
@@ -309,7 +309,7 @@ func (h *Handler[P]) Delete(ctx context.Context, parentID P, fileID uint64) erro
 	err = h.joinTable.
 		SELECT(jet.COUNT(h.fileCol).AS("count")).
 		FROM(h.joinTable).
-		WHERE(jet.AND(h.fileCol.EQ(jet.Uint64(fileID)))).
+		WHERE(jet.AND(h.fileCol.EQ(jet.Int64(fileID)))).
 		QueryContext(ctx, tx, &refs)
 	if err != nil {
 		return err
@@ -322,7 +322,7 @@ func (h *Handler[P]) Delete(ctx context.Context, parentID P, fileID uint64) erro
 		tFiles := table.FivenetFiles
 		err := tFiles.
 			SELECT(tFiles.FilePath.AS("file_path")).
-			WHERE(tFiles.ID.EQ(jet.Uint64(fileID))).
+			WHERE(tFiles.ID.EQ(jet.Int64(fileID))).
 			QueryContext(ctx, tx, &key)
 		if err != nil {
 			return err
@@ -335,7 +335,7 @@ func (h *Handler[P]) Delete(ctx context.Context, parentID P, fileID uint64) erro
 		_, err = tFiles.
 			UPDATE().
 			SET(tFiles.DeletedAt.SET(jet.CURRENT_TIMESTAMP())).
-			WHERE(tFiles.ID.EQ(jet.Uint64(fileID))).
+			WHERE(tFiles.ID.EQ(jet.Int64(fileID))).
 			LIMIT(1).
 			ExecContext(ctx, tx)
 		if err != nil {
@@ -365,10 +365,10 @@ func (h *Handler[P]) DeleteFileByPath(ctx context.Context, parentId P, path stri
 }
 
 // upsertFileRow inserts or updates a file row in the database, returning the file ID.
-func upsertFileRow(ctx context.Context, tx *sql.Tx, key, ctype string, size int64) (uint64, error) {
+func upsertFileRow(ctx context.Context, tx *sql.Tx, key, ctype string, size int64) (int64, error) {
 	// 1. Try to lock an existing row via the UNIQUE(file_path) index
 	var fileId struct {
-		ID uint64 `jet:"id"`
+		ID int64 `jet:"id"`
 	}
 	err := tFiles.
 		SELECT(tFiles.ID.AS("id")).
@@ -392,7 +392,7 @@ func upsertFileRow(ctx context.Context, tx *sql.Tx, key, ctype string, size int6
 			return 0, err
 		}
 		newID, _ := res.LastInsertId()
-		return uint64(newID), nil
+		return newID, nil
 
 	case err == nil:
 		// 2b) Row exists - overwrite metadata
@@ -403,7 +403,7 @@ func upsertFileRow(ctx context.Context, tx *sql.Tx, key, ctype string, size int6
 				tFiles.ContentType.SET(jet.String(ctype)),
 				tFiles.DeletedAt.SET(jet.TimestampExp(jet.NULL)), // Revive if file was soft-deleted
 			).
-			WHERE(tFiles.ID.EQ(jet.Uint64(fileId.ID))).
+			WHERE(tFiles.ID.EQ(jet.Int64(fileId.ID))).
 			ExecContext(ctx, tx); err != nil {
 			return 0, err
 		}
@@ -423,7 +423,7 @@ func InsertJoinRow[P ParentID](
 	fileCol jet.ColumnInteger,
 	parentId P,
 	_ jet.BoolExpression,
-	fileID uint64,
+	fileID int64,
 ) error {
 	_, err := join.
 		INSERT(
@@ -447,7 +447,7 @@ func UpdateJoinRow[P ParentID](
 	fileCol jet.ColumnInteger,
 	_ P,
 	parentIdBoolExp jet.BoolExpression,
-	fileID uint64,
+	fileID int64,
 ) error {
 	_, err := join.
 		UPDATE(
@@ -546,12 +546,12 @@ func (h *Handler[P]) HandleFileChangesForParent(
 		return 0, 0, err
 	}
 
-	currentMap := make(map[uint64]*file.File)
+	currentMap := make(map[int64]*file.File)
 	for _, f := range current {
 		currentMap[f.GetId()] = f
 	}
 
-	updatedMap := make(map[uint64]*file.File)
+	updatedMap := make(map[int64]*file.File)
 	for _, f := range updatedFiles {
 		updatedMap[f.GetId()] = f
 	}

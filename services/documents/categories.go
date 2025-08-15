@@ -62,7 +62,7 @@ func (s *Server) ListCategories(
 	return resp, nil
 }
 
-func (s *Server) getCategory(ctx context.Context, id uint64) (*documents.Category, error) {
+func (s *Server) getCategory(ctx context.Context, id int64) (*documents.Category, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	stmt := tDCategory.
@@ -80,7 +80,7 @@ func (s *Server) getCategory(ctx context.Context, id uint64) (*documents.Categor
 		).
 		WHERE(jet.AND(
 			tDCategory.Job.EQ(jet.String(userInfo.GetJob())),
-			tDCategory.ID.EQ(jet.Uint64(id)),
+			tDCategory.ID.EQ(jet.Int64(id)),
 		)).
 		LIMIT(1)
 
@@ -140,7 +140,7 @@ func (s *Server) CreateOrUpdateCategory(
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 
-		req.Category.Id = uint64(lastId)
+		req.Category.Id = lastId
 
 		auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 	} else {
@@ -160,7 +160,7 @@ func (s *Server) CreateOrUpdateCategory(
 				req.GetCategory().Icon,
 			).
 			WHERE(jet.AND(
-				tDCategory.ID.EQ(jet.Uint64(req.GetCategory().GetId())),
+				tDCategory.ID.EQ(jet.Int64(req.GetCategory().GetId())),
 				tDCategory.Job.EQ(jet.String(userInfo.GetJob())),
 			))
 
@@ -218,7 +218,7 @@ func (s *Server) DeleteCategory(
 		).
 		WHERE(jet.AND(
 			tDCategory.Job.EQ(jet.String(userInfo.GetJob())),
-			tDCategory.ID.EQ(jet.Uint64(req.GetId())),
+			tDCategory.ID.EQ(jet.Int64(req.GetId())),
 		)).
 		LIMIT(1)
 

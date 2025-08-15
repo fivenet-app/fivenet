@@ -12,12 +12,12 @@ import (
 )
 
 type FivenetMailerThreads struct {
-	ID             uint64     `sql:"primary_key" json:"id"`
+	ID             int64      `sql:"primary_key" json:"id"`
 	CreatedAt      *time.Time `json:"created_at"`
 	UpdatedAt      *time.Time `json:"updated_at"`
 	DeletedAt      *time.Time `json:"deleted_at"`
 	Title          string     `json:"title"`
-	CreatorEmailID uint64     `json:"creator_email_id"`
+	CreatorEmailID int64      `json:"creator_email_id"`
 	CreatorID      *int32     `json:"creator_id"`
 	CreatorEmail   string     `json:"creator_email"`
 }

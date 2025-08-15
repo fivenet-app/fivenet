@@ -15,7 +15,7 @@ import "tagger/tagger.proto";
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documents";
 
 message Template {
-  uint64 id = 1 [(tagger.tags) = "alias:\"id\""];
+  int64 id = 1 [(tagger.tags) = "alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   resources.documents.Category category = 4 [(tagger.tags) = "alias:\"category\""];
@@ -61,7 +61,7 @@ message Template {
 }
 
 message TemplateShort {
-  uint64 id = 1 [(tagger.tags) = "alias:\"id\""];
+  int64 id = 1 [(tagger.tags) = "alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   resources.documents.Category category = 4 [(tagger.tags) = "alias:\"category\""];
@@ -111,9 +111,9 @@ message TemplateData {
 }
 
 message TemplateJobAccess {
-  uint64 id = 1 [(tagger.tags) = "alias:\"id\""];
+  int64 id = 1 [(tagger.tags) = "alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
-  uint64 target_id = 3 [(tagger.tags) = "alias:\"template_id\""];
+  int64 target_id = 3 [(tagger.tags) = "alias:\"template_id\""];
   string job = 4 [(buf.validate.field).string.max_len = 20];
   optional string job_label = 5 [(buf.validate.field).string.max_len = 50];
   int32 minimum_grade = 6 [(buf.validate.field).int32.gte = 0];

@@ -58,11 +58,11 @@ func (s *Server) GetComments(
 	var condition jet.BoolExpression
 	if userInfo.GetSuperuser() {
 		condition = jet.AND(
-			tDComments.DocumentID.EQ(jet.Uint64(req.GetDocumentId())),
+			tDComments.DocumentID.EQ(jet.Int64(req.GetDocumentId())),
 		)
 	} else {
 		condition = jet.AND(
-			tDComments.DocumentID.EQ(jet.Uint64(req.GetDocumentId())),
+			tDComments.DocumentID.EQ(jet.Int64(req.GetDocumentId())),
 			tDComments.DeletedAt.IS_NULL(),
 		)
 	}
@@ -232,7 +232,7 @@ func (s *Server) PostComment(
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 
-	comment, err := s.getComment(ctx, uint64(lastId), userInfo)
+	comment, err := s.getComment(ctx, lastId, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -300,7 +300,7 @@ func (s *Server) EditComment(
 			tDComments.Comment.SET(jet.String(req.GetComment().GetContent().GetRawContent())),
 		).
 		WHERE(jet.AND(
-			tDComments.ID.EQ(jet.Uint64(req.GetComment().GetId())),
+			tDComments.ID.EQ(jet.Int64(req.GetComment().GetId())),
 			tDComments.DeletedAt.IS_NULL(),
 		))
 
@@ -328,7 +328,7 @@ func (s *Server) EditComment(
 
 func (s *Server) getComment(
 	ctx context.Context,
-	id uint64,
+	id int64,
 	userInfo *userinfo.UserInfo,
 ) (*documents.Comment, error) {
 	tDComments := tDComments.AS("comment")
@@ -366,7 +366,7 @@ func (s *Server) getComment(
 				),
 		).
 		WHERE(
-			tDComments.ID.EQ(jet.Uint64(id)),
+			tDComments.ID.EQ(jet.Int64(id)),
 		).
 		LIMIT(1)
 
@@ -447,7 +447,7 @@ func (s *Server) DeleteComment(
 			tDComments.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
 		).
 		WHERE(jet.AND(
-			tDComments.ID.EQ(jet.Uint64(req.GetCommentId())),
+			tDComments.ID.EQ(jet.Int64(req.GetCommentId())),
 			tDComments.DeletedAt.IS_NULL(),
 		))
 
@@ -471,7 +471,7 @@ func (s *Server) DeleteComment(
 
 func (s *Server) notifyUsersNewComment(
 	ctx context.Context,
-	documentId uint64,
+	documentId int64,
 	sourceUserId int32,
 ) error {
 	userInfo, err := s.ui.GetUserInfoWithoutAccountId(ctx, sourceUserId)
@@ -479,7 +479,7 @@ func (s *Server) notifyUsersNewComment(
 		return err
 	}
 
-	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(documentId)), userInfo, false)
+	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Int64(documentId)), userInfo, false)
 	if err != nil {
 		return err
 	}
@@ -501,7 +501,7 @@ func (s *Server) notifyUsersNewComment(
 				),
 		).
 		WHERE(jet.AND(
-			tDComments.DocumentID.EQ(jet.Uint64(doc.GetId())),
+			tDComments.DocumentID.EQ(jet.Int64(doc.GetId())),
 			tDComments.CreatorID.NOT_EQ(jet.Int32(sourceUserId)),
 		)).
 		GROUP_BY(tDComments.CreatorID).

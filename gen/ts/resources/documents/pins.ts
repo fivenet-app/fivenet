@@ -17,7 +17,7 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface DocumentPin {
     /**
-     * @generated from protobuf field: uint64 document_id = 1
+     * @generated from protobuf field: int64 document_id = 1
      */
     documentId: number;
     /**
@@ -45,7 +45,7 @@ export interface DocumentPin {
 class DocumentPin$Type extends MessageType<DocumentPin> {
     constructor() {
         super("resources.documents.DocumentPin", [
-            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { uint64: { gt: "0" } }, "tagger.tags": "sql:\"primary_key\"" } },
+            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } }, "tagger.tags": "sql:\"primary_key\"" } },
             { no: 2, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } }, "tagger.tags": "sql:\"primary_key\"" } },
             { no: 3, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } }, "tagger.tags": "sql:\"primary_key\"" } },
             { no: 4, name: "created_at", kind: "message", T: () => Timestamp },
@@ -67,8 +67,8 @@ class DocumentPin$Type extends MessageType<DocumentPin> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 document_id */ 1:
-                    message.documentId = reader.uint64().toNumber();
+                case /* int64 document_id */ 1:
+                    message.documentId = reader.int64().toNumber();
                     break;
                 case /* optional string job */ 2:
                     message.job = reader.string();
@@ -97,9 +97,9 @@ class DocumentPin$Type extends MessageType<DocumentPin> {
         return message;
     }
     internalBinaryWrite(message: DocumentPin, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 document_id = 1; */
+        /* int64 document_id = 1; */
         if (message.documentId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.documentId);
+            writer.tag(1, WireType.Varint).int64(message.documentId);
         /* optional string job = 2; */
         if (message.job !== undefined)
             writer.tag(2, WireType.LengthDelimited).string(message.job);

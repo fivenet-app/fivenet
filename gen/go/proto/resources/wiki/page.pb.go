@@ -28,11 +28,11 @@ const (
 
 type Page struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	// @sanitize: method=StripTags
 	Job           string           `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel      *string          `protobuf:"bytes,3,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
-	ParentId      *uint64          `protobuf:"varint,4,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`
+	ParentId      *int64           `protobuf:"varint,4,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`
 	Meta          *PageMeta        `protobuf:"bytes,5,opt,name=meta,proto3" json:"meta,omitempty"`
 	Content       *content.Content `protobuf:"bytes,6,opt,name=content,proto3" json:"content,omitempty"`
 	Access        *PageAccess      `protobuf:"bytes,7,opt,name=access,proto3" json:"access,omitempty"`
@@ -71,7 +71,7 @@ func (*Page) Descriptor() ([]byte, []int) {
 	return file_resources_wiki_page_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Page) GetId() uint64 {
+func (x *Page) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -92,7 +92,7 @@ func (x *Page) GetJobLabel() string {
 	return ""
 }
 
-func (x *Page) GetParentId() uint64 {
+func (x *Page) GetParentId() int64 {
 	if x != nil && x.ParentId != nil {
 		return *x.ParentId
 	}
@@ -273,10 +273,10 @@ func (x *PageMeta) GetDraft() bool {
 
 type PageShort struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	Job       string                 `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel  *string                `protobuf:"bytes,3,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
-	ParentId  *uint64                `protobuf:"varint,4,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`
+	ParentId  *int64                 `protobuf:"varint,4,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`
 	DeletedAt *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	// @sanitize: method=StripTags
 	Slug          *string       `protobuf:"bytes,6,opt,name=slug,proto3,oneof" json:"slug,omitempty"`
@@ -320,7 +320,7 @@ func (*PageShort) Descriptor() ([]byte, []int) {
 	return file_resources_wiki_page_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *PageShort) GetId() uint64 {
+func (x *PageShort) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -341,7 +341,7 @@ func (x *PageShort) GetJobLabel() string {
 	return ""
 }
 
-func (x *PageShort) GetParentId() uint64 {
+func (x *PageShort) GetParentId() int64 {
 	if x != nil && x.ParentId != nil {
 		return *x.ParentId
 	}
@@ -406,7 +406,7 @@ func (x *PageShort) GetDraft() bool {
 
 type PageRootInfo struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	LogoFileId    *uint64                `protobuf:"varint,1,opt,name=logo_file_id,json=logoFileId,proto3,oneof" json:"logo_file_id,omitempty"`
+	LogoFileId    *int64                 `protobuf:"varint,1,opt,name=logo_file_id,json=logoFileId,proto3,oneof" json:"logo_file_id,omitempty"`
 	Logo          *file.File             `protobuf:"bytes,2,opt,name=logo,proto3,oneof" json:"logo,omitempty" alias:"logo"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -442,7 +442,7 @@ func (*PageRootInfo) Descriptor() ([]byte, []int) {
 	return file_resources_wiki_page_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *PageRootInfo) GetLogoFileId() uint64 {
+func (x *PageRootInfo) GetLogoFileId() int64 {
 	if x != nil && x.LogoFileId != nil {
 		return *x.LogoFileId
 	}
@@ -462,10 +462,10 @@ const file_resources_wiki_page_proto_rawDesc = "" +
 	"\n" +
 	"\x19resources/wiki/page.proto\x12\x0eresources.wiki\x1a&resources/common/content/content.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x1bresources/wiki/access.proto\x1a\x13tagger/tagger.proto\"\xac\x03\n" +
 	"\x04Page\x121\n" +
-	"\x02id\x18\x01 \x01(\x04B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12\x19\n" +
+	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12\x19\n" +
 	"\x03job\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x182R\x03job\x12)\n" +
 	"\tjob_label\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x182H\x00R\bjobLabel\x88\x01\x01\x12 \n" +
-	"\tparent_id\x18\x04 \x01(\x04H\x01R\bparentId\x88\x01\x01\x124\n" +
+	"\tparent_id\x18\x04 \x01(\x03H\x01R\bparentId\x88\x01\x01\x124\n" +
 	"\x04meta\x18\x05 \x01(\v2\x18.resources.wiki.PageMetaB\x06\xbaH\x03\xc8\x01\x01R\x04meta\x12;\n" +
 	"\acontent\x18\x06 \x01(\v2!.resources.common.content.ContentR\acontent\x12:\n" +
 	"\x06access\x18\a \x01(\v2\x1a.resources.wiki.PageAccessB\x06\xbaH\x03\xc8\x01\x01R\x06access\x12>\n" +
@@ -502,10 +502,10 @@ const file_resources_wiki_page_proto_rawDesc = "" +
 	"\b_creatorB\x06\n" +
 	"\x04_toc\"\xc1\x04\n" +
 	"\tPageShort\x121\n" +
-	"\x02id\x18\x01 \x01(\x04B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12\x19\n" +
+	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12\x19\n" +
 	"\x03job\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x182R\x03job\x12)\n" +
 	"\tjob_label\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x182H\x00R\bjobLabel\x88\x01\x01\x12 \n" +
-	"\tparent_id\x18\x04 \x01(\x04H\x01R\bparentId\x88\x01\x01\x12B\n" +
+	"\tparent_id\x18\x04 \x01(\x03H\x01R\bparentId\x88\x01\x01\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12 \n" +
 	"\x04slug\x18\x06 \x01(\tB\a\xbaH\x04r\x02\x18dH\x03R\x04slug\x88\x01\x01\x12\x14\n" +
@@ -526,7 +526,7 @@ const file_resources_wiki_page_proto_rawDesc = "" +
 	"_root_infoB\b\n" +
 	"\x06_level\"\x91\x01\n" +
 	"\fPageRootInfo\x12%\n" +
-	"\flogo_file_id\x18\x01 \x01(\x04H\x00R\n" +
+	"\flogo_file_id\x18\x01 \x01(\x03H\x00R\n" +
 	"logoFileId\x88\x01\x01\x12@\n" +
 	"\x04logo\x18\x02 \x01(\v2\x14.resources.file.FileB\x11\x9a\x84\x9e\x03\falias:\"logo\"H\x01R\x04logo\x88\x01\x01B\x0f\n" +
 	"\r_logo_file_idB\a\n" +

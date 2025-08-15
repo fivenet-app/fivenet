@@ -11,7 +11,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) getTLD(ctx context.Context, tx qrm.DB, id uint64) (*internet.TLD, error) {
+func (s *Server) getTLD(ctx context.Context, tx qrm.DB, id int64) (*internet.TLD, error) {
 	stmt := tTLDs.
 		SELECT(
 			tTLDs.ID,
@@ -21,7 +21,7 @@ func (s *Server) getTLD(ctx context.Context, tx qrm.DB, id uint64) (*internet.TL
 			tTLDs.CreatorID,
 		).
 		FROM(tTLDs).
-		WHERE(tTLDs.ID.EQ(jet.Uint64(id))).
+		WHERE(tTLDs.ID.EQ(jet.Int64(id))).
 		LIMIT(1)
 
 	dest := &internet.TLD{}

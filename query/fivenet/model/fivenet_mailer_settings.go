@@ -8,6 +8,6 @@
 package model
 
 type FivenetMailerSettings struct {
-	EmailID   uint64  `sql:"primary_key" json:"email_id"`
+	EmailID   int64   `sql:"primary_key" json:"email_id"`
 	Signature *string `json:"signature"`
 }

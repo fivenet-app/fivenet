@@ -19,7 +19,7 @@ const (
 type CitizenInfoClaims struct {
 	jwt.RegisteredClaims
 
-	AccID    uint64 `json:"accid"`
+	AccID    int64  `json:"accid"`
 	Username string `json:"usr"`
 	CharID   int32  `json:"chrid"`
 }
@@ -72,7 +72,7 @@ func BuildTokenClaimsFromAccount(
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:   "fivenet",
 			Subject:  account.License,
-			ID:       strconv.FormatUint(account.ID, 10),
+			ID:       strconv.FormatInt(account.ID, 10),
 			Audience: []string{"fivenet"},
 		},
 	}

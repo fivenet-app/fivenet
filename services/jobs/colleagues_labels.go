@@ -133,7 +133,7 @@ func (s *Server) ManageLabels(
 	}
 
 	_, removed := utils.SlicesDifferenceFunc(labels, req.GetLabels(),
-		func(in *jobs.Label) uint64 {
+		func(in *jobs.Label) int64 {
 			return in.GetId()
 		})
 
@@ -193,7 +193,7 @@ func (s *Server) ManageLabels(
 						tJobLabels.DeletedAt.SET(jet.TimestampExp(jet.NULL)),
 					).
 					WHERE(jet.AND(
-						tJobLabels.ID.EQ(jet.Uint64(label.GetId())),
+						tJobLabels.ID.EQ(jet.Int64(label.GetId())),
 						tJobLabels.Job.EQ(jet.String(label.GetJob())),
 					))
 
@@ -208,7 +208,7 @@ func (s *Server) ManageLabels(
 		ids := make([]jet.Expression, len(removed))
 
 		for i := range removed {
-			ids[i] = jet.Uint64(removed[i].GetId())
+			ids[i] = jet.Int64(removed[i].GetId())
 		}
 
 		deleteStmt := tJobLabels.
@@ -252,7 +252,7 @@ func (s *Server) validateLabels(
 
 	idsExp := make([]jet.Expression, len(labels))
 	for i := range labels {
-		idsExp[i] = jet.Uint64(labels[i].GetId())
+		idsExp[i] = jet.Int64(labels[i].GetId())
 	}
 
 	stmt := tJobLabels.

@@ -83,7 +83,7 @@ export interface GetRolesResponse {
  */
 export interface GetRoleRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
 }
@@ -123,7 +123,7 @@ export interface CreateRoleResponse {
  */
 export interface DeleteRoleRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
 }
@@ -137,7 +137,7 @@ export interface DeleteRoleResponse {
  */
 export interface UpdateRolePermsRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -159,7 +159,7 @@ export interface UpdateRolePermsResponse {
  */
 export interface GetPermissionsRequest {
     /**
-     * @generated from protobuf field: uint64 role_id = 1
+     * @generated from protobuf field: int64 role_id = 1
      */
     roleId: number;
 }
@@ -181,7 +181,7 @@ export interface GetPermissionsResponse {
  */
 export interface GetEffectivePermissionsRequest {
     /**
-     * @generated from protobuf field: uint64 role_id = 1
+     * @generated from protobuf field: int64 role_id = 1
      */
     roleId: number;
 }
@@ -573,7 +573,7 @@ export const GetRolesResponse = new GetRolesResponse$Type();
 class GetRoleRequest$Type extends MessageType<GetRoleRequest> {
     constructor() {
         super("services.settings.GetRoleRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<GetRoleRequest>): GetRoleRequest {
@@ -588,8 +588,8 @@ class GetRoleRequest$Type extends MessageType<GetRoleRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -603,9 +603,9 @@ class GetRoleRequest$Type extends MessageType<GetRoleRequest> {
         return message;
     }
     internalBinaryWrite(message: GetRoleRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -767,7 +767,7 @@ export const CreateRoleResponse = new CreateRoleResponse$Type();
 class DeleteRoleRequest$Type extends MessageType<DeleteRoleRequest> {
     constructor() {
         super("services.settings.DeleteRoleRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteRoleRequest>): DeleteRoleRequest {
@@ -782,8 +782,8 @@ class DeleteRoleRequest$Type extends MessageType<DeleteRoleRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -797,9 +797,9 @@ class DeleteRoleRequest$Type extends MessageType<DeleteRoleRequest> {
         return message;
     }
     internalBinaryWrite(message: DeleteRoleRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -852,7 +852,7 @@ export const DeleteRoleResponse = new DeleteRoleResponse$Type();
 class UpdateRolePermsRequest$Type extends MessageType<UpdateRolePermsRequest> {
     constructor() {
         super("services.settings.UpdateRolePermsRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "perms", kind: "message", T: () => PermsUpdate },
             { no: 3, name: "attrs", kind: "message", T: () => AttrsUpdate }
         ]);
@@ -869,8 +869,8 @@ class UpdateRolePermsRequest$Type extends MessageType<UpdateRolePermsRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* optional resources.settings.PermsUpdate perms */ 2:
                     message.perms = PermsUpdate.internalBinaryRead(reader, reader.uint32(), options, message.perms);
@@ -890,9 +890,9 @@ class UpdateRolePermsRequest$Type extends MessageType<UpdateRolePermsRequest> {
         return message;
     }
     internalBinaryWrite(message: UpdateRolePermsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* optional resources.settings.PermsUpdate perms = 2; */
         if (message.perms)
             PermsUpdate.internalBinaryWrite(message.perms, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
@@ -951,7 +951,7 @@ export const UpdateRolePermsResponse = new UpdateRolePermsResponse$Type();
 class GetPermissionsRequest$Type extends MessageType<GetPermissionsRequest> {
     constructor() {
         super("services.settings.GetPermissionsRequest", [
-            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "role_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<GetPermissionsRequest>): GetPermissionsRequest {
@@ -966,8 +966,8 @@ class GetPermissionsRequest$Type extends MessageType<GetPermissionsRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 role_id */ 1:
-                    message.roleId = reader.uint64().toNumber();
+                case /* int64 role_id */ 1:
+                    message.roleId = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -981,9 +981,9 @@ class GetPermissionsRequest$Type extends MessageType<GetPermissionsRequest> {
         return message;
     }
     internalBinaryWrite(message: GetPermissionsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 role_id = 1; */
+        /* int64 role_id = 1; */
         if (message.roleId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.roleId);
+            writer.tag(1, WireType.Varint).int64(message.roleId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1053,7 +1053,7 @@ export const GetPermissionsResponse = new GetPermissionsResponse$Type();
 class GetEffectivePermissionsRequest$Type extends MessageType<GetEffectivePermissionsRequest> {
     constructor() {
         super("services.settings.GetEffectivePermissionsRequest", [
-            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "role_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<GetEffectivePermissionsRequest>): GetEffectivePermissionsRequest {
@@ -1068,8 +1068,8 @@ class GetEffectivePermissionsRequest$Type extends MessageType<GetEffectivePermis
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 role_id */ 1:
-                    message.roleId = reader.uint64().toNumber();
+                case /* int64 role_id */ 1:
+                    message.roleId = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1083,9 +1083,9 @@ class GetEffectivePermissionsRequest$Type extends MessageType<GetEffectivePermis
         return message;
     }
     internalBinaryWrite(message: GetEffectivePermissionsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 role_id = 1; */
+        /* int64 role_id = 1; */
         if (message.roleId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.roleId);
+            writer.tag(1, WireType.Varint).int64(message.roleId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

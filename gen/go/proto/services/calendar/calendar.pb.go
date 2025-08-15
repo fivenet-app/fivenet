@@ -146,7 +146,7 @@ func (x *ListCalendarsResponse) GetCalendars() []*calendar.Calendar {
 
 type GetCalendarRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	CalendarId    uint64                 `protobuf:"varint,1,opt,name=calendar_id,json=calendarId,proto3" json:"calendar_id,omitempty"`
+	CalendarId    int64                  `protobuf:"varint,1,opt,name=calendar_id,json=calendarId,proto3" json:"calendar_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -181,7 +181,7 @@ func (*GetCalendarRequest) Descriptor() ([]byte, []int) {
 	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetCalendarRequest) GetCalendarId() uint64 {
+func (x *GetCalendarRequest) GetCalendarId() int64 {
 	if x != nil {
 		return x.CalendarId
 	}
@@ -410,7 +410,7 @@ func (x *UpdateCalendarResponse) GetCalendar() *calendar.Calendar {
 
 type DeleteCalendarRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	CalendarId    uint64                 `protobuf:"varint,1,opt,name=calendar_id,json=calendarId,proto3" json:"calendar_id,omitempty"`
+	CalendarId    int64                  `protobuf:"varint,1,opt,name=calendar_id,json=calendarId,proto3" json:"calendar_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -445,7 +445,7 @@ func (*DeleteCalendarRequest) Descriptor() ([]byte, []int) {
 	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *DeleteCalendarRequest) GetCalendarId() uint64 {
+func (x *DeleteCalendarRequest) GetCalendarId() int64 {
 	if x != nil {
 		return x.CalendarId
 	}
@@ -492,7 +492,7 @@ type ListCalendarEntriesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Year          int32                  `protobuf:"varint,1,opt,name=year,proto3" json:"year,omitempty"`
 	Month         int32                  `protobuf:"varint,2,opt,name=month,proto3" json:"month,omitempty"`
-	CalendarIds   []uint64               `protobuf:"varint,3,rep,packed,name=calendar_ids,json=calendarIds,proto3" json:"calendar_ids,omitempty"`
+	CalendarIds   []int64                `protobuf:"varint,3,rep,packed,name=calendar_ids,json=calendarIds,proto3" json:"calendar_ids,omitempty"`
 	ShowHidden    *bool                  `protobuf:"varint,4,opt,name=show_hidden,json=showHidden,proto3,oneof" json:"show_hidden,omitempty"`
 	After         *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=after,proto3,oneof" json:"after,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -543,7 +543,7 @@ func (x *ListCalendarEntriesRequest) GetMonth() int32 {
 	return 0
 }
 
-func (x *ListCalendarEntriesRequest) GetCalendarIds() []uint64 {
+func (x *ListCalendarEntriesRequest) GetCalendarIds() []int64 {
 	if x != nil {
 		return x.CalendarIds
 	}
@@ -698,7 +698,7 @@ func (x *GetUpcomingEntriesResponse) GetEntries() []*calendar.CalendarEntry {
 
 type GetCalendarEntryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	EntryId       uint64                 `protobuf:"varint,1,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
+	EntryId       int64                  `protobuf:"varint,1,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -733,7 +733,7 @@ func (*GetCalendarEntryRequest) Descriptor() ([]byte, []int) {
 	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{14}
 }
 
-func (x *GetCalendarEntryRequest) GetEntryId() uint64 {
+func (x *GetCalendarEntryRequest) GetEntryId() int64 {
 	if x != nil {
 		return x.EntryId
 	}
@@ -882,7 +882,7 @@ func (x *CreateOrUpdateCalendarEntryResponse) GetEntry() *calendar.CalendarEntry
 
 type DeleteCalendarEntryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	EntryId       uint64                 `protobuf:"varint,1,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
+	EntryId       int64                  `protobuf:"varint,1,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -917,7 +917,7 @@ func (*DeleteCalendarEntryRequest) Descriptor() ([]byte, []int) {
 	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *DeleteCalendarEntryRequest) GetEntryId() uint64 {
+func (x *DeleteCalendarEntryRequest) GetEntryId() int64 {
 	if x != nil {
 		return x.EntryId
 	}
@@ -962,7 +962,7 @@ func (*DeleteCalendarEntryResponse) Descriptor() ([]byte, []int) {
 
 type ShareCalendarEntryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	EntryId       uint64                 `protobuf:"varint,1,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
+	EntryId       int64                  `protobuf:"varint,1,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
 	UserIds       []int32                `protobuf:"varint,2,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -998,7 +998,7 @@ func (*ShareCalendarEntryRequest) Descriptor() ([]byte, []int) {
 	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{20}
 }
 
-func (x *ShareCalendarEntryRequest) GetEntryId() uint64 {
+func (x *ShareCalendarEntryRequest) GetEntryId() int64 {
 	if x != nil {
 		return x.EntryId
 	}
@@ -1051,7 +1051,7 @@ func (*ShareCalendarEntryResponse) Descriptor() ([]byte, []int) {
 type ListCalendarEntryRSVPRequest struct {
 	state         protoimpl.MessageState      `protogen:"open.v1"`
 	Pagination    *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	EntryId       uint64                      `protobuf:"varint,2,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
+	EntryId       int64                       `protobuf:"varint,2,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1093,7 +1093,7 @@ func (x *ListCalendarEntryRSVPRequest) GetPagination() *database.PaginationReque
 	return nil
 }
 
-func (x *ListCalendarEntryRSVPRequest) GetEntryId() uint64 {
+func (x *ListCalendarEntryRSVPRequest) GetEntryId() int64 {
 	if x != nil {
 		return x.EntryId
 	}
@@ -1469,7 +1469,7 @@ const file_services_calendar_calendar_proto_rawDesc = "" +
 	"pagination\x12:\n" +
 	"\tcalendars\x18\x02 \x03(\v2\x1c.resources.calendar.CalendarR\tcalendars\"5\n" +
 	"\x12GetCalendarRequest\x12\x1f\n" +
-	"\vcalendar_id\x18\x01 \x01(\x04R\n" +
+	"\vcalendar_id\x18\x01 \x01(\x03R\n" +
 	"calendarId\"O\n" +
 	"\x13GetCalendarResponse\x128\n" +
 	"\bcalendar\x18\x01 \x01(\v2\x1c.resources.calendar.CalendarR\bcalendar\"Y\n" +
@@ -1482,13 +1482,13 @@ const file_services_calendar_calendar_proto_rawDesc = "" +
 	"\x16UpdateCalendarResponse\x128\n" +
 	"\bcalendar\x18\x01 \x01(\v2\x1c.resources.calendar.CalendarR\bcalendar\"8\n" +
 	"\x15DeleteCalendarRequest\x12\x1f\n" +
-	"\vcalendar_id\x18\x01 \x01(\x04R\n" +
+	"\vcalendar_id\x18\x01 \x01(\x03R\n" +
 	"calendarId\"\x18\n" +
 	"\x16DeleteCalendarResponse\"\xf9\x01\n" +
 	"\x1aListCalendarEntriesRequest\x12\x1c\n" +
 	"\x04year\x18\x01 \x01(\x05B\b\xbaH\x05\x1a\x03(\xe7\x0fR\x04year\x12\x1f\n" +
 	"\x05month\x18\x02 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\f(\x01R\x05month\x12!\n" +
-	"\fcalendar_ids\x18\x03 \x03(\x04R\vcalendarIds\x12$\n" +
+	"\fcalendar_ids\x18\x03 \x03(\x03R\vcalendarIds\x12$\n" +
 	"\vshow_hidden\x18\x04 \x01(\bH\x00R\n" +
 	"showHidden\x88\x01\x01\x129\n" +
 	"\x05after\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x05after\x88\x01\x01B\x0e\n" +
@@ -1501,7 +1501,7 @@ const file_services_calendar_calendar_proto_rawDesc = "" +
 	"\x1aGetUpcomingEntriesResponse\x12;\n" +
 	"\aentries\x18\x01 \x03(\v2!.resources.calendar.CalendarEntryR\aentries\"4\n" +
 	"\x17GetCalendarEntryRequest\x12\x19\n" +
-	"\bentry_id\x18\x01 \x01(\x04R\aentryId\"S\n" +
+	"\bentry_id\x18\x01 \x01(\x03R\aentryId\"S\n" +
 	"\x18GetCalendarEntryResponse\x127\n" +
 	"\x05entry\x18\x01 \x01(\v2!.resources.calendar.CalendarEntryR\x05entry\"\x80\x01\n" +
 	"\"CreateOrUpdateCalendarEntryRequest\x12?\n" +
@@ -1510,17 +1510,17 @@ const file_services_calendar_calendar_proto_rawDesc = "" +
 	"#CreateOrUpdateCalendarEntryResponse\x127\n" +
 	"\x05entry\x18\x01 \x01(\v2!.resources.calendar.CalendarEntryR\x05entry\"7\n" +
 	"\x1aDeleteCalendarEntryRequest\x12\x19\n" +
-	"\bentry_id\x18\x01 \x01(\x04R\aentryId\"\x1d\n" +
+	"\bentry_id\x18\x01 \x01(\x03R\aentryId\"\x1d\n" +
 	"\x1bDeleteCalendarEntryResponse\"Q\n" +
 	"\x19ShareCalendarEntryRequest\x12\x19\n" +
-	"\bentry_id\x18\x01 \x01(\x04R\aentryId\x12\x19\n" +
+	"\bentry_id\x18\x01 \x01(\x03R\aentryId\x12\x19\n" +
 	"\buser_ids\x18\x02 \x03(\x05R\auserIds\"\x1c\n" +
 	"\x1aShareCalendarEntryResponse\"\x8f\x01\n" +
 	"\x1cListCalendarEntryRSVPRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12\x19\n" +
-	"\bentry_id\x18\x02 \x01(\x04R\aentryId\"\xb7\x01\n" +
+	"\bentry_id\x18\x02 \x01(\x03R\aentryId\"\xb7\x01\n" +
 	"\x1dListCalendarEntryRSVPResponse\x12U\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +

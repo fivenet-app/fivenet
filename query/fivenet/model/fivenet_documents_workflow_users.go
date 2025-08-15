@@ -12,7 +12,7 @@ import (
 )
 
 type FivenetDocumentsWorkflowUsers struct {
-	DocumentID            uint64     `json:"document_id"`
+	DocumentID            int64      `json:"document_id"`
 	UserID                int32      `json:"user_id"`
 	ManualReminderTime    *time.Time `json:"manual_reminder_time"`
 	ManualReminderMessage *string    `json:"manual_reminder_message"`

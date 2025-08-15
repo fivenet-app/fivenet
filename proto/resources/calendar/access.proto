@@ -24,9 +24,9 @@ message CalendarAccess {
 }
 
 message CalendarJobAccess {
-  uint64 id = 1;
+  int64 id = 1;
   optional resources.timestamp.Timestamp created_at = 2;
-  uint64 target_id = 3;
+  int64 target_id = 3;
   string job = 4 [(buf.validate.field).string.max_len = 20];
   optional string job_label = 5 [(buf.validate.field).string.max_len = 50];
   int32 minimum_grade = 6 [(buf.validate.field).int32.gte = 0];
@@ -35,9 +35,9 @@ message CalendarJobAccess {
 }
 
 message CalendarUserAccess {
-  uint64 id = 1;
+  int64 id = 1;
   optional resources.timestamp.Timestamp created_at = 2;
-  uint64 target_id = 3;
+  int64 target_id = 3;
   int32 user_id = 4 [(buf.validate.field).int32.gte = 0];
   optional resources.users.UserShort user = 5;
   AccessLevel access = 6 [(buf.validate.field).enum.defined_only = true];

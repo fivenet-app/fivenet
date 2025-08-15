@@ -44,7 +44,7 @@ type Poller struct {
 	pendingMu sync.Mutex
 	pending   map[string]*pb.PollReq
 	snapMu    sync.Mutex
-	lastSeen  map[uint64]map[int32]*userSnapshot
+	lastSeen  map[int64]map[int32]*userSnapshot
 	interval  time.Duration
 	ttl       time.Duration
 }
@@ -74,7 +74,7 @@ func NewPoller(p PollerParams) *Poller {
 		js:       p.JS,
 
 		pending:  make(map[string]*pb.PollReq),
-		lastSeen: make(map[uint64]map[int32]*userSnapshot),
+		lastSeen: make(map[int64]map[int32]*userSnapshot),
 		interval: 20 * time.Second,
 		ttl:      20 * time.Second,
 	}
@@ -215,7 +215,7 @@ func (p *Poller) doBatch(ctx context.Context) error {
 		WHERE(tUser.ID.IN(userIds...))
 
 	var dest []*struct {
-		AccountId uint64
+		AccountId int64
 		UserId    int32
 		Job       string
 		JobGrade  int32
@@ -239,7 +239,7 @@ func (p *Poller) doBatch(ctx context.Context) error {
 
 func (p *Poller) checkDiffAndPublish(
 	ctx context.Context,
-	acct uint64,
+	acct int64,
 	uid int32,
 	job string,
 	grade int32,

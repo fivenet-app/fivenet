@@ -216,7 +216,7 @@ func (DispatchReferenceType) EnumDescriptor() ([]byte, []int) {
 
 type Dispatch struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	// Deprecated: Marked as deprecated in resources/centrum/dispatches.proto.
@@ -271,7 +271,7 @@ func (*Dispatch) Descriptor() ([]byte, []int) {
 	return file_resources_centrum_dispatches_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Dispatch) GetId() uint64 {
+func (x *Dispatch) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -393,7 +393,7 @@ func (x *Dispatch) GetReferences() *DispatchReferences {
 
 type DispatchAssignments struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	DispatchId    uint64                 `protobuf:"varint,1,opt,name=dispatch_id,json=dispatchId,proto3" json:"dispatch_id,omitempty"`
+	DispatchId    int64                  `protobuf:"varint,1,opt,name=dispatch_id,json=dispatchId,proto3" json:"dispatch_id,omitempty"`
 	Job           string                 `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
 	Units         []*DispatchAssignment  `protobuf:"bytes,3,rep,name=units,proto3" json:"units,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -430,7 +430,7 @@ func (*DispatchAssignments) Descriptor() ([]byte, []int) {
 	return file_resources_centrum_dispatches_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *DispatchAssignments) GetDispatchId() uint64 {
+func (x *DispatchAssignments) GetDispatchId() int64 {
 	if x != nil {
 		return x.DispatchId
 	}
@@ -453,8 +453,8 @@ func (x *DispatchAssignments) GetUnits() []*DispatchAssignment {
 
 type DispatchAssignment struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	DispatchId    uint64                 `protobuf:"varint,1,opt,name=dispatch_id,json=dispatchId,proto3" json:"dispatch_id,omitempty" alias:"dispatch_id" sql:"primary_key"`
-	UnitId        uint64                 `protobuf:"varint,2,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty" alias:"unit_id" sql:"primary_key"`
+	DispatchId    int64                  `protobuf:"varint,1,opt,name=dispatch_id,json=dispatchId,proto3" json:"dispatch_id,omitempty" alias:"dispatch_id" sql:"primary_key"`
+	UnitId        int64                  `protobuf:"varint,2,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty" alias:"unit_id" sql:"primary_key"`
 	Unit          *Unit                  `protobuf:"bytes,3,opt,name=unit,proto3,oneof" json:"unit,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	ExpiresAt     *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
@@ -492,14 +492,14 @@ func (*DispatchAssignment) Descriptor() ([]byte, []int) {
 	return file_resources_centrum_dispatches_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *DispatchAssignment) GetDispatchId() uint64 {
+func (x *DispatchAssignment) GetDispatchId() int64 {
 	if x != nil {
 		return x.DispatchId
 	}
 	return 0
 }
 
-func (x *DispatchAssignment) GetUnitId() uint64 {
+func (x *DispatchAssignment) GetUnitId() int64 {
 	if x != nil {
 		return x.UnitId
 	}
@@ -529,10 +529,10 @@ func (x *DispatchAssignment) GetExpiresAt() *timestamp.Timestamp {
 
 type DispatchStatus struct {
 	state      protoimpl.MessageState `protogen:"open.v1"`
-	Id         uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id         int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt  *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	DispatchId uint64                 `protobuf:"varint,3,opt,name=dispatch_id,json=dispatchId,proto3" json:"dispatch_id,omitempty"`
-	UnitId     *uint64                `protobuf:"varint,4,opt,name=unit_id,json=unitId,proto3,oneof" json:"unit_id,omitempty"`
+	DispatchId int64                  `protobuf:"varint,3,opt,name=dispatch_id,json=dispatchId,proto3" json:"dispatch_id,omitempty"`
+	UnitId     *int64                 `protobuf:"varint,4,opt,name=unit_id,json=unitId,proto3,oneof" json:"unit_id,omitempty"`
 	Unit       *Unit                  `protobuf:"bytes,5,opt,name=unit,proto3,oneof" json:"unit,omitempty"`
 	Status     StatusDispatch         `protobuf:"varint,6,opt,name=status,proto3,enum=resources.centrum.StatusDispatch" json:"status,omitempty"`
 	// @sanitize
@@ -580,7 +580,7 @@ func (*DispatchStatus) Descriptor() ([]byte, []int) {
 	return file_resources_centrum_dispatches_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *DispatchStatus) GetId() uint64 {
+func (x *DispatchStatus) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -594,14 +594,14 @@ func (x *DispatchStatus) GetCreatedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *DispatchStatus) GetDispatchId() uint64 {
+func (x *DispatchStatus) GetDispatchId() int64 {
 	if x != nil {
 		return x.DispatchId
 	}
 	return 0
 }
 
-func (x *DispatchStatus) GetUnitId() uint64 {
+func (x *DispatchStatus) GetUnitId() int64 {
 	if x != nil && x.UnitId != nil {
 		return *x.UnitId
 	}
@@ -725,7 +725,7 @@ func (x *DispatchReferences) GetReferences() []*DispatchReference {
 
 type DispatchReference struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	TargetDispatchId uint64                 `protobuf:"varint,1,opt,name=target_dispatch_id,json=targetDispatchId,proto3" json:"target_dispatch_id,omitempty"`
+	TargetDispatchId int64                  `protobuf:"varint,1,opt,name=target_dispatch_id,json=targetDispatchId,proto3" json:"target_dispatch_id,omitempty"`
 	ReferenceType    DispatchReferenceType  `protobuf:"varint,2,opt,name=reference_type,json=referenceType,proto3,enum=resources.centrum.DispatchReferenceType" json:"reference_type,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
@@ -761,7 +761,7 @@ func (*DispatchReference) Descriptor() ([]byte, []int) {
 	return file_resources_centrum_dispatches_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *DispatchReference) GetTargetDispatchId() uint64 {
+func (x *DispatchReference) GetTargetDispatchId() int64 {
 	if x != nil {
 		return x.TargetDispatchId
 	}
@@ -781,7 +781,7 @@ const file_resources_centrum_dispatches_proto_rawDesc = "" +
 	"\n" +
 	"\"resources/centrum/dispatches.proto\x12\x11resources.centrum\x1a\"resources/centrum/attributes.proto\x1a resources/centrum/settings.proto\x1a\x1dresources/centrum/units.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xb2\a\n" +
 	"\bDispatch\x121\n" +
-	"\x02id\x18\x01 \x01(\x04B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
+	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
@@ -817,14 +817,14 @@ const file_resources_centrum_dispatches_proto_rawDesc = "" +
 	"\b_creatorB\r\n" +
 	"\v_references\"\x8e\x01\n" +
 	"\x13DispatchAssignments\x12\x1f\n" +
-	"\vdispatch_id\x18\x01 \x01(\x04R\n" +
+	"\vdispatch_id\x18\x01 \x01(\x03R\n" +
 	"dispatchId\x12\x19\n" +
 	"\x03job\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12;\n" +
 	"\x05units\x18\x03 \x03(\v2%.resources.centrum.DispatchAssignmentR\x05units\"\x83\x03\n" +
 	"\x12DispatchAssignment\x12K\n" +
-	"\vdispatch_id\x18\x01 \x01(\x04B*\x9a\x84\x9e\x03%sql:\"primary_key\" alias:\"dispatch_id\"R\n" +
+	"\vdispatch_id\x18\x01 \x01(\x03B*\x9a\x84\x9e\x03%sql:\"primary_key\" alias:\"dispatch_id\"R\n" +
 	"dispatchId\x12?\n" +
-	"\aunit_id\x18\x02 \x01(\x04B&\x9a\x84\x9e\x03!sql:\"primary_key\" alias:\"unit_id\"R\x06unitId\x120\n" +
+	"\aunit_id\x18\x02 \x01(\x03B&\x9a\x84\x9e\x03!sql:\"primary_key\" alias:\"unit_id\"R\x06unitId\x120\n" +
 	"\x04unit\x18\x03 \x01(\v2\x17.resources.centrum.UnitH\x00R\x04unit\x88\x01\x01\x12B\n" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tcreatedAt\x88\x01\x01\x12B\n" +
@@ -834,12 +834,12 @@ const file_resources_centrum_dispatches_proto_rawDesc = "" +
 	"\v_created_atB\r\n" +
 	"\v_expires_at\"\xd0\x05\n" +
 	"\x0eDispatchStatus\x121\n" +
-	"\x02id\x18\x01 \x01(\x04B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
+	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1f\n" +
-	"\vdispatch_id\x18\x03 \x01(\x04R\n" +
+	"\vdispatch_id\x18\x03 \x01(\x03R\n" +
 	"dispatchId\x12\x1c\n" +
-	"\aunit_id\x18\x04 \x01(\x04H\x01R\x06unitId\x88\x01\x01\x120\n" +
+	"\aunit_id\x18\x04 \x01(\x03H\x01R\x06unitId\x88\x01\x01\x120\n" +
 	"\x04unit\x18\x05 \x01(\v2\x17.resources.centrum.UnitH\x02R\x04unit\x88\x01\x01\x12C\n" +
 	"\x06status\x18\x06 \x01(\x0e2!.resources.centrum.StatusDispatchB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12%\n" +
 	"\x06reason\x18\a \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x03R\x06reason\x88\x01\x01\x12 \n" +
@@ -871,7 +871,7 @@ const file_resources_centrum_dispatches_proto_rawDesc = "" +
 	"references\x18\x01 \x03(\v2$.resources.centrum.DispatchReferenceR\n" +
 	"references\"\x9c\x01\n" +
 	"\x11DispatchReference\x12,\n" +
-	"\x12target_dispatch_id\x18\x01 \x01(\x04R\x10targetDispatchId\x12Y\n" +
+	"\x12target_dispatch_id\x18\x01 \x01(\x03R\x10targetDispatchId\x12Y\n" +
 	"\x0ereference_type\x18\x02 \x01(\x0e2(.resources.centrum.DispatchReferenceTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\rreferenceType*\xef\x03\n" +
 	"\x0eStatusDispatch\x12\x1f\n" +
 	"\x1bSTATUS_DISPATCH_UNSPECIFIED\x10\x00\x12\x17\n" +

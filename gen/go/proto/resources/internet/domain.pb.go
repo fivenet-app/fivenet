@@ -24,7 +24,7 @@ const (
 
 type TLD struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
@@ -65,7 +65,7 @@ func (*TLD) Descriptor() ([]byte, []int) {
 	return file_resources_internet_domain_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *TLD) GetId() uint64 {
+func (x *TLD) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -116,11 +116,11 @@ func (x *TLD) GetCreatorId() int32 {
 
 type Domain struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	TldId         uint64                 `protobuf:"varint,5,opt,name=tld_id,json=tldId,proto3" json:"tld_id,omitempty"`
+	TldId         int64                  `protobuf:"varint,5,opt,name=tld_id,json=tldId,proto3" json:"tld_id,omitempty"`
 	Tld           *TLD                   `protobuf:"bytes,6,opt,name=tld,proto3,oneof" json:"tld,omitempty"`
 	Active        bool                   `protobuf:"varint,7,opt,name=active,proto3" json:"active,omitempty"`
 	Name          string                 `protobuf:"bytes,8,opt,name=name,proto3" json:"name,omitempty"`
@@ -163,7 +163,7 @@ func (*Domain) Descriptor() ([]byte, []int) {
 	return file_resources_internet_domain_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *Domain) GetId() uint64 {
+func (x *Domain) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -191,7 +191,7 @@ func (x *Domain) GetDeletedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *Domain) GetTldId() uint64 {
+func (x *Domain) GetTldId() int64 {
 	if x != nil {
 		return x.TldId
 	}
@@ -260,7 +260,7 @@ const file_resources_internet_domain_proto_rawDesc = "" +
 	"\n" +
 	"\x1fresources/internet/domain.proto\x12\x12resources.internet\x1a#resources/timestamp/timestamp.proto\"\xe8\x02\n" +
 	"\x03TLD\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12=\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
 	"\n" +
@@ -275,14 +275,14 @@ const file_resources_internet_domain_proto_rawDesc = "" +
 	"\v_deleted_atB\r\n" +
 	"\v_creator_id\"\xaf\x05\n" +
 	"\x06Domain\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12=\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12\x15\n" +
-	"\x06tld_id\x18\x05 \x01(\x04R\x05tldId\x12.\n" +
+	"\x06tld_id\x18\x05 \x01(\x03R\x05tldId\x12.\n" +
 	"\x03tld\x18\x06 \x01(\v2\x17.resources.internet.TLDH\x02R\x03tld\x88\x01\x01\x12\x16\n" +
 	"\x06active\x18\a \x01(\bR\x06active\x12\x1c\n" +
 	"\x04name\x18\b \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01R\x04name\x12A\n" +

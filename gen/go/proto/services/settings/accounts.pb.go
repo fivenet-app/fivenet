@@ -162,7 +162,7 @@ func (x *ListAccountsResponse) GetAccounts() []*accounts.Account {
 
 type UpdateAccountRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Enabled       *bool                  `protobuf:"varint,2,opt,name=enabled,proto3,oneof" json:"enabled,omitempty"`
 	LastChar      *int32                 `protobuf:"varint,3,opt,name=last_char,json=lastChar,proto3,oneof" json:"last_char,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -199,7 +199,7 @@ func (*UpdateAccountRequest) Descriptor() ([]byte, []int) {
 	return file_services_settings_accounts_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *UpdateAccountRequest) GetId() uint64 {
+func (x *UpdateAccountRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -266,7 +266,7 @@ func (x *UpdateAccountResponse) GetAccount() *accounts.Account {
 
 type DisconnectOAuth2ConnectionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	ProviderName  string                 `protobuf:"bytes,2,opt,name=provider_name,json=providerName,proto3" json:"provider_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -302,7 +302,7 @@ func (*DisconnectOAuth2ConnectionRequest) Descriptor() ([]byte, []int) {
 	return file_services_settings_accounts_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *DisconnectOAuth2ConnectionRequest) GetId() uint64 {
+func (x *DisconnectOAuth2ConnectionRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -354,7 +354,7 @@ func (*DisconnectOAuth2ConnectionResponse) Descriptor() ([]byte, []int) {
 
 type DeleteAccountRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -389,7 +389,7 @@ func (*DeleteAccountRequest) Descriptor() ([]byte, []int) {
 	return file_services_settings_accounts_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *DeleteAccountRequest) GetId() uint64 {
+func (x *DeleteAccountRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -460,7 +460,7 @@ const file_services_settings_accounts_proto_rawDesc = "" +
 	"pagination\x127\n" +
 	"\baccounts\x18\x02 \x03(\v2\x1b.resources.accounts.AccountR\baccounts\"\x8a\x01\n" +
 	"\x14UpdateAccountRequest\x12\x17\n" +
-	"\x02id\x18\x01 \x01(\x04B\a\xbaH\x042\x02 \x00R\x02id\x12\x1d\n" +
+	"\x02id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\x12\x1d\n" +
 	"\aenabled\x18\x02 \x01(\bH\x00R\aenabled\x88\x01\x01\x12 \n" +
 	"\tlast_char\x18\x03 \x01(\x05H\x01R\blastChar\x88\x01\x01B\n" +
 	"\n" +
@@ -470,11 +470,11 @@ const file_services_settings_accounts_proto_rawDesc = "" +
 	"\x15UpdateAccountResponse\x125\n" +
 	"\aaccount\x18\x01 \x01(\v2\x1b.resources.accounts.AccountR\aaccount\"k\n" +
 	"!DisconnectOAuth2ConnectionRequest\x12\x17\n" +
-	"\x02id\x18\x01 \x01(\x04B\a\xbaH\x042\x02 \x00R\x02id\x12-\n" +
+	"\x02id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\x12-\n" +
 	"\rprovider_name\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\fproviderName\"$\n" +
 	"\"DisconnectOAuth2ConnectionResponse\"/\n" +
 	"\x14DeleteAccountRequest\x12\x17\n" +
-	"\x02id\x18\x01 \x01(\x04B\a\xbaH\x042\x02 \x00R\x02id\"\x17\n" +
+	"\x02id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\"\x17\n" +
 	"\x15DeleteAccountResponse2\xc6\x03\n" +
 	"\x0fAccountsService\x12_\n" +
 	"\fListAccounts\x12&.services.settings.ListAccountsRequest\x1a'.services.settings.ListAccountsResponse\x12b\n" +

@@ -149,7 +149,7 @@ func (x *ListQualificationsResponse) GetQualifications() []*qualifications.Quali
 
 type GetQualificationRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	QualificationId uint64                 `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
+	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	WithExam        *bool                  `protobuf:"varint,2,opt,name=with_exam,json=withExam,proto3,oneof" json:"with_exam,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
@@ -185,7 +185,7 @@ func (*GetQualificationRequest) Descriptor() ([]byte, []int) {
 	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetQualificationRequest) GetQualificationId() uint64 {
+func (x *GetQualificationRequest) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
 	}
@@ -289,7 +289,7 @@ func (x *CreateQualificationRequest) GetContentType() content.ContentType {
 
 type CreateQualificationResponse struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	QualificationId uint64                 `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
+	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -324,7 +324,7 @@ func (*CreateQualificationResponse) Descriptor() ([]byte, []int) {
 	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *CreateQualificationResponse) GetQualificationId() uint64 {
+func (x *CreateQualificationResponse) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
 	}
@@ -377,7 +377,7 @@ func (x *UpdateQualificationRequest) GetQualification() *qualifications.Qualific
 
 type UpdateQualificationResponse struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	QualificationId uint64                 `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
+	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -412,7 +412,7 @@ func (*UpdateQualificationResponse) Descriptor() ([]byte, []int) {
 	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *UpdateQualificationResponse) GetQualificationId() uint64 {
+func (x *UpdateQualificationResponse) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
 	}
@@ -421,7 +421,7 @@ func (x *UpdateQualificationResponse) GetQualificationId() uint64 {
 
 type DeleteQualificationRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	QualificationId uint64                 `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
+	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -456,7 +456,7 @@ func (*DeleteQualificationRequest) Descriptor() ([]byte, []int) {
 	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *DeleteQualificationRequest) GetQualificationId() uint64 {
+func (x *DeleteQualificationRequest) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
 	}
@@ -501,7 +501,7 @@ func (*DeleteQualificationResponse) Descriptor() ([]byte, []int) {
 
 type GetQualificationAccessRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	QualificationId uint64                 `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
+	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -536,7 +536,7 @@ func (*GetQualificationAccessRequest) Descriptor() ([]byte, []int) {
 	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *GetQualificationAccessRequest) GetQualificationId() uint64 {
+func (x *GetQualificationAccessRequest) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
 	}
@@ -589,7 +589,7 @@ func (x *GetQualificationAccessResponse) GetAccess() *qualifications.Qualificati
 
 type SetQualificationAccessRequest struct {
 	state           protoimpl.MessageState              `protogen:"open.v1"`
-	QualificationId uint64                              `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
+	QualificationId int64                               `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	Access          *qualifications.QualificationAccess `protobuf:"bytes,2,opt,name=access,proto3" json:"access,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
@@ -625,7 +625,7 @@ func (*SetQualificationAccessRequest) Descriptor() ([]byte, []int) {
 	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *SetQualificationAccessRequest) GetQualificationId() uint64 {
+func (x *SetQualificationAccessRequest) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
 	}
@@ -680,7 +680,7 @@ type ListQualificationRequestsRequest struct {
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
-	QualificationId *uint64                        `protobuf:"varint,3,opt,name=qualification_id,json=qualificationId,proto3,oneof" json:"qualification_id,omitempty"`
+	QualificationId *int64                         `protobuf:"varint,3,opt,name=qualification_id,json=qualificationId,proto3,oneof" json:"qualification_id,omitempty"`
 	Status          []qualifications.RequestStatus `protobuf:"varint,4,rep,packed,name=status,proto3,enum=resources.qualifications.RequestStatus" json:"status,omitempty"`
 	UserId          *int32                         `protobuf:"varint,5,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
 	unknownFields   protoimpl.UnknownFields
@@ -731,7 +731,7 @@ func (x *ListQualificationRequestsRequest) GetSort() *database.Sort {
 	return nil
 }
 
-func (x *ListQualificationRequestsRequest) GetQualificationId() uint64 {
+func (x *ListQualificationRequestsRequest) GetQualificationId() int64 {
 	if x != nil && x.QualificationId != nil {
 		return *x.QualificationId
 	}
@@ -894,7 +894,7 @@ func (x *CreateOrUpdateQualificationRequestResponse) GetRequest() *qualification
 
 type DeleteQualificationReqRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	QualificationId uint64                 `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
+	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	UserId          int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
@@ -930,7 +930,7 @@ func (*DeleteQualificationReqRequest) Descriptor() ([]byte, []int) {
 	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *DeleteQualificationReqRequest) GetQualificationId() uint64 {
+func (x *DeleteQualificationReqRequest) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
 	}
@@ -985,7 +985,7 @@ type ListQualificationsResultsRequest struct {
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
-	QualificationId *uint64                       `protobuf:"varint,3,opt,name=qualification_id,json=qualificationId,proto3,oneof" json:"qualification_id,omitempty"`
+	QualificationId *int64                        `protobuf:"varint,3,opt,name=qualification_id,json=qualificationId,proto3,oneof" json:"qualification_id,omitempty"`
 	Status          []qualifications.ResultStatus `protobuf:"varint,4,rep,packed,name=status,proto3,enum=resources.qualifications.ResultStatus" json:"status,omitempty"`
 	UserId          *int32                        `protobuf:"varint,5,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
 	unknownFields   protoimpl.UnknownFields
@@ -1036,7 +1036,7 @@ func (x *ListQualificationsResultsRequest) GetSort() *database.Sort {
 	return nil
 }
 
-func (x *ListQualificationsResultsRequest) GetQualificationId() uint64 {
+func (x *ListQualificationsResultsRequest) GetQualificationId() int64 {
 	if x != nil && x.QualificationId != nil {
 		return *x.QualificationId
 	}
@@ -1207,7 +1207,7 @@ func (x *CreateOrUpdateQualificationResultResponse) GetResult() *qualifications.
 
 type DeleteQualificationResultRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ResultId      uint64                 `protobuf:"varint,1,opt,name=result_id,json=resultId,proto3" json:"result_id,omitempty"`
+	ResultId      int64                  `protobuf:"varint,1,opt,name=result_id,json=resultId,proto3" json:"result_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1242,7 +1242,7 @@ func (*DeleteQualificationResultRequest) Descriptor() ([]byte, []int) {
 	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{24}
 }
 
-func (x *DeleteQualificationResultRequest) GetResultId() uint64 {
+func (x *DeleteQualificationResultRequest) GetResultId() int64 {
 	if x != nil {
 		return x.ResultId
 	}
@@ -1287,7 +1287,7 @@ func (*DeleteQualificationResultResponse) Descriptor() ([]byte, []int) {
 
 type GetExamInfoRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	QualificationId uint64                 `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
+	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -1322,7 +1322,7 @@ func (*GetExamInfoRequest) Descriptor() ([]byte, []int) {
 	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{26}
 }
 
-func (x *GetExamInfoRequest) GetQualificationId() uint64 {
+func (x *GetExamInfoRequest) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
 	}
@@ -1332,7 +1332,7 @@ func (x *GetExamInfoRequest) GetQualificationId() uint64 {
 type GetExamInfoResponse struct {
 	state         protoimpl.MessageState             `protogen:"open.v1"`
 	Qualification *qualifications.QualificationShort `protobuf:"bytes,1,opt,name=qualification,proto3" json:"qualification,omitempty"`
-	QuestionCount int32                              `protobuf:"varint,2,opt,name=question_count,json=questionCount,proto3" json:"question_count,omitempty"`
+	QuestionCount int64                              `protobuf:"varint,2,opt,name=question_count,json=questionCount,proto3" json:"question_count,omitempty"`
 	ExamUser      *qualifications.ExamUser           `protobuf:"bytes,3,opt,name=exam_user,json=examUser,proto3,oneof" json:"exam_user,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1375,7 +1375,7 @@ func (x *GetExamInfoResponse) GetQualification() *qualifications.QualificationSh
 	return nil
 }
 
-func (x *GetExamInfoResponse) GetQuestionCount() int32 {
+func (x *GetExamInfoResponse) GetQuestionCount() int64 {
 	if x != nil {
 		return x.QuestionCount
 	}
@@ -1391,7 +1391,7 @@ func (x *GetExamInfoResponse) GetExamUser() *qualifications.ExamUser {
 
 type TakeExamRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	QualificationId uint64                 `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
+	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	Cancel          *bool                  `protobuf:"varint,2,opt,name=cancel,proto3,oneof" json:"cancel,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
@@ -1427,7 +1427,7 @@ func (*TakeExamRequest) Descriptor() ([]byte, []int) {
 	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{28}
 }
 
-func (x *TakeExamRequest) GetQualificationId() uint64 {
+func (x *TakeExamRequest) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
 	}
@@ -1495,7 +1495,7 @@ func (x *TakeExamResponse) GetExamUser() *qualifications.ExamUser {
 
 type SubmitExamRequest struct {
 	state           protoimpl.MessageState        `protogen:"open.v1"`
-	QualificationId uint64                        `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
+	QualificationId int64                         `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	Responses       *qualifications.ExamResponses `protobuf:"bytes,2,opt,name=responses,proto3" json:"responses,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
@@ -1531,7 +1531,7 @@ func (*SubmitExamRequest) Descriptor() ([]byte, []int) {
 	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{30}
 }
 
-func (x *SubmitExamRequest) GetQualificationId() uint64 {
+func (x *SubmitExamRequest) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
 	}
@@ -1591,7 +1591,7 @@ func (x *SubmitExamResponse) GetDuration() *durationpb.Duration {
 
 type GetUserExamRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	QualificationId uint64                 `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
+	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	UserId          int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
@@ -1627,7 +1627,7 @@ func (*GetUserExamRequest) Descriptor() ([]byte, []int) {
 	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{32}
 }
 
-func (x *GetUserExamRequest) GetQualificationId() uint64 {
+func (x *GetUserExamRequest) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
 	}
@@ -1730,7 +1730,7 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"pagination\x12O\n" +
 	"\x0equalifications\x18\x02 \x03(\v2'.resources.qualifications.QualificationR\x0equalifications\"t\n" +
 	"\x17GetQualificationRequest\x12)\n" +
-	"\x10qualification_id\x18\x01 \x01(\x04R\x0fqualificationId\x12 \n" +
+	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x12 \n" +
 	"\twith_exam\x18\x02 \x01(\bH\x00R\bwithExam\x88\x01\x01B\f\n" +
 	"\n" +
 	"_with_exam\"i\n" +
@@ -1739,20 +1739,20 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"\x1aCreateQualificationRequest\x12R\n" +
 	"\fcontent_type\x18\x01 \x01(\x0e2%.resources.common.content.ContentTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\vcontentType\"H\n" +
 	"\x1bCreateQualificationResponse\x12)\n" +
-	"\x10qualification_id\x18\x01 \x01(\x04R\x0fqualificationId\"s\n" +
+	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\"s\n" +
 	"\x1aUpdateQualificationRequest\x12U\n" +
 	"\rqualification\x18\x01 \x01(\v2'.resources.qualifications.QualificationB\x06\xbaH\x03\xc8\x01\x01R\rqualification\"H\n" +
 	"\x1bUpdateQualificationResponse\x12)\n" +
-	"\x10qualification_id\x18\x01 \x01(\x04R\x0fqualificationId\"G\n" +
+	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\"G\n" +
 	"\x1aDeleteQualificationRequest\x12)\n" +
-	"\x10qualification_id\x18\x01 \x01(\x04R\x0fqualificationId\"\x1d\n" +
+	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\"\x1d\n" +
 	"\x1bDeleteQualificationResponse\"J\n" +
 	"\x1dGetQualificationAccessRequest\x12)\n" +
-	"\x10qualification_id\x18\x01 \x01(\x04R\x0fqualificationId\"o\n" +
+	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\"o\n" +
 	"\x1eGetQualificationAccessResponse\x12M\n" +
 	"\x06access\x18\x01 \x01(\v2-.resources.qualifications.QualificationAccessB\x06\xbaH\x03\xc8\x01\x01R\x06access\"\x99\x01\n" +
 	"\x1dSetQualificationAccessRequest\x12)\n" +
-	"\x10qualification_id\x18\x01 \x01(\x04R\x0fqualificationId\x12M\n" +
+	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x12M\n" +
 	"\x06access\x18\x02 \x01(\v2-.resources.qualifications.QualificationAccessB\x06\xbaH\x03\xc8\x01\x01R\x06access\" \n" +
 	"\x1eSetQualificationAccessResponse\"\xf4\x02\n" +
 	" ListQualificationRequestsRequest\x12T\n" +
@@ -1760,7 +1760,7 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x128\n" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12.\n" +
-	"\x10qualification_id\x18\x03 \x01(\x04H\x01R\x0fqualificationId\x88\x01\x01\x12?\n" +
+	"\x10qualification_id\x18\x03 \x01(\x03H\x01R\x0fqualificationId\x88\x01\x01\x12?\n" +
 	"\x06status\x18\x04 \x03(\x0e2'.resources.qualifications.RequestStatusR\x06status\x12%\n" +
 	"\auser_id\x18\x05 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00H\x02R\x06userId\x88\x01\x01B\a\n" +
 	"\x05_sortB\x13\n" +
@@ -1777,7 +1777,7 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"*CreateOrUpdateQualificationRequestResponse\x12H\n" +
 	"\arequest\x18\x01 \x01(\v2..resources.qualifications.QualificationRequestR\arequest\"l\n" +
 	"\x1dDeleteQualificationReqRequest\x12)\n" +
-	"\x10qualification_id\x18\x01 \x01(\x04R\x0fqualificationId\x12 \n" +
+	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x12 \n" +
 	"\auser_id\x18\x02 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x06userId\" \n" +
 	"\x1eDeleteQualificationReqResponse\"\xf3\x02\n" +
 	" ListQualificationsResultsRequest\x12T\n" +
@@ -1785,7 +1785,7 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x128\n" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12.\n" +
-	"\x10qualification_id\x18\x03 \x01(\x04H\x01R\x0fqualificationId\x88\x01\x01\x12>\n" +
+	"\x10qualification_id\x18\x03 \x01(\x03H\x01R\x0fqualificationId\x88\x01\x01\x12>\n" +
 	"\x06status\x18\x04 \x03(\x0e2&.resources.qualifications.ResultStatusR\x06status\x12%\n" +
 	"\auser_id\x18\x05 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00H\x02R\x06userId\x88\x01\x01B\a\n" +
 	"\x05_sortB\x13\n" +
@@ -1805,30 +1805,30 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	")CreateOrUpdateQualificationResultResponse\x12E\n" +
 	"\x06result\x18\x01 \x01(\v2-.resources.qualifications.QualificationResultR\x06result\"?\n" +
 	" DeleteQualificationResultRequest\x12\x1b\n" +
-	"\tresult_id\x18\x01 \x01(\x04R\bresultId\"#\n" +
+	"\tresult_id\x18\x01 \x01(\x03R\bresultId\"#\n" +
 	"!DeleteQualificationResultResponse\"?\n" +
 	"\x12GetExamInfoRequest\x12)\n" +
-	"\x10qualification_id\x18\x01 \x01(\x04R\x0fqualificationId\"\xe4\x01\n" +
+	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\"\xe4\x01\n" +
 	"\x13GetExamInfoResponse\x12R\n" +
 	"\rqualification\x18\x01 \x01(\v2,.resources.qualifications.QualificationShortR\rqualification\x12%\n" +
-	"\x0equestion_count\x18\x02 \x01(\x05R\rquestionCount\x12D\n" +
+	"\x0equestion_count\x18\x02 \x01(\x03R\rquestionCount\x12D\n" +
 	"\texam_user\x18\x03 \x01(\v2\".resources.qualifications.ExamUserH\x00R\bexamUser\x88\x01\x01B\f\n" +
 	"\n" +
 	"_exam_user\"d\n" +
 	"\x0fTakeExamRequest\x12)\n" +
-	"\x10qualification_id\x18\x01 \x01(\x04R\x0fqualificationId\x12\x1b\n" +
+	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x12\x1b\n" +
 	"\x06cancel\x18\x02 \x01(\bH\x00R\x06cancel\x88\x01\x01B\t\n" +
 	"\a_cancel\"\x90\x01\n" +
 	"\x10TakeExamResponse\x12;\n" +
 	"\x04exam\x18\x01 \x01(\v2'.resources.qualifications.ExamQuestionsR\x04exam\x12?\n" +
 	"\texam_user\x18\x02 \x01(\v2\".resources.qualifications.ExamUserR\bexamUser\"\x85\x01\n" +
 	"\x11SubmitExamRequest\x12)\n" +
-	"\x10qualification_id\x18\x01 \x01(\x04R\x0fqualificationId\x12E\n" +
+	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x12E\n" +
 	"\tresponses\x18\x02 \x01(\v2'.resources.qualifications.ExamResponsesR\tresponses\"K\n" +
 	"\x12SubmitExamResponse\x125\n" +
 	"\bduration\x18\x01 \x01(\v2\x19.google.protobuf.DurationR\bduration\"a\n" +
 	"\x12GetUserExamRequest\x12)\n" +
-	"\x10qualification_id\x18\x01 \x01(\x04R\x0fqualificationId\x12 \n" +
+	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x12 \n" +
 	"\auser_id\x18\x02 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x06userId\"\x9b\x02\n" +
 	"\x13GetUserExamResponse\x12;\n" +
 	"\x04exam\x18\x01 \x01(\v2'.resources.qualifications.ExamQuestionsR\x04exam\x12?\n" +

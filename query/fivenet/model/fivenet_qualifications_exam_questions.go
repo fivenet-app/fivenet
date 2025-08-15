@@ -12,8 +12,8 @@ import (
 )
 
 type FivenetQualificationsExamQuestions struct {
-	ID              uint64     `sql:"primary_key" json:"id"`
-	QualificationID uint64     `json:"qualification_id"`
+	ID              int64      `sql:"primary_key" json:"id"`
+	QualificationID int64      `json:"qualification_id"`
 	CreatedAt       *time.Time `json:"created_at"`
 	UpdatedAt       *time.Time `json:"updated_at"`
 	Title           string     `json:"title"`

@@ -20,7 +20,7 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface Unit {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -95,7 +95,7 @@ export interface Unit {
  */
 export interface UnitAssignments {
     /**
-     * @generated from protobuf field: uint64 unit_id = 1
+     * @generated from protobuf field: int64 unit_id = 1
      */
     unitId: number;
     /**
@@ -112,7 +112,7 @@ export interface UnitAssignments {
  */
 export interface UnitAssignment {
     /**
-     * @generated from protobuf field: uint64 unit_id = 1
+     * @generated from protobuf field: int64 unit_id = 1
      */
     unitId: number;
     /**
@@ -129,7 +129,7 @@ export interface UnitAssignment {
  */
 export interface UnitStatus {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -137,7 +137,7 @@ export interface UnitStatus {
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 unit_id = 3
+     * @generated from protobuf field: int64 unit_id = 3
      */
     unitId: number;
     /**
@@ -236,7 +236,7 @@ export enum StatusUnit {
 class Unit$Type extends MessageType<Unit> {
     constructor() {
         super("resources.centrum.Unit", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
@@ -270,8 +270,8 @@ class Unit$Type extends MessageType<Unit> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -327,9 +327,9 @@ class Unit$Type extends MessageType<Unit> {
         return message;
     }
     internalBinaryWrite(message: Unit, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
@@ -386,7 +386,7 @@ export const Unit = new Unit$Type();
 class UnitAssignments$Type extends MessageType<UnitAssignments> {
     constructor() {
         super("resources.centrum.UnitAssignments", [
-            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "unit_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 3, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UnitAssignment }
         ]);
@@ -405,8 +405,8 @@ class UnitAssignments$Type extends MessageType<UnitAssignments> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 unit_id */ 1:
-                    message.unitId = reader.uint64().toNumber();
+                case /* int64 unit_id */ 1:
+                    message.unitId = reader.int64().toNumber();
                     break;
                 case /* string job */ 2:
                     message.job = reader.string();
@@ -426,9 +426,9 @@ class UnitAssignments$Type extends MessageType<UnitAssignments> {
         return message;
     }
     internalBinaryWrite(message: UnitAssignments, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 unit_id = 1; */
+        /* int64 unit_id = 1; */
         if (message.unitId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.unitId);
+            writer.tag(1, WireType.Varint).int64(message.unitId);
         /* string job = 2; */
         if (message.job !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.job);
@@ -449,7 +449,7 @@ export const UnitAssignments = new UnitAssignments$Type();
 class UnitAssignment$Type extends MessageType<UnitAssignment> {
     constructor() {
         super("resources.centrum.UnitAssignment", [
-            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"unit_id\"" } },
+            { no: 1, name: "unit_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"unit_id\"" } },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } }, "tagger.tags": "sql:\"primary_key\" alias:\"user_id\"" } },
             { no: 3, name: "user", kind: "message", T: () => Colleague }
         ]);
@@ -467,8 +467,8 @@ class UnitAssignment$Type extends MessageType<UnitAssignment> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 unit_id */ 1:
-                    message.unitId = reader.uint64().toNumber();
+                case /* int64 unit_id */ 1:
+                    message.unitId = reader.int64().toNumber();
                     break;
                 case /* int32 user_id */ 2:
                     message.userId = reader.int32();
@@ -488,9 +488,9 @@ class UnitAssignment$Type extends MessageType<UnitAssignment> {
         return message;
     }
     internalBinaryWrite(message: UnitAssignment, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 unit_id = 1; */
+        /* int64 unit_id = 1; */
         if (message.unitId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.unitId);
+            writer.tag(1, WireType.Varint).int64(message.unitId);
         /* int32 user_id = 2; */
         if (message.userId !== 0)
             writer.tag(2, WireType.Varint).int32(message.userId);
@@ -511,9 +511,9 @@ export const UnitAssignment = new UnitAssignment$Type();
 class UnitStatus$Type extends MessageType<UnitStatus> {
     constructor() {
         super("resources.centrum.UnitStatus", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "unit_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "unit", kind: "message", T: () => Unit },
             { no: 5, name: "status", kind: "enum", T: () => ["resources.centrum.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 6, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
@@ -542,14 +542,14 @@ class UnitStatus$Type extends MessageType<UnitStatus> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* uint64 unit_id */ 3:
-                    message.unitId = reader.uint64().toNumber();
+                case /* int64 unit_id */ 3:
+                    message.unitId = reader.int64().toNumber();
                     break;
                 case /* optional resources.centrum.Unit unit */ 4:
                     message.unit = Unit.internalBinaryRead(reader, reader.uint32(), options, message.unit);
@@ -599,15 +599,15 @@ class UnitStatus$Type extends MessageType<UnitStatus> {
         return message;
     }
     internalBinaryWrite(message: UnitStatus, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 unit_id = 3; */
+        /* int64 unit_id = 3; */
         if (message.unitId !== 0)
-            writer.tag(3, WireType.Varint).uint64(message.unitId);
+            writer.tag(3, WireType.Varint).int64(message.unitId);
         /* optional resources.centrum.Unit unit = 4; */
         if (message.unit)
             Unit.internalBinaryWrite(message.unit, writer.tag(4, WireType.LengthDelimited).fork(), options).join();

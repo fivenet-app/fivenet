@@ -17,7 +17,7 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface LawBook {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -50,7 +50,7 @@ export interface LawBook {
  */
 export interface Law {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -62,7 +62,7 @@ export interface Law {
      */
     updatedAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 lawbook_id = 4
+     * @generated from protobuf field: int64 lawbook_id = 4
      */
     lawbookId: number;
     /**
@@ -100,7 +100,7 @@ export interface Law {
 class LawBook$Type extends MessageType<LawBook> {
     constructor() {
         super("resources.laws.LawBook", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "128" } } } },
@@ -122,8 +122,8 @@ class LawBook$Type extends MessageType<LawBook> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -152,9 +152,9 @@ class LawBook$Type extends MessageType<LawBook> {
         return message;
     }
     internalBinaryWrite(message: LawBook, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
@@ -184,10 +184,10 @@ export const LawBook = new LawBook$Type();
 class Law$Type extends MessageType<Law> {
     constructor() {
         super("resources.laws.Law", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"law.id\"" } },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"law.id\"" } },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "lawbook_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "lawbook_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "128" } } } },
             { no: 6, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "1024" } } } },
             { no: 7, name: "hint", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } } } },
@@ -210,8 +210,8 @@ class Law$Type extends MessageType<Law> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -219,8 +219,8 @@ class Law$Type extends MessageType<Law> {
                 case /* optional resources.timestamp.Timestamp updated_at */ 3:
                     message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
                     break;
-                case /* uint64 lawbook_id */ 4:
-                    message.lawbookId = reader.uint64().toNumber();
+                case /* int64 lawbook_id */ 4:
+                    message.lawbookId = reader.int64().toNumber();
                     break;
                 case /* string name */ 5:
                     message.name = reader.string();
@@ -252,18 +252,18 @@ class Law$Type extends MessageType<Law> {
         return message;
     }
     internalBinaryWrite(message: Law, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* optional resources.timestamp.Timestamp updated_at = 3; */
         if (message.updatedAt)
             Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 lawbook_id = 4; */
+        /* int64 lawbook_id = 4; */
         if (message.lawbookId !== 0)
-            writer.tag(4, WireType.Varint).uint64(message.lawbookId);
+            writer.tag(4, WireType.Varint).int64(message.lawbookId);
         /* string name = 5; */
         if (message.name !== "")
             writer.tag(5, WireType.LengthDelimited).string(message.name);

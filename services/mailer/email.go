@@ -253,11 +253,11 @@ func (s *Server) getEmailByCondition(
 
 func (s *Server) getEmail(
 	ctx context.Context,
-	emailId uint64,
+	emailId int64,
 	withAccess bool,
 	withSettings bool,
 ) (*mailer.Email, error) {
-	email, err := s.getEmailByCondition(ctx, s.db, tEmails.ID.EQ(jet.Uint64(emailId)))
+	email, err := s.getEmailByCondition(ctx, s.db, tEmails.ID.EQ(jet.Int64(emailId)))
 	if err != nil {
 		return nil, err
 	}
@@ -324,7 +324,7 @@ func (s *Server) GetEmail(
 	}, nil
 }
 
-func (s *Server) getEmailAccess(ctx context.Context, emailId uint64) (*mailer.Access, error) {
+func (s *Server) getEmailAccess(ctx context.Context, emailId int64) (*mailer.Access, error) {
 	access := &mailer.Access{}
 
 	jobsAccess, err := s.access.Jobs.List(ctx, s.db, emailId)
@@ -472,7 +472,7 @@ func (s *Server) CreateOrUpdateEmail(
 			)
 		}
 
-		condition := tEmails.ID.EQ(jet.Uint64(req.GetEmail().GetId()))
+		condition := tEmails.ID.EQ(jet.Int64(req.GetEmail().GetId()))
 		if req.Email.Job != nil {
 			condition = condition.AND(tEmails.Job.EQ(jet.String(userInfo.GetJob())))
 		} else {
@@ -486,7 +486,7 @@ func (s *Server) CreateOrUpdateEmail(
 				sets[1:]...,
 			).
 			WHERE(jet.AND(
-				tEmails.ID.EQ(jet.Uint64(req.GetEmail().GetId())),
+				tEmails.ID.EQ(jet.Int64(req.GetEmail().GetId())),
 				condition,
 			))
 
@@ -555,7 +555,7 @@ func (s *Server) createEmail(
 	tx qrm.DB,
 	email *mailer.Email,
 	userInfo *userinfo.UserInfo,
-) (uint64, error) {
+) (int64, error) {
 	tEmails := table.FivenetMailerEmails
 	stmt := tEmails.
 		INSERT(
@@ -606,7 +606,7 @@ func (s *Server) createEmail(
 		}
 	}
 
-	return uint64(lastId), nil
+	return lastId, nil
 }
 
 func (s *Server) DeleteEmail(
@@ -667,7 +667,7 @@ func (s *Server) DeleteEmail(
 			tEmails.DeletedAt.SET(deletedAtTime),
 		).
 		WHERE(jet.AND(
-			tEmails.ID.EQ(jet.Uint64(req.GetId())),
+			tEmails.ID.EQ(jet.Int64(req.GetId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

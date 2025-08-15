@@ -9,7 +9,7 @@ import "tagger/tagger.proto";
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/laws;laws";
 
 message LawBook {
-  uint64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
+  int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   // @sanitize
@@ -23,10 +23,10 @@ message LawBook {
 }
 
 message Law {
-  uint64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"law.id\""];
+  int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"law.id\""];
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
-  uint64 lawbook_id = 4;
+  int64 lawbook_id = 4;
   // @sanitize
   string name = 5 [(buf.validate.field).string = {
     min_len: 3

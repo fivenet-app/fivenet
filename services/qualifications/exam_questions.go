@@ -17,7 +17,7 @@ import (
 func (s *Server) getExamQuestions(
 	ctx context.Context,
 	tx qrm.DB,
-	qualificationId uint64,
+	qualificationId int64,
 	withAnswers bool,
 ) (*qualifications.ExamQuestions, error) {
 	columns := []jet.Projection{
@@ -41,7 +41,7 @@ func (s *Server) getExamQuestions(
 		).
 		FROM(tExamQuestions).
 		WHERE(jet.AND(
-			tExamQuestions.QualificationID.EQ(jet.Uint64(qualificationId)),
+			tExamQuestions.QualificationID.EQ(jet.Int64(qualificationId)),
 		)).
 		ORDER_BY(tExamQuestions.Order.ASC()).
 		LIMIT(100)
@@ -56,14 +56,14 @@ func (s *Server) getExamQuestions(
 	return &dest, nil
 }
 
-func (s *Server) countExamQuestions(ctx context.Context, qualificationid uint64) (int32, error) {
+func (s *Server) countExamQuestions(ctx context.Context, qualificationid int64) (int64, error) {
 	stmt := tExamQuestions.
 		SELECT(
 			jet.COUNT(jet.DISTINCT(tExamQuestions.ID)).AS("data_count.total"),
 		).
 		FROM(tExamQuestions).
 		WHERE(
-			tExamQuestions.QualificationID.EQ(jet.Uint64(qualificationid)),
+			tExamQuestions.QualificationID.EQ(jet.Int64(qualificationid)),
 		)
 
 	var count database.DataCount
@@ -71,13 +71,13 @@ func (s *Server) countExamQuestions(ctx context.Context, qualificationid uint64)
 		return 0, err
 	}
 
-	return int32(count.Total), nil
+	return count.Total, nil
 }
 
 func (s *Server) handleExamQuestionsChanges(
 	ctx context.Context,
 	tx *sql.Tx,
-	qualificationId uint64,
+	qualificationId int64,
 	questions *qualifications.ExamQuestions,
 ) ([]*file.File, error) {
 	files := []*file.File{}
@@ -87,7 +87,7 @@ func (s *Server) handleExamQuestionsChanges(
 	if len(questions.GetQuestions()) == 0 {
 		stmt := tExamQuestions.
 			DELETE().
-			WHERE(tExamQuestions.QualificationID.EQ(jet.Uint64(qualificationId))).
+			WHERE(tExamQuestions.QualificationID.EQ(jet.Int64(qualificationId))).
 			LIMIT(100)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -176,8 +176,8 @@ func (s *Server) handleExamQuestionsChanges(
 				question.GetOrder(),
 			).
 			WHERE(jet.AND(
-				tExamQuestions.ID.EQ(jet.Uint64(question.GetId())),
-				tExamQuestions.QualificationID.EQ(jet.Uint64(qualificationId)),
+				tExamQuestions.ID.EQ(jet.Int64(question.GetId())),
+				tExamQuestions.QualificationID.EQ(jet.Int64(qualificationId)),
 			))
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -188,14 +188,14 @@ func (s *Server) handleExamQuestionsChanges(
 	if len(toDelete) > 0 {
 		questionIds := []jet.Expression{}
 		for _, question := range toDelete {
-			questionIds = append(questionIds, jet.Uint64(question.GetId()))
+			questionIds = append(questionIds, jet.Int64(question.GetId()))
 		}
 
 		stmt := tExamQuestions.
 			DELETE().
 			WHERE(jet.AND(
 				tExamQuestions.ID.IN(questionIds...),
-				tExamQuestions.QualificationID.EQ(jet.Uint64(qualificationId)),
+				tExamQuestions.QualificationID.EQ(jet.Int64(qualificationId)),
 			))
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -254,7 +254,7 @@ type examResponses struct {
 
 func (s *Server) getExamResponses(
 	ctx context.Context,
-	qualificationId uint64,
+	qualificationId int64,
 	userId int32,
 ) (*qualifications.ExamResponses, *qualifications.ExamGrading, error) {
 	tExamResponses := tExamResponses.AS("examresponses")
@@ -267,7 +267,7 @@ func (s *Server) getExamResponses(
 		).
 		FROM(tExamResponses).
 		WHERE(jet.AND(
-			tExamResponses.QualificationID.EQ(jet.Uint64(qualificationId)),
+			tExamResponses.QualificationID.EQ(jet.Int64(qualificationId)),
 			tExamResponses.UserID.EQ(jet.Int32(userId)),
 		)).
 		LIMIT(1)

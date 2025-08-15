@@ -122,7 +122,7 @@ func (s *Server) MarkNotifications(
 	if len(req.GetIds()) > 0 {
 		ids := make([]jet.Expression, len(req.GetIds()))
 		for i := range req.GetIds() {
-			ids[i] = jet.Uint64(req.GetIds()[i])
+			ids[i] = jet.Int64(req.GetIds()[i])
 		}
 		condition = condition.AND(tNotifications.ID.IN(ids...))
 	} else if req.All == nil || !req.GetAll() {
@@ -171,7 +171,7 @@ func (s *Server) MarkNotifications(
 	}
 
 	return &pbnotifications.MarkNotificationsResponse{
-		Updated: uint64(affected),
+		Updated: affected,
 	}, nil
 }
 

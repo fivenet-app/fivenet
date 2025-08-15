@@ -27,7 +27,7 @@ var ignoredGuardPermissions = []string{}
 
 func (s *Server) ensureUserCanAccessRole(
 	ctx context.Context,
-	roleId uint64,
+	roleId int64,
 ) (*permissions.Role, bool, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -98,8 +98,8 @@ outer:
 func (s *Server) filterPermissionIDs(
 	ctx context.Context,
 	job string,
-	ids []uint64,
-) ([]uint64, error) {
+	ids []int64,
+) ([]int64, error) {
 	if len(ids) == 0 {
 		return ids, nil
 	}
@@ -114,7 +114,7 @@ func (s *Server) filterPermissionIDs(
 		return nil, err
 	}
 
-	permIds := make([]uint64, len(filtered))
+	permIds := make([]int64, len(filtered))
 	for i := range filtered {
 		permIds[i] = filtered[i].GetId()
 	}
@@ -380,7 +380,7 @@ func (s *Server) handlPermissionsUpdate(
 	role *permissions.Role,
 	permsUpdate *settings.PermsUpdate,
 ) error {
-	updatePermIds := make([]uint64, len(permsUpdate.GetToUpdate()))
+	updatePermIds := make([]int64, len(permsUpdate.GetToUpdate()))
 	for i := range permsUpdate.GetToUpdate() {
 		updatePermIds[i] = permsUpdate.GetToUpdate()[i].GetId()
 	}
@@ -389,7 +389,7 @@ func (s *Server) handlPermissionsUpdate(
 		return err
 	}
 
-	removePermIds := make([]uint64, len(permsUpdate.GetToRemove()))
+	removePermIds := make([]int64, len(permsUpdate.GetToRemove()))
 	for i := range permsUpdate.GetToRemove() {
 		removePermIds[i] = permsUpdate.GetToUpdate()[i].GetId()
 	}
@@ -398,7 +398,7 @@ func (s *Server) handlPermissionsUpdate(
 		return err
 	}
 
-	permsToRemove := []uint64{}
+	permsToRemove := []int64{}
 	if len(toUpdate) > 0 {
 		toUpdatePerms := make([]perms.AddPerm, len(permsUpdate.GetToUpdate()))
 		for _, v := range toUpdate {

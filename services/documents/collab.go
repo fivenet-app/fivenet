@@ -47,7 +47,7 @@ func (s *Server) JoinRoom(srv pbdocuments.CollabService_JoinRoomServer) error {
 	}
 
 	doc, err := s.getDocument(ctx,
-		tDocument.ID.EQ(jet.Uint64(docId)),
+		tDocument.ID.EQ(jet.Int64(docId)),
 		userInfo, true)
 	if err != nil {
 		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

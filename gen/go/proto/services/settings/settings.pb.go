@@ -287,7 +287,7 @@ func (x *GetRolesResponse) GetRoles() []*permissions.Role {
 
 type GetRoleRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -322,7 +322,7 @@ func (*GetRoleRequest) Descriptor() ([]byte, []int) {
 	return file_services_settings_settings_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *GetRoleRequest) GetId() uint64 {
+func (x *GetRoleRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -471,7 +471,7 @@ func (x *CreateRoleResponse) GetRole() *permissions.Role {
 
 type DeleteRoleRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -506,7 +506,7 @@ func (*DeleteRoleRequest) Descriptor() ([]byte, []int) {
 	return file_services_settings_settings_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *DeleteRoleRequest) GetId() uint64 {
+func (x *DeleteRoleRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -551,7 +551,7 @@ func (*DeleteRoleResponse) Descriptor() ([]byte, []int) {
 
 type UpdateRolePermsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Perms         *settings.PermsUpdate  `protobuf:"bytes,2,opt,name=perms,proto3,oneof" json:"perms,omitempty"`
 	Attrs         *settings.AttrsUpdate  `protobuf:"bytes,3,opt,name=attrs,proto3,oneof" json:"attrs,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -588,7 +588,7 @@ func (*UpdateRolePermsRequest) Descriptor() ([]byte, []int) {
 	return file_services_settings_settings_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *UpdateRolePermsRequest) GetId() uint64 {
+func (x *UpdateRolePermsRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -647,7 +647,7 @@ func (*UpdateRolePermsResponse) Descriptor() ([]byte, []int) {
 
 type GetPermissionsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	RoleId        uint64                 `protobuf:"varint,1,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
+	RoleId        int64                  `protobuf:"varint,1,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -682,7 +682,7 @@ func (*GetPermissionsRequest) Descriptor() ([]byte, []int) {
 	return file_services_settings_settings_proto_rawDescGZIP(), []int{14}
 }
 
-func (x *GetPermissionsRequest) GetRoleId() uint64 {
+func (x *GetPermissionsRequest) GetRoleId() int64 {
 	if x != nil {
 		return x.RoleId
 	}
@@ -743,7 +743,7 @@ func (x *GetPermissionsResponse) GetAttributes() []*permissions.RoleAttribute {
 
 type GetEffectivePermissionsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	RoleId        uint64                 `protobuf:"varint,1,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
+	RoleId        int64                  `protobuf:"varint,1,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -778,7 +778,7 @@ func (*GetEffectivePermissionsRequest) Descriptor() ([]byte, []int) {
 	return file_services_settings_settings_proto_rawDescGZIP(), []int{16}
 }
 
-func (x *GetEffectivePermissionsRequest) GetRoleId() uint64 {
+func (x *GetEffectivePermissionsRequest) GetRoleId() int64 {
 	if x != nil {
 		return x.RoleId
 	}
@@ -1259,7 +1259,7 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\x10GetRolesResponse\x121\n" +
 	"\x05roles\x18\x01 \x03(\v2\x1b.resources.permissions.RoleR\x05roles\" \n" +
 	"\x0eGetRoleRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"B\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"B\n" +
 	"\x0fGetRoleResponse\x12/\n" +
 	"\x04role\x18\x01 \x01(\v2\x1b.resources.permissions.RoleR\x04role\"M\n" +
 	"\x11CreateRoleRequest\x12\x19\n" +
@@ -1268,24 +1268,24 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\x12CreateRoleResponse\x12/\n" +
 	"\x04role\x18\x01 \x01(\v2\x1b.resources.permissions.RoleR\x04role\"#\n" +
 	"\x11DeleteRoleRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"\x14\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\x14\n" +
 	"\x12DeleteRoleResponse\"\xb4\x01\n" +
 	"\x16UpdateRolePermsRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12:\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12:\n" +
 	"\x05perms\x18\x02 \x01(\v2\x1f.resources.settings.PermsUpdateH\x00R\x05perms\x88\x01\x01\x12:\n" +
 	"\x05attrs\x18\x03 \x01(\v2\x1f.resources.settings.AttrsUpdateH\x01R\x05attrs\x88\x01\x01B\b\n" +
 	"\x06_permsB\b\n" +
 	"\x06_attrs\"\x19\n" +
 	"\x17UpdateRolePermsResponse\"0\n" +
 	"\x15GetPermissionsRequest\x12\x17\n" +
-	"\arole_id\x18\x01 \x01(\x04R\x06roleId\"\xa3\x01\n" +
+	"\arole_id\x18\x01 \x01(\x03R\x06roleId\"\xa3\x01\n" +
 	"\x16GetPermissionsResponse\x12C\n" +
 	"\vpermissions\x18\x01 \x03(\v2!.resources.permissions.PermissionR\vpermissions\x12D\n" +
 	"\n" +
 	"attributes\x18\x02 \x03(\v2$.resources.permissions.RoleAttributeR\n" +
 	"attributes\"9\n" +
 	"\x1eGetEffectivePermissionsRequest\x12\x17\n" +
-	"\arole_id\x18\x01 \x01(\x04R\x06roleId\"\xdd\x01\n" +
+	"\arole_id\x18\x01 \x01(\x03R\x06roleId\"\xdd\x01\n" +
 	"\x1fGetEffectivePermissionsResponse\x12/\n" +
 	"\x04role\x18\x01 \x01(\v2\x1b.resources.permissions.RoleR\x04role\x12C\n" +
 	"\vpermissions\x18\x02 \x03(\v2!.resources.permissions.PermissionR\vpermissions\x12D\n" +

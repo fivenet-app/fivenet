@@ -26,10 +26,10 @@ const (
 
 type DocRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	Id              uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt       *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	DocumentId      uint64                 `protobuf:"varint,4,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	DocumentId      int64                  `protobuf:"varint,4,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	RequestType     DocActivityType        `protobuf:"varint,5,opt,name=request_type,json=requestType,proto3,enum=resources.documents.DocActivityType" json:"request_type,omitempty"`
 	CreatorId       *int32                 `protobuf:"varint,6,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
 	Creator         *users.UserShort       `protobuf:"bytes,7,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
@@ -72,7 +72,7 @@ func (*DocRequest) Descriptor() ([]byte, []int) {
 	return file_resources_documents_requests_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *DocRequest) GetId() uint64 {
+func (x *DocRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -93,7 +93,7 @@ func (x *DocRequest) GetUpdatedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *DocRequest) GetDocumentId() uint64 {
+func (x *DocRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
 	}
@@ -163,12 +163,12 @@ const file_resources_documents_requests_proto_rawDesc = "" +
 	"\"resources/documents/requests.proto\x12\x13resources.documents\x1a\"resources/documents/activity.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xc5\x05\n" +
 	"\n" +
 	"DocRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12=\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12=\n" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\tupdatedAt\x12\x1f\n" +
-	"\vdocument_id\x18\x04 \x01(\x04R\n" +
+	"\vdocument_id\x18\x04 \x01(\x03R\n" +
 	"documentId\x12[\n" +
 	"\frequest_type\x18\x05 \x01(\x0e2$.resources.documents.DocActivityTypeB\x12\xbaH\x0f\x82\x01\f\x18\r\x18\x0e\x18\x0f\x18\x10\x18\x11\x18\x12R\vrequestType\x12+\n" +
 	"\n" +

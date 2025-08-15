@@ -81,7 +81,7 @@ func (AdType) EnumDescriptor() ([]byte, []int) {
 
 type Ad struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
@@ -132,7 +132,7 @@ func (*Ad) Descriptor() ([]byte, []int) {
 	return file_resources_internet_ads_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Ad) GetId() uint64 {
+func (x *Ad) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -243,7 +243,7 @@ const file_resources_internet_ads_proto_rawDesc = "" +
 	"\n" +
 	"\x1cresources/internet/ads.proto\x12\x12resources.internet\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xf4\x06\n" +
 	"\x02Ad\x121\n" +
-	"\x02id\x18\x01 \x01(\x04B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12=\n" +
+	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12=\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
 	"\n" +

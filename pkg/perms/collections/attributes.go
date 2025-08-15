@@ -16,9 +16,9 @@ func (u Attributes) Len() int64 {
 
 // IDs returns an array of the attribute array's ids.
 //
-//	@return	[]uint64
-func (u Attributes) IDs() []uint64 {
-	ids := make([]uint64, 0, len(u))
+//	@return	[]int64
+func (u Attributes) IDs() []int64 {
+	ids := make([]int64, 0, len(u))
 	for _, attribute := range u {
 		ids = append(ids, attribute.GetAttrId())
 	}

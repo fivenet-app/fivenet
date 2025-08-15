@@ -13,14 +13,14 @@ import (
 )
 
 type canAccessIdsHelper struct {
-	IDs []uint64 `alias:"id"`
+	IDs []int64 `alias:"id"`
 }
 
 func (s *Server) checkIfEmailPartOfThread(
 	ctx context.Context,
 	userInfo *userinfo.UserInfo,
-	threadId uint64,
-	emailId uint64,
+	threadId int64,
+	emailId int64,
 	accessLevel mailer.AccessLevel,
 ) error {
 	check, err := s.access.CanUserAccessTarget(ctx, emailId, userInfo, accessLevel)
@@ -43,8 +43,8 @@ func (s *Server) checkIfEmailPartOfThread(
 
 func (s *Server) checkIfEmailIdPartOfThread(
 	ctx context.Context,
-	threadId uint64,
-	emailId uint64,
+	threadId int64,
+	emailId int64,
 ) (bool, error) {
 	stmt := tThreadsRecipients.
 		SELECT(
@@ -52,8 +52,8 @@ func (s *Server) checkIfEmailIdPartOfThread(
 		).
 		FROM(tThreadsRecipients).
 		WHERE(jet.AND(
-			tThreadsRecipients.ThreadID.EQ(jet.Uint64(threadId)),
-			tThreadsRecipients.EmailID.EQ(jet.Uint64(emailId)),
+			tThreadsRecipients.ThreadID.EQ(jet.Int64(threadId)),
+			tThreadsRecipients.EmailID.EQ(jet.Int64(emailId)),
 		))
 
 	dest := &canAccessIdsHelper{}

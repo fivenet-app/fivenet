@@ -26,7 +26,7 @@ message ListPagesResponse {
 }
 
 message GetPageRequest {
-  uint64 id = 1;
+  int64 id = 1;
 }
 
 message GetPageResponse {
@@ -34,13 +34,13 @@ message GetPageResponse {
 }
 
 message CreatePageRequest {
-  optional uint64 parent_id = 1 [(buf.validate.field).uint64.gt = 0];
+  optional int64 parent_id = 1 [(buf.validate.field).int64.gt = 0];
   resources.common.content.ContentType content_type = 2 [(buf.validate.field).enum.defined_only = true];
 }
 
 message CreatePageResponse {
   string job = 1;
-  uint64 id = 2;
+  int64 id = 2;
 }
 
 message UpdatePageRequest {
@@ -52,14 +52,14 @@ message UpdatePageResponse {
 }
 
 message DeletePageRequest {
-  uint64 id = 1;
+  int64 id = 1;
 }
 
 message DeletePageResponse {}
 
 message ListPageActivityRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
-  uint64 page_id = 2;
+  int64 page_id = 2;
 }
 
 message ListPageActivityResponse {

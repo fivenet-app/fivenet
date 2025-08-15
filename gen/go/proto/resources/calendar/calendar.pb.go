@@ -85,7 +85,7 @@ func (RsvpResponses) EnumDescriptor() ([]byte, []int) {
 
 type Calendar struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
@@ -137,7 +137,7 @@ func (*Calendar) Descriptor() ([]byte, []int) {
 	return file_resources_calendar_calendar_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Calendar) GetId() uint64 {
+func (x *Calendar) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -244,7 +244,7 @@ func (x *Calendar) GetAccess() *CalendarAccess {
 
 type CalendarShort struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	// @sanitize: method=StripTags
 	Name string `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
@@ -289,7 +289,7 @@ func (*CalendarShort) Descriptor() ([]byte, []int) {
 	return file_resources_calendar_calendar_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *CalendarShort) GetId() uint64 {
+func (x *CalendarShort) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -347,7 +347,7 @@ func (x *CalendarShort) GetSubscription() *CalendarSub {
 
 type CalendarSub struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	CalendarId    uint64                 `protobuf:"varint,1,opt,name=calendar_id,json=calendarId,proto3" json:"calendar_id,omitempty"`
+	CalendarId    int64                  `protobuf:"varint,1,opt,name=calendar_id,json=calendarId,proto3" json:"calendar_id,omitempty"`
 	UserId        int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	User          *users.UserShort       `protobuf:"bytes,3,opt,name=user,proto3,oneof" json:"user,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
@@ -387,7 +387,7 @@ func (*CalendarSub) Descriptor() ([]byte, []int) {
 	return file_resources_calendar_calendar_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *CalendarSub) GetCalendarId() uint64 {
+func (x *CalendarSub) GetCalendarId() int64 {
 	if x != nil {
 		return x.CalendarId
 	}
@@ -431,11 +431,11 @@ func (x *CalendarSub) GetMuted() bool {
 
 type CalendarEntry struct {
 	state      protoimpl.MessageState `protogen:"open.v1"`
-	Id         uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id         int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt  *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt  *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt  *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	CalendarId uint64                 `protobuf:"varint,5,opt,name=calendar_id,json=calendarId,proto3" json:"calendar_id,omitempty"`
+	CalendarId int64                  `protobuf:"varint,5,opt,name=calendar_id,json=calendarId,proto3" json:"calendar_id,omitempty"`
 	Calendar   *Calendar              `protobuf:"bytes,6,opt,name=calendar,proto3,oneof" json:"calendar,omitempty"`
 	Job        *string                `protobuf:"bytes,7,opt,name=job,proto3,oneof" json:"job,omitempty"`
 	StartTime  *timestamp.Timestamp   `protobuf:"bytes,8,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
@@ -484,7 +484,7 @@ func (*CalendarEntry) Descriptor() ([]byte, []int) {
 	return file_resources_calendar_calendar_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *CalendarEntry) GetId() uint64 {
+func (x *CalendarEntry) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -512,7 +512,7 @@ func (x *CalendarEntry) GetDeletedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *CalendarEntry) GetCalendarId() uint64 {
+func (x *CalendarEntry) GetCalendarId() int64 {
 	if x != nil {
 		return x.CalendarId
 	}
@@ -673,7 +673,7 @@ func (x *CalendarEntryRecurring) GetUntil() *timestamp.Timestamp {
 
 type CalendarEntryRSVP struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	EntryId       uint64                 `protobuf:"varint,1,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
+	EntryId       int64                  `protobuf:"varint,1,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UserId        int32                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	User          *users.UserShort       `protobuf:"bytes,4,opt,name=user,proto3,oneof" json:"user,omitempty"`
@@ -712,7 +712,7 @@ func (*CalendarEntryRSVP) Descriptor() ([]byte, []int) {
 	return file_resources_calendar_calendar_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *CalendarEntryRSVP) GetEntryId() uint64 {
+func (x *CalendarEntryRSVP) GetEntryId() int64 {
 	if x != nil {
 		return x.EntryId
 	}
@@ -753,7 +753,7 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\n" +
 	"!resources/calendar/calendar.proto\x12\x12resources.calendar\x1a\x1fresources/calendar/access.proto\x1a&resources/common/content/content.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xe8\x06\n" +
 	"\bCalendar\x121\n" +
-	"\x02id\x18\x01 \x01(\x04B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
+	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
@@ -785,7 +785,7 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\b_creatorB\x0f\n" +
 	"\r_subscription\"\xa0\x03\n" +
 	"\rCalendarShort\x121\n" +
-	"\x02id\x18\x01 \x01(\x04B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
+	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1e\n" +
 	"\x04name\x18\x06 \x01(\tB\n" +
@@ -800,7 +800,7 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\f_descriptionB\x0f\n" +
 	"\r_subscription\"\x95\x02\n" +
 	"\vCalendarSub\x12\x1f\n" +
-	"\vcalendar_id\x18\x01 \x01(\x04R\n" +
+	"\vcalendar_id\x18\x01 \x01(\x03R\n" +
 	"calendarId\x12 \n" +
 	"\auser_id\x18\x02 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x06userId\x123\n" +
 	"\x04user\x18\x03 \x01(\v2\x1a.resources.users.UserShortH\x00R\x04user\x88\x01\x01\x12B\n" +
@@ -811,14 +811,14 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\x05_userB\r\n" +
 	"\v_created_at\"\xec\b\n" +
 	"\rCalendarEntry\x121\n" +
-	"\x02id\x18\x01 \x01(\x04B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
+	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x1f\n" +
-	"\vcalendar_id\x18\x05 \x01(\x04R\n" +
+	"\vcalendar_id\x18\x05 \x01(\x03R\n" +
 	"calendarId\x12=\n" +
 	"\bcalendar\x18\x06 \x01(\v2\x1c.resources.calendar.CalendarH\x03R\bcalendar\x88\x01\x01\x12\x1e\n" +
 	"\x03job\x18\a \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x04R\x03job\x88\x01\x01\x12=\n" +
@@ -859,7 +859,7 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\x05until\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x05until\x88\x01\x01B\b\n" +
 	"\x06_until\"\xaa\x02\n" +
 	"\x11CalendarEntryRSVP\x12\x19\n" +
-	"\bentry_id\x18\x01 \x01(\x04R\aentryId\x12B\n" +
+	"\bentry_id\x18\x01 \x01(\x03R\aentryId\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12 \n" +
 	"\auser_id\x18\x03 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\x06userId\x123\n" +

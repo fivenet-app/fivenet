@@ -174,7 +174,7 @@ func (w *Workflow) handleDocuments(ctx context.Context, data *documents.Workflow
 					),
 			).
 			WHERE(jet.AND(
-				tWorkflow.DocumentID.GT(jet.Uint64(data.GetLastDocId())),
+				tWorkflow.DocumentID.GT(jet.Int64(data.GetLastDocId())),
 				jet.AND( // Only auto close and auto remind docs that aren't closed and have an owner
 					tDocumentShort.Closed.IS_FALSE(),
 					jet.OR(
@@ -225,7 +225,7 @@ func (w *Workflow) handleDocuments(ctx context.Context, data *documents.Workflow
 
 				if err := w.handleWorkflowState(ctx, state); err != nil {
 					w.logger.Error("error during workflow state handling",
-						zap.Uint64("document_id", state.GetDocumentId()), zap.Error(err))
+						zap.Int64("document_id", state.GetDocumentId()), zap.Error(err))
 				}
 			}()
 		}
@@ -351,7 +351,7 @@ func (w *Workflow) updateWorkflowState(ctx context.Context, state *documents.Wor
 			state.GetAutoCloseTime(),
 		).
 		WHERE(jet.AND(
-			tWorkflow.DocumentID.EQ(jet.Uint64(state.GetDocumentId())),
+			tWorkflow.DocumentID.EQ(jet.Int64(state.GetDocumentId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, w.db); err != nil {
@@ -367,7 +367,7 @@ func (w *Workflow) deleteWorkflowState(ctx context.Context, state *documents.Wor
 	stmt := tWorkflow.
 		DELETE().
 		WHERE(jet.AND(
-			tWorkflow.DocumentID.EQ(jet.Uint64(state.GetDocumentId())),
+			tWorkflow.DocumentID.EQ(jet.Int64(state.GetDocumentId())),
 		)).
 		LIMIT(1)
 
@@ -398,7 +398,7 @@ func (w *Workflow) autoCloseDocument(
 			tDocument.Closed.SET(jet.Bool(true)),
 		).
 		WHERE(jet.AND(
-			tDocument.ID.EQ(jet.Uint64(state.GetDocumentId())),
+			tDocument.ID.EQ(jet.Int64(state.GetDocumentId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -452,12 +452,12 @@ func (w *Workflow) autoCloseDocument(
 		UserId: userInfo.GetUserId(),
 		Title: &common.I18NItem{
 			Key:        "notifications.documents.document_auto_closed.title",
-			Parameters: map[string]string{"id": strconv.FormatUint(state.GetDocumentId(), 10)},
+			Parameters: map[string]string{"id": strconv.FormatInt(state.GetDocumentId(), 10)},
 		},
 		Content: &common.I18NItem{
 			Key: "notifications.documents.document_auto_closed.content",
 			Parameters: map[string]string{
-				"id":      strconv.FormatUint(state.GetDocumentId(), 10),
+				"id":      strconv.FormatInt(state.GetDocumentId(), 10),
 				"title":   state.GetDocument().GetTitle(),
 				"message": message,
 			},
@@ -480,7 +480,7 @@ func (w *Workflow) autoCloseDocument(
 
 func (w *Workflow) sendDocumentReminder(
 	ctx context.Context,
-	documentId uint64,
+	documentId int64,
 	userId int32,
 	document *documents.DocumentShort,
 	message string,
@@ -514,12 +514,12 @@ func (w *Workflow) sendDocumentReminder(
 		UserId: userId,
 		Title: &common.I18NItem{
 			Key:        "notifications.documents.document_reminder.title",
-			Parameters: map[string]string{"id": strconv.FormatUint(documentId, 10)},
+			Parameters: map[string]string{"id": strconv.FormatInt(documentId, 10)},
 		},
 		Content: &common.I18NItem{
 			Key: "notifications.documents.document_reminder.content",
 			Parameters: map[string]string{
-				"id":    strconv.FormatUint(documentId, 10),
+				"id":    strconv.FormatInt(documentId, 10),
 				"title": document.GetTitle(),
 			},
 		},

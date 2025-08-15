@@ -19,7 +19,7 @@ import (
 func (s *Server) createOrUpdateWorkflowState(
 	ctx context.Context,
 	tx qrm.DB,
-	documentId uint64,
+	documentId int64,
 	workflow *documents.Workflow,
 ) error {
 	if workflow == nil || (!workflow.GetAutoClose() && !workflow.GetReminder()) {

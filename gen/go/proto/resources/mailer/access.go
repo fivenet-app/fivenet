@@ -22,7 +22,7 @@ func (x *UserAccess) SetAccess(access AccessLevel) {
 	x.Access = access
 }
 
-func (x *QualificationAccess) SetQualificationId(id uint64) {
+func (x *QualificationAccess) SetQualificationId(id int64) {
 	x.QualificationId = id
 }
 

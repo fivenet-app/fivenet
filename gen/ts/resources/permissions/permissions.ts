@@ -18,7 +18,7 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface Permission {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -51,7 +51,7 @@ export interface Permission {
  */
 export interface Role {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -88,7 +88,7 @@ export interface Role {
  */
 export interface PermItem {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -100,7 +100,7 @@ export interface PermItem {
 class Permission$Type extends MessageType<Permission> {
     constructor() {
         super("resources.permissions.Permission", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "category", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } },
             { no: 4, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
@@ -125,8 +125,8 @@ class Permission$Type extends MessageType<Permission> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -158,9 +158,9 @@ class Permission$Type extends MessageType<Permission> {
         return message;
     }
     internalBinaryWrite(message: Permission, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
@@ -193,7 +193,7 @@ export const Permission = new Permission$Type();
 class Role$Type extends MessageType<Role> {
     constructor() {
         super("resources.permissions.Role", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
             { no: 4, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
@@ -219,8 +219,8 @@ class Role$Type extends MessageType<Role> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -255,9 +255,9 @@ class Role$Type extends MessageType<Role> {
         return message;
     }
     internalBinaryWrite(message: Role, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
@@ -293,7 +293,7 @@ export const Role = new Role$Type();
 class PermItem$Type extends MessageType<PermItem> {
     constructor() {
         super("resources.permissions.PermItem", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "val", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -310,8 +310,8 @@ class PermItem$Type extends MessageType<PermItem> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* bool val */ 2:
                     message.val = reader.bool();
@@ -328,9 +328,9 @@ class PermItem$Type extends MessageType<PermItem> {
         return message;
     }
     internalBinaryWrite(message: PermItem, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* bool val = 2; */
         if (message.val !== false)
             writer.tag(2, WireType.Varint).bool(message.val);

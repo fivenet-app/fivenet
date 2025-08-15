@@ -32,22 +32,22 @@ var ErrAccountError = errors.New("failed to retrieve account data")
 var tFivenetAccounts = table.FivenetAccounts
 
 type UserInfoRetriever interface {
-	GetUserInfo(ctx context.Context, userId int32, accountId uint64) (*pbuserinfo.UserInfo, error)
+	GetUserInfo(ctx context.Context, userId int32, accountId int64) (*pbuserinfo.UserInfo, error)
 	GetUserInfoWithoutAccountId(ctx context.Context, userId int32) (*pbuserinfo.UserInfo, error)
 	SetUserInfo(
 		ctx context.Context,
-		accountId uint64,
+		accountId int64,
 		superuser bool,
 		job *string,
 		jobGrade *int32,
 	) error
-	RefreshUserInfo(ctx context.Context, userId int32, accountId uint64) error
+	RefreshUserInfo(ctx context.Context, userId int32, accountId int64) error
 }
 
 // UIRetriever implements UserInfoRetriever and provides user info retrieval with caching.
 type userAccountKey struct {
 	UserID    int32
-	AccountID uint64
+	AccountID int64
 }
 
 type Retriever struct {
@@ -179,7 +179,7 @@ func (r *Retriever) handleMsg(m jetstream.Msg) {
 		r.logger.Debug(
 			"User info changed, notifying user",
 			zap.Int32("userId", evt.GetUserId()),
-			zap.Uint64("accountId", evt.GetAccountId()),
+			zap.Int64("accountId", evt.GetAccountId()),
 		)
 
 		r.notifi.SendUserEvent(r.ctx, evt.GetUserId(), &notifications.UserEvent{
@@ -194,7 +194,7 @@ func (r *Retriever) handleMsg(m jetstream.Msg) {
 func (r *Retriever) GetUserInfo(
 	ctx context.Context,
 	userId int32,
-	accountId uint64,
+	accountId int64,
 ) (*pbuserinfo.UserInfo, error) {
 	key := userAccountKey{UserID: userId, AccountID: accountId}
 	if dest, ok := r.userCache.Get(key); ok {
@@ -222,7 +222,7 @@ func (r *Retriever) GetUserInfo(
 func (r *Retriever) getUserInfo(
 	ctx context.Context,
 	userId int32,
-	accountId uint64,
+	accountId int64,
 ) (*pbuserinfo.UserInfo, error) {
 	dest := &pbuserinfo.UserInfo{}
 	tUsers := tables.User().AS("user_info")
@@ -246,7 +246,7 @@ func (r *Retriever) getUserInfo(
 			tUsers,
 		).
 		WHERE(jet.AND(
-			tFivenetAccounts.ID.EQ(jet.Uint64(accountId)),
+			tFivenetAccounts.ID.EQ(jet.Int64(accountId)),
 			tUsers.ID.EQ(jet.Int32(userId)),
 		)).
 		LIMIT(1)
@@ -310,7 +310,7 @@ func (r *Retriever) setSuperuserStatus(dest *pbuserinfo.UserInfo) {
 
 func (r *Retriever) SetUserInfo(
 	ctx context.Context,
-	accountId uint64,
+	accountId int64,
 	superuser bool,
 	job *string,
 	jobGrade *int32,
@@ -327,7 +327,7 @@ func (r *Retriever) SetUserInfo(
 			jobGrade,
 		).
 		WHERE(
-			tFivenetAccounts.ID.EQ(jet.Uint64(accountId)),
+			tFivenetAccounts.ID.EQ(jet.Int64(accountId)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, r.db); err != nil {
@@ -337,7 +337,7 @@ func (r *Retriever) SetUserInfo(
 	return nil
 }
 
-func (r *Retriever) RefreshUserInfo(ctx context.Context, userId int32, accountId uint64) error {
+func (r *Retriever) RefreshUserInfo(ctx context.Context, userId int32, accountId int64) error {
 	dest, err := r.getUserInfo(ctx, userId, accountId)
 	if err != nil {
 		return err

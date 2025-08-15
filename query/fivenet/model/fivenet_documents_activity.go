@@ -12,9 +12,9 @@ import (
 )
 
 type FivenetDocumentsActivity struct {
-	ID           uint64     `sql:"primary_key" json:"id"`
+	ID           int64      `sql:"primary_key" json:"id"`
 	CreatedAt    *time.Time `json:"created_at"`
-	DocumentID   uint64     `json:"document_id"`
+	DocumentID   int64      `json:"document_id"`
 	ActivityType int16      `json:"activity_type"`
 	CreatorID    *int32     `json:"creator_id"`
 	CreatorJob   string     `json:"creator_job"`

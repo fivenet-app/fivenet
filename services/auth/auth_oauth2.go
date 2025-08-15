@@ -33,7 +33,7 @@ func (s *Server) DeleteOAuth2Connection(
 	stmt := tOAuth2Accs.
 		DELETE().
 		WHERE(jet.AND(
-			tOAuth2Accs.AccountID.EQ(jet.Uint64(claims.AccID)),
+			tOAuth2Accs.AccountID.EQ(jet.Int64(claims.AccID)),
 			tOAuth2Accs.Provider.EQ(jet.String(req.GetProvider())),
 		)).
 		LIMIT(1)

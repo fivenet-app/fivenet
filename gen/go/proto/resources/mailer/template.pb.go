@@ -24,11 +24,11 @@ const (
 
 type Template struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	EmailId   uint64                 `protobuf:"varint,6,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
+	EmailId   int64                  `protobuf:"varint,6,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
 	// @sanitize: method=StripTags
 	Title string `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`
 	// @sanitize
@@ -69,7 +69,7 @@ func (*Template) Descriptor() ([]byte, []int) {
 	return file_resources_mailer_template_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Template) GetId() uint64 {
+func (x *Template) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -97,7 +97,7 @@ func (x *Template) GetDeletedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *Template) GetEmailId() uint64 {
+func (x *Template) GetEmailId() int64 {
 	if x != nil {
 		return x.EmailId
 	}
@@ -138,14 +138,14 @@ const file_resources_mailer_template_proto_rawDesc = "" +
 	"\n" +
 	"\x1fresources/mailer/template.proto\x12\x10resources.mailer\x1a#resources/timestamp/timestamp.proto\"\xdd\x03\n" +
 	"\bTemplate\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12=\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
 	"created_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
 	"\n" +
 	"updated_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12\x19\n" +
-	"\bemail_id\x18\x06 \x01(\x04R\aemailId\x12 \n" +
+	"\bemail_id\x18\x06 \x01(\x03R\aemailId\x12 \n" +
 	"\x05title\x18\a \x01(\tB\n" +
 	"\xbaH\ar\x05\x10\x03\x18\xff\x01R\x05title\x12$\n" +
 	"\acontent\x18\b \x01(\tB\n" +

@@ -10,7 +10,7 @@ import (
 )
 
 // GetEntry retrieves a single user access entry by its ID, joining with user_short for additional user info.
-func (a *Users[U, T, AccessLevel]) GetEntry(ctx context.Context, tx qrm.DB, id uint64) (T, error) {
+func (a *Users[U, T, AccessLevel]) GetEntry(ctx context.Context, tx qrm.DB, id int64) (T, error) {
 	tUsers := tables.User().AS("user_short")
 
 	stmt := a.selectTable.
@@ -34,7 +34,7 @@ func (a *Users[U, T, AccessLevel]) GetEntry(ctx context.Context, tx qrm.DB, id u
 				),
 		).
 		WHERE(
-			a.selectColumns.ID.EQ(jet.Uint64(id)),
+			a.selectColumns.ID.EQ(jet.Int64(id)),
 		).
 		LIMIT(1)
 
@@ -52,7 +52,7 @@ func (a *Users[U, T, AccessLevel]) GetEntry(ctx context.Context, tx qrm.DB, id u
 func (a *Users[U, T, AccessLevel]) CreateEntry(
 	ctx context.Context,
 	tx qrm.DB,
-	targetId uint64,
+	targetId int64,
 	entry T,
 ) error {
 	stmt := a.table.
@@ -78,7 +78,7 @@ func (a *Users[U, T, AccessLevel]) CreateEntry(
 func (a *Users[U, T, AccessLevel]) UpdateEntry(
 	ctx context.Context,
 	tx qrm.DB,
-	targetId uint64,
+	targetId int64,
 	entry T,
 ) error {
 	stmt := a.table.
@@ -91,8 +91,8 @@ func (a *Users[U, T, AccessLevel]) UpdateEntry(
 			entry.GetUserId(),
 		).
 		WHERE(jet.AND(
-			a.columns.ID.EQ(jet.Uint64(entry.GetId())),
-			a.columns.TargetID.EQ(jet.Uint64(targetId)),
+			a.columns.ID.EQ(jet.Int64(entry.GetId())),
+			a.columns.TargetID.EQ(jet.Int64(targetId)),
 		))
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -106,14 +106,14 @@ func (a *Users[U, T, AccessLevel]) UpdateEntry(
 func (a *Users[U, T, AccessLevel]) DeleteEntry(
 	ctx context.Context,
 	tx qrm.DB,
-	targetId uint64,
-	id uint64,
+	targetId int64,
+	id int64,
 ) error {
 	stmt := a.table.
 		DELETE().
 		WHERE(jet.AND(
-			a.columns.ID.EQ(jet.Uint64(id)),
-			a.columns.TargetID.EQ(jet.Uint64(targetId)),
+			a.columns.ID.EQ(jet.Int64(id)),
+			a.columns.TargetID.EQ(jet.Int64(targetId)),
 		)).
 		LIMIT(1)
 
@@ -131,13 +131,13 @@ func (a *Users[U, T, AccessLevel]) DeleteEntryWithCondition(
 	ctx context.Context,
 	tx qrm.DB,
 	condition jet.BoolExpression,
-	targetId uint64,
+	targetId int64,
 ) error {
 	stmt := a.table.
 		DELETE().
 		WHERE(jet.AND(
 			condition,
-			a.columns.TargetID.EQ(jet.Uint64(targetId)),
+			a.columns.TargetID.EQ(jet.Int64(targetId)),
 		)).
 		LIMIT(1)
 

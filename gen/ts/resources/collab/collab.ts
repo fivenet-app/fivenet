@@ -53,7 +53,7 @@ export interface ClientPacket {
  */
 export interface CollabInit {
     /**
-     * @generated from protobuf field: uint64 target_id = 1
+     * @generated from protobuf field: int64 target_id = 1
      */
     targetId: number;
 }
@@ -169,7 +169,7 @@ export interface CollabHandshake {
  */
 export interface TargetSaved {
     /**
-     * @generated from protobuf field: uint64 target_id = 1
+     * @generated from protobuf field: int64 target_id = 1
      */
     targetId: number;
 }
@@ -296,7 +296,7 @@ export const ClientPacket = new ClientPacket$Type();
 class CollabInit$Type extends MessageType<CollabInit> {
     constructor() {
         super("resources.collab.CollabInit", [
-            { no: 1, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { uint64: { gt: "0" } } } }
+            { no: 1, name: "target_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
         ]);
     }
     create(value?: PartialMessage<CollabInit>): CollabInit {
@@ -311,8 +311,8 @@ class CollabInit$Type extends MessageType<CollabInit> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 target_id */ 1:
-                    message.targetId = reader.uint64().toNumber();
+                case /* int64 target_id */ 1:
+                    message.targetId = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -326,9 +326,9 @@ class CollabInit$Type extends MessageType<CollabInit> {
         return message;
     }
     internalBinaryWrite(message: CollabInit, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 target_id = 1; */
+        /* int64 target_id = 1; */
         if (message.targetId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.targetId);
+            writer.tag(1, WireType.Varint).int64(message.targetId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -672,7 +672,7 @@ export const CollabHandshake = new CollabHandshake$Type();
 class TargetSaved$Type extends MessageType<TargetSaved> {
     constructor() {
         super("resources.collab.TargetSaved", [
-            { no: 1, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { uint64: { gt: "0" } } } }
+            { no: 1, name: "target_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
         ]);
     }
     create(value?: PartialMessage<TargetSaved>): TargetSaved {
@@ -687,8 +687,8 @@ class TargetSaved$Type extends MessageType<TargetSaved> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 target_id */ 1:
-                    message.targetId = reader.uint64().toNumber();
+                case /* int64 target_id */ 1:
+                    message.targetId = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -702,9 +702,9 @@ class TargetSaved$Type extends MessageType<TargetSaved> {
         return message;
     }
     internalBinaryWrite(message: TargetSaved, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 target_id = 1; */
+        /* int64 target_id = 1; */
         if (message.targetId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.targetId);
+            writer.tag(1, WireType.Varint).int64(message.targetId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

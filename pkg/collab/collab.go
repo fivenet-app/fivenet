@@ -51,7 +51,7 @@ type CollabServer struct {
 	// mu protects the rooms map.
 	mu sync.Mutex
 	// rooms maps target IDs to active CollabRoom instances.
-	rooms map[uint64]*CollabRoom
+	rooms map[int64]*CollabRoom
 
 	// Key-Value store for state management
 	stateKV jetstream.KeyValue
@@ -77,7 +77,7 @@ func New(
 		category: category,
 
 		mu:    sync.Mutex{},
-		rooms: make(map[uint64]*CollabRoom),
+		rooms: make(map[int64]*CollabRoom),
 	}
 }
 
@@ -125,7 +125,7 @@ func (s *CollabServer) HandleFirstMsg(
 	_ context.Context,
 	_ uint64,
 	stream grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket],
-) (uint64, error) {
+) (int64, error) {
 	// Wait for the first message to determine client/target id
 	firstMsg, err := stream.Recv()
 	if err != nil {
@@ -165,7 +165,7 @@ func (s *CollabServer) sendHelloResponse(
 
 // getOrCreateRoom retrieves an existing CollabRoom for the target or creates a new one if needed.
 // Returns the room, a boolean indicating if it was created, and any error.
-func (s *CollabServer) getOrCreateRoom(targetId uint64) (*CollabRoom, bool, error) {
+func (s *CollabServer) getOrCreateRoom(targetId int64) (*CollabRoom, bool, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -190,7 +190,7 @@ func (s *CollabServer) getOrCreateRoom(targetId uint64) (*CollabRoom, bool, erro
 // It joins the client to the room, handles sending and receiving, and cleans up when the client leaves.
 func (s *CollabServer) HandleClient(
 	ctx context.Context,
-	targetId uint64,
+	targetId int64,
 	userId int32,
 	clientId uint64,
 	role collab.ClientRole,
@@ -272,7 +272,7 @@ func (s *CollabServer) HandleClient(
 }
 
 // SendTargetSaved notifies the room for the given targetId that the target has been saved.
-func (s *CollabServer) SendTargetSaved(_ context.Context, targetId uint64) {
+func (s *CollabServer) SendTargetSaved(_ context.Context, targetId int64) {
 	s.mu.Lock()
 	room, exists := s.rooms[targetId]
 	s.mu.Unlock()

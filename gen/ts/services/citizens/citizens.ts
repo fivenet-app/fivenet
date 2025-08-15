@@ -57,7 +57,7 @@ export interface ListCitizensRequest {
      */
     dateofbirth?: string;
     /**
-     * @generated from protobuf field: optional uint64 open_fines = 8
+     * @generated from protobuf field: optional int64 open_fines = 8
      */
     openFines?: number;
 }
@@ -215,7 +215,7 @@ class ListCitizensRequest$Type extends MessageType<ListCitizensRequest> {
             { no: 5, name: "phone_number", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 6, name: "traffic_infraction_points", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
             { no: 7, name: "dateofbirth", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "10" } } } },
-            { no: 8, name: "open_fines", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 8, name: "open_fines", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<ListCitizensRequest>): ListCitizensRequest {
@@ -251,8 +251,8 @@ class ListCitizensRequest$Type extends MessageType<ListCitizensRequest> {
                 case /* optional string dateofbirth */ 7:
                     message.dateofbirth = reader.string();
                     break;
-                case /* optional uint64 open_fines */ 8:
-                    message.openFines = reader.uint64().toNumber();
+                case /* optional int64 open_fines */ 8:
+                    message.openFines = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -287,9 +287,9 @@ class ListCitizensRequest$Type extends MessageType<ListCitizensRequest> {
         /* optional string dateofbirth = 7; */
         if (message.dateofbirth !== undefined)
             writer.tag(7, WireType.LengthDelimited).string(message.dateofbirth);
-        /* optional uint64 open_fines = 8; */
+        /* optional int64 open_fines = 8; */
         if (message.openFines !== undefined)
-            writer.tag(8, WireType.Varint).uint64(message.openFines);
+            writer.tag(8, WireType.Varint).int64(message.openFines);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

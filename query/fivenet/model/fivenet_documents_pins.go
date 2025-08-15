@@ -12,7 +12,7 @@ import (
 )
 
 type FivenetDocumentsPins struct {
-	DocumentID uint64     `json:"document_id"`
+	DocumentID int64      `json:"document_id"`
 	Job        *string    `json:"job"`
 	UserID     *int32     `json:"user_id"`
 	CreatedAt  *time.Time `json:"created_at"`

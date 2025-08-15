@@ -26,10 +26,10 @@ type DummyJobAccess[V protoutils.ProtoEnum] struct {
 }
 
 // GetId returns a dummy ID (always 0).
-func (x *DummyJobAccess[V]) GetId() uint64 { return 0 }
+func (x *DummyJobAccess[V]) GetId() int64 { return 0 }
 
 // GetTargetId returns a dummy target ID (always 0).
-func (x *DummyJobAccess[V]) GetTargetId() uint64 { return 0 }
+func (x *DummyJobAccess[V]) GetTargetId() int64 { return 0 }
 
 // GetJob returns a dummy job string (always empty).
 func (x *DummyJobAccess[V]) GetJob() string { return "" }
@@ -56,10 +56,10 @@ type DummyUserAccess[V protoutils.ProtoEnum] struct {
 }
 
 // GetId returns a dummy ID (always 0).
-func (x *DummyUserAccess[V]) GetId() uint64 { return 0 }
+func (x *DummyUserAccess[V]) GetId() int64 { return 0 }
 
 // GetTargetId returns a dummy target ID (always 0).
-func (x *DummyUserAccess[V]) GetTargetId() uint64 { return 0 }
+func (x *DummyUserAccess[V]) GetTargetId() int64 { return 0 }
 
 // GetUserId returns a dummy user ID (always 0).
 func (x *DummyUserAccess[V]) GetUserId() int32 { return 0 }
@@ -83,16 +83,16 @@ type DummyQualificationAccess[V protoutils.ProtoEnum] struct {
 }
 
 // GetId returns a dummy ID (always 0).
-func (x *DummyQualificationAccess[V]) GetId() uint64 { return 0 }
+func (x *DummyQualificationAccess[V]) GetId() int64 { return 0 }
 
 // GetTargetId returns a dummy target ID (always 0).
-func (x *DummyQualificationAccess[V]) GetTargetId() uint64 { return 0 }
+func (x *DummyQualificationAccess[V]) GetTargetId() int64 { return 0 }
 
 // GetQualificationId returns a dummy qualification ID (always 0).
-func (x *DummyQualificationAccess[V]) GetQualificationId() uint64 { return 0 }
+func (x *DummyQualificationAccess[V]) GetQualificationId() int64 { return 0 }
 
 // SetQualificationId is a no-op for the dummy implementation.
-func (x *DummyQualificationAccess[V]) SetQualificationId(uint64) {}
+func (x *DummyQualificationAccess[V]) SetQualificationId(int64) {}
 
 // GetAccess returns the stored access value.
 func (x *DummyQualificationAccess[V]) GetAccess() V { return x.Access }

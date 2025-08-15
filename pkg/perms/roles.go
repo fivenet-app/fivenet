@@ -28,7 +28,7 @@ var (
 )
 
 type AddPerm struct {
-	Id  uint64
+	Id  int64
 	Val bool
 }
 
@@ -178,7 +178,7 @@ func (p *Perms) CountRolesForJob(ctx context.Context, job string) (int64, error)
 	return dest.Total, nil
 }
 
-func (p *Perms) GetRole(ctx context.Context, id uint64) (*permissions.Role, error) {
+func (p *Perms) GetRole(ctx context.Context, id int64) (*permissions.Role, error) {
 	stmt := tRoles.
 		SELECT(
 			tRoles.ID,
@@ -188,7 +188,7 @@ func (p *Perms) GetRole(ctx context.Context, id uint64) (*permissions.Role, erro
 		).
 		FROM(tRoles).
 		WHERE(
-			tRoles.ID.EQ(jet.Uint64(id)),
+			tRoles.ID.EQ(jet.Int64(id)),
 		).
 		LIMIT(1)
 
@@ -234,7 +234,7 @@ func (p *Perms) CreateRole(
 			return nil, fmt.Errorf("failed to retrieve last insert ID for role creation. %w", err)
 		}
 
-		role, err = p.GetRole(ctx, uint64(lastId))
+		role, err = p.GetRole(ctx, lastId)
 		if err != nil {
 			return nil, fmt.Errorf("failed to retrieve created role with ID %d. %w", lastId, err)
 		}
@@ -245,12 +245,12 @@ func (p *Perms) CreateRole(
 		}
 	}
 
-	p.permsRoleMap.Store(role.GetId(), xsync.NewMap[uint64, bool]())
+	p.permsRoleMap.Store(role.GetId(), xsync.NewMap[int64, bool]())
 
 	grades, _ := p.permsJobsRoleMap.LoadOrCompute(
 		role.GetJob(),
-		func() (*xsync.Map[int32, uint64], bool) {
-			return xsync.NewMap[int32, uint64](), false
+		func() (*xsync.Map[int32, int64], bool) {
+			return xsync.NewMap[int32, int64](), false
 		},
 	)
 	grades.Store(role.GetGrade(), role.GetId())
@@ -272,7 +272,7 @@ func (p *Perms) CreateRole(
 	return role, nil
 }
 
-func (p *Perms) DeleteRole(ctx context.Context, id uint64) error {
+func (p *Perms) DeleteRole(ctx context.Context, id int64) error {
 	role, err := p.GetRole(ctx, id)
 	if err != nil {
 		// Role not found? It shouldn't exist anymore
@@ -288,7 +288,7 @@ func (p *Perms) DeleteRole(ctx context.Context, id uint64) error {
 	stmt := tRoles.
 		DELETE().
 		WHERE(
-			tRoles.ID.EQ(jet.Uint64(id)),
+			tRoles.ID.EQ(jet.Int64(id)),
 		).LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
@@ -312,11 +312,11 @@ func (p *Perms) DeleteRole(ctx context.Context, id uint64) error {
 	return nil
 }
 
-func (p *Perms) deleteRole(id uint64, job string, grade int32) {
+func (p *Perms) deleteRole(id int64, job string, grade int32) {
 	p.permsRoleMap.Delete(id)
 
-	grades, _ := p.permsJobsRoleMap.LoadOrCompute(job, func() (*xsync.Map[int32, uint64], bool) {
-		return xsync.NewMap[int32, uint64](), false
+	grades, _ := p.permsJobsRoleMap.LoadOrCompute(job, func() (*xsync.Map[int32, int64], bool) {
+		return xsync.NewMap[int32, int64](), false
 	})
 	grades.Delete(grade)
 
@@ -356,7 +356,7 @@ func (p *Perms) GetRoleByJobAndGrade(
 
 func (p *Perms) GetRolePermissions(
 	ctx context.Context,
-	id uint64,
+	id int64,
 ) ([]*permissions.Permission, error) {
 	tRolePerms := tRolePerms
 	tPerms := tPerms.AS("permission")
@@ -376,7 +376,7 @@ func (p *Perms) GetRolePermissions(
 				),
 		).
 		WHERE(
-			tRolePerms.RoleID.EQ(jet.Uint64(id)),
+			tRolePerms.RoleID.EQ(jet.Int64(id)),
 		).
 		ORDER_BY(
 			tPerms.ID.ASC(),
@@ -394,7 +394,7 @@ func (p *Perms) GetRolePermissions(
 
 func (p *Perms) GetEffectiveRolePermissions(
 	ctx context.Context,
-	roleId uint64,
+	roleId int64,
 ) ([]*permissions.Permission, error) {
 	defaultRoleId, ok := p.lookupRoleIDForJobAndGrade(DefaultRoleJob, p.startJobGrade)
 	if !ok {
@@ -409,20 +409,20 @@ func (p *Perms) GetEffectiveRolePermissions(
 	roleIds, ok := p.lookupRoleIDsForJobUpToGrade(role.GetJob(), role.GetGrade())
 	if !ok {
 		// Fallback to default role
-		roleIds = []uint64{defaultRoleId}
+		roleIds = []int64{defaultRoleId}
 	} else {
 		// Prepend default role to default perms
-		roleIds = append([]uint64{defaultRoleId}, roleIds...)
+		roleIds = append([]int64{defaultRoleId}, roleIds...)
 	}
 
-	perms := map[uint64]bool{}
+	perms := map[int64]bool{}
 	for i := range slices.Backward(roleIds) {
 		permsRoleMap, ok := p.permsRoleMap.Load(roleIds[i])
 		if !ok {
 			continue
 		}
 
-		permsRoleMap.Range(func(key uint64, value bool) bool {
+		permsRoleMap.Range(func(key int64, value bool) bool {
 			// Only allow the first perm "value" to be set (because that's how role perms inheritance works)
 			if _, ok := perms[key]; !ok {
 				perms[key] = value
@@ -457,16 +457,16 @@ func (p *Perms) GetEffectiveRolePermissions(
 	return ps, nil
 }
 
-func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId uint64, perms ...AddPerm) error {
+func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId int64, perms ...AddPerm) error {
 	rolePerms := make([]struct {
-		RoleID       uint64
-		PermissionID uint64
+		RoleID       int64
+		PermissionID int64
 		Val          bool
 	}, len(perms))
 	for i, perm := range perms {
 		rolePerms[i] = struct {
-			RoleID       uint64
-			PermissionID uint64
+			RoleID       int64
+			PermissionID int64
 			Val          bool
 		}{
 			RoleID:       roleId,
@@ -492,8 +492,8 @@ func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId uint64, perms 
 		}
 	}
 
-	roleCache, _ := p.permsRoleMap.LoadOrCompute(roleId, func() (*xsync.Map[uint64, bool], bool) {
-		return xsync.NewMap[uint64, bool](), false
+	roleCache, _ := p.permsRoleMap.LoadOrCompute(roleId, func() (*xsync.Map[int64, bool], bool) {
+		return xsync.NewMap[int64, bool](), false
 	})
 	for _, v := range rolePerms {
 		roleCache.Store(v.PermissionID, v.Val)
@@ -514,18 +514,18 @@ func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId uint64, perms 
 
 func (p *Perms) RemovePermissionsFromRole(
 	ctx context.Context,
-	roleId uint64,
-	perms ...uint64,
+	roleId int64,
+	perms ...int64,
 ) error {
 	ids := make([]jet.Expression, len(perms))
 	for i := range perms {
-		ids[i] = jet.Uint64(perms[i])
+		ids[i] = jet.Int64(perms[i])
 	}
 
 	stmt := tRolePerms.
 		DELETE().
 		WHERE(jet.AND(
-			tRolePerms.RoleID.EQ(jet.Uint64(roleId)),
+			tRolePerms.RoleID.EQ(jet.Int64(roleId)),
 			tRolePerms.PermissionID.IN(ids...),
 		)).
 		LIMIT(int64(len(ids)))

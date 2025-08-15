@@ -10,5 +10,5 @@ package model
 type FivenetJobColleagueLabels struct {
 	UserID  int32  `json:"user_id"`
 	Job     string `json:"job"`
-	LabelID uint64 `json:"label_id"`
+	LabelID int64  `json:"label_id"`
 }

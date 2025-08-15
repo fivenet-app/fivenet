@@ -39,7 +39,7 @@ func (s *Server) Search(
 
 	if req.DomainId != nil && req.GetDomainId() > 0 {
 		condition = condition.AND(
-			tPage.DomainID.EQ(jet.Uint64(req.GetDomainId())),
+			tPage.DomainID.EQ(jet.Int64(req.GetDomainId())),
 		)
 	}
 

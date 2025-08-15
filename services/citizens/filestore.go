@@ -74,7 +74,7 @@ func (s *Server) DeleteAvatar(
 		LIMIT(1)
 
 	var props struct {
-		AvatarFileId *uint64
+		AvatarFileId *int64
 	}
 	if err := stmt.QueryContext(ctx, s.db, &props); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -281,7 +281,7 @@ func (s *Server) DeleteMugshot(
 		LIMIT(1)
 
 	var props struct {
-		MugshotFileId *uint64
+		MugshotFileId *int64
 	}
 	if err := stmt.QueryContext(ctx, s.db, &props); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

@@ -12,7 +12,7 @@ import (
 )
 
 type FivenetNotifications struct {
-	ID        uint64     `sql:"primary_key" json:"id"`
+	ID        int64      `sql:"primary_key" json:"id"`
 	CreatedAt *time.Time `json:"created_at"`
 	ReadAt    *time.Time `json:"read_at"`
 	UserID    *int32     `json:"user_id"`

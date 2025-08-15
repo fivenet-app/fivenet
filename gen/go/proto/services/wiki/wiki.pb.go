@@ -156,7 +156,7 @@ func (x *ListPagesResponse) GetPages() []*wiki.PageShort {
 
 type GetPageRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -191,7 +191,7 @@ func (*GetPageRequest) Descriptor() ([]byte, []int) {
 	return file_services_wiki_wiki_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetPageRequest) GetId() uint64 {
+func (x *GetPageRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -244,7 +244,7 @@ func (x *GetPageResponse) GetPage() *wiki.Page {
 
 type CreatePageRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ParentId      *uint64                `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`
+	ParentId      *int64                 `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`
 	ContentType   content.ContentType    `protobuf:"varint,2,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -280,7 +280,7 @@ func (*CreatePageRequest) Descriptor() ([]byte, []int) {
 	return file_services_wiki_wiki_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *CreatePageRequest) GetParentId() uint64 {
+func (x *CreatePageRequest) GetParentId() int64 {
 	if x != nil && x.ParentId != nil {
 		return *x.ParentId
 	}
@@ -297,7 +297,7 @@ func (x *CreatePageRequest) GetContentType() content.ContentType {
 type CreatePageResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Job           string                 `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
-	Id            uint64                 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -339,7 +339,7 @@ func (x *CreatePageResponse) GetJob() string {
 	return ""
 }
 
-func (x *CreatePageResponse) GetId() uint64 {
+func (x *CreatePageResponse) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -436,7 +436,7 @@ func (x *UpdatePageResponse) GetPage() *wiki.Page {
 
 type DeletePageRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -471,7 +471,7 @@ func (*DeletePageRequest) Descriptor() ([]byte, []int) {
 	return file_services_wiki_wiki_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *DeletePageRequest) GetId() uint64 {
+func (x *DeletePageRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -517,7 +517,7 @@ func (*DeletePageResponse) Descriptor() ([]byte, []int) {
 type ListPageActivityRequest struct {
 	state         protoimpl.MessageState      `protogen:"open.v1"`
 	Pagination    *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	PageId        uint64                      `protobuf:"varint,2,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`
+	PageId        int64                       `protobuf:"varint,2,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -559,7 +559,7 @@ func (x *ListPageActivityRequest) GetPagination() *database.PaginationRequest {
 	return nil
 }
 
-func (x *ListPageActivityRequest) GetPageId() uint64 {
+func (x *ListPageActivityRequest) GetPageId() int64 {
 	if x != nil {
 		return x.PageId
 	}
@@ -642,29 +642,29 @@ const file_services_wiki_wiki_proto_rawDesc = "" +
 	"pagination\x12/\n" +
 	"\x05pages\x18\x02 \x03(\v2\x19.resources.wiki.PageShortR\x05pages\" \n" +
 	"\x0eGetPageRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\";\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\";\n" +
 	"\x0fGetPageResponse\x12(\n" +
 	"\x04page\x18\x01 \x01(\v2\x14.resources.wiki.PageR\x04page\"\xa0\x01\n" +
 	"\x11CreatePageRequest\x12)\n" +
-	"\tparent_id\x18\x01 \x01(\x04B\a\xbaH\x042\x02 \x00H\x00R\bparentId\x88\x01\x01\x12R\n" +
+	"\tparent_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x00R\bparentId\x88\x01\x01\x12R\n" +
 	"\fcontent_type\x18\x02 \x01(\x0e2%.resources.common.content.ContentTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\vcontentTypeB\f\n" +
 	"\n" +
 	"_parent_id\"6\n" +
 	"\x12CreatePageResponse\x12\x10\n" +
 	"\x03job\x18\x01 \x01(\tR\x03job\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x04R\x02id\"E\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"E\n" +
 	"\x11UpdatePageRequest\x120\n" +
 	"\x04page\x18\x01 \x01(\v2\x14.resources.wiki.PageB\x06\xbaH\x03\xc8\x01\x01R\x04page\">\n" +
 	"\x12UpdatePageResponse\x12(\n" +
 	"\x04page\x18\x01 \x01(\v2\x14.resources.wiki.PageR\x04page\"#\n" +
 	"\x11DeletePageRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"\x14\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\x14\n" +
 	"\x12DeletePageResponse\"\x88\x01\n" +
 	"\x17ListPageActivityRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12\x17\n" +
-	"\apage_id\x18\x02 \x01(\x04R\x06pageId\"\xab\x01\n" +
+	"\apage_id\x18\x02 \x01(\x03R\x06pageId\"\xab\x01\n" +
 	"\x18ListPageActivityResponse\x12U\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +

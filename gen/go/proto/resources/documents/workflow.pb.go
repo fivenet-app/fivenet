@@ -241,7 +241,7 @@ func (x *AutoCloseSettings) GetMessage() string {
 
 type WorkflowCronData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	LastDocId     uint64                 `protobuf:"varint,1,opt,name=last_doc_id,json=lastDocId,proto3" json:"last_doc_id,omitempty"`
+	LastDocId     int64                  `protobuf:"varint,1,opt,name=last_doc_id,json=lastDocId,proto3" json:"last_doc_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -276,7 +276,7 @@ func (*WorkflowCronData) Descriptor() ([]byte, []int) {
 	return file_resources_documents_workflow_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *WorkflowCronData) GetLastDocId() uint64 {
+func (x *WorkflowCronData) GetLastDocId() int64 {
 	if x != nil {
 		return x.LastDocId
 	}
@@ -303,7 +303,7 @@ const file_resources_documents_workflow_proto_rawDesc = "" +
 	"\bduration\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\x16\xbaH\x13\xc8\x01\x01\xaa\x01\r\x1a\x05\b\x80\xce\xda\x032\x04\b\x80\xa3\x05R\bduration\x12\"\n" +
 	"\amessage\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\amessage\"2\n" +
 	"\x10WorkflowCronData\x12\x1e\n" +
-	"\vlast_doc_id\x18\x01 \x01(\x04R\tlastDocIdBQZOgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
+	"\vlast_doc_id\x18\x01 \x01(\x03R\tlastDocIdBQZOgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
 
 var (
 	file_resources_documents_workflow_proto_rawDescOnce sync.Once

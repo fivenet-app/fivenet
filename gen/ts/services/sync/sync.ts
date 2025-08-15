@@ -157,7 +157,7 @@ export interface RegisterAccountResponse {
      */
     regToken?: string;
     /**
-     * @generated from protobuf field: optional uint64 account_id = 2
+     * @generated from protobuf field: optional int64 account_id = 2
      */
     accountId?: number;
     /**
@@ -619,7 +619,7 @@ class RegisterAccountResponse$Type extends MessageType<RegisterAccountResponse> 
     constructor() {
         super("services.sync.RegisterAccountResponse", [
             { no: 1, name: "reg_token", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "6", pattern: "^[0-9]{6}$" } } } },
-            { no: 2, name: "account_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "account_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "username", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
@@ -637,8 +637,8 @@ class RegisterAccountResponse$Type extends MessageType<RegisterAccountResponse> 
                 case /* optional string reg_token */ 1:
                     message.regToken = reader.string();
                     break;
-                case /* optional uint64 account_id */ 2:
-                    message.accountId = reader.uint64().toNumber();
+                case /* optional int64 account_id */ 2:
+                    message.accountId = reader.int64().toNumber();
                     break;
                 case /* optional string username */ 3:
                     message.username = reader.string();
@@ -658,9 +658,9 @@ class RegisterAccountResponse$Type extends MessageType<RegisterAccountResponse> 
         /* optional string reg_token = 1; */
         if (message.regToken !== undefined)
             writer.tag(1, WireType.LengthDelimited).string(message.regToken);
-        /* optional uint64 account_id = 2; */
+        /* optional int64 account_id = 2; */
         if (message.accountId !== undefined)
-            writer.tag(2, WireType.Varint).uint64(message.accountId);
+            writer.tag(2, WireType.Varint).int64(message.accountId);
         /* optional string username = 3; */
         if (message.username !== undefined)
             writer.tag(3, WireType.LengthDelimited).string(message.username);

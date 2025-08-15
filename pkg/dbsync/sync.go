@@ -324,10 +324,10 @@ func (s *Sync) syncBaseData(ctx context.Context) error {
 func prepareStringQuery(
 	query DBSyncTable,
 	state *TableSyncState,
-	offset uint64,
+	offset int64,
 	limit int64,
 ) string {
-	offsetStr := strconv.FormatUint(offset, 10)
+	offsetStr := strconv.FormatInt(offset, 10)
 	limitStr := strconv.FormatInt(limit, 10)
 
 	q := strings.ReplaceAll(query.Query, "$offset", offsetStr)

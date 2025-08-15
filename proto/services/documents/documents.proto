@@ -29,7 +29,7 @@ message ListTemplatesResponse {
 }
 
 message GetTemplateRequest {
-  uint64 template_id = 1;
+  int64 template_id = 1;
   optional resources.documents.TemplateData data = 2;
   optional bool render = 3;
 }
@@ -44,7 +44,7 @@ message CreateTemplateRequest {
 }
 
 message CreateTemplateResponse {
-  uint64 id = 1;
+  int64 id = 1;
 }
 
 message UpdateTemplateRequest {
@@ -56,7 +56,7 @@ message UpdateTemplateResponse {
 }
 
 message DeleteTemplateRequest {
-  uint64 id = 1;
+  int64 id = 1;
 }
 
 message DeleteTemplateResponse {}
@@ -68,12 +68,12 @@ message ListDocumentsRequest {
   optional resources.common.database.Sort sort = 2;
   // Search params
   optional string search = 3 [(buf.validate.field).string.max_len = 64];
-  repeated uint64 category_ids = 4 [(buf.validate.field).repeated.max_items = 5];
+  repeated int64 category_ids = 4 [(buf.validate.field).repeated.max_items = 5];
   repeated int32 creator_ids = 5 [(buf.validate.field).repeated.max_items = 5];
   optional resources.timestamp.Timestamp from = 6;
   optional resources.timestamp.Timestamp to = 7;
   optional bool closed = 8;
-  repeated uint64 document_ids = 9 [(buf.validate.field).repeated.max_items = 5];
+  repeated int64 document_ids = 9 [(buf.validate.field).repeated.max_items = 5];
   // Controls inclusion of drafts in the result:
   // - unset/null: include all documents (drafts and non-drafts)
   // - false: only non-draft documents
@@ -87,7 +87,7 @@ message ListDocumentsResponse {
 }
 
 message GetDocumentRequest {
-  uint64 document_id = 1;
+  int64 document_id = 1;
   optional bool info_only = 2;
 }
 
@@ -97,7 +97,7 @@ message GetDocumentResponse {
 }
 
 message GetDocumentReferencesRequest {
-  uint64 document_id = 1;
+  int64 document_id = 1;
 }
 
 message GetDocumentReferencesResponse {
@@ -105,7 +105,7 @@ message GetDocumentReferencesResponse {
 }
 
 message GetDocumentRelationsRequest {
-  uint64 document_id = 1;
+  int64 document_id = 1;
 }
 
 message GetDocumentRelationsResponse {
@@ -117,11 +117,11 @@ message AddDocumentReferenceRequest {
 }
 
 message AddDocumentReferenceResponse {
-  uint64 id = 1;
+  int64 id = 1;
 }
 
 message RemoveDocumentReferenceRequest {
-  uint64 id = 1;
+  int64 id = 1;
 }
 
 message RemoveDocumentReferenceResponse {}
@@ -131,11 +131,11 @@ message AddDocumentRelationRequest {
 }
 
 message AddDocumentRelationResponse {
-  uint64 id = 1;
+  int64 id = 1;
 }
 
 message RemoveDocumentRelationRequest {
-  uint64 id = 1;
+  int64 id = 1;
 }
 
 message RemoveDocumentRelationResponse {}
@@ -144,7 +144,7 @@ message RemoveDocumentRelationResponse {}
 
 message GetCommentsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
-  uint64 document_id = 2;
+  int64 document_id = 2;
 }
 
 message GetCommentsResponse {
@@ -169,7 +169,7 @@ message EditCommentResponse {
 }
 
 message DeleteCommentRequest {
-  uint64 comment_id = 1;
+  int64 comment_id = 1;
 }
 
 message DeleteCommentResponse {}
@@ -179,7 +179,7 @@ message UpdateDocumentResponse {
 }
 
 message DeleteDocumentRequest {
-  uint64 document_id = 1 [(tagger.tags) = "alias:\"id\""];
+  int64 document_id = 1 [(tagger.tags) = "alias:\"id\""];
   // @sanitize: method=StripTags
   optional string reason = 2 [
     (buf.validate.field).string = {
@@ -193,14 +193,14 @@ message DeleteDocumentRequest {
 message DeleteDocumentResponse {}
 
 message ToggleDocumentRequest {
-  uint64 document_id = 1;
+  int64 document_id = 1;
   bool closed = 2;
 }
 
 message ToggleDocumentResponse {}
 
 message ChangeDocumentOwnerRequest {
-  uint64 document_id = 1;
+  int64 document_id = 1;
   optional int32 new_user_id = 2;
 }
 
@@ -208,17 +208,17 @@ message ChangeDocumentOwnerResponse {}
 
 message CreateDocumentRequest {
   resources.common.content.ContentType content_type = 1 [(buf.validate.field).enum.defined_only = true];
-  optional uint64 template_id = 2;
+  optional int64 template_id = 2;
   optional resources.documents.TemplateData template_data = 3;
 }
 
 message CreateDocumentResponse {
-  uint64 id = 1;
+  int64 id = 1;
 }
 
 message UpdateDocumentRequest {
-  uint64 document_id = 1 [(tagger.tags) = "alias:\"id\""];
-  optional uint64 category_id = 2;
+  int64 document_id = 1 [(tagger.tags) = "alias:\"id\""];
+  optional int64 category_id = 2;
   // @sanitize: method=StripTags
   string title = 3 [
     (buf.validate.field).string = {
@@ -243,7 +243,7 @@ message UpdateDocumentRequest {
 
 message ListDocumentActivityRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
-  uint64 document_id = 2;
+  int64 document_id = 2;
   // Search params
   repeated resources.documents.DocActivityType activity_types = 3 [(buf.validate.field).repeated = {
     max_items: 10
@@ -269,7 +269,7 @@ message ListDocumentActivityResponse {
 
 message ListDocumentReqsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
-  uint64 document_id = 2;
+  int64 document_id = 2;
 }
 
 message ListDocumentReqsResponse {
@@ -278,7 +278,7 @@ message ListDocumentReqsResponse {
 }
 
 message CreateDocumentReqRequest {
-  uint64 document_id = 1;
+  int64 document_id = 1;
   resources.documents.DocActivityType request_type = 2 [(buf.validate.field).enum = {
     in: [
       13,
@@ -299,8 +299,8 @@ message CreateDocumentReqResponse {
 }
 
 message UpdateDocumentReqRequest {
-  uint64 document_id = 1;
-  uint64 request_id = 2;
+  int64 document_id = 1;
+  int64 request_id = 2;
   // @sanitize
   optional string reason = 3 [(buf.validate.field).string.max_len = 255];
   optional resources.documents.DocActivityData data = 4;
@@ -312,7 +312,7 @@ message UpdateDocumentReqResponse {
 }
 
 message DeleteDocumentReqRequest {
-  uint64 request_id = 1;
+  int64 request_id = 1;
 }
 
 message DeleteDocumentReqResponse {}
@@ -320,7 +320,7 @@ message DeleteDocumentReqResponse {}
 // Access =====================================================================
 
 message GetDocumentAccessRequest {
-  uint64 document_id = 1;
+  int64 document_id = 1;
 }
 
 message GetDocumentAccessResponse {
@@ -328,7 +328,7 @@ message GetDocumentAccessResponse {
 }
 
 message SetDocumentAccessRequest {
-  uint64 document_id = 1;
+  int64 document_id = 1;
   resources.documents.DocumentAccess access = 2 [(buf.validate.field).required = true];
 }
 
@@ -364,7 +364,7 @@ message CreateOrUpdateCategoryResponse {
 }
 
 message DeleteCategoryRequest {
-  uint64 id = 1;
+  int64 id = 1;
 }
 
 message DeleteCategoryResponse {}
@@ -384,7 +384,7 @@ message ListDocumentPinsResponse {
 }
 
 message ToggleDocumentPinRequest {
-  uint64 document_id = 1;
+  int64 document_id = 1;
   bool state = 2;
   // If true, the pin is personal and not shared with other job members
   optional bool personal = 3;
@@ -397,7 +397,7 @@ message ToggleDocumentPinResponse {
 // Reminders ==================================================================
 
 message SetDocumentReminderRequest {
-  uint64 document_id = 1;
+  int64 document_id = 1;
   optional resources.timestamp.Timestamp reminder_time = 2;
   // @sanitize: method=StripTags
   optional string message = 3 [(buf.validate.field).string.max_bytes = 1024];

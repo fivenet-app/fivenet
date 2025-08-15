@@ -37,9 +37,9 @@ enum DocActivityType {
 }
 
 message DocActivity {
-  uint64 id = 1;
+  int64 id = 1;
   resources.timestamp.Timestamp created_at = 2;
-  uint64 document_id = 3;
+  int64 document_id = 3;
   DocActivityType activity_type = 4;
   optional int32 creator_id = 5 [(buf.validate.field).int32.gt = 0];
   optional resources.users.UserShort creator = 6 [(tagger.tags) = "alias:\"creator\""];

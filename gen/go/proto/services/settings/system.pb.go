@@ -877,11 +877,11 @@ const file_services_settings_system_proto_rawDesc = "" +
 	"\aversion\x18\x04 \x01(\v2 .services.settings.VersionStatusR\aversion\"G\n" +
 	"\x04Nats\x12!\n" +
 	"\aversion\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18 R\aversion\x12\x1c\n" +
-	"\tconnected\x18\x02 \x01(\bR\tconnected\"\x9b\x02\n" +
+	"\tconnected\x18\x02 \x01(\bR\tconnected\"\x92\x02\n" +
 	"\bDatabase\x12!\n" +
 	"\aversion\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18 R\aversion\x12\x1c\n" +
-	"\tconnected\x18\x02 \x01(\bR\tconnected\x124\n" +
-	"\x11migration_version\x18\x03 \x01(\x04B\a\xbaH\x042\x02 \x00R\x10migrationVersion\x12'\n" +
+	"\tconnected\x18\x02 \x01(\bR\tconnected\x12+\n" +
+	"\x11migration_version\x18\x03 \x01(\x04R\x10migrationVersion\x12'\n" +
 	"\x0fmigration_dirty\x18\x04 \x01(\bR\x0emigrationDirty\x12&\n" +
 	"\n" +
 	"db_charset\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x18 R\tdbCharset\x12*\n" +

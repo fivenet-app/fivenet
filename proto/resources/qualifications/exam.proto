@@ -15,8 +15,8 @@ message ExamQuestions {
 }
 
 message ExamQuestion {
-  uint64 id = 1;
-  uint64 qualification_id = 2;
+  int64 id = 1;
+  int64 qualification_id = 2;
   optional resources.timestamp.Timestamp created_at = 3;
   optional resources.timestamp.Timestamp updated_at = 4;
   // @sanitize: method=StripTags
@@ -89,7 +89,7 @@ message ExamQuestionAnswerData {
 // User Response
 
 message ExamUser {
-  uint64 qualification_id = 1;
+  int64 qualification_id = 1;
   int32 user_id = 2;
   optional resources.timestamp.Timestamp created_at = 3;
   optional resources.timestamp.Timestamp started_at = 4;
@@ -99,13 +99,13 @@ message ExamUser {
 
 // @dbscanner: json
 message ExamResponses {
-  uint64 qualification_id = 1;
+  int64 qualification_id = 1;
   int32 user_id = 2;
   repeated ExamResponse responses = 3 [(buf.validate.field).repeated.max_items = 100];
 }
 
 message ExamResponse {
-  uint64 question_id = 1;
+  int64 question_id = 1;
   int32 user_id = 2;
 
   ExamQuestion question = 3;
@@ -151,7 +151,7 @@ message ExamGrading {
 }
 
 message ExamGradingResponse {
-  uint64 question_id = 1;
+  int64 question_id = 1;
   float points = 2 [(buf.validate.field).float = {
     gte: 0
     lte: 1000

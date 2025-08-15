@@ -9,7 +9,7 @@ import "tagger/tagger.proto";
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documents";
 
 message DocumentPin {
-  uint64 document_id = 1 [(buf.validate.field).uint64.gt = 0, (tagger.tags) = "sql:\"primary_key\""];
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0, (tagger.tags) = "sql:\"primary_key\""];
   optional string job = 2 [(buf.validate.field).string.max_len = 20, (tagger.tags) = "sql:\"primary_key\""];
   optional int32 user_id = 3 [(buf.validate.field).int32.gt = 0, (tagger.tags) = "sql:\"primary_key\""];
   optional resources.timestamp.Timestamp created_at = 4;

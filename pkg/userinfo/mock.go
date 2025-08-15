@@ -24,7 +24,7 @@ func NewMockUserInfoRetriever(userInfo map[int32]*pbuserinfo.UserInfo) *MockUser
 func (ui *MockUserInfoRetriever) GetUserInfo(
 	_ context.Context,
 	userId int32,
-	_ uint64,
+	_ int64,
 ) (*pbuserinfo.UserInfo, error) {
 	if userInfo, ok := ui.UserInfo[userId]; ok {
 		return userInfo, nil
@@ -48,7 +48,7 @@ func (ui *MockUserInfoRetriever) GetUserInfoWithoutAccountId(
 // SetUserInfo is a mock method that does nothing and always returns nil.
 func (ui *MockUserInfoRetriever) SetUserInfo(
 	ctx context.Context,
-	accountId uint64,
+	accountId int64,
 	superuser bool,
 	job *string,
 	jobGrade *int32,
@@ -60,7 +60,7 @@ func (ui *MockUserInfoRetriever) SetUserInfo(
 func (ui *MockUserInfoRetriever) RefreshUserInfo(
 	ctx context.Context,
 	userId int32,
-	accountId uint64,
+	accountId int64,
 ) error {
 	return nil
 }

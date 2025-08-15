@@ -17,8 +17,8 @@ func (u Permissions) Len() int64 {
 // IDs returns an array of the permission array's ids.
 //
 //	@return	[]uint
-func (u Permissions) IDs() []uint64 {
-	ids := make([]uint64, 0, len(u))
+func (u Permissions) IDs() []int64 {
+	ids := make([]int64, 0, len(u))
 	for _, permission := range u {
 		ids = append(ids, permission.GetId())
 	}

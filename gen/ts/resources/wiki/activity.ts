@@ -20,7 +20,7 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface PageActivity {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -28,7 +28,7 @@ export interface PageActivity {
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 page_id = 3
+     * @generated from protobuf field: int64 page_id = 3
      */
     pageId: number;
     /**
@@ -205,9 +205,9 @@ export enum PageActivityType {
 class PageActivity$Type extends MessageType<PageActivity> {
     constructor() {
         super("resources.wiki.PageActivity", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "page_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "page_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "activity_type", kind: "enum", T: () => ["resources.wiki.PageActivityType", PageActivityType, "PAGE_ACTIVITY_TYPE_"] },
             { no: 5, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 6, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
@@ -232,14 +232,14 @@ class PageActivity$Type extends MessageType<PageActivity> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* uint64 page_id */ 3:
-                    message.pageId = reader.uint64().toNumber();
+                case /* int64 page_id */ 3:
+                    message.pageId = reader.int64().toNumber();
                     break;
                 case /* resources.wiki.PageActivityType activity_type */ 4:
                     message.activityType = reader.int32();
@@ -274,15 +274,15 @@ class PageActivity$Type extends MessageType<PageActivity> {
         return message;
     }
     internalBinaryWrite(message: PageActivity, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 page_id = 3; */
+        /* int64 page_id = 3; */
         if (message.pageId !== 0)
-            writer.tag(3, WireType.Varint).uint64(message.pageId);
+            writer.tag(3, WireType.Varint).int64(message.pageId);
         /* resources.wiki.PageActivityType activity_type = 4; */
         if (message.activityType !== 0)
             writer.tag(4, WireType.Varint).int32(message.activityType);

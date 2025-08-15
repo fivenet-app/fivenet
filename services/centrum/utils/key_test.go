@@ -5,16 +5,16 @@ import (
 	"testing"
 )
 
-func BenchmarkUint64ToString(b *testing.B) {
+func BenchmarkInt64ToString(b *testing.B) {
 	b.Run("Itoa", func(b *testing.B) {
 		for b.Loop() {
 			_ = strconv.Itoa(123456789)
 		}
 	})
 
-	b.Run("FormatUint", func(b *testing.B) {
+	b.Run("FormatInt", func(b *testing.B) {
 		for b.Loop() {
-			_ = strconv.FormatUint(123456789, 10)
+			_ = strconv.FormatInt(123456789, 10)
 		}
 	})
 }

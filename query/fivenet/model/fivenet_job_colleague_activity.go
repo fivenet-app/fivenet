@@ -12,7 +12,7 @@ import (
 )
 
 type FivenetJobColleagueActivity struct {
-	ID           uint64     `sql:"primary_key" json:"id"`
+	ID           int64      `sql:"primary_key" json:"id"`
 	CreatedAt    *time.Time `json:"created_at"`
 	Job          string     `json:"job"`
 	SourceUserID *int32     `json:"source_user_id"`

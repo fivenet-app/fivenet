@@ -24,11 +24,11 @@ var (
 type QualificationsAccessProtoMessage[T any, V protoutils.ProtoEnum] interface {
 	protoutils.ProtoMessage[T]
 
-	GetId() uint64
-	GetTargetId() uint64
+	GetId() int64
+	GetTargetId() int64
 
-	GetQualificationId() uint64
-	SetQualificationId(id uint64)
+	GetQualificationId() int64
+	SetQualificationId(id int64)
 	GetAccess() V
 	SetAccess(access V)
 }
@@ -65,7 +65,7 @@ func NewQualifications[U any, T QualificationsAccessProtoMessage[U, V], V protou
 func (a *Qualifications[U, T, V]) List(
 	ctx context.Context,
 	tx qrm.DB,
-	targetId uint64,
+	targetId int64,
 ) ([]T, error) {
 	tQualiResults := tQualiResults.AS("qualification_result")
 
@@ -97,7 +97,7 @@ func (a *Qualifications[U, T, V]) List(
 					),
 			).
 			WHERE(jet.AND(
-				a.selectColumns.TargetID.EQ(jet.Uint64(targetId)),
+				a.selectColumns.TargetID.EQ(jet.Int64(targetId)),
 				a.selectColumns.QualificationId.IS_NOT_NULL(),
 				tQualifications.DeletedAt.IS_NULL(),
 				tQualiResults.DeletedAt.IS_NULL(),
@@ -122,7 +122,7 @@ func (a *Qualifications[U, T, V]) List(
 					),
 			).
 			WHERE(jet.AND(
-				a.selectColumns.TargetID.EQ(jet.Uint64(targetId)),
+				a.selectColumns.TargetID.EQ(jet.Int64(targetId)),
 				tQualifications.DeletedAt.IS_NULL(),
 			))
 	}
@@ -141,12 +141,12 @@ func (a *Qualifications[U, T, V]) List(
 func (a *Qualifications[U, T, V]) Clear(
 	ctx context.Context,
 	tx qrm.DB,
-	targetId uint64,
+	targetId int64,
 ) (T, error) {
 	stmt := a.table.
 		DELETE().
 		WHERE(
-			a.columns.TargetID.EQ(jet.Uint64(targetId)),
+			a.columns.TargetID.EQ(jet.Int64(targetId)),
 		)
 
 	var dest T
@@ -164,7 +164,7 @@ func (a *Qualifications[U, T, V]) Clear(
 func (a *Qualifications[U, T, V]) Compare(
 	ctx context.Context,
 	tx qrm.DB,
-	targetId uint64,
+	targetId int64,
 	in []T,
 ) ([]T, []T, []T, error) {
 	current, err := a.List(ctx, tx, targetId)
@@ -239,7 +239,7 @@ func (a *Qualifications[U, T, V]) compare(
 func (a *Qualifications[U, T, AccessLevel]) HandleAccessChanges(
 	ctx context.Context,
 	tx qrm.DB,
-	targetId uint64,
+	targetId int64,
 	access []T,
 ) ([]T, []T, []T, error) {
 	toCreate, toUpdate, toDelete, err := a.Compare(ctx, tx, targetId, access)

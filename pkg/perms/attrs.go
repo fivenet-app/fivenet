@@ -59,11 +59,11 @@ func (p *Perms) GetAttribute(
 
 func (p *Perms) GetAttributeByIDs(
 	ctx context.Context,
-	attrIds ...uint64,
+	attrIds ...int64,
 ) ([]*permissions.RoleAttribute, error) {
 	ids := make([]jet.Expression, len(attrIds))
 	for i := range attrIds {
-		ids[i] = jet.Uint64(attrIds[i])
+		ids[i] = jet.Int64(attrIds[i])
 	}
 
 	tAttrs := table.FivenetRbacAttrs.AS("role_attribute")
@@ -104,7 +104,7 @@ func (p *Perms) GetAttributeByIDs(
 
 func (p *Perms) getAttributeFromDatabase(
 	ctx context.Context,
-	permId uint64,
+	permId int64,
 	key Key,
 ) (*model.FivenetRbacAttrs, error) {
 	stmt := tAttrs.
@@ -118,7 +118,7 @@ func (p *Perms) getAttributeFromDatabase(
 		).
 		FROM(tAttrs).
 		WHERE(jet.AND(
-			tAttrs.PermissionID.EQ(jet.Uint64(permId)),
+			tAttrs.PermissionID.EQ(jet.Int64(permId)),
 			tAttrs.Key.EQ(jet.String(string(key))),
 		)).
 		LIMIT(1)
@@ -135,11 +135,11 @@ func (p *Perms) getAttributeFromDatabase(
 
 func (p *Perms) CreateAttribute(
 	ctx context.Context,
-	permId uint64,
+	permId int64,
 	key Key,
 	aType permissions.AttributeTypes,
 	validValues *permissions.AttributeValues,
-) (uint64, error) {
+) (int64, error) {
 	stmt := tAttrs.
 		INSERT(
 			tAttrs.PermissionID,
@@ -183,16 +183,16 @@ func (p *Perms) CreateAttribute(
 		return 0, fmt.Errorf("failed to retrieve last insert ID. %w", err)
 	}
 
-	if err := p.addOrUpdateAttributeInMap(permId, uint64(lastId), key, aType, validValues); err != nil {
+	if err := p.addOrUpdateAttributeInMap(permId, lastId, key, aType, validValues); err != nil {
 		return 0, fmt.Errorf("failed to add or update attribute in map. %w", err)
 	}
 
-	return uint64(lastId), nil
+	return lastId, nil
 }
 
 func (p *Perms) addOrUpdateAttributeInMap(
-	permId uint64,
-	attrId uint64,
+	permId int64,
+	attrId int64,
 	key Key,
 	aType permissions.AttributeTypes,
 	validValues *permissions.AttributeValues,
@@ -214,8 +214,8 @@ func (p *Perms) addOrUpdateAttributeInMap(
 
 	p.attrsMap.Store(attrId, attr)
 
-	pAttrMap, _ := p.attrsPermsMap.LoadOrCompute(permId, func() (*xsync.Map[string, uint64], bool) {
-		return xsync.NewMap[string, uint64](), false
+	pAttrMap, _ := p.attrsPermsMap.LoadOrCompute(permId, func() (*xsync.Map[string, int64], bool) {
+		return xsync.NewMap[string, int64](), false
 	})
 	pAttrMap.Store(string(key), attrId)
 
@@ -224,8 +224,8 @@ func (p *Perms) addOrUpdateAttributeInMap(
 
 func (p *Perms) UpdateAttribute(
 	ctx context.Context,
-	attrId uint64,
-	permId uint64,
+	attrId int64,
+	permId int64,
 	key Key,
 	aType permissions.AttributeTypes,
 	validValues *permissions.AttributeValues,
@@ -244,7 +244,7 @@ func (p *Perms) UpdateAttribute(
 			validValues,
 		).
 		WHERE(
-			tAttrs.ID.EQ(jet.Uint64(attrId)),
+			tAttrs.ID.EQ(jet.Int64(attrId)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
@@ -258,7 +258,7 @@ func (p *Perms) UpdateAttribute(
 	return nil
 }
 
-func (p *Perms) getClosestRoleAttr(job string, grade int32, permId uint64, key Key) *cacheRoleAttr {
+func (p *Perms) getClosestRoleAttr(job string, grade int32, permId int64, key Key) *cacheRoleAttr {
 	roleIds, ok := p.lookupRoleIDsForJobUpToGrade(job, grade)
 	if !ok {
 		return nil
@@ -288,7 +288,7 @@ func (p *Perms) getClosestRoleAttr(job string, grade int32, permId uint64, key K
 func (p *Perms) GetJobAttributeValue(
 	ctx context.Context,
 	job string,
-	attrId uint64,
+	attrId int64,
 ) (*permissions.AttributeValues, error) {
 	tJobAttrs := table.FivenetRbacJobAttrs.AS("role_attribute")
 	stmt := tJobAttrs.
@@ -300,7 +300,7 @@ func (p *Perms) GetJobAttributeValue(
 		).
 		WHERE(jet.AND(
 			tJobAttrs.Job.EQ(jet.String(job)),
-			tJobAttrs.AttrID.EQ(jet.Uint64(attrId)),
+			tJobAttrs.AttrID.EQ(jet.Int64(attrId)),
 		)).
 		LIMIT(1)
 
@@ -389,7 +389,7 @@ func (p *Perms) Attr(
 		return nil, nil
 	}
 
-	//nolint:forcetypeassert // We know that rAttr.Value is of type permissions.AttributeValues as we just clone it.
+	//nolint:forcetypeassert,errcheck // We know that rAttr.Value is of type permissions.AttributeValues as we just clone it.
 	return proto.Clone(rAttr.Value).(*permissions.AttributeValues), nil
 }
 
@@ -543,7 +543,7 @@ func (p *Perms) GetRoleAttributes(
 
 	var err error
 	attrs := []*permissions.RoleAttribute{}
-	attrsRoleMap.Range(func(key uint64, value *cacheRoleAttr) bool {
+	attrsRoleMap.Range(func(key int64, value *cacheRoleAttr) bool {
 		attr, ok := p.LookupAttributeByID(key)
 		if !ok {
 			err = fmt.Errorf(
@@ -601,7 +601,7 @@ func (p *Perms) GetEffectiveRoleAttributes(
 	job string,
 	grade int32,
 ) ([]*permissions.RoleAttribute, error) {
-	roleAttrs := map[uint64]interface{}{}
+	roleAttrs := map[int64]interface{}{}
 
 	roleIds, ok := p.lookupRoleIDsForJobUpToGrade(job, grade)
 	if !ok {
@@ -618,7 +618,7 @@ func (p *Perms) GetEffectiveRoleAttributes(
 			continue
 		}
 
-		attrMap.Range(func(_ uint64, value *cacheRoleAttr) bool {
+		attrMap.Range(func(_ int64, value *cacheRoleAttr) bool {
 			// Skip already added attributes
 			if _, ok := roleAttrs[value.AttrID]; ok {
 				return true
@@ -682,7 +682,7 @@ func (p *Perms) GetEffectiveRoleAttributes(
 }
 
 func (p *Perms) getRoleAttributesFromCache(job string, grade int32) []*cacheRoleAttr {
-	roleAttrs := map[uint64]*cacheRoleAttr{}
+	roleAttrs := map[int64]*cacheRoleAttr{}
 
 	roleIds, ok := p.lookupRoleIDsForJobUpToGrade(job, grade)
 	if !ok {
@@ -695,7 +695,7 @@ func (p *Perms) getRoleAttributesFromCache(job string, grade int32) []*cacheRole
 			continue
 		}
 
-		attrMap.Range(func(_ uint64, value *cacheRoleAttr) bool {
+		attrMap.Range(func(_ int64, value *cacheRoleAttr) bool {
 			// Skip already added attributes
 			if _, ok := roleAttrs[value.AttrID]; ok {
 				return true
@@ -759,7 +759,7 @@ func (p *Perms) FlattenRoleAttributes(job string, grade int32) ([]string, error)
 func (p *Perms) UpdateRoleAttributes(
 	ctx context.Context,
 	job string,
-	roleId uint64,
+	roleId int64,
 	attrs ...*permissions.RoleAttribute,
 ) error {
 	for i := range attrs {
@@ -815,7 +815,7 @@ func (p *Perms) UpdateRoleAttributes(
 
 func (p *Perms) addOrUpdateAttributesToRole(
 	ctx context.Context,
-	roleId uint64,
+	roleId int64,
 	attrs ...*permissions.RoleAttribute,
 ) error {
 	for i := range attrs {
@@ -865,7 +865,7 @@ func (p *Perms) addOrUpdateAttributesToRole(
 
 func (p *Perms) RemoveAttributesFromRole(
 	ctx context.Context,
-	roleId uint64,
+	roleId int64,
 	attrs ...*permissions.RoleAttribute,
 ) error {
 	if len(attrs) == 0 {
@@ -874,13 +874,13 @@ func (p *Perms) RemoveAttributesFromRole(
 
 	ids := make([]jet.Expression, len(attrs))
 	for i := range attrs {
-		ids[i] = jet.Uint64(attrs[i].GetAttrId())
+		ids[i] = jet.Int64(attrs[i].GetAttrId())
 	}
 
 	stmt := tRoleAttrs.
 		DELETE().
 		WHERE(jet.AND(
-			tRoleAttrs.RoleID.EQ(jet.Uint64(roleId)),
+			tRoleAttrs.RoleID.EQ(jet.Int64(roleId)),
 			tRoleAttrs.AttrID.IN(ids...),
 		))
 
@@ -903,8 +903,8 @@ func (p *Perms) RemoveAttributesFromRole(
 
 func (p *Perms) RemoveAttributesFromRoleByPermission(
 	ctx context.Context,
-	roleId uint64,
-	permissionId uint64,
+	roleId int64,
+	permissionId int64,
 ) error {
 	as, ok := p.attrsPermsMap.Load(permissionId)
 	if !ok {
@@ -912,7 +912,7 @@ func (p *Perms) RemoveAttributesFromRoleByPermission(
 	}
 
 	ras := []*permissions.RoleAttribute{}
-	as.Range(func(key string, attrId uint64) bool {
+	as.Range(func(key string, attrId int64) bool {
 		ras = append(ras, &permissions.RoleAttribute{
 			AttrId: attrId,
 		})
@@ -1001,23 +1001,23 @@ func (p *Perms) ClearJobAttributes(ctx context.Context, job string) error {
 }
 
 func (p *Perms) updateRoleAttributeInMap(
-	roleId uint64,
-	permId uint64,
-	attrId uint64,
+	roleId int64,
+	permId int64,
+	attrId int64,
 	key Key,
 	aType permissions.AttributeTypes,
 	value *permissions.AttributeValues,
 ) {
 	job, ok := p.lookupJobForRoleID(roleId)
 	if !ok {
-		p.logger.Error("unable to lookup job for role id", zap.Uint64("role_id", roleId))
+		p.logger.Error("unable to lookup job for role id", zap.Int64("role_id", roleId))
 		return
 	}
 
 	attrRoleMap, _ := p.attrsRoleMap.LoadOrCompute(
 		roleId,
-		func() (*xsync.Map[uint64, *cacheRoleAttr], bool) {
-			return xsync.NewMap[uint64, *cacheRoleAttr](), false
+		func() (*xsync.Map[int64, *cacheRoleAttr], bool) {
+			return xsync.NewMap[int64, *cacheRoleAttr](), false
 		},
 	)
 
@@ -1031,7 +1031,7 @@ func (p *Perms) updateRoleAttributeInMap(
 	})
 }
 
-func (p *Perms) removeRoleAttributeFromMap(roleId uint64, attrId uint64) {
+func (p *Perms) removeRoleAttributeFromMap(roleId int64, attrId int64) {
 	attrMap, ok := p.attrsRoleMap.Load(roleId)
 	if !ok {
 		return

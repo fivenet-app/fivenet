@@ -192,7 +192,7 @@ func (s *Server) CreateAccount(
 			tAccounts.RegToken.SET(jet.StringExp(jet.NULL)),
 		).
 		WHERE(jet.AND(
-			tAccounts.ID.EQ(jet.Uint64(acc.ID)),
+			tAccounts.ID.EQ(jet.Int64(acc.ID)),
 			tAccounts.RegToken.EQ(jet.String(req.GetRegToken())),
 		))
 
@@ -267,7 +267,7 @@ func (s *Server) ChangePassword(
 			tAccounts.Password.SET(jet.String(pass)),
 		).
 		WHERE(
-			tAccounts.ID.EQ(jet.Uint64(acc.ID)),
+			tAccounts.ID.EQ(jet.Int64(acc.ID)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -347,7 +347,7 @@ func (s *Server) ChangeUsername(
 			tAccounts.Username.SET(jet.String(username)),
 		).
 		WHERE(
-			tAccounts.ID.EQ(jet.Uint64(acc.ID)),
+			tAccounts.ID.EQ(jet.Int64(acc.ID)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -393,7 +393,7 @@ func (s *Server) ForgotPassword(
 			tAccounts.RegToken.SET(jet.StringExp(jet.NULL)),
 		).
 		WHERE(
-			tAccounts.ID.EQ(jet.Uint64(acc.ID)),
+			tAccounts.ID.EQ(jet.Int64(acc.ID)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

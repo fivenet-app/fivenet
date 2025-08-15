@@ -27,7 +27,7 @@ message ListQualificationsResponse {
 }
 
 message GetQualificationRequest {
-  uint64 qualification_id = 1;
+  int64 qualification_id = 1;
   optional bool with_exam = 2;
 }
 
@@ -40,7 +40,7 @@ message CreateQualificationRequest {
 }
 
 message CreateQualificationResponse {
-  uint64 qualification_id = 1;
+  int64 qualification_id = 1;
 }
 
 message UpdateQualificationRequest {
@@ -48,11 +48,11 @@ message UpdateQualificationRequest {
 }
 
 message UpdateQualificationResponse {
-  uint64 qualification_id = 1;
+  int64 qualification_id = 1;
 }
 
 message DeleteQualificationRequest {
-  uint64 qualification_id = 1;
+  int64 qualification_id = 1;
 }
 
 message DeleteQualificationResponse {}
@@ -60,7 +60,7 @@ message DeleteQualificationResponse {}
 // Access =====================================================================
 
 message GetQualificationAccessRequest {
-  uint64 qualification_id = 1;
+  int64 qualification_id = 1;
 }
 
 message GetQualificationAccessResponse {
@@ -68,7 +68,7 @@ message GetQualificationAccessResponse {
 }
 
 message SetQualificationAccessRequest {
-  uint64 qualification_id = 1;
+  int64 qualification_id = 1;
   resources.qualifications.QualificationAccess access = 2 [(buf.validate.field).required = true];
 }
 
@@ -80,7 +80,7 @@ message ListQualificationRequestsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   optional resources.common.database.Sort sort = 2;
   // Search params
-  optional uint64 qualification_id = 3;
+  optional int64 qualification_id = 3;
   repeated resources.qualifications.RequestStatus status = 4;
   optional int32 user_id = 5 [(buf.validate.field).int32.gte = 0];
 }
@@ -99,7 +99,7 @@ message CreateOrUpdateQualificationRequestResponse {
 }
 
 message DeleteQualificationReqRequest {
-  uint64 qualification_id = 1;
+  int64 qualification_id = 1;
   int32 user_id = 2 [(buf.validate.field).int32.gte = 0];
 }
 
@@ -111,7 +111,7 @@ message ListQualificationsResultsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   optional resources.common.database.Sort sort = 2;
   // Search params
-  optional uint64 qualification_id = 3;
+  optional int64 qualification_id = 3;
   repeated resources.qualifications.ResultStatus status = 4;
   optional int32 user_id = 5 [(buf.validate.field).int32.gte = 0];
 }
@@ -131,7 +131,7 @@ message CreateOrUpdateQualificationResultResponse {
 }
 
 message DeleteQualificationResultRequest {
-  uint64 result_id = 1;
+  int64 result_id = 1;
 }
 
 message DeleteQualificationResultResponse {}
@@ -139,17 +139,17 @@ message DeleteQualificationResultResponse {}
 // Exam =======================================================================
 
 message GetExamInfoRequest {
-  uint64 qualification_id = 1;
+  int64 qualification_id = 1;
 }
 
 message GetExamInfoResponse {
   resources.qualifications.QualificationShort qualification = 1;
-  int32 question_count = 2;
+  int64 question_count = 2;
   optional resources.qualifications.ExamUser exam_user = 3;
 }
 
 message TakeExamRequest {
-  uint64 qualification_id = 1;
+  int64 qualification_id = 1;
   optional bool cancel = 2;
 }
 
@@ -159,7 +159,7 @@ message TakeExamResponse {
 }
 
 message SubmitExamRequest {
-  uint64 qualification_id = 1;
+  int64 qualification_id = 1;
   resources.qualifications.ExamResponses responses = 2;
 }
 
@@ -168,7 +168,7 @@ message SubmitExamResponse {
 }
 
 message GetUserExamRequest {
-  uint64 qualification_id = 1;
+  int64 qualification_id = 1;
   int32 user_id = 2 [(buf.validate.field).int32.gte = 0];
 }
 

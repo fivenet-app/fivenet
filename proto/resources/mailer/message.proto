@@ -11,9 +11,9 @@ import "tagger/tagger.proto";
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailer";
 
 message Message {
-  uint64 id = 1;
-  uint64 thread_id = 2;
-  uint64 sender_id = 3;
+  int64 id = 1;
+  int64 thread_id = 2;
+  int64 sender_id = 3;
   optional resources.mailer.Email sender = 4 [(tagger.tags) = "alias:\"sender\""];
   resources.timestamp.Timestamp created_at = 5;
   optional resources.timestamp.Timestamp updated_at = 6;
@@ -44,6 +44,6 @@ message MessageAttachment {
 }
 
 message MessageAttachmentDocument {
-  uint64 id = 1;
+  int64 id = 1;
   optional string title = 2 [(buf.validate.field).string.max_len = 768];
 }

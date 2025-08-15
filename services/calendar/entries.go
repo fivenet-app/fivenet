@@ -88,7 +88,7 @@ func (s *Server) ListCalendarEntries(
 			if req.GetCalendarIds()[i] == 0 {
 				continue
 			}
-			ids = append(ids, jet.Uint64(req.GetCalendarIds()[i]))
+			ids = append(ids, jet.Int64(req.GetCalendarIds()[i]))
 		}
 
 		condition = condition.AND(tCalendarEntry.CalendarID.IN(ids...))
@@ -172,7 +172,7 @@ func (s *Server) GetCalendarEntry(
 ) (*pbcalendar.GetCalendarEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.GetEntryId())))
+	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Int64(req.GetEntryId())))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -239,7 +239,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 	calendar, err := s.getCalendar(
 		ctx,
 		userInfo,
-		tCalendar.ID.EQ(jet.Uint64(req.GetEntry().GetCalendarId())),
+		tCalendar.ID.EQ(jet.Int64(req.GetEntry().GetCalendarId())),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
@@ -289,8 +289,8 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 				req.GetEntry().GetRecurring(),
 			).
 			WHERE(jet.AND(
-				tCalendarEntry.ID.EQ(jet.Uint64(req.GetEntry().GetId())),
-				tCalendarEntry.CalendarID.EQ(jet.Uint64(req.GetEntry().GetCalendarId())),
+				tCalendarEntry.ID.EQ(jet.Int64(req.GetEntry().GetId())),
+				tCalendarEntry.CalendarID.EQ(jet.Int64(req.GetEntry().GetCalendarId())),
 			))
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -337,7 +337,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
 
-		req.Entry.Id = uint64(lastId)
+		req.Entry.Id = lastId
 
 		auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 	}
@@ -358,7 +358,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 	entry, err := s.getEntry(
 		ctx,
 		userInfo,
-		tCalendarEntry.AS("calendar_entry").ID.EQ(jet.Uint64(req.GetEntry().GetId())),
+		tCalendarEntry.AS("calendar_entry").ID.EQ(jet.Int64(req.GetEntry().GetId())),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
@@ -390,7 +390,7 @@ func (s *Server) DeleteCalendarEntry(
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.GetEntryId())))
+	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Int64(req.GetEntryId())))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -425,8 +425,8 @@ func (s *Server) DeleteCalendarEntry(
 			tCalendarEntry.DeletedAt.SET(deletedAtTime),
 		).
 		WHERE(jet.AND(
-			tCalendarEntry.CalendarID.EQ(jet.Uint64(entry.GetCalendarId())),
-			tCalendarEntry.ID.EQ(jet.Uint64(req.GetEntryId())),
+			tCalendarEntry.CalendarID.EQ(jet.Int64(entry.GetCalendarId())),
+			tCalendarEntry.ID.EQ(jet.Int64(req.GetEntryId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

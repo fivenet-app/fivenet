@@ -24,7 +24,7 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface Document {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -40,7 +40,7 @@ export interface Document {
      */
     deletedAt?: Timestamp;
     /**
-     * @generated from protobuf field: optional uint64 category_id = 5
+     * @generated from protobuf field: optional int64 category_id = 5
      */
     categoryId?: number;
     /**
@@ -102,7 +102,7 @@ export interface Document {
      */
     public: boolean;
     /**
-     * @generated from protobuf field: optional uint64 template_id = 19
+     * @generated from protobuf field: optional int64 template_id = 19
      */
     templateId?: number;
     /**
@@ -127,7 +127,7 @@ export interface Document {
  */
 export interface DocumentShort {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -143,7 +143,7 @@ export interface DocumentShort {
      */
     deletedAt?: Timestamp;
     /**
-     * @generated from protobuf field: optional uint64 category_id = 5
+     * @generated from protobuf field: optional int64 category_id = 5
      */
     categoryId?: number;
     /**
@@ -216,7 +216,7 @@ export interface DocumentShort {
  */
 export interface DocumentReference {
     /**
-     * @generated from protobuf field: optional uint64 id = 1
+     * @generated from protobuf field: optional int64 id = 1
      */
     id?: number;
     /**
@@ -224,7 +224,7 @@ export interface DocumentReference {
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 source_document_id = 3
+     * @generated from protobuf field: int64 source_document_id = 3
      */
     sourceDocumentId: number;
     /**
@@ -236,7 +236,7 @@ export interface DocumentReference {
      */
     reference: DocReference;
     /**
-     * @generated from protobuf field: uint64 target_document_id = 6
+     * @generated from protobuf field: int64 target_document_id = 6
      */
     targetDocumentId: number;
     /**
@@ -257,7 +257,7 @@ export interface DocumentReference {
  */
 export interface DocumentRelation {
     /**
-     * @generated from protobuf field: optional uint64 id = 1
+     * @generated from protobuf field: optional int64 id = 1
      */
     id?: number;
     /**
@@ -265,7 +265,7 @@ export interface DocumentRelation {
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 document_id = 3
+     * @generated from protobuf field: int64 document_id = 3
      */
     documentId: number;
     /**
@@ -298,7 +298,7 @@ export interface DocumentRelation {
  */
 export interface WorkflowState {
     /**
-     * @generated from protobuf field: uint64 document_id = 1
+     * @generated from protobuf field: int64 document_id = 1
      */
     documentId: number;
     /**
@@ -327,7 +327,7 @@ export interface WorkflowState {
  */
 export interface WorkflowUserState {
     /**
-     * @generated from protobuf field: uint64 document_id = 1
+     * @generated from protobuf field: int64 document_id = 1
      */
     documentId: number;
     /**
@@ -401,11 +401,11 @@ export enum DocRelation {
 class Document$Type extends MessageType<Document> {
     constructor() {
         super("resources.documents.Document", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 5, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 5, name: "category_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 6, name: "category", kind: "message", T: () => Category, options: { "tagger.tags": "alias:\"category\"" } },
             { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "512" } } } },
             { no: 8, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
@@ -419,7 +419,7 @@ class Document$Type extends MessageType<Document> {
             { no: 16, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 17, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 18, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 19, name: "template_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 19, name: "template_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 20, name: "pin", kind: "message", T: () => DocumentPin, options: { "tagger.tags": "alias:\"pin\"" } },
             { no: 21, name: "workflow_state", kind: "message", T: () => WorkflowState },
             { no: 22, name: "workflow_user", kind: "message", T: () => WorkflowUserState },
@@ -446,8 +446,8 @@ class Document$Type extends MessageType<Document> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -458,8 +458,8 @@ class Document$Type extends MessageType<Document> {
                 case /* optional resources.timestamp.Timestamp deleted_at */ 4:
                     message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
                     break;
-                case /* optional uint64 category_id */ 5:
-                    message.categoryId = reader.uint64().toNumber();
+                case /* optional int64 category_id */ 5:
+                    message.categoryId = reader.int64().toNumber();
                     break;
                 case /* optional resources.documents.Category category */ 6:
                     message.category = Category.internalBinaryRead(reader, reader.uint32(), options, message.category);
@@ -500,8 +500,8 @@ class Document$Type extends MessageType<Document> {
                 case /* bool public */ 18:
                     message.public = reader.bool();
                     break;
-                case /* optional uint64 template_id */ 19:
-                    message.templateId = reader.uint64().toNumber();
+                case /* optional int64 template_id */ 19:
+                    message.templateId = reader.int64().toNumber();
                     break;
                 case /* optional resources.documents.DocumentPin pin */ 20:
                     message.pin = DocumentPin.internalBinaryRead(reader, reader.uint32(), options, message.pin);
@@ -527,9 +527,9 @@ class Document$Type extends MessageType<Document> {
         return message;
     }
     internalBinaryWrite(message: Document, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
@@ -539,9 +539,9 @@ class Document$Type extends MessageType<Document> {
         /* optional resources.timestamp.Timestamp deleted_at = 4; */
         if (message.deletedAt)
             Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* optional uint64 category_id = 5; */
+        /* optional int64 category_id = 5; */
         if (message.categoryId !== undefined)
-            writer.tag(5, WireType.Varint).uint64(message.categoryId);
+            writer.tag(5, WireType.Varint).int64(message.categoryId);
         /* optional resources.documents.Category category = 6; */
         if (message.category)
             Category.internalBinaryWrite(message.category, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
@@ -581,9 +581,9 @@ class Document$Type extends MessageType<Document> {
         /* bool public = 18; */
         if (message.public !== false)
             writer.tag(18, WireType.Varint).bool(message.public);
-        /* optional uint64 template_id = 19; */
+        /* optional int64 template_id = 19; */
         if (message.templateId !== undefined)
-            writer.tag(19, WireType.Varint).uint64(message.templateId);
+            writer.tag(19, WireType.Varint).int64(message.templateId);
         /* optional resources.documents.DocumentPin pin = 20; */
         if (message.pin)
             DocumentPin.internalBinaryWrite(message.pin, writer.tag(20, WireType.LengthDelimited).fork(), options).join();
@@ -610,11 +610,11 @@ export const Document = new Document$Type();
 class DocumentShort$Type extends MessageType<DocumentShort> {
     constructor() {
         super("resources.documents.DocumentShort", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 5, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 5, name: "category_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 6, name: "category", kind: "message", T: () => Category, options: { "tagger.tags": "alias:\"category\"" } },
             { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "512" } } } },
             { no: 8, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
@@ -651,8 +651,8 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -663,8 +663,8 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
                 case /* optional resources.timestamp.Timestamp deleted_at */ 4:
                     message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
                     break;
-                case /* optional uint64 category_id */ 5:
-                    message.categoryId = reader.uint64().toNumber();
+                case /* optional int64 category_id */ 5:
+                    message.categoryId = reader.int64().toNumber();
                     break;
                 case /* optional resources.documents.Category category */ 6:
                     message.category = Category.internalBinaryRead(reader, reader.uint32(), options, message.category);
@@ -723,9 +723,9 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
         return message;
     }
     internalBinaryWrite(message: DocumentShort, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
@@ -735,9 +735,9 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
         /* optional resources.timestamp.Timestamp deleted_at = 4; */
         if (message.deletedAt)
             Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* optional uint64 category_id = 5; */
+        /* optional int64 category_id = 5; */
         if (message.categoryId !== undefined)
-            writer.tag(5, WireType.Varint).uint64(message.categoryId);
+            writer.tag(5, WireType.Varint).int64(message.categoryId);
         /* optional resources.documents.Category category = 6; */
         if (message.category)
             Category.internalBinaryWrite(message.category, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
@@ -797,12 +797,12 @@ export const DocumentShort = new DocumentShort$Type();
 class DocumentReference$Type extends MessageType<DocumentReference> {
     constructor() {
         super("resources.documents.DocumentReference", [
-            { no: 1, name: "id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "source_document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "alias:\"source_document_id\"" } },
+            { no: 3, name: "source_document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "alias:\"source_document_id\"" } },
             { no: 4, name: "source_document", kind: "message", T: () => DocumentShort, options: { "tagger.tags": "alias:\"source_document\"" } },
             { no: 5, name: "reference", kind: "enum", T: () => ["resources.documents.DocReference", DocReference, "DOC_REFERENCE_"], options: { "buf.validate.field": { enum: { definedOnly: true } }, "tagger.tags": "alias:\"reference\"" } },
-            { no: 6, name: "target_document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "alias:\"target_document_id\"" } },
+            { no: 6, name: "target_document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "alias:\"target_document_id\"" } },
             { no: 7, name: "target_document", kind: "message", T: () => DocumentShort, options: { "tagger.tags": "alias:\"target_document\"" } },
             { no: 8, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 9, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"ref_creator\"" } }
@@ -822,14 +822,14 @@ class DocumentReference$Type extends MessageType<DocumentReference> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* optional int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* uint64 source_document_id */ 3:
-                    message.sourceDocumentId = reader.uint64().toNumber();
+                case /* int64 source_document_id */ 3:
+                    message.sourceDocumentId = reader.int64().toNumber();
                     break;
                 case /* optional resources.documents.DocumentShort source_document */ 4:
                     message.sourceDocument = DocumentShort.internalBinaryRead(reader, reader.uint32(), options, message.sourceDocument);
@@ -837,8 +837,8 @@ class DocumentReference$Type extends MessageType<DocumentReference> {
                 case /* resources.documents.DocReference reference */ 5:
                     message.reference = reader.int32();
                     break;
-                case /* uint64 target_document_id */ 6:
-                    message.targetDocumentId = reader.uint64().toNumber();
+                case /* int64 target_document_id */ 6:
+                    message.targetDocumentId = reader.int64().toNumber();
                     break;
                 case /* optional resources.documents.DocumentShort target_document */ 7:
                     message.targetDocument = DocumentShort.internalBinaryRead(reader, reader.uint32(), options, message.targetDocument);
@@ -861,24 +861,24 @@ class DocumentReference$Type extends MessageType<DocumentReference> {
         return message;
     }
     internalBinaryWrite(message: DocumentReference, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional uint64 id = 1; */
+        /* optional int64 id = 1; */
         if (message.id !== undefined)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 source_document_id = 3; */
+        /* int64 source_document_id = 3; */
         if (message.sourceDocumentId !== 0)
-            writer.tag(3, WireType.Varint).uint64(message.sourceDocumentId);
+            writer.tag(3, WireType.Varint).int64(message.sourceDocumentId);
         /* optional resources.documents.DocumentShort source_document = 4; */
         if (message.sourceDocument)
             DocumentShort.internalBinaryWrite(message.sourceDocument, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         /* resources.documents.DocReference reference = 5; */
         if (message.reference !== 0)
             writer.tag(5, WireType.Varint).int32(message.reference);
-        /* uint64 target_document_id = 6; */
+        /* int64 target_document_id = 6; */
         if (message.targetDocumentId !== 0)
-            writer.tag(6, WireType.Varint).uint64(message.targetDocumentId);
+            writer.tag(6, WireType.Varint).int64(message.targetDocumentId);
         /* optional resources.documents.DocumentShort target_document = 7; */
         if (message.targetDocument)
             DocumentShort.internalBinaryWrite(message.targetDocument, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
@@ -902,9 +902,9 @@ export const DocumentReference = new DocumentReference$Type();
 class DocumentRelation$Type extends MessageType<DocumentRelation> {
     constructor() {
         super("resources.documents.DocumentRelation", [
-            { no: 1, name: "id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "document", kind: "message", T: () => DocumentShort, options: { "tagger.tags": "alias:\"document\"" } },
             { no: 5, name: "source_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } }, "tagger.tags": "alias:\"source_user_id\"" } },
             { no: 6, name: "source_user", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"source_user\"" } },
@@ -928,14 +928,14 @@ class DocumentRelation$Type extends MessageType<DocumentRelation> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* optional int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* uint64 document_id */ 3:
-                    message.documentId = reader.uint64().toNumber();
+                case /* int64 document_id */ 3:
+                    message.documentId = reader.int64().toNumber();
                     break;
                 case /* optional resources.documents.DocumentShort document */ 4:
                     message.document = DocumentShort.internalBinaryRead(reader, reader.uint32(), options, message.document);
@@ -967,15 +967,15 @@ class DocumentRelation$Type extends MessageType<DocumentRelation> {
         return message;
     }
     internalBinaryWrite(message: DocumentRelation, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional uint64 id = 1; */
+        /* optional int64 id = 1; */
         if (message.id !== undefined)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 document_id = 3; */
+        /* int64 document_id = 3; */
         if (message.documentId !== 0)
-            writer.tag(3, WireType.Varint).uint64(message.documentId);
+            writer.tag(3, WireType.Varint).int64(message.documentId);
         /* optional resources.documents.DocumentShort document = 4; */
         if (message.document)
             DocumentShort.internalBinaryWrite(message.document, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
@@ -1008,7 +1008,7 @@ export const DocumentRelation = new DocumentRelation$Type();
 class WorkflowState$Type extends MessageType<WorkflowState> {
     constructor() {
         super("resources.documents.WorkflowState", [
-            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "next_reminder_time", kind: "message", T: () => Timestamp },
             { no: 3, name: "next_reminder_count", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 4, name: "auto_close_time", kind: "message", T: () => Timestamp },
@@ -1028,8 +1028,8 @@ class WorkflowState$Type extends MessageType<WorkflowState> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 document_id */ 1:
-                    message.documentId = reader.uint64().toNumber();
+                case /* int64 document_id */ 1:
+                    message.documentId = reader.int64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp next_reminder_time */ 2:
                     message.nextReminderTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.nextReminderTime);
@@ -1058,9 +1058,9 @@ class WorkflowState$Type extends MessageType<WorkflowState> {
         return message;
     }
     internalBinaryWrite(message: WorkflowState, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 document_id = 1; */
+        /* int64 document_id = 1; */
         if (message.documentId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.documentId);
+            writer.tag(1, WireType.Varint).int64(message.documentId);
         /* optional resources.timestamp.Timestamp next_reminder_time = 2; */
         if (message.nextReminderTime)
             Timestamp.internalBinaryWrite(message.nextReminderTime, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
@@ -1090,7 +1090,7 @@ export const WorkflowState = new WorkflowState$Type();
 class WorkflowUserState$Type extends MessageType<WorkflowUserState> {
     constructor() {
         super("resources.documents.WorkflowUserState", [
-            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 3, name: "manual_reminder_time", kind: "message", T: () => Timestamp },
             { no: 4, name: "manual_reminder_message", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
@@ -1111,8 +1111,8 @@ class WorkflowUserState$Type extends MessageType<WorkflowUserState> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 document_id */ 1:
-                    message.documentId = reader.uint64().toNumber();
+                case /* int64 document_id */ 1:
+                    message.documentId = reader.int64().toNumber();
                     break;
                 case /* int32 user_id */ 2:
                     message.userId = reader.int32();
@@ -1141,9 +1141,9 @@ class WorkflowUserState$Type extends MessageType<WorkflowUserState> {
         return message;
     }
     internalBinaryWrite(message: WorkflowUserState, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 document_id = 1; */
+        /* int64 document_id = 1; */
         if (message.documentId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.documentId);
+            writer.tag(1, WireType.Varint).int64(message.documentId);
         /* int32 user_id = 2; */
         if (message.userId !== 0)
             writer.tag(2, WireType.Varint).int32(message.userId);

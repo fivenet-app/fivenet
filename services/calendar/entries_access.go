@@ -12,8 +12,8 @@ import (
 
 func (s *Server) checkIfUserHasAccessToCalendarEntry(
 	ctx context.Context,
-	calendarId uint64,
-	entryId uint64,
+	calendarId int64,
+	entryId int64,
 	userInfo *userinfo.UserInfo,
 	access calendar.AccessLevel,
 	publicOk bool,
@@ -39,9 +39,9 @@ func (s *Server) checkIfUserHasAccessToCalendarEntryIDs(
 	ctx context.Context,
 	userInfo *userinfo.UserInfo,
 	publicOk bool,
-	entryIds ...uint64,
-) ([]uint64, error) {
-	var dest []uint64
+	entryIds ...int64,
+) ([]int64, error) {
+	var dest []int64
 	if len(entryIds) == 0 {
 		return dest, nil
 	}
@@ -54,7 +54,7 @@ func (s *Server) checkIfUserHasAccessToCalendarEntryIDs(
 
 	ids := make([]jet.Expression, len(entryIds))
 	for i := range entryIds {
-		ids[i] = jet.Uint64(entryIds[i])
+		ids[i] = jet.Int64(entryIds[i])
 	}
 
 	condition := jet.Bool(false)

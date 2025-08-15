@@ -51,7 +51,7 @@ func (s *Server) ListThreads(
 
 	ids := []jet.Expression{}
 	for _, emailId := range emailIds {
-		ids = append(ids, jet.Uint64(emailId))
+		ids = append(ids, jet.Int64(emailId))
 	}
 
 	wheres := []jet.BoolExpression{jet.Bool(true)}
@@ -93,7 +93,7 @@ func (s *Server) ListThreads(
 				).
 				LEFT_JOIN(tThreadsState,
 					tThreadsState.ThreadID.EQ(tThreads.ID).
-						AND(tThreadsState.EmailID.EQ(jet.Uint64(req.GetEmailIds()[0]))),
+						AND(tThreadsState.EmailID.EQ(jet.Int64(req.GetEmailIds()[0]))),
 				),
 		).
 		WHERE(jet.AND(
@@ -143,7 +143,7 @@ func (s *Server) ListThreads(
 				).
 				LEFT_JOIN(tThreadsState,
 					tThreadsState.ThreadID.EQ(tThreads.ID).
-						AND(tThreadsState.EmailID.EQ(jet.Uint64(req.GetEmailIds()[0]))),
+						AND(tThreadsState.EmailID.EQ(jet.Int64(req.GetEmailIds()[0]))),
 				),
 		).
 		WHERE(jet.AND(
@@ -174,8 +174,8 @@ func (s *Server) ListThreads(
 
 func (s *Server) getThread(
 	ctx context.Context,
-	threadId uint64,
-	emailId uint64,
+	threadId int64,
+	emailId int64,
 	userInfo *userinfo.UserInfo,
 ) (*mailer.Thread, error) {
 	stmt := tThreads.
@@ -202,11 +202,11 @@ func (s *Server) getThread(
 			tThreads.
 				LEFT_JOIN(tThreadsState,
 					tThreadsState.ThreadID.EQ(tThreads.ID).
-						AND(tThreadsState.EmailID.EQ(jet.Uint64(emailId))),
+						AND(tThreadsState.EmailID.EQ(jet.Int64(emailId))),
 				),
 		).
 		WHERE(jet.AND(
-			tThreads.ID.EQ(jet.Uint64(threadId)),
+			tThreads.ID.EQ(jet.Int64(threadId)),
 		)).
 		GROUP_BY(tThreads.ID).
 		LIMIT(1)
@@ -333,7 +333,7 @@ func (s *Server) CreateThread(
 		return nil, errorsmailer.ErrFailedQuery
 	}
 
-	req.Thread.Id = uint64(lastId)
+	req.Thread.Id = lastId
 
 	req.Message.ThreadId = req.GetThread().GetId()
 	req.Message.Sender = senderEmail
@@ -352,7 +352,7 @@ func (s *Server) CreateThread(
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	emailIds := []uint64{}
+	emailIds := []int64{}
 	for _, recipient := range emails {
 		emailIds = append(emailIds, recipient.GetEmailId())
 	}
@@ -393,7 +393,7 @@ func (s *Server) CreateThread(
 			}, thread.GetCreatorEmailId())
 		}
 
-		emailIds := []uint64{}
+		emailIds := []int64{}
 		for _, ua := range thread.GetRecipients() {
 			emailIds = append(emailIds, ua.GetEmailId())
 		}
@@ -410,7 +410,7 @@ func (s *Server) CreateThread(
 	}, nil
 }
 
-func (s *Server) updateThreadTime(ctx context.Context, tx qrm.DB, threadId uint64) error {
+func (s *Server) updateThreadTime(ctx context.Context, tx qrm.DB, threadId int64) error {
 	stmt := tThreads.
 		UPDATE(
 			tThreads.UpdatedAt,
@@ -419,7 +419,7 @@ func (s *Server) updateThreadTime(ctx context.Context, tx qrm.DB, threadId uint6
 			tThreads.UpdatedAt.SET(jet.CURRENT_TIMESTAMP()),
 		).
 		WHERE(
-			tThreads.ID.EQ(jet.Uint64(threadId)),
+			tThreads.ID.EQ(jet.Int64(threadId)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -469,7 +469,7 @@ func (s *Server) DeleteThread(
 			tThreads.DeletedAt.SET(deletedAtTime),
 		).
 		WHERE(
-			tThreads.ID.EQ(jet.Uint64(req.GetThreadId())),
+			tThreads.ID.EQ(jet.Int64(req.GetThreadId())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -477,7 +477,7 @@ func (s *Server) DeleteThread(
 	}
 
 	if thread != nil && thread.Recipients != nil && len(thread.GetRecipients()) > 0 {
-		emailIds := []uint64{}
+		emailIds := []int64{}
 		if thread.CreatorId != nil {
 			emailIds = append(emailIds, thread.GetCreatorEmailId())
 		}

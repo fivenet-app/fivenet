@@ -12,8 +12,8 @@ import (
 )
 
 type FivenetQualificationsRequirements struct {
-	ID                    uint64     `sql:"primary_key" json:"id"`
+	ID                    int64      `sql:"primary_key" json:"id"`
 	CreatedAt             *time.Time `json:"created_at"`
-	QualificationID       uint64     `json:"qualification_id"`
-	TargetQualificationID uint64     `json:"target_qualification_id"`
+	QualificationID       int64      `json:"qualification_id"`
+	TargetQualificationID int64      `json:"target_qualification_id"`
 }

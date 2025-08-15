@@ -112,7 +112,7 @@ func (s *Server) SetDocumentAccess(
 
 func (s *Server) getDocumentAccess(
 	ctx context.Context,
-	documentId uint64,
+	documentId int64,
 ) (*documents.DocumentAccess, error) {
 	jobAccess, err := s.access.Jobs.List(ctx, s.db, documentId)
 	if err != nil {
@@ -133,7 +133,7 @@ func (s *Server) getDocumentAccess(
 func (s *Server) handleDocumentAccessChange(
 	ctx context.Context,
 	tx qrm.DB,
-	documentId uint64,
+	documentId int64,
 	userInfo *userinfo.UserInfo,
 	access *documents.DocumentAccess,
 	addActivity bool,

@@ -64,7 +64,7 @@ type Server struct {
 	access *access.Grouped[wiki.PageJobAccess, *wiki.PageJobAccess, wiki.PageUserAccess, *wiki.PageUserAccess, access.DummyQualificationAccess[wiki.AccessLevel], *access.DummyQualificationAccess[wiki.AccessLevel], wiki.AccessLevel]
 
 	collabServer *collab.CollabServer
-	fHandler     *filestore.Handler[uint64]
+	fHandler     *filestore.Handler[int64]
 }
 
 type Params struct {
@@ -96,8 +96,8 @@ func NewServer(p Params) *Server {
 		tPageFiles.PageID,
 		tPageFiles.FileID,
 		3<<20,
-		func(parentID uint64) jet.BoolExpression {
-			return tPageFiles.PageID.EQ(jet.Uint64(parentID))
+		func(parentID int64) jet.BoolExpression {
+			return tPageFiles.PageID.EQ(jet.Int64(parentID))
 		},
 		filestore.InsertJoinRow,
 		false,
@@ -157,7 +157,7 @@ func NewServer(p Params) *Server {
 		nil,
 	)
 	access.RegisterAccess("wiki_page", &access.GroupedAccessAdapter{
-		CanUserAccessTargetFn: func(ctx context.Context, targetId uint64, userInfo *userinfo.UserInfo, access int32) (bool, error) {
+		CanUserAccessTargetFn: func(ctx context.Context, targetId int64, userInfo *userinfo.UserInfo, access int32) (bool, error) {
 			return objAccess.CanUserAccessTarget(ctx, targetId, userInfo, wiki.AccessLevel(access))
 		},
 	})

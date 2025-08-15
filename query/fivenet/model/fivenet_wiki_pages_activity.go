@@ -12,9 +12,9 @@ import (
 )
 
 type FivenetWikiPagesActivity struct {
-	ID           uint64     `sql:"primary_key" json:"id"`
+	ID           int64      `sql:"primary_key" json:"id"`
 	CreatedAt    *time.Time `json:"created_at"`
-	PageID       uint64     `json:"page_id"`
+	PageID       int64      `json:"page_id"`
 	ActivityType int16      `json:"activity_type"`
 	CreatorID    *int32     `json:"creator_id"`
 	CreatorJob   string     `json:"creator_job"`

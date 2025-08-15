@@ -31,7 +31,7 @@ func (s *vehiclesSync) Sync(ctx context.Context) error {
 	}
 
 	limit := int64(1000)
-	var offset uint64
+	var offset int64
 	if s.state != nil && s.state.Offset > 0 {
 		offset = s.state.Offset
 	}
@@ -79,7 +79,7 @@ func (s *vehiclesSync) Sync(ctx context.Context) error {
 	}
 
 	lastPlate := vehicles[len(vehicles)-1].GetPlate()
-	s.state.Set(uint64(limit)+offset, &lastPlate)
+	s.state.Set(limit+offset, &lastPlate)
 
 	return nil
 }

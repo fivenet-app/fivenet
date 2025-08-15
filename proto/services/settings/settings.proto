@@ -38,7 +38,7 @@ message GetRolesResponse {
 }
 
 message GetRoleRequest {
-  uint64 id = 1;
+  int64 id = 1;
 }
 
 message GetRoleResponse {
@@ -55,13 +55,13 @@ message CreateRoleResponse {
 }
 
 message DeleteRoleRequest {
-  uint64 id = 1;
+  int64 id = 1;
 }
 
 message DeleteRoleResponse {}
 
 message UpdateRolePermsRequest {
-  uint64 id = 1;
+  int64 id = 1;
   optional resources.settings.PermsUpdate perms = 2;
   optional resources.settings.AttrsUpdate attrs = 3;
 }
@@ -69,7 +69,7 @@ message UpdateRolePermsRequest {
 message UpdateRolePermsResponse {}
 
 message GetPermissionsRequest {
-  uint64 role_id = 1;
+  int64 role_id = 1;
 }
 
 message GetPermissionsResponse {
@@ -78,7 +78,7 @@ message GetPermissionsResponse {
 }
 
 message GetEffectivePermissionsRequest {
-  uint64 role_id = 1;
+  int64 role_id = 1;
 }
 
 message GetEffectivePermissionsResponse {

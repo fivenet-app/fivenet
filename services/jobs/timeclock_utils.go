@@ -1,3 +1,4 @@
+//nolint:gosec // G115 year and week should never be larger than an int32
 package jobs
 
 import (

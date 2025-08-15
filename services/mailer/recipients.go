@@ -16,7 +16,7 @@ import (
 func (s *Server) handleRecipientsChanges(
 	ctx context.Context,
 	tx qrm.DB,
-	threadId uint64,
+	threadId int64,
 	recipients []*mailer.ThreadRecipientEmail,
 ) error {
 	if len(recipients) == 0 {
@@ -49,7 +49,7 @@ func (s *Server) handleRecipientsChanges(
 func (s *Server) getThreadRecipients(
 	ctx context.Context,
 	tx qrm.DB,
-	threadId uint64,
+	threadId int64,
 ) ([]*mailer.ThreadRecipientEmail, error) {
 	tThreadsRecipients := tThreadsRecipients.AS("thread_recipient_email")
 	stmt := tThreadsRecipients.
@@ -68,7 +68,7 @@ func (s *Server) getThreadRecipients(
 				),
 		).
 		WHERE(jet.AND(
-			tThreadsRecipients.ThreadID.EQ(jet.Uint64(threadId)),
+			tThreadsRecipients.ThreadID.EQ(jet.Int64(threadId)),
 			tEmails.DeletedAt.IS_NULL(),
 		))
 

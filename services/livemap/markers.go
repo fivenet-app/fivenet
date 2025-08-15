@@ -92,7 +92,7 @@ func (s *Server) CreateOrUpdateMarker(
 			return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 		}
 
-		req.Marker.Id = uint64(lastId)
+		req.Marker.Id = lastId
 
 		auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 	} else {
@@ -135,7 +135,7 @@ func (s *Server) CreateOrUpdateMarker(
 			).
 			WHERE(jet.AND(
 				tMarkers.Job.EQ(jet.String(userInfo.GetJob())),
-				tMarkers.ID.EQ(jet.Uint64(req.GetMarker().GetId())),
+				tMarkers.ID.EQ(jet.Int64(req.GetMarker().GetId())),
 			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -212,7 +212,7 @@ func (s *Server) DeleteMarker(
 			tMarkers.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
 		).
 		WHERE(
-			tMarkers.ID.EQ(jet.Uint64(req.GetId())),
+			tMarkers.ID.EQ(jet.Int64(req.GetId())),
 		).
 		LIMIT(1)
 
@@ -227,7 +227,7 @@ func (s *Server) DeleteMarker(
 	return &pblivemap.DeleteMarkerResponse{}, nil
 }
 
-func (s *Server) getMarker(ctx context.Context, id uint64) (*livemap.MarkerMarker, error) {
+func (s *Server) getMarker(ctx context.Context, id int64) (*livemap.MarkerMarker, error) {
 	tUsers := tables.User().AS("user_short")
 
 	stmt := tMarkers.
@@ -262,7 +262,7 @@ func (s *Server) getMarker(ctx context.Context, id uint64) (*livemap.MarkerMarke
 				),
 		).
 		WHERE(
-			tMarkers.ID.EQ(jet.Uint64(id)),
+			tMarkers.ID.EQ(jet.Int64(id)),
 		).
 		LIMIT(1)
 
@@ -278,9 +278,9 @@ func (s *Server) getMarker(ctx context.Context, id uint64) (*livemap.MarkerMarke
 
 func (s *Server) getMarkerMarkers(
 	jobs *permissions.StringList,
-) ([]*livemap.MarkerMarker, []uint64) {
+) ([]*livemap.MarkerMarker, []int64) {
 	updated := []*livemap.MarkerMarker{}
-	deleted := []uint64{}
+	deleted := []int64{}
 
 	for _, job := range jobs.GetStrings() {
 		markers, _ := s.markersCache.Load(job)
@@ -386,7 +386,7 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 }
 
 func (s *Server) refreshDeletedMarkers(ctx context.Context) error {
-	deletedMarkers := map[string][]uint64{}
+	deletedMarkers := map[string][]int64{}
 
 	stmt := tMarkers.
 		SELECT(
@@ -412,7 +412,7 @@ func (s *Server) refreshDeletedMarkers(ctx context.Context) error {
 
 	for _, m := range dest {
 		if _, ok := deletedMarkers[m.GetJob()]; !ok {
-			deletedMarkers[m.GetJob()] = []uint64{}
+			deletedMarkers[m.GetJob()] = []int64{}
 		}
 
 		deletedMarkers[m.GetJob()] = append(deletedMarkers[m.GetJob()], m.GetId())

@@ -31,7 +31,7 @@ type ListConductEntriesRequest struct {
 	Types         []jobs.ConductType `protobuf:"varint,3,rep,packed,name=types,proto3,enum=resources.jobs.ConductType" json:"types,omitempty"`
 	ShowExpired   *bool              `protobuf:"varint,4,opt,name=show_expired,json=showExpired,proto3,oneof" json:"show_expired,omitempty"`
 	UserIds       []int32            `protobuf:"varint,5,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
-	Ids           []uint64           `protobuf:"varint,6,rep,packed,name=ids,proto3" json:"ids,omitempty"`
+	Ids           []int64            `protobuf:"varint,6,rep,packed,name=ids,proto3" json:"ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -101,7 +101,7 @@ func (x *ListConductEntriesRequest) GetUserIds() []int32 {
 	return nil
 }
 
-func (x *ListConductEntriesRequest) GetIds() []uint64 {
+func (x *ListConductEntriesRequest) GetIds() []int64 {
 	if x != nil {
 		return x.Ids
 	}
@@ -338,7 +338,7 @@ func (x *UpdateConductEntryResponse) GetEntry() *jobs.ConductEntry {
 
 type DeleteConductEntryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -373,7 +373,7 @@ func (*DeleteConductEntryRequest) Descriptor() ([]byte, []int) {
 	return file_services_jobs_conduct_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *DeleteConductEntryRequest) GetId() uint64 {
+func (x *DeleteConductEntryRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -429,7 +429,7 @@ const file_services_jobs_conduct_proto_rawDesc = "" +
 	"\x05types\x18\x03 \x03(\x0e2\x1b.resources.jobs.ConductTypeR\x05types\x12&\n" +
 	"\fshow_expired\x18\x04 \x01(\bH\x01R\vshowExpired\x88\x01\x01\x12\x19\n" +
 	"\buser_ids\x18\x05 \x03(\x05R\auserIds\x12\x10\n" +
-	"\x03ids\x18\x06 \x03(\x04R\x03idsB\a\n" +
+	"\x03ids\x18\x06 \x03(\x03R\x03idsB\a\n" +
 	"\x05_sortB\x0f\n" +
 	"\r_show_expired\"\xa3\x01\n" +
 	"\x1aListConductEntriesResponse\x12M\n" +
@@ -446,7 +446,7 @@ const file_services_jobs_conduct_proto_rawDesc = "" +
 	"\x1aUpdateConductEntryResponse\x12:\n" +
 	"\x05entry\x18\x01 \x01(\v2\x1c.resources.jobs.ConductEntryB\x06\xbaH\x03\xc8\x01\x01R\x05entry\"+\n" +
 	"\x19DeleteConductEntryRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"\x1c\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\x1c\n" +
 	"\x1aDeleteConductEntryResponse2\xbc\x03\n" +
 	"\x0eConductService\x12i\n" +
 	"\x12ListConductEntries\x12(.services.jobs.ListConductEntriesRequest\x1a).services.jobs.ListConductEntriesResponse\x12i\n" +

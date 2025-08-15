@@ -14,7 +14,7 @@ import "tagger/tagger.proto";
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrum";
 
 message Dispatch {
-  uint64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
+  int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   string job = 4 [
@@ -40,14 +40,14 @@ message Dispatch {
 }
 
 message DispatchAssignments {
-  uint64 dispatch_id = 1;
+  int64 dispatch_id = 1;
   string job = 2 [(buf.validate.field).string.max_len = 20];
   repeated DispatchAssignment units = 3;
 }
 
 message DispatchAssignment {
-  uint64 dispatch_id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"dispatch_id\""];
-  uint64 unit_id = 2 [(tagger.tags) = "sql:\"primary_key\" alias:\"unit_id\""];
+  int64 dispatch_id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"dispatch_id\""];
+  int64 unit_id = 2 [(tagger.tags) = "sql:\"primary_key\" alias:\"unit_id\""];
   optional resources.centrum.Unit unit = 3;
   optional resources.timestamp.Timestamp created_at = 4;
   optional resources.timestamp.Timestamp expires_at = 5;
@@ -72,10 +72,10 @@ enum StatusDispatch {
 }
 
 message DispatchStatus {
-  uint64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
+  int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
-  uint64 dispatch_id = 3;
-  optional uint64 unit_id = 4;
+  int64 dispatch_id = 3;
+  optional int64 unit_id = 4;
   optional resources.centrum.Unit unit = 5;
   StatusDispatch status = 6 [(buf.validate.field).enum.defined_only = true];
   // @sanitize
@@ -104,7 +104,7 @@ message DispatchReferences {
 }
 
 message DispatchReference {
-  uint64 target_dispatch_id = 1;
+  int64 target_dispatch_id = 1;
   DispatchReferenceType reference_type = 2 [(buf.validate.field).enum.defined_only = true];
 }
 

@@ -92,7 +92,7 @@ func (s *Server) handleUserOauth2(
 
 	// Struct to hold the query result
 	type Account struct {
-		ID uint64
+		ID int64
 	}
 	var account Account
 

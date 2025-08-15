@@ -33,7 +33,7 @@ type QualificationsSync struct {
 }
 
 type qualificationsEntry struct {
-	ID                 uint64 `alias:"qualifications_entry.id"`
+	ID                 int64  `alias:"qualifications_entry.id"`
 	Abbreviation       string `alias:"qualifications_entry.abbreviation"`
 	QualificationTitle string `alias:"qualifications_entry.title"`
 
@@ -42,7 +42,7 @@ type qualificationsEntry struct {
 }
 
 type qualificationUserMapping struct {
-	AccountID  uint64 `alias:"account_id"`
+	AccountID  int64  `alias:"account_id"`
 	ExternalID string `alias:"external_id"`
 	Job        string `alias:"job"`
 }
@@ -161,14 +161,14 @@ func (g *QualificationsSync) planUsers(
 ) (discordtypes.Users, []discord.Embed, error) {
 	logs := []discord.Embed{}
 
-	qualificationRoles := map[uint64]*discordtypes.Role{}
+	qualificationRoles := map[int64]*discordtypes.Role{}
 	for _, role := range roles {
 		if strings.HasPrefix(role.Module, qualificationsRoleModulePrefix) {
 			sGroup, found := strings.CutPrefix(role.Module, qualificationsRoleModulePrefix)
 			if !found {
 				continue
 			}
-			index, err := strconv.ParseUint(sGroup, 10, 64)
+			index, err := strconv.ParseInt(sGroup, 10, 64)
 			if err != nil {
 				return nil, logs, err
 			}
@@ -210,7 +210,7 @@ func (g *QualificationsSync) planUsers(
 					),
 			).
 			WHERE(jet.AND(
-				tQualificationsResults.QualificationID.EQ(jet.Uint64(qualificationId)),
+				tQualificationsResults.QualificationID.EQ(jet.Int64(qualificationId)),
 				tQualificationsResults.DeletedAt.IS_NULL(),
 				tQualificationsResults.Status.EQ(
 					jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)),

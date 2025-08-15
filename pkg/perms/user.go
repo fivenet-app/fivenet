@@ -18,10 +18,10 @@ func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.P
 	roleIds, ok := p.lookupRoleIDsForJobUpToGrade(userInfo.GetJob(), userInfo.GetJobGrade())
 	if !ok {
 		// Fallback to default role
-		roleIds = []uint64{defaultRoleId}
+		roleIds = []int64{defaultRoleId}
 	} else {
 		// Prepend default role to default perms
-		roleIds = append([]uint64{defaultRoleId}, roleIds...)
+		roleIds = append([]int64{defaultRoleId}, roleIds...)
 	}
 
 	ps := p.getRolePermissionsFromCache(roleIds)
@@ -42,15 +42,15 @@ func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.P
 	return perms, nil
 }
 
-func (p *Perms) getRolePermissionsFromCache(roleIds []uint64) []*cachePerm {
-	perms := map[uint64]bool{}
+func (p *Perms) getRolePermissionsFromCache(roleIds []int64) []*cachePerm {
+	perms := map[int64]bool{}
 	for i := range slices.Backward(roleIds) {
 		permsRoleMap, ok := p.permsRoleMap.Load(roleIds[i])
 		if !ok {
 			continue
 		}
 
-		permsRoleMap.Range(func(key uint64, value bool) bool {
+		permsRoleMap.Range(func(key int64, value bool) bool {
 			// Only allow the perm "value" to be set once (because that's how role perms inheritance works)
 			if _, ok := perms[key]; !ok {
 				perms[key] = value
@@ -104,7 +104,7 @@ func (p *Perms) Can(userInfo *userinfo.UserInfo, category Category, name Name) b
 	return result
 }
 
-func (p *Perms) checkIfCan(permId uint64, userInfo *userinfo.UserInfo) bool {
+func (p *Perms) checkIfCan(permId int64, userInfo *userinfo.UserInfo) bool {
 	if check, ok := p.checkRoleJob(userInfo.GetJob(), userInfo.GetJobGrade(), permId); ok {
 		return check
 	}
@@ -114,7 +114,7 @@ func (p *Perms) checkIfCan(permId uint64, userInfo *userinfo.UserInfo) bool {
 	return check
 }
 
-func (p *Perms) checkRoleJob(job string, grade int32, permId uint64) (bool, bool) {
+func (p *Perms) checkRoleJob(job string, grade int32, permId int64) (bool, bool) {
 	roleIds, ok := p.lookupRoleIDsForJobUpToGrade(job, grade)
 	if !ok {
 		return false, false

@@ -20,7 +20,7 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface Calendar {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -91,7 +91,7 @@ export interface Calendar {
  */
 export interface CalendarShort {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -134,7 +134,7 @@ export interface CalendarShort {
  */
 export interface CalendarSub {
     /**
-     * @generated from protobuf field: uint64 calendar_id = 1
+     * @generated from protobuf field: int64 calendar_id = 1
      */
     calendarId: number;
     /**
@@ -165,7 +165,7 @@ export interface CalendarSub {
  */
 export interface CalendarEntry {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -181,7 +181,7 @@ export interface CalendarEntry {
      */
     deletedAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 calendar_id = 5
+     * @generated from protobuf field: int64 calendar_id = 5
      */
     calendarId: number;
     /**
@@ -263,7 +263,7 @@ export interface CalendarEntryRecurring {
  */
 export interface CalendarEntryRSVP {
     /**
-     * @generated from protobuf field: uint64 entry_id = 1
+     * @generated from protobuf field: int64 entry_id = 1
      */
     entryId: number;
     /**
@@ -316,7 +316,7 @@ export enum RsvpResponses {
 class Calendar$Type extends MessageType<Calendar> {
     constructor() {
         super("resources.calendar.Calendar", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
@@ -350,8 +350,8 @@ class Calendar$Type extends MessageType<Calendar> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -407,9 +407,9 @@ class Calendar$Type extends MessageType<Calendar> {
         return message;
     }
     internalBinaryWrite(message: Calendar, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
@@ -466,7 +466,7 @@ export const Calendar = new Calendar$Type();
 class CalendarShort$Type extends MessageType<CalendarShort> {
     constructor() {
         super("resources.calendar.CalendarShort", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } } } },
             { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } } } },
@@ -492,8 +492,8 @@ class CalendarShort$Type extends MessageType<CalendarShort> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -528,9 +528,9 @@ class CalendarShort$Type extends MessageType<CalendarShort> {
         return message;
     }
     internalBinaryWrite(message: CalendarShort, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
@@ -566,7 +566,7 @@ export const CalendarShort = new CalendarShort$Type();
 class CalendarSub$Type extends MessageType<CalendarSub> {
     constructor() {
         super("resources.calendar.CalendarSub", [
-            { no: 1, name: "calendar_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "calendar_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
             { no: 3, name: "user", kind: "message", T: () => UserShort },
             { no: 4, name: "created_at", kind: "message", T: () => Timestamp },
@@ -589,8 +589,8 @@ class CalendarSub$Type extends MessageType<CalendarSub> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 calendar_id */ 1:
-                    message.calendarId = reader.uint64().toNumber();
+                case /* int64 calendar_id */ 1:
+                    message.calendarId = reader.int64().toNumber();
                     break;
                 case /* int32 user_id */ 2:
                     message.userId = reader.int32();
@@ -619,9 +619,9 @@ class CalendarSub$Type extends MessageType<CalendarSub> {
         return message;
     }
     internalBinaryWrite(message: CalendarSub, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 calendar_id = 1; */
+        /* int64 calendar_id = 1; */
         if (message.calendarId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.calendarId);
+            writer.tag(1, WireType.Varint).int64(message.calendarId);
         /* int32 user_id = 2; */
         if (message.userId !== 0)
             writer.tag(2, WireType.Varint).int32(message.userId);
@@ -651,11 +651,11 @@ export const CalendarSub = new CalendarSub$Type();
 class CalendarEntry$Type extends MessageType<CalendarEntry> {
     constructor() {
         super("resources.calendar.CalendarEntry", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 5, name: "calendar_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 5, name: "calendar_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 6, name: "calendar", kind: "message", T: () => Calendar },
             { no: 7, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 8, name: "start_time", kind: "message", T: () => Timestamp },
@@ -687,8 +687,8 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -699,8 +699,8 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
                 case /* optional resources.timestamp.Timestamp deleted_at */ 4:
                     message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
                     break;
-                case /* uint64 calendar_id */ 5:
-                    message.calendarId = reader.uint64().toNumber();
+                case /* int64 calendar_id */ 5:
+                    message.calendarId = reader.int64().toNumber();
                     break;
                 case /* optional resources.calendar.Calendar calendar */ 6:
                     message.calendar = Calendar.internalBinaryRead(reader, reader.uint32(), options, message.calendar);
@@ -753,9 +753,9 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
         return message;
     }
     internalBinaryWrite(message: CalendarEntry, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
@@ -765,9 +765,9 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
         /* optional resources.timestamp.Timestamp deleted_at = 4; */
         if (message.deletedAt)
             Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 calendar_id = 5; */
+        /* int64 calendar_id = 5; */
         if (message.calendarId !== 0)
-            writer.tag(5, WireType.Varint).uint64(message.calendarId);
+            writer.tag(5, WireType.Varint).int64(message.calendarId);
         /* optional resources.calendar.Calendar calendar = 6; */
         if (message.calendar)
             Calendar.internalBinaryWrite(message.calendar, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
@@ -883,7 +883,7 @@ export const CalendarEntryRecurring = new CalendarEntryRecurring$Type();
 class CalendarEntryRSVP$Type extends MessageType<CalendarEntryRSVP> {
     constructor() {
         super("resources.calendar.CalendarEntryRSVP", [
-            { no: 1, name: "entry_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "entry_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 4, name: "user", kind: "message", T: () => UserShort },
@@ -904,8 +904,8 @@ class CalendarEntryRSVP$Type extends MessageType<CalendarEntryRSVP> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 entry_id */ 1:
-                    message.entryId = reader.uint64().toNumber();
+                case /* int64 entry_id */ 1:
+                    message.entryId = reader.int64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -931,9 +931,9 @@ class CalendarEntryRSVP$Type extends MessageType<CalendarEntryRSVP> {
         return message;
     }
     internalBinaryWrite(message: CalendarEntryRSVP, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 entry_id = 1; */
+        /* int64 entry_id = 1; */
         if (message.entryId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.entryId);
+            writer.tag(1, WireType.Varint).int64(message.entryId);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();

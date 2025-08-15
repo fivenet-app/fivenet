@@ -23,7 +23,7 @@ const (
 
 type RoleIDEvent struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	RoleId        uint64                 `protobuf:"varint,1,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
+	RoleId        int64                  `protobuf:"varint,1,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
 	Job           string                 `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
 	Grade         int32                  `protobuf:"varint,3,opt,name=grade,proto3" json:"grade,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -60,7 +60,7 @@ func (*RoleIDEvent) Descriptor() ([]byte, []int) {
 	return file_resources_permissions_events_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *RoleIDEvent) GetRoleId() uint64 {
+func (x *RoleIDEvent) GetRoleId() int64 {
 	if x != nil {
 		return x.RoleId
 	}
@@ -131,7 +131,7 @@ const file_resources_permissions_events_proto_rawDesc = "" +
 	"\n" +
 	"\"resources/permissions/events.proto\x12\x15resources.permissions\"N\n" +
 	"\vRoleIDEvent\x12\x17\n" +
-	"\arole_id\x18\x01 \x01(\x04R\x06roleId\x12\x10\n" +
+	"\arole_id\x18\x01 \x01(\x03R\x06roleId\x12\x10\n" +
 	"\x03job\x18\x02 \x01(\tR\x03job\x12\x14\n" +
 	"\x05grade\x18\x03 \x01(\x05R\x05grade\")\n" +
 	"\x15JobLimitsUpdatedEvent\x12\x10\n" +

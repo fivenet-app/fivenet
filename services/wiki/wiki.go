@@ -254,7 +254,7 @@ func (s *Server) GetPage(
 func (s *Server) getPageAccess(
 	ctx context.Context,
 	userInfo *userinfo.UserInfo,
-	pageId uint64,
+	pageId int64,
 ) (*wiki.PageAccess, error) {
 	jobsAccess, err := s.access.Jobs.List(ctx, s.db, pageId)
 	if err != nil {
@@ -284,7 +284,7 @@ func (s *Server) getPageAccess(
 
 func (s *Server) getPage(
 	ctx context.Context,
-	pageId uint64,
+	pageId int64,
 	withContent bool,
 	withAccess bool,
 	userInfo *userinfo.UserInfo,
@@ -333,7 +333,7 @@ func (s *Server) getPage(
 				),
 		).
 		WHERE(jet.AND(
-			tPage.ID.EQ(jet.Uint64(pageId)),
+			tPage.ID.EQ(jet.Int64(pageId)),
 		)).
 		LIMIT(1)
 
@@ -395,7 +395,7 @@ func (s *Server) CreatePage(
 			ORDER_BY(tPageShort.ParentID.ASC(), tPageShort.Draft.ASC(), tPageShort.SortKey.ASC()).
 			LIMIT(1)
 
-		ids := struct{ ID uint64 }{}
+		ids := struct{ ID int64 }{}
 		if err := parentStmt.QueryContext(ctx, s.db, &ids); err != nil {
 			if !errors.Is(err, qrm.ErrNoRows) {
 				return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
@@ -508,7 +508,7 @@ func (s *Server) CreatePage(
 	}
 	resp := &pbwiki.CreatePageResponse{
 		Job: userInfo.GetJob(),
-		Id:  uint64(lastId),
+		Id:  lastId,
 	}
 
 	if _, err := s.addPageActivity(ctx, tx, &wiki.PageActivity{
@@ -579,7 +579,7 @@ func (s *Server) UpdatePage(
 			))
 
 		var ids struct {
-			ID uint64 `alias:"id"`
+			ID int64 `alias:"id"`
 		}
 		if err := stmt.QueryContext(ctx, s.db, &ids); err != nil {
 			if !errors.Is(err, qrm.ErrNoRows) {
@@ -697,7 +697,7 @@ func (s *Server) UpdatePage(
 			nil,
 		).
 		WHERE(jet.AND(
-			tPage.ID.EQ(jet.Uint64(req.GetPage().GetId())),
+			tPage.ID.EQ(jet.Int64(req.GetPage().GetId())),
 		)).
 		LIMIT(1)
 
@@ -795,7 +795,7 @@ func (s *Server) UpdatePage(
 func (s *Server) handlePageAccessChange(
 	ctx context.Context,
 	tx qrm.DB,
-	pageId uint64,
+	pageId int64,
 	userInfo *userinfo.UserInfo,
 	access *wiki.PageAccess,
 	addActivity bool,
@@ -891,7 +891,7 @@ func (s *Server) DeletePage(
 			jet.COUNT(tPage.ID).AS("data_count.total"),
 		).
 		FROM(tPage).
-		WHERE(tPage.ParentID.EQ(jet.Uint64(page.GetId())))
+		WHERE(tPage.ParentID.EQ(jet.Int64(page.GetId())))
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -917,7 +917,7 @@ func (s *Server) DeletePage(
 			tPage.DeletedAt.SET(deletedAtTime),
 		).
 		WHERE(jet.AND(
-			tPage.ID.EQ(jet.Uint64(req.GetId())),
+			tPage.ID.EQ(jet.Int64(req.GetId())),
 		)).
 		LIMIT(1)
 

@@ -62,7 +62,7 @@ func (s *Server) ListQualificationRequests(
 		}
 
 		condition = condition.AND(
-			tQualiRequests.QualificationID.EQ(jet.Uint64(req.GetQualificationId())),
+			tQualiRequests.QualificationID.EQ(jet.Int64(req.GetQualificationId())),
 		)
 	} else {
 		condition = condition.AND(jet.AND(
@@ -274,7 +274,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 	quali, err := s.getQualification(
 		ctx,
 		req.GetRequest().GetQualificationId(),
-		tQuali.ID.EQ(jet.Uint64(req.GetRequest().GetQualificationId())),
+		tQuali.ID.EQ(jet.Int64(req.GetRequest().GetQualificationId())),
 		userInfo,
 		false,
 	)
@@ -306,7 +306,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 			).
 			WHERE(jet.AND(
 				tQualiRequests.QualificationID.EQ(
-					jet.Uint64(req.GetRequest().GetQualificationId()),
+					jet.Int64(req.GetRequest().GetQualificationId()),
 				),
 				tQualiRequests.UserID.EQ(jet.Int32(req.GetRequest().GetUserId())),
 			))
@@ -427,7 +427,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 
 func (s *Server) getQualificationRequest(
 	ctx context.Context,
-	qualificationId uint64,
+	qualificationId int64,
 	userId int32,
 	userInfo *userinfo.UserInfo,
 ) (*qualifications.QualificationRequest, error) {
@@ -486,7 +486,7 @@ func (s *Server) getQualificationRequest(
 		GROUP_BY(tQualiRequests.QualificationID, tQualiRequests.UserID).
 		ORDER_BY(tQualiRequests.CreatedAt.DESC()).
 		WHERE(jet.AND(
-			tQualiRequests.QualificationID.EQ(jet.Uint64(qualificationId)),
+			tQualiRequests.QualificationID.EQ(jet.Int64(qualificationId)),
 			tQualiRequests.UserID.EQ(jet.Int32(userId)),
 			tQualiRequests.DeletedAt.IS_NULL(),
 		)).
@@ -563,7 +563,7 @@ func (s *Server) DeleteQualificationReq(
 func (s *Server) deleteQualificationRequest(
 	ctx context.Context,
 	tx qrm.DB,
-	qualificationId uint64,
+	qualificationId int64,
 	userId int32,
 ) error {
 	stmt := tQualiRequests.
@@ -574,7 +574,7 @@ func (s *Server) deleteQualificationRequest(
 			jet.CURRENT_TIMESTAMP(),
 		).
 		WHERE(jet.AND(
-			tQualiRequests.QualificationID.EQ(jet.Uint64(qualificationId)),
+			tQualiRequests.QualificationID.EQ(jet.Int64(qualificationId)),
 			tQualiRequests.UserID.EQ(jet.Int32(userId)),
 		))
 
@@ -592,7 +592,7 @@ func (s *Server) deleteQualificationRequest(
 func (s *Server) updateRequestStatus(
 	ctx context.Context,
 	tx qrm.DB,
-	qualificationId uint64,
+	qualificationId int64,
 	userId int32,
 	status qualifications.RequestStatus,
 ) error {

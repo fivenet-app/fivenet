@@ -4,11 +4,11 @@ import "slices"
 
 // Attrs
 
-func (p *Perms) LookupAttributeByID(id uint64) (*cacheAttr, bool) {
+func (p *Perms) LookupAttributeByID(id int64) (*cacheAttr, bool) {
 	return p.attrsMap.Load(id)
 }
 
-func (p *Perms) lookupAttributeByPermID(id uint64, key Key) (*cacheAttr, bool) {
+func (p *Perms) lookupAttributeByPermID(id int64, key Key) (*cacheAttr, bool) {
 	as, ok := p.attrsPermsMap.Load(id)
 	if !ok {
 		return nil, false
@@ -22,7 +22,7 @@ func (p *Perms) lookupAttributeByPermID(id uint64, key Key) (*cacheAttr, bool) {
 	return p.LookupAttributeByID(aId)
 }
 
-func (p *Perms) lookupRoleAttribute(roleId uint64, attrId uint64) (*cacheRoleAttr, bool) {
+func (p *Perms) lookupRoleAttribute(roleId int64, attrId int64) (*cacheRoleAttr, bool) {
 	attrMap, ok := p.attrsRoleMap.Load(roleId)
 	if !ok {
 		return nil, false
@@ -33,11 +33,11 @@ func (p *Perms) lookupRoleAttribute(roleId uint64, attrId uint64) (*cacheRoleAtt
 
 // Roles
 
-func (p *Perms) lookupJobForRoleID(roleId uint64) (string, bool) {
+func (p *Perms) lookupJobForRoleID(roleId int64) (string, bool) {
 	return p.roleIDToJobMap.Load(roleId)
 }
 
-func (p *Perms) lookupRoleIDForJobAndGrade(job string, grade int32) (uint64, bool) {
+func (p *Perms) lookupRoleIDForJobAndGrade(job string, grade int32) (int64, bool) {
 	roles, ok := p.lookupRoleIDsForJobUpToGrade(job, grade)
 	if !ok || len(roles) == 0 {
 		return 0, false
@@ -47,14 +47,14 @@ func (p *Perms) lookupRoleIDForJobAndGrade(job string, grade int32) (uint64, boo
 }
 
 // Lookup all role IDs for a job up to a certain grade.
-func (p *Perms) lookupRoleIDsForJobUpToGrade(job string, grade int32) ([]uint64, bool) {
+func (p *Perms) lookupRoleIDsForJobUpToGrade(job string, grade int32) ([]int64, bool) {
 	gradesMap, ok := p.permsJobsRoleMap.Load(job)
 	if !ok {
 		return nil, false
 	}
 
 	grades := []int32{}
-	gradesMap.Range(func(g int32, _ uint64) bool {
+	gradesMap.Range(func(g int32, _ int64) bool {
 		if g > grade {
 			return true
 		}
@@ -65,7 +65,7 @@ func (p *Perms) lookupRoleIDsForJobUpToGrade(job string, grade int32) ([]uint64,
 
 	slices.Sort(grades)
 
-	gradeList := []uint64{}
+	gradeList := []int64{}
 	for i := range grades {
 		grade, ok := gradesMap.Load(grades[i])
 		if !ok {
@@ -84,10 +84,10 @@ func (p *Perms) lookupRoleIDsForJobUpToGrade(job string, grade int32) ([]uint64,
 
 // Permissions
 
-func (p *Perms) lookupPermIDByGuard(guard string) (uint64, bool) {
+func (p *Perms) lookupPermIDByGuard(guard string) (int64, bool) {
 	return p.permsGuardToIDMap.Load(guard)
 }
 
-func (p *Perms) lookupPermByID(id uint64) (*cachePerm, bool) {
+func (p *Perms) lookupPermByID(id int64) (*cachePerm, bool) {
 	return p.permsMap.Load(id)
 }

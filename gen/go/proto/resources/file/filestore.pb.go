@@ -106,7 +106,7 @@ func (*UploadFileRequest_Data) isUploadFileRequest_Payload() {}
 
 type UploadMeta struct {
 	state        protoimpl.MessageState `protogen:"open.v1"`
-	ParentId     uint64                 `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
+	ParentId     int64                  `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
 	Namespace    string                 `protobuf:"bytes,2,opt,name=namespace,proto3" json:"namespace,omitempty"` // "documents", "wiki", …
 	OriginalName string                 `protobuf:"bytes,3,opt,name=original_name,json=originalName,proto3" json:"original_name,omitempty"`
 	ContentType  string                 `protobuf:"bytes,4,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"` // optional - server re-validates
@@ -147,7 +147,7 @@ func (*UploadMeta) Descriptor() ([]byte, []int) {
 	return file_resources_file_filestore_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *UploadMeta) GetParentId() uint64 {
+func (x *UploadMeta) GetParentId() int64 {
 	if x != nil {
 		return x.ParentId
 	}
@@ -191,7 +191,7 @@ func (x *UploadMeta) GetReason() string {
 
 type UploadFileResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`    // Unique ID for the uploaded file
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`    // Unique ID for the uploaded file
 	Url           string                 `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`   // URL to the uploaded file
 	File          *File                  `protobuf:"bytes,3,opt,name=file,proto3" json:"file,omitempty"` // File info
 	unknownFields protoimpl.UnknownFields
@@ -228,7 +228,7 @@ func (*UploadFileResponse) Descriptor() ([]byte, []int) {
 	return file_resources_file_filestore_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *UploadFileResponse) GetId() uint64 {
+func (x *UploadFileResponse) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -251,8 +251,8 @@ func (x *UploadFileResponse) GetFile() *File {
 
 type DeleteFileRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ParentId      uint64                 `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
-	FileId        uint64                 `protobuf:"varint,2,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"`
+	ParentId      int64                  `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
+	FileId        int64                  `protobuf:"varint,2,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -287,14 +287,14 @@ func (*DeleteFileRequest) Descriptor() ([]byte, []int) {
 	return file_resources_file_filestore_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *DeleteFileRequest) GetParentId() uint64 {
+func (x *DeleteFileRequest) GetParentId() int64 {
 	if x != nil {
 		return x.ParentId
 	}
 	return 0
 }
 
-func (x *DeleteFileRequest) GetFileId() uint64 {
+func (x *DeleteFileRequest) GetFileId() int64 {
 	if x != nil {
 		return x.FileId
 	}
@@ -348,7 +348,7 @@ const file_resources_file_filestore_proto_rawDesc = "" +
 	"\apayload\"\xdd\x01\n" +
 	"\n" +
 	"UploadMeta\x12\x1b\n" +
-	"\tparent_id\x18\x01 \x01(\x04R\bparentId\x12\x1c\n" +
+	"\tparent_id\x18\x01 \x01(\x03R\bparentId\x12\x1c\n" +
 	"\tnamespace\x18\x02 \x01(\tR\tnamespace\x12-\n" +
 	"\roriginal_name\x18\x03 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\foriginalName\x12!\n" +
 	"\fcontent_type\x18\x04 \x01(\tR\vcontentType\x12\x1b\n" +
@@ -356,12 +356,12 @@ const file_resources_file_filestore_proto_rawDesc = "" +
 	"\x06reason\x18\x06 \x01(\tB\r\xbaH\n" +
 	"\xd8\x01\x01r\x05\x10\x03\x18\xff\x01R\x06reason\"`\n" +
 	"\x12UploadFileResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x10\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x10\n" +
 	"\x03url\x18\x02 \x01(\tR\x03url\x12(\n" +
 	"\x04file\x18\x03 \x01(\v2\x14.resources.file.FileR\x04file\"[\n" +
 	"\x11DeleteFileRequest\x12$\n" +
-	"\tparent_id\x18\x01 \x01(\x04B\a\xbaH\x042\x02 \x00R\bparentId\x12 \n" +
-	"\afile_id\x18\x02 \x01(\x04B\a\xbaH\x042\x02 \x00R\x06fileId\"\x14\n" +
+	"\tparent_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\bparentId\x12 \n" +
+	"\afile_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x06fileId\"\x14\n" +
 	"\x12DeleteFileResponseBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file;fileb\x06proto3"
 
 var (

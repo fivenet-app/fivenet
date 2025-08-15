@@ -133,9 +133,9 @@ func (x *PageAccess) GetUsers() []*PageUserAccess {
 
 type PageJobAccess struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	TargetId      uint64                 `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
+	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
 	Job           string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel      *string                `protobuf:"bytes,5,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	MinimumGrade  int32                  `protobuf:"varint,6,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty"`
@@ -175,7 +175,7 @@ func (*PageJobAccess) Descriptor() ([]byte, []int) {
 	return file_resources_internet_access_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *PageJobAccess) GetId() uint64 {
+func (x *PageJobAccess) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -189,7 +189,7 @@ func (x *PageJobAccess) GetCreatedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *PageJobAccess) GetTargetId() uint64 {
+func (x *PageJobAccess) GetTargetId() int64 {
 	if x != nil {
 		return x.TargetId
 	}
@@ -233,9 +233,9 @@ func (x *PageJobAccess) GetAccess() AccessLevel {
 
 type PageUserAccess struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	TargetId      uint64                 `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
+	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
 	UserId        int32                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	User          *users.UserShort       `protobuf:"bytes,5,opt,name=user,proto3,oneof" json:"user,omitempty"`
 	Access        AccessLevel            `protobuf:"varint,6,opt,name=access,proto3,enum=resources.internet.AccessLevel" json:"access,omitempty"`
@@ -273,7 +273,7 @@ func (*PageUserAccess) Descriptor() ([]byte, []int) {
 	return file_resources_internet_access_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *PageUserAccess) GetId() uint64 {
+func (x *PageUserAccess) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -287,7 +287,7 @@ func (x *PageUserAccess) GetCreatedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *PageUserAccess) GetTargetId() uint64 {
+func (x *PageUserAccess) GetTargetId() int64 {
 	if x != nil {
 		return x.TargetId
 	}
@@ -325,10 +325,10 @@ const file_resources_internet_access_proto_rawDesc = "" +
 	"\x04jobs\x18\x01 \x03(\v2!.resources.internet.PageJobAccessB\x1f\x9a\x84\x9e\x03\x12alias:\"job_access\"\xbaH\x05\x92\x01\x02\x10\x14R\x04jobs\x12Z\n" +
 	"\x05users\x18\x02 \x03(\v2\".resources.internet.PageUserAccessB \x9a\x84\x9e\x03\x13alias:\"user_access\"\xbaH\x05\x92\x01\x02\x10\x14R\x05users\"\x9e\x03\n" +
 	"\rPageJobAccess\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12B\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1b\n" +
-	"\ttarget_id\x18\x03 \x01(\x04R\btargetId\x12\x19\n" +
+	"\ttarget_id\x18\x03 \x01(\x03R\btargetId\x12\x19\n" +
 	"\x03job\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12)\n" +
 	"\tjob_label\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x182H\x01R\bjobLabel\x88\x01\x01\x12,\n" +
 	"\rminimum_grade\x18\x06 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\fminimumGrade\x124\n" +
@@ -339,10 +339,10 @@ const file_resources_internet_access_proto_rawDesc = "" +
 	"_job_labelB\x12\n" +
 	"\x10_job_grade_label\"\xb3\x02\n" +
 	"\x0ePageUserAccess\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12B\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1b\n" +
-	"\ttarget_id\x18\x03 \x01(\x04R\btargetId\x12 \n" +
+	"\ttarget_id\x18\x03 \x01(\x03R\btargetId\x12 \n" +
 	"\auser_id\x18\x04 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\x06userId\x123\n" +
 	"\x04user\x18\x05 \x01(\v2\x1a.resources.users.UserShortH\x01R\x04user\x88\x01\x01\x12A\n" +
 	"\x06access\x18\x06 \x01(\x0e2\x1f.resources.internet.AccessLevelB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06accessB\r\n" +

@@ -12,11 +12,11 @@ import (
 )
 
 type FivenetDocuments struct {
-	ID          uint64     `sql:"primary_key" json:"id"`
+	ID          int64      `sql:"primary_key" json:"id"`
 	CreatedAt   *time.Time `json:"created_at"`
 	UpdatedAt   *time.Time `json:"updated_at"`
 	DeletedAt   *time.Time `json:"deleted_at"`
-	CategoryID  *uint64    `json:"category_id"`
+	CategoryID  *int64     `json:"category_id"`
 	Title       string     `json:"title"`
 	Summary     string     `json:"summary"`
 	ContentType int16      `json:"content_type"`
@@ -28,5 +28,5 @@ type FivenetDocuments struct {
 	Closed      *bool      `json:"closed"`
 	Draft       *bool      `json:"draft"`
 	Public      bool       `json:"public"`
-	TemplateID  *uint64    `json:"template_id"`
+	TemplateID  *int64     `json:"template_id"`
 }

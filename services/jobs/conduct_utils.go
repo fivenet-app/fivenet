@@ -8,7 +8,7 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
-func (s *Server) getConductEntry(ctx context.Context, id uint64) (*jobs.ConductEntry, error) {
+func (s *Server) getConductEntry(ctx context.Context, id int64) (*jobs.ConductEntry, error) {
 	tColleague := tables.User().AS("target_user")
 	tCreator := tColleague.AS("creator")
 
@@ -44,7 +44,7 @@ func (s *Server) getConductEntry(ctx context.Context, id uint64) (*jobs.ConductE
 					tCreator.ID.EQ(tConduct.CreatorID),
 				),
 		).
-		WHERE(tConduct.ID.EQ(jet.Uint64(id))).
+		WHERE(tConduct.ID.EQ(jet.Int64(id))).
 		LIMIT(1)
 
 	dest := &jobs.ConductEntry{}

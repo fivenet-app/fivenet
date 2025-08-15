@@ -34,7 +34,7 @@ type UserShort struct {
 	Lastname      string                 `protobuf:"bytes,8,opt,name=lastname,proto3" json:"lastname,omitempty"`
 	Dateofbirth   string                 `protobuf:"bytes,9,opt,name=dateofbirth,proto3" json:"dateofbirth,omitempty"`
 	PhoneNumber   *string                `protobuf:"bytes,12,opt,name=phone_number,json=phoneNumber,proto3,oneof" json:"phone_number,omitempty"`
-	AvatarFileId  *uint64                `protobuf:"varint,17,opt,name=avatar_file_id,json=avatarFileId,proto3,oneof" json:"avatar_file_id,omitempty"`
+	AvatarFileId  *int64                 `protobuf:"varint,17,opt,name=avatar_file_id,json=avatarFileId,proto3,oneof" json:"avatar_file_id,omitempty"`
 	Avatar        *string                `protobuf:"bytes,18,opt,name=avatar,proto3,oneof" json:"avatar,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -140,7 +140,7 @@ func (x *UserShort) GetPhoneNumber() string {
 	return ""
 }
 
-func (x *UserShort) GetAvatarFileId() uint64 {
+func (x *UserShort) GetAvatarFileId() int64 {
 	if x != nil && x.AvatarFileId != nil {
 		return *x.AvatarFileId
 	}
@@ -172,7 +172,7 @@ type User struct {
 	Playtime      *int32                 `protobuf:"varint,14,opt,name=playtime,proto3,oneof" json:"playtime,omitempty"`
 	Props         *UserProps             `protobuf:"bytes,15,opt,name=props,proto3" json:"props,omitempty" alias:"fivenet_user_props"`
 	Licenses      []*License             `protobuf:"bytes,16,rep,name=licenses,proto3" json:"licenses,omitempty" alias:"user_licenses"`
-	AvatarFileId  *uint64                `protobuf:"varint,17,opt,name=avatar_file_id,json=avatarFileId,proto3,oneof" json:"avatar_file_id,omitempty"`
+	AvatarFileId  *int64                 `protobuf:"varint,17,opt,name=avatar_file_id,json=avatarFileId,proto3,oneof" json:"avatar_file_id,omitempty"`
 	Avatar        *string                `protobuf:"bytes,18,opt,name=avatar,proto3,oneof" json:"avatar,omitempty"`
 	Group         *string                `protobuf:"bytes,20,opt,name=group,proto3,oneof" json:"group,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -321,7 +321,7 @@ func (x *User) GetLicenses() []*License {
 	return nil
 }
 
-func (x *User) GetAvatarFileId() uint64 {
+func (x *User) GetAvatarFileId() int64 {
 	if x != nil && x.AvatarFileId != nil {
 		return *x.AvatarFileId
 	}
@@ -365,7 +365,7 @@ const file_resources_users_users_proto_rawDesc = "" +
 	"\xbaH\a\xd8\x01\x01r\x02\x18\n" +
 	"R\vdateofbirth\x12/\n" +
 	"\fphone_number\x18\f \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x03R\vphoneNumber\x88\x01\x01\x12)\n" +
-	"\x0eavatar_file_id\x18\x11 \x01(\x04H\x04R\favatarFileId\x88\x01\x01\x12\x1b\n" +
+	"\x0eavatar_file_id\x18\x11 \x01(\x03H\x04R\favatarFileId\x88\x01\x01\x12\x1b\n" +
 	"\x06avatar\x18\x12 \x01(\tH\x05R\x06avatar\x88\x01\x01B\r\n" +
 	"\v_identifierB\f\n" +
 	"\n" +
@@ -399,7 +399,7 @@ const file_resources_users_users_proto_rawDesc = "" +
 	"\bplaytime\x18\x0e \x01(\x05B\a\xbaH\x04\x1a\x02(\x00H\aR\bplaytime\x88\x01\x01\x12Q\n" +
 	"\x05props\x18\x0f \x01(\v2\x1a.resources.users.UserPropsB\x1f\x9a\x84\x9e\x03\x1aalias:\"fivenet_user_props\"R\x05props\x12P\n" +
 	"\blicenses\x18\x10 \x03(\v2\x18.resources.users.LicenseB\x1a\x9a\x84\x9e\x03\x15alias:\"user_licenses\"R\blicenses\x12)\n" +
-	"\x0eavatar_file_id\x18\x11 \x01(\x04H\bR\favatarFileId\x88\x01\x01\x12\x1b\n" +
+	"\x0eavatar_file_id\x18\x11 \x01(\x03H\bR\favatarFileId\x88\x01\x01\x12\x1b\n" +
 	"\x06avatar\x18\x12 \x01(\tH\tR\x06avatar\x88\x01\x01\x12\"\n" +
 	"\x05group\x18\x14 \x01(\tB\a\xbaH\x04r\x02\x182H\n" +
 	"R\x05group\x88\x01\x01B\r\n" +

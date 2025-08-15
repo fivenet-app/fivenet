@@ -69,7 +69,7 @@ func (x *Labels) GetList() []*Label {
 
 type Label struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	Job       *string                `protobuf:"bytes,2,opt,name=job,proto3,oneof" json:"job,omitempty"`
 	DeletedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	Name      string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
@@ -110,7 +110,7 @@ func (*Label) Descriptor() ([]byte, []int) {
 	return file_resources_jobs_labels_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *Label) GetId() uint64 {
+func (x *Label) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -213,7 +213,7 @@ const file_resources_jobs_labels_proto_rawDesc = "" +
 	"\x04list\x18\x01 \x03(\v2\x15.resources.jobs.LabelB\b\xbaH\x05\x92\x01\x02\x10\n" +
 	"R\x04list\"\x9b\x02\n" +
 	"\x05Label\x121\n" +
-	"\x02id\x18\x01 \x01(\x04B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12\x1e\n" +
+	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12\x1e\n" +
 	"\x03job\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x00R\x03job\x88\x01\x01\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12\x1b\n" +

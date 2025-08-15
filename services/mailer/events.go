@@ -12,7 +12,7 @@ import (
 func (s *Server) sendUpdate(
 	ctx context.Context,
 	event *mailer.MailerEvent,
-	emailIds ...uint64,
+	emailIds ...int64,
 ) error {
 	emailIds = utils.RemoveSliceDuplicates(emailIds)
 

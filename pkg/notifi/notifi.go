@@ -73,7 +73,7 @@ func (n *Notifi) NotifyUser(ctx context.Context, not *notifications.Notification
 		return fmt.Errorf("failed to insert notification into database. %w", err)
 	}
 
-	not.Id = uint64(nId)
+	not.Id = nId
 	data, err := proto.Marshal(&notifications.UserEvent{
 		Data: &notifications.UserEvent_Notification{
 			Notification: not,

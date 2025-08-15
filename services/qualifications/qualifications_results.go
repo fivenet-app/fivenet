@@ -68,7 +68,7 @@ func (s *Server) ListQualificationsResults(
 		}
 
 		condition = condition.AND(
-			tQualiResults.QualificationID.EQ(jet.Uint64(req.GetQualificationId())),
+			tQualiResults.QualificationID.EQ(jet.Int64(req.GetQualificationId())),
 		)
 	} else {
 		condition = condition.AND(jet.AND(
@@ -317,15 +317,15 @@ func (s *Server) CreateOrUpdateQualificationResult(
 func (s *Server) createOrUpdateQualificationResult(
 	ctx context.Context,
 	tx qrm.DB,
-	qualificationId uint64,
-	resultId uint64,
+	qualificationId int64,
+	resultId int64,
 	userInfo *userinfo.UserInfo,
 	userId int32,
 	status qualifications.ResultStatus,
 	score *float32,
 	summary string,
 	grading *qualifications.ExamGrading,
-) (uint64, error) {
+) (int64, error) {
 	currentResult, err := s.getQualificationResult(
 		ctx,
 		qualificationId,
@@ -341,7 +341,7 @@ func (s *Server) createOrUpdateQualificationResult(
 	quali, err := s.getQualification(
 		ctx,
 		qualificationId,
-		tQuali.ID.EQ(jet.Uint64(qualificationId)),
+		tQuali.ID.EQ(jet.Int64(qualificationId)),
 		userInfo,
 		false,
 	)
@@ -390,7 +390,7 @@ func (s *Server) createOrUpdateQualificationResult(
 			return 0, err
 		}
 
-		resultId = uint64(lastId)
+		resultId = lastId
 	} else {
 		result, err := s.getQualificationResult(ctx, quali.GetId(), resultId, nil, userInfo, userId)
 		if err != nil {
@@ -415,7 +415,7 @@ func (s *Server) createOrUpdateQualificationResult(
 				summary,
 			).
 			WHERE(jet.AND(
-				tQualiResults.ID.EQ(jet.Uint64(resultId)),
+				tQualiResults.ID.EQ(jet.Int64(resultId)),
 				tQualiResults.DeletedAt.IS_NULL(),
 			))
 
@@ -435,7 +435,7 @@ func (s *Server) createOrUpdateQualificationResult(
 				grading,
 			).
 			WHERE(jet.AND(
-				tExamResponses.QualificationID.EQ(jet.Uint64(quali.GetId())),
+				tExamResponses.QualificationID.EQ(jet.Int64(quali.GetId())),
 				tExamResponses.UserID.EQ(jet.Int32(userId)),
 			))
 
@@ -496,8 +496,8 @@ func (s *Server) createOrUpdateQualificationResult(
 
 func (s *Server) getQualificationResult(
 	ctx context.Context,
-	qualificationId uint64,
-	resultId uint64,
+	qualificationId int64,
+	resultId int64,
 	status []qualifications.ResultStatus,
 	userInfo *userinfo.UserInfo,
 	userId int32,
@@ -508,14 +508,14 @@ func (s *Server) getQualificationResult(
 	condition := tQualiResults.DeletedAt.IS_NULL()
 
 	if resultId > 0 {
-		condition = condition.AND(tQualiResults.ID.EQ(jet.Uint64(resultId)))
+		condition = condition.AND(tQualiResults.ID.EQ(jet.Int64(resultId)))
 	} else if userId > 0 {
 		condition = condition.AND(tQualiResults.UserID.EQ(jet.Int32(userId)))
 	} else {
 		condition = condition.AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.GetUserId())))
 	}
 	if qualificationId > 0 {
-		condition = condition.AND(tQualiResults.QualificationID.EQ(jet.Uint64(qualificationId)))
+		condition = condition.AND(tQualiResults.QualificationID.EQ(jet.Int64(qualificationId)))
 	}
 
 	if len(status) > 0 {
@@ -628,7 +628,7 @@ func (s *Server) DeleteQualificationResult(
 	quali, err := s.getQualification(
 		ctx,
 		result.GetQualificationId(),
-		tQuali.ID.EQ(jet.Uint64(result.GetQualificationId())),
+		tQuali.ID.EQ(jet.Int64(result.GetQualificationId())),
 		userInfo,
 		false,
 	)
@@ -654,8 +654,8 @@ func (s *Server) DeleteQualificationResult(
 			jet.CURRENT_TIMESTAMP(),
 		).
 		WHERE(jet.AND(
-			tQualiResults.ID.EQ(jet.Uint64(result.GetId())),
-			tQualiResults.ID.EQ(jet.Uint64(req.GetResultId())),
+			tQualiResults.ID.EQ(jet.Int64(result.GetId())),
+			tQualiResults.ID.EQ(jet.Int64(req.GetResultId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -716,7 +716,7 @@ func (s *Server) handleColleagueLabelSync(
 			labelName,
 		)
 
-	var labelId uint64
+	var labelId int64
 	res, err := createStmt.ExecContext(ctx, tx)
 	if err != nil {
 		if !dbutils.IsDuplicateError(err) {
@@ -738,7 +738,7 @@ func (s *Server) handleColleagueLabelSync(
 			LIMIT(1)
 
 		dest := struct {
-			ID uint64 `alias:"id"`
+			ID int64 `alias:"id"`
 		}{}
 		if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
 			return err
@@ -751,7 +751,7 @@ func (s *Server) handleColleagueLabelSync(
 			return err
 		}
 
-		labelId = uint64(lastId)
+		labelId = lastId
 	}
 
 	tUserLabels := table.FivenetJobColleagueLabels
@@ -781,7 +781,7 @@ func (s *Server) handleColleagueLabelSync(
 			WHERE(jet.AND(
 				tUserLabels.UserID.EQ(jet.Int32(targetUserId)),
 				tUserLabels.Job.EQ(jet.String(userInfo.GetJob())),
-				tUserLabels.LabelID.EQ(jet.Uint64(labelId)),
+				tUserLabels.LabelID.EQ(jet.Int64(labelId)),
 			)).
 			LIMIT(1)
 

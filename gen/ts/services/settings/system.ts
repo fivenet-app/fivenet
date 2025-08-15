@@ -797,7 +797,7 @@ class Database$Type extends MessageType<Database> {
         super("services.settings.Database", [
             { no: 1, name: "version", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
             { no: 2, name: "connected", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "migration_version", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { uint64: { gt: "0" } } } },
+            { no: 3, name: "migration_version", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "migration_dirty", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 5, name: "db_charset", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
             { no: 6, name: "db_collation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },

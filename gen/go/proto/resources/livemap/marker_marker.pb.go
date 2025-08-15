@@ -78,7 +78,7 @@ func (MarkerType) EnumDescriptor() ([]byte, []int) {
 
 type MarkerMarker struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	X         float64                `protobuf:"fixed64,2,opt,name=x,proto3" json:"x,omitempty"`
 	Y         float64                `protobuf:"fixed64,3,opt,name=y,proto3" json:"y,omitempty"`
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
@@ -133,7 +133,7 @@ func (*MarkerMarker) Descriptor() ([]byte, []int) {
 	return file_resources_livemap_marker_marker_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *MarkerMarker) GetId() uint64 {
+func (x *MarkerMarker) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -438,7 +438,7 @@ const file_resources_livemap_marker_marker_proto_rawDesc = "" +
 	"\n" +
 	"%resources/livemap/marker_marker.proto\x12\x11resources.livemap\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xad\a\n" +
 	"\fMarkerMarker\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12\f\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\f\n" +
 	"\x01x\x18\x02 \x01(\x01R\x01x\x12\f\n" +
 	"\x01y\x18\x03 \x01(\x01R\x01y\x12B\n" +
 	"\n" +

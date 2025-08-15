@@ -12,7 +12,7 @@ import (
 )
 
 type FivenetAccountsOauth2 struct {
-	AccountID    uint64     `json:"account_id"`
+	AccountID    int64      `json:"account_id"`
 	CreatedAt    *time.Time `json:"created_at"`
 	Provider     string     `json:"provider"`
 	ExternalID   string     `json:"external_id"`
@@ -22,6 +22,6 @@ type FivenetAccountsOauth2 struct {
 	RefreshToken *string    `json:"refresh_token"`
 	TokenType    *string    `json:"token_type"`
 	Scope        *string    `json:"scope"`
-	ExpiresIn    *int32     `json:"expires_in"`
+	ExpiresIn    *int64     `json:"expires_in"`
 	ObtainedAt   *time.Time `json:"obtained_at"`
 }

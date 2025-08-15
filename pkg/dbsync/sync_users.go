@@ -36,7 +36,7 @@ func (s *usersSync) Sync(ctx context.Context) error {
 	}
 
 	limit := int64(500)
-	var offset uint64
+	var offset int64
 	if s.state != nil && s.state.Offset > 0 {
 		offset = s.state.Offset
 	}
@@ -155,7 +155,7 @@ func (s *usersSync) Sync(ctx context.Context) error {
 	}
 
 	lastUserId := strconv.FormatInt(int64(us[len(us)-1].GetUserId()), 10)
-	s.state.Set(uint64(limit)+offset, &lastUserId)
+	s.state.Set(limit+offset, &lastUserId)
 
 	return nil
 }

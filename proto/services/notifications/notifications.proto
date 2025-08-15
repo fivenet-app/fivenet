@@ -29,7 +29,7 @@ message GetNotificationsResponse {
 
 message MarkNotificationsRequest {
   bool unread = 1;
-  repeated uint64 ids = 2 [
+  repeated int64 ids = 2 [
     (buf.validate.field).repeated = {
       min_items: 1
       max_items: 20
@@ -40,7 +40,7 @@ message MarkNotificationsRequest {
 }
 
 message MarkNotificationsResponse {
-  uint64 updated = 1;
+  int64 updated = 1;
 }
 
 message StreamRequest {

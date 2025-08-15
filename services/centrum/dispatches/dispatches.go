@@ -266,7 +266,7 @@ func New(p Params) *DispatchDB {
 								func(p1, p2 orb.Pointer) bool {
 									return p1.Point().Equal(p2.Point())
 								}); err != nil {
-								d.logger.Error("failed to add non-existent dispatch to locations", zap.Uint64("dispatch_id", dispatch.GetId()))
+								d.logger.Error("failed to add non-existent dispatch to locations", zap.Int64("dispatch_id", dispatch.GetId()))
 							}
 						}
 					}
@@ -297,7 +297,7 @@ func New(p Params) *DispatchDB {
 					}
 
 					idKey := split[1]
-					dspId, err := strconv.ParseUint(idKey, 10, 64)
+					dspId, err := strconv.ParseInt(idKey, 10, 64)
 					if err != nil {
 						return fmt.Errorf("failed to parse dispatch id from key %s. %w", key, err)
 					}
@@ -505,7 +505,7 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond jet.BoolExpression) (i
 						return p1.Point().Equal(p2.Point())
 					})
 				if err != nil {
-					s.logger.Error("failed to replace dispatch in locations", zap.Uint64("dispatch_id", dsps[i].GetId()), zap.Error(err))
+					s.logger.Error("failed to replace dispatch in locations", zap.Int64("dispatch_id", dsps[i].GetId()), zap.Error(err))
 				}
 			}
 		}
@@ -516,7 +516,7 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond jet.BoolExpression) (i
 
 func (s *DispatchDB) LoadDispatchAssignments(
 	ctx context.Context,
-	dispatchId uint64,
+	dispatchId int64,
 ) ([]*centrum.DispatchAssignment, error) {
 	tDispatchUnit := table.FivenetCentrumDispatchesAsgmts.AS("dispatch_assignment")
 
@@ -532,7 +532,7 @@ func (s *DispatchDB) LoadDispatchAssignments(
 			tDispatchUnit.CreatedAt.ASC(),
 		).
 		WHERE(
-			tDispatchUnit.DispatchID.EQ(jet.Uint64(dispatchId)),
+			tDispatchUnit.DispatchID.EQ(jet.Int64(dispatchId)),
 		)
 
 	dest := []*centrum.DispatchAssignment{}
@@ -583,7 +583,7 @@ func (s *DispatchDB) GetLocationsJob() []string {
 	return jobs
 }
 
-func (s *DispatchDB) Delete(ctx context.Context, id uint64, removeFromDB bool) error {
+func (s *DispatchDB) Delete(ctx context.Context, id int64, removeFromDB bool) error {
 	if err := s.deleteInKV(ctx, id); err != nil {
 		if !errors.Is(err, jetstream.ErrKeyNotFound) {
 			return err
@@ -596,7 +596,7 @@ func (s *DispatchDB) Delete(ctx context.Context, id uint64, removeFromDB bool) e
 		stmt := tDispatch.
 			DELETE().
 			WHERE(jet.AND(
-				tDispatch.ID.EQ(jet.Uint64(id)),
+				tDispatch.ID.EQ(jet.Int64(id)),
 			)).
 			LIMIT(1)
 
@@ -610,7 +610,7 @@ func (s *DispatchDB) Delete(ctx context.Context, id uint64, removeFromDB bool) e
 
 func (s *DispatchDB) UpdateStatus(
 	ctx context.Context,
-	dspId uint64,
+	dspId int64,
 	in *centrum.DispatchStatus,
 ) (*centrum.DispatchStatus, error) {
 	dsp, err := s.Get(ctx, dspId)
@@ -627,7 +627,7 @@ func (s *DispatchDB) UpdateStatus(
 				in.GetStatus() == centrum.StatusDispatch_STATUS_DISPATCH_UNASSIGNED) {
 			s.logger.Debug(
 				"skipping dispatch status update due to being new or same status",
-				zap.Uint64("dispatch_id", dsp.GetId()),
+				zap.Int64("dispatch_id", dsp.GetId()),
 				zap.String("status", in.GetStatus().String()),
 			)
 			return in, nil
@@ -645,7 +645,7 @@ func (s *DispatchDB) UpdateStatus(
 
 	s.logger.Debug(
 		"updating dispatch status",
-		zap.Uint64("dispatch_id", dspId),
+		zap.Int64("dispatch_id", dspId),
 		zap.String("status", in.GetStatus().String()),
 	)
 
@@ -705,7 +705,7 @@ func (s *DispatchDB) UpdateStatus(
 	if err != nil {
 		return nil, err
 	}
-	in.Id = uint64(lastId)
+	in.Id = lastId
 
 	if err := s.updateStatusInKV(ctx, in.GetDispatchId(), in); err != nil {
 		return nil, err
@@ -733,17 +733,17 @@ func (s *DispatchDB) UpdateStatus(
 func (s *DispatchDB) UpdateAssignments(
 	ctx context.Context,
 	userId *int32,
-	dspId uint64,
-	toAdd []uint64,
-	toRemove []uint64,
+	dspId int64,
+	toAdd []int64,
+	toRemove []int64,
 	expiresAt time.Time,
 ) error {
 	s.logger.Debug(
 		"updating dispatch assignments",
 		zap.Int32p("user_id", userId),
-		zap.Uint64("dispatch_id", dspId),
-		zap.Uint64s("toAdd", toAdd),
-		zap.Uint64s("toRemove", toRemove),
+		zap.Int64("dispatch_id", dspId),
+		zap.Int64s("toAdd", toAdd),
+		zap.Int64s("toRemove", toRemove),
 	)
 
 	if len(toAdd) == 0 && len(toRemove) == 0 {
@@ -773,13 +773,13 @@ func (s *DispatchDB) UpdateAssignments(
 	if len(toRemove) > 0 {
 		removeIds := make([]jet.Expression, len(toRemove))
 		for i := range toRemove {
-			removeIds[i] = jet.Uint64(toRemove[i])
+			removeIds[i] = jet.Int64(toRemove[i])
 		}
 
 		stmt := tDispatchUnit.
 			DELETE().
 			WHERE(jet.AND(
-				tDispatchUnit.DispatchID.EQ(jet.Uint64(dspId)),
+				tDispatchUnit.DispatchID.EQ(jet.Int64(dspId)),
 				tDispatchUnit.UnitID.IN(removeIds...),
 			))
 
@@ -797,7 +797,7 @@ func (s *DispatchDB) UpdateAssignments(
 	}
 
 	if len(toAdd) > 0 {
-		units := []uint64{}
+		units := []int64{}
 		dsp, err := s.Get(ctx, dspId)
 		if err != nil {
 			return err
@@ -866,7 +866,7 @@ func (s *DispatchDB) UpdateAssignments(
 		}
 
 		if len(toRemove) > 0 {
-			toAnnounce := []uint64{}
+			toAnnounce := []int64{}
 			dsp.Units = slices.DeleteFunc(dsp.GetUnits(), func(in *centrum.DispatchAssignment) bool {
 				for k := range toRemove {
 					if in.GetUnitId() != toRemove[k] {
@@ -898,7 +898,7 @@ func (s *DispatchDB) UpdateAssignments(
 		}
 
 		if len(toAdd) > 0 {
-			units := []uint64{}
+			units := []int64{}
 			for i := range toAdd {
 				// Skip already added units
 				if slices.ContainsFunc(dsp.GetUnits(), func(in *centrum.DispatchAssignment) bool {
@@ -1076,7 +1076,7 @@ func (s *DispatchDB) Create(ctx context.Context, dsp *centrum.Dispatch) (*centru
 	if err != nil {
 		return nil, err
 	}
-	dsp.Id = uint64(lastId)
+	dsp.Id = lastId
 
 	var userId *int32
 	if !dsp.GetAnon() && dsp.CreatorId != nil {
@@ -1158,7 +1158,7 @@ func (s *DispatchDB) Update(
 			dsp.CreatorId,
 		).
 		WHERE(jet.AND(
-			tDispatch.ID.EQ(jet.Uint64(dsp.GetId())),
+			tDispatch.ID.EQ(jet.Int64(dsp.GetId())),
 		)).
 		LIMIT(1)
 
@@ -1219,7 +1219,7 @@ func (s *DispatchDB) AddDispatchStatus(
 		return nil, err
 	}
 
-	newStatus, err := s.GetStatus(ctx, tx, uint64(lastId))
+	newStatus, err := s.GetStatus(ctx, tx, lastId)
 	if err != nil {
 		return nil, err
 	}
@@ -1243,7 +1243,7 @@ func (s *DispatchDB) AddDispatchStatus(
 func (s *DispatchDB) GetStatus(
 	ctx context.Context,
 	tx qrm.DB,
-	id uint64,
+	id int64,
 ) (*centrum.DispatchStatus, error) {
 	tDispatchStatus := table.FivenetCentrumDispatchesStatus.AS("dispatch_status")
 	tUsers := tables.User().AS("colleague")
@@ -1278,7 +1278,7 @@ func (s *DispatchDB) GetStatus(
 				),
 		).
 		WHERE(
-			tDispatchStatus.ID.EQ(jet.Uint64(id)),
+			tDispatchStatus.ID.EQ(jet.Int64(id)),
 		).
 		ORDER_BY(tDispatchStatus.ID.DESC()).
 		LIMIT(1)
@@ -1308,9 +1308,9 @@ func (s *DispatchDB) TakeDispatch(
 	ctx context.Context,
 	userJob string,
 	userId int32,
-	unitId uint64,
+	unitId int64,
 	resp centrum.TakeDispatchResp,
-	dispatchIds []uint64,
+	dispatchIds []int64,
 ) error {
 	settings, err := s.settings.Get(ctx, userJob)
 	if err != nil {
@@ -1363,8 +1363,8 @@ func (s *DispatchDB) TakeDispatch(
 			stmt := tDispatchUnit.
 				DELETE().
 				WHERE(jet.AND(
-					tDispatchUnit.DispatchID.EQ(jet.Uint64(dspId)),
-					tDispatchUnit.UnitID.EQ(jet.Uint64(unit.GetId())),
+					tDispatchUnit.DispatchID.EQ(jet.Int64(dspId)),
+					tDispatchUnit.UnitID.EQ(jet.Int64(unit.GetId())),
 				)).
 				LIMIT(1)
 

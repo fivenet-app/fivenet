@@ -15,8 +15,8 @@ import (
 type JobsAccessProtoMessage[T any, V protoutils.ProtoEnum] interface {
 	protoutils.ProtoMessage[T]
 
-	GetId() uint64
-	GetTargetId() uint64
+	GetId() int64
+	GetTargetId() int64
 	GetJob() string
 
 	GetMinimumGrade() int32
@@ -53,7 +53,7 @@ func NewJobs[U any, T JobsAccessProtoMessage[U, V], V protoutils.ProtoEnum](
 }
 
 // List returns all job access entries for a given targetId.
-func (a *Jobs[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId uint64) ([]T, error) {
+func (a *Jobs[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId int64) ([]T, error) {
 	stmt := a.selectTable.
 		SELECT(
 			a.selectColumns.ID,
@@ -64,7 +64,7 @@ func (a *Jobs[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId uint64) ([
 		).
 		FROM(a.selectTable).
 		WHERE(jet.AND(
-			a.selectColumns.TargetID.EQ(jet.Uint64(targetId)),
+			a.selectColumns.TargetID.EQ(jet.Int64(targetId)),
 			a.selectColumns.Job.IS_NOT_NULL(),
 			a.selectColumns.MinimumGrade.IS_NOT_NULL(),
 		))
@@ -80,11 +80,11 @@ func (a *Jobs[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId uint64) ([
 }
 
 // Clear deletes all job access entries for a given targetId.
-func (a *Jobs[U, T, V]) Clear(ctx context.Context, tx qrm.DB, targetId uint64) (T, error) {
+func (a *Jobs[U, T, V]) Clear(ctx context.Context, tx qrm.DB, targetId int64) (T, error) {
 	stmt := a.table.
 		DELETE().
 		WHERE(
-			a.columns.TargetID.EQ(jet.Uint64(targetId)),
+			a.columns.TargetID.EQ(jet.Int64(targetId)),
 		)
 
 	var dest T
@@ -102,7 +102,7 @@ func (a *Jobs[U, T, V]) Clear(ctx context.Context, tx qrm.DB, targetId uint64) (
 func (a *Jobs[U, T, V]) Compare(
 	ctx context.Context,
 	tx qrm.DB,
-	targetId uint64,
+	targetId int64,
 	in []T,
 ) ([]T, []T, []T, error) {
 	current, err := a.List(ctx, tx, targetId)
@@ -182,7 +182,7 @@ func (a *Jobs[U, T, V]) compare(current, in []T) ([]T, []T, []T) {
 func (a *Jobs[U, T, AccessLevel]) HandleAccessChanges(
 	ctx context.Context,
 	tx qrm.DB,
-	targetId uint64,
+	targetId int64,
 	access []T,
 ) ([]T, []T, []T, error) {
 	toCreate, toUpdate, toDelete, err := a.Compare(ctx, tx, targetId, access)

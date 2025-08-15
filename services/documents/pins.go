@@ -86,7 +86,7 @@ func (s *Server) ListDocumentPins(
 
 	docIdsExpr := make([]jet.Expression, len(docPins))
 	for k, pin := range docPins {
-		docIdsExpr[k] = jet.Uint64(pin.GetDocumentId())
+		docIdsExpr[k] = jet.Int64(pin.GetDocumentId())
 	}
 	condition := tDocumentShort.ID.IN(docIdsExpr...)
 
@@ -204,7 +204,7 @@ func (s *Server) ToggleDocumentPin(
 			}
 		}
 	} else {
-		condition := tDPins.DocumentID.EQ(jet.Uint64(req.GetDocumentId()))
+		condition := tDPins.DocumentID.EQ(jet.Int64(req.GetDocumentId()))
 		if req.Personal != nil && req.GetPersonal() {
 			condition = condition.AND(jet.AND(
 				tDPins.UserID.EQ(jet.Int32(userInfo.GetUserId())),
@@ -239,13 +239,13 @@ func (s *Server) ToggleDocumentPin(
 
 func (s *Server) getDocumentPin(
 	ctx context.Context,
-	documentId uint64,
+	documentId int64,
 	userInfo *userinfo.UserInfo,
 ) (*documents.DocumentPin, error) {
 	tDPins := table.FivenetDocumentsPins.AS("document_pin")
 
 	condition := jet.AND(
-		tDPins.DocumentID.EQ(jet.Uint64(documentId)),
+		tDPins.DocumentID.EQ(jet.Int64(documentId)),
 		jet.OR(
 			jet.AND(
 				tDPins.Job.EQ(jet.String(userInfo.GetJob())),

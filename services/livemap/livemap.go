@@ -244,7 +244,7 @@ func (s *Server) Stream(
 					outCh <- &pblivemap.StreamResponse{
 						Data: &pblivemap.StreamResponse_Markers{
 							Markers: &pblivemap.MarkerMarkersUpdates{
-								Deleted: []uint64{*event.MarkerDelete},
+								Deleted: []int64{*event.MarkerDelete},
 							},
 						},
 					}

@@ -89,7 +89,7 @@ func (x *CreateAccountRequest) GetPassword() string {
 
 type CreateAccountResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	AccountId     uint64                 `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	AccountId     int64                  `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -124,7 +124,7 @@ func (*CreateAccountResponse) Descriptor() ([]byte, []int) {
 	return file_services_auth_auth_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *CreateAccountResponse) GetAccountId() uint64 {
+func (x *CreateAccountResponse) GetAccountId() int64 {
 	if x != nil {
 		return x.AccountId
 	}
@@ -186,7 +186,7 @@ func (x *LoginRequest) GetPassword() string {
 type LoginResponse struct {
 	state         protoimpl.MessageState   `protogen:"open.v1"`
 	Expires       *timestamp.Timestamp     `protobuf:"bytes,1,opt,name=expires,proto3" json:"expires,omitempty"`
-	AccountId     uint64                   `protobuf:"varint,2,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	AccountId     int64                    `protobuf:"varint,2,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	Char          *ChooseCharacterResponse `protobuf:"bytes,3,opt,name=char,proto3,oneof" json:"char,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -229,7 +229,7 @@ func (x *LoginResponse) GetExpires() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *LoginResponse) GetAccountId() uint64 {
+func (x *LoginResponse) GetAccountId() int64 {
 	if x != nil {
 		return x.AccountId
 	}
@@ -1127,14 +1127,14 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\bpassword\x18\x03 \x01(\tB\t\xbaH\x06r\x04\x10\x06(FR\bpassword\"6\n" +
 	"\x15CreateAccountResponse\x12\x1d\n" +
 	"\n" +
-	"account_id\x18\x01 \x01(\x04R\taccountId\"|\n" +
+	"account_id\x18\x01 \x01(\x03R\taccountId\"|\n" +
 	"\fLoginRequest\x12E\n" +
 	"\busername\x18\x01 \x01(\tB)\xbaH&r$\x10\x03\x18\x182\x1e(?i)^[0-9A-ZÄÖÜß_-]{3,24}$R\busername\x12%\n" +
 	"\bpassword\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x10\x06(FR\bpassword\"\xb2\x01\n" +
 	"\rLoginResponse\x128\n" +
 	"\aexpires\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\aexpires\x12\x1d\n" +
 	"\n" +
-	"account_id\x18\x02 \x01(\x04R\taccountId\x12?\n" +
+	"account_id\x18\x02 \x01(\x03R\taccountId\x12?\n" +
 	"\x04char\x18\x03 \x01(\v2&.services.auth.ChooseCharacterResponseH\x00R\x04char\x88\x01\x01B\a\n" +
 	"\x05_char\"\x0f\n" +
 	"\rLogoutRequest\"*\n" +

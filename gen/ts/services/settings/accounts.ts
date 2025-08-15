@@ -65,7 +65,7 @@ export interface ListAccountsResponse {
  */
 export interface UpdateAccountRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -91,7 +91,7 @@ export interface UpdateAccountResponse {
  */
 export interface DisconnectOAuth2ConnectionRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -109,7 +109,7 @@ export interface DisconnectOAuth2ConnectionResponse {
  */
 export interface DeleteAccountRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
 }
@@ -257,7 +257,7 @@ export const ListAccountsResponse = new ListAccountsResponse$Type();
 class UpdateAccountRequest$Type extends MessageType<UpdateAccountRequest> {
     constructor() {
         super("services.settings.UpdateAccountRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { uint64: { gt: "0" } } } },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 2, name: "enabled", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "last_char", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
@@ -274,8 +274,8 @@ class UpdateAccountRequest$Type extends MessageType<UpdateAccountRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* optional bool enabled */ 2:
                     message.enabled = reader.bool();
@@ -295,9 +295,9 @@ class UpdateAccountRequest$Type extends MessageType<UpdateAccountRequest> {
         return message;
     }
     internalBinaryWrite(message: UpdateAccountRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* optional bool enabled = 2; */
         if (message.enabled !== undefined)
             writer.tag(2, WireType.Varint).bool(message.enabled);
@@ -364,7 +364,7 @@ export const UpdateAccountResponse = new UpdateAccountResponse$Type();
 class DisconnectOAuth2ConnectionRequest$Type extends MessageType<DisconnectOAuth2ConnectionRequest> {
     constructor() {
         super("services.settings.DisconnectOAuth2ConnectionRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { uint64: { gt: "0" } } } },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 2, name: "provider_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } }
         ]);
     }
@@ -381,8 +381,8 @@ class DisconnectOAuth2ConnectionRequest$Type extends MessageType<DisconnectOAuth
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* string provider_name */ 2:
                     message.providerName = reader.string();
@@ -399,9 +399,9 @@ class DisconnectOAuth2ConnectionRequest$Type extends MessageType<DisconnectOAuth
         return message;
     }
     internalBinaryWrite(message: DisconnectOAuth2ConnectionRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* string provider_name = 2; */
         if (message.providerName !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.providerName);
@@ -457,7 +457,7 @@ export const DisconnectOAuth2ConnectionResponse = new DisconnectOAuth2Connection
 class DeleteAccountRequest$Type extends MessageType<DeleteAccountRequest> {
     constructor() {
         super("services.settings.DeleteAccountRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { uint64: { gt: "0" } } } }
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteAccountRequest>): DeleteAccountRequest {
@@ -472,8 +472,8 @@ class DeleteAccountRequest$Type extends MessageType<DeleteAccountRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -487,9 +487,9 @@ class DeleteAccountRequest$Type extends MessageType<DeleteAccountRequest> {
         return message;
     }
     internalBinaryWrite(message: DeleteAccountRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

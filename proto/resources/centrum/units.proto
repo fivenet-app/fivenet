@@ -12,7 +12,7 @@ import "tagger/tagger.proto";
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrum";
 
 message Unit {
-  uint64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
+  int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   string job = 4 [(buf.validate.field).string.max_len = 20];
@@ -47,13 +47,13 @@ message Unit {
 }
 
 message UnitAssignments {
-  uint64 unit_id = 1;
+  int64 unit_id = 1;
   string job = 2 [(buf.validate.field).string.max_len = 20];
   repeated UnitAssignment users = 3;
 }
 
 message UnitAssignment {
-  uint64 unit_id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"unit_id\""];
+  int64 unit_id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"unit_id\""];
   int32 user_id = 2 [
     (buf.validate.field).int32.gte = 0,
     (tagger.tags) = "sql:\"primary_key\" alias:\"user_id\""
@@ -73,9 +73,9 @@ enum StatusUnit {
 }
 
 message UnitStatus {
-  uint64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
+  int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
-  uint64 unit_id = 3;
+  int64 unit_id = 3;
   optional resources.centrum.Unit unit = 4;
   StatusUnit status = 5 [(buf.validate.field).enum.defined_only = true];
   // @sanitize

@@ -23,9 +23,9 @@ message QualificationAccess {
 }
 
 message QualificationJobAccess {
-  uint64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
+  int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
-  uint64 target_id = 4;
+  int64 target_id = 4;
   string job = 5 [(buf.validate.field).string.max_len = 20];
   optional string job_label = 6 [(buf.validate.field).string.max_len = 50];
   int32 minimum_grade = 7 [(buf.validate.field).int32.gte = 0];

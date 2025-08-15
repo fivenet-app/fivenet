@@ -108,7 +108,7 @@ func (s *Server) ListCitizens(
 
 			if req.OpenFines != nil && req.GetOpenFines() > 0 {
 				condition = condition.AND(
-					tUserProps.OpenFines.GT_EQ(jet.Uint64(req.GetOpenFines())),
+					tUserProps.OpenFines.GT_EQ(jet.Int64(req.GetOpenFines())),
 				)
 			}
 
@@ -612,7 +612,7 @@ func (s *Server) SetUserProps(
 		added, _ := utils.SlicesDifferenceFunc(
 			props.GetLabels().GetList(),
 			req.GetProps().GetLabels().GetList(),
-			func(in *users.Label) uint64 {
+			func(in *users.Label) int64 {
 				return in.GetId()
 			},
 		)
@@ -676,7 +676,7 @@ func (s *Server) SetUserProps(
 		)
 	}
 
-	userId := uint64(user.GetUser().GetUserId())
+	userId := int64(user.GetUser().GetUserId())
 	s.notifi.SendObjectEvent(ctx, &notifications.ObjectEvent{
 		Type:      notifications.ObjectType_OBJECT_TYPE_CITIZEN,
 		Id:        &userId,

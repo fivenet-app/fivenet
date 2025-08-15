@@ -101,7 +101,7 @@ func (p *Perms) loadAttributes(ctx context.Context) error {
 	return nil
 }
 
-func (p *Perms) loadRoles(ctx context.Context, id uint64) error {
+func (p *Perms) loadRoles(ctx context.Context, id int64) error {
 	stmt := tRoles.
 		SELECT(
 			tRoles.ID,
@@ -112,7 +112,7 @@ func (p *Perms) loadRoles(ctx context.Context, id uint64) error {
 
 	if id != 0 {
 		stmt = stmt.
-			WHERE(tRoles.ID.EQ(jet.Uint64(id)))
+			WHERE(tRoles.ID.EQ(jet.Int64(id)))
 	}
 
 	var dest []*permissions.Role
@@ -125,8 +125,8 @@ func (p *Perms) loadRoles(ctx context.Context, id uint64) error {
 	for _, role := range dest {
 		grades, _ := p.permsJobsRoleMap.LoadOrCompute(
 			role.GetJob(),
-			func() (*xsync.Map[int32, uint64], bool) {
-				return xsync.NewMap[int32, uint64](), false
+			func() (*xsync.Map[int32, int64], bool) {
+				return xsync.NewMap[int32, int64](), false
 			},
 		)
 		grades.Store(role.GetGrade(), role.GetId())
@@ -137,7 +137,7 @@ func (p *Perms) loadRoles(ctx context.Context, id uint64) error {
 	return nil
 }
 
-func (p *Perms) loadRolePermissions(ctx context.Context, roleId uint64) error {
+func (p *Perms) loadRolePermissions(ctx context.Context, roleId int64) error {
 	stmt := tRolePerms.
 		SELECT(
 			tRolePerms.RoleID.AS("role_id"),
@@ -156,13 +156,13 @@ func (p *Perms) loadRolePermissions(ctx context.Context, roleId uint64) error {
 
 	if roleId != 0 {
 		stmt = stmt.WHERE(
-			tRoles.ID.EQ(jet.Uint64(roleId)),
+			tRoles.ID.EQ(jet.Int64(roleId)),
 		)
 	}
 
 	var dest []struct {
-		RoleID uint64
-		ID     uint64
+		RoleID int64
+		ID     int64
 		Val    bool
 	}
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
@@ -171,18 +171,18 @@ func (p *Perms) loadRolePermissions(ctx context.Context, roleId uint64) error {
 		}
 	}
 
-	found := map[uint64][]uint64{}
+	found := map[int64][]int64{}
 	for _, rolePerms := range dest {
 		perms, _ := p.permsRoleMap.LoadOrCompute(
 			rolePerms.RoleID,
-			func() (*xsync.Map[uint64, bool], bool) {
-				return xsync.NewMap[uint64, bool](), false
+			func() (*xsync.Map[int64, bool], bool) {
+				return xsync.NewMap[int64, bool](), false
 			},
 		)
 		perms.Store(rolePerms.ID, rolePerms.Val)
 
 		if _, ok := found[rolePerms.RoleID]; !ok {
-			found[rolePerms.RoleID] = []uint64{}
+			found[rolePerms.RoleID] = []int64{}
 		}
 
 		found[rolePerms.RoleID] = append(found[rolePerms.RoleID], rolePerms.ID)
@@ -195,7 +195,7 @@ func (p *Perms) loadRolePermissions(ctx context.Context, roleId uint64) error {
 			continue
 		}
 
-		perms.Range(func(permId uint64, _ bool) bool {
+		perms.Range(func(permId int64, _ bool) bool {
 			if !slices.Contains(list, permId) {
 				perms.Delete(permId)
 			}
@@ -206,7 +206,7 @@ func (p *Perms) loadRolePermissions(ctx context.Context, roleId uint64) error {
 	return nil
 }
 
-func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
+func (p *Perms) loadRoleAttributes(ctx context.Context, roleId int64) error {
 	tRoleAttrs := table.FivenetRbacRolesAttrs.AS("role_attribute")
 	stmt := tRoleAttrs.
 		SELECT(
@@ -226,7 +226,7 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
 
 	if roleId != 0 {
 		stmt = stmt.WHERE(
-			tRoleAttrs.RoleID.EQ(jet.Uint64(roleId)),
+			tRoleAttrs.RoleID.EQ(jet.Int64(roleId)),
 		)
 	}
 
@@ -237,7 +237,7 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
 		}
 	}
 
-	found := map[uint64][]uint64{}
+	found := map[int64][]int64{}
 	for _, ra := range dest {
 		ra.GetValue().Default(permissions.AttributeTypes(ra.GetType()))
 		p.updateRoleAttributeInMap(
@@ -250,7 +250,7 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
 		)
 
 		if _, ok := found[ra.GetRoleId()]; !ok {
-			found[ra.GetRoleId()] = []uint64{}
+			found[ra.GetRoleId()] = []int64{}
 		}
 		found[ra.GetRoleId()] = append(found[ra.GetRoleId()], ra.GetAttrId())
 	}
@@ -262,7 +262,7 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
 			continue
 		}
 
-		attrRoleMap.Range(func(attrId uint64, _ *cacheRoleAttr) bool {
+		attrRoleMap.Range(func(attrId int64, _ *cacheRoleAttr) bool {
 			if !slices.Contains(list, attrId) {
 				attrRoleMap.Delete(attrId)
 			}

@@ -74,11 +74,11 @@ func (PageLayoutType) EnumDescriptor() ([]byte, []int) {
 
 type Page struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	DomainId  uint64                 `protobuf:"varint,5,opt,name=domain_id,json=domainId,proto3" json:"domain_id,omitempty"`
+	DomainId  int64                  `protobuf:"varint,5,opt,name=domain_id,json=domainId,proto3" json:"domain_id,omitempty"`
 	// @sanitize: method=StripTags
 	Path string `protobuf:"bytes,6,opt,name=path,proto3" json:"path,omitempty"`
 	// @sanitize: method=StripTags
@@ -122,7 +122,7 @@ func (*Page) Descriptor() ([]byte, []int) {
 	return file_resources_internet_page_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Page) GetId() uint64 {
+func (x *Page) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -150,7 +150,7 @@ func (x *Page) GetDeletedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *Page) GetDomainId() uint64 {
+func (x *Page) GetDomainId() int64 {
 	if x != nil {
 		return x.DomainId
 	}
@@ -354,14 +354,14 @@ const file_resources_internet_page_proto_rawDesc = "" +
 	"\n" +
 	"\x1dresources/internet/page.proto\x12\x12resources.internet\x1a&resources/common/content/content.proto\x1a#resources/timestamp/timestamp.proto\"\xa9\x04\n" +
 	"\x04Page\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12=\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12\x1b\n" +
-	"\tdomain_id\x18\x05 \x01(\x04R\bdomainId\x12\x1c\n" +
+	"\tdomain_id\x18\x05 \x01(\x03R\bdomainId\x12\x1c\n" +
 	"\x04path\x18\x06 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01R\x04path\x12 \n" +
 	"\x05title\x18\a \x01(\tB\n" +
 	"\xbaH\ar\x05\x10\x01\x18\xff\x01R\x05title\x12,\n" +

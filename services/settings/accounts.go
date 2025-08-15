@@ -107,7 +107,7 @@ func (s *Server) ListAccounts(
 	}
 
 	// First, fetch the distinct account IDs for the current page
-	var accountIDs []uint64
+	var accountIDs []int64
 	idStmt := tAccounts.
 		SELECT(
 			tAccounts.ID,
@@ -129,7 +129,7 @@ func (s *Server) ListAccounts(
 
 	ids := make([]jet.Expression, len(accountIDs))
 	for i, id := range accountIDs {
-		ids[i] = jet.Uint64(id)
+		ids[i] = jet.Int64(id)
 	}
 
 	// Now, fetch all accounts and their oauth2 connections for these IDs
@@ -168,7 +168,7 @@ func (s *Server) ListAccounts(
 	return resp, nil
 }
 
-func (s *Server) getAccount(ctx context.Context, id uint64) (*accounts.Account, error) {
+func (s *Server) getAccount(ctx context.Context, id int64) (*accounts.Account, error) {
 	stmt := tAccounts.
 		SELECT(
 			tAccounts.ID,
@@ -181,7 +181,7 @@ func (s *Server) getAccount(ctx context.Context, id uint64) (*accounts.Account, 
 		).
 		FROM(tAccounts).
 		WHERE(
-			tAccounts.ID.EQ(jet.Uint64(id)),
+			tAccounts.ID.EQ(jet.Int64(id)),
 		)
 
 	var account accounts.Account
@@ -236,7 +236,7 @@ func (s *Server) UpdateAccount(
 
 		stmt = stmt.
 			WHERE(
-				tAccounts.ID.EQ(jet.Uint64(req.GetId())),
+				tAccounts.ID.EQ(jet.Int64(req.GetId())),
 			)
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
@@ -275,7 +275,7 @@ func (s *Server) DisconnectOAuth2Connection(
 	stmt := tOauth2.
 		DELETE().
 		WHERE(jet.AND(
-			tOauth2.AccountID.EQ(jet.Uint64(req.GetId())),
+			tOauth2.AccountID.EQ(jet.Int64(req.GetId())),
 			tOauth2.Provider.EQ(jet.String(req.GetProviderName())),
 		)).
 		LIMIT(1)
@@ -308,7 +308,7 @@ func (s *Server) DeleteAccount(
 
 	stmt := tAccounts.
 		DELETE().
-		WHERE(tAccounts.ID.EQ(jet.Uint64(req.GetId()))).
+		WHERE(tAccounts.ID.EQ(jet.Int64(req.GetId()))).
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

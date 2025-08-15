@@ -26,11 +26,11 @@ const (
 
 type Thread struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt      *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt      *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt      *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	CreatorEmailId uint64                 `protobuf:"varint,5,opt,name=creator_email_id,json=creatorEmailId,proto3" json:"creator_email_id,omitempty"`
+	CreatorEmailId int64                  `protobuf:"varint,5,opt,name=creator_email_id,json=creatorEmailId,proto3" json:"creator_email_id,omitempty"`
 	CreatorEmail   *Email                 `protobuf:"bytes,6,opt,name=creator_email,json=creatorEmail,proto3,oneof" json:"creator_email,omitempty"`
 	CreatorId      *int32                 `protobuf:"varint,7,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
 	Creator        *users.UserShort       `protobuf:"bytes,8,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
@@ -72,7 +72,7 @@ func (*Thread) Descriptor() ([]byte, []int) {
 	return file_resources_mailer_thread_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Thread) GetId() uint64 {
+func (x *Thread) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -100,7 +100,7 @@ func (x *Thread) GetDeletedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *Thread) GetCreatorEmailId() uint64 {
+func (x *Thread) GetCreatorEmailId() int64 {
 	if x != nil {
 		return x.CreatorEmailId
 	}
@@ -151,10 +151,10 @@ func (x *Thread) GetState() *ThreadState {
 
 type ThreadRecipientEmail struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	TargetId      uint64                 `protobuf:"varint,4,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty" alias:"thread_id"`
-	EmailId       uint64                 `protobuf:"varint,5,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
+	TargetId      int64                  `protobuf:"varint,4,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty" alias:"thread_id"`
+	EmailId       int64                  `protobuf:"varint,5,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
 	Email         *Email                 `protobuf:"bytes,6,opt,name=email,proto3,oneof" json:"email,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -190,7 +190,7 @@ func (*ThreadRecipientEmail) Descriptor() ([]byte, []int) {
 	return file_resources_mailer_thread_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ThreadRecipientEmail) GetId() uint64 {
+func (x *ThreadRecipientEmail) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -204,14 +204,14 @@ func (x *ThreadRecipientEmail) GetCreatedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *ThreadRecipientEmail) GetTargetId() uint64 {
+func (x *ThreadRecipientEmail) GetTargetId() int64 {
 	if x != nil {
 		return x.TargetId
 	}
 	return 0
 }
 
-func (x *ThreadRecipientEmail) GetEmailId() uint64 {
+func (x *ThreadRecipientEmail) GetEmailId() int64 {
 	if x != nil {
 		return x.EmailId
 	}
@@ -227,8 +227,8 @@ func (x *ThreadRecipientEmail) GetEmail() *Email {
 
 type ThreadState struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ThreadId      uint64                 `protobuf:"varint,1,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
-	EmailId       uint64                 `protobuf:"varint,2,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
+	ThreadId      int64                  `protobuf:"varint,1,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
+	EmailId       int64                  `protobuf:"varint,2,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
 	LastRead      *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=last_read,json=lastRead,proto3,oneof" json:"last_read,omitempty"`
 	Unread        *bool                  `protobuf:"varint,4,opt,name=unread,proto3,oneof" json:"unread,omitempty"`
 	Important     *bool                  `protobuf:"varint,5,opt,name=important,proto3,oneof" json:"important,omitempty"`
@@ -269,14 +269,14 @@ func (*ThreadState) Descriptor() ([]byte, []int) {
 	return file_resources_mailer_thread_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ThreadState) GetThreadId() uint64 {
+func (x *ThreadState) GetThreadId() int64 {
 	if x != nil {
 		return x.ThreadId
 	}
 	return 0
 }
 
-func (x *ThreadState) GetEmailId() uint64 {
+func (x *ThreadState) GetEmailId() int64 {
 	if x != nil {
 		return x.EmailId
 	}
@@ -331,14 +331,14 @@ const file_resources_mailer_thread_proto_rawDesc = "" +
 	"\n" +
 	"\x1dresources/mailer/thread.proto\x12\x10resources.mailer\x1a\x1cresources/mailer/email.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xe8\x05\n" +
 	"\x06Thread\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12=\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12(\n" +
-	"\x10creator_email_id\x18\x05 \x01(\x04R\x0ecreatorEmailId\x12A\n" +
+	"\x10creator_email_id\x18\x05 \x01(\x03R\x0ecreatorEmailId\x12A\n" +
 	"\rcreator_email\x18\x06 \x01(\v2\x17.resources.mailer.EmailH\x02R\fcreatorEmail\x88\x01\x01\x12+\n" +
 	"\n" +
 	"creator_id\x18\a \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x03R\tcreatorId\x88\x01\x01\x12O\n" +
@@ -358,17 +358,17 @@ const file_resources_mailer_thread_proto_rawDesc = "" +
 	"\b_creatorB\b\n" +
 	"\x06_state\"\xaa\x02\n" +
 	"\x14ThreadRecipientEmail\x121\n" +
-	"\x02id\x18\x01 \x01(\x04B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
+	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x123\n" +
-	"\ttarget_id\x18\x04 \x01(\x04B\x16\x9a\x84\x9e\x03\x11alias:\"thread_id\"R\btargetId\x12\x19\n" +
-	"\bemail_id\x18\x05 \x01(\x04R\aemailId\x122\n" +
+	"\ttarget_id\x18\x04 \x01(\x03B\x16\x9a\x84\x9e\x03\x11alias:\"thread_id\"R\btargetId\x12\x19\n" +
+	"\bemail_id\x18\x05 \x01(\x03R\aemailId\x122\n" +
 	"\x05email\x18\x06 \x01(\v2\x17.resources.mailer.EmailH\x01R\x05email\x88\x01\x01B\r\n" +
 	"\v_created_atB\b\n" +
 	"\x06_email\"\xef\x02\n" +
 	"\vThreadState\x12\x1b\n" +
-	"\tthread_id\x18\x01 \x01(\x04R\bthreadId\x12\x19\n" +
-	"\bemail_id\x18\x02 \x01(\x04R\aemailId\x12@\n" +
+	"\tthread_id\x18\x01 \x01(\x03R\bthreadId\x12\x19\n" +
+	"\bemail_id\x18\x02 \x01(\x03R\aemailId\x12@\n" +
 	"\tlast_read\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\blastRead\x88\x01\x01\x12\x1b\n" +
 	"\x06unread\x18\x04 \x01(\bH\x01R\x06unread\x88\x01\x01\x12!\n" +
 	"\timportant\x18\x05 \x01(\bH\x02R\timportant\x88\x01\x01\x12\x1f\n" +

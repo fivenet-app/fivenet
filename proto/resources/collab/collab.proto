@@ -25,7 +25,7 @@ message ClientPacket {
 }
 
 message CollabInit {
-  uint64 target_id = 1 [(buf.validate.field).uint64.gt = 0];
+  int64 target_id = 1 [(buf.validate.field).int64.gt = 0];
 }
 
 message SyncStep {
@@ -69,7 +69,7 @@ message CollabHandshake {
 }
 
 message TargetSaved {
-  uint64 target_id = 1 [(buf.validate.field).uint64.gt = 0];
+  int64 target_id = 1 [(buf.validate.field).int64.gt = 0];
 }
 
 message FirstPromote {}

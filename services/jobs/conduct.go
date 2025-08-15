@@ -51,7 +51,7 @@ func (s *Server) ListConductEntries(
 	if len(req.GetIds()) > 0 {
 		ids := make([]jet.Expression, len(req.GetIds()))
 		for i := range req.GetIds() {
-			ids[i] = jet.Uint64(req.GetIds()[i])
+			ids[i] = jet.Int64(req.GetIds()[i])
 		}
 
 		condition = condition.AND(tConduct.ID.IN(ids...))
@@ -266,7 +266,7 @@ func (s *Server) CreateConductEntry(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	req.Entry.Id = uint64(lastId)
+	req.Entry.Id = lastId
 
 	entry, err := s.getConductEntry(ctx, req.GetEntry().GetId())
 	if err != nil {
@@ -330,7 +330,7 @@ func (s *Server) UpdateConductEntry(
 		).
 		WHERE(jet.AND(
 			tConduct.Job.EQ(jet.String(req.GetEntry().GetJob())),
-			tConduct.ID.EQ(jet.Uint64(req.GetEntry().GetId())),
+			tConduct.ID.EQ(jet.Int64(req.GetEntry().GetId())),
 		)).
 		LIMIT(1)
 
@@ -396,7 +396,7 @@ func (s *Server) DeleteConductEntry(
 		).
 		WHERE(jet.AND(
 			tConduct.Job.EQ(jet.String(userInfo.GetJob())),
-			tConduct.ID.EQ(jet.Uint64(req.GetId())),
+			tConduct.ID.EQ(jet.Int64(req.GetId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

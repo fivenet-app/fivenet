@@ -8,6 +8,6 @@
 package model
 
 type FivenetCentrumUnitsUsers struct {
-	UnitID uint64 `sql:"primary_key" json:"unit_id"`
-	UserID int32  `sql:"primary_key" json:"user_id"`
+	UnitID int64 `sql:"primary_key" json:"unit_id"`
+	UserID int32 `sql:"primary_key" json:"user_id"`
 }

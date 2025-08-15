@@ -26,13 +26,13 @@ func cleanupPath(in string) string {
 
 func (s *Server) getPageByDomainAndPath(
 	ctx context.Context,
-	domainId uint64,
+	domainId int64,
 	path string,
 ) (*internet.Page, error) {
 	path = cleanupPath(path)
 
 	return s.getPageByCondition(ctx,
-		tPage.DomainID.EQ(jet.Uint64(domainId)).
+		tPage.DomainID.EQ(jet.Int64(domainId)).
 			AND(tPage.Path.EQ(jet.String(path))),
 	)
 }

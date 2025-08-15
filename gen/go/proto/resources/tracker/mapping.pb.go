@@ -25,7 +25,7 @@ const (
 type UserMapping struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	UnitId        *uint64                `protobuf:"varint,2,opt,name=unit_id,json=unitId,proto3,oneof" json:"unit_id,omitempty"`
+	UnitId        *int64                 `protobuf:"varint,2,opt,name=unit_id,json=unitId,proto3,oneof" json:"unit_id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	Hidden        bool                   `protobuf:"varint,4,opt,name=hidden,proto3" json:"hidden,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -69,7 +69,7 @@ func (x *UserMapping) GetUserId() int32 {
 	return 0
 }
 
-func (x *UserMapping) GetUnitId() uint64 {
+func (x *UserMapping) GetUnitId() int64 {
 	if x != nil && x.UnitId != nil {
 		return *x.UnitId
 	}
@@ -97,7 +97,7 @@ const file_resources_tracker_mapping_proto_rawDesc = "" +
 	"\x1fresources/tracker/mapping.proto\x12\x11resources.tracker\x1a#resources/timestamp/timestamp.proto\"\xb0\x01\n" +
 	"\vUserMapping\x12 \n" +
 	"\auser_id\x18\x01 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x06userId\x12\x1c\n" +
-	"\aunit_id\x18\x02 \x01(\x04H\x00R\x06unitId\x88\x01\x01\x12=\n" +
+	"\aunit_id\x18\x02 \x01(\x03H\x00R\x06unitId\x88\x01\x01\x12=\n" +
 	"\n" +
 	"created_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12\x16\n" +
 	"\x06hidden\x18\x04 \x01(\bR\x06hiddenB\n" +

@@ -8,6 +8,6 @@
 package model
 
 type FivenetMailerMessagesFiles struct {
-	MessageID uint64 `sql:"primary_key" json:"message_id"`
-	FileID    uint64 `sql:"primary_key" json:"file_id"`
+	MessageID int64 `sql:"primary_key" json:"message_id"`
+	FileID    int64 `sql:"primary_key" json:"file_id"`
 }

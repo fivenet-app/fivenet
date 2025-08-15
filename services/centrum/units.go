@@ -324,8 +324,8 @@ func (s *Server) JoinUnit(
 			"user joining unit",
 			zap.String("job", userInfo.GetJob()),
 			zap.Int32("user_id", userInfo.GetUserId()),
-			zap.Uint64("current_unit_id", currentUnitMapping.GetUnitId()),
-			zap.Uint64("unit_id", req.GetUnitId()),
+			zap.Int64("current_unit_id", currentUnitMapping.GetUnitId()),
+			zap.Int64("unit_id", req.GetUnitId()),
 		)
 
 		// Remove user from his current unit
@@ -365,7 +365,7 @@ func (s *Server) JoinUnit(
 
 		resp.Unit = newUnit
 	} else {
-		s.logger.Debug("user leaving unit", zap.Uint64("current_unit_id", currentUnitMapping.GetUnitId()), zap.Uint64("unit_id", req.GetUnitId()))
+		s.logger.Debug("user leaving unit", zap.Int64("current_unit_id", currentUnitMapping.GetUnitId()), zap.Int64("unit_id", req.GetUnitId()))
 		// User leaves his current unit (if he is in an unit)
 		if currentUnit != nil {
 			if err := s.units.UpdateUnitAssignments(ctx, userInfo.GetJob(), &userInfo.UserId, currentUnit.GetId(), nil, []int32{userInfo.GetUserId()}); err != nil {
@@ -396,7 +396,7 @@ func (s *Server) ListUnitActivity(
 				),
 		).
 		WHERE(jet.AND(
-			tUnitStatus.UnitID.EQ(jet.Uint64(req.GetId())),
+			tUnitStatus.UnitID.EQ(jet.Int64(req.GetId())),
 			tUnits.Job.EQ(jet.String(userInfo.GetJob())),
 		))
 
@@ -465,7 +465,7 @@ func (s *Server) ListUnitActivity(
 				),
 		).
 		WHERE(
-			tUnitStatus.UnitID.EQ(jet.Uint64(req.GetId())),
+			tUnitStatus.UnitID.EQ(jet.Int64(req.GetId())),
 		).
 		ORDER_BY(tUnitStatus.ID.DESC()).
 		OFFSET(req.GetPagination().GetOffset()).

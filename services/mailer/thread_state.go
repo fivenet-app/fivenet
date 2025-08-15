@@ -124,8 +124,8 @@ func (s *Server) SetThreadState(
 
 func (s *Server) getThreadState(
 	ctx context.Context,
-	threadId uint64,
-	emaildId uint64,
+	threadId int64,
+	emaildId int64,
 ) (*mailer.ThreadState, error) {
 	stmt := tThreadsState.
 		SELECT(
@@ -140,8 +140,8 @@ func (s *Server) getThreadState(
 		).
 		FROM(tThreadsState).
 		WHERE(jet.AND(
-			tThreadsState.ThreadID.EQ(jet.Uint64(threadId)),
-			tThreadsState.EmailID.EQ(jet.Uint64(emaildId)),
+			tThreadsState.ThreadID.EQ(jet.Int64(threadId)),
+			tThreadsState.EmailID.EQ(jet.Int64(emaildId)),
 		))
 
 	dest := &mailer.ThreadState{}
@@ -161,9 +161,9 @@ func (s *Server) getThreadState(
 func (s *Server) setUnreadState(
 	ctx context.Context,
 	tx qrm.DB,
-	threadId uint64,
-	senderId uint64,
-	emailIds []uint64,
+	threadId int64,
+	senderId int64,
+	emailIds []int64,
 ) error {
 	if len(emailIds) == 0 {
 		return nil

@@ -21,7 +21,7 @@ export interface ClientView {
      */
     type: ObjectType;
     /**
-     * @generated from protobuf field: optional uint64 id = 2
+     * @generated from protobuf field: optional int64 id = 2
      */
     id?: number;
 }
@@ -34,7 +34,7 @@ export interface ObjectEvent {
      */
     type: ObjectType;
     /**
-     * @generated from protobuf field: optional uint64 id = 2
+     * @generated from protobuf field: optional int64 id = 2
      */
     id?: number;
     /**
@@ -105,7 +105,7 @@ class ClientView$Type extends MessageType<ClientView> {
     constructor() {
         super("resources.notifications.ClientView", [
             { no: 1, name: "type", kind: "enum", T: () => ["resources.notifications.ObjectType", ObjectType, "OBJECT_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 2, name: "id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 2, name: "id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<ClientView>): ClientView {
@@ -123,8 +123,8 @@ class ClientView$Type extends MessageType<ClientView> {
                 case /* resources.notifications.ObjectType type */ 1:
                     message.type = reader.int32();
                     break;
-                case /* optional uint64 id */ 2:
-                    message.id = reader.uint64().toNumber();
+                case /* optional int64 id */ 2:
+                    message.id = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -141,9 +141,9 @@ class ClientView$Type extends MessageType<ClientView> {
         /* resources.notifications.ObjectType type = 1; */
         if (message.type !== 0)
             writer.tag(1, WireType.Varint).int32(message.type);
-        /* optional uint64 id = 2; */
+        /* optional int64 id = 2; */
         if (message.id !== undefined)
-            writer.tag(2, WireType.Varint).uint64(message.id);
+            writer.tag(2, WireType.Varint).int64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -159,7 +159,7 @@ class ObjectEvent$Type extends MessageType<ObjectEvent> {
     constructor() {
         super("resources.notifications.ObjectEvent", [
             { no: 1, name: "type", kind: "enum", T: () => ["resources.notifications.ObjectType", ObjectType, "OBJECT_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 2, name: "id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "event_type", kind: "enum", T: () => ["resources.notifications.ObjectEventType", ObjectEventType, "OBJECT_EVENT_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 4, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
             { no: 5, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
@@ -182,8 +182,8 @@ class ObjectEvent$Type extends MessageType<ObjectEvent> {
                 case /* resources.notifications.ObjectType type */ 1:
                     message.type = reader.int32();
                     break;
-                case /* optional uint64 id */ 2:
-                    message.id = reader.uint64().toNumber();
+                case /* optional int64 id */ 2:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* resources.notifications.ObjectEventType event_type */ 3:
                     message.eventType = reader.int32();
@@ -212,9 +212,9 @@ class ObjectEvent$Type extends MessageType<ObjectEvent> {
         /* resources.notifications.ObjectType type = 1; */
         if (message.type !== 0)
             writer.tag(1, WireType.Varint).int32(message.type);
-        /* optional uint64 id = 2; */
+        /* optional int64 id = 2; */
         if (message.id !== undefined)
-            writer.tag(2, WireType.Varint).uint64(message.id);
+            writer.tag(2, WireType.Varint).int64(message.id);
         /* resources.notifications.ObjectEventType event_type = 3; */
         if (message.eventType !== 0)
             writer.tag(3, WireType.Varint).int32(message.eventType);

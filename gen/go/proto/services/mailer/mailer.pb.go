@@ -131,7 +131,7 @@ func (x *ListEmailsResponse) GetEmails() []*mailer.Email {
 
 type GetEmailRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -166,7 +166,7 @@ func (*GetEmailRequest) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetEmailRequest) GetId() uint64 {
+func (x *GetEmailRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -307,7 +307,7 @@ func (x *CreateOrUpdateEmailResponse) GetEmail() *mailer.Email {
 
 type DeleteEmailRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -342,7 +342,7 @@ func (*DeleteEmailRequest) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *DeleteEmailRequest) GetId() uint64 {
+func (x *DeleteEmailRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -499,7 +499,7 @@ func (x *GetEmailProposalsResponse) GetDomains() []string {
 
 type ListTemplatesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	EmailId       uint64                 `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
+	EmailId       int64                  `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -534,7 +534,7 @@ func (*ListTemplatesRequest) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *ListTemplatesRequest) GetEmailId() uint64 {
+func (x *ListTemplatesRequest) GetEmailId() int64 {
 	if x != nil {
 		return x.EmailId
 	}
@@ -587,8 +587,8 @@ func (x *ListTemplatesResponse) GetTemplates() []*mailer.Template {
 
 type GetTemplateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	EmailId       uint64                 `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
-	TemplateId    uint64                 `protobuf:"varint,2,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
+	EmailId       int64                  `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
+	TemplateId    int64                  `protobuf:"varint,2,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -623,14 +623,14 @@ func (*GetTemplateRequest) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *GetTemplateRequest) GetEmailId() uint64 {
+func (x *GetTemplateRequest) GetEmailId() int64 {
 	if x != nil {
 		return x.EmailId
 	}
 	return 0
 }
 
-func (x *GetTemplateRequest) GetTemplateId() uint64 {
+func (x *GetTemplateRequest) GetTemplateId() int64 {
 	if x != nil {
 		return x.TemplateId
 	}
@@ -771,8 +771,8 @@ func (x *CreateOrUpdateTemplateResponse) GetTemplate() *mailer.Template {
 
 type DeleteTemplateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	EmailId       uint64                 `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
-	Id            uint64                 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	EmailId       int64                  `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -807,14 +807,14 @@ func (*DeleteTemplateRequest) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{16}
 }
 
-func (x *DeleteTemplateRequest) GetEmailId() uint64 {
+func (x *DeleteTemplateRequest) GetEmailId() int64 {
 	if x != nil {
 		return x.EmailId
 	}
 	return 0
 }
 
-func (x *DeleteTemplateRequest) GetId() uint64 {
+func (x *DeleteTemplateRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -861,9 +861,9 @@ type ListThreadsRequest struct {
 	state      protoimpl.MessageState      `protogen:"open.v1"`
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	// Search params
-	EmailIds      []uint64 `protobuf:"varint,2,rep,packed,name=email_ids,json=emailIds,proto3" json:"email_ids,omitempty"`
-	Unread        *bool    `protobuf:"varint,4,opt,name=unread,proto3,oneof" json:"unread,omitempty"`
-	Archived      *bool    `protobuf:"varint,5,opt,name=archived,proto3,oneof" json:"archived,omitempty"`
+	EmailIds      []int64 `protobuf:"varint,2,rep,packed,name=email_ids,json=emailIds,proto3" json:"email_ids,omitempty"`
+	Unread        *bool   `protobuf:"varint,4,opt,name=unread,proto3,oneof" json:"unread,omitempty"`
+	Archived      *bool   `protobuf:"varint,5,opt,name=archived,proto3,oneof" json:"archived,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -905,7 +905,7 @@ func (x *ListThreadsRequest) GetPagination() *database.PaginationRequest {
 	return nil
 }
 
-func (x *ListThreadsRequest) GetEmailIds() []uint64 {
+func (x *ListThreadsRequest) GetEmailIds() []int64 {
 	if x != nil {
 		return x.EmailIds
 	}
@@ -980,8 +980,8 @@ func (x *ListThreadsResponse) GetThreads() []*mailer.Thread {
 
 type GetThreadRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	EmailId       uint64                 `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
-	ThreadId      uint64                 `protobuf:"varint,2,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
+	EmailId       int64                  `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
+	ThreadId      int64                  `protobuf:"varint,2,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1016,14 +1016,14 @@ func (*GetThreadRequest) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{20}
 }
 
-func (x *GetThreadRequest) GetEmailId() uint64 {
+func (x *GetThreadRequest) GetEmailId() int64 {
 	if x != nil {
 		return x.EmailId
 	}
 	return 0
 }
 
-func (x *GetThreadRequest) GetThreadId() uint64 {
+func (x *GetThreadRequest) GetThreadId() int64 {
 	if x != nil {
 		return x.ThreadId
 	}
@@ -1181,8 +1181,8 @@ func (x *CreateThreadResponse) GetThread() *mailer.Thread {
 
 type DeleteThreadRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	EmailId       uint64                 `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
-	ThreadId      uint64                 `protobuf:"varint,2,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
+	EmailId       int64                  `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
+	ThreadId      int64                  `protobuf:"varint,2,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1217,14 +1217,14 @@ func (*DeleteThreadRequest) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{24}
 }
 
-func (x *DeleteThreadRequest) GetEmailId() uint64 {
+func (x *DeleteThreadRequest) GetEmailId() int64 {
 	if x != nil {
 		return x.EmailId
 	}
 	return 0
 }
 
-func (x *DeleteThreadRequest) GetThreadId() uint64 {
+func (x *DeleteThreadRequest) GetThreadId() int64 {
 	if x != nil {
 		return x.ThreadId
 	}
@@ -1269,8 +1269,8 @@ func (*DeleteThreadResponse) Descriptor() ([]byte, []int) {
 
 type GetThreadStateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	EmailId       uint64                 `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
-	ThreadId      uint64                 `protobuf:"varint,2,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
+	EmailId       int64                  `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
+	ThreadId      int64                  `protobuf:"varint,2,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1305,14 +1305,14 @@ func (*GetThreadStateRequest) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{26}
 }
 
-func (x *GetThreadStateRequest) GetEmailId() uint64 {
+func (x *GetThreadStateRequest) GetEmailId() int64 {
 	if x != nil {
 		return x.EmailId
 	}
 	return 0
 }
 
-func (x *GetThreadStateRequest) GetThreadId() uint64 {
+func (x *GetThreadStateRequest) GetThreadId() int64 {
 	if x != nil {
 		return x.ThreadId
 	}
@@ -1453,7 +1453,7 @@ func (x *SetThreadStateResponse) GetState() *mailer.ThreadState {
 
 type GetEmailSettingsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	EmailId       uint64                 `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
+	EmailId       int64                  `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1488,7 +1488,7 @@ func (*GetEmailSettingsRequest) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{30}
 }
 
-func (x *GetEmailSettingsRequest) GetEmailId() uint64 {
+func (x *GetEmailSettingsRequest) GetEmailId() int64 {
 	if x != nil {
 		return x.EmailId
 	}
@@ -1735,8 +1735,8 @@ func (x *SearchThreadsResponse) GetMessages() []*mailer.Message {
 type ListThreadMessagesRequest struct {
 	state         protoimpl.MessageState      `protogen:"open.v1"`
 	Pagination    *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	EmailId       uint64                      `protobuf:"varint,2,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
-	ThreadId      uint64                      `protobuf:"varint,3,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
+	EmailId       int64                       `protobuf:"varint,2,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
+	ThreadId      int64                       `protobuf:"varint,3,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
 	After         *timestamp.Timestamp        `protobuf:"bytes,4,opt,name=after,proto3,oneof" json:"after,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1779,14 +1779,14 @@ func (x *ListThreadMessagesRequest) GetPagination() *database.PaginationRequest 
 	return nil
 }
 
-func (x *ListThreadMessagesRequest) GetEmailId() uint64 {
+func (x *ListThreadMessagesRequest) GetEmailId() int64 {
 	if x != nil {
 		return x.EmailId
 	}
 	return 0
 }
 
-func (x *ListThreadMessagesRequest) GetThreadId() uint64 {
+func (x *ListThreadMessagesRequest) GetThreadId() int64 {
 	if x != nil {
 		return x.ThreadId
 	}
@@ -1951,9 +1951,9 @@ func (x *PostMessageResponse) GetMessage() *mailer.Message {
 
 type DeleteMessageRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	EmailId       uint64                 `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
-	ThreadId      uint64                 `protobuf:"varint,2,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
-	MessageId     uint64                 `protobuf:"varint,3,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
+	EmailId       int64                  `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
+	ThreadId      int64                  `protobuf:"varint,2,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
+	MessageId     int64                  `protobuf:"varint,3,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1988,21 +1988,21 @@ func (*DeleteMessageRequest) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{40}
 }
 
-func (x *DeleteMessageRequest) GetEmailId() uint64 {
+func (x *DeleteMessageRequest) GetEmailId() int64 {
 	if x != nil {
 		return x.EmailId
 	}
 	return 0
 }
 
-func (x *DeleteMessageRequest) GetThreadId() uint64 {
+func (x *DeleteMessageRequest) GetThreadId() int64 {
 	if x != nil {
 		return x.ThreadId
 	}
 	return 0
 }
 
-func (x *DeleteMessageRequest) GetMessageId() uint64 {
+func (x *DeleteMessageRequest) GetMessageId() int64 {
 	if x != nil {
 		return x.MessageId
 	}
@@ -2062,7 +2062,7 @@ const file_services_mailer_mailer_proto_rawDesc = "" +
 	"pagination\x12/\n" +
 	"\x06emails\x18\x02 \x03(\v2\x17.resources.mailer.EmailR\x06emails\"*\n" +
 	"\x0fGetEmailRequest\x12\x17\n" +
-	"\x02id\x18\x01 \x01(\x04B\a\xbaH\x042\x02 \x00R\x02id\"I\n" +
+	"\x02id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\"I\n" +
 	"\x10GetEmailResponse\x125\n" +
 	"\x05email\x18\x01 \x01(\v2\x17.resources.mailer.EmailB\x06\xbaH\x03\xc8\x01\x01R\x05email\"S\n" +
 	"\x1aCreateOrUpdateEmailRequest\x125\n" +
@@ -2070,7 +2070,7 @@ const file_services_mailer_mailer_proto_rawDesc = "" +
 	"\x1bCreateOrUpdateEmailResponse\x12-\n" +
 	"\x05email\x18\x01 \x01(\v2\x17.resources.mailer.EmailR\x05email\"-\n" +
 	"\x12DeleteEmailRequest\x12\x17\n" +
-	"\x02id\x18\x01 \x01(\x04B\a\xbaH\x042\x02 \x00R\x02id\"\x15\n" +
+	"\x02id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\"\x15\n" +
 	"\x13DeleteEmailResponse\"\x82\x01\n" +
 	"\x18GetEmailProposalsRequest\x12\x1d\n" +
 	"\x05input\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18(R\x05input\x12\x15\n" +
@@ -2083,12 +2083,12 @@ const file_services_mailer_mailer_proto_rawDesc = "" +
 	"\x06emails\x18\x01 \x03(\tR\x06emails\x12\x18\n" +
 	"\adomains\x18\x02 \x03(\tR\adomains\":\n" +
 	"\x14ListTemplatesRequest\x12\"\n" +
-	"\bemail_id\x18\x01 \x01(\x04B\a\xbaH\x042\x02 \x00R\aemailId\"Q\n" +
+	"\bemail_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\aemailId\"Q\n" +
 	"\x15ListTemplatesResponse\x128\n" +
 	"\ttemplates\x18\x01 \x03(\v2\x1a.resources.mailer.TemplateR\ttemplates\"b\n" +
 	"\x12GetTemplateRequest\x12\"\n" +
-	"\bemail_id\x18\x01 \x01(\x04B\a\xbaH\x042\x02 \x00R\aemailId\x12(\n" +
-	"\vtemplate_id\x18\x02 \x01(\x04B\a\xbaH\x042\x02 \x00R\n" +
+	"\bemail_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\aemailId\x12(\n" +
+	"\vtemplate_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
 	"templateId\"U\n" +
 	"\x13GetTemplateResponse\x12>\n" +
 	"\btemplate\x18\x01 \x01(\v2\x1a.resources.mailer.TemplateB\x06\xbaH\x03\xc8\x01\x01R\btemplate\"_\n" +
@@ -2097,16 +2097,16 @@ const file_services_mailer_mailer_proto_rawDesc = "" +
 	"\x1eCreateOrUpdateTemplateResponse\x12>\n" +
 	"\btemplate\x18\x01 \x01(\v2\x1a.resources.mailer.TemplateB\x06\xbaH\x03\xc8\x01\x01R\btemplate\"T\n" +
 	"\x15DeleteTemplateRequest\x12\"\n" +
-	"\bemail_id\x18\x01 \x01(\x04B\a\xbaH\x042\x02 \x00R\aemailId\x12\x17\n" +
-	"\x02id\x18\x02 \x01(\x04B\a\xbaH\x042\x02 \x00R\x02id\"\x18\n" +
+	"\bemail_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\aemailId\x12\x17\n" +
+	"\x02id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\"\x18\n" +
 	"\x16DeleteTemplateResponse\"\xef\x01\n" +
 	"\x12ListThreadsRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12-\n" +
-	"\temail_ids\x18\x02 \x03(\x04B\x10\xbaH\r\x92\x01\n" +
+	"\temail_ids\x18\x02 \x03(\x03B\x10\xbaH\r\x92\x01\n" +
 	"\b\x01\x10\n" +
-	"\"\x042\x02 \x00R\bemailIds\x12\x1b\n" +
+	"\"\x04\"\x02 \x00R\bemailIds\x12\x1b\n" +
 	"\x06unread\x18\x04 \x01(\bH\x00R\x06unread\x88\x01\x01\x12\x1f\n" +
 	"\barchived\x18\x05 \x01(\bH\x01R\barchived\x88\x01\x01B\t\n" +
 	"\a_unreadB\v\n" +
@@ -2117,8 +2117,8 @@ const file_services_mailer_mailer_proto_rawDesc = "" +
 	"pagination\x122\n" +
 	"\athreads\x18\x02 \x03(\v2\x18.resources.mailer.ThreadR\athreads\"\\\n" +
 	"\x10GetThreadRequest\x12\"\n" +
-	"\bemail_id\x18\x01 \x01(\x04B\a\xbaH\x042\x02 \x00R\aemailId\x12$\n" +
-	"\tthread_id\x18\x02 \x01(\x04B\a\xbaH\x042\x02 \x00R\bthreadId\"E\n" +
+	"\bemail_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\aemailId\x12$\n" +
+	"\tthread_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\bthreadId\"E\n" +
 	"\x11GetThreadResponse\x120\n" +
 	"\x06thread\x18\x01 \x01(\v2\x18.resources.mailer.ThreadR\x06thread\"\xc0\x01\n" +
 	"\x13CreateThreadRequest\x128\n" +
@@ -2130,12 +2130,12 @@ const file_services_mailer_mailer_proto_rawDesc = "" +
 	"\x14CreateThreadResponse\x120\n" +
 	"\x06thread\x18\x01 \x01(\v2\x18.resources.mailer.ThreadR\x06thread\"_\n" +
 	"\x13DeleteThreadRequest\x12\"\n" +
-	"\bemail_id\x18\x01 \x01(\x04B\a\xbaH\x042\x02 \x00R\aemailId\x12$\n" +
-	"\tthread_id\x18\x02 \x01(\x04B\a\xbaH\x042\x02 \x00R\bthreadId\"\x16\n" +
+	"\bemail_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\aemailId\x12$\n" +
+	"\tthread_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\bthreadId\"\x16\n" +
 	"\x14DeleteThreadResponse\"a\n" +
 	"\x15GetThreadStateRequest\x12\"\n" +
-	"\bemail_id\x18\x01 \x01(\x04B\a\xbaH\x042\x02 \x00R\aemailId\x12$\n" +
-	"\tthread_id\x18\x02 \x01(\x04B\a\xbaH\x042\x02 \x00R\bthreadId\"M\n" +
+	"\bemail_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\aemailId\x12$\n" +
+	"\tthread_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\bthreadId\"M\n" +
 	"\x16GetThreadStateResponse\x123\n" +
 	"\x05state\x18\x01 \x01(\v2\x1d.resources.mailer.ThreadStateR\x05state\"T\n" +
 	"\x15SetThreadStateRequest\x12;\n" +
@@ -2143,7 +2143,7 @@ const file_services_mailer_mailer_proto_rawDesc = "" +
 	"\x16SetThreadStateResponse\x123\n" +
 	"\x05state\x18\x01 \x01(\v2\x1d.resources.mailer.ThreadStateR\x05state\"=\n" +
 	"\x17GetEmailSettingsRequest\x12\"\n" +
-	"\bemail_id\x18\x01 \x01(\x04B\a\xbaH\x042\x02 \x00R\aemailId\"W\n" +
+	"\bemail_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\aemailId\"W\n" +
 	"\x18GetEmailSettingsResponse\x12;\n" +
 	"\bsettings\x18\x01 \x01(\v2\x1f.resources.mailer.EmailSettingsR\bsettings\"^\n" +
 	"\x17SetEmailSettingsRequest\x12C\n" +
@@ -2164,8 +2164,8 @@ const file_services_mailer_mailer_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12\"\n" +
-	"\bemail_id\x18\x02 \x01(\x04B\a\xbaH\x042\x02 \x00R\aemailId\x12$\n" +
-	"\tthread_id\x18\x03 \x01(\x04B\a\xbaH\x042\x02 \x00R\bthreadId\x129\n" +
+	"\bemail_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\aemailId\x12$\n" +
+	"\tthread_id\x18\x03 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\bthreadId\x129\n" +
 	"\x05after\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x05after\x88\x01\x01B\b\n" +
 	"\x06_after\"\xaa\x01\n" +
 	"\x1aListThreadMessagesResponse\x12U\n" +
@@ -2183,10 +2183,10 @@ const file_services_mailer_mailer_proto_rawDesc = "" +
 	"\x13PostMessageResponse\x123\n" +
 	"\amessage\x18\x01 \x01(\v2\x19.resources.mailer.MessageR\amessage\"\x88\x01\n" +
 	"\x14DeleteMessageRequest\x12\"\n" +
-	"\bemail_id\x18\x01 \x01(\x04B\a\xbaH\x042\x02 \x00R\aemailId\x12$\n" +
-	"\tthread_id\x18\x02 \x01(\x04B\a\xbaH\x042\x02 \x00R\bthreadId\x12&\n" +
+	"\bemail_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\aemailId\x12$\n" +
+	"\tthread_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\bthreadId\x12&\n" +
 	"\n" +
-	"message_id\x18\x03 \x01(\x04B\a\xbaH\x042\x02 \x00R\tmessageId\"\x17\n" +
+	"message_id\x18\x03 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\tmessageId\"\x17\n" +
 	"\x15DeleteMessageResponse2\x90\x10\n" +
 	"\rMailerService\x12U\n" +
 	"\n" +

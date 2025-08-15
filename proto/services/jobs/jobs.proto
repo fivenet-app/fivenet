@@ -20,7 +20,7 @@ message ListColleaguesRequest {
   repeated int32 user_ids = 4 [(buf.validate.field).repeated.items.int32.gte = 0];
   optional bool user_only = 5;
   optional bool absent = 6;
-  repeated uint64 label_ids = 7;
+  repeated int64 label_ids = 7;
   optional string name_prefix = 8 [(buf.validate.field).string.max_len = 12];
   optional string name_suffix = 9 [(buf.validate.field).string.max_len = 12];
 }
@@ -91,7 +91,7 @@ message ManageLabelsResponse {
 }
 
 message GetColleagueLabelsStatsRequest {
-  repeated uint64 label_ids = 1;
+  repeated int64 label_ids = 1;
 }
 
 message GetColleagueLabelsStatsResponse {

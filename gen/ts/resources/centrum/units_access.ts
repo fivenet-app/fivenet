@@ -33,7 +33,7 @@ export interface UnitAccess {
  */
 export interface UnitJobAccess {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -41,7 +41,7 @@ export interface UnitJobAccess {
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 target_id = 3
+     * @generated from protobuf field: int64 target_id = 3
      */
     targetId: number;
     /**
@@ -75,7 +75,7 @@ export interface UnitUserAccess {
  */
 export interface UnitQualificationAccess {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -83,11 +83,11 @@ export interface UnitQualificationAccess {
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 target_id = 3
+     * @generated from protobuf field: int64 target_id = 3
      */
     targetId: number;
     /**
-     * @generated from protobuf field: uint64 qualification_id = 4
+     * @generated from protobuf field: int64 qualification_id = 4
      */
     qualificationId: number;
     /**
@@ -175,9 +175,9 @@ export const UnitAccess = new UnitAccess$Type();
 class UnitJobAccess$Type extends MessageType<UnitJobAccess> {
     constructor() {
         super("resources.centrum.UnitJobAccess", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "target_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 5, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
             { no: 6, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
@@ -201,14 +201,14 @@ class UnitJobAccess$Type extends MessageType<UnitJobAccess> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* uint64 target_id */ 3:
-                    message.targetId = reader.uint64().toNumber();
+                case /* int64 target_id */ 3:
+                    message.targetId = reader.int64().toNumber();
                     break;
                 case /* string job */ 4:
                     message.job = reader.string();
@@ -237,15 +237,15 @@ class UnitJobAccess$Type extends MessageType<UnitJobAccess> {
         return message;
     }
     internalBinaryWrite(message: UnitJobAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 target_id = 3; */
+        /* int64 target_id = 3; */
         if (message.targetId !== 0)
-            writer.tag(3, WireType.Varint).uint64(message.targetId);
+            writer.tag(3, WireType.Varint).int64(message.targetId);
         /* string job = 4; */
         if (message.job !== "")
             writer.tag(4, WireType.LengthDelimited).string(message.job);
@@ -313,10 +313,10 @@ export const UnitUserAccess = new UnitUserAccess$Type();
 class UnitQualificationAccess$Type extends MessageType<UnitQualificationAccess> {
     constructor() {
         super("resources.centrum.UnitQualificationAccess", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 4, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "target_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "qualification_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "qualification", kind: "message", T: () => QualificationShort },
             { no: 6, name: "access", kind: "enum", T: () => ["resources.centrum.UnitAccessLevel", UnitAccessLevel, "UNIT_ACCESS_LEVEL_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
         ]);
@@ -336,17 +336,17 @@ class UnitQualificationAccess$Type extends MessageType<UnitQualificationAccess> 
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* uint64 target_id */ 3:
-                    message.targetId = reader.uint64().toNumber();
+                case /* int64 target_id */ 3:
+                    message.targetId = reader.int64().toNumber();
                     break;
-                case /* uint64 qualification_id */ 4:
-                    message.qualificationId = reader.uint64().toNumber();
+                case /* int64 qualification_id */ 4:
+                    message.qualificationId = reader.int64().toNumber();
                     break;
                 case /* optional resources.qualifications.QualificationShort qualification */ 5:
                     message.qualification = QualificationShort.internalBinaryRead(reader, reader.uint32(), options, message.qualification);
@@ -366,18 +366,18 @@ class UnitQualificationAccess$Type extends MessageType<UnitQualificationAccess> 
         return message;
     }
     internalBinaryWrite(message: UnitQualificationAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 target_id = 3; */
+        /* int64 target_id = 3; */
         if (message.targetId !== 0)
-            writer.tag(3, WireType.Varint).uint64(message.targetId);
-        /* uint64 qualification_id = 4; */
+            writer.tag(3, WireType.Varint).int64(message.targetId);
+        /* int64 qualification_id = 4; */
         if (message.qualificationId !== 0)
-            writer.tag(4, WireType.Varint).uint64(message.qualificationId);
+            writer.tag(4, WireType.Varint).int64(message.qualificationId);
         /* optional resources.qualifications.QualificationShort qualification = 5; */
         if (message.qualification)
             QualificationShort.internalBinaryWrite(message.qualification, writer.tag(5, WireType.LengthDelimited).fork(), options).join();

@@ -23,7 +23,7 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface Qualification {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -148,7 +148,7 @@ export interface Qualification {
  */
 export interface QualificationShort {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -235,7 +235,7 @@ export interface QualificationShort {
  */
 export interface QualificationRequirement {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -243,11 +243,11 @@ export interface QualificationRequirement {
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 qualification_id = 3
+     * @generated from protobuf field: int64 qualification_id = 3
      */
     qualificationId: number;
     /**
-     * @generated from protobuf field: uint64 target_qualification_id = 4
+     * @generated from protobuf field: int64 target_qualification_id = 4
      */
     targetQualificationId: number;
     /**
@@ -306,7 +306,7 @@ export interface QualificationRequest {
      */
     deletedAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 qualification_id = 3
+     * @generated from protobuf field: int64 qualification_id = 3
      */
     qualificationId: number;
     /**
@@ -359,7 +359,7 @@ export interface QualificationRequest {
  */
 export interface QualificationResult {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -371,7 +371,7 @@ export interface QualificationResult {
      */
     deletedAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 qualification_id = 4
+     * @generated from protobuf field: int64 qualification_id = 4
      */
     qualificationId: number;
     /**
@@ -509,7 +509,7 @@ export enum ResultStatus {
 class Qualification$Type extends MessageType<Qualification> {
     constructor() {
         super("resources.qualifications.Qualification", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
@@ -564,8 +564,8 @@ class Qualification$Type extends MessageType<Qualification> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -660,9 +660,9 @@ class Qualification$Type extends MessageType<Qualification> {
         return message;
     }
     internalBinaryWrite(message: Qualification, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
@@ -758,7 +758,7 @@ export const Qualification = new Qualification$Type();
 class QualificationShort$Type extends MessageType<QualificationShort> {
     constructor() {
         super("resources.qualifications.QualificationShort", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
@@ -801,8 +801,8 @@ class QualificationShort$Type extends MessageType<QualificationShort> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -870,9 +870,9 @@ class QualificationShort$Type extends MessageType<QualificationShort> {
         return message;
     }
     internalBinaryWrite(message: QualificationShort, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
@@ -941,10 +941,10 @@ export const QualificationShort = new QualificationShort$Type();
 class QualificationRequirement$Type extends MessageType<QualificationRequirement> {
     constructor() {
         super("resources.qualifications.QualificationRequirement", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 4, name: "target_qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "qualification_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "target_qualification_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "target_qualification", kind: "message", T: () => QualificationShort, options: { "tagger.tags": "alias:\"targetqualification\"" } }
         ]);
     }
@@ -962,17 +962,17 @@ class QualificationRequirement$Type extends MessageType<QualificationRequirement
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* uint64 qualification_id */ 3:
-                    message.qualificationId = reader.uint64().toNumber();
+                case /* int64 qualification_id */ 3:
+                    message.qualificationId = reader.int64().toNumber();
                     break;
-                case /* uint64 target_qualification_id */ 4:
-                    message.targetQualificationId = reader.uint64().toNumber();
+                case /* int64 target_qualification_id */ 4:
+                    message.targetQualificationId = reader.int64().toNumber();
                     break;
                 case /* optional resources.qualifications.QualificationShort target_qualification */ 5:
                     message.targetQualification = QualificationShort.internalBinaryRead(reader, reader.uint32(), options, message.targetQualification);
@@ -989,18 +989,18 @@ class QualificationRequirement$Type extends MessageType<QualificationRequirement
         return message;
     }
     internalBinaryWrite(message: QualificationRequirement, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 qualification_id = 3; */
+        /* int64 qualification_id = 3; */
         if (message.qualificationId !== 0)
-            writer.tag(3, WireType.Varint).uint64(message.qualificationId);
-        /* uint64 target_qualification_id = 4; */
+            writer.tag(3, WireType.Varint).int64(message.qualificationId);
+        /* int64 target_qualification_id = 4; */
         if (message.targetQualificationId !== 0)
-            writer.tag(4, WireType.Varint).uint64(message.targetQualificationId);
+            writer.tag(4, WireType.Varint).int64(message.targetQualificationId);
         /* optional resources.qualifications.QualificationShort target_qualification = 5; */
         if (message.targetQualification)
             QualificationShort.internalBinaryWrite(message.targetQualification, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
@@ -1143,7 +1143,7 @@ class QualificationRequest$Type extends MessageType<QualificationRequest> {
         super("resources.qualifications.QualificationRequest", [
             { no: 1, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 2, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"qualification_id\"" } },
+            { no: 3, name: "qualification_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"qualification_id\"" } },
             { no: 4, name: "qualification", kind: "message", T: () => QualificationShort },
             { no: 5, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } }, "tagger.tags": "sql:\"primary_key\"" } },
             { no: 6, name: "user", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"user\"" } },
@@ -1175,8 +1175,8 @@ class QualificationRequest$Type extends MessageType<QualificationRequest> {
                 case /* optional resources.timestamp.Timestamp deleted_at */ 2:
                     message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
                     break;
-                case /* uint64 qualification_id */ 3:
-                    message.qualificationId = reader.uint64().toNumber();
+                case /* int64 qualification_id */ 3:
+                    message.qualificationId = reader.int64().toNumber();
                     break;
                 case /* optional resources.qualifications.QualificationShort qualification */ 4:
                     message.qualification = QualificationShort.internalBinaryRead(reader, reader.uint32(), options, message.qualification);
@@ -1226,9 +1226,9 @@ class QualificationRequest$Type extends MessageType<QualificationRequest> {
         /* optional resources.timestamp.Timestamp deleted_at = 2; */
         if (message.deletedAt)
             Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 qualification_id = 3; */
+        /* int64 qualification_id = 3; */
         if (message.qualificationId !== 0)
-            writer.tag(3, WireType.Varint).uint64(message.qualificationId);
+            writer.tag(3, WireType.Varint).int64(message.qualificationId);
         /* optional resources.qualifications.QualificationShort qualification = 4; */
         if (message.qualification)
             QualificationShort.internalBinaryWrite(message.qualification, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
@@ -1273,10 +1273,10 @@ export const QualificationRequest = new QualificationRequest$Type();
 class QualificationResult$Type extends MessageType<QualificationResult> {
     constructor() {
         super("resources.qualifications.QualificationResult", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "qualification_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "qualification", kind: "message", T: () => QualificationShort },
             { no: 6, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
             { no: 7, name: "user", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"user\"" } },
@@ -1306,8 +1306,8 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -1315,8 +1315,8 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
                 case /* optional resources.timestamp.Timestamp deleted_at */ 3:
                     message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
                     break;
-                case /* uint64 qualification_id */ 4:
-                    message.qualificationId = reader.uint64().toNumber();
+                case /* int64 qualification_id */ 4:
+                    message.qualificationId = reader.int64().toNumber();
                     break;
                 case /* optional resources.qualifications.QualificationShort qualification */ 5:
                     message.qualification = QualificationShort.internalBinaryRead(reader, reader.uint32(), options, message.qualification);
@@ -1357,18 +1357,18 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
         return message;
     }
     internalBinaryWrite(message: QualificationResult, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* optional resources.timestamp.Timestamp deleted_at = 3; */
         if (message.deletedAt)
             Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 qualification_id = 4; */
+        /* int64 qualification_id = 4; */
         if (message.qualificationId !== 0)
-            writer.tag(4, WireType.Varint).uint64(message.qualificationId);
+            writer.tag(4, WireType.Varint).int64(message.qualificationId);
         /* optional resources.qualifications.QualificationShort qualification = 5; */
         if (message.qualification)
             QualificationShort.internalBinaryWrite(message.qualification, writer.tag(5, WireType.LengthDelimited).fork(), options).join();

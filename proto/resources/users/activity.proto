@@ -30,7 +30,7 @@ enum UserActivityType {
 }
 
 message UserActivity {
-  uint64 id = 1 [(tagger.tags) = "alias:\"user_activity.id\""];
+  int64 id = 1 [(tagger.tags) = "alias:\"user_activity.id\""];
   UserActivityType type = 2 [
     (buf.validate.field).enum.defined_only = true,
     (tagger.tags) = "alias:\"user_activity.type\""
@@ -122,7 +122,7 @@ message JobChange {
 
 message CitizenDocumentRelation {
   bool added = 1;
-  uint64 document_id = 2;
+  int64 document_id = 2;
   int32 relation = 3; // resources.documents.DocRelation enum
 }
 

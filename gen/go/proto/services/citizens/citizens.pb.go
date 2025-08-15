@@ -34,7 +34,7 @@ type ListCitizensRequest struct {
 	PhoneNumber             *string `protobuf:"bytes,5,opt,name=phone_number,json=phoneNumber,proto3,oneof" json:"phone_number,omitempty"`
 	TrafficInfractionPoints *uint32 `protobuf:"varint,6,opt,name=traffic_infraction_points,json=trafficInfractionPoints,proto3,oneof" json:"traffic_infraction_points,omitempty"`
 	Dateofbirth             *string `protobuf:"bytes,7,opt,name=dateofbirth,proto3,oneof" json:"dateofbirth,omitempty"`
-	OpenFines               *uint64 `protobuf:"varint,8,opt,name=open_fines,json=openFines,proto3,oneof" json:"open_fines,omitempty"`
+	OpenFines               *int64  `protobuf:"varint,8,opt,name=open_fines,json=openFines,proto3,oneof" json:"open_fines,omitempty"`
 	unknownFields           protoimpl.UnknownFields
 	sizeCache               protoimpl.SizeCache
 }
@@ -118,7 +118,7 @@ func (x *ListCitizensRequest) GetDateofbirth() string {
 	return ""
 }
 
-func (x *ListCitizensRequest) GetOpenFines() uint64 {
+func (x *ListCitizensRequest) GetOpenFines() int64 {
 	if x != nil && x.OpenFines != nil {
 		return *x.OpenFines
 	}
@@ -757,7 +757,7 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\vdateofbirth\x18\a \x01(\tB\a\xbaH\x04r\x02\x18\n" +
 	"H\x04R\vdateofbirth\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"open_fines\x18\b \x01(\x04H\x05R\topenFines\x88\x01\x01B\a\n" +
+	"open_fines\x18\b \x01(\x03H\x05R\topenFines\x88\x01\x01B\a\n" +
 	"\x05_sortB\t\n" +
 	"\a_wantedB\x0f\n" +
 	"\r_phone_numberB\x1c\n" +

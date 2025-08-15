@@ -38,7 +38,7 @@ type UserProps struct {
 	TrafficInfractionPointsUpdatedAt *timestamp.Timestamp   `protobuf:"bytes,9,opt,name=traffic_infraction_points_updated_at,json=trafficInfractionPointsUpdatedAt,proto3,oneof" json:"traffic_infraction_points_updated_at,omitempty"`
 	OpenFines                        *int64                 `protobuf:"varint,10,opt,name=open_fines,json=openFines,proto3,oneof" json:"open_fines,omitempty"`
 	BloodType                        *string                `protobuf:"bytes,11,opt,name=blood_type,json=bloodType,proto3,oneof" json:"blood_type,omitempty"`
-	MugshotFileId                    *uint64                `protobuf:"varint,12,opt,name=mugshot_file_id,json=mugshotFileId,proto3,oneof" json:"mugshot_file_id,omitempty"`
+	MugshotFileId                    *int64                 `protobuf:"varint,12,opt,name=mugshot_file_id,json=mugshotFileId,proto3,oneof" json:"mugshot_file_id,omitempty"`
 	Mugshot                          *file.File             `protobuf:"bytes,13,opt,name=mugshot,proto3,oneof" json:"mugshot,omitempty" alias:"mugshot"`
 	Labels                           *Labels                `protobuf:"bytes,14,opt,name=labels,proto3,oneof" json:"labels,omitempty"`
 	// @sanitize: method=StripTags
@@ -154,7 +154,7 @@ func (x *UserProps) GetBloodType() string {
 	return ""
 }
 
-func (x *UserProps) GetMugshotFileId() uint64 {
+func (x *UserProps) GetMugshotFileId() int64 {
 	if x != nil && x.MugshotFileId != nil {
 		return *x.MugshotFileId
 	}
@@ -203,7 +203,7 @@ const file_resources_users_props_proto_rawDesc = "" +
 	" \x01(\x03H\bR\topenFines\x88\x01\x01\x12\"\n" +
 	"\n" +
 	"blood_type\x18\v \x01(\tH\tR\tbloodType\x88\x01\x01\x12+\n" +
-	"\x0fmugshot_file_id\x18\f \x01(\x04H\n" +
+	"\x0fmugshot_file_id\x18\f \x01(\x03H\n" +
 	"R\rmugshotFileId\x88\x01\x01\x12I\n" +
 	"\amugshot\x18\r \x01(\v2\x14.resources.file.FileB\x14\x9a\x84\x9e\x03\x0falias:\"mugshot\"H\vR\amugshot\x88\x01\x01\x124\n" +
 	"\x06labels\x18\x0e \x01(\v2\x17.resources.users.LabelsH\fR\x06labels\x88\x01\x01\x12$\n" +

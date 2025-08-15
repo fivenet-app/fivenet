@@ -15,7 +15,7 @@ import "tagger/tagger.proto";
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications;qualifications";
 
 message Qualification {
-  uint64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
+  int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   optional resources.timestamp.Timestamp deleted_at = 4;
@@ -53,7 +53,7 @@ message Qualification {
 }
 
 message QualificationShort {
-  uint64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
+  int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   optional resources.timestamp.Timestamp deleted_at = 4;
@@ -81,10 +81,10 @@ message QualificationShort {
 }
 
 message QualificationRequirement {
-  uint64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
+  int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
-  uint64 qualification_id = 3;
-  uint64 target_qualification_id = 4;
+  int64 qualification_id = 3;
+  int64 target_qualification_id = 4;
   optional QualificationShort target_qualification = 5 [(tagger.tags) = "alias:\"targetqualification\""];
 }
 
@@ -134,7 +134,7 @@ enum RequestStatus {
 message QualificationRequest {
   optional resources.timestamp.Timestamp created_at = 1;
   optional resources.timestamp.Timestamp deleted_at = 2;
-  uint64 qualification_id = 3 [(tagger.tags) = "sql:\"primary_key\" alias:\"qualification_id\""];
+  int64 qualification_id = 3 [(tagger.tags) = "sql:\"primary_key\" alias:\"qualification_id\""];
   optional QualificationShort qualification = 4;
   int32 user_id = 5 [
     (buf.validate.field).int32.gte = 0,
@@ -160,10 +160,10 @@ enum ResultStatus {
 }
 
 message QualificationResult {
-  uint64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
+  int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp deleted_at = 3;
-  uint64 qualification_id = 4;
+  int64 qualification_id = 4;
   optional QualificationShort qualification = 5;
   int32 user_id = 6 [(buf.validate.field).int32.gte = 0];
   resources.users.UserShort user = 7 [(tagger.tags) = "alias:\"user\""];

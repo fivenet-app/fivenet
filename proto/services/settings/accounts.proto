@@ -24,7 +24,7 @@ message ListAccountsResponse {
 }
 
 message UpdateAccountRequest {
-  uint64 id = 1 [(buf.validate.field).uint64.gt = 0];
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
   optional bool enabled = 2;
   optional int32 last_char = 3;
 }
@@ -34,14 +34,14 @@ message UpdateAccountResponse {
 }
 
 message DisconnectOAuth2ConnectionRequest {
-  uint64 id = 1 [(buf.validate.field).uint64.gt = 0];
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
   string provider_name = 2 [(buf.validate.field).string.max_len = 255];
 }
 
 message DisconnectOAuth2ConnectionResponse {}
 
 message DeleteAccountRequest {
-  uint64 id = 1 [(buf.validate.field).uint64.gt = 0];
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
 }
 
 message DeleteAccountResponse {}

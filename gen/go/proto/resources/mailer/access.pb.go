@@ -142,9 +142,9 @@ func (x *Access) GetQualifications() []*QualificationAccess {
 
 type JobAccess struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	TargetId      uint64                 `protobuf:"varint,4,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
+	TargetId      int64                  `protobuf:"varint,4,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
 	Job           string                 `protobuf:"bytes,5,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel      *string                `protobuf:"bytes,6,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	MinimumGrade  int32                  `protobuf:"varint,7,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty"`
@@ -184,7 +184,7 @@ func (*JobAccess) Descriptor() ([]byte, []int) {
 	return file_resources_mailer_access_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *JobAccess) GetId() uint64 {
+func (x *JobAccess) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -198,7 +198,7 @@ func (x *JobAccess) GetCreatedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *JobAccess) GetTargetId() uint64 {
+func (x *JobAccess) GetTargetId() int64 {
 	if x != nil {
 		return x.TargetId
 	}
@@ -242,9 +242,9 @@ func (x *JobAccess) GetAccess() AccessLevel {
 
 type UserAccess struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	TargetId      uint64                 `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
+	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
 	UserId        int32                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	User          *users.UserShort       `protobuf:"bytes,5,opt,name=user,proto3,oneof" json:"user,omitempty"`
 	Access        AccessLevel            `protobuf:"varint,6,opt,name=access,proto3,enum=resources.mailer.AccessLevel" json:"access,omitempty"`
@@ -282,7 +282,7 @@ func (*UserAccess) Descriptor() ([]byte, []int) {
 	return file_resources_mailer_access_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *UserAccess) GetId() uint64 {
+func (x *UserAccess) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -296,7 +296,7 @@ func (x *UserAccess) GetCreatedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *UserAccess) GetTargetId() uint64 {
+func (x *UserAccess) GetTargetId() int64 {
 	if x != nil {
 		return x.TargetId
 	}
@@ -326,10 +326,10 @@ func (x *UserAccess) GetAccess() AccessLevel {
 
 type QualificationAccess struct {
 	state           protoimpl.MessageState             `protogen:"open.v1"`
-	Id              uint64                             `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id              int64                              `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt       *timestamp.Timestamp               `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	TargetId        uint64                             `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
-	QualificationId uint64                             `protobuf:"varint,4,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
+	TargetId        int64                              `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
+	QualificationId int64                              `protobuf:"varint,4,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	Qualification   *qualifications.QualificationShort `protobuf:"bytes,5,opt,name=qualification,proto3,oneof" json:"qualification,omitempty"`
 	Access          AccessLevel                        `protobuf:"varint,6,opt,name=access,proto3,enum=resources.mailer.AccessLevel" json:"access,omitempty"`
 	unknownFields   protoimpl.UnknownFields
@@ -366,7 +366,7 @@ func (*QualificationAccess) Descriptor() ([]byte, []int) {
 	return file_resources_mailer_access_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *QualificationAccess) GetId() uint64 {
+func (x *QualificationAccess) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -380,14 +380,14 @@ func (x *QualificationAccess) GetCreatedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *QualificationAccess) GetTargetId() uint64 {
+func (x *QualificationAccess) GetTargetId() int64 {
 	if x != nil {
 		return x.TargetId
 	}
 	return 0
 }
 
-func (x *QualificationAccess) GetQualificationId() uint64 {
+func (x *QualificationAccess) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
 	}
@@ -418,10 +418,10 @@ const file_resources_mailer_access_proto_rawDesc = "" +
 	"\x05users\x18\x02 \x03(\v2\x1c.resources.mailer.UserAccessB \x9a\x84\x9e\x03\x13alias:\"user_access\"\xbaH\x05\x92\x01\x02\x10\x14R\x05users\x12x\n" +
 	"\x0equalifications\x18\x03 \x03(\v2%.resources.mailer.QualificationAccessB)\x9a\x84\x9e\x03\x1calias:\"qualification_access\"\xbaH\x05\x92\x01\x02\x10\x14R\x0equalifications\"\xbb\x03\n" +
 	"\tJobAccess\x121\n" +
-	"\x02id\x18\x01 \x01(\x04B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
+	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1b\n" +
-	"\ttarget_id\x18\x04 \x01(\x04R\btargetId\x12\x19\n" +
+	"\ttarget_id\x18\x04 \x01(\x03R\btargetId\x12\x19\n" +
 	"\x03job\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12)\n" +
 	"\tjob_label\x18\x06 \x01(\tB\a\xbaH\x04r\x02\x182H\x01R\bjobLabel\x88\x01\x01\x12,\n" +
 	"\rminimum_grade\x18\a \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\fminimumGrade\x124\n" +
@@ -433,21 +433,21 @@ const file_resources_mailer_access_proto_rawDesc = "" +
 	"\x10_job_grade_label\"\xad\x02\n" +
 	"\n" +
 	"UserAccess\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12B\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1b\n" +
-	"\ttarget_id\x18\x03 \x01(\x04R\btargetId\x12 \n" +
+	"\ttarget_id\x18\x03 \x01(\x03R\btargetId\x12 \n" +
 	"\auser_id\x18\x04 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x06userId\x123\n" +
 	"\x04user\x18\x05 \x01(\v2\x1a.resources.users.UserShortH\x01R\x04user\x88\x01\x01\x12?\n" +
 	"\x06access\x18\x06 \x01(\x0e2\x1d.resources.mailer.AccessLevelB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06accessB\r\n" +
 	"\v_created_atB\a\n" +
 	"\x05_user\"\xec\x02\n" +
 	"\x13QualificationAccess\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12B\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1b\n" +
-	"\ttarget_id\x18\x03 \x01(\x04R\btargetId\x12)\n" +
-	"\x10qualification_id\x18\x04 \x01(\x04R\x0fqualificationId\x12W\n" +
+	"\ttarget_id\x18\x03 \x01(\x03R\btargetId\x12)\n" +
+	"\x10qualification_id\x18\x04 \x01(\x03R\x0fqualificationId\x12W\n" +
 	"\rqualification\x18\x05 \x01(\v2,.resources.qualifications.QualificationShortH\x01R\rqualification\x88\x01\x01\x12?\n" +
 	"\x06access\x18\x06 \x01(\x0e2\x1d.resources.mailer.AccessLevelB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06accessB\r\n" +
 	"\v_created_atB\x10\n" +

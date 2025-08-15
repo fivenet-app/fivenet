@@ -12,8 +12,8 @@ import (
 )
 
 type FivenetCentrumDispatchesAsgmts struct {
-	DispatchID uint64     `sql:"primary_key" json:"dispatch_id"`
-	UnitID     uint64     `sql:"primary_key" json:"unit_id"`
+	DispatchID int64      `sql:"primary_key" json:"dispatch_id"`
+	UnitID     int64      `sql:"primary_key" json:"unit_id"`
 	CreatedAt  *time.Time `json:"created_at"`
 	ExpiresAt  *time.Time `json:"expires_at"`
 }

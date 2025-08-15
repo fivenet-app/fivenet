@@ -63,7 +63,7 @@ export interface UserMarker {
      */
     user?: Colleague;
     /**
-     * @generated from protobuf field: optional uint64 unit_id = 10
+     * @generated from protobuf field: optional int64 unit_id = 10
      */
     unitId?: number;
     /**
@@ -112,7 +112,7 @@ class UserMarker$Type extends MessageType<UserMarker> {
             { no: 8, name: "job_label", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 13, name: "job_grade", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 9, name: "user", kind: "message", T: () => Colleague, options: { "tagger.tags": "alias:\"user\"" } },
-            { no: 10, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 10, name: "unit_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 11, name: "unit", kind: "message", T: () => Unit },
             { no: 12, name: "hidden", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 14, name: "data", kind: "message", T: () => UserMarkerData, options: { "tagger.tags": "alias:\"data\"" } }
@@ -165,8 +165,8 @@ class UserMarker$Type extends MessageType<UserMarker> {
                 case /* resources.jobs.Colleague user */ 9:
                     message.user = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.user);
                     break;
-                case /* optional uint64 unit_id */ 10:
-                    message.unitId = reader.uint64().toNumber();
+                case /* optional int64 unit_id */ 10:
+                    message.unitId = reader.int64().toNumber();
                     break;
                 case /* optional resources.centrum.Unit unit */ 11:
                     message.unit = Unit.internalBinaryRead(reader, reader.uint32(), options, message.unit);
@@ -216,9 +216,9 @@ class UserMarker$Type extends MessageType<UserMarker> {
         /* resources.jobs.Colleague user = 9; */
         if (message.user)
             Colleague.internalBinaryWrite(message.user, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        /* optional uint64 unit_id = 10; */
+        /* optional int64 unit_id = 10; */
         if (message.unitId !== undefined)
-            writer.tag(10, WireType.Varint).uint64(message.unitId);
+            writer.tag(10, WireType.Varint).int64(message.unitId);
         /* optional resources.centrum.Unit unit = 11; */
         if (message.unit)
             Unit.internalBinaryWrite(message.unit, writer.tag(11, WireType.LengthDelimited).fork(), options).join();

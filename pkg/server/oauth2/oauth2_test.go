@@ -51,7 +51,7 @@ type MockUserInfoStore struct {
 
 func (m *MockUserInfoStore) storeUserInfo(
 	ctx context.Context,
-	accountId uint64,
+	accountId int64,
 	provider string,
 	userInfo *providers.UserInfo,
 ) error {
@@ -61,7 +61,7 @@ func (m *MockUserInfoStore) storeUserInfo(
 
 func (m *MockUserInfoStore) updateUserInfo(
 	ctx context.Context,
-	accountId uint64,
+	accountId int64,
 	provider string,
 	userInfo *providers.UserInfo,
 ) error {
@@ -229,7 +229,7 @@ func TestCallback_LoginSuccess(t *testing.T) {
 			Username: &mockUserInfo.Username,
 			License:  "license",
 		}, nil)
-	mockUserInfoStore.On("updateUserInfo", mock.Anything, uint64(123), "test-provider", mockUserInfo).
+	mockUserInfoStore.On("updateUserInfo", mock.Anything, int64(123), "test-provider", mockUserInfo).
 		Return(nil)
 
 	oauth := &OAuth2{
@@ -347,7 +347,7 @@ func TestCallback_ConnectErrorAlreadyInUse(t *testing.T) {
 	mockProvider.On("GetUserInfo", mock.Anything, "test-code").Return(mockUserInfo, nil)
 
 	mockUserInfoStore := &MockUserInfoStore{}
-	mockUserInfoStore.On("storeUserInfo", mock.Anything, uint64(123), "test-provider", mockUserInfo).
+	mockUserInfoStore.On("storeUserInfo", mock.Anything, int64(123), "test-provider", mockUserInfo).
 		Return(&mysql.MySQLError{Number: 1062})
 
 	oauth := &OAuth2{
@@ -413,7 +413,7 @@ func TestCallback_ConnectFlow(t *testing.T) {
 			Username: &mockUserInfo.Username,
 			License:  "license",
 		}, nil)
-	mockUserInfoStore.On("storeUserInfo", mock.Anything, uint64(123), "test-provider", mockUserInfo).
+	mockUserInfoStore.On("storeUserInfo", mock.Anything, int64(123), "test-provider", mockUserInfo).
 		Return(nil)
 	oauth := &OAuth2{
 		logger: zaptest.NewLogger(t),

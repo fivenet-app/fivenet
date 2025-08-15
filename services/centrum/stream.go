@@ -70,7 +70,7 @@ func (s *Server) sendLatestState(
 
 	// Own unit ID
 	ownUnitMapping, _ := s.tracker.GetUserMapping(userInfo.GetUserId())
-	var pOwnUnitId *uint64
+	var pOwnUnitId *int64
 	if ownUnitMapping != nil && ownUnitMapping.UnitId != nil && ownUnitMapping.GetUnitId() > 0 {
 		pOwnUnitId = ownUnitMapping.UnitId
 	}

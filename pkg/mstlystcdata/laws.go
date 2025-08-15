@@ -31,7 +31,7 @@ type Laws struct {
 	tracer trace.Tracer
 
 	// lawBooks is a concurrent map of law book IDs to LawBook structs
-	lawBooks *xsync.Map[uint64, *laws.LawBook]
+	lawBooks *xsync.Map[int64, *laws.LawBook]
 }
 
 // LawsResult is the output struct for NewLaws, providing Laws and a cronjob register.
@@ -52,7 +52,7 @@ func NewLaws(p Params) LawsResult {
 		logger:   p.Logger,
 		db:       p.DB,
 		tracer:   p.TP.Tracer("mstlystcdata.laws"),
-		lawBooks: xsync.NewMap[uint64, *laws.LawBook](),
+		lawBooks: xsync.NewMap[int64, *laws.LawBook](),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
@@ -102,7 +102,7 @@ func (c *Laws) RegisterCronjobHandlers(h *croner.Handlers) error {
 
 // loadLaws loads law books and their laws from the database into the cache.
 // If lawBookId is 0, loads all law books; otherwise, loads only the specified law book.
-func (c *Laws) loadLaws(ctx context.Context, lawBookId uint64) error {
+func (c *Laws) loadLaws(ctx context.Context, lawBookId int64) error {
 	tLawBooks := table.FivenetLawbooks.AS("lawbook")
 	tLaws := table.FivenetLawbooksLaws.AS("law")
 
@@ -136,7 +136,7 @@ func (c *Laws) loadLaws(ctx context.Context, lawBookId uint64) error {
 
 	if lawBookId > 0 {
 		stmt = stmt.WHERE(
-			tLawBooks.ID.EQ(jet.Uint64(lawBookId)),
+			tLawBooks.ID.EQ(jet.Int64(lawBookId)),
 		)
 	}
 
@@ -154,15 +154,15 @@ func (c *Laws) loadLaws(ctx context.Context, lawBookId uint64) error {
 		c.lawBooks.Store(lawBookId, dest[0])
 	} else {
 		// Update cache
-		found := []uint64{}
+		found := []int64{}
 		for _, lawbook := range dest {
 			c.lawBooks.Store(lawbook.GetId(), lawbook)
 			found = append(found, lawbook.GetId())
 		}
 
 		// Delete non-existing law books, based on which are in the database
-		c.lawBooks.Range(func(key uint64, value *laws.LawBook) bool {
-			if !slices.ContainsFunc(found, func(in uint64) bool {
+		c.lawBooks.Range(func(key int64, value *laws.LawBook) bool {
+			if !slices.ContainsFunc(found, func(in int64) bool {
 				return in == key
 			}) {
 				c.lawBooks.Delete(key)
@@ -177,7 +177,7 @@ func (c *Laws) loadLaws(ctx context.Context, lawBookId uint64) error {
 // GetLawBooks returns all cached law books, sorted by name using natural order.
 func (c *Laws) GetLawBooks() []*laws.LawBook {
 	lawBooks := []*laws.LawBook{}
-	c.lawBooks.Range(func(key uint64, value *laws.LawBook) bool {
+	c.lawBooks.Range(func(key int64, value *laws.LawBook) bool {
 		lawBooks = append(lawBooks, value)
 		return true
 	})
@@ -190,7 +190,7 @@ func (c *Laws) GetLawBooks() []*laws.LawBook {
 }
 
 // Refresh reloads the specified law book (or all if lawBookId is 0) from the database.
-func (c *Laws) Refresh(ctx context.Context, lawBookId uint64) error {
+func (c *Laws) Refresh(ctx context.Context, lawBookId int64) error {
 	if err := c.loadLaws(ctx, lawBookId); err != nil {
 		return err
 	}

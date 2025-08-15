@@ -44,7 +44,7 @@ func (s *Server) ListPageActivity(
 	}
 
 	tPActivity := table.FivenetWikiPagesActivity.AS("page_activity")
-	condition := tPActivity.PageID.EQ(jet.Uint64(req.GetPageId()))
+	condition := tPActivity.PageID.EQ(jet.Int64(req.GetPageId()))
 
 	countStmt := tPActivity.
 		SELECT(
@@ -126,7 +126,7 @@ func (s *Server) addPageActivity(
 	ctx context.Context,
 	tx qrm.DB,
 	activitiy *wiki.PageActivity,
-) (uint64, error) {
+) (int64, error) {
 	stmt := tPActivity.
 		INSERT(
 			tPActivity.PageID,
@@ -157,7 +157,7 @@ func (s *Server) addPageActivity(
 		return 0, err
 	}
 
-	return uint64(lastId), nil
+	return lastId, nil
 }
 
 // generatePageDiff Generates diff if the old and new contents are not equal, using a simple "string comparison".

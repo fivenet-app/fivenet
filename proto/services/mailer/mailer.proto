@@ -27,7 +27,7 @@ message ListEmailsResponse {
 }
 
 message GetEmailRequest {
-  uint64 id = 1 [(buf.validate.field).uint64.gt = 0];
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
 }
 
 message GetEmailResponse {
@@ -43,7 +43,7 @@ message CreateOrUpdateEmailResponse {
 }
 
 message DeleteEmailRequest {
-  uint64 id = 1 [(buf.validate.field).uint64.gt = 0];
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
 }
 
 message DeleteEmailResponse {}
@@ -62,7 +62,7 @@ message GetEmailProposalsResponse {
 // Templates
 
 message ListTemplatesRequest {
-  uint64 email_id = 1 [(buf.validate.field).uint64.gt = 0];
+  int64 email_id = 1 [(buf.validate.field).int64.gt = 0];
 }
 
 message ListTemplatesResponse {
@@ -70,8 +70,8 @@ message ListTemplatesResponse {
 }
 
 message GetTemplateRequest {
-  uint64 email_id = 1 [(buf.validate.field).uint64.gt = 0];
-  uint64 template_id = 2 [(buf.validate.field).uint64.gt = 0];
+  int64 email_id = 1 [(buf.validate.field).int64.gt = 0];
+  int64 template_id = 2 [(buf.validate.field).int64.gt = 0];
 }
 
 message GetTemplateResponse {
@@ -87,8 +87,8 @@ message CreateOrUpdateTemplateResponse {
 }
 
 message DeleteTemplateRequest {
-  uint64 email_id = 1 [(buf.validate.field).uint64.gt = 0];
-  uint64 id = 2 [(buf.validate.field).uint64.gt = 0];
+  int64 email_id = 1 [(buf.validate.field).int64.gt = 0];
+  int64 id = 2 [(buf.validate.field).int64.gt = 0];
 }
 
 message DeleteTemplateResponse {}
@@ -98,11 +98,11 @@ message DeleteTemplateResponse {}
 message ListThreadsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   // Search params
-  repeated uint64 email_ids = 2 [(buf.validate.field).repeated = {
+  repeated int64 email_ids = 2 [(buf.validate.field).repeated = {
     min_items: 1
     max_items: 10
     items: {
-      uint64: {gt: 0}
+      int64: {gt: 0}
     }
   }];
   optional bool unread = 4;
@@ -115,8 +115,8 @@ message ListThreadsResponse {
 }
 
 message GetThreadRequest {
-  uint64 email_id = 1 [(buf.validate.field).uint64.gt = 0];
-  uint64 thread_id = 2 [(buf.validate.field).uint64.gt = 0];
+  int64 email_id = 1 [(buf.validate.field).int64.gt = 0];
+  int64 thread_id = 2 [(buf.validate.field).int64.gt = 0];
 }
 
 message GetThreadResponse {
@@ -144,15 +144,15 @@ message CreateThreadResponse {
 }
 
 message DeleteThreadRequest {
-  uint64 email_id = 1 [(buf.validate.field).uint64.gt = 0];
-  uint64 thread_id = 2 [(buf.validate.field).uint64.gt = 0];
+  int64 email_id = 1 [(buf.validate.field).int64.gt = 0];
+  int64 thread_id = 2 [(buf.validate.field).int64.gt = 0];
 }
 
 message DeleteThreadResponse {}
 
 message GetThreadStateRequest {
-  uint64 email_id = 1 [(buf.validate.field).uint64.gt = 0];
-  uint64 thread_id = 2 [(buf.validate.field).uint64.gt = 0];
+  int64 email_id = 1 [(buf.validate.field).int64.gt = 0];
+  int64 thread_id = 2 [(buf.validate.field).int64.gt = 0];
 }
 
 message GetThreadStateResponse {
@@ -168,7 +168,7 @@ message SetThreadStateResponse {
 }
 
 message GetEmailSettingsRequest {
-  uint64 email_id = 1 [(buf.validate.field).uint64.gt = 0];
+  int64 email_id = 1 [(buf.validate.field).int64.gt = 0];
 }
 
 message GetEmailSettingsResponse {
@@ -198,8 +198,8 @@ message SearchThreadsResponse {
 
 message ListThreadMessagesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
-  uint64 email_id = 2 [(buf.validate.field).uint64.gt = 0];
-  uint64 thread_id = 3 [(buf.validate.field).uint64.gt = 0];
+  int64 email_id = 2 [(buf.validate.field).int64.gt = 0];
+  int64 thread_id = 3 [(buf.validate.field).int64.gt = 0];
   optional resources.timestamp.Timestamp after = 4;
 }
 
@@ -227,9 +227,9 @@ message PostMessageResponse {
 }
 
 message DeleteMessageRequest {
-  uint64 email_id = 1 [(buf.validate.field).uint64.gt = 0];
-  uint64 thread_id = 2 [(buf.validate.field).uint64.gt = 0];
-  uint64 message_id = 3 [(buf.validate.field).uint64.gt = 0];
+  int64 email_id = 1 [(buf.validate.field).int64.gt = 0];
+  int64 thread_id = 2 [(buf.validate.field).int64.gt = 0];
+  int64 message_id = 3 [(buf.validate.field).int64.gt = 0];
 }
 
 message DeleteMessageResponse {}

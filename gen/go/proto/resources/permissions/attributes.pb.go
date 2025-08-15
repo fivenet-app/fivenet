@@ -24,10 +24,10 @@ const (
 
 type RoleAttribute struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	RoleId        uint64                 `protobuf:"varint,1,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
+	RoleId        int64                  `protobuf:"varint,1,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	AttrId        uint64                 `protobuf:"varint,3,opt,name=attr_id,json=attrId,proto3" json:"attr_id,omitempty"`
-	PermissionId  uint64                 `protobuf:"varint,4,opt,name=permission_id,json=permissionId,proto3" json:"permission_id,omitempty"`
+	AttrId        int64                  `protobuf:"varint,3,opt,name=attr_id,json=attrId,proto3" json:"attr_id,omitempty"`
+	PermissionId  int64                  `protobuf:"varint,4,opt,name=permission_id,json=permissionId,proto3" json:"permission_id,omitempty"`
 	Category      string                 `protobuf:"bytes,5,opt,name=category,proto3" json:"category,omitempty"`
 	Name          string                 `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
 	Key           string                 `protobuf:"bytes,7,opt,name=key,proto3" json:"key,omitempty"`
@@ -69,7 +69,7 @@ func (*RoleAttribute) Descriptor() ([]byte, []int) {
 	return file_resources_permissions_attributes_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *RoleAttribute) GetRoleId() uint64 {
+func (x *RoleAttribute) GetRoleId() int64 {
 	if x != nil {
 		return x.RoleId
 	}
@@ -83,14 +83,14 @@ func (x *RoleAttribute) GetCreatedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *RoleAttribute) GetAttrId() uint64 {
+func (x *RoleAttribute) GetAttrId() int64 {
 	if x != nil {
 		return x.AttrId
 	}
 	return 0
 }
 
-func (x *RoleAttribute) GetPermissionId() uint64 {
+func (x *RoleAttribute) GetPermissionId() int64 {
 	if x != nil {
 		return x.PermissionId
 	}
@@ -400,11 +400,11 @@ const file_resources_permissions_attributes_proto_rawDesc = "" +
 	"\n" +
 	"&resources/permissions/attributes.proto\x12\x15resources.permissions\x1a#resources/timestamp/timestamp.proto\"\x9b\x04\n" +
 	"\rRoleAttribute\x12\x17\n" +
-	"\arole_id\x18\x01 \x01(\x04R\x06roleId\x12B\n" +
+	"\arole_id\x18\x01 \x01(\x03R\x06roleId\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x17\n" +
-	"\aattr_id\x18\x03 \x01(\x04R\x06attrId\x12#\n" +
-	"\rpermission_id\x18\x04 \x01(\x04R\fpermissionId\x12$\n" +
+	"\aattr_id\x18\x03 \x01(\x03R\x06attrId\x12#\n" +
+	"\rpermission_id\x18\x04 \x01(\x03R\fpermissionId\x12$\n" +
 	"\bcategory\x18\x05 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01R\bcategory\x12\x1c\n" +
 	"\x04name\x18\x06 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\x04name\x12\x1a\n" +
 	"\x03key\x18\a \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\x03key\x12\x1c\n" +

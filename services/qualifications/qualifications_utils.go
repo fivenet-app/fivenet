@@ -158,7 +158,7 @@ func (s *Server) listQualificationsQuery(
 }
 
 func (s *Server) getQualificationQuery(
-	qualificationId uint64,
+	qualificationId int64,
 	where jet.BoolExpression,
 	onlyColumns jet.ProjectionList,
 	userInfo *userinfo.UserInfo,
@@ -167,7 +167,7 @@ func (s *Server) getQualificationQuery(
 	tCreator := tables.User().AS("creator")
 
 	wheres := []jet.BoolExpression{
-		tQuali.ID.EQ(jet.Uint64(qualificationId)),
+		tQuali.ID.EQ(jet.Int64(qualificationId)),
 	}
 	if !userInfo.GetSuperuser() {
 		wheres = append(wheres,
@@ -321,7 +321,7 @@ func (s *Server) getQualificationQuery(
 
 func (s *Server) getQualificationRequirements(
 	ctx context.Context,
-	qualificationId uint64,
+	qualificationId int64,
 ) ([]*qualifications.QualificationRequirement, error) {
 	tQuali := tQuali.AS("target_qualification")
 
@@ -347,7 +347,7 @@ func (s *Server) getQualificationRequirements(
 				tQualiResults.QualificationID.EQ(tQReqs.TargetQualificationID),
 			),
 		).
-		WHERE(tQReqs.QualificationID.EQ(jet.Uint64(qualificationId))).
+		WHERE(tQReqs.QualificationID.EQ(jet.Int64(qualificationId))).
 		GROUP_BY(tQuali.ID)
 
 	var dest []*qualifications.QualificationRequirement
@@ -360,7 +360,7 @@ func (s *Server) getQualificationRequirements(
 
 func (s *Server) getQualification(
 	ctx context.Context,
-	qualificationId uint64,
+	qualificationId int64,
 	condition jet.BoolExpression,
 	userInfo *userinfo.UserInfo,
 	selectContent bool,
@@ -408,7 +408,7 @@ func (s *Server) getQualification(
 
 func (s *Server) getQualificationShort(
 	ctx context.Context,
-	qualificationId uint64,
+	qualificationId int64,
 	condition jet.BoolExpression,
 	userInfo *userinfo.UserInfo,
 ) (*qualifications.QualificationShort, error) {
@@ -454,7 +454,7 @@ func (s *Server) getQualificationShort(
 
 func (s *Server) checkRequirementsMetForQualification(
 	ctx context.Context,
-	qualificationId uint64,
+	qualificationId int64,
 	userId int32,
 ) (bool, error) {
 	stmt := tQReqs.
@@ -471,11 +471,11 @@ func (s *Server) checkRequirementsMetForQualification(
 			),
 		).
 		WHERE(
-			tQReqs.QualificationID.EQ(jet.Uint64(qualificationId)),
+			tQReqs.QualificationID.EQ(jet.Int64(qualificationId)),
 		)
 
 	var dest []*struct {
-		QualificationID uint64
+		QualificationID int64
 		UserID          int32
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
@@ -491,7 +491,7 @@ func (s *Server) checkRequirementsMetForQualification(
 
 	// Remove all requirements which the user has fulfilled
 	dest = slices.DeleteFunc(dest, func(s *struct {
-		QualificationID uint64
+		QualificationID int64
 		UserID          int32
 	},
 	) bool {
@@ -504,7 +504,7 @@ func (s *Server) checkRequirementsMetForQualification(
 func (s *Server) handleQualificationRequirementsChanges(
 	ctx context.Context,
 	tx qrm.DB,
-	qualificationId uint64,
+	qualificationId int64,
 	reqs []*qualifications.QualificationRequirement,
 ) error {
 	current, err := s.getQualificationRequirements(ctx, qualificationId)
@@ -520,7 +520,7 @@ func (s *Server) handleQualificationRequirementsChanges(
 		stmt := tQReqs.
 			DELETE().
 			WHERE(jet.AND(
-				tQReqs.ID.EQ(jet.Uint64(req.GetId())),
+				tQReqs.ID.EQ(jet.Int64(req.GetId())),
 			)).
 			LIMIT(1)
 

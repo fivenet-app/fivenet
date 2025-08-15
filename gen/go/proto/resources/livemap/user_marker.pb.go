@@ -39,7 +39,7 @@ type UserMarker struct {
 	JobLabel      string          `protobuf:"bytes,8,opt,name=job_label,json=jobLabel,proto3" json:"job_label,omitempty"`
 	JobGrade      *int32          `protobuf:"varint,13,opt,name=job_grade,json=jobGrade,proto3,oneof" json:"job_grade,omitempty"`
 	User          *jobs.Colleague `protobuf:"bytes,9,opt,name=user,proto3" json:"user,omitempty" alias:"user"`
-	UnitId        *uint64         `protobuf:"varint,10,opt,name=unit_id,json=unitId,proto3,oneof" json:"unit_id,omitempty"`
+	UnitId        *int64          `protobuf:"varint,10,opt,name=unit_id,json=unitId,proto3,oneof" json:"unit_id,omitempty"`
 	Unit          *centrum.Unit   `protobuf:"bytes,11,opt,name=unit,proto3,oneof" json:"unit,omitempty"`
 	Hidden        bool            `protobuf:"varint,12,opt,name=hidden,proto3" json:"hidden,omitempty"`
 	Data          *UserMarkerData `protobuf:"bytes,14,opt,name=data,proto3,oneof" json:"data,omitempty" alias:"data"`
@@ -147,7 +147,7 @@ func (x *UserMarker) GetUser() *jobs.Colleague {
 	return nil
 }
 
-func (x *UserMarker) GetUnitId() uint64 {
+func (x *UserMarker) GetUnitId() int64 {
 	if x != nil && x.UnitId != nil {
 		return *x.UnitId
 	}
@@ -255,7 +255,7 @@ const file_resources_livemap_user_marker_proto_rawDesc = "" +
 	"\tjob_grade\x18\r \x01(\x05H\x03R\bjobGrade\x88\x01\x01\x12@\n" +
 	"\x04user\x18\t \x01(\v2\x19.resources.jobs.ColleagueB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04user\x12\x1c\n" +
 	"\aunit_id\x18\n" +
-	" \x01(\x04H\x04R\x06unitId\x88\x01\x01\x120\n" +
+	" \x01(\x03H\x04R\x06unitId\x88\x01\x01\x120\n" +
 	"\x04unit\x18\v \x01(\v2\x17.resources.centrum.UnitH\x05R\x04unit\x88\x01\x01\x12\x16\n" +
 	"\x06hidden\x18\f \x01(\bR\x06hidden\x12M\n" +
 	"\x04data\x18\x0e \x01(\v2!.resources.livemap.UserMarkerDataB\x11\x9a\x84\x9e\x03\falias:\"data\"H\x06R\x04data\x88\x01\x01B\r\n" +

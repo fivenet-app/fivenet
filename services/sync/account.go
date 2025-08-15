@@ -100,7 +100,7 @@ func (s *Server) RegisterAccount(
 				tAccounts.RegToken.SET(jet.String(regToken)),
 			).
 			WHERE(jet.AND(
-				tAccounts.ID.EQ(jet.Uint64(acc.GetId())),
+				tAccounts.ID.EQ(jet.Int64(acc.GetId())),
 				// Make sure the license is (still) the same
 				tAccounts.License.EQ(jet.String(req.GetIdentifier())),
 			))
@@ -143,7 +143,7 @@ func (s *Server) TransferAccount(
 	// Delete new account
 	delStmt := tAccounts.
 		DELETE().
-		WHERE(tAccounts.ID.EQ(jet.Uint64(acc.GetId()))).
+		WHERE(tAccounts.ID.EQ(jet.Int64(acc.GetId()))).
 		LIMIT(1)
 
 	if _, err := delStmt.ExecContext(ctx, s.db); err != nil {
@@ -159,7 +159,7 @@ func (s *Server) TransferAccount(
 			tAccounts.License.SET(jet.String(req.GetNewLicense())),
 		).
 		WHERE(
-			tAccounts.ID.EQ(jet.Uint64(acc.GetId())),
+			tAccounts.ID.EQ(jet.Int64(acc.GetId())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

@@ -16,7 +16,7 @@ import (
 func RefreshDiscordAccessToken(
 	ctx context.Context,
 	clientID, clientSecret, refreshToken, redirectURI string,
-) (string, string, int32, error) {
+) (string, string, int64, error) {
 	data := url.Values{}
 	data.Set("client_id", clientID)
 	data.Set("client_secret", clientSecret)
@@ -54,7 +54,7 @@ func RefreshDiscordAccessToken(
 	var respData struct {
 		AccessToken  string `json:"access_token"`
 		RefreshToken string `json:"refresh_token"`
-		ExpiresIn    int32  `json:"expires_in"`
+		ExpiresIn    int64  `json:"expires_in"`
 		TokenType    string `json:"token_type"`
 		Scope        string `json:"scope"`
 	}

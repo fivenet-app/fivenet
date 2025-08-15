@@ -88,9 +88,9 @@ func (PageActivityType) EnumDescriptor() ([]byte, []int) {
 
 type PageActivity struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	Id              uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	PageId          uint64                 `protobuf:"varint,3,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`
+	PageId          int64                  `protobuf:"varint,3,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`
 	ActivityType    PageActivityType       `protobuf:"varint,4,opt,name=activity_type,json=activityType,proto3,enum=resources.wiki.PageActivityType" json:"activity_type,omitempty"`
 	CreatorId       *int32                 `protobuf:"varint,5,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
 	Creator         *users.UserShort       `protobuf:"bytes,6,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
@@ -132,7 +132,7 @@ func (*PageActivity) Descriptor() ([]byte, []int) {
 	return file_resources_wiki_activity_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *PageActivity) GetId() uint64 {
+func (x *PageActivity) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -146,7 +146,7 @@ func (x *PageActivity) GetCreatedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *PageActivity) GetPageId() uint64 {
+func (x *PageActivity) GetPageId() int64 {
 	if x != nil {
 		return x.PageId
 	}
@@ -583,10 +583,10 @@ const file_resources_wiki_activity_proto_rawDesc = "" +
 	"\n" +
 	"\x1dresources/wiki/activity.proto\x12\x0eresources.wiki\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x1bresources/wiki/access.proto\x1a\x13tagger/tagger.proto\"\xb8\x04\n" +
 	"\fPageActivity\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12=\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12\x17\n" +
-	"\apage_id\x18\x03 \x01(\x04R\x06pageId\x12E\n" +
+	"\apage_id\x18\x03 \x01(\x03R\x06pageId\x12E\n" +
 	"\ractivity_type\x18\x04 \x01(\x0e2 .resources.wiki.PageActivityTypeR\factivityType\x12+\n" +
 	"\n" +
 	"creator_id\x18\x05 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x00R\tcreatorId\x88\x01\x01\x12O\n" +

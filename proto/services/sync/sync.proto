@@ -59,7 +59,7 @@ message RegisterAccountResponse {
     len: 6
     pattern: "^[0-9]{6}$"
   }];
-  optional uint64 account_id = 2;
+  optional int64 account_id = 2;
   optional string username = 3;
 }
 

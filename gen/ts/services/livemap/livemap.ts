@@ -87,7 +87,7 @@ export interface MarkerMarkersUpdates {
      */
     updated: MarkerMarker[];
     /**
-     * @generated from protobuf field: repeated uint64 deleted = 2
+     * @generated from protobuf field: repeated int64 deleted = 2
      */
     deleted: number[];
     /**
@@ -157,7 +157,7 @@ export interface CreateOrUpdateMarkerResponse {
  */
 export interface DeleteMarkerRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
 }
@@ -361,7 +361,7 @@ class MarkerMarkersUpdates$Type extends MessageType<MarkerMarkersUpdates> {
     constructor() {
         super("services.livemap.MarkerMarkersUpdates", [
             { no: 1, name: "updated", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => MarkerMarker },
-            { no: 2, name: "deleted", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "deleted", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "part", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 4, name: "partial", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
@@ -384,12 +384,12 @@ class MarkerMarkersUpdates$Type extends MessageType<MarkerMarkersUpdates> {
                 case /* repeated resources.livemap.MarkerMarker updated */ 1:
                     message.updated.push(MarkerMarker.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated uint64 deleted */ 2:
+                case /* repeated int64 deleted */ 2:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.deleted.push(reader.uint64().toNumber());
+                            message.deleted.push(reader.int64().toNumber());
                     else
-                        message.deleted.push(reader.uint64().toNumber());
+                        message.deleted.push(reader.int64().toNumber());
                     break;
                 case /* int32 part */ 3:
                     message.part = reader.int32();
@@ -412,11 +412,11 @@ class MarkerMarkersUpdates$Type extends MessageType<MarkerMarkersUpdates> {
         /* repeated resources.livemap.MarkerMarker updated = 1; */
         for (let i = 0; i < message.updated.length; i++)
             MarkerMarker.internalBinaryWrite(message.updated[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated uint64 deleted = 2; */
+        /* repeated int64 deleted = 2; */
         if (message.deleted.length) {
             writer.tag(2, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.deleted.length; i++)
-                writer.uint64(message.deleted[i]);
+                writer.int64(message.deleted[i]);
             writer.join();
         }
         /* int32 part = 3; */
@@ -633,7 +633,7 @@ export const CreateOrUpdateMarkerResponse = new CreateOrUpdateMarkerResponse$Typ
 class DeleteMarkerRequest$Type extends MessageType<DeleteMarkerRequest> {
     constructor() {
         super("services.livemap.DeleteMarkerRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteMarkerRequest>): DeleteMarkerRequest {
@@ -648,8 +648,8 @@ class DeleteMarkerRequest$Type extends MessageType<DeleteMarkerRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -663,9 +663,9 @@ class DeleteMarkerRequest$Type extends MessageType<DeleteMarkerRequest> {
         return message;
     }
     internalBinaryWrite(message: DeleteMarkerRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

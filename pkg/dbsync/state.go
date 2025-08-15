@@ -29,7 +29,7 @@ type TableSyncState struct {
 	dss *DBSyncState
 
 	LastCheck *time.Time `yaml:"lastCheck"`
-	Offset    uint64     `yaml:"offset"`
+	Offset    int64      `yaml:"offset"`
 	LastID    *string    `yaml:"lastId"`
 	SyncedUp  bool       `yaml:"syncedUp"`
 }
@@ -97,7 +97,7 @@ func (s *DBSyncState) Save() error {
 	return nil
 }
 
-func (s *TableSyncState) Set(offset uint64, lastId *string) {
+func (s *TableSyncState) Set(offset int64, lastId *string) {
 	now := time.Now()
 	s.LastCheck = &now
 	s.Offset = offset

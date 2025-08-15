@@ -42,11 +42,11 @@ func (x *UnitJobAccess) SetAccess(access UnitAccessLevel) {
 	x.Access = access
 }
 
-func (x *UnitUserAccess) GetId() uint64 {
+func (x *UnitUserAccess) GetId() int64 {
 	return 0
 }
 
-func (x *UnitUserAccess) GetTargetId() uint64 {
+func (x *UnitUserAccess) GetTargetId() int64 {
 	return 0
 }
 
@@ -62,7 +62,7 @@ func (x *UnitUserAccess) SetUserId(id int32) {}
 
 func (x *UnitUserAccess) SetAccess(access UnitAccessLevel) {}
 
-func (x *UnitQualificationAccess) SetQualificationId(id uint64) {
+func (x *UnitQualificationAccess) SetQualificationId(id int64) {
 	x.QualificationId = id
 }
 

@@ -16,7 +16,7 @@ import (
 func (s *Housekeeper) runTTLWatcher(
 	kv jetstream.KeyValue,
 	prefix string,
-	handler func(ctx context.Context, unitID uint64) error,
+	handler func(ctx context.Context, unitID int64) error,
 ) {
 	sub, _ := kv.Watch(s.ctx, prefix+".*")
 	for {
@@ -28,12 +28,12 @@ func (s *Housekeeper) runTTLWatcher(
 				e.Operation() != jetstream.KeyValuePurge) {
 				continue
 			}
-			id, _ := strconv.ParseUint(strings.TrimPrefix(e.Key(), prefix+"."), 10, 64)
+			id, _ := strconv.ParseInt(strings.TrimPrefix(e.Key(), prefix+"."), 10, 64)
 			if err := handler(s.ctx, id); err != nil {
 				s.logger.Error(
 					"failed to handle TTL event",
 					zap.Error(err),
-					zap.Uint64("unit_id", id),
+					zap.Int64("unit_id", id),
 				)
 			}
 		}
@@ -41,7 +41,7 @@ func (s *Housekeeper) runTTLWatcher(
 }
 
 // handleUnitKVPing checks if a unit is empty or has the static attribute and sets its status to unavailable if so.
-func (s *Housekeeper) handleUnitKVPing(ctx context.Context, id uint64) error {
+func (s *Housekeeper) handleUnitKVPing(ctx context.Context, id int64) error {
 	unit, err := s.units.Get(ctx, id)
 	if err != nil {
 		return err
@@ -87,7 +87,7 @@ func (s *Housekeeper) handleUnitKVPing(ctx context.Context, id uint64) error {
 	s.logger.Debug(
 		"setting unit status to unavailable it is empty or static attribute (wrong status)",
 		zap.String("job", unit.GetJob()),
-		zap.Uint64("unit_id", unit.GetId()),
+		zap.Int64("unit_id", unit.GetId()),
 		zap.Int32p("user_id", userId),
 	)
 	if _, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrum.UnitStatus{
@@ -98,14 +98,14 @@ func (s *Housekeeper) handleUnitKVPing(ctx context.Context, id uint64) error {
 		CreatorJob: &unit.Job,
 	}); err != nil {
 		s.logger.Error("failed to update empty unit status to unavailable",
-			zap.String("job", unit.GetJob()), zap.Uint64("unit_id", unit.GetId()), zap.Error(err))
+			zap.String("job", unit.GetJob()), zap.Int64("unit_id", unit.GetId()), zap.Error(err))
 		return nil
 	}
 
 	return nil
 }
 
-func (s *Housekeeper) resetUnitPing(ctx context.Context, id uint64) error {
+func (s *Housekeeper) resetUnitPing(ctx context.Context, id int64) error {
 	// Reset unit ping timer
 	if err := s.units.UpsertWithTTL(ctx, s.units.KVPing, fmt.Sprintf("ping.%d", id), units.PingTTL); err != nil {
 		return fmt.Errorf("failed to upsert ping unit timer. %w", err)

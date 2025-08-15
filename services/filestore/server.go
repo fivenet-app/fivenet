@@ -24,7 +24,7 @@ type Server struct {
 	db       *sql.DB
 	aud      audit.IAuditer
 	st       storage.IStorage
-	fHandler *filestore.Handler[uint64]
+	fHandler *filestore.Handler[int64]
 }
 
 type Params struct {
@@ -43,7 +43,7 @@ type Params struct {
 }
 
 func NewServer(p Params) *Server {
-	fHandler := filestore.NewHandler[uint64](
+	fHandler := filestore.NewHandler[int64](
 		p.Storage,
 		p.DB,
 		nil,

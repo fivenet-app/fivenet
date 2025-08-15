@@ -109,7 +109,7 @@ func (x *ListTemplatesResponse) GetTemplates() []*documents.TemplateShort {
 
 type GetTemplateRequest struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
-	TemplateId    uint64                  `protobuf:"varint,1,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
+	TemplateId    int64                   `protobuf:"varint,1,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
 	Data          *documents.TemplateData `protobuf:"bytes,2,opt,name=data,proto3,oneof" json:"data,omitempty"`
 	Render        *bool                   `protobuf:"varint,3,opt,name=render,proto3,oneof" json:"render,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -146,7 +146,7 @@ func (*GetTemplateRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetTemplateRequest) GetTemplateId() uint64 {
+func (x *GetTemplateRequest) GetTemplateId() int64 {
 	if x != nil {
 		return x.TemplateId
 	}
@@ -265,7 +265,7 @@ func (x *CreateTemplateRequest) GetTemplate() *documents.Template {
 
 type CreateTemplateResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -300,7 +300,7 @@ func (*CreateTemplateResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *CreateTemplateResponse) GetId() uint64 {
+func (x *CreateTemplateResponse) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -397,7 +397,7 @@ func (x *UpdateTemplateResponse) GetTemplate() *documents.Template {
 
 type DeleteTemplateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -432,7 +432,7 @@ func (*DeleteTemplateRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *DeleteTemplateRequest) GetId() uint64 {
+func (x *DeleteTemplateRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -481,12 +481,12 @@ type ListDocumentsRequest struct {
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
 	Search      *string              `protobuf:"bytes,3,opt,name=search,proto3,oneof" json:"search,omitempty"`
-	CategoryIds []uint64             `protobuf:"varint,4,rep,packed,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
+	CategoryIds []int64              `protobuf:"varint,4,rep,packed,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
 	CreatorIds  []int32              `protobuf:"varint,5,rep,packed,name=creator_ids,json=creatorIds,proto3" json:"creator_ids,omitempty"`
 	From        *timestamp.Timestamp `protobuf:"bytes,6,opt,name=from,proto3,oneof" json:"from,omitempty"`
 	To          *timestamp.Timestamp `protobuf:"bytes,7,opt,name=to,proto3,oneof" json:"to,omitempty"`
 	Closed      *bool                `protobuf:"varint,8,opt,name=closed,proto3,oneof" json:"closed,omitempty"`
-	DocumentIds []uint64             `protobuf:"varint,9,rep,packed,name=document_ids,json=documentIds,proto3" json:"document_ids,omitempty"`
+	DocumentIds []int64              `protobuf:"varint,9,rep,packed,name=document_ids,json=documentIds,proto3" json:"document_ids,omitempty"`
 	// Controls inclusion of drafts in the result:
 	// - unset/null: include all documents (drafts and non-drafts)
 	// - false: only non-draft documents
@@ -547,7 +547,7 @@ func (x *ListDocumentsRequest) GetSearch() string {
 	return ""
 }
 
-func (x *ListDocumentsRequest) GetCategoryIds() []uint64 {
+func (x *ListDocumentsRequest) GetCategoryIds() []int64 {
 	if x != nil {
 		return x.CategoryIds
 	}
@@ -582,7 +582,7 @@ func (x *ListDocumentsRequest) GetClosed() bool {
 	return false
 }
 
-func (x *ListDocumentsRequest) GetDocumentIds() []uint64 {
+func (x *ListDocumentsRequest) GetDocumentIds() []int64 {
 	if x != nil {
 		return x.DocumentIds
 	}
@@ -650,7 +650,7 @@ func (x *ListDocumentsResponse) GetDocuments() []*documents.DocumentShort {
 
 type GetDocumentRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	DocumentId    uint64                 `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	InfoOnly      *bool                  `protobuf:"varint,2,opt,name=info_only,json=infoOnly,proto3,oneof" json:"info_only,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -686,7 +686,7 @@ func (*GetDocumentRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *GetDocumentRequest) GetDocumentId() uint64 {
+func (x *GetDocumentRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
 	}
@@ -754,7 +754,7 @@ func (x *GetDocumentResponse) GetAccess() *documents.DocumentAccess {
 
 type GetDocumentReferencesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	DocumentId    uint64                 `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -789,7 +789,7 @@ func (*GetDocumentReferencesRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{14}
 }
 
-func (x *GetDocumentReferencesRequest) GetDocumentId() uint64 {
+func (x *GetDocumentReferencesRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
 	}
@@ -842,7 +842,7 @@ func (x *GetDocumentReferencesResponse) GetReferences() []*documents.DocumentRef
 
 type GetDocumentRelationsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	DocumentId    uint64                 `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -877,7 +877,7 @@ func (*GetDocumentRelationsRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{16}
 }
 
-func (x *GetDocumentRelationsRequest) GetDocumentId() uint64 {
+func (x *GetDocumentRelationsRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
 	}
@@ -974,7 +974,7 @@ func (x *AddDocumentReferenceRequest) GetReference() *documents.DocumentReferenc
 
 type AddDocumentReferenceResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1009,7 +1009,7 @@ func (*AddDocumentReferenceResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{19}
 }
 
-func (x *AddDocumentReferenceResponse) GetId() uint64 {
+func (x *AddDocumentReferenceResponse) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -1018,7 +1018,7 @@ func (x *AddDocumentReferenceResponse) GetId() uint64 {
 
 type RemoveDocumentReferenceRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1053,7 +1053,7 @@ func (*RemoveDocumentReferenceRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{20}
 }
 
-func (x *RemoveDocumentReferenceRequest) GetId() uint64 {
+func (x *RemoveDocumentReferenceRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -1142,7 +1142,7 @@ func (x *AddDocumentRelationRequest) GetRelation() *documents.DocumentRelation {
 
 type AddDocumentRelationResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1177,7 +1177,7 @@ func (*AddDocumentRelationResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{23}
 }
 
-func (x *AddDocumentRelationResponse) GetId() uint64 {
+func (x *AddDocumentRelationResponse) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -1186,7 +1186,7 @@ func (x *AddDocumentRelationResponse) GetId() uint64 {
 
 type RemoveDocumentRelationRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1221,7 +1221,7 @@ func (*RemoveDocumentRelationRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{24}
 }
 
-func (x *RemoveDocumentRelationRequest) GetId() uint64 {
+func (x *RemoveDocumentRelationRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -1267,7 +1267,7 @@ func (*RemoveDocumentRelationResponse) Descriptor() ([]byte, []int) {
 type GetCommentsRequest struct {
 	state         protoimpl.MessageState      `protogen:"open.v1"`
 	Pagination    *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	DocumentId    uint64                      `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	DocumentId    int64                       `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1309,7 +1309,7 @@ func (x *GetCommentsRequest) GetPagination() *database.PaginationRequest {
 	return nil
 }
 
-func (x *GetCommentsRequest) GetDocumentId() uint64 {
+func (x *GetCommentsRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
 	}
@@ -1546,7 +1546,7 @@ func (x *EditCommentResponse) GetComment() *documents.Comment {
 
 type DeleteCommentRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	CommentId     uint64                 `protobuf:"varint,1,opt,name=comment_id,json=commentId,proto3" json:"comment_id,omitempty"`
+	CommentId     int64                  `protobuf:"varint,1,opt,name=comment_id,json=commentId,proto3" json:"comment_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1581,7 +1581,7 @@ func (*DeleteCommentRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{32}
 }
 
-func (x *DeleteCommentRequest) GetCommentId() uint64 {
+func (x *DeleteCommentRequest) GetCommentId() int64 {
 	if x != nil {
 		return x.CommentId
 	}
@@ -1670,7 +1670,7 @@ func (x *UpdateDocumentResponse) GetDocument() *documents.Document {
 
 type DeleteDocumentRequest struct {
 	state      protoimpl.MessageState `protogen:"open.v1"`
-	DocumentId uint64                 `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"id"`
+	DocumentId int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"id"`
 	// @sanitize: method=StripTags
 	Reason        *string `protobuf:"bytes,2,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1707,7 +1707,7 @@ func (*DeleteDocumentRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{35}
 }
 
-func (x *DeleteDocumentRequest) GetDocumentId() uint64 {
+func (x *DeleteDocumentRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
 	}
@@ -1759,7 +1759,7 @@ func (*DeleteDocumentResponse) Descriptor() ([]byte, []int) {
 
 type ToggleDocumentRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	DocumentId    uint64                 `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	Closed        bool                   `protobuf:"varint,2,opt,name=closed,proto3" json:"closed,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1795,7 +1795,7 @@ func (*ToggleDocumentRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{37}
 }
 
-func (x *ToggleDocumentRequest) GetDocumentId() uint64 {
+func (x *ToggleDocumentRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
 	}
@@ -1847,7 +1847,7 @@ func (*ToggleDocumentResponse) Descriptor() ([]byte, []int) {
 
 type ChangeDocumentOwnerRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	DocumentId    uint64                 `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	NewUserId     *int32                 `protobuf:"varint,2,opt,name=new_user_id,json=newUserId,proto3,oneof" json:"new_user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1883,7 +1883,7 @@ func (*ChangeDocumentOwnerRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{39}
 }
 
-func (x *ChangeDocumentOwnerRequest) GetDocumentId() uint64 {
+func (x *ChangeDocumentOwnerRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
 	}
@@ -1936,7 +1936,7 @@ func (*ChangeDocumentOwnerResponse) Descriptor() ([]byte, []int) {
 type CreateDocumentRequest struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	ContentType   content.ContentType     `protobuf:"varint,1,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
-	TemplateId    *uint64                 `protobuf:"varint,2,opt,name=template_id,json=templateId,proto3,oneof" json:"template_id,omitempty"`
+	TemplateId    *int64                  `protobuf:"varint,2,opt,name=template_id,json=templateId,proto3,oneof" json:"template_id,omitempty"`
 	TemplateData  *documents.TemplateData `protobuf:"bytes,3,opt,name=template_data,json=templateData,proto3,oneof" json:"template_data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1979,7 +1979,7 @@ func (x *CreateDocumentRequest) GetContentType() content.ContentType {
 	return content.ContentType(0)
 }
 
-func (x *CreateDocumentRequest) GetTemplateId() uint64 {
+func (x *CreateDocumentRequest) GetTemplateId() int64 {
 	if x != nil && x.TemplateId != nil {
 		return *x.TemplateId
 	}
@@ -1995,7 +1995,7 @@ func (x *CreateDocumentRequest) GetTemplateData() *documents.TemplateData {
 
 type CreateDocumentResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2030,7 +2030,7 @@ func (*CreateDocumentResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{42}
 }
 
-func (x *CreateDocumentResponse) GetId() uint64 {
+func (x *CreateDocumentResponse) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -2039,8 +2039,8 @@ func (x *CreateDocumentResponse) GetId() uint64 {
 
 type UpdateDocumentRequest struct {
 	state      protoimpl.MessageState `protogen:"open.v1"`
-	DocumentId uint64                 `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"id"`
-	CategoryId *uint64                `protobuf:"varint,2,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty"`
+	DocumentId int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"id"`
+	CategoryId *int64                 `protobuf:"varint,2,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty"`
 	// @sanitize: method=StripTags
 	Title       string              `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty" alias:"title"`
 	Content     *content.Content    `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty"`
@@ -2087,14 +2087,14 @@ func (*UpdateDocumentRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{43}
 }
 
-func (x *UpdateDocumentRequest) GetDocumentId() uint64 {
+func (x *UpdateDocumentRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
 	}
 	return 0
 }
 
-func (x *UpdateDocumentRequest) GetCategoryId() uint64 {
+func (x *UpdateDocumentRequest) GetCategoryId() int64 {
 	if x != nil && x.CategoryId != nil {
 		return *x.CategoryId
 	}
@@ -2174,7 +2174,7 @@ func (x *UpdateDocumentRequest) GetFiles() []*file.File {
 type ListDocumentActivityRequest struct {
 	state      protoimpl.MessageState      `protogen:"open.v1"`
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	DocumentId uint64                      `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	DocumentId int64                       `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	// Search params
 	ActivityTypes []documents.DocActivityType `protobuf:"varint,3,rep,packed,name=activity_types,json=activityTypes,proto3,enum=resources.documents.DocActivityType" json:"activity_types,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -2218,7 +2218,7 @@ func (x *ListDocumentActivityRequest) GetPagination() *database.PaginationReques
 	return nil
 }
 
-func (x *ListDocumentActivityRequest) GetDocumentId() uint64 {
+func (x *ListDocumentActivityRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
 	}
@@ -2287,7 +2287,7 @@ func (x *ListDocumentActivityResponse) GetActivity() []*documents.DocActivity {
 type ListDocumentReqsRequest struct {
 	state         protoimpl.MessageState      `protogen:"open.v1"`
 	Pagination    *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	DocumentId    uint64                      `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	DocumentId    int64                       `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2329,7 +2329,7 @@ func (x *ListDocumentReqsRequest) GetPagination() *database.PaginationRequest {
 	return nil
 }
 
-func (x *ListDocumentReqsRequest) GetDocumentId() uint64 {
+func (x *ListDocumentReqsRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
 	}
@@ -2390,7 +2390,7 @@ func (x *ListDocumentReqsResponse) GetRequests() []*documents.DocRequest {
 
 type CreateDocumentReqRequest struct {
 	state       protoimpl.MessageState    `protogen:"open.v1"`
-	DocumentId  uint64                    `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	DocumentId  int64                     `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	RequestType documents.DocActivityType `protobuf:"varint,2,opt,name=request_type,json=requestType,proto3,enum=resources.documents.DocActivityType" json:"request_type,omitempty"`
 	// @sanitize
 	Reason        *string                    `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
@@ -2429,7 +2429,7 @@ func (*CreateDocumentReqRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{48}
 }
 
-func (x *CreateDocumentReqRequest) GetDocumentId() uint64 {
+func (x *CreateDocumentReqRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
 	}
@@ -2503,8 +2503,8 @@ func (x *CreateDocumentReqResponse) GetRequest() *documents.DocRequest {
 
 type UpdateDocumentReqRequest struct {
 	state      protoimpl.MessageState `protogen:"open.v1"`
-	DocumentId uint64                 `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	RequestId  uint64                 `protobuf:"varint,2,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	DocumentId int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	RequestId  int64                  `protobuf:"varint,2,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
 	// @sanitize
 	Reason        *string                    `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
 	Data          *documents.DocActivityData `protobuf:"bytes,4,opt,name=data,proto3,oneof" json:"data,omitempty"`
@@ -2543,14 +2543,14 @@ func (*UpdateDocumentReqRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{50}
 }
 
-func (x *UpdateDocumentReqRequest) GetDocumentId() uint64 {
+func (x *UpdateDocumentReqRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
 	}
 	return 0
 }
 
-func (x *UpdateDocumentReqRequest) GetRequestId() uint64 {
+func (x *UpdateDocumentReqRequest) GetRequestId() int64 {
 	if x != nil {
 		return x.RequestId
 	}
@@ -2624,7 +2624,7 @@ func (x *UpdateDocumentReqResponse) GetRequest() *documents.DocRequest {
 
 type DeleteDocumentReqRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	RequestId     uint64                 `protobuf:"varint,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	RequestId     int64                  `protobuf:"varint,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2659,7 +2659,7 @@ func (*DeleteDocumentReqRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{52}
 }
 
-func (x *DeleteDocumentReqRequest) GetRequestId() uint64 {
+func (x *DeleteDocumentReqRequest) GetRequestId() int64 {
 	if x != nil {
 		return x.RequestId
 	}
@@ -2704,7 +2704,7 @@ func (*DeleteDocumentReqResponse) Descriptor() ([]byte, []int) {
 
 type GetDocumentAccessRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	DocumentId    uint64                 `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2739,7 +2739,7 @@ func (*GetDocumentAccessRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{54}
 }
 
-func (x *GetDocumentAccessRequest) GetDocumentId() uint64 {
+func (x *GetDocumentAccessRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
 	}
@@ -2792,7 +2792,7 @@ func (x *GetDocumentAccessResponse) GetAccess() *documents.DocumentAccess {
 
 type SetDocumentAccessRequest struct {
 	state         protoimpl.MessageState    `protogen:"open.v1"`
-	DocumentId    uint64                    `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	DocumentId    int64                     `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	Access        *documents.DocumentAccess `protobuf:"bytes,2,opt,name=access,proto3" json:"access,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2828,7 +2828,7 @@ func (*SetDocumentAccessRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{56}
 }
 
-func (x *SetDocumentAccessRequest) GetDocumentId() uint64 {
+func (x *SetDocumentAccessRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
 	}
@@ -3176,7 +3176,7 @@ func (x *CreateOrUpdateCategoryResponse) GetCategory() *documents.Category {
 
 type DeleteCategoryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3211,7 +3211,7 @@ func (*DeleteCategoryRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{64}
 }
 
-func (x *DeleteCategoryRequest) GetId() uint64 {
+func (x *DeleteCategoryRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -3362,7 +3362,7 @@ func (x *ListDocumentPinsResponse) GetDocuments() []*documents.DocumentShort {
 
 type ToggleDocumentPinRequest struct {
 	state      protoimpl.MessageState `protogen:"open.v1"`
-	DocumentId uint64                 `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	DocumentId int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	State      bool                   `protobuf:"varint,2,opt,name=state,proto3" json:"state,omitempty"`
 	// If true, the pin is personal and not shared with other job members
 	Personal      *bool `protobuf:"varint,3,opt,name=personal,proto3,oneof" json:"personal,omitempty"`
@@ -3400,7 +3400,7 @@ func (*ToggleDocumentPinRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{68}
 }
 
-func (x *ToggleDocumentPinRequest) GetDocumentId() uint64 {
+func (x *ToggleDocumentPinRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
 	}
@@ -3467,7 +3467,7 @@ func (x *ToggleDocumentPinResponse) GetPin() *documents.DocumentPin {
 
 type SetDocumentReminderRequest struct {
 	state        protoimpl.MessageState `protogen:"open.v1"`
-	DocumentId   uint64                 `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	DocumentId   int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	ReminderTime *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=reminder_time,json=reminderTime,proto3,oneof" json:"reminder_time,omitempty"`
 	// @sanitize: method=StripTags
 	Message       *string `protobuf:"bytes,3,opt,name=message,proto3,oneof" json:"message,omitempty"`
@@ -3505,7 +3505,7 @@ func (*SetDocumentReminderRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{70}
 }
 
-func (x *SetDocumentReminderRequest) GetDocumentId() uint64 {
+func (x *SetDocumentReminderRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
 	}
@@ -3571,7 +3571,7 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x15ListTemplatesResponse\x12@\n" +
 	"\ttemplates\x18\x01 \x03(\v2\".resources.documents.TemplateShortR\ttemplates\"\xa2\x01\n" +
 	"\x12GetTemplateRequest\x12\x1f\n" +
-	"\vtemplate_id\x18\x01 \x01(\x04R\n" +
+	"\vtemplate_id\x18\x01 \x01(\x03R\n" +
 	"templateId\x12:\n" +
 	"\x04data\x18\x02 \x01(\v2!.resources.documents.TemplateDataH\x00R\x04data\x88\x01\x01\x12\x1b\n" +
 	"\x06render\x18\x03 \x01(\bH\x01R\x06render\x88\x01\x01B\a\n" +
@@ -3583,13 +3583,13 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x15CreateTemplateRequest\x12A\n" +
 	"\btemplate\x18\x01 \x01(\v2\x1d.resources.documents.TemplateB\x06\xbaH\x03\xc8\x01\x01R\btemplate\"(\n" +
 	"\x16CreateTemplateResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"Z\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"Z\n" +
 	"\x15UpdateTemplateRequest\x12A\n" +
 	"\btemplate\x18\x01 \x01(\v2\x1d.resources.documents.TemplateB\x06\xbaH\x03\xc8\x01\x01R\btemplate\"S\n" +
 	"\x16UpdateTemplateResponse\x129\n" +
 	"\btemplate\x18\x01 \x01(\v2\x1d.resources.documents.TemplateR\btemplate\"'\n" +
 	"\x15DeleteTemplateRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"\x18\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\x18\n" +
 	"\x16DeleteTemplateResponse\"\xc1\x04\n" +
 	"\x14ListDocumentsRequest\x12T\n" +
 	"\n" +
@@ -3597,13 +3597,13 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"pagination\x128\n" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12$\n" +
 	"\x06search\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x18@H\x01R\x06search\x88\x01\x01\x12+\n" +
-	"\fcategory_ids\x18\x04 \x03(\x04B\b\xbaH\x05\x92\x01\x02\x10\x05R\vcategoryIds\x12)\n" +
+	"\fcategory_ids\x18\x04 \x03(\x03B\b\xbaH\x05\x92\x01\x02\x10\x05R\vcategoryIds\x12)\n" +
 	"\vcreator_ids\x18\x05 \x03(\x05B\b\xbaH\x05\x92\x01\x02\x10\x05R\n" +
 	"creatorIds\x127\n" +
 	"\x04from\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\x04from\x88\x01\x01\x123\n" +
 	"\x02to\x18\a \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\x02to\x88\x01\x01\x12\x1b\n" +
 	"\x06closed\x18\b \x01(\bH\x04R\x06closed\x88\x01\x01\x12+\n" +
-	"\fdocument_ids\x18\t \x03(\x04B\b\xbaH\x05\x92\x01\x02\x10\x05R\vdocumentIds\x12$\n" +
+	"\fdocument_ids\x18\t \x03(\x03B\b\xbaH\x05\x92\x01\x02\x10\x05R\vdocumentIds\x12$\n" +
 	"\vonly_drafts\x18\n" +
 	" \x01(\bH\x05R\n" +
 	"onlyDrafts\x88\x01\x01B\a\n" +
@@ -3619,7 +3619,7 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"pagination\x12@\n" +
 	"\tdocuments\x18\x02 \x03(\v2\".resources.documents.DocumentShortR\tdocuments\"e\n" +
 	"\x12GetDocumentRequest\x12\x1f\n" +
-	"\vdocument_id\x18\x01 \x01(\x04R\n" +
+	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12 \n" +
 	"\tinfo_only\x18\x02 \x01(\bH\x00R\binfoOnly\x88\x01\x01B\f\n" +
 	"\n" +
@@ -3628,36 +3628,36 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\bdocument\x18\x01 \x01(\v2\x1d.resources.documents.DocumentR\bdocument\x12;\n" +
 	"\x06access\x18\x02 \x01(\v2#.resources.documents.DocumentAccessR\x06access\"?\n" +
 	"\x1cGetDocumentReferencesRequest\x12\x1f\n" +
-	"\vdocument_id\x18\x01 \x01(\x04R\n" +
+	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\"\x7f\n" +
 	"\x1dGetDocumentReferencesResponse\x12^\n" +
 	"\n" +
 	"references\x18\x01 \x03(\v2&.resources.documents.DocumentReferenceB\x16\x9a\x84\x9e\x03\x11alias:\"reference\"R\n" +
 	"references\">\n" +
 	"\x1bGetDocumentRelationsRequest\x12\x1f\n" +
-	"\vdocument_id\x18\x01 \x01(\x04R\n" +
+	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\"z\n" +
 	"\x1cGetDocumentRelationsResponse\x12Z\n" +
 	"\trelations\x18\x01 \x03(\v2%.resources.documents.DocumentRelationB\x15\x9a\x84\x9e\x03\x10alias:\"relation\"R\trelations\"k\n" +
 	"\x1bAddDocumentReferenceRequest\x12L\n" +
 	"\treference\x18\x01 \x01(\v2&.resources.documents.DocumentReferenceB\x06\xbaH\x03\xc8\x01\x01R\treference\".\n" +
 	"\x1cAddDocumentReferenceResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"0\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"0\n" +
 	"\x1eRemoveDocumentReferenceRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"!\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"!\n" +
 	"\x1fRemoveDocumentReferenceResponse\"g\n" +
 	"\x1aAddDocumentRelationRequest\x12I\n" +
 	"\brelation\x18\x01 \x01(\v2%.resources.documents.DocumentRelationB\x06\xbaH\x03\xc8\x01\x01R\brelation\"-\n" +
 	"\x1bAddDocumentRelationResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"/\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"/\n" +
 	"\x1dRemoveDocumentRelationRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\" \n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\" \n" +
 	"\x1eRemoveDocumentRelationResponse\"\x8b\x01\n" +
 	"\x12GetCommentsRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12\x1f\n" +
-	"\vdocument_id\x18\x02 \x01(\x04R\n" +
+	"\vdocument_id\x18\x02 \x01(\x03R\n" +
 	"documentId\"\x9e\x01\n" +
 	"\x13GetCommentsResponse\x12M\n" +
 	"\n" +
@@ -3674,12 +3674,12 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\acomment\x18\x01 \x01(\v2\x1c.resources.documents.CommentR\acomment\"5\n" +
 	"\x14DeleteCommentRequest\x12\x1d\n" +
 	"\n" +
-	"comment_id\x18\x01 \x01(\x04R\tcommentId\"\x17\n" +
+	"comment_id\x18\x01 \x01(\x03R\tcommentId\"\x17\n" +
 	"\x15DeleteCommentResponse\"S\n" +
 	"\x16UpdateDocumentResponse\x129\n" +
 	"\bdocument\x18\x01 \x01(\v2\x1d.resources.documents.DocumentR\bdocument\"\x80\x01\n" +
 	"\x15DeleteDocumentRequest\x120\n" +
-	"\vdocument_id\x18\x01 \x01(\x04B\x0f\x9a\x84\x9e\x03\n" +
+	"\vdocument_id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\n" +
 	"documentId\x12*\n" +
 	"\x06reason\x18\x02 \x01(\tB\r\xbaH\n" +
@@ -3687,30 +3687,30 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\a_reason\"\x18\n" +
 	"\x16DeleteDocumentResponse\"P\n" +
 	"\x15ToggleDocumentRequest\x12\x1f\n" +
-	"\vdocument_id\x18\x01 \x01(\x04R\n" +
+	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12\x16\n" +
 	"\x06closed\x18\x02 \x01(\bR\x06closed\"\x18\n" +
 	"\x16ToggleDocumentResponse\"r\n" +
 	"\x1aChangeDocumentOwnerRequest\x12\x1f\n" +
-	"\vdocument_id\x18\x01 \x01(\x04R\n" +
+	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12#\n" +
 	"\vnew_user_id\x18\x02 \x01(\x05H\x00R\tnewUserId\x88\x01\x01B\x0e\n" +
 	"\f_new_user_id\"\x1d\n" +
 	"\x1bChangeDocumentOwnerResponse\"\x80\x02\n" +
 	"\x15CreateDocumentRequest\x12R\n" +
 	"\fcontent_type\x18\x01 \x01(\x0e2%.resources.common.content.ContentTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\vcontentType\x12$\n" +
-	"\vtemplate_id\x18\x02 \x01(\x04H\x00R\n" +
+	"\vtemplate_id\x18\x02 \x01(\x03H\x00R\n" +
 	"templateId\x88\x01\x01\x12K\n" +
 	"\rtemplate_data\x18\x03 \x01(\v2!.resources.documents.TemplateDataH\x01R\ftemplateData\x88\x01\x01B\x0e\n" +
 	"\f_template_idB\x10\n" +
 	"\x0e_template_data\"(\n" +
 	"\x16CreateDocumentResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"\xe3\x04\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xe3\x04\n" +
 	"\x15UpdateDocumentRequest\x120\n" +
-	"\vdocument_id\x18\x01 \x01(\x04B\x0f\x9a\x84\x9e\x03\n" +
+	"\vdocument_id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\n" +
 	"documentId\x12$\n" +
-	"\vcategory_id\x18\x02 \x01(\x04H\x00R\n" +
+	"\vcategory_id\x18\x02 \x01(\x03H\x00R\n" +
 	"categoryId\x88\x01\x01\x122\n" +
 	"\x05title\x18\x03 \x01(\tB\x1c\x9a\x84\x9e\x03\ralias:\"title\"\xbaH\ar\x05\x10\x03\x18\xff\x01R\x05title\x12;\n" +
 	"\acontent\x18\x04 \x01(\v2!.resources.common.content.ContentR\acontent\x12R\n" +
@@ -3730,7 +3730,7 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12\x1f\n" +
-	"\vdocument_id\x18\x02 \x01(\x04R\n" +
+	"\vdocument_id\x18\x02 \x01(\x03R\n" +
 	"documentId\x12f\n" +
 	"\x0eactivity_types\x18\x03 \x03(\x0e2$.resources.documents.DocActivityTypeB\x19\xbaH\x16\x92\x01\x13\x10\n" +
 	"\"\x0f\x82\x01\f\x18\r\x18\x0e\x18\x0f\x18\x10\x18\x11\x18\x12R\ractivityTypes\"\xab\x01\n" +
@@ -3743,7 +3743,7 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12\x1f\n" +
-	"\vdocument_id\x18\x02 \x01(\x04R\n" +
+	"\vdocument_id\x18\x02 \x01(\x03R\n" +
 	"documentId\"\xa6\x01\n" +
 	"\x18ListDocumentReqsResponse\x12M\n" +
 	"\n" +
@@ -3751,7 +3751,7 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"pagination\x12;\n" +
 	"\brequests\x18\x02 \x03(\v2\x1f.resources.documents.DocRequestR\brequests\"\x92\x02\n" +
 	"\x18CreateDocumentReqRequest\x12\x1f\n" +
-	"\vdocument_id\x18\x01 \x01(\x04R\n" +
+	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12[\n" +
 	"\frequest_type\x18\x02 \x01(\x0e2$.resources.documents.DocActivityTypeB\x12\xbaH\x0f\x82\x01\f\x18\r\x18\x0e\x18\x0f\x18\x10\x18\x11\x18\x12R\vrequestType\x12%\n" +
 	"\x06reason\x18\x03 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x00R\x06reason\x88\x01\x01\x12=\n" +
@@ -3761,10 +3761,10 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x19CreateDocumentReqResponse\x129\n" +
 	"\arequest\x18\x01 \x01(\v2\x1f.resources.documents.DocRequestR\arequest\"\xf0\x01\n" +
 	"\x18UpdateDocumentReqRequest\x12\x1f\n" +
-	"\vdocument_id\x18\x01 \x01(\x04R\n" +
+	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12\x1d\n" +
 	"\n" +
-	"request_id\x18\x02 \x01(\x04R\trequestId\x12%\n" +
+	"request_id\x18\x02 \x01(\x03R\trequestId\x12%\n" +
 	"\x06reason\x18\x03 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x00R\x06reason\x88\x01\x01\x12=\n" +
 	"\x04data\x18\x04 \x01(\v2$.resources.documents.DocActivityDataH\x01R\x04data\x88\x01\x01\x12\x1a\n" +
 	"\baccepted\x18\x05 \x01(\bR\bacceptedB\t\n" +
@@ -3774,15 +3774,15 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\arequest\x18\x01 \x01(\v2\x1f.resources.documents.DocRequestR\arequest\"9\n" +
 	"\x18DeleteDocumentReqRequest\x12\x1d\n" +
 	"\n" +
-	"request_id\x18\x01 \x01(\x04R\trequestId\"\x1b\n" +
+	"request_id\x18\x01 \x01(\x03R\trequestId\"\x1b\n" +
 	"\x19DeleteDocumentReqResponse\";\n" +
 	"\x18GetDocumentAccessRequest\x12\x1f\n" +
-	"\vdocument_id\x18\x01 \x01(\x04R\n" +
+	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\"`\n" +
 	"\x19GetDocumentAccessResponse\x12C\n" +
 	"\x06access\x18\x01 \x01(\v2#.resources.documents.DocumentAccessB\x06\xbaH\x03\xc8\x01\x01R\x06access\"\x80\x01\n" +
 	"\x18SetDocumentAccessRequest\x12\x1f\n" +
-	"\vdocument_id\x18\x01 \x01(\x04R\n" +
+	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12C\n" +
 	"\x06access\x18\x02 \x01(\v2#.resources.documents.DocumentAccessB\x06\xbaH\x03\xc8\x01\x01R\x06access\"\x1b\n" +
 	"\x19SetDocumentAccessResponse\"\xc7\x02\n" +
@@ -3811,7 +3811,7 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x1eCreateOrUpdateCategoryResponse\x12A\n" +
 	"\bcategory\x18\x01 \x01(\v2\x1d.resources.documents.CategoryB\x06\xbaH\x03\xc8\x01\x01R\bcategory\"'\n" +
 	"\x15DeleteCategoryRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"\x18\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\x18\n" +
 	"\x16DeleteCategoryResponse\"\x9d\x01\n" +
 	"\x17ListDocumentPinsRequest\x12T\n" +
 	"\n" +
@@ -3825,7 +3825,7 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"pagination\x12@\n" +
 	"\tdocuments\x18\x02 \x03(\v2\".resources.documents.DocumentShortR\tdocuments\"\x7f\n" +
 	"\x18ToggleDocumentPinRequest\x12\x1f\n" +
-	"\vdocument_id\x18\x01 \x01(\x04R\n" +
+	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12\x14\n" +
 	"\x05state\x18\x02 \x01(\bR\x05state\x12\x1f\n" +
 	"\bpersonal\x18\x03 \x01(\bH\x00R\bpersonal\x88\x01\x01B\v\n" +
@@ -3834,7 +3834,7 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x03pin\x18\x01 \x01(\v2 .resources.documents.DocumentPinB\x10\x9a\x84\x9e\x03\valias:\"pin\"H\x00R\x03pin\x88\x01\x01B\x06\n" +
 	"\x04_pin\"\xce\x01\n" +
 	"\x1aSetDocumentReminderRequest\x12\x1f\n" +
-	"\vdocument_id\x18\x01 \x01(\x04R\n" +
+	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12H\n" +
 	"\rreminder_time\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\freminderTime\x88\x01\x01\x12'\n" +
 	"\amessage\x18\x03 \x01(\tB\b\xbaH\x05r\x03(\x80\bH\x01R\amessage\x88\x01\x01B\x10\n" +

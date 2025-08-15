@@ -304,7 +304,7 @@ func (s *Server) getDocumentQuery(
 func (s *Server) updateDocumentOwner(
 	ctx context.Context,
 	tx qrm.DB,
-	documentId uint64,
+	documentId int64,
 	userInfo *userinfo.UserInfo,
 	newOwner *users.UserShort,
 ) error {
@@ -316,7 +316,7 @@ func (s *Server) updateDocumentOwner(
 			newOwner.GetUserId(),
 		).
 		WHERE(
-			tDocument.ID.EQ(jet.Uint64(documentId)),
+			tDocument.ID.EQ(jet.Int64(documentId)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {

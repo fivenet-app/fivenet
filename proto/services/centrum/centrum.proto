@@ -19,12 +19,12 @@ option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/
 
 message ListDispatchActivityRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
-  uint64 id = 2;
+  int64 id = 2;
 }
 
 message ListUnitActivityRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
-  uint64 id = 2;
+  int64 id = 2;
 }
 
 message GetSettingsRequest {}
@@ -60,13 +60,13 @@ message CreateOrUpdateUnitResponse {
 }
 
 message DeleteUnitRequest {
-  uint64 unit_id = 1;
+  int64 unit_id = 1;
 }
 
 message DeleteUnitResponse {}
 
 message UpdateUnitStatusRequest {
-  uint64 unit_id = 1;
+  int64 unit_id = 1;
   resources.centrum.StatusUnit status = 2 [(buf.validate.field).enum.defined_only = true];
   // @sanitize
   optional string reason = 3 [(buf.validate.field).string.max_len = 255];
@@ -77,7 +77,7 @@ message UpdateUnitStatusRequest {
 message UpdateUnitStatusResponse {}
 
 message AssignUnitRequest {
-  uint64 unit_id = 1;
+  int64 unit_id = 1;
   repeated int32 to_add = 2;
   repeated int32 to_remove = 3;
 }
@@ -116,7 +116,7 @@ message ListDispatchesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   repeated resources.centrum.StatusDispatch status = 2 [(buf.validate.field).repeated.items.enum.defined_only = true];
   repeated resources.centrum.StatusDispatch not_status = 3 [(buf.validate.field).repeated.items.enum.defined_only = true];
-  repeated uint64 ids = 4 [(buf.validate.field).repeated.max_items = 10];
+  repeated int64 ids = 4 [(buf.validate.field).repeated.max_items = 10];
   optional string postal = 5 [(buf.validate.field).string.max_len = 12];
 }
 
@@ -126,7 +126,7 @@ message ListDispatchesResponse {
 }
 
 message GetDispatchRequest {
-  uint64 id = 1 [(buf.validate.field).uint64.gt = 0];
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
 }
 
 message GetDispatchResponse {
@@ -150,7 +150,7 @@ message UpdateDispatchResponse {
 }
 
 message DeleteDispatchRequest {
-  uint64 id = 1 [(buf.validate.field).uint64.gt = 0];
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
 }
 
 message DeleteDispatchResponse {}
@@ -162,7 +162,7 @@ message ListDispatchTargetJobsResponse {
 }
 
 message UpdateDispatchStatusRequest {
-  uint64 dispatch_id = 1;
+  int64 dispatch_id = 1;
   resources.centrum.StatusDispatch status = 2 [(buf.validate.field).enum.defined_only = true];
   // @sanitize
   optional string reason = 3 [(buf.validate.field).string.max_len = 255];
@@ -173,9 +173,9 @@ message UpdateDispatchStatusRequest {
 message UpdateDispatchStatusResponse {}
 
 message AssignDispatchRequest {
-  uint64 dispatch_id = 1;
-  repeated uint64 to_add = 2;
-  repeated uint64 to_remove = 3;
+  int64 dispatch_id = 1;
+  repeated int64 to_add = 2;
+  repeated int64 to_remove = 3;
   optional bool forced = 4;
 }
 
@@ -187,7 +187,7 @@ message ListDispatchActivityResponse {
 }
 
 message JoinUnitRequest {
-  optional uint64 unit_id = 1;
+  optional int64 unit_id = 1;
 }
 
 message JoinUnitResponse {
@@ -195,7 +195,7 @@ message JoinUnitResponse {
 }
 
 message TakeDispatchRequest {
-  repeated uint64 dispatch_ids = 1 [(buf.validate.field).repeated.min_items = 1];
+  repeated int64 dispatch_ids = 1 [(buf.validate.field).repeated.min_items = 1];
   resources.centrum.TakeDispatchResp resp = 2 [(buf.validate.field).enum.defined_only = true];
   // @sanitize
   optional string reason = 3 [(buf.validate.field).string.max_len = 255];
@@ -211,7 +211,7 @@ message StreamHandshake {
 
 message LatestState {
   Dispatchers dispatchers = 1;
-  optional uint64 own_unit_id = 2;
+  optional int64 own_unit_id = 2;
   // Send the current units and dispatches
   repeated resources.centrum.Unit units = 3;
   repeated resources.centrum.Dispatch dispatches = 4;
@@ -230,11 +230,11 @@ message StreamResponse {
     JobAccess job_access = 4;
     resources.centrum.Dispatchers dispatchers = 5;
 
-    uint64 unit_deleted = 6;
+    int64 unit_deleted = 6;
     resources.centrum.Unit unit_updated = 7;
     resources.centrum.UnitStatus unit_status = 8;
 
-    uint64 dispatch_deleted = 9;
+    int64 dispatch_deleted = 9;
     resources.centrum.Dispatch dispatch_updated = 10;
     resources.centrum.DispatchStatus dispatch_status = 11;
   }

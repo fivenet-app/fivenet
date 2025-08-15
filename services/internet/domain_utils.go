@@ -86,13 +86,13 @@ func (s *Server) getDomainByCondition(
 func (s *Server) getDomainByTLDAndName(
 	ctx context.Context,
 	tx *sql.DB,
-	tldId uint64,
+	tldId int64,
 	name string,
 ) (*internet.Domain, error) {
 	domain, _ := cleanAndSplitDomain(name)
 	return s.getDomainByCondition(ctx, tx,
 		jet.AND(
-			tTLDs.ID.EQ(jet.Uint64(tldId)),
+			tTLDs.ID.EQ(jet.Int64(tldId)),
 			tDomains.Name.EQ(jet.String(domain)),
 			tDomains.DeletedAt.IS_NULL(),
 		),
@@ -117,10 +117,10 @@ func (s *Server) getDomainByName(
 func (s *Server) getDomainById(
 	ctx context.Context,
 	tx *sql.DB,
-	id uint64,
+	id int64,
 ) (*internet.Domain, error) {
 	return s.getDomainByCondition(ctx, tx,
-		tDomains.ID.EQ(jet.Uint64(id)).
+		tDomains.ID.EQ(jet.Int64(id)).
 			AND(tDomains.DeletedAt.IS_NULL()),
 	)
 }

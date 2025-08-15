@@ -27,7 +27,7 @@ message UserMarker {
   optional int32 job_grade = 13;
 
   resources.jobs.Colleague user = 9 [(tagger.tags) = "alias:\"user\""];
-  optional uint64 unit_id = 10;
+  optional int64 unit_id = 10;
   optional resources.centrum.Unit unit = 11;
 
   bool hidden = 12;

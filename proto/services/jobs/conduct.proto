@@ -17,7 +17,7 @@ message ListConductEntriesRequest {
   repeated resources.jobs.ConductType types = 3;
   optional bool show_expired = 4;
   repeated int32 user_ids = 5;
-  repeated uint64 ids = 6;
+  repeated int64 ids = 6;
 }
 
 message ListConductEntriesResponse {
@@ -42,7 +42,7 @@ message UpdateConductEntryResponse {
 }
 
 message DeleteConductEntryRequest {
-  uint64 id = 1;
+  int64 id = 1;
 }
 
 message DeleteConductEntryResponse {}

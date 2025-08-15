@@ -21,7 +21,7 @@ export interface UserInfo {
      */
     enabled: boolean;
     /**
-     * @generated from protobuf field: uint64 account_id = 2
+     * @generated from protobuf field: int64 account_id = 2
      */
     accountId: number;
     /**
@@ -74,7 +74,7 @@ export interface PollReq {
     /**
      * The account the user belongs to
      *
-     * @generated from protobuf field: uint64 account_id = 1
+     * @generated from protobuf field: int64 account_id = 1
      */
     accountId: number;
     /**
@@ -93,7 +93,7 @@ export interface UserInfoChanged {
     /**
      * The account the user belongs to
      *
-     * @generated from protobuf field: uint64 account_id = 1
+     * @generated from protobuf field: int64 account_id = 1
      */
     accountId: number;
     /**
@@ -148,7 +148,7 @@ class UserInfo$Type extends MessageType<UserInfo> {
     constructor() {
         super("resources.userinfo.UserInfo", [
             { no: 1, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "account_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "account_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "license", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "last_char", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 5, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
@@ -184,8 +184,8 @@ class UserInfo$Type extends MessageType<UserInfo> {
                 case /* bool enabled */ 1:
                     message.enabled = reader.bool();
                     break;
-                case /* uint64 account_id */ 2:
-                    message.accountId = reader.uint64().toNumber();
+                case /* int64 account_id */ 2:
+                    message.accountId = reader.int64().toNumber();
                     break;
                 case /* string license */ 3:
                     message.license = reader.string();
@@ -232,9 +232,9 @@ class UserInfo$Type extends MessageType<UserInfo> {
         /* bool enabled = 1; */
         if (message.enabled !== false)
             writer.tag(1, WireType.Varint).bool(message.enabled);
-        /* uint64 account_id = 2; */
+        /* int64 account_id = 2; */
         if (message.accountId !== 0)
-            writer.tag(2, WireType.Varint).uint64(message.accountId);
+            writer.tag(2, WireType.Varint).int64(message.accountId);
         /* string license = 3; */
         if (message.license !== "")
             writer.tag(3, WireType.LengthDelimited).string(message.license);
@@ -279,7 +279,7 @@ export const UserInfo = new UserInfo$Type();
 class PollReq$Type extends MessageType<PollReq> {
     constructor() {
         super("resources.userinfo.PollReq", [
-            { no: 1, name: "account_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "account_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
@@ -296,8 +296,8 @@ class PollReq$Type extends MessageType<PollReq> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 account_id */ 1:
-                    message.accountId = reader.uint64().toNumber();
+                case /* int64 account_id */ 1:
+                    message.accountId = reader.int64().toNumber();
                     break;
                 case /* int32 user_id */ 2:
                     message.userId = reader.int32();
@@ -314,9 +314,9 @@ class PollReq$Type extends MessageType<PollReq> {
         return message;
     }
     internalBinaryWrite(message: PollReq, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 account_id = 1; */
+        /* int64 account_id = 1; */
         if (message.accountId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.accountId);
+            writer.tag(1, WireType.Varint).int64(message.accountId);
         /* int32 user_id = 2; */
         if (message.userId !== 0)
             writer.tag(2, WireType.Varint).int32(message.userId);
@@ -334,7 +334,7 @@ export const PollReq = new PollReq$Type();
 class UserInfoChanged$Type extends MessageType<UserInfoChanged> {
     constructor() {
         super("resources.userinfo.UserInfoChanged", [
-            { no: 1, name: "account_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "account_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "old_job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "new_job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
@@ -362,8 +362,8 @@ class UserInfoChanged$Type extends MessageType<UserInfoChanged> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 account_id */ 1:
-                    message.accountId = reader.uint64().toNumber();
+                case /* int64 account_id */ 1:
+                    message.accountId = reader.int64().toNumber();
                     break;
                 case /* int32 user_id */ 2:
                     message.userId = reader.int32();
@@ -401,9 +401,9 @@ class UserInfoChanged$Type extends MessageType<UserInfoChanged> {
         return message;
     }
     internalBinaryWrite(message: UserInfoChanged, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 account_id = 1; */
+        /* int64 account_id = 1; */
         if (message.accountId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.accountId);
+            writer.tag(1, WireType.Varint).int64(message.accountId);
         /* int32 user_id = 2; */
         if (message.userId !== 0)
             writer.tag(2, WireType.Varint).int32(message.userId);

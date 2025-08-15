@@ -24,7 +24,7 @@ func (s *Server) ListCalendarEntryRSVP(
 ) (*pbcalendar.ListCalendarEntryRSVPResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.GetEntryId())))
+	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Int64(req.GetEntryId())))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -50,7 +50,7 @@ func (s *Server) ListCalendarEntryRSVP(
 	tUser := tables.User().AS("user_short")
 	tAvatar := table.FivenetFiles.AS("avatar")
 
-	condition := tCalendarRSVP.EntryID.EQ(jet.Uint64(entry.GetId())).
+	condition := tCalendarRSVP.EntryID.EQ(jet.Int64(entry.GetId())).
 		AND(tCalendarRSVP.Response.GT(jet.Int32(int32(calendar.RsvpResponses_RSVP_RESPONSES_HIDDEN))))
 
 	countStmt := tCalendarRSVP.
@@ -148,7 +148,7 @@ func (s *Server) RSVPCalendarEntry(
 	entry, err := s.getEntry(
 		ctx,
 		userInfo,
-		tCalendarEntry.ID.EQ(jet.Uint64(req.GetEntry().GetEntryId())),
+		tCalendarEntry.ID.EQ(jet.Int64(req.GetEntry().GetEntryId())),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
@@ -220,7 +220,7 @@ func (s *Server) RSVPCalendarEntry(
 
 func (s *Server) getRSVPCalendarEntry(
 	ctx context.Context,
-	entryId uint64,
+	entryId int64,
 	userId int32,
 ) (*calendar.CalendarEntryRSVP, error) {
 	tUser := tables.User().AS("user_short")
@@ -254,7 +254,7 @@ func (s *Server) getRSVPCalendarEntry(
 			),
 		).
 		WHERE(jet.AND(
-			tCalendarRSVP.EntryID.EQ(jet.Uint64(entryId)),
+			tCalendarRSVP.EntryID.EQ(jet.Int64(entryId)),
 			tCalendarRSVP.UserID.EQ(jet.Int32(userId)),
 		)).
 		LIMIT(1)

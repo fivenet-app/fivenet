@@ -113,7 +113,7 @@ func (x *ListTLDsResponse) GetTlds() []*internet.TLD {
 
 type CheckDomainAvailabilityRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	TldId uint64                 `protobuf:"varint,1,opt,name=tld_id,json=tldId,proto3" json:"tld_id,omitempty"`
+	TldId int64                  `protobuf:"varint,1,opt,name=tld_id,json=tldId,proto3" json:"tld_id,omitempty"`
 	// @sanitize: method=StripTags
 	Name          string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -150,7 +150,7 @@ func (*CheckDomainAvailabilityRequest) Descriptor() ([]byte, []int) {
 	return file_services_internet_domain_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *CheckDomainAvailabilityRequest) GetTldId() uint64 {
+func (x *CheckDomainAvailabilityRequest) GetTldId() int64 {
 	if x != nil {
 		return x.TldId
 	}
@@ -218,7 +218,7 @@ func (x *CheckDomainAvailabilityResponse) GetTransferable() bool {
 
 type RegisterDomainRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	TldId uint64                 `protobuf:"varint,1,opt,name=tld_id,json=tldId,proto3" json:"tld_id,omitempty"`
+	TldId int64                  `protobuf:"varint,1,opt,name=tld_id,json=tldId,proto3" json:"tld_id,omitempty"`
 	// @sanitize: method=StripTags
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// In case a domain will be transfered
@@ -257,7 +257,7 @@ func (*RegisterDomainRequest) Descriptor() ([]byte, []int) {
 	return file_services_internet_domain_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *RegisterDomainRequest) GetTldId() uint64 {
+func (x *RegisterDomainRequest) GetTldId() int64 {
 	if x != nil {
 		return x.TldId
 	}
@@ -420,7 +420,7 @@ func (x *ListDomainsResponse) GetDomains() []*internet.Domain {
 
 type UpdateDomainRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	DomainId      uint64                 `protobuf:"varint,1,opt,name=domain_id,json=domainId,proto3" json:"domain_id,omitempty"`
+	DomainId      int64                  `protobuf:"varint,1,opt,name=domain_id,json=domainId,proto3" json:"domain_id,omitempty"`
 	Transferable  bool                   `protobuf:"varint,2,opt,name=transferable,proto3" json:"transferable,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -456,7 +456,7 @@ func (*UpdateDomainRequest) Descriptor() ([]byte, []int) {
 	return file_services_internet_domain_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *UpdateDomainRequest) GetDomainId() uint64 {
+func (x *UpdateDomainRequest) GetDomainId() int64 {
 	if x != nil {
 		return x.DomainId
 	}
@@ -525,14 +525,14 @@ const file_services_internet_domain_proto_rawDesc = "" +
 	"\x10ListTLDsResponse\x12+\n" +
 	"\x04tlds\x18\x01 \x03(\v2\x17.resources.internet.TLDR\x04tlds\"V\n" +
 	"\x1eCheckDomainAvailabilityRequest\x12\x15\n" +
-	"\x06tld_id\x18\x01 \x01(\x04R\x05tldId\x12\x1d\n" +
+	"\x06tld_id\x18\x01 \x01(\x03R\x05tldId\x12\x1d\n" +
 	"\x04name\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x10\x03\x18<R\x04name\"y\n" +
 	"\x1fCheckDomainAvailabilityResponse\x12\x1c\n" +
 	"\tavailable\x18\x01 \x01(\bR\tavailable\x12'\n" +
 	"\ftransferable\x18\x02 \x01(\bH\x00R\ftransferable\x88\x01\x01B\x0f\n" +
 	"\r_transferable\"\xa2\x01\n" +
 	"\x15RegisterDomainRequest\x12\x15\n" +
-	"\x06tld_id\x18\x01 \x01(\x04R\x05tldId\x12\x1d\n" +
+	"\x06tld_id\x18\x01 \x01(\x03R\x05tldId\x12\x1d\n" +
 	"\x04name\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x10\x03\x18<R\x04name\x12A\n" +
 	"\rtransfer_code\x18\x03 \x01(\tB\x17\xbaH\x14r\x122\r^[0-9A-Z]{6}$\x98\x01\n" +
 	"H\x00R\ftransferCode\x88\x01\x01B\x10\n" +
@@ -549,7 +549,7 @@ const file_services_internet_domain_proto_rawDesc = "" +
 	"pagination\x124\n" +
 	"\adomains\x18\x02 \x03(\v2\x1a.resources.internet.DomainR\adomains\"V\n" +
 	"\x13UpdateDomainRequest\x12\x1b\n" +
-	"\tdomain_id\x18\x01 \x01(\x04R\bdomainId\x12\"\n" +
+	"\tdomain_id\x18\x01 \x01(\x03R\bdomainId\x12\"\n" +
 	"\ftransferable\x18\x02 \x01(\bR\ftransferable\"J\n" +
 	"\x14UpdateDomainResponse\x122\n" +
 	"\x06domain\x18\x01 \x01(\v2\x1a.resources.internet.DomainR\x06domain2\x8d\x04\n" +

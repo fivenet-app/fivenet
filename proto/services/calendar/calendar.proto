@@ -25,7 +25,7 @@ message ListCalendarsResponse {
 }
 
 message GetCalendarRequest {
-  uint64 calendar_id = 1;
+  int64 calendar_id = 1;
 }
 
 message GetCalendarResponse {
@@ -49,7 +49,7 @@ message UpdateCalendarResponse {
 }
 
 message DeleteCalendarRequest {
-  uint64 calendar_id = 1;
+  int64 calendar_id = 1;
 }
 
 message DeleteCalendarResponse {}
@@ -62,7 +62,7 @@ message ListCalendarEntriesRequest {
     gte: 1
     lte: 12
   }];
-  repeated uint64 calendar_ids = 3;
+  repeated int64 calendar_ids = 3;
   optional bool show_hidden = 4;
   optional resources.timestamp.Timestamp after = 5;
 }
@@ -80,7 +80,7 @@ message GetUpcomingEntriesResponse {
 }
 
 message GetCalendarEntryRequest {
-  uint64 entry_id = 1;
+  int64 entry_id = 1;
 }
 
 message GetCalendarEntryResponse {
@@ -97,13 +97,13 @@ message CreateOrUpdateCalendarEntryResponse {
 }
 
 message DeleteCalendarEntryRequest {
-  uint64 entry_id = 1;
+  int64 entry_id = 1;
 }
 
 message DeleteCalendarEntryResponse {}
 
 message ShareCalendarEntryRequest {
-  uint64 entry_id = 1;
+  int64 entry_id = 1;
   repeated int32 user_ids = 2;
 }
 
@@ -113,7 +113,7 @@ message ShareCalendarEntryResponse {}
 
 message ListCalendarEntryRSVPRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
-  uint64 entry_id = 2;
+  int64 entry_id = 2;
 }
 
 message ListCalendarEntryRSVPResponse {

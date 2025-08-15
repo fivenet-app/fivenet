@@ -50,7 +50,7 @@ func (s *Server) GetExamInfo(
 	quali, err := s.getQualificationShort(
 		ctx,
 		req.GetQualificationId(),
-		tQuali.ID.EQ(jet.Uint64(req.GetQualificationId())),
+		tQuali.ID.EQ(jet.Int64(req.GetQualificationId())),
 		userInfo,
 	)
 	if err != nil {
@@ -105,7 +105,7 @@ func (s *Server) checkIfUserCanTakeExam(
 
 func (s *Server) getExamUser(
 	ctx context.Context,
-	qualificationId uint64,
+	qualificationId int64,
 	userId int32,
 ) (*qualifications.ExamUser, error) {
 	stmt := tExamUser.
@@ -119,7 +119,7 @@ func (s *Server) getExamUser(
 		).
 		FROM(tExamUser).
 		WHERE(jet.AND(
-			tExamUser.QualificationID.EQ(jet.Uint64(qualificationId)),
+			tExamUser.QualificationID.EQ(jet.Int64(qualificationId)),
 			tExamUser.UserID.EQ(jet.Int32(userId)),
 		)).
 		LIMIT(1)
@@ -171,7 +171,7 @@ func (s *Server) TakeExam(
 	quali, err := s.getQualificationShort(
 		ctx,
 		req.GetQualificationId(),
-		tQuali.ID.EQ(jet.Uint64(req.GetQualificationId())),
+		tQuali.ID.EQ(jet.Int64(req.GetQualificationId())),
 		userInfo,
 	)
 	if err != nil {
@@ -455,7 +455,7 @@ func (s *Server) GetUserExam(
 func (s *Server) deleteExamUser(
 	ctx context.Context,
 	tx qrm.DB,
-	qualificationId uint64,
+	qualificationId int64,
 	userId int32,
 ) error {
 	tExamUser := table.FivenetQualificationsExamUsers
@@ -463,7 +463,7 @@ func (s *Server) deleteExamUser(
 	stmt := tExamUser.
 		DELETE().
 		WHERE(jet.AND(
-			tExamUser.QualificationID.EQ(jet.Uint64(qualificationId)),
+			tExamUser.QualificationID.EQ(jet.Int64(qualificationId)),
 			tExamUser.UserID.EQ(jet.Int32(userId)),
 		)).
 		LIMIT(1)

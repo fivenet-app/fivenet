@@ -4,13 +4,13 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki"
 )
 
-func mapPagesToNavItems(pages []*wiki.PageShort) map[uint64]*wiki.PageShort {
+func mapPagesToNavItems(pages []*wiki.PageShort) map[int64]*wiki.PageShort {
 	if len(pages) == 0 {
 		return nil
 	}
 
 	var root *wiki.PageShort
-	mapping := map[uint64]*wiki.PageShort{}
+	mapping := map[int64]*wiki.PageShort{}
 	for _, page := range pages {
 		mapping[page.GetId()] = page
 
@@ -86,7 +86,7 @@ func mapPagesToNavItems(pages []*wiki.PageShort) map[uint64]*wiki.PageShort {
 		}, root.GetChildren()...)
 	}
 
-	return map[uint64]*wiki.PageShort{
+	return map[int64]*wiki.PageShort{
 		root.GetId(): {
 			Id:          root.GetId(),
 			Job:         root.GetJob(),

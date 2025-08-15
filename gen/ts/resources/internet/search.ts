@@ -17,7 +17,7 @@ import { Domain } from "./domain";
  */
 export interface SearchResult {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -29,7 +29,7 @@ export interface SearchResult {
      */
     description: string;
     /**
-     * @generated from protobuf field: uint64 domain_id = 4
+     * @generated from protobuf field: int64 domain_id = 4
      */
     domainId: number;
     /**
@@ -45,10 +45,10 @@ export interface SearchResult {
 class SearchResult$Type extends MessageType<SearchResult> {
     constructor() {
         super("resources.internet.SearchResult", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "domain_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "domain_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "domain", kind: "message", T: () => Domain },
             { no: 6, name: "path", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
@@ -69,8 +69,8 @@ class SearchResult$Type extends MessageType<SearchResult> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* string title */ 2:
                     message.title = reader.string();
@@ -78,8 +78,8 @@ class SearchResult$Type extends MessageType<SearchResult> {
                 case /* string description */ 3:
                     message.description = reader.string();
                     break;
-                case /* uint64 domain_id */ 4:
-                    message.domainId = reader.uint64().toNumber();
+                case /* int64 domain_id */ 4:
+                    message.domainId = reader.int64().toNumber();
                     break;
                 case /* optional resources.internet.Domain domain */ 5:
                     message.domain = Domain.internalBinaryRead(reader, reader.uint32(), options, message.domain);
@@ -99,18 +99,18 @@ class SearchResult$Type extends MessageType<SearchResult> {
         return message;
     }
     internalBinaryWrite(message: SearchResult, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* string title = 2; */
         if (message.title !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.title);
         /* string description = 3; */
         if (message.description !== "")
             writer.tag(3, WireType.LengthDelimited).string(message.description);
-        /* uint64 domain_id = 4; */
+        /* int64 domain_id = 4; */
         if (message.domainId !== 0)
-            writer.tag(4, WireType.Varint).uint64(message.domainId);
+            writer.tag(4, WireType.Varint).int64(message.domainId);
         /* optional resources.internet.Domain domain = 5; */
         if (message.domain)
             Domain.internalBinaryWrite(message.domain, writer.tag(5, WireType.LengthDelimited).fork(), options).join();

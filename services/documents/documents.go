@@ -60,7 +60,7 @@ func (s *Server) ListDocuments(
 	if len(req.GetCategoryIds()) > 0 {
 		ids := make([]jet.Expression, len(req.GetCategoryIds()))
 		for i := range req.GetCategoryIds() {
-			ids[i] = jet.Uint64(req.GetCategoryIds()[i])
+			ids[i] = jet.Int64(req.GetCategoryIds()[i])
 		}
 
 		condition = condition.AND(
@@ -96,7 +96,7 @@ func (s *Server) ListDocuments(
 	if len(req.GetDocumentIds()) > 0 {
 		ids := make([]jet.Expression, len(req.GetDocumentIds()))
 		for i := range req.GetDocumentIds() {
-			ids[i] = jet.Uint64(req.GetDocumentIds()[i])
+			ids[i] = jet.Int64(req.GetDocumentIds()[i])
 		}
 
 		condition = condition.AND(
@@ -215,7 +215,7 @@ func (s *Server) GetDocument(
 
 	resp := &pbdocuments.GetDocumentResponse{}
 	resp.Document, err = s.getDocument(ctx,
-		tDocument.ID.EQ(jet.Uint64(req.GetDocumentId())), userInfo, withContent)
+		tDocument.ID.EQ(jet.Int64(req.GetDocumentId())), userInfo, withContent)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -303,7 +303,7 @@ func (s *Server) CreateDocument(
 	var docContent string
 	var docTitle string
 	var docState string
-	var categoryId *uint64
+	var categoryId *int64
 	docAccess := &documents.DocumentAccess{}
 	docReferences := []*documents.DocumentReference{}
 	docRelations := []*documents.DocumentRelation{}
@@ -443,7 +443,7 @@ func (s *Server) CreateDocument(
 	}
 
 	if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
-		DocumentId:   uint64(lastId),
+		DocumentId:   lastId,
 		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_CREATED,
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.GetJob(),
@@ -451,24 +451,24 @@ func (s *Server) CreateDocument(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if err := s.handleDocumentAccessChange(ctx, tx, uint64(lastId), userInfo, docAccess, false); err != nil {
+	if err := s.handleDocumentAccessChange(ctx, tx, lastId, userInfo, docAccess, false); err != nil {
 		return nil, err
 	}
 
 	if tmpl != nil {
-		if err := s.createOrUpdateWorkflowState(ctx, tx, uint64(lastId), tmpl.GetWorkflow()); err != nil {
+		if err := s.createOrUpdateWorkflowState(ctx, tx, lastId, tmpl.GetWorkflow()); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	}
 
 	for _, ref := range docReferences {
-		ref.SourceDocumentId = uint64(lastId)
+		ref.SourceDocumentId = lastId
 		if _, err := s.addDocumentReference(ctx, tx, ref); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	}
 	for _, rel := range docRelations {
-		rel.DocumentId = uint64(lastId)
+		rel.DocumentId = lastId
 		if _, err := s.addDocumentRelation(ctx, tx, userInfo, rel); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
@@ -482,7 +482,7 @@ func (s *Server) CreateDocument(
 	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 
 	return &pbdocuments.CreateDocumentResponse{
-		Id: uint64(lastId),
+		Id: lastId,
 	}, nil
 }
 
@@ -529,7 +529,7 @@ func (s *Server) UpdateDocument(
 	}
 
 	oldDoc, err := s.getDocument(ctx,
-		tDocument.ID.EQ(jet.Uint64(req.GetDocumentId())),
+		tDocument.ID.EQ(jet.Int64(req.GetDocumentId())),
 		userInfo, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -612,7 +612,7 @@ func (s *Server) UpdateDocument(
 				req.GetPublic(),
 			).
 			WHERE(
-				tDocument.ID.EQ(jet.Uint64(oldDoc.GetId())),
+				tDocument.ID.EQ(jet.Int64(oldDoc.GetId())),
 			)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -690,7 +690,7 @@ func (s *Server) UpdateDocument(
 	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
 	doc, err := s.getDocument(ctx,
-		tDocument.ID.EQ(jet.Uint64(req.GetDocumentId())),
+		tDocument.ID.EQ(jet.Int64(req.GetDocumentId())),
 		userInfo, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -746,7 +746,7 @@ func (s *Server) DeleteDocument(
 
 	doc, err := s.getDocument(
 		ctx,
-		tDocument.ID.EQ(jet.Uint64(req.GetDocumentId())),
+		tDocument.ID.EQ(jet.Int64(req.GetDocumentId())),
 		userInfo,
 		false,
 	)
@@ -786,7 +786,7 @@ func (s *Server) DeleteDocument(
 			tDocument.DeletedAt.SET(deletedAtTime),
 		).
 		WHERE(
-			tDocument.ID.EQ(jet.Uint64(req.GetDocumentId())),
+			tDocument.ID.EQ(jet.Int64(req.GetDocumentId())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -842,7 +842,7 @@ func (s *Server) ToggleDocument(
 
 	doc, err := s.getDocument(
 		ctx,
-		tDocument.ID.EQ(jet.Uint64(req.GetDocumentId())),
+		tDocument.ID.EQ(jet.Int64(req.GetDocumentId())),
 		userInfo,
 		false,
 	)
@@ -892,7 +892,7 @@ func (s *Server) ToggleDocument(
 			req.GetClosed(),
 		).
 		WHERE(
-			tDocument.ID.EQ(jet.Uint64(doc.GetId())),
+			tDocument.ID.EQ(jet.Int64(doc.GetId())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -965,7 +965,7 @@ func (s *Server) ChangeDocumentOwner(
 
 	doc, err := s.getDocument(
 		ctx,
-		tDocument.ID.EQ(jet.Uint64(req.GetDocumentId())),
+		tDocument.ID.EQ(jet.Int64(req.GetDocumentId())),
 		userInfo,
 		false,
 	)

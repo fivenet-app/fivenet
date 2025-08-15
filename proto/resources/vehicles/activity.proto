@@ -16,7 +16,7 @@ enum VehicleActivityType {
 }
 
 message VehicleActivity {
-  uint64 id = 1 [(tagger.tags) = "alias:\"vehicle_activity.id\""];
+  int64 id = 1 [(tagger.tags) = "alias:\"vehicle_activity.id\""];
   optional resources.timestamp.Timestamp created_at = 2 [(tagger.tags) = "alias:\"user_activity.created_at\""];
   string plate = 3 [(buf.validate.field).string.max_len = 32];
   VehicleActivityType activity_type = 4 [

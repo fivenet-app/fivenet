@@ -412,7 +412,7 @@ func (x *RegisterAccountRequest) GetLastCharId() int32 {
 type RegisterAccountResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	RegToken      *string                `protobuf:"bytes,1,opt,name=reg_token,json=regToken,proto3,oneof" json:"reg_token,omitempty"`
-	AccountId     *uint64                `protobuf:"varint,2,opt,name=account_id,json=accountId,proto3,oneof" json:"account_id,omitempty"`
+	AccountId     *int64                 `protobuf:"varint,2,opt,name=account_id,json=accountId,proto3,oneof" json:"account_id,omitempty"`
 	Username      *string                `protobuf:"bytes,3,opt,name=username,proto3,oneof" json:"username,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -455,7 +455,7 @@ func (x *RegisterAccountResponse) GetRegToken() string {
 	return ""
 }
 
-func (x *RegisterAccountResponse) GetAccountId() uint64 {
+func (x *RegisterAccountResponse) GetAccountId() int64 {
 	if x != nil && x.AccountId != nil {
 		return *x.AccountId
 	}
@@ -999,7 +999,7 @@ const file_services_sync_sync_proto_rawDesc = "" +
 	"\treg_token\x18\x01 \x01(\tB\x14\xbaH\x11r\x0f2\n" +
 	"^[0-9]{6}$\x98\x01\x06H\x00R\bregToken\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"account_id\x18\x02 \x01(\x04H\x01R\taccountId\x88\x01\x01\x12\x1f\n" +
+	"account_id\x18\x02 \x01(\x03H\x01R\taccountId\x88\x01\x01\x12\x1f\n" +
 	"\busername\x18\x03 \x01(\tH\x02R\busername\x88\x01\x01B\f\n" +
 	"\n" +
 	"_reg_tokenB\r\n" +

@@ -17,7 +17,7 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface TLD {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -50,7 +50,7 @@ export interface TLD {
  */
 export interface Domain {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -66,7 +66,7 @@ export interface Domain {
      */
     deletedAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 tld_id = 5
+     * @generated from protobuf field: int64 tld_id = 5
      */
     tldId: number;
     /**
@@ -106,7 +106,7 @@ export interface Domain {
 class TLD$Type extends MessageType<TLD> {
     constructor() {
         super("resources.internet.TLD", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
@@ -129,8 +129,8 @@ class TLD$Type extends MessageType<TLD> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -162,9 +162,9 @@ class TLD$Type extends MessageType<TLD> {
         return message;
     }
     internalBinaryWrite(message: TLD, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
@@ -197,11 +197,11 @@ export const TLD = new TLD$Type();
 class Domain$Type extends MessageType<Domain> {
     constructor() {
         super("resources.internet.Domain", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 5, name: "tld_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 5, name: "tld_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 6, name: "tld", kind: "message", T: () => TLD },
             { no: 7, name: "active", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 8, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } },
@@ -227,8 +227,8 @@ class Domain$Type extends MessageType<Domain> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -239,8 +239,8 @@ class Domain$Type extends MessageType<Domain> {
                 case /* optional resources.timestamp.Timestamp deleted_at */ 4:
                     message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
                     break;
-                case /* uint64 tld_id */ 5:
-                    message.tldId = reader.uint64().toNumber();
+                case /* int64 tld_id */ 5:
+                    message.tldId = reader.int64().toNumber();
                     break;
                 case /* optional resources.internet.TLD tld */ 6:
                     message.tld = TLD.internalBinaryRead(reader, reader.uint32(), options, message.tld);
@@ -278,9 +278,9 @@ class Domain$Type extends MessageType<Domain> {
         return message;
     }
     internalBinaryWrite(message: Domain, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
@@ -290,9 +290,9 @@ class Domain$Type extends MessageType<Domain> {
         /* optional resources.timestamp.Timestamp deleted_at = 4; */
         if (message.deletedAt)
             Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 tld_id = 5; */
+        /* int64 tld_id = 5; */
         if (message.tldId !== 0)
-            writer.tag(5, WireType.Varint).uint64(message.tldId);
+            writer.tag(5, WireType.Varint).int64(message.tldId);
         /* optional resources.internet.TLD tld = 6; */
         if (message.tld)
             TLD.internalBinaryWrite(message.tld, writer.tag(6, WireType.LengthDelimited).fork(), options).join();

@@ -23,7 +23,7 @@ const (
 
 type IDMapping struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -58,7 +58,7 @@ func (*IDMapping) Descriptor() ([]byte, []int) {
 	return file_resources_common_id_mapping_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *IDMapping) GetId() uint64 {
+func (x *IDMapping) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -71,7 +71,7 @@ const file_resources_common_id_mapping_proto_rawDesc = "" +
 	"\n" +
 	"!resources/common/id_mapping.proto\x12\x10resources.common\"$\n" +
 	"\tIDMapping\x12\x17\n" +
-	"\x02id\x18\x01 \x01(\x04B\a\xbaH\x042\x02 \x00R\x02idBKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common;commonb\x06proto3"
+	"\x02id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02idBKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common;commonb\x06proto3"
 
 var (
 	file_resources_common_id_mapping_proto_rawDescOnce sync.Once

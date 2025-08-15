@@ -86,7 +86,7 @@ func (ConductType) EnumDescriptor() ([]byte, []int) {
 
 type ConductEntry struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
@@ -133,7 +133,7 @@ func (*ConductEntry) Descriptor() ([]byte, []int) {
 	return file_resources_jobs_conduct_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *ConductEntry) GetId() uint64 {
+func (x *ConductEntry) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -223,7 +223,7 @@ const file_resources_jobs_conduct_proto_rawDesc = "" +
 	"\n" +
 	"\x1cresources/jobs/conduct.proto\x12\x0eresources.jobs\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xa7\x06\n" +
 	"\fConductEntry\x121\n" +
-	"\x02id\x18\x01 \x01(\x04B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
+	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +

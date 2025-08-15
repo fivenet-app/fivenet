@@ -17,7 +17,7 @@ enum MarkerType {
 }
 
 message MarkerMarker {
-  uint64 id = 1;
+  int64 id = 1;
   double x = 2;
   double y = 3;
   optional resources.timestamp.Timestamp created_at = 4;

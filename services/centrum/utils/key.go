@@ -6,22 +6,22 @@ import (
 	"strings"
 )
 
-func IdKey(id uint64) string {
-	return strconv.FormatUint(id, 10)
+func IdKey(id int64) string {
+	return strconv.FormatInt(id, 10)
 }
 
-func JobIdKey(job string, id uint64) string {
-	return job + "." + strconv.FormatUint(id, 10)
+func JobIdKey(job string, id int64) string {
+	return job + "." + strconv.FormatInt(id, 10)
 }
 
 // ExtractID takes a key like "police.123" ➜ 123.
-func ExtractID(key string) (uint64, error) {
+func ExtractID(key string) (int64, error) {
 	idx := strings.LastIndexByte(key, '.')
 	if idx < 0 || idx+1 >= len(key) {
 		return 0, fmt.Errorf("key %q does not contain a numeric suffix", key)
 	}
 
-	return strconv.ParseUint(key[idx+1:], 10, 64)
+	return strconv.ParseInt(key[idx+1:], 10, 64)
 }
 
 // ExtractIDString takes a key like "police.123" ➜ 123.

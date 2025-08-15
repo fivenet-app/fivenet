@@ -58,7 +58,7 @@ export interface Colleague {
      */
     phoneNumber?: string;
     /**
-     * @generated from protobuf field: optional uint64 avatar_file_id = 17
+     * @generated from protobuf field: optional int64 avatar_file_id = 17
      */
     avatarFileId?: number;
     /**
@@ -133,7 +133,7 @@ class Colleague$Type extends MessageType<Colleague> {
             { no: 8, name: "lastname", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "50" } } } },
             { no: 9, name: "dateofbirth", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "10" } } } },
             { no: 12, name: "phone_number", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 17, name: "avatar_file_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 17, name: "avatar_file_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 18, name: "avatar", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "alias:\"avatar\"" } },
             { no: 19, name: "props", kind: "message", T: () => ColleagueProps, options: { "tagger.tags": "alias:\"colleague_props\"" } },
             { no: 20, name: "email", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "6", maxLen: "80" } } } }
@@ -186,8 +186,8 @@ class Colleague$Type extends MessageType<Colleague> {
                 case /* optional string phone_number */ 12:
                     message.phoneNumber = reader.string();
                     break;
-                case /* optional uint64 avatar_file_id */ 17:
-                    message.avatarFileId = reader.uint64().toNumber();
+                case /* optional int64 avatar_file_id */ 17:
+                    message.avatarFileId = reader.int64().toNumber();
                     break;
                 case /* optional string avatar */ 18:
                     message.avatar = reader.string();
@@ -240,9 +240,9 @@ class Colleague$Type extends MessageType<Colleague> {
         /* optional string phone_number = 12; */
         if (message.phoneNumber !== undefined)
             writer.tag(12, WireType.LengthDelimited).string(message.phoneNumber);
-        /* optional uint64 avatar_file_id = 17; */
+        /* optional int64 avatar_file_id = 17; */
         if (message.avatarFileId !== undefined)
-            writer.tag(17, WireType.Varint).uint64(message.avatarFileId);
+            writer.tag(17, WireType.Varint).int64(message.avatarFileId);
         /* optional string avatar = 18; */
         if (message.avatar !== undefined)
             writer.tag(18, WireType.LengthDelimited).string(message.avatar);

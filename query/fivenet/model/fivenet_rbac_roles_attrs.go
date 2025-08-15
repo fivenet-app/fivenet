@@ -12,9 +12,9 @@ import (
 )
 
 type FivenetRbacRolesAttrs struct {
-	RoleID    uint64     `sql:"primary_key" json:"role_id"`
+	RoleID    int64      `sql:"primary_key" json:"role_id"`
 	CreatedAt *time.Time `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at"`
-	AttrID    uint64     `sql:"primary_key" json:"attr_id"`
+	AttrID    int64      `sql:"primary_key" json:"attr_id"`
 	Value     string     `json:"value"`
 }

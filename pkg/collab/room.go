@@ -34,7 +34,7 @@ type CollabRoom struct {
 	category string
 
 	// Id is the unique identifier for this room.
-	Id uint64
+	Id int64
 
 	// mu protects the clients map.
 	mu sync.RWMutex
@@ -61,7 +61,7 @@ func NewCollabRoom(
 	ctx context.Context,
 	logger *zap.Logger,
 	stateKV jetstream.KeyValue,
-	roomId uint64,
+	roomId int64,
 	js jetstream.JetStream,
 	category string,
 ) (*CollabRoom, error) {
@@ -81,7 +81,7 @@ func NewCollabRoom(
 	}
 
 	room := &CollabRoom{
-		logger:   logger.Named("room").With(zap.Uint64("room_id", roomId)),
+		logger:   logger.Named("room").With(zap.Int64("room_id", roomId)),
 		category: category,
 
 		Id:       roomId,

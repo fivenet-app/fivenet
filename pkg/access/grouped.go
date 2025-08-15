@@ -123,7 +123,7 @@ func NewGrouped[
 func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) HandleAccessChanges(
 	ctx context.Context,
 	tx qrm.DB,
-	targetId uint64,
+	targetId int64,
 	jobsIn []JobsT,
 	usersIn []UsersT,
 	qualisIn []QualiT,
@@ -159,7 +159,7 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) HandleAccessC
 // CanUserAccessTarget checks if a user can access a specific target based on access rights.
 func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) CanUserAccessTarget(
 	ctx context.Context,
-	targetId uint64,
+	targetId int64,
 	userInfo *pbuserinfo.UserInfo,
 	access V,
 ) (bool, error) {
@@ -172,14 +172,14 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) CanUserAccess
 	ctx context.Context,
 	userInfo *pbuserinfo.UserInfo,
 	access V,
-	targetIds ...uint64,
+	targetIds ...int64,
 ) (bool, error) {
 	out, err := g.CanUserAccessTargetIDs(ctx, userInfo, access, targetIds...)
 	return len(out) == len(targetIds), err
 }
 
 type canAccessIdsHelper struct {
-	IDs []uint64 `alias:"id"`
+	IDs []int64 `alias:"id"`
 }
 
 // CanUserAccessTargetIDs retrieves target IDs that a user can access based on access rights.
@@ -187,8 +187,8 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) CanUserAccess
 	ctx context.Context,
 	userInfo *pbuserinfo.UserInfo,
 	access V,
-	targetIds ...uint64,
-) ([]uint64, error) {
+	targetIds ...int64,
+) ([]int64, error) {
 	if len(targetIds) == 0 {
 		return targetIds, nil
 	}
@@ -213,12 +213,12 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) CanUserAccess
 // getAccessQuery constructs a query to check user access for given target IDs.
 func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) getAccessQuery(
 	userInfo *pbuserinfo.UserInfo,
-	targetIds []uint64,
+	targetIds []int64,
 	access V,
 ) jet.SelectStatement {
 	ids := make([]jet.Expression, len(targetIds))
 	for i := range targetIds {
-		ids[i] = jet.Uint64(targetIds[i])
+		ids[i] = jet.Int64(targetIds[i])
 	}
 
 	from := g.targetTable.

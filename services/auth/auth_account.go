@@ -38,7 +38,7 @@ func (s *Server) GetAccountInfo(
 	}
 
 	// Load account
-	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)))
+	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Int64(claims.AccID)))
 	if err != nil && !errors.Is(err, qrm.ErrNoRows) {
 		return nil, errswrap.NewError(err, ErrGenericAccount)
 	}
@@ -71,7 +71,7 @@ func (s *Server) GetAccountInfo(
 			oAuth2Accounts,
 		).
 		WHERE(
-			oAuth2Accounts.AccountID.EQ(jet.Uint64(acc.ID)),
+			oAuth2Accounts.AccountID.EQ(jet.Int64(acc.ID)),
 		).
 		LIMIT(5)
 

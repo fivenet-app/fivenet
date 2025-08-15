@@ -35,7 +35,7 @@ type Colleague struct {
 	Lastname      string                 `protobuf:"bytes,8,opt,name=lastname,proto3" json:"lastname,omitempty"`
 	Dateofbirth   string                 `protobuf:"bytes,9,opt,name=dateofbirth,proto3" json:"dateofbirth,omitempty"`
 	PhoneNumber   *string                `protobuf:"bytes,12,opt,name=phone_number,json=phoneNumber,proto3,oneof" json:"phone_number,omitempty"`
-	AvatarFileId  *uint64                `protobuf:"varint,17,opt,name=avatar_file_id,json=avatarFileId,proto3,oneof" json:"avatar_file_id,omitempty"`
+	AvatarFileId  *int64                 `protobuf:"varint,17,opt,name=avatar_file_id,json=avatarFileId,proto3,oneof" json:"avatar_file_id,omitempty"`
 	Avatar        *string                `protobuf:"bytes,18,opt,name=avatar,proto3,oneof" json:"avatar,omitempty" alias:"avatar"`
 	Props         *ColleagueProps        `protobuf:"bytes,19,opt,name=props,proto3" json:"props,omitempty" alias:"colleague_props"`
 	// @sanitize: method=StripTags
@@ -144,7 +144,7 @@ func (x *Colleague) GetPhoneNumber() string {
 	return ""
 }
 
-func (x *Colleague) GetAvatarFileId() uint64 {
+func (x *Colleague) GetAvatarFileId() int64 {
 	if x != nil && x.AvatarFileId != nil {
 		return *x.AvatarFileId
 	}
@@ -301,7 +301,7 @@ const file_resources_jobs_colleagues_proto_rawDesc = "" +
 	"\vdateofbirth\x18\t \x01(\tB\a\xbaH\x04r\x02\x18\n" +
 	"R\vdateofbirth\x12/\n" +
 	"\fphone_number\x18\f \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x03R\vphoneNumber\x88\x01\x01\x12)\n" +
-	"\x0eavatar_file_id\x18\x11 \x01(\x04H\x04R\favatarFileId\x88\x01\x01\x120\n" +
+	"\x0eavatar_file_id\x18\x11 \x01(\x03H\x04R\favatarFileId\x88\x01\x01\x120\n" +
 	"\x06avatar\x18\x12 \x01(\tB\x13\x9a\x84\x9e\x03\x0ealias:\"avatar\"H\x05R\x06avatar\x88\x01\x01\x12R\n" +
 	"\x05props\x18\x13 \x01(\v2\x1e.resources.jobs.ColleaguePropsB\x1c\x9a\x84\x9e\x03\x17alias:\"colleague_props\"R\x05props\x12$\n" +
 	"\x05email\x18\x14 \x01(\tB\t\xbaH\x06r\x04\x10\x06\x18PH\x06R\x05email\x88\x01\x01B\r\n" +

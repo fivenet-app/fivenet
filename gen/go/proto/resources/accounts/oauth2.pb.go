@@ -25,7 +25,7 @@ const (
 
 type OAuth2Account struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	AccountId     uint64                 `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	AccountId     int64                  `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	ProviderName  string                 `protobuf:"bytes,3,opt,name=provider_name,json=providerName,proto3" json:"provider_name,omitempty" alias:"provider_name" sql:"primary_key"`
 	Provider      *OAuth2Provider        `protobuf:"bytes,4,opt,name=provider,proto3" json:"provider,omitempty"`
@@ -66,7 +66,7 @@ func (*OAuth2Account) Descriptor() ([]byte, []int) {
 	return file_resources_accounts_oauth2_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *OAuth2Account) GetAccountId() uint64 {
+func (x *OAuth2Account) GetAccountId() int64 {
 	if x != nil {
 		return x.AccountId
 	}
@@ -190,7 +190,7 @@ const file_resources_accounts_oauth2_proto_rawDesc = "" +
 	"\x1fresources/accounts/oauth2.proto\x12\x12resources.accounts\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x8f\x03\n" +
 	"\rOAuth2Account\x12\x1d\n" +
 	"\n" +
-	"account_id\x18\x01 \x01(\x04R\taccountId\x12B\n" +
+	"account_id\x18\x01 \x01(\x03R\taccountId\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12Y\n" +
 	"\rprovider_name\x18\x03 \x01(\tB4\x9a\x84\x9e\x03'sql:\"primary_key\" alias:\"provider_name\"\xbaH\x05r\x03\x18\xff\x01R\fproviderName\x12>\n" +

@@ -10,19 +10,19 @@ import (
 type GroupedAccess interface {
 	CanUserAccessTarget(
 		ctx context.Context,
-		targetId uint64,
+		targetId int64,
 		userInfo *userinfo.UserInfo,
 		access int32,
 	) (bool, error)
 }
 
 type GroupedAccessAdapter struct {
-	CanUserAccessTargetFn func(ctx context.Context, targetId uint64, userInfo *userinfo.UserInfo, access int32) (bool, error)
+	CanUserAccessTargetFn func(ctx context.Context, targetId int64, userInfo *userinfo.UserInfo, access int32) (bool, error)
 }
 
 func (a *GroupedAccessAdapter) CanUserAccessTarget(
 	ctx context.Context,
-	targetId uint64,
+	targetId int64,
 	userInfo *userinfo.UserInfo,
 	access int32,
 ) (bool, error) {

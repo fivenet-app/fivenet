@@ -18,7 +18,7 @@ func (p *Perms) CreatePermission(
 	ctx context.Context,
 	category Category,
 	name Name,
-) (uint64, error) {
+) (int64, error) {
 	guard := BuildGuard(category, name)
 	stmt := tPerms.
 		INSERT(
@@ -51,7 +51,7 @@ func (p *Perms) CreatePermission(
 		return 0, fmt.Errorf("failed to retrieve last insert ID. %w", err)
 	}
 
-	return uint64(lastId), nil
+	return lastId, nil
 }
 
 func (p *Perms) loadPermissionFromDatabaseByCategoryName(
@@ -91,7 +91,7 @@ func (p *Perms) loadPermissionFromDatabaseByCategoryName(
 
 func (p *Perms) UpdatePermission(
 	ctx context.Context,
-	id uint64,
+	id int64,
 	category Category,
 	name Name,
 ) error {
@@ -109,7 +109,7 @@ func (p *Perms) UpdatePermission(
 			tPerms.GuardName.SET(jet.String(guard)),
 		).
 		WHERE(
-			tPerms.ID.EQ(jet.Uint64(id)),
+			tPerms.ID.EQ(jet.Int64(id)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
@@ -145,14 +145,14 @@ func (p *Perms) GetAllPermissions(ctx context.Context) ([]*permissions.Permissio
 	return dest, nil
 }
 
-func (p *Perms) RemovePermissionsByIDs(ctx context.Context, ids ...uint64) error {
+func (p *Perms) RemovePermissionsByIDs(ctx context.Context, ids ...int64) error {
 	if len(ids) == 0 {
 		return nil
 	}
 
 	wIds := make([]jet.Expression, len(ids))
 	for i := range ids {
-		wIds[i] = jet.Uint64(ids[i])
+		wIds[i] = jet.Int64(ids[i])
 	}
 
 	stmt := tPerms.
@@ -171,7 +171,7 @@ func (p *Perms) RemovePermissionsByIDs(ctx context.Context, ids ...uint64) error
 
 func (p *Perms) GetPermissionsByIDs(
 	ctx context.Context,
-	ids ...uint64,
+	ids ...int64,
 ) ([]*permissions.Permission, error) {
 	if len(ids) == 0 {
 		return nil, nil
@@ -179,7 +179,7 @@ func (p *Perms) GetPermissionsByIDs(
 
 	wIds := make([]jet.Expression, len(ids))
 	for i := range ids {
-		wIds[i] = jet.Uint64(ids[i])
+		wIds[i] = jet.Int64(ids[i])
 	}
 
 	tPerms := tPerms.AS("permission")

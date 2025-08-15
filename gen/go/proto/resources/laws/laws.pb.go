@@ -25,7 +25,7 @@ const (
 
 type LawBook struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	// @sanitize
@@ -67,7 +67,7 @@ func (*LawBook) Descriptor() ([]byte, []int) {
 	return file_resources_laws_laws_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *LawBook) GetId() uint64 {
+func (x *LawBook) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -111,10 +111,10 @@ func (x *LawBook) GetLaws() []*Law {
 
 type Law struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"law.id" sql:"primary_key"`
+	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"law.id" sql:"primary_key"`
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	LawbookId uint64                 `protobuf:"varint,4,opt,name=lawbook_id,json=lawbookId,proto3" json:"lawbook_id,omitempty"`
+	LawbookId int64                  `protobuf:"varint,4,opt,name=lawbook_id,json=lawbookId,proto3" json:"lawbook_id,omitempty"`
 	// @sanitize
 	Name string `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
 	// @sanitize
@@ -158,7 +158,7 @@ func (*Law) Descriptor() ([]byte, []int) {
 	return file_resources_laws_laws_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *Law) GetId() uint64 {
+func (x *Law) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -179,7 +179,7 @@ func (x *Law) GetUpdatedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *Law) GetLawbookId() uint64 {
+func (x *Law) GetLawbookId() int64 {
 	if x != nil {
 		return x.LawbookId
 	}
@@ -234,7 +234,7 @@ const file_resources_laws_laws_proto_rawDesc = "" +
 	"\n" +
 	"\x19resources/laws/laws.proto\x12\x0eresources.laws\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xec\x02\n" +
 	"\aLawBook\x121\n" +
-	"\x02id\x18\x01 \x01(\x04B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
+	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
@@ -247,13 +247,13 @@ const file_resources_laws_laws_proto_rawDesc = "" +
 	"\v_updated_atB\x0e\n" +
 	"\f_description\"\xa5\x04\n" +
 	"\x03Law\x125\n" +
-	"\x02id\x18\x01 \x01(\x04B%\x9a\x84\x9e\x03 sql:\"primary_key\" alias:\"law.id\"R\x02id\x12B\n" +
+	"\x02id\x18\x01 \x01(\x03B%\x9a\x84\x9e\x03 sql:\"primary_key\" alias:\"law.id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12\x1d\n" +
 	"\n" +
-	"lawbook_id\x18\x04 \x01(\x04R\tlawbookId\x12\x1e\n" +
+	"lawbook_id\x18\x04 \x01(\x03R\tlawbookId\x12\x1e\n" +
 	"\x04name\x18\x05 \x01(\tB\n" +
 	"\xbaH\ar\x05\x10\x03\x18\x80\x01R\x04name\x12/\n" +
 	"\vdescription\x18\x06 \x01(\tB\b\xbaH\x05r\x03\x18\x80\bH\x02R\vdescription\x88\x01\x01\x12!\n" +

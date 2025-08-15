@@ -59,7 +59,7 @@ func (c *Client) StartPresence(ctx context.Context) error {
 	stateKV := c.room.stateKV
 
 	cid := strconv.FormatUint(c.Id, 10)
-	roomId := strconv.FormatUint(c.room.Id, 10)
+	roomId := strconv.FormatInt(c.room.Id, 10)
 	c.presenceKey = "presence." + c.room.category + "." + roomId + "." + cid
 	c.firstKey = "first." + c.room.category + "." + roomId
 

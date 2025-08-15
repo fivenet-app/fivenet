@@ -43,7 +43,7 @@ export interface CreateAccountRequest {
  */
 export interface CreateAccountResponse {
     /**
-     * @generated from protobuf field: uint64 account_id = 1
+     * @generated from protobuf field: int64 account_id = 1
      */
     accountId: number;
 }
@@ -69,7 +69,7 @@ export interface LoginResponse {
      */
     expires?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 account_id = 2
+     * @generated from protobuf field: int64 account_id = 2
      */
     accountId: number;
     /**
@@ -346,7 +346,7 @@ export const CreateAccountRequest = new CreateAccountRequest$Type();
 class CreateAccountResponse$Type extends MessageType<CreateAccountResponse> {
     constructor() {
         super("services.auth.CreateAccountResponse", [
-            { no: 1, name: "account_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "account_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<CreateAccountResponse>): CreateAccountResponse {
@@ -361,8 +361,8 @@ class CreateAccountResponse$Type extends MessageType<CreateAccountResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 account_id */ 1:
-                    message.accountId = reader.uint64().toNumber();
+                case /* int64 account_id */ 1:
+                    message.accountId = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -376,9 +376,9 @@ class CreateAccountResponse$Type extends MessageType<CreateAccountResponse> {
         return message;
     }
     internalBinaryWrite(message: CreateAccountResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 account_id = 1; */
+        /* int64 account_id = 1; */
         if (message.accountId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.accountId);
+            writer.tag(1, WireType.Varint).int64(message.accountId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -449,7 +449,7 @@ class LoginResponse$Type extends MessageType<LoginResponse> {
     constructor() {
         super("services.auth.LoginResponse", [
             { no: 1, name: "expires", kind: "message", T: () => Timestamp },
-            { no: 2, name: "account_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "account_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "char", kind: "message", T: () => ChooseCharacterResponse }
         ]);
     }
@@ -468,8 +468,8 @@ class LoginResponse$Type extends MessageType<LoginResponse> {
                 case /* resources.timestamp.Timestamp expires */ 1:
                     message.expires = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expires);
                     break;
-                case /* uint64 account_id */ 2:
-                    message.accountId = reader.uint64().toNumber();
+                case /* int64 account_id */ 2:
+                    message.accountId = reader.int64().toNumber();
                     break;
                 case /* optional services.auth.ChooseCharacterResponse char */ 3:
                     message.char = ChooseCharacterResponse.internalBinaryRead(reader, reader.uint32(), options, message.char);
@@ -489,9 +489,9 @@ class LoginResponse$Type extends MessageType<LoginResponse> {
         /* resources.timestamp.Timestamp expires = 1; */
         if (message.expires)
             Timestamp.internalBinaryWrite(message.expires, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 account_id = 2; */
+        /* int64 account_id = 2; */
         if (message.accountId !== 0)
-            writer.tag(2, WireType.Varint).uint64(message.accountId);
+            writer.tag(2, WireType.Varint).int64(message.accountId);
         /* optional services.auth.ChooseCharacterResponse char = 3; */
         if (message.char)
             ChooseCharacterResponse.internalBinaryWrite(message.char, writer.tag(3, WireType.LengthDelimited).fork(), options).join();

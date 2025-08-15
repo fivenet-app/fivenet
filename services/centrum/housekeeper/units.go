@@ -52,7 +52,7 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error 
 				s.logger.Debug(
 					"updating dispatch status to unassigned because it has no assignments",
 					zap.String("job", job),
-					zap.Uint64("dispatch_id", dsp.GetId()),
+					zap.Int64("dispatch_id", dsp.GetId()),
 				)
 				if _, err := s.dispatches.UpdateStatus(ctx, dsp.GetId(), &centrum.DispatchStatus{
 					CreatedAt:  timestamp.Now(),
@@ -92,19 +92,19 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error 
 						"job",
 						job,
 					),
-					zap.Uint64("unit_id", unitId),
-					zap.Uint64("dispatch_id", dsp.GetId()),
+					zap.Int64("unit_id", unitId),
+					zap.Int64("dispatch_id", dsp.GetId()),
 				)
 
-				if err := s.dispatches.UpdateAssignments(ctx, nil, dsp.GetId(), nil, []uint64{unitId}, time.Time{}); err != nil {
+				if err := s.dispatches.UpdateAssignments(ctx, nil, dsp.GetId(), nil, []int64{unitId}, time.Time{}); err != nil {
 					s.logger.Error(
 						"failed to remove empty unit from dispatch",
 						zap.String(
 							"job",
 							job,
 						),
-						zap.Uint64("unit_id", unitId),
-						zap.Uint64("dispatch_id", dsp.GetId()),
+						zap.Int64("unit_id", unitId),
+						zap.Int64("dispatch_id", dsp.GetId()),
 						zap.Error(err),
 					)
 					continue
@@ -153,7 +153,7 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
 					"job",
 					job,
 				),
-				zap.Uint64("unit_id", unit.GetId()),
+				zap.Int64("unit_id", unit.GetId()),
 				zap.Int32p("user_id", userId),
 			)
 			if _, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrum.UnitStatus{
@@ -169,7 +169,7 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
 						"job",
 						unit.GetJob(),
 					),
-					zap.Uint64("unit_id", unit.GetId()),
+					zap.Int64("unit_id", unit.GetId()),
 					zap.Error(err),
 				)
 				continue
@@ -257,7 +257,7 @@ func (s *Housekeeper) checkAndUpdateUnitUsers(
 		if userId == 0 {
 			s.logger.Warn(
 				"zero user id found during unit user checkup",
-				zap.Uint64("unit_id", unit.GetId()),
+				zap.Int64("unit_id", unit.GetId()),
 			)
 			continue
 		}
@@ -283,7 +283,7 @@ func (s *Housekeeper) checkAndUpdateUnitUsers(
 			"job",
 			unit.GetJob(),
 		),
-		zap.Uint64("unit_id", unit.GetId()),
+		zap.Int64("unit_id", unit.GetId()),
 		zap.Int32s("to_remove", toRemove),
 	)
 
@@ -294,7 +294,7 @@ func (s *Housekeeper) checkAndUpdateUnitUsers(
 				"job",
 				unit.GetJob(),
 			),
-			zap.Uint64("unit_id", unit.GetId()),
+			zap.Int64("unit_id", unit.GetId()),
 			zap.Int32s("user_ids", toRemove),
 			zap.Error(err),
 		)

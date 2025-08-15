@@ -9,6 +9,6 @@ package model
 
 type FivenetRbacJobPermissions struct {
 	Job          string `sql:"primary_key" json:"job"`
-	PermissionID uint64 `sql:"primary_key" json:"permission_id"`
+	PermissionID int64  `sql:"primary_key" json:"permission_id"`
 	Val          bool   `json:"val"`
 }

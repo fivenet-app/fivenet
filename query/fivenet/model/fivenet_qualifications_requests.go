@@ -14,7 +14,7 @@ import (
 type FivenetQualificationsRequests struct {
 	CreatedAt       *time.Time `json:"created_at"`
 	DeletedAt       *time.Time `json:"deleted_at"`
-	QualificationID uint64     `json:"qualification_id"`
+	QualificationID int64      `json:"qualification_id"`
 	UserID          int32      `json:"user_id"`
 	UserComment     *string    `json:"user_comment"`
 	Status          *int16     `json:"status"`

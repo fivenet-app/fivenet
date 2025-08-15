@@ -218,7 +218,7 @@ func (x *ColleagueProps) HandleChanges(
 		added, removed := utils.SlicesDifferenceFunc(
 			x.GetLabels().GetList(),
 			in.GetLabels().GetList(),
-			func(in *Label) uint64 {
+			func(in *Label) int64 {
 				return in.GetId()
 			},
 		)
@@ -336,7 +336,7 @@ func (x *ColleagueProps) updateLabels(
 		ids := make([]jet.Expression, len(removed))
 
 		for i := range removed {
-			ids[i] = jet.Uint64(removed[i].GetId())
+			ids[i] = jet.Int64(removed[i].GetId())
 		}
 
 		stmt := tUserLabels.

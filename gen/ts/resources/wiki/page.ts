@@ -22,7 +22,7 @@ import { Content } from "../common/content/content";
  */
 export interface Page {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -36,7 +36,7 @@ export interface Page {
      */
     jobLabel?: string;
     /**
-     * @generated from protobuf field: optional uint64 parent_id = 4
+     * @generated from protobuf field: optional int64 parent_id = 4
      */
     parentId?: number;
     /**
@@ -126,7 +126,7 @@ export interface PageMeta {
  */
 export interface PageShort {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -138,7 +138,7 @@ export interface PageShort {
      */
     jobLabel?: string;
     /**
-     * @generated from protobuf field: optional uint64 parent_id = 4
+     * @generated from protobuf field: optional int64 parent_id = 4
      */
     parentId?: number;
     /**
@@ -181,7 +181,7 @@ export interface PageShort {
  */
 export interface PageRootInfo {
     /**
-     * @generated from protobuf field: optional uint64 logo_file_id = 1
+     * @generated from protobuf field: optional int64 logo_file_id = 1
      */
     logoFileId?: number;
     /**
@@ -193,10 +193,10 @@ export interface PageRootInfo {
 class Page$Type extends MessageType<Page> {
     constructor() {
         super("resources.wiki.Page", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
             { no: 3, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 4, name: "parent_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "parent_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "meta", kind: "message", T: () => PageMeta, options: { "buf.validate.field": { required: true } } },
             { no: 6, name: "content", kind: "message", T: () => Content },
             { no: 7, name: "access", kind: "message", T: () => PageAccess, options: { "buf.validate.field": { required: true } } },
@@ -217,8 +217,8 @@ class Page$Type extends MessageType<Page> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* string job */ 2:
                     message.job = reader.string();
@@ -226,8 +226,8 @@ class Page$Type extends MessageType<Page> {
                 case /* optional string job_label */ 3:
                     message.jobLabel = reader.string();
                     break;
-                case /* optional uint64 parent_id */ 4:
-                    message.parentId = reader.uint64().toNumber();
+                case /* optional int64 parent_id */ 4:
+                    message.parentId = reader.int64().toNumber();
                     break;
                 case /* resources.wiki.PageMeta meta */ 5:
                     message.meta = PageMeta.internalBinaryRead(reader, reader.uint32(), options, message.meta);
@@ -253,18 +253,18 @@ class Page$Type extends MessageType<Page> {
         return message;
     }
     internalBinaryWrite(message: Page, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* string job = 2; */
         if (message.job !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.job);
         /* optional string job_label = 3; */
         if (message.jobLabel !== undefined)
             writer.tag(3, WireType.LengthDelimited).string(message.jobLabel);
-        /* optional uint64 parent_id = 4; */
+        /* optional int64 parent_id = 4; */
         if (message.parentId !== undefined)
-            writer.tag(4, WireType.Varint).uint64(message.parentId);
+            writer.tag(4, WireType.Varint).int64(message.parentId);
         /* resources.wiki.PageMeta meta = 5; */
         if (message.meta)
             PageMeta.internalBinaryWrite(message.meta, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
@@ -427,10 +427,10 @@ export const PageMeta = new PageMeta$Type();
 class PageShort$Type extends MessageType<PageShort> {
     constructor() {
         super("resources.wiki.PageShort", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
             { no: 3, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 4, name: "parent_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "parent_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 6, name: "slug", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "100" } } } },
             { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
@@ -458,8 +458,8 @@ class PageShort$Type extends MessageType<PageShort> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* string job */ 2:
                     message.job = reader.string();
@@ -467,8 +467,8 @@ class PageShort$Type extends MessageType<PageShort> {
                 case /* optional string job_label */ 3:
                     message.jobLabel = reader.string();
                     break;
-                case /* optional uint64 parent_id */ 4:
-                    message.parentId = reader.uint64().toNumber();
+                case /* optional int64 parent_id */ 4:
+                    message.parentId = reader.int64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp deleted_at */ 5:
                     message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
@@ -506,18 +506,18 @@ class PageShort$Type extends MessageType<PageShort> {
         return message;
     }
     internalBinaryWrite(message: PageShort, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* string job = 2; */
         if (message.job !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.job);
         /* optional string job_label = 3; */
         if (message.jobLabel !== undefined)
             writer.tag(3, WireType.LengthDelimited).string(message.jobLabel);
-        /* optional uint64 parent_id = 4; */
+        /* optional int64 parent_id = 4; */
         if (message.parentId !== undefined)
-            writer.tag(4, WireType.Varint).uint64(message.parentId);
+            writer.tag(4, WireType.Varint).int64(message.parentId);
         /* optional resources.timestamp.Timestamp deleted_at = 5; */
         if (message.deletedAt)
             Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
@@ -556,7 +556,7 @@ export const PageShort = new PageShort$Type();
 class PageRootInfo$Type extends MessageType<PageRootInfo> {
     constructor() {
         super("resources.wiki.PageRootInfo", [
-            { no: 1, name: "logo_file_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "logo_file_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "logo", kind: "message", T: () => File, options: { "tagger.tags": "alias:\"logo\"" } }
         ]);
     }
@@ -571,8 +571,8 @@ class PageRootInfo$Type extends MessageType<PageRootInfo> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional uint64 logo_file_id */ 1:
-                    message.logoFileId = reader.uint64().toNumber();
+                case /* optional int64 logo_file_id */ 1:
+                    message.logoFileId = reader.int64().toNumber();
                     break;
                 case /* optional resources.file.File logo */ 2:
                     message.logo = File.internalBinaryRead(reader, reader.uint32(), options, message.logo);
@@ -589,9 +589,9 @@ class PageRootInfo$Type extends MessageType<PageRootInfo> {
         return message;
     }
     internalBinaryWrite(message: PageRootInfo, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional uint64 logo_file_id = 1; */
+        /* optional int64 logo_file_id = 1; */
         if (message.logoFileId !== undefined)
-            writer.tag(1, WireType.Varint).uint64(message.logoFileId);
+            writer.tag(1, WireType.Varint).int64(message.logoFileId);
         /* optional resources.file.File logo = 2; */
         if (message.logo)
             File.internalBinaryWrite(message.logo, writer.tag(2, WireType.LengthDelimited).fork(), options).join();

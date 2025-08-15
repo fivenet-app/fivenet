@@ -19,7 +19,7 @@ enum EventType {
 }
 
 message AuditEntry {
-  uint64 id = 1 [(tagger.tags) = "alias:\"id\""];
+  int64 id = 1 [(tagger.tags) = "alias:\"id\""];
   resources.timestamp.Timestamp created_at = 2;
   int32 user_id = 3 [(tagger.tags) = "alias:\"user_id\""];
   optional resources.users.UserShort user = 4;

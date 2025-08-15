@@ -42,7 +42,7 @@ func (w *Workflow) handleDocumentsUsers(
 				),
 		).
 		WHERE(jet.AND(
-			tUserWorkflow.DocumentID.GT(jet.Uint64(data.GetLastDocId())),
+			tUserWorkflow.DocumentID.GT(jet.Int64(data.GetLastDocId())),
 			tUserWorkflow.ManualReminderTime.LT_EQ(jet.TimestampT(time.Now())),
 		)).
 		LIMIT(100)
@@ -71,7 +71,7 @@ func (w *Workflow) handleDocumentsUsers(
 				if err := w.handleWorkflowUserState(ctx, state); err != nil {
 					w.logger.Error(
 						"error during workflow user state handling",
-						zap.Uint64(
+						zap.Int64(
 							"document_id",
 							state.GetDocumentId(),
 						),
@@ -165,7 +165,7 @@ func deleteWorkflowUserState(
 	stmt := tUserWorkflow.
 		DELETE().
 		WHERE(jet.AND(
-			tUserWorkflow.DocumentID.EQ(jet.Uint64(state.GetDocumentId())),
+			tUserWorkflow.DocumentID.EQ(jet.Int64(state.GetDocumentId())),
 			tUserWorkflow.UserID.EQ(jet.Int32(state.GetUserId())),
 		)).
 		LIMIT(1)

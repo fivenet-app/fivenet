@@ -42,14 +42,19 @@ func genTemplate() template.Template {
 
 						return template.DefaultTableModel(table).
 							UseField(func(columnMetaData metadata.Column) template.TableModelField {
+								if columnMetaData.DataType.Name == "bigint" {
+									columnMetaData.DataType.IsUnsigned = false // force signed integers
+								}
+
 								defaultColumn := template.DefaultTableModelField(columnMetaData)
 								if shouldSkipField(table.Name, columnMetaData.Name) {
 									defaultColumn.Skip = true
 								}
 
-								return defaultColumn.UseTags(
-									fmt.Sprintf(`json:"%s"`, columnMetaData.Name),
-								)
+								return defaultColumn.
+									UseTags(
+										fmt.Sprintf(`json:"%s"`, columnMetaData.Name),
+									)
 							})
 					}),
 				).

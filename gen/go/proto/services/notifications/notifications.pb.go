@@ -139,7 +139,7 @@ func (x *GetNotificationsResponse) GetNotifications() []*notifications.Notificat
 type MarkNotificationsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Unread        bool                   `protobuf:"varint,1,opt,name=unread,proto3" json:"unread,omitempty"`
-	Ids           []uint64               `protobuf:"varint,2,rep,packed,name=ids,proto3" json:"ids,omitempty"`
+	Ids           []int64                `protobuf:"varint,2,rep,packed,name=ids,proto3" json:"ids,omitempty"`
 	All           *bool                  `protobuf:"varint,3,opt,name=all,proto3,oneof" json:"all,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -182,7 +182,7 @@ func (x *MarkNotificationsRequest) GetUnread() bool {
 	return false
 }
 
-func (x *MarkNotificationsRequest) GetIds() []uint64 {
+func (x *MarkNotificationsRequest) GetIds() []int64 {
 	if x != nil {
 		return x.Ids
 	}
@@ -198,7 +198,7 @@ func (x *MarkNotificationsRequest) GetAll() bool {
 
 type MarkNotificationsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Updated       uint64                 `protobuf:"varint,1,opt,name=updated,proto3" json:"updated,omitempty"`
+	Updated       int64                  `protobuf:"varint,1,opt,name=updated,proto3" json:"updated,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -233,7 +233,7 @@ func (*MarkNotificationsResponse) Descriptor() ([]byte, []int) {
 	return file_services_notifications_notifications_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *MarkNotificationsResponse) GetUpdated() uint64 {
+func (x *MarkNotificationsResponse) GetUpdated() int64 {
 	if x != nil {
 		return x.Updated
 	}
@@ -489,12 +489,12 @@ const file_services_notifications_notifications_proto_rawDesc = "" +
 	"\rnotifications\x18\x02 \x03(\v2%.resources.notifications.NotificationR\rnotifications\"r\n" +
 	"\x18MarkNotificationsRequest\x12\x16\n" +
 	"\x06unread\x18\x01 \x01(\bR\x06unread\x12\x1f\n" +
-	"\x03ids\x18\x02 \x03(\x04B\r\xbaH\n" +
+	"\x03ids\x18\x02 \x03(\x03B\r\xbaH\n" +
 	"\xd8\x01\x01\x92\x01\x04\b\x01\x10\x14R\x03ids\x12\x15\n" +
 	"\x03all\x18\x03 \x01(\bH\x00R\x03all\x88\x01\x01B\x06\n" +
 	"\x04_all\"5\n" +
 	"\x19MarkNotificationsResponse\x12\x18\n" +
-	"\aupdated\x18\x01 \x01(\x04R\aupdated\"f\n" +
+	"\aupdated\x18\x01 \x01(\x03R\aupdated\"f\n" +
 	"\rStreamRequest\x12F\n" +
 	"\vclient_view\x18\x01 \x01(\v2#.resources.notifications.ClientViewH\x00R\n" +
 	"clientViewB\r\n" +

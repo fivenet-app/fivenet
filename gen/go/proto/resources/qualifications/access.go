@@ -10,11 +10,11 @@ func (x *QualificationJobAccess) SetAccess(access AccessLevel) {
 	x.Access = access
 }
 
-func (x *QualificationUserAccess) GetId() uint64 {
+func (x *QualificationUserAccess) GetId() int64 {
 	return 0
 }
 
-func (x *QualificationUserAccess) GetTargetId() uint64 {
+func (x *QualificationUserAccess) GetTargetId() int64 {
 	return 0
 }
 

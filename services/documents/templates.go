@@ -141,7 +141,7 @@ func (s *Server) GetTemplate(
 	return resp, nil
 }
 
-func (s *Server) getTemplate(ctx context.Context, templateId uint64) (*documents.Template, error) {
+func (s *Server) getTemplate(ctx context.Context, templateId int64) (*documents.Template, error) {
 	tDTemplates := tDTemplates.AS("template")
 	stmt := tDTemplates.
 		SELECT(
@@ -175,7 +175,7 @@ func (s *Server) getTemplate(ctx context.Context, templateId uint64) (*documents
 		).
 		WHERE(jet.AND(
 			tDTemplates.DeletedAt.IS_NULL(),
-			tDTemplates.ID.EQ(jet.Uint64(templateId)),
+			tDTemplates.ID.EQ(jet.Int64(templateId)),
 		)).
 		LIMIT(1)
 
@@ -272,7 +272,7 @@ func (s *Server) CreateTemplate(
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 		if cat != nil {
-			categoryId = jet.Uint64(cat.GetId())
+			categoryId = jet.Int64(cat.GetId())
 		}
 	}
 
@@ -327,7 +327,7 @@ func (s *Server) CreateTemplate(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if _, err := s.templateAccess.HandleAccessChanges(ctx, tx, uint64(lastId), req.GetTemplate().GetJobAccess(), nil, nil); err != nil {
+	if _, err := s.templateAccess.HandleAccessChanges(ctx, tx, lastId, req.GetTemplate().GetJobAccess(), nil, nil); err != nil {
 		if dbutils.IsDuplicateError(err) {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateAccessDuplicate)
 		}
@@ -342,7 +342,7 @@ func (s *Server) CreateTemplate(
 	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 
 	return &pbdocuments.CreateTemplateResponse{
-		Id: uint64(lastId),
+		Id: lastId,
 	}, nil
 }
 
@@ -391,7 +391,7 @@ func (s *Server) UpdateTemplate(
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 		if cat != nil {
-			categoryId = jet.Uint64(cat.GetId())
+			categoryId = jet.Int64(cat.GetId())
 		}
 	}
 
@@ -434,7 +434,7 @@ func (s *Server) UpdateTemplate(
 			req.GetTemplate().GetWorkflow(),
 		).
 		WHERE(
-			tDTemplates.ID.EQ(jet.Uint64(req.GetTemplate().GetId())),
+			tDTemplates.ID.EQ(jet.Int64(req.GetTemplate().GetId())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -525,7 +525,7 @@ func (s *Server) DeleteTemplate(
 		).
 		WHERE(jet.AND(
 			tDTemplates.CreatorJob.EQ(jet.String(userInfo.GetJob())),
-			tDTemplates.ID.EQ(jet.Uint64(req.GetId())),
+			tDTemplates.ID.EQ(jet.Int64(req.GetId())),
 		)).
 		LIMIT(1)
 

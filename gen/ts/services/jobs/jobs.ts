@@ -54,7 +54,7 @@ export interface ListColleaguesRequest {
      */
     absent?: boolean;
     /**
-     * @generated from protobuf field: repeated uint64 label_ids = 7
+     * @generated from protobuf field: repeated int64 label_ids = 7
      */
     labelIds: number[];
     /**
@@ -216,7 +216,7 @@ export interface ManageLabelsResponse {
  */
 export interface GetColleagueLabelsStatsRequest {
     /**
-     * @generated from protobuf field: repeated uint64 label_ids = 1
+     * @generated from protobuf field: repeated int64 label_ids = 1
      */
     labelIds: number[];
 }
@@ -275,7 +275,7 @@ class ListColleaguesRequest$Type extends MessageType<ListColleaguesRequest> {
             { no: 4, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { items: { int32: { gte: 0 } } } } } },
             { no: 5, name: "user_only", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 6, name: "absent", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 7, name: "label_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 7, name: "label_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 8, name: "name_prefix", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "12" } } } },
             { no: 9, name: "name_suffix", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "12" } } } }
         ]);
@@ -316,12 +316,12 @@ class ListColleaguesRequest$Type extends MessageType<ListColleaguesRequest> {
                 case /* optional bool absent */ 6:
                     message.absent = reader.bool();
                     break;
-                case /* repeated uint64 label_ids */ 7:
+                case /* repeated int64 label_ids */ 7:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.labelIds.push(reader.uint64().toNumber());
+                            message.labelIds.push(reader.int64().toNumber());
                     else
-                        message.labelIds.push(reader.uint64().toNumber());
+                        message.labelIds.push(reader.int64().toNumber());
                     break;
                 case /* optional string name_prefix */ 8:
                     message.namePrefix = reader.string();
@@ -363,11 +363,11 @@ class ListColleaguesRequest$Type extends MessageType<ListColleaguesRequest> {
         /* optional bool absent = 6; */
         if (message.absent !== undefined)
             writer.tag(6, WireType.Varint).bool(message.absent);
-        /* repeated uint64 label_ids = 7; */
+        /* repeated int64 label_ids = 7; */
         if (message.labelIds.length) {
             writer.tag(7, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.labelIds.length; i++)
-                writer.uint64(message.labelIds[i]);
+                writer.int64(message.labelIds[i]);
             writer.join();
         }
         /* optional string name_prefix = 8; */
@@ -1054,7 +1054,7 @@ export const ManageLabelsResponse = new ManageLabelsResponse$Type();
 class GetColleagueLabelsStatsRequest$Type extends MessageType<GetColleagueLabelsStatsRequest> {
     constructor() {
         super("services.jobs.GetColleagueLabelsStatsRequest", [
-            { no: 1, name: "label_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "label_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<GetColleagueLabelsStatsRequest>): GetColleagueLabelsStatsRequest {
@@ -1069,12 +1069,12 @@ class GetColleagueLabelsStatsRequest$Type extends MessageType<GetColleagueLabels
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated uint64 label_ids */ 1:
+                case /* repeated int64 label_ids */ 1:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.labelIds.push(reader.uint64().toNumber());
+                            message.labelIds.push(reader.int64().toNumber());
                     else
-                        message.labelIds.push(reader.uint64().toNumber());
+                        message.labelIds.push(reader.int64().toNumber());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1088,11 +1088,11 @@ class GetColleagueLabelsStatsRequest$Type extends MessageType<GetColleagueLabels
         return message;
     }
     internalBinaryWrite(message: GetColleagueLabelsStatsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated uint64 label_ids = 1; */
+        /* repeated int64 label_ids = 1; */
         if (message.labelIds.length) {
             writer.tag(1, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.labelIds.length; i++)
-                writer.uint64(message.labelIds[i]);
+                writer.int64(message.labelIds[i]);
             writer.join();
         }
         let u = options.writeUnknownFields;

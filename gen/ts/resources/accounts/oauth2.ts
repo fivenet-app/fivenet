@@ -17,7 +17,7 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface OAuth2Account {
     /**
-     * @generated from protobuf field: uint64 account_id = 1
+     * @generated from protobuf field: int64 account_id = 1
      */
     accountId: number;
     /**
@@ -70,7 +70,7 @@ export interface OAuth2Provider {
 class OAuth2Account$Type extends MessageType<OAuth2Account> {
     constructor() {
         super("resources.accounts.OAuth2Account", [
-            { no: 1, name: "account_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "account_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "provider_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "tagger.tags": "sql:\"primary_key\" alias:\"provider_name\"" } },
             { no: 4, name: "provider", kind: "message", T: () => OAuth2Provider },
@@ -95,8 +95,8 @@ class OAuth2Account$Type extends MessageType<OAuth2Account> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 account_id */ 1:
-                    message.accountId = reader.uint64().toNumber();
+                case /* int64 account_id */ 1:
+                    message.accountId = reader.int64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -128,9 +128,9 @@ class OAuth2Account$Type extends MessageType<OAuth2Account> {
         return message;
     }
     internalBinaryWrite(message: OAuth2Account, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 account_id = 1; */
+        /* int64 account_id = 1; */
         if (message.accountId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.accountId);
+            writer.tag(1, WireType.Varint).int64(message.accountId);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();

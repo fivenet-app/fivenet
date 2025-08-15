@@ -19,13 +19,13 @@ import (
 type userInfoStore interface {
 	storeUserInfo(
 		ctx context.Context,
-		accountId uint64,
+		accountId int64,
 		provider string,
 		userInfo *providers.UserInfo,
 	) error
 	updateUserInfo(
 		ctx context.Context,
-		accountId uint64,
+		accountId int64,
 		provider string,
 		userInfo *providers.UserInfo,
 	) error
@@ -84,7 +84,7 @@ func (o *oauth2UserInfo) getAccountInfo(
 // If a duplicate is found, it checks the external ID before updating.
 func (o *oauth2UserInfo) storeUserInfo(
 	ctx context.Context,
-	accountId uint64,
+	accountId int64,
 	provider string,
 	userInfo *providers.UserInfo,
 ) error {
@@ -154,14 +154,15 @@ func (o *oauth2UserInfo) storeUserInfo(
 // updateUserInfo updates the OAuth2 user info for the given account and provider.
 func (o *oauth2UserInfo) updateUserInfo(
 	ctx context.Context,
-	accountId uint64,
+	accountId int64,
 	provider string,
 	userInfo *providers.UserInfo,
 ) error {
-	expiresIn := int32(0)
+	expiresIn := int64(0)
 	if userInfo.ExpiresIn != nil {
-		expiresIn = int32(*userInfo.ExpiresIn)
+		expiresIn = *userInfo.ExpiresIn
 	}
+	_ = expiresIn
 
 	if err := accounts.UpdateOAuth2Account(ctx, o.db, o.crypt, accountId, &model.FivenetAccountsOauth2{
 		AccountID:    accountId,

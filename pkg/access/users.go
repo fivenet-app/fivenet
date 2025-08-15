@@ -16,8 +16,8 @@ import (
 type UsersAccessProtoMessage[T any, V protoutils.ProtoEnum] interface {
 	protoutils.ProtoMessage[T]
 
-	GetId() uint64
-	GetTargetId() uint64
+	GetId() int64
+	GetTargetId() int64
 
 	GetUserId() int32
 	SetUserId(userId int32)
@@ -53,7 +53,7 @@ func NewUsers[U any, T UsersAccessProtoMessage[U, V], V protoutils.ProtoEnum](
 }
 
 // List returns all user access entries for a given targetId, joining with user_short for additional user info.
-func (a *Users[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId uint64) ([]T, error) {
+func (a *Users[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId int64) ([]T, error) {
 	tUsers := tables.User().AS("user_short")
 
 	stmt := a.selectTable.
@@ -77,7 +77,7 @@ func (a *Users[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId uint64) (
 				),
 		).
 		WHERE(jet.AND(
-			a.selectColumns.TargetID.EQ(jet.Uint64(targetId)),
+			a.selectColumns.TargetID.EQ(jet.Int64(targetId)),
 			a.selectColumns.UserId.IS_NOT_NULL(),
 		))
 
@@ -92,11 +92,11 @@ func (a *Users[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId uint64) (
 }
 
 // Clear deletes all user access entries for a given targetId.
-func (a *Users[U, T, V]) Clear(ctx context.Context, tx qrm.DB, targetId uint64) (T, error) {
+func (a *Users[U, T, V]) Clear(ctx context.Context, tx qrm.DB, targetId int64) (T, error) {
 	stmt := a.table.
 		DELETE().
 		WHERE(
-			a.columns.TargetID.EQ(jet.Uint64(targetId)),
+			a.columns.TargetID.EQ(jet.Int64(targetId)),
 		)
 
 	var dest T
@@ -114,7 +114,7 @@ func (a *Users[U, T, V]) Clear(ctx context.Context, tx qrm.DB, targetId uint64) 
 func (a *Users[U, T, V]) Compare(
 	ctx context.Context,
 	tx qrm.DB,
-	targetId uint64,
+	targetId int64,
 	in []T,
 ) ([]T, []T, []T, error) {
 	current, err := a.List(ctx, tx, targetId)
@@ -187,7 +187,7 @@ func (a *Users[U, T, V]) compare(current, in []T) ([]T, []T, []T) {
 func (a *Users[U, T, AccessLevel]) HandleAccessChanges(
 	ctx context.Context,
 	tx qrm.DB,
-	targetId uint64,
+	targetId int64,
 	access []T,
 ) ([]T, []T, []T, error) {
 	toCreate, toUpdate, toDelete, err := a.Compare(ctx, tx, targetId, access)

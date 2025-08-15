@@ -148,7 +148,7 @@ func (s *Server) RegisterDomain(
 
 	tDomains := table.FivenetInternetDomains
 
-	var domainId uint64
+	var domainId int64
 	// Domain exists
 	if domain != nil {
 		if domain.CreatorId != nil && domain.GetCreatorId() == userInfo.GetUserId() {
@@ -169,7 +169,7 @@ func (s *Server) RegisterDomain(
 				userInfo.GetUserId(),
 			).
 			WHERE(
-				tDomains.ID.EQ(jet.Uint64(domain.GetId())),
+				tDomains.ID.EQ(jet.Int64(domain.GetId())),
 			)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -213,7 +213,7 @@ func (s *Server) RegisterDomain(
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
 		}
-		domainId = uint64(lastId)
+		domainId = lastId
 	}
 
 	domain, err = s.getDomainById(ctx, s.db, domainId)
@@ -262,7 +262,7 @@ func (s *Server) UpdateDomain(
 			req.GetTransferable(),
 		).
 		WHERE(
-			tDomains.ID.EQ(jet.Uint64(domain.GetId())),
+			tDomains.ID.EQ(jet.Int64(domain.GetId())),
 		)
 
 	res, err := stmt.ExecContext(ctx, s.db)
@@ -275,7 +275,7 @@ func (s *Server) UpdateDomain(
 		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
 	}
 
-	domain, err = s.getDomainById(ctx, s.db, uint64(lastId))
+	domain, err = s.getDomainById(ctx, s.db, lastId)
 	if err != nil {
 		return nil, err
 	}

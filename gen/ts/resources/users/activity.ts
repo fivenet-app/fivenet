@@ -20,7 +20,7 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface UserActivity {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -251,7 +251,7 @@ export interface CitizenDocumentRelation {
      */
     added: boolean;
     /**
-     * @generated from protobuf field: uint64 document_id = 2
+     * @generated from protobuf field: int64 document_id = 2
      */
     documentId: number;
     /**
@@ -342,7 +342,7 @@ export enum UserActivityType {
 class UserActivity$Type extends MessageType<UserActivity> {
     constructor() {
         super("resources.users.UserActivity", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "alias:\"user_activity.id\"" } },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "alias:\"user_activity.id\"" } },
             { no: 2, name: "type", kind: "enum", T: () => ["resources.users.UserActivityType", UserActivityType, "USER_ACTIVITY_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } }, "tagger.tags": "alias:\"user_activity.type\"" } },
             { no: 3, name: "created_at", kind: "message", T: () => Timestamp, options: { "tagger.tags": "alias:\"user_activity.created_at\"" } },
             { no: 4, name: "source_user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "tagger.tags": "alias:\"source_user_id\"" } },
@@ -374,8 +374,8 @@ class UserActivity$Type extends MessageType<UserActivity> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* resources.users.UserActivityType type */ 2:
                     message.type = reader.int32();
@@ -422,9 +422,9 @@ class UserActivity$Type extends MessageType<UserActivity> {
         return message;
     }
     internalBinaryWrite(message: UserActivity, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* resources.users.UserActivityType type = 2; */
         if (message.type !== 0)
             writer.tag(2, WireType.Varint).int32(message.type);
@@ -993,7 +993,7 @@ class CitizenDocumentRelation$Type extends MessageType<CitizenDocumentRelation> 
     constructor() {
         super("resources.users.CitizenDocumentRelation", [
             { no: 1, name: "added", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "relation", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
@@ -1014,8 +1014,8 @@ class CitizenDocumentRelation$Type extends MessageType<CitizenDocumentRelation> 
                 case /* bool added */ 1:
                     message.added = reader.bool();
                     break;
-                case /* uint64 document_id */ 2:
-                    message.documentId = reader.uint64().toNumber();
+                case /* int64 document_id */ 2:
+                    message.documentId = reader.int64().toNumber();
                     break;
                 case /* int32 relation */ 3:
                     message.relation = reader.int32();
@@ -1035,9 +1035,9 @@ class CitizenDocumentRelation$Type extends MessageType<CitizenDocumentRelation> 
         /* bool added = 1; */
         if (message.added !== false)
             writer.tag(1, WireType.Varint).bool(message.added);
-        /* uint64 document_id = 2; */
+        /* int64 document_id = 2; */
         if (message.documentId !== 0)
-            writer.tag(2, WireType.Varint).uint64(message.documentId);
+            writer.tag(2, WireType.Varint).int64(message.documentId);
         /* int32 relation = 3; */
         if (message.relation !== 0)
             writer.tag(3, WireType.Varint).int32(message.relation);

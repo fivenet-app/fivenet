@@ -25,7 +25,7 @@ const (
 
 type Email struct {
 	state       protoimpl.MessageState `protogen:"open.v1"`
-	Id          uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id          int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt   *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt   *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt   *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
@@ -74,7 +74,7 @@ func (*Email) Descriptor() ([]byte, []int) {
 	return file_resources_mailer_email_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Email) GetId() uint64 {
+func (x *Email) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -171,7 +171,7 @@ const file_resources_mailer_email_proto_rawDesc = "" +
 	"\n" +
 	"\x1cresources/mailer/email.proto\x12\x10resources.mailer\x1a\x1dresources/mailer/access.proto\x1a\x1fresources/mailer/settings.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"\xe4\x05\n" +
 	"\x05Email\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12=\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
 	"\n" +

@@ -12,11 +12,11 @@ import (
 )
 
 type FivenetInternetPages struct {
-	ID          uint64     `sql:"primary_key" json:"id"`
+	ID          int64      `sql:"primary_key" json:"id"`
 	CreatedAt   *time.Time `json:"created_at"`
 	UpdatedAt   *time.Time `json:"updated_at"`
 	DeletedAt   *time.Time `json:"deleted_at"`
-	DomainID    uint64     `json:"domain_id"`
+	DomainID    int64      `json:"domain_id"`
 	Path        string     `json:"path"`
 	Title       string     `json:"title"`
 	Description string     `json:"description"`

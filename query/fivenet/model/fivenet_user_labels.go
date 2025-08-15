@@ -8,6 +8,6 @@
 package model
 
 type FivenetUserLabels struct {
-	UserID  int32  `json:"user_id"`
-	LabelID uint64 `json:"label_id"`
+	UserID  int32 `json:"user_id"`
+	LabelID int64 `json:"label_id"`
 }

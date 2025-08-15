@@ -55,7 +55,7 @@ func (s *Server) GetEmailSettings(
 func (s *Server) getEmailSettings(
 	ctx context.Context,
 	tx qrm.DB,
-	emailId uint64,
+	emailId int64,
 ) (*mailer.EmailSettings, error) {
 	tSettings := tSettings.AS("email_settings")
 	stmt := tSettings.
@@ -71,7 +71,7 @@ func (s *Server) getEmailSettings(
 				),
 		).
 		WHERE(
-			tSettings.EmailID.EQ(jet.Uint64(emailId)),
+			tSettings.EmailID.EQ(jet.Int64(emailId)),
 		).
 		LIMIT(25)
 
@@ -224,7 +224,7 @@ func (s *Server) SetEmailSettings(
 			stmt := tSettingsBlocks.
 				DELETE().
 				WHERE(jet.AND(
-					tSettingsBlocks.EmailID.EQ(jet.Uint64(req.GetSettings().GetEmailId())),
+					tSettingsBlocks.EmailID.EQ(jet.Int64(req.GetSettings().GetEmailId())),
 					tSettingsBlocks.TargetEmail.IN(targets...),
 				))
 

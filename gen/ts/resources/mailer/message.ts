@@ -19,15 +19,15 @@ import { Email } from "./email";
  */
 export interface Message {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
-     * @generated from protobuf field: uint64 thread_id = 2
+     * @generated from protobuf field: int64 thread_id = 2
      */
     threadId: number;
     /**
-     * @generated from protobuf field: uint64 sender_id = 3
+     * @generated from protobuf field: int64 sender_id = 3
      */
     senderId: number;
     /**
@@ -104,7 +104,7 @@ export interface MessageAttachment {
  */
 export interface MessageAttachmentDocument {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
@@ -116,9 +116,9 @@ export interface MessageAttachmentDocument {
 class Message$Type extends MessageType<Message> {
     constructor() {
         super("resources.mailer.Message", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 3, name: "sender_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "thread_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "sender_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "sender", kind: "message", T: () => Email, options: { "tagger.tags": "alias:\"sender\"" } },
             { no: 5, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 6, name: "updated_at", kind: "message", T: () => Timestamp },
@@ -145,14 +145,14 @@ class Message$Type extends MessageType<Message> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
-                case /* uint64 thread_id */ 2:
-                    message.threadId = reader.uint64().toNumber();
+                case /* int64 thread_id */ 2:
+                    message.threadId = reader.int64().toNumber();
                     break;
-                case /* uint64 sender_id */ 3:
-                    message.senderId = reader.uint64().toNumber();
+                case /* int64 sender_id */ 3:
+                    message.senderId = reader.int64().toNumber();
                     break;
                 case /* optional resources.mailer.Email sender */ 4:
                     message.sender = Email.internalBinaryRead(reader, reader.uint32(), options, message.sender);
@@ -193,15 +193,15 @@ class Message$Type extends MessageType<Message> {
         return message;
     }
     internalBinaryWrite(message: Message, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
-        /* uint64 thread_id = 2; */
+            writer.tag(1, WireType.Varint).int64(message.id);
+        /* int64 thread_id = 2; */
         if (message.threadId !== 0)
-            writer.tag(2, WireType.Varint).uint64(message.threadId);
-        /* uint64 sender_id = 3; */
+            writer.tag(2, WireType.Varint).int64(message.threadId);
+        /* int64 sender_id = 3; */
         if (message.senderId !== 0)
-            writer.tag(3, WireType.Varint).uint64(message.senderId);
+            writer.tag(3, WireType.Varint).int64(message.senderId);
         /* optional resources.mailer.Email sender = 4; */
         if (message.sender)
             Email.internalBinaryWrite(message.sender, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
@@ -340,7 +340,7 @@ export const MessageAttachment = new MessageAttachment$Type();
 class MessageAttachmentDocument$Type extends MessageType<MessageAttachmentDocument> {
     constructor() {
         super("resources.mailer.MessageAttachmentDocument", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "title", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "768" } } } }
         ]);
     }
@@ -356,8 +356,8 @@ class MessageAttachmentDocument$Type extends MessageType<MessageAttachmentDocume
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* optional string title */ 2:
                     message.title = reader.string();
@@ -374,9 +374,9 @@ class MessageAttachmentDocument$Type extends MessageType<MessageAttachmentDocume
         return message;
     }
     internalBinaryWrite(message: MessageAttachmentDocument, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* optional string title = 2; */
         if (message.title !== undefined)
             writer.tag(2, WireType.LengthDelimited).string(message.title);

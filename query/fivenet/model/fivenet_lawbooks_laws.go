@@ -12,15 +12,15 @@ import (
 )
 
 type FivenetLawbooksLaws struct {
-	ID            uint64     `sql:"primary_key" json:"id"`
+	ID            int64      `sql:"primary_key" json:"id"`
 	CreatedAt     *time.Time `json:"created_at"`
 	UpdatedAt     *time.Time `json:"updated_at"`
-	LawbookID     uint64     `json:"lawbook_id"`
+	LawbookID     int64      `json:"lawbook_id"`
 	Name          string     `json:"name"`
 	SortKey       *string    `json:"sort_key"`
 	Description   *string    `json:"description"`
 	Hint          *string    `json:"hint"`
-	Fine          *uint64    `json:"fine"`
-	DetentionTime *uint64    `json:"detention_time"`
-	StvoPoints    *uint64    `json:"stvo_points"`
+	Fine          *int64     `json:"fine"`
+	DetentionTime *int64     `json:"detention_time"`
+	StvoPoints    *int64     `json:"stvo_points"`
 }

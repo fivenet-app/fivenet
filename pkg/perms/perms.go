@@ -31,28 +31,28 @@ type Permissions interface {
 	// Permissions management
 	SetDefaultRolePerms(ctx context.Context, defaultPerms []string) error
 	GetAllPermissions(ctx context.Context) ([]*permissions.Permission, error)
-	GetPermissionsByIDs(ctx context.Context, ids ...uint64) ([]*permissions.Permission, error)
+	GetPermissionsByIDs(ctx context.Context, ids ...int64) ([]*permissions.Permission, error)
 	GetPermission(
 		ctx context.Context,
 		category Category,
 		name Name,
 	) (*permissions.Permission, error)
-	CreatePermission(ctx context.Context, category Category, name Name) (uint64, error)
+	CreatePermission(ctx context.Context, category Category, name Name) (int64, error)
 	GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.Permissions, error)
 
 	// Attributes management
 	GetAllAttributes(ctx context.Context) ([]*permissions.RoleAttribute, error)
 	CreateAttribute(
 		ctx context.Context,
-		permId uint64,
+		permId int64,
 		key Key,
 		aType permissions.AttributeTypes,
 		validValues *permissions.AttributeValues,
-	) (uint64, error)
+	) (int64, error)
 	UpdateAttribute(
 		ctx context.Context,
-		attributeId uint64,
-		permId uint64,
+		attributeId int64,
+		permId int64,
 		key Key,
 		aType permissions.AttributeTypes,
 		validValues *permissions.AttributeValues,
@@ -60,18 +60,18 @@ type Permissions interface {
 
 	// Roles management
 	GetRoles(ctx context.Context, excludeSystem bool) (collections.Roles, error)
-	GetRole(ctx context.Context, id uint64) (*permissions.Role, error)
+	GetRole(ctx context.Context, id int64) (*permissions.Role, error)
 	GetRoleByJobAndGrade(ctx context.Context, job string, grade int32) (*permissions.Role, error)
 	GetJobRoles(ctx context.Context, job string) (collections.Roles, error)
 	GetJobRolesUpTo(ctx context.Context, job string, grade int32) (collections.Roles, error)
 	GetClosestJobRole(ctx context.Context, job string, grade int32) (*permissions.Role, error)
 	CountRolesForJob(ctx context.Context, prefix string) (int64, error)
 	CreateRole(ctx context.Context, job string, grade int32) (*permissions.Role, error)
-	DeleteRole(ctx context.Context, id uint64) error
-	GetRolePermissions(ctx context.Context, id uint64) ([]*permissions.Permission, error)
-	GetEffectiveRolePermissions(ctx context.Context, id uint64) ([]*permissions.Permission, error)
-	UpdateRolePermissions(ctx context.Context, id uint64, perms ...AddPerm) error
-	RemovePermissionsFromRole(ctx context.Context, id uint64, perms ...uint64) error
+	DeleteRole(ctx context.Context, id int64) error
+	GetRolePermissions(ctx context.Context, id int64) ([]*permissions.Permission, error)
+	GetEffectiveRolePermissions(ctx context.Context, id int64) ([]*permissions.Permission, error)
+	UpdateRolePermissions(ctx context.Context, id int64, perms ...AddPerm) error
+	RemovePermissionsFromRole(ctx context.Context, id int64, perms ...int64) error
 
 	// Role Attributes management
 	GetRoleAttributes(
@@ -88,18 +88,18 @@ type Permissions interface {
 	UpdateRoleAttributes(
 		ctx context.Context,
 		job string,
-		roleId uint64,
+		roleId int64,
 		attrs ...*permissions.RoleAttribute,
 	) error
 	RemoveAttributesFromRole(
 		ctx context.Context,
-		roleId uint64,
+		roleId int64,
 		attrs ...*permissions.RoleAttribute,
 	) error
 	RemoveAttributesFromRoleByPermission(
 		ctx context.Context,
-		roleId uint64,
-		permissionId uint64,
+		roleId int64,
+		permissionId int64,
 	) error
 
 	// Limit - Job permissions
@@ -144,7 +144,7 @@ type Permissions interface {
 
 type userCacheKey struct {
 	userId int32
-	permId uint64
+	permId int64
 }
 
 type Perms struct {
@@ -160,29 +160,29 @@ type Perms struct {
 	cleanupRolesForMissingJobs bool
 	startJobGrade              int32
 
-	permsMap *xsync.Map[uint64, *cachePerm]
+	permsMap *xsync.Map[int64, *cachePerm]
 	// Guard name to permission ID
-	permsGuardToIDMap *xsync.Map[string, uint64]
+	permsGuardToIDMap *xsync.Map[string, int64]
 	// Job name to map of grade numbers to role ID
-	permsJobsRoleMap *xsync.Map[string, *xsync.Map[int32, uint64]]
+	permsJobsRoleMap *xsync.Map[string, *xsync.Map[int32, int64]]
 	// Role ID to map of permissions ID and result
-	permsRoleMap *xsync.Map[uint64, *xsync.Map[uint64, bool]]
+	permsRoleMap *xsync.Map[int64, *xsync.Map[int64, bool]]
 	// Role ID to Job map
-	roleIDToJobMap *xsync.Map[uint64, string]
+	roleIDToJobMap *xsync.Map[int64, string]
 
 	// Attribute map (key: ID of attribute)
-	attrsMap *xsync.Map[uint64, *cacheAttr]
+	attrsMap *xsync.Map[int64, *cacheAttr]
 	// Role ID to map of role attributes
-	attrsRoleMap *xsync.Map[uint64, *xsync.Map[uint64, *cacheRoleAttr]]
+	attrsRoleMap *xsync.Map[int64, *xsync.Map[int64, *cacheRoleAttr]]
 	// Perm ID to map `Key` → cached attribute (key is name of attribute)
-	attrsPermsMap *xsync.Map[uint64, *xsync.Map[string, uint64]]
+	attrsPermsMap *xsync.Map[int64, *xsync.Map[string, int64]]
 
 	userCanCacheTTL time.Duration
 	userCanCache    *cache.LRUCache[userCacheKey, bool]
 }
 
 type JobPermission struct {
-	PermissionID uint64
+	PermissionID int64
 	Val          bool
 }
 
@@ -221,15 +221,15 @@ func New(p Params) (Permissions, error) {
 		cleanupRolesForMissingJobs: p.Cfg.Game.CleanupRolesForMissingJobs,
 		startJobGrade:              p.Cfg.Game.StartJobGrade,
 
-		permsMap:          xsync.NewMap[uint64, *cachePerm](),
-		permsGuardToIDMap: xsync.NewMap[string, uint64](),
-		permsJobsRoleMap:  xsync.NewMap[string, *xsync.Map[int32, uint64]](),
-		permsRoleMap:      xsync.NewMap[uint64, *xsync.Map[uint64, bool]](),
-		roleIDToJobMap:    xsync.NewMap[uint64, string](),
+		permsMap:          xsync.NewMap[int64, *cachePerm](),
+		permsGuardToIDMap: xsync.NewMap[string, int64](),
+		permsJobsRoleMap:  xsync.NewMap[string, *xsync.Map[int32, int64]](),
+		permsRoleMap:      xsync.NewMap[int64, *xsync.Map[int64, bool]](),
+		roleIDToJobMap:    xsync.NewMap[int64, string](),
 
-		attrsMap:      xsync.NewMap[uint64, *cacheAttr](),
-		attrsRoleMap:  xsync.NewMap[uint64, *xsync.Map[uint64, *cacheRoleAttr]](),
-		attrsPermsMap: xsync.NewMap[uint64, *xsync.Map[string, uint64]](),
+		attrsMap:      xsync.NewMap[int64, *cacheAttr](),
+		attrsRoleMap:  xsync.NewMap[int64, *xsync.Map[int64, *cacheRoleAttr]](),
+		attrsPermsMap: xsync.NewMap[int64, *xsync.Map[string, int64]](),
 
 		userCanCacheTTL: p.Cfg.Auth.PermsCacheTTL,
 		userCanCache:    userCanCache,
@@ -260,7 +260,7 @@ func New(p Params) (Permissions, error) {
 }
 
 type cachePerm struct {
-	ID        uint64
+	ID        int64
 	Category  Category
 	Name      Name
 	GuardName string
@@ -268,8 +268,8 @@ type cachePerm struct {
 }
 
 type cacheAttr struct {
-	ID           uint64
-	PermissionID uint64
+	ID           int64
+	PermissionID int64
 	Category     Category
 	Name         Name
 	Key          Key
@@ -279,8 +279,8 @@ type cacheAttr struct {
 
 type cacheRoleAttr struct {
 	Job          string
-	AttrID       uint64
-	PermissionID uint64
+	AttrID       int64
+	PermissionID int64
 	Key          Key
 	Type         permissions.AttributeTypes
 	Value        *permissions.AttributeValues

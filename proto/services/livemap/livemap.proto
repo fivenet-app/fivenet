@@ -32,7 +32,7 @@ message JobsList {
 
 message MarkerMarkersUpdates {
   repeated resources.livemap.MarkerMarker updated = 1;
-  repeated uint64 deleted = 2;
+  repeated int64 deleted = 2;
   int32 part = 3;
   bool partial = 4;
 }
@@ -65,7 +65,7 @@ message CreateOrUpdateMarkerResponse {
 }
 
 message DeleteMarkerRequest {
-  uint64 id = 1;
+  int64 id = 1;
 }
 
 message DeleteMarkerResponse {}

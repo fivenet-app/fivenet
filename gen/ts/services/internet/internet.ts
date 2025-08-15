@@ -23,7 +23,7 @@ export interface SearchRequest {
      */
     search: string;
     /**
-     * @generated from protobuf field: optional uint64 domain_id = 2
+     * @generated from protobuf field: optional int64 domain_id = 2
      */
     domainId?: number;
 }
@@ -63,7 +63,7 @@ class SearchRequest$Type extends MessageType<SearchRequest> {
     constructor() {
         super("services.internet.SearchRequest", [
             { no: 1, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "60" } } } },
-            { no: 2, name: "domain_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 2, name: "domain_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<SearchRequest>): SearchRequest {
@@ -81,8 +81,8 @@ class SearchRequest$Type extends MessageType<SearchRequest> {
                 case /* string search */ 1:
                     message.search = reader.string();
                     break;
-                case /* optional uint64 domain_id */ 2:
-                    message.domainId = reader.uint64().toNumber();
+                case /* optional int64 domain_id */ 2:
+                    message.domainId = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -99,9 +99,9 @@ class SearchRequest$Type extends MessageType<SearchRequest> {
         /* string search = 1; */
         if (message.search !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.search);
-        /* optional uint64 domain_id = 2; */
+        /* optional int64 domain_id = 2; */
         if (message.domainId !== undefined)
-            writer.tag(2, WireType.Varint).uint64(message.domainId);
+            writer.tag(2, WireType.Varint).int64(message.domainId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

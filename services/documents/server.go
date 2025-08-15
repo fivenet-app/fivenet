@@ -122,7 +122,7 @@ type Server struct {
 	templateAccess *access.Grouped[documents.TemplateJobAccess, *documents.TemplateJobAccess, documents.TemplateUserAccess, *documents.TemplateUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel]
 
 	collabServer *collab.CollabServer
-	fHandler     *filestore.Handler[uint64]
+	fHandler     *filestore.Handler[int64]
 }
 
 type Params struct {
@@ -159,8 +159,8 @@ func NewServer(p Params) *Server {
 		tDocFiles.DocumentID,
 		tDocFiles.FileID,
 		3<<20,
-		func(parentId uint64) jet.BoolExpression {
-			return tDocFiles.DocumentID.EQ(jet.Uint64(parentId))
+		func(parentId int64) jet.BoolExpression {
+			return tDocFiles.DocumentID.EQ(jet.Int64(parentId))
 		},
 		filestore.InsertJoinRow,
 		false,
@@ -168,7 +168,7 @@ func NewServer(p Params) *Server {
 
 	docAccess := newAccess(p.DB)
 	access.RegisterAccess("documents", &access.GroupedAccessAdapter{
-		CanUserAccessTargetFn: func(ctx context.Context, targetId uint64, userInfo *pbuserinfo.UserInfo, access int32) (bool, error) {
+		CanUserAccessTargetFn: func(ctx context.Context, targetId int64, userInfo *pbuserinfo.UserInfo, access int32) (bool, error) {
 			// Type assert access to the correct enum type
 			return docAccess.CanUserAccessTarget(
 				ctx,

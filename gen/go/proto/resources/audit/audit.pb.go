@@ -84,7 +84,7 @@ func (EventType) EnumDescriptor() ([]byte, []int) {
 
 type AuditEntry struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UserId        int32                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"user_id"`
 	User          *users.UserShort       `protobuf:"bytes,4,opt,name=user,proto3,oneof" json:"user,omitempty"`
@@ -130,7 +130,7 @@ func (*AuditEntry) Descriptor() ([]byte, []int) {
 	return file_resources_audit_audit_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *AuditEntry) GetId() uint64 {
+func (x *AuditEntry) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -221,7 +221,7 @@ const file_resources_audit_audit_proto_rawDesc = "" +
 	"\x1bresources/audit/audit.proto\x12\x0fresources.audit\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xf7\x05\n" +
 	"\n" +
 	"AuditEntry\x12\x1f\n" +
-	"\x02id\x18\x01 \x01(\x04B\x0f\x9a\x84\x9e\x03\n" +
+	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x02id\x12=\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12-\n" +

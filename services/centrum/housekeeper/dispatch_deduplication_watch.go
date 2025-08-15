@@ -63,7 +63,7 @@ func (s *Housekeeper) watchDispatches(ctx context.Context) error {
 				if err := s.tryDeduplicate(ctx, dsp); err != nil {
 					s.logger.Error(
 						"dispatch deduplication failed",
-						zap.Uint64("dispatch_id", dsp.GetId()),
+						zap.Int64("dispatch_id", dsp.GetId()),
 						zap.Error(err),
 					)
 				}
@@ -201,7 +201,7 @@ func (s *Housekeeper) tryDeduplicate(ctx context.Context, dsp *centrum.Dispatch)
 			return err
 		}
 
-		toRemove := []uint64{}
+		toRemove := []int64{}
 		for _, ua := range dup.GetUnits() {
 			toRemove = append(toRemove, ua.GetUnitId())
 		}

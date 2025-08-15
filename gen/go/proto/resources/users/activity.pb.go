@@ -98,7 +98,7 @@ func (UserActivityType) EnumDescriptor() ([]byte, []int) {
 
 type UserActivity struct {
 	state        protoimpl.MessageState `protogen:"open.v1"`
-	Id           uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"user_activity.id"`
+	Id           int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"user_activity.id"`
 	Type         UserActivityType       `protobuf:"varint,2,opt,name=type,proto3,enum=resources.users.UserActivityType" json:"type,omitempty" alias:"user_activity.type"`
 	CreatedAt    *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"user_activity.created_at"`
 	SourceUserId *int32                 `protobuf:"varint,4,opt,name=source_user_id,json=sourceUserId,proto3,oneof" json:"source_user_id,omitempty" alias:"source_user_id"`
@@ -146,7 +146,7 @@ func (*UserActivity) Descriptor() ([]byte, []int) {
 	return file_resources_users_activity_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *UserActivity) GetId() uint64 {
+func (x *UserActivity) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -811,7 +811,7 @@ func (x *JobChange) GetGradeLabel() string {
 type CitizenDocumentRelation struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Added         bool                   `protobuf:"varint,1,opt,name=added,proto3" json:"added,omitempty"`
-	DocumentId    uint64                 `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	DocumentId    int64                  `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	Relation      int32                  `protobuf:"varint,3,opt,name=relation,proto3" json:"relation,omitempty"` // resources.documents.DocRelation enum
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -854,7 +854,7 @@ func (x *CitizenDocumentRelation) GetAdded() bool {
 	return false
 }
 
-func (x *CitizenDocumentRelation) GetDocumentId() uint64 {
+func (x *CitizenDocumentRelation) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
 	}
@@ -986,7 +986,7 @@ const file_resources_users_activity_proto_rawDesc = "" +
 	"\n" +
 	"\x1eresources/users/activity.proto\x12\x0fresources.users\x1a#resources/timestamp/timestamp.proto\x1a\x1cresources/users/labels.proto\x1a\x1eresources/users/licenses.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xdc\a\n" +
 	"\fUserActivity\x12-\n" +
-	"\x02id\x18\x01 \x01(\x04B\x1d\x9a\x84\x9e\x03\x18alias:\"user_activity.id\"R\x02id\x12^\n" +
+	"\x02id\x18\x01 \x01(\x03B\x1d\x9a\x84\x9e\x03\x18alias:\"user_activity.id\"R\x02id\x12^\n" +
 	"\x04type\x18\x02 \x01(\x0e2!.resources.users.UserActivityTypeB'\x9a\x84\x9e\x03\x1aalias:\"user_activity.type\"\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12d\n" +
 	"\n" +
 	"created_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampB%\x9a\x84\x9e\x03 alias:\"user_activity.created_at\"R\tcreatedAt\x12F\n" +
@@ -1053,7 +1053,7 @@ const file_resources_users_activity_proto_rawDesc = "" +
 	"\f_grade_label\"l\n" +
 	"\x17CitizenDocumentRelation\x12\x14\n" +
 	"\x05added\x18\x01 \x01(\bR\x05added\x12\x1f\n" +
-	"\vdocument_id\x18\x02 \x01(\x04R\n" +
+	"\vdocument_id\x18\x02 \x01(\x03R\n" +
 	"documentId\x12\x1a\n" +
 	"\brelation\x18\x03 \x01(\x05R\brelation\"j\n" +
 	"\n" +

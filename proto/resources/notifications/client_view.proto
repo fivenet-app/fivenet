@@ -18,7 +18,7 @@ enum ObjectType {
 
 message ClientView {
   ObjectType type = 1 [(buf.validate.field).enum.defined_only = true];
-  optional uint64 id = 2;
+  optional int64 id = 2;
 }
 
 enum ObjectEventType {
@@ -29,7 +29,7 @@ enum ObjectEventType {
 
 message ObjectEvent {
   ObjectType type = 1 [(buf.validate.field).enum.defined_only = true];
-  optional uint64 id = 2;
+  optional int64 id = 2;
   ObjectEventType event_type = 3 [(buf.validate.field).enum.defined_only = true];
 
   optional int32 user_id = 4 [(buf.validate.field).int32.gte = 0];

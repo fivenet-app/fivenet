@@ -25,7 +25,7 @@ const (
 type SearchRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Search        string                 `protobuf:"bytes,1,opt,name=search,proto3" json:"search,omitempty"`
-	DomainId      *uint64                `protobuf:"varint,2,opt,name=domain_id,json=domainId,proto3,oneof" json:"domain_id,omitempty"`
+	DomainId      *int64                 `protobuf:"varint,2,opt,name=domain_id,json=domainId,proto3,oneof" json:"domain_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -67,7 +67,7 @@ func (x *SearchRequest) GetSearch() string {
 	return ""
 }
 
-func (x *SearchRequest) GetDomainId() uint64 {
+func (x *SearchRequest) GetDomainId() int64 {
 	if x != nil && x.DomainId != nil {
 		return *x.DomainId
 	}
@@ -221,7 +221,7 @@ const file_services_internet_internet_proto_rawDesc = "" +
 	" services/internet/internet.proto\x12\x11services.internet\x1a\x1dresources/internet/page.proto\x1a\x1fresources/internet/search.proto\"`\n" +
 	"\rSearchRequest\x12\x1f\n" +
 	"\x06search\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18<R\x06search\x12 \n" +
-	"\tdomain_id\x18\x02 \x01(\x04H\x00R\bdomainId\x88\x01\x01B\f\n" +
+	"\tdomain_id\x18\x02 \x01(\x03H\x00R\bdomainId\x88\x01\x01B\f\n" +
 	"\n" +
 	"_domain_id\"L\n" +
 	"\x0eSearchResponse\x12:\n" +

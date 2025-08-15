@@ -43,5 +43,5 @@ message AutoCloseSettings {
 }
 
 message WorkflowCronData {
-  uint64 last_doc_id = 1;
+  int64 last_doc_id = 1;
 }

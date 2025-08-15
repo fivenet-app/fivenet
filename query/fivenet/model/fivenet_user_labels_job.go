@@ -8,7 +8,7 @@
 package model
 
 type FivenetUserLabelsJob struct {
-	ID      uint64  `sql:"primary_key" json:"id"`
+	ID      int64   `sql:"primary_key" json:"id"`
 	Job     string  `json:"job"`
 	Name    string  `json:"name"`
 	SortKey *string `json:"sort_key"`

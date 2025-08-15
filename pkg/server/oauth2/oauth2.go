@@ -387,7 +387,7 @@ func (o *OAuth2) handleConnectOnlyCallback(
 		if dbutils.IsDuplicateError(err) {
 			o.handleRedirect(c, true, false, "already_in_use")
 		} else {
-			o.logger.Error("failed to store user info", zap.Uint64("acc_id", claims.AccID), zap.String("provider", provider.GetName()), zap.Error(err))
+			o.logger.Error("failed to store user info", zap.Int64("acc_id", claims.AccID), zap.String("provider", provider.GetName()), zap.Error(err))
 			o.handleRedirect(c, true, false, ReasonInternalError)
 		}
 		return
@@ -444,7 +444,7 @@ func (o *OAuth2) handleLoginCallback(
 	if err := o.userInfoStore.updateUserInfo(c.Request.Context(), account.ID, provider.GetName(), uInfo); err != nil {
 		o.logger.Error(
 			"failed to update oauth2 user info for account id",
-			zap.Uint64("account_id", account.ID),
+			zap.Int64("account_id", account.ID),
 			zap.String("provider", provider.GetName()),
 			zap.Error(err),
 		)

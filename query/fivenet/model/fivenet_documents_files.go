@@ -8,6 +8,6 @@
 package model
 
 type FivenetDocumentsFiles struct {
-	DocumentID uint64 `sql:"primary_key" json:"document_id"`
-	FileID     uint64 `sql:"primary_key" json:"file_id"`
+	DocumentID int64 `sql:"primary_key" json:"document_id"`
+	FileID     int64 `sql:"primary_key" json:"file_id"`
 }

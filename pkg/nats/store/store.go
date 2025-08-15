@@ -313,6 +313,7 @@ func (s *Store[T, U]) get(key string) (U, error) {
 		return nil, jetstream.ErrKeyNotFound
 	}
 
+	//nolint:errcheck // We know that i is of type U as we only store U in the data map.
 	return proto.Clone(i).(U), nil
 }
 
@@ -410,6 +411,7 @@ func (s *Store[T, U]) update(
 
 	var err error
 	item := s.updateFromType(entry.Key(), data, triggerHook)
+	//nolint:errcheck // We know that i is of type U as we only store U in the data map.
 	item = proto.Clone(item).(U)
 	if triggerHook && s.onUpdate != nil {
 		item, err = s.onUpdate(ctx, oldItem, item)
@@ -597,6 +599,7 @@ func (s *Store[T, U]) Range(fn func(key string, value U) bool) {
 		}
 
 		// Clone the value to ensure no parallel access issues
+		//nolint:errcheck // We know that i is of type U as we only store U in the data map.
 		return fn(userKey, proto.Clone(v).(U))
 	})
 }

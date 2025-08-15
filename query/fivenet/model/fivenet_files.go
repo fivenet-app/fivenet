@@ -12,9 +12,9 @@ import (
 )
 
 type FivenetFiles struct {
-	ID          uint64     `sql:"primary_key" json:"id"`
+	ID          int64      `sql:"primary_key" json:"id"`
 	FilePath    string     `json:"file_path"`
-	ByteSize    uint64     `json:"byte_size"`
+	ByteSize    int64      `json:"byte_size"`
 	ContentType string     `json:"content_type"`
 	Meta        *string    `json:"meta"`
 	CreatedAt   time.Time  `json:"created_at"`

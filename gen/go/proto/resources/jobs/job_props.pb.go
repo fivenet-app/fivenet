@@ -37,7 +37,7 @@ type JobProps struct {
 	DiscordSyncSettings *DiscordSyncSettings   `protobuf:"bytes,9,opt,name=discord_sync_settings,json=discordSyncSettings,proto3" json:"discord_sync_settings,omitempty"`
 	DiscordSyncChanges  *DiscordSyncChanges    `protobuf:"bytes,10,opt,name=discord_sync_changes,json=discordSyncChanges,proto3,oneof" json:"discord_sync_changes,omitempty"`
 	Motd                *string                `protobuf:"bytes,11,opt,name=motd,proto3,oneof" json:"motd,omitempty"`
-	LogoFileId          *uint64                `protobuf:"varint,12,opt,name=logo_file_id,json=logoFileId,proto3,oneof" json:"logo_file_id,omitempty"`
+	LogoFileId          *int64                 `protobuf:"varint,12,opt,name=logo_file_id,json=logoFileId,proto3,oneof" json:"logo_file_id,omitempty"`
 	LogoFile            *file.File             `protobuf:"bytes,13,opt,name=logo_file,json=logoFile,proto3,oneof" json:"logo_file,omitempty" alias:"logo_file"`
 	Settings            *JobSettings           `protobuf:"bytes,14,opt,name=settings,proto3" json:"settings,omitempty"`
 	unknownFields       protoimpl.UnknownFields
@@ -151,7 +151,7 @@ func (x *JobProps) GetMotd() string {
 	return ""
 }
 
-func (x *JobProps) GetLogoFileId() uint64 {
+func (x *JobProps) GetLogoFileId() int64 {
 	if x != nil && x.LogoFileId != nil {
 		return *x.LogoFileId
 	}
@@ -244,7 +244,7 @@ const file_resources_jobs_job_props_proto_rawDesc = "" +
 	"\x14discord_sync_changes\x18\n" +
 	" \x01(\v2\".resources.jobs.DiscordSyncChangesH\x05R\x12discordSyncChanges\x88\x01\x01\x12!\n" +
 	"\x04motd\x18\v \x01(\tB\b\xbaH\x05r\x03\x18\x80\bH\x06R\x04motd\x88\x01\x01\x12%\n" +
-	"\flogo_file_id\x18\f \x01(\x04H\aR\n" +
+	"\flogo_file_id\x18\f \x01(\x03H\aR\n" +
 	"logoFileId\x88\x01\x01\x12N\n" +
 	"\tlogo_file\x18\r \x01(\v2\x14.resources.file.FileB\x16\x9a\x84\x9e\x03\x11alias:\"logo_file\"H\bR\blogoFile\x88\x01\x01\x127\n" +
 	"\bsettings\x18\x0e \x01(\v2\x1b.resources.jobs.JobSettingsR\bsettingsB\f\n" +

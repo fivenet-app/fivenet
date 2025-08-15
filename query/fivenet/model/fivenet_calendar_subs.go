@@ -12,7 +12,7 @@ import (
 )
 
 type FivenetCalendarSubs struct {
-	CalendarID uint64     `json:"calendar_id"`
+	CalendarID int64      `json:"calendar_id"`
 	UserID     int32      `json:"user_id"`
 	CreatedAt  *time.Time `json:"created_at"`
 	Confirmed  bool       `json:"confirmed"`

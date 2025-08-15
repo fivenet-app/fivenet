@@ -236,7 +236,7 @@ func (h *Housekeeper) Run(ctx context.Context) (int64, error) {
 			// B) Delete row from fivenet_files
 			if _, err := tFiles.
 				DELETE().
-				WHERE(tFiles.ID.EQ(jet.Uint64(c.GetId()))).
+				WHERE(tFiles.ID.EQ(jet.Int64(c.GetId()))).
 				ExecContext(ctx, tx); err != nil {
 				if err := tx.Rollback(); err != nil {
 					h.logger.Error(
@@ -248,7 +248,7 @@ func (h *Housekeeper) Run(ctx context.Context) (int64, error) {
 			}
 			h.logger.Debug(
 				"deleted file",
-				zap.Uint64("file_id", c.GetId()),
+				zap.Int64("file_id", c.GetId()),
 				zap.String("file_path", c.GetFilePath()),
 			)
 		}

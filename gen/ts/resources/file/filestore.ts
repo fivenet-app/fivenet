@@ -42,7 +42,7 @@ export interface UploadFileRequest {
  */
 export interface UploadMeta {
     /**
-     * @generated from protobuf field: uint64 parent_id = 1
+     * @generated from protobuf field: int64 parent_id = 1
      */
     parentId: number;
     /**
@@ -73,7 +73,7 @@ export interface UploadMeta {
  */
 export interface UploadFileResponse {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number; // Unique ID for the uploaded file
     /**
@@ -90,11 +90,11 @@ export interface UploadFileResponse {
  */
 export interface DeleteFileRequest {
     /**
-     * @generated from protobuf field: uint64 parent_id = 1
+     * @generated from protobuf field: int64 parent_id = 1
      */
     parentId: number;
     /**
-     * @generated from protobuf field: uint64 file_id = 2
+     * @generated from protobuf field: int64 file_id = 2
      */
     fileId: number;
 }
@@ -167,7 +167,7 @@ export const UploadFileRequest = new UploadFileRequest$Type();
 class UploadMeta$Type extends MessageType<UploadMeta> {
     constructor() {
         super("resources.file.UploadMeta", [
-            { no: 1, name: "parent_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "parent_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "namespace", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "original_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
             { no: 4, name: "content_type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
@@ -192,8 +192,8 @@ class UploadMeta$Type extends MessageType<UploadMeta> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 parent_id */ 1:
-                    message.parentId = reader.uint64().toNumber();
+                case /* int64 parent_id */ 1:
+                    message.parentId = reader.int64().toNumber();
                     break;
                 case /* string namespace */ 2:
                     message.namespace = reader.string();
@@ -222,9 +222,9 @@ class UploadMeta$Type extends MessageType<UploadMeta> {
         return message;
     }
     internalBinaryWrite(message: UploadMeta, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 parent_id = 1; */
+        /* int64 parent_id = 1; */
         if (message.parentId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.parentId);
+            writer.tag(1, WireType.Varint).int64(message.parentId);
         /* string namespace = 2; */
         if (message.namespace !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.namespace);
@@ -254,7 +254,7 @@ export const UploadMeta = new UploadMeta$Type();
 class UploadFileResponse$Type extends MessageType<UploadFileResponse> {
     constructor() {
         super("resources.file.UploadFileResponse", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "url", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "file", kind: "message", T: () => File }
         ]);
@@ -272,8 +272,8 @@ class UploadFileResponse$Type extends MessageType<UploadFileResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* string url */ 2:
                     message.url = reader.string();
@@ -293,9 +293,9 @@ class UploadFileResponse$Type extends MessageType<UploadFileResponse> {
         return message;
     }
     internalBinaryWrite(message: UploadFileResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         /* string url = 2; */
         if (message.url !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.url);
@@ -316,8 +316,8 @@ export const UploadFileResponse = new UploadFileResponse$Type();
 class DeleteFileRequest$Type extends MessageType<DeleteFileRequest> {
     constructor() {
         super("resources.file.DeleteFileRequest", [
-            { no: 1, name: "parent_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { uint64: { gt: "0" } } } },
-            { no: 2, name: "file_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { uint64: { gt: "0" } } } }
+            { no: 1, name: "parent_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 2, name: "file_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteFileRequest>): DeleteFileRequest {
@@ -333,11 +333,11 @@ class DeleteFileRequest$Type extends MessageType<DeleteFileRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 parent_id */ 1:
-                    message.parentId = reader.uint64().toNumber();
+                case /* int64 parent_id */ 1:
+                    message.parentId = reader.int64().toNumber();
                     break;
-                case /* uint64 file_id */ 2:
-                    message.fileId = reader.uint64().toNumber();
+                case /* int64 file_id */ 2:
+                    message.fileId = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -351,12 +351,12 @@ class DeleteFileRequest$Type extends MessageType<DeleteFileRequest> {
         return message;
     }
     internalBinaryWrite(message: DeleteFileRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 parent_id = 1; */
+        /* int64 parent_id = 1; */
         if (message.parentId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.parentId);
-        /* uint64 file_id = 2; */
+            writer.tag(1, WireType.Varint).int64(message.parentId);
+        /* int64 file_id = 2; */
         if (message.fileId !== 0)
-            writer.tag(2, WireType.Varint).uint64(message.fileId);
+            writer.tag(2, WireType.Varint).int64(message.fileId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

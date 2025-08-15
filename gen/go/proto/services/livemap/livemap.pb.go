@@ -252,7 +252,7 @@ func (x *JobsList) GetMarkers() []*jobs.Job {
 type MarkerMarkersUpdates struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	Updated       []*livemap.MarkerMarker `protobuf:"bytes,1,rep,name=updated,proto3" json:"updated,omitempty"`
-	Deleted       []uint64                `protobuf:"varint,2,rep,packed,name=deleted,proto3" json:"deleted,omitempty"`
+	Deleted       []int64                 `protobuf:"varint,2,rep,packed,name=deleted,proto3" json:"deleted,omitempty"`
 	Part          int32                   `protobuf:"varint,3,opt,name=part,proto3" json:"part,omitempty"`
 	Partial       bool                    `protobuf:"varint,4,opt,name=partial,proto3" json:"partial,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -296,7 +296,7 @@ func (x *MarkerMarkersUpdates) GetUpdated() []*livemap.MarkerMarker {
 	return nil
 }
 
-func (x *MarkerMarkersUpdates) GetDeleted() []uint64 {
+func (x *MarkerMarkersUpdates) GetDeleted() []int64 {
 	if x != nil {
 		return x.Deleted
 	}
@@ -513,7 +513,7 @@ func (x *CreateOrUpdateMarkerResponse) GetMarker() *livemap.MarkerMarker {
 
 type DeleteMarkerRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -548,7 +548,7 @@ func (*DeleteMarkerRequest) Descriptor() ([]byte, []int) {
 	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *DeleteMarkerRequest) GetId() uint64 {
+func (x *DeleteMarkerRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -614,7 +614,7 @@ const file_services_livemap_livemap_proto_rawDesc = "" +
 	"\amarkers\x18\x02 \x03(\v2\x13.resources.jobs.JobR\amarkers\"\x99\x01\n" +
 	"\x14MarkerMarkersUpdates\x129\n" +
 	"\aupdated\x18\x01 \x03(\v2\x1f.resources.livemap.MarkerMarkerR\aupdated\x12\x18\n" +
-	"\adeleted\x18\x02 \x03(\x04R\adeleted\x12\x12\n" +
+	"\adeleted\x18\x02 \x03(\x03R\adeleted\x12\x12\n" +
 	"\x04part\x18\x03 \x01(\x05R\x04part\x12\x18\n" +
 	"\apartial\x18\x04 \x01(\bR\apartial\"C\n" +
 	"\bSnapshot\x127\n" +
@@ -628,7 +628,7 @@ const file_services_livemap_livemap_proto_rawDesc = "" +
 	"\x1cCreateOrUpdateMarkerResponse\x127\n" +
 	"\x06marker\x18\x01 \x01(\v2\x1f.resources.livemap.MarkerMarkerR\x06marker\"%\n" +
 	"\x13DeleteMarkerRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"\x16\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\x16\n" +
 	"\x14DeleteMarkerResponse2\xb5\x02\n" +
 	"\x0eLivemapService\x12M\n" +
 	"\x06Stream\x12\x1f.services.livemap.StreamRequest\x1a .services.livemap.StreamResponse0\x01\x12u\n" +

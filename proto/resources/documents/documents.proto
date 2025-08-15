@@ -15,11 +15,11 @@ import "tagger/tagger.proto";
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documents";
 
 message Document {
-  uint64 id = 1;
+  int64 id = 1;
   resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   optional resources.timestamp.Timestamp deleted_at = 4;
-  optional uint64 category_id = 5;
+  optional int64 category_id = 5;
   optional resources.documents.Category category = 6 [(tagger.tags) = "alias:\"category\""];
   // @sanitize
   string title = 7 [(buf.validate.field).string = {
@@ -42,7 +42,7 @@ message Document {
   bool closed = 16;
   bool draft = 17;
   bool public = 18;
-  optional uint64 template_id = 19;
+  optional int64 template_id = 19;
   optional DocumentPin pin = 20 [(tagger.tags) = "alias:\"pin\""];
   optional WorkflowState workflow_state = 21;
   optional WorkflowUserState workflow_user = 22;
@@ -50,11 +50,11 @@ message Document {
 }
 
 message DocumentShort {
-  uint64 id = 1;
+  int64 id = 1;
   resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   optional resources.timestamp.Timestamp deleted_at = 4;
-  optional uint64 category_id = 5;
+  optional int64 category_id = 5;
   optional resources.documents.Category category = 6 [(tagger.tags) = "alias:\"category\""];
   // @sanitize
   string title = 7 [(buf.validate.field).string = {
@@ -86,15 +86,15 @@ enum DocReference {
 }
 
 message DocumentReference {
-  optional uint64 id = 1;
+  optional int64 id = 1;
   optional resources.timestamp.Timestamp created_at = 2;
-  uint64 source_document_id = 3 [(tagger.tags) = "alias:\"source_document_id\""];
+  int64 source_document_id = 3 [(tagger.tags) = "alias:\"source_document_id\""];
   optional resources.documents.DocumentShort source_document = 4 [(tagger.tags) = "alias:\"source_document\""];
   DocReference reference = 5 [
     (buf.validate.field).enum.defined_only = true,
     (tagger.tags) = "alias:\"reference\""
   ];
-  uint64 target_document_id = 6 [(tagger.tags) = "alias:\"target_document_id\""];
+  int64 target_document_id = 6 [(tagger.tags) = "alias:\"target_document_id\""];
   optional resources.documents.DocumentShort target_document = 7 [(tagger.tags) = "alias:\"target_document\""];
   optional int32 creator_id = 8 [(buf.validate.field).int32.gt = 0];
   optional resources.users.UserShort creator = 9 [(tagger.tags) = "alias:\"ref_creator\""];
@@ -108,9 +108,9 @@ enum DocRelation {
 }
 
 message DocumentRelation {
-  optional uint64 id = 1;
+  optional int64 id = 1;
   optional resources.timestamp.Timestamp created_at = 2;
-  uint64 document_id = 3;
+  int64 document_id = 3;
   optional resources.documents.DocumentShort document = 4 [(tagger.tags) = "alias:\"document\""];
   int32 source_user_id = 5 [
     (buf.validate.field).int32.gt = 0,
@@ -129,7 +129,7 @@ message DocumentRelation {
 }
 
 message WorkflowState {
-  uint64 document_id = 1;
+  int64 document_id = 1;
   optional resources.timestamp.Timestamp next_reminder_time = 2;
   optional int32 next_reminder_count = 3;
   optional resources.timestamp.Timestamp auto_close_time = 4;
@@ -139,7 +139,7 @@ message WorkflowState {
 }
 
 message WorkflowUserState {
-  uint64 document_id = 1;
+  int64 document_id = 1;
   int32 user_id = 2 [(buf.validate.field).int32.gt = 0];
   optional resources.timestamp.Timestamp manual_reminder_time = 3;
   optional string manual_reminder_message = 4 [(buf.validate.field).string.max_len = 255];

@@ -156,7 +156,7 @@ func (c *DocumentCategories) loadCategories(ctx context.Context) error {
 	errs := multierr.Combine()
 	categoriesPerJob := map[string][]*documents.Category{}
 	for _, d := range dest {
-		key := strconv.FormatUint(d.GetId(), 10)
+		key := strconv.FormatInt(d.GetId(), 10)
 		if err := c.Put(ctx, key, d); err != nil {
 			errs = multierr.Append(errs, err)
 		}
@@ -180,7 +180,7 @@ func (c *DocumentCategories) Enrich(doc common.ICategory) {
 		return
 	}
 
-	dc, err := c.Get(strconv.FormatUint(cId, 10))
+	dc, err := c.Get(strconv.FormatInt(cId, 10))
 	if err != nil {
 		job := NotAvailablePlaceholder
 		doc.SetCategory(&documents.Category{

@@ -65,7 +65,7 @@ export interface UserProps {
      */
     bloodType?: string;
     /**
-     * @generated from protobuf field: optional uint64 mugshot_file_id = 12
+     * @generated from protobuf field: optional int64 mugshot_file_id = 12
      */
     mugshotFileId?: number;
     /**
@@ -98,7 +98,7 @@ class UserProps$Type extends MessageType<UserProps> {
             { no: 9, name: "traffic_infraction_points_updated_at", kind: "message", T: () => Timestamp },
             { no: 10, name: "open_fines", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 11, name: "blood_type", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 12, name: "mugshot_file_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 12, name: "mugshot_file_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 13, name: "mugshot", kind: "message", T: () => File, options: { "tagger.tags": "alias:\"mugshot\"" } },
             { no: 14, name: "labels", kind: "message", T: () => Labels },
             { no: 15, name: "email", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "6", maxLen: "80" } } } }
@@ -149,8 +149,8 @@ class UserProps$Type extends MessageType<UserProps> {
                 case /* optional string blood_type */ 11:
                     message.bloodType = reader.string();
                     break;
-                case /* optional uint64 mugshot_file_id */ 12:
-                    message.mugshotFileId = reader.uint64().toNumber();
+                case /* optional int64 mugshot_file_id */ 12:
+                    message.mugshotFileId = reader.int64().toNumber();
                     break;
                 case /* optional resources.file.File mugshot */ 13:
                     message.mugshot = File.internalBinaryRead(reader, reader.uint32(), options, message.mugshot);
@@ -206,9 +206,9 @@ class UserProps$Type extends MessageType<UserProps> {
         /* optional string blood_type = 11; */
         if (message.bloodType !== undefined)
             writer.tag(11, WireType.LengthDelimited).string(message.bloodType);
-        /* optional uint64 mugshot_file_id = 12; */
+        /* optional int64 mugshot_file_id = 12; */
         if (message.mugshotFileId !== undefined)
-            writer.tag(12, WireType.Varint).uint64(message.mugshotFileId);
+            writer.tag(12, WireType.Varint).int64(message.mugshotFileId);
         /* optional resources.file.File mugshot = 13; */
         if (message.mugshot)
             File.internalBinaryWrite(message.mugshot, writer.tag(13, WireType.LengthDelimited).fork(), options).join();

@@ -12,7 +12,7 @@ import (
 )
 
 type FivenetDocumentsWorkflowState struct {
-	DocumentID        uint64     `json:"document_id"`
+	DocumentID        int64      `json:"document_id"`
 	NextReminderTime  *time.Time `json:"next_reminder_time"`
 	NextReminderCount *int32     `json:"next_reminder_count"`
 	AutoCloseTime     *time.Time `json:"auto_close_time"`

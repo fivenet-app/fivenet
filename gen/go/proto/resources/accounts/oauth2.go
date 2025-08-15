@@ -18,7 +18,7 @@ func RetrieveOAuth2Account(
 	ctx context.Context,
 	db qrm.Queryable,
 	ct *crypt.Crypt,
-	accountId uint64,
+	accountId int64,
 	provider string,
 ) (*model.FivenetAccountsOauth2, error) {
 	tOauth2 := table.FivenetAccountsOauth2
@@ -41,7 +41,7 @@ func RetrieveOAuth2Account(
 		).
 		FROM(tOauth2).
 		WHERE(jet.AND(
-			tOauth2.AccountID.EQ(jet.Uint64(accountId)),
+			tOauth2.AccountID.EQ(jet.Int64(accountId)),
 			tOauth2.Provider.EQ(jet.String(provider)),
 		)).
 		LIMIT(1)
@@ -74,7 +74,7 @@ func UpdateOAuth2Account(
 	ctx context.Context,
 	db qrm.Executable,
 	ct *crypt.Crypt,
-	accountId uint64,
+	accountId int64,
 	oauth2Acc *model.FivenetAccountsOauth2,
 ) error {
 	accessToken, err := ct.EncryptPointerString(oauth2Acc.AccessToken)
@@ -112,7 +112,7 @@ func UpdateOAuth2Account(
 			oauth2Acc.ObtainedAt,
 		).
 		WHERE(jet.AND(
-			tOauth2.AccountID.EQ(jet.Uint64(accountId)),
+			tOauth2.AccountID.EQ(jet.Int64(accountId)),
 			tOauth2.Provider.EQ(jet.String(oauth2Acc.Provider)),
 			tOauth2.ExternalID.EQ(jet.String(oauth2Acc.ExternalID)),
 		)).

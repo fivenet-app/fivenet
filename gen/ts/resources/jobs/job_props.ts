@@ -65,7 +65,7 @@ export interface JobProps {
      */
     motd?: string;
     /**
-     * @generated from protobuf field: optional uint64 logo_file_id = 12
+     * @generated from protobuf field: optional int64 logo_file_id = 12
      */
     logoFileId?: number;
     /**
@@ -107,7 +107,7 @@ class JobProps$Type extends MessageType<JobProps> {
             { no: 9, name: "discord_sync_settings", kind: "message", T: () => DiscordSyncSettings },
             { no: 10, name: "discord_sync_changes", kind: "message", T: () => DiscordSyncChanges },
             { no: 11, name: "motd", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "1024" } } } },
-            { no: 12, name: "logo_file_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 12, name: "logo_file_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 13, name: "logo_file", kind: "message", T: () => File, options: { "tagger.tags": "alias:\"logo_file\"" } },
             { no: 14, name: "settings", kind: "message", T: () => JobSettings }
         ]);
@@ -158,8 +158,8 @@ class JobProps$Type extends MessageType<JobProps> {
                 case /* optional string motd */ 11:
                     message.motd = reader.string();
                     break;
-                case /* optional uint64 logo_file_id */ 12:
-                    message.logoFileId = reader.uint64().toNumber();
+                case /* optional int64 logo_file_id */ 12:
+                    message.logoFileId = reader.int64().toNumber();
                     break;
                 case /* optional resources.file.File logo_file */ 13:
                     message.logoFile = File.internalBinaryRead(reader, reader.uint32(), options, message.logoFile);
@@ -212,9 +212,9 @@ class JobProps$Type extends MessageType<JobProps> {
         /* optional string motd = 11; */
         if (message.motd !== undefined)
             writer.tag(11, WireType.LengthDelimited).string(message.motd);
-        /* optional uint64 logo_file_id = 12; */
+        /* optional int64 logo_file_id = 12; */
         if (message.logoFileId !== undefined)
-            writer.tag(12, WireType.Varint).uint64(message.logoFileId);
+            writer.tag(12, WireType.Varint).int64(message.logoFileId);
         /* optional resources.file.File logo_file = 13; */
         if (message.logoFile)
             File.internalBinaryWrite(message.logoFile, writer.tag(13, WireType.LengthDelimited).fork(), options).join();

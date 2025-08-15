@@ -38,7 +38,7 @@ func (s *Server) ShareCalendarEntry(
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.GetEntryId())))
+	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Int64(req.GetEntryId())))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -103,7 +103,7 @@ func (s *Server) ShareCalendarEntry(
 func (s *Server) shareCalendarEntry(
 	ctx context.Context,
 	tx qrm.DB,
-	entryId uint64,
+	entryId int64,
 	inUserIds []int32,
 ) ([]int32, error) {
 	userIds := make([]jet.Expression, len(inUserIds))
@@ -117,7 +117,7 @@ func (s *Server) shareCalendarEntry(
 		).
 		FROM(tCalendarRSVP).
 		WHERE(jet.AND(
-			tCalendarRSVP.EntryID.EQ(jet.Uint64(entryId)),
+			tCalendarRSVP.EntryID.EQ(jet.Int64(entryId)),
 			tCalendarRSVP.UserID.IN(userIds...),
 		))
 

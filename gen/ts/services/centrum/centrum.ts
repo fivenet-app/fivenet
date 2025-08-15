@@ -38,7 +38,7 @@ export interface ListDispatchActivityRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: uint64 id = 2
+     * @generated from protobuf field: int64 id = 2
      */
     id: number;
 }
@@ -51,7 +51,7 @@ export interface ListUnitActivityRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: uint64 id = 2
+     * @generated from protobuf field: int64 id = 2
      */
     id: number;
 }
@@ -130,7 +130,7 @@ export interface CreateOrUpdateUnitResponse {
  */
 export interface DeleteUnitRequest {
     /**
-     * @generated from protobuf field: uint64 unit_id = 1
+     * @generated from protobuf field: int64 unit_id = 1
      */
     unitId: number;
 }
@@ -144,7 +144,7 @@ export interface DeleteUnitResponse {
  */
 export interface UpdateUnitStatusRequest {
     /**
-     * @generated from protobuf field: uint64 unit_id = 1
+     * @generated from protobuf field: int64 unit_id = 1
      */
     unitId: number;
     /**
@@ -174,7 +174,7 @@ export interface UpdateUnitStatusResponse {
  */
 export interface AssignUnitRequest {
     /**
-     * @generated from protobuf field: uint64 unit_id = 1
+     * @generated from protobuf field: int64 unit_id = 1
      */
     unitId: number;
     /**
@@ -273,7 +273,7 @@ export interface ListDispatchesRequest {
      */
     notStatus: StatusDispatch[];
     /**
-     * @generated from protobuf field: repeated uint64 ids = 4
+     * @generated from protobuf field: repeated int64 ids = 4
      */
     ids: number[];
     /**
@@ -299,7 +299,7 @@ export interface ListDispatchesResponse {
  */
 export interface GetDispatchRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
 }
@@ -353,7 +353,7 @@ export interface UpdateDispatchResponse {
  */
 export interface DeleteDispatchRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
 }
@@ -381,7 +381,7 @@ export interface ListDispatchTargetJobsResponse {
  */
 export interface UpdateDispatchStatusRequest {
     /**
-     * @generated from protobuf field: uint64 dispatch_id = 1
+     * @generated from protobuf field: int64 dispatch_id = 1
      */
     dispatchId: number;
     /**
@@ -411,15 +411,15 @@ export interface UpdateDispatchStatusResponse {
  */
 export interface AssignDispatchRequest {
     /**
-     * @generated from protobuf field: uint64 dispatch_id = 1
+     * @generated from protobuf field: int64 dispatch_id = 1
      */
     dispatchId: number;
     /**
-     * @generated from protobuf field: repeated uint64 to_add = 2
+     * @generated from protobuf field: repeated int64 to_add = 2
      */
     toAdd: number[];
     /**
-     * @generated from protobuf field: repeated uint64 to_remove = 3
+     * @generated from protobuf field: repeated int64 to_remove = 3
      */
     toRemove: number[];
     /**
@@ -450,7 +450,7 @@ export interface ListDispatchActivityResponse {
  */
 export interface JoinUnitRequest {
     /**
-     * @generated from protobuf field: optional uint64 unit_id = 1
+     * @generated from protobuf field: optional int64 unit_id = 1
      */
     unitId?: number;
 }
@@ -468,7 +468,7 @@ export interface JoinUnitResponse {
  */
 export interface TakeDispatchRequest {
     /**
-     * @generated from protobuf field: repeated uint64 dispatch_ids = 1
+     * @generated from protobuf field: repeated int64 dispatch_ids = 1
      */
     dispatchIds: number[];
     /**
@@ -513,7 +513,7 @@ export interface LatestState {
      */
     dispatchers?: Dispatchers;
     /**
-     * @generated from protobuf field: optional uint64 own_unit_id = 2
+     * @generated from protobuf field: optional int64 own_unit_id = 2
      */
     ownUnitId?: number;
     /**
@@ -572,7 +572,7 @@ export interface StreamResponse {
     } | {
         oneofKind: "unitDeleted";
         /**
-         * @generated from protobuf field: uint64 unit_deleted = 6
+         * @generated from protobuf field: int64 unit_deleted = 6
          */
         unitDeleted: number;
     } | {
@@ -590,7 +590,7 @@ export interface StreamResponse {
     } | {
         oneofKind: "dispatchDeleted";
         /**
-         * @generated from protobuf field: uint64 dispatch_deleted = 9
+         * @generated from protobuf field: int64 dispatch_deleted = 9
          */
         dispatchDeleted: number;
     } | {
@@ -649,7 +649,7 @@ class ListDispatchActivityRequest$Type extends MessageType<ListDispatchActivityR
     constructor() {
         super("services.centrum.ListDispatchActivityRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 2, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<ListDispatchActivityRequest>): ListDispatchActivityRequest {
@@ -667,8 +667,8 @@ class ListDispatchActivityRequest$Type extends MessageType<ListDispatchActivityR
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* uint64 id */ 2:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 2:
+                    message.id = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -685,9 +685,9 @@ class ListDispatchActivityRequest$Type extends MessageType<ListDispatchActivityR
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 id = 2; */
+        /* int64 id = 2; */
         if (message.id !== 0)
-            writer.tag(2, WireType.Varint).uint64(message.id);
+            writer.tag(2, WireType.Varint).int64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -703,7 +703,7 @@ class ListUnitActivityRequest$Type extends MessageType<ListUnitActivityRequest> 
     constructor() {
         super("services.centrum.ListUnitActivityRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 2, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<ListUnitActivityRequest>): ListUnitActivityRequest {
@@ -721,8 +721,8 @@ class ListUnitActivityRequest$Type extends MessageType<ListUnitActivityRequest> 
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* uint64 id */ 2:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 2:
+                    message.id = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -739,9 +739,9 @@ class ListUnitActivityRequest$Type extends MessageType<ListUnitActivityRequest> 
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 id = 2; */
+        /* int64 id = 2; */
         if (message.id !== 0)
-            writer.tag(2, WireType.Varint).uint64(message.id);
+            writer.tag(2, WireType.Varint).int64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1126,7 +1126,7 @@ export const CreateOrUpdateUnitResponse = new CreateOrUpdateUnitResponse$Type();
 class DeleteUnitRequest$Type extends MessageType<DeleteUnitRequest> {
     constructor() {
         super("services.centrum.DeleteUnitRequest", [
-            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "unit_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteUnitRequest>): DeleteUnitRequest {
@@ -1141,8 +1141,8 @@ class DeleteUnitRequest$Type extends MessageType<DeleteUnitRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 unit_id */ 1:
-                    message.unitId = reader.uint64().toNumber();
+                case /* int64 unit_id */ 1:
+                    message.unitId = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1156,9 +1156,9 @@ class DeleteUnitRequest$Type extends MessageType<DeleteUnitRequest> {
         return message;
     }
     internalBinaryWrite(message: DeleteUnitRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 unit_id = 1; */
+        /* int64 unit_id = 1; */
         if (message.unitId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.unitId);
+            writer.tag(1, WireType.Varint).int64(message.unitId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1211,7 +1211,7 @@ export const DeleteUnitResponse = new DeleteUnitResponse$Type();
 class UpdateUnitStatusRequest$Type extends MessageType<UpdateUnitStatusRequest> {
     constructor() {
         super("services.centrum.UpdateUnitStatusRequest", [
-            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "unit_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "status", kind: "enum", T: () => ["resources.centrum.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
             { no: 4, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } }
@@ -1230,8 +1230,8 @@ class UpdateUnitStatusRequest$Type extends MessageType<UpdateUnitStatusRequest> 
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 unit_id */ 1:
-                    message.unitId = reader.uint64().toNumber();
+                case /* int64 unit_id */ 1:
+                    message.unitId = reader.int64().toNumber();
                     break;
                 case /* resources.centrum.StatusUnit status */ 2:
                     message.status = reader.int32();
@@ -1254,9 +1254,9 @@ class UpdateUnitStatusRequest$Type extends MessageType<UpdateUnitStatusRequest> 
         return message;
     }
     internalBinaryWrite(message: UpdateUnitStatusRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 unit_id = 1; */
+        /* int64 unit_id = 1; */
         if (message.unitId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.unitId);
+            writer.tag(1, WireType.Varint).int64(message.unitId);
         /* resources.centrum.StatusUnit status = 2; */
         if (message.status !== 0)
             writer.tag(2, WireType.Varint).int32(message.status);
@@ -1318,7 +1318,7 @@ export const UpdateUnitStatusResponse = new UpdateUnitStatusResponse$Type();
 class AssignUnitRequest$Type extends MessageType<AssignUnitRequest> {
     constructor() {
         super("services.centrum.AssignUnitRequest", [
-            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "unit_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "to_add", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
         ]);
@@ -1337,8 +1337,8 @@ class AssignUnitRequest$Type extends MessageType<AssignUnitRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 unit_id */ 1:
-                    message.unitId = reader.uint64().toNumber();
+                case /* int64 unit_id */ 1:
+                    message.unitId = reader.int64().toNumber();
                     break;
                 case /* repeated int32 to_add */ 2:
                     if (wireType === WireType.LengthDelimited)
@@ -1366,9 +1366,9 @@ class AssignUnitRequest$Type extends MessageType<AssignUnitRequest> {
         return message;
     }
     internalBinaryWrite(message: AssignUnitRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 unit_id = 1; */
+        /* int64 unit_id = 1; */
         if (message.unitId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.unitId);
+            writer.tag(1, WireType.Varint).int64(message.unitId);
         /* repeated int32 to_add = 2; */
         if (message.toAdd.length) {
             writer.tag(2, WireType.LengthDelimited).fork();
@@ -1771,7 +1771,7 @@ class ListDispatchesRequest$Type extends MessageType<ListDispatchesRequest> {
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "buf.validate.field": { repeated: { items: { enum: { definedOnly: true } } } } } },
             { no: 3, name: "not_status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "buf.validate.field": { repeated: { items: { enum: { definedOnly: true } } } } } },
-            { no: 4, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { maxItems: "10" } } } },
+            { no: 4, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { maxItems: "10" } } } },
             { no: 5, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "12" } } } }
         ]);
     }
@@ -1806,12 +1806,12 @@ class ListDispatchesRequest$Type extends MessageType<ListDispatchesRequest> {
                     else
                         message.notStatus.push(reader.int32());
                     break;
-                case /* repeated uint64 ids */ 4:
+                case /* repeated int64 ids */ 4:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.ids.push(reader.uint64().toNumber());
+                            message.ids.push(reader.int64().toNumber());
                     else
-                        message.ids.push(reader.uint64().toNumber());
+                        message.ids.push(reader.int64().toNumber());
                     break;
                 case /* optional string postal */ 5:
                     message.postal = reader.string();
@@ -1845,11 +1845,11 @@ class ListDispatchesRequest$Type extends MessageType<ListDispatchesRequest> {
                 writer.int32(message.notStatus[i]);
             writer.join();
         }
-        /* repeated uint64 ids = 4; */
+        /* repeated int64 ids = 4; */
         if (message.ids.length) {
             writer.tag(4, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.ids.length; i++)
-                writer.uint64(message.ids[i]);
+                writer.int64(message.ids[i]);
             writer.join();
         }
         /* optional string postal = 5; */
@@ -1923,7 +1923,7 @@ export const ListDispatchesResponse = new ListDispatchesResponse$Type();
 class GetDispatchRequest$Type extends MessageType<GetDispatchRequest> {
     constructor() {
         super("services.centrum.GetDispatchRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { uint64: { gt: "0" } } } }
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
         ]);
     }
     create(value?: PartialMessage<GetDispatchRequest>): GetDispatchRequest {
@@ -1938,8 +1938,8 @@ class GetDispatchRequest$Type extends MessageType<GetDispatchRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1953,9 +1953,9 @@ class GetDispatchRequest$Type extends MessageType<GetDispatchRequest> {
         return message;
     }
     internalBinaryWrite(message: GetDispatchRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2200,7 +2200,7 @@ export const UpdateDispatchResponse = new UpdateDispatchResponse$Type();
 class DeleteDispatchRequest$Type extends MessageType<DeleteDispatchRequest> {
     constructor() {
         super("services.centrum.DeleteDispatchRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { uint64: { gt: "0" } } } }
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteDispatchRequest>): DeleteDispatchRequest {
@@ -2215,8 +2215,8 @@ class DeleteDispatchRequest$Type extends MessageType<DeleteDispatchRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2230,9 +2230,9 @@ class DeleteDispatchRequest$Type extends MessageType<DeleteDispatchRequest> {
         return message;
     }
     internalBinaryWrite(message: DeleteDispatchRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
+            writer.tag(1, WireType.Varint).int64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2370,7 +2370,7 @@ export const ListDispatchTargetJobsResponse = new ListDispatchTargetJobsResponse
 class UpdateDispatchStatusRequest$Type extends MessageType<UpdateDispatchStatusRequest> {
     constructor() {
         super("services.centrum.UpdateDispatchStatusRequest", [
-            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "dispatch_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "status", kind: "enum", T: () => ["resources.centrum.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
             { no: 4, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
@@ -2389,8 +2389,8 @@ class UpdateDispatchStatusRequest$Type extends MessageType<UpdateDispatchStatusR
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 dispatch_id */ 1:
-                    message.dispatchId = reader.uint64().toNumber();
+                case /* int64 dispatch_id */ 1:
+                    message.dispatchId = reader.int64().toNumber();
                     break;
                 case /* resources.centrum.StatusDispatch status */ 2:
                     message.status = reader.int32();
@@ -2413,9 +2413,9 @@ class UpdateDispatchStatusRequest$Type extends MessageType<UpdateDispatchStatusR
         return message;
     }
     internalBinaryWrite(message: UpdateDispatchStatusRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 dispatch_id = 1; */
+        /* int64 dispatch_id = 1; */
         if (message.dispatchId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.dispatchId);
+            writer.tag(1, WireType.Varint).int64(message.dispatchId);
         /* resources.centrum.StatusDispatch status = 2; */
         if (message.status !== 0)
             writer.tag(2, WireType.Varint).int32(message.status);
@@ -2477,9 +2477,9 @@ export const UpdateDispatchStatusResponse = new UpdateDispatchStatusResponse$Typ
 class AssignDispatchRequest$Type extends MessageType<AssignDispatchRequest> {
     constructor() {
         super("services.centrum.AssignDispatchRequest", [
-            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "to_add", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 3, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "dispatch_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "to_add", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "forced", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -2497,22 +2497,22 @@ class AssignDispatchRequest$Type extends MessageType<AssignDispatchRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 dispatch_id */ 1:
-                    message.dispatchId = reader.uint64().toNumber();
+                case /* int64 dispatch_id */ 1:
+                    message.dispatchId = reader.int64().toNumber();
                     break;
-                case /* repeated uint64 to_add */ 2:
+                case /* repeated int64 to_add */ 2:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.toAdd.push(reader.uint64().toNumber());
+                            message.toAdd.push(reader.int64().toNumber());
                     else
-                        message.toAdd.push(reader.uint64().toNumber());
+                        message.toAdd.push(reader.int64().toNumber());
                     break;
-                case /* repeated uint64 to_remove */ 3:
+                case /* repeated int64 to_remove */ 3:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.toRemove.push(reader.uint64().toNumber());
+                            message.toRemove.push(reader.int64().toNumber());
                     else
-                        message.toRemove.push(reader.uint64().toNumber());
+                        message.toRemove.push(reader.int64().toNumber());
                     break;
                 case /* optional bool forced */ 4:
                     message.forced = reader.bool();
@@ -2529,21 +2529,21 @@ class AssignDispatchRequest$Type extends MessageType<AssignDispatchRequest> {
         return message;
     }
     internalBinaryWrite(message: AssignDispatchRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 dispatch_id = 1; */
+        /* int64 dispatch_id = 1; */
         if (message.dispatchId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.dispatchId);
-        /* repeated uint64 to_add = 2; */
+            writer.tag(1, WireType.Varint).int64(message.dispatchId);
+        /* repeated int64 to_add = 2; */
         if (message.toAdd.length) {
             writer.tag(2, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.toAdd.length; i++)
-                writer.uint64(message.toAdd[i]);
+                writer.int64(message.toAdd[i]);
             writer.join();
         }
-        /* repeated uint64 to_remove = 3; */
+        /* repeated int64 to_remove = 3; */
         if (message.toRemove.length) {
             writer.tag(3, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.toRemove.length; i++)
-                writer.uint64(message.toRemove[i]);
+                writer.int64(message.toRemove[i]);
             writer.join();
         }
         /* optional bool forced = 4; */
@@ -2655,7 +2655,7 @@ export const ListDispatchActivityResponse = new ListDispatchActivityResponse$Typ
 class JoinUnitRequest$Type extends MessageType<JoinUnitRequest> {
     constructor() {
         super("services.centrum.JoinUnitRequest", [
-            { no: 1, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "unit_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<JoinUnitRequest>): JoinUnitRequest {
@@ -2669,8 +2669,8 @@ class JoinUnitRequest$Type extends MessageType<JoinUnitRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional uint64 unit_id */ 1:
-                    message.unitId = reader.uint64().toNumber();
+                case /* optional int64 unit_id */ 1:
+                    message.unitId = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2684,9 +2684,9 @@ class JoinUnitRequest$Type extends MessageType<JoinUnitRequest> {
         return message;
     }
     internalBinaryWrite(message: JoinUnitRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional uint64 unit_id = 1; */
+        /* optional int64 unit_id = 1; */
         if (message.unitId !== undefined)
-            writer.tag(1, WireType.Varint).uint64(message.unitId);
+            writer.tag(1, WireType.Varint).int64(message.unitId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2747,7 +2747,7 @@ export const JoinUnitResponse = new JoinUnitResponse$Type();
 class TakeDispatchRequest$Type extends MessageType<TakeDispatchRequest> {
     constructor() {
         super("services.centrum.TakeDispatchRequest", [
-            { no: 1, name: "dispatch_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { minItems: "1" } } } },
+            { no: 1, name: "dispatch_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { minItems: "1" } } } },
             { no: 2, name: "resp", kind: "enum", T: () => ["resources.centrum.TakeDispatchResp", TakeDispatchResp, "TAKE_DISPATCH_RESP_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } }
         ]);
@@ -2765,12 +2765,12 @@ class TakeDispatchRequest$Type extends MessageType<TakeDispatchRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated uint64 dispatch_ids */ 1:
+                case /* repeated int64 dispatch_ids */ 1:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.dispatchIds.push(reader.uint64().toNumber());
+                            message.dispatchIds.push(reader.int64().toNumber());
                     else
-                        message.dispatchIds.push(reader.uint64().toNumber());
+                        message.dispatchIds.push(reader.int64().toNumber());
                     break;
                 case /* resources.centrum.TakeDispatchResp resp */ 2:
                     message.resp = reader.int32();
@@ -2790,11 +2790,11 @@ class TakeDispatchRequest$Type extends MessageType<TakeDispatchRequest> {
         return message;
     }
     internalBinaryWrite(message: TakeDispatchRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated uint64 dispatch_ids = 1; */
+        /* repeated int64 dispatch_ids = 1; */
         if (message.dispatchIds.length) {
             writer.tag(1, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.dispatchIds.length; i++)
-                writer.uint64(message.dispatchIds[i]);
+                writer.int64(message.dispatchIds[i]);
             writer.join();
         }
         /* resources.centrum.TakeDispatchResp resp = 2; */
@@ -2916,7 +2916,7 @@ class LatestState$Type extends MessageType<LatestState> {
     constructor() {
         super("services.centrum.LatestState", [
             { no: 1, name: "dispatchers", kind: "message", T: () => Dispatchers },
-            { no: 2, name: "own_unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "own_unit_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "units", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Unit },
             { no: 4, name: "dispatches", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Dispatch }
         ]);
@@ -2937,8 +2937,8 @@ class LatestState$Type extends MessageType<LatestState> {
                 case /* services.centrum.Dispatchers dispatchers */ 1:
                     message.dispatchers = Dispatchers.internalBinaryRead(reader, reader.uint32(), options, message.dispatchers);
                     break;
-                case /* optional uint64 own_unit_id */ 2:
-                    message.ownUnitId = reader.uint64().toNumber();
+                case /* optional int64 own_unit_id */ 2:
+                    message.ownUnitId = reader.int64().toNumber();
                     break;
                 case /* repeated resources.centrum.Unit units */ 3:
                     message.units.push(Unit.internalBinaryRead(reader, reader.uint32(), options));
@@ -2961,9 +2961,9 @@ class LatestState$Type extends MessageType<LatestState> {
         /* services.centrum.Dispatchers dispatchers = 1; */
         if (message.dispatchers)
             Dispatchers.internalBinaryWrite(message.dispatchers, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* optional uint64 own_unit_id = 2; */
+        /* optional int64 own_unit_id = 2; */
         if (message.ownUnitId !== undefined)
-            writer.tag(2, WireType.Varint).uint64(message.ownUnitId);
+            writer.tag(2, WireType.Varint).int64(message.ownUnitId);
         /* repeated resources.centrum.Unit units = 3; */
         for (let i = 0; i < message.units.length; i++)
             Unit.internalBinaryWrite(message.units[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
@@ -3027,10 +3027,10 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
             { no: 3, name: "settings", kind: "message", oneof: "change", T: () => Settings },
             { no: 4, name: "job_access", kind: "message", oneof: "change", T: () => JobAccess },
             { no: 5, name: "dispatchers", kind: "message", oneof: "change", T: () => Dispatchers$ },
-            { no: 6, name: "unit_deleted", kind: "scalar", oneof: "change", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 6, name: "unit_deleted", kind: "scalar", oneof: "change", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 7, name: "unit_updated", kind: "message", oneof: "change", T: () => Unit },
             { no: 8, name: "unit_status", kind: "message", oneof: "change", T: () => UnitStatus },
-            { no: 9, name: "dispatch_deleted", kind: "scalar", oneof: "change", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 9, name: "dispatch_deleted", kind: "scalar", oneof: "change", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 10, name: "dispatch_updated", kind: "message", oneof: "change", T: () => Dispatch },
             { no: 11, name: "dispatch_status", kind: "message", oneof: "change", T: () => DispatchStatus }
         ]);
@@ -3077,10 +3077,10 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
                         dispatchers: Dispatchers$.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).dispatchers)
                     };
                     break;
-                case /* uint64 unit_deleted */ 6:
+                case /* int64 unit_deleted */ 6:
                     message.change = {
                         oneofKind: "unitDeleted",
-                        unitDeleted: reader.uint64().toNumber()
+                        unitDeleted: reader.int64().toNumber()
                     };
                     break;
                 case /* resources.centrum.Unit unit_updated */ 7:
@@ -3095,10 +3095,10 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
                         unitStatus: UnitStatus.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).unitStatus)
                     };
                     break;
-                case /* uint64 dispatch_deleted */ 9:
+                case /* int64 dispatch_deleted */ 9:
                     message.change = {
                         oneofKind: "dispatchDeleted",
-                        dispatchDeleted: reader.uint64().toNumber()
+                        dispatchDeleted: reader.int64().toNumber()
                     };
                     break;
                 case /* resources.centrum.Dispatch dispatch_updated */ 10:
@@ -3140,18 +3140,18 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         /* resources.centrum.Dispatchers dispatchers = 5; */
         if (message.change.oneofKind === "dispatchers")
             Dispatchers$.internalBinaryWrite(message.change.dispatchers, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 unit_deleted = 6; */
+        /* int64 unit_deleted = 6; */
         if (message.change.oneofKind === "unitDeleted")
-            writer.tag(6, WireType.Varint).uint64(message.change.unitDeleted);
+            writer.tag(6, WireType.Varint).int64(message.change.unitDeleted);
         /* resources.centrum.Unit unit_updated = 7; */
         if (message.change.oneofKind === "unitUpdated")
             Unit.internalBinaryWrite(message.change.unitUpdated, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         /* resources.centrum.UnitStatus unit_status = 8; */
         if (message.change.oneofKind === "unitStatus")
             UnitStatus.internalBinaryWrite(message.change.unitStatus, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 dispatch_deleted = 9; */
+        /* int64 dispatch_deleted = 9; */
         if (message.change.oneofKind === "dispatchDeleted")
-            writer.tag(9, WireType.Varint).uint64(message.change.dispatchDeleted);
+            writer.tag(9, WireType.Varint).int64(message.change.dispatchDeleted);
         /* resources.centrum.Dispatch dispatch_updated = 10; */
         if (message.change.oneofKind === "dispatchUpdated")
             Dispatch.internalBinaryWrite(message.change.dispatchUpdated, writer.tag(10, WireType.LengthDelimited).fork(), options).join();

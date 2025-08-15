@@ -26,9 +26,9 @@ const (
 
 type Message struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	ThreadId  uint64                 `protobuf:"varint,2,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
-	SenderId  uint64                 `protobuf:"varint,3,opt,name=sender_id,json=senderId,proto3" json:"sender_id,omitempty"`
+	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	ThreadId  int64                  `protobuf:"varint,2,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
+	SenderId  int64                  `protobuf:"varint,3,opt,name=sender_id,json=senderId,proto3" json:"sender_id,omitempty"`
 	Sender    *Email                 `protobuf:"bytes,4,opt,name=sender,proto3,oneof" json:"sender,omitempty" alias:"sender"`
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
@@ -74,21 +74,21 @@ func (*Message) Descriptor() ([]byte, []int) {
 	return file_resources_mailer_message_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Message) GetId() uint64 {
+func (x *Message) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *Message) GetThreadId() uint64 {
+func (x *Message) GetThreadId() int64 {
 	if x != nil {
 		return x.ThreadId
 	}
 	return 0
 }
 
-func (x *Message) GetSenderId() uint64 {
+func (x *Message) GetSenderId() int64 {
 	if x != nil {
 		return x.SenderId
 	}
@@ -271,7 +271,7 @@ func (*MessageAttachment_Document) isMessageAttachment_Data() {}
 
 type MessageAttachmentDocument struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Title         *string                `protobuf:"bytes,2,opt,name=title,proto3,oneof" json:"title,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -307,7 +307,7 @@ func (*MessageAttachmentDocument) Descriptor() ([]byte, []int) {
 	return file_resources_mailer_message_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *MessageAttachmentDocument) GetId() uint64 {
+func (x *MessageAttachmentDocument) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -327,9 +327,9 @@ const file_resources_mailer_message_proto_rawDesc = "" +
 	"\n" +
 	"\x1eresources/mailer/message.proto\x12\x10resources.mailer\x1a&resources/common/content/content.proto\x1a\x1cresources/mailer/email.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x97\x05\n" +
 	"\aMessage\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x1b\n" +
-	"\tthread_id\x18\x02 \x01(\x04R\bthreadId\x12\x1b\n" +
-	"\tsender_id\x18\x03 \x01(\x04R\bsenderId\x12I\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\tthread_id\x18\x02 \x01(\x03R\bthreadId\x12\x1b\n" +
+	"\tsender_id\x18\x03 \x01(\x03R\bsenderId\x12I\n" +
 	"\x06sender\x18\x04 \x01(\v2\x17.resources.mailer.EmailB\x13\x9a\x84\x9e\x03\x0ealias:\"sender\"H\x00R\x06sender\x88\x01\x01\x12=\n" +
 	"\n" +
 	"created_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
@@ -358,7 +358,7 @@ const file_resources_mailer_message_proto_rawDesc = "" +
 	"\bdocument\x18\x01 \x01(\v2+.resources.mailer.MessageAttachmentDocumentH\x00R\bdocumentB\r\n" +
 	"\x04data\x12\x05\xbaH\x02\b\x01\"Z\n" +
 	"\x19MessageAttachmentDocument\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12#\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\x05title\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x06H\x00R\x05title\x88\x01\x01B\b\n" +
 	"\x06_titleBKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailerb\x06proto3"
 

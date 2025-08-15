@@ -49,7 +49,7 @@ func (s *Server) ListTemplates(
 		).
 		FROM(tTemplates).
 		WHERE(jet.AND(
-			tTemplates.EmailID.EQ(jet.Uint64(req.GetEmailId())),
+			tTemplates.EmailID.EQ(jet.Int64(req.GetEmailId())),
 		)).
 		LIMIT(25)
 
@@ -65,10 +65,10 @@ func (s *Server) ListTemplates(
 
 func (s *Server) getTemplate(
 	ctx context.Context,
-	id uint64,
-	emailId *uint64,
+	id int64,
+	emailId *int64,
 ) (*mailer.Template, error) {
-	condition := tTemplates.ID.EQ(jet.Uint64(id))
+	condition := tTemplates.ID.EQ(jet.Int64(id))
 
 	if emailId == nil || *emailId <= 0 {
 		condition = condition.AND(
@@ -76,7 +76,7 @@ func (s *Server) getTemplate(
 		)
 	} else {
 		condition = condition.AND(
-			tTemplates.EmailID.EQ(jet.Uint64(*emailId)),
+			tTemplates.EmailID.EQ(jet.Int64(*emailId)),
 		)
 	}
 
@@ -229,7 +229,7 @@ func (s *Server) CreateOrUpdateTemplate(
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
-		req.Template.Id = uint64(lastId)
+		req.Template.Id = lastId
 
 		auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 	} else {
@@ -249,7 +249,7 @@ func (s *Server) CreateOrUpdateTemplate(
 				tTemplates.Content.SET(jet.String(req.GetTemplate().GetContent())),
 			).
 			WHERE(jet.AND(
-				tTemplates.ID.EQ(jet.Uint64(req.GetTemplate().GetId())),
+				tTemplates.ID.EQ(jet.Int64(req.GetTemplate().GetId())),
 			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -303,7 +303,7 @@ func (s *Server) DeleteTemplate(
 			tTemplates.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
 		).
 		WHERE(jet.AND(
-			tTemplates.ID.EQ(jet.Uint64(req.GetId())),
+			tTemplates.ID.EQ(jet.Int64(req.GetId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

@@ -24,8 +24,8 @@ func (u Roles) Len() int64 {
 // IDs returns an array of the role array's ids.
 //
 //	@return	[]uint
-func (r Roles) IDs() []uint64 {
-	ids := make([]uint64, 0, len(r))
+func (r Roles) IDs() []int64 {
+	ids := make([]int64, 0, len(r))
 	for _, role := range r {
 		ids = append(ids, role.GetId())
 	}

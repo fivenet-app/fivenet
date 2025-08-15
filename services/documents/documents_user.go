@@ -129,7 +129,7 @@ func (s *Server) ListUserDocuments(
 		GROUP_BY(tDocRel.ID).
 		LIMIT(limit)
 
-	var dbRelIds []uint64
+	var dbRelIds []int64
 	if err := idStmt.QueryContext(ctx, s.db, &dbRelIds); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -166,7 +166,7 @@ func (s *Server) ListUserDocuments(
 
 	rIds := make([]jet.Expression, len(dbRelIds))
 	for i := range dbRelIds {
-		rIds[i] = jet.Uint64(dbRelIds[i])
+		rIds[i] = jet.Int64(dbRelIds[i])
 	}
 
 	tCreator := tables.User().AS("creator")

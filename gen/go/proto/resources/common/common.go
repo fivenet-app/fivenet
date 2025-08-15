@@ -29,7 +29,7 @@ type IJobName interface {
 // ICategory defines methods for accessing and mutating category information.
 type ICategory interface {
 	// GetCategoryId returns the unique identifier for the category.
-	GetCategoryId() uint64
+	GetCategoryId() int64
 	// SetCategory sets the category using a Category struct.
 	SetCategory(category *documents.Category)
 }

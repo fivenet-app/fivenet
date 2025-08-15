@@ -183,7 +183,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 							s.logger.Warn("user does not have access to the object",
 								zap.Int32("user_id", userInfo.GetUserId()),
 								zap.String("object_type", clientView.GetType().String()),
-								zap.Uint64("object_id", clientView.GetId()),
+								zap.Int64("object_id", clientView.GetId()),
 							)
 							continue
 						}

@@ -8,6 +8,6 @@
 package model
 
 type FivenetQualificationsFiles struct {
-	QualificationID uint64 `sql:"primary_key" json:"qualification_id"`
-	FileID          uint64 `sql:"primary_key" json:"file_id"`
+	QualificationID int64 `sql:"primary_key" json:"qualification_id"`
+	FileID          int64 `sql:"primary_key" json:"file_id"`
 }

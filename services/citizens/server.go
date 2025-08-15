@@ -102,7 +102,7 @@ func NewServer(p Params) *Server {
 	}
 
 	access.RegisterAccess("citizen", &access.GroupedAccessAdapter{
-		CanUserAccessTargetFn: func(ctx context.Context, targetId uint64, userInfo *userinfo.UserInfo, access int32) (bool, error) {
+		CanUserAccessTargetFn: func(ctx context.Context, targetId int64, userInfo *userinfo.UserInfo, access int32) (bool, error) {
 			if !s.ps.Can(
 				userInfo,
 				permscitizens.CitizensServicePerm,
@@ -111,7 +111,7 @@ func NewServer(p Params) *Server {
 				return false, nil
 			}
 
-			if targetId > uint64(math.MaxInt32) {
+			if targetId < int64(math.MinInt32) || targetId > int64(math.MaxInt32) {
 				return false, nil // targetId is too large to fit in int32
 			}
 			userId := int32(targetId)

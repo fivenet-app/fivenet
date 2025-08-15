@@ -50,7 +50,7 @@ type UserInfo struct {
 }
 
 type userRoleMapping struct {
-	AccountID  uint64 `alias:"account_id"`
+	AccountID  int64  `alias:"account_id"`
 	ExternalID string `alias:"external_id"`
 	UserID     int32  `alias:"user_id"`
 	Job        string `alias:"job"`

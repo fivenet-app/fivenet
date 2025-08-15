@@ -12,12 +12,12 @@ import (
 )
 
 type FivenetDocumentsTemplates struct {
-	ID           uint64     `sql:"primary_key" json:"id"`
+	ID           int64      `sql:"primary_key" json:"id"`
 	CreatedAt    *time.Time `json:"created_at"`
 	UpdatedAt    *time.Time `json:"updated_at"`
 	DeletedAt    *time.Time `json:"deleted_at"`
 	Weight       *uint32    `json:"weight"`
-	CategoryID   *uint64    `json:"category_id"`
+	CategoryID   *int64     `json:"category_id"`
 	Title        string     `json:"title"`
 	Description  string     `json:"description"`
 	Color        *string    `json:"color"`

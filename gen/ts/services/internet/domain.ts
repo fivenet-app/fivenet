@@ -39,7 +39,7 @@ export interface ListTLDsResponse {
  */
 export interface CheckDomainAvailabilityRequest {
     /**
-     * @generated from protobuf field: uint64 tld_id = 1
+     * @generated from protobuf field: int64 tld_id = 1
      */
     tldId: number;
     /**
@@ -67,7 +67,7 @@ export interface CheckDomainAvailabilityResponse {
  */
 export interface RegisterDomainRequest {
     /**
-     * @generated from protobuf field: uint64 tld_id = 1
+     * @generated from protobuf field: int64 tld_id = 1
      */
     tldId: number;
     /**
@@ -119,7 +119,7 @@ export interface ListDomainsResponse {
  */
 export interface UpdateDomainRequest {
     /**
-     * @generated from protobuf field: uint64 domain_id = 1
+     * @generated from protobuf field: int64 domain_id = 1
      */
     domainId: number;
     /**
@@ -233,7 +233,7 @@ export const ListTLDsResponse = new ListTLDsResponse$Type();
 class CheckDomainAvailabilityRequest$Type extends MessageType<CheckDomainAvailabilityRequest> {
     constructor() {
         super("services.internet.CheckDomainAvailabilityRequest", [
-            { no: 1, name: "tld_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "tld_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "60" } } } }
         ]);
     }
@@ -250,8 +250,8 @@ class CheckDomainAvailabilityRequest$Type extends MessageType<CheckDomainAvailab
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 tld_id */ 1:
-                    message.tldId = reader.uint64().toNumber();
+                case /* int64 tld_id */ 1:
+                    message.tldId = reader.int64().toNumber();
                     break;
                 case /* string name */ 2:
                     message.name = reader.string();
@@ -268,9 +268,9 @@ class CheckDomainAvailabilityRequest$Type extends MessageType<CheckDomainAvailab
         return message;
     }
     internalBinaryWrite(message: CheckDomainAvailabilityRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 tld_id = 1; */
+        /* int64 tld_id = 1; */
         if (message.tldId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.tldId);
+            writer.tag(1, WireType.Varint).int64(message.tldId);
         /* string name = 2; */
         if (message.name !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.name);
@@ -342,7 +342,7 @@ export const CheckDomainAvailabilityResponse = new CheckDomainAvailabilityRespon
 class RegisterDomainRequest$Type extends MessageType<RegisterDomainRequest> {
     constructor() {
         super("services.internet.RegisterDomainRequest", [
-            { no: 1, name: "tld_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "tld_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "60" } } } },
             { no: 3, name: "transfer_code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "10", pattern: "^[0-9A-Z]{6}$" } } } }
         ]);
@@ -360,8 +360,8 @@ class RegisterDomainRequest$Type extends MessageType<RegisterDomainRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 tld_id */ 1:
-                    message.tldId = reader.uint64().toNumber();
+                case /* int64 tld_id */ 1:
+                    message.tldId = reader.int64().toNumber();
                     break;
                 case /* string name */ 2:
                     message.name = reader.string();
@@ -381,9 +381,9 @@ class RegisterDomainRequest$Type extends MessageType<RegisterDomainRequest> {
         return message;
     }
     internalBinaryWrite(message: RegisterDomainRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 tld_id = 1; */
+        /* int64 tld_id = 1; */
         if (message.tldId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.tldId);
+            writer.tag(1, WireType.Varint).int64(message.tldId);
         /* string name = 2; */
         if (message.name !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.name);
@@ -550,7 +550,7 @@ export const ListDomainsResponse = new ListDomainsResponse$Type();
 class UpdateDomainRequest$Type extends MessageType<UpdateDomainRequest> {
     constructor() {
         super("services.internet.UpdateDomainRequest", [
-            { no: 1, name: "domain_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "domain_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "transferable", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -567,8 +567,8 @@ class UpdateDomainRequest$Type extends MessageType<UpdateDomainRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 domain_id */ 1:
-                    message.domainId = reader.uint64().toNumber();
+                case /* int64 domain_id */ 1:
+                    message.domainId = reader.int64().toNumber();
                     break;
                 case /* bool transferable */ 2:
                     message.transferable = reader.bool();
@@ -585,9 +585,9 @@ class UpdateDomainRequest$Type extends MessageType<UpdateDomainRequest> {
         return message;
     }
     internalBinaryWrite(message: UpdateDomainRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 domain_id = 1; */
+        /* int64 domain_id = 1; */
         if (message.domainId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.domainId);
+            writer.tag(1, WireType.Varint).int64(message.domainId);
         /* bool transferable = 2; */
         if (message.transferable !== false)
             writer.tag(2, WireType.Varint).bool(message.transferable);

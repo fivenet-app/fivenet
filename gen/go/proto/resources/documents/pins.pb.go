@@ -25,7 +25,7 @@ const (
 
 type DocumentPin struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	DocumentId    uint64                 `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" sql:"primary_key"`
+	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" sql:"primary_key"`
 	Job           *string                `protobuf:"bytes,2,opt,name=job,proto3,oneof" json:"job,omitempty" sql:"primary_key"`
 	UserId        *int32                 `protobuf:"varint,3,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty" sql:"primary_key"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
@@ -65,7 +65,7 @@ func (*DocumentPin) Descriptor() ([]byte, []int) {
 	return file_resources_documents_pins_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *DocumentPin) GetDocumentId() uint64 {
+func (x *DocumentPin) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
 	}
@@ -113,7 +113,7 @@ const file_resources_documents_pins_proto_rawDesc = "" +
 	"\n" +
 	"\x1eresources/documents/pins.proto\x12\x13resources.documents\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xdc\x02\n" +
 	"\vDocumentPin\x12>\n" +
-	"\vdocument_id\x18\x01 \x01(\x04B\x1d\x9a\x84\x9e\x03\x11sql:\"primary_key\"\xbaH\x042\x02 \x00R\n" +
+	"\vdocument_id\x18\x01 \x01(\x03B\x1d\x9a\x84\x9e\x03\x11sql:\"primary_key\"\xbaH\x04\"\x02 \x00R\n" +
 	"documentId\x124\n" +
 	"\x03job\x18\x02 \x01(\tB\x1d\x9a\x84\x9e\x03\x11sql:\"primary_key\"\xbaH\x04r\x02\x18\x14H\x00R\x03job\x88\x01\x01\x12;\n" +
 	"\auser_id\x18\x03 \x01(\x05B\x1d\x9a\x84\x9e\x03\x11sql:\"primary_key\"\xbaH\x04\x1a\x02 \x00H\x01R\x06userId\x88\x01\x01\x12B\n" +

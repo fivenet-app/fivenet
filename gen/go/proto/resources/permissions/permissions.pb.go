@@ -24,7 +24,7 @@ const (
 
 type Permission struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	Category      string                 `protobuf:"bytes,3,opt,name=category,proto3" json:"category,omitempty"`
 	Name          string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
@@ -65,7 +65,7 @@ func (*Permission) Descriptor() ([]byte, []int) {
 	return file_resources_permissions_permissions_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Permission) GetId() uint64 {
+func (x *Permission) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -116,7 +116,7 @@ func (x *Permission) GetOrder() int32 {
 
 type Role struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	Job           string                 `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel      *string                `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
@@ -158,7 +158,7 @@ func (*Role) Descriptor() ([]byte, []int) {
 	return file_resources_permissions_permissions_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *Role) GetId() uint64 {
+func (x *Role) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -216,7 +216,7 @@ func (x *Role) GetAttributes() []*RoleAttribute {
 
 type PermItem struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Val           bool                   `protobuf:"varint,2,opt,name=val,proto3" json:"val,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -252,7 +252,7 @@ func (*PermItem) Descriptor() ([]byte, []int) {
 	return file_resources_permissions_permissions_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *PermItem) GetId() uint64 {
+func (x *PermItem) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -273,7 +273,7 @@ const file_resources_permissions_permissions_proto_rawDesc = "" +
 	"'resources/permissions/permissions.proto\x12\x15resources.permissions\x1a&resources/permissions/attributes.proto\x1a#resources/timestamp/timestamp.proto\"\x9c\x02\n" +
 	"\n" +
 	"Permission\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12B\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12$\n" +
 	"\bcategory\x18\x03 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01R\bcategory\x12\x1c\n" +
@@ -285,7 +285,7 @@ const file_resources_permissions_permissions_proto_rawDesc = "" +
 	"\v_created_atB\b\n" +
 	"\x06_order\"\xb2\x03\n" +
 	"\x04Role\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12B\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1a\n" +
 	"\x03job\x18\x03 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\x03job\x12)\n" +
@@ -301,7 +301,7 @@ const file_resources_permissions_permissions_proto_rawDesc = "" +
 	"_job_labelB\x12\n" +
 	"\x10_job_grade_label\",\n" +
 	"\bPermItem\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x10\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x10\n" +
 	"\x03val\x18\x02 \x01(\bR\x03valBUZSgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions;permissionsb\x06proto3"
 
 var (

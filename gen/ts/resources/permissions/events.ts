@@ -16,7 +16,7 @@ import { MessageType } from "@protobuf-ts/runtime";
  */
 export interface RoleIDEvent {
     /**
-     * @generated from protobuf field: uint64 role_id = 1
+     * @generated from protobuf field: int64 role_id = 1
      */
     roleId: number;
     /**
@@ -41,7 +41,7 @@ export interface JobLimitsUpdatedEvent {
 class RoleIDEvent$Type extends MessageType<RoleIDEvent> {
     constructor() {
         super("resources.permissions.RoleIDEvent", [
-            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "role_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "grade", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
@@ -60,8 +60,8 @@ class RoleIDEvent$Type extends MessageType<RoleIDEvent> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 role_id */ 1:
-                    message.roleId = reader.uint64().toNumber();
+                case /* int64 role_id */ 1:
+                    message.roleId = reader.int64().toNumber();
                     break;
                 case /* string job */ 2:
                     message.job = reader.string();
@@ -81,9 +81,9 @@ class RoleIDEvent$Type extends MessageType<RoleIDEvent> {
         return message;
     }
     internalBinaryWrite(message: RoleIDEvent, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 role_id = 1; */
+        /* int64 role_id = 1; */
         if (message.roleId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.roleId);
+            writer.tag(1, WireType.Varint).int64(message.roleId);
         /* string job = 2; */
         if (message.job !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.job);

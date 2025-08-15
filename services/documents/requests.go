@@ -50,7 +50,7 @@ func (s *Server) ListDocumentReqs(
 		return nil, errorsdocuments.ErrDocViewDenied
 	}
 
-	condition := tDocRequest.DocumentID.EQ(jet.Uint64(req.GetDocumentId()))
+	condition := tDocRequest.DocumentID.EQ(jet.Int64(req.GetDocumentId()))
 
 	countStmt := tDocRequest.
 		SELECT(
@@ -164,7 +164,7 @@ func (s *Server) CreateDocumentReq(
 
 	doc, err := s.getDocument(
 		ctx,
-		tDocument.ID.EQ(jet.Uint64(req.GetDocumentId())),
+		tDocument.ID.EQ(jet.Int64(req.GetDocumentId())),
 		userInfo,
 		false,
 	)
@@ -200,7 +200,7 @@ func (s *Server) CreateDocumentReq(
 	}
 
 	request, err := s.getDocumentReq(ctx, s.db,
-		tDocRequest.DocumentID.EQ(jet.Uint64(doc.GetId())).AND(
+		tDocRequest.DocumentID.EQ(jet.Int64(doc.GetId())).AND(
 			tDocRequest.RequestType.EQ(jet.Int32(int32(req.GetRequestType()))),
 		),
 	)
@@ -309,8 +309,8 @@ func (s *Server) UpdateDocumentReq(
 	defer s.aud.Log(auditEntry, req)
 
 	request, err := s.getDocumentReq(ctx, s.db,
-		tDocRequest.ID.EQ(jet.Uint64(req.GetRequestId())).
-			AND(tDocRequest.DocumentID.EQ(jet.Uint64(req.GetDocumentId()))),
+		tDocRequest.ID.EQ(jet.Int64(req.GetRequestId())).
+			AND(tDocRequest.DocumentID.EQ(jet.Int64(req.GetDocumentId()))),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -334,7 +334,7 @@ func (s *Server) UpdateDocumentReq(
 
 	doc, err := s.getDocument(
 		ctx,
-		tDocument.ID.EQ(jet.Uint64(req.GetDocumentId())),
+		tDocument.ID.EQ(jet.Int64(req.GetDocumentId())),
 		userInfo,
 		false,
 	)
@@ -470,7 +470,7 @@ func (s *Server) DeleteDocumentReq(
 	defer s.aud.Log(auditEntry, req)
 
 	request, err := s.getDocumentReq(ctx, s.db,
-		tDocRequest.ID.EQ(jet.Uint64(req.GetRequestId())),
+		tDocRequest.ID.EQ(jet.Int64(req.GetRequestId())),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -557,7 +557,7 @@ func (s *Server) addDocumentReq(
 	ctx context.Context,
 	tx qrm.DB,
 	request *documents.DocRequest,
-) (uint64, error) {
+) (int64, error) {
 	tDocRequest := table.FivenetDocumentsRequests
 	stmt := tDocRequest.
 		INSERT(
@@ -591,7 +591,7 @@ func (s *Server) addDocumentReq(
 		return 0, err
 	}
 
-	return uint64(lastId), nil
+	return lastId, nil
 }
 
 func (s *Server) addAndGetDocumentReq(
@@ -610,7 +610,7 @@ func (s *Server) addAndGetDocumentReq(
 func (s *Server) updateDocumentReq(
 	ctx context.Context,
 	tx qrm.DB,
-	id uint64,
+	id int64,
 	request *documents.DocRequest,
 ) error {
 	tDocRequest := table.FivenetDocumentsRequests
@@ -634,7 +634,7 @@ func (s *Server) updateDocumentReq(
 			request.Accepted,
 		).
 		WHERE(
-			tDocRequest.ID.EQ(jet.Uint64(id)),
+			tDocRequest.ID.EQ(jet.Int64(id)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -649,9 +649,9 @@ func (s *Server) updateDocumentReq(
 func (s *Server) getDocumentReqById(
 	ctx context.Context,
 	tx qrm.DB,
-	id uint64,
+	id int64,
 ) (*documents.DocRequest, error) {
-	return s.getDocumentReq(ctx, tx, tDocRequest.ID.EQ(jet.Uint64(id)))
+	return s.getDocumentReq(ctx, tx, tDocRequest.ID.EQ(jet.Int64(id)))
 }
 
 func (s *Server) getDocumentReq(
@@ -700,12 +700,12 @@ func (s *Server) getDocumentReq(
 	return &dest, nil
 }
 
-func (s *Server) deleteDocumentReq(ctx context.Context, tx qrm.DB, id uint64) error {
+func (s *Server) deleteDocumentReq(ctx context.Context, tx qrm.DB, id int64) error {
 	tDocRequest := table.FivenetDocumentsRequests
 
 	stmt := tDocRequest.
 		DELETE().
-		WHERE(tDocRequest.ID.EQ(jet.Uint64(id))).
+		WHERE(tDocRequest.ID.EQ(jet.Int64(id))).
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {

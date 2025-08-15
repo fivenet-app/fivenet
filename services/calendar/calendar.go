@@ -210,7 +210,7 @@ func (s *Server) GetCalendar(
 		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
 	}
 
-	calendar, err := s.getCalendar(ctx, userInfo, tCalendar.ID.EQ(jet.Uint64(req.GetCalendarId())))
+	calendar, err := s.getCalendar(ctx, userInfo, tCalendar.ID.EQ(jet.Int64(req.GetCalendarId())))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -243,7 +243,7 @@ func (s *Server) GetCalendar(
 
 func (s *Server) getAccess(
 	ctx context.Context,
-	calendarId uint64,
+	calendarId int64,
 ) (*calendar.CalendarAccess, error) {
 	jobAccess, err := s.access.Jobs.List(ctx, s.db, calendarId)
 	if err != nil {
@@ -365,7 +365,7 @@ func (s *Server) CreateCalendar(
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
 
-		req.Calendar.Id = uint64(lastId)
+		req.Calendar.Id = lastId
 	}
 
 	if _, err := s.access.HandleAccessChanges(ctx, tx, req.GetCalendar().GetId(), req.GetCalendar().GetAccess().GetJobs(), req.GetCalendar().GetAccess().GetUsers(), nil); err != nil {
@@ -382,7 +382,7 @@ func (s *Server) CreateCalendar(
 	calendar, err := s.getCalendar(
 		ctx,
 		userInfo,
-		tCalendar.AS("calendar").ID.EQ(jet.Uint64(req.GetCalendar().GetId())),
+		tCalendar.AS("calendar").ID.EQ(jet.Int64(req.GetCalendar().GetId())),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
@@ -446,7 +446,7 @@ func (s *Server) UpdateCalendar(
 	calendar, err := s.getCalendar(
 		ctx,
 		userInfo,
-		tCalendar.ID.EQ(jet.Uint64(req.GetCalendar().GetId())),
+		tCalendar.ID.EQ(jet.Int64(req.GetCalendar().GetId())),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
@@ -487,7 +487,7 @@ func (s *Server) UpdateCalendar(
 			tCalendar.Color.SET(jet.String(req.GetCalendar().GetColor())),
 		).
 		WHERE(jet.AND(
-			tCalendar.ID.EQ(jet.Uint64(req.GetCalendar().GetId())),
+			tCalendar.ID.EQ(jet.Int64(req.GetCalendar().GetId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -508,7 +508,7 @@ func (s *Server) UpdateCalendar(
 	calendar, err = s.getCalendar(
 		ctx,
 		userInfo,
-		tCalendar.AS("calendar").ID.EQ(jet.Uint64(req.GetCalendar().GetId())),
+		tCalendar.AS("calendar").ID.EQ(jet.Int64(req.GetCalendar().GetId())),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
@@ -548,7 +548,7 @@ func (s *Server) DeleteCalendar(
 		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
 	}
 
-	calendar, err := s.getCalendar(ctx, userInfo, tCalendar.ID.EQ(jet.Uint64(req.GetCalendarId())))
+	calendar, err := s.getCalendar(ctx, userInfo, tCalendar.ID.EQ(jet.Int64(req.GetCalendarId())))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -568,7 +568,7 @@ func (s *Server) DeleteCalendar(
 		SET(
 			tCalendar.DeletedAt.SET(deletedAtTime),
 		).
-		WHERE(tCalendar.ID.EQ(jet.Uint64(req.GetCalendarId())))
+		WHERE(tCalendar.ID.EQ(jet.Int64(req.GetCalendarId())))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)

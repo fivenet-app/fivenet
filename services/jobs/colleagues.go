@@ -97,7 +97,7 @@ func (s *Server) ListColleagues(
 	if len(req.GetLabelIds()) > 0 && (types.Contains("Labels") || userInfo.GetSuperuser()) {
 		labelIds := []jet.Expression{}
 		for _, labelId := range req.GetLabelIds() {
-			labelIds = append(labelIds, jet.Uint64(labelId))
+			labelIds = append(labelIds, jet.Int64(labelId))
 		}
 
 		condition = condition.AND(
@@ -715,7 +715,7 @@ func (s *Server) SetColleagueProps(
 		added, _ := utils.SlicesDifferenceFunc(
 			props.GetLabels().GetList(),
 			reqProps.GetLabels().GetList(),
-			func(in *jobs.Label) uint64 {
+			func(in *jobs.Label) int64 {
 				return in.GetId()
 			},
 		)
@@ -777,7 +777,7 @@ func (s *Server) SetColleagueProps(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	userId := uint64(targetUser.GetUserId())
+	userId := int64(targetUser.GetUserId())
 	s.notifi.SendObjectEvent(ctx, &notifications.ObjectEvent{
 		Type:      notifications.ObjectType_OBJECT_TYPE_JOBS_COLLEAGUE,
 		Id:        &userId,

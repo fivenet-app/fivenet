@@ -69,8 +69,8 @@ func (x *ExamQuestions) GetQuestions() []*ExamQuestion {
 
 type ExamQuestion struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	Id              uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	QualificationId uint64                 `protobuf:"varint,2,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	QualificationId int64                  `protobuf:"varint,2,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt       *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	// @sanitize: method=StripTags
@@ -115,14 +115,14 @@ func (*ExamQuestion) Descriptor() ([]byte, []int) {
 	return file_resources_qualifications_exam_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ExamQuestion) GetId() uint64 {
+func (x *ExamQuestion) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *ExamQuestion) GetQualificationId() uint64 {
+func (x *ExamQuestion) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
 	}
@@ -731,7 +731,7 @@ func (*ExamQuestionAnswerData_MultipleChoice) isExamQuestionAnswerData_Answer() 
 
 type ExamUser struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	QualificationId uint64                 `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
+	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	UserId          int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	StartedAt       *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=started_at,json=startedAt,proto3,oneof" json:"started_at,omitempty"`
@@ -771,7 +771,7 @@ func (*ExamUser) Descriptor() ([]byte, []int) {
 	return file_resources_qualifications_exam_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *ExamUser) GetQualificationId() uint64 {
+func (x *ExamUser) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
 	}
@@ -816,7 +816,7 @@ func (x *ExamUser) GetEndedAt() *timestamp.Timestamp {
 // @dbscanner: json
 type ExamResponses struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	QualificationId uint64                 `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
+	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	UserId          int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Responses       []*ExamResponse        `protobuf:"bytes,3,rep,name=responses,proto3" json:"responses,omitempty"`
 	unknownFields   protoimpl.UnknownFields
@@ -853,7 +853,7 @@ func (*ExamResponses) Descriptor() ([]byte, []int) {
 	return file_resources_qualifications_exam_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *ExamResponses) GetQualificationId() uint64 {
+func (x *ExamResponses) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
 	}
@@ -876,7 +876,7 @@ func (x *ExamResponses) GetResponses() []*ExamResponse {
 
 type ExamResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	QuestionId    uint64                 `protobuf:"varint,1,opt,name=question_id,json=questionId,proto3" json:"question_id,omitempty"`
+	QuestionId    int64                  `protobuf:"varint,1,opt,name=question_id,json=questionId,proto3" json:"question_id,omitempty"`
 	UserId        int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Question      *ExamQuestion          `protobuf:"bytes,3,opt,name=question,proto3" json:"question,omitempty"`
 	Response      *ExamResponseData      `protobuf:"bytes,4,opt,name=response,proto3" json:"response,omitempty"`
@@ -914,7 +914,7 @@ func (*ExamResponse) Descriptor() ([]byte, []int) {
 	return file_resources_qualifications_exam_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *ExamResponse) GetQuestionId() uint64 {
+func (x *ExamResponse) GetQuestionId() int64 {
 	if x != nil {
 		return x.QuestionId
 	}
@@ -1334,7 +1334,7 @@ func (x *ExamGrading) GetResponses() []*ExamGradingResponse {
 
 type ExamGradingResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	QuestionId    uint64                 `protobuf:"varint,1,opt,name=question_id,json=questionId,proto3" json:"question_id,omitempty"`
+	QuestionId    int64                  `protobuf:"varint,1,opt,name=question_id,json=questionId,proto3" json:"question_id,omitempty"`
 	Points        float32                `protobuf:"fixed32,2,opt,name=points,proto3" json:"points,omitempty"`
 	Checked       *bool                  `protobuf:"varint,3,opt,name=checked,proto3,oneof" json:"checked,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1371,7 +1371,7 @@ func (*ExamGradingResponse) Descriptor() ([]byte, []int) {
 	return file_resources_qualifications_exam_proto_rawDescGZIP(), []int{20}
 }
 
-func (x *ExamGradingResponse) GetQuestionId() uint64 {
+func (x *ExamGradingResponse) GetQuestionId() int64 {
 	if x != nil {
 		return x.QuestionId
 	}
@@ -1400,8 +1400,8 @@ const file_resources_qualifications_exam_proto_rawDesc = "" +
 	"\rExamQuestions\x12N\n" +
 	"\tquestions\x18\x01 \x03(\v2&.resources.qualifications.ExamQuestionB\b\xbaH\x05\x92\x01\x02\x10dR\tquestions\"\xc5\x04\n" +
 	"\fExamQuestion\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12)\n" +
-	"\x10qualification_id\x18\x02 \x01(\x04R\x0fqualificationId\x12B\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12)\n" +
+	"\x10qualification_id\x18\x02 \x01(\x03R\x0fqualificationId\x12B\n" +
 	"\n" +
 	"created_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
@@ -1456,7 +1456,7 @@ const file_resources_qualifications_exam_proto_rawDesc = "" +
 	"\x0fmultiple_choice\x18\a \x01(\v24.resources.qualifications.ExamResponseMultipleChoiceH\x00R\x0emultipleChoiceB\b\n" +
 	"\x06answer\"\x8b\x03\n" +
 	"\bExamUser\x12)\n" +
-	"\x10qualification_id\x18\x01 \x01(\x04R\x0fqualificationId\x12\x17\n" +
+	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12B\n" +
 	"\n" +
 	"created_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
@@ -1470,11 +1470,11 @@ const file_resources_qualifications_exam_proto_rawDesc = "" +
 	"\b_ends_atB\v\n" +
 	"\t_ended_at\"\xa3\x01\n" +
 	"\rExamResponses\x12)\n" +
-	"\x10qualification_id\x18\x01 \x01(\x04R\x0fqualificationId\x12\x17\n" +
+	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12N\n" +
 	"\tresponses\x18\x03 \x03(\v2&.resources.qualifications.ExamResponseB\b\xbaH\x05\x92\x01\x02\x10dR\tresponses\"\xd4\x01\n" +
 	"\fExamResponse\x12\x1f\n" +
-	"\vquestion_id\x18\x01 \x01(\x04R\n" +
+	"\vquestion_id\x18\x01 \x01(\x03R\n" +
 	"questionId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12B\n" +
 	"\bquestion\x18\x03 \x01(\v2&.resources.qualifications.ExamQuestionR\bquestion\x12F\n" +
@@ -1499,7 +1499,7 @@ const file_resources_qualifications_exam_proto_rawDesc = "" +
 	"\vExamGrading\x12U\n" +
 	"\tresponses\x18\x01 \x03(\v2-.resources.qualifications.ExamGradingResponseB\b\xbaH\x05\x92\x01\x02\x10dR\tresponses\"\x8a\x01\n" +
 	"\x13ExamGradingResponse\x12\x1f\n" +
-	"\vquestion_id\x18\x01 \x01(\x04R\n" +
+	"\vquestion_id\x18\x01 \x01(\x03R\n" +
 	"questionId\x12'\n" +
 	"\x06points\x18\x02 \x01(\x02B\x0f\xbaH\f\n" +
 	"\n" +

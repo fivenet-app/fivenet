@@ -27,7 +27,7 @@ const (
 
 type Template struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`
+	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	Category  *Category              `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty" alias:"category"`
@@ -83,7 +83,7 @@ func (*Template) Descriptor() ([]byte, []int) {
 	return file_resources_documents_templates_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Template) GetId() uint64 {
+func (x *Template) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -211,7 +211,7 @@ func (x *Template) GetWorkflow() *Workflow {
 
 type TemplateShort struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`
+	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	Category  *Category              `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty" alias:"category"`
@@ -262,7 +262,7 @@ func (*TemplateShort) Descriptor() ([]byte, []int) {
 	return file_resources_documents_templates_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *TemplateShort) GetId() uint64 {
+func (x *TemplateShort) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -588,9 +588,9 @@ func (x *TemplateData) GetVehicles() []*vehicles.Vehicle {
 
 type TemplateJobAccess struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	TargetId      uint64                 `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty" alias:"template_id"`
+	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty" alias:"template_id"`
 	Job           string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel      *string                `protobuf:"bytes,5,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	MinimumGrade  int32                  `protobuf:"varint,6,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty"`
@@ -630,7 +630,7 @@ func (*TemplateJobAccess) Descriptor() ([]byte, []int) {
 	return file_resources_documents_templates_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *TemplateJobAccess) GetId() uint64 {
+func (x *TemplateJobAccess) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -644,7 +644,7 @@ func (x *TemplateJobAccess) GetCreatedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *TemplateJobAccess) GetTargetId() uint64 {
+func (x *TemplateJobAccess) GetTargetId() int64 {
 	if x != nil {
 		return x.TargetId
 	}
@@ -729,7 +729,7 @@ const file_resources_documents_templates_proto_rawDesc = "" +
 	"\n" +
 	"#resources/documents/templates.proto\x12\x13resources.documents\x1a resources/documents/access.proto\x1a\"resources/documents/category.proto\x1a#resources/documents/documents.proto\x1a\"resources/documents/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\xf8\b\n" +
 	"\bTemplate\x12\x1f\n" +
-	"\x02id\x18\x01 \x01(\x04B\x0f\x9a\x84\x9e\x03\n" +
+	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
@@ -760,7 +760,7 @@ const file_resources_documents_templates_proto_rawDesc = "" +
 	"\x12_creator_job_labelB\v\n" +
 	"\t_workflow\"\x93\x06\n" +
 	"\rTemplateShort\x12\x1f\n" +
-	"\x02id\x18\x01 \x01(\x04B\x0f\x9a\x84\x9e\x03\n" +
+	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
@@ -808,11 +808,11 @@ const file_resources_documents_templates_proto_rawDesc = "" +
 	"\x05users\x18\x03 \x03(\v2\x1a.resources.users.UserShortB\b\xbaH\x05\x92\x01\x02\x10\fR\x05users\x12A\n" +
 	"\bvehicles\x18\x04 \x03(\v2\x1b.resources.vehicles.VehicleB\b\xbaH\x05\x92\x01\x02\x10\fR\bvehicles\"\xce\x03\n" +
 	"\x11TemplateJobAccess\x12\x1f\n" +
-	"\x02id\x18\x01 \x01(\x04B\x0f\x9a\x84\x9e\x03\n" +
+	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x125\n" +
-	"\ttarget_id\x18\x03 \x01(\x04B\x18\x9a\x84\x9e\x03\x13alias:\"template_id\"R\btargetId\x12\x19\n" +
+	"\ttarget_id\x18\x03 \x01(\x03B\x18\x9a\x84\x9e\x03\x13alias:\"template_id\"R\btargetId\x12\x19\n" +
 	"\x03job\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12)\n" +
 	"\tjob_label\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x182H\x01R\bjobLabel\x88\x01\x01\x12,\n" +
 	"\rminimum_grade\x18\x06 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\fminimumGrade\x124\n" +

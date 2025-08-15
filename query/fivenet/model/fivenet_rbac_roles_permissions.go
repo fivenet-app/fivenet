@@ -8,7 +8,7 @@
 package model
 
 type FivenetRbacRolesPermissions struct {
-	RoleID       uint64 `sql:"primary_key" json:"role_id"`
-	PermissionID uint64 `sql:"primary_key" json:"permission_id"`
-	Val          bool   `json:"val"`
+	RoleID       int64 `sql:"primary_key" json:"role_id"`
+	PermissionID int64 `sql:"primary_key" json:"permission_id"`
+	Val          bool  `json:"val"`
 }

@@ -61,7 +61,7 @@ export interface ListCalendarsResponse {
  */
 export interface GetCalendarRequest {
     /**
-     * @generated from protobuf field: uint64 calendar_id = 1
+     * @generated from protobuf field: int64 calendar_id = 1
      */
     calendarId: number;
 }
@@ -115,7 +115,7 @@ export interface UpdateCalendarResponse {
  */
 export interface DeleteCalendarRequest {
     /**
-     * @generated from protobuf field: uint64 calendar_id = 1
+     * @generated from protobuf field: int64 calendar_id = 1
      */
     calendarId: number;
 }
@@ -139,7 +139,7 @@ export interface ListCalendarEntriesRequest {
      */
     month: number;
     /**
-     * @generated from protobuf field: repeated uint64 calendar_ids = 3
+     * @generated from protobuf field: repeated int64 calendar_ids = 3
      */
     calendarIds: number[];
     /**
@@ -183,7 +183,7 @@ export interface GetUpcomingEntriesResponse {
  */
 export interface GetCalendarEntryRequest {
     /**
-     * @generated from protobuf field: uint64 entry_id = 1
+     * @generated from protobuf field: int64 entry_id = 1
      */
     entryId: number;
 }
@@ -223,7 +223,7 @@ export interface CreateOrUpdateCalendarEntryResponse {
  */
 export interface DeleteCalendarEntryRequest {
     /**
-     * @generated from protobuf field: uint64 entry_id = 1
+     * @generated from protobuf field: int64 entry_id = 1
      */
     entryId: number;
 }
@@ -237,7 +237,7 @@ export interface DeleteCalendarEntryResponse {
  */
 export interface ShareCalendarEntryRequest {
     /**
-     * @generated from protobuf field: uint64 entry_id = 1
+     * @generated from protobuf field: int64 entry_id = 1
      */
     entryId: number;
     /**
@@ -261,7 +261,7 @@ export interface ListCalendarEntryRSVPRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: uint64 entry_id = 2
+     * @generated from protobuf field: int64 entry_id = 2
      */
     entryId: number;
 }
@@ -476,7 +476,7 @@ export const ListCalendarsResponse = new ListCalendarsResponse$Type();
 class GetCalendarRequest$Type extends MessageType<GetCalendarRequest> {
     constructor() {
         super("services.calendar.GetCalendarRequest", [
-            { no: 1, name: "calendar_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "calendar_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<GetCalendarRequest>): GetCalendarRequest {
@@ -491,8 +491,8 @@ class GetCalendarRequest$Type extends MessageType<GetCalendarRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 calendar_id */ 1:
-                    message.calendarId = reader.uint64().toNumber();
+                case /* int64 calendar_id */ 1:
+                    message.calendarId = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -506,9 +506,9 @@ class GetCalendarRequest$Type extends MessageType<GetCalendarRequest> {
         return message;
     }
     internalBinaryWrite(message: GetCalendarRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 calendar_id = 1; */
+        /* int64 calendar_id = 1; */
         if (message.calendarId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.calendarId);
+            writer.tag(1, WireType.Varint).int64(message.calendarId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -753,7 +753,7 @@ export const UpdateCalendarResponse = new UpdateCalendarResponse$Type();
 class DeleteCalendarRequest$Type extends MessageType<DeleteCalendarRequest> {
     constructor() {
         super("services.calendar.DeleteCalendarRequest", [
-            { no: 1, name: "calendar_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "calendar_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteCalendarRequest>): DeleteCalendarRequest {
@@ -768,8 +768,8 @@ class DeleteCalendarRequest$Type extends MessageType<DeleteCalendarRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 calendar_id */ 1:
-                    message.calendarId = reader.uint64().toNumber();
+                case /* int64 calendar_id */ 1:
+                    message.calendarId = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -783,9 +783,9 @@ class DeleteCalendarRequest$Type extends MessageType<DeleteCalendarRequest> {
         return message;
     }
     internalBinaryWrite(message: DeleteCalendarRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 calendar_id = 1; */
+        /* int64 calendar_id = 1; */
         if (message.calendarId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.calendarId);
+            writer.tag(1, WireType.Varint).int64(message.calendarId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -840,7 +840,7 @@ class ListCalendarEntriesRequest$Type extends MessageType<ListCalendarEntriesReq
         super("services.calendar.ListCalendarEntriesRequest", [
             { no: 1, name: "year", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 2023 } } } },
             { no: 2, name: "month", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 12, gte: 1 } } } },
-            { no: 3, name: "calendar_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "calendar_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "show_hidden", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 5, name: "after", kind: "message", T: () => Timestamp }
         ]);
@@ -865,12 +865,12 @@ class ListCalendarEntriesRequest$Type extends MessageType<ListCalendarEntriesReq
                 case /* int32 month */ 2:
                     message.month = reader.int32();
                     break;
-                case /* repeated uint64 calendar_ids */ 3:
+                case /* repeated int64 calendar_ids */ 3:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.calendarIds.push(reader.uint64().toNumber());
+                            message.calendarIds.push(reader.int64().toNumber());
                     else
-                        message.calendarIds.push(reader.uint64().toNumber());
+                        message.calendarIds.push(reader.int64().toNumber());
                     break;
                 case /* optional bool show_hidden */ 4:
                     message.showHidden = reader.bool();
@@ -896,11 +896,11 @@ class ListCalendarEntriesRequest$Type extends MessageType<ListCalendarEntriesReq
         /* int32 month = 2; */
         if (message.month !== 0)
             writer.tag(2, WireType.Varint).int32(message.month);
-        /* repeated uint64 calendar_ids = 3; */
+        /* repeated int64 calendar_ids = 3; */
         if (message.calendarIds.length) {
             writer.tag(3, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.calendarIds.length; i++)
-                writer.uint64(message.calendarIds[i]);
+                writer.int64(message.calendarIds[i]);
             writer.join();
         }
         /* optional bool show_hidden = 4; */
@@ -1064,7 +1064,7 @@ export const GetUpcomingEntriesResponse = new GetUpcomingEntriesResponse$Type();
 class GetCalendarEntryRequest$Type extends MessageType<GetCalendarEntryRequest> {
     constructor() {
         super("services.calendar.GetCalendarEntryRequest", [
-            { no: 1, name: "entry_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "entry_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<GetCalendarEntryRequest>): GetCalendarEntryRequest {
@@ -1079,8 +1079,8 @@ class GetCalendarEntryRequest$Type extends MessageType<GetCalendarEntryRequest> 
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 entry_id */ 1:
-                    message.entryId = reader.uint64().toNumber();
+                case /* int64 entry_id */ 1:
+                    message.entryId = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1094,9 +1094,9 @@ class GetCalendarEntryRequest$Type extends MessageType<GetCalendarEntryRequest> 
         return message;
     }
     internalBinaryWrite(message: GetCalendarEntryRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 entry_id = 1; */
+        /* int64 entry_id = 1; */
         if (message.entryId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.entryId);
+            writer.tag(1, WireType.Varint).int64(message.entryId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1265,7 +1265,7 @@ export const CreateOrUpdateCalendarEntryResponse = new CreateOrUpdateCalendarEnt
 class DeleteCalendarEntryRequest$Type extends MessageType<DeleteCalendarEntryRequest> {
     constructor() {
         super("services.calendar.DeleteCalendarEntryRequest", [
-            { no: 1, name: "entry_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "entry_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteCalendarEntryRequest>): DeleteCalendarEntryRequest {
@@ -1280,8 +1280,8 @@ class DeleteCalendarEntryRequest$Type extends MessageType<DeleteCalendarEntryReq
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 entry_id */ 1:
-                    message.entryId = reader.uint64().toNumber();
+                case /* int64 entry_id */ 1:
+                    message.entryId = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1295,9 +1295,9 @@ class DeleteCalendarEntryRequest$Type extends MessageType<DeleteCalendarEntryReq
         return message;
     }
     internalBinaryWrite(message: DeleteCalendarEntryRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 entry_id = 1; */
+        /* int64 entry_id = 1; */
         if (message.entryId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.entryId);
+            writer.tag(1, WireType.Varint).int64(message.entryId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1350,7 +1350,7 @@ export const DeleteCalendarEntryResponse = new DeleteCalendarEntryResponse$Type(
 class ShareCalendarEntryRequest$Type extends MessageType<ShareCalendarEntryRequest> {
     constructor() {
         super("services.calendar.ShareCalendarEntryRequest", [
-            { no: 1, name: "entry_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "entry_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
@@ -1367,8 +1367,8 @@ class ShareCalendarEntryRequest$Type extends MessageType<ShareCalendarEntryReque
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 entry_id */ 1:
-                    message.entryId = reader.uint64().toNumber();
+                case /* int64 entry_id */ 1:
+                    message.entryId = reader.int64().toNumber();
                     break;
                 case /* repeated int32 user_ids */ 2:
                     if (wireType === WireType.LengthDelimited)
@@ -1389,9 +1389,9 @@ class ShareCalendarEntryRequest$Type extends MessageType<ShareCalendarEntryReque
         return message;
     }
     internalBinaryWrite(message: ShareCalendarEntryRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 entry_id = 1; */
+        /* int64 entry_id = 1; */
         if (message.entryId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.entryId);
+            writer.tag(1, WireType.Varint).int64(message.entryId);
         /* repeated int32 user_ids = 2; */
         if (message.userIds.length) {
             writer.tag(2, WireType.LengthDelimited).fork();
@@ -1452,7 +1452,7 @@ class ListCalendarEntryRSVPRequest$Type extends MessageType<ListCalendarEntryRSV
     constructor() {
         super("services.calendar.ListCalendarEntryRSVPRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "entry_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 2, name: "entry_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<ListCalendarEntryRSVPRequest>): ListCalendarEntryRSVPRequest {
@@ -1470,8 +1470,8 @@ class ListCalendarEntryRSVPRequest$Type extends MessageType<ListCalendarEntryRSV
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* uint64 entry_id */ 2:
-                    message.entryId = reader.uint64().toNumber();
+                case /* int64 entry_id */ 2:
+                    message.entryId = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1488,9 +1488,9 @@ class ListCalendarEntryRSVPRequest$Type extends MessageType<ListCalendarEntryRSV
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 entry_id = 2; */
+        /* int64 entry_id = 2; */
         if (message.entryId !== 0)
-            writer.tag(2, WireType.Varint).uint64(message.entryId);
+            writer.tag(2, WireType.Varint).int64(message.entryId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

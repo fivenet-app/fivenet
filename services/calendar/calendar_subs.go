@@ -65,7 +65,7 @@ func (s *Server) SubscribeToCalendar(
 
 func (s *Server) createOrDeleteSubscription(
 	ctx context.Context,
-	calendarId uint64,
+	calendarId int64,
 	userId int32,
 	subscribe bool,
 	confirmed bool,
@@ -99,7 +99,7 @@ func (s *Server) createOrDeleteSubscription(
 		stmt := tCalendarSubs.
 			DELETE().
 			WHERE(jet.AND(
-				tCalendarSubs.CalendarID.EQ(jet.Uint64(calendarId)),
+				tCalendarSubs.CalendarID.EQ(jet.Int64(calendarId)),
 				tCalendarSubs.UserID.EQ(jet.Int32(userId)),
 			)).
 			LIMIT(1)
@@ -115,7 +115,7 @@ func (s *Server) createOrDeleteSubscription(
 func (s *Server) getCalendarSub(
 	ctx context.Context,
 	userId int32,
-	calendarId uint64,
+	calendarId int64,
 ) (*calendar.CalendarSub, error) {
 	stmt := tCalendarSubs.
 		SELECT(
@@ -127,7 +127,7 @@ func (s *Server) getCalendarSub(
 		).
 		FROM(tCalendarSubs).
 		WHERE(jet.AND(
-			tCalendarSubs.CalendarID.EQ(jet.Uint64(calendarId)),
+			tCalendarSubs.CalendarID.EQ(jet.Int64(calendarId)),
 			tCalendarSubs.UserID.EQ(jet.Int32(userId)),
 		))
 

@@ -8,8 +8,8 @@
 package model
 
 type FivenetDocumentsTemplatesAccess struct {
-	ID           uint64  `sql:"primary_key" json:"id"`
-	TargetID     uint64  `json:"target_id"`
+	ID           int64   `sql:"primary_key" json:"id"`
+	TargetID     int64   `json:"target_id"`
 	Job          *string `json:"job"`
 	MinimumGrade *int32  `json:"minimum_grade"`
 	Access       int16   `json:"access"`

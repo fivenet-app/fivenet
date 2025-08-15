@@ -37,7 +37,7 @@ type ITracker interface {
 
 	GetUserMapping(userId int32) (*tracker.UserMapping, error)
 	SetUserMapping(ctx context.Context, mapping *tracker.UserMapping) error
-	SetUserMappingForUser(ctx context.Context, userId int32, unitId *uint64) error
+	SetUserMappingForUser(ctx context.Context, userId int32, unitId *int64) error
 	UnsetUnitIDForUser(ctx context.Context, userId int32) error
 	ListUserMappings(ctx context.Context) (map[int32]*tracker.UserMapping, error)
 }
@@ -235,7 +235,7 @@ func (t *Tracker) SetUserMapping(ctx context.Context, mapping *tracker.UserMappi
 	return nil
 }
 
-func (t *Tracker) SetUserMappingForUser(ctx context.Context, userId int32, unitId *uint64) error {
+func (t *Tracker) SetUserMappingForUser(ctx context.Context, userId int32, unitId *int64) error {
 	if err := t.SetUserMapping(ctx, &tracker.UserMapping{
 		UserId: userId,
 		UnitId: unitId,

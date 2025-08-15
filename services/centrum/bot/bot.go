@@ -37,7 +37,7 @@ type Bot struct {
 
 	job string
 
-	lastAssignedUnits map[uint64]time.Time
+	lastAssignedUnits map[int64]time.Time
 }
 
 func NewBot(
@@ -64,7 +64,7 @@ func NewBot(
 		dispatches: dispatches,
 
 		job:               job,
-		lastAssignedUnits: map[uint64]time.Time{},
+		lastAssignedUnits: map[int64]time.Time{},
 	}
 }
 
@@ -107,24 +107,24 @@ func (b *Bot) Run() {
 				continue
 			}
 
-			b.logger.Debug("trying to auto assign dispatch", zap.Uint64("dispatch_id", dsp.GetId()))
+			b.logger.Debug("trying to auto assign dispatch", zap.Int64("dispatch_id", dsp.GetId()))
 
 			unit, ok := b.getAvailableUnit(b.ctx, dsp.GetJobs())
 			if !ok {
 				// No unit available
 				b.logger.Warn(
 					"no available units for dispatch",
-					zap.Uint64("dispatch_id", dsp.GetId()),
+					zap.Int64("dispatch_id", dsp.GetId()),
 				)
 				break
 			}
 
-			if err := b.dispatches.UpdateAssignments(b.ctx, nil, dsp.GetId(), []uint64{unit.GetId()}, nil,
+			if err := b.dispatches.UpdateAssignments(b.ctx, nil, dsp.GetId(), []int64{unit.GetId()}, nil,
 				b.settings.DispatchAssignmentExpirationTime()); err != nil {
 				b.logger.Error(
 					"failed to assgin unit to dispatch",
-					zap.Uint64("dispatch_id", dsp.GetId()),
-					zap.Uint64("unit_id", unit.GetId()),
+					zap.Int64("dispatch_id", dsp.GetId()),
+					zap.Int64("unit_id", unit.GetId()),
 					zap.Error(err),
 				)
 				break

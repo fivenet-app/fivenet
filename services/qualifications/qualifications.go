@@ -199,7 +199,7 @@ func (s *Server) GetQualification(
 
 	resp := &pbqualifications.GetQualificationResponse{}
 	resp.Qualification, err = s.getQualification(ctx, req.GetQualificationId(),
-		tQuali.ID.EQ(jet.Uint64(req.GetQualificationId())), userInfo, canContent)
+		tQuali.ID.EQ(jet.Int64(req.GetQualificationId())), userInfo, canContent)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -328,14 +328,14 @@ func (s *Server) CreateQualification(
 		}
 
 		jobAccess = append(jobAccess, &qualifications.QualificationJobAccess{
-			TargetId:     uint64(lastId),
+			TargetId:     lastId,
 			Job:          job.GetName(),
 			MinimumGrade: highestGrade,
 			Access:       qualifications.AccessLevel_ACCESS_LEVEL_EDIT,
 		})
 	}
 
-	if _, err := s.access.HandleAccessChanges(ctx, tx, uint64(lastId), jobAccess, nil, nil); err != nil {
+	if _, err := s.access.HandleAccessChanges(ctx, tx, lastId, jobAccess, nil, nil); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
@@ -347,7 +347,7 @@ func (s *Server) CreateQualification(
 	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 
 	return &pbqualifications.CreateQualificationResponse{
-		QualificationId: uint64(lastId),
+		QualificationId: lastId,
 	}, nil
 }
 
@@ -385,7 +385,7 @@ func (s *Server) UpdateQualification(
 	}
 
 	oldQuali, err := s.getQualification(ctx, req.GetQualification().GetId(),
-		tQuali.ID.EQ(jet.Uint64(req.GetQualification().GetId())),
+		tQuali.ID.EQ(jet.Int64(req.GetQualification().GetId())),
 		userInfo, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -490,7 +490,7 @@ func (s *Server) UpdateQualification(
 			req.GetQualification().LabelSyncFormat,
 		).
 		WHERE(
-			tQuali.ID.EQ(jet.Uint64(req.GetQualification().GetId())),
+			tQuali.ID.EQ(jet.Int64(req.GetQualification().GetId())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -574,7 +574,7 @@ func (s *Server) DeleteQualification(
 	}
 
 	quali, err := s.getQualification(ctx, req.GetQualificationId(),
-		tQuali.ID.EQ(jet.Uint64(req.GetQualificationId())), userInfo, true)
+		tQuali.ID.EQ(jet.Int64(req.GetQualificationId())), userInfo, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -607,7 +607,7 @@ func (s *Server) DeleteQualification(
 			tQuali.DeletedAt.SET(deletedAtTime),
 		).
 		WHERE(
-			tQuali.ID.EQ(jet.Uint64(req.GetQualificationId())),
+			tQuali.ID.EQ(jet.Int64(req.GetQualificationId())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

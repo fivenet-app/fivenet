@@ -12,10 +12,10 @@ import (
 )
 
 type FivenetDocumentsRequests struct {
-	ID          uint64     `sql:"primary_key" json:"id"`
+	ID          int64      `sql:"primary_key" json:"id"`
 	CreatedAt   *time.Time `json:"created_at"`
 	UpdatedAt   *time.Time `json:"updated_at"`
-	DocumentID  uint64     `json:"document_id"`
+	DocumentID  int64      `json:"document_id"`
 	RequestType int16      `json:"request_type"`
 	CreatorID   *int32     `json:"creator_id"`
 	CreatorJob  string     `json:"creator_job"`

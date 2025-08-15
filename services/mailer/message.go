@@ -41,7 +41,7 @@ func (s *Server) ListThreadMessages(
 		FROM(tMessages).
 		WHERE(jet.AND(
 			tMessages.DeletedAt.IS_NULL(),
-			tMessages.ThreadID.EQ(jet.Uint64(req.GetThreadId())),
+			tMessages.ThreadID.EQ(jet.Int64(req.GetThreadId())),
 		))
 
 	var count database.DataCount
@@ -83,7 +83,7 @@ func (s *Server) ListThreadMessages(
 		).
 		WHERE(jet.AND(
 			tMessages.DeletedAt.IS_NULL(),
-			tMessages.ThreadID.EQ(jet.Uint64(req.GetThreadId())),
+			tMessages.ThreadID.EQ(jet.Int64(req.GetThreadId())),
 			tEmails.DeletedAt.IS_NULL(),
 		)).
 		OFFSET(req.GetPagination().GetOffset()).
@@ -108,7 +108,7 @@ func (s *Server) ListThreadMessages(
 	return resp, nil
 }
 
-func (s *Server) getMessage(ctx context.Context, messageId uint64) (*mailer.Message, error) {
+func (s *Server) getMessage(ctx context.Context, messageId int64) (*mailer.Message, error) {
 	stmt := tMessages.
 		SELECT(
 			tMessages.ID,
@@ -126,7 +126,7 @@ func (s *Server) getMessage(ctx context.Context, messageId uint64) (*mailer.Mess
 		).
 		FROM(tMessages).
 		WHERE(
-			tMessages.ID.EQ(jet.Uint64(messageId)),
+			tMessages.ID.EQ(jet.Int64(messageId)),
 		).
 		LIMIT(1)
 
@@ -221,7 +221,7 @@ func (s *Server) PostMessage(
 		return nil, errorsmailer.ErrFailedQuery
 	}
 
-	emailIds := []uint64{}
+	emailIds := []int64{}
 	for _, ua := range recipients {
 		// Skip sender email id
 		if ua.GetEmailId() == senderEmail.GetId() {
@@ -262,7 +262,7 @@ func (s *Server) createMessage(
 	ctx context.Context,
 	tx qrm.DB,
 	msg *mailer.Message,
-) (uint64, error) {
+) (int64, error) {
 	tMessages := table.FivenetMailerMessages
 	stmt := tMessages.
 		INSERT(
@@ -296,7 +296,7 @@ func (s *Server) createMessage(
 		return 0, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	return uint64(lastId), nil
+	return lastId, nil
 }
 
 func (s *Server) DeleteMessage(
@@ -339,8 +339,8 @@ func (s *Server) DeleteMessage(
 			tMessages.DeletedAt.SET(deletedAtTime),
 		).
 		WHERE(jet.AND(
-			tMessages.ThreadID.EQ(jet.Uint64(req.GetThreadId())),
-			tMessages.ID.EQ(jet.Uint64(req.GetMessageId())),
+			tMessages.ThreadID.EQ(jet.Int64(req.GetThreadId())),
+			tMessages.ID.EQ(jet.Int64(req.GetMessageId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -353,7 +353,7 @@ func (s *Server) DeleteMessage(
 	}
 
 	if thread != nil && thread.Recipients != nil && len(thread.GetRecipients()) > 0 {
-		emailIds := []uint64{}
+		emailIds := []int64{}
 		for _, ua := range thread.GetRecipients() {
 			emailIds = append(emailIds, ua.GetEmailId())
 		}
@@ -411,7 +411,7 @@ func (s *Server) SearchThreads(
 
 	ids := []jet.Expression{}
 	for _, email := range listEmailsResp.GetEmails() {
-		ids = append(ids, jet.Uint64(email.GetId()))
+		ids = append(ids, jet.Int64(email.GetId()))
 	}
 
 	// Get Thread ids via threads recipients list

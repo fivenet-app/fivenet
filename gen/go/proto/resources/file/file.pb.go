@@ -24,8 +24,8 @@ const (
 
 type File struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ParentId      *uint64                `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`
-	Id            uint64                 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	ParentId      *int64                 `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	FilePath      string                 `protobuf:"bytes,3,opt,name=file_path,json=filePath,proto3" json:"file_path,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	ByteSize      int64                  `protobuf:"varint,5,opt,name=byte_size,json=byteSize,proto3" json:"byte_size,omitempty"` // Bytes stored
@@ -65,14 +65,14 @@ func (*File) Descriptor() ([]byte, []int) {
 	return file_resources_file_file_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *File) GetParentId() uint64 {
+func (x *File) GetParentId() int64 {
 	if x != nil && x.ParentId != nil {
 		return *x.ParentId
 	}
 	return 0
 }
 
-func (x *File) GetId() uint64 {
+func (x *File) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -120,8 +120,8 @@ const file_resources_file_file_proto_rawDesc = "" +
 	"\n" +
 	"\x19resources/file/file.proto\x12\x0eresources.file\x1a\x19resources/file/meta.proto\x1a#resources/timestamp/timestamp.proto\"\xc4\x02\n" +
 	"\x04File\x12)\n" +
-	"\tparent_id\x18\x01 \x01(\x04B\a\xbaH\x042\x02 \x00H\x00R\bparentId\x88\x01\x01\x12\x17\n" +
-	"\x02id\x18\x02 \x01(\x04B\a\xbaH\x042\x02 \x00R\x02id\x12\x1b\n" +
+	"\tparent_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x00R\bparentId\x88\x01\x01\x12\x17\n" +
+	"\x02id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\x12\x1b\n" +
 	"\tfile_path\x18\x03 \x01(\tR\bfilePath\x12B\n" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tcreatedAt\x88\x01\x01\x12\x1b\n" +

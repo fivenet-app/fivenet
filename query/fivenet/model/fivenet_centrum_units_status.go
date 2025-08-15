@@ -12,9 +12,9 @@ import (
 )
 
 type FivenetCentrumUnitsStatus struct {
-	ID         uint64     `sql:"primary_key" json:"id"`
+	ID         int64      `sql:"primary_key" json:"id"`
 	CreatedAt  *time.Time `json:"created_at"`
-	UnitID     uint64     `json:"unit_id"`
+	UnitID     int64      `json:"unit_id"`
 	Status     int16      `json:"status"`
 	Reason     *string    `json:"reason"`
 	Code       *string    `json:"code"`

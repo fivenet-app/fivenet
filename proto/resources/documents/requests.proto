@@ -11,10 +11,10 @@ import "tagger/tagger.proto";
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documents";
 
 message DocRequest {
-  uint64 id = 1;
+  int64 id = 1;
   resources.timestamp.Timestamp created_at = 2;
   resources.timestamp.Timestamp updated_at = 3;
-  uint64 document_id = 4;
+  int64 document_id = 4;
   DocActivityType request_type = 5 [(buf.validate.field).enum = {
     in: [
       13,

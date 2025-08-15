@@ -18,11 +18,11 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface File {
     /**
-     * @generated from protobuf field: optional uint64 parent_id = 1
+     * @generated from protobuf field: optional int64 parent_id = 1
      */
     parentId?: number;
     /**
-     * @generated from protobuf field: uint64 id = 2
+     * @generated from protobuf field: int64 id = 2
      */
     id: number;
     /**
@@ -50,8 +50,8 @@ export interface File {
 class File$Type extends MessageType<File> {
     constructor() {
         super("resources.file.File", [
-            { no: 1, name: "parent_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { uint64: { gt: "0" } } } },
-            { no: 2, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { uint64: { gt: "0" } } } },
+            { no: 1, name: "parent_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 2, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 3, name: "file_path", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "byte_size", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
@@ -74,11 +74,11 @@ class File$Type extends MessageType<File> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional uint64 parent_id */ 1:
-                    message.parentId = reader.uint64().toNumber();
+                case /* optional int64 parent_id */ 1:
+                    message.parentId = reader.int64().toNumber();
                     break;
-                case /* uint64 id */ 2:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 2:
+                    message.id = reader.int64().toNumber();
                     break;
                 case /* string file_path */ 3:
                     message.filePath = reader.string();
@@ -107,12 +107,12 @@ class File$Type extends MessageType<File> {
         return message;
     }
     internalBinaryWrite(message: File, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional uint64 parent_id = 1; */
+        /* optional int64 parent_id = 1; */
         if (message.parentId !== undefined)
-            writer.tag(1, WireType.Varint).uint64(message.parentId);
-        /* uint64 id = 2; */
+            writer.tag(1, WireType.Varint).int64(message.parentId);
+        /* int64 id = 2; */
         if (message.id !== 0)
-            writer.tag(2, WireType.Varint).uint64(message.id);
+            writer.tag(2, WireType.Varint).int64(message.id);
         /* string file_path = 3; */
         if (message.filePath !== "")
             writer.tag(3, WireType.LengthDelimited).string(message.filePath);

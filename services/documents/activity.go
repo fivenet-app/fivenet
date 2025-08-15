@@ -49,7 +49,7 @@ func (s *Server) ListDocumentActivity(
 
 	tDocActivity := table.FivenetDocumentsActivity.AS("doc_activity")
 
-	condition := tDocActivity.DocumentID.EQ(jet.Uint64(req.GetDocumentId()))
+	condition := tDocActivity.DocumentID.EQ(jet.Int64(req.GetDocumentId()))
 	if len(req.GetActivityTypes()) > 0 {
 		ids := make([]jet.Expression, len(req.GetActivityTypes()))
 		for i := range req.GetActivityTypes() {
@@ -138,7 +138,7 @@ func addDocumentActivity(
 	ctx context.Context,
 	tx qrm.DB,
 	activitiy *documents.DocActivity,
-) (uint64, error) {
+) (int64, error) {
 	stmt := tDocActivity.
 		INSERT(
 			tDocActivity.DocumentID,
@@ -169,7 +169,7 @@ func addDocumentActivity(
 		return 0, err
 	}
 
-	return uint64(lastId), nil
+	return lastId, nil
 }
 
 // generateDocumentDiff Generates diff if the old and new contents are not equal, using a simple "string comparison".

@@ -17,7 +17,7 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface RoleAttribute {
     /**
-     * @generated from protobuf field: uint64 role_id = 1
+     * @generated from protobuf field: int64 role_id = 1
      */
     roleId: number;
     /**
@@ -25,11 +25,11 @@ export interface RoleAttribute {
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 attr_id = 3
+     * @generated from protobuf field: int64 attr_id = 3
      */
     attrId: number;
     /**
-     * @generated from protobuf field: uint64 permission_id = 4
+     * @generated from protobuf field: int64 permission_id = 4
      */
     permissionId: number;
     /**
@@ -137,10 +137,10 @@ export interface JobGrades {
 class RoleAttribute$Type extends MessageType<RoleAttribute> {
     constructor() {
         super("resources.permissions.RoleAttribute", [
-            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "role_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "attr_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 4, name: "permission_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "attr_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "permission_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "category", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } },
             { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
             { no: 7, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
@@ -168,17 +168,17 @@ class RoleAttribute$Type extends MessageType<RoleAttribute> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 role_id */ 1:
-                    message.roleId = reader.uint64().toNumber();
+                case /* int64 role_id */ 1:
+                    message.roleId = reader.int64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* uint64 attr_id */ 3:
-                    message.attrId = reader.uint64().toNumber();
+                case /* int64 attr_id */ 3:
+                    message.attrId = reader.int64().toNumber();
                     break;
-                case /* uint64 permission_id */ 4:
-                    message.permissionId = reader.uint64().toNumber();
+                case /* int64 permission_id */ 4:
+                    message.permissionId = reader.int64().toNumber();
                     break;
                 case /* string category */ 5:
                     message.category = reader.string();
@@ -213,18 +213,18 @@ class RoleAttribute$Type extends MessageType<RoleAttribute> {
         return message;
     }
     internalBinaryWrite(message: RoleAttribute, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 role_id = 1; */
+        /* int64 role_id = 1; */
         if (message.roleId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.roleId);
+            writer.tag(1, WireType.Varint).int64(message.roleId);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 attr_id = 3; */
+        /* int64 attr_id = 3; */
         if (message.attrId !== 0)
-            writer.tag(3, WireType.Varint).uint64(message.attrId);
-        /* uint64 permission_id = 4; */
+            writer.tag(3, WireType.Varint).int64(message.attrId);
+        /* int64 permission_id = 4; */
         if (message.permissionId !== 0)
-            writer.tag(4, WireType.Varint).uint64(message.permissionId);
+            writer.tag(4, WireType.Varint).int64(message.permissionId);
         /* string category = 5; */
         if (message.category !== "")
             writer.tag(5, WireType.LengthDelimited).string(message.category);

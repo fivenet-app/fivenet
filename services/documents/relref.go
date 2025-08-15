@@ -52,8 +52,8 @@ func (s *Server) GetDocumentReferences(
 	resp := &pbdocuments.GetDocumentReferencesResponse{}
 
 	var docsIds []struct {
-		Source *uint64
-		Target *uint64
+		Source *int64
+		Target *int64
 	}
 	idStmt := tDocRef.
 		SELECT(
@@ -66,8 +66,8 @@ func (s *Server) GetDocumentReferences(
 		WHERE(jet.AND(
 			tDocRef.DeletedAt.IS_NULL(),
 			jet.OR(
-				tDocRef.SourceDocumentID.EQ(jet.Uint64(req.GetDocumentId())),
-				tDocRef.TargetDocumentID.EQ(jet.Uint64(req.GetDocumentId())),
+				tDocRef.SourceDocumentID.EQ(jet.Int64(req.GetDocumentId())),
+				tDocRef.TargetDocumentID.EQ(jet.Int64(req.GetDocumentId())),
 			),
 		))
 
@@ -81,7 +81,7 @@ func (s *Server) GetDocumentReferences(
 		return resp, nil
 	}
 
-	var docIds []uint64
+	var docIds []int64
 	for _, v := range docsIds {
 		if v.Source != nil {
 			docIds = append(docIds, *v.Source)
@@ -106,7 +106,7 @@ func (s *Server) GetDocumentReferences(
 
 	dIds := make([]jet.Expression, len(ids))
 	for i := range ids {
-		dIds[i] = jet.Uint64(ids[i])
+		dIds[i] = jet.Int64(ids[i])
 	}
 
 	tSourceDoc := tDocument.AS("source_document")
@@ -169,8 +169,8 @@ func (s *Server) GetDocumentReferences(
 		WHERE(jet.AND(
 			tDocRef.DeletedAt.IS_NULL(),
 			jet.OR(
-				tDocRef.SourceDocumentID.EQ(jet.Uint64(req.GetDocumentId())),
-				tDocRef.TargetDocumentID.EQ(jet.Uint64(req.GetDocumentId())),
+				tDocRef.SourceDocumentID.EQ(jet.Int64(req.GetDocumentId())),
+				tDocRef.TargetDocumentID.EQ(jet.Int64(req.GetDocumentId())),
 			),
 		)).
 		ORDER_BY(
@@ -289,7 +289,7 @@ func (s *Server) AddDocumentReference(
 	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 
 	return &pbdocuments.AddDocumentReferenceResponse{
-		Id: uint64(lastId),
+		Id: lastId,
 	}, nil
 }
 
@@ -344,8 +344,8 @@ func (s *Server) RemoveDocumentReference(
 	defer s.aud.Log(auditEntry, req)
 
 	var docIDs struct {
-		Source uint64
-		Target uint64
+		Source int64
+		Target int64
 	}
 
 	// Get document IDs of reference entry
@@ -355,7 +355,7 @@ func (s *Server) RemoveDocumentReference(
 			tDocRef.TargetDocumentID.AS("target"),
 		).
 		FROM(tDocRef).
-		WHERE(tDocRef.ID.EQ(jet.Uint64(req.GetId()))).
+		WHERE(tDocRef.ID.EQ(jet.Int64(req.GetId()))).
 		LIMIT(1)
 
 	if err := docsStmt.QueryContext(ctx, s.db, &docIDs); err != nil {
@@ -384,7 +384,7 @@ func (s *Server) RemoveDocumentReference(
 			tDocRef.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
 		).
 		WHERE(
-			tDocRef.ID.EQ(jet.Uint64(req.GetId())),
+			tDocRef.ID.EQ(jet.Int64(req.GetId())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -454,7 +454,7 @@ func (s *Server) addDocumentRelation(
 	tx qrm.DB,
 	userInfo *userinfo.UserInfo,
 	rel *documents.DocumentRelation,
-) (uint64, error) {
+) (int64, error) {
 	tDocRel := table.FivenetDocumentsRelations
 	stmt := tDocRel.
 		INSERT(
@@ -484,7 +484,7 @@ func (s *Server) addDocumentRelation(
 			).
 			FROM(tDocRel).
 			WHERE(jet.AND(
-				tDocRel.DocumentID.EQ(jet.Uint64(rel.GetDocumentId())),
+				tDocRel.DocumentID.EQ(jet.Int64(rel.GetDocumentId())),
 				tDocRel.Relation.EQ(jet.Int32(int32(rel.GetRelation()))),
 				tDocRel.TargetUserID.EQ(jet.Int32(rel.GetTargetUserId())),
 			)).
@@ -525,7 +525,7 @@ func (s *Server) addDocumentRelation(
 		}
 	}
 
-	return uint64(lastId), nil
+	return lastId, nil
 }
 
 func (s *Server) RemoveDocumentRelation(
@@ -546,7 +546,7 @@ func (s *Server) RemoveDocumentRelation(
 	defer s.aud.Log(auditEntry, req)
 
 	var docID struct {
-		ID uint64
+		ID int64
 	}
 
 	// Get document IDs of reference entry
@@ -555,7 +555,7 @@ func (s *Server) RemoveDocumentRelation(
 			tDocRel.DocumentID.AS("id"),
 		).
 		FROM(tDocRel).
-		WHERE(tDocRel.ID.EQ(jet.Uint64(req.GetId()))).
+		WHERE(tDocRel.ID.EQ(jet.Int64(req.GetId()))).
 		LIMIT(1)
 
 	if err := docsStmt.QueryContext(ctx, s.db, &docID); err != nil {
@@ -591,7 +591,7 @@ func (s *Server) RemoveDocumentRelation(
 			tDocRel.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
 		).
 		WHERE(
-			tDocRel.ID.EQ(jet.Uint64(req.GetId())),
+			tDocRel.ID.EQ(jet.Int64(req.GetId())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -628,7 +628,7 @@ func (s *Server) RemoveDocumentRelation(
 
 func (s *Server) getDocumentRelation(
 	ctx context.Context,
-	id uint64,
+	id int64,
 ) (*documents.DocumentRelation, error) {
 	stmt := tDocRel.
 		SELECT(
@@ -643,7 +643,7 @@ func (s *Server) getDocumentRelation(
 			tDocRel,
 		).
 		WHERE(
-			tDocRel.ID.EQ(jet.Uint64(id)),
+			tDocRel.ID.EQ(jet.Int64(id)),
 		).
 		LIMIT(1)
 
@@ -660,7 +660,7 @@ func (s *Server) getDocumentRelation(
 func (s *Server) getDocumentRelations(
 	ctx context.Context,
 	userInfo *userinfo.UserInfo,
-	documentId uint64,
+	documentId int64,
 ) ([]*documents.DocumentRelation, error) {
 	tSourceUser := tables.User().AS("source_user")
 	tTargetUser := tSourceUser.AS("target_user")
@@ -718,7 +718,7 @@ func (s *Server) getDocumentRelations(
 				),
 		).
 		WHERE(jet.AND(
-			tDocRel.DocumentID.EQ(jet.Uint64(documentId)),
+			tDocRel.DocumentID.EQ(jet.Int64(documentId)),
 			tDocRel.DeletedAt.IS_NULL(),
 		)).
 		ORDER_BY(
@@ -748,7 +748,7 @@ func (s *Server) getDocumentRelations(
 
 func (s *Server) notifyMentionedUser(
 	ctx context.Context,
-	documentId uint64,
+	documentId int64,
 	sourceUserId int32,
 	targetUserId int32,
 ) error {
@@ -771,7 +771,7 @@ func (s *Server) notifyMentionedUser(
 		return nil
 	}
 
-	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(documentId)), userInfo, false)
+	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Int64(documentId)), userInfo, false)
 	if err != nil {
 		return err
 	}

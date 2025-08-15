@@ -49,7 +49,7 @@ func (s *Housekeeper) idleWatcher(ctx context.Context) error {
 			}
 
 			idStr := strings.TrimPrefix(e.Key(), "idle.")
-			id, _ := strconv.ParseUint(idStr, 10, 64)
+			id, _ := strconv.ParseInt(idStr, 10, 64)
 
 			// double-check it is still open, then cancel & archive
 			dsp, err := s.dispatches.Get(ctx, id)
@@ -65,14 +65,14 @@ func (s *Housekeeper) idleWatcher(ctx context.Context) error {
 			}); err != nil {
 				s.logger.Error(
 					"failed to update dispatch status to cancelled",
-					zap.Uint64("dispatch_id", id),
+					zap.Int64("dispatch_id", id),
 					zap.Error(err),
 				)
 			}
 			if err := s.dispatches.AddAttributeToDispatch(ctx, dsp, centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_TOO_OLD); err != nil {
 				s.logger.Error(
 					"failed to add too old attribute to cancelled dispatch",
-					zap.Uint64("dispatch_id", id),
+					zap.Int64("dispatch_id", id),
 					zap.Error(err),
 				)
 			}
@@ -81,7 +81,7 @@ func (s *Housekeeper) idleWatcher(ctx context.Context) error {
 			if err := s.dispatches.Delete(ctx, id, false); err != nil {
 				s.logger.Error(
 					"failed to delete idle dispatch",
-					zap.Uint64("dispatch_id", id),
+					zap.Int64("dispatch_id", id),
 					zap.Error(err),
 				)
 			}

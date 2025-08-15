@@ -243,7 +243,7 @@ func (ResultStatus) EnumDescriptor() ([]byte, []int) {
 
 type Qualification struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
@@ -309,7 +309,7 @@ func (*Qualification) Descriptor() ([]byte, []int) {
 	return file_resources_qualifications_qualifications_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Qualification) GetId() uint64 {
+func (x *Qualification) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -507,7 +507,7 @@ func (x *Qualification) GetFiles() []*file.File {
 
 type QualificationShort struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
@@ -563,7 +563,7 @@ func (*QualificationShort) Descriptor() ([]byte, []int) {
 	return file_resources_qualifications_qualifications_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *QualificationShort) GetId() uint64 {
+func (x *QualificationShort) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -698,10 +698,10 @@ func (x *QualificationShort) GetResult() *QualificationResult {
 
 type QualificationRequirement struct {
 	state                 protoimpl.MessageState `protogen:"open.v1"`
-	Id                    uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id                    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt             *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	QualificationId       uint64                 `protobuf:"varint,3,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
-	TargetQualificationId uint64                 `protobuf:"varint,4,opt,name=target_qualification_id,json=targetQualificationId,proto3" json:"target_qualification_id,omitempty"`
+	QualificationId       int64                  `protobuf:"varint,3,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
+	TargetQualificationId int64                  `protobuf:"varint,4,opt,name=target_qualification_id,json=targetQualificationId,proto3" json:"target_qualification_id,omitempty"`
 	TargetQualification   *QualificationShort    `protobuf:"bytes,5,opt,name=target_qualification,json=targetQualification,proto3,oneof" json:"target_qualification,omitempty" alias:"targetqualification"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
@@ -737,7 +737,7 @@ func (*QualificationRequirement) Descriptor() ([]byte, []int) {
 	return file_resources_qualifications_qualifications_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *QualificationRequirement) GetId() uint64 {
+func (x *QualificationRequirement) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -751,14 +751,14 @@ func (x *QualificationRequirement) GetCreatedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *QualificationRequirement) GetQualificationId() uint64 {
+func (x *QualificationRequirement) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
 	}
 	return 0
 }
 
-func (x *QualificationRequirement) GetTargetQualificationId() uint64 {
+func (x *QualificationRequirement) GetTargetQualificationId() int64 {
 	if x != nil {
 		return x.TargetQualificationId
 	}
@@ -898,7 +898,7 @@ type QualificationRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	DeletedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	QualificationId uint64                 `protobuf:"varint,3,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty" alias:"qualification_id" sql:"primary_key"`
+	QualificationId int64                  `protobuf:"varint,3,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty" alias:"qualification_id" sql:"primary_key"`
 	Qualification   *QualificationShort    `protobuf:"bytes,4,opt,name=qualification,proto3,oneof" json:"qualification,omitempty"`
 	UserId          int32                  `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" sql:"primary_key"`
 	User            *users.UserShort       `protobuf:"bytes,6,opt,name=user,proto3" json:"user,omitempty" alias:"user"`
@@ -959,7 +959,7 @@ func (x *QualificationRequest) GetDeletedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *QualificationRequest) GetQualificationId() uint64 {
+func (x *QualificationRequest) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
 	}
@@ -1038,10 +1038,10 @@ func (x *QualificationRequest) GetApproverJob() string {
 
 type QualificationResult struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	Id              uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	DeletedAt       *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	QualificationId uint64                 `protobuf:"varint,4,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
+	QualificationId int64                  `protobuf:"varint,4,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	Qualification   *QualificationShort    `protobuf:"bytes,5,opt,name=qualification,proto3,oneof" json:"qualification,omitempty"`
 	UserId          int32                  `protobuf:"varint,6,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	User            *users.UserShort       `protobuf:"bytes,7,opt,name=user,proto3" json:"user,omitempty" alias:"user"`
@@ -1086,7 +1086,7 @@ func (*QualificationResult) Descriptor() ([]byte, []int) {
 	return file_resources_qualifications_qualifications_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *QualificationResult) GetId() uint64 {
+func (x *QualificationResult) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -1107,7 +1107,7 @@ func (x *QualificationResult) GetDeletedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *QualificationResult) GetQualificationId() uint64 {
+func (x *QualificationResult) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
 	}
@@ -1183,7 +1183,7 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\n" +
 	"-resources/qualifications/qualifications.proto\x12\x18resources.qualifications\x1a\x1egoogle/protobuf/duration.proto\x1a&resources/common/content/content.proto\x1a\x19resources/file/file.proto\x1a%resources/qualifications/access.proto\x1a#resources/qualifications/exam.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xa4\x0e\n" +
 	"\rQualification\x121\n" +
-	"\x02id\x18\x01 \x01(\x04B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
+	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
@@ -1234,7 +1234,7 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\b_requestB\x14\n" +
 	"\x12_label_sync_format\"\x91\t\n" +
 	"\x12QualificationShort\x121\n" +
-	"\x02id\x18\x01 \x01(\x04B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
+	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
@@ -1270,11 +1270,11 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\x0e_exam_settingsB\t\n" +
 	"\a_result\"\xa5\x03\n" +
 	"\x18QualificationRequirement\x121\n" +
-	"\x02id\x18\x01 \x01(\x04B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
+	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12)\n" +
-	"\x10qualification_id\x18\x03 \x01(\x04R\x0fqualificationId\x126\n" +
-	"\x17target_qualification_id\x18\x04 \x01(\x04R\x15targetQualificationId\x12\x86\x01\n" +
+	"\x10qualification_id\x18\x03 \x01(\x03R\x0fqualificationId\x126\n" +
+	"\x17target_qualification_id\x18\x04 \x01(\x03R\x15targetQualificationId\x12\x86\x01\n" +
 	"\x14target_qualification\x18\x05 \x01(\v2,.resources.qualifications.QualificationShortB \x9a\x84\x9e\x03\x1balias:\"targetqualification\"H\x01R\x13targetQualification\x88\x01\x01B\r\n" +
 	"\v_created_atB\x17\n" +
 	"\x15_target_qualification\"\x96\x01\n" +
@@ -1296,7 +1296,7 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"created_at\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12Z\n" +
-	"\x10qualification_id\x18\x03 \x01(\x04B/\x9a\x84\x9e\x03*sql:\"primary_key\" alias:\"qualification_id\"R\x0fqualificationId\x12W\n" +
+	"\x10qualification_id\x18\x03 \x01(\x03B/\x9a\x84\x9e\x03*sql:\"primary_key\" alias:\"qualification_id\"R\x0fqualificationId\x12W\n" +
 	"\rqualification\x18\x04 \x01(\v2,.resources.qualifications.QualificationShortH\x02R\rqualification\x88\x01\x01\x126\n" +
 	"\auser_id\x18\x05 \x01(\x05B\x1d\x9a\x84\x9e\x03\x11sql:\"primary_key\"\xbaH\x04\x1a\x02(\x00R\x06userId\x12A\n" +
 	"\x04user\x18\x06 \x01(\v2\x1a.resources.users.UserShortB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04user\x120\n" +
@@ -1321,12 +1321,12 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\t_approverB\x0f\n" +
 	"\r_approver_job\"\xab\x06\n" +
 	"\x13QualificationResult\x121\n" +
-	"\x02id\x18\x01 \x01(\x04B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
+	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12)\n" +
-	"\x10qualification_id\x18\x04 \x01(\x04R\x0fqualificationId\x12W\n" +
+	"\x10qualification_id\x18\x04 \x01(\x03R\x0fqualificationId\x12W\n" +
 	"\rqualification\x18\x05 \x01(\v2,.resources.qualifications.QualificationShortH\x02R\rqualification\x88\x01\x01\x12 \n" +
 	"\auser_id\x18\x06 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x06userId\x12A\n" +
 	"\x04user\x18\a \x01(\v2\x1a.resources.users.UserShortB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04user\x12H\n" +

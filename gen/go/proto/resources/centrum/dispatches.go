@@ -7,7 +7,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func DispatchPointMatchFn(dspId uint64) func(p orb.Pointer) bool {
+func DispatchPointMatchFn(dspId int64) func(p orb.Pointer) bool {
 	return func(p orb.Pointer) bool {
 		//nolint:forcetypeassert // Value type is guaranteed to be Dispatch due to generics type
 		return p.(*Dispatch).GetId() == dspId
@@ -106,7 +106,7 @@ func (x *DispatchStatus) Point() orb.Point {
 	return orb.Point{x.GetX(), x.GetY()}
 }
 
-func (x *DispatchReferences) Has(dspId uint64) bool {
+func (x *DispatchReferences) Has(dspId int64) bool {
 	if len(x.GetReferences()) == 0 {
 		return false
 	}
@@ -130,7 +130,7 @@ func (x *DispatchReferences) Add(ref *DispatchReference) bool {
 	return true
 }
 
-func (x *DispatchReferences) Remove(dspId uint64) bool {
+func (x *DispatchReferences) Remove(dspId int64) bool {
 	if !x.Has(dspId) {
 		return false
 	}

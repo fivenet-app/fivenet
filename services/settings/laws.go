@@ -52,7 +52,7 @@ func (s *Server) CreateOrUpdateLawBook(
 			return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 		}
 
-		req.LawBook.Id = uint64(lastId)
+		req.LawBook.Id = lastId
 
 		auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 	} else {
@@ -66,7 +66,7 @@ func (s *Server) CreateOrUpdateLawBook(
 				req.GetLawBook().Description,
 			).
 			WHERE(jet.AND(
-				tLawBooks.ID.EQ(jet.Uint64(req.GetLawBook().GetId())),
+				tLawBooks.ID.EQ(jet.Int64(req.GetLawBook().GetId())),
 			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -84,7 +84,7 @@ func (s *Server) CreateOrUpdateLawBook(
 	if err := s.laws.Refresh(ctx, lawBook.GetId()); err != nil {
 		s.logger.Error(
 			"failed to refresh law book",
-			zap.Uint64("law_book_id", lawBook.GetId()),
+			zap.Int64("law_book_id", lawBook.GetId()),
 			zap.Error(err),
 		)
 	}
@@ -119,7 +119,7 @@ func (s *Server) DeleteLawBook(
 	stmt := tLawBooks.
 		DELETE().
 		WHERE(
-			tLawBooks.ID.EQ(jet.Uint64(req.GetId())),
+			tLawBooks.ID.EQ(jet.Int64(req.GetId())),
 		).
 		LIMIT(1)
 
@@ -134,7 +134,7 @@ func (s *Server) DeleteLawBook(
 	return &pbsettings.DeleteLawBookResponse{}, nil
 }
 
-func (s *Server) getLawBook(ctx context.Context, lawbookId uint64) (*laws.LawBook, error) {
+func (s *Server) getLawBook(ctx context.Context, lawbookId int64) (*laws.LawBook, error) {
 	tLawBooks := table.FivenetLawbooks.AS("law_book")
 
 	stmt := tLawBooks.
@@ -147,7 +147,7 @@ func (s *Server) getLawBook(ctx context.Context, lawbookId uint64) (*laws.LawBoo
 		).
 		FROM(tLawBooks).
 		WHERE(
-			tLawBooks.ID.EQ(jet.Uint64(lawbookId)),
+			tLawBooks.ID.EQ(jet.Int64(lawbookId)),
 		).
 		LIMIT(1)
 
@@ -207,7 +207,7 @@ func (s *Server) CreateOrUpdateLaw(
 			return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 		}
 
-		req.Law.Id = uint64(lastId)
+		req.Law.Id = lastId
 
 		auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 	} else {
@@ -231,7 +231,7 @@ func (s *Server) CreateOrUpdateLaw(
 				req.GetLaw().StvoPoints,
 			).
 			WHERE(jet.AND(
-				tLaws.ID.EQ(jet.Uint64(req.GetLaw().GetId())),
+				tLaws.ID.EQ(jet.Int64(req.GetLaw().GetId())),
 			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -280,7 +280,7 @@ func (s *Server) DeleteLaw(
 	stmt := tLaws.
 		DELETE().
 		WHERE(
-			tLaws.ID.EQ(jet.Uint64(req.GetId())),
+			tLaws.ID.EQ(jet.Int64(req.GetId())),
 		).
 		LIMIT(1)
 
@@ -295,7 +295,7 @@ func (s *Server) DeleteLaw(
 	return &pbsettings.DeleteLawResponse{}, nil
 }
 
-func (s *Server) getLaw(ctx context.Context, lawId uint64) (*laws.Law, error) {
+func (s *Server) getLaw(ctx context.Context, lawId int64) (*laws.Law, error) {
 	tLaws := table.FivenetLawbooksLaws.AS("law")
 
 	stmt := tLaws.
@@ -313,7 +313,7 @@ func (s *Server) getLaw(ctx context.Context, lawId uint64) (*laws.Law, error) {
 		).
 		FROM(tLaws).
 		WHERE(
-			tLaws.ID.EQ(jet.Uint64(lawId)),
+			tLaws.ID.EQ(jet.Int64(lawId)),
 		).
 		LIMIT(1)
 

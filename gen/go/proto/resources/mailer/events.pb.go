@@ -84,7 +84,7 @@ func (x *MailerEvent) GetEmailUpdate() *Email {
 	return nil
 }
 
-func (x *MailerEvent) GetEmailDelete() uint64 {
+func (x *MailerEvent) GetEmailDelete() int64 {
 	if x != nil {
 		if x, ok := x.Data.(*MailerEvent_EmailDelete); ok {
 			return x.EmailDelete
@@ -111,7 +111,7 @@ func (x *MailerEvent) GetThreadUpdate() *Thread {
 	return nil
 }
 
-func (x *MailerEvent) GetThreadDelete() uint64 {
+func (x *MailerEvent) GetThreadDelete() int64 {
 	if x != nil {
 		if x, ok := x.Data.(*MailerEvent_ThreadDelete); ok {
 			return x.ThreadDelete
@@ -138,7 +138,7 @@ func (x *MailerEvent) GetMessageUpdate() *Message {
 	return nil
 }
 
-func (x *MailerEvent) GetMessageDelete() uint64 {
+func (x *MailerEvent) GetMessageDelete() int64 {
 	if x != nil {
 		if x, ok := x.Data.(*MailerEvent_MessageDelete); ok {
 			return x.MessageDelete
@@ -156,7 +156,7 @@ type MailerEvent_EmailUpdate struct {
 }
 
 type MailerEvent_EmailDelete struct {
-	EmailDelete uint64 `protobuf:"varint,2,opt,name=email_delete,json=emailDelete,proto3,oneof"`
+	EmailDelete int64 `protobuf:"varint,2,opt,name=email_delete,json=emailDelete,proto3,oneof"`
 }
 
 type MailerEvent_EmailSettingsUpdated struct {
@@ -168,7 +168,7 @@ type MailerEvent_ThreadUpdate struct {
 }
 
 type MailerEvent_ThreadDelete struct {
-	ThreadDelete uint64 `protobuf:"varint,5,opt,name=thread_delete,json=threadDelete,proto3,oneof"`
+	ThreadDelete int64 `protobuf:"varint,5,opt,name=thread_delete,json=threadDelete,proto3,oneof"`
 }
 
 type MailerEvent_ThreadStateUpdate struct {
@@ -180,7 +180,7 @@ type MailerEvent_MessageUpdate struct {
 }
 
 type MailerEvent_MessageDelete struct {
-	MessageDelete uint64 `protobuf:"varint,8,opt,name=message_delete,json=messageDelete,proto3,oneof"`
+	MessageDelete int64 `protobuf:"varint,8,opt,name=message_delete,json=messageDelete,proto3,oneof"`
 }
 
 func (*MailerEvent_EmailUpdate) isMailerEvent_Data() {}
@@ -206,13 +206,13 @@ const file_resources_mailer_events_proto_rawDesc = "" +
 	"\x1dresources/mailer/events.proto\x12\x10resources.mailer\x1a\x1cresources/mailer/email.proto\x1a\x1eresources/mailer/message.proto\x1a\x1fresources/mailer/settings.proto\x1a\x1dresources/mailer/thread.proto\"\xfe\x03\n" +
 	"\vMailerEvent\x12<\n" +
 	"\femail_update\x18\x01 \x01(\v2\x17.resources.mailer.EmailH\x00R\vemailUpdate\x12#\n" +
-	"\femail_delete\x18\x02 \x01(\x04H\x00R\vemailDelete\x12W\n" +
+	"\femail_delete\x18\x02 \x01(\x03H\x00R\vemailDelete\x12W\n" +
 	"\x16email_settings_updated\x18\x03 \x01(\v2\x1f.resources.mailer.EmailSettingsH\x00R\x14emailSettingsUpdated\x12?\n" +
 	"\rthread_update\x18\x04 \x01(\v2\x18.resources.mailer.ThreadH\x00R\fthreadUpdate\x12%\n" +
-	"\rthread_delete\x18\x05 \x01(\x04H\x00R\fthreadDelete\x12O\n" +
+	"\rthread_delete\x18\x05 \x01(\x03H\x00R\fthreadDelete\x12O\n" +
 	"\x13thread_state_update\x18\x06 \x01(\v2\x1d.resources.mailer.ThreadStateH\x00R\x11threadStateUpdate\x12B\n" +
 	"\x0emessage_update\x18\a \x01(\v2\x19.resources.mailer.MessageH\x00R\rmessageUpdate\x12'\n" +
-	"\x0emessage_delete\x18\b \x01(\x04H\x00R\rmessageDeleteB\r\n" +
+	"\x0emessage_delete\x18\b \x01(\x03H\x00R\rmessageDeleteB\r\n" +
 	"\x04data\x12\x05\xbaH\x02\b\x01BKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailerb\x06proto3"
 
 var (

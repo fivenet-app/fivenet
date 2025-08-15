@@ -230,7 +230,7 @@ func New(p Params) *UnitDB {
 				if err := d.KVPing.Delete(ctx, fmt.Sprintf("ping.%d", unit.GetId())); err != nil {
 					d.logger.Error(
 						"failed to delete ping timer for unit",
-						zap.Uint64("unit_id", unit.GetId()),
+						zap.Int64("unit_id", unit.GetId()),
 						zap.Error(err),
 					)
 				}
@@ -259,7 +259,7 @@ func New(p Params) *UnitDB {
 	return d
 }
 
-func (s *UnitDB) LoadFromDB(ctx context.Context, id uint64) error {
+func (s *UnitDB) LoadFromDB(ctx context.Context, id int64) error {
 	tUnits := table.FivenetCentrumUnits.AS("unit")
 	tUnitUser := table.FivenetCentrumUnitsUsers.AS("unit_assignment")
 
@@ -267,7 +267,7 @@ func (s *UnitDB) LoadFromDB(ctx context.Context, id uint64) error {
 
 	if id > 0 {
 		condition = condition.AND(
-			tUnits.ID.EQ(jet.Uint64(id)),
+			tUnits.ID.EQ(jet.Int64(id)),
 		)
 	}
 
@@ -339,7 +339,7 @@ func (s *UnitDB) LoadFromDB(ctx context.Context, id uint64) error {
 	return nil
 }
 
-func (s *UnitDB) LoadUnitIDForUserID(ctx context.Context, userId int32) (uint64, error) {
+func (s *UnitDB) LoadUnitIDForUserID(ctx context.Context, userId int32) (int64, error) {
 	tUnitUser := table.FivenetCentrumUnitsUsers.AS("unit_assignment")
 
 	stmt := tUnitUser.
@@ -353,7 +353,7 @@ func (s *UnitDB) LoadUnitIDForUserID(ctx context.Context, userId int32) (uint64,
 		LIMIT(1)
 
 	var dest struct {
-		UnitID uint64
+		UnitID int64
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -368,7 +368,7 @@ func (s *UnitDB) LoadUnitIDForUserID(ctx context.Context, userId int32) (uint64,
 
 func (s *UnitDB) UpdateStatus(
 	ctx context.Context,
-	unitId uint64,
+	unitId int64,
 	in *centrum.UnitStatus,
 ) (*centrum.UnitStatus, error) {
 	unit, err := s.Get(ctx, unitId)
@@ -387,7 +387,7 @@ func (s *UnitDB) UpdateStatus(
 		(unit.GetStatus().GetCreatedAt() == nil || time.Since(unit.GetStatus().GetCreatedAt().AsTime()) < 2*time.Minute) {
 		s.logger.Debug(
 			"skipping unit status update due to same status or time",
-			zap.Uint64("unit_id", unitId),
+			zap.Int64("unit_id", unitId),
 			zap.String("status", in.GetStatus().String()),
 		)
 		return nil, nil
@@ -405,7 +405,7 @@ func (s *UnitDB) UpdateStatus(
 
 	s.logger.Debug(
 		"updating unit status",
-		zap.Uint64("unit_id", unitId),
+		zap.Int64("unit_id", unitId),
 		zap.String("status", in.GetStatus().String()),
 	)
 
@@ -477,7 +477,7 @@ func (s *UnitDB) UpdateStatus(
 	if err != nil {
 		return nil, err
 	}
-	in.Id = uint64(lastId)
+	in.Id = lastId
 
 	if err := s.updateStatusInKV(ctx, in.GetUnitId(), in); err != nil {
 		return nil, err
@@ -490,13 +490,13 @@ func (s *UnitDB) UpdateUnitAssignments(
 	ctx context.Context,
 	_ string,
 	userId *int32,
-	unitId uint64,
+	unitId int64,
 	toAdd []int32,
 	toRemove []int32,
 ) error {
 	s.logger.Debug(
 		"updating unit assignments",
-		zap.Uint64("unit_id", unitId),
+		zap.Int64("unit_id", unitId),
 		zap.Int32s("toAdd", toAdd),
 		zap.Int32s("toRemove", toRemove),
 	)
@@ -536,7 +536,7 @@ func (s *UnitDB) UpdateUnitAssignments(
 		stmt := tUnitUser.
 			DELETE().
 			WHERE(jet.AND(
-				tUnitUser.UnitID.EQ(jet.Uint64(unitId)),
+				tUnitUser.UnitID.EQ(jet.Int64(unitId)),
 				tUnitUser.UserID.IN(removeIds...),
 			))
 
@@ -751,7 +751,7 @@ func (s *UnitDB) CreateUnit(
 		return nil, err
 	}
 	unit.Job = creatorJob
-	unit.Id = uint64(lastId)
+	unit.Id = lastId
 
 	// A new unit shouldn't have a status, so we make sure we add one
 	if unit.Status, err = s.AddStatus(ctx, tx, &centrum.UnitStatus{
@@ -815,7 +815,7 @@ func (s *UnitDB) Update(ctx context.Context, unit *centrum.Unit) (*centrum.Unit,
 			unit.GetHomePostal(),
 		).
 		WHERE(jet.AND(
-			tUnits.ID.EQ(jet.Uint64(unit.GetId())),
+			tUnits.ID.EQ(jet.Int64(unit.GetId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -889,7 +889,7 @@ func (s *UnitDB) AddStatus(
 		return nil, err
 	}
 
-	newStatus, err := s.GetStatusByID(ctx, tx, uint64(lastId))
+	newStatus, err := s.GetStatusByID(ctx, tx, lastId)
 	if err != nil {
 		return nil, err
 	}
@@ -911,7 +911,7 @@ func (s *UnitDB) AddStatus(
 func (s *UnitDB) GetStatusByID(
 	ctx context.Context,
 	tx qrm.DB,
-	id uint64,
+	id int64,
 ) (*centrum.UnitStatus, error) {
 	tUnitStatus := table.FivenetCentrumUnitsStatus.AS("unit_status")
 	tColleagueProps := table.FivenetJobColleagueProps.AS("colleague_props")
@@ -965,7 +965,7 @@ func (s *UnitDB) GetStatusByID(
 				),
 		).
 		WHERE(
-			tUnitStatus.ID.EQ(jet.Uint64(id)),
+			tUnitStatus.ID.EQ(jet.Int64(id)),
 		).
 		ORDER_BY(tUnitStatus.ID.DESC()).
 		LIMIT(1)
@@ -985,7 +985,7 @@ func (s *UnitDB) GetStatusByID(
 func (s *UnitDB) GetLastStatus(
 	ctx context.Context,
 	tx qrm.DB,
-	unitId uint64,
+	unitId int64,
 ) (*centrum.UnitStatus, error) {
 	tUnitStatus := table.FivenetCentrumUnitsStatus.AS("unit_status")
 	tColleagueProps := table.FivenetJobColleagueProps.AS("colleague_props")
@@ -1039,7 +1039,7 @@ func (s *UnitDB) GetLastStatus(
 				),
 		).
 		WHERE(jet.AND(
-			tUnitStatus.UnitID.EQ(jet.Uint64(unitId)),
+			tUnitStatus.UnitID.EQ(jet.Int64(unitId)),
 			tUnitStatus.Status.NOT_IN(
 				jet.Int32(int32(centrum.StatusUnit_STATUS_UNIT_USER_ADDED)),
 				jet.Int32(int32(centrum.StatusUnit_STATUS_UNIT_USER_REMOVED)),
@@ -1060,13 +1060,13 @@ func (s *UnitDB) GetLastStatus(
 	return &dest, nil
 }
 
-func (s *UnitDB) Delete(ctx context.Context, id uint64) error {
+func (s *UnitDB) Delete(ctx context.Context, id int64) error {
 	tUnits := table.FivenetCentrumUnits
 
 	stmt := tUnits.
 		DELETE().
 		WHERE(jet.AND(
-			tUnits.ID.EQ(jet.Uint64(id)),
+			tUnits.ID.EQ(jet.Int64(id)),
 		)).
 		LIMIT(1)
 
@@ -1081,7 +1081,7 @@ func (s *UnitDB) Delete(ctx context.Context, id uint64) error {
 	return nil
 }
 
-func (s *UnitDB) ListAccess(ctx context.Context, id uint64) (*centrum.UnitAccess, error) {
+func (s *UnitDB) ListAccess(ctx context.Context, id int64) (*centrum.UnitAccess, error) {
 	access := &centrum.UnitAccess{}
 
 	jobsAccess, err := s.unitAccess.Jobs.List(ctx, s.db, id)

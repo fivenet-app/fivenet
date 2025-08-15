@@ -38,7 +38,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `account_id` | [uint64](#uint64) |  |  |
+| `account_id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `provider_name` | [string](#string) |  |  |
 | `provider` | [OAuth2Provider](#resourcesaccountsOAuth2Provider) |  |  |
@@ -154,8 +154,8 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `parent_id` | [uint64](#uint64) | optional |  |
-| `id` | [uint64](#uint64) |  |  |
+| `parent_id` | [int64](#int64) | optional |  |
+| `id` | [int64](#int64) |  |  |
 | `file_path` | [string](#string) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `byte_size` | [int64](#int64) |  | Bytes stored |
@@ -221,7 +221,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `job` | [string](#string) | optional |  |
 | `name` | [string](#string) |  | @sanitize: method=StripTags |
 | `color` | [string](#string) |  | @sanitize: method=StripTags |
@@ -271,7 +271,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `traffic_infraction_points_updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `open_fines` | [int64](#int64) | optional |  |
 | `blood_type` | [string](#string) | optional |  |
-| `mugshot_file_id` | [uint64](#uint64) | optional |  |
+| `mugshot_file_id` | [int64](#int64) | optional |  |
 | `mugshot` | [resources.file.File](#resourcesfileFile) | optional |  |
 | `labels` | [Labels](#resourcesusersLabels) | optional |  |
 | `email` | [string](#string) | optional | @sanitize: method=StripTags |
@@ -313,7 +313,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `playtime` | [int32](#int32) | optional |  |
 | `props` | [UserProps](#resourcesusersUserProps) |  |  |
 | `licenses` | [License](#resourcesusersLicense) | repeated |  |
-| `avatar_file_id` | [uint64](#uint64) | optional |  |
+| `avatar_file_id` | [int64](#int64) | optional |  |
 | `avatar` | [string](#string) | optional |  |
 | `group` | [string](#string) | optional |  |
 
@@ -336,7 +336,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `lastname` | [string](#string) |  |  |
 | `dateofbirth` | [string](#string) |  |  |
 | `phone_number` | [string](#string) | optional |  |
-| `avatar_file_id` | [uint64](#uint64) | optional |  |
+| `avatar_file_id` | [int64](#int64) | optional |  |
 | `avatar` | [string](#string) | optional |  |
 
 
@@ -360,7 +360,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `username` | [string](#string) |  |  |
@@ -403,7 +403,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 | `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
@@ -462,9 +462,9 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
+| `target_id` | [int64](#int64) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `minimum_grade` | [int32](#int32) |  |  |
@@ -480,9 +480,9 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
+| `target_id` | [int64](#int64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 | `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
 | `access` | [AccessLevel](#resourcescalendarAccessLevel) |  |  |
@@ -597,7 +597,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
@@ -622,11 +622,11 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `calendar_id` | [uint64](#uint64) |  |  |
+| `calendar_id` | [int64](#int64) |  |  |
 | `calendar` | [Calendar](#resourcescalendarCalendar) | optional |  |
 | `job` | [string](#string) | optional |  |
 | `start_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
@@ -650,7 +650,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `entry_id` | [uint64](#uint64) |  |  |
+| `entry_id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `user_id` | [int32](#int32) |  |  |
 | `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
@@ -680,7 +680,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `name` | [string](#string) |  | @sanitize: method=StripTags |
 | `description` | [string](#string) | optional | @sanitize: method=StripTags |
@@ -698,7 +698,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `calendar_id` | [uint64](#uint64) |  |  |
+| `calendar_id` | [int64](#int64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 | `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
@@ -752,9 +752,9 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
+| `target_id` | [int64](#int64) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `minimum_grade` | [int32](#int32) |  |  |
@@ -870,7 +870,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `job` | [string](#string) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `name` | [string](#string) |  |  |
@@ -931,7 +931,7 @@ Dummy - DO NOT USE!
 | `lastname` | [string](#string) |  |  |
 | `dateofbirth` | [string](#string) |  |  |
 | `phone_number` | [string](#string) | optional |  |
-| `avatar_file_id` | [uint64](#uint64) | optional |  |
+| `avatar_file_id` | [int64](#int64) | optional |  |
 | `avatar` | [string](#string) | optional |  |
 | `props` | [ColleagueProps](#resourcesjobsColleagueProps) |  |  |
 | `email` | [string](#string) | optional | @sanitize: method=StripTags |
@@ -1133,9 +1133,9 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
+| `target_id` | [int64](#int64) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `minimum_grade` | [int32](#int32) |  |  |
@@ -1198,7 +1198,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `question_id` | [uint64](#uint64) |  |  |
+| `question_id` | [int64](#int64) |  |  |
 | `points` | [float](#float) |  |  |
 | `checked` | [bool](#bool) | optional |  |
 
@@ -1211,8 +1211,8 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `qualification_id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
+| `qualification_id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `title` | [string](#string) |  | @sanitize: method=StripTags |
@@ -1336,7 +1336,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `question_id` | [uint64](#uint64) |  |  |
+| `question_id` | [int64](#int64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 | `question` | [ExamQuestion](#resourcesqualificationsExamQuestion) |  |  |
 | `response` | [ExamResponseData](#resourcesqualificationsExamResponseData) |  |  |
@@ -1417,7 +1417,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `qualification_id` | [uint64](#uint64) |  |  |
+| `qualification_id` | [int64](#int64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 | `responses` | [ExamResponse](#resourcesqualificationsExamResponse) | repeated |  |
 
@@ -1430,7 +1430,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `qualification_id` | [uint64](#uint64) |  |  |
+| `qualification_id` | [int64](#int64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `started_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
@@ -1458,7 +1458,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
@@ -1528,7 +1528,7 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `qualification_id` | [uint64](#uint64) |  |  |
+| `qualification_id` | [int64](#int64) |  |  |
 | `qualification` | [QualificationShort](#resourcesqualificationsQualificationShort) | optional |  |
 | `user_id` | [int32](#int32) |  |  |
 | `user` | [resources.users.UserShort](#resourcesusersUserShort) |  |  |
@@ -1549,10 +1549,10 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `qualification_id` | [uint64](#uint64) |  |  |
-| `target_qualification_id` | [uint64](#uint64) |  |  |
+| `qualification_id` | [int64](#int64) |  |  |
+| `target_qualification_id` | [int64](#int64) |  |  |
 | `target_qualification` | [QualificationShort](#resourcesqualificationsQualificationShort) | optional |  |
 
 
@@ -1564,10 +1564,10 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `qualification_id` | [uint64](#uint64) |  |  |
+| `qualification_id` | [int64](#int64) |  |  |
 | `qualification` | [QualificationShort](#resourcesqualificationsQualificationShort) | optional |  |
 | `user_id` | [int32](#int32) |  |  |
 | `user` | [resources.users.UserShort](#resourcesusersUserShort) |  |  |
@@ -1587,7 +1587,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
@@ -1688,9 +1688,9 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
+| `target_id` | [int64](#int64) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `minimum_grade` | [int32](#int32) |  |  |
@@ -1706,10 +1706,10 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
-| `qualification_id` | [uint64](#uint64) |  |  |
+| `target_id` | [int64](#int64) |  |  |
+| `qualification_id` | [int64](#int64) |  |  |
 | `qualification` | [resources.qualifications.QualificationShort](#resourcesqualificationsQualificationShort) | optional |  |
 | `access` | [UnitAccessLevel](#resourcescentrumUnitAccessLevel) |  |  |
 
@@ -1750,7 +1750,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `job` | [string](#string) |  |  |
@@ -1775,7 +1775,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `unit_id` | [uint64](#uint64) |  |  |
+| `unit_id` | [int64](#int64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 | `user` | [resources.jobs.Colleague](#resourcesjobsColleague) | optional |  |
 
@@ -1788,7 +1788,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `unit_id` | [uint64](#uint64) |  |  |
+| `unit_id` | [int64](#int64) |  |  |
 | `job` | [string](#string) |  |  |
 | `users` | [UnitAssignment](#resourcescentrumUnitAssignment) | repeated |  |
 
@@ -1801,9 +1801,9 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `unit_id` | [uint64](#uint64) |  |  |
+| `unit_id` | [int64](#int64) |  |  |
 | `unit` | [Unit](#resourcescentrumUnit) | optional |  |
 | `status` | [StatusUnit](#resourcescentrumStatusUnit) |  |  |
 | `reason` | [string](#string) | optional | @sanitize |
@@ -1853,7 +1853,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `job` | [string](#string) |  | **Deprecated.**  |
@@ -1880,8 +1880,8 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `dispatch_id` | [uint64](#uint64) |  |  |
-| `unit_id` | [uint64](#uint64) |  |  |
+| `dispatch_id` | [int64](#int64) |  |  |
+| `unit_id` | [int64](#int64) |  |  |
 | `unit` | [Unit](#resourcescentrumUnit) | optional |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `expires_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
@@ -1895,7 +1895,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `dispatch_id` | [uint64](#uint64) |  |  |
+| `dispatch_id` | [int64](#int64) |  |  |
 | `job` | [string](#string) |  |  |
 | `units` | [DispatchAssignment](#resourcescentrumDispatchAssignment) | repeated |  |
 
@@ -1908,7 +1908,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `target_dispatch_id` | [uint64](#uint64) |  |  |
+| `target_dispatch_id` | [int64](#int64) |  |  |
 | `reference_type` | [DispatchReferenceType](#resourcescentrumDispatchReferenceType) |  |  |
 
 
@@ -1933,10 +1933,10 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `dispatch_id` | [uint64](#uint64) |  |  |
-| `unit_id` | [uint64](#uint64) | optional |  |
+| `dispatch_id` | [int64](#int64) |  |  |
+| `unit_id` | [int64](#int64) | optional |  |
 | `unit` | [Unit](#resourcescentrumUnit) | optional |  |
 | `status` | [StatusDispatch](#resourcescentrumStatusDispatch) |  |  |
 | `reason` | [string](#string) | optional | @sanitize |
@@ -2244,7 +2244,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `target_id` | [uint64](#uint64) |  |  |
+| `target_id` | [int64](#int64) |  |  |
 
 
 
@@ -2292,7 +2292,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `target_id` | [uint64](#uint64) |  |  |
+| `target_id` | [int64](#int64) |  |  |
 
 
 
@@ -2713,7 +2713,7 @@ Wrapped translated message for the client @dbscanner: json
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -2840,9 +2840,9 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
+| `target_id` | [int64](#int64) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `minimum_grade` | [int32](#int32) |  |  |
@@ -2859,9 +2859,9 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
+| `target_id` | [int64](#int64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 | `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
 | `access` | [AccessLevel](#resourcesdocumentsAccessLevel) |  |  |
@@ -2951,9 +2951,9 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `document_id` | [uint64](#uint64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 | `activity_type` | [DocActivityType](#resourcesdocumentsDocActivityType) |  |  |
 | `creator_id` | [int32](#int32) | optional |  |
 | `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
@@ -3064,7 +3064,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `name` | [string](#string) |  | @sanitize |
@@ -3094,11 +3094,11 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `document_id` | [uint64](#uint64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 | `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
 | `creator_id` | [int32](#int32) | optional |  |
 | `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
@@ -3125,7 +3125,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 | `job` | [string](#string) | optional |  |
 | `user_id` | [int32](#int32) | optional |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
@@ -3204,7 +3204,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `last_doc_id` | [uint64](#uint64) |  |  |
+| `last_doc_id` | [int64](#int64) |  |  |
 
 
 
@@ -3227,11 +3227,11 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `category_id` | [uint64](#uint64) | optional |  |
+| `category_id` | [int64](#int64) | optional |  |
 | `category` | [Category](#resourcesdocumentsCategory) | optional |  |
 | `title` | [string](#string) |  | @sanitize |
 | `content_type` | [resources.common.content.ContentType](#resourcescommoncontentContentType) |  |  |
@@ -3245,7 +3245,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `closed` | [bool](#bool) |  |  |
 | `draft` | [bool](#bool) |  |  |
 | `public` | [bool](#bool) |  |  |
-| `template_id` | [uint64](#uint64) | optional |  |
+| `template_id` | [int64](#int64) | optional |  |
 | `pin` | [DocumentPin](#resourcesdocumentsDocumentPin) | optional |  |
 | `workflow_state` | [WorkflowState](#resourcesdocumentsWorkflowState) | optional |  |
 | `workflow_user` | [WorkflowUserState](#resourcesdocumentsWorkflowUserState) | optional |  |
@@ -3260,12 +3260,12 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) | optional |  |
+| `id` | [int64](#int64) | optional |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `source_document_id` | [uint64](#uint64) |  |  |
+| `source_document_id` | [int64](#int64) |  |  |
 | `source_document` | [DocumentShort](#resourcesdocumentsDocumentShort) | optional |  |
 | `reference` | [DocReference](#resourcesdocumentsDocReference) |  |  |
-| `target_document_id` | [uint64](#uint64) |  |  |
+| `target_document_id` | [int64](#int64) |  |  |
 | `target_document` | [DocumentShort](#resourcesdocumentsDocumentShort) | optional |  |
 | `creator_id` | [int32](#int32) | optional |  |
 | `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
@@ -3279,9 +3279,9 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) | optional |  |
+| `id` | [int64](#int64) | optional |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `document_id` | [uint64](#uint64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 | `document` | [DocumentShort](#resourcesdocumentsDocumentShort) | optional |  |
 | `source_user_id` | [int32](#int32) |  |  |
 | `source_user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
@@ -3298,11 +3298,11 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `category_id` | [uint64](#uint64) | optional |  |
+| `category_id` | [int64](#int64) | optional |  |
 | `category` | [Category](#resourcesdocumentsCategory) | optional |  |
 | `title` | [string](#string) |  | @sanitize |
 | `content_type` | [resources.common.content.ContentType](#resourcescommoncontentContentType) |  |  |
@@ -3328,7 +3328,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 | `next_reminder_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `next_reminder_count` | [int32](#int32) | optional |  |
 | `auto_close_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
@@ -3344,7 +3344,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 | `manual_reminder_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `manual_reminder_message` | [string](#string) | optional |  |
@@ -3395,10 +3395,10 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `document_id` | [uint64](#uint64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 | `request_type` | [DocActivityType](#resourcesdocumentsDocActivityType) |  |  |
 | `creator_id` | [int32](#int32) | optional |  |
 | `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
@@ -3499,7 +3499,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `category` | [Category](#resourcesdocumentsCategory) |  |  |
@@ -3541,9 +3541,9 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
+| `target_id` | [int64](#int64) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `minimum_grade` | [int32](#int32) |  |  |
@@ -3585,7 +3585,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `category` | [Category](#resourcesdocumentsCategory) |  |  |
@@ -3628,8 +3628,8 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `parent_id` | [uint64](#uint64) |  |  |
-| `file_id` | [uint64](#uint64) |  |  |
+| `parent_id` | [int64](#int64) |  |  |
+| `file_id` | [int64](#int64) |  |  |
 
 
 
@@ -3658,7 +3658,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  | Unique ID for the uploaded file |
+| `id` | [int64](#int64) |  | Unique ID for the uploaded file |
 | `url` | [string](#string) |  | URL to the uploaded file |
 | `file` | [File](#resourcesfileFile) |  | File info |
 
@@ -3671,7 +3671,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `parent_id` | [uint64](#uint64) |  |  |
+| `parent_id` | [int64](#int64) |  |  |
 | `namespace` | [string](#string) |  | "documents", "wiki", … |
 | `original_name` | [string](#string) |  |  |
 | `content_type` | [string](#string) |  | optional - server re-validates |
@@ -3711,9 +3711,9 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
+| `target_id` | [int64](#int64) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `minimum_grade` | [int32](#int32) |  |  |
@@ -3729,9 +3729,9 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
+| `target_id` | [int64](#int64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 | `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
 | `access` | [AccessLevel](#resourcesinternetAccessLevel) |  |  |
@@ -3769,7 +3769,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
@@ -3818,11 +3818,11 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `tld_id` | [uint64](#uint64) |  |  |
+| `tld_id` | [int64](#int64) |  |  |
 | `tld` | [TLD](#resourcesinternetTLD) | optional |  |
 | `active` | [bool](#bool) |  |  |
 | `name` | [string](#string) |  |  |
@@ -3841,7 +3841,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
@@ -3899,11 +3899,11 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `domain_id` | [uint64](#uint64) |  |  |
+| `domain_id` | [int64](#int64) |  |  |
 | `path` | [string](#string) |  | @sanitize: method=StripTags |
 | `title` | [string](#string) |  | @sanitize: method=StripTags |
 | `description` | [string](#string) |  | @sanitize: method=StripTags |
@@ -3956,10 +3956,10 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `title` | [string](#string) |  |  |
 | `description` | [string](#string) |  |  |
-| `domain_id` | [uint64](#uint64) |  |  |
+| `domain_id` | [int64](#int64) |  |  |
 | `domain` | [Domain](#resourcesinternetDomain) | optional |  |
 | `path` | [string](#string) |  |  |
 
@@ -3996,7 +3996,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `job` | [string](#string) |  |  |
 | `source_user_id` | [int32](#int32) | optional |  |
@@ -4096,7 +4096,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
@@ -4301,7 +4301,7 @@ Dummy - DO NOT USE!
 | `discord_sync_settings` | [DiscordSyncSettings](#resourcesjobsDiscordSyncSettings) |  |  |
 | `discord_sync_changes` | [DiscordSyncChanges](#resourcesjobsDiscordSyncChanges) | optional |  |
 | `motd` | [string](#string) | optional |  |
-| `logo_file_id` | [uint64](#uint64) | optional |  |
+| `logo_file_id` | [int64](#int64) | optional |  |
 | `logo_file` | [resources.file.File](#resourcesfileFile) | optional |  |
 | `settings` | [JobSettings](#resourcesjobsJobSettings) |  |  |
 
@@ -4420,10 +4420,10 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `lawbook_id` | [uint64](#uint64) |  |  |
+| `lawbook_id` | [int64](#int64) |  |  |
 | `name` | [string](#string) |  | @sanitize |
 | `description` | [string](#string) | optional | @sanitize |
 | `hint` | [string](#string) | optional | @sanitize |
@@ -4440,7 +4440,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `name` | [string](#string) |  | @sanitize |
@@ -4554,7 +4554,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `x` | [double](#double) |  |  |
 | `y` | [double](#double) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
@@ -4614,7 +4614,7 @@ Dummy - DO NOT USE!
 | `job_label` | [string](#string) |  |  |
 | `job_grade` | [int32](#int32) | optional |  |
 | `user` | [resources.jobs.Colleague](#resourcesjobsColleague) |  |  |
-| `unit_id` | [uint64](#uint64) | optional |  |
+| `unit_id` | [int64](#int64) | optional |  |
 | `unit` | [resources.centrum.Unit](#resourcescentrumUnit) | optional |  |
 | `hidden` | [bool](#bool) |  |  |
 | `data` | [UserMarkerData](#resourceslivemapUserMarkerData) | optional |  |
@@ -4668,9 +4668,9 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
+| `target_id` | [int64](#int64) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `minimum_grade` | [int32](#int32) |  |  |
@@ -4686,10 +4686,10 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
-| `qualification_id` | [uint64](#uint64) |  |  |
+| `target_id` | [int64](#int64) |  |  |
+| `qualification_id` | [int64](#int64) |  |  |
 | `qualification` | [resources.qualifications.QualificationShort](#resourcesqualificationsQualificationShort) | optional |  |
 | `access` | [AccessLevel](#resourcesmailerAccessLevel) |  |  |
 
@@ -4702,9 +4702,9 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
+| `target_id` | [int64](#int64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 | `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
 | `access` | [AccessLevel](#resourcesmailerAccessLevel) |  |  |
@@ -4742,7 +4742,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `email_id` | [uint64](#uint64) |  |  |
+| `email_id` | [int64](#int64) |  |  |
 | `signature` | [string](#string) | optional | @sanitize |
 | `blocked_emails` | [string](#string) | repeated | @sanitize: method=StripTags |
 
@@ -4767,7 +4767,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
@@ -4802,9 +4802,9 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `thread_id` | [uint64](#uint64) |  |  |
-| `sender_id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
+| `thread_id` | [int64](#int64) |  |  |
+| `sender_id` | [int64](#int64) |  |  |
 | `sender` | [Email](#resourcesmailerEmail) | optional |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
@@ -4835,7 +4835,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `title` | [string](#string) | optional |  |
 
 
@@ -4872,11 +4872,11 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `creator_email_id` | [uint64](#uint64) |  |  |
+| `creator_email_id` | [int64](#int64) |  |  |
 | `creator_email` | [Email](#resourcesmailerEmail) | optional |  |
 | `creator_id` | [int32](#int32) | optional |  |
 | `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
@@ -4893,10 +4893,10 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
-| `email_id` | [uint64](#uint64) |  |  |
+| `target_id` | [int64](#int64) |  |  |
+| `email_id` | [int64](#int64) |  |  |
 | `email` | [Email](#resourcesmailerEmail) | optional |  |
 
 
@@ -4908,8 +4908,8 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `thread_id` | [uint64](#uint64) |  |  |
-| `email_id` | [uint64](#uint64) |  |  |
+| `thread_id` | [int64](#int64) |  |  |
+| `email_id` | [int64](#int64) |  |  |
 | `last_read` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `unread` | [bool](#bool) | optional |  |
 | `important` | [bool](#bool) | optional |  |
@@ -4939,13 +4939,13 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `email_update` | [Email](#resourcesmailerEmail) |  |  |
-| `email_delete` | [uint64](#uint64) |  |  |
+| `email_delete` | [int64](#int64) |  |  |
 | `email_settings_updated` | [EmailSettings](#resourcesmailerEmailSettings) |  |  |
 | `thread_update` | [Thread](#resourcesmailerThread) |  |  |
-| `thread_delete` | [uint64](#uint64) |  |  |
+| `thread_delete` | [int64](#int64) |  |  |
 | `thread_state_update` | [ThreadState](#resourcesmailerThreadState) |  |  |
 | `message_update` | [Message](#resourcesmailerMessage) |  |  |
-| `message_delete` | [uint64](#uint64) |  |  |
+| `message_delete` | [int64](#int64) |  |  |
 
 
 
@@ -4968,11 +4968,11 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `email_id` | [uint64](#uint64) |  |  |
+| `email_id` | [int64](#int64) |  |  |
 | `title` | [string](#string) |  | @sanitize: method=StripTags |
 | `content` | [string](#string) |  | @sanitize |
 | `creator_job` | [string](#string) | optional |  |
@@ -5000,7 +5000,7 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `type` | [ObjectType](#resourcesnotificationsObjectType) |  |  |
-| `id` | [uint64](#uint64) | optional |  |
+| `id` | [int64](#int64) | optional |  |
 
 
 
@@ -5012,7 +5012,7 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `type` | [ObjectType](#resourcesnotificationsObjectType) |  |  |
-| `id` | [uint64](#uint64) | optional |  |
+| `id` | [int64](#int64) | optional |  |
 | `event_type` | [ObjectEventType](#resourcesnotificationsObjectEventType) |  |  |
 | `user_id` | [int32](#int32) | optional |  |
 | `job` | [string](#string) | optional |  |
@@ -5062,8 +5062,8 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `calendar_id` | [uint64](#uint64) | optional |  |
-| `calendar_entry_id` | [uint64](#uint64) | optional |  |
+| `calendar_id` | [int64](#int64) | optional |  |
+| `calendar_entry_id` | [int64](#int64) | optional |  |
 
 
 
@@ -5102,7 +5102,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `read_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `user_id` | [int32](#int32) |  |  |
@@ -5159,7 +5159,7 @@ PollReq: published to `userinfo.poll.request` when an active user connects or re
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `account_id` | [uint64](#uint64) |  | The account the user belongs to |
+| `account_id` | [int64](#int64) |  | The account the user belongs to |
 | `user_id` | [int32](#int32) |  | The unique user identifier within the account |
 
 
@@ -5172,7 +5172,7 @@ PollReq: published to `userinfo.poll.request` when an active user connects or re
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `enabled` | [bool](#bool) |  |  |
-| `account_id` | [uint64](#uint64) |  |  |
+| `account_id` | [int64](#int64) |  |  |
 | `license` | [string](#string) |  |  |
 | `last_char` | [int32](#int32) | optional |  |
 | `user_id` | [int32](#int32) |  |  |
@@ -5195,7 +5195,7 @@ UserInfoChanged used to signal Job or JobGrade changes.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `account_id` | [uint64](#uint64) |  | The account the user belongs to |
+| `account_id` | [int64](#int64) |  | The account the user belongs to |
 | `user_id` | [int32](#int32) |  | The unique user identifier within the account |
 | `old_job` | [string](#string) |  | Previous job title |
 | `new_job` | [string](#string) |  | New job title |
@@ -5356,10 +5356,10 @@ User related events
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `role_id` | [uint64](#uint64) |  |  |
+| `role_id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `attr_id` | [uint64](#uint64) |  |  |
-| `permission_id` | [uint64](#uint64) |  |  |
+| `attr_id` | [int64](#int64) |  |  |
+| `permission_id` | [int64](#int64) |  |  |
 | `category` | [string](#string) |  |  |
 | `name` | [string](#string) |  |  |
 | `key` | [string](#string) |  |  |
@@ -5411,7 +5411,7 @@ User related events
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `role_id` | [uint64](#uint64) |  |  |
+| `role_id` | [int64](#int64) |  |  |
 | `job` | [string](#string) |  |  |
 | `grade` | [int32](#int32) |  |  |
 
@@ -5436,7 +5436,7 @@ User related events
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `val` | [bool](#bool) |  |  |
 
 
@@ -5448,7 +5448,7 @@ User related events
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `category` | [string](#string) |  |  |
 | `name` | [string](#string) |  |  |
@@ -5465,7 +5465,7 @@ User related events
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
@@ -5947,7 +5947,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `user_id` | [int32](#int32) |  |  |
-| `unit_id` | [uint64](#uint64) | optional |  |
+| `unit_id` | [int64](#int64) | optional |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `hidden` | [bool](#bool) |  |  |
 
@@ -5973,7 +5973,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `added` | [bool](#bool) |  |  |
-| `document_id` | [uint64](#uint64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 | `relation` | [int32](#int32) |  | resources.documents.DocRelation enum |
 
 
@@ -6083,7 +6083,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `type` | [UserActivityType](#resourcesusersUserActivityType) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `source_user_id` | [int32](#int32) | optional |  |
@@ -6168,7 +6168,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `plate` | [string](#string) |  |  |
 | `activity_type` | [VehicleActivityType](#resourcesvehiclesVehicleActivityType) |  |  |
@@ -6229,9 +6229,9 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
+| `target_id` | [int64](#int64) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `minimum_grade` | [int32](#int32) |  |  |
@@ -6247,9 +6247,9 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
+| `target_id` | [int64](#int64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 | `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
 | `access` | [AccessLevel](#resourceswikiAccessLevel) |  |  |
@@ -6325,9 +6325,9 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `page_id` | [uint64](#uint64) |  |  |
+| `page_id` | [int64](#int64) |  |  |
 | `activity_type` | [PageActivityType](#resourceswikiPageActivityType) |  |  |
 | `creator_id` | [int32](#int32) | optional |  |
 | `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
@@ -6411,10 +6411,10 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `job` | [string](#string) |  | @sanitize: method=StripTags |
 | `job_label` | [string](#string) | optional |  |
-| `parent_id` | [uint64](#uint64) | optional |  |
+| `parent_id` | [int64](#int64) | optional |  |
 | `meta` | [PageMeta](#resourceswikiPageMeta) |  |  |
 | `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
 | `access` | [PageAccess](#resourceswikiPageAccess) |  |  |
@@ -6452,7 +6452,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `logo_file_id` | [uint64](#uint64) | optional |  |
+| `logo_file_id` | [int64](#int64) | optional |  |
 | `logo` | [resources.file.File](#resourcesfileFile) | optional |  |
 
 
@@ -6464,10 +6464,10 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
-| `parent_id` | [uint64](#uint64) | optional |  |
+| `parent_id` | [int64](#int64) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `slug` | [string](#string) | optional | @sanitize: method=StripTags |
 | `title` | [string](#string) |  |  |
@@ -6579,7 +6579,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `account_id` | [uint64](#uint64) |  |  |
+| `account_id` | [int64](#int64) |  |  |
 
 
 
@@ -6679,7 +6679,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `expires` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `account_id` | [uint64](#uint64) |  |  |
+| `account_id` | [int64](#int64) |  |  |
 | `char` | [ChooseCharacterResponse](#servicesauthChooseCharacterResponse) | optional |  |
 
 
@@ -6811,7 +6811,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `entry_id` | [uint64](#uint64) |  |  |
+| `entry_id` | [int64](#int64) |  |  |
 
 
 
@@ -6828,7 +6828,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `calendar_id` | [uint64](#uint64) |  |  |
+| `calendar_id` | [int64](#int64) |  |  |
 
 
 
@@ -6845,7 +6845,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `entry_id` | [uint64](#uint64) |  |  |
+| `entry_id` | [int64](#int64) |  |  |
 
 
 
@@ -6867,7 +6867,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `calendar_id` | [uint64](#uint64) |  |  |
+| `calendar_id` | [int64](#int64) |  |  |
 
 
 
@@ -6913,7 +6913,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | ----- | ---- | ----- | ----------- |
 | `year` | [int32](#int32) |  |  |
 | `month` | [int32](#int32) |  |  |
-| `calendar_ids` | [uint64](#uint64) | repeated |  |
+| `calendar_ids` | [int64](#int64) | repeated |  |
 | `show_hidden` | [bool](#bool) | optional |  |
 | `after` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 
@@ -6938,7 +6938,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
-| `entry_id` | [uint64](#uint64) |  |  |
+| `entry_id` | [int64](#int64) |  |  |
 
 
 
@@ -7034,7 +7034,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `entry_id` | [uint64](#uint64) |  |  |
+| `entry_id` | [int64](#int64) |  |  |
 | `user_ids` | [int32](#int32) | repeated |  |
 
 
@@ -7130,9 +7130,9 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `dispatch_id` | [uint64](#uint64) |  |  |
-| `to_add` | [uint64](#uint64) | repeated |  |
-| `to_remove` | [uint64](#uint64) | repeated |  |
+| `dispatch_id` | [int64](#int64) |  |  |
+| `to_add` | [int64](#int64) | repeated |  |
+| `to_remove` | [int64](#int64) | repeated |  |
 | `forced` | [bool](#bool) | optional |  |
 
 
@@ -7150,7 +7150,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `unit_id` | [uint64](#uint64) |  |  |
+| `unit_id` | [int64](#int64) |  |  |
 | `to_add` | [int32](#int32) | repeated |  |
 | `to_remove` | [int32](#int32) | repeated |  |
 
@@ -7213,7 +7213,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -7230,7 +7230,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `unit_id` | [uint64](#uint64) |  |  |
+| `unit_id` | [int64](#int64) |  |  |
 
 
 
@@ -7276,7 +7276,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -7339,7 +7339,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `unit_id` | [uint64](#uint64) | optional |  |
+| `unit_id` | [int64](#int64) | optional |  |
 
 
 
@@ -7362,7 +7362,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `dispatchers` | [Dispatchers](#servicescentrumDispatchers) |  |  |
-| `own_unit_id` | [uint64](#uint64) | optional |  |
+| `own_unit_id` | [int64](#int64) | optional |  |
 | `units` | [resources.centrum.Unit](#resourcescentrumUnit) | repeated | Send the current units and dispatches |
 | `dispatches` | [resources.centrum.Dispatch](#resourcescentrumDispatch) | repeated |  |
 
@@ -7376,7 +7376,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -7419,7 +7419,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
 | `status` | [resources.centrum.StatusDispatch](#resourcescentrumStatusDispatch) | repeated |  |
 | `not_status` | [resources.centrum.StatusDispatch](#resourcescentrumStatusDispatch) | repeated |  |
-| `ids` | [uint64](#uint64) | repeated |  |
+| `ids` | [int64](#int64) | repeated |  |
 | `postal` | [string](#string) | optional |  |
 
 
@@ -7444,7 +7444,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -7513,10 +7513,10 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `settings` | [resources.centrum.Settings](#resourcescentrumSettings) |  |  |
 | `job_access` | [JobAccess](#servicescentrumJobAccess) |  |  |
 | `dispatchers` | [resources.centrum.Dispatchers](#resourcescentrumDispatchers) |  |  |
-| `unit_deleted` | [uint64](#uint64) |  |  |
+| `unit_deleted` | [int64](#int64) |  |  |
 | `unit_updated` | [resources.centrum.Unit](#resourcescentrumUnit) |  |  |
 | `unit_status` | [resources.centrum.UnitStatus](#resourcescentrumUnitStatus) |  |  |
-| `dispatch_deleted` | [uint64](#uint64) |  |  |
+| `dispatch_deleted` | [int64](#int64) |  |  |
 | `dispatch_updated` | [resources.centrum.Dispatch](#resourcescentrumDispatch) |  |  |
 | `dispatch_status` | [resources.centrum.DispatchStatus](#resourcescentrumDispatchStatus) |  |  |
 
@@ -7546,7 +7546,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `dispatch_ids` | [uint64](#uint64) | repeated |  |
+| `dispatch_ids` | [int64](#int64) | repeated |  |
 | `resp` | [resources.centrum.TakeDispatchResp](#resourcescentrumTakeDispatchResp) |  |  |
 | `reason` | [string](#string) | optional | @sanitize |
 
@@ -7587,7 +7587,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `dispatch_id` | [uint64](#uint64) |  |  |
+| `dispatch_id` | [int64](#int64) |  |  |
 | `status` | [resources.centrum.StatusDispatch](#resourcescentrumStatusDispatch) |  |  |
 | `reason` | [string](#string) | optional | @sanitize |
 | `code` | [string](#string) | optional | @sanitize |
@@ -7651,7 +7651,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `unit_id` | [uint64](#uint64) |  |  |
+| `unit_id` | [int64](#int64) |  |  |
 | `status` | [resources.centrum.StatusUnit](#resourcescentrumStatusUnit) |  |  |
 | `reason` | [string](#string) | optional | @sanitize |
 | `code` | [string](#string) | optional | @sanitize |
@@ -7772,7 +7772,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `phone_number` | [string](#string) | optional |  |
 | `traffic_infraction_points` | [uint32](#uint32) | optional |  |
 | `dateofbirth` | [string](#string) | optional |  |
-| `open_fines` | [uint64](#uint64) | optional |  |
+| `open_fines` | [int64](#int64) | optional |  |
 
 
 
@@ -8057,7 +8057,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -8079,7 +8079,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -8090,7 +8090,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 | `new_user_id` | [int32](#int32) | optional |  |
 
 
@@ -8108,7 +8108,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 | `request_type` | [resources.documents.DocActivityType](#resourcesdocumentsDocActivityType) |  |  |
 | `reason` | [string](#string) | optional | @sanitize |
 | `data` | [resources.documents.DocActivityData](#resourcesdocumentsDocActivityData) | optional |  |
@@ -8134,7 +8134,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `content_type` | [resources.common.content.ContentType](#resourcescommoncontentContentType) |  |  |
-| `template_id` | [uint64](#uint64) | optional |  |
+| `template_id` | [int64](#int64) | optional |  |
 | `template_data` | [resources.documents.TemplateData](#resourcesdocumentsTemplateData) | optional |  |
 
 
@@ -8146,7 +8146,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -8190,7 +8190,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -8201,7 +8201,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -8218,7 +8218,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `comment_id` | [uint64](#uint64) |  |  |
+| `comment_id` | [int64](#int64) |  |  |
 
 
 
@@ -8235,7 +8235,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `request_id` | [uint64](#uint64) |  |  |
+| `request_id` | [int64](#int64) |  |  |
 
 
 
@@ -8252,7 +8252,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 | `reason` | [string](#string) | optional | @sanitize: method=StripTags |
 
 
@@ -8270,7 +8270,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -8310,7 +8310,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
-| `document_id` | [uint64](#uint64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 
 
 
@@ -8333,7 +8333,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 
 
 
@@ -8355,7 +8355,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 
 
 
@@ -8377,7 +8377,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 
 
 
@@ -8399,7 +8399,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 | `info_only` | [bool](#bool) | optional |  |
 
 
@@ -8423,7 +8423,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `template_id` | [uint64](#uint64) |  |  |
+| `template_id` | [int64](#int64) |  |  |
 | `data` | [resources.documents.TemplateData](#resourcesdocumentsTemplateData) | optional |  |
 | `render` | [bool](#bool) | optional |  |
 
@@ -8466,7 +8466,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
-| `document_id` | [uint64](#uint64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 | `activity_types` | [resources.documents.DocActivityType](#resourcesdocumentsDocActivityType) | repeated | Search params |
 
 
@@ -8515,7 +8515,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
-| `document_id` | [uint64](#uint64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 
 
 
@@ -8541,12 +8541,12 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
 | `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
 | `search` | [string](#string) | optional | Search params |
-| `category_ids` | [uint64](#uint64) | repeated |  |
+| `category_ids` | [int64](#int64) | repeated |  |
 | `creator_ids` | [int32](#int32) | repeated |  |
 | `from` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `to` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `closed` | [bool](#bool) | optional |  |
-| `document_ids` | [uint64](#uint64) | repeated |  |
+| `document_ids` | [int64](#int64) | repeated |  |
 | `only_drafts` | [bool](#bool) | optional | Controls inclusion of drafts in the result: - unset/null: include all documents (drafts and non-drafts) - false: only non-draft documents - true: only draft documents |
 
 
@@ -8636,7 +8636,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -8653,7 +8653,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -8670,7 +8670,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 | `access` | [resources.documents.DocumentAccess](#resourcesdocumentsDocumentAccess) |  |  |
 
 
@@ -8688,7 +8688,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 | `reminder_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `message` | [string](#string) | optional | @sanitize: method=StripTags |
 
@@ -8707,7 +8707,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 | `state` | [bool](#bool) |  |  |
 | `personal` | [bool](#bool) | optional | If true, the pin is personal and not shared with other job members |
 
@@ -8731,7 +8731,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 | `closed` | [bool](#bool) |  |  |
 
 
@@ -8749,8 +8749,8 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
-| `request_id` | [uint64](#uint64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
+| `request_id` | [int64](#int64) |  |  |
 | `reason` | [string](#string) | optional | @sanitize |
 | `data` | [resources.documents.DocActivityData](#resourcesdocumentsDocActivityData) | optional |  |
 | `accepted` | [bool](#bool) |  |  |
@@ -8775,8 +8775,8 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
-| `category_id` | [uint64](#uint64) | optional |  |
+| `document_id` | [int64](#int64) |  |  |
+| `category_id` | [int64](#int64) | optional |  |
 | `title` | [string](#string) |  | @sanitize: method=StripTags |
 | `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
 | `content_type` | [resources.common.content.ContentType](#resourcescommoncontentContentType) |  |  |
@@ -8990,7 +8990,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `tld_id` | [uint64](#uint64) |  |  |
+| `tld_id` | [int64](#int64) |  |  |
 | `name` | [string](#string) |  | @sanitize: method=StripTags |
 
 
@@ -9059,7 +9059,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `tld_id` | [uint64](#uint64) |  |  |
+| `tld_id` | [int64](#int64) |  |  |
 | `name` | [string](#string) |  | @sanitize: method=StripTags |
 | `transfer_code` | [string](#string) | optional | In case a domain will be transfered |
 
@@ -9083,7 +9083,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `domain_id` | [uint64](#uint64) |  |  |
+| `domain_id` | [int64](#int64) |  |  |
 | `transferable` | [bool](#bool) |  |  |
 
 
@@ -9153,7 +9153,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `search` | [string](#string) |  |  |
-| `domain_id` | [uint64](#uint64) | optional |  |
+| `domain_id` | [int64](#int64) | optional |  |
 
 
 
@@ -9217,7 +9217,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -9239,7 +9239,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `types` | [resources.jobs.ConductType](#resourcesjobsConductType) | repeated | Search params |
 | `show_expired` | [bool](#bool) | optional |  |
 | `user_ids` | [int32](#int32) | repeated |  |
-| `ids` | [uint64](#uint64) | repeated |  |
+| `ids` | [int64](#int64) | repeated |  |
 
 
 
@@ -9328,7 +9328,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `label_ids` | [uint64](#uint64) | repeated |  |
+| `label_ids` | [int64](#int64) | repeated |  |
 
 
 
@@ -9439,7 +9439,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `user_ids` | [int32](#int32) | repeated |  |
 | `user_only` | [bool](#bool) | optional |  |
 | `absent` | [bool](#bool) | optional |  |
-| `label_ids` | [uint64](#uint64) | repeated |  |
+| `label_ids` | [int64](#int64) | repeated |  |
 | `name_prefix` | [string](#string) | optional |  |
 | `name_suffix` | [string](#string) | optional |  |
 
@@ -9722,7 +9722,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -9752,7 +9752,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `updated` | [resources.livemap.MarkerMarker](#resourceslivemapMarkerMarker) | repeated |  |
-| `deleted` | [uint64](#uint64) | repeated |  |
+| `deleted` | [int64](#int64) | repeated |  |
 | `part` | [int32](#int32) |  |  |
 | `partial` | [bool](#bool) |  |  |
 
@@ -9901,7 +9901,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -9918,9 +9918,9 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `email_id` | [uint64](#uint64) |  |  |
-| `thread_id` | [uint64](#uint64) |  |  |
-| `message_id` | [uint64](#uint64) |  |  |
+| `email_id` | [int64](#int64) |  |  |
+| `thread_id` | [int64](#int64) |  |  |
+| `message_id` | [int64](#int64) |  |  |
 
 
 
@@ -9937,8 +9937,8 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `email_id` | [uint64](#uint64) |  |  |
-| `id` | [uint64](#uint64) |  |  |
+| `email_id` | [int64](#int64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -9955,8 +9955,8 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `email_id` | [uint64](#uint64) |  |  |
-| `thread_id` | [uint64](#uint64) |  |  |
+| `email_id` | [int64](#int64) |  |  |
+| `thread_id` | [int64](#int64) |  |  |
 
 
 
@@ -9998,7 +9998,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -10020,7 +10020,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `email_id` | [uint64](#uint64) |  |  |
+| `email_id` | [int64](#int64) |  |  |
 
 
 
@@ -10042,8 +10042,8 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `email_id` | [uint64](#uint64) |  |  |
-| `template_id` | [uint64](#uint64) |  |  |
+| `email_id` | [int64](#int64) |  |  |
+| `template_id` | [int64](#int64) |  |  |
 
 
 
@@ -10065,8 +10065,8 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `email_id` | [uint64](#uint64) |  |  |
-| `thread_id` | [uint64](#uint64) |  |  |
+| `email_id` | [int64](#int64) |  |  |
+| `thread_id` | [int64](#int64) |  |  |
 
 
 
@@ -10088,8 +10088,8 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `email_id` | [uint64](#uint64) |  |  |
-| `thread_id` | [uint64](#uint64) |  |  |
+| `email_id` | [int64](#int64) |  |  |
+| `thread_id` | [int64](#int64) |  |  |
 
 
 
@@ -10135,7 +10135,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `email_id` | [uint64](#uint64) |  |  |
+| `email_id` | [int64](#int64) |  |  |
 
 
 
@@ -10158,8 +10158,8 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
-| `email_id` | [uint64](#uint64) |  |  |
-| `thread_id` | [uint64](#uint64) |  |  |
+| `email_id` | [int64](#int64) |  |  |
+| `thread_id` | [int64](#int64) |  |  |
 | `after` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 
 
@@ -10184,7 +10184,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
-| `email_ids` | [uint64](#uint64) | repeated | Search params |
+| `email_ids` | [int64](#int64) | repeated | Search params |
 | `unread` | [bool](#bool) | optional |  |
 | `archived` | [bool](#bool) | optional |  |
 
@@ -10365,7 +10365,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `unread` | [bool](#bool) |  |  |
-| `ids` | [uint64](#uint64) | repeated |  |
+| `ids` | [int64](#int64) | repeated |  |
 | `all` | [bool](#bool) | optional |  |
 
 
@@ -10377,7 +10377,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `updated` | [uint64](#uint64) |  |  |
+| `updated` | [int64](#int64) |  |  |
 
 
 
@@ -10494,7 +10494,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `qualification_id` | [uint64](#uint64) |  |  |
+| `qualification_id` | [int64](#int64) |  |  |
 
 
 
@@ -10505,7 +10505,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `qualification_id` | [uint64](#uint64) |  |  |
+| `qualification_id` | [int64](#int64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 
 
@@ -10523,7 +10523,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `qualification_id` | [uint64](#uint64) |  |  |
+| `qualification_id` | [int64](#int64) |  |  |
 
 
 
@@ -10540,7 +10540,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `result_id` | [uint64](#uint64) |  |  |
+| `result_id` | [int64](#int64) |  |  |
 
 
 
@@ -10557,7 +10557,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `qualification_id` | [uint64](#uint64) |  |  |
+| `qualification_id` | [int64](#int64) |  |  |
 
 
 
@@ -10569,7 +10569,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `qualification` | [resources.qualifications.QualificationShort](#resourcesqualificationsQualificationShort) |  |  |
-| `question_count` | [int32](#int32) |  |  |
+| `question_count` | [int64](#int64) |  |  |
 | `exam_user` | [resources.qualifications.ExamUser](#resourcesqualificationsExamUser) | optional |  |
 
 
@@ -10581,7 +10581,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `qualification_id` | [uint64](#uint64) |  |  |
+| `qualification_id` | [int64](#int64) |  |  |
 
 
 
@@ -10603,7 +10603,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `qualification_id` | [uint64](#uint64) |  |  |
+| `qualification_id` | [int64](#int64) |  |  |
 | `with_exam` | [bool](#bool) | optional |  |
 
 
@@ -10626,7 +10626,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `qualification_id` | [uint64](#uint64) |  |  |
+| `qualification_id` | [int64](#int64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 
 
@@ -10654,7 +10654,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
 | `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
-| `qualification_id` | [uint64](#uint64) | optional | Search params |
+| `qualification_id` | [int64](#int64) | optional | Search params |
 | `status` | [resources.qualifications.RequestStatus](#resourcesqualificationsRequestStatus) | repeated |  |
 | `user_id` | [int32](#int32) | optional |  |
 
@@ -10707,7 +10707,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
 | `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
-| `qualification_id` | [uint64](#uint64) | optional | Search params |
+| `qualification_id` | [int64](#int64) | optional | Search params |
 | `status` | [resources.qualifications.ResultStatus](#resourcesqualificationsResultStatus) | repeated |  |
 | `user_id` | [int32](#int32) | optional |  |
 
@@ -10732,7 +10732,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `qualification_id` | [uint64](#uint64) |  |  |
+| `qualification_id` | [int64](#int64) |  |  |
 | `access` | [resources.qualifications.QualificationAccess](#resourcesqualificationsQualificationAccess) |  |  |
 
 
@@ -10750,7 +10750,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `qualification_id` | [uint64](#uint64) |  |  |
+| `qualification_id` | [int64](#int64) |  |  |
 | `responses` | [resources.qualifications.ExamResponses](#resourcesqualificationsExamResponses) |  |  |
 
 
@@ -10773,7 +10773,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `qualification_id` | [uint64](#uint64) |  |  |
+| `qualification_id` | [int64](#int64) |  |  |
 | `cancel` | [bool](#bool) | optional |  |
 
 
@@ -10808,7 +10808,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `qualification_id` | [uint64](#uint64) |  |  |
+| `qualification_id` | [int64](#int64) |  |  |
 
 
 
@@ -10853,7 +10853,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -10870,7 +10870,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `provider_name` | [string](#string) |  |  |
 
 
@@ -10916,7 +10916,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `enabled` | [bool](#bool) | optional |  |
 | `last_char` | [int32](#int32) | optional |  |
 
@@ -11101,7 +11101,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -11118,7 +11118,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -11192,7 +11192,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -11209,7 +11209,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `role_id` | [uint64](#uint64) |  |  |
+| `role_id` | [int64](#int64) |  |  |
 
 
 
@@ -11250,7 +11250,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `role_id` | [uint64](#uint64) |  |  |
+| `role_id` | [int64](#int64) |  |  |
 
 
 
@@ -11273,7 +11273,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -11373,7 +11373,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `perms` | [resources.settings.PermsUpdate](#resourcessettingsPermsUpdate) | optional |  |
 | `attrs` | [resources.settings.AttrsUpdate](#resourcessettingsAttrsUpdate) | optional |  |
 
@@ -11779,7 +11779,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `reg_token` | [string](#string) | optional |  |
-| `account_id` | [uint64](#uint64) | optional |  |
+| `account_id` | [int64](#int64) | optional |  |
 | `username` | [string](#string) | optional |  |
 
 
@@ -11976,7 +11976,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `parent_id` | [uint64](#uint64) | optional |  |
+| `parent_id` | [int64](#int64) | optional |  |
 | `content_type` | [resources.common.content.ContentType](#resourcescommoncontentContentType) |  |  |
 
 
@@ -11989,7 +11989,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `job` | [string](#string) |  |  |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -12000,7 +12000,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -12017,7 +12017,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -12040,7 +12040,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
-| `page_id` | [uint64](#uint64) |  |  |
+| `page_id` | [int64](#int64) |  |  |
 
 
 

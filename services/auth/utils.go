@@ -63,7 +63,7 @@ func (s *Server) getAccountFromClaims(
 	ctx context.Context,
 	claims *auth.CitizenInfoClaims,
 ) (*model.FivenetAccounts, error) {
-	return s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)).
+	return s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Int64(claims.AccID)).
 		AND(tAccounts.Username.EQ(jet.String(claims.Username))))
 }
 

@@ -30,11 +30,11 @@ func (x *TemplateUserAccess) GetAccess() AccessLevel {
 	return AccessLevel_ACCESS_LEVEL_UNSPECIFIED
 }
 
-func (x *TemplateUserAccess) GetId() uint64 {
+func (x *TemplateUserAccess) GetId() int64 {
 	return 0
 }
 
-func (x *TemplateUserAccess) GetTargetId() uint64 {
+func (x *TemplateUserAccess) GetTargetId() int64 {
 	return 0
 }
 

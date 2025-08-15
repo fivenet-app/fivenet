@@ -29,11 +29,11 @@ export interface ExamQuestions {
  */
 export interface ExamQuestion {
     /**
-     * @generated from protobuf field: uint64 id = 1
+     * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
-     * @generated from protobuf field: uint64 qualification_id = 2
+     * @generated from protobuf field: int64 qualification_id = 2
      */
     qualificationId: number;
     /**
@@ -232,7 +232,7 @@ export interface ExamQuestionAnswerData {
  */
 export interface ExamUser {
     /**
-     * @generated from protobuf field: uint64 qualification_id = 1
+     * @generated from protobuf field: int64 qualification_id = 1
      */
     qualificationId: number;
     /**
@@ -263,7 +263,7 @@ export interface ExamUser {
  */
 export interface ExamResponses {
     /**
-     * @generated from protobuf field: uint64 qualification_id = 1
+     * @generated from protobuf field: int64 qualification_id = 1
      */
     qualificationId: number;
     /**
@@ -280,7 +280,7 @@ export interface ExamResponses {
  */
 export interface ExamResponse {
     /**
-     * @generated from protobuf field: uint64 question_id = 1
+     * @generated from protobuf field: int64 question_id = 1
      */
     questionId: number;
     /**
@@ -400,7 +400,7 @@ export interface ExamGrading {
  */
 export interface ExamGradingResponse {
     /**
-     * @generated from protobuf field: uint64 question_id = 1
+     * @generated from protobuf field: int64 question_id = 1
      */
     questionId: number;
     /**
@@ -463,8 +463,8 @@ export const ExamQuestions = new ExamQuestions$Type();
 class ExamQuestion$Type extends MessageType<ExamQuestion> {
     constructor() {
         super("resources.qualifications.ExamQuestion", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "qualification_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } } } },
@@ -490,11 +490,11 @@ class ExamQuestion$Type extends MessageType<ExamQuestion> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
                     break;
-                case /* uint64 qualification_id */ 2:
-                    message.qualificationId = reader.uint64().toNumber();
+                case /* int64 qualification_id */ 2:
+                    message.qualificationId = reader.int64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 3:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -532,12 +532,12 @@ class ExamQuestion$Type extends MessageType<ExamQuestion> {
         return message;
     }
     internalBinaryWrite(message: ExamQuestion, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
+        /* int64 id = 1; */
         if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
-        /* uint64 qualification_id = 2; */
+            writer.tag(1, WireType.Varint).int64(message.id);
+        /* int64 qualification_id = 2; */
         if (message.qualificationId !== 0)
-            writer.tag(2, WireType.Varint).uint64(message.qualificationId);
+            writer.tag(2, WireType.Varint).int64(message.qualificationId);
         /* optional resources.timestamp.Timestamp created_at = 3; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
@@ -1049,7 +1049,7 @@ export const ExamQuestionAnswerData = new ExamQuestionAnswerData$Type();
 class ExamUser$Type extends MessageType<ExamUser> {
     constructor() {
         super("resources.qualifications.ExamUser", [
-            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "qualification_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "started_at", kind: "message", T: () => Timestamp },
@@ -1070,8 +1070,8 @@ class ExamUser$Type extends MessageType<ExamUser> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 qualification_id */ 1:
-                    message.qualificationId = reader.uint64().toNumber();
+                case /* int64 qualification_id */ 1:
+                    message.qualificationId = reader.int64().toNumber();
                     break;
                 case /* int32 user_id */ 2:
                     message.userId = reader.int32();
@@ -1100,9 +1100,9 @@ class ExamUser$Type extends MessageType<ExamUser> {
         return message;
     }
     internalBinaryWrite(message: ExamUser, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 qualification_id = 1; */
+        /* int64 qualification_id = 1; */
         if (message.qualificationId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.qualificationId);
+            writer.tag(1, WireType.Varint).int64(message.qualificationId);
         /* int32 user_id = 2; */
         if (message.userId !== 0)
             writer.tag(2, WireType.Varint).int32(message.userId);
@@ -1132,7 +1132,7 @@ export const ExamUser = new ExamUser$Type();
 class ExamResponses$Type extends MessageType<ExamResponses> {
     constructor() {
         super("resources.qualifications.ExamResponses", [
-            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "qualification_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "responses", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ExamResponse, options: { "buf.validate.field": { repeated: { maxItems: "100" } } } }
         ]);
@@ -1151,8 +1151,8 @@ class ExamResponses$Type extends MessageType<ExamResponses> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 qualification_id */ 1:
-                    message.qualificationId = reader.uint64().toNumber();
+                case /* int64 qualification_id */ 1:
+                    message.qualificationId = reader.int64().toNumber();
                     break;
                 case /* int32 user_id */ 2:
                     message.userId = reader.int32();
@@ -1172,9 +1172,9 @@ class ExamResponses$Type extends MessageType<ExamResponses> {
         return message;
     }
     internalBinaryWrite(message: ExamResponses, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 qualification_id = 1; */
+        /* int64 qualification_id = 1; */
         if (message.qualificationId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.qualificationId);
+            writer.tag(1, WireType.Varint).int64(message.qualificationId);
         /* int32 user_id = 2; */
         if (message.userId !== 0)
             writer.tag(2, WireType.Varint).int32(message.userId);
@@ -1195,7 +1195,7 @@ export const ExamResponses = new ExamResponses$Type();
 class ExamResponse$Type extends MessageType<ExamResponse> {
     constructor() {
         super("resources.qualifications.ExamResponse", [
-            { no: 1, name: "question_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "question_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "question", kind: "message", T: () => ExamQuestion },
             { no: 4, name: "response", kind: "message", T: () => ExamResponseData }
@@ -1214,8 +1214,8 @@ class ExamResponse$Type extends MessageType<ExamResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 question_id */ 1:
-                    message.questionId = reader.uint64().toNumber();
+                case /* int64 question_id */ 1:
+                    message.questionId = reader.int64().toNumber();
                     break;
                 case /* int32 user_id */ 2:
                     message.userId = reader.int32();
@@ -1238,9 +1238,9 @@ class ExamResponse$Type extends MessageType<ExamResponse> {
         return message;
     }
     internalBinaryWrite(message: ExamResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 question_id = 1; */
+        /* int64 question_id = 1; */
         if (message.questionId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.questionId);
+            writer.tag(1, WireType.Varint).int64(message.questionId);
         /* int32 user_id = 2; */
         if (message.userId !== 0)
             writer.tag(2, WireType.Varint).int32(message.userId);
@@ -1627,7 +1627,7 @@ export const ExamGrading = new ExamGrading$Type();
 class ExamGradingResponse$Type extends MessageType<ExamGradingResponse> {
     constructor() {
         super("resources.qualifications.ExamGradingResponse", [
-            { no: 1, name: "question_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "question_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "points", kind: "scalar", T: 2 /*ScalarType.FLOAT*/, options: { "buf.validate.field": { float: { lte: 1000, gte: 0 } } } },
             { no: 3, name: "checked", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
@@ -1645,8 +1645,8 @@ class ExamGradingResponse$Type extends MessageType<ExamGradingResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 question_id */ 1:
-                    message.questionId = reader.uint64().toNumber();
+                case /* int64 question_id */ 1:
+                    message.questionId = reader.int64().toNumber();
                     break;
                 case /* float points */ 2:
                     message.points = reader.float();
@@ -1666,9 +1666,9 @@ class ExamGradingResponse$Type extends MessageType<ExamGradingResponse> {
         return message;
     }
     internalBinaryWrite(message: ExamGradingResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 question_id = 1; */
+        /* int64 question_id = 1; */
         if (message.questionId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.questionId);
+            writer.tag(1, WireType.Varint).int64(message.questionId);
         /* float points = 2; */
         if (message.points !== 0)
             writer.tag(2, WireType.Bit32).float(message.points);

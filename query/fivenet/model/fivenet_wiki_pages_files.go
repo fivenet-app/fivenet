@@ -8,6 +8,6 @@
 package model
 
 type FivenetWikiPagesFiles struct {
-	PageID uint64 `sql:"primary_key" json:"page_id"`
-	FileID uint64 `sql:"primary_key" json:"file_id"`
+	PageID int64 `sql:"primary_key" json:"page_id"`
+	FileID int64 `sql:"primary_key" json:"file_id"`
 }

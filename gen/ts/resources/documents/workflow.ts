@@ -75,7 +75,7 @@ export interface AutoCloseSettings {
  */
 export interface WorkflowCronData {
     /**
-     * @generated from protobuf field: uint64 last_doc_id = 1
+     * @generated from protobuf field: int64 last_doc_id = 1
      */
     lastDocId: number;
 }
@@ -307,7 +307,7 @@ export const AutoCloseSettings = new AutoCloseSettings$Type();
 class WorkflowCronData$Type extends MessageType<WorkflowCronData> {
     constructor() {
         super("resources.documents.WorkflowCronData", [
-            { no: 1, name: "last_doc_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "last_doc_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<WorkflowCronData>): WorkflowCronData {
@@ -322,8 +322,8 @@ class WorkflowCronData$Type extends MessageType<WorkflowCronData> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 last_doc_id */ 1:
-                    message.lastDocId = reader.uint64().toNumber();
+                case /* int64 last_doc_id */ 1:
+                    message.lastDocId = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -337,9 +337,9 @@ class WorkflowCronData$Type extends MessageType<WorkflowCronData> {
         return message;
     }
     internalBinaryWrite(message: WorkflowCronData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 last_doc_id = 1; */
+        /* int64 last_doc_id = 1; */
         if (message.lastDocId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.lastDocId);
+            writer.tag(1, WireType.Varint).int64(message.lastDocId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -112,7 +112,7 @@ func (x *CreateOrUpdateLawBookResponse) GetLawBook() *laws.LawBook {
 
 type DeleteLawBookRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -147,7 +147,7 @@ func (*DeleteLawBookRequest) Descriptor() ([]byte, []int) {
 	return file_services_settings_laws_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *DeleteLawBookRequest) GetId() uint64 {
+func (x *DeleteLawBookRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -280,7 +280,7 @@ func (x *CreateOrUpdateLawResponse) GetLaw() *laws.Law {
 
 type DeleteLawRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -315,7 +315,7 @@ func (*DeleteLawRequest) Descriptor() ([]byte, []int) {
 	return file_services_settings_laws_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *DeleteLawRequest) GetId() uint64 {
+func (x *DeleteLawRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -368,14 +368,14 @@ const file_services_settings_laws_proto_rawDesc = "" +
 	"\x1dCreateOrUpdateLawBookResponse\x122\n" +
 	"\blaw_book\x18\x01 \x01(\v2\x17.resources.laws.LawBookR\alawBook\"&\n" +
 	"\x14DeleteLawBookRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"\x17\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\x17\n" +
 	"\x15DeleteLawBookResponse\"I\n" +
 	"\x18CreateOrUpdateLawRequest\x12-\n" +
 	"\x03law\x18\x01 \x01(\v2\x13.resources.laws.LawB\x06\xbaH\x03\xc8\x01\x01R\x03law\"B\n" +
 	"\x19CreateOrUpdateLawResponse\x12%\n" +
 	"\x03law\x18\x01 \x01(\v2\x13.resources.laws.LawR\x03law\"\"\n" +
 	"\x10DeleteLawRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"\x13\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\x13\n" +
 	"\x11DeleteLawResponse2\xb5\x03\n" +
 	"\vLawsService\x12z\n" +
 	"\x15CreateOrUpdateLawBook\x12/.services.settings.CreateOrUpdateLawBookRequest\x1a0.services.settings.CreateOrUpdateLawBookResponse\x12b\n" +

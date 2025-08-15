@@ -132,7 +132,7 @@ func (ObjectEventType) EnumDescriptor() ([]byte, []int) {
 type ClientView struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Type          ObjectType             `protobuf:"varint,1,opt,name=type,proto3,enum=resources.notifications.ObjectType" json:"type,omitempty"`
-	Id            *uint64                `protobuf:"varint,2,opt,name=id,proto3,oneof" json:"id,omitempty"`
+	Id            *int64                 `protobuf:"varint,2,opt,name=id,proto3,oneof" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -174,7 +174,7 @@ func (x *ClientView) GetType() ObjectType {
 	return ObjectType_OBJECT_TYPE_UNSPECIFIED
 }
 
-func (x *ClientView) GetId() uint64 {
+func (x *ClientView) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -184,7 +184,7 @@ func (x *ClientView) GetId() uint64 {
 type ObjectEvent struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Type          ObjectType             `protobuf:"varint,1,opt,name=type,proto3,enum=resources.notifications.ObjectType" json:"type,omitempty"`
-	Id            *uint64                `protobuf:"varint,2,opt,name=id,proto3,oneof" json:"id,omitempty"`
+	Id            *int64                 `protobuf:"varint,2,opt,name=id,proto3,oneof" json:"id,omitempty"`
 	EventType     ObjectEventType        `protobuf:"varint,3,opt,name=event_type,json=eventType,proto3,enum=resources.notifications.ObjectEventType" json:"event_type,omitempty"`
 	UserId        *int32                 `protobuf:"varint,4,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
 	Job           *string                `protobuf:"bytes,5,opt,name=job,proto3,oneof" json:"job,omitempty"`
@@ -230,7 +230,7 @@ func (x *ObjectEvent) GetType() ObjectType {
 	return ObjectType_OBJECT_TYPE_UNSPECIFIED
 }
 
-func (x *ObjectEvent) GetId() uint64 {
+func (x *ObjectEvent) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -273,11 +273,11 @@ const file_resources_notifications_client_view_proto_rawDesc = "" +
 	"\n" +
 	"ClientView\x12A\n" +
 	"\x04type\x18\x01 \x01(\x0e2#.resources.notifications.ObjectTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12\x13\n" +
-	"\x02id\x18\x02 \x01(\x04H\x00R\x02id\x88\x01\x01B\x05\n" +
+	"\x02id\x18\x02 \x01(\x03H\x00R\x02id\x88\x01\x01B\x05\n" +
 	"\x03_id\"\xd5\x02\n" +
 	"\vObjectEvent\x12A\n" +
 	"\x04type\x18\x01 \x01(\x0e2#.resources.notifications.ObjectTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12\x13\n" +
-	"\x02id\x18\x02 \x01(\x04H\x00R\x02id\x88\x01\x01\x12Q\n" +
+	"\x02id\x18\x02 \x01(\x03H\x00R\x02id\x88\x01\x01\x12Q\n" +
 	"\n" +
 	"event_type\x18\x03 \x01(\x0e2(.resources.notifications.ObjectEventTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\teventType\x12%\n" +
 	"\auser_id\x18\x04 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00H\x01R\x06userId\x88\x01\x01\x12\x1e\n" +

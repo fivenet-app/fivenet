@@ -28,13 +28,13 @@ type ListColleaguesRequest struct {
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
-	Search        string   `protobuf:"bytes,3,opt,name=search,proto3" json:"search,omitempty"`
-	UserIds       []int32  `protobuf:"varint,4,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
-	UserOnly      *bool    `protobuf:"varint,5,opt,name=user_only,json=userOnly,proto3,oneof" json:"user_only,omitempty"`
-	Absent        *bool    `protobuf:"varint,6,opt,name=absent,proto3,oneof" json:"absent,omitempty"`
-	LabelIds      []uint64 `protobuf:"varint,7,rep,packed,name=label_ids,json=labelIds,proto3" json:"label_ids,omitempty"`
-	NamePrefix    *string  `protobuf:"bytes,8,opt,name=name_prefix,json=namePrefix,proto3,oneof" json:"name_prefix,omitempty"`
-	NameSuffix    *string  `protobuf:"bytes,9,opt,name=name_suffix,json=nameSuffix,proto3,oneof" json:"name_suffix,omitempty"`
+	Search        string  `protobuf:"bytes,3,opt,name=search,proto3" json:"search,omitempty"`
+	UserIds       []int32 `protobuf:"varint,4,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
+	UserOnly      *bool   `protobuf:"varint,5,opt,name=user_only,json=userOnly,proto3,oneof" json:"user_only,omitempty"`
+	Absent        *bool   `protobuf:"varint,6,opt,name=absent,proto3,oneof" json:"absent,omitempty"`
+	LabelIds      []int64 `protobuf:"varint,7,rep,packed,name=label_ids,json=labelIds,proto3" json:"label_ids,omitempty"`
+	NamePrefix    *string `protobuf:"bytes,8,opt,name=name_prefix,json=namePrefix,proto3,oneof" json:"name_prefix,omitempty"`
+	NameSuffix    *string `protobuf:"bytes,9,opt,name=name_suffix,json=nameSuffix,proto3,oneof" json:"name_suffix,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -111,7 +111,7 @@ func (x *ListColleaguesRequest) GetAbsent() bool {
 	return false
 }
 
-func (x *ListColleaguesRequest) GetLabelIds() []uint64 {
+func (x *ListColleaguesRequest) GetLabelIds() []int64 {
 	if x != nil {
 		return x.LabelIds
 	}
@@ -756,7 +756,7 @@ func (x *ManageLabelsResponse) GetLabels() []*jobs.Label {
 
 type GetColleagueLabelsStatsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	LabelIds      []uint64               `protobuf:"varint,1,rep,packed,name=label_ids,json=labelIds,proto3" json:"label_ids,omitempty"`
+	LabelIds      []int64                `protobuf:"varint,1,rep,packed,name=label_ids,json=labelIds,proto3" json:"label_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -791,7 +791,7 @@ func (*GetColleagueLabelsStatsRequest) Descriptor() ([]byte, []int) {
 	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{14}
 }
 
-func (x *GetColleagueLabelsStatsRequest) GetLabelIds() []uint64 {
+func (x *GetColleagueLabelsStatsRequest) GetLabelIds() []int64 {
 	if x != nil {
 		return x.LabelIds
 	}
@@ -1025,7 +1025,7 @@ const file_services_jobs_jobs_proto_rawDesc = "" +
 	"\buser_ids\x18\x04 \x03(\x05B\f\xbaH\t\x92\x01\x06\"\x04\x1a\x02(\x00R\auserIds\x12 \n" +
 	"\tuser_only\x18\x05 \x01(\bH\x01R\buserOnly\x88\x01\x01\x12\x1b\n" +
 	"\x06absent\x18\x06 \x01(\bH\x02R\x06absent\x88\x01\x01\x12\x1b\n" +
-	"\tlabel_ids\x18\a \x03(\x04R\blabelIds\x12-\n" +
+	"\tlabel_ids\x18\a \x03(\x03R\blabelIds\x12-\n" +
 	"\vname_prefix\x18\b \x01(\tB\a\xbaH\x04r\x02\x18\fH\x03R\n" +
 	"namePrefix\x88\x01\x01\x12-\n" +
 	"\vname_suffix\x18\t \x01(\tB\a\xbaH\x04r\x02\x18\fH\x04R\n" +
@@ -1083,7 +1083,7 @@ const file_services_jobs_jobs_proto_rawDesc = "" +
 	"\x14ManageLabelsResponse\x12-\n" +
 	"\x06labels\x18\x01 \x03(\v2\x15.resources.jobs.LabelR\x06labels\"=\n" +
 	"\x1eGetColleagueLabelsStatsRequest\x12\x1b\n" +
-	"\tlabel_ids\x18\x01 \x03(\x04R\blabelIds\"S\n" +
+	"\tlabel_ids\x18\x01 \x03(\x03R\blabelIds\"S\n" +
 	"\x1fGetColleagueLabelsStatsResponse\x120\n" +
 	"\x05count\x18\x01 \x03(\v2\x1a.resources.jobs.LabelCountR\x05count\"\x10\n" +
 	"\x0eGetMOTDRequest\"%\n" +

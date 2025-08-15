@@ -74,7 +74,7 @@ type Server struct {
 	postals  postals.Postals
 
 	markersCache        *xsync.Map[string, []*livemap.MarkerMarker]
-	markersDeletedCache *xsync.Map[string, []uint64]
+	markersDeletedCache *xsync.Map[string, []int64]
 
 	broker *broker.Broker[*brokerEvent]
 }
@@ -99,7 +99,7 @@ type Params struct {
 
 type brokerEvent struct {
 	MarkerUpdate *livemap.MarkerMarker
-	MarkerDelete *uint64
+	MarkerDelete *int64
 }
 
 func NewServer(p Params) *Server {
@@ -119,7 +119,7 @@ func NewServer(p Params) *Server {
 		postals:  p.Postals,
 
 		markersCache:        xsync.NewMap[string, []*livemap.MarkerMarker](),
-		markersDeletedCache: xsync.NewMap[string, []uint64](),
+		markersDeletedCache: xsync.NewMap[string, []int64](),
 
 		broker: broker.New[*brokerEvent](),
 	}

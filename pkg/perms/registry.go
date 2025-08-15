@@ -35,7 +35,7 @@ type Perm struct {
 }
 
 type Attr struct {
-	ID            uint64
+	ID            int64
 	Key           Key
 	Type          permissions.AttributeTypes
 	ValidValues   any
@@ -133,7 +133,7 @@ func (p *Perms) SetDefaultRolePerms(ctx context.Context, defaultPerms []string) 
 		return fmt.Errorf("failed to get role permissions. %w", err)
 	}
 
-	removePerms := []uint64{}
+	removePerms := []int64{}
 	for _, p := range currentPerms {
 		if slices.ContainsFunc(addPerms, func(ap AddPerm) bool {
 			return ap.Id == p.GetId()
@@ -173,7 +173,7 @@ func (p *Perms) createOrUpdatePermission(
 	category Category,
 	name Name,
 	order int32,
-) (uint64, error) {
+) (int64, error) {
 	perm, err := p.loadPermissionFromDatabaseByCategoryName(ctx, category, name)
 	if err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -197,11 +197,11 @@ func (p *Perms) createOrUpdatePermission(
 
 func (p *Perms) registerOrUpdateAttribute(
 	ctx context.Context,
-	permId uint64,
+	permId int64,
 	key Key,
 	aType permissions.AttributeTypes,
 	validValues any,
-) (uint64, error) {
+) (int64, error) {
 	attr, err := p.getAttributeFromDatabase(ctx, permId, key)
 	if err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -451,7 +451,7 @@ func (p *Perms) applyJobPermissions(ctx context.Context, job string) error {
 				"removing all job permissions from role due to job perms change",
 				zap.String("job", job),
 			)
-			pIds := []uint64{}
+			pIds := []int64{}
 			for _, p := range ps {
 				pIds = append(pIds, p.GetId())
 			}
@@ -466,7 +466,7 @@ func (p *Perms) applyJobPermissions(ctx context.Context, job string) error {
 			continue
 		}
 
-		toRemove := []uint64{}
+		toRemove := []int64{}
 		for _, p := range ps {
 			if !slices.ContainsFunc(jps, func(in *permissions.Permission) bool {
 				return in.GetId() == p.GetId() && in.GetVal()
@@ -549,14 +549,14 @@ func (p *Perms) applyJobPermissionsToAttrs(
 					p.logger.Debug(
 						"attribute changed on role due to job perms change",
 						zap.String("job", role.GetJob()),
-						zap.Uint64("attr_id", attr.GetAttrId()),
+						zap.Int64("attr_id", attr.GetAttrId()),
 						zap.Any("attr_value", attr.GetValue()),
 						zap.Any("attr_valid_value", attr.GetValidValues()),
 						zap.Any("attr_max_values", maxValues),
 					)
 					toUpdate = append(toUpdate, attr)
 				} else {
-					p.logger.Debug("attribute not changed on role due to job perms change", zap.String("job", role.GetJob()), zap.Uint64("attr_id", attr.GetAttrId()), zap.Any("attr_value", attr.GetValue()), zap.Any("attr_valid_value", attr.GetValidValues()), zap.Any("attr_max_values", maxValues))
+					p.logger.Debug("attribute not changed on role due to job perms change", zap.String("job", role.GetJob()), zap.Int64("attr_id", attr.GetAttrId()), zap.Any("attr_value", attr.GetValue()), zap.Any("attr_valid_value", attr.GetValidValues()), zap.Any("attr_max_values", maxValues))
 				}
 			} else {
 				toRemove = append(toRemove, attr)

@@ -9,6 +9,6 @@ package model
 
 type FivenetRbacJobAttrs struct {
 	Job       string  `sql:"primary_key" json:"job"`
-	AttrID    uint64  `sql:"primary_key" json:"attr_id"`
+	AttrID    int64   `sql:"primary_key" json:"attr_id"`
 	MaxValues *string `json:"max_values"`
 }

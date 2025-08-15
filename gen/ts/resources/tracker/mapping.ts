@@ -21,7 +21,7 @@ export interface UserMapping {
      */
     userId: number;
     /**
-     * @generated from protobuf field: optional uint64 unit_id = 2
+     * @generated from protobuf field: optional int64 unit_id = 2
      */
     unitId?: number;
     /**
@@ -38,7 +38,7 @@ class UserMapping$Type extends MessageType<UserMapping> {
     constructor() {
         super("resources.tracker.UserMapping", [
             { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
-            { no: 2, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "unit_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "hidden", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
@@ -59,8 +59,8 @@ class UserMapping$Type extends MessageType<UserMapping> {
                 case /* int32 user_id */ 1:
                     message.userId = reader.int32();
                     break;
-                case /* optional uint64 unit_id */ 2:
-                    message.unitId = reader.uint64().toNumber();
+                case /* optional int64 unit_id */ 2:
+                    message.unitId = reader.int64().toNumber();
                     break;
                 case /* resources.timestamp.Timestamp created_at */ 3:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -83,9 +83,9 @@ class UserMapping$Type extends MessageType<UserMapping> {
         /* int32 user_id = 1; */
         if (message.userId !== 0)
             writer.tag(1, WireType.Varint).int32(message.userId);
-        /* optional uint64 unit_id = 2; */
+        /* optional int64 unit_id = 2; */
         if (message.unitId !== undefined)
-            writer.tag(2, WireType.Varint).uint64(message.unitId);
+            writer.tag(2, WireType.Varint).int64(message.unitId);
         /* resources.timestamp.Timestamp created_at = 3; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();

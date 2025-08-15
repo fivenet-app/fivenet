@@ -10,7 +10,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func (s *UnitDB) updateInKV(ctx context.Context, id uint64, unit *centrum.Unit) error {
+func (s *UnitDB) updateInKV(ctx context.Context, id int64, unit *centrum.Unit) error {
 	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), func(key string, existing *centrum.Unit) (*centrum.Unit, bool, error) {
 		if existing == nil {
 			return unit, unit != nil, nil
@@ -29,11 +29,11 @@ func (s *UnitDB) updateInKV(ctx context.Context, id uint64, unit *centrum.Unit) 
 	return nil
 }
 
-func (s *UnitDB) deleteInKV(ctx context.Context, id uint64) error {
+func (s *UnitDB) deleteInKV(ctx context.Context, id int64) error {
 	return s.store.Delete(ctx, centrumutils.IdKey(id))
 }
 
-func (s *UnitDB) Get(ctx context.Context, id uint64) (*centrum.Unit, error) {
+func (s *UnitDB) Get(ctx context.Context, id int64) (*centrum.Unit, error) {
 	return s.store.GetOrLoad(ctx, centrumutils.IdKey(id))
 }
 
@@ -109,7 +109,7 @@ func (s *UnitDB) Filter(
 
 func (s *UnitDB) updateStatusInKV(
 	ctx context.Context,
-	id uint64,
+	id int64,
 	status *centrum.UnitStatus,
 ) error {
 	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), func(key string, existing *centrum.Unit) (*centrum.Unit, bool, error) {

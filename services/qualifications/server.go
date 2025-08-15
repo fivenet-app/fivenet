@@ -75,7 +75,7 @@ type Server struct {
 
 	access *access.Grouped[qualifications.QualificationJobAccess, *qualifications.QualificationJobAccess, qualifications.QualificationUserAccess, *qualifications.QualificationUserAccess, access.DummyQualificationAccess[qualifications.AccessLevel], *access.DummyQualificationAccess[qualifications.AccessLevel], qualifications.AccessLevel]
 
-	fHandler *filestore.Handler[uint64]
+	fHandler *filestore.Handler[int64]
 }
 
 type Params struct {
@@ -102,8 +102,8 @@ func NewServer(p Params) *Server {
 		tQualiFiles.QualificationID,
 		tQualiFiles.FileID,
 		3<<20,
-		func(parentId uint64) jet.BoolExpression {
-			return tQualiFiles.QualificationID.EQ(jet.Uint64(parentId))
+		func(parentId int64) jet.BoolExpression {
+			return tQualiFiles.QualificationID.EQ(jet.Int64(parentId))
 		},
 		filestore.InsertJoinRow,
 		false,

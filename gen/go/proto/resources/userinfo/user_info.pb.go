@@ -25,7 +25,7 @@ const (
 type UserInfo struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Enabled          bool                   `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	AccountId        uint64                 `protobuf:"varint,2,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	AccountId        int64                  `protobuf:"varint,2,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	License          string                 `protobuf:"bytes,3,opt,name=license,proto3" json:"license,omitempty"`
 	LastChar         *int32                 `protobuf:"varint,4,opt,name=last_char,json=lastChar,proto3,oneof" json:"last_char,omitempty"`
 	UserId           int32                  `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -77,7 +77,7 @@ func (x *UserInfo) GetEnabled() bool {
 	return false
 }
 
-func (x *UserInfo) GetAccountId() uint64 {
+func (x *UserInfo) GetAccountId() int64 {
 	if x != nil {
 		return x.AccountId
 	}
@@ -158,7 +158,7 @@ func (x *UserInfo) GetOverrideJobGrade() int32 {
 type PollReq struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The account the user belongs to
-	AccountId uint64 `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	AccountId int64 `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	// The unique user identifier within the account
 	UserId        int32 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -195,7 +195,7 @@ func (*PollReq) Descriptor() ([]byte, []int) {
 	return file_resources_userinfo_user_info_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *PollReq) GetAccountId() uint64 {
+func (x *PollReq) GetAccountId() int64 {
 	if x != nil {
 		return x.AccountId
 	}
@@ -213,7 +213,7 @@ func (x *PollReq) GetUserId() int32 {
 type UserInfoChanged struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The account the user belongs to
-	AccountId uint64 `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	AccountId int64 `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	// The unique user identifier within the account
 	UserId int32 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	// Previous job title
@@ -263,7 +263,7 @@ func (*UserInfoChanged) Descriptor() ([]byte, []int) {
 	return file_resources_userinfo_user_info_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *UserInfoChanged) GetAccountId() uint64 {
+func (x *UserInfoChanged) GetAccountId() int64 {
 	if x != nil {
 		return x.AccountId
 	}
@@ -334,7 +334,7 @@ const file_resources_userinfo_user_info_proto_rawDesc = "" +
 	"\bUserInfo\x12\x18\n" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x12\x1d\n" +
 	"\n" +
-	"account_id\x18\x02 \x01(\x04R\taccountId\x12\x18\n" +
+	"account_id\x18\x02 \x01(\x03R\taccountId\x12\x18\n" +
 	"\alicense\x18\x03 \x01(\tR\alicense\x12 \n" +
 	"\tlast_char\x18\x04 \x01(\x05H\x00R\blastChar\x88\x01\x01\x12\x17\n" +
 	"\auser_id\x18\x05 \x01(\x05R\x06userId\x12\x10\n" +
@@ -352,11 +352,11 @@ const file_resources_userinfo_user_info_proto_rawDesc = "" +
 	"\x13_override_job_grade\"A\n" +
 	"\aPollReq\x12\x1d\n" +
 	"\n" +
-	"account_id\x18\x01 \x01(\x04R\taccountId\x12\x17\n" +
+	"account_id\x18\x01 \x01(\x03R\taccountId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\"\x89\x03\n" +
 	"\x0fUserInfoChanged\x12\x1d\n" +
 	"\n" +
-	"account_id\x18\x01 \x01(\x04R\taccountId\x12\x17\n" +
+	"account_id\x18\x01 \x01(\x03R\taccountId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12\x17\n" +
 	"\aold_job\x18\x03 \x01(\tR\x06oldJob\x12\x17\n" +
 	"\anew_job\x18\x04 \x01(\tR\x06newJob\x12'\n" +

@@ -23,10 +23,10 @@ const (
 
 type SearchResult struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
 	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	DomainId      uint64                 `protobuf:"varint,4,opt,name=domain_id,json=domainId,proto3" json:"domain_id,omitempty"`
+	DomainId      int64                  `protobuf:"varint,4,opt,name=domain_id,json=domainId,proto3" json:"domain_id,omitempty"`
 	Domain        *Domain                `protobuf:"bytes,5,opt,name=domain,proto3,oneof" json:"domain,omitempty"`
 	Path          string                 `protobuf:"bytes,6,opt,name=path,proto3" json:"path,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -63,7 +63,7 @@ func (*SearchResult) Descriptor() ([]byte, []int) {
 	return file_resources_internet_search_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *SearchResult) GetId() uint64 {
+func (x *SearchResult) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -84,7 +84,7 @@ func (x *SearchResult) GetDescription() string {
 	return ""
 }
 
-func (x *SearchResult) GetDomainId() uint64 {
+func (x *SearchResult) GetDomainId() int64 {
 	if x != nil {
 		return x.DomainId
 	}
@@ -111,10 +111,10 @@ const file_resources_internet_search_proto_rawDesc = "" +
 	"\n" +
 	"\x1fresources/internet/search.proto\x12\x12resources.internet\x1a\x1fresources/internet/domain.proto\"\xcb\x01\n" +
 	"\fSearchResult\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x14\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x1b\n" +
-	"\tdomain_id\x18\x04 \x01(\x04R\bdomainId\x127\n" +
+	"\tdomain_id\x18\x04 \x01(\x03R\bdomainId\x127\n" +
 	"\x06domain\x18\x05 \x01(\v2\x1a.resources.internet.DomainH\x00R\x06domain\x88\x01\x01\x12\x12\n" +
 	"\x04path\x18\x06 \x01(\tR\x04pathB\t\n" +
 	"\a_domainBOZMgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/internet;internetb\x06proto3"
