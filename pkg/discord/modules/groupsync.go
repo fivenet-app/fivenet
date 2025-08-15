@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math"
 	"math/big"
 	"slices"
 	"strconv"
@@ -80,6 +81,15 @@ func (g *GroupSync) planRoles() []*discordtypes.Role {
 
 		n := new(big.Int)
 		n.SetString(color, 16)
+		if !n.IsInt64() || n.Int64() > math.MaxInt32 || n.Int64() < math.MinInt32 {
+			g.logger.Warn(
+				"role color value out of int32 range",
+				zap.String("role", dcRole.RoleName),
+				zap.String("color", color),
+			)
+			continue
+		}
+		//nolint:gosec // We ensure the value is within int32 range above.
 		colorDec := int32(n.Int64())
 		dcColor := discord.Color(colorDec)
 
@@ -90,6 +100,7 @@ func (g *GroupSync) planRoles() []*discordtypes.Role {
 			Module: "GroupSync",
 		}
 		if dcRole.Permissions != nil {
+			//nolint:gosec // Permissions are expected to be a valid Discord permissions value, if not at latest the Discord API will complain.
 			ps := discord.Permissions(*dcRole.Permissions)
 			r.Permissions = &ps
 		}

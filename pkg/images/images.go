@@ -5,6 +5,7 @@ import (
 	"errors"
 	"image"
 	"io"
+	"math"
 	"strings"
 
 	"golang.org/x/image/draw"
@@ -19,9 +20,10 @@ const (
 )
 
 var (
-	ErrUnsupportedImageType = errors.New("unsupported image type")
-	ErrZeroDimensions       = errors.New("image has zero dimensions")
-	ErrZeroResize           = errors.New("resize height and width are both zero")
+	ErrUnsupportedImageType  = errors.New("unsupported image type")
+	ErrZeroDimensions        = errors.New("image has zero dimensions")
+	ErrZeroResize            = errors.New("resize height and width are both zero")
+	ErrDimensionsOutOfBounds = errors.New("image dimensions exceed uint size")
 )
 
 // ImageType defines an interface for image encoding and decoding.
@@ -76,6 +78,11 @@ func resizeImageIfNecessary(src image.Image, height uint, width uint) (*image.RG
 		return nil, ErrZeroDimensions
 	}
 
+	// Make sure the dimensions are within the bounds of uint
+	if src.Bounds().Dx() > math.MaxInt || src.Bounds().Dy() > math.MaxInt {
+		return nil, ErrDimensionsOutOfBounds
+	}
+
 	if width == 0 && height == 0 {
 		return nil, ErrZeroResize
 	}
@@ -93,12 +100,18 @@ func resizeImageIfNecessary(src image.Image, height uint, width uint) (*image.RG
 		height = uint(0.7 + float64(src.Bounds().Dy())/scaleY)
 	}
 
+	// Ensure the width and height are within bounds of int for the RGBA image creation.
+	if width > math.MaxInt || height > math.MaxInt {
+		return nil, ErrDimensionsOutOfBounds
+	}
+
 	// Nothing to do, return src image
 	if width == uint(src.Bounds().Dx()) && height == uint(src.Bounds().Dy()) {
 		return nil, nil
 	}
 
 	// Create the destination image with the expected size we want
+	//nolint:gosec // Above width and height are checked to be within bounds of int.
 	dst := image.NewRGBA(image.Rect(0, 0, int(width), int(height)))
 
 	// Resize image go's draw builtin bilinear interpolator

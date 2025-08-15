@@ -105,6 +105,7 @@ func (w *grpcWebResponse) copyTrailersToPayload() {
 		0,
 		0,
 	} // MSB=1 indicates this is a trailer data frame.
+	//nolint:gosec // G115: GRPC server's limits should protect us from int/uint overflow issues.
 	binary.BigEndian.PutUint32(trailerGrpcDataHeader[1:5], uint32(trailerBuffer.Len()))
 	w.wrapped.Write(trailerGrpcDataHeader)
 	w.wrapped.Write(trailerBuffer.Bytes())

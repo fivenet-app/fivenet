@@ -426,6 +426,8 @@ func (s *Server) sendMarkerMarkers(
 		return false, nil
 	}
 
+	//nolint:gosec // If the total parts to send is bigger than int32 max, panic here is fine.
+	// Why? Because with that many markers you can't see anything on the map anymore anyways (not to mention the load times).
 	totalParts := int32(len(updatedMarkers) / markerMarkerChunkSize)
 	currentPart := totalParts
 	for markerMarkerChunkSize < len(updatedMarkers) {

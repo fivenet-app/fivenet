@@ -5,13 +5,17 @@ import (
 	"encoding/binary"
 	"errors"
 	"io"
+	"math"
 	"net/http"
 	"strings"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/grpcws"
 )
 
-var ErrClient = errors.New("grpc client error")
+var (
+	ErrClient     = errors.New("grpc client error")
+	ErrDataLength = errors.New("data length exceeds maximum uint32 value")
+)
 
 type GrpcStream struct {
 	id                uint32
@@ -136,11 +140,15 @@ func (stream *GrpcStream) Write(data []byte) (int, error) {
 		stream.writeBuffer = data[5:]
 		return len(data), nil
 	} else {
-		stream.bytesToWrite -= uint32(len(data))
+		dataLen := len(data)
+		if dataLen < 0 || dataLen > math.MaxUint32 {
+			return 0, ErrDataLength
+		}
+		stream.bytesToWrite -= uint32(dataLen)
 		stream.writeBuffer = append(stream.writeBuffer, data...)
 
 		if stream.bytesToWrite != 0 {
-			return len(data), nil
+			return dataLen, nil
 		}
 
 		err := stream.channel.write(&grpcws.GrpcFrame{
@@ -152,7 +160,7 @@ func (stream *GrpcStream) Write(data []byte) (int, error) {
 			},
 		})
 		stream.writeBuffer = nil
-		return len(data), err
+		return dataLen, err
 	}
 }
 
@@ -176,7 +184,8 @@ func (stream *GrpcStream) WriteHeader(statusCode int) {
 					Header: &grpcws.Header{
 						Operation: "",
 						Headers:   headerResponse,
-						Status:    int32(statusCode),
+						//nolint:gosec // The statusCode is checked to be a valid HTTP status code so it can be safely to cast to int32
+						Status: int32(statusCode),
 					},
 				},
 			})

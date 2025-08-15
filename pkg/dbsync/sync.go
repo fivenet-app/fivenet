@@ -196,13 +196,16 @@ func (s *Sync) stop() error {
 
 	s.wg.Wait()
 
-	s.cli.Close()
-
-	if err := s.state.Save(); err != nil {
-		return err
+	var errs error
+	if err := s.cli.Close(); err != nil {
+		errs = multierr.Append(errs, fmt.Errorf("failed to close gRPC client. %w", err))
 	}
 
-	return nil
+	if err := s.state.Save(); err != nil {
+		errs = multierr.Append(errs, fmt.Errorf("failed to save state. %w", err))
+	}
+
+	return errs
 }
 
 func (s *Sync) restart() error {
