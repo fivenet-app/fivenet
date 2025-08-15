@@ -2,6 +2,7 @@ package centrum
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"slices"
 	"time"
@@ -21,11 +22,8 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
-	jsoniter "github.com/json-iterator/go"
 	"github.com/nats-io/nats.go/jetstream"
 )
-
-var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 var (
 	tDispatch        = table.FivenetCentrumDispatches.AS("dispatch")

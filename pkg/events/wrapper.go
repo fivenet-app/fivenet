@@ -17,7 +17,7 @@ import (
 
 const DescriptionPrefix = "FiveNet: "
 
-// Ensures certain NATS config options are applied.
+// JSWrapper ensures that when creating/updating NATS streams, KVs, etc., we apply some (globally) configurable config options.
 type JSWrapper struct {
 	jetstream.JetStream
 

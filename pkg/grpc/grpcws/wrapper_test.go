@@ -1,5 +1,7 @@
 // Copyright 2017 Improbable. All Rights Reserved.
 // See LICENSE for licensing terms.
+//
+//nolint:canonicalheader // The headers are not canonicalized in the trailers, etc.
 package grpcws_test
 
 import (

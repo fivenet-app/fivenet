@@ -2,6 +2,7 @@ package perms
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"slices"

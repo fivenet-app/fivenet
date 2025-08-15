@@ -87,9 +87,9 @@ func (stream *GrpcStream) Read(p []byte) (int, error) {
 }
 
 func (stream *GrpcStream) Close() error {
-	if st, ok := stream.responseHeaders["grpc-status"]; ok && (len(st) == 0 || st[0] != "0") {
+	if st, ok := stream.responseHeaders["Grpc-Status"]; ok && (len(st) == 0 || st[0] != "0") {
 		statusCode := st[0]
-		statusMessage, ok := stream.responseHeaders["grpc-message"]
+		statusMessage, ok := stream.responseHeaders["Grpc-Message"]
 		if !ok {
 			statusMessage = []string{"Unknown"}
 		}

@@ -17,8 +17,8 @@ import (
 	"go.uber.org/zap"
 )
 
-// Default `defaultAsyncPubAckInflight` is `4000` (`nats.go`).
-const DefaultDefaultAsyncPubAckInflight = 256
+// DefaultDefaultAsyncPubAckInflight override value for the default `defaultAsyncPubAckInflight` is `4000` (`nats.go`).
+const DefaultDefaultAsyncPubAckInflight = 512
 
 var Module = fx.Module("events",
 	fx.Provide(
@@ -58,6 +58,7 @@ type Result struct {
 	Req *reqs.NatsReqs
 }
 
+// New creates a new NATS connection and JetStream context.
 func New(p Params) (Result, error) {
 	logger := p.Logger.Named("events")
 

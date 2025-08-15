@@ -29,7 +29,7 @@ func SplitSubject(subject string) (string, events.Topic, events.Type) {
 	return split[1], events.Topic(split[2]), events.Type(split[3])
 }
 
-// Structure: "BASE_SUJBECT.JOB.TOPIC.TYPE.ID".
+// BuildSubject creates a subject of structure: "BASE_SUBJECT.JOB.TOPIC.TYPE.ID".
 func BuildSubject(topic events.Topic, tType events.Type, job string) string {
 	return fmt.Sprintf("%s.%s.%s.%s", BaseSubject, job, topic, tType)
 }

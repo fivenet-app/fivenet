@@ -13,7 +13,9 @@ import (
 	"github.com/nats-io/nats.go/jetstream"
 )
 
-// Based on a-h "Adrian Hesketh" code from <https://github.com/nats-io/nats.go/issues/467#issuecomment-1771424369>
+// NewInProcessNATSServer based on a-h "Adrian Hesketh" code from <https://github.com/nats-io/nats.go/issues/467#issuecomment-1771424369>
+// Used to create an in-process NATS server for testing purposes.
+// It returns a connection to the server, a JetStream client, a cleanup function to call after tests, and an error if any.
 func NewInProcessNATSServer() (*nats.Conn, *events.JSWrapper, func() error, error) {
 	tmp, err := os.MkdirTemp("", "nats_test")
 	if err != nil {
@@ -40,7 +42,7 @@ func NewInProcessNATSServer() (*nats.Conn, *events.JSWrapper, func() error, erro
 		return nil
 	}
 
-	if !server.ReadyForConnections(time.Second * 5) {
+	if !server.ReadyForConnections(5 * time.Second) {
 		err = errors.New("failed to start server after 5 seconds")
 		return nil, nil, nil, err
 	}

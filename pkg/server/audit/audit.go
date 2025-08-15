@@ -3,6 +3,7 @@ package audit
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"strings"
 	"sync"
 
@@ -10,7 +11,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jsoniter "github.com/json-iterator/go"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -19,9 +19,6 @@ import (
 
 // tAudit is a reference to the audit log table in the database.
 var tAudit = table.FivenetAuditLog
-
-// json is the configured JSON encoder/decoder for fast serialization.
-var json = jsoniter.ConfigFastest
 
 // Default values for audit system.
 const (
@@ -206,10 +203,11 @@ func (a *AuditStorer) toJson(data any) *string {
 		return &noData
 	}
 
-	out, err := json.MarshalToString(data)
+	outB, err := json.Marshal(data)
 	if err != nil {
 		errStr := "Failed to marshal data"
 		return &errStr
 	}
+	out := string(outB)
 	return &out
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"embed"
+	"encoding/json"
 	"fmt"
 
 	"github.com/XSAM/otelsql"
@@ -13,7 +14,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/reqs"
 	"github.com/go-jet/jet/v2/qrm"
 	_ "github.com/go-sql-driver/mysql"
-	jsoniter "github.com/json-iterator/go"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/collectors"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
@@ -67,8 +67,8 @@ type Result struct {
 func SetupDB(p Params) (Result, error) {
 	res := Result{}
 
-	// Use jsoniter as a replacement for std json lib for jet qrm (in case it is used)
-	qrm.GlobalConfig.JsonUnmarshalFunc = jsoniter.ConfigCompatibleWithStandardLibrary.Unmarshal
+	// "Override" Jet QRM's global JSON unmarshal function so changing to, e.g., encoding/json/v2, will be seamless.
+	qrm.GlobalConfig.JsonUnmarshalFunc = json.Unmarshal
 
 	var req *reqs.DBReqs
 	// Run DB migrations unless explicitly skipped via environment variable.

@@ -28,7 +28,7 @@ type userSnapshot struct {
 	JobGrade int32
 }
 
-// Poller.
+// Poller is responsible for polling user information via the Retriever.
 type Poller struct {
 	ctx context.Context
 

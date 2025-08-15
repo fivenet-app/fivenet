@@ -5,11 +5,8 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	jsoniter "github.com/json-iterator/go"
 	"golang.org/x/oauth2"
 )
-
-var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 type IProvider interface {
 	SetOauthConfig(cfg *oauth2.Config)

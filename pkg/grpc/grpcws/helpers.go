@@ -53,7 +53,7 @@ func getGRPCEndpoint(req *http.Request) string {
 	return endpoint
 }
 
-// IsGrpcWebSocketRequest determines if a request is a gRPC-Web request by checking that the "Upgrade" header is set and
+// IsGrpcWebSocketChannelRequest determines if a request is a gRPC-Web request by checking that the "Upgrade" header is set and
 // "Sec-Websocket-Protocol" header value is "grpc-websocket-channel" and that the "root" path is requested.
 func IsGrpcWebSocketChannelRequest(req *http.Request) bool {
 	if strings.ToLower(req.Header.Get("Upgrade")) != "websocket" {

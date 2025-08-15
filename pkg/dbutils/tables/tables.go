@@ -16,7 +16,7 @@ var once sync.Once
 
 var esxCompatEnabled = false
 
-// Called to enable ESX compat mode, overrides the `fivenet_` prefixed tables with the ESX names.
+// EnableESXCompat called to enable ESX compat mode, overrides the `fivenet_` prefixed tables with the ESX names.
 func EnableESXCompat() {
 	once.Do(setESXTableNames)
 }

@@ -4,6 +4,7 @@
 package i18n
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"regexp"
@@ -19,7 +20,7 @@ type I18n struct {
 	translations map[string]map[string]any
 }
 
-// Returns the available languages as a string slice.
+// Langs returns the available languages as a string slice.
 func (i *I18n) Langs() []string {
 	return i.availableLangs
 }
@@ -28,7 +29,7 @@ func (i *I18n) Langs() []string {
 func (i *I18n) LoadFromJSON(lang string, data []byte) error {
 	var raw map[string]any
 	if err := json.Unmarshal(data, &raw); err != nil {
-		return err
+		return fmt.Errorf("failed to unmarshal JSON for language %s. %w", lang, err)
 	}
 
 	if i.translations == nil {

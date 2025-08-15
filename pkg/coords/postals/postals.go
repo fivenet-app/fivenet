@@ -1,17 +1,14 @@
 package postals
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/coords"
-	jsoniter "github.com/json-iterator/go"
 )
-
-// json is a jsoniter instance configured to be compatible with the standard library.
-var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 // Postals is a type alias for a read-only coordinate store of Postal pointers.
 type Postals = *coords.CoordsRO[*Postal]

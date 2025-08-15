@@ -23,40 +23,40 @@ func TestAuthFromMD(t *testing.T) {
 		msg     string
 	}{
 		{
-			md:    grpcMetadata.Pairs("authorization", "bearer some_token"),
+			md:    grpcMetadata.Pairs("Authorization", "bearer some_token"),
 			value: "some_token",
 			msg:   "must extract simple bearer tokens without case checking",
 		},
 		{
-			md:    grpcMetadata.Pairs("authorization", "Bearer some_token"),
+			md:    grpcMetadata.Pairs("Authorization", "Bearer some_token"),
 			value: "some_token",
 			msg:   "must extract simple bearer tokens with case checking",
 		},
 		{
-			md:    grpcMetadata.Pairs("authorization", "Bearer some multi string bearer"),
+			md:    grpcMetadata.Pairs("Authorization", "Bearer some multi string bearer"),
 			value: "some multi string bearer",
 			msg:   "must handle string based bearers",
 		},
 		{
-			md:      grpcMetadata.Pairs("authorization", "Basic login:passwd"),
+			md:      grpcMetadata.Pairs("Authorization", "Basic login:passwd"),
 			value:   "",
 			errCode: codes.Unauthenticated,
 			msg:     "must check authentication type",
 		},
 		{
-			md:      grpcMetadata.Pairs("authorization", "Basic login:passwd", "authorization", "bearer some_token"),
+			md:      grpcMetadata.Pairs("Authorization", "Basic login:passwd", "Authorization", "bearer some_token"),
 			value:   "",
 			errCode: codes.Unauthenticated,
 			msg:     "must not allow multiple authentication methods",
 		},
 		{
-			md:      grpcMetadata.Pairs("authorization", ""),
+			md:      grpcMetadata.Pairs("Authorization", ""),
 			value:   "",
 			errCode: codes.Unauthenticated,
 			msg:     "authorization string must not be empty",
 		},
 		{
-			md:      grpcMetadata.Pairs("authorization", "Bearer"),
+			md:      grpcMetadata.Pairs("Authorization", "Bearer"),
 			value:   "",
 			errCode: codes.Unauthenticated,
 			msg:     "bearer token must not be empty",

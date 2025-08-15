@@ -38,7 +38,6 @@ require (
 	github.com/h2non/filetype v1.1.3
 	github.com/improbable-eng/grpc-web v0.15.0
 	github.com/jinzhu/now v1.1.5
-	github.com/json-iterator/go v1.1.12
 	github.com/kardianos/service v1.2.4
 	github.com/maruel/natural v1.1.1
 	github.com/microcosm-cc/bluemonday v1.0.27
@@ -172,6 +171,7 @@ require (
 	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
 	github.com/jackc/pgtype v1.14.4 // indirect
+	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/compress v1.18.0 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.11 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect

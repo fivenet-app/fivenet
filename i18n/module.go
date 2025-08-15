@@ -6,12 +6,12 @@ import (
 	"io/fs"
 	"strings"
 
-	jsoniter "github.com/json-iterator/go"
 	"go.uber.org/fx"
 )
 
-var json = jsoniter.ConfigCompatibleWithStandardLibrary
+const defaultLanguage = "en"
 
+// Module is the fx module for the i18n handler.
 var Module = fx.Module("lang",
 	fx.Provide(New),
 )
@@ -19,15 +19,13 @@ var Module = fx.Module("lang",
 //go:embed locales/*.json
 var langFS embed.FS
 
-const defaultLanguage = "en"
-
 func New() (*I18n, error) {
 	i := &I18n{}
 	i.SetFallbackLanguage(defaultLanguage)
 
 	if err := fs.WalkDir(langFS, "locales", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to walk locales dir. %w", err)
 		}
 
 		if d.IsDir() || !d.Type().IsRegular() {

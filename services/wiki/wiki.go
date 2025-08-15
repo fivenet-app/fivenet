@@ -211,9 +211,12 @@ func (s *Server) GetPage(
 
 	page, err := s.getPage(ctx, req.GetId(), true, true, userInfo)
 	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, errorswiki.ErrPageNotFound
+		}
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
-	if page == nil || page.GetId() <= 0 || page.GetMeta() == nil {
+	if page.GetId() <= 0 || page.GetMeta() == nil {
 		return nil, errorswiki.ErrPageNotFound
 	}
 
@@ -331,13 +334,7 @@ func (s *Server) getPage(
 
 	dest := &wiki.Page{}
 	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	if dest.GetId() == 0 {
-		return nil, nil
+		return nil, err
 	}
 
 	s.enricher.EnrichJobName(dest)
@@ -410,6 +407,9 @@ func (s *Server) CreatePage(
 
 		p, err := s.getPage(ctx, req.GetParentId(), false, false, nil)
 		if err != nil {
+			if errors.Is(err, qrm.ErrNoRows) {
+				return nil, errorswiki.ErrPageNotFound
+			}
 			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 		}
 
@@ -583,6 +583,9 @@ func (s *Server) UpdatePage(
 	} else {
 		p, err := s.getPage(ctx, req.GetPage().GetParentId(), false, false, nil)
 		if err != nil {
+			if errors.Is(err, qrm.ErrNoRows) {
+				return nil, errorswiki.ErrPageNotFound
+			}
 			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 		}
 
@@ -611,6 +614,9 @@ func (s *Server) UpdatePage(
 
 	oldPage, err := s.getPage(ctx, req.GetPage().GetId(), true, true, userInfo)
 	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, errorswiki.ErrPageNotFound
+		}
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
@@ -754,6 +760,9 @@ func (s *Server) UpdatePage(
 
 	page, err := s.getPage(ctx, req.GetPage().GetId(), true, true, userInfo)
 	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, errorswiki.ErrPageNotFound
+		}
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
@@ -858,6 +867,9 @@ func (s *Server) DeletePage(
 
 	page, err := s.getPage(ctx, req.GetId(), false, false, userInfo)
 	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, errorswiki.ErrPageNotFound
+		}
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 

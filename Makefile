@@ -76,7 +76,6 @@ build-go:
 		-a \
 		-installsuffix cgo \
 		-ldflags "-X github.com/fivenet-app/fivenet/v2025/pkg/version.Version=$(shell git describe --tags --exclude='fivenet-*')" \
-		-tags=jsoniter \
 		-o fivenet \
 		.
 

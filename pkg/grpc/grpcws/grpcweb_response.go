@@ -115,7 +115,7 @@ func extractTrailingHeaders(src http.Header, flushed http.Header) http.Header {
 	th := make(http.Header)
 	copyHeader(
 		th, src,
-		skipKeys(append([]string{"trailer"}, headerKeys(flushed)...)...),
+		skipKeys(append([]string{"Trailer"}, headerKeys(flushed)...)...),
 		replaceInKeys(http2.TrailerPrefix, ""),
 		// gRPC-Web spec says that must use lower-case header/trailer names. See
 		// "HTTP wire protocols" section in

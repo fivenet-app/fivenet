@@ -42,19 +42,19 @@ func TestGRPCAuthFunc(t *testing.T) {
 		msg       string
 	}{
 		{
-			md:        metadata.Pairs("authorization", ""),
+			md:        metadata.Pairs("Authorization", ""),
 			outputNil: true,
 			errCode:   codes.Unauthenticated,
 			msg:       "authorization string must not be empty",
 		},
 		{
-			md:        metadata.Pairs("authorization", "invalid-jwt-token"),
+			md:        metadata.Pairs("Authorization", "invalid-jwt-token"),
 			outputNil: true,
 			errCode:   codes.Unauthenticated,
 			msg:       "invalid auth token: ",
 		},
 		{
-			md:        metadata.Pairs("authorization", "Bearer "+token),
+			md:        metadata.Pairs("Authorization", "Bearer "+token),
 			outputNil: false,
 			errCode:   codes.OK,
 			msg:       "valid token",

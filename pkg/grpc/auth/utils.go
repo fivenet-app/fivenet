@@ -45,8 +45,8 @@ func GetTokenFromGRPCContext(ctx context.Context) (string, error) {
 }
 
 func SetTokenInGRPCContext(ctx context.Context, token string) context.Context {
-	md := metadata.ExtractIncoming(ctx).Clone("authorization")
-	return md.Set("authorization", "bearer "+token).ToIncoming(ctx)
+	md := metadata.ExtractIncoming(ctx).Clone("Authorization")
+	return md.Set("Authorization", "bearer "+token).ToIncoming(ctx)
 }
 
 func GetUserInfoFromContext(ctx context.Context) (*pbuserinfo.UserInfo, bool) {

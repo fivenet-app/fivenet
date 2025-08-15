@@ -2,14 +2,12 @@ package centrum
 
 import (
 	"database/sql/driver"
+	"encoding/json"
 	"slices"
 	"time"
 
-	jsoniter "github.com/json-iterator/go"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
-
-var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 func (x *Settings) Default(job string) {
 	x.Job = job
@@ -134,7 +132,11 @@ func (x *JobList) Value() (driver.Value, error) {
 		return nil, nil
 	}
 
-	return json.MarshalToString(x.GetJobStrings())
+	out, err := json.Marshal(x.GetJobStrings())
+	if err != nil {
+		return nil, err
+	}
+	return string(out), nil
 }
 
 func (x *JobList) IsEmpty() bool {

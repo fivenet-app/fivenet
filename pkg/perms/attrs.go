@@ -13,7 +13,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	jsoniter "github.com/json-iterator/go"
 	"github.com/pkg/errors"
 	"github.com/puzpuzpuz/xsync/v4"
 	"go.uber.org/zap"
@@ -24,8 +23,6 @@ import (
 type Key string
 
 var ErrAttrInvalid = errors.New("invalid attributes")
-
-var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 var (
 	tAttrs     = table.FivenetRbacAttrs

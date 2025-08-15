@@ -77,7 +77,7 @@ func (s *assertingPingService) PingList(
 }
 
 func ctxWithToken(ctx context.Context, scheme string, token string) context.Context {
-	md := grpcMetadata.Pairs("authorization", fmt.Sprintf("%s %v", scheme, token))
+	md := grpcMetadata.Pairs("Authorization", fmt.Sprintf("%s %v", scheme, token))
 	return metadata.MD(md).ToOutgoing(ctx)
 }
 

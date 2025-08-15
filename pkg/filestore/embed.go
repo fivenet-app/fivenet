@@ -34,7 +34,7 @@ type ParentColBoolExpFn[P ParentID] func(parentId P) jet.BoolExpression
 // JoinRowInserterFn is a function type for inserting a join row into a table linking parent and file.
 type JoinRowInserterFn[P ParentID] func(ctx context.Context, tx *sql.Tx, join jet.Table, parentCol jet.Column, fileCol jet.ColumnInteger, parentId P, _ jet.BoolExpression, fileID uint64) error
 
-// Generic, embeddable file-upload helper.
+// Handler is a generic, embeddable file-upload helper.
 type Handler[P ParentID] struct {
 	// store is the storage adapter (e.g. S3, filesystem).
 	store storage.IStorage
