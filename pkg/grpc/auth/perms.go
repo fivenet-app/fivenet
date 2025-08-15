@@ -25,36 +25,40 @@ func (g *GRPCPerm) GRPCPermissionUnaryFunc(
 	info *grpc.UnaryServerInfo,
 ) (context.Context, error) {
 	// Check if the method is from a service otherwise the request must be invalid
-	if strings.HasPrefix(info.FullMethod, "/services.") {
-		userInfo, ok := FromContext(ctx)
-		if ok {
-			perm, found := strings.CutPrefix(info.FullMethod, "/services.")
-			if !found {
-				return nil, errorsgrpcauth.ErrPermissionDenied
-			}
+	if !strings.HasPrefix(info.FullMethod, "/services.") {
+		return nil, errorsgrpcauth.ErrPermissionDenied
+	}
 
-			if overrideSrv, ok := info.Server.(grpc_permission.GetPermsRemapFunc); ok {
-				remap := overrideSrv.GetPermsRemap()
-				if _, ok := remap[perm]; ok {
-					perm = remap[perm]
-				}
-			}
+	userInfo, ok := FromContext(ctx)
+	if !ok {
+		return nil, errorsgrpcauth.ErrPermissionDenied
+	}
 
-			if perm == PermSuperuser.GetName() && userInfo.GetSuperuser() {
-				return ctx, nil
-			} else if perm == PermAny {
-				return ctx, nil
-			}
+	perm, found := strings.CutPrefix(info.FullMethod, "/services.")
+	if !found {
+		return nil, errorsgrpcauth.ErrPermissionDenied
+	}
 
-			permSplit := strings.Split(perm, "/")
-			if len(permSplit) > 1 {
-				category := perms.Category(permSplit[0])
-				name := perms.Name(permSplit[1])
+	if overrideSrv, ok := info.Server.(grpc_permission.GetPermsRemapFunc); ok {
+		remap := overrideSrv.GetPermsRemap()
+		if _, ok := remap[perm]; ok {
+			perm = remap[perm]
+		}
+	}
 
-				if g.p.Can(userInfo, category, name) {
-					return ctx, nil
-				}
-			}
+	if perm == PermSuperuser.GetName() && userInfo.GetSuperuser() {
+		return ctx, nil
+	} else if perm == PermAny {
+		return ctx, nil
+	}
+
+	permSplit := strings.Split(perm, "/")
+	if len(permSplit) > 1 {
+		category := perms.Category(permSplit[0])
+		name := perms.Name(permSplit[1])
+
+		if g.p.Can(userInfo, category, name) {
+			return ctx, nil
 		}
 	}
 
@@ -72,33 +76,35 @@ func (g *GRPCPerm) GRPCPermissionStreamFunc(
 	}
 
 	userInfo, ok := FromContext(ctx)
-	if ok {
-		perm, found := strings.CutPrefix(info.FullMethod, "/services.")
-		if !found {
-			return nil, errorsgrpcauth.ErrPermissionDenied
-		}
+	if !ok {
+		return nil, errorsgrpcauth.ErrPermissionDenied
+	}
 
-		if overrideSrv, ok := srv.(grpc_permission.GetPermsRemapFunc); ok {
-			remap := overrideSrv.GetPermsRemap()
-			if _, ok := remap[perm]; ok {
-				perm = remap[perm]
-			}
-		}
+	perm, found := strings.CutPrefix(info.FullMethod, "/services.")
+	if !found {
+		return nil, errorsgrpcauth.ErrPermissionDenied
+	}
 
-		if perm == PermSuperuser.GetName() && userInfo.GetSuperuser() {
+	if overrideSrv, ok := srv.(grpc_permission.GetPermsRemapFunc); ok {
+		remap := overrideSrv.GetPermsRemap()
+		if _, ok := remap[perm]; ok {
+			perm = remap[perm]
+		}
+	}
+
+	if perm == PermSuperuser.GetName() && userInfo.GetSuperuser() {
+		return ctx, nil
+	} else if perm == PermAny {
+		return ctx, nil
+	}
+
+	permSplit := strings.Split(perm, "/")
+	if len(permSplit) > 1 {
+		category := perms.Category(permSplit[0])
+		name := perms.Name(permSplit[1])
+
+		if g.p.Can(userInfo, category, name) {
 			return ctx, nil
-		} else if perm == PermAny {
-			return ctx, nil
-		}
-
-		permSplit := strings.Split(perm, "/")
-		if len(permSplit) > 1 {
-			category := perms.Category(permSplit[0])
-			name := perms.Name(permSplit[1])
-
-			if g.p.Can(userInfo, category, name) {
-				return ctx, nil
-			}
 		}
 	}
 

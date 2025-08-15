@@ -209,11 +209,18 @@ func InterceptorLogger(l *zap.Logger) logging.Logger {
 			for i.Next() {
 				k, v := i.At()
 
+				// Fast path for common types
 				switch v := v.(type) {
 				case string:
 					f = append(f, zap.String(k, v))
 				case int:
 					f = append(f, zap.Int(k, v))
+				case int32:
+					f = append(f, zap.Int32(k, v))
+				case int64:
+					f = append(f, zap.Int64(k, v))
+				case uint64:
+					f = append(f, zap.Uint64(k, v))
 				case bool:
 					f = append(f, zap.Bool(k, v))
 				default:
