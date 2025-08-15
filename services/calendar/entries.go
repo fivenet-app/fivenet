@@ -51,7 +51,7 @@ func (s *Server) ListCalendarEntries(
 					FROM(tCalendarRSVP).
 					WHERE(jet.AND(
 						tCalendarRSVP.UserID.EQ(jet.Int32(userInfo.GetUserId())),
-						tCalendarRSVP.Response.GT(jet.Int16(int16(rsvpResponse))),
+						tCalendarRSVP.Response.GT(jet.Int32(int32(rsvpResponse))),
 					)),
 			),
 			tCalendarEntry.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
@@ -139,7 +139,7 @@ func (s *Server) GetUpcomingEntries(
 						tCalendarRSVP.UserID.EQ(jet.Int32(userInfo.GetUserId())),
 						// RSVP responses: Maybe and Yes
 						tCalendarRSVP.Response.GT(
-							jet.Int16(int16(calendar.RsvpResponses_RSVP_RESPONSES_NO)),
+							jet.Int32(int32(calendar.RsvpResponses_RSVP_RESPONSES_NO)),
 						),
 					)),
 			),

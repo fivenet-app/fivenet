@@ -252,7 +252,7 @@ func (r *Retriever) getUserInfo(
 		LIMIT(1)
 
 	if err := stmt.QueryContext(ctx, r.db, dest); err != nil {
-		return nil, errswrap.NewError(err, ErrAccountError)
+		return nil, err
 	}
 
 	return dest, nil

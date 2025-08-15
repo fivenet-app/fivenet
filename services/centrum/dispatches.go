@@ -64,7 +64,7 @@ func (s *Server) ListDispatches(
 	if len(req.GetStatus()) > 0 {
 		statuses := make([]jet.Expression, len(req.GetStatus()))
 		for i := range req.GetStatus() {
-			statuses[i] = jet.Int16(int16(*req.GetStatus()[i].Enum()))
+			statuses[i] = jet.Int32(int32(*req.GetStatus()[i].Enum()))
 		}
 
 		condition = condition.AND(tDispatchStatus.Status.IN(statuses...))
@@ -72,7 +72,7 @@ func (s *Server) ListDispatches(
 	if len(req.GetNotStatus()) > 0 {
 		statuses := make([]jet.Expression, len(req.GetNotStatus()))
 		for i := range req.GetNotStatus() {
-			statuses[i] = jet.Int16(int16(*req.GetNotStatus()[i].Enum()))
+			statuses[i] = jet.Int32(int32(*req.GetNotStatus()[i].Enum()))
 		}
 
 		condition = condition.AND(tDispatchStatus.Status.NOT_IN(statuses...))

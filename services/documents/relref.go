@@ -485,7 +485,7 @@ func (s *Server) addDocumentRelation(
 			FROM(tDocRel).
 			WHERE(jet.AND(
 				tDocRel.DocumentID.EQ(jet.Uint64(rel.GetDocumentId())),
-				tDocRel.Relation.EQ(jet.Int16(int16(rel.GetRelation()))),
+				tDocRel.Relation.EQ(jet.Int32(int32(rel.GetRelation()))),
 				tDocRel.TargetUserID.EQ(jet.Int32(rel.GetTargetUserId())),
 			)).
 			LIMIT(1)

@@ -51,7 +51,7 @@ func (s *Server) ListCalendarEntryRSVP(
 	tAvatar := table.FivenetFiles.AS("avatar")
 
 	condition := tCalendarRSVP.EntryID.EQ(jet.Uint64(entry.GetId())).
-		AND(tCalendarRSVP.Response.GT(jet.Int16(int16(calendar.RsvpResponses_RSVP_RESPONSES_HIDDEN))))
+		AND(tCalendarRSVP.Response.GT(jet.Int32(int32(calendar.RsvpResponses_RSVP_RESPONSES_HIDDEN))))
 
 	countStmt := tCalendarRSVP.
 		SELECT(
@@ -193,7 +193,7 @@ func (s *Server) RSVPCalendarEntry(
 			req.GetEntry().GetResponse(),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tCalendarRSVP.Response.SET(jet.Int16(int16(req.GetEntry().GetResponse()))),
+			tCalendarRSVP.Response.SET(jet.Int32(int32(req.GetEntry().GetResponse()))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

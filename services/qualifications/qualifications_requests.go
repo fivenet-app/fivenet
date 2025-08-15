@@ -45,7 +45,7 @@ func (s *Server) ListQualificationRequests(
 	tApprover := tUser.AS("approver")
 
 	condition := tQualiRequests.DeletedAt.IS_NULL().
-		AND(tQualiRequests.Status.NOT_EQ(jet.Int16(int16(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED))))
+		AND(tQualiRequests.Status.NOT_EQ(jet.Int32(int32(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED))))
 
 	if req.QualificationId != nil {
 		check, err := s.access.CanUserAccessTarget(
@@ -99,12 +99,12 @@ func (s *Server) ListQualificationRequests(
 	if len(req.GetStatus()) > 0 {
 		statuses := []jet.Expression{}
 		for i := range req.GetStatus() {
-			statuses = append(statuses, jet.Int16(int16(req.GetStatus()[i])))
+			statuses = append(statuses, jet.Int32(int32(req.GetStatus()[i])))
 		}
 
 		condition = condition.AND(tQualiRequests.Status.IN(statuses...))
 	} else {
-		condition = condition.AND(tQualiRequests.Status.NOT_EQ(jet.Int16(int16(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED))))
+		condition = condition.AND(tQualiRequests.Status.NOT_EQ(jet.Int32(int32(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED))))
 	}
 
 	countStmt := tQualiRequests.
@@ -396,7 +396,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 			ON_DUPLICATE_KEY_UPDATE(
 				tQualiRequests.DeletedAt.SET(jet.TimestampExp(jet.NULL)),
 				tQualiRequests.UserComment.SET(jet.StringExp(jet.Raw("VALUES(`user_comment`)"))),
-				tQualiRequests.Status.SET(jet.Int16(int16(qualifications.RequestStatus_REQUEST_STATUS_PENDING))),
+				tQualiRequests.Status.SET(jet.Int32(int32(qualifications.RequestStatus_REQUEST_STATUS_PENDING))),
 				tQualiRequests.ApprovedAt.SET(jet.DateTimeExp(jet.NULL)),
 				tQualiRequests.ApproverComment.SET(jet.StringExp(jet.NULL)),
 				tQualiRequests.ApproverID.SET(jet.IntExp(jet.NULL)),
@@ -609,7 +609,7 @@ func (s *Server) updateRequestStatus(
 			status,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tQualiRequests.Status.SET(jet.Int16(int16(status))),
+			tQualiRequests.Status.SET(jet.Int32(int32(status))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {

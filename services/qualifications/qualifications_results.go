@@ -108,7 +108,7 @@ func (s *Server) ListQualificationsResults(
 	if len(req.GetStatus()) > 0 {
 		statuses := []jet.Expression{}
 		for i := range req.GetStatus() {
-			statuses = append(statuses, jet.Int16(int16(req.GetStatus()[i])))
+			statuses = append(statuses, jet.Int32(int32(req.GetStatus()[i])))
 		}
 
 		condition = condition.AND(tQualiResults.Status.IN(statuses...))
@@ -326,7 +326,7 @@ func (s *Server) createOrUpdateQualificationResult(
 	summary string,
 	grading *qualifications.ExamGrading,
 ) (uint64, error) {
-	result, err := s.getQualificationResult(
+	currentResult, err := s.getQualificationResult(
 		ctx,
 		qualificationId,
 		resultId,
@@ -352,7 +352,7 @@ func (s *Server) createOrUpdateQualificationResult(
 	tQualiResults := table.FivenetQualificationsResults
 	// There is currently no result with status successful
 	if resultId <= 0 &&
-		(result == nil || (result.GetStatus() != qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL && status != qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)) {
+		(currentResult == nil || (currentResult.GetStatus() != qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL && status != qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)) {
 		var creatorId jet.Expression
 		if userInfo.GetUserId() <= 0 {
 			creatorId = jet.NULL
@@ -469,7 +469,7 @@ func (s *Server) createOrUpdateQualificationResult(
 
 	// Only send notification when the original result had no score and wasn't in pending status
 	if status != qualifications.ResultStatus_RESULT_STATUS_PENDING &&
-		(result == nil || (result.GetStatus() == qualifications.ResultStatus_RESULT_STATUS_PENDING || (result.Score == nil && score != nil))) {
+		(currentResult == nil || (currentResult.GetStatus() == qualifications.ResultStatus_RESULT_STATUS_PENDING || (currentResult.Score == nil && score != nil))) {
 		if err := s.notif.NotifyUser(ctx, &notifications.Notification{
 			UserId: userId,
 			Title: &common.I18NItem{
@@ -521,7 +521,7 @@ func (s *Server) getQualificationResult(
 	if len(status) > 0 {
 		statusConds := make([]jet.Expression, len(status))
 		for i := range status {
-			statusConds[i] = jet.Int16(int16(status[i]))
+			statusConds[i] = jet.Int32(int32(status[i]))
 		}
 
 		condition = condition.AND(tQualiResults.Status.IN(statusConds...))

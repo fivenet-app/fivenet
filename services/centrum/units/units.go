@@ -1041,8 +1041,8 @@ func (s *UnitDB) GetLastStatus(
 		WHERE(jet.AND(
 			tUnitStatus.UnitID.EQ(jet.Uint64(unitId)),
 			tUnitStatus.Status.NOT_IN(
-				jet.Int16(int16(centrum.StatusUnit_STATUS_UNIT_USER_ADDED)),
-				jet.Int16(int16(centrum.StatusUnit_STATUS_UNIT_USER_REMOVED)),
+				jet.Int32(int32(centrum.StatusUnit_STATUS_UNIT_USER_ADDED)),
+				jet.Int32(int32(centrum.StatusUnit_STATUS_UNIT_USER_REMOVED)),
 			),
 		)).
 		ORDER_BY(tUnitStatus.ID.DESC()).

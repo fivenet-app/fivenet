@@ -346,10 +346,10 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond jet.BoolExpression) (i
 			).
 				// Don't load archived dispatches into cache
 				AND(tDispatchStatus.Status.NOT_IN(
-					jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED)),
-					jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED)),
-					jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
-					jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_DELETED)),
+					jet.Int32(int32(centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED)),
+					jet.Int32(int32(centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED)),
+					jet.Int32(int32(centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
+					jet.Int32(int32(centrum.StatusDispatch_STATUS_DISPATCH_DELETED)),
 				)),
 		),
 	)

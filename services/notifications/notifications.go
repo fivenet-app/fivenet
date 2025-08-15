@@ -48,7 +48,7 @@ func (s *Server) GetNotifications(
 	if len(req.GetCategories()) > 0 {
 		categoryIds := make([]jet.Expression, len(req.GetCategories()))
 		for i := range req.GetCategories() {
-			categoryIds[i] = jet.Int16(int16(req.GetCategories()[i]))
+			categoryIds[i] = jet.Int32(int32(req.GetCategories()[i]))
 		}
 
 		condition = condition.AND(tNotifications.Category.IN(categoryIds...))

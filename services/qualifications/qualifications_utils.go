@@ -288,7 +288,7 @@ func (s *Server) getQualificationQuery(
 				tQualiRequests.QualificationID.EQ(tQuali.ID).
 					AND(tQualiRequests.DeletedAt.IS_NULL()).
 					AND(tQualiRequests.UserID.EQ(jet.Int32(userInfo.GetUserId()))).
-					AND(tQualiRequests.Status.NOT_EQ(jet.Int16(int16(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED)))),
+					AND(tQualiRequests.Status.NOT_EQ(jet.Int32(int32(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED)))),
 			)
 	} else {
 		tables = tQuali.
@@ -304,7 +304,7 @@ func (s *Server) getQualificationQuery(
 				tQualiRequests.QualificationID.EQ(tQuali.ID).
 					AND(tQualiRequests.DeletedAt.IS_NULL()).
 					AND(tQualiRequests.UserID.EQ(jet.Int32(userInfo.GetUserId()))).
-					AND(tQualiRequests.Status.NOT_EQ(jet.Int16(int16(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED)))),
+					AND(tQualiRequests.Status.NOT_EQ(jet.Int32(int32(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED)))),
 			)
 	}
 
@@ -467,7 +467,7 @@ func (s *Server) checkRequirementsMetForQualification(
 				tQualiResults.QualificationID.EQ(tQReqs.TargetQualificationID).
 					AND(tQualiResults.DeletedAt.IS_NULL()).
 					AND(tQualiResults.UserID.EQ(jet.Int32(userId))).
-					AND(tQualiResults.Status.EQ(jet.Int16(int16(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)))),
+					AND(tQualiResults.Status.EQ(jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)))),
 			),
 		).
 		WHERE(

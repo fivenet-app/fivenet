@@ -158,6 +158,10 @@ func (stream *GrpcStream) Write(data []byte) (int, error) {
 
 func (stream *GrpcStream) WriteHeader(statusCode int) {
 	if !stream.hasWrittenHeaders {
+		if statusCode < 100 || statusCode > 599 {
+			return // Invalid status code, do not write headers, just return
+		}
+
 		headerResponse := make(map[string]*grpcws.HeaderValue)
 		for key, element := range stream.responseHeaders {
 			headerResponse[key] = &grpcws.HeaderValue{

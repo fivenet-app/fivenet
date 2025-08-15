@@ -201,7 +201,7 @@ func (s *Server) CreateDocumentReq(
 
 	request, err := s.getDocumentReq(ctx, s.db,
 		tDocRequest.DocumentID.EQ(jet.Uint64(doc.GetId())).AND(
-			tDocRequest.RequestType.EQ(jet.Int16(int16(req.GetRequestType()))),
+			tDocRequest.RequestType.EQ(jet.Int32(int32(req.GetRequestType()))),
 		),
 	)
 	if err != nil {

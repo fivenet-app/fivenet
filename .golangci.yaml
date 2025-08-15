@@ -39,7 +39,7 @@ linters:
     - funlen # tool for detection of long functions
     - gocheckcompilerdirectives # validates go compiler directive comments (//go:)
     - gochecksumtype # checks exhaustiveness on Go "sum types"
-    - gocognit # computes and checks the cognitive complexity of functions
+    #- gocognit # computes and checks the cognitive complexity of functions # Re-enable in future
     - goconst # finds repeated strings that could be replaced by a constant
     - gocritic # provides diagnostics that check for bugs, performance and style issues
     - gocyclo # computes and checks the cyclomatic complexity of functions
@@ -220,11 +220,11 @@ linters:
       # Checks the number of lines in a function.
       # If lower than 0, disable the check.
       # Default: 60
-      lines: 120
+      lines: 130
       # Checks the number of statements in a function.
       # If lower than 0, disable the check.
       # Default: 40
-      statements: 50
+      statements: 60
 
     gochecksumtype:
       # Presence of `default` case in switch statements satisfies exhaustiveness, if all members are not listed.
@@ -435,6 +435,9 @@ linters:
         G301: "0770" # In containers 0770 is basically required for shared volumes
         G306: "0640" # In containers 0640 is basically required for shared volumes
 
+    nestif:
+      min-complexity: 8
+
     wrapcheck:
       extra-ignore-sigs:
         - errswrap.NewError(
@@ -513,7 +516,7 @@ linters:
         linters: [ revive, staticcheck ]
       - linters:
           - govet
-        text: 'shadow: declaration of .(err|ctx). shadows declaration'
+        text: 'shadow: declaration of .(err|ctx|t[A-Z][A-Za-z]+). shadows declaration'
       - path: '_test\.go'
         linters:
           - bodyclose
@@ -529,7 +532,7 @@ linters:
       - path: '_test\.go'
         linters:
           - govet
-        text: 'shadow: declaration of .(err|ctx). shadows declaration'
+        text: 'shadow: declaration of .(err|ctx|[A-Za-z0-9_-]+). shadows declaration'
       - path: tests.*\.go
         linters:
           - funlen

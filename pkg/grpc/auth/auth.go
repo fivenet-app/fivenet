@@ -6,6 +6,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
 	errorsgrpcauth "github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/errors"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -83,12 +84,21 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, _ string) (context.Context,
 
 	userInfo, err := g.ui.GetUserInfo(ctx, tInfo.CharID, tInfo.AccID)
 	if err != nil {
-		return nil, err
+		// Inject logging fields for better debugging
+		if tInfo != nil {
+			logging.InjectFields(ctx, logging.Fields{
+				AuthSubCtxTag, tInfo.Subject,
+				AuthAccIDCtxTag, tInfo.AccID,
+				AuthActiveCharIDCtxTag, tInfo.CharID,
+			})
+		}
+
+		return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)
 	}
 
 	newCtx := logging.InjectFields(ctx, logging.Fields{
 		AuthSubCtxTag, tInfo.Subject,
-		AuthAccIDCtxTag, tInfo.CharID,
+		AuthAccIDCtxTag, tInfo.AccID,
 		AuthActiveCharIDCtxTag, tInfo.CharID,
 		AuthActiveCharJobCtxTag, userInfo.GetJob(),
 	})
@@ -124,7 +134,7 @@ func (g *GRPCAuth) GRPCAuthFuncWithoutUserInfo(
 
 	ctx = logging.InjectFields(ctx, logging.Fields{
 		AuthSubCtxTag, tInfo.Subject,
-		AuthAccIDCtxTag, tInfo.CharID,
+		AuthAccIDCtxTag, tInfo.AccID,
 		AuthActiveCharIDCtxTag, tInfo.CharID,
 	})
 

@@ -24,11 +24,13 @@ var (
 	ErrZeroResize           = errors.New("resize height and width are both zero")
 )
 
+// ImageType defines an interface for image encoding and decoding.
 type ImageType interface {
 	Decode(input io.Reader) (image.Image, error)
 	Encode(w io.Writer, m image.Image) error
 }
 
+// ResizeImage resizes an image to the specified height and width.
 func ResizeImage(ext string, input io.Reader, height uint, width uint) ([]byte, error) {
 	var imgType ImageType
 
@@ -92,7 +94,7 @@ func resizeImageIfNecessary(src image.Image, height uint, width uint) (*image.RG
 	}
 
 	// Nothing to do, return src image
-	if int(width) == src.Bounds().Dx() && int(height) == src.Bounds().Dy() {
+	if width == uint(src.Bounds().Dx()) && height == uint(src.Bounds().Dy()) {
 		return nil, nil
 	}
 

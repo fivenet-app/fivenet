@@ -136,9 +136,9 @@ func TestRefreshUserLocations(t *testing.T) {
 				return nil
 
 			case <-time.After(1 * time.Second):
-				list := manager.userLocStore.List()
+				l := manager.userLocStore.List()
 				return retry.RetryableError(
-					fmt.Errorf("no user event received (event count: %d). %v", eventCount, list),
+					fmt.Errorf("no user event received (event count: %d). %v", eventCount, l),
 				)
 			}
 		},

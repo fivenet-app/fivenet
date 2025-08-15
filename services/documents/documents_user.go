@@ -64,7 +64,7 @@ func (s *Server) ListUserDocuments(
 	if len(req.GetRelations()) > 0 {
 		types := []jet.Expression{}
 		for _, t := range req.GetRelations() {
-			types = append(types, jet.Int16(int16(*t.Enum())))
+			types = append(types, jet.Int32(int32(*t.Enum())))
 		}
 
 		condition = condition.AND(tDocRel.Relation.IN(types...))
@@ -281,7 +281,7 @@ func (s *Server) addUserActivity(
 		VALUES(
 			userId,
 			targetUserId,
-			int16(aType),
+			int32(aType),
 			reasonField,
 			data,
 		)

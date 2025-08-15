@@ -53,7 +53,7 @@ func (s *Server) ListDocumentActivity(
 	if len(req.GetActivityTypes()) > 0 {
 		ids := make([]jet.Expression, len(req.GetActivityTypes()))
 		for i := range req.GetActivityTypes() {
-			ids[i] = jet.Int16(int16(*req.GetActivityTypes()[i].Enum()))
+			ids[i] = jet.Int32(int32(*req.GetActivityTypes()[i].Enum()))
 		}
 		condition = condition.AND(tDocActivity.ActivityType.IN(ids...))
 	}

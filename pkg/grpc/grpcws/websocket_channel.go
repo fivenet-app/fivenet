@@ -122,7 +122,7 @@ func (ws *WebsocketChannel) poll() error {
 			return ws.writeError(frame.GetStreamId(), "stream already exists")
 		}
 
-		stream, err := func() (*GrpcStream, error) {
+		newStream, err := func() (*GrpcStream, error) {
 			ws.mu.Lock()
 			defer ws.mu.Unlock()
 
@@ -130,10 +130,10 @@ func (ws *WebsocketChannel) poll() error {
 				return nil, ws.writeError(frame.GetStreamId(), "rejecting max number of streams reached for this channel")
 			}
 
-			stream := newGrpcStream(frame.GetStreamId(), ws, ws.maxStreamCount)
-			ws.activeStreams[frame.GetStreamId()] = stream
+			st := newGrpcStream(frame.GetStreamId(), ws, ws.maxStreamCount)
+			ws.activeStreams[frame.GetStreamId()] = st
 
-			return stream, nil
+			return st, nil
 		}()
 		if err != nil {
 			return err
@@ -151,19 +151,19 @@ func (ws *WebsocketChannel) poll() error {
 			Method:     http.MethodPost,
 			URL:        url,
 			Header:     ws.req.Header.Clone(),
-			Body:       stream,
+			Body:       newStream,
 			RemoteAddr: ws.req.RemoteAddr,
 		}
 		for key, element := range frame.GetHeader().GetHeaders() {
 			req.Header[key] = element.GetValue()
 		}
 
-		interceptedReq := makeGrpcRequest(req.WithContext(stream.ctx))
+		interceptedReq := makeGrpcRequest(req.WithContext(newStream.ctx))
 		// Forward the request to the grpcHandler
 		go func() {
-			defer ws.deleteStream(stream.id)
+			defer ws.deleteStream(newStream.id)
 
-			ws.grpcHandler(stream, interceptedReq)
+			ws.grpcHandler(newStream, interceptedReq)
 		}()
 
 	case *grpcws.GrpcFrame_Body:

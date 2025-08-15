@@ -39,13 +39,13 @@ func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCr
 
 	jobName := jobs[0]
 
-	tablesList := h.getTablesListFn()
-	if len(tablesList) == 0 {
+	tables := h.getTablesListFn()
+	if len(tables) == 0 {
 		return nil
 	}
 
-	keys := make([]string, 0, len(tablesList))
-	for k := range tablesList {
+	keys := make([]string, 0, len(tables))
+	for k := range tables {
 		keys = append(keys, k)
 	}
 	slices.Sort(keys)
@@ -64,7 +64,7 @@ func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCr
 	}
 
 	nextTblKey := keys[currentIdx]
-	tbl := tablesList[nextTblKey]
+	tbl := tables[nextTblKey]
 	if tbl == nil {
 		return fmt.Errorf("no table found for key: %s", nextTblKey)
 	}

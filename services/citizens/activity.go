@@ -55,7 +55,7 @@ func (s *Server) ListUserActivity(
 	if len(req.GetTypes()) > 0 {
 		types := []jet.Expression{}
 		for _, t := range req.GetTypes() {
-			types = append(types, jet.Int16(int16(*t.Enum())))
+			types = append(types, jet.Int32(int32(*t.Enum())))
 		}
 
 		condition = condition.AND(tUserActivity.Type.IN(types...))

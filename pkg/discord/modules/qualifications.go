@@ -213,7 +213,7 @@ func (g *QualificationsSync) planUsers(
 				tQualificationsResults.QualificationID.EQ(jet.Uint64(qualificationId)),
 				tQualificationsResults.DeletedAt.IS_NULL(),
 				tQualificationsResults.Status.EQ(
-					jet.Int16(int16(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)),
+					jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)),
 				),
 				tQualifications.Job.IN(jobs...),
 				tAccsOauth2.Provider.EQ(jet.String("discord")),

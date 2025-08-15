@@ -59,7 +59,7 @@ func (s *Server) ListConductEntries(
 	if len(req.GetTypes()) > 0 {
 		ts := make([]jet.Expression, len(req.GetTypes()))
 		for i := range req.GetTypes() {
-			ts[i] = jet.Int16(int16(req.GetTypes()[i].Number()))
+			ts[i] = jet.Int32(int32(req.GetTypes()[i].Number()))
 		}
 
 		condition = condition.AND(tConduct.Type.IN(ts...))

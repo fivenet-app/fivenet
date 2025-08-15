@@ -933,7 +933,7 @@ func (s *Server) ListColleagueActivity(
 
 	condTypes := []jet.Expression{}
 	for _, aType := range req.GetActivityTypes() {
-		condTypes = append(condTypes, jet.Int16(int16(aType)))
+		condTypes = append(condTypes, jet.Int32(int32(aType)))
 	}
 
 	if len(condTypes) == 0 {

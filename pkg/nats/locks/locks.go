@@ -280,5 +280,6 @@ func makeLockKey(key string) string {
 
 // jitterDelay returns a random delay for lock retry backoff.
 func jitterDelay() time.Duration {
+	//nolint:gosec // G404: Use of weak random number generator is acceptable here
 	return time.Duration(50+rand.Float64()*150) * time.Millisecond
 }
