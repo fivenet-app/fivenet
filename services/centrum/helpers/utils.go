@@ -66,10 +66,9 @@ func (s *Helpers) CheckIfBotNeeded(ctx context.Context, job string) bool {
 		return false
 	}
 
-	if dispatchers.IsEmpty() {
-		if settings.GetFallbackMode() == centrum.CentrumMode_CENTRUM_MODE_AUTO_ROUND_ROBIN {
-			return true
-		}
+	if dispatchers.IsEmpty() &&
+		settings.GetFallbackMode() == centrum.CentrumMode_CENTRUM_MODE_AUTO_ROUND_ROBIN {
+		return true
 	}
 
 	return false
@@ -99,6 +98,29 @@ func (s *Helpers) CheckIfUserIsPartOfDispatch(
 	dsp *centrum.Dispatch,
 	dispatcherOkay bool,
 ) bool {
+	// Check if user is allowed to access the dispatch if the job is not the same as the user's job, need to check the
+	// job's dispatch center settings access
+	if !dsp.Jobs.ContainsJob(userInfo.GetJob()) {
+		ok, err := s.settings.HasAccessToJob(
+			ctx,
+			userInfo.GetJob(),
+			userInfo.GetJobGrade(),
+			dsp.GetJobs().GetJobs()[0].GetName(),
+			centrum.CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_PARTICIPATE,
+		)
+		if err != nil {
+			s.logger.Error(
+				"failed to check access to job for dispatch",
+				zap.String("job", userInfo.GetJob()),
+				zap.Error(err),
+			)
+			return false
+		}
+		if !ok {
+			return false
+		}
+	}
+
 	// Check if user is a dispatcher
 	if dispatcherOkay && s.CheckIfUserIsDispatcher(ctx, userInfo.GetJob(), userInfo.GetUserId()) {
 		return true

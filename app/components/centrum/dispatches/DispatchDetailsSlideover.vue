@@ -2,7 +2,7 @@
 import DispatchAssignModal from '~/components/centrum/dispatches//DispatchAssignModal.vue';
 import DispatchFeed from '~/components/centrum/dispatches/DispatchFeed.vue';
 import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
-import { dispatchStatusToBGColor, dispatchStatusToIcon } from '~/components/centrum/helpers';
+import { checkDispatchAccess, dispatchStatusToBGColor, dispatchStatusToIcon } from '~/components/centrum/helpers';
 import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
 import DispatchReferences from '~/components/centrum/partials/DispatchReferences.vue';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
@@ -12,6 +12,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
+import { CentrumAccessLevel } from '~~/gen/ts/resources/centrum/access';
 import { type Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 const props = defineProps<{
@@ -52,6 +53,11 @@ watch(dispatch, () => {
         isOpen.value = false;
     }
 });
+
+const canAccessDispatch = computed(() => ({
+    participate: checkDispatchAccess(dispatch.value?.jobs, CentrumAccessLevel.PARTICIPATE),
+    dispatch: checkDispatchAccess(dispatch.value?.jobs, CentrumAccessLevel.DISPATCH),
+}));
 </script>
 
 <template>
@@ -76,7 +82,10 @@ watch(dispatch, () => {
                             {{ dispatch.message }}
                         </p>
 
-                        <UTooltip v-if="can('centrum.CentrumService/DeleteDispatch').value" :text="$t('common.delete')">
+                        <UTooltip
+                            v-if="can('centrum.CentrumService/DeleteDispatch').value && canAccessDispatch.dispatch"
+                            :text="$t('common.delete')"
+                        >
                             <UButton
                                 variant="link"
                                 icon="i-mdi-delete"
@@ -217,7 +226,7 @@ watch(dispatch, () => {
 
                                 <UButtonGroup class="inline-flex">
                                     <UButton
-                                        v-if="canDo('TakeControl')"
+                                        v-if="canDo('TakeControl') && canAccessDispatch.dispatch"
                                         icon="i-mdi-account-multiple-plus"
                                         truncate
                                         @click="modal.open(DispatchAssignModal, { dispatchId: dispatchId })"
@@ -225,7 +234,7 @@ watch(dispatch, () => {
                                         {{ $t('common.assign') }}
                                     </UButton>
                                     <UButton
-                                        v-if="canDo('TakeDispatch')"
+                                        v-if="canDo('TakeDispatch') && canAccessDispatch.participate"
                                         icon="i-mdi-plus"
                                         truncate
                                         @click="selfAssign(dispatch.id)"
@@ -288,6 +297,7 @@ watch(dispatch, () => {
                                     class="rounded px-2 py-1 text-sm font-semibold"
                                     :class="dispatchStatusColors"
                                     :icon="dispatchStatusToIcon(dispatch.status?.status)"
+                                    :disabled="!canAccessDispatch.participate"
                                     @click="modal.open(DispatchStatusUpdateModal, { dispatchId: dispatch.id })"
                                 >
                                     {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`) }}

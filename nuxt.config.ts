@@ -162,6 +162,9 @@ export default defineNuxtConfig({
             drop: ['debugger'],
         },
         server: {
+            // Make it easier to test the app behind a proxy server (e.g., ngrok), SSR is disabled
+            // so we can use `allowedHosts: true` to allow any host
+            allowedHosts: true,
             proxy: {
                 '/api/grpc': {
                     target: 'http://127.0.0.1:8080',

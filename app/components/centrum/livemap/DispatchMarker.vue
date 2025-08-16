@@ -1,11 +1,17 @@
 <script lang="ts" setup>
 import type { PointExpression } from 'leaflet';
 import { BellIcon } from 'mdi-vue3';
-import { dispatchStatusAnimate, dispatchStatusToBGColor, dispatchStatusToFillColor } from '~/components/centrum/helpers';
+import {
+    checkDispatchAccess,
+    dispatchStatusAnimate,
+    dispatchStatusToBGColor,
+    dispatchStatusToFillColor,
+} from '~/components/centrum/helpers';
 import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useLivemapStore } from '~/stores/livemap';
+import { CentrumAccessLevel } from '~~/gen/ts/resources/centrum/access';
 import { type Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import DispatchAssignModal from '../dispatches/DispatchAssignModal.vue';
 
@@ -101,7 +107,7 @@ const zIndexOffset = computed(() => {
                         </UButton>
 
                         <UButton
-                            v-if="canDo('TakeControl')"
+                            v-if="canDo('TakeControl') && checkDispatchAccess(dispatch.jobs, CentrumAccessLevel.DISPATCH)"
                             class="truncate"
                             icon="i-mdi-account-multiple-plus"
                             variant="link"
@@ -117,7 +123,7 @@ const zIndexOffset = computed(() => {
                         </UButton>
 
                         <UButton
-                            v-if="canDo('TakeDispatch')"
+                            v-if="canDo('TakeDispatch') && checkDispatchAccess(dispatch.jobs, CentrumAccessLevel.PARTICIPATE)"
                             icon="i-mdi-plus"
                             variant="link"
                             :padded="false"

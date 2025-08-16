@@ -2,7 +2,12 @@
 import DispatchAssignModal from '~/components/centrum/dispatches/DispatchAssignModal.vue';
 import DispatchDetailsByIDSlideover from '~/components/centrum/dispatches/DispatchDetailsByIDSlideover.vue';
 import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
-import { dispatchStatusAnimate, dispatchStatusToBadgeColor, dispatchTimeToBadge } from '~/components/centrum/helpers';
+import {
+    checkDispatchAccess,
+    dispatchStatusAnimate,
+    dispatchStatusToBadgeColor,
+    dispatchTimeToBadge,
+} from '~/components/centrum/helpers';
 import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
 import DispatchStatusBreakdown from '~/components/centrum/partials/DispatchStatusBreakdown.vue';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
@@ -11,6 +16,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
+import { CentrumAccessLevel } from '~~/gen/ts/resources/centrum/access';
 import { type Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 const props = withDefaults(
@@ -152,6 +158,7 @@ const columns = [
                                 <UButton
                                     variant="link"
                                     icon="i-mdi-account-multiple-plus"
+                                    :disabled="!checkDispatchAccess(dispatch.jobs, CentrumAccessLevel.DISPATCH)"
                                     @click="
                                         () =>
                                             modal.open(DispatchAssignModal, {
@@ -173,6 +180,7 @@ const columns = [
                                 <UButton
                                     variant="link"
                                     icon="i-mdi-refresh"
+                                    :disabled="!checkDispatchAccess(dispatch.jobs, CentrumAccessLevel.DISPATCH)"
                                     @click="
                                         () =>
                                             modal.open(DispatchStatusUpdateModal, {

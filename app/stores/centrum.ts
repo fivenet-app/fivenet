@@ -36,7 +36,7 @@ export const useCentrumStore = defineStore(
 
         const timeCorrection = ref<number>(0);
 
-        const dispatchesJobs = ref<JobAccess | undefined>(undefined);
+        const acls = ref<JobAccess | undefined>(undefined);
         const settings = ref<Settings | undefined>(undefined);
         const isDispatcher = ref<boolean>(false);
         const dispatchers = ref<Dispatchers[]>([]);
@@ -393,7 +393,7 @@ export const useCentrumStore = defineStore(
                             calculateTimeCorrection(resp.change.handshake.serverTime);
                         }
 
-                        dispatchesJobs.value = resp.change.handshake.jobAccess;
+                        acls.value = resp.change.handshake.jobAccess;
 
                         if (resp.change.handshake.settings) {
                             setOrUpdateSettings(resp.change.handshake.settings);
@@ -644,7 +644,7 @@ export const useCentrumStore = defineStore(
 
             // Remove all dispatch layers from the settings
             const settingsStore = useSettingsStore();
-            dispatchesJobs.value?.dispatches.forEach((job) => settingsStore.removeLivemapLayer(`dispatches_job_${job.job}`));
+            acls.value?.dispatches.forEach((job) => settingsStore.removeLivemapLayer(`dispatches_job_${job.job}`));
 
             abort.value = undefined;
         };
@@ -850,7 +850,7 @@ export const useCentrumStore = defineStore(
             reconnectBackoffTime,
             timeCorrection,
             settings,
-            dispatchesJobs,
+            acls,
             isDispatcher,
             dispatchers,
             feed,

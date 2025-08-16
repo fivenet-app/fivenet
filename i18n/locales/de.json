@@ -195,7 +195,8 @@
                 "filestore": "Auflisten und verwalten aller Dateien.",
                 "settings": "Verwalten von FiveNet-Einstellungen.",
                 "cron": "Status der Hintergrundaufgaben anzeigen.",
-                "accounts": "Auflisten und verwalten von FiveNet Konten."
+                "accounts": "Auflisten und verwalten von FiveNet Konten.",
+                "dispatch_center": "Verknüpfung zur Verwaltung der Leitstellen-Einstellungen."
             },
             "roles": {
                 "title": "Rollen",
@@ -681,7 +682,8 @@
         "set_wanted": "Als Gesucht markieren",
         "revoke_wanted": "Gesuchten-Status entfernen",
         "only_wanted": "Nur Gesuchte",
-        "no_actions_available": "Keine Aktionen verfügbar."
+        "no_actions_available": "Keine Aktionen verfügbar.",
+        "dispatch_center_settings": "Leitstellen-Einstellungen"
     },
     "components": {
         "partials": {

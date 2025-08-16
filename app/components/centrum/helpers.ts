@@ -1,6 +1,7 @@
 import type { BadgeColor, BadgeVariant } from '#ui/types';
-import type { CentrumAccess, CentrumAccessLevel } from '~~/gen/ts/resources/centrum/access';
+import type { CentrumAccessLevel } from '~~/gen/ts/resources/centrum/access';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import type { JobList } from '~~/gen/ts/resources/centrum/settings';
 import { type Unit, StatusUnit } from '~~/gen/ts/resources/centrum/units';
 import type { UnitAccess, UnitAccessLevel } from '~~/gen/ts/resources/centrum/units_access';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
@@ -251,9 +252,12 @@ export function checkUnitAccess(unitAccess: UnitAccess | undefined, level: UnitA
     return true;
 }
 
-export function checkDispatchAccess(dispatchAccess: CentrumAccess | undefined, level: CentrumAccessLevel): boolean {
-    // TODO check the job of the active char, user always has "full" access to dispatches that they are part of
-    if (dispatchAccess === undefined || dispatchAccess.jobs.length === 0) {
+export function checkDispatchAccess(dispatchJobs: JobList | undefined, level: CentrumAccessLevel): boolean {
+    const centrumStore = useCentrumStore();
+    const { acls } = storeToRefs(centrumStore);
+
+    // The dispatch has no ACLs at all
+    if (dispatchJobs === undefined || dispatchJobs.jobs.length === 0) {
         return true;
     }
 
@@ -266,7 +270,31 @@ export function checkDispatchAccess(dispatchAccess: CentrumAccess | undefined, l
         return false;
     }
 
-    if (!checkAccess(activeChar.value, dispatchAccess, undefined, level)) {
+    // If the active character's job isn't in the dispatch's jobs list, check dispatchesJobs access list (contains the job to job access)
+    if (!dispatchJobs?.jobs.find((j) => j.name === activeChar.value?.job)) {
+        if (acls.value?.dispatches) {
+            for (const djob of dispatchJobs.jobs) {
+                let lowestAccess: CentrumAccessLevel | undefined = undefined;
+                for (let index = 0; index < acls.value.dispatches.length; index++) {
+                    const ja = acls.value.dispatches[index]!;
+                    if (ja.job !== djob.name) {
+                        continue;
+                    }
+                    // Dispatch access doesn't use job grade for access check.
+                    if (ja.access < level) {
+                        continue;
+                    }
+                    if (lowestAccess === undefined || ja.access < lowestAccess!) {
+                        lowestAccess = ja.access;
+                    }
+                }
+
+                if (level <= (lowestAccess ?? 0)) {
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 

@@ -15,7 +15,7 @@ const { t } = useI18n();
 const slideover = useSlideover();
 
 const centrumStore = useCentrumStore();
-const { dispatches, dispatchesJobs, ownDispatches, settings } = storeToRefs(centrumStore);
+const { dispatches, acls, ownDispatches, settings } = storeToRefs(centrumStore);
 
 const settingsStore = useSettingsStore();
 const { addOrUpdateLivemapLayer, addOrUpdateLivemapCategory, removeLivemapLayer } = settingsStore;
@@ -58,8 +58,8 @@ watch(settings, () => {
     });
 });
 
-watch(dispatchesJobs, () =>
-    dispatchesJobs.value?.dispatches.forEach((job) =>
+watch(acls, () =>
+    acls.value?.dispatches.forEach((job) =>
         addOrUpdateLivemapLayer({
             key: `dispatches_job_${job.job}`,
             category: 'dispatches',

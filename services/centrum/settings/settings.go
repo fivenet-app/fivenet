@@ -184,13 +184,13 @@ func (s *SettingsDB) Update(
 		return nil, err
 	}
 
+	if in.Job == "" {
+		in.Job = job
+	}
+
 	current.Merge(in)
 
 	if err := s.updateDB(ctx, job, current); err != nil {
-		return nil, err
-	}
-
-	if err := s.updateInKV(ctx, job, current); err != nil {
 		return nil, err
 	}
 

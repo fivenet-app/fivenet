@@ -40,6 +40,13 @@ const items = [
         icon: 'i-mdi-math-log',
     },
     {
+        title: t('common.dispatch_center_settings'),
+        description: t('pages.settings.features.dispatch_center'),
+        to: { name: 'centrum-settings' },
+        permission: 'centrum.CentrumService/UpdateSettings',
+        icon: 'i-mdi-car-emergency',
+    },
+    {
         title: t('pages.settings.laws.title'),
         description: t('pages.settings.features.laws'),
         to: { name: 'settings-laws' },
@@ -94,7 +101,9 @@ const superuserItems = [
 
             <UDashboardPanelContent>
                 <div class="flex flex-col gap-1">
-                    <CardsList :items="items" class="mb-4" />
+                    <div class="mb-4">
+                        <CardsList :items="items" />
+                    </div>
 
                     <UDashboardSection
                         v-if="isSuperuser"

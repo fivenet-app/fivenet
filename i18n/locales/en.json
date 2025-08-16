@@ -195,7 +195,8 @@
                 "filestore": "List and manage all files.",
                 "settings": "Manage FiveNet settings.",
                 "cron": "View status of background tasks.",
-                "accounts": "List and manage FiveNet accounts."
+                "accounts": "List and manage FiveNet accounts.",
+                "dispatch_center": "Shortcut to manage the dispatch center settings."
             },
             "roles": {
                 "title": "Roles",
@@ -681,7 +682,8 @@
         "set_wanted": "Set Wanted",
         "revoke_wanted": "Revoke Wanted",
         "only_wanted": "Only Wanted",
-        "no_actions_available": "No actions available."
+        "no_actions_available": "No actions available.",
+        "dispatch_center_settings": "Dispatch Center Settings"
     },
     "components": {
         "partials": {
