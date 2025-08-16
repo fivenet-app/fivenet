@@ -1572,7 +1572,8 @@
                     "last_activity_received": "Last Activity Received",
                     "last_dbsync_version": "Last seen DB Sync Version"
                 }
-            }
+            },
+            "system_settings": "System Settings"
         }
     },
     "notifications": {

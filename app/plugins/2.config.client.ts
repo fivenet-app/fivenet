@@ -31,7 +31,8 @@ async function loadConfig(): Promise<ClientConfig> {
 
 export default defineNuxtPlugin({
     name: 'config',
-    parallel: true,
+    parallel: false,
+    enforce: 'post',
     async setup(nuxtApp) {
         nuxtApp.provide('appConfigPromise', appConfigPromise);
 

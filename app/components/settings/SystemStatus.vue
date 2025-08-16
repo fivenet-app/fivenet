@@ -21,11 +21,7 @@ async function getStatus() {
 </script>
 
 <template>
-    <UCard>
-        <template #header>
-            <h2 class="text-lg font-medium">{{ $t('components.settings.system_status.title') }}</h2>
-        </template>
-
+    <div>
         <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.status')])" />
         <DataErrorBlock
             v-else-if="error"
@@ -120,5 +116,5 @@ async function getStatus() {
                 </template>
             </UPopover>
         </div>
-    </UCard>
+    </div>
 </template>

@@ -40,18 +40,21 @@ const items = [
         icon: 'i-mdi-math-log',
     },
     {
-        title: t('pages.settings.limiter.title'),
-        description: t('pages.settings.features.limiter'),
-        to: { name: 'settings-limiter' },
-        permission: 'Superuser/Superuser',
-        icon: 'i-mdi-car-speed-limiter',
-    },
-    {
         title: t('pages.settings.laws.title'),
         description: t('pages.settings.features.laws'),
         to: { name: 'settings-laws' },
         permission: 'Superuser/Superuser',
         icon: 'i-mdi-scale-balance',
+    },
+] as CardElements;
+
+const superuserItems = [
+    {
+        title: t('pages.settings.limiter.title'),
+        description: t('pages.settings.features.limiter'),
+        to: { name: 'settings-limiter' },
+        permission: 'Superuser/Superuser',
+        icon: 'i-mdi-car-speed-limiter',
     },
     {
         title: t('pages.settings.filestore.title'),
@@ -90,9 +93,28 @@ const items = [
             <UDashboardNavbar :title="$t('common.control_panel')" />
 
             <UDashboardPanelContent>
-                <SystemStatus v-if="isSuperuser" class="mb-4" />
+                <div class="flex flex-col gap-1">
+                    <CardsList :items="items" class="mb-4" />
 
-                <CardsList :items="items" />
+                    <UDashboardSection
+                        v-if="isSuperuser"
+                        class="mb-4"
+                        :title="$t('components.settings.system_status.title')"
+                        icon="i-mdi-server"
+                        :ui="{ icon: { base: 'h-6 w-6' } }"
+                    >
+                        <SystemStatus />
+                    </UDashboardSection>
+
+                    <UDashboardSection
+                        v-if="isSuperuser"
+                        :title="$t('components.settings.system_settings')"
+                        icon="i-mdi-administrator"
+                        :ui="{ icon: { base: 'h-6 w-6' } }"
+                    >
+                        <CardsList :items="superuserItems" />
+                    </UDashboardSection>
+                </div>
             </UDashboardPanelContent>
         </UDashboardPanel>
     </UDashboardPage>
