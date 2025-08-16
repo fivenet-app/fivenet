@@ -74,7 +74,8 @@ func (c *LRUCache[K, V]) Put(key K, value V, ttl time.Duration) {
 	defer c.mu.Unlock()
 
 	if elem, ok := c.store.Load(key); ok {
-		// update existing entry
+		// Update existing entry
+		//nolint:errcheck // We know elem is non-nil and of the correct type.
 		p := elem.Value.(*pair[K, V])
 		p.value = value
 		p.expiresAt = exp
@@ -99,10 +100,11 @@ func (c *LRUCache[K, V]) Get(key K) (V, bool) {
 	if !ok {
 		return zero, false
 	}
+	//nolint:errcheck // We know elem is non-nil and of the correct type.
 	p := elem.Value.(*pair[K, V])
 
 	if c.isExpired(p) {
-		c.deleteElement(elem) // drop stale entry
+		c.deleteElement(elem) // Drop stale entry
 		return zero, false
 	}
 
@@ -156,6 +158,7 @@ func (c *LRUCache[K, V]) cleanupExpired() {
 	c.mu.Lock()
 	for elem := c.list.Back(); elem != nil; {
 		prev := elem.Prev()
+		//nolint:errcheck // We know elem is non-nil and of the correct type.
 		p := elem.Value.(*pair[K, V])
 		if !p.expiresAt.IsZero() && p.expiresAt.Before(now) {
 			c.list.Remove(elem)
@@ -174,6 +177,7 @@ func (c *LRUCache[K, V]) cleanupExpired() {
 // deleteElement removes elem from both list and map. Callers need *not* hold
 // c.mu as we lock internally to guard the list.
 func (c *LRUCache[K, V]) deleteElement(elem *list.Element) {
+	//nolint:errcheck // We know elem is non-nil and of the correct type.
 	p := elem.Value.(*pair[K, V])
 	c.mu.Lock()
 	c.list.Remove(elem)
@@ -187,6 +191,7 @@ func (c *LRUCache[K, V]) evictLRU() {
 	if tail == nil {
 		return
 	}
+	//nolint:errcheck // We know tail.Value is non-nil and of the correct type.
 	p := tail.Value.(*pair[K, V])
 	c.list.Remove(tail)
 	c.store.Delete(p.key)

@@ -33,8 +33,8 @@ export default defineNuxtPlugin({
     name: 'config',
     parallel: true,
     async setup(nuxtApp) {
-        await appConfigPromise;
-
         nuxtApp.provide('appConfigPromise', appConfigPromise);
+
+        await appConfigPromise;
     },
 });

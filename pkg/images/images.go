@@ -106,12 +106,12 @@ func resizeImageIfNecessary(src image.Image, height uint, width uint) (*image.RG
 	}
 
 	// Nothing to do, return src image
+	//nolint:gosec // Above width and height are checked to be within bounds of int.
 	if width == uint(src.Bounds().Dx()) && height == uint(src.Bounds().Dy()) {
 		return nil, nil
 	}
 
 	// Create the destination image with the expected size we want
-	//nolint:gosec // Above width and height are checked to be within bounds of int.
 	dst := image.NewRGBA(image.Rect(0, 0, int(width), int(height)))
 
 	// Resize image go's draw builtin bilinear interpolator

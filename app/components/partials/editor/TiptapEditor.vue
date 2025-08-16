@@ -8,6 +8,7 @@ import { CodeBlock } from '@tiptap/extension-code-block';
 import Collaboration, { isChangeOrigin } from '@tiptap/extension-collaboration';
 import CollaborationCaret from '@tiptap/extension-collaboration-caret';
 import { Document } from '@tiptap/extension-document';
+import { DragHandle } from '@tiptap/extension-drag-handle-vue-3';
 import { HardBreak } from '@tiptap/extension-hard-break';
 import { Heading } from '@tiptap/extension-heading';
 import Highlight from '@tiptap/extension-highlight';
@@ -16,6 +17,7 @@ import InvisibleCharacters from '@tiptap/extension-invisible-characters';
 import { Italic } from '@tiptap/extension-italic';
 import Link from '@tiptap/extension-link';
 import { BulletList, ListItem, ListKeymap, OrderedList, TaskItem, TaskList } from '@tiptap/extension-list';
+import NodeRange from '@tiptap/extension-node-range';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Strike } from '@tiptap/extension-strike';
 import Subscript from '@tiptap/extension-subscript';
@@ -114,6 +116,10 @@ const extensions = [
         attributeName: 'id',
         types: ['heading'],
         filterTransaction: (transaction) => !isChangeOrigin(transaction),
+    }),
+    NodeRange.configure({
+        depth: 0,
+        key: null,
     }),
     // Basics
     Blockquote,
@@ -1170,13 +1176,13 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                     </UTooltip>
                     <!--
                     <UButton
-                    color="gray"
-                    variant="ghost"
-                    icon="i-mdi-format-page-break"
-                    @click="editor.chain().focus().setHardBreak().run()"
-                    :disabled="disabled"
+                        color="gray"
+                        variant="ghost"
+                        icon="i-mdi-format-page-break"
+                        :disabled="disabled"
+                        @click="editor.chain().focus().setHardBreak().run()"
                     />
-                    -->
+                -->
                 </UButtonGroup>
 
                 <div class="flex-1"></div>
@@ -1337,6 +1343,13 @@ onBeforeUnmount(() => unref(editor)?.destroy());
             </div>
         </div>
 
+        <!-- @vue-expect-error editor prop type is "messed" up due to tiptap core vs pm vs vue3 as far as I can tell -->
+        <DragHandle v-if="editor !== undefined" :editor="editor">
+            <div class="tiptap-drag-handle h-5 w-6 after:flex after:cursor-grab after:items-center after:justify-center">
+                <UIcon class="h-5 w-4" name="i-mdi-drag-horizontal" />
+            </div>
+        </DragHandle>
+
         <TiptapEditorContent
             ref="contentRef"
             class="min-h-0 w-full min-w-0 max-w-full flex-auto overflow-y-auto"
@@ -1404,3 +1417,33 @@ onBeforeUnmount(() => unref(editor)?.destroy());
         </div>
     </div>
 </template>
+
+<style lang="scss">
+.ProseMirror {
+    > * {
+        margin-left: 0.75rem;
+    }
+
+    .ProseMirror-widget * {
+        margin-top: auto;
+    }
+
+    ul,
+    ol {
+        padding: 0 1rem;
+    }
+}
+
+/* Tiptap Editor Drag Handle Style */
+.tiptap-drag-handle {
+    &::after {
+        margin-right: 0.1rem;
+        width: 1rem;
+        height: 1.25rem;
+        font-weight: 700;
+        background: #0d0d0d10;
+        color: #0d0d0d50;
+        border-radius: 0.25rem;
+    }
+}
+</style>
