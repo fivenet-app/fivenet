@@ -7676,7 +7676,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `UpdateSettings` | [UpdateSettingsRequest](#servicescentrumUpdateSettingsRequest) | [UpdateSettingsResponse](#servicescentrumUpdateSettingsResponse) |@perm: Attrs=Access/StringList:[]string{"Shared"} |
+| `UpdateSettings` | [UpdateSettingsRequest](#servicescentrumUpdateSettingsRequest) | [UpdateSettingsResponse](#servicescentrumUpdateSettingsResponse) |@perm: Attrs=Access/StringList:[]string{"Shared", "Public"} |
 | `CreateDispatch` | [CreateDispatchRequest](#servicescentrumCreateDispatchRequest) | [CreateDispatchResponse](#servicescentrumCreateDispatchResponse) |@perm |
 | `UpdateDispatch` | [UpdateDispatchRequest](#servicescentrumUpdateDispatchRequest) | [UpdateDispatchResponse](#servicescentrumUpdateDispatchResponse) |@perm |
 | `DeleteDispatch` | [DeleteDispatchRequest](#servicescentrumDeleteDispatchRequest) | [DeleteDispatchResponse](#servicescentrumDeleteDispatchResponse) |@perm |

@@ -300,3 +300,20 @@ export function checkDispatchAccess(dispatchJobs: JobList | undefined, level: Ce
 
     return true;
 }
+
+export function calculateDispatchZIndexOffset(status: StatusDispatch | undefined): number {
+    switch (status) {
+        case StatusDispatch.COMPLETED:
+        case StatusDispatch.CANCELLED:
+        case StatusDispatch.ARCHIVED:
+            return 5;
+
+        case StatusDispatch.NEW:
+        case StatusDispatch.UNASSIGNED:
+        case StatusDispatch.UNIT_DECLINED:
+            return 15;
+
+        default:
+            return 10;
+    }
+}

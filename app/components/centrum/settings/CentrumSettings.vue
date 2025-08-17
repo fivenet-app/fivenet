@@ -16,7 +16,7 @@ const { t } = useI18n();
 
 const { isOpen } = useModal();
 
-const { activeChar } = useAuth();
+const { activeChar, attr } = useAuth();
 
 const notifications = useNotificationsStore();
 
@@ -270,6 +270,22 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :ui="{ container: '' }"
                                 >
                                     <UToggle v-model="state.enabled" name="enabled" :disabled="!canSubmit" />
+                                </UFormGroup>
+
+                                <UFormGroup
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    name="public"
+                                    :label="$t('common.public')"
+                                    :description="$t('components.centrum.settings.public.description')"
+                                    :ui="{ container: '' }"
+                                >
+                                    <UToggle
+                                        v-model="state.public"
+                                        :disabled="
+                                            !canSubmit ||
+                                            !attr('centrum.CentrumService/UpdateSettings', 'Access', 'Public').value
+                                        "
+                                    />
                                 </UFormGroup>
 
                                 <UFormGroup
@@ -561,6 +577,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :access-types="[{ type: 'job', name: $t('common.job', 2) }]"
                                         hide-grade
                                         :hide-jobs="[activeChar!.job]"
+                                        :disabled="!attr('centrum.CentrumService/UpdateSettings', 'Access', 'Shared').value"
                                     />
                                 </UFormGroup>
                             </UDashboardSection>

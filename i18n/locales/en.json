@@ -996,6 +996,9 @@
                     "deduplication_duration": "Deduplication Duration (in seconds)",
                     "deduplication_radius": "Deduplication Radius (in meters)",
                     "deduplication_radius_description": "The radius in which dispatches will be deduplicated. If a new dispatch is created within this radius of an existing dispatch, it will be marked as a duplicate and and canelled."
+                },
+                "public": {
+                    "description": "If enabled, will make your job available to anyone with access to create dispatches. This is useful for public jobs like police, taxi or bus services."
                 }
             }
         },
@@ -3143,7 +3146,14 @@
                 },
                 "UpdateSettings": {
                     "key": "Update Dispatch Center Settings",
-                    "description": "Allows to update the dispatch center settings via the control panel."
+                    "description": "Allows to update the dispatch center settings via the control panel.",
+                    "attrs": {
+                        "Shared": "Allows to share the dispatch center with other jobs.",
+                        "Public": "Allows to make the dispatch center public (receive dispatches from the public)."
+                    },
+                    "attrs_types": {
+                        "Access": "Special Features of Dispatch Center"
+                    }
                 },
                 "DeleteDispatch": {
                     "key": "Delete Dispatches",

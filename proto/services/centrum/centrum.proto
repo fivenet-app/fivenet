@@ -255,7 +255,7 @@ message Dispatchers {
 }
 
 service CentrumService {
-  // @perm: Attrs=Access/StringList:[]string{"Shared"}
+  // @perm: Attrs=Access/StringList:[]string{"Shared", "Public"}
   rpc UpdateSettings(UpdateSettingsRequest) returns (UpdateSettingsResponse);
 
   // @perm

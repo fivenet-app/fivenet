@@ -996,6 +996,9 @@
                     "deduplication_duration": "Deduplizierungs-Zeitfenster (in Sekunden)",
                     "deduplication_radius": "Deduplizierungs-Radius (in Metern)",
                     "deduplication_radius_description": "Der Radius, in dem die Einsätze dedupliziert werden. Wenn ein neuer Einsatz innerhalb dieses Radius eines bestehenden Einsatz erstellt wird, wird der neue Einsatz entsprechend als Duplikat markiert und abgebrochen."
+                },
+                "public": {
+                    "description": "Wenn aktiviert, wird Ihr Job für jeden auswählbar sein, der die Berechtigung zum erstellen von Einsätzen hat. Dies ist nützlich für öffentliche Jobs wie Polizei-, Taxi- oder Busdienste."
                 }
             }
         },
@@ -3142,7 +3145,14 @@
                 },
                 "UpdateSettings": {
                     "key": "Aktualisieren der Leitstellen Einstellungen",
-                    "description": "Erlaubt es die Einstellungen der Leitstelle zu aktualisieren."
+                    "description": "Erlaubt es die Einstellungen der Leitstelle zu aktualisieren.",
+                    "attrs": {
+                        "Shared": "Erlaubt es, die Leitstelle mit anderen Berufen zu teilen.",
+                        "Public": "Erlaubt es, die Leitstelle öffentlich zu machen (Einsätze von der Öffentlichkeit zu empfangen)."
+                    },
+                    "attrs_types": {
+                        "Access": "Besondere Funktionen der Leitstelle"
+                    }
                 },
                 "DeleteDispatch": {
                     "key": "Einsätze löschen",

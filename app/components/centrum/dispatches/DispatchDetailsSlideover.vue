@@ -78,25 +78,9 @@ const canAccessDispatch = computed(() => ({
                     <div class="inline-flex items-center">
                         <IDCopyBadge :id="dispatch.id" class="mx-2" prefix="DSP" />
 
-                        <p class="max-w-80 truncate">
+                        <p class="max-w-80 flex-1 truncate">
                             {{ dispatch.message }}
                         </p>
-
-                        <UTooltip
-                            v-if="can('centrum.CentrumService/DeleteDispatch').value && canAccessDispatch.dispatch"
-                            :text="$t('common.delete')"
-                        >
-                            <UButton
-                                variant="link"
-                                icon="i-mdi-delete"
-                                color="error"
-                                @click="
-                                    modal.open(ConfirmModal, {
-                                        confirm: async () => dispatch && deleteDispatch(dispatch.id),
-                                    })
-                                "
-                            />
-                        </UTooltip>
                     </div>
 
                     <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
@@ -108,7 +92,18 @@ const canAccessDispatch = computed(() => ({
                     <dl class="divide-neutral/10 divide-y">
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
-                                {{ $t('common.created_at') }}
+                                {{ $t('common.job') }}
+                            </dt>
+                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                                <span>
+                                    {{ dispatch.jobs?.jobs.map((j) => j.label ?? j.name).join(', ') }}
+                                </span>
+                            </dd>
+                        </div>
+
+                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                            <dt class="text-sm font-medium leading-6">
+                                {{ $t('common.sent_at') }}
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <GenericTime :value="dispatch.createdAt" />
@@ -224,7 +219,7 @@ const canAccessDispatch = computed(() => ({
                                     </ul>
                                 </div>
 
-                                <UButtonGroup class="inline-flex">
+                                <UButtonGroup class="inline-flex w-full">
                                     <UButton
                                         v-if="canDo('TakeControl') && canAccessDispatch.dispatch"
                                         icon="i-mdi-account-multiple-plus"
@@ -334,9 +329,26 @@ const canAccessDispatch = computed(() => ({
             </div>
 
             <template #footer>
-                <UButton color="black" block @click="isOpen = false">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButtonGroup class="inline-flex w-full">
+                    <UButton color="black" class="flex-1" block @click="isOpen = false">
+                        {{ $t('common.close', 1) }}
+                    </UButton>
+
+                    <UTooltip
+                        v-if="can('centrum.CentrumService/DeleteDispatch').value && canAccessDispatch.dispatch"
+                        :text="$t('common.delete')"
+                    >
+                        <UButton
+                            icon="i-mdi-delete"
+                            color="error"
+                            @click="
+                                modal.open(ConfirmModal, {
+                                    confirm: async () => dispatch && deleteDispatch(dispatch.id),
+                                })
+                            "
+                        />
+                    </UTooltip>
+                </UButtonGroup>
             </template>
         </UCard>
     </USlideover>

@@ -2,9 +2,9 @@
 import type { PointExpression } from 'leaflet';
 import { BellIcon } from 'mdi-vue3';
 import {
+    calculateDispatchZIndexOffset,
     checkDispatchAccess,
     dispatchStatusAnimate,
-    dispatchStatusToBGColor,
     dispatchStatusToFillColor,
 } from '~/components/centrum/helpers';
 import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
@@ -12,8 +12,9 @@ import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useLivemapStore } from '~/stores/livemap';
 import { CentrumAccessLevel } from '~~/gen/ts/resources/centrum/access';
-import { type Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import DispatchAssignModal from '../dispatches/DispatchAssignModal.vue';
+import DispatchStatusBadge from '../partials/DispatchStatusBadge.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -47,20 +48,7 @@ const dispatchClasses = computed(() => [
     dispatchStatusAnimate(props.dispatch.status?.status) ? 'animate-wiggle' : '',
 ]);
 
-const zIndexOffset = computed(() => {
-    switch (props.dispatch.status?.status) {
-        case StatusDispatch.COMPLETED:
-        case StatusDispatch.CANCELLED:
-        case StatusDispatch.ARCHIVED:
-            return 5;
-        case StatusDispatch.NEW:
-        case StatusDispatch.UNASSIGNED:
-        case StatusDispatch.UNIT_DECLINED:
-            return 15;
-        default:
-            return 10;
-    }
-});
+const zIndexOffset = computed(() => calculateDispatchZIndexOffset(props.dispatch.status?.status));
 </script>
 
 <template>
@@ -124,9 +112,11 @@ const zIndexOffset = computed(() => {
 
                         <UButton
                             v-if="canDo('TakeDispatch') && checkDispatchAccess(dispatch.jobs, CentrumAccessLevel.PARTICIPATE)"
+                            class="text-left"
                             icon="i-mdi-plus"
                             variant="link"
                             :padded="false"
+                            truncate
                             @click="selfAssign(dispatch.id)"
                         >
                             {{ $t('common.self_assign') }}
@@ -146,6 +136,12 @@ const zIndexOffset = computed(() => {
                 </p>
 
                 <ul role="list">
+                    <li class="inline-flex gap-1">
+                        <span class="flex-initial font-semibold">{{ $t('common.job') }}:</span>
+                        <span class="flex-1">
+                            {{ dispatch.jobs?.jobs.map((j) => j.label ?? j.name).join(', ') }}
+                        </span>
+                    </li>
                     <li>
                         <span class="font-semibold">{{ $t('common.sent_at') }}:</span>
                         {{ $d(toDate(dispatch.createdAt), 'short') }}
@@ -174,11 +170,9 @@ const zIndexOffset = computed(() => {
                         <span class="font-semibold">{{ $t('common.description') }}:</span>
                         {{ dispatch.description ?? $t('common.na') }}
                     </li>
-                    <li>
+                    <li class="inline-flex gap-1">
                         <span class="font-semibold">{{ $t('common.status') }}:</span>
-                        <span class="ml-1" :class="dispatchStatusToBGColor(dispatch.status?.status)">
-                            {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`) }}
-                        </span>
+                        <DispatchStatusBadge :status="dispatch.status?.status" />
                     </li>
                     <li>
                         <span class="font-semibold">{{ $t('common.attributes', 2) }}:</span>

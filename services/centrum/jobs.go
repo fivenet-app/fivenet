@@ -18,8 +18,17 @@ func (s *Server) ListDispatchTargetJobs(
 		Jobs: []*jobs.Job{},
 	}
 
-	if j := s.enricher.GetJobByName(userInfo.GetJob()); j != nil {
-		resp.Jobs = append(resp.Jobs, j)
+	// TODO retrieve public jobs if the dispatch center is enabled
+
+	// Add user's job to the job list if dispatch center is enabled
+	settings, err := s.settings.Get(ctx, userInfo.GetJob())
+	if err != nil {
+		return nil, err
+	}
+	if settings.Enabled {
+		if j := s.enricher.GetJobByName(userInfo.GetJob()); j != nil {
+			resp.Jobs = append(resp.Jobs, j)
+		}
 	}
 
 	return resp, nil

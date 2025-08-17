@@ -2,12 +2,7 @@
 import DispatchAssignModal from '~/components/centrum/dispatches/DispatchAssignModal.vue';
 import DispatchDetailsByIDSlideover from '~/components/centrum/dispatches/DispatchDetailsByIDSlideover.vue';
 import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
-import {
-    checkDispatchAccess,
-    dispatchStatusAnimate,
-    dispatchStatusToBadgeColor,
-    dispatchTimeToBadge,
-} from '~/components/centrum/helpers';
+import { checkDispatchAccess, dispatchTimeToBadge } from '~/components/centrum/helpers';
 import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
 import DispatchStatusBreakdown from '~/components/centrum/partials/DispatchStatusBreakdown.vue';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
@@ -17,7 +12,8 @@ import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
 import { CentrumAccessLevel } from '~~/gen/ts/resources/centrum/access';
-import { type Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import { type Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import DispatchStatusBadge from '../partials/DispatchStatusBadge.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -225,14 +221,7 @@ const columns = [
                     </template>
 
                     <template #status-data="{ row: dispatch }">
-                        <UBadge
-                            class="text-gray-900 dark:text-white"
-                            :class="dispatchStatusAnimate(dispatch.status?.status) ? 'animate-pulse' : ''"
-                            :color="dispatchStatusToBadgeColor(dispatch.status?.status)"
-                            size="xs"
-                        >
-                            {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`) }}
-                        </UBadge>
+                        <DispatchStatusBadge :status="dispatch.status?.status" />
                     </template>
 
                     <template #postal-data="{ row: dispatch }">
@@ -366,18 +355,7 @@ const columns = [
                                             />
                                         </span>
 
-                                        <UBadge
-                                            class="text-gray-900 dark:text-white"
-                                            :class="dispatchStatusAnimate(dispatch.status?.status) ? 'animate-pulse' : ''"
-                                            :color="dispatchStatusToBadgeColor(dispatch.status?.status)"
-                                            size="sm"
-                                        >
-                                            {{
-                                                $t(
-                                                    `enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`,
-                                                )
-                                            }}
-                                        </UBadge>
+                                        <DispatchStatusBadge :status="dispatch.status?.status" />
                                     </div>
 
                                     <span> {{ $t('common.postal') }}: {{ dispatch.postal ?? $t('common.na') }} </span>
