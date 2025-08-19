@@ -4,7 +4,6 @@ package resources.centrum;
 
 import "buf/validate/validate.proto";
 import "resources/centrum/attributes.proto";
-import "resources/centrum/settings.proto";
 import "resources/centrum/units.proto";
 import "resources/jobs/colleagues.proto";
 import "resources/timestamp/timestamp.proto";
@@ -21,7 +20,7 @@ message Dispatch {
     deprecated = true,
     (buf.validate.field).string.max_len = 20
   ];
-  resources.centrum.JobList jobs = 18;
+  JobList jobs = 18;
   optional DispatchStatus status = 5;
   // @sanitize
   string message = 7 [(buf.validate.field).string.max_len = 255];
@@ -37,6 +36,15 @@ message Dispatch {
   optional resources.users.User creator = 15;
   repeated DispatchAssignment units = 16;
   optional DispatchReferences references = 17;
+}
+
+message JobList {
+  repeated JobListEntry jobs = 1 [(buf.validate.field).repeated.max_items = 10];
+}
+
+message JobListEntry {
+  string name = 1 [(buf.validate.field).string.max_len = 20];
+  optional string label = 2;
 }
 
 message DispatchAssignments {

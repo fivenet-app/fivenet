@@ -29,7 +29,7 @@ func (s *Server) sendHandshakre(
 	ctx context.Context,
 	srv pbcentrum.CentrumService_StreamServer,
 	userJob string,
-	aclJobs *pbcentrum.JobAccess,
+	acls *centrum.EffectiveAccess,
 ) error {
 	settings, err := s.settings.Get(ctx, userJob)
 	if err != nil {
@@ -41,7 +41,7 @@ func (s *Server) sendHandshakre(
 			Handshake: &pbcentrum.StreamHandshake{
 				ServerTime: timestamp.Now(),
 				Settings:   settings,
-				JobAccess:  aclJobs,
+				Access:     acls,
 			},
 		},
 	}); err != nil {
@@ -55,12 +55,12 @@ func (s *Server) sendLatestState(
 	ctx context.Context,
 	srv pbcentrum.CentrumService_StreamServer,
 	userInfo *userinfo.UserInfo,
-	aclJobs *pbcentrum.JobAccess,
+	acls *centrum.EffectiveAccess,
 	jobList []string,
 ) error {
 	// Dispatchers
-	dispatchers := &pbcentrum.Dispatchers{}
-	for _, j := range aclJobs.GetDispatches() {
+	dispatchers := &centrum.JobDispatchers{}
+	for _, j := range acls.GetDispatches().GetJobs() {
 		dispos, err := s.dispatchers.Get(ctx, j.GetJob())
 		if err != nil {
 			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
@@ -109,7 +109,7 @@ func (s *Server) Stream(
 	userInfo := auth.MustGetUserInfoFromContext(srv.Context()).Clone()
 
 	// Check if user has access to other job's centrum
-	jobList, jobAcls, err := s.settings.GetJobAccessList(
+	jobList, acls, err := s.settings.GetAccessList(
 		srv.Context(),
 		userInfo.GetJob(),
 		userInfo.GetJobGrade(),
@@ -119,11 +119,11 @@ func (s *Server) Stream(
 	}
 
 	for {
-		if err := s.sendHandshakre(srv.Context(), srv, userInfo.GetJob(), jobAcls); err != nil {
+		if err := s.sendHandshakre(srv.Context(), srv, userInfo.GetJob(), acls); err != nil {
 			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
-		if err := s.sendLatestState(srv.Context(), srv, userInfo, jobAcls, jobList); err != nil {
+		if err := s.sendLatestState(srv.Context(), srv, userInfo, acls, jobList); err != nil {
 			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 

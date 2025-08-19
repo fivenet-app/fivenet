@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import CentrumSettings from '~/components/centrum/settings/CentrumSettings.vue';
+import Settings from '~/components/centrum/settings/Settings.vue';
 
 useHead({
     title: 'components.centrum.settings.title',
@@ -15,7 +15,7 @@ definePageMeta({
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <CentrumSettings />
+            <Settings />
         </UDashboardPanel>
     </UDashboardPage>
 </template>

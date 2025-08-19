@@ -540,7 +540,7 @@ const goToSelection = () => {
     }
 
     const { results, resultIndex } = editor.value.storage.searchAndReplace;
-    const position: Range = results[resultIndex];
+    const position: Range | undefined = results[resultIndex];
 
     if (!position) {
         return;
@@ -733,7 +733,7 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                         :popper="{ placement: 'top' }"
                     >
                         <UButton
-                            :class="{ 'bg-gray-300 dark:bg-gray-900': editor.storage.invisibleCharacters.visibility() }"
+                            :class="{ 'bg-gray-300 dark:bg-gray-900': editorSettings.showInvisibleCharacters }"
                             :disabled="!editor.can().chain().focus().toggleInvisibleCharacters().run() || disabled"
                             color="gray"
                             variant="ghost"
@@ -1343,7 +1343,6 @@ onBeforeUnmount(() => unref(editor)?.destroy());
             </div>
         </div>
 
-        <!-- @vue-expect-error editor prop type is "messed" up due to tiptap core vs pm vs vue3 as far as I can tell -->
         <DragHandle v-if="editor !== undefined" :editor="editor">
             <div class="tiptap-drag-handle h-5 w-6 after:flex after:cursor-grab after:items-center after:justify-center">
                 <UIcon class="h-5 w-4" name="i-mdi-drag-horizontal" />

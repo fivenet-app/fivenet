@@ -4,7 +4,7 @@ import { dispatchStatusAnimate, dispatchStatusToBadgeColor } from '../helpers';
 
 withDefaults(
     defineProps<{
-        status: StatusDispatch | undefined;
+        status?: StatusDispatch | undefined;
     }>(),
     {
         status: StatusDispatch.UNSPECIFIED,

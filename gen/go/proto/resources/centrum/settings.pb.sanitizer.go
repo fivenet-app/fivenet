@@ -24,15 +24,24 @@ func (m *Configuration) Sanitize() error {
 	return nil
 }
 
-func (m *Job) Sanitize() error {
+func (m *EffectiveAccess) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: Dispatches
+	if m.Dispatches != nil {
+		if v, ok := any(m.GetDispatches()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil
 }
 
-func (m *JobList) Sanitize() error {
+func (m *EffectiveDispatchAccess) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -47,6 +56,14 @@ func (m *JobList) Sanitize() error {
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *JobAccessEntry) Sanitize() error {
+	if m == nil {
+		return nil
 	}
 
 	return nil
@@ -93,6 +110,24 @@ func (m *Settings) Sanitize() error {
 	// Field: Configuration
 	if m.Configuration != nil {
 		if v, ok := any(m.GetConfiguration()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: EffectiveAccess
+	if m.EffectiveAccess != nil {
+		if v, ok := any(m.GetEffectiveAccess()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: OfferedAccess
+	if m.OfferedAccess != nil {
+		if v, ok := any(m.GetOfferedAccess()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

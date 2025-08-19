@@ -49,6 +49,7 @@ func (ui *MockUserInfoRetriever) GetUserInfoWithoutAccountId(
 func (ui *MockUserInfoRetriever) SetUserInfo(
 	ctx context.Context,
 	accountId int64,
+	userId int32,
 	superuser bool,
 	job *string,
 	jobGrade *int32,

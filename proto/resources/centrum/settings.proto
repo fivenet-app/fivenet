@@ -5,6 +5,7 @@ package resources.centrum;
 import "buf/validate/validate.proto";
 import "google/protobuf/duration.proto";
 import "resources/centrum/access.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrum";
 
@@ -31,8 +32,10 @@ message Settings {
   CentrumMode fallback_mode = 4 [(buf.validate.field).enum.defined_only = true];
   optional PredefinedStatus predefined_status = 5;
   Timings timings = 6;
-  resources.centrum.CentrumAccess access = 7;
   Configuration configuration = 10;
+  optional resources.centrum.CentrumAccess access = 7;
+  optional resources.centrum.CentrumAccess offered_access = 12;
+  optional EffectiveAccess effective_access = 11;
 }
 
 // @dbscanner: json
@@ -76,11 +79,16 @@ message Configuration {
   optional google.protobuf.Duration deduplication_duration = 3;
 }
 
-message JobList {
-  repeated Job jobs = 1 [(buf.validate.field).repeated.max_items = 10];
+message EffectiveAccess {
+  EffectiveDispatchAccess dispatches = 1;
 }
 
-message Job {
-  string name = 1 [(buf.validate.field).string.max_len = 20];
-  optional string label = 2;
+message EffectiveDispatchAccess {
+  repeated JobAccessEntry jobs = 1 [(tagger.tags) = "alias:\"job_access\""];
+}
+
+message JobAccessEntry {
+  string job = 1 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 2;
+  resources.centrum.CentrumAccessLevel access = 3 [(buf.validate.field).enum.defined_only = true];
 }

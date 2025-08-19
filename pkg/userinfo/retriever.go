@@ -9,11 +9,14 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	pb "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	pbuserinfo "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/cache"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
@@ -29,14 +32,13 @@ const cacheTTL = 20 * time.Second
 
 var ErrAccountError = errors.New("failed to retrieve account data")
 
-var tFivenetAccounts = table.FivenetAccounts
-
 type UserInfoRetriever interface {
 	GetUserInfo(ctx context.Context, userId int32, accountId int64) (*pbuserinfo.UserInfo, error)
 	GetUserInfoWithoutAccountId(ctx context.Context, userId int32) (*pbuserinfo.UserInfo, error)
 	SetUserInfo(
 		ctx context.Context,
 		accountId int64,
+		userId int32,
 		superuser bool,
 		job *string,
 		jobGrade *int32,
@@ -54,10 +56,11 @@ type Retriever struct {
 	logger *zap.Logger
 	jsCons jetstream.ConsumeContext
 
-	ctx    context.Context
-	db     *sql.DB
-	js     *events.JSWrapper
-	notifi notifi.INotifi
+	ctx      context.Context
+	db       *sql.DB
+	js       *events.JSWrapper
+	enricher *mstlystcdata.Enricher
+	notifi   notifi.INotifi
 
 	// userCache caches user info by userAccountKey (userId+accountId)
 	userCache    *cache.LRUCache[userAccountKey, *pbuserinfo.UserInfo]
@@ -72,11 +75,12 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger *zap.Logger
-	DB     *sql.DB
-	JS     *events.JSWrapper
-	Config *config.Config
-	Notifi notifi.INotifi
+	Logger   *zap.Logger
+	DB       *sql.DB
+	JS       *events.JSWrapper
+	Enricher *mstlystcdata.Enricher
+	Config   *config.Config
+	Notifi   notifi.INotifi
 }
 
 // NewRetriever creates a new Retriever with LRU cache and configures lifecycle hooks.
@@ -86,11 +90,12 @@ func NewRetriever(p Params) UserInfoRetriever {
 	userCache := cache.NewLRUCache[userAccountKey, *pbuserinfo.UserInfo](350)
 
 	retriever := &Retriever{
-		logger: p.Logger.Named("userinfo.retriever"),
-		ctx:    ctxCancel,
-		db:     p.DB,
-		js:     p.JS,
-		notifi: p.Notifi,
+		logger:   p.Logger.Named("userinfo.retriever"),
+		ctx:      ctxCancel,
+		db:       p.DB,
+		js:       p.JS,
+		enricher: p.Enricher,
+		notifi:   p.Notifi,
 
 		userCache:    userCache,
 		userCacheTTL: cacheTTL,
@@ -165,29 +170,35 @@ func (r *Retriever) handleMsg(m jetstream.Msg) {
 	}
 
 	var evt pbuserinfo.UserInfoChanged
-	if err := proto.Unmarshal(m.Data(), &evt); err == nil {
-		key := userAccountKey{UserID: evt.GetUserId(), AccountID: evt.GetAccountId()}
-		if userInfo, ok := r.userCache.Get(key); ok {
-			// If we already have this user in cache, clone the current user info and update it
-			clone := userInfo.Clone()
-			clone.Job = evt.GetNewJob()
-			clone.JobGrade = evt.GetNewJobGrade()
-			r.userCache.Put(key, clone, r.userCacheTTL)
-		}
-
-		// Notify UI about the user info change
-		r.logger.Debug(
-			"User info changed, notifying user",
-			zap.Int32("userId", evt.GetUserId()),
-			zap.Int64("accountId", evt.GetAccountId()),
+	if err := proto.Unmarshal(m.Data(), &evt); err != nil {
+		r.logger.Error("failed to unmarshal user info changed event",
+			zap.Error(err),
+			zap.String("subject", m.Subject()),
 		)
-
-		r.notifi.SendUserEvent(r.ctx, evt.GetUserId(), &notifications.UserEvent{
-			Data: &notifications.UserEvent_UserInfoChanged{
-				UserInfoChanged: &evt,
-			},
-		})
+		return
 	}
+
+	key := userAccountKey{UserID: evt.GetUserId(), AccountID: evt.GetAccountId()}
+	if userInfo, ok := r.userCache.Get(key); ok {
+		// If we already have this user in cache, clone the current user info and update it
+		clone := userInfo.Clone()
+		clone.Job = evt.GetNewJob()
+		clone.JobGrade = evt.GetNewJobGrade()
+		r.userCache.Put(key, clone, r.userCacheTTL)
+	}
+
+	// Notify UI about the user info change
+	r.logger.Debug(
+		"User info changed, notifying user",
+		zap.Int32("userId", evt.GetUserId()),
+		zap.Int64("accountId", evt.GetAccountId()),
+	)
+
+	r.notifi.SendUserEvent(r.ctx, evt.GetUserId(), &notifications.UserEvent{
+		Data: &notifications.UserEvent_UserInfoChanged{
+			UserInfoChanged: &evt,
+		},
+	})
 }
 
 // GetUserInfo retrieves user info for a given userId and accountId, using cache for performance.
@@ -212,7 +223,7 @@ func (r *Retriever) GetUserInfo(
 	}
 
 	// Set superuser status and override job/grade if applicable
-	r.setSuperuserStatus(dest)
+	r.checkAndSetSuperuser(dest)
 
 	r.userCache.Put(key, dest, r.userCacheTTL)
 
@@ -224,33 +235,34 @@ func (r *Retriever) getUserInfo(
 	userId int32,
 	accountId int64,
 ) (*pbuserinfo.UserInfo, error) {
-	dest := &pbuserinfo.UserInfo{}
 	tUsers := tables.User().AS("user_info")
+	tAccount := table.FivenetAccounts
 
 	stmt := tUsers.
 		SELECT(
-			tFivenetAccounts.ID.AS("user_info.account_id"),
-			tFivenetAccounts.Enabled.AS("user_info.enabled"),
-			tFivenetAccounts.License.AS("user_info.license"),
-			tFivenetAccounts.OverrideJob.AS("user_info.override_job"),
-			tFivenetAccounts.OverrideJobGrade.AS("user_info.override_job_grade"),
-			tFivenetAccounts.Superuser.AS("user_info.superuser"),
-			tFivenetAccounts.LastChar.AS("user_info.last_char"),
+			tAccount.ID.AS("user_info.account_id"),
+			tAccount.Enabled.AS("user_info.enabled"),
+			tAccount.License.AS("user_info.license"),
+			tAccount.OverrideJob.AS("user_info.override_job"),
+			tAccount.OverrideJobGrade.AS("user_info.override_job_grade"),
+			tAccount.Superuser.AS("user_info.superuser"),
+			tAccount.LastChar.AS("user_info.last_char"),
 			tUsers.ID.AS("user_info.userid"),
 			tUsers.Job,
 			tUsers.JobGrade,
 			tUsers.Group,
 		).
 		FROM(
-			tFivenetAccounts,
+			tAccount,
 			tUsers,
 		).
 		WHERE(jet.AND(
-			tFivenetAccounts.ID.EQ(jet.Int64(accountId)),
+			tAccount.ID.EQ(jet.Int64(accountId)),
 			tUsers.ID.EQ(jet.Int32(userId)),
 		)).
 		LIMIT(1)
 
+	dest := &pbuserinfo.UserInfo{}
 	if err := stmt.QueryContext(ctx, r.db, dest); err != nil {
 		return nil, err
 	}
@@ -283,20 +295,14 @@ func (r *Retriever) GetUserInfoWithoutAccountId(
 		return nil, errswrap.NewError(err, ErrAccountError)
 	}
 
-	// Set superuser status (without license check)
-	r.setSuperuserStatus(dest)
+	// Set superuser status
+	r.checkAndSetSuperuser(dest)
 
 	return dest, nil
 }
 
-// setSuperuserStatus sets CanBeSuper and applies override job/grade if user is a superuser.
-func (r *Retriever) setSuperuserStatus(dest *pbuserinfo.UserInfo) {
-	// Defensive nil check for dest
-	if dest == nil {
-		return
-	}
-
-	// Check if user is superuser by group or license
+// checkAndSetSuperuser check if user is superuser by group or license.
+func (r *Retriever) checkAndSetSuperuser(dest *pbuserinfo.UserInfo) {
 	isSuperGroup := slices.Contains(r.superuserGroups, dest.GetGroup())
 	if isSuperGroup || slices.Contains(r.superuserUsers, dest.GetLicense()) {
 		dest.CanBeSuperuser = true
@@ -308,30 +314,79 @@ func (r *Retriever) setSuperuserStatus(dest *pbuserinfo.UserInfo) {
 	}
 }
 
+// SetUserInfo updates user info for a given accountId, setting superuser status and job/grade in the account table.
 func (r *Retriever) SetUserInfo(
 	ctx context.Context,
 	accountId int64,
+	userId int32,
 	superuser bool,
-	job *string,
-	jobGrade *int32,
+	overrideJob *string,
+	overrideJobGrade *int32,
 ) error {
-	stmt := tFivenetAccounts.
+	tAccount := table.FivenetAccounts
+
+	stmt := tAccount.
 		UPDATE(
-			tFivenetAccounts.Superuser,
-			tFivenetAccounts.OverrideJob,
-			tFivenetAccounts.OverrideJobGrade,
+			tAccount.Superuser,
+			tAccount.OverrideJob,
+			tAccount.OverrideJobGrade,
 		).
 		SET(
 			superuser,
-			job,
-			jobGrade,
+			overrideJob,
+			overrideJobGrade,
 		).
-		WHERE(
-			tFivenetAccounts.ID.EQ(jet.Int64(accountId)),
-		)
+		WHERE(tAccount.ID.EQ(jet.Int64(accountId))).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, r.db); err != nil {
 		return err
+	}
+
+	// If userId is not provided, we only update the account info
+	if userId <= 0 {
+		return nil
+	}
+
+	// If userId is provided, we need to update the user info in cache by publishing the update
+	key := userAccountKey{UserID: userId, AccountID: accountId}
+	dest, ok := r.userCache.Get(key)
+	if !ok {
+		return nil
+	}
+
+	ui := dest.Clone()
+	ui.Superuser = superuser
+	if overrideJob != nil {
+		ui.Job = *overrideJob
+	}
+	if overrideJobGrade != nil {
+		ui.JobGrade = *overrideJobGrade
+	}
+
+	r.userCache.Put(key, ui, r.userCacheTTL)
+
+	evt := &pb.UserInfoChanged{
+		AccountId:   ui.AccountId,
+		UserId:      ui.UserId,
+		OldJob:      dest.Job,
+		NewJob:      overrideJob,
+		OldJobGrade: dest.JobGrade,
+		NewJobGrade: overrideJobGrade,
+		Superuser:   &superuser,
+		ChangedAt:   timestamp.Now(),
+	}
+	r.enricher.EnrichJobInfo(evt)
+
+	// Publish the user info change to the NATS JetStream
+	subj := fmt.Sprintf("userinfo.%d.changes", ui.AccountId)
+	if _, err := r.js.PublishAsyncProto(ctx, subj, evt); err != nil {
+		return fmt.Errorf(
+			"failed to publish user info change for userId %d, accountId %d. %w",
+			userId,
+			accountId,
+			err,
+		)
 	}
 
 	return nil

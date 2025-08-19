@@ -128,11 +128,13 @@ type CentrumJobAccess struct {
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
+	SourceJob     string                 `protobuf:"bytes,9,opt,name=source_job,json=sourceJob,proto3" json:"source_job,omitempty"`
 	Job           string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel      *string                `protobuf:"bytes,5,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	MinimumGrade  int32                  `protobuf:"varint,6,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty"`
 	JobGradeLabel *string                `protobuf:"bytes,7,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty"`
 	Access        CentrumAccessLevel     `protobuf:"varint,8,opt,name=access,proto3,enum=resources.centrum.CentrumAccessLevel" json:"access,omitempty"`
+	AcceptedAt    *timestamp.Timestamp   `protobuf:"bytes,10,opt,name=accepted_at,json=acceptedAt,proto3,oneof" json:"accepted_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -188,6 +190,13 @@ func (x *CentrumJobAccess) GetTargetId() int64 {
 	return 0
 }
 
+func (x *CentrumJobAccess) GetSourceJob() string {
+	if x != nil {
+		return x.SourceJob
+	}
+	return ""
+}
+
 func (x *CentrumJobAccess) GetJob() string {
 	if x != nil {
 		return x.Job
@@ -221,6 +230,13 @@ func (x *CentrumJobAccess) GetAccess() CentrumAccessLevel {
 		return x.Access
 	}
 	return CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_UNSPECIFIED
+}
+
+func (x *CentrumJobAccess) GetAcceptedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.AcceptedAt
+	}
+	return nil
 }
 
 // Dummy - DO NOT USE!
@@ -304,21 +320,27 @@ const file_resources_centrum_access_proto_rawDesc = "" +
 	"\x1eresources/centrum/access.proto\x12\x11resources.centrum\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"i\n" +
 	"\rCentrumAccess\x12X\n" +
 	"\x04jobs\x18\x01 \x03(\v2#.resources.centrum.CentrumJobAccessB\x1f\x9a\x84\x9e\x03\x12alias:\"job_access\"\xbaH\x05\x92\x01\x02\x10\n" +
-	"R\x04jobs\"\xa7\x03\n" +
+	"R\x04jobs\"\xa5\x04\n" +
 	"\x10CentrumJobAccess\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1b\n" +
-	"\ttarget_id\x18\x03 \x01(\x03R\btargetId\x12\x19\n" +
+	"\ttarget_id\x18\x03 \x01(\x03R\btargetId\x12&\n" +
+	"\n" +
+	"source_job\x18\t \x01(\tB\a\xbaH\x04r\x02\x18\x14R\tsourceJob\x12\x19\n" +
 	"\x03job\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12)\n" +
 	"\tjob_label\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x182H\x01R\bjobLabel\x88\x01\x01\x12,\n" +
 	"\rminimum_grade\x18\x06 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\fminimumGrade\x124\n" +
 	"\x0fjob_grade_label\x18\a \x01(\tB\a\xbaH\x04r\x02\x182H\x02R\rjobGradeLabel\x88\x01\x01\x12G\n" +
-	"\x06access\x18\b \x01(\x0e2%.resources.centrum.CentrumAccessLevelB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06accessB\r\n" +
+	"\x06access\x18\b \x01(\x0e2%.resources.centrum.CentrumAccessLevelB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06access\x12D\n" +
+	"\vaccepted_at\x18\n" +
+	" \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\n" +
+	"acceptedAt\x88\x01\x01B\r\n" +
 	"\v_created_atB\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
-	"\x10_job_grade_label\"\x13\n" +
+	"\x10_job_grade_labelB\x0e\n" +
+	"\f_accepted_at\"\x13\n" +
 	"\x11CentrumUserAccess\"\x1c\n" +
 	"\x1aCentrumQualificationAccess*\xc4\x01\n" +
 	"\x12CentrumAccessLevel\x12$\n" +
@@ -354,11 +376,12 @@ var file_resources_centrum_access_proto_depIdxs = []int32{
 	2, // 0: resources.centrum.CentrumAccess.jobs:type_name -> resources.centrum.CentrumJobAccess
 	5, // 1: resources.centrum.CentrumJobAccess.created_at:type_name -> resources.timestamp.Timestamp
 	0, // 2: resources.centrum.CentrumJobAccess.access:type_name -> resources.centrum.CentrumAccessLevel
-	3, // [3:3] is the sub-list for method output_type
-	3, // [3:3] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	5, // 3: resources.centrum.CentrumJobAccess.accepted_at:type_name -> resources.timestamp.Timestamp
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_resources_centrum_access_proto_init() }

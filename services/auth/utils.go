@@ -99,7 +99,7 @@ func (s *Server) handleSuperuserOverride(
 		account.OverrideJob = nil
 		account.OverrideJobGrade = nil
 
-		if err := s.ui.SetUserInfo(ctx, claims.AccID, false, account.OverrideJob, account.OverrideJobGrade); err != nil {
+		if err := s.ui.SetUserInfo(ctx, claims.AccID, claims.CharID, false, account.OverrideJob, account.OverrideJobGrade); err != nil {
 			return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 		}
 

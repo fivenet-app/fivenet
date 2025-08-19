@@ -22,3 +22,23 @@ func (m *Dispatchers) Sanitize() error {
 
 	return nil
 }
+
+func (m *JobDispatchers) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Dispatchers
+	for idx, item := range m.Dispatchers {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}

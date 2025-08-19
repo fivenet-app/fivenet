@@ -219,14 +219,16 @@ type UserInfoChanged struct {
 	// Previous job title
 	OldJob string `protobuf:"bytes,3,opt,name=old_job,json=oldJob,proto3" json:"old_job,omitempty"`
 	// New job title
-	NewJob      string  `protobuf:"bytes,4,opt,name=new_job,json=newJob,proto3" json:"new_job,omitempty"`
+	NewJob      *string `protobuf:"bytes,4,opt,name=new_job,json=newJob,proto3,oneof" json:"new_job,omitempty"`
 	NewJobLabel *string `protobuf:"bytes,5,opt,name=new_job_label,json=newJobLabel,proto3,oneof" json:"new_job_label,omitempty"`
 	// Previous job grade
 	OldJobGrade int32 `protobuf:"varint,6,opt,name=old_job_grade,json=oldJobGrade,proto3" json:"old_job_grade,omitempty"`
 	// New job grade
-	NewJobGrade int32 `protobuf:"varint,7,opt,name=new_job_grade,json=newJobGrade,proto3" json:"new_job_grade,omitempty"`
+	NewJobGrade *int32 `protobuf:"varint,7,opt,name=new_job_grade,json=newJobGrade,proto3,oneof" json:"new_job_grade,omitempty"`
 	// New job grade label
 	NewJobGradeLabel *string `protobuf:"bytes,8,opt,name=new_job_grade_label,json=newJobGradeLabel,proto3,oneof" json:"new_job_grade_label,omitempty"`
+	// Superuser state
+	Superuser *bool `protobuf:"varint,10,opt,name=superuser,proto3,oneof" json:"superuser,omitempty"`
 	// Timestamp of when the change was detected
 	ChangedAt     *timestamp.Timestamp `protobuf:"bytes,9,opt,name=changed_at,json=changedAt,proto3" json:"changed_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -285,8 +287,8 @@ func (x *UserInfoChanged) GetOldJob() string {
 }
 
 func (x *UserInfoChanged) GetNewJob() string {
-	if x != nil {
-		return x.NewJob
+	if x != nil && x.NewJob != nil {
+		return *x.NewJob
 	}
 	return ""
 }
@@ -306,8 +308,8 @@ func (x *UserInfoChanged) GetOldJobGrade() int32 {
 }
 
 func (x *UserInfoChanged) GetNewJobGrade() int32 {
-	if x != nil {
-		return x.NewJobGrade
+	if x != nil && x.NewJobGrade != nil {
+		return *x.NewJobGrade
 	}
 	return 0
 }
@@ -317,6 +319,13 @@ func (x *UserInfoChanged) GetNewJobGradeLabel() string {
 		return *x.NewJobGradeLabel
 	}
 	return ""
+}
+
+func (x *UserInfoChanged) GetSuperuser() bool {
+	if x != nil && x.Superuser != nil {
+		return *x.Superuser
+	}
+	return false
 }
 
 func (x *UserInfoChanged) GetChangedAt() *timestamp.Timestamp {
@@ -353,21 +362,28 @@ const file_resources_userinfo_user_info_proto_rawDesc = "" +
 	"\aPollReq\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x01 \x01(\x03R\taccountId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x05R\x06userId\"\x89\x03\n" +
+	"\auser_id\x18\x02 \x01(\x05R\x06userId\"\xe2\x03\n" +
 	"\x0fUserInfoChanged\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x01 \x01(\x03R\taccountId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12\x17\n" +
-	"\aold_job\x18\x03 \x01(\tR\x06oldJob\x12\x17\n" +
-	"\anew_job\x18\x04 \x01(\tR\x06newJob\x12'\n" +
-	"\rnew_job_label\x18\x05 \x01(\tH\x00R\vnewJobLabel\x88\x01\x01\x12\"\n" +
-	"\rold_job_grade\x18\x06 \x01(\x05R\voldJobGrade\x12\"\n" +
-	"\rnew_job_grade\x18\a \x01(\x05R\vnewJobGrade\x122\n" +
-	"\x13new_job_grade_label\x18\b \x01(\tH\x01R\x10newJobGradeLabel\x88\x01\x01\x12=\n" +
+	"\aold_job\x18\x03 \x01(\tR\x06oldJob\x12\x1c\n" +
+	"\anew_job\x18\x04 \x01(\tH\x00R\x06newJob\x88\x01\x01\x12'\n" +
+	"\rnew_job_label\x18\x05 \x01(\tH\x01R\vnewJobLabel\x88\x01\x01\x12\"\n" +
+	"\rold_job_grade\x18\x06 \x01(\x05R\voldJobGrade\x12'\n" +
+	"\rnew_job_grade\x18\a \x01(\x05H\x02R\vnewJobGrade\x88\x01\x01\x122\n" +
+	"\x13new_job_grade_label\x18\b \x01(\tH\x03R\x10newJobGradeLabel\x88\x01\x01\x12!\n" +
+	"\tsuperuser\x18\n" +
+	" \x01(\bH\x04R\tsuperuser\x88\x01\x01\x12=\n" +
 	"\n" +
-	"changed_at\x18\t \x01(\v2\x1e.resources.timestamp.TimestampR\tchangedAtB\x10\n" +
-	"\x0e_new_job_labelB\x16\n" +
-	"\x14_new_job_grade_labelBOZMgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo;userinfob\x06proto3"
+	"changed_at\x18\t \x01(\v2\x1e.resources.timestamp.TimestampR\tchangedAtB\n" +
+	"\n" +
+	"\b_new_jobB\x10\n" +
+	"\x0e_new_job_labelB\x10\n" +
+	"\x0e_new_job_gradeB\x16\n" +
+	"\x14_new_job_grade_labelB\f\n" +
+	"\n" +
+	"_superuserBOZMgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo;userinfob\x06proto3"
 
 var (
 	file_resources_userinfo_user_info_proto_rawDescOnce sync.Once

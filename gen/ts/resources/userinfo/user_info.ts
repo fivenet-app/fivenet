@@ -111,9 +111,9 @@ export interface UserInfoChanged {
     /**
      * New job title
      *
-     * @generated from protobuf field: string new_job = 4
+     * @generated from protobuf field: optional string new_job = 4
      */
-    newJob: string;
+    newJob?: string;
     /**
      * @generated from protobuf field: optional string new_job_label = 5
      */
@@ -127,15 +127,21 @@ export interface UserInfoChanged {
     /**
      * New job grade
      *
-     * @generated from protobuf field: int32 new_job_grade = 7
+     * @generated from protobuf field: optional int32 new_job_grade = 7
      */
-    newJobGrade: number;
+    newJobGrade?: number;
     /**
      * New job grade label
      *
      * @generated from protobuf field: optional string new_job_grade_label = 8
      */
     newJobGradeLabel?: string;
+    /**
+     * Superuser state
+     *
+     * @generated from protobuf field: optional bool superuser = 10
+     */
+    superuser?: boolean;
     /**
      * Timestamp of when the change was detected
      *
@@ -337,11 +343,12 @@ class UserInfoChanged$Type extends MessageType<UserInfoChanged> {
             { no: 1, name: "account_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "old_job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "new_job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "new_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 5, name: "new_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 6, name: "old_job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 7, name: "new_job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 7, name: "new_job_grade", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 8, name: "new_job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 10, name: "superuser", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 9, name: "changed_at", kind: "message", T: () => Timestamp }
         ]);
     }
@@ -350,9 +357,7 @@ class UserInfoChanged$Type extends MessageType<UserInfoChanged> {
         message.accountId = 0;
         message.userId = 0;
         message.oldJob = "";
-        message.newJob = "";
         message.oldJobGrade = 0;
-        message.newJobGrade = 0;
         if (value !== undefined)
             reflectionMergePartial<UserInfoChanged>(this, message, value);
         return message;
@@ -371,7 +376,7 @@ class UserInfoChanged$Type extends MessageType<UserInfoChanged> {
                 case /* string old_job */ 3:
                     message.oldJob = reader.string();
                     break;
-                case /* string new_job */ 4:
+                case /* optional string new_job */ 4:
                     message.newJob = reader.string();
                     break;
                 case /* optional string new_job_label */ 5:
@@ -380,11 +385,14 @@ class UserInfoChanged$Type extends MessageType<UserInfoChanged> {
                 case /* int32 old_job_grade */ 6:
                     message.oldJobGrade = reader.int32();
                     break;
-                case /* int32 new_job_grade */ 7:
+                case /* optional int32 new_job_grade */ 7:
                     message.newJobGrade = reader.int32();
                     break;
                 case /* optional string new_job_grade_label */ 8:
                     message.newJobGradeLabel = reader.string();
+                    break;
+                case /* optional bool superuser */ 10:
+                    message.superuser = reader.bool();
                     break;
                 case /* resources.timestamp.Timestamp changed_at */ 9:
                     message.changedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.changedAt);
@@ -410,8 +418,8 @@ class UserInfoChanged$Type extends MessageType<UserInfoChanged> {
         /* string old_job = 3; */
         if (message.oldJob !== "")
             writer.tag(3, WireType.LengthDelimited).string(message.oldJob);
-        /* string new_job = 4; */
-        if (message.newJob !== "")
+        /* optional string new_job = 4; */
+        if (message.newJob !== undefined)
             writer.tag(4, WireType.LengthDelimited).string(message.newJob);
         /* optional string new_job_label = 5; */
         if (message.newJobLabel !== undefined)
@@ -419,8 +427,8 @@ class UserInfoChanged$Type extends MessageType<UserInfoChanged> {
         /* int32 old_job_grade = 6; */
         if (message.oldJobGrade !== 0)
             writer.tag(6, WireType.Varint).int32(message.oldJobGrade);
-        /* int32 new_job_grade = 7; */
-        if (message.newJobGrade !== 0)
+        /* optional int32 new_job_grade = 7; */
+        if (message.newJobGrade !== undefined)
             writer.tag(7, WireType.Varint).int32(message.newJobGrade);
         /* optional string new_job_grade_label = 8; */
         if (message.newJobGradeLabel !== undefined)
@@ -428,6 +436,9 @@ class UserInfoChanged$Type extends MessageType<UserInfoChanged> {
         /* resources.timestamp.Timestamp changed_at = 9; */
         if (message.changedAt)
             Timestamp.internalBinaryWrite(message.changedAt, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        /* optional bool superuser = 10; */
+        if (message.superuser !== undefined)
+            writer.tag(10, WireType.Varint).bool(message.superuser);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

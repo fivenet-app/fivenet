@@ -33,21 +33,18 @@ func (s *Housekeeper) runDispatchWatch(ctx context.Context) {
 }
 
 func (s *Housekeeper) watchDispatches(ctx context.Context) error {
-	store := s.dispatches.Store() // Helper that returns our nats store wrapper
-
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
-	eventCh, err := store.WatchAll(ctx)
+	watch, err := s.dispatches.Store().WatchAll(ctx)
 	if err != nil {
 		return err
 	}
+	defer watch.Stop()
 
 	for {
 		select {
 		case <-ctx.Done():
 			return nil
 
-		case e := <-eventCh.Updates():
+		case e := <-watch.Updates():
 			if e == nil { // heartbeat
 				continue
 			}

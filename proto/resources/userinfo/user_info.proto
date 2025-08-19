@@ -43,15 +43,18 @@ message UserInfoChanged {
   // Previous job title
   string old_job = 3;
   // New job title
-  string new_job = 4;
+  optional string new_job = 4;
   optional string new_job_label = 5;
 
   // Previous job grade
   int32 old_job_grade = 6;
   // New job grade
-  int32 new_job_grade = 7;
+  optional int32 new_job_grade = 7;
   // New job grade label
   optional string new_job_grade_label = 8;
+
+  // Superuser state
+  optional bool superuser = 10;
 
   // Timestamp of when the change was detected
   resources.timestamp.Timestamp changed_at = 9;

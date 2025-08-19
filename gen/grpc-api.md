@@ -755,11 +755,13 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `target_id` | [int64](#int64) |  |  |
+| `source_job` | [string](#string) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `minimum_grade` | [int32](#int32) |  |  |
 | `job_grade_label` | [string](#string) | optional |  |
 | `access` | [CentrumAccessLevel](#resourcescentrumCentrumAccessLevel) |  |  |
+| `accepted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 
 
 
@@ -983,128 +985,18 @@ Dummy - DO NOT USE!
 
 
 
- <!-- end messages -->
 
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-## resources/centrum/settings.proto
-
-
-### resources.centrum.Configuration
-@dbscanner: json
-
+### resources.centrum.JobDispatchers
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `deduplication_enabled` | [bool](#bool) |  |  |
-| `deduplication_radius` | [int64](#int64) |  |  |
-| `deduplication_duration` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) | optional |  |
-
-
-
-
-
-### resources.centrum.Job
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `name` | [string](#string) |  |  |
-| `label` | [string](#string) | optional |  |
-
-
-
-
-
-### resources.centrum.JobList
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [Job](#resourcescentrumJob) | repeated |  |
-
-
-
-
-
-### resources.centrum.PredefinedStatus
-@dbscanner: json
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `unit_status` | [string](#string) | repeated | @sanitize: method=StripTags |
-| `dispatch_status` | [string](#string) | repeated | @sanitize: method=StripTags |
-
-
-
-
-
-### resources.centrum.Settings
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job` | [string](#string) |  |  |
-| `enabled` | [bool](#bool) |  |  |
-| `type` | [CentrumType](#resourcescentrumCentrumType) |  |  |
-| `public` | [bool](#bool) |  |  |
-| `mode` | [CentrumMode](#resourcescentrumCentrumMode) |  |  |
-| `fallback_mode` | [CentrumMode](#resourcescentrumCentrumMode) |  |  |
-| `predefined_status` | [PredefinedStatus](#resourcescentrumPredefinedStatus) | optional |  |
-| `timings` | [Timings](#resourcescentrumTimings) |  |  |
-| `access` | [CentrumAccess](#resourcescentrumCentrumAccess) |  |  |
-| `configuration` | [Configuration](#resourcescentrumConfiguration) |  |  |
-
-
-
-
-
-### resources.centrum.Timings
-@dbscanner: json
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `dispatch_max_wait` | [int64](#int64) |  |  |
-| `require_unit` | [bool](#bool) |  |  |
-| `require_unit_reminder_seconds` | [int64](#int64) |  |  |
+| `dispatchers` | [Dispatchers](#resourcescentrumDispatchers) | repeated |  |
 
 
 
 
  <!-- end messages -->
-
-
-### resources.centrum.CentrumMode
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `CENTRUM_MODE_UNSPECIFIED` | 0 |  |
-| `CENTRUM_MODE_MANUAL` | 1 |  |
-| `CENTRUM_MODE_CENTRAL_COMMAND` | 2 |  |
-| `CENTRUM_MODE_AUTO_ROUND_ROBIN` | 3 |  |
-| `CENTRUM_MODE_SIMPLIFIED` | 4 |  |
-
-
-
-### resources.centrum.CentrumType
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `CENTRUM_TYPE_UNSPECIFIED` | 0 |  |
-| `CENTRUM_TYPE_DISPATCH` | 1 |  |
-| `CENTRUM_TYPE_DELIVERY` | 2 |  |
-
 
  <!-- end enums -->
 
@@ -1951,6 +1843,29 @@ Dummy - DO NOT USE!
 
 
 
+
+### resources.centrum.JobList
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [JobListEntry](#resourcescentrumJobListEntry) | repeated |  |
+
+
+
+
+
+### resources.centrum.JobListEntry
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `name` | [string](#string) |  |  |
+| `label` | [string](#string) | optional |  |
+
+
+
+
  <!-- end messages -->
 
 
@@ -1995,6 +1910,141 @@ Dummy - DO NOT USE!
 | `TAKE_DISPATCH_RESP_TIMEOUT` | 1 |  |
 | `TAKE_DISPATCH_RESP_ACCEPTED` | 2 |  |
 | `TAKE_DISPATCH_RESP_DECLINED` | 3 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/centrum/settings.proto
+
+
+### resources.centrum.Configuration
+@dbscanner: json
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `deduplication_enabled` | [bool](#bool) |  |  |
+| `deduplication_radius` | [int64](#int64) |  |  |
+| `deduplication_duration` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) | optional |  |
+
+
+
+
+
+### resources.centrum.EffectiveAccess
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `dispatches` | [EffectiveDispatchAccess](#resourcescentrumEffectiveDispatchAccess) |  |  |
+
+
+
+
+
+### resources.centrum.EffectiveDispatchAccess
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [JobAccessEntry](#resourcescentrumJobAccessEntry) | repeated |  |
+
+
+
+
+
+### resources.centrum.JobAccessEntry
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `access` | [CentrumAccessLevel](#resourcescentrumCentrumAccessLevel) |  |  |
+
+
+
+
+
+### resources.centrum.PredefinedStatus
+@dbscanner: json
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `unit_status` | [string](#string) | repeated | @sanitize: method=StripTags |
+| `dispatch_status` | [string](#string) | repeated | @sanitize: method=StripTags |
+
+
+
+
+
+### resources.centrum.Settings
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+| `enabled` | [bool](#bool) |  |  |
+| `type` | [CentrumType](#resourcescentrumCentrumType) |  |  |
+| `public` | [bool](#bool) |  |  |
+| `mode` | [CentrumMode](#resourcescentrumCentrumMode) |  |  |
+| `fallback_mode` | [CentrumMode](#resourcescentrumCentrumMode) |  |  |
+| `predefined_status` | [PredefinedStatus](#resourcescentrumPredefinedStatus) | optional |  |
+| `timings` | [Timings](#resourcescentrumTimings) |  |  |
+| `configuration` | [Configuration](#resourcescentrumConfiguration) |  |  |
+| `access` | [CentrumAccess](#resourcescentrumCentrumAccess) | optional |  |
+| `offered_access` | [CentrumAccess](#resourcescentrumCentrumAccess) | optional |  |
+| `effective_access` | [EffectiveAccess](#resourcescentrumEffectiveAccess) | optional |  |
+
+
+
+
+
+### resources.centrum.Timings
+@dbscanner: json
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `dispatch_max_wait` | [int64](#int64) |  |  |
+| `require_unit` | [bool](#bool) |  |  |
+| `require_unit_reminder_seconds` | [int64](#int64) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+
+### resources.centrum.CentrumMode
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `CENTRUM_MODE_UNSPECIFIED` | 0 |  |
+| `CENTRUM_MODE_MANUAL` | 1 |  |
+| `CENTRUM_MODE_CENTRAL_COMMAND` | 2 |  |
+| `CENTRUM_MODE_AUTO_ROUND_ROBIN` | 3 |  |
+| `CENTRUM_MODE_SIMPLIFIED` | 4 |  |
+
+
+
+### resources.centrum.CentrumType
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `CENTRUM_TYPE_UNSPECIFIED` | 0 |  |
+| `CENTRUM_TYPE_DISPATCH` | 1 |  |
+| `CENTRUM_TYPE_DELIVERY` | 2 |  |
 
 
  <!-- end enums -->
@@ -5198,11 +5248,12 @@ UserInfoChanged used to signal Job or JobGrade changes.
 | `account_id` | [int64](#int64) |  | The account the user belongs to |
 | `user_id` | [int32](#int32) |  | The unique user identifier within the account |
 | `old_job` | [string](#string) |  | Previous job title |
-| `new_job` | [string](#string) |  | New job title |
+| `new_job` | [string](#string) | optional | New job title |
 | `new_job_label` | [string](#string) | optional |  |
 | `old_job_grade` | [int32](#int32) |  | Previous job grade |
-| `new_job_grade` | [int32](#int32) |  | New job grade |
+| `new_job_grade` | [int32](#int32) | optional | New job grade |
 | `new_job_grade_label` | [string](#string) | optional | New job grade label |
+| `superuser` | [bool](#bool) | optional | Superuser state |
 | `changed_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  | Timestamp of when the change was detected |
 
 
@@ -7242,17 +7293,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-### services.centrum.Dispatchers
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `dispatchers` | [resources.centrum.Dispatchers](#resourcescentrumDispatchers) | repeated |  |
-
-
-
-
-
 ### services.centrum.GetDispatchHeatmapRequest
 
 
@@ -7305,30 +7345,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `settings` | [resources.centrum.Settings](#resourcescentrumSettings) |  |  |
-
-
-
-
-
-### services.centrum.JobAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `dispatches` | [JobAccessEntry](#servicescentrumJobAccessEntry) | repeated |  |
-
-
-
-
-
-### services.centrum.JobAccessEntry
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `access` | [resources.centrum.CentrumAccessLevel](#resourcescentrumCentrumAccessLevel) |  |  |
+| `effective_access` | [resources.centrum.EffectiveAccess](#resourcescentrumEffectiveAccess) |  |  |
 
 
 
@@ -7361,7 +7378,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `dispatchers` | [Dispatchers](#servicescentrumDispatchers) |  |  |
+| `dispatchers` | [resources.centrum.JobDispatchers](#resourcescentrumJobDispatchers) |  |  |
 | `own_unit_id` | [int64](#int64) | optional |  |
 | `units` | [resources.centrum.Unit](#resourcescentrumUnit) | repeated | Send the current units and dispatches |
 | `dispatches` | [resources.centrum.Dispatch](#resourcescentrumDispatch) | repeated |  |
@@ -7491,7 +7508,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | ----- | ---- | ----- | ----------- |
 | `server_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `settings` | [resources.centrum.Settings](#resourcescentrumSettings) |  |  |
-| `job_access` | [JobAccess](#servicescentrumJobAccess) |  |  |
+| `access` | [resources.centrum.EffectiveAccess](#resourcescentrumEffectiveAccess) |  |  |
 
 
 
@@ -7511,7 +7528,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `handshake` | [StreamHandshake](#servicescentrumStreamHandshake) |  |  |
 | `latest_state` | [LatestState](#servicescentrumLatestState) |  |  |
 | `settings` | [resources.centrum.Settings](#resourcescentrumSettings) |  |  |
-| `job_access` | [JobAccess](#servicescentrumJobAccess) |  |  |
+| `access` | [resources.centrum.EffectiveAccess](#resourcescentrumEffectiveAccess) |  |  |
 | `dispatchers` | [resources.centrum.Dispatchers](#resourcescentrumDispatchers) |  |  |
 | `unit_deleted` | [int64](#int64) |  |  |
 | `unit_updated` | [resources.centrum.Unit](#resourcescentrumUnit) |  |  |

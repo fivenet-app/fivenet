@@ -3,7 +3,6 @@ syntax = "proto3";
 package services.centrum;
 
 import "buf/validate/validate.proto";
-import "resources/centrum/access.proto";
 import "resources/centrum/dispatchers.proto";
 import "resources/centrum/dispatches.proto";
 import "resources/centrum/settings.proto";
@@ -31,6 +30,7 @@ message GetSettingsRequest {}
 
 message GetSettingsResponse {
   resources.centrum.Settings settings = 1;
+  resources.centrum.EffectiveAccess effective_access = 2;
 }
 
 message UpdateSettingsRequest {
@@ -206,11 +206,11 @@ message TakeDispatchResponse {}
 message StreamHandshake {
   resources.timestamp.Timestamp server_time = 1;
   resources.centrum.Settings settings = 2;
-  JobAccess job_access = 3;
+  resources.centrum.EffectiveAccess access = 3;
 }
 
 message LatestState {
-  Dispatchers dispatchers = 1;
+  resources.centrum.JobDispatchers dispatchers = 1;
   optional int64 own_unit_id = 2;
   // Send the current units and dispatches
   repeated resources.centrum.Unit units = 3;
@@ -227,7 +227,7 @@ message StreamResponse {
     LatestState latest_state = 2;
 
     resources.centrum.Settings settings = 3;
-    JobAccess job_access = 4;
+    resources.centrum.EffectiveAccess access = 4;
     resources.centrum.Dispatchers dispatchers = 5;
 
     int64 unit_deleted = 6;
@@ -238,20 +238,6 @@ message StreamResponse {
     resources.centrum.Dispatch dispatch_updated = 10;
     resources.centrum.DispatchStatus dispatch_status = 11;
   }
-}
-
-message JobAccess {
-  repeated JobAccessEntry dispatches = 1;
-}
-
-message JobAccessEntry {
-  string job = 1 [(buf.validate.field).string.max_len = 20];
-  optional string job_label = 2;
-  resources.centrum.CentrumAccessLevel access = 3 [(buf.validate.field).enum.defined_only = true];
-}
-
-message Dispatchers {
-  repeated resources.centrum.Dispatchers dispatchers = 1;
 }
 
 service CentrumService {

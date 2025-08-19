@@ -56,6 +56,7 @@ func (s *Server) buildSubjects(
 	userInfo *pbuserinfo.UserInfo,
 ) ([]string, []string, error) {
 	baseSubjects := []string{
+		fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.AccountTopic, userInfo.GetAccountId()),
 		fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserTopic, userInfo.GetUserId()),
 		fmt.Sprintf("%s.%s.%s", notifi.BaseSubject, notifi.JobTopic, userInfo.GetJob()),
 		fmt.Sprintf("%s.%s.%s.>", notifi.BaseSubject, notifi.JobGradeTopic, userInfo.GetJob()),
@@ -132,17 +133,17 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 	}
 	defer s.js.DeleteConsumer(s.ctx, notifi.StreamName, consCfg.Durable)
 
-	metricLastUserSession.SetToCurrentTime()
-
-	metricActiveUserSessions.Inc()
-	defer metricActiveUserSessions.Dec()
-
 	// Central pipe: all feeds push messages into outCh
 	outCh := make(chan *pbnotifications.StreamResponse, 256)
 	defer close(outCh)
 	g, gctx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
+		// Update metrics for active user sessions in first goroutine
+		metricLastUserSession.SetToCurrentTime()
+		metricActiveUserSessions.Inc()
+		defer metricActiveUserSessions.Dec()
+
 		for {
 			msg, err := srv.Recv()
 			if errors.Is(err, io.EOF) {

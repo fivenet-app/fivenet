@@ -1,13 +1,16 @@
 package userinfo
 
-import "google.golang.org/protobuf/proto"
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
+	"google.golang.org/protobuf/proto"
+)
 
 func (x *UserInfoChanged) GetJob() string {
 	return x.GetNewJob()
 }
 
 func (x *UserInfoChanged) SetJob(job string) {
-	x.NewJob = job
+	x.NewJob = &job
 }
 
 func (x *UserInfoChanged) SetJobLabel(label string) {
@@ -19,7 +22,7 @@ func (x *UserInfoChanged) GetJobGrade() int32 {
 }
 
 func (x *UserInfoChanged) SetJobGrade(grade int32) {
-	x.NewJobGrade = grade
+	x.NewJobGrade = &grade
 }
 
 func (x *UserInfoChanged) SetJobGradeLabel(label string) {
@@ -41,7 +44,7 @@ func (u *UserInfo) Equal(in *UserInfo) bool {
 	if u.GetLicense() != in.GetLicense() {
 		return false
 	}
-	if !equalInt32Ptr(u.LastChar, in.LastChar) {
+	if !utils.EqualInt32Ptr(u.LastChar, in.LastChar) {
 		return false
 	}
 	if u.GetUserId() != in.GetUserId() {
@@ -62,35 +65,13 @@ func (u *UserInfo) Equal(in *UserInfo) bool {
 	if u.GetSuperuser() != in.GetSuperuser() {
 		return false
 	}
-	if !equalStringPtr(u.OverrideJob, in.OverrideJob) {
+	if !utils.EqualStringPtr(u.OverrideJob, in.OverrideJob) {
 		return false
 	}
-	if !equalInt32Ptr(u.OverrideJobGrade, in.OverrideJobGrade) {
+	if !utils.EqualInt32Ptr(u.OverrideJobGrade, in.OverrideJobGrade) {
 		return false
 	}
 	return true
-}
-
-// equalInt32Ptr compares two *int32 pointers for equality.
-func equalInt32Ptr(a, b *int32) bool {
-	if a == nil && b == nil {
-		return true
-	}
-	if a == nil || b == nil {
-		return false
-	}
-	return *a == *b
-}
-
-// equalStringPtr compares two *string pointers for equality.
-func equalStringPtr(a, b *string) bool {
-	if a == nil && b == nil {
-		return true
-	}
-	if a == nil || b == nil {
-		return false
-	}
-	return *a == *b
 }
 
 // Clone returns a deep copy of the UserInfo struct.

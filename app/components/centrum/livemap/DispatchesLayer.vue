@@ -59,7 +59,7 @@ watch(settings, () => {
 });
 
 watch(acls, () =>
-    acls.value?.dispatches.forEach((job) =>
+    acls.value?.dispatches?.jobs.forEach((job) =>
         addOrUpdateLivemapLayer({
             key: `dispatches_job_${job.job}`,
             category: 'dispatches',

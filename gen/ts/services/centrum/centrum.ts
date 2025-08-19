@@ -12,7 +12,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { CentrumAccessLevel } from "../../resources/centrum/access";
+import { JobDispatchers } from "../../resources/centrum/dispatchers";
 import { Timestamp } from "../../resources/timestamp/timestamp";
 import { TakeDispatchResp } from "../../resources/centrum/dispatches";
 import { DispatchStatus } from "../../resources/centrum/dispatches";
@@ -21,10 +21,11 @@ import { Dispatch } from "../../resources/centrum/dispatches";
 import { StatusDispatch } from "../../resources/centrum/dispatches";
 import { UnitStatus } from "../../resources/centrum/units";
 import { PaginationResponse } from "../../resources/common/database/database";
-import { Dispatchers as Dispatchers$ } from "../../resources/centrum/dispatchers";
+import { Dispatchers } from "../../resources/centrum/dispatchers";
 import { HeatmapEntry } from "../../resources/livemap/heatmap";
 import { Unit } from "../../resources/centrum/units";
 import { StatusUnit } from "../../resources/centrum/units";
+import { EffectiveAccess } from "../../resources/centrum/settings";
 import { Settings } from "../../resources/centrum/settings";
 import { PaginationRequest } from "../../resources/common/database/database";
 // Common
@@ -68,6 +69,10 @@ export interface GetSettingsResponse {
      * @generated from protobuf field: resources.centrum.Settings settings = 1
      */
     settings?: Settings;
+    /**
+     * @generated from protobuf field: resources.centrum.EffectiveAccess effective_access = 2
+     */
+    effectiveAccess?: EffectiveAccess;
 }
 /**
  * @generated from protobuf message services.centrum.UpdateSettingsRequest
@@ -225,7 +230,7 @@ export interface UpdateDispatchersResponse {
     /**
      * @generated from protobuf field: resources.centrum.Dispatchers dispatchers = 1
      */
-    dispatchers?: Dispatchers$;
+    dispatchers?: Dispatchers;
 }
 /**
  * @generated from protobuf message services.centrum.ListUnitActivityResponse
@@ -500,18 +505,18 @@ export interface StreamHandshake {
      */
     settings?: Settings;
     /**
-     * @generated from protobuf field: services.centrum.JobAccess job_access = 3
+     * @generated from protobuf field: resources.centrum.EffectiveAccess access = 3
      */
-    jobAccess?: JobAccess;
+    access?: EffectiveAccess;
 }
 /**
  * @generated from protobuf message services.centrum.LatestState
  */
 export interface LatestState {
     /**
-     * @generated from protobuf field: services.centrum.Dispatchers dispatchers = 1
+     * @generated from protobuf field: resources.centrum.JobDispatchers dispatchers = 1
      */
-    dispatchers?: Dispatchers;
+    dispatchers?: JobDispatchers;
     /**
      * @generated from protobuf field: optional int64 own_unit_id = 2
      */
@@ -558,17 +563,17 @@ export interface StreamResponse {
          */
         settings: Settings;
     } | {
-        oneofKind: "jobAccess";
+        oneofKind: "access";
         /**
-         * @generated from protobuf field: services.centrum.JobAccess job_access = 4
+         * @generated from protobuf field: resources.centrum.EffectiveAccess access = 4
          */
-        jobAccess: JobAccess;
+        access: EffectiveAccess;
     } | {
         oneofKind: "dispatchers";
         /**
          * @generated from protobuf field: resources.centrum.Dispatchers dispatchers = 5
          */
-        dispatchers: Dispatchers$;
+        dispatchers: Dispatchers;
     } | {
         oneofKind: "unitDeleted";
         /**
@@ -608,41 +613,6 @@ export interface StreamResponse {
     } | {
         oneofKind: undefined;
     };
-}
-/**
- * @generated from protobuf message services.centrum.JobAccess
- */
-export interface JobAccess {
-    /**
-     * @generated from protobuf field: repeated services.centrum.JobAccessEntry dispatches = 1
-     */
-    dispatches: JobAccessEntry[];
-}
-/**
- * @generated from protobuf message services.centrum.JobAccessEntry
- */
-export interface JobAccessEntry {
-    /**
-     * @generated from protobuf field: string job = 1
-     */
-    job: string;
-    /**
-     * @generated from protobuf field: optional string job_label = 2
-     */
-    jobLabel?: string;
-    /**
-     * @generated from protobuf field: resources.centrum.CentrumAccessLevel access = 3
-     */
-    access: CentrumAccessLevel;
-}
-/**
- * @generated from protobuf message services.centrum.Dispatchers
- */
-export interface Dispatchers {
-    /**
-     * @generated from protobuf field: repeated resources.centrum.Dispatchers dispatchers = 1
-     */
-    dispatchers: Dispatchers$[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListDispatchActivityRequest$Type extends MessageType<ListDispatchActivityRequest> {
@@ -794,7 +764,8 @@ export const GetSettingsRequest = new GetSettingsRequest$Type();
 class GetSettingsResponse$Type extends MessageType<GetSettingsResponse> {
     constructor() {
         super("services.centrum.GetSettingsResponse", [
-            { no: 1, name: "settings", kind: "message", T: () => Settings }
+            { no: 1, name: "settings", kind: "message", T: () => Settings },
+            { no: 2, name: "effective_access", kind: "message", T: () => EffectiveAccess }
         ]);
     }
     create(value?: PartialMessage<GetSettingsResponse>): GetSettingsResponse {
@@ -811,6 +782,9 @@ class GetSettingsResponse$Type extends MessageType<GetSettingsResponse> {
                 case /* resources.centrum.Settings settings */ 1:
                     message.settings = Settings.internalBinaryRead(reader, reader.uint32(), options, message.settings);
                     break;
+                case /* resources.centrum.EffectiveAccess effective_access */ 2:
+                    message.effectiveAccess = EffectiveAccess.internalBinaryRead(reader, reader.uint32(), options, message.effectiveAccess);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -826,6 +800,9 @@ class GetSettingsResponse$Type extends MessageType<GetSettingsResponse> {
         /* resources.centrum.Settings settings = 1; */
         if (message.settings)
             Settings.internalBinaryWrite(message.settings, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.centrum.EffectiveAccess effective_access = 2; */
+        if (message.effectiveAccess)
+            EffectiveAccess.internalBinaryWrite(message.effectiveAccess, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1583,7 +1560,7 @@ export const UpdateDispatchersRequest = new UpdateDispatchersRequest$Type();
 class UpdateDispatchersResponse$Type extends MessageType<UpdateDispatchersResponse> {
     constructor() {
         super("services.centrum.UpdateDispatchersResponse", [
-            { no: 1, name: "dispatchers", kind: "message", T: () => Dispatchers$ }
+            { no: 1, name: "dispatchers", kind: "message", T: () => Dispatchers }
         ]);
     }
     create(value?: PartialMessage<UpdateDispatchersResponse>): UpdateDispatchersResponse {
@@ -1598,7 +1575,7 @@ class UpdateDispatchersResponse$Type extends MessageType<UpdateDispatchersRespon
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
                 case /* resources.centrum.Dispatchers dispatchers */ 1:
-                    message.dispatchers = Dispatchers$.internalBinaryRead(reader, reader.uint32(), options, message.dispatchers);
+                    message.dispatchers = Dispatchers.internalBinaryRead(reader, reader.uint32(), options, message.dispatchers);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1614,7 +1591,7 @@ class UpdateDispatchersResponse$Type extends MessageType<UpdateDispatchersRespon
     internalBinaryWrite(message: UpdateDispatchersResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* resources.centrum.Dispatchers dispatchers = 1; */
         if (message.dispatchers)
-            Dispatchers$.internalBinaryWrite(message.dispatchers, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            Dispatchers.internalBinaryWrite(message.dispatchers, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2857,7 +2834,7 @@ class StreamHandshake$Type extends MessageType<StreamHandshake> {
         super("services.centrum.StreamHandshake", [
             { no: 1, name: "server_time", kind: "message", T: () => Timestamp },
             { no: 2, name: "settings", kind: "message", T: () => Settings },
-            { no: 3, name: "job_access", kind: "message", T: () => JobAccess }
+            { no: 3, name: "access", kind: "message", T: () => EffectiveAccess }
         ]);
     }
     create(value?: PartialMessage<StreamHandshake>): StreamHandshake {
@@ -2877,8 +2854,8 @@ class StreamHandshake$Type extends MessageType<StreamHandshake> {
                 case /* resources.centrum.Settings settings */ 2:
                     message.settings = Settings.internalBinaryRead(reader, reader.uint32(), options, message.settings);
                     break;
-                case /* services.centrum.JobAccess job_access */ 3:
-                    message.jobAccess = JobAccess.internalBinaryRead(reader, reader.uint32(), options, message.jobAccess);
+                case /* resources.centrum.EffectiveAccess access */ 3:
+                    message.access = EffectiveAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2898,9 +2875,9 @@ class StreamHandshake$Type extends MessageType<StreamHandshake> {
         /* resources.centrum.Settings settings = 2; */
         if (message.settings)
             Settings.internalBinaryWrite(message.settings, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* services.centrum.JobAccess job_access = 3; */
-        if (message.jobAccess)
-            JobAccess.internalBinaryWrite(message.jobAccess, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* resources.centrum.EffectiveAccess access = 3; */
+        if (message.access)
+            EffectiveAccess.internalBinaryWrite(message.access, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2915,7 +2892,7 @@ export const StreamHandshake = new StreamHandshake$Type();
 class LatestState$Type extends MessageType<LatestState> {
     constructor() {
         super("services.centrum.LatestState", [
-            { no: 1, name: "dispatchers", kind: "message", T: () => Dispatchers },
+            { no: 1, name: "dispatchers", kind: "message", T: () => JobDispatchers },
             { no: 2, name: "own_unit_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "units", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Unit },
             { no: 4, name: "dispatches", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Dispatch }
@@ -2934,8 +2911,8 @@ class LatestState$Type extends MessageType<LatestState> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* services.centrum.Dispatchers dispatchers */ 1:
-                    message.dispatchers = Dispatchers.internalBinaryRead(reader, reader.uint32(), options, message.dispatchers);
+                case /* resources.centrum.JobDispatchers dispatchers */ 1:
+                    message.dispatchers = JobDispatchers.internalBinaryRead(reader, reader.uint32(), options, message.dispatchers);
                     break;
                 case /* optional int64 own_unit_id */ 2:
                     message.ownUnitId = reader.int64().toNumber();
@@ -2958,9 +2935,9 @@ class LatestState$Type extends MessageType<LatestState> {
         return message;
     }
     internalBinaryWrite(message: LatestState, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* services.centrum.Dispatchers dispatchers = 1; */
+        /* resources.centrum.JobDispatchers dispatchers = 1; */
         if (message.dispatchers)
-            Dispatchers.internalBinaryWrite(message.dispatchers, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            JobDispatchers.internalBinaryWrite(message.dispatchers, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         /* optional int64 own_unit_id = 2; */
         if (message.ownUnitId !== undefined)
             writer.tag(2, WireType.Varint).int64(message.ownUnitId);
@@ -3025,8 +3002,8 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
             { no: 1, name: "handshake", kind: "message", oneof: "change", T: () => StreamHandshake },
             { no: 2, name: "latest_state", kind: "message", oneof: "change", T: () => LatestState },
             { no: 3, name: "settings", kind: "message", oneof: "change", T: () => Settings },
-            { no: 4, name: "job_access", kind: "message", oneof: "change", T: () => JobAccess },
-            { no: 5, name: "dispatchers", kind: "message", oneof: "change", T: () => Dispatchers$ },
+            { no: 4, name: "access", kind: "message", oneof: "change", T: () => EffectiveAccess },
+            { no: 5, name: "dispatchers", kind: "message", oneof: "change", T: () => Dispatchers },
             { no: 6, name: "unit_deleted", kind: "scalar", oneof: "change", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 7, name: "unit_updated", kind: "message", oneof: "change", T: () => Unit },
             { no: 8, name: "unit_status", kind: "message", oneof: "change", T: () => UnitStatus },
@@ -3065,16 +3042,16 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
                         settings: Settings.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).settings)
                     };
                     break;
-                case /* services.centrum.JobAccess job_access */ 4:
+                case /* resources.centrum.EffectiveAccess access */ 4:
                     message.change = {
-                        oneofKind: "jobAccess",
-                        jobAccess: JobAccess.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).jobAccess)
+                        oneofKind: "access",
+                        access: EffectiveAccess.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).access)
                     };
                     break;
                 case /* resources.centrum.Dispatchers dispatchers */ 5:
                     message.change = {
                         oneofKind: "dispatchers",
-                        dispatchers: Dispatchers$.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).dispatchers)
+                        dispatchers: Dispatchers.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).dispatchers)
                     };
                     break;
                 case /* int64 unit_deleted */ 6:
@@ -3134,12 +3111,12 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         /* resources.centrum.Settings settings = 3; */
         if (message.change.oneofKind === "settings")
             Settings.internalBinaryWrite(message.change.settings, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* services.centrum.JobAccess job_access = 4; */
-        if (message.change.oneofKind === "jobAccess")
-            JobAccess.internalBinaryWrite(message.change.jobAccess, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.centrum.EffectiveAccess access = 4; */
+        if (message.change.oneofKind === "access")
+            EffectiveAccess.internalBinaryWrite(message.change.access, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         /* resources.centrum.Dispatchers dispatchers = 5; */
         if (message.change.oneofKind === "dispatchers")
-            Dispatchers$.internalBinaryWrite(message.change.dispatchers, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+            Dispatchers.internalBinaryWrite(message.change.dispatchers, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         /* int64 unit_deleted = 6; */
         if (message.change.oneofKind === "unitDeleted")
             writer.tag(6, WireType.Varint).int64(message.change.unitDeleted);
@@ -3168,162 +3145,6 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
  * @generated MessageType for protobuf message services.centrum.StreamResponse
  */
 export const StreamResponse = new StreamResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class JobAccess$Type extends MessageType<JobAccess> {
-    constructor() {
-        super("services.centrum.JobAccess", [
-            { no: 1, name: "dispatches", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => JobAccessEntry }
-        ]);
-    }
-    create(value?: PartialMessage<JobAccess>): JobAccess {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.dispatches = [];
-        if (value !== undefined)
-            reflectionMergePartial<JobAccess>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobAccess): JobAccess {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated services.centrum.JobAccessEntry dispatches */ 1:
-                    message.dispatches.push(JobAccessEntry.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: JobAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated services.centrum.JobAccessEntry dispatches = 1; */
-        for (let i = 0; i < message.dispatches.length; i++)
-            JobAccessEntry.internalBinaryWrite(message.dispatches[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.centrum.JobAccess
- */
-export const JobAccess = new JobAccess$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class JobAccessEntry$Type extends MessageType<JobAccessEntry> {
-    constructor() {
-        super("services.centrum.JobAccessEntry", [
-            { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 2, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "access", kind: "enum", T: () => ["resources.centrum.CentrumAccessLevel", CentrumAccessLevel, "CENTRUM_ACCESS_LEVEL_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
-        ]);
-    }
-    create(value?: PartialMessage<JobAccessEntry>): JobAccessEntry {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.job = "";
-        message.access = 0;
-        if (value !== undefined)
-            reflectionMergePartial<JobAccessEntry>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobAccessEntry): JobAccessEntry {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string job */ 1:
-                    message.job = reader.string();
-                    break;
-                case /* optional string job_label */ 2:
-                    message.jobLabel = reader.string();
-                    break;
-                case /* resources.centrum.CentrumAccessLevel access */ 3:
-                    message.access = reader.int32();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: JobAccessEntry, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string job = 1; */
-        if (message.job !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.job);
-        /* optional string job_label = 2; */
-        if (message.jobLabel !== undefined)
-            writer.tag(2, WireType.LengthDelimited).string(message.jobLabel);
-        /* resources.centrum.CentrumAccessLevel access = 3; */
-        if (message.access !== 0)
-            writer.tag(3, WireType.Varint).int32(message.access);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.centrum.JobAccessEntry
- */
-export const JobAccessEntry = new JobAccessEntry$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class Dispatchers$Type extends MessageType<Dispatchers> {
-    constructor() {
-        super("services.centrum.Dispatchers", [
-            { no: 1, name: "dispatchers", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Dispatchers$ }
-        ]);
-    }
-    create(value?: PartialMessage<Dispatchers>): Dispatchers {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.dispatchers = [];
-        if (value !== undefined)
-            reflectionMergePartial<Dispatchers>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Dispatchers): Dispatchers {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated resources.centrum.Dispatchers dispatchers */ 1:
-                    message.dispatchers.push(Dispatchers$.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: Dispatchers, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.centrum.Dispatchers dispatchers = 1; */
-        for (let i = 0; i < message.dispatchers.length; i++)
-            Dispatchers$.internalBinaryWrite(message.dispatchers[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.centrum.Dispatchers
- */
-export const Dispatchers = new Dispatchers$Type();
 /**
  * @generated ServiceType for protobuf service services.centrum.CentrumService
  */

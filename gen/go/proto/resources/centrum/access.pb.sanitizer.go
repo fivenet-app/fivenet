@@ -28,6 +28,15 @@ func (m *CentrumJobAccess) Sanitize() error {
 		return nil
 	}
 
+	// Field: AcceptedAt
+	if m.AcceptedAt != nil {
+		if v, ok := any(m.GetAcceptedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
 		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {

@@ -58,9 +58,16 @@ const schema = z.object({
         requireUnit: z.coerce.boolean(),
         requireUnitReminderSeconds: z.coerce.number().min(60).max(6000).default(180),
     }),
-    access: z.object({
-        jobs: z.custom<CentrumJobAccess>().array().max(maxAccessEntries).default([]),
-    }),
+    access: z
+        .object({
+            jobs: z.custom<CentrumJobAccess>().array().max(maxAccessEntries).default([]),
+        })
+        .default({ jobs: [] }),
+    offeredAccess: z
+        .object({
+            jobs: z.custom<CentrumJobAccess>().array().max(maxAccessEntries).default([]),
+        })
+        .default({ jobs: [] }),
     configuration: z.object({
         deduplicationEnabled: z.coerce.boolean().default(true),
         deduplicationRadius: z.coerce.number().min(5).max(1000000).default(45),
@@ -88,6 +95,9 @@ const state = reactive<Schema>({
     access: {
         jobs: [],
     },
+    offeredAccess: {
+        jobs: [],
+    },
     configuration: {
         deduplicationEnabled: true,
         deduplicationRadius: 45,
@@ -97,6 +107,7 @@ const state = reactive<Schema>({
 
 async function updateSettings(values: Schema): Promise<void> {
     values.access.jobs.forEach((job) => job.id < 0 && (job.id = 0));
+    values.offeredAccess.jobs.forEach((job) => job.id < 0 && (job.id = 0));
 
     try {
         const call = $grpc.centrum.centrum.updateSettings({
@@ -110,6 +121,7 @@ async function updateSettings(values: Schema): Promise<void> {
                 predefinedStatus: values.predefinedStatus,
                 timings: values.timings,
                 access: values.access,
+                offeredAccess: values.offeredAccess,
                 configuration: {
                     deduplicationEnabled: values.configuration?.deduplicationEnabled ?? true,
                     deduplicationRadius: values.configuration?.deduplicationRadius ?? 45,
@@ -149,7 +161,13 @@ function setSettingsValues(): void {
         unitStatus: [],
         dispatchStatus: [],
     };
+    state.timings = settings.value.timings ?? {
+        dispatchMaxWait: 900,
+        requireUnit: false,
+        requireUnitReminderSeconds: 180,
+    };
     state.access = settings.value.access ?? { jobs: [] };
+    state.offeredAccess = settings.value.offeredAccess ?? { jobs: [] };
     state.configuration = {
         deduplicationEnabled: settings.value.configuration?.deduplicationEnabled ?? true,
         deduplicationRadius: settings.value.configuration?.deduplicationRadius ?? 45,
@@ -579,6 +597,34 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :hide-jobs="[activeChar!.job]"
                                         :disabled="!attr('centrum.CentrumService/UpdateSettings', 'Access', 'Shared').value"
                                     />
+                                </UFormGroup>
+
+                                <UFormGroup
+                                    name="offeredAccess"
+                                    :label="$t('components.centrum.settings.offered_access.title')"
+                                    :description="$t('components.centrum.settings.offered_access.description')"
+                                >
+                                    <UPageGrid class="mt-2">
+                                        <UCard v-for="(ja, idx) in state.offeredAccess.jobs" :key="ja.id">
+                                            <div class="flex items-center gap-2">
+                                                <UToggle
+                                                    :model-value="state.offeredAccess.jobs[idx]!.acceptedAt !== undefined"
+                                                    @update:model-value="
+                                                        $event
+                                                            ? (state.offeredAccess.jobs[idx]!.acceptedAt = toTimestamp(
+                                                                  new Date(),
+                                                              ))
+                                                            : (state.offeredAccess.jobs[idx]!.acceptedAt = undefined)
+                                                    "
+                                                />
+                                                <h3 class="flex-1 text-lg">{{ ja.jobLabel ?? ja.job }}</h3>
+
+                                                <UBadge
+                                                    :label="`${$t('common.access')}: ${$t('enums.centrum.CentrumAccessLevel.' + CentrumAccessLevel[ja.access])}`"
+                                                />
+                                            </div>
+                                        </UCard>
+                                    </UPageGrid>
                                 </UFormGroup>
                             </UDashboardSection>
                         </UDashboardPanelContent>

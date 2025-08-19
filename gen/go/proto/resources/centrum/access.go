@@ -6,3 +6,10 @@ func (x *JobAccessEntry) SetJobLabel(label string) {
 	}
 	x.JobLabel = &label
 }
+
+func (x *CentrumJobAccess) SetJobLabel(label string) {
+	if x == nil {
+		return
+	}
+	x.JobLabel = &label
+}

@@ -4,11 +4,11 @@ import { statusOrder } from '~/components/centrum/helpers';
 import type { NotificationActionI18n } from '~/utils/notifications';
 import type { Dispatchers } from '~~/gen/ts/resources/centrum/dispatchers';
 import { type Dispatch, type DispatchStatus, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
-import { type Settings, CentrumMode, CentrumType } from '~~/gen/ts/resources/centrum/settings';
+import { type EffectiveAccess, type Settings, CentrumMode, CentrumType } from '~~/gen/ts/resources/centrum/settings';
 import { type Unit, type UnitStatus, StatusUnit } from '~~/gen/ts/resources/centrum/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
-import type { JobAccess, StreamRequest, StreamResponse } from '~~/gen/ts/services/centrum/centrum';
+import type { StreamRequest, StreamResponse } from '~~/gen/ts/services/centrum/centrum';
 
 export const logger = useLogger('⛑️ Centrum');
 
@@ -36,7 +36,7 @@ export const useCentrumStore = defineStore(
 
         const timeCorrection = ref<number>(0);
 
-        const acls = ref<JobAccess | undefined>(undefined);
+        const acls = ref<EffectiveAccess | undefined>(undefined);
         const settings = ref<Settings | undefined>(undefined);
         const isDispatcher = ref<boolean>(false);
         const dispatchers = ref<Dispatchers[]>([]);
@@ -112,6 +112,13 @@ export const useCentrumStore = defineStore(
         const getSortedOwnDispatches = computed<number[]>(() => {
             // Sort descending
             return ownDispatches.value.sort((a, b) => b - a);
+        });
+
+        const isMultiJob = computed((): boolean => {
+            return (
+                settings.value?.effectiveAccess?.dispatches?.jobs !== undefined &&
+                settings.value.effectiveAccess.dispatches.jobs.length > 0
+            );
         });
 
         // Actions
@@ -393,7 +400,7 @@ export const useCentrumStore = defineStore(
                             calculateTimeCorrection(resp.change.handshake.serverTime);
                         }
 
-                        acls.value = resp.change.handshake.jobAccess;
+                        acls.value = resp.change.handshake.access;
 
                         if (resp.change.handshake.settings) {
                             setOrUpdateSettings(resp.change.handshake.settings);
@@ -644,7 +651,7 @@ export const useCentrumStore = defineStore(
 
             // Remove all dispatch layers from the settings
             const settingsStore = useSettingsStore();
-            acls.value?.dispatches.forEach((job) => settingsStore.removeLivemapLayer(`dispatches_job_${job.job}`));
+            acls.value?.dispatches?.jobs.forEach((job) => settingsStore.removeLivemapLayer(`dispatches_job_${job.job}`));
 
             abort.value = undefined;
         };
@@ -869,6 +876,7 @@ export const useCentrumStore = defineStore(
             getSortedUnits,
             getSortedDispatches,
             getSortedOwnDispatches,
+            isMultiJob,
 
             // Actions
             setOrUpdateSettings,

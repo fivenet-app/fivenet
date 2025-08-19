@@ -391,6 +391,102 @@ func (x *Dispatch) GetReferences() *DispatchReferences {
 	return nil
 }
 
+type JobList struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Jobs          []*JobListEntry        `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *JobList) Reset() {
+	*x = JobList{}
+	mi := &file_resources_centrum_dispatches_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *JobList) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*JobList) ProtoMessage() {}
+
+func (x *JobList) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_centrum_dispatches_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use JobList.ProtoReflect.Descriptor instead.
+func (*JobList) Descriptor() ([]byte, []int) {
+	return file_resources_centrum_dispatches_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *JobList) GetJobs() []*JobListEntry {
+	if x != nil {
+		return x.Jobs
+	}
+	return nil
+}
+
+type JobListEntry struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Label         *string                `protobuf:"bytes,2,opt,name=label,proto3,oneof" json:"label,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *JobListEntry) Reset() {
+	*x = JobListEntry{}
+	mi := &file_resources_centrum_dispatches_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *JobListEntry) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*JobListEntry) ProtoMessage() {}
+
+func (x *JobListEntry) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_centrum_dispatches_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use JobListEntry.ProtoReflect.Descriptor instead.
+func (*JobListEntry) Descriptor() ([]byte, []int) {
+	return file_resources_centrum_dispatches_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *JobListEntry) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *JobListEntry) GetLabel() string {
+	if x != nil && x.Label != nil {
+		return *x.Label
+	}
+	return ""
+}
+
 type DispatchAssignments struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DispatchId    int64                  `protobuf:"varint,1,opt,name=dispatch_id,json=dispatchId,proto3" json:"dispatch_id,omitempty"`
@@ -402,7 +498,7 @@ type DispatchAssignments struct {
 
 func (x *DispatchAssignments) Reset() {
 	*x = DispatchAssignments{}
-	mi := &file_resources_centrum_dispatches_proto_msgTypes[1]
+	mi := &file_resources_centrum_dispatches_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -414,7 +510,7 @@ func (x *DispatchAssignments) String() string {
 func (*DispatchAssignments) ProtoMessage() {}
 
 func (x *DispatchAssignments) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_centrum_dispatches_proto_msgTypes[1]
+	mi := &file_resources_centrum_dispatches_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -427,7 +523,7 @@ func (x *DispatchAssignments) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DispatchAssignments.ProtoReflect.Descriptor instead.
 func (*DispatchAssignments) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_dispatches_proto_rawDescGZIP(), []int{1}
+	return file_resources_centrum_dispatches_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *DispatchAssignments) GetDispatchId() int64 {
@@ -464,7 +560,7 @@ type DispatchAssignment struct {
 
 func (x *DispatchAssignment) Reset() {
 	*x = DispatchAssignment{}
-	mi := &file_resources_centrum_dispatches_proto_msgTypes[2]
+	mi := &file_resources_centrum_dispatches_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -476,7 +572,7 @@ func (x *DispatchAssignment) String() string {
 func (*DispatchAssignment) ProtoMessage() {}
 
 func (x *DispatchAssignment) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_centrum_dispatches_proto_msgTypes[2]
+	mi := &file_resources_centrum_dispatches_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -489,7 +585,7 @@ func (x *DispatchAssignment) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DispatchAssignment.ProtoReflect.Descriptor instead.
 func (*DispatchAssignment) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_dispatches_proto_rawDescGZIP(), []int{2}
+	return file_resources_centrum_dispatches_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *DispatchAssignment) GetDispatchId() int64 {
@@ -552,7 +648,7 @@ type DispatchStatus struct {
 
 func (x *DispatchStatus) Reset() {
 	*x = DispatchStatus{}
-	mi := &file_resources_centrum_dispatches_proto_msgTypes[3]
+	mi := &file_resources_centrum_dispatches_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -564,7 +660,7 @@ func (x *DispatchStatus) String() string {
 func (*DispatchStatus) ProtoMessage() {}
 
 func (x *DispatchStatus) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_centrum_dispatches_proto_msgTypes[3]
+	mi := &file_resources_centrum_dispatches_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -577,7 +673,7 @@ func (x *DispatchStatus) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DispatchStatus.ProtoReflect.Descriptor instead.
 func (*DispatchStatus) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_dispatches_proto_rawDescGZIP(), []int{3}
+	return file_resources_centrum_dispatches_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *DispatchStatus) GetId() int64 {
@@ -688,7 +784,7 @@ type DispatchReferences struct {
 
 func (x *DispatchReferences) Reset() {
 	*x = DispatchReferences{}
-	mi := &file_resources_centrum_dispatches_proto_msgTypes[4]
+	mi := &file_resources_centrum_dispatches_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -700,7 +796,7 @@ func (x *DispatchReferences) String() string {
 func (*DispatchReferences) ProtoMessage() {}
 
 func (x *DispatchReferences) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_centrum_dispatches_proto_msgTypes[4]
+	mi := &file_resources_centrum_dispatches_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -713,7 +809,7 @@ func (x *DispatchReferences) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DispatchReferences.ProtoReflect.Descriptor instead.
 func (*DispatchReferences) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_dispatches_proto_rawDescGZIP(), []int{4}
+	return file_resources_centrum_dispatches_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *DispatchReferences) GetReferences() []*DispatchReference {
@@ -733,7 +829,7 @@ type DispatchReference struct {
 
 func (x *DispatchReference) Reset() {
 	*x = DispatchReference{}
-	mi := &file_resources_centrum_dispatches_proto_msgTypes[5]
+	mi := &file_resources_centrum_dispatches_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -745,7 +841,7 @@ func (x *DispatchReference) String() string {
 func (*DispatchReference) ProtoMessage() {}
 
 func (x *DispatchReference) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_centrum_dispatches_proto_msgTypes[5]
+	mi := &file_resources_centrum_dispatches_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -758,7 +854,7 @@ func (x *DispatchReference) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DispatchReference.ProtoReflect.Descriptor instead.
 func (*DispatchReference) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_dispatches_proto_rawDescGZIP(), []int{5}
+	return file_resources_centrum_dispatches_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *DispatchReference) GetTargetDispatchId() int64 {
@@ -779,7 +875,7 @@ var File_resources_centrum_dispatches_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_dispatches_proto_rawDesc = "" +
 	"\n" +
-	"\"resources/centrum/dispatches.proto\x12\x11resources.centrum\x1a\"resources/centrum/attributes.proto\x1a resources/centrum/settings.proto\x1a\x1dresources/centrum/units.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xb2\a\n" +
+	"\"resources/centrum/dispatches.proto\x12\x11resources.centrum\x1a\"resources/centrum/attributes.proto\x1a\x1dresources/centrum/units.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xb2\a\n" +
 	"\bDispatch\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -815,7 +911,14 @@ const file_resources_centrum_dispatches_proto_rawDesc = "" +
 	"\v_creator_idB\n" +
 	"\n" +
 	"\b_creatorB\r\n" +
-	"\v_references\"\x8e\x01\n" +
+	"\v_references\"H\n" +
+	"\aJobList\x12=\n" +
+	"\x04jobs\x18\x01 \x03(\v2\x1f.resources.centrum.JobListEntryB\b\xbaH\x05\x92\x01\x02\x10\n" +
+	"R\x04jobs\"P\n" +
+	"\fJobListEntry\x12\x1b\n" +
+	"\x04name\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x04name\x12\x19\n" +
+	"\x05label\x18\x02 \x01(\tH\x00R\x05label\x88\x01\x01B\b\n" +
+	"\x06_label\"\x8e\x01\n" +
 	"\x13DispatchAssignments\x12\x1f\n" +
 	"\vdispatch_id\x18\x01 \x01(\x03R\n" +
 	"dispatchId\x12\x19\n" +
@@ -914,48 +1017,50 @@ func file_resources_centrum_dispatches_proto_rawDescGZIP() []byte {
 }
 
 var file_resources_centrum_dispatches_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_resources_centrum_dispatches_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_resources_centrum_dispatches_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_resources_centrum_dispatches_proto_goTypes = []any{
 	(StatusDispatch)(0),         // 0: resources.centrum.StatusDispatch
 	(TakeDispatchResp)(0),       // 1: resources.centrum.TakeDispatchResp
 	(DispatchReferenceType)(0),  // 2: resources.centrum.DispatchReferenceType
 	(*Dispatch)(nil),            // 3: resources.centrum.Dispatch
-	(*DispatchAssignments)(nil), // 4: resources.centrum.DispatchAssignments
-	(*DispatchAssignment)(nil),  // 5: resources.centrum.DispatchAssignment
-	(*DispatchStatus)(nil),      // 6: resources.centrum.DispatchStatus
-	(*DispatchReferences)(nil),  // 7: resources.centrum.DispatchReferences
-	(*DispatchReference)(nil),   // 8: resources.centrum.DispatchReference
-	(*timestamp.Timestamp)(nil), // 9: resources.timestamp.Timestamp
-	(*JobList)(nil),             // 10: resources.centrum.JobList
-	(*DispatchAttributes)(nil),  // 11: resources.centrum.DispatchAttributes
-	(*users.User)(nil),          // 12: resources.users.User
-	(*Unit)(nil),                // 13: resources.centrum.Unit
-	(*jobs.Colleague)(nil),      // 14: resources.jobs.Colleague
+	(*JobList)(nil),             // 4: resources.centrum.JobList
+	(*JobListEntry)(nil),        // 5: resources.centrum.JobListEntry
+	(*DispatchAssignments)(nil), // 6: resources.centrum.DispatchAssignments
+	(*DispatchAssignment)(nil),  // 7: resources.centrum.DispatchAssignment
+	(*DispatchStatus)(nil),      // 8: resources.centrum.DispatchStatus
+	(*DispatchReferences)(nil),  // 9: resources.centrum.DispatchReferences
+	(*DispatchReference)(nil),   // 10: resources.centrum.DispatchReference
+	(*timestamp.Timestamp)(nil), // 11: resources.timestamp.Timestamp
+	(*DispatchAttributes)(nil),  // 12: resources.centrum.DispatchAttributes
+	(*users.User)(nil),          // 13: resources.users.User
+	(*Unit)(nil),                // 14: resources.centrum.Unit
+	(*jobs.Colleague)(nil),      // 15: resources.jobs.Colleague
 }
 var file_resources_centrum_dispatches_proto_depIdxs = []int32{
-	9,  // 0: resources.centrum.Dispatch.created_at:type_name -> resources.timestamp.Timestamp
-	9,  // 1: resources.centrum.Dispatch.updated_at:type_name -> resources.timestamp.Timestamp
-	10, // 2: resources.centrum.Dispatch.jobs:type_name -> resources.centrum.JobList
-	6,  // 3: resources.centrum.Dispatch.status:type_name -> resources.centrum.DispatchStatus
-	11, // 4: resources.centrum.Dispatch.attributes:type_name -> resources.centrum.DispatchAttributes
-	12, // 5: resources.centrum.Dispatch.creator:type_name -> resources.users.User
-	5,  // 6: resources.centrum.Dispatch.units:type_name -> resources.centrum.DispatchAssignment
-	7,  // 7: resources.centrum.Dispatch.references:type_name -> resources.centrum.DispatchReferences
-	5,  // 8: resources.centrum.DispatchAssignments.units:type_name -> resources.centrum.DispatchAssignment
-	13, // 9: resources.centrum.DispatchAssignment.unit:type_name -> resources.centrum.Unit
-	9,  // 10: resources.centrum.DispatchAssignment.created_at:type_name -> resources.timestamp.Timestamp
-	9,  // 11: resources.centrum.DispatchAssignment.expires_at:type_name -> resources.timestamp.Timestamp
-	9,  // 12: resources.centrum.DispatchStatus.created_at:type_name -> resources.timestamp.Timestamp
-	13, // 13: resources.centrum.DispatchStatus.unit:type_name -> resources.centrum.Unit
-	0,  // 14: resources.centrum.DispatchStatus.status:type_name -> resources.centrum.StatusDispatch
-	14, // 15: resources.centrum.DispatchStatus.user:type_name -> resources.jobs.Colleague
-	8,  // 16: resources.centrum.DispatchReferences.references:type_name -> resources.centrum.DispatchReference
-	2,  // 17: resources.centrum.DispatchReference.reference_type:type_name -> resources.centrum.DispatchReferenceType
-	18, // [18:18] is the sub-list for method output_type
-	18, // [18:18] is the sub-list for method input_type
-	18, // [18:18] is the sub-list for extension type_name
-	18, // [18:18] is the sub-list for extension extendee
-	0,  // [0:18] is the sub-list for field type_name
+	11, // 0: resources.centrum.Dispatch.created_at:type_name -> resources.timestamp.Timestamp
+	11, // 1: resources.centrum.Dispatch.updated_at:type_name -> resources.timestamp.Timestamp
+	4,  // 2: resources.centrum.Dispatch.jobs:type_name -> resources.centrum.JobList
+	8,  // 3: resources.centrum.Dispatch.status:type_name -> resources.centrum.DispatchStatus
+	12, // 4: resources.centrum.Dispatch.attributes:type_name -> resources.centrum.DispatchAttributes
+	13, // 5: resources.centrum.Dispatch.creator:type_name -> resources.users.User
+	7,  // 6: resources.centrum.Dispatch.units:type_name -> resources.centrum.DispatchAssignment
+	9,  // 7: resources.centrum.Dispatch.references:type_name -> resources.centrum.DispatchReferences
+	5,  // 8: resources.centrum.JobList.jobs:type_name -> resources.centrum.JobListEntry
+	7,  // 9: resources.centrum.DispatchAssignments.units:type_name -> resources.centrum.DispatchAssignment
+	14, // 10: resources.centrum.DispatchAssignment.unit:type_name -> resources.centrum.Unit
+	11, // 11: resources.centrum.DispatchAssignment.created_at:type_name -> resources.timestamp.Timestamp
+	11, // 12: resources.centrum.DispatchAssignment.expires_at:type_name -> resources.timestamp.Timestamp
+	11, // 13: resources.centrum.DispatchStatus.created_at:type_name -> resources.timestamp.Timestamp
+	14, // 14: resources.centrum.DispatchStatus.unit:type_name -> resources.centrum.Unit
+	0,  // 15: resources.centrum.DispatchStatus.status:type_name -> resources.centrum.StatusDispatch
+	15, // 16: resources.centrum.DispatchStatus.user:type_name -> resources.jobs.Colleague
+	10, // 17: resources.centrum.DispatchReferences.references:type_name -> resources.centrum.DispatchReference
+	2,  // 18: resources.centrum.DispatchReference.reference_type:type_name -> resources.centrum.DispatchReferenceType
+	19, // [19:19] is the sub-list for method output_type
+	19, // [19:19] is the sub-list for method input_type
+	19, // [19:19] is the sub-list for extension type_name
+	19, // [19:19] is the sub-list for extension extendee
+	0,  // [0:19] is the sub-list for field type_name
 }
 
 func init() { file_resources_centrum_dispatches_proto_init() }
@@ -964,18 +1069,18 @@ func file_resources_centrum_dispatches_proto_init() {
 		return
 	}
 	file_resources_centrum_attributes_proto_init()
-	file_resources_centrum_settings_proto_init()
 	file_resources_centrum_units_proto_init()
 	file_resources_centrum_dispatches_proto_msgTypes[0].OneofWrappers = []any{}
 	file_resources_centrum_dispatches_proto_msgTypes[2].OneofWrappers = []any{}
-	file_resources_centrum_dispatches_proto_msgTypes[3].OneofWrappers = []any{}
+	file_resources_centrum_dispatches_proto_msgTypes[4].OneofWrappers = []any{}
+	file_resources_centrum_dispatches_proto_msgTypes[5].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_centrum_dispatches_proto_rawDesc), len(file_resources_centrum_dispatches_proto_rawDesc)),
 			NumEnums:      3,
-			NumMessages:   6,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

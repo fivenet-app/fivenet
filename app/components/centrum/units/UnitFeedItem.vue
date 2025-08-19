@@ -28,6 +28,7 @@ const { goto } = useLivemapStore();
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <UIcon class="text-primary-500 size-5" name="i-mdi-account-plus" />
             </div>
+
             <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.units.feed.item.USER_ADDED') }}
@@ -46,14 +47,17 @@ const { goto } = useLivemapStore();
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
+
             <span class="flex-none text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
+
         <template v-else-if="item.status === StatusUnit.USER_REMOVED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <UIcon class="text-primary-500 size-5" name="i-mdi-account-remove" />
             </div>
+
             <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.units.feed.item.USER_REMOVED') }}
@@ -72,14 +76,17 @@ const { goto } = useLivemapStore();
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
+
             <span class="flex-none text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
+
         <template v-else-if="item.status === StatusUnit.UNAVAILABLE">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <UIcon class="text-primary-500 size-5" name="i-mdi-stop" />
             </div>
+
             <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.units.feed.item.UNAVAILABLE') }}
@@ -98,14 +105,17 @@ const { goto } = useLivemapStore();
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
+
             <span class="flex-none text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
+
         <template v-else-if="item.status === StatusUnit.AVAILABLE">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <UIcon class="text-primary-500 size-5" name="i-mdi-play" />
             </div>
+
             <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.units.feed.item.AVAILABLE') }}
@@ -124,14 +134,17 @@ const { goto } = useLivemapStore();
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
+
             <span class="flex-none text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
+
         <template v-else-if="item.status === StatusUnit.ON_BREAK">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <UIcon class="text-primary-500 size-5" name="i-mdi-coffee" />
             </div>
+
             <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.units.feed.item.ON_BREAK') }}
@@ -150,14 +163,17 @@ const { goto } = useLivemapStore();
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
+
             <span class="flex-none text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
+
         <template v-else-if="item.status === StatusUnit.BUSY">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <UIcon class="text-primary-500 size-5" name="i-mdi-briefcase" />
             </div>
+
             <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.units.feed.item.BUSY') }}
@@ -176,14 +192,17 @@ const { goto } = useLivemapStore();
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
+
             <span class="flex-none text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
+
         <template v-else>
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <UIcon class="text-primary-500 size-5" name="i-mdi-help" />
             </div>
+
             <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.units.feed.item.UNKNOWN') }}
@@ -202,6 +221,7 @@ const { goto } = useLivemapStore();
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
+
             <span class="flex-none text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" type="compact" />
             </span>

@@ -1,7 +1,6 @@
-import type { BadgeColor, BadgeVariant } from '#ui/types';
+import type { BadgeColor, BadgeVariant, ButtonColor } from '#ui/types';
 import type { CentrumAccessLevel } from '~~/gen/ts/resources/centrum/access';
-import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
-import type { JobList } from '~~/gen/ts/resources/centrum/settings';
+import { type JobList, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { type Unit, StatusUnit } from '~~/gen/ts/resources/centrum/units';
 import type { UnitAccess, UnitAccessLevel } from '~~/gen/ts/resources/centrum/units_access';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
@@ -40,27 +39,53 @@ export function dispatchStatusToBGColor(status: StatusDispatch | undefined): str
         case StatusDispatch.NEW:
         case StatusDispatch.UNASSIGNED:
         case StatusDispatch.UNIT_DECLINED:
-            return '!bg-error-600';
+            return '!bg-error-600 !text-white';
         case StatusDispatch.EN_ROUTE:
-            return '!bg-info-500';
+            return '!bg-info-600 !text-white';
         case StatusDispatch.ON_SCENE:
-            return '!bg-info-700';
+            return '!bg-info-700 !text-white';
         case StatusDispatch.NEED_ASSISTANCE:
-            return '!bg-warn-600';
+            return '!bg-warn-600 !text-white';
         case StatusDispatch.COMPLETED:
-            return '!bg-success-600';
+            return '!bg-success-600 !text-white';
         case StatusDispatch.CANCELLED:
-            return '!bg-success-800';
+            return '!bg-success-800 !text-white';
         case StatusDispatch.ARCHIVED:
-            return '!bg-background';
+            return '!bg-background !text-white';
         case StatusDispatch.UNIT_ACCEPTED:
-            return '!bg-info-600';
+            return '!bg-info-600 !text-white';
         default:
-            return '!bg-info-500';
+            return '!bg-info-600 !text-white';
     }
 }
 
 export function dispatchStatusToBadgeColor(status: StatusDispatch | undefined): BadgeColor {
+    switch (status) {
+        case StatusDispatch.UNSPECIFIED:
+        case StatusDispatch.NEW:
+        case StatusDispatch.UNASSIGNED:
+        case StatusDispatch.UNIT_DECLINED:
+            return 'error';
+        case StatusDispatch.EN_ROUTE:
+            return 'info';
+        case StatusDispatch.ON_SCENE:
+            return 'info';
+        case StatusDispatch.NEED_ASSISTANCE:
+            return 'warn';
+        case StatusDispatch.COMPLETED:
+            return 'success';
+        case StatusDispatch.CANCELLED:
+            return 'success';
+        case StatusDispatch.ARCHIVED:
+            return 'white';
+        case StatusDispatch.UNIT_ACCEPTED:
+            return 'info';
+        default:
+            return 'info';
+    }
+}
+
+export function dispatchStatusToButtonColor(status: StatusDispatch | undefined): ButtonColor {
     switch (status) {
         case StatusDispatch.UNSPECIFIED:
         case StatusDispatch.NEW:
@@ -110,7 +135,7 @@ export function unitStatusToBGColor(status: StatusUnit | undefined): string {
         case StatusUnit.ON_BREAK:
         case StatusUnit.USER_ADDED:
         case StatusUnit.USER_REMOVED:
-            return '!bg-info-500';
+            return '!bg-info-600';
         case StatusUnit.AVAILABLE:
             return '!bg-success-600';
         case StatusUnit.BUSY:
@@ -272,11 +297,11 @@ export function checkDispatchAccess(dispatchJobs: JobList | undefined, level: Ce
 
     // If the active character's job isn't in the dispatch's jobs list, check dispatchesJobs access list (contains the job to job access)
     if (!dispatchJobs?.jobs.find((j) => j.name === activeChar.value?.job)) {
-        if (acls.value?.dispatches) {
+        if (acls.value?.dispatches?.jobs) {
             for (const djob of dispatchJobs.jobs) {
                 let lowestAccess: CentrumAccessLevel | undefined = undefined;
-                for (let index = 0; index < acls.value.dispatches.length; index++) {
-                    const ja = acls.value.dispatches[index]!;
+                for (let index = 0; index < acls.value.dispatches.jobs.length; index++) {
+                    const ja = acls.value.dispatches.jobs[index]!;
                     if (ja.job !== djob.name) {
                         continue;
                     }

@@ -472,7 +472,7 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond jet.BoolExpression) (i
 		// Ensure dispatch has a valid job list (fallback to deprecated Jobs field for old dispatches)
 		if dsps[i].GetJobs() == nil || len(dsps[i].GetJobs().GetJobs()) == 0 {
 			dsps[i].Jobs = &centrum.JobList{
-				Jobs: []*centrum.Job{
+				Jobs: []*centrum.JobListEntry{
 					{
 						//nolint:staticcheck // This is a fallback for old dispatches.
 						Name: dsps[i].GetJob(),
@@ -993,7 +993,7 @@ func (s *DispatchDB) Create(ctx context.Context, dsp *centrum.Dispatch) (*centru
 	// If the deprecated Job field is used, convert it to Jobs but only if the jobs list is empty
 	if dsp.GetJobs() == nil || len(dsp.GetJobs().GetJobs()) == 0 {
 		dsp.Jobs = &centrum.JobList{
-			Jobs: []*centrum.Job{
+			Jobs: []*centrum.JobListEntry{
 				{
 					//nolint:staticcheck // This is a fallback for old dispatches.
 					Name: dsp.GetJob(),

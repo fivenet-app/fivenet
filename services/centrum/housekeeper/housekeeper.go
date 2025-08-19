@@ -172,7 +172,7 @@ func (s *Housekeeper) start(ctx context.Context) {
 	s.wg.Add(1)
 	go func() {
 		defer s.wg.Done()
-		s.runTTLWatcher(s.units.KVPing, "ping", s.handleUnitKVPing)
+		s.runTTLWatcher(ctx)
 	}()
 }
 

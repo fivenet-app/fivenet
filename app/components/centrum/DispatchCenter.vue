@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { Pane, Splitpanes } from 'splitpanes';
 import 'splitpanes/dist/splitpanes.css';
-import CentrumFeed from '~/components/centrum/CentrumFeed.vue';
 import DispatchList from '~/components/centrum/dispatches/DispatchList.vue';
+import Feed from '~/components/centrum/Feed.vue';
 import DispatchesLayer from '~/components/centrum/livemap/DispatchesLayer.vue';
 import MarkersList from '~/components/centrum/MarkersList.vue';
 import UnitList from '~/components/centrum/units/UnitList.vue';
@@ -83,7 +83,7 @@ onBeforeRouteLeave(async (to) => {
                             <MarkersList />
                         </Pane>
                         <Pane :size="8" :min-size="2">
-                            <CentrumFeed :items="feed" />
+                            <Feed :items="feed" />
                         </Pane>
                     </Splitpanes>
                 </Pane>

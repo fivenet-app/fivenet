@@ -29,7 +29,7 @@ export function conductTypesToBGColor(status: ConductType | undefined): string {
         case ConductType.WARNING:
             return 'bg-warn-600/10';
         case ConductType.SUSPENSION:
-            return 'bg-info-500/10';
+            return 'bg-info-600/10';
         default:
             return 'bg-background/10';
     }

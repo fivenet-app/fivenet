@@ -744,7 +744,12 @@ func (s *Server) SetSuperuserMode(
 	}
 
 	if !userInfo.GetCanBeSuperuser() {
-		return nil, errorsauth.ErrNotSuperuser
+		if !userInfo.GetSuperuser() {
+			return nil, errorsauth.ErrNotSuperuser
+		}
+
+		req.Superuser = false
+		req.Job = nil
 	}
 
 	// Set user's job as requested job when superuser mode is turned on
@@ -816,7 +821,7 @@ func (s *Server) SetSuperuserMode(
 	}
 
 	//nolint:protogetter // The values are needed as pointers
-	if err := s.ui.SetUserInfo(ctx, claims.AccID, req.GetSuperuser(), userInfo.OverrideJob, userInfo.OverrideJobGrade); err != nil {
+	if err := s.ui.SetUserInfo(ctx, claims.AccID, claims.CharID, req.GetSuperuser(), userInfo.OverrideJob, userInfo.OverrideJobGrade); err != nil {
 		return nil, errswrap.NewError(
 			fmt.Errorf("failed to set user info. %w", err),
 			errorsauth.ErrGenericLogin,

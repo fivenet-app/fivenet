@@ -24,8 +24,9 @@ import (
 )
 
 type userSnapshot struct {
-	Job      string
-	JobGrade int32
+	Job       string
+	JobGrade  int32
+	Superuser bool
 }
 
 // Poller is responsible for polling user information via the Retriever.
@@ -166,13 +167,14 @@ func (p *Poller) start(ctx context.Context) {
 
 	for {
 		select {
+		case <-ctx.Done():
+			return
+
 		case <-ticker.C:
 			if err := p.doBatch(ctx); err != nil {
 				// Log the error, but continue polling
 				p.logger.Error("failed to process batch", zap.Error(err))
 			}
-		case <-ctx.Done():
-			return
 		}
 	}
 }
@@ -201,6 +203,7 @@ func (p *Poller) doBatch(ctx context.Context) error {
 			tUser.ID.AS("user_id"),
 			tUser.Job.AS("job"),
 			tUser.JobGrade.AS("job_grade"),
+			tAccount.Superuser.AS("superuser"),
 			tUser.LastSeen.AS("last_seen"),
 		).
 		FROM(
@@ -212,13 +215,15 @@ func (p *Poller) doBatch(ctx context.Context) error {
 					),
 				),
 		).
-		WHERE(tUser.ID.IN(userIds...))
+		WHERE(tUser.ID.IN(userIds...)).
+		LIMIT(int64(len(userIds)))
 
 	var dest []*struct {
 		AccountId int64
 		UserId    int32
 		Job       string
 		JobGrade  int32
+		Superuser bool
 		LastSeen  *timestamp.Timestamp
 	}
 
@@ -228,7 +233,7 @@ func (p *Poller) doBatch(ctx context.Context) error {
 
 	var errs error
 	for _, row := range dest {
-		if err := p.checkDiffAndPublish(ctx, row.AccountId, row.UserId, row.Job, row.JobGrade, row.LastSeen); err != nil {
+		if err := p.checkDiffAndPublish(ctx, row.AccountId, row.UserId, row.Job, row.JobGrade, row.Superuser, row.LastSeen); err != nil {
 			errs = multierr.Append(errs, fmt.Errorf("failed to check diff. %w", err))
 			continue
 		}
@@ -243,6 +248,7 @@ func (p *Poller) checkDiffAndPublish(
 	uid int32,
 	job string,
 	grade int32,
+	superuser bool,
 	updatedAt *timestamp.Timestamp,
 ) error {
 	p.snapMu.Lock()
@@ -260,21 +266,31 @@ func (p *Poller) checkDiffAndPublish(
 		return nil
 	}
 
-	if old.Job != job || old.JobGrade != grade {
+	if old.Job != job || old.JobGrade != grade || old.Superuser != superuser {
 		evt := &pb.UserInfoChanged{
 			AccountId:   acct,
 			UserId:      uid,
 			OldJob:      old.Job,
-			NewJob:      job,
+			NewJob:      &job,
 			OldJobGrade: old.JobGrade,
-			NewJobGrade: grade,
+			NewJobGrade: &grade,
+			Superuser:   &superuser,
 			ChangedAt:   updatedAt,
 		}
 		p.enricher.EnrichJobInfo(evt)
 
 		subj := fmt.Sprintf("userinfo.%d.changes", acct)
-		p.js.PublishAsyncProto(ctx, subj, evt)
-		userMap[uid] = &userSnapshot{Job: job, JobGrade: grade}
+		if _, err := p.js.PublishAsyncProto(ctx, subj, evt); err != nil {
+			p.logger.Error("failed to publish user info change event",
+				zap.Int64("accountId", acct),
+				zap.Int32("userId", uid),
+				zap.String("job", job),
+				zap.Int32("jobGrade", grade),
+				zap.Bool("superuser", superuser),
+				zap.Error(err),
+			)
+		}
+		userMap[uid] = &userSnapshot{Job: job, JobGrade: grade, Superuser: superuser}
 	}
 
 	return nil

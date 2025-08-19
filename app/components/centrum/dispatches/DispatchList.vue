@@ -12,7 +12,7 @@ import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
 import { CentrumAccessLevel } from '~~/gen/ts/resources/centrum/access';
-import { type Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import DispatchStatusBadge from '../partials/DispatchStatusBadge.vue';
 
 const props = withDefaults(

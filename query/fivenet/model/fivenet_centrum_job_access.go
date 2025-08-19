@@ -14,8 +14,9 @@ import (
 type FivenetCentrumJobAccess struct {
 	ID           int64      `sql:"primary_key" json:"id"`
 	CreatedAt    *time.Time `json:"created_at"`
-	UnitID       int64      `json:"unit_id"`
+	SourceJob    string     `json:"source_job"`
 	Job          string     `json:"job"`
 	MinimumGrade int32      `json:"minimum_grade"`
 	Access       int16      `json:"access"`
+	AcceptedAt   *time.Time `json:"accepted_at"`
 }

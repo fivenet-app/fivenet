@@ -240,3 +240,31 @@ func (m *DispatchStatus) Sanitize() error {
 
 	return nil
 }
+
+func (m *JobList) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Jobs
+	for idx, item := range m.Jobs {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *JobListEntry) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}

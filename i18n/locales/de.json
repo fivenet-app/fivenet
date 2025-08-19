@@ -683,7 +683,8 @@
         "revoke_wanted": "Gesuchten-Status entfernen",
         "only_wanted": "Nur Gesuchte",
         "no_actions_available": "Keine Aktionen verfügbar.",
-        "dispatch_center_settings": "Leitstellen-Einstellungen"
+        "dispatch_center_settings": "Leitstellen-Einstellungen",
+        "accepted_at": "Akzeptiert am"
     },
     "components": {
         "partials": {
@@ -987,8 +988,8 @@
                     "require_unit_reminder_seconds": "Erinnerungsintervall (in Sekunden), um Kollegen anzupingen, die nicht in einer Einheit sind"
                 },
                 "access": {
-                    "title": "Zugriff",
-                    "description": "Legen Sie fest, wer auf die Leitstelle zugreifen kann und welche Berechtigungen sie hat."
+                    "title": "Geteilter Zugriff",
+                    "description": "Legen Sie fest, welche anderen Berufe auf ihre Leitstelle zugreifen können und welche Berechtigungen sie haben."
                 },
                 "deduplication": {
                     "title": "Einsatz-Deduplizierung",
@@ -999,6 +1000,10 @@
                 },
                 "public": {
                     "description": "Wenn aktiviert, wird Ihr Job für jeden auswählbar sein, der die Berechtigung zum erstellen von Einsätzen hat. Dies ist nützlich für öffentliche Jobs wie Polizei-, Taxi- oder Busdienste."
+                },
+                "offered_access": {
+                    "title": "Angebotene Zugriffe",
+                    "description": "Dies sind Zugriffe, die von anderen Jobs angeboten werden. Um angebotene Zugriffe zu aktivieren, aktivieren Sie den Eintrag über den Schalter und speichern Sie Ihre Einstellungen."
                 }
             }
         },
@@ -2061,7 +2066,8 @@
             "ErrCharLock": {
                 "title": "Charakter-Sperre ist aktiv!",
                 "content": "Bitte wählen Sie einen verfügbaren Charakter aus und versuchen Sie es erneut."
-            }
+            },
+            "ErrNotSuperuser": "Sie sind kein Superuser! Bitte wenden Sie sich an Ihre FiveNet-Administratoren, um dieses Problem zu melden."
         },
         "CompletorService": {
             "ErrFailedSearch": "Fehler beim Laden der Autovervollständigung!"

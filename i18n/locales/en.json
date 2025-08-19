@@ -683,7 +683,8 @@
         "revoke_wanted": "Revoke Wanted",
         "only_wanted": "Only Wanted",
         "no_actions_available": "No actions available.",
-        "dispatch_center_settings": "Dispatch Center Settings"
+        "dispatch_center_settings": "Dispatch Center Settings",
+        "accepted_at": "Accepted At"
     },
     "components": {
         "partials": {
@@ -987,8 +988,8 @@
                     "require_unit_reminder_seconds": "Reminder interval (in seconds) to ping colleagues not in an unit to join an unit"
                 },
                 "access": {
-                    "title": "Access",
-                    "description": "Configure who can access the dispatch center and what permissions they have."
+                    "title": "Shared Access",
+                    "description": "Configure which other jobss can access your dispatch center. This is useful for jobs that work together, like police and ambulance services."
                 },
                 "deduplication": {
                     "title": "Deduplication",
@@ -999,6 +1000,10 @@
                 },
                 "public": {
                     "description": "If enabled, will make your job available to anyone with access to create dispatches. This is useful for public jobs like police, taxi or bus services."
+                },
+                "offered_access": {
+                    "title": "Offered Access",
+                    "description": "These are accesses offered from other jobs. To enable offered accesses, enable the entry via the toggle, and save your settings."
                 }
             }
         },

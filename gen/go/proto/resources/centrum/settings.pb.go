@@ -7,6 +7,7 @@
 package centrum
 
 import (
+	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -136,8 +137,10 @@ type Settings struct {
 	FallbackMode     CentrumMode            `protobuf:"varint,4,opt,name=fallback_mode,json=fallbackMode,proto3,enum=resources.centrum.CentrumMode" json:"fallback_mode,omitempty"`
 	PredefinedStatus *PredefinedStatus      `protobuf:"bytes,5,opt,name=predefined_status,json=predefinedStatus,proto3,oneof" json:"predefined_status,omitempty"`
 	Timings          *Timings               `protobuf:"bytes,6,opt,name=timings,proto3" json:"timings,omitempty"`
-	Access           *CentrumAccess         `protobuf:"bytes,7,opt,name=access,proto3" json:"access,omitempty"`
 	Configuration    *Configuration         `protobuf:"bytes,10,opt,name=configuration,proto3" json:"configuration,omitempty"`
+	Access           *CentrumAccess         `protobuf:"bytes,7,opt,name=access,proto3,oneof" json:"access,omitempty"`
+	OfferedAccess    *CentrumAccess         `protobuf:"bytes,12,opt,name=offered_access,json=offeredAccess,proto3,oneof" json:"offered_access,omitempty"`
+	EffectiveAccess  *EffectiveAccess       `protobuf:"bytes,11,opt,name=effective_access,json=effectiveAccess,proto3,oneof" json:"effective_access,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -228,6 +231,13 @@ func (x *Settings) GetTimings() *Timings {
 	return nil
 }
 
+func (x *Settings) GetConfiguration() *Configuration {
+	if x != nil {
+		return x.Configuration
+	}
+	return nil
+}
+
 func (x *Settings) GetAccess() *CentrumAccess {
 	if x != nil {
 		return x.Access
@@ -235,9 +245,16 @@ func (x *Settings) GetAccess() *CentrumAccess {
 	return nil
 }
 
-func (x *Settings) GetConfiguration() *Configuration {
+func (x *Settings) GetOfferedAccess() *CentrumAccess {
 	if x != nil {
-		return x.Configuration
+		return x.OfferedAccess
+	}
+	return nil
+}
+
+func (x *Settings) GetEffectiveAccess() *EffectiveAccess {
+	if x != nil {
+		return x.EffectiveAccess
 	}
 	return nil
 }
@@ -419,27 +436,27 @@ func (x *Configuration) GetDeduplicationDuration() *durationpb.Duration {
 	return nil
 }
 
-type JobList struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Jobs          []*Job                 `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty"`
+type EffectiveAccess struct {
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Dispatches    *EffectiveDispatchAccess `protobuf:"bytes,1,opt,name=dispatches,proto3" json:"dispatches,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *JobList) Reset() {
-	*x = JobList{}
+func (x *EffectiveAccess) Reset() {
+	*x = EffectiveAccess{}
 	mi := &file_resources_centrum_settings_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *JobList) String() string {
+func (x *EffectiveAccess) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*JobList) ProtoMessage() {}
+func (*EffectiveAccess) ProtoMessage() {}
 
-func (x *JobList) ProtoReflect() protoreflect.Message {
+func (x *EffectiveAccess) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_centrum_settings_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -451,41 +468,86 @@ func (x *JobList) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use JobList.ProtoReflect.Descriptor instead.
-func (*JobList) Descriptor() ([]byte, []int) {
+// Deprecated: Use EffectiveAccess.ProtoReflect.Descriptor instead.
+func (*EffectiveAccess) Descriptor() ([]byte, []int) {
 	return file_resources_centrum_settings_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *JobList) GetJobs() []*Job {
+func (x *EffectiveAccess) GetDispatches() *EffectiveDispatchAccess {
+	if x != nil {
+		return x.Dispatches
+	}
+	return nil
+}
+
+type EffectiveDispatchAccess struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Jobs          []*JobAccessEntry      `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EffectiveDispatchAccess) Reset() {
+	*x = EffectiveDispatchAccess{}
+	mi := &file_resources_centrum_settings_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EffectiveDispatchAccess) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EffectiveDispatchAccess) ProtoMessage() {}
+
+func (x *EffectiveDispatchAccess) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_centrum_settings_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EffectiveDispatchAccess.ProtoReflect.Descriptor instead.
+func (*EffectiveDispatchAccess) Descriptor() ([]byte, []int) {
+	return file_resources_centrum_settings_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *EffectiveDispatchAccess) GetJobs() []*JobAccessEntry {
 	if x != nil {
 		return x.Jobs
 	}
 	return nil
 }
 
-type Job struct {
+type JobAccessEntry struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Label         *string                `protobuf:"bytes,2,opt,name=label,proto3,oneof" json:"label,omitempty"`
+	Job           string                 `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
+	JobLabel      *string                `protobuf:"bytes,2,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
+	Access        CentrumAccessLevel     `protobuf:"varint,3,opt,name=access,proto3,enum=resources.centrum.CentrumAccessLevel" json:"access,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Job) Reset() {
-	*x = Job{}
-	mi := &file_resources_centrum_settings_proto_msgTypes[5]
+func (x *JobAccessEntry) Reset() {
+	*x = JobAccessEntry{}
+	mi := &file_resources_centrum_settings_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Job) String() string {
+func (x *JobAccessEntry) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Job) ProtoMessage() {}
+func (*JobAccessEntry) ProtoMessage() {}
 
-func (x *Job) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_centrum_settings_proto_msgTypes[5]
+func (x *JobAccessEntry) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_centrum_settings_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -496,30 +558,37 @@ func (x *Job) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Job.ProtoReflect.Descriptor instead.
-func (*Job) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_settings_proto_rawDescGZIP(), []int{5}
+// Deprecated: Use JobAccessEntry.ProtoReflect.Descriptor instead.
+func (*JobAccessEntry) Descriptor() ([]byte, []int) {
+	return file_resources_centrum_settings_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *Job) GetName() string {
+func (x *JobAccessEntry) GetJob() string {
 	if x != nil {
-		return x.Name
+		return x.Job
 	}
 	return ""
 }
 
-func (x *Job) GetLabel() string {
-	if x != nil && x.Label != nil {
-		return *x.Label
+func (x *JobAccessEntry) GetJobLabel() string {
+	if x != nil && x.JobLabel != nil {
+		return *x.JobLabel
 	}
 	return ""
+}
+
+func (x *JobAccessEntry) GetAccess() CentrumAccessLevel {
+	if x != nil {
+		return x.Access
+	}
+	return CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_UNSPECIFIED
 }
 
 var File_resources_centrum_settings_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_settings_proto_rawDesc = "" +
 	"\n" +
-	" resources/centrum/settings.proto\x12\x11resources.centrum\x1a\x1egoogle/protobuf/duration.proto\x1a\x1eresources/centrum/access.proto\"\xc7\x04\n" +
+	" resources/centrum/settings.proto\x12\x11resources.centrum\x1a\x1egoogle/protobuf/duration.proto\x1a\x1eresources/centrum/access.proto\x1a\x13tagger/tagger.proto\"\xa1\x06\n" +
 	"\bSettings\x12\x19\n" +
 	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12\x18\n" +
 	"\aenabled\x18\x02 \x01(\bR\aenabled\x12<\n" +
@@ -528,11 +597,16 @@ const file_resources_centrum_settings_proto_rawDesc = "" +
 	"\x04mode\x18\b \x01(\x0e2\x1e.resources.centrum.CentrumModeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04mode\x12M\n" +
 	"\rfallback_mode\x18\x04 \x01(\x0e2\x1e.resources.centrum.CentrumModeB\b\xbaH\x05\x82\x01\x02\x10\x01R\ffallbackMode\x12U\n" +
 	"\x11predefined_status\x18\x05 \x01(\v2#.resources.centrum.PredefinedStatusH\x00R\x10predefinedStatus\x88\x01\x01\x124\n" +
-	"\atimings\x18\x06 \x01(\v2\x1a.resources.centrum.TimingsR\atimings\x128\n" +
-	"\x06access\x18\a \x01(\v2 .resources.centrum.CentrumAccessR\x06access\x12F\n" +
+	"\atimings\x18\x06 \x01(\v2\x1a.resources.centrum.TimingsR\atimings\x12F\n" +
 	"\rconfiguration\x18\n" +
-	" \x01(\v2 .resources.centrum.ConfigurationR\rconfigurationB\x14\n" +
-	"\x12_predefined_status\"|\n" +
+	" \x01(\v2 .resources.centrum.ConfigurationR\rconfiguration\x12=\n" +
+	"\x06access\x18\a \x01(\v2 .resources.centrum.CentrumAccessH\x01R\x06access\x88\x01\x01\x12L\n" +
+	"\x0eoffered_access\x18\f \x01(\v2 .resources.centrum.CentrumAccessH\x02R\rofferedAccess\x88\x01\x01\x12R\n" +
+	"\x10effective_access\x18\v \x01(\v2\".resources.centrum.EffectiveAccessH\x03R\x0feffectiveAccess\x88\x01\x01B\x14\n" +
+	"\x12_predefined_statusB\t\n" +
+	"\a_accessB\x11\n" +
+	"\x0f_offered_accessB\x13\n" +
+	"\x11_effective_access\"|\n" +
 	"\x10PredefinedStatus\x12/\n" +
 	"\vunit_status\x18\x01 \x03(\tB\x0e\xbaH\v\x92\x01\b\x10\x14\"\x04r\x02\x18@R\n" +
 	"unitStatus\x127\n" +
@@ -547,14 +621,19 @@ const file_resources_centrum_settings_proto_rawDesc = "" +
 	"\x15deduplication_enabled\x18\x01 \x01(\bR\x14deduplicationEnabled\x12>\n" +
 	"\x14deduplication_radius\x18\x02 \x01(\x03B\v\xbaH\b\"\x06\x10\xc0\x84= \x05R\x13deduplicationRadius\x12U\n" +
 	"\x16deduplication_duration\x18\x03 \x01(\v2\x19.google.protobuf.DurationH\x00R\x15deduplicationDuration\x88\x01\x01B\x19\n" +
-	"\x17_deduplication_duration\"?\n" +
-	"\aJobList\x124\n" +
-	"\x04jobs\x18\x01 \x03(\v2\x16.resources.centrum.JobB\b\xbaH\x05\x92\x01\x02\x10\n" +
-	"R\x04jobs\"G\n" +
-	"\x03Job\x12\x1b\n" +
-	"\x04name\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x04name\x12\x19\n" +
-	"\x05label\x18\x02 \x01(\tH\x00R\x05label\x88\x01\x01B\b\n" +
-	"\x06_label*a\n" +
+	"\x17_deduplication_duration\"]\n" +
+	"\x0fEffectiveAccess\x12J\n" +
+	"\n" +
+	"dispatches\x18\x01 \x01(\v2*.resources.centrum.EffectiveDispatchAccessR\n" +
+	"dispatches\"i\n" +
+	"\x17EffectiveDispatchAccess\x12N\n" +
+	"\x04jobs\x18\x01 \x03(\v2!.resources.centrum.JobAccessEntryB\x17\x9a\x84\x9e\x03\x12alias:\"job_access\"R\x04jobs\"\xa4\x01\n" +
+	"\x0eJobAccessEntry\x12\x19\n" +
+	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12 \n" +
+	"\tjob_label\x18\x02 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12G\n" +
+	"\x06access\x18\x03 \x01(\x0e2%.resources.centrum.CentrumAccessLevelB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06accessB\f\n" +
+	"\n" +
+	"_job_label*a\n" +
 	"\vCentrumType\x12\x1c\n" +
 	"\x18CENTRUM_TYPE_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15CENTRUM_TYPE_DISPATCH\x10\x01\x12\x19\n" +
@@ -579,34 +658,40 @@ func file_resources_centrum_settings_proto_rawDescGZIP() []byte {
 }
 
 var file_resources_centrum_settings_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_resources_centrum_settings_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_resources_centrum_settings_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_resources_centrum_settings_proto_goTypes = []any{
-	(CentrumType)(0),            // 0: resources.centrum.CentrumType
-	(CentrumMode)(0),            // 1: resources.centrum.CentrumMode
-	(*Settings)(nil),            // 2: resources.centrum.Settings
-	(*PredefinedStatus)(nil),    // 3: resources.centrum.PredefinedStatus
-	(*Timings)(nil),             // 4: resources.centrum.Timings
-	(*Configuration)(nil),       // 5: resources.centrum.Configuration
-	(*JobList)(nil),             // 6: resources.centrum.JobList
-	(*Job)(nil),                 // 7: resources.centrum.Job
-	(*CentrumAccess)(nil),       // 8: resources.centrum.CentrumAccess
-	(*durationpb.Duration)(nil), // 9: google.protobuf.Duration
+	(CentrumType)(0),                // 0: resources.centrum.CentrumType
+	(CentrumMode)(0),                // 1: resources.centrum.CentrumMode
+	(*Settings)(nil),                // 2: resources.centrum.Settings
+	(*PredefinedStatus)(nil),        // 3: resources.centrum.PredefinedStatus
+	(*Timings)(nil),                 // 4: resources.centrum.Timings
+	(*Configuration)(nil),           // 5: resources.centrum.Configuration
+	(*EffectiveAccess)(nil),         // 6: resources.centrum.EffectiveAccess
+	(*EffectiveDispatchAccess)(nil), // 7: resources.centrum.EffectiveDispatchAccess
+	(*JobAccessEntry)(nil),          // 8: resources.centrum.JobAccessEntry
+	(*CentrumAccess)(nil),           // 9: resources.centrum.CentrumAccess
+	(*durationpb.Duration)(nil),     // 10: google.protobuf.Duration
+	(CentrumAccessLevel)(0),         // 11: resources.centrum.CentrumAccessLevel
 }
 var file_resources_centrum_settings_proto_depIdxs = []int32{
-	0, // 0: resources.centrum.Settings.type:type_name -> resources.centrum.CentrumType
-	1, // 1: resources.centrum.Settings.mode:type_name -> resources.centrum.CentrumMode
-	1, // 2: resources.centrum.Settings.fallback_mode:type_name -> resources.centrum.CentrumMode
-	3, // 3: resources.centrum.Settings.predefined_status:type_name -> resources.centrum.PredefinedStatus
-	4, // 4: resources.centrum.Settings.timings:type_name -> resources.centrum.Timings
-	8, // 5: resources.centrum.Settings.access:type_name -> resources.centrum.CentrumAccess
-	5, // 6: resources.centrum.Settings.configuration:type_name -> resources.centrum.Configuration
-	9, // 7: resources.centrum.Configuration.deduplication_duration:type_name -> google.protobuf.Duration
-	7, // 8: resources.centrum.JobList.jobs:type_name -> resources.centrum.Job
-	9, // [9:9] is the sub-list for method output_type
-	9, // [9:9] is the sub-list for method input_type
-	9, // [9:9] is the sub-list for extension type_name
-	9, // [9:9] is the sub-list for extension extendee
-	0, // [0:9] is the sub-list for field type_name
+	0,  // 0: resources.centrum.Settings.type:type_name -> resources.centrum.CentrumType
+	1,  // 1: resources.centrum.Settings.mode:type_name -> resources.centrum.CentrumMode
+	1,  // 2: resources.centrum.Settings.fallback_mode:type_name -> resources.centrum.CentrumMode
+	3,  // 3: resources.centrum.Settings.predefined_status:type_name -> resources.centrum.PredefinedStatus
+	4,  // 4: resources.centrum.Settings.timings:type_name -> resources.centrum.Timings
+	5,  // 5: resources.centrum.Settings.configuration:type_name -> resources.centrum.Configuration
+	9,  // 6: resources.centrum.Settings.access:type_name -> resources.centrum.CentrumAccess
+	9,  // 7: resources.centrum.Settings.offered_access:type_name -> resources.centrum.CentrumAccess
+	6,  // 8: resources.centrum.Settings.effective_access:type_name -> resources.centrum.EffectiveAccess
+	10, // 9: resources.centrum.Configuration.deduplication_duration:type_name -> google.protobuf.Duration
+	7,  // 10: resources.centrum.EffectiveAccess.dispatches:type_name -> resources.centrum.EffectiveDispatchAccess
+	8,  // 11: resources.centrum.EffectiveDispatchAccess.jobs:type_name -> resources.centrum.JobAccessEntry
+	11, // 12: resources.centrum.JobAccessEntry.access:type_name -> resources.centrum.CentrumAccessLevel
+	13, // [13:13] is the sub-list for method output_type
+	13, // [13:13] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_resources_centrum_settings_proto_init() }
@@ -617,14 +702,14 @@ func file_resources_centrum_settings_proto_init() {
 	file_resources_centrum_access_proto_init()
 	file_resources_centrum_settings_proto_msgTypes[0].OneofWrappers = []any{}
 	file_resources_centrum_settings_proto_msgTypes[3].OneofWrappers = []any{}
-	file_resources_centrum_settings_proto_msgTypes[5].OneofWrappers = []any{}
+	file_resources_centrum_settings_proto_msgTypes[6].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_centrum_settings_proto_rawDesc), len(file_resources_centrum_settings_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   6,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

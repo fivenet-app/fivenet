@@ -46,7 +46,7 @@ func (s *Server) ListDispatches(
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	jobs, _, err := s.settings.GetJobAccessList(ctx, userInfo.GetJob(), userInfo.GetJobGrade())
+	jobs, _, err := s.settings.GetAccessList(ctx, userInfo.GetJob(), userInfo.GetJobGrade())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
@@ -213,7 +213,7 @@ func (s *Server) ListDispatches(
 		if dsps[i].GetJobs() == nil ||
 			len(dsps[i].GetJobs().GetJobs()) == 0 {
 			resp.Dispatches[i].Jobs = &centrum.JobList{
-				Jobs: []*centrum.Job{
+				Jobs: []*centrum.JobListEntry{
 					{
 						//nolint:staticcheck // This is a fallback for old dispatches.
 						Name: dsps[i].GetJob(),
@@ -250,7 +250,7 @@ func (s *Server) GetDispatch(
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	jobs, _, err := s.settings.GetJobAccessList(ctx, userInfo.GetJob(), userInfo.GetJobGrade())
+	jobs, _, err := s.settings.GetAccessList(ctx, userInfo.GetJob(), userInfo.GetJobGrade())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
@@ -379,7 +379,7 @@ func (s *Server) CreateDispatch(
 		}
 	} else {
 		req.Dispatch.Jobs = &centrum.JobList{
-			Jobs: []*centrum.Job{
+			Jobs: []*centrum.JobListEntry{
 				{
 					Name: userInfo.GetJob(),
 				},

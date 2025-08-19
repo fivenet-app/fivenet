@@ -173,7 +173,7 @@ func hbLoop(ctx context.Context, room *CollabRoom, pKey, fKey, cid string) {
 
 // firstWatch - auto-promotion when "first" key disappears.
 func firstWatch(ctx context.Context, room *CollabRoom, fKey, cid string, myID uint64) {
-	sub, err := room.stateKV.Watch(ctx, fKey, jetstream.UpdatesOnly())
+	watch, err := room.stateKV.Watch(ctx, fKey, jetstream.UpdatesOnly())
 	if err != nil {
 		room.logger.Error("failed to watch first key", zap.Error(err))
 		return
@@ -185,7 +185,7 @@ func firstWatch(ctx context.Context, room *CollabRoom, fKey, cid string, myID ui
 			room.logger.Debug("firstWatch: context cancelled, exiting")
 			return
 
-		case upd, ok := <-sub.Updates():
+		case upd, ok := <-watch.Updates():
 			if !ok {
 				room.logger.Info("firstWatcher: Updates channel closed")
 				return

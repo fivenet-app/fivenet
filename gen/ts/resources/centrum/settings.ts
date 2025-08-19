@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { CentrumAccessLevel } from "./access";
 import { Duration } from "../../google/protobuf/duration";
 import { CentrumAccess } from "./access";
 /**
@@ -50,13 +51,21 @@ export interface Settings {
      */
     timings?: Timings;
     /**
-     * @generated from protobuf field: resources.centrum.CentrumAccess access = 7
-     */
-    access?: CentrumAccess;
-    /**
      * @generated from protobuf field: resources.centrum.Configuration configuration = 10
      */
     configuration?: Configuration;
+    /**
+     * @generated from protobuf field: optional resources.centrum.CentrumAccess access = 7
+     */
+    access?: CentrumAccess;
+    /**
+     * @generated from protobuf field: optional resources.centrum.CentrumAccess offered_access = 12
+     */
+    offeredAccess?: CentrumAccess;
+    /**
+     * @generated from protobuf field: optional resources.centrum.EffectiveAccess effective_access = 11
+     */
+    effectiveAccess?: EffectiveAccess;
 }
 /**
  * @dbscanner: json
@@ -116,26 +125,39 @@ export interface Configuration {
     deduplicationDuration?: Duration;
 }
 /**
- * @generated from protobuf message resources.centrum.JobList
+ * @generated from protobuf message resources.centrum.EffectiveAccess
  */
-export interface JobList {
+export interface EffectiveAccess {
     /**
-     * @generated from protobuf field: repeated resources.centrum.Job jobs = 1
+     * @generated from protobuf field: resources.centrum.EffectiveDispatchAccess dispatches = 1
      */
-    jobs: Job[];
+    dispatches?: EffectiveDispatchAccess;
 }
 /**
- * @generated from protobuf message resources.centrum.Job
+ * @generated from protobuf message resources.centrum.EffectiveDispatchAccess
  */
-export interface Job {
+export interface EffectiveDispatchAccess {
     /**
-     * @generated from protobuf field: string name = 1
+     * @generated from protobuf field: repeated resources.centrum.JobAccessEntry jobs = 1
      */
-    name: string;
+    jobs: JobAccessEntry[];
+}
+/**
+ * @generated from protobuf message resources.centrum.JobAccessEntry
+ */
+export interface JobAccessEntry {
     /**
-     * @generated from protobuf field: optional string label = 2
+     * @generated from protobuf field: string job = 1
      */
-    label?: string;
+    job: string;
+    /**
+     * @generated from protobuf field: optional string job_label = 2
+     */
+    jobLabel?: string;
+    /**
+     * @generated from protobuf field: resources.centrum.CentrumAccessLevel access = 3
+     */
+    access: CentrumAccessLevel;
 }
 /**
  * @generated from protobuf enum resources.centrum.CentrumType
@@ -191,8 +213,10 @@ class Settings$Type extends MessageType<Settings> {
             { no: 4, name: "fallback_mode", kind: "enum", T: () => ["resources.centrum.CentrumMode", CentrumMode, "CENTRUM_MODE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 5, name: "predefined_status", kind: "message", T: () => PredefinedStatus },
             { no: 6, name: "timings", kind: "message", T: () => Timings },
+            { no: 10, name: "configuration", kind: "message", T: () => Configuration },
             { no: 7, name: "access", kind: "message", T: () => CentrumAccess },
-            { no: 10, name: "configuration", kind: "message", T: () => Configuration }
+            { no: 12, name: "offered_access", kind: "message", T: () => CentrumAccess },
+            { no: 11, name: "effective_access", kind: "message", T: () => EffectiveAccess }
         ]);
     }
     create(value?: PartialMessage<Settings>): Settings {
@@ -236,11 +260,17 @@ class Settings$Type extends MessageType<Settings> {
                 case /* resources.centrum.Timings timings */ 6:
                     message.timings = Timings.internalBinaryRead(reader, reader.uint32(), options, message.timings);
                     break;
-                case /* resources.centrum.CentrumAccess access */ 7:
-                    message.access = CentrumAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
-                    break;
                 case /* resources.centrum.Configuration configuration */ 10:
                     message.configuration = Configuration.internalBinaryRead(reader, reader.uint32(), options, message.configuration);
+                    break;
+                case /* optional resources.centrum.CentrumAccess access */ 7:
+                    message.access = CentrumAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                    break;
+                case /* optional resources.centrum.CentrumAccess offered_access */ 12:
+                    message.offeredAccess = CentrumAccess.internalBinaryRead(reader, reader.uint32(), options, message.offeredAccess);
+                    break;
+                case /* optional resources.centrum.EffectiveAccess effective_access */ 11:
+                    message.effectiveAccess = EffectiveAccess.internalBinaryRead(reader, reader.uint32(), options, message.effectiveAccess);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -272,7 +302,7 @@ class Settings$Type extends MessageType<Settings> {
         /* resources.centrum.Timings timings = 6; */
         if (message.timings)
             Timings.internalBinaryWrite(message.timings, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.CentrumAccess access = 7; */
+        /* optional resources.centrum.CentrumAccess access = 7; */
         if (message.access)
             CentrumAccess.internalBinaryWrite(message.access, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         /* resources.centrum.CentrumMode mode = 8; */
@@ -284,6 +314,12 @@ class Settings$Type extends MessageType<Settings> {
         /* resources.centrum.Configuration configuration = 10; */
         if (message.configuration)
             Configuration.internalBinaryWrite(message.configuration, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.centrum.EffectiveAccess effective_access = 11; */
+        if (message.effectiveAccess)
+            EffectiveAccess.internalBinaryWrite(message.effectiveAccess, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.centrum.CentrumAccess offered_access = 12; */
+        if (message.offeredAccess)
+            CentrumAccess.internalBinaryWrite(message.offeredAccess, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -475,26 +511,72 @@ class Configuration$Type extends MessageType<Configuration> {
  */
 export const Configuration = new Configuration$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class JobList$Type extends MessageType<JobList> {
+class EffectiveAccess$Type extends MessageType<EffectiveAccess> {
     constructor() {
-        super("resources.centrum.JobList", [
-            { no: 1, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Job, options: { "buf.validate.field": { repeated: { maxItems: "10" } } } }
+        super("resources.centrum.EffectiveAccess", [
+            { no: 1, name: "dispatches", kind: "message", T: () => EffectiveDispatchAccess }
         ]);
     }
-    create(value?: PartialMessage<JobList>): JobList {
+    create(value?: PartialMessage<EffectiveAccess>): EffectiveAccess {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<EffectiveAccess>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: EffectiveAccess): EffectiveAccess {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.centrum.EffectiveDispatchAccess dispatches */ 1:
+                    message.dispatches = EffectiveDispatchAccess.internalBinaryRead(reader, reader.uint32(), options, message.dispatches);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: EffectiveAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.centrum.EffectiveDispatchAccess dispatches = 1; */
+        if (message.dispatches)
+            EffectiveDispatchAccess.internalBinaryWrite(message.dispatches, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.centrum.EffectiveAccess
+ */
+export const EffectiveAccess = new EffectiveAccess$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class EffectiveDispatchAccess$Type extends MessageType<EffectiveDispatchAccess> {
+    constructor() {
+        super("resources.centrum.EffectiveDispatchAccess", [
+            { no: 1, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => JobAccessEntry, options: { "tagger.tags": "alias:\"job_access\"" } }
+        ]);
+    }
+    create(value?: PartialMessage<EffectiveDispatchAccess>): EffectiveDispatchAccess {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.jobs = [];
         if (value !== undefined)
-            reflectionMergePartial<JobList>(this, message, value);
+            reflectionMergePartial<EffectiveDispatchAccess>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobList): JobList {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: EffectiveDispatchAccess): EffectiveDispatchAccess {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.centrum.Job jobs */ 1:
-                    message.jobs.push(Job.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.centrum.JobAccessEntry jobs */ 1:
+                    message.jobs.push(JobAccessEntry.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -507,10 +589,10 @@ class JobList$Type extends MessageType<JobList> {
         }
         return message;
     }
-    internalBinaryWrite(message: JobList, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.centrum.Job jobs = 1; */
+    internalBinaryWrite(message: EffectiveDispatchAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.centrum.JobAccessEntry jobs = 1; */
         for (let i = 0; i < message.jobs.length; i++)
-            Job.internalBinaryWrite(message.jobs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            JobAccessEntry.internalBinaryWrite(message.jobs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -518,34 +600,39 @@ class JobList$Type extends MessageType<JobList> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.centrum.JobList
+ * @generated MessageType for protobuf message resources.centrum.EffectiveDispatchAccess
  */
-export const JobList = new JobList$Type();
+export const EffectiveDispatchAccess = new EffectiveDispatchAccess$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class Job$Type extends MessageType<Job> {
+class JobAccessEntry$Type extends MessageType<JobAccessEntry> {
     constructor() {
-        super("resources.centrum.Job", [
-            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 2, name: "label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        super("resources.centrum.JobAccessEntry", [
+            { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
+            { no: 2, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "access", kind: "enum", T: () => ["resources.centrum.CentrumAccessLevel", CentrumAccessLevel, "CENTRUM_ACCESS_LEVEL_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
         ]);
     }
-    create(value?: PartialMessage<Job>): Job {
+    create(value?: PartialMessage<JobAccessEntry>): JobAccessEntry {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.name = "";
+        message.job = "";
+        message.access = 0;
         if (value !== undefined)
-            reflectionMergePartial<Job>(this, message, value);
+            reflectionMergePartial<JobAccessEntry>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Job): Job {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobAccessEntry): JobAccessEntry {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string name */ 1:
-                    message.name = reader.string();
+                case /* string job */ 1:
+                    message.job = reader.string();
                     break;
-                case /* optional string label */ 2:
-                    message.label = reader.string();
+                case /* optional string job_label */ 2:
+                    message.jobLabel = reader.string();
+                    break;
+                case /* resources.centrum.CentrumAccessLevel access */ 3:
+                    message.access = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -558,13 +645,16 @@ class Job$Type extends MessageType<Job> {
         }
         return message;
     }
-    internalBinaryWrite(message: Job, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string name = 1; */
-        if (message.name !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.name);
-        /* optional string label = 2; */
-        if (message.label !== undefined)
-            writer.tag(2, WireType.LengthDelimited).string(message.label);
+    internalBinaryWrite(message: JobAccessEntry, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string job = 1; */
+        if (message.job !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.job);
+        /* optional string job_label = 2; */
+        if (message.jobLabel !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.jobLabel);
+        /* resources.centrum.CentrumAccessLevel access = 3; */
+        if (message.access !== 0)
+            writer.tag(3, WireType.Varint).int32(message.access);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -572,6 +662,6 @@ class Job$Type extends MessageType<Job> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.centrum.Job
+ * @generated MessageType for protobuf message resources.centrum.JobAccessEntry
  */
-export const Job = new Job$Type();
+export const JobAccessEntry = new JobAccessEntry$Type();

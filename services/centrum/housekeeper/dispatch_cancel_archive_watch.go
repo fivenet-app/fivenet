@@ -36,6 +36,7 @@ func (s *Housekeeper) idleWatcher(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	defer watch.Stop()
 
 	for {
 		select {

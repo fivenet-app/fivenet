@@ -2,9 +2,11 @@ package housekeeper
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
@@ -13,23 +15,43 @@ import (
 	"go.uber.org/zap"
 )
 
-func (s *Housekeeper) runTTLWatcher(
-	kv jetstream.KeyValue,
-	prefix string,
-	handler func(ctx context.Context, unitID int64) error,
-) {
-	sub, _ := kv.Watch(s.ctx, prefix+".*")
+func (s *Housekeeper) runTTLWatcher(ctx context.Context) error {
 	for {
+		if err := s.unitKVPing(ctx); err != nil {
+			if !errors.Is(err, context.Canceled) {
+				s.logger.Error("unit ping watcher stopped", zap.Error(err))
+			}
+		}
+
 		select {
 		case <-s.ctx.Done():
-			return
-		case e := <-sub.Updates():
+			return nil
+
+		case <-time.After(2 * time.Second):
+		}
+	}
+}
+
+func (s *Housekeeper) unitKVPing(ctx context.Context) error {
+	watch, err := s.units.KVPing.Watch(ctx, "ping.*")
+	if err != nil {
+		return err
+	}
+	defer watch.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return nil
+
+		case e := <-watch.Updates():
 			if e == nil || (e.Operation() != jetstream.KeyValueDelete &&
 				e.Operation() != jetstream.KeyValuePurge) {
 				continue
 			}
-			id, _ := strconv.ParseInt(strings.TrimPrefix(e.Key(), prefix+"."), 10, 64)
-			if err := handler(s.ctx, id); err != nil {
+
+			id, _ := strconv.ParseInt(strings.TrimPrefix(e.Key(), "ping."), 10, 64)
+			if err := s.handleUnitKVPing(ctx, id); err != nil {
 				s.logger.Error(
 					"failed to handle TTL event",
 					zap.Error(err),

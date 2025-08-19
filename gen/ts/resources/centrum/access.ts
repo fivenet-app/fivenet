@@ -40,6 +40,10 @@ export interface CentrumJobAccess {
      */
     targetId: number;
     /**
+     * @generated from protobuf field: string source_job = 9
+     */
+    sourceJob: string;
+    /**
      * @generated from protobuf field: string job = 4
      */
     job: string;
@@ -59,6 +63,10 @@ export interface CentrumJobAccess {
      * @generated from protobuf field: resources.centrum.CentrumAccessLevel access = 8
      */
     access: CentrumAccessLevel;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp accepted_at = 10
+     */
+    acceptedAt?: Timestamp;
 }
 /**
  * Dummy - DO NOT USE!
@@ -153,17 +161,20 @@ class CentrumJobAccess$Type extends MessageType<CentrumJobAccess> {
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "target_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 9, name: "source_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 5, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
             { no: 6, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
             { no: 7, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 8, name: "access", kind: "enum", T: () => ["resources.centrum.CentrumAccessLevel", CentrumAccessLevel, "CENTRUM_ACCESS_LEVEL_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
+            { no: 8, name: "access", kind: "enum", T: () => ["resources.centrum.CentrumAccessLevel", CentrumAccessLevel, "CENTRUM_ACCESS_LEVEL_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 10, name: "accepted_at", kind: "message", T: () => Timestamp }
         ]);
     }
     create(value?: PartialMessage<CentrumJobAccess>): CentrumJobAccess {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         message.targetId = 0;
+        message.sourceJob = "";
         message.job = "";
         message.minimumGrade = 0;
         message.access = 0;
@@ -185,6 +196,9 @@ class CentrumJobAccess$Type extends MessageType<CentrumJobAccess> {
                 case /* int64 target_id */ 3:
                     message.targetId = reader.int64().toNumber();
                     break;
+                case /* string source_job */ 9:
+                    message.sourceJob = reader.string();
+                    break;
                 case /* string job */ 4:
                     message.job = reader.string();
                     break;
@@ -199,6 +213,9 @@ class CentrumJobAccess$Type extends MessageType<CentrumJobAccess> {
                     break;
                 case /* resources.centrum.CentrumAccessLevel access */ 8:
                     message.access = reader.int32();
+                    break;
+                case /* optional resources.timestamp.Timestamp accepted_at */ 10:
+                    message.acceptedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.acceptedAt);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -236,6 +253,12 @@ class CentrumJobAccess$Type extends MessageType<CentrumJobAccess> {
         /* resources.centrum.CentrumAccessLevel access = 8; */
         if (message.access !== 0)
             writer.tag(8, WireType.Varint).int32(message.access);
+        /* string source_job = 9; */
+        if (message.sourceJob !== "")
+            writer.tag(9, WireType.LengthDelimited).string(message.sourceJob);
+        /* optional resources.timestamp.Timestamp accepted_at = 10; */
+        if (message.acceptedAt)
+            Timestamp.internalBinaryWrite(message.acceptedAt, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

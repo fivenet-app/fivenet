@@ -19,10 +19,11 @@ type fivenetCentrumJobAccessTable struct {
 	// Columns
 	ID           mysql.ColumnInteger
 	CreatedAt    mysql.ColumnTimestamp
-	UnitID       mysql.ColumnInteger
+	SourceJob    mysql.ColumnString
 	Job          mysql.ColumnString
 	MinimumGrade mysql.ColumnInteger
 	Access       mysql.ColumnInteger
+	AcceptedAt   mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -66,12 +67,13 @@ func newFivenetCentrumJobAccessTableImpl(schemaName, tableName, alias string) fi
 	var (
 		IDColumn           = mysql.IntegerColumn("id")
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
-		UnitIDColumn       = mysql.IntegerColumn("unit_id")
+		SourceJobColumn    = mysql.StringColumn("source_job")
 		JobColumn          = mysql.StringColumn("job")
 		MinimumGradeColumn = mysql.IntegerColumn("minimum_grade")
 		AccessColumn       = mysql.IntegerColumn("access")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UnitIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UnitIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
+		AcceptedAtColumn   = mysql.TimestampColumn("accepted_at")
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, SourceJobColumn, JobColumn, MinimumGradeColumn, AccessColumn, AcceptedAtColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, SourceJobColumn, JobColumn, MinimumGradeColumn, AccessColumn, AcceptedAtColumn}
 		defaultColumns     = mysql.ColumnList{CreatedAtColumn, MinimumGradeColumn}
 	)
 
@@ -81,10 +83,11 @@ func newFivenetCentrumJobAccessTableImpl(schemaName, tableName, alias string) fi
 		//Columns
 		ID:           IDColumn,
 		CreatedAt:    CreatedAtColumn,
-		UnitID:       UnitIDColumn,
+		SourceJob:    SourceJobColumn,
 		Job:          JobColumn,
 		MinimumGrade: MinimumGradeColumn,
 		Access:       AccessColumn,
+		AcceptedAt:   AcceptedAtColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

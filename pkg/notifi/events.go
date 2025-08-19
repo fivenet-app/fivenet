@@ -17,6 +17,8 @@ const (
 	// BaseSubject is the root subject for all notification events.
 	BaseSubject events.Subject = "notifi"
 
+	// AccountTopic is the topic for account notifications.
+	AccountTopic events.Topic = "account"
 	// UserTopic is the topic for user notifications.
 	UserTopic events.Topic = "user"
 	// JobTopic is the topic for job event notifications.

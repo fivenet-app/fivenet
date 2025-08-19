@@ -167,10 +167,11 @@ func (*GetSettingsRequest) Descriptor() ([]byte, []int) {
 }
 
 type GetSettingsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Settings      *centrum.Settings      `protobuf:"bytes,1,opt,name=settings,proto3" json:"settings,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState   `protogen:"open.v1"`
+	Settings        *centrum.Settings        `protobuf:"bytes,1,opt,name=settings,proto3" json:"settings,omitempty"`
+	EffectiveAccess *centrum.EffectiveAccess `protobuf:"bytes,2,opt,name=effective_access,json=effectiveAccess,proto3" json:"effective_access,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *GetSettingsResponse) Reset() {
@@ -206,6 +207,13 @@ func (*GetSettingsResponse) Descriptor() ([]byte, []int) {
 func (x *GetSettingsResponse) GetSettings() *centrum.Settings {
 	if x != nil {
 		return x.Settings
+	}
+	return nil
+}
+
+func (x *GetSettingsResponse) GetEffectiveAccess() *centrum.EffectiveAccess {
+	if x != nil {
+		return x.EffectiveAccess
 	}
 	return nil
 }
@@ -2064,10 +2072,10 @@ func (*TakeDispatchResponse) Descriptor() ([]byte, []int) {
 }
 
 type StreamHandshake struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ServerTime    *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=server_time,json=serverTime,proto3" json:"server_time,omitempty"`
-	Settings      *centrum.Settings      `protobuf:"bytes,2,opt,name=settings,proto3" json:"settings,omitempty"`
-	JobAccess     *JobAccess             `protobuf:"bytes,3,opt,name=job_access,json=jobAccess,proto3" json:"job_access,omitempty"`
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	ServerTime    *timestamp.Timestamp     `protobuf:"bytes,1,opt,name=server_time,json=serverTime,proto3" json:"server_time,omitempty"`
+	Settings      *centrum.Settings        `protobuf:"bytes,2,opt,name=settings,proto3" json:"settings,omitempty"`
+	Access        *centrum.EffectiveAccess `protobuf:"bytes,3,opt,name=access,proto3" json:"access,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2116,17 +2124,17 @@ func (x *StreamHandshake) GetSettings() *centrum.Settings {
 	return nil
 }
 
-func (x *StreamHandshake) GetJobAccess() *JobAccess {
+func (x *StreamHandshake) GetAccess() *centrum.EffectiveAccess {
 	if x != nil {
-		return x.JobAccess
+		return x.Access
 	}
 	return nil
 }
 
 type LatestState struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Dispatchers *Dispatchers           `protobuf:"bytes,1,opt,name=dispatchers,proto3" json:"dispatchers,omitempty"`
-	OwnUnitId   *int64                 `protobuf:"varint,2,opt,name=own_unit_id,json=ownUnitId,proto3,oneof" json:"own_unit_id,omitempty"`
+	state       protoimpl.MessageState  `protogen:"open.v1"`
+	Dispatchers *centrum.JobDispatchers `protobuf:"bytes,1,opt,name=dispatchers,proto3" json:"dispatchers,omitempty"`
+	OwnUnitId   *int64                  `protobuf:"varint,2,opt,name=own_unit_id,json=ownUnitId,proto3,oneof" json:"own_unit_id,omitempty"`
 	// Send the current units and dispatches
 	Units         []*centrum.Unit     `protobuf:"bytes,3,rep,name=units,proto3" json:"units,omitempty"`
 	Dispatches    []*centrum.Dispatch `protobuf:"bytes,4,rep,name=dispatches,proto3" json:"dispatches,omitempty"`
@@ -2164,7 +2172,7 @@ func (*LatestState) Descriptor() ([]byte, []int) {
 	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{45}
 }
 
-func (x *LatestState) GetDispatchers() *Dispatchers {
+func (x *LatestState) GetDispatchers() *centrum.JobDispatchers {
 	if x != nil {
 		return x.Dispatchers
 	}
@@ -2235,7 +2243,7 @@ type StreamResponse struct {
 	//	*StreamResponse_Handshake
 	//	*StreamResponse_LatestState
 	//	*StreamResponse_Settings
-	//	*StreamResponse_JobAccess
+	//	*StreamResponse_Access
 	//	*StreamResponse_Dispatchers
 	//	*StreamResponse_UnitDeleted
 	//	*StreamResponse_UnitUpdated
@@ -2312,10 +2320,10 @@ func (x *StreamResponse) GetSettings() *centrum.Settings {
 	return nil
 }
 
-func (x *StreamResponse) GetJobAccess() *JobAccess {
+func (x *StreamResponse) GetAccess() *centrum.EffectiveAccess {
 	if x != nil {
-		if x, ok := x.Change.(*StreamResponse_JobAccess); ok {
-			return x.JobAccess
+		if x, ok := x.Change.(*StreamResponse_Access); ok {
+			return x.Access
 		}
 	}
 	return nil
@@ -2400,8 +2408,8 @@ type StreamResponse_Settings struct {
 	Settings *centrum.Settings `protobuf:"bytes,3,opt,name=settings,proto3,oneof"`
 }
 
-type StreamResponse_JobAccess struct {
-	JobAccess *JobAccess `protobuf:"bytes,4,opt,name=job_access,json=jobAccess,proto3,oneof"`
+type StreamResponse_Access struct {
+	Access *centrum.EffectiveAccess `protobuf:"bytes,4,opt,name=access,proto3,oneof"`
 }
 
 type StreamResponse_Dispatchers struct {
@@ -2438,7 +2446,7 @@ func (*StreamResponse_LatestState) isStreamResponse_Change() {}
 
 func (*StreamResponse_Settings) isStreamResponse_Change() {}
 
-func (*StreamResponse_JobAccess) isStreamResponse_Change() {}
+func (*StreamResponse_Access) isStreamResponse_Change() {}
 
 func (*StreamResponse_Dispatchers) isStreamResponse_Change() {}
 
@@ -2454,159 +2462,11 @@ func (*StreamResponse_DispatchUpdated) isStreamResponse_Change() {}
 
 func (*StreamResponse_DispatchStatus) isStreamResponse_Change() {}
 
-type JobAccess struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Dispatches    []*JobAccessEntry      `protobuf:"bytes,1,rep,name=dispatches,proto3" json:"dispatches,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *JobAccess) Reset() {
-	*x = JobAccess{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[48]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *JobAccess) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*JobAccess) ProtoMessage() {}
-
-func (x *JobAccess) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[48]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use JobAccess.ProtoReflect.Descriptor instead.
-func (*JobAccess) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{48}
-}
-
-func (x *JobAccess) GetDispatches() []*JobAccessEntry {
-	if x != nil {
-		return x.Dispatches
-	}
-	return nil
-}
-
-type JobAccessEntry struct {
-	state         protoimpl.MessageState     `protogen:"open.v1"`
-	Job           string                     `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
-	JobLabel      *string                    `protobuf:"bytes,2,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
-	Access        centrum.CentrumAccessLevel `protobuf:"varint,3,opt,name=access,proto3,enum=resources.centrum.CentrumAccessLevel" json:"access,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *JobAccessEntry) Reset() {
-	*x = JobAccessEntry{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[49]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *JobAccessEntry) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*JobAccessEntry) ProtoMessage() {}
-
-func (x *JobAccessEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[49]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use JobAccessEntry.ProtoReflect.Descriptor instead.
-func (*JobAccessEntry) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{49}
-}
-
-func (x *JobAccessEntry) GetJob() string {
-	if x != nil {
-		return x.Job
-	}
-	return ""
-}
-
-func (x *JobAccessEntry) GetJobLabel() string {
-	if x != nil && x.JobLabel != nil {
-		return *x.JobLabel
-	}
-	return ""
-}
-
-func (x *JobAccessEntry) GetAccess() centrum.CentrumAccessLevel {
-	if x != nil {
-		return x.Access
-	}
-	return centrum.CentrumAccessLevel(0)
-}
-
-type Dispatchers struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Dispatchers   []*centrum.Dispatchers `protobuf:"bytes,1,rep,name=dispatchers,proto3" json:"dispatchers,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Dispatchers) Reset() {
-	*x = Dispatchers{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[50]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Dispatchers) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Dispatchers) ProtoMessage() {}
-
-func (x *Dispatchers) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[50]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Dispatchers.ProtoReflect.Descriptor instead.
-func (*Dispatchers) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{50}
-}
-
-func (x *Dispatchers) GetDispatchers() []*centrum.Dispatchers {
-	if x != nil {
-		return x.Dispatchers
-	}
-	return nil
-}
-
 var File_services_centrum_centrum_proto protoreflect.FileDescriptor
 
 const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/centrum/centrum.proto\x12\x10services.centrum\x1a\x1eresources/centrum/access.proto\x1a#resources/centrum/dispatchers.proto\x1a\"resources/centrum/dispatches.proto\x1a resources/centrum/settings.proto\x1a\x1dresources/centrum/units.proto\x1a(resources/common/database/database.proto\x1a\x19resources/jobs/jobs.proto\x1a\x1fresources/livemap/heatmap.proto\x1a#resources/timestamp/timestamp.proto\"\x83\x01\n" +
+	"\x1eservices/centrum/centrum.proto\x12\x10services.centrum\x1a#resources/centrum/dispatchers.proto\x1a\"resources/centrum/dispatches.proto\x1a resources/centrum/settings.proto\x1a\x1dresources/centrum/units.proto\x1a(resources/common/database/database.proto\x1a\x19resources/jobs/jobs.proto\x1a\x1fresources/livemap/heatmap.proto\x1a#resources/timestamp/timestamp.proto\"\x83\x01\n" +
 	"\x1bListDispatchActivityRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
@@ -2617,9 +2477,10 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\"\x14\n" +
-	"\x12GetSettingsRequest\"N\n" +
+	"\x12GetSettingsRequest\"\x9d\x01\n" +
 	"\x13GetSettingsResponse\x127\n" +
-	"\bsettings\x18\x01 \x01(\v2\x1b.resources.centrum.SettingsR\bsettings\"P\n" +
+	"\bsettings\x18\x01 \x01(\v2\x1b.resources.centrum.SettingsR\bsettings\x12M\n" +
+	"\x10effective_access\x18\x02 \x01(\v2\".resources.centrum.EffectiveAccessR\x0feffectiveAccess\"P\n" +
 	"\x15UpdateSettingsRequest\x127\n" +
 	"\bsettings\x18\x01 \x01(\v2\x1b.resources.centrum.SettingsR\bsettings\"Q\n" +
 	"\x16UpdateSettingsResponse\x127\n" +
@@ -2743,10 +2604,9 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\vserver_time\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\n" +
 	"serverTime\x127\n" +
 	"\bsettings\x18\x02 \x01(\v2\x1b.resources.centrum.SettingsR\bsettings\x12:\n" +
-	"\n" +
-	"job_access\x18\x03 \x01(\v2\x1b.services.centrum.JobAccessR\tjobAccess\"\xef\x01\n" +
-	"\vLatestState\x12?\n" +
-	"\vdispatchers\x18\x01 \x01(\v2\x1d.services.centrum.DispatchersR\vdispatchers\x12#\n" +
+	"\x06access\x18\x03 \x01(\v2\".resources.centrum.EffectiveAccessR\x06access\"\xf3\x01\n" +
+	"\vLatestState\x12C\n" +
+	"\vdispatchers\x18\x01 \x01(\v2!.resources.centrum.JobDispatchersR\vdispatchers\x12#\n" +
 	"\vown_unit_id\x18\x02 \x01(\x03H\x00R\townUnitId\x88\x01\x01\x12-\n" +
 	"\x05units\x18\x03 \x03(\v2\x17.resources.centrum.UnitR\x05units\x12;\n" +
 	"\n" +
@@ -2758,8 +2618,7 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\thandshake\x18\x01 \x01(\v2!.services.centrum.StreamHandshakeH\x00R\thandshake\x12B\n" +
 	"\flatest_state\x18\x02 \x01(\v2\x1d.services.centrum.LatestStateH\x00R\vlatestState\x129\n" +
 	"\bsettings\x18\x03 \x01(\v2\x1b.resources.centrum.SettingsH\x00R\bsettings\x12<\n" +
-	"\n" +
-	"job_access\x18\x04 \x01(\v2\x1b.services.centrum.JobAccessH\x00R\tjobAccess\x12B\n" +
+	"\x06access\x18\x04 \x01(\v2\".resources.centrum.EffectiveAccessH\x00R\x06access\x12B\n" +
 	"\vdispatchers\x18\x05 \x01(\v2\x1e.resources.centrum.DispatchersH\x00R\vdispatchers\x12#\n" +
 	"\funit_deleted\x18\x06 \x01(\x03H\x00R\vunitDeleted\x12<\n" +
 	"\funit_updated\x18\a \x01(\v2\x17.resources.centrum.UnitH\x00R\vunitUpdated\x12@\n" +
@@ -2769,19 +2628,7 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\x10dispatch_updated\x18\n" +
 	" \x01(\v2\x1b.resources.centrum.DispatchH\x00R\x0fdispatchUpdated\x12L\n" +
 	"\x0fdispatch_status\x18\v \x01(\v2!.resources.centrum.DispatchStatusH\x00R\x0edispatchStatusB\x0f\n" +
-	"\x06change\x12\x05\xbaH\x02\b\x01\"M\n" +
-	"\tJobAccess\x12@\n" +
-	"\n" +
-	"dispatches\x18\x01 \x03(\v2 .services.centrum.JobAccessEntryR\n" +
-	"dispatches\"\xa4\x01\n" +
-	"\x0eJobAccessEntry\x12\x19\n" +
-	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12 \n" +
-	"\tjob_label\x18\x02 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12G\n" +
-	"\x06access\x18\x03 \x01(\x0e2%.resources.centrum.CentrumAccessLevelB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06accessB\f\n" +
-	"\n" +
-	"_job_label\"O\n" +
-	"\vDispatchers\x12@\n" +
-	"\vdispatchers\x18\x01 \x03(\v2\x1e.resources.centrum.DispatchersR\vdispatchers2\x9c\x12\n" +
+	"\x06change\x12\x05\xbaH\x02\b\x012\x9c\x12\n" +
 	"\x0eCentrumService\x12c\n" +
 	"\x0eUpdateSettings\x12'.services.centrum.UpdateSettingsRequest\x1a(.services.centrum.UpdateSettingsResponse\x12c\n" +
 	"\x0eCreateDispatch\x12'.services.centrum.CreateDispatchRequest\x1a(.services.centrum.CreateDispatchResponse\x12c\n" +
@@ -2821,7 +2668,7 @@ func file_services_centrum_centrum_proto_rawDescGZIP() []byte {
 	return file_services_centrum_centrum_proto_rawDescData
 }
 
-var file_services_centrum_centrum_proto_msgTypes = make([]protoimpl.MessageInfo, 51)
+var file_services_centrum_centrum_proto_msgTypes = make([]protoimpl.MessageInfo, 48)
 var file_services_centrum_centrum_proto_goTypes = []any{
 	(*ListDispatchActivityRequest)(nil),    // 0: services.centrum.ListDispatchActivityRequest
 	(*ListUnitActivityRequest)(nil),        // 1: services.centrum.ListUnitActivityRequest
@@ -2871,125 +2718,121 @@ var file_services_centrum_centrum_proto_goTypes = []any{
 	(*LatestState)(nil),                    // 45: services.centrum.LatestState
 	(*StreamRequest)(nil),                  // 46: services.centrum.StreamRequest
 	(*StreamResponse)(nil),                 // 47: services.centrum.StreamResponse
-	(*JobAccess)(nil),                      // 48: services.centrum.JobAccess
-	(*JobAccessEntry)(nil),                 // 49: services.centrum.JobAccessEntry
-	(*Dispatchers)(nil),                    // 50: services.centrum.Dispatchers
-	(*database.PaginationRequest)(nil),     // 51: resources.common.database.PaginationRequest
-	(*centrum.Settings)(nil),               // 52: resources.centrum.Settings
-	(centrum.StatusUnit)(0),                // 53: resources.centrum.StatusUnit
-	(*centrum.Unit)(nil),                   // 54: resources.centrum.Unit
-	(*livemap.HeatmapEntry)(nil),           // 55: resources.livemap.HeatmapEntry
-	(*centrum.Dispatchers)(nil),            // 56: resources.centrum.Dispatchers
-	(*database.PaginationResponse)(nil),    // 57: resources.common.database.PaginationResponse
-	(*centrum.UnitStatus)(nil),             // 58: resources.centrum.UnitStatus
-	(centrum.StatusDispatch)(0),            // 59: resources.centrum.StatusDispatch
-	(*centrum.Dispatch)(nil),               // 60: resources.centrum.Dispatch
-	(*jobs.Job)(nil),                       // 61: resources.jobs.Job
-	(*centrum.DispatchStatus)(nil),         // 62: resources.centrum.DispatchStatus
-	(centrum.TakeDispatchResp)(0),          // 63: resources.centrum.TakeDispatchResp
-	(*timestamp.Timestamp)(nil),            // 64: resources.timestamp.Timestamp
-	(centrum.CentrumAccessLevel)(0),        // 65: resources.centrum.CentrumAccessLevel
+	(*database.PaginationRequest)(nil),     // 48: resources.common.database.PaginationRequest
+	(*centrum.Settings)(nil),               // 49: resources.centrum.Settings
+	(*centrum.EffectiveAccess)(nil),        // 50: resources.centrum.EffectiveAccess
+	(centrum.StatusUnit)(0),                // 51: resources.centrum.StatusUnit
+	(*centrum.Unit)(nil),                   // 52: resources.centrum.Unit
+	(*livemap.HeatmapEntry)(nil),           // 53: resources.livemap.HeatmapEntry
+	(*centrum.Dispatchers)(nil),            // 54: resources.centrum.Dispatchers
+	(*database.PaginationResponse)(nil),    // 55: resources.common.database.PaginationResponse
+	(*centrum.UnitStatus)(nil),             // 56: resources.centrum.UnitStatus
+	(centrum.StatusDispatch)(0),            // 57: resources.centrum.StatusDispatch
+	(*centrum.Dispatch)(nil),               // 58: resources.centrum.Dispatch
+	(*jobs.Job)(nil),                       // 59: resources.jobs.Job
+	(*centrum.DispatchStatus)(nil),         // 60: resources.centrum.DispatchStatus
+	(centrum.TakeDispatchResp)(0),          // 61: resources.centrum.TakeDispatchResp
+	(*timestamp.Timestamp)(nil),            // 62: resources.timestamp.Timestamp
+	(*centrum.JobDispatchers)(nil),         // 63: resources.centrum.JobDispatchers
 }
 var file_services_centrum_centrum_proto_depIdxs = []int32{
-	51, // 0: services.centrum.ListDispatchActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	51, // 1: services.centrum.ListUnitActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	52, // 2: services.centrum.GetSettingsResponse.settings:type_name -> resources.centrum.Settings
-	52, // 3: services.centrum.UpdateSettingsRequest.settings:type_name -> resources.centrum.Settings
-	52, // 4: services.centrum.UpdateSettingsResponse.settings:type_name -> resources.centrum.Settings
-	53, // 5: services.centrum.ListUnitsRequest.status:type_name -> resources.centrum.StatusUnit
-	54, // 6: services.centrum.ListUnitsResponse.units:type_name -> resources.centrum.Unit
-	54, // 7: services.centrum.CreateOrUpdateUnitRequest.unit:type_name -> resources.centrum.Unit
-	54, // 8: services.centrum.CreateOrUpdateUnitResponse.unit:type_name -> resources.centrum.Unit
-	53, // 9: services.centrum.UpdateUnitStatusRequest.status:type_name -> resources.centrum.StatusUnit
-	55, // 10: services.centrum.GetDispatchHeatmapResponse.entries:type_name -> resources.livemap.HeatmapEntry
-	56, // 11: services.centrum.UpdateDispatchersResponse.dispatchers:type_name -> resources.centrum.Dispatchers
-	57, // 12: services.centrum.ListUnitActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	58, // 13: services.centrum.ListUnitActivityResponse.activity:type_name -> resources.centrum.UnitStatus
-	51, // 14: services.centrum.ListDispatchesRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	59, // 15: services.centrum.ListDispatchesRequest.status:type_name -> resources.centrum.StatusDispatch
-	59, // 16: services.centrum.ListDispatchesRequest.not_status:type_name -> resources.centrum.StatusDispatch
-	57, // 17: services.centrum.ListDispatchesResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	60, // 18: services.centrum.ListDispatchesResponse.dispatches:type_name -> resources.centrum.Dispatch
-	60, // 19: services.centrum.GetDispatchResponse.dispatch:type_name -> resources.centrum.Dispatch
-	60, // 20: services.centrum.CreateDispatchRequest.dispatch:type_name -> resources.centrum.Dispatch
-	60, // 21: services.centrum.CreateDispatchResponse.dispatch:type_name -> resources.centrum.Dispatch
-	60, // 22: services.centrum.UpdateDispatchRequest.dispatch:type_name -> resources.centrum.Dispatch
-	60, // 23: services.centrum.UpdateDispatchResponse.dispatch:type_name -> resources.centrum.Dispatch
-	61, // 24: services.centrum.ListDispatchTargetJobsResponse.jobs:type_name -> resources.jobs.Job
-	59, // 25: services.centrum.UpdateDispatchStatusRequest.status:type_name -> resources.centrum.StatusDispatch
-	57, // 26: services.centrum.ListDispatchActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	62, // 27: services.centrum.ListDispatchActivityResponse.activity:type_name -> resources.centrum.DispatchStatus
-	54, // 28: services.centrum.JoinUnitResponse.unit:type_name -> resources.centrum.Unit
-	63, // 29: services.centrum.TakeDispatchRequest.resp:type_name -> resources.centrum.TakeDispatchResp
-	64, // 30: services.centrum.StreamHandshake.server_time:type_name -> resources.timestamp.Timestamp
-	52, // 31: services.centrum.StreamHandshake.settings:type_name -> resources.centrum.Settings
-	48, // 32: services.centrum.StreamHandshake.job_access:type_name -> services.centrum.JobAccess
-	50, // 33: services.centrum.LatestState.dispatchers:type_name -> services.centrum.Dispatchers
-	54, // 34: services.centrum.LatestState.units:type_name -> resources.centrum.Unit
-	60, // 35: services.centrum.LatestState.dispatches:type_name -> resources.centrum.Dispatch
-	44, // 36: services.centrum.StreamResponse.handshake:type_name -> services.centrum.StreamHandshake
-	45, // 37: services.centrum.StreamResponse.latest_state:type_name -> services.centrum.LatestState
-	52, // 38: services.centrum.StreamResponse.settings:type_name -> resources.centrum.Settings
-	48, // 39: services.centrum.StreamResponse.job_access:type_name -> services.centrum.JobAccess
-	56, // 40: services.centrum.StreamResponse.dispatchers:type_name -> resources.centrum.Dispatchers
-	54, // 41: services.centrum.StreamResponse.unit_updated:type_name -> resources.centrum.Unit
-	58, // 42: services.centrum.StreamResponse.unit_status:type_name -> resources.centrum.UnitStatus
-	60, // 43: services.centrum.StreamResponse.dispatch_updated:type_name -> resources.centrum.Dispatch
-	62, // 44: services.centrum.StreamResponse.dispatch_status:type_name -> resources.centrum.DispatchStatus
-	49, // 45: services.centrum.JobAccess.dispatches:type_name -> services.centrum.JobAccessEntry
-	65, // 46: services.centrum.JobAccessEntry.access:type_name -> resources.centrum.CentrumAccessLevel
-	56, // 47: services.centrum.Dispatchers.dispatchers:type_name -> resources.centrum.Dispatchers
-	4,  // 48: services.centrum.CentrumService.UpdateSettings:input_type -> services.centrum.UpdateSettingsRequest
-	27, // 49: services.centrum.CentrumService.CreateDispatch:input_type -> services.centrum.CreateDispatchRequest
-	29, // 50: services.centrum.CentrumService.UpdateDispatch:input_type -> services.centrum.UpdateDispatchRequest
-	31, // 51: services.centrum.CentrumService.DeleteDispatch:input_type -> services.centrum.DeleteDispatchRequest
-	33, // 52: services.centrum.CentrumService.ListDispatchTargetJobs:input_type -> services.centrum.ListDispatchTargetJobsRequest
-	21, // 53: services.centrum.CentrumService.TakeControl:input_type -> services.centrum.TakeControlRequest
-	37, // 54: services.centrum.CentrumService.AssignDispatch:input_type -> services.centrum.AssignDispatchRequest
-	14, // 55: services.centrum.CentrumService.AssignUnit:input_type -> services.centrum.AssignUnitRequest
-	16, // 56: services.centrum.CentrumService.GetDispatchHeatmap:input_type -> services.centrum.GetDispatchHeatmapRequest
-	18, // 57: services.centrum.CentrumService.UpdateDispatchers:input_type -> services.centrum.UpdateDispatchersRequest
-	46, // 58: services.centrum.CentrumService.Stream:input_type -> services.centrum.StreamRequest
-	2,  // 59: services.centrum.CentrumService.GetSettings:input_type -> services.centrum.GetSettingsRequest
-	40, // 60: services.centrum.CentrumService.JoinUnit:input_type -> services.centrum.JoinUnitRequest
-	6,  // 61: services.centrum.CentrumService.ListUnits:input_type -> services.centrum.ListUnitsRequest
-	1,  // 62: services.centrum.CentrumService.ListUnitActivity:input_type -> services.centrum.ListUnitActivityRequest
-	25, // 63: services.centrum.CentrumService.GetDispatch:input_type -> services.centrum.GetDispatchRequest
-	23, // 64: services.centrum.CentrumService.ListDispatches:input_type -> services.centrum.ListDispatchesRequest
-	0,  // 65: services.centrum.CentrumService.ListDispatchActivity:input_type -> services.centrum.ListDispatchActivityRequest
-	8,  // 66: services.centrum.CentrumService.CreateOrUpdateUnit:input_type -> services.centrum.CreateOrUpdateUnitRequest
-	10, // 67: services.centrum.CentrumService.DeleteUnit:input_type -> services.centrum.DeleteUnitRequest
-	42, // 68: services.centrum.CentrumService.TakeDispatch:input_type -> services.centrum.TakeDispatchRequest
-	12, // 69: services.centrum.CentrumService.UpdateUnitStatus:input_type -> services.centrum.UpdateUnitStatusRequest
-	35, // 70: services.centrum.CentrumService.UpdateDispatchStatus:input_type -> services.centrum.UpdateDispatchStatusRequest
-	5,  // 71: services.centrum.CentrumService.UpdateSettings:output_type -> services.centrum.UpdateSettingsResponse
-	28, // 72: services.centrum.CentrumService.CreateDispatch:output_type -> services.centrum.CreateDispatchResponse
-	30, // 73: services.centrum.CentrumService.UpdateDispatch:output_type -> services.centrum.UpdateDispatchResponse
-	32, // 74: services.centrum.CentrumService.DeleteDispatch:output_type -> services.centrum.DeleteDispatchResponse
-	34, // 75: services.centrum.CentrumService.ListDispatchTargetJobs:output_type -> services.centrum.ListDispatchTargetJobsResponse
-	22, // 76: services.centrum.CentrumService.TakeControl:output_type -> services.centrum.TakeControlResponse
-	38, // 77: services.centrum.CentrumService.AssignDispatch:output_type -> services.centrum.AssignDispatchResponse
-	15, // 78: services.centrum.CentrumService.AssignUnit:output_type -> services.centrum.AssignUnitResponse
-	17, // 79: services.centrum.CentrumService.GetDispatchHeatmap:output_type -> services.centrum.GetDispatchHeatmapResponse
-	19, // 80: services.centrum.CentrumService.UpdateDispatchers:output_type -> services.centrum.UpdateDispatchersResponse
-	47, // 81: services.centrum.CentrumService.Stream:output_type -> services.centrum.StreamResponse
-	3,  // 82: services.centrum.CentrumService.GetSettings:output_type -> services.centrum.GetSettingsResponse
-	41, // 83: services.centrum.CentrumService.JoinUnit:output_type -> services.centrum.JoinUnitResponse
-	7,  // 84: services.centrum.CentrumService.ListUnits:output_type -> services.centrum.ListUnitsResponse
-	20, // 85: services.centrum.CentrumService.ListUnitActivity:output_type -> services.centrum.ListUnitActivityResponse
-	26, // 86: services.centrum.CentrumService.GetDispatch:output_type -> services.centrum.GetDispatchResponse
-	24, // 87: services.centrum.CentrumService.ListDispatches:output_type -> services.centrum.ListDispatchesResponse
-	39, // 88: services.centrum.CentrumService.ListDispatchActivity:output_type -> services.centrum.ListDispatchActivityResponse
-	9,  // 89: services.centrum.CentrumService.CreateOrUpdateUnit:output_type -> services.centrum.CreateOrUpdateUnitResponse
-	11, // 90: services.centrum.CentrumService.DeleteUnit:output_type -> services.centrum.DeleteUnitResponse
-	43, // 91: services.centrum.CentrumService.TakeDispatch:output_type -> services.centrum.TakeDispatchResponse
-	13, // 92: services.centrum.CentrumService.UpdateUnitStatus:output_type -> services.centrum.UpdateUnitStatusResponse
-	36, // 93: services.centrum.CentrumService.UpdateDispatchStatus:output_type -> services.centrum.UpdateDispatchStatusResponse
-	71, // [71:94] is the sub-list for method output_type
-	48, // [48:71] is the sub-list for method input_type
-	48, // [48:48] is the sub-list for extension type_name
-	48, // [48:48] is the sub-list for extension extendee
-	0,  // [0:48] is the sub-list for field type_name
+	48, // 0: services.centrum.ListDispatchActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	48, // 1: services.centrum.ListUnitActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	49, // 2: services.centrum.GetSettingsResponse.settings:type_name -> resources.centrum.Settings
+	50, // 3: services.centrum.GetSettingsResponse.effective_access:type_name -> resources.centrum.EffectiveAccess
+	49, // 4: services.centrum.UpdateSettingsRequest.settings:type_name -> resources.centrum.Settings
+	49, // 5: services.centrum.UpdateSettingsResponse.settings:type_name -> resources.centrum.Settings
+	51, // 6: services.centrum.ListUnitsRequest.status:type_name -> resources.centrum.StatusUnit
+	52, // 7: services.centrum.ListUnitsResponse.units:type_name -> resources.centrum.Unit
+	52, // 8: services.centrum.CreateOrUpdateUnitRequest.unit:type_name -> resources.centrum.Unit
+	52, // 9: services.centrum.CreateOrUpdateUnitResponse.unit:type_name -> resources.centrum.Unit
+	51, // 10: services.centrum.UpdateUnitStatusRequest.status:type_name -> resources.centrum.StatusUnit
+	53, // 11: services.centrum.GetDispatchHeatmapResponse.entries:type_name -> resources.livemap.HeatmapEntry
+	54, // 12: services.centrum.UpdateDispatchersResponse.dispatchers:type_name -> resources.centrum.Dispatchers
+	55, // 13: services.centrum.ListUnitActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	56, // 14: services.centrum.ListUnitActivityResponse.activity:type_name -> resources.centrum.UnitStatus
+	48, // 15: services.centrum.ListDispatchesRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	57, // 16: services.centrum.ListDispatchesRequest.status:type_name -> resources.centrum.StatusDispatch
+	57, // 17: services.centrum.ListDispatchesRequest.not_status:type_name -> resources.centrum.StatusDispatch
+	55, // 18: services.centrum.ListDispatchesResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	58, // 19: services.centrum.ListDispatchesResponse.dispatches:type_name -> resources.centrum.Dispatch
+	58, // 20: services.centrum.GetDispatchResponse.dispatch:type_name -> resources.centrum.Dispatch
+	58, // 21: services.centrum.CreateDispatchRequest.dispatch:type_name -> resources.centrum.Dispatch
+	58, // 22: services.centrum.CreateDispatchResponse.dispatch:type_name -> resources.centrum.Dispatch
+	58, // 23: services.centrum.UpdateDispatchRequest.dispatch:type_name -> resources.centrum.Dispatch
+	58, // 24: services.centrum.UpdateDispatchResponse.dispatch:type_name -> resources.centrum.Dispatch
+	59, // 25: services.centrum.ListDispatchTargetJobsResponse.jobs:type_name -> resources.jobs.Job
+	57, // 26: services.centrum.UpdateDispatchStatusRequest.status:type_name -> resources.centrum.StatusDispatch
+	55, // 27: services.centrum.ListDispatchActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	60, // 28: services.centrum.ListDispatchActivityResponse.activity:type_name -> resources.centrum.DispatchStatus
+	52, // 29: services.centrum.JoinUnitResponse.unit:type_name -> resources.centrum.Unit
+	61, // 30: services.centrum.TakeDispatchRequest.resp:type_name -> resources.centrum.TakeDispatchResp
+	62, // 31: services.centrum.StreamHandshake.server_time:type_name -> resources.timestamp.Timestamp
+	49, // 32: services.centrum.StreamHandshake.settings:type_name -> resources.centrum.Settings
+	50, // 33: services.centrum.StreamHandshake.access:type_name -> resources.centrum.EffectiveAccess
+	63, // 34: services.centrum.LatestState.dispatchers:type_name -> resources.centrum.JobDispatchers
+	52, // 35: services.centrum.LatestState.units:type_name -> resources.centrum.Unit
+	58, // 36: services.centrum.LatestState.dispatches:type_name -> resources.centrum.Dispatch
+	44, // 37: services.centrum.StreamResponse.handshake:type_name -> services.centrum.StreamHandshake
+	45, // 38: services.centrum.StreamResponse.latest_state:type_name -> services.centrum.LatestState
+	49, // 39: services.centrum.StreamResponse.settings:type_name -> resources.centrum.Settings
+	50, // 40: services.centrum.StreamResponse.access:type_name -> resources.centrum.EffectiveAccess
+	54, // 41: services.centrum.StreamResponse.dispatchers:type_name -> resources.centrum.Dispatchers
+	52, // 42: services.centrum.StreamResponse.unit_updated:type_name -> resources.centrum.Unit
+	56, // 43: services.centrum.StreamResponse.unit_status:type_name -> resources.centrum.UnitStatus
+	58, // 44: services.centrum.StreamResponse.dispatch_updated:type_name -> resources.centrum.Dispatch
+	60, // 45: services.centrum.StreamResponse.dispatch_status:type_name -> resources.centrum.DispatchStatus
+	4,  // 46: services.centrum.CentrumService.UpdateSettings:input_type -> services.centrum.UpdateSettingsRequest
+	27, // 47: services.centrum.CentrumService.CreateDispatch:input_type -> services.centrum.CreateDispatchRequest
+	29, // 48: services.centrum.CentrumService.UpdateDispatch:input_type -> services.centrum.UpdateDispatchRequest
+	31, // 49: services.centrum.CentrumService.DeleteDispatch:input_type -> services.centrum.DeleteDispatchRequest
+	33, // 50: services.centrum.CentrumService.ListDispatchTargetJobs:input_type -> services.centrum.ListDispatchTargetJobsRequest
+	21, // 51: services.centrum.CentrumService.TakeControl:input_type -> services.centrum.TakeControlRequest
+	37, // 52: services.centrum.CentrumService.AssignDispatch:input_type -> services.centrum.AssignDispatchRequest
+	14, // 53: services.centrum.CentrumService.AssignUnit:input_type -> services.centrum.AssignUnitRequest
+	16, // 54: services.centrum.CentrumService.GetDispatchHeatmap:input_type -> services.centrum.GetDispatchHeatmapRequest
+	18, // 55: services.centrum.CentrumService.UpdateDispatchers:input_type -> services.centrum.UpdateDispatchersRequest
+	46, // 56: services.centrum.CentrumService.Stream:input_type -> services.centrum.StreamRequest
+	2,  // 57: services.centrum.CentrumService.GetSettings:input_type -> services.centrum.GetSettingsRequest
+	40, // 58: services.centrum.CentrumService.JoinUnit:input_type -> services.centrum.JoinUnitRequest
+	6,  // 59: services.centrum.CentrumService.ListUnits:input_type -> services.centrum.ListUnitsRequest
+	1,  // 60: services.centrum.CentrumService.ListUnitActivity:input_type -> services.centrum.ListUnitActivityRequest
+	25, // 61: services.centrum.CentrumService.GetDispatch:input_type -> services.centrum.GetDispatchRequest
+	23, // 62: services.centrum.CentrumService.ListDispatches:input_type -> services.centrum.ListDispatchesRequest
+	0,  // 63: services.centrum.CentrumService.ListDispatchActivity:input_type -> services.centrum.ListDispatchActivityRequest
+	8,  // 64: services.centrum.CentrumService.CreateOrUpdateUnit:input_type -> services.centrum.CreateOrUpdateUnitRequest
+	10, // 65: services.centrum.CentrumService.DeleteUnit:input_type -> services.centrum.DeleteUnitRequest
+	42, // 66: services.centrum.CentrumService.TakeDispatch:input_type -> services.centrum.TakeDispatchRequest
+	12, // 67: services.centrum.CentrumService.UpdateUnitStatus:input_type -> services.centrum.UpdateUnitStatusRequest
+	35, // 68: services.centrum.CentrumService.UpdateDispatchStatus:input_type -> services.centrum.UpdateDispatchStatusRequest
+	5,  // 69: services.centrum.CentrumService.UpdateSettings:output_type -> services.centrum.UpdateSettingsResponse
+	28, // 70: services.centrum.CentrumService.CreateDispatch:output_type -> services.centrum.CreateDispatchResponse
+	30, // 71: services.centrum.CentrumService.UpdateDispatch:output_type -> services.centrum.UpdateDispatchResponse
+	32, // 72: services.centrum.CentrumService.DeleteDispatch:output_type -> services.centrum.DeleteDispatchResponse
+	34, // 73: services.centrum.CentrumService.ListDispatchTargetJobs:output_type -> services.centrum.ListDispatchTargetJobsResponse
+	22, // 74: services.centrum.CentrumService.TakeControl:output_type -> services.centrum.TakeControlResponse
+	38, // 75: services.centrum.CentrumService.AssignDispatch:output_type -> services.centrum.AssignDispatchResponse
+	15, // 76: services.centrum.CentrumService.AssignUnit:output_type -> services.centrum.AssignUnitResponse
+	17, // 77: services.centrum.CentrumService.GetDispatchHeatmap:output_type -> services.centrum.GetDispatchHeatmapResponse
+	19, // 78: services.centrum.CentrumService.UpdateDispatchers:output_type -> services.centrum.UpdateDispatchersResponse
+	47, // 79: services.centrum.CentrumService.Stream:output_type -> services.centrum.StreamResponse
+	3,  // 80: services.centrum.CentrumService.GetSettings:output_type -> services.centrum.GetSettingsResponse
+	41, // 81: services.centrum.CentrumService.JoinUnit:output_type -> services.centrum.JoinUnitResponse
+	7,  // 82: services.centrum.CentrumService.ListUnits:output_type -> services.centrum.ListUnitsResponse
+	20, // 83: services.centrum.CentrumService.ListUnitActivity:output_type -> services.centrum.ListUnitActivityResponse
+	26, // 84: services.centrum.CentrumService.GetDispatch:output_type -> services.centrum.GetDispatchResponse
+	24, // 85: services.centrum.CentrumService.ListDispatches:output_type -> services.centrum.ListDispatchesResponse
+	39, // 86: services.centrum.CentrumService.ListDispatchActivity:output_type -> services.centrum.ListDispatchActivityResponse
+	9,  // 87: services.centrum.CentrumService.CreateOrUpdateUnit:output_type -> services.centrum.CreateOrUpdateUnitResponse
+	11, // 88: services.centrum.CentrumService.DeleteUnit:output_type -> services.centrum.DeleteUnitResponse
+	43, // 89: services.centrum.CentrumService.TakeDispatch:output_type -> services.centrum.TakeDispatchResponse
+	13, // 90: services.centrum.CentrumService.UpdateUnitStatus:output_type -> services.centrum.UpdateUnitStatusResponse
+	36, // 91: services.centrum.CentrumService.UpdateDispatchStatus:output_type -> services.centrum.UpdateDispatchStatusResponse
+	69, // [69:92] is the sub-list for method output_type
+	46, // [46:69] is the sub-list for method input_type
+	46, // [46:46] is the sub-list for extension type_name
+	46, // [46:46] is the sub-list for extension extendee
+	0,  // [0:46] is the sub-list for field type_name
 }
 
 func init() { file_services_centrum_centrum_proto_init() }
@@ -3008,7 +2851,7 @@ func file_services_centrum_centrum_proto_init() {
 		(*StreamResponse_Handshake)(nil),
 		(*StreamResponse_LatestState)(nil),
 		(*StreamResponse_Settings)(nil),
-		(*StreamResponse_JobAccess)(nil),
+		(*StreamResponse_Access)(nil),
 		(*StreamResponse_Dispatchers)(nil),
 		(*StreamResponse_UnitDeleted)(nil),
 		(*StreamResponse_UnitUpdated)(nil),
@@ -3017,14 +2860,13 @@ func file_services_centrum_centrum_proto_init() {
 		(*StreamResponse_DispatchUpdated)(nil),
 		(*StreamResponse_DispatchStatus)(nil),
 	}
-	file_services_centrum_centrum_proto_msgTypes[49].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_centrum_centrum_proto_rawDesc), len(file_services_centrum_centrum_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   51,
+			NumMessages:   48,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

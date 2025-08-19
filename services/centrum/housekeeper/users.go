@@ -28,17 +28,18 @@ func (s *Housekeeper) runUserChangesWatch(ctx context.Context) {
 }
 
 func (s *Housekeeper) watchUserChanges(ctx context.Context) error {
-	userCh, err := s.tracker.Subscribe(ctx)
+	watch, err := s.tracker.Subscribe(ctx)
 	if err != nil {
 		return err
 	}
+	defer watch.Stop()
 
 	for {
 		select {
 		case <-ctx.Done():
 			return nil
 
-		case event := <-userCh.Updates():
+		case event := <-watch.Updates():
 			if event == nil {
 				s.logger.Error("received nil user changes event, skipping")
 				continue

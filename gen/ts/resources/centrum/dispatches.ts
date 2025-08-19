@@ -15,7 +15,6 @@ import { Colleague } from "../jobs/colleagues";
 import { Unit } from "./units";
 import { User } from "../users/users";
 import { DispatchAttributes } from "./attributes";
-import { JobList } from "./settings";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.centrum.Dispatch
@@ -96,6 +95,28 @@ export interface Dispatch {
      * @generated from protobuf field: optional resources.centrum.DispatchReferences references = 17
      */
     references?: DispatchReferences;
+}
+/**
+ * @generated from protobuf message resources.centrum.JobList
+ */
+export interface JobList {
+    /**
+     * @generated from protobuf field: repeated resources.centrum.JobListEntry jobs = 1
+     */
+    jobs: JobListEntry[];
+}
+/**
+ * @generated from protobuf message resources.centrum.JobListEntry
+ */
+export interface JobListEntry {
+    /**
+     * @generated from protobuf field: string name = 1
+     */
+    name: string;
+    /**
+     * @generated from protobuf field: optional string label = 2
+     */
+    label?: string;
 }
 /**
  * @generated from protobuf message resources.centrum.DispatchAssignments
@@ -502,6 +523,107 @@ class Dispatch$Type extends MessageType<Dispatch> {
  * @generated MessageType for protobuf message resources.centrum.Dispatch
  */
 export const Dispatch = new Dispatch$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class JobList$Type extends MessageType<JobList> {
+    constructor() {
+        super("resources.centrum.JobList", [
+            { no: 1, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => JobListEntry, options: { "buf.validate.field": { repeated: { maxItems: "10" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<JobList>): JobList {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.jobs = [];
+        if (value !== undefined)
+            reflectionMergePartial<JobList>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobList): JobList {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.centrum.JobListEntry jobs */ 1:
+                    message.jobs.push(JobListEntry.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: JobList, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.centrum.JobListEntry jobs = 1; */
+        for (let i = 0; i < message.jobs.length; i++)
+            JobListEntry.internalBinaryWrite(message.jobs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.centrum.JobList
+ */
+export const JobList = new JobList$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class JobListEntry$Type extends MessageType<JobListEntry> {
+    constructor() {
+        super("resources.centrum.JobListEntry", [
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
+            { no: 2, name: "label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<JobListEntry>): JobListEntry {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.name = "";
+        if (value !== undefined)
+            reflectionMergePartial<JobListEntry>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobListEntry): JobListEntry {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string name */ 1:
+                    message.name = reader.string();
+                    break;
+                case /* optional string label */ 2:
+                    message.label = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: JobListEntry, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 1; */
+        if (message.name !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.name);
+        /* optional string label = 2; */
+        if (message.label !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.label);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.centrum.JobListEntry
+ */
+export const JobListEntry = new JobListEntry$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DispatchAssignments$Type extends MessageType<DispatchAssignments> {
     constructor() {

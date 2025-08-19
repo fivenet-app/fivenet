@@ -139,26 +139,6 @@ func (m *DeleteUnitResponse) Sanitize() error {
 	return nil
 }
 
-func (m *Dispatchers) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Dispatchers
-	for idx, item := range m.Dispatchers {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
 func (m *GetDispatchHeatmapRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -225,6 +205,15 @@ func (m *GetSettingsResponse) Sanitize() error {
 		return nil
 	}
 
+	// Field: EffectiveAccess
+	if m.EffectiveAccess != nil {
+		if v, ok := any(m.GetEffectiveAccess()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: Settings
 	if m.Settings != nil {
 		if v, ok := any(m.GetSettings()).(interface{ Sanitize() error }); ok {
@@ -232,34 +221,6 @@ func (m *GetSettingsResponse) Sanitize() error {
 				return err
 			}
 		}
-	}
-
-	return nil
-}
-
-func (m *JobAccess) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Dispatches
-	for idx, item := range m.Dispatches {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *JobAccessEntry) Sanitize() error {
-	if m == nil {
-		return nil
 	}
 
 	return nil
@@ -548,9 +509,9 @@ func (m *StreamHandshake) Sanitize() error {
 		return nil
 	}
 
-	// Field: JobAccess
-	if m.JobAccess != nil {
-		if v, ok := any(m.GetJobAccess()).(interface{ Sanitize() error }); ok {
+	// Field: Access
+	if m.Access != nil {
+		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -591,9 +552,17 @@ func (m *StreamResponse) Sanitize() error {
 		return nil
 	}
 
-	// Field: DispatchStatus
+	// Field: Access
 	switch v := m.Change.(type) {
 
+	case *StreamResponse_Access:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: DispatchStatus
 	case *StreamResponse_DispatchStatus:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
@@ -619,14 +588,6 @@ func (m *StreamResponse) Sanitize() error {
 
 		// Field: Handshake
 	case *StreamResponse_Handshake:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-		// Field: JobAccess
-	case *StreamResponse_JobAccess:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err

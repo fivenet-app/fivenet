@@ -174,7 +174,7 @@ func (d *Demo) generateDispatches(ctx context.Context) {
 		msg := dispatchMessages[rand.IntN(len(dispatchMessages))]
 		if _, err := d.dispatches.Create(ctx, &centrum.Dispatch{
 			Jobs: &centrum.JobList{
-				Jobs: []*centrum.Job{
+				Jobs: []*centrum.JobListEntry{
 					{
 						Name: d.cfg.Demo.TargetJob,
 					},
