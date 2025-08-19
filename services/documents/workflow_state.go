@@ -147,9 +147,9 @@ func (w *Workflow) RegisterCronjobHandlers(h *croner.Handlers) error {
 func (w *Workflow) handleDocuments(ctx context.Context, data *documents.WorkflowCronData) error {
 	nowTs := jet.TimestampT(time.Now())
 
-	tDTemplates := tDTemplates.AS("template")
+	tDTemplates := table.FivenetDocumentsTemplates.AS("template")
 
-	dest := []*documents.WorkflowState{}
+	var dest []*documents.WorkflowState
 	for {
 		stmt := tWorkflow.
 			SELECT(
@@ -157,6 +157,7 @@ func (w *Workflow) handleDocuments(ctx context.Context, data *documents.Workflow
 				tWorkflow.NextReminderTime,
 				tWorkflow.NextReminderCount,
 				tWorkflow.AutoCloseTime,
+				tWorkflow.ReminderCount,
 				tDTemplates.Workflow.AS("workflow_state.workflow"),
 				tDocumentShort.Title,
 				tDocumentShort.CreatorID,
@@ -209,7 +210,7 @@ func (w *Workflow) handleDocuments(ctx context.Context, data *documents.Workflow
 		}
 	}
 
-	wg := sync.WaitGroup{}
+	var wg sync.WaitGroup
 
 	// Run at max 3 handlers at once
 	workChannel := make(chan *documents.WorkflowState, 3)
@@ -268,14 +269,21 @@ func (w *Workflow) handleWorkflowState(ctx context.Context, state *documents.Wor
 			}
 
 			w.updateAutoReminderTime(state)
+			state.ReminderCount++
 		} else {
 			state.NextReminderTime = nil
 			state.NextReminderCount = nil
+			state.ReminderCount = 0
 		}
 	}
 
-	// Make sure to delete the document workflow state as we don't have a creator anymore
-	if state.GetDocument() == nil || state.Document.CreatorId == nil {
+	// Make sure to delete the document workflow state under one of the following conditions:
+	// * document doesn't exist anymore
+	// * if we don't have a doc creator anymore
+	// * reached the max reminder count
+	if state.GetDocument() == nil ||
+		state.GetDocument().GetCreatorId() == 0 ||
+		state.GetReminderCount() >= documents.MaxReminderCount {
 		return w.deleteWorkflowState(ctx, state)
 	}
 
@@ -344,15 +352,16 @@ func (w *Workflow) updateWorkflowState(ctx context.Context, state *documents.Wor
 			tWorkflow.NextReminderTime,
 			tWorkflow.NextReminderCount,
 			tWorkflow.AutoCloseTime,
+			tWorkflow.ReminderCount,
 		).
 		SET(
 			state.GetNextReminderTime(),
 			state.GetNextReminderCount(),
 			state.GetAutoCloseTime(),
+			state.GetReminderCount(),
 		).
-		WHERE(jet.AND(
-			tWorkflow.DocumentID.EQ(jet.Int64(state.GetDocumentId())),
-		))
+		WHERE(tWorkflow.DocumentID.EQ(jet.Int64(state.GetDocumentId()))).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, w.db); err != nil {
 		return err
@@ -366,9 +375,7 @@ func (w *Workflow) deleteWorkflowState(ctx context.Context, state *documents.Wor
 
 	stmt := tWorkflow.
 		DELETE().
-		WHERE(jet.AND(
-			tWorkflow.DocumentID.EQ(jet.Int64(state.GetDocumentId())),
-		)).
+		WHERE(tWorkflow.DocumentID.EQ(jet.Int64(state.GetDocumentId()))).
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, w.db); err != nil {

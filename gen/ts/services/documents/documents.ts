@@ -897,6 +897,10 @@ export interface SetDocumentReminderRequest {
      * @generated from protobuf field: optional string message = 3
      */
     message?: string;
+    /**
+     * @generated from protobuf field: int32 max_reminder_count = 4
+     */
+    maxReminderCount: number;
 }
 /**
  * @generated from protobuf message services.documents.SetDocumentReminderResponse
@@ -4514,12 +4518,14 @@ class SetDocumentReminderRequest$Type extends MessageType<SetDocumentReminderReq
         super("services.documents.SetDocumentReminderRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "reminder_time", kind: "message", T: () => Timestamp },
-            { no: 3, name: "message", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "1024" } } } }
+            { no: 3, name: "message", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "1024" } } } },
+            { no: 4, name: "max_reminder_count", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 10, gte: 1 } } } }
         ]);
     }
     create(value?: PartialMessage<SetDocumentReminderRequest>): SetDocumentReminderRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.documentId = 0;
+        message.maxReminderCount = 0;
         if (value !== undefined)
             reflectionMergePartial<SetDocumentReminderRequest>(this, message, value);
         return message;
@@ -4537,6 +4543,9 @@ class SetDocumentReminderRequest$Type extends MessageType<SetDocumentReminderReq
                     break;
                 case /* optional string message */ 3:
                     message.message = reader.string();
+                    break;
+                case /* int32 max_reminder_count */ 4:
+                    message.maxReminderCount = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -4559,6 +4568,9 @@ class SetDocumentReminderRequest$Type extends MessageType<SetDocumentReminderReq
         /* optional string message = 3; */
         if (message.message !== undefined)
             writer.tag(3, WireType.LengthDelimited).string(message.message);
+        /* int32 max_reminder_count = 4; */
+        if (message.maxReminderCount !== 0)
+            writer.tag(4, WireType.Varint).int32(message.maxReminderCount);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

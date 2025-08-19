@@ -19,6 +19,7 @@ export const zWorkflow = z.object({
                     .array()
                     .max(3)
                     .default([]),
+                maxReminderCount: z.coerce.number().min(1).max(10).default(10),
             }),
         }),
 
@@ -33,6 +34,7 @@ export const zWorkflow = z.object({
                     .array()
                     .max(3)
                     .default([]),
+                maxReminderCount: z.coerce.number().min(1).max(10).default(10),
             }),
         }),
     ]),

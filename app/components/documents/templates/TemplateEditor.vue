@@ -88,6 +88,7 @@ const state = reactive<Schema>({
             reminder: false,
             reminderSettings: {
                 reminders: [],
+                maxReminderCount: 10,
             },
         },
     },
@@ -177,6 +178,7 @@ async function createOrUpdateTemplate(values: Schema, templateId?: number): Prom
                             duration: toDuration((r.duration ? r.duration : 0) * 24 * 60 * 60),
                             message: r.message ?? '',
                         })),
+                    maxReminderCount: values.workflow?.reminders.reminderSettings?.maxReminderCount ?? 10,
                 },
 
                 autoClose: values.workflow.autoClose.autoClose,
@@ -270,6 +272,7 @@ function setValuesFromTemplate(tpl: Template): void {
                             message: r.message ?? '',
                         };
                     }) ?? [],
+                maxReminderCount: tpl.workflow?.reminderSettings?.maxReminderCount ?? 10,
             },
         },
 

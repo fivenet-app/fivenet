@@ -241,7 +241,7 @@ func (s *Sync) Run(ctx context.Context) {
 }
 
 func (s *Sync) run(ctx context.Context) error {
-	wg := sync.WaitGroup{}
+	var wg sync.WaitGroup
 	// On startup sync base data (jobs, job grades and license types) before the "main" sync loop starts,
 	// then sync in 5 minute interval to keep the data fresh
 	if err := s.syncBaseData(ctx); err != nil {

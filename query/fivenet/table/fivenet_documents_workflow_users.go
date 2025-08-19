@@ -21,6 +21,8 @@ type fivenetDocumentsWorkflowUsersTable struct {
 	UserID                mysql.ColumnInteger
 	ManualReminderTime    mysql.ColumnTimestamp
 	ManualReminderMessage mysql.ColumnString
+	ReminderCount         mysql.ColumnInteger
+	MaxReminderCount      mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -66,9 +68,11 @@ func newFivenetDocumentsWorkflowUsersTableImpl(schemaName, tableName, alias stri
 		UserIDColumn                = mysql.IntegerColumn("user_id")
 		ManualReminderTimeColumn    = mysql.TimestampColumn("manual_reminder_time")
 		ManualReminderMessageColumn = mysql.StringColumn("manual_reminder_message")
-		allColumns                  = mysql.ColumnList{DocumentIDColumn, UserIDColumn, ManualReminderTimeColumn, ManualReminderMessageColumn}
-		mutableColumns              = mysql.ColumnList{DocumentIDColumn, UserIDColumn, ManualReminderTimeColumn, ManualReminderMessageColumn}
-		defaultColumns              = mysql.ColumnList{}
+		ReminderCountColumn         = mysql.IntegerColumn("reminder_count")
+		MaxReminderCountColumn      = mysql.IntegerColumn("max_reminder_count")
+		allColumns                  = mysql.ColumnList{DocumentIDColumn, UserIDColumn, ManualReminderTimeColumn, ManualReminderMessageColumn, ReminderCountColumn, MaxReminderCountColumn}
+		mutableColumns              = mysql.ColumnList{DocumentIDColumn, UserIDColumn, ManualReminderTimeColumn, ManualReminderMessageColumn, ReminderCountColumn, MaxReminderCountColumn}
+		defaultColumns              = mysql.ColumnList{ReminderCountColumn, MaxReminderCountColumn}
 	)
 
 	return fivenetDocumentsWorkflowUsersTable{
@@ -79,6 +83,8 @@ func newFivenetDocumentsWorkflowUsersTableImpl(schemaName, tableName, alias stri
 		UserID:                UserIDColumn,
 		ManualReminderTime:    ManualReminderTimeColumn,
 		ManualReminderMessage: ManualReminderMessageColumn,
+		ReminderCount:         ReminderCountColumn,
+		MaxReminderCount:      MaxReminderCountColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

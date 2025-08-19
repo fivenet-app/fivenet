@@ -21,16 +21,15 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
-var (
-	tDTemplates       = table.FivenetDocumentsTemplates.AS("template_short")
-	tDTemplatesAccess = table.FivenetDocumentsTemplatesAccess.AS("template_job_access")
-)
+var tDTemplatesAccess = table.FivenetDocumentsTemplatesAccess.AS("template_job_access")
 
 func (s *Server) ListTemplates(
 	ctx context.Context,
 	req *pbdocuments.ListTemplatesRequest,
 ) (*pbdocuments.ListTemplatesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	tDTemplates := table.FivenetDocumentsTemplates.AS("template_short")
 
 	stmt := tDTemplates.
 		SELECT(
@@ -142,7 +141,8 @@ func (s *Server) GetTemplate(
 }
 
 func (s *Server) getTemplate(ctx context.Context, templateId int64) (*documents.Template, error) {
-	tDTemplates := tDTemplates.AS("template")
+	tDTemplates := table.FivenetDocumentsTemplates.AS("template")
+
 	stmt := tDTemplates.
 		SELECT(
 			tDTemplates.ID,

@@ -775,9 +775,10 @@ type WorkflowState struct {
 	DocumentId        int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	NextReminderTime  *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=next_reminder_time,json=nextReminderTime,proto3,oneof" json:"next_reminder_time,omitempty"`
 	NextReminderCount *int32                 `protobuf:"varint,3,opt,name=next_reminder_count,json=nextReminderCount,proto3,oneof" json:"next_reminder_count,omitempty"`
+	ReminderCount     int32                  `protobuf:"varint,5,opt,name=reminder_count,json=reminderCount,proto3" json:"reminder_count,omitempty"`
 	AutoCloseTime     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=auto_close_time,json=autoCloseTime,proto3,oneof" json:"auto_close_time,omitempty"`
-	Workflow          *Workflow              `protobuf:"bytes,5,opt,name=workflow,proto3,oneof" json:"workflow,omitempty" alias:"workflow"`
-	Document          *DocumentShort         `protobuf:"bytes,6,opt,name=document,proto3,oneof" json:"document,omitempty"`
+	Workflow          *Workflow              `protobuf:"bytes,6,opt,name=workflow,proto3,oneof" json:"workflow,omitempty" alias:"workflow"`
+	Document          *DocumentShort         `protobuf:"bytes,7,opt,name=document,proto3,oneof" json:"document,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -833,6 +834,13 @@ func (x *WorkflowState) GetNextReminderCount() int32 {
 	return 0
 }
 
+func (x *WorkflowState) GetReminderCount() int32 {
+	if x != nil {
+		return x.ReminderCount
+	}
+	return 0
+}
+
 func (x *WorkflowState) GetAutoCloseTime() *timestamp.Timestamp {
 	if x != nil {
 		return x.AutoCloseTime
@@ -860,8 +868,10 @@ type WorkflowUserState struct {
 	UserId                int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	ManualReminderTime    *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=manual_reminder_time,json=manualReminderTime,proto3,oneof" json:"manual_reminder_time,omitempty"`
 	ManualReminderMessage *string                `protobuf:"bytes,4,opt,name=manual_reminder_message,json=manualReminderMessage,proto3,oneof" json:"manual_reminder_message,omitempty"`
-	Workflow              *Workflow              `protobuf:"bytes,5,opt,name=workflow,proto3,oneof" json:"workflow,omitempty" alias:"workflow"`
-	Document              *DocumentShort         `protobuf:"bytes,6,opt,name=document,proto3,oneof" json:"document,omitempty"`
+	ReminderCount         int32                  `protobuf:"varint,5,opt,name=reminder_count,json=reminderCount,proto3" json:"reminder_count,omitempty"`
+	MaxReminderCount      int32                  `protobuf:"varint,6,opt,name=max_reminder_count,json=maxReminderCount,proto3" json:"max_reminder_count,omitempty"`
+	Workflow              *Workflow              `protobuf:"bytes,7,opt,name=workflow,proto3,oneof" json:"workflow,omitempty" alias:"workflow"`
+	Document              *DocumentShort         `protobuf:"bytes,8,opt,name=document,proto3,oneof" json:"document,omitempty"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }
@@ -922,6 +932,20 @@ func (x *WorkflowUserState) GetManualReminderMessage() string {
 		return *x.ManualReminderMessage
 	}
 	return ""
+}
+
+func (x *WorkflowUserState) GetReminderCount() int32 {
+	if x != nil {
+		return x.ReminderCount
+	}
+	return 0
+}
+
+func (x *WorkflowUserState) GetMaxReminderCount() int32 {
+	if x != nil {
+		return x.MaxReminderCount
+	}
+	return 0
 }
 
 func (x *WorkflowUserState) GetWorkflow() *Workflow {
@@ -1066,28 +1090,34 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\v_created_atB\v\n" +
 	"\t_documentB\x0e\n" +
 	"\f_source_userB\x0e\n" +
-	"\f_target_user\"\xfe\x03\n" +
+	"\f_target_user\"\xb0\x04\n" +
 	"\rWorkflowState\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12Q\n" +
 	"\x12next_reminder_time\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x10nextReminderTime\x88\x01\x01\x123\n" +
-	"\x13next_reminder_count\x18\x03 \x01(\x05H\x01R\x11nextReminderCount\x88\x01\x01\x12K\n" +
+	"\x13next_reminder_count\x18\x03 \x01(\x05H\x01R\x11nextReminderCount\x88\x01\x01\x120\n" +
+	"\x0ereminder_count\x18\x05 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\n" +
+	"(\x01R\rreminderCount\x12K\n" +
 	"\x0fauto_close_time\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\rautoCloseTime\x88\x01\x01\x12U\n" +
-	"\bworkflow\x18\x05 \x01(\v2\x1d.resources.documents.WorkflowB\x15\x9a\x84\x9e\x03\x10alias:\"workflow\"H\x03R\bworkflow\x88\x01\x01\x12C\n" +
-	"\bdocument\x18\x06 \x01(\v2\".resources.documents.DocumentShortH\x04R\bdocument\x88\x01\x01B\x15\n" +
+	"\bworkflow\x18\x06 \x01(\v2\x1d.resources.documents.WorkflowB\x15\x9a\x84\x9e\x03\x10alias:\"workflow\"H\x03R\bworkflow\x88\x01\x01\x12C\n" +
+	"\bdocument\x18\a \x01(\v2\".resources.documents.DocumentShortH\x04R\bdocument\x88\x01\x01B\x15\n" +
 	"\x13_next_reminder_timeB\x16\n" +
 	"\x14_next_reminder_countB\x12\n" +
 	"\x10_auto_close_timeB\v\n" +
 	"\t_workflowB\v\n" +
-	"\t_document\"\xdf\x03\n" +
+	"\t_document\"\xca\x04\n" +
 	"\x11WorkflowUserState\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12 \n" +
 	"\auser_id\x18\x02 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\x06userId\x12U\n" +
 	"\x14manual_reminder_time\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x12manualReminderTime\x88\x01\x01\x12E\n" +
-	"\x17manual_reminder_message\x18\x04 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x01R\x15manualReminderMessage\x88\x01\x01\x12U\n" +
-	"\bworkflow\x18\x05 \x01(\v2\x1d.resources.documents.WorkflowB\x15\x9a\x84\x9e\x03\x10alias:\"workflow\"H\x02R\bworkflow\x88\x01\x01\x12C\n" +
-	"\bdocument\x18\x06 \x01(\v2\".resources.documents.DocumentShortH\x03R\bdocument\x88\x01\x01B\x17\n" +
+	"\x17manual_reminder_message\x18\x04 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x01R\x15manualReminderMessage\x88\x01\x01\x120\n" +
+	"\x0ereminder_count\x18\x05 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\n" +
+	"(\x01R\rreminderCount\x127\n" +
+	"\x12max_reminder_count\x18\x06 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\n" +
+	"(\x01R\x10maxReminderCount\x12U\n" +
+	"\bworkflow\x18\a \x01(\v2\x1d.resources.documents.WorkflowB\x15\x9a\x84\x9e\x03\x10alias:\"workflow\"H\x02R\bworkflow\x88\x01\x01\x12C\n" +
+	"\bdocument\x18\b \x01(\v2\".resources.documents.DocumentShortH\x03R\bdocument\x88\x01\x01B\x17\n" +
 	"\x15_manual_reminder_timeB\x1a\n" +
 	"\x18_manual_reminder_messageB\v\n" +
 	"\t_workflowB\v\n" +

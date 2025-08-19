@@ -3027,6 +3027,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `owner_changed` | [DocOwnerChanged](#resourcesdocumentsDocOwnerChanged) |  |  |
 | `access_updated` | [DocAccessUpdated](#resourcesdocumentsDocAccessUpdated) |  |  |
 | `access_requested` | [DocAccessRequested](#resourcesdocumentsDocAccessRequested) |  |  |
+| `sign_off_requested` | [DocSignOffRequested](#resourcesdocumentsDocSignOffRequested) |  |  |
 
 
 
@@ -3051,6 +3052,18 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | ----- | ---- | ----- | ----------- |
 | `new_owner_id` | [int32](#int32) |  |  |
 | `new_owner` | [resources.users.UserShort](#resourcesusersUserShort) |  |  |
+
+
+
+
+
+### resources.documents.DocSignOffRequested
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `deadline` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `approvers` | [resources.users.UserShort](#resourcesusersUserShort) | repeated |  |
 
 
 
@@ -3087,6 +3100,8 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `DOC_ACTIVITY_TYPE_OWNER_CHANGED` | 8 |  |
 | `DOC_ACTIVITY_TYPE_DELETED` | 9 |  |
 | `DOC_ACTIVITY_TYPE_DRAFT_TOGGLED` | 19 |  |
+| `DOC_ACTIVITY_TYPE_SIGN_OFF_APPROVED` | 21 |  |
+| `DOC_ACTIVITY_TYPE_SIGN_OFF_REJECTED` | 22 |  |
 | `DOC_ACTIVITY_TYPE_COMMENT_ADDED` | 10 | Comments |
 | `DOC_ACTIVITY_TYPE_COMMENT_UPDATED` | 11 |  |
 | `DOC_ACTIVITY_TYPE_COMMENT_DELETED` | 12 |  |
@@ -3096,6 +3111,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `DOC_ACTIVITY_TYPE_REQUESTED_UPDATE` | 16 |  |
 | `DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE` | 17 |  |
 | `DOC_ACTIVITY_TYPE_REQUESTED_DELETION` | 18 |  |
+| `DOC_ACTIVITY_TYPE_REQUESTED_SIGN_OFF` | 20 |  |
 
 
  <!-- end enums -->
@@ -3228,6 +3244,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `reminders` | [Reminder](#resourcesdocumentsReminder) | repeated |  |
+| `max_reminder_count` | [int32](#int32) |  |  |
 
 
 
@@ -3381,6 +3398,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `document_id` | [int64](#int64) |  |  |
 | `next_reminder_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `next_reminder_count` | [int32](#int32) | optional |  |
+| `reminder_count` | [int32](#int32) |  |  |
 | `auto_close_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `workflow` | [Workflow](#resourcesdocumentsWorkflow) | optional |  |
 | `document` | [DocumentShort](#resourcesdocumentsDocumentShort) | optional |  |
@@ -3398,6 +3416,8 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `user_id` | [int32](#int32) |  |  |
 | `manual_reminder_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `manual_reminder_message` | [string](#string) | optional |  |
+| `reminder_count` | [int32](#int32) |  |  |
+| `max_reminder_count` | [int32](#int32) |  |  |
 | `workflow` | [Workflow](#resourcesdocumentsWorkflow) | optional |  |
 | `document` | [DocumentShort](#resourcesdocumentsDocumentShort) | optional |  |
 
@@ -3460,6 +3480,18 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 
 
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/documents/signoff.proto
 
  <!-- end messages -->
 
@@ -8708,6 +8740,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `document_id` | [int64](#int64) |  |  |
 | `reminder_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `message` | [string](#string) | optional | @sanitize: method=StripTags |
+| `max_reminder_count` | [int32](#int32) |  |  |
 
 
 

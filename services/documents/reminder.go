@@ -114,6 +114,8 @@ func (s *Server) SetDocumentReminder(
 			UserId:                userInfo.GetUserId(),
 			ManualReminderTime:    req.GetReminderTime(),
 			ManualReminderMessage: req.Message,
+			ReminderCount:         0,
+			MaxReminderCount:      req.MaxReminderCount,
 		}); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}

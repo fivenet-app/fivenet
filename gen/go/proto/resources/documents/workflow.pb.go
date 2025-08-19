@@ -92,10 +92,11 @@ func (x *Workflow) GetAutoCloseSettings() *AutoCloseSettings {
 }
 
 type ReminderSettings struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Reminders     []*Reminder            `protobuf:"bytes,1,rep,name=reminders,proto3" json:"reminders,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Reminders        []*Reminder            `protobuf:"bytes,1,rep,name=reminders,proto3" json:"reminders,omitempty"`
+	MaxReminderCount int32                  `protobuf:"varint,2,opt,name=max_reminder_count,json=maxReminderCount,proto3" json:"max_reminder_count,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *ReminderSettings) Reset() {
@@ -133,6 +134,13 @@ func (x *ReminderSettings) GetReminders() []*Reminder {
 		return x.Reminders
 	}
 	return nil
+}
+
+func (x *ReminderSettings) GetMaxReminderCount() int32 {
+	if x != nil {
+		return x.MaxReminderCount
+	}
+	return 0
 }
 
 type Reminder struct {
@@ -293,11 +301,13 @@ const file_resources_documents_workflow_proto_rawDesc = "" +
 	"\x11reminder_settings\x18\x02 \x01(\v2%.resources.documents.ReminderSettingsR\x10reminderSettings\x12\x1d\n" +
 	"\n" +
 	"auto_close\x18\x03 \x01(\bR\tautoClose\x12V\n" +
-	"\x13auto_close_settings\x18\x04 \x01(\v2&.resources.documents.AutoCloseSettingsR\x11autoCloseSettings\"Y\n" +
+	"\x13auto_close_settings\x18\x04 \x01(\v2&.resources.documents.AutoCloseSettingsR\x11autoCloseSettings\"\x92\x01\n" +
 	"\x10ReminderSettings\x12E\n" +
-	"\treminders\x18\x01 \x03(\v2\x1d.resources.documents.ReminderB\b\xbaH\x05\x92\x01\x02\x10\x03R\treminders\"}\n" +
-	"\bReminder\x12M\n" +
-	"\bduration\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\x16\xbaH\x13\xc8\x01\x01\xaa\x01\r\x1a\x05\b\x80\xce\xda\x032\x04\b\x80\xa3\x05R\bduration\x12\"\n" +
+	"\treminders\x18\x01 \x03(\v2\x1d.resources.documents.ReminderB\b\xbaH\x05\x92\x01\x02\x10\x03R\treminders\x127\n" +
+	"\x12max_reminder_count\x18\x02 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\n" +
+	"(\x01R\x10maxReminderCount\"|\n" +
+	"\bReminder\x12L\n" +
+	"\bduration\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\x15\xbaH\x12\xc8\x01\x01\xaa\x01\f\x1a\x05\b\x80\xce\xda\x032\x03\b\x90\x1cR\bduration\x12\"\n" +
 	"\amessage\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\amessage\"\x86\x01\n" +
 	"\x11AutoCloseSettings\x12M\n" +
 	"\bduration\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\x16\xbaH\x13\xc8\x01\x01\xaa\x01\r\x1a\x05\b\x80\xce\xda\x032\x04\b\x80\xa3\x05R\bduration\x12\"\n" +

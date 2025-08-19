@@ -401,6 +401,10 @@ message SetDocumentReminderRequest {
   optional resources.timestamp.Timestamp reminder_time = 2;
   // @sanitize: method=StripTags
   optional string message = 3 [(buf.validate.field).string.max_bytes = 1024];
+  int32 max_reminder_count = 4 [(buf.validate.field).int32 = {
+    gte: 1
+    lte: 10
+  }];
 }
 
 message SetDocumentReminderResponse {}

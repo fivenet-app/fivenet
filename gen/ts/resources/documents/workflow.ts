@@ -43,6 +43,10 @@ export interface ReminderSettings {
      * @generated from protobuf field: repeated resources.documents.Reminder reminders = 1
      */
     reminders: Reminder[];
+    /**
+     * @generated from protobuf field: int32 max_reminder_count = 2
+     */
+    maxReminderCount: number;
 }
 /**
  * @generated from protobuf message resources.documents.Reminder
@@ -152,12 +156,14 @@ export const Workflow = new Workflow$Type();
 class ReminderSettings$Type extends MessageType<ReminderSettings> {
     constructor() {
         super("resources.documents.ReminderSettings", [
-            { no: 1, name: "reminders", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Reminder, options: { "buf.validate.field": { repeated: { maxItems: "3" } } } }
+            { no: 1, name: "reminders", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Reminder, options: { "buf.validate.field": { repeated: { maxItems: "3" } } } },
+            { no: 2, name: "max_reminder_count", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 10, gte: 1 } } } }
         ]);
     }
     create(value?: PartialMessage<ReminderSettings>): ReminderSettings {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.reminders = [];
+        message.maxReminderCount = 0;
         if (value !== undefined)
             reflectionMergePartial<ReminderSettings>(this, message, value);
         return message;
@@ -169,6 +175,9 @@ class ReminderSettings$Type extends MessageType<ReminderSettings> {
             switch (fieldNo) {
                 case /* repeated resources.documents.Reminder reminders */ 1:
                     message.reminders.push(Reminder.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* int32 max_reminder_count */ 2:
+                    message.maxReminderCount = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -185,6 +194,9 @@ class ReminderSettings$Type extends MessageType<ReminderSettings> {
         /* repeated resources.documents.Reminder reminders = 1; */
         for (let i = 0; i < message.reminders.length; i++)
             Reminder.internalBinaryWrite(message.reminders[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* int32 max_reminder_count = 2; */
+        if (message.maxReminderCount !== 0)
+            writer.tag(2, WireType.Varint).int32(message.maxReminderCount);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -199,7 +211,7 @@ export const ReminderSettings = new ReminderSettings$Type();
 class Reminder$Type extends MessageType<Reminder> {
     constructor() {
         super("resources.documents.Reminder", [
-            { no: 1, name: "duration", kind: "message", T: () => Duration, options: { "buf.validate.field": { required: true, duration: { lt: { seconds: "7776000" }, gte: { seconds: "86400" } } } } },
+            { no: 1, name: "duration", kind: "message", T: () => Duration, options: { "buf.validate.field": { required: true, duration: { lt: { seconds: "7776000" }, gte: { seconds: "3600" } } } } },
             { no: 2, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } }
         ]);
     }

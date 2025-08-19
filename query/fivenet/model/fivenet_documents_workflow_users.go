@@ -16,4 +16,6 @@ type FivenetDocumentsWorkflowUsers struct {
 	UserID                int32      `json:"user_id"`
 	ManualReminderTime    *time.Time `json:"manual_reminder_time"`
 	ManualReminderMessage *string    `json:"manual_reminder_message"`
+	ReminderCount         int32      `json:"reminder_count"`
+	MaxReminderCount      int32      `json:"max_reminder_count"`
 }

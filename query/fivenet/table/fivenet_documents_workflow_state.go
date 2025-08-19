@@ -21,6 +21,7 @@ type fivenetDocumentsWorkflowStateTable struct {
 	NextReminderTime  mysql.ColumnTimestamp
 	NextReminderCount mysql.ColumnInteger
 	AutoCloseTime     mysql.ColumnTimestamp
+	ReminderCount     mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -66,9 +67,10 @@ func newFivenetDocumentsWorkflowStateTableImpl(schemaName, tableName, alias stri
 		NextReminderTimeColumn  = mysql.TimestampColumn("next_reminder_time")
 		NextReminderCountColumn = mysql.IntegerColumn("next_reminder_count")
 		AutoCloseTimeColumn     = mysql.TimestampColumn("auto_close_time")
-		allColumns              = mysql.ColumnList{DocumentIDColumn, NextReminderTimeColumn, NextReminderCountColumn, AutoCloseTimeColumn}
-		mutableColumns          = mysql.ColumnList{DocumentIDColumn, NextReminderTimeColumn, NextReminderCountColumn, AutoCloseTimeColumn}
-		defaultColumns          = mysql.ColumnList{}
+		ReminderCountColumn     = mysql.IntegerColumn("reminder_count")
+		allColumns              = mysql.ColumnList{DocumentIDColumn, NextReminderTimeColumn, NextReminderCountColumn, AutoCloseTimeColumn, ReminderCountColumn}
+		mutableColumns          = mysql.ColumnList{DocumentIDColumn, NextReminderTimeColumn, NextReminderCountColumn, AutoCloseTimeColumn, ReminderCountColumn}
+		defaultColumns          = mysql.ColumnList{ReminderCountColumn}
 	)
 
 	return fivenetDocumentsWorkflowStateTable{
@@ -79,6 +81,7 @@ func newFivenetDocumentsWorkflowStateTableImpl(schemaName, tableName, alias stri
 		NextReminderTime:  NextReminderTimeColumn,
 		NextReminderCount: NextReminderCountColumn,
 		AutoCloseTime:     AutoCloseTimeColumn,
+		ReminderCount:     ReminderCountColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

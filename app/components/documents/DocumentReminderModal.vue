@@ -26,7 +26,8 @@ const notifications = useNotificationsStore();
 
 const schema = z.object({
     message: z.string().min(1).max(64),
-    reminderTime: z.date().optional(),
+    reminderTime: z.coerce.date().optional(),
+    maxReminderCount: z.coerce.number().int().min(1).max(10).default(10),
 });
 
 type Schema = z.output<typeof schema>;
@@ -34,6 +35,7 @@ type Schema = z.output<typeof schema>;
 const state = reactive<Schema>({
     message: '',
     reminderTime: reminderTime.value ? toDate(reminderTime.value) : undefined,
+    maxReminderCount: 1,
 });
 
 watch(reminderTime, () => (state.reminderTime = reminderTime.value ? toDate(reminderTime.value) : undefined));
@@ -44,6 +46,7 @@ async function setDocumentReminder(values: Schema): Promise<SetDocumentReminderR
             documentId: props.documentId,
             reminderTime: values.reminderTime ? toTimestamp(values.reminderTime) : undefined,
             message: values.message,
+            maxReminderCount: values.maxReminderCount,
         });
         const { response } = await call;
 
@@ -113,6 +116,18 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     >
                         <UInput v-model="state.message" type="text" :placeholder="$t('common.message')" />
                     </UFormGroup>
+
+                    <!--
+                    Only show if recurring reminders are enabled
+                    <UFormGroup
+                        class="grid items-center gap-2"
+                        name="message"
+                        label="Max number of total reminders"
+                        :ui="{ container: '' }"
+                    >
+                        <UInput v-model="state.maxReminderCount" type="number" :min="1" :max="10" :step="1" />
+                    </UFormGroup>
+                    -->
                 </div>
 
                 <template #footer>

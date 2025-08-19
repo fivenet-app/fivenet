@@ -201,6 +201,14 @@ func (m *DocActivityData) Sanitize() error {
 			}
 		}
 
+		// Field: SignOffRequested
+	case *DocActivityData_SignOffRequested:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 		// Field: Updated
 	case *DocActivityData_Updated:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
@@ -230,6 +238,35 @@ func (m *DocOwnerChanged) Sanitize() error {
 	// Field: NewOwner
 	if m.NewOwner != nil {
 		if v, ok := any(m.GetNewOwner()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *DocSignOffRequested) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Approvers
+	for idx, item := range m.Approvers {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Deadline
+	if m.Deadline != nil {
+		if v, ok := any(m.GetDeadline()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

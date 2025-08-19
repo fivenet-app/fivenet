@@ -19,12 +19,16 @@ func (w *Workflow) handleDocumentsUsers(
 	ctx context.Context,
 	data *documents.WorkflowCronData,
 ) error {
+	tDTemplates := table.FivenetDocumentsTemplates.AS("template_short")
+
 	stmt := tUserWorkflow.
 		SELECT(
 			tUserWorkflow.DocumentID,
 			tUserWorkflow.UserID,
 			tUserWorkflow.ManualReminderTime,
 			tUserWorkflow.ManualReminderMessage,
+			tUserWorkflow.ReminderCount,
+			tUserWorkflow.MaxReminderCount,
 			tDTemplates.Workflow,
 			tDocumentShort.Title,
 			tDocumentShort.CreatorID,
@@ -47,14 +51,14 @@ func (w *Workflow) handleDocumentsUsers(
 		)).
 		LIMIT(100)
 
-	dest := []*documents.WorkflowUserState{}
+	var dest []*documents.WorkflowUserState
 	if err := stmt.QueryContext(ctx, w.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
 		}
 	}
 
-	wg := sync.WaitGroup{}
+	var wg sync.WaitGroup
 
 	// Run at max 3 handlers at once
 	workChannel := make(chan *documents.WorkflowUserState, 3)
@@ -136,16 +140,22 @@ func updateWorkflowUserState(
 			tUserWorkflow.UserID,
 			tUserWorkflow.ManualReminderTime,
 			tUserWorkflow.ManualReminderMessage,
+			tUserWorkflow.ReminderCount,
+			tUserWorkflow.MaxReminderCount,
 		).
 		VALUES(
 			state.GetDocumentId(),
 			state.GetUserId(),
 			state.GetManualReminderTime(),
 			state.ManualReminderMessage,
+			state.GetReminderCount(),
+			state.GetMaxReminderCount(),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tUserWorkflow.ManualReminderTime.SET(reminderTime),
 			tUserWorkflow.ManualReminderMessage.SET(reminderMessage),
+			tUserWorkflow.ReminderCount.SET(jet.Int32(state.GetReminderCount())),
+			tUserWorkflow.MaxReminderCount.SET(jet.Int32(state.GetMaxReminderCount())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {

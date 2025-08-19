@@ -3470,9 +3470,10 @@ type SetDocumentReminderRequest struct {
 	DocumentId   int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	ReminderTime *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=reminder_time,json=reminderTime,proto3,oneof" json:"reminder_time,omitempty"`
 	// @sanitize: method=StripTags
-	Message       *string `protobuf:"bytes,3,opt,name=message,proto3,oneof" json:"message,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Message          *string `protobuf:"bytes,3,opt,name=message,proto3,oneof" json:"message,omitempty"`
+	MaxReminderCount int32   `protobuf:"varint,4,opt,name=max_reminder_count,json=maxReminderCount,proto3" json:"max_reminder_count,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *SetDocumentReminderRequest) Reset() {
@@ -3524,6 +3525,13 @@ func (x *SetDocumentReminderRequest) GetMessage() string {
 		return *x.Message
 	}
 	return ""
+}
+
+func (x *SetDocumentReminderRequest) GetMaxReminderCount() int32 {
+	if x != nil {
+		return x.MaxReminderCount
+	}
+	return 0
 }
 
 type SetDocumentReminderResponse struct {
@@ -3832,12 +3840,14 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\t_personal\"n\n" +
 	"\x19ToggleDocumentPinResponse\x12I\n" +
 	"\x03pin\x18\x01 \x01(\v2 .resources.documents.DocumentPinB\x10\x9a\x84\x9e\x03\valias:\"pin\"H\x00R\x03pin\x88\x01\x01B\x06\n" +
-	"\x04_pin\"\xce\x01\n" +
+	"\x04_pin\"\x87\x02\n" +
 	"\x1aSetDocumentReminderRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12H\n" +
 	"\rreminder_time\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\freminderTime\x88\x01\x01\x12'\n" +
-	"\amessage\x18\x03 \x01(\tB\b\xbaH\x05r\x03(\x80\bH\x01R\amessage\x88\x01\x01B\x10\n" +
+	"\amessage\x18\x03 \x01(\tB\b\xbaH\x05r\x03(\x80\bH\x01R\amessage\x88\x01\x01\x127\n" +
+	"\x12max_reminder_count\x18\x04 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\n" +
+	"(\x01R\x10maxReminderCountB\x10\n" +
 	"\x0e_reminder_timeB\n" +
 	"\n" +
 	"\b_message\"\x1d\n" +

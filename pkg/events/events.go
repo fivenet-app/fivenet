@@ -126,7 +126,7 @@ func New(p Params) (Result, error) {
 		p.Logger.Warn("ignoring failed nats requirements", zap.Error(err))
 	}
 
-	wg := sync.WaitGroup{}
+	var wg sync.WaitGroup
 	ctx, cancel := context.WithCancel(context.Background())
 
 	// Run migrations and collect basic metric

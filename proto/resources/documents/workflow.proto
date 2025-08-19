@@ -18,13 +18,17 @@ message Workflow {
 
 message ReminderSettings {
   repeated Reminder reminders = 1 [(buf.validate.field).repeated.max_items = 3];
+  int32 max_reminder_count = 2 [(buf.validate.field).int32 = {
+    gte: 1
+    lte: 10
+  }];
 }
 
 message Reminder {
   google.protobuf.Duration duration = 1 [
     (buf.validate.field).duration = {
       lt: {seconds: 7776000} /* 90 days */
-      gte: {seconds: 86400} /* 1 day */
+      gte: {seconds: 3600} /* 1 hour */
     },
     (buf.validate.field).required = true
   ];

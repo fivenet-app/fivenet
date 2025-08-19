@@ -16,4 +16,5 @@ type FivenetDocumentsWorkflowState struct {
 	NextReminderTime  *time.Time `json:"next_reminder_time"`
 	NextReminderCount *int32     `json:"next_reminder_count"`
 	AutoCloseTime     *time.Time `json:"auto_close_time"`
+	ReminderCount     int32      `json:"reminder_count"`
 }

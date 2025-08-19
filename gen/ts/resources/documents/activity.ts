@@ -97,6 +97,12 @@ export interface DocActivityData {
          */
         accessRequested: DocAccessRequested;
     } | {
+        oneofKind: "signOffRequested";
+        /**
+         * @generated from protobuf field: resources.documents.DocSignOffRequested sign_off_requested = 6
+         */
+        signOffRequested: DocSignOffRequested;
+    } | {
         oneofKind: undefined;
     };
 }
@@ -204,6 +210,19 @@ export interface DocAccessUsersDiff {
     toDelete: DocumentUserAccess[];
 }
 /**
+ * @generated from protobuf message resources.documents.DocSignOffRequested
+ */
+export interface DocSignOffRequested {
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deadline = 1
+     */
+    deadline?: Timestamp;
+    /**
+     * @generated from protobuf field: repeated resources.users.UserShort approvers = 2
+     */
+    approvers: UserShort[];
+}
+/**
  * @generated from protobuf enum resources.documents.DocActivityType
  */
 export enum DocActivityType {
@@ -254,6 +273,14 @@ export enum DocActivityType {
      */
     DRAFT_TOGGLED = 19,
     /**
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_SIGN_OFF_APPROVED = 21;
+     */
+    SIGN_OFF_APPROVED = 21,
+    /**
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_SIGN_OFF_REJECTED = 22;
+     */
+    SIGN_OFF_REJECTED = 22,
+    /**
      * Comments
      *
      * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_COMMENT_ADDED = 10;
@@ -292,7 +319,11 @@ export enum DocActivityType {
     /**
      * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_REQUESTED_DELETION = 18;
      */
-    REQUESTED_DELETION = 18
+    REQUESTED_DELETION = 18,
+    /**
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_REQUESTED_SIGN_OFF = 20;
+     */
+    REQUESTED_SIGN_OFF = 20
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class DocActivity$Type extends MessageType<DocActivity> {
@@ -414,7 +445,8 @@ class DocActivityData$Type extends MessageType<DocActivityData> {
             { no: 1, name: "updated", kind: "message", oneof: "data", T: () => DocUpdated },
             { no: 2, name: "owner_changed", kind: "message", oneof: "data", T: () => DocOwnerChanged },
             { no: 4, name: "access_updated", kind: "message", oneof: "data", T: () => DocAccessUpdated },
-            { no: 5, name: "access_requested", kind: "message", oneof: "data", T: () => DocAccessRequested }
+            { no: 5, name: "access_requested", kind: "message", oneof: "data", T: () => DocAccessRequested },
+            { no: 6, name: "sign_off_requested", kind: "message", oneof: "data", T: () => DocSignOffRequested }
         ]);
     }
     create(value?: PartialMessage<DocActivityData>): DocActivityData {
@@ -453,6 +485,12 @@ class DocActivityData$Type extends MessageType<DocActivityData> {
                         accessRequested: DocAccessRequested.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).accessRequested)
                     };
                     break;
+                case /* resources.documents.DocSignOffRequested sign_off_requested */ 6:
+                    message.data = {
+                        oneofKind: "signOffRequested",
+                        signOffRequested: DocSignOffRequested.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).signOffRequested)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -477,6 +515,9 @@ class DocActivityData$Type extends MessageType<DocActivityData> {
         /* resources.documents.DocAccessRequested access_requested = 5; */
         if (message.data.oneofKind === "accessRequested")
             DocAccessRequested.internalBinaryWrite(message.data.accessRequested, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* resources.documents.DocSignOffRequested sign_off_requested = 6; */
+        if (message.data.oneofKind === "signOffRequested")
+            DocSignOffRequested.internalBinaryWrite(message.data.signOffRequested, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -889,3 +930,57 @@ class DocAccessUsersDiff$Type extends MessageType<DocAccessUsersDiff> {
  * @generated MessageType for protobuf message resources.documents.DocAccessUsersDiff
  */
 export const DocAccessUsersDiff = new DocAccessUsersDiff$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DocSignOffRequested$Type extends MessageType<DocSignOffRequested> {
+    constructor() {
+        super("resources.documents.DocSignOffRequested", [
+            { no: 1, name: "deadline", kind: "message", T: () => Timestamp },
+            { no: 2, name: "approvers", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UserShort, options: { "buf.validate.field": { repeated: { maxItems: "8" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<DocSignOffRequested>): DocSignOffRequested {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.approvers = [];
+        if (value !== undefined)
+            reflectionMergePartial<DocSignOffRequested>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DocSignOffRequested): DocSignOffRequested {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional resources.timestamp.Timestamp deadline */ 1:
+                    message.deadline = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deadline);
+                    break;
+                case /* repeated resources.users.UserShort approvers */ 2:
+                    message.approvers.push(UserShort.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DocSignOffRequested, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional resources.timestamp.Timestamp deadline = 1; */
+        if (message.deadline)
+            Timestamp.internalBinaryWrite(message.deadline, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.users.UserShort approvers = 2; */
+        for (let i = 0; i < message.approvers.length; i++)
+            UserShort.internalBinaryWrite(message.approvers[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.documents.DocSignOffRequested
+ */
+export const DocSignOffRequested = new DocSignOffRequested$Type();

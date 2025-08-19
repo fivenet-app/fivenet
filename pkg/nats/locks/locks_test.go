@@ -99,7 +99,7 @@ func TestNats_MultipleLocks(t *testing.T) {
 	n3.Unlock(ctx, lockKey)
 
 	tracker := int32(0)
-	wg := sync.WaitGroup{}
+	var wg sync.WaitGroup
 	for i := range 500 {
 		wg.Add(1)
 		go func(i int) {

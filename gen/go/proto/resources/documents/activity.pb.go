@@ -39,6 +39,8 @@ const (
 	DocActivityType_DOC_ACTIVITY_TYPE_OWNER_CHANGED      DocActivityType = 8
 	DocActivityType_DOC_ACTIVITY_TYPE_DELETED            DocActivityType = 9
 	DocActivityType_DOC_ACTIVITY_TYPE_DRAFT_TOGGLED      DocActivityType = 19
+	DocActivityType_DOC_ACTIVITY_TYPE_SIGN_OFF_APPROVED  DocActivityType = 21
+	DocActivityType_DOC_ACTIVITY_TYPE_SIGN_OFF_REJECTED  DocActivityType = 22
 	// Comments
 	DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_ADDED   DocActivityType = 10
 	DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_UPDATED DocActivityType = 11
@@ -50,6 +52,7 @@ const (
 	DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_UPDATE       DocActivityType = 16
 	DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE DocActivityType = 17
 	DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_DELETION     DocActivityType = 18
+	DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_SIGN_OFF     DocActivityType = 20
 )
 
 // Enum value maps for DocActivityType.
@@ -66,6 +69,8 @@ var (
 		8:  "DOC_ACTIVITY_TYPE_OWNER_CHANGED",
 		9:  "DOC_ACTIVITY_TYPE_DELETED",
 		19: "DOC_ACTIVITY_TYPE_DRAFT_TOGGLED",
+		21: "DOC_ACTIVITY_TYPE_SIGN_OFF_APPROVED",
+		22: "DOC_ACTIVITY_TYPE_SIGN_OFF_REJECTED",
 		10: "DOC_ACTIVITY_TYPE_COMMENT_ADDED",
 		11: "DOC_ACTIVITY_TYPE_COMMENT_UPDATED",
 		12: "DOC_ACTIVITY_TYPE_COMMENT_DELETED",
@@ -75,6 +80,7 @@ var (
 		16: "DOC_ACTIVITY_TYPE_REQUESTED_UPDATE",
 		17: "DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE",
 		18: "DOC_ACTIVITY_TYPE_REQUESTED_DELETION",
+		20: "DOC_ACTIVITY_TYPE_REQUESTED_SIGN_OFF",
 	}
 	DocActivityType_value = map[string]int32{
 		"DOC_ACTIVITY_TYPE_UNSPECIFIED":            0,
@@ -88,6 +94,8 @@ var (
 		"DOC_ACTIVITY_TYPE_OWNER_CHANGED":          8,
 		"DOC_ACTIVITY_TYPE_DELETED":                9,
 		"DOC_ACTIVITY_TYPE_DRAFT_TOGGLED":          19,
+		"DOC_ACTIVITY_TYPE_SIGN_OFF_APPROVED":      21,
+		"DOC_ACTIVITY_TYPE_SIGN_OFF_REJECTED":      22,
 		"DOC_ACTIVITY_TYPE_COMMENT_ADDED":          10,
 		"DOC_ACTIVITY_TYPE_COMMENT_UPDATED":        11,
 		"DOC_ACTIVITY_TYPE_COMMENT_DELETED":        12,
@@ -97,6 +105,7 @@ var (
 		"DOC_ACTIVITY_TYPE_REQUESTED_UPDATE":       16,
 		"DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE": 17,
 		"DOC_ACTIVITY_TYPE_REQUESTED_DELETION":     18,
+		"DOC_ACTIVITY_TYPE_REQUESTED_SIGN_OFF":     20,
 	}
 )
 
@@ -253,6 +262,7 @@ type DocActivityData struct {
 	//	*DocActivityData_OwnerChanged
 	//	*DocActivityData_AccessUpdated
 	//	*DocActivityData_AccessRequested
+	//	*DocActivityData_SignOffRequested
 	Data          isDocActivityData_Data `protobuf_oneof:"data"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -331,6 +341,15 @@ func (x *DocActivityData) GetAccessRequested() *DocAccessRequested {
 	return nil
 }
 
+func (x *DocActivityData) GetSignOffRequested() *DocSignOffRequested {
+	if x != nil {
+		if x, ok := x.Data.(*DocActivityData_SignOffRequested); ok {
+			return x.SignOffRequested
+		}
+	}
+	return nil
+}
+
 type isDocActivityData_Data interface {
 	isDocActivityData_Data()
 }
@@ -351,6 +370,10 @@ type DocActivityData_AccessRequested struct {
 	AccessRequested *DocAccessRequested `protobuf:"bytes,5,opt,name=access_requested,json=accessRequested,proto3,oneof"`
 }
 
+type DocActivityData_SignOffRequested struct {
+	SignOffRequested *DocSignOffRequested `protobuf:"bytes,6,opt,name=sign_off_requested,json=signOffRequested,proto3,oneof"`
+}
+
 func (*DocActivityData_Updated) isDocActivityData_Data() {}
 
 func (*DocActivityData_OwnerChanged) isDocActivityData_Data() {}
@@ -358,6 +381,8 @@ func (*DocActivityData_OwnerChanged) isDocActivityData_Data() {}
 func (*DocActivityData_AccessUpdated) isDocActivityData_Data() {}
 
 func (*DocActivityData_AccessRequested) isDocActivityData_Data() {}
+
+func (*DocActivityData_SignOffRequested) isDocActivityData_Data() {}
 
 type DocUpdated struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -747,6 +772,58 @@ func (x *DocAccessUsersDiff) GetToDelete() []*DocumentUserAccess {
 	return nil
 }
 
+type DocSignOffRequested struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Deadline      *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=deadline,proto3,oneof" json:"deadline,omitempty"`
+	Approvers     []*users.UserShort     `protobuf:"bytes,2,rep,name=approvers,proto3" json:"approvers,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DocSignOffRequested) Reset() {
+	*x = DocSignOffRequested{}
+	mi := &file_resources_documents_activity_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DocSignOffRequested) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DocSignOffRequested) ProtoMessage() {}
+
+func (x *DocSignOffRequested) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_documents_activity_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DocSignOffRequested.ProtoReflect.Descriptor instead.
+func (*DocSignOffRequested) Descriptor() ([]byte, []int) {
+	return file_resources_documents_activity_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *DocSignOffRequested) GetDeadline() *timestamp.Timestamp {
+	if x != nil {
+		return x.Deadline
+	}
+	return nil
+}
+
+func (x *DocSignOffRequested) GetApprovers() []*users.UserShort {
+	if x != nil {
+		return x.Approvers
+	}
+	return nil
+}
+
 var File_resources_documents_activity_proto protoreflect.FileDescriptor
 
 const file_resources_documents_activity_proto_rawDesc = "" +
@@ -772,12 +849,13 @@ const file_resources_documents_activity_proto_rawDesc = "" +
 	"\n" +
 	"\b_creatorB\x14\n" +
 	"\x12_creator_job_labelB\t\n" +
-	"\a_reason\"\xd0\x02\n" +
+	"\a_reason\"\xaa\x03\n" +
 	"\x0fDocActivityData\x12;\n" +
 	"\aupdated\x18\x01 \x01(\v2\x1f.resources.documents.DocUpdatedH\x00R\aupdated\x12K\n" +
 	"\rowner_changed\x18\x02 \x01(\v2$.resources.documents.DocOwnerChangedH\x00R\fownerChanged\x12N\n" +
 	"\x0eaccess_updated\x18\x04 \x01(\v2%.resources.documents.DocAccessUpdatedH\x00R\raccessUpdated\x12T\n" +
-	"\x10access_requested\x18\x05 \x01(\v2'.resources.documents.DocAccessRequestedH\x00R\x0faccessRequestedB\r\n" +
+	"\x10access_requested\x18\x05 \x01(\v2'.resources.documents.DocAccessRequestedH\x00R\x0faccessRequested\x12X\n" +
+	"\x12sign_off_requested\x18\x06 \x01(\v2(.resources.documents.DocSignOffRequestedH\x00R\x10signOffRequestedB\r\n" +
 	"\x04data\x12\x05\xbaH\x02\b\x01\"\x89\x02\n" +
 	"\n" +
 	"DocUpdated\x12\"\n" +
@@ -810,7 +888,11 @@ const file_resources_documents_activity_proto_rawDesc = "" +
 	"\x12DocAccessUsersDiff\x12N\n" +
 	"\tto_create\x18\x01 \x03(\v2'.resources.documents.DocumentUserAccessB\b\xbaH\x05\x92\x01\x02\x10\x14R\btoCreate\x12N\n" +
 	"\tto_update\x18\x02 \x03(\v2'.resources.documents.DocumentUserAccessB\b\xbaH\x05\x92\x01\x02\x10\x14R\btoUpdate\x12N\n" +
-	"\tto_delete\x18\x03 \x03(\v2'.resources.documents.DocumentUserAccessB\b\xbaH\x05\x92\x01\x02\x10\x14R\btoDelete*\x89\x06\n" +
+	"\tto_delete\x18\x03 \x03(\v2'.resources.documents.DocumentUserAccessB\b\xbaH\x05\x92\x01\x02\x10\x14R\btoDelete\"\xa7\x01\n" +
+	"\x13DocSignOffRequested\x12?\n" +
+	"\bdeadline\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\bdeadline\x88\x01\x01\x12B\n" +
+	"\tapprovers\x18\x02 \x03(\v2\x1a.resources.users.UserShortB\b\xbaH\x05\x92\x01\x02\x10\bR\tapproversB\v\n" +
+	"\t_deadline*\x85\a\n" +
 	"\x0fDocActivityType\x12!\n" +
 	"\x1dDOC_ACTIVITY_TYPE_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19DOC_ACTIVITY_TYPE_CREATED\x10\x01\x12!\n" +
@@ -822,7 +904,9 @@ const file_resources_documents_activity_proto_rawDesc = "" +
 	" DOC_ACTIVITY_TYPE_ACCESS_UPDATED\x10\a\x12#\n" +
 	"\x1fDOC_ACTIVITY_TYPE_OWNER_CHANGED\x10\b\x12\x1d\n" +
 	"\x19DOC_ACTIVITY_TYPE_DELETED\x10\t\x12#\n" +
-	"\x1fDOC_ACTIVITY_TYPE_DRAFT_TOGGLED\x10\x13\x12#\n" +
+	"\x1fDOC_ACTIVITY_TYPE_DRAFT_TOGGLED\x10\x13\x12'\n" +
+	"#DOC_ACTIVITY_TYPE_SIGN_OFF_APPROVED\x10\x15\x12'\n" +
+	"#DOC_ACTIVITY_TYPE_SIGN_OFF_REJECTED\x10\x16\x12#\n" +
 	"\x1fDOC_ACTIVITY_TYPE_COMMENT_ADDED\x10\n" +
 	"\x12%\n" +
 	"!DOC_ACTIVITY_TYPE_COMMENT_UPDATED\x10\v\x12%\n" +
@@ -832,7 +916,8 @@ const file_resources_documents_activity_proto_rawDesc = "" +
 	"#DOC_ACTIVITY_TYPE_REQUESTED_OPENING\x10\x0f\x12&\n" +
 	"\"DOC_ACTIVITY_TYPE_REQUESTED_UPDATE\x10\x10\x12,\n" +
 	"(DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE\x10\x11\x12(\n" +
-	"$DOC_ACTIVITY_TYPE_REQUESTED_DELETION\x10\x12BQZOgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
+	"$DOC_ACTIVITY_TYPE_REQUESTED_DELETION\x10\x12\x12(\n" +
+	"$DOC_ACTIVITY_TYPE_REQUESTED_SIGN_OFF\x10\x14BQZOgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
 
 var (
 	file_resources_documents_activity_proto_rawDescOnce sync.Once
@@ -847,7 +932,7 @@ func file_resources_documents_activity_proto_rawDescGZIP() []byte {
 }
 
 var file_resources_documents_activity_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_documents_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_resources_documents_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_resources_documents_activity_proto_goTypes = []any{
 	(DocActivityType)(0),        // 0: resources.documents.DocActivityType
 	(*DocActivity)(nil),         // 1: resources.documents.DocActivity
@@ -859,37 +944,41 @@ var file_resources_documents_activity_proto_goTypes = []any{
 	(*DocAccessUpdated)(nil),    // 7: resources.documents.DocAccessUpdated
 	(*DocAccessJobsDiff)(nil),   // 8: resources.documents.DocAccessJobsDiff
 	(*DocAccessUsersDiff)(nil),  // 9: resources.documents.DocAccessUsersDiff
-	(*timestamp.Timestamp)(nil), // 10: resources.timestamp.Timestamp
-	(*users.UserShort)(nil),     // 11: resources.users.UserShort
-	(AccessLevel)(0),            // 12: resources.documents.AccessLevel
-	(*DocumentJobAccess)(nil),   // 13: resources.documents.DocumentJobAccess
-	(*DocumentUserAccess)(nil),  // 14: resources.documents.DocumentUserAccess
+	(*DocSignOffRequested)(nil), // 10: resources.documents.DocSignOffRequested
+	(*timestamp.Timestamp)(nil), // 11: resources.timestamp.Timestamp
+	(*users.UserShort)(nil),     // 12: resources.users.UserShort
+	(AccessLevel)(0),            // 13: resources.documents.AccessLevel
+	(*DocumentJobAccess)(nil),   // 14: resources.documents.DocumentJobAccess
+	(*DocumentUserAccess)(nil),  // 15: resources.documents.DocumentUserAccess
 }
 var file_resources_documents_activity_proto_depIdxs = []int32{
-	10, // 0: resources.documents.DocActivity.created_at:type_name -> resources.timestamp.Timestamp
+	11, // 0: resources.documents.DocActivity.created_at:type_name -> resources.timestamp.Timestamp
 	0,  // 1: resources.documents.DocActivity.activity_type:type_name -> resources.documents.DocActivityType
-	11, // 2: resources.documents.DocActivity.creator:type_name -> resources.users.UserShort
+	12, // 2: resources.documents.DocActivity.creator:type_name -> resources.users.UserShort
 	2,  // 3: resources.documents.DocActivity.data:type_name -> resources.documents.DocActivityData
 	3,  // 4: resources.documents.DocActivityData.updated:type_name -> resources.documents.DocUpdated
 	5,  // 5: resources.documents.DocActivityData.owner_changed:type_name -> resources.documents.DocOwnerChanged
 	7,  // 6: resources.documents.DocActivityData.access_updated:type_name -> resources.documents.DocAccessUpdated
 	6,  // 7: resources.documents.DocActivityData.access_requested:type_name -> resources.documents.DocAccessRequested
-	4,  // 8: resources.documents.DocUpdated.files_change:type_name -> resources.documents.DocFilesChange
-	11, // 9: resources.documents.DocOwnerChanged.new_owner:type_name -> resources.users.UserShort
-	12, // 10: resources.documents.DocAccessRequested.level:type_name -> resources.documents.AccessLevel
-	8,  // 11: resources.documents.DocAccessUpdated.jobs:type_name -> resources.documents.DocAccessJobsDiff
-	9,  // 12: resources.documents.DocAccessUpdated.users:type_name -> resources.documents.DocAccessUsersDiff
-	13, // 13: resources.documents.DocAccessJobsDiff.to_create:type_name -> resources.documents.DocumentJobAccess
-	13, // 14: resources.documents.DocAccessJobsDiff.to_update:type_name -> resources.documents.DocumentJobAccess
-	13, // 15: resources.documents.DocAccessJobsDiff.to_delete:type_name -> resources.documents.DocumentJobAccess
-	14, // 16: resources.documents.DocAccessUsersDiff.to_create:type_name -> resources.documents.DocumentUserAccess
-	14, // 17: resources.documents.DocAccessUsersDiff.to_update:type_name -> resources.documents.DocumentUserAccess
-	14, // 18: resources.documents.DocAccessUsersDiff.to_delete:type_name -> resources.documents.DocumentUserAccess
-	19, // [19:19] is the sub-list for method output_type
-	19, // [19:19] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	10, // 8: resources.documents.DocActivityData.sign_off_requested:type_name -> resources.documents.DocSignOffRequested
+	4,  // 9: resources.documents.DocUpdated.files_change:type_name -> resources.documents.DocFilesChange
+	12, // 10: resources.documents.DocOwnerChanged.new_owner:type_name -> resources.users.UserShort
+	13, // 11: resources.documents.DocAccessRequested.level:type_name -> resources.documents.AccessLevel
+	8,  // 12: resources.documents.DocAccessUpdated.jobs:type_name -> resources.documents.DocAccessJobsDiff
+	9,  // 13: resources.documents.DocAccessUpdated.users:type_name -> resources.documents.DocAccessUsersDiff
+	14, // 14: resources.documents.DocAccessJobsDiff.to_create:type_name -> resources.documents.DocumentJobAccess
+	14, // 15: resources.documents.DocAccessJobsDiff.to_update:type_name -> resources.documents.DocumentJobAccess
+	14, // 16: resources.documents.DocAccessJobsDiff.to_delete:type_name -> resources.documents.DocumentJobAccess
+	15, // 17: resources.documents.DocAccessUsersDiff.to_create:type_name -> resources.documents.DocumentUserAccess
+	15, // 18: resources.documents.DocAccessUsersDiff.to_update:type_name -> resources.documents.DocumentUserAccess
+	15, // 19: resources.documents.DocAccessUsersDiff.to_delete:type_name -> resources.documents.DocumentUserAccess
+	11, // 20: resources.documents.DocSignOffRequested.deadline:type_name -> resources.timestamp.Timestamp
+	12, // 21: resources.documents.DocSignOffRequested.approvers:type_name -> resources.users.UserShort
+	22, // [22:22] is the sub-list for method output_type
+	22, // [22:22] is the sub-list for method input_type
+	22, // [22:22] is the sub-list for extension type_name
+	22, // [22:22] is the sub-list for extension extendee
+	0,  // [0:22] is the sub-list for field type_name
 }
 
 func init() { file_resources_documents_activity_proto_init() }
@@ -904,15 +993,17 @@ func file_resources_documents_activity_proto_init() {
 		(*DocActivityData_OwnerChanged)(nil),
 		(*DocActivityData_AccessUpdated)(nil),
 		(*DocActivityData_AccessRequested)(nil),
+		(*DocActivityData_SignOffRequested)(nil),
 	}
 	file_resources_documents_activity_proto_msgTypes[2].OneofWrappers = []any{}
+	file_resources_documents_activity_proto_msgTypes[9].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_documents_activity_proto_rawDesc), len(file_resources_documents_activity_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   9,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

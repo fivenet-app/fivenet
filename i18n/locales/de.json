@@ -859,6 +859,10 @@
                 },
                 "auto_close": {
                     "description": "Automatisches Schließen des Dokumentes nach der Anzahl der Tagen. Die Anzahl der Tage wird mit dem Dokumenten-Erstellungs- oder Änderungszeitpunkt plus gerechnet."
+                },
+                "max_reminder_count": {
+                    "title": "Maximale Anzahl gesendeter Erinnerungen",
+                    "description": "Die maximale Anzahl an Erinnerungen, die an den Ersteller eines Dokuments gesendet werden. Wenn das Maximum (10) erreicht ist, werden keine weiteren Erinnerungen gesendet."
                 }
             }
         },

@@ -123,7 +123,7 @@ func (s *Scheduler) start(ctx context.Context) {
 				ctx, cancel := context.WithCancel(ctx)
 				defer cancel()
 
-				wg := sync.WaitGroup{}
+				var wg sync.WaitGroup
 
 				s.registry.store.Range(func(key string, value *cron.Cronjob) bool {
 					job, err := s.registry.store.GetOrLoad(ctx, key)

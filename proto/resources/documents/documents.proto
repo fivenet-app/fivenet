@@ -132,10 +132,14 @@ message WorkflowState {
   int64 document_id = 1;
   optional resources.timestamp.Timestamp next_reminder_time = 2;
   optional int32 next_reminder_count = 3;
+  int32 reminder_count = 5 [(buf.validate.field).int32 = {
+    gte: 1
+    lte: 10
+  }];
   optional resources.timestamp.Timestamp auto_close_time = 4;
 
-  optional resources.documents.Workflow workflow = 5 [(tagger.tags) = "alias:\"workflow\""];
-  optional resources.documents.DocumentShort document = 6;
+  optional resources.documents.Workflow workflow = 6 [(tagger.tags) = "alias:\"workflow\""];
+  optional resources.documents.DocumentShort document = 7;
 }
 
 message WorkflowUserState {
@@ -143,7 +147,15 @@ message WorkflowUserState {
   int32 user_id = 2 [(buf.validate.field).int32.gt = 0];
   optional resources.timestamp.Timestamp manual_reminder_time = 3;
   optional string manual_reminder_message = 4 [(buf.validate.field).string.max_len = 255];
+  int32 reminder_count = 5 [(buf.validate.field).int32 = {
+    gte: 1
+    lte: 10
+  }];
+  int32 max_reminder_count = 6 [(buf.validate.field).int32 = {
+    gte: 1
+    lte: 10
+  }];
 
-  optional resources.documents.Workflow workflow = 5 [(tagger.tags) = "alias:\"workflow\""];
-  optional resources.documents.DocumentShort document = 6;
+  optional resources.documents.Workflow workflow = 7 [(tagger.tags) = "alias:\"workflow\""];
+  optional resources.documents.DocumentShort document = 8;
 }
