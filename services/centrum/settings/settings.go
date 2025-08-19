@@ -5,8 +5,11 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"slices"
+	"sync"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
@@ -16,6 +19,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/gogo/protobuf/proto"
 	"go.uber.org/fx"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
@@ -29,6 +33,9 @@ type SettingsDB struct {
 	enricher *mstlystcdata.Enricher
 
 	store *store.Store[centrum.Settings, *centrum.Settings]
+
+	publicJobsMu sync.RWMutex
+	publicJobs   []*jobs.Job
 }
 
 type Params struct {
@@ -52,6 +59,9 @@ func New(p Params) *SettingsDB {
 		db:       p.DB,
 		js:       p.JS,
 		enricher: p.Enricher,
+
+		publicJobsMu: sync.RWMutex{},
+		publicJobs:   []*jobs.Job{},
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
@@ -60,6 +70,34 @@ func New(p Params) *SettingsDB {
 			logger,
 			p.JS,
 			"centrum_settings",
+			store.WithOnRemoteUpdatedFn(
+				func(ctx context.Context, oldValue *centrum.Settings, newValue *centrum.Settings) (*centrum.Settings, error) {
+					if newValue == nil {
+						return newValue, nil
+					}
+
+					d.publicJobsMu.Lock()
+					defer d.publicJobsMu.Unlock()
+
+					if newValue.GetPublic() {
+						// If the job is public, add it to the public jobs list
+						if !slices.ContainsFunc(d.publicJobs, func(j *jobs.Job) bool {
+							return j.GetName() == newValue.GetJob()
+						}) {
+							if j := d.enricher.GetJobByName(newValue.GetJob()); j != nil {
+								d.publicJobs = append(d.publicJobs, j)
+							}
+						}
+					} else if i := slices.IndexFunc(d.publicJobs, func(j *jobs.Job) bool {
+						return j.GetName() == newValue.GetJob()
+					}); i != -1 {
+						// If the job is not public, remove it from the public jobs list
+						d.publicJobs = slices.Delete(d.publicJobs, i, 1)
+					}
+
+					return newValue, nil
+				},
+			),
 		)
 		if err != nil {
 			return err
@@ -493,4 +531,16 @@ func (s *SettingsDB) Update(
 	}
 
 	return current, nil
+}
+
+func (s *SettingsDB) GetPublicJobs() []*jobs.Job {
+	s.publicJobsMu.RLock()
+	defer s.publicJobsMu.RUnlock()
+
+	publicJobs := make([]*jobs.Job, 0, len(s.publicJobs))
+	for _, job := range s.publicJobs {
+		publicJobs = append(publicJobs, proto.Clone(job).(*jobs.Job))
+	}
+
+	return publicJobs
 }
