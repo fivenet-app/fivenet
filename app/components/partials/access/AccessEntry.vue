@@ -138,14 +138,9 @@ if (props.hideGrade) {
 
 <template>
     <UForm class="my-2 flex flex-row items-center gap-1" :schema="schema" :state="entry">
-        <UCheckbox
-            v-if="showRequired"
-            v-model="entry.required"
-            class="flex-initial"
-            :disabled="disabled"
-            :title="$t('common.require')"
-            name="required"
-        />
+        <UTooltip v-if="showRequired" class="flex-initial" :text="$t('common.require')">
+            <UCheckbox v-model="entry.required" :disabled="disabled" name="required" />
+        </UTooltip>
 
         <UFormGroup class="w-40 flex-initial">
             <UInput v-if="accessTypes.length === 1" type="text" disabled :model-value="accessTypes[0]?.name" />

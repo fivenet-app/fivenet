@@ -55,9 +55,21 @@ func (s *SettingsDB) GetAccessList(
 		return nil, nil, fmt.Errorf("failed to get settings for job %s. %w", userJob, err)
 	}
 
+	if settings.GetEffectiveAccess() == nil {
+		settings.EffectiveAccess = &centrum.EffectiveAccess{
+			Dispatches: &centrum.EffectiveDispatchAccess{
+				Jobs: []*centrum.JobAccessEntry{},
+			},
+		}
+	}
+	if settings.GetEffectiveAccess().GetDispatches() == nil {
+		settings.EffectiveAccess.Dispatches = &centrum.EffectiveDispatchAccess{
+			Jobs: []*centrum.JobAccessEntry{},
+		}
+	}
+
 	access := settings.GetEffectiveAccess()
 	jobs := []string{}
-
 	if access == nil {
 		s.calculateEffectiveAccess(settings)
 	}
@@ -68,6 +80,7 @@ func (s *SettingsDB) GetAccessList(
 		Access: centrum.CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_DISPATCH,
 	}
 	s.enricher.EnrichJobName(jae)
+
 	access.Dispatches.Jobs = append(access.Dispatches.Jobs, jae)
 	jobs = append(jobs, userJob)
 
