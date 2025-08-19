@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
+import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
@@ -38,16 +39,33 @@ const { dispatchers, anyDispatchersActive, getCurrentMode } = storeToRefs(centru
                         {{ dispas.jobLabel ?? dispas.job }}
                     </h3>
 
-                    <UPageGrid>
+                    <UPageGrid class="xl:grid-cols-2">
                         <UPageCard
                             v-for="dispatcher in dispas.dispatchers"
                             :key="dispatcher.userId"
                             :title="`${dispatcher.firstname} ${dispatcher.lastname}`"
+                            icon="i-mdi-account"
                             :ui="{
                                 title: 'text-gray-900 dark:text-white text-base font-semibold flex items-center gap-1.5 line-clamp-2 whitespace-break-spaces',
+                                body: {
+                                    padding: 'flex-0',
+                                },
                             }"
                         >
-                            <PhoneNumberBlock :number="dispatcher.phoneNumber" />
+                            <template #default>
+                                <PhoneNumberBlock :number="dispatcher.phoneNumber" />
+                            </template>
+
+                            <template v-if="dispatcher.avatar" #icon>
+                                <ProfilePictureImg
+                                    class="mr-2"
+                                    :src="dispatcher?.avatar"
+                                    :name="`${dispatcher.firstname} ${dispatcher.lastname}`"
+                                    size="sm"
+                                    :enable-popup="false"
+                                    :alt="$t('common.avatar')"
+                                />
+                            </template>
                         </UPageCard>
                     </UPageGrid>
                 </div>
