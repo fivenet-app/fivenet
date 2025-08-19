@@ -15,8 +15,9 @@ const { dispatchers, anyDispatchersActive, getCurrentMode } = storeToRefs(centru
         <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
-                        {{ $t('common.dispatchers', 2) }}
+                    <h3 class="inline-flex items-center gap-2 text-2xl font-semibold leading-6">
+                        <span>{{ $t('common.dispatchers', 2) }}</span>
+
                         <UBadge color="gray">
                             {{ $t('common.mode') }}: {{ $t(`enums.centrum.CentrumMode.${CentrumMode[getCurrentMode ?? 0]}`) }}
                         </UBadge>
@@ -31,20 +32,26 @@ const { dispatchers, anyDispatchersActive, getCurrentMode } = storeToRefs(centru
                 icon="i-mdi-monitor"
                 :type="$t('common.dispatcher')"
             />
-            <template v-else>
-                <UPageGrid v-for="dispas in dispatchers" :key="dispas.job" class="gap-4 p-4" :cols="2">
-                    <UPageCard
-                        v-for="dispatcher in dispas.dispatchers"
-                        :key="dispatcher.userId"
-                        :title="`${dispatcher.firstname} ${dispatcher.lastname}`"
-                        :ui="{
-                            title: 'text-gray-900 dark:text-white text-base font-semibold flex items-center gap-1.5 line-clamp-2 whitespace-break-spaces',
-                        }"
-                    >
-                        <PhoneNumberBlock :number="dispatcher.phoneNumber" />
-                    </UPageCard>
-                </UPageGrid>
-            </template>
+            <div v-else>
+                <div v-for="dispas in dispatchers" :key="dispas.job" class="gap-4 p-4" :cols="2">
+                    <h3 class="mb-4 text-lg font-semibold">
+                        {{ dispas.jobLabel ?? dispas.job }}
+                    </h3>
+
+                    <UPageGrid>
+                        <UPageCard
+                            v-for="dispatcher in dispas.dispatchers"
+                            :key="dispatcher.userId"
+                            :title="`${dispatcher.firstname} ${dispatcher.lastname}`"
+                            :ui="{
+                                title: 'text-gray-900 dark:text-white text-base font-semibold flex items-center gap-1.5 line-clamp-2 whitespace-break-spaces',
+                            }"
+                        >
+                            <PhoneNumberBlock :number="dispatcher.phoneNumber" />
+                        </UPageCard>
+                    </UPageGrid>
+                </div>
+            </div>
 
             <template #footer>
                 <UButton class="flex-1" color="black" block @click="isOpen = false">

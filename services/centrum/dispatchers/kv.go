@@ -14,10 +14,12 @@ func (s *DispatchersDB) updateDispatchersInKV(
 	job string,
 	dispatchers []*jobs.Colleague,
 ) error {
-	if err := s.store.Put(ctx, job, &centrum.Dispatchers{
+	dspers := &centrum.Dispatchers{
 		Job:         job,
 		Dispatchers: dispatchers,
-	}); err != nil {
+	}
+	s.enricher.EnrichJobName(dspers)
+	if err := s.store.Put(ctx, job, dspers); err != nil {
 		return err
 	}
 
@@ -34,8 +36,9 @@ func (s *DispatchersDB) Get(ctx context.Context, job string) (*centrum.Dispatche
 		dispatchers = &centrum.Dispatchers{
 			Job: job,
 		}
-		s.enricher.EnrichJobName(dispatchers)
 	}
+
+	s.enricher.EnrichJobName(dispatchers)
 
 	return dispatchers, nil
 }
