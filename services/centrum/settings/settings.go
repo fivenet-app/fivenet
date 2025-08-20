@@ -19,10 +19,10 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"github.com/gogo/protobuf/proto"
 	"go.uber.org/fx"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
+	"google.golang.org/protobuf/proto"
 )
 
 type SettingsDB struct {
