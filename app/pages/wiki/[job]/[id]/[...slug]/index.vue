@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { TypedRouteFromName } from '#build/typed-router';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import PagesList from '~/components/wiki/PagesList.vue';
+import PageList from '~/components/wiki/PageList.vue';
 import PageView from '~/components/wiki/PageView.vue';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 
@@ -85,7 +85,7 @@ async function getPage(id: number): Promise<Page | undefined> {
                 <template #left>
                     <DataErrorBlock v-if="pagesError" :error="pagesError" :retry="pagesRefresh" />
                     <ClientOnly v-else>
-                        <PagesList :pages="pages ?? []" />
+                        <PageList :pages="pages ?? []" />
 
                         <UTooltip :text="$t('common.refresh')">
                             <UButton class="-ml-2 mt-1" variant="link" icon="i-mdi-refresh" @click="pagesRefresh" />

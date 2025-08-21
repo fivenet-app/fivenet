@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import DispatchersInfo from '~/components/centrum/dispatchers/DispatchersInfo.vue';
+import DispatcherInfo from '~/components/centrum/dispatchers/DispatcherInfo.vue';
 import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
 import {
     dispatchStatusToBGColor,
@@ -8,7 +8,7 @@ import {
     unitStatusToBGColor,
     unitStatuses,
 } from '~/components/centrum/helpers';
-import DispatchesLayer from '~/components/centrum/livemap/DispatchesLayer.vue';
+import DispatchLayer from '~/components/centrum/livemap/DispatchLayer.vue';
 import JoinUnitSlideover from '~/components/centrum/livemap/JoinUnitSlideover.vue';
 import OwnDispatchEntry from '~/components/centrum/livemap/OwnDispatchEntry.vue';
 import TakeDispatchSlideover from '~/components/centrum/livemap/TakeDispatchSlideover.vue';
@@ -360,7 +360,7 @@ defineShortcuts({
     <UDashboardPanel grow>
         <UDashboardNavbar :title="$t('common.livemap')">
             <template #right>
-                <DispatchersInfo v-if="canStream && settings?.enabled" :hide-join="true" />
+                <DispatcherInfo v-if="canStream && settings?.enabled" :hide-join="true" />
             </template>
         </UDashboardNavbar>
 
@@ -369,7 +369,7 @@ defineShortcuts({
                 <ClientOnly>
                     <LivemapBase>
                         <template v-if="canStream" #default>
-                            <DispatchesLayer
+                            <DispatchLayer
                                 :show-all-dispatches="livemap.showAllDispatches || getCurrentMode === CentrumMode.SIMPLIFIED"
                             />
 

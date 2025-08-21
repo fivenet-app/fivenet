@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import type { TabItem } from '#ui/types';
 import QualificationList from '~/components/qualifications/QualificationList.vue';
-import QualificationRequestsList from '~/components/qualifications/QualificationRequestsList.vue';
-import QualificationResultsList from '~/components/qualifications/QualificationResultsList.vue';
+import QualificationRequestList from '~/components/qualifications/QualificationRequestList.vue';
+import QualificationResultList from '~/components/qualifications/QualificationResultList.vue';
 
 useHead({
     title: 'pages.qualifications.title',
@@ -77,9 +77,9 @@ const qualifications = useQualifications();
                     <template #yours>
                         <UContainer>
                             <div class="flex flex-col gap-2">
-                                <QualificationResultsList />
+                                <QualificationResultList />
 
-                                <QualificationRequestsList />
+                                <QualificationRequestList />
                             </div>
                         </UContainer>
                     </template>

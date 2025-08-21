@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { z } from 'zod';
 import ColleagueName from '~/components/jobs/colleagues/ColleagueName.vue';
-import QualificationRequestsList from '~/components/qualifications/tutor/QualificationRequestsList.vue';
-import QualificationResultsList from '~/components/qualifications/tutor/QualificationResultsList.vue';
+import QualificationRequestList from '~/components/qualifications/tutor/QualificationRequestList.vue';
+import QualificationResultList from '~/components/qualifications/tutor/QualificationResultList.vue';
 import QualificationResultTutorModal from '~/components/qualifications/tutor/QualificationResultTutorModal.vue';
 import { useCompletorStore } from '~/stores/completor';
 import type { Qualification } from '~~/gen/ts/resources/qualifications/qualifications';
@@ -24,8 +24,8 @@ const query = useSearchForm('qualifications_tutor', schema);
 
 const usersLoading = ref(false);
 
-const requests = ref<InstanceType<typeof QualificationRequestsList> | null>(null);
-const results = ref<InstanceType<typeof QualificationResultsList> | null>(null);
+const requests = ref<InstanceType<typeof QualificationRequestList> | null>(null);
+const results = ref<InstanceType<typeof QualificationResultList> | null>(null);
 </script>
 
 <template>
@@ -81,7 +81,7 @@ const results = ref<InstanceType<typeof QualificationResultsList> | null>(null);
         <div>
             <h2 class="text-sm text-gray-900 dark:text-white">{{ $t('common.request', 2) }}</h2>
 
-            <QualificationRequestsList
+            <QualificationRequestList
                 ref="requests"
                 :qualification="qualification"
                 :exam-mode="qualification.examMode"
@@ -105,7 +105,7 @@ const results = ref<InstanceType<typeof QualificationResultsList> | null>(null);
                 />
             </div>
 
-            <QualificationResultsList
+            <QualificationResultList
                 ref="results"
                 :qualification="qualification"
                 :exam-mode="qualification.examMode"

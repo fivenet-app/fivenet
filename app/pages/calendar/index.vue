@@ -4,7 +4,7 @@ import { isFuture, isPast, isSameDay, isToday } from 'date-fns';
 import type { DateRangeSource } from 'v-calendar/dist/types/src/utils/date/range.js';
 import CalendarCreateOrUpdateModal from '~/components/calendar/CalendarCreateOrUpdateModal.vue';
 import CalendarViewSlideover from '~/components/calendar/CalendarViewSlideover.vue';
-import FindCalendarsModal from '~/components/calendar/FindCalendarsModal.vue';
+import FindCalendarModal from '~/components/calendar/FindCalendarModal.vue';
 import EntryCreateOrUpdateModal from '~/components/calendar/entry/EntryCreateOrUpdateModal.vue';
 import EntryViewSlideover from '~/components/calendar/entry/EntryViewSlideover.vue';
 import MonthCalendarClient from '~/components/partials/MonthCalendar.client.vue';
@@ -535,8 +535,8 @@ const isOpen = ref(false);
                     </UButton>
                 </UTooltip>
 
-                <UButton class="font-semibold" icon="i-mdi-calendar-search" @click="modal.open(FindCalendarsModal, {})">
-                    {{ $t('components.calendar.FindCalendarsModal.title') }}
+                <UButton class="font-semibold" icon="i-mdi-calendar-search" @click="modal.open(FindCalendarModal, {})">
+                    {{ $t('components.calendar.FindCalendarModal.title') }}
                 </UButton>
             </div>
         </UDashboardPanel>
@@ -647,8 +647,8 @@ const isOpen = ref(false);
                     </UButton>
                 </UTooltip>
 
-                <UButton class="font-semibold" icon="i-mdi-calendar-search" @click="modal.open(FindCalendarsModal, {})">
-                    {{ $t('components.calendar.FindCalendarsModal.title') }}
+                <UButton class="font-semibold" icon="i-mdi-calendar-search" @click="modal.open(FindCalendarModal, {})">
+                    {{ $t('components.calendar.FindCalendarModal.title') }}
                 </UButton>
             </div>
         </UDashboardPanel>

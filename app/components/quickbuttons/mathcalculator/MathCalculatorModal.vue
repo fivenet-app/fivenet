@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import GenericModal from '~/components/partials/elements/GenericModal.vue';
-import MathCalculator from '~/components/quickbuttons/mathcalculator/MathCalculator.vue';
 import { useSettingsStore } from '~/stores/settings';
 
 const { isOpen } = useModal();
@@ -32,7 +31,7 @@ const containerPosition = computed(() => {
         @close="isOpen = false"
     >
         <div class="flex gap-2">
-            <MathCalculator class="flex-1" />
+            <LazyQuickbuttonsMathcalculatorMathCalculator />
 
             <UButtonGroup class="my-auto flex-initial" orientation="vertical">
                 <UButton icon="i-mdi-arrow-up-bold" @click="position = 'top'" />

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import AccountsList from '~/components/settings/accounts/AccountsList.vue';
+import AccountList from '~/components/settings/accounts/AccountList.vue';
 
 useHead({
     title: 'pages.settings.accounts.title',
@@ -15,7 +15,7 @@ definePageMeta({
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <AccountsList />
+            <AccountList />
         </UDashboardPanel>
     </UDashboardPage>
 </template>

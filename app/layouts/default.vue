@@ -2,7 +2,7 @@
 import type { Group } from '#ui/types';
 import ClipboardModal from '~/components/clipboard/modal/ClipboardModal.vue';
 import HelpSlideover from '~/components/HelpSlideover.vue';
-import NotificationSlideover from '~/components/NotificationSlideover.vue';
+import NotificationSlideover from '~/components/notifications/NotificationSlideover.vue';
 import WebSocketStatusOverlay from '~/components/partials/WebSocketStatusOverlay.vue';
 import MathCalculatorModal from '~/components/quickbuttons/mathcalculator/MathCalculatorModal.vue';
 import PenaltyCalculatorModal from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorModal.vue';

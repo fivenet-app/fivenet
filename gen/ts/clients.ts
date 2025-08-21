@@ -9,9 +9,6 @@ import { CompletorServiceClient as completorCompletorServiceClient } from '~~/ge
 import { CollabServiceClient as documentsCollabServiceClient } from '~~/gen/ts/services/documents/collab.client';
 import { DocumentsServiceClient as documentsDocumentsServiceClient } from '~~/gen/ts/services/documents/documents.client';
 import { FilestoreServiceClient as filestoreFilestoreServiceClient } from '~~/gen/ts/services/filestore/filestore.client';
-import { AdsServiceClient as internetAdsServiceClient } from '~~/gen/ts/services/internet/ads.client';
-import { DomainServiceClient as internetDomainServiceClient } from '~~/gen/ts/services/internet/domain.client';
-import { InternetServiceClient as internetInternetServiceClient } from '~~/gen/ts/services/internet/internet.client';
 import { ConductServiceClient as jobsConductServiceClient } from '~~/gen/ts/services/jobs/conduct.client';
 import { JobsServiceClient as jobsJobsServiceClient } from '~~/gen/ts/services/jobs/jobs.client';
 import { TimeclockServiceClient as jobsTimeclockServiceClient } from '~~/gen/ts/services/jobs/timeclock.client';
@@ -53,11 +50,6 @@ export class GRPCClients {
     };
     public filestore: {
         filestore: filestoreFilestoreServiceClient;
-    };
-    public internet: {
-        ads: internetAdsServiceClient;
-        domain: internetDomainServiceClient;
-        internet: internetInternetServiceClient;
     };
     public jobs: {
         conduct: jobsConductServiceClient;
@@ -120,11 +112,6 @@ export class GRPCClients {
         };
         this.filestore = {
             filestore: new filestoreFilestoreServiceClient(transport),
-        };
-        this.internet = {
-            ads: new internetAdsServiceClient(transport),
-            domain: new internetDomainServiceClient(transport),
-            internet: new internetInternetServiceClient(transport),
         };
         this.jobs = {
             conduct: new jobsConductServiceClient(transport),

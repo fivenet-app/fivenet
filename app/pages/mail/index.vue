@@ -2,7 +2,7 @@
 import EmailSettingsModal from '~/components/mailer/EmailSettingsModal.vue';
 import { canAccess } from '~/components/mailer/helpers';
 import MailerThread from '~/components/mailer/MailerThread.vue';
-import MessagesSearch from '~/components/mailer/MessagesSearch.vue';
+import MessageSearch from '~/components/mailer/MessageSearch.vue';
 import TemplateModal from '~/components/mailer/TemplateModal.vue';
 import ThreadCreateOrUpdateModal from '~/components/mailer/ThreadCreateOrUpdateModal.vue';
 import ThreadList from '~/components/mailer/ThreadList.vue';
@@ -179,7 +179,7 @@ onBeforeMount(async () => {
         <UDashboardPanel id="mailerthreadlist" :width="450" :resizable="{ min: 325, max: 550 }">
             <UDashboardNavbar :title="$t('common.mail')" :badge="threads?.pagination?.totalCount ?? 0">
                 <template #center>
-                    <MessagesSearch />
+                    <MessageSearch />
                 </template>
 
                 <template #right>

@@ -1242,7 +1242,7 @@
             }
         },
         "citizens": {
-            "CitizensList": {
+            "CitizenList": {
                 "no_citizens": "Benutze das obige Suchfeld, um erneut zu suchen oder die Anfrage zu aktualisieren.",
                 "open_fine": "Offene Geldstrafen"
             },
@@ -1324,7 +1324,7 @@
                     "title": "Kalendereintrag aktualisieren"
                 }
             },
-            "FindCalendarsModal": {
+            "FindCalendarModal": {
                 "title": "Kalender finden"
             },
             "EntryShareModal": {

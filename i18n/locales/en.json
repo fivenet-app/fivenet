@@ -1242,7 +1242,7 @@
             }
         },
         "citizens": {
-            "CitizensList": {
+            "CitizenList": {
                 "no_citizens": "Use the search field above to search or update your query.",
                 "open_fine": "Open fines"
             },
@@ -1324,7 +1324,7 @@
                     "title": "Update Calendar Entry"
                 }
             },
-            "FindCalendarsModal": {
+            "FindCalendarModal": {
                 "title": "Find Calendars"
             },
             "EntryShareModal": {

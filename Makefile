@@ -33,9 +33,6 @@ protoc-gen-go-grpc:
 protoc-gen-doc:
 	$(GO) install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@latest
 
-protoc-gen-gotag:
-	$(GO) install github.com/srikrsna/protoc-gen-gotag@latest
-
 go-licenses:
 ifeq (, $(shell which go-licenses))
 	@GO111MODULE=on $(GO) install github.com/google/go-licenses@latest
@@ -100,11 +97,10 @@ gen-sql:
 	find ./query/fivenet/table -type f -iname '*.go' -exec sed -i 's~("fivenet", ~("", ~g' {} \;
 
 .PHONY: gen-proto
-gen-proto: buf protoc-gen-go protoc-gen-go-grpc protoc-gen-doc protoc-gen-gotag
+gen-proto: buf protoc-gen-go protoc-gen-go-grpc protoc-gen-doc
 	mkdir -p ./gen/go/proto ./gen/ts
 
 	buf generate
-
 	buf generate --template buf.gen.tag.yaml
 
 .PHONY: fmt

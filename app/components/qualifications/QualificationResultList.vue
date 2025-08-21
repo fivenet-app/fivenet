@@ -4,7 +4,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
-import QualificationResultsListEntry from '~/components/qualifications/QualificationResultsListEntry.vue';
+import QualificationResultListEntry from '~/components/qualifications/QualificationResultListEntry.vue';
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { ListQualificationsResultsResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
@@ -94,7 +94,7 @@ async function listQualificationResults(
             />
 
             <ul v-else class="divide-y divide-gray-100 dark:divide-gray-800" role="list">
-                <QualificationResultsListEntry v-for="result in data?.results" :key="result.id" :result="result" />
+                <QualificationResultListEntry v-for="result in data?.results" :key="result.id" :result="result" />
             </ul>
         </div>
 

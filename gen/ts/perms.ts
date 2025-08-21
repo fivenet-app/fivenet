@@ -36,11 +36,6 @@
 // source: resources/file/file.proto
 // source: resources/file/filestore.proto
 // source: resources/file/meta.proto
-// source: resources/internet/access.proto
-// source: resources/internet/ads.proto
-// source: resources/internet/domain.proto
-// source: resources/internet/page.proto
-// source: resources/internet/search.proto
 // source: resources/jobs/activity.proto
 // source: resources/jobs/colleagues.proto
 // source: resources/jobs/conduct.proto
@@ -98,9 +93,6 @@
 // source: services/documents/collab.proto
 // source: services/documents/documents.proto
 // source: services/filestore/filestore.proto
-// source: services/internet/ads.proto
-// source: services/internet/domain.proto
-// source: services/internet/internet.proto
 // source: services/jobs/conduct.proto
 // source: services/jobs/jobs.proto
 // source: services/jobs/timeclock.proto

@@ -15,8 +15,8 @@ import type { Label } from '~~/gen/ts/resources/jobs/labels';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { GetColleagueLabelsResponse, ListColleaguesResponse } from '~~/gen/ts/services/jobs/jobs';
 import ColleagueName from './ColleagueName.vue';
-import ColleaguesLabelStatsModal from './ColleaguesLabelStatsModal.vue';
-import JobsLabelsModal from './JobsLabelsModal.vue';
+import ColleagueLabelStatsModal from './ColleagueLabelStatsModal.vue';
+import JobLabelsModal from './JobLabelsModal.vue';
 import SelfServicePropsAbsenceDateModal from './SelfServicePropsAbsenceDateModal.vue';
 
 const { $grpc } = useNuxtApp();
@@ -231,11 +231,11 @@ defineShortcuts({
                         v-if="can('jobs.JobsService/ManageLabels').value"
                         :label="$t('common.label', 2)"
                         icon="i-mdi-tag"
-                        @click="modal.open(JobsLabelsModal, {})"
+                        @click="modal.open(JobLabelsModal, {})"
                     />
 
                     <UTooltip v-if="attr('jobs.JobsService/GetColleague', 'Types', 'Labels').value" :text="$t('common.stats')">
-                        <UButton icon="i-mdi-chart-donut" color="white" @click="modal.open(ColleaguesLabelStatsModal, {})" />
+                        <UButton icon="i-mdi-chart-donut" color="white" @click="modal.open(ColleagueLabelStatsModal, {})" />
                     </UTooltip>
                 </UFormGroup>
             </div>

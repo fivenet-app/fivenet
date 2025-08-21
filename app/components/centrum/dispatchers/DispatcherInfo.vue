@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import DispatchersModal from '~/components/centrum/dispatchers/DispatchersModal.vue';
+import DispatcherModal from '~/components/centrum/dispatchers/DispatcherModal.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 
@@ -72,7 +72,7 @@ if (!props.hideJoin) {
                           : 'success'
                 "
                 truncate
-                @click="modal.open(DispatchersModal, {})"
+                @click="modal.open(DispatcherModal, {})"
             >
                 <template v-if="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN">
                     {{ $t('common.dispatcher', dispatchers.dispatchers.length) }}

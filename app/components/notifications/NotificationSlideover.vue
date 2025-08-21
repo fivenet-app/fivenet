@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import DNBToggle from './notifications/DNBToggle.vue';
-import NotificationList from './notifications/NotificationList.vue';
+import DNBToggle from '~/components/notifications/DNBToggle.vue';
+import NotificationList from '~/components/notifications/NotificationList.vue';
 
 const { isNotificationSlideoverOpen } = useDashboard();
 </script>

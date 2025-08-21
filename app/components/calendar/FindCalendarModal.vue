@@ -71,7 +71,7 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-2xl font-semibold leading-6">
-                        {{ $t('components.calendar.FindCalendarsModal.title') }}
+                        {{ $t('components.calendar.FindCalendarModal.title') }}
                     </h3>
 
                     <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />

@@ -256,7 +256,7 @@ defineShortcuts({
                             v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.OpenFines').value"
                             class="flex-1"
                             name="openFines"
-                            :label="$t('components.citizens.CitizensList.open_fine')"
+                            :label="$t('components.citizens.CitizenList.open_fine')"
                         >
                             <UInput
                                 v-model="query.openFines"

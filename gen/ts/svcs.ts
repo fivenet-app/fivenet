@@ -36,11 +36,6 @@
 // source: resources/file/file.proto
 // source: resources/file/filestore.proto
 // source: resources/file/meta.proto
-// source: resources/internet/access.proto
-// source: resources/internet/ads.proto
-// source: resources/internet/domain.proto
-// source: resources/internet/page.proto
-// source: resources/internet/search.proto
 // source: resources/jobs/activity.proto
 // source: resources/jobs/colleagues.proto
 // source: resources/jobs/conduct.proto
@@ -98,9 +93,6 @@
 // source: services/documents/collab.proto
 // source: services/documents/documents.proto
 // source: services/filestore/filestore.proto
-// source: services/internet/ads.proto
-// source: services/internet/domain.proto
-// source: services/internet/internet.proto
 // source: services/jobs/conduct.proto
 // source: services/jobs/jobs.proto
 // source: services/jobs/timeclock.proto
@@ -129,9 +121,6 @@ export const grpcServices = [
     'documents.CollabService',
     'documents.DocumentsService',
     'filestore.FilestoreService',
-    'internet.AdsService',
-    'internet.DomainService',
-    'internet.InternetService',
     'jobs.ConductService',
     'jobs.JobsService',
     'jobs.TimeclockService',
@@ -258,14 +247,6 @@ export const grpcMethods = [
 	'filestore.FilestoreService/ListFiles',
 	'filestore.FilestoreService/DeleteFile',
 	'filestore.FilestoreService/DeleteFileByPath',
-	'internet.AdsService/GetAds',
-	'internet.DomainService/ListTLDs',
-	'internet.DomainService/CheckDomainAvailability',
-	'internet.DomainService/RegisterDomain',
-	'internet.DomainService/ListDomains',
-	'internet.DomainService/UpdateDomain',
-	'internet.InternetService/Search',
-	'internet.InternetService/GetPage',
 	'jobs.ConductService/ListConductEntries',
 	'jobs.ConductService/CreateConductEntry',
 	'jobs.ConductService/UpdateConductEntry',

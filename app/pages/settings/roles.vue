@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import RolesList from '~/components/settings/roles/RolesList.vue';
+import RoleList from '~/components/settings/roles/RoleList.vue';
 
 useHead({
     title: 'pages.settings.roles.title',
@@ -21,7 +21,7 @@ definePageMeta({
                 </template>
             </UDashboardNavbar>
 
-            <RolesList />
+            <RoleList />
         </UDashboardPanel>
     </UDashboardPage>
 </template>
