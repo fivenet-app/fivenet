@@ -16,8 +16,7 @@
                 "qualifications": "Expand your knowledge by taking qualifications provided by your faction or others.",
                 "calendar": "Public, private and job events all in this nice calendar.",
                 "wiki": "Wiki for simple knowledge sharing.",
-                "mailer": "E-Mail for quick and simple communication with citizens and colleagues.",
-                "internet": "The World Wide Web, in smaller and more local."
+                "mailer": "E-Mail for quick and simple communication with citizens and colleagues."
             }
         },
         "documents": {
@@ -577,8 +576,6 @@
         "domain": "Domain | Domains",
         "address_book": "Address Book",
         "unavailable": "Unavailable",
-        "internet": "Internet",
-        "ad": "Ad | Ads",
         "card_view": "Card View",
         "show": "View",
         "selected_no": "{0} selected",
@@ -1365,61 +1362,6 @@
             "ThreadAttachmentsForm": {
                 "document_title_warning": "By attaching documents to an email, the document titles might be visible to the receiving party even if they don't have access to the document."
             }
-        },
-        "internet": {
-            "new_tab": "New Tab",
-            "pages": {
-                "homepage": {
-                    "title": "Internet Search",
-                    "description": "Search through the internet.",
-                    "nic_registrar_cta": {
-                        "title": "Want your own Domain on the Internet?",
-                        "description": "Every Domain comes with Free Website Hosting that includes a convienent Website builder.",
-                        "button": "Click here to register your domain!"
-                    }
-                },
-                "nic_registrar": {
-                    "title": "NIC.ls",
-                    "description": "Network Information Center handling the registration and management of domains and websites on the internet.",
-                    "search": {
-                        "button": "Search Domain",
-                        "available": {
-                            "title": "Domain is available",
-                            "description": "You can register the domain by following the steps below."
-                        },
-                        "transferable": {
-                            "title": "Domain is transferable",
-                            "description": "The domain is already registered by someone else, but can be transfered with a transfer code."
-                        },
-                        "not_available": {
-                            "title": "Domain is not available",
-                            "description": "The domain is already registered and not available for transfer. Please try another domain name."
-                        }
-                    },
-                    "cards": {
-                        "builder": {
-                            "title": "Website Builder",
-                            "description": "Our convienent website builder will help you get started quickly with your website."
-                        },
-                        "access": {
-                            "title": "Access Control",
-                            "description": "Manage who can edit your website with our easy to use access control manager."
-                        }
-                    },
-                    "control_panel": "Control Panel",
-                    "register_form": {
-                        "submit": "Are you sure you want to register this domain?"
-                    }
-                }
-            },
-            "ads": {
-                "sponsored_ad": "Sponsored Advertisement"
-            },
-            "not_found": {
-                "title": "Server not Found",
-                "description": "Cannot find the server at \"{domain}\". Check the address for typing errors. If you cannot load any pages, check your internet connection."
-            },
-            "transfer_code": "Transfer Code"
         },
         "access": {
             "add_entry": "Add Access",

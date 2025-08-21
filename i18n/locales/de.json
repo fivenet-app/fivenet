@@ -17,7 +17,6 @@
                 "calendar": "Öffentliche, private und Berufstermine, alle in einem Kalender.",
                 "wiki": "Ein Lexikon für einfache Informationsteilung.",
                 "mailer": "E-Mail System um Bürger und Kollegen einfacher zu erreichen.",
-                "internet": "Das World Wide Web, in kleiner und lokaler."
             }
         },
         "documents": {
@@ -577,8 +576,6 @@
         "domain": "Domain | Domains",
         "address_book": "Adressbuch",
         "unavailable": "Nicht verfügbar",
-        "internet": "Internet",
-        "ad": "Werbung | Werbung",
         "card_view": "Kartenansicht",
         "show": "Anzeigen",
         "selected_no": "{0} ausgewählt",
@@ -1365,61 +1362,6 @@
             "ThreadAttachmentsForm": {
                 "document_title_warning": "Durch das Anhängen von Dokumenten an eine E-Mail können die Titel der Dokumente für den Empfänger sichtbar sein, auch wenn dieser keinen Zugriff auf das Dokument hat."
             }
-        },
-        "internet": {
-            "new_tab": "Neuer Tab",
-            "pages": {
-                "homepage": {
-                    "title": "Internet Suche",
-                    "description": "Das Internet durchsuchen.",
-                    "nic_registrar_cta": {
-                        "title": "Möchten Sie Ihre eigene Domain im Internet?",
-                        "description": "Jede Domain wird mit kostenlosem Website-Hosting und einem einfachen Website-Builder geliefert.",
-                        "button": "Klicken Sie hier, um Ihre Domain zu registrieren!"
-                    }
-                },
-                "nic_registrar": {
-                    "title": "Netzwerk-Informationszentrum",
-                    "description": "Netzwerk-Informationszentrum, das sich mit der Registrierung und Verwaltung von Domains und Websites im Internet befasst.",
-                    "search": {
-                        "button": "Domains suchen",
-                        "available": {
-                            "title": "Domain ist verfügbar",
-                            "description": "Sie können die Domäne registrieren, indem Sie die nachstehenden Schritte ausführen."
-                        },
-                        "transferable": {
-                            "title": "Domain ist übertragbar",
-                            "description": "Die Domain ist bereits von einer anderen Person registriert, kann aber mit einem Transfercode übertragen werden."
-                        },
-                        "not_available": {
-                            "title": "Domain ist nicht verfügbar",
-                            "description": "Die Domain ist bereits registriert und kann nicht übertragen werden. Bitte versuchen Sie einen anderen Domainnamen."
-                        }
-                    },
-                    "cards": {
-                        "builder": {
-                            "title": "Website-Builder",
-                            "description": "Unser praktischer Website-Builder hilft Ihnen, schnell mit Ihrer Website zu beginnen."
-                        },
-                        "access": {
-                            "title": "Zugriffskontrolle",
-                            "description": "Verwalten Sie mit unserem benutzerfreundlichen Zugangskontrollmanager, wer Ihre Website bearbeiten darf."
-                        }
-                    },
-                    "control_panel": "Kontrollzentrum",
-                    "register_form": {
-                        "submit": "Sind Sie sicher, dass Sie diese Domain registrieren möchten?"
-                    }
-                }
-            },
-            "ads": {
-                "sponsored_ad": "Gesponserte Werbung"
-            },
-            "not_found": {
-                "title": "Server nicht gefunden",
-                "description": "Der Server unter \"{domain}\" kann nicht gefunden werden. Überprüfen Sie die Adresse auf Tippfehler. Wenn Sie keine Seiten laden können, überprüfen Sie Ihre Internetverbindung."
-            },
-            "transfer_code": "Übertragungscode"
         },
         "access": {
             "add_entry": "Zugriff hinzufügen",
