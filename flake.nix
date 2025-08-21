@@ -49,6 +49,10 @@
             protobuf
             protoc-gen-go
             protoc-gen-go-grpc
+
+            # Utilities
+            ripgrep
+            sd
           ];
         };
       });

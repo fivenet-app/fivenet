@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+import Big from 'big.js';
+import { evaluateTokens } from './helpers';
+
 const powerOn = ref(true);
 
 const histroryOperation = useState<
@@ -8,8 +11,11 @@ const histroryOperation = useState<
     }[]
 >('quickButton:mathCalculator:historyOps', () => []);
 
+const { n } = useI18n();
+
 const currentCalculate = ref('0');
 const lastOperation = ref('0');
+const lastStatus = ref('');
 
 const numberInput = useTemplateRef('numberInput');
 const resultElement = useTemplateRef('resultElement');
@@ -30,6 +36,7 @@ function allClear() {
 
     currentCalculate.value = '0';
     lastOperation.value = '0';
+    lastStatus.value = '';
 }
 
 function doDelete() {
@@ -49,6 +56,9 @@ function inputValue(val: string) {
     if (!powerOn.value) {
         return;
     }
+
+    // Clear the error status when a new character is inputted
+    lastStatus.value = '';
 
     if (val === '0' || val === '00') {
         if (currentCalculate.value === '0') {
@@ -104,31 +114,55 @@ function calculate() {
     }
 
     if (lastIsOperand()) {
-        const vars = currentCalculate.value.slice(0, -1);
-        currentCalculate.value = vars;
-        if (checkContainsOperand(currentCalculate.value)) {
-            counted();
-        } else {
-            return currentCalculate.value;
-        }
-    } else {
-        counted();
+        // Trigger an error for incomplete expressions
+        lastStatus.value = 'ERROR';
+        console.error('Calculation error: Incomplete expression');
+        return;
     }
-    nextTick(() => {
-        scrollDown();
-    });
+
+    try {
+        counted();
+        nextTick(() => {
+            scrollDown();
+        });
+    } catch (error) {
+        console.error('Calculation error:', error);
+        lastStatus.value = 'ERROR';
+    }
 }
 
 function counted() {
-    const rep = currentCalculate.value
-        .replace('x', '*')
-        .replace(',', '.')
-        .replace(/([*+/-])0(?!\.)/, '$1');
-    const lastCalculate = currentCalculate.value;
-    let currentCalt = '';
-    currentCalt = eval(rep).toString();
-    addHistroy(lastCalculate, currentCalt.replace('.', ','));
-    currentCalculate.value = currentCalt.replace('.', ',');
+    try {
+        const rep = currentCalculate.value
+            .replace('x', '*')
+            .replace(',', '.')
+            .replace(/([*+/-])0(?!\.)/, '$1');
+        const lastCalculate = currentCalculate.value;
+
+        // Parse and calculate using Big.js
+        const tokens = tokenize(rep);
+        const result = evaluateTokens(tokens);
+
+        addHistroy(lastCalculate, formatResult(result));
+        currentCalculate.value = formatResult(result);
+    } catch (error) {
+        console.error('Calculation error:', error);
+        lastStatus.value = 'ERROR';
+    }
+}
+
+function tokenize(expression: string): string[] {
+    const regex = /([+\-*/])|([0-9]+(?:\.[0-9]*)?)/g;
+    const tokens: string[] = [];
+    let match;
+    while ((match = regex.exec(expression)) !== null) {
+        tokens.push(match[0]);
+    }
+    return tokens;
+}
+
+function formatResult(result: Big): string {
+    return n(result.toNumber());
 }
 
 function maskedIn(val: string) {
@@ -186,8 +220,13 @@ onKeyStroke([...digitKeys, ...operatorKeys, ...resultKeys, ...clearKeys, ...eras
 </script>
 
 <template>
-    <div class="flex flex-col gap-4">
-        <div class="relative flex h-48 max-h-48 flex-col items-end justify-end rounded-md bg-gray-800 text-right text-white">
+    <div class="flex flex-1 flex-col gap-4 overflow-hidden">
+        <div
+            :class="[
+                'relative flex h-48 max-h-48 flex-col items-end justify-end rounded-md text-right text-white transition-colors duration-300',
+                { 'bg-red-800': lastStatus === 'ERROR', 'bg-gray-800': lastStatus !== 'ERROR' },
+            ]"
+        >
             <template v-if="powerOn">
                 <UTooltip :text="$t('common.delete')">
                     <UButton
@@ -228,24 +267,28 @@ onKeyStroke([...digitKeys, ...operatorKeys, ...resultKeys, ...clearKeys, ...eras
                 <UButton block color="white" icon="i-mdi-percent" @click="getPercent()" />
                 <UButton block color="white" icon="i-mdi-division" @click="inputValue('/')" />
             </div>
+
             <div class="grid grid-cols-4 gap-2">
                 <UButton block color="black" icon="i-mdi-numeric-7" @click="inputValue('7')" />
                 <UButton block color="black" icon="i-mdi-numeric-8" @click="inputValue('8')" />
                 <UButton block color="black" icon="i-mdi-numeric-9" @click="inputValue('9')" />
                 <UButton block color="white" icon="i-mdi-multiplication" @click="inputValue('*')" />
             </div>
+
             <div class="grid grid-cols-4 gap-2">
                 <UButton block color="black" icon="i-mdi-numeric-4" @click="inputValue('4')" />
                 <UButton block color="black" icon="i-mdi-numeric-5" @click="inputValue('5')" />
                 <UButton block color="black" icon="i-mdi-numeric-6" @click="inputValue('6')" />
                 <UButton block color="white" icon="i-mdi-minus" @click="inputValue('-')" />
             </div>
+
             <div class="grid grid-cols-4 gap-2">
                 <UButton block color="black" icon="i-mdi-numeric-1" @click="inputValue('1')" />
                 <UButton block color="black" icon="i-mdi-numeric-2" @click="inputValue('2')" />
                 <UButton block color="black" icon="i-mdi-numeric-3" @click="inputValue('3')" />
                 <UButton block color="white" icon="i-mdi-plus" @click="inputValue('+')" />
             </div>
+
             <div class="grid grid-cols-4 gap-2">
                 <UButton block color="black" icon="i-mdi-numeric-0" @click="inputValue('0')" />
                 <UButton block color="black" icon="i-mdi-comma" @click="inputValue(',')" />
