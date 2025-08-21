@@ -3,7 +3,7 @@ import CitizenSetJobModal from '~/components/citizens/info/props/CitizenSetJobMo
 import CitizenSetMugshotModal from '~/components/citizens/info/props/CitizenSetMugshotModal.vue';
 import CitizenSetTrafficPointsModal from '~/components/citizens/info/props/CitizenSetTrafficPointsModal.vue';
 import CitizenSetWantedModal from '~/components/citizens/info/props/CitizenSetWantedModal.vue';
-import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
+import TemplateModal from '~/components/documents/templates/TemplateModal.vue';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
 import { useClipboardStore } from '~/stores/clipboard';
 import type { File } from '~~/gen/ts/resources/file/file';
@@ -45,7 +45,7 @@ function openTemplates(): void {
 
     clipboardStore.addUser(props.user, true);
 
-    modal.open(TemplatesModal, {});
+    modal.open(TemplateModal, {});
 }
 
 function copyLinkToClipboard(): void {

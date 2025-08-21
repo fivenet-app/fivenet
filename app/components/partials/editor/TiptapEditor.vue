@@ -45,8 +45,8 @@ import type { File as FileGrpc } from '~~/gen/ts/resources/file/file';
 import type { UploadFileRequest, UploadFileResponse } from '~~/gen/ts/resources/file/filestore';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import FileListModal from './FileListModal.vue';
-import TiptapEditorImagePopover from './TiptapEditorImagePopover.vue';
-import TiptapEditorSourceCodeModal from './TiptapEditorSourceCodeModal.vue';
+import ImageSelectPopover from './ImageSelectPopover.vue';
+import SourceCodeModal from './SourceCodeModal.vue';
 import VersionHistoryModal from './VersionHistoryModal.vue';
 import YJSUserPopover from './YJSUserPopover.vue';
 
@@ -357,7 +357,11 @@ const editor = useEditor({
         }
         logger.info('Editor created');
     },
-    onUpdate: () => (modelValue.value = unref(editor)?.getHTML() ?? ''),
+    onUpdate: () => {
+        modelValue.value = unref(editor)?.getHTML() ?? '';
+        // TODO
+        console.log('Editor JSON: ', unref(editor)?.getJSON());
+    },
 });
 
 if (props.filestoreService && props.filestoreNamespace && props.targetId) {
@@ -1049,7 +1053,7 @@ onBeforeUnmount(() => unref(editor)?.destroy());
 
                 <UDivider orientation="vertical" :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }" />
 
-                <TiptapEditorImagePopover
+                <ImageSelectPopover
                     v-if="!disableImages"
                     :editor="editor"
                     :file-limit="fileLimit"
@@ -1297,7 +1301,7 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                             icon="i-mdi-file-code"
                             :disabled="disabled"
                             @click="
-                                modal.open(TiptapEditorSourceCodeModal, {
+                                modal.open(SourceCodeModal, {
                                     content: modelValue,
                                     'onUpdate:content': ($event) => (modelValue = $event),
                                 })

@@ -72,3 +72,26 @@ func (m *JSONNode) Sanitize() error {
 
 	return nil
 }
+
+func (m *TiptapJSONDocument) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: FirstHeading
+	m.FirstHeading = htmlsanitizer.StripTags(m.FirstHeading)
+
+	// Field: Json
+	if m.Json != nil {
+		if v, ok := any(m.GetJson()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Summary
+	m.Summary = htmlsanitizer.StripTags(m.Summary)
+
+	return nil
+}

@@ -2,7 +2,7 @@
 import type { Group } from '#ui/types';
 import ClipboardModal from '~/components/clipboard/modal/ClipboardModal.vue';
 import HelpSlideover from '~/components/HelpSlideover.vue';
-import NotificationsSlideover from '~/components/NotificationsSlideover.vue';
+import NotificationSlideover from '~/components/NotificationSlideover.vue';
 import WebSocketStatusOverlay from '~/components/partials/WebSocketStatusOverlay.vue';
 import MathCalculatorModal from '~/components/quickbuttons/mathcalculator/MathCalculatorModal.vue';
 import PenaltyCalculatorModal from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorModal.vue';
@@ -163,16 +163,6 @@ const links = computed(() =>
                 shortcuts: ['G', 'L'],
             },
             permission: 'wiki.WikiService/ListPages' as Perms,
-        },
-        {
-            label: t('common.internet'),
-            icon: 'i-mdi-web',
-            to: '/internet',
-            tooltip: {
-                text: t('common.internet'),
-                shortcuts: ['G', 'I'],
-            },
-            permission: 'TODOService/TODOMethod' as Perms,
         },
         {
             label: t('common.control_panel'),
@@ -465,7 +455,7 @@ const quickAccessButtons = computed(() =>
         </ClientOnly>
 
         <HelpSlideover />
-        <NotificationsSlideover />
+        <NotificationSlideover />
 
         <ClientOnly>
             <LazyUDashboardSearch

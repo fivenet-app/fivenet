@@ -9,6 +9,7 @@ package content
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	structpb "google.golang.org/protobuf/types/known/structpb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -26,8 +27,7 @@ type ContentType int32
 const (
 	ContentType_CONTENT_TYPE_UNSPECIFIED ContentType = 0
 	ContentType_CONTENT_TYPE_HTML        ContentType = 1
-	ContentType_CONTENT_TYPE_PLAIN       ContentType = 2
-	ContentType_CONTENT_TYPE_TIPTAP_JSON ContentType = 3
+	ContentType_CONTENT_TYPE_TIPTAP_JSON ContentType = 2
 )
 
 // Enum value maps for ContentType.
@@ -35,14 +35,12 @@ var (
 	ContentType_name = map[int32]string{
 		0: "CONTENT_TYPE_UNSPECIFIED",
 		1: "CONTENT_TYPE_HTML",
-		2: "CONTENT_TYPE_PLAIN",
-		3: "CONTENT_TYPE_TIPTAP_JSON",
+		2: "CONTENT_TYPE_TIPTAP_JSON",
 	}
 	ContentType_value = map[string]int32{
 		"CONTENT_TYPE_UNSPECIFIED": 0,
 		"CONTENT_TYPE_HTML":        1,
-		"CONTENT_TYPE_PLAIN":       2,
-		"CONTENT_TYPE_TIPTAP_JSON": 3,
+		"CONTENT_TYPE_TIPTAP_JSON": 2,
 	}
 )
 
@@ -277,11 +275,81 @@ func (x *JSONNode) GetContent() []*JSONNode {
 	return nil
 }
 
+type TiptapJSONDocument struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Json  *structpb.Struct       `protobuf:"bytes,1,opt,name=json,proto3" json:"json,omitempty"`
+	// @sanitize: method=StripTags
+	Summary   string `protobuf:"bytes,2,opt,name=summary,proto3" json:"summary,omitempty"`
+	WordCount uint32 `protobuf:"varint,3,opt,name=word_count,json=wordCount,proto3" json:"word_count,omitempty"`
+	// @sanitize: method=StripTags
+	FirstHeading  string `protobuf:"bytes,4,opt,name=first_heading,json=firstHeading,proto3" json:"first_heading,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TiptapJSONDocument) Reset() {
+	*x = TiptapJSONDocument{}
+	mi := &file_resources_common_content_content_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TiptapJSONDocument) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TiptapJSONDocument) ProtoMessage() {}
+
+func (x *TiptapJSONDocument) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_common_content_content_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TiptapJSONDocument.ProtoReflect.Descriptor instead.
+func (*TiptapJSONDocument) Descriptor() ([]byte, []int) {
+	return file_resources_common_content_content_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *TiptapJSONDocument) GetJson() *structpb.Struct {
+	if x != nil {
+		return x.Json
+	}
+	return nil
+}
+
+func (x *TiptapJSONDocument) GetSummary() string {
+	if x != nil {
+		return x.Summary
+	}
+	return ""
+}
+
+func (x *TiptapJSONDocument) GetWordCount() uint32 {
+	if x != nil {
+		return x.WordCount
+	}
+	return 0
+}
+
+func (x *TiptapJSONDocument) GetFirstHeading() string {
+	if x != nil {
+		return x.FirstHeading
+	}
+	return ""
+}
+
 var File_resources_common_content_content_proto protoreflect.FileDescriptor
 
 const file_resources_common_content_content_proto_rawDesc = "" +
 	"\n" +
-	"&resources/common/content/content.proto\x12\x18resources.common.content\"\xcd\x01\n" +
+	"&resources/common/content/content.proto\x12\x18resources.common.content\x1a\x1cgoogle/protobuf/struct.proto\"\xcd\x01\n" +
 	"\aContent\x12&\n" +
 	"\aversion\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x18H\x00R\aversion\x88\x01\x01\x12A\n" +
 	"\acontent\x18\x02 \x01(\v2\".resources.common.content.JSONNodeH\x01R\acontent\x88\x01\x01\x12/\n" +
@@ -304,12 +372,17 @@ const file_resources_common_content_content_proto_rawDesc = "" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\x05\n" +
 	"\x03_idB\a\n" +
-	"\x05_text*x\n" +
+	"\x05_text\"\x9f\x01\n" +
+	"\x12TiptapJSONDocument\x12+\n" +
+	"\x04json\x18\x01 \x01(\v2\x17.google.protobuf.StructR\x04json\x12\x18\n" +
+	"\asummary\x18\x02 \x01(\tR\asummary\x12\x1d\n" +
+	"\n" +
+	"word_count\x18\x03 \x01(\rR\twordCount\x12#\n" +
+	"\rfirst_heading\x18\x04 \x01(\tR\ffirstHeading*`\n" +
 	"\vContentType\x12\x1c\n" +
 	"\x18CONTENT_TYPE_UNSPECIFIED\x10\x00\x12\x15\n" +
-	"\x11CONTENT_TYPE_HTML\x10\x01\x12\x16\n" +
-	"\x12CONTENT_TYPE_PLAIN\x10\x02\x12\x1c\n" +
-	"\x18CONTENT_TYPE_TIPTAP_JSON\x10\x03*z\n" +
+	"\x11CONTENT_TYPE_HTML\x10\x01\x12\x1c\n" +
+	"\x18CONTENT_TYPE_TIPTAP_JSON\x10\x02*z\n" +
 	"\bNodeType\x12\x19\n" +
 	"\x15NODE_TYPE_UNSPECIFIED\x10\x00\x12\x11\n" +
 	"\rNODE_TYPE_DOC\x10\x01\x12\x15\n" +
@@ -330,24 +403,27 @@ func file_resources_common_content_content_proto_rawDescGZIP() []byte {
 }
 
 var file_resources_common_content_content_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_resources_common_content_content_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_resources_common_content_content_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_resources_common_content_content_proto_goTypes = []any{
-	(ContentType)(0), // 0: resources.common.content.ContentType
-	(NodeType)(0),    // 1: resources.common.content.NodeType
-	(*Content)(nil),  // 2: resources.common.content.Content
-	(*JSONNode)(nil), // 3: resources.common.content.JSONNode
-	nil,              // 4: resources.common.content.JSONNode.AttrsEntry
+	(ContentType)(0),           // 0: resources.common.content.ContentType
+	(NodeType)(0),              // 1: resources.common.content.NodeType
+	(*Content)(nil),            // 2: resources.common.content.Content
+	(*JSONNode)(nil),           // 3: resources.common.content.JSONNode
+	(*TiptapJSONDocument)(nil), // 4: resources.common.content.TiptapJSONDocument
+	nil,                        // 5: resources.common.content.JSONNode.AttrsEntry
+	(*structpb.Struct)(nil),    // 6: google.protobuf.Struct
 }
 var file_resources_common_content_content_proto_depIdxs = []int32{
 	3, // 0: resources.common.content.Content.content:type_name -> resources.common.content.JSONNode
 	1, // 1: resources.common.content.JSONNode.type:type_name -> resources.common.content.NodeType
-	4, // 2: resources.common.content.JSONNode.attrs:type_name -> resources.common.content.JSONNode.AttrsEntry
+	5, // 2: resources.common.content.JSONNode.attrs:type_name -> resources.common.content.JSONNode.AttrsEntry
 	3, // 3: resources.common.content.JSONNode.content:type_name -> resources.common.content.JSONNode
-	4, // [4:4] is the sub-list for method output_type
-	4, // [4:4] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	6, // 4: resources.common.content.TiptapJSONDocument.json:type_name -> google.protobuf.Struct
+	5, // [5:5] is the sub-list for method output_type
+	5, // [5:5] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_resources_common_content_content_proto_init() }
@@ -363,7 +439,7 @@ func file_resources_common_content_content_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_common_content_content_proto_rawDesc), len(file_resources_common_content_content_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   3,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

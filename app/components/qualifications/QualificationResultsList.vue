@@ -4,7 +4,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
-import QualificationsResultsListEntry from '~/components/qualifications/QualificationsResultsListEntry.vue';
+import QualificationResultsListEntry from '~/components/qualifications/QualificationResultsListEntry.vue';
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { ListQualificationsResultsResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
@@ -32,13 +32,13 @@ const sort = useRouteQueryObject<TableSortable>('sort', {
 
 const { data, status, refresh, error } = useLazyAsyncData(
     `qualifications-results-${sort.value.column}:${sort.value.direction}-${page.value}-${props.qualificationId}-${props.userId}`,
-    () => listQualificationsResults(props.qualificationId, props.userId, props.status),
+    () => listQualificationResults(props.qualificationId, props.userId, props.status),
     {
         watch: [sort],
     },
 );
 
-async function listQualificationsResults(
+async function listQualificationResults(
     qualificationId?: number,
     userId?: number,
     status?: ResultStatus[],
@@ -94,7 +94,7 @@ async function listQualificationsResults(
             />
 
             <ul v-else class="divide-y divide-gray-100 dark:divide-gray-800" role="list">
-                <QualificationsResultsListEntry v-for="result in data?.results" :key="result.id" :result="result" />
+                <QualificationResultsListEntry v-for="result in data?.results" :key="result.id" :result="result" />
             </ul>
         </div>
 

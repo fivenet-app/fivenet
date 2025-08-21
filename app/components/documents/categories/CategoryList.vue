@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import CategoriesModal from '~/components/documents/categories/CategoriesModal.vue';
+import CategoryCreateOrUpdateModal from '~/components/documents/categories/CategoryCreateOrUpdateModal.vue';
 import CardsList from '~/components/partials/CardsList.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -40,7 +40,7 @@ function categorySelected(idx: number): void {
         return;
     }
 
-    modal.open(CategoriesModal, {
+    modal.open(CategoryCreateOrUpdateModal, {
         category: categories.value[idx],
         onUpdate: () => refresh(),
     });
@@ -59,7 +59,7 @@ const modal = useModal();
                     color="gray"
                     trailing-icon="i-mdi-plus"
                     @click="
-                        modal.open(CategoriesModal, {
+                        modal.open(CategoryCreateOrUpdateModal, {
                             onUpdate: () => refresh(),
                         })
                     "

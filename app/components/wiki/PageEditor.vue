@@ -245,7 +245,6 @@ async function updatePage(values: Schema): Promise<void> {
             tags: [],
         },
         content: {
-            version: '',
             rawContent: values.content,
         },
         parentId: values.parentId,

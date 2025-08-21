@@ -3,7 +3,7 @@ import EmailSettingsModal from '~/components/mailer/EmailSettingsModal.vue';
 import { canAccess } from '~/components/mailer/helpers';
 import MailerThread from '~/components/mailer/MailerThread.vue';
 import MessagesSearch from '~/components/mailer/MessagesSearch.vue';
-import TemplatesModal from '~/components/mailer/TemplatesModal.vue';
+import TemplateModal from '~/components/mailer/TemplateModal.vue';
 import ThreadCreateOrUpdateModal from '~/components/mailer/ThreadCreateOrUpdateModal.vue';
 import ThreadList from '~/components/mailer/ThreadList.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
@@ -327,7 +327,7 @@ onBeforeMount(async () => {
                             <UButton
                                 color="gray"
                                 trailing-icon="i-mdi-file-outline"
-                                @click="() => modal.open(TemplatesModal, {})"
+                                @click="() => modal.open(TemplateModal, {})"
                             >
                                 <span class="hidden truncate md:block">{{ $t('common.template', 2) }}</span>
                             </UButton>

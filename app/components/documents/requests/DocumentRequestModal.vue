@@ -9,7 +9,7 @@ import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ListDocumentReqsResponse } from '~~/gen/ts/services/documents/documents';
-import DocumentRequestsListEntry from './DocumentRequestsListEntry.vue';
+import DocumentRequestListEntry from './DocumentRequestListEntry.vue';
 
 const props = defineProps<{
     access: DocumentAccess;
@@ -256,7 +256,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         />
 
                         <ul v-else class="mb-6 divide-y divide-gray-800 rounded-md dark:divide-gray-500" role="list">
-                            <DocumentRequestsListEntry
+                            <DocumentRequestListEntry
                                 v-for="request in requests.requests"
                                 :key="request.id"
                                 :request="request"

@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Struct } from "../../../google/protobuf/struct";
 /**
  * @generated from protobuf message resources.common.content.Content
  */
@@ -70,6 +71,31 @@ export interface JSONNode {
     content: JSONNode[];
 }
 /**
+ * @generated from protobuf message resources.common.content.TiptapJSONDocument
+ */
+export interface TiptapJSONDocument {
+    /**
+     * @generated from protobuf field: google.protobuf.Struct json = 1
+     */
+    json?: Struct;
+    /**
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: string summary = 2
+     */
+    summary: string;
+    /**
+     * @generated from protobuf field: uint32 word_count = 3
+     */
+    wordCount: number;
+    /**
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: string first_heading = 4
+     */
+    firstHeading: string;
+}
+/**
  * @generated from protobuf enum resources.common.content.ContentType
  */
 export enum ContentType {
@@ -82,13 +108,9 @@ export enum ContentType {
      */
     HTML = 1,
     /**
-     * @generated from protobuf enum value: CONTENT_TYPE_PLAIN = 2;
+     * @generated from protobuf enum value: CONTENT_TYPE_TIPTAP_JSON = 2;
      */
-    PLAIN = 2,
-    /**
-     * @generated from protobuf enum value: CONTENT_TYPE_TIPTAP_JSON = 3;
-     */
-    TIPTAP_JSON = 3
+    TIPTAP_JSON = 2
 }
 /**
  * @generated from protobuf enum resources.common.content.NodeType
@@ -276,3 +298,73 @@ class JSONNode$Type extends MessageType<JSONNode> {
  * @generated MessageType for protobuf message resources.common.content.JSONNode
  */
 export const JSONNode = new JSONNode$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TiptapJSONDocument$Type extends MessageType<TiptapJSONDocument> {
+    constructor() {
+        super("resources.common.content.TiptapJSONDocument", [
+            { no: 1, name: "json", kind: "message", T: () => Struct },
+            { no: 2, name: "summary", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "word_count", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
+            { no: 4, name: "first_heading", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<TiptapJSONDocument>): TiptapJSONDocument {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.summary = "";
+        message.wordCount = 0;
+        message.firstHeading = "";
+        if (value !== undefined)
+            reflectionMergePartial<TiptapJSONDocument>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TiptapJSONDocument): TiptapJSONDocument {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* google.protobuf.Struct json */ 1:
+                    message.json = Struct.internalBinaryRead(reader, reader.uint32(), options, message.json);
+                    break;
+                case /* string summary */ 2:
+                    message.summary = reader.string();
+                    break;
+                case /* uint32 word_count */ 3:
+                    message.wordCount = reader.uint32();
+                    break;
+                case /* string first_heading */ 4:
+                    message.firstHeading = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: TiptapJSONDocument, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* google.protobuf.Struct json = 1; */
+        if (message.json)
+            Struct.internalBinaryWrite(message.json, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* string summary = 2; */
+        if (message.summary !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.summary);
+        /* uint32 word_count = 3; */
+        if (message.wordCount !== 0)
+            writer.tag(3, WireType.Varint).uint32(message.wordCount);
+        /* string first_heading = 4; */
+        if (message.firstHeading !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.firstHeading);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.common.content.TiptapJSONDocument
+ */
+export const TiptapJSONDocument = new TiptapJSONDocument$Type();

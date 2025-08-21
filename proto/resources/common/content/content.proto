@@ -3,14 +3,14 @@ syntax = "proto3";
 package resources.common.content;
 
 import "buf/validate/validate.proto";
+import "google/protobuf/struct.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content;content";
 
 enum ContentType {
   CONTENT_TYPE_UNSPECIFIED = 0;
   CONTENT_TYPE_HTML = 1;
-  CONTENT_TYPE_PLAIN = 2;
-  CONTENT_TYPE_TIPTAP_JSON = 3;
+  CONTENT_TYPE_TIPTAP_JSON = 2;
 }
 
 message Content {
@@ -41,4 +41,14 @@ message JSONNode {
   // @sanitize: method=StripTags
   optional string text = 5;
   repeated JSONNode content = 6;
+}
+
+message TiptapJSONDocument {
+  google.protobuf.Struct json = 1;
+
+  // @sanitize: method=StripTags
+  string summary = 2;
+  uint32 word_count = 3;
+  // @sanitize: method=StripTags
+  string first_heading = 4;
 }

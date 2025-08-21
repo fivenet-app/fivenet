@@ -4,7 +4,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
-import QualificationsRequestsListEntry from '~/components/qualifications/QualificationsRequestsListEntry.vue';
+import QualificationRequestsListEntry from '~/components/qualifications/QualificationRequestsListEntry.vue';
 import type { RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { ListQualificationRequestsResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
@@ -30,10 +30,10 @@ const sort = useRouteQueryObject<TableSortable>('sort', {
 
 const { data, status, refresh, error } = useLazyAsyncData(
     `qualifications-requests-${sort.value.column}:${sort.value.direction}-${page.value}-${props.qualificationId}`,
-    () => listQualificationsRequests(props.qualificationId),
+    () => listQualificationRequests(props.qualificationId),
 );
 
-async function listQualificationsRequests(
+async function listQualificationRequests(
     qualificationId?: number,
     status?: RequestStatus[],
 ): Promise<ListQualificationRequestsResponse> {
@@ -87,7 +87,7 @@ async function listQualificationsRequests(
             />
 
             <ul v-else class="divide-y divide-gray-100 dark:divide-gray-800" role="list">
-                <QualificationsRequestsListEntry
+                <QualificationRequestsListEntry
                     v-for="request in data?.requests"
                     :key="`${request.qualificationId}-${request.userId}`"
                     :request="request"

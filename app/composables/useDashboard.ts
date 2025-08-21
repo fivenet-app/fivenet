@@ -4,7 +4,7 @@ const _useDashboard = () => {
     const route = useRoute();
     const router = useRouter();
     const isHelpSlideoverOpen = ref(false);
-    const isNotificationsSlideoverOpen = ref(false);
+    const isNotificationSlideoverOpen = ref(false);
 
     defineShortcuts({
         'g-h': () => router.push('/'),
@@ -18,23 +18,22 @@ const _useDashboard = () => {
         'g-m': () => router.push('/livemap'),
         'g-w': () => router.push('/centrum'),
         'g-l': () => router.push('/wiki'),
-        'g-i': () => router.push('/internet'),
         'g-p': () => router.push('/settings'),
         '?': () => (isHelpSlideoverOpen.value = true),
-        b: () => (isNotificationsSlideoverOpen.value = true),
+        b: () => (isNotificationSlideoverOpen.value = true),
     });
 
     watch(
         () => route.fullPath,
         () => {
             isHelpSlideoverOpen.value = false;
-            isNotificationsSlideoverOpen.value = false;
+            isNotificationSlideoverOpen.value = false;
         },
     );
 
     return {
         isHelpSlideoverOpen,
-        isNotificationsSlideoverOpen,
+        isNotificationSlideoverOpen,
     };
 };
 

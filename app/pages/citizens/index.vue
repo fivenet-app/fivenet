@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import CitizensLabelsModal from '~/components/citizens/CitizensLabelsModal.vue';
+import CitizensLabelModal from '~/components/citizens/CitizensLabelModal.vue';
 import CitizensList from '~/components/citizens/CitizensList.vue';
 
 useHead({
@@ -26,7 +26,7 @@ const modal = useModal();
                         v-if="can('citizens.CitizensService/ManageLabels').value"
                         :label="$t('common.label', 2)"
                         icon="i-mdi-tag"
-                        @click="modal.open(CitizensLabelsModal, {})"
+                        @click="modal.open(CitizensLabelModal, {})"
                     />
                 </template>
             </UDashboardNavbar>

@@ -5,7 +5,7 @@ import SortButton from '~/components/partials/SortButton.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import QualificationsListEntry from '~/components/qualifications/QualificationsListEntry.vue';
+import QualificationListEntry from '~/components/qualifications/QualificationListEntry.vue';
 import type { ListQualificationsResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
 const { $grpc } = useNuxtApp();
@@ -93,7 +93,7 @@ watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
             />
 
             <ul v-else class="divide-y divide-gray-100 dark:divide-gray-800" role="list">
-                <QualificationsListEntry
+                <QualificationListEntry
                     v-for="qualification in data?.qualifications"
                     :key="qualification.id"
                     :qualification="qualification"

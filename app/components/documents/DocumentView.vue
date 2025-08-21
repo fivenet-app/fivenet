@@ -6,7 +6,7 @@ import DocumentReferences from '~/components/documents/DocumentReferences.vue';
 import DocumentRelations from '~/components/documents/DocumentRelations.vue';
 import { checkDocAccess } from '~/components/documents/helpers';
 import DocumentRequestAccess from '~/components/documents/requests/DocumentRequestAccess.vue';
-import DocumentRequestsModal from '~/components/documents/requests/DocumentRequestsModal.vue';
+import DocumentRequestModal from '~/components/documents/requests/DocumentRequestModal.vue';
 import AccessBadges from '~/components/partials/access/AccessBadges.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
@@ -79,7 +79,7 @@ function openRequestsModal(): void {
         return;
     }
 
-    modal.open(DocumentRequestsModal, {
+    modal.open(DocumentRequestModal, {
         access: doc.value.access,
         doc: doc.value.document,
         onRefresh: () => refresh(),
@@ -115,6 +115,8 @@ function updateReminderTime(reminderTime?: Timestamp): void {
         doc.value.document.workflowUser = {
             documentId: props.documentId,
             userId: activeChar.value!.userId,
+            reminderCount: 0,
+            maxReminderCount: 10,
         };
     }
 

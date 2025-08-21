@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import CategoriesList from '~/components/documents/categories/CategoriesList.vue';
+import CategoryList from '~/components/documents/categories/CategoryList.vue';
 
 useHead({
     title: 'pages.documents.categories.title',
@@ -15,7 +15,7 @@ definePageMeta({
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <CategoriesList />
+            <CategoryList />
         </UDashboardPanel>
     </UDashboardPage>
 </template>

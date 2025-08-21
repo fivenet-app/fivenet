@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import DNBToggle from './notifications/DNBToggle.vue';
-import NotificationsList from './notifications/NotificationsList.vue';
+import NotificationList from './notifications/NotificationList.vue';
 
-const { isNotificationsSlideoverOpen } = useDashboard();
+const { isNotificationSlideoverOpen } = useDashboard();
 </script>
 
 <template>
-    <USlideover v-model="isNotificationsSlideoverOpen" :ui="{ width: 'w-screen sm:max-w-3xl' }">
+    <USlideover v-model="isNotificationSlideoverOpen" :ui="{ width: 'w-screen sm:max-w-3xl' }">
         <UCard
             class="flex flex-1 flex-col"
             :ui="{
@@ -32,14 +32,14 @@ const { isNotificationsSlideoverOpen } = useDashboard();
                             color="gray"
                             variant="ghost"
                             icon="i-mdi-window-close"
-                            @click="isNotificationsSlideoverOpen = false"
+                            @click="isNotificationSlideoverOpen = false"
                         />
                     </div>
                 </div>
             </template>
 
             <div class="flex flex-1 flex-col">
-                <NotificationsList @clicked="isNotificationsSlideoverOpen = false" />
+                <NotificationList @clicked="isNotificationSlideoverOpen = false" />
             </div>
 
             <template #footer>
@@ -49,13 +49,13 @@ const { isNotificationsSlideoverOpen } = useDashboard();
                         block
                         @click="
                             navigateTo({ name: 'notifications' });
-                            isNotificationsSlideoverOpen = false;
+                            isNotificationSlideoverOpen = false;
                         "
                     >
                         {{ $t('components.partials.sidebar_notifications') }}
                     </UButton>
 
-                    <UButton class="flex-1" color="black" block @click="isNotificationsSlideoverOpen = false">
+                    <UButton class="flex-1" color="black" block @click="isNotificationSlideoverOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

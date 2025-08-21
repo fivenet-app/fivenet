@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import TemplatesList from '~/components/documents/templates/TemplatesList.vue';
+import TemplateList from '~/components/documents/templates/TemplateList.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import type { TemplateShort } from '~~/gen/ts/resources/documents/templates';
 
@@ -44,7 +44,7 @@ const templatesListRef = useTemplateRef('templatesListRef');
             </UDashboardNavbar>
 
             <UDashboardPanelContent>
-                <TemplatesList ref="templatesListRef" @selected="selected($event)" />
+                <TemplateList ref="templatesListRef" @selected="selected($event)" />
             </UDashboardPanelContent>
 
             <Pagination

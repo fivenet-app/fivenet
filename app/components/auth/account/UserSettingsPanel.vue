@@ -33,10 +33,10 @@ const startpages: { name: string; path: RoutePathSchema; permission?: Perms }[] 
 const selectedHomepage = ref<(typeof startpages)[0]>();
 watch(selectedHomepage, () => (startpage.value = selectedHomepage.value?.path ?? '/overview'));
 
-const designDocumentsListStyle = ref(design.value.documents.listStyle === 'double');
+const designDocumentListStyle = ref(design.value.documents.listStyle === 'double');
 
-watch(designDocumentsListStyle, async () => {
-    if (designDocumentsListStyle.value) {
+watch(designDocumentListStyle, async () => {
+    if (designDocumentListStyle.value) {
         design.value.documents.listStyle = 'double';
     } else {
         design.value.documents.listStyle = 'single';
@@ -119,12 +119,12 @@ onBeforeMount(async () => (selectedHomepage.value = startpages.find((h) => h.pat
 
                     <UFormGroup
                         class="grid grid-cols-2 items-center gap-2"
-                        name="designDocumentsListStyle"
+                        name="designDocumentListStyle"
                         :label="$t('components.auth.UserSettingsPanel.documents_lists_style.title')"
                     >
                         <div class="inline-flex items-center gap-2 text-sm">
                             <span>{{ $t('components.auth.UserSettingsPanel.documents_lists_style.single') }}</span>
-                            <UToggle v-model="designDocumentsListStyle" />
+                            <UToggle v-model="designDocumentListStyle" />
                             <span>{{ $t('components.auth.UserSettingsPanel.documents_lists_style.double') }}</span>
                         </div>
                     </UFormGroup>

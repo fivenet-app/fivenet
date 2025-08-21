@@ -19,7 +19,10 @@ import {
     AutoGradeMode,
     QualificationExamMode,
 } from '~~/gen/ts/resources/qualifications/qualifications';
-import type { UpdateQualificationRequest, UpdateQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
+import type {
+    UpdateQualificationRequest,
+    UpdateQualificationsResponse,
+} from '~~/gen/ts/services/qualifications/qualifications';
 import BackButton from '../partials/BackButton.vue';
 import ConfirmModal from '../partials/ConfirmModal.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
@@ -245,7 +248,7 @@ function setFromProps(): void {
 
 watch(qualification, () => setFromProps());
 
-async function updateQualification(values: Schema): Promise<UpdateQualificationResponse> {
+async function updateQualification(values: Schema): Promise<UpdateQualificationsResponse> {
     values.access.jobs.forEach((job) => job.id < 0 && (job.id = 0));
 
     const req: UpdateQualificationRequest = {

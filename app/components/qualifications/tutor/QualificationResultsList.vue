@@ -10,7 +10,7 @@ import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
 import { type Qualification, QualificationExamMode, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type {
     DeleteQualificationResultResponse,
-    ListQualificationsResultsResponse,
+    ListQualificationResultsResponse,
 } from '~~/gen/ts/services/qualifications/qualifications';
 
 const props = withDefaults(
@@ -45,18 +45,18 @@ const sort = useRouteQueryObject<TableSortable>('sort', {
 
 const { data, status, refresh, error } = useLazyAsyncData(
     `qualifications-results-${sort.value.column}:${sort.value.direction}-${page.value}-${props.qualification.id}`,
-    () => listQualificationsResults(props.qualification.id, props.status),
+    () => listQualificationResults(props.qualification.id, props.status),
     {
         watch: [sort],
     },
 );
 
-async function listQualificationsResults(
+async function listQualificationResults(
     qualificationId?: number,
     status?: ResultStatus[],
-): Promise<ListQualificationsResultsResponse> {
+): Promise<ListQualificationResultsResponse> {
     try {
-        const call = $grpc.qualifications.qualifications.listQualificationsResults({
+        const call = $grpc.qualifications.qualifications.listQualificationResults({
             pagination: {
                 offset: calculateOffset(page.value, data.value?.pagination),
             },

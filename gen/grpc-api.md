@@ -556,6 +556,20 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
+
+### resources.common.content.TiptapJSONDocument
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `json` | [google.protobuf.Struct](https://protobuf.dev/reference/protobuf/google.protobuf/#struct) |  |  |
+| `summary` | [string](#string) |  | @sanitize: method=StripTags |
+| `word_count` | [uint32](#uint32) |  |  |
+| `first_heading` | [string](#string) |  | @sanitize: method=StripTags |
+
+
+
+
  <!-- end messages -->
 
 
@@ -565,8 +579,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | ---- | ------ | ----------- |
 | `CONTENT_TYPE_UNSPECIFIED` | 0 |  |
 | `CONTENT_TYPE_HTML` | 1 |  |
-| `CONTENT_TYPE_PLAIN` | 2 |  |
-| `CONTENT_TYPE_TIPTAP_JSON` | 3 |  |
+| `CONTENT_TYPE_TIPTAP_JSON` | 2 |  |
 
 
 

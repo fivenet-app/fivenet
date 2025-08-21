@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 
-const { isNotificationsSlideoverOpen } = useDashboard();
+const { isNotificationSlideoverOpen } = useDashboard();
 
 const notifications = useNotificationsStore();
 const { notificationsCount, doNotDisturb } = storeToRefs(notifications);
@@ -40,7 +40,7 @@ watch(notificationsCount, () => {
             :text="notificationsCount <= 9 ? notificationsCount : '9+'"
             size="xl"
         >
-            <UButton color="gray" variant="ghost" square @click="isNotificationsSlideoverOpen = true">
+            <UButton color="gray" variant="ghost" square @click="isNotificationSlideoverOpen = true">
                 <UIcon
                     class="size-5"
                     :name="

@@ -47,13 +47,13 @@ const sort = useRouteQueryObject<TableSortable>('sort', {
 
 const { data, status, refresh, error } = useLazyAsyncData(
     `qualifications-requests-${sort.value.column}:${sort.value.direction}-${page.value}-${props.qualification.id}`,
-    () => listQualificationsRequests(props.qualification.id),
+    () => listQualificationRequests(props.qualification.id),
     {
         watch: [sort],
     },
 );
 
-async function listQualificationsRequests(
+async function listQualificationRequests(
     qualificationId?: number,
     status?: RequestStatus[],
 ): Promise<ListQualificationRequestsResponse> {

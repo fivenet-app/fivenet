@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import DocumentList from '~/components/documents/DocumentList.vue';
-import PinnedDocumentsList from '~/components/documents/PinnedDocumentsList.vue';
-import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
+import PinnedDocumentList from '~/components/documents/PinnedDocumentList.vue';
+import TemplateModal from '~/components/documents/templates/TemplateModal.vue';
 
 useHead({
     title: 'pages.documents.title',
@@ -56,7 +56,7 @@ const isOpen = ref(false);
                     </UButtonGroup>
 
                     <UTooltip v-if="can('documents.DocumentsService/UpdateDocument').value" :text="$t('common.create')">
-                        <UButton trailing-icon="i-mdi-plus" color="gray" truncate @click="modal.open(TemplatesModal, {})">
+                        <UButton trailing-icon="i-mdi-plus" color="gray" truncate @click="modal.open(TemplateModal, {})">
                             <span class="hidden truncate sm:block">
                                 {{ $t('common.document', 1) }}
                             </span>
@@ -79,7 +79,7 @@ const isOpen = ref(false);
             :resizable="{ min: 275, max: 600 }"
             :ui="{ collapsible: 'lg:!hidden 2xl:!flex', slideover: 'lg:!flex 2xl:hidden' }"
         >
-            <PinnedDocumentsList />
+            <PinnedDocumentList />
         </UDashboardPanel>
     </UDashboardPage>
 </template>
