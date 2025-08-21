@@ -20,12 +20,11 @@ import { setWaypointPLZ } from '~/composables/nui';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
 import { useSettingsStore } from '~/stores/settings';
+import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-
-const { $grpc } = useNuxtApp();
 
 const modal = useModal();
 
@@ -46,6 +45,8 @@ const notifications = useNotificationsStore();
 const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
 
+const centrumCentrumClient = await getCentrumCentrumClient();
+
 const logger = useLogger('⛑️ Centrum');
 
 const canStream = can('centrum.CentrumService/Stream');
@@ -54,7 +55,7 @@ const selectedDispatch = ref<number | undefined>();
 
 async function updateDispatchStatus(dispatchId: number, status: StatusDispatch): Promise<void> {
     try {
-        const call = $grpc.centrum.centrum.updateDispatchStatus({ dispatchId, status });
+        const call = centrumCentrumClient.updateDispatchStatus({ dispatchId, status });
         await call;
 
         notifications.add({
@@ -91,7 +92,7 @@ async function updateDspStatus(dispatchId?: number, status?: StatusDispatch): Pr
 
 async function updateUnitStatus(id: number, status: StatusUnit): Promise<void> {
     try {
-        const call = $grpc.centrum.centrum.updateUnitStatus({
+        const call = centrumCentrumClient.updateUnitStatus({
             unitId: id,
             status,
         });

@@ -9,6 +9,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { jsonNodeToTocLinks } from '~/utils/content';
+import { getWikiWikiClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { AccessLevel } from '~~/gen/ts/resources/wiki/access';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
@@ -25,8 +26,6 @@ const props = defineProps<{
     error: Error | undefined;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const { can } = useAuth();
@@ -34,6 +33,8 @@ const { can } = useAuth();
 const modal = useModal();
 
 const notifications = useNotificationsStore();
+
+const wikiWikiClient = await getWikiWikiClient();
 
 const breadcrumbs = computed(() => [
     {
@@ -55,7 +56,7 @@ const breadcrumbs = computed(() => [
 
 async function deletePage(id: number): Promise<void> {
     try {
-        const call = $grpc.wiki.wiki.deletePage({
+        const call = wikiWikiClient.deletePage({
             id: id,
         });
         await call;
@@ -86,7 +87,7 @@ async function deletePage(id: number): Promise<void> {
     }
 }
 
-const wikiService = useWikiWiki();
+const wikiService = await useWikiWiki();
 
 const tocLinks = computedAsync(async () => props.page?.content?.content && jsonNodeToTocLinks(props.page?.content?.content));
 

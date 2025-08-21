@@ -4,10 +4,13 @@ import { z } from 'zod';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
 import { useSettingsStore } from '~/stores/settings';
+import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { File } from '~~/gen/ts/resources/file/file';
 import type { ExamQuestion } from '~~/gen/ts/resources/qualifications/exam';
 import QuestionMutipleChoice from './QuestionMutipleChoice.vue';
 import QuestionSingleChoice from './QuestionSingleChoice.vue';
+
+const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
 const props = defineProps<{
     qualificationId: number;
@@ -26,11 +29,9 @@ const emit = defineEmits<{
 
 const question = useVModel(props, 'modelValue', emit);
 
-const { $grpc } = useNuxtApp();
-
 const appConfig = useAppConfig();
-
 const settingsStore = useSettingsStore();
+
 const { nuiEnabled } = storeToRefs(settingsStore);
 
 const schema = z.object({
@@ -178,7 +179,7 @@ watch(
 );
 
 const { resizeAndUpload } = useFileUploader(
-    (opts) => $grpc.qualifications.qualifications.uploadFile(opts),
+    (opts) => qualificationsQualificationsClient.uploadFile(opts),
     'qualifications-exam-questions',
     props.qualificationId,
 );

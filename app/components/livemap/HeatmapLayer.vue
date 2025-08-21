@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type * as L from 'leaflet';
 import HeatmapLegend from '~/components/livemap/controls/HeatmapLegend.vue';
+import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import type { GetDispatchHeatmapResponse } from '~~/gen/ts/services/centrum/centrum';
 
 const props = withDefaults(
@@ -12,7 +13,7 @@ const props = withDefaults(
     },
 );
 
-const { $grpc } = useNuxtApp();
+const centrumCentrumClient = await getCentrumCentrumClient();
 
 const {
     data: heatmap,
@@ -22,7 +23,7 @@ const {
 
 async function getDispatchHeatmap(): Promise<GetDispatchHeatmapResponse> {
     try {
-        const call = $grpc.centrum.centrum.getDispatchHeatmap({
+        const call = centrumCentrumClient.getDispatchHeatmap({
             status: [],
         });
         const { response } = await call;

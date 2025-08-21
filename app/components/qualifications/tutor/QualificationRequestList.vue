@@ -7,6 +7,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { checkQualificationAccess, requestStatusToTextColor } from '~/components/qualifications/helpers';
 import QualificationRequestTutorModal from '~/components/qualifications/tutor/QualificationRequestTutorModal.vue';
 import QualificationResultTutorModal from '~/components/qualifications/tutor/QualificationResultTutorModal.vue';
+import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
 import { type Qualification, QualificationExamMode, RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type {
@@ -32,8 +33,6 @@ const emit = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const modal = useModal();
@@ -53,12 +52,18 @@ const { data, status, refresh, error } = useLazyAsyncData(
     },
 );
 
+defineExpose({
+    refresh,
+});
+
+const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
+
 async function listQualificationRequests(
     qualificationId?: number,
     status?: RequestStatus[],
 ): Promise<ListQualificationRequestsResponse> {
     try {
-        const call = $grpc.qualifications.qualifications.listQualificationRequests({
+        const call = qualificationsQualificationsClient.listQualificationRequests({
             pagination: {
                 offset: calculateOffset(page.value, data.value?.pagination),
             },
@@ -77,7 +82,7 @@ async function listQualificationRequests(
 
 async function deleteQualificationRequest(qualificationId: number, userId: number): Promise<DeleteQualificationReqResponse> {
     try {
-        const call = $grpc.qualifications.qualifications.deleteQualificationReq({
+        const call = qualificationsQualificationsClient.deleteQualificationReq({
             qualificationId: qualificationId,
             userId,
         });
@@ -131,10 +136,6 @@ async function onRefresh(): Promise<void> {
     emit('refresh');
     return refresh();
 }
-
-defineExpose({
-    refresh,
-});
 </script>
 
 <template>

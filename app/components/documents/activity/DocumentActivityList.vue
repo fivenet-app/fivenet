@@ -4,13 +4,14 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { ListDocumentActivityResponse } from '~~/gen/ts/services/documents/documents';
 
 const props = defineProps<{
     documentId: number;
 }>();
 
-const { $grpc } = useNuxtApp();
+const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
@@ -20,7 +21,7 @@ const { data, status, refresh, error } = useLazyAsyncData(`document-${props.docu
 
 async function listDocumentActivity(): Promise<ListDocumentActivityResponse> {
     try {
-        const call = $grpc.documents.documents.listDocumentActivity({
+        const call = documentsDocumentsClient.listDocumentActivity({
             pagination: {
                 offset: calculateOffset(page.value, data.value?.pagination),
             },

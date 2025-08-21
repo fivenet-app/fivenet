@@ -10,6 +10,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useLivemapStore } from '~/stores/livemap';
+import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import type { ListDispatchesRequest, ListDispatchesResponse } from '~~/gen/ts/services/centrum/centrum';
 
 useHead({
@@ -22,10 +23,10 @@ definePageMeta({
     permission: 'centrum.CentrumService/TakeControl',
 });
 
-const { $grpc } = useNuxtApp();
-
 const livemapStore = useLivemapStore();
 const { showLocationMarker } = storeToRefs(livemapStore);
+
+const centrumCentrumClient = await getCentrumCentrumClient();
 
 const schema = z.object({
     postal: z.string().trim().max(12).default(''),
@@ -54,7 +55,7 @@ async function listDispatches(): Promise<ListDispatchesResponse> {
             req.ids.push(query.id);
         }
 
-        const call = $grpc.centrum.centrum.listDispatches(req);
+        const call = centrumCentrumClient.listDispatches(req);
         const { response } = await call;
 
         return response;

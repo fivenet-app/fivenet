@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { getCompletorCompletorClient, getJobsJobsClient } from '~~/gen/ts/clients';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
@@ -11,8 +12,6 @@ import type { ListColleaguesRequest } from '~~/gen/ts/services/jobs/jobs';
 export const useCompletorStore = defineStore(
     'completor',
     () => {
-        const { $grpc } = useNuxtApp();
-
         // State
         const jobs = ref<Job[]>([]);
 
@@ -30,8 +29,10 @@ export const useCompletorStore = defineStore(
         };
 
         const completeJobs = async (req: CompleteJobsRequest): Promise<Job[]> => {
+            const completorCompletorClient = await getCompletorCompletorClient();
+
             try {
-                const call = $grpc.completor.completor.completeJobs(req);
+                const call = completorCompletorClient.completeJobs(req);
                 const { response } = await call;
                 return response.jobs;
             } catch (e) {
@@ -54,8 +55,11 @@ export const useCompletorStore = defineStore(
             if (!can('completor.CompletorService/CompleteCitizens').value) {
                 return [];
             }
+
+            const completorCompletorClient = await getCompletorCompletorClient();
+
             try {
-                const call = $grpc.completor.completor.completeCitizens(req);
+                const call = completorCompletorClient.completeCitizens(req);
                 const { response } = await call;
                 return response.users;
             } catch (e) {
@@ -78,8 +82,11 @@ export const useCompletorStore = defineStore(
             if (!req.pagination) {
                 req.pagination = { offset: 0 };
             }
+
+            const jobsJobsClient = await getJobsJobsClient();
+
             try {
-                const call = $grpc.jobs.jobs.listColleagues(req);
+                const call = jobsJobsClient.listColleagues(req);
                 const { response } = await call;
                 return response.colleagues;
             } catch (e) {
@@ -93,8 +100,11 @@ export const useCompletorStore = defineStore(
             if (!can('completor.CompletorService/CompleteDocumentCategories').value) {
                 return [];
             }
+
+            const completorCompletorClient = await getCompletorCompletorClient();
+
             try {
-                const call = $grpc.completor.completor.completeDocumentCategories({ search });
+                const call = completorCompletorClient.completeDocumentCategories({ search });
                 const { response } = await call;
                 return response.categories;
             } catch (e) {
@@ -104,8 +114,10 @@ export const useCompletorStore = defineStore(
         };
 
         const listLawBooks = async (): Promise<LawBook[]> => {
+            const completorCompletorClient = await getCompletorCompletorClient();
+
             try {
-                const call = $grpc.completor.completor.listLawBooks({});
+                const call = completorCompletorClient.listLawBooks({});
                 const { response } = await call;
                 return response.books;
             } catch (e) {
@@ -115,8 +127,10 @@ export const useCompletorStore = defineStore(
         };
 
         const completeCitizenLabels = async (search: string): Promise<Label[]> => {
+            const completorCompletorClient = await getCompletorCompletorClient();
+
             try {
-                const call = $grpc.completor.completor.completeCitizenLabels({
+                const call = completorCompletorClient.completeCitizenLabels({
                     search: search,
                 });
                 const { response } = await call;

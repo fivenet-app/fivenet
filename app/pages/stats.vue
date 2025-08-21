@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import CountUp from 'vue-countup-v3';
 import { useAuthStore } from '~/stores/auth';
+import { getStatsStatsClient } from '~~/gen/ts/clients';
 import type { Stat } from '~~/gen/ts/resources/stats/stats';
 
 useHead({
@@ -16,10 +17,10 @@ definePageMeta({
     redirectIfAuthed: false,
 });
 
-const { $grpc } = useNuxtApp();
-
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
+
+const statsStatsClient = await getStatsStatsClient();
 
 type Stats = { [key: string]: Stat & { unit?: string; icon?: string } };
 
@@ -70,7 +71,7 @@ const { data: stats, status } = useLazyAsyncData('stats', () => getStats(), {
 
 async function getStats(): Promise<Stats> {
     try {
-        const call = $grpc.stats.stats.getStats({});
+        const call = statsStatsClient.getStats({});
         const { response } = await call;
 
         const stats = { ...defaultStats };

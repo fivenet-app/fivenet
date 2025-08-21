@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { z } from 'zod';
 import { useCompletorStore } from '~/stores/completor';
+import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import { QualificationExamMode, type QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
@@ -30,13 +31,13 @@ defineEmits<{
     (e: 'delete'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const entry = defineModel<MixedAccessEntry>({ required: true });
 
 const completorStore = useCompletorStore();
 
 const { game } = useAppConfig();
+
+const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
 const schema = z.object({
     id: z.coerce.number(),
@@ -86,7 +87,7 @@ async function setFromProps(): Promise<void> {
         }
 
         try {
-            const { response } = await $grpc.qualifications.qualifications.getQualification({
+            const { response } = await qualificationsQualificationsClient.getQualification({
                 qualificationId: entry.value.qualificationId,
             });
             selectedQualification.value = response.qualification;
@@ -225,7 +226,7 @@ if (props.hideGrade) {
                         class="flex-1"
                         :searchable="
                             async (q: string) => {
-                                const { response } = await $grpc.qualifications.qualifications.listQualifications({
+                                const { response } = await qualificationsQualificationsClient.listQualifications({
                                     pagination: {
                                         offset: 0,
                                     },

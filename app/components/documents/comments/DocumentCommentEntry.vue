@@ -7,6 +7,7 @@ import HTMLContent from '~/components/partials/content/HTMLContent.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { Content } from '~/types/history';
+import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { Comment } from '~~/gen/ts/resources/documents/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -28,8 +29,6 @@ const emit = defineEmits<{
 
 const comment = useVModel(props, 'modelValue', emit);
 
-const { $grpc } = useNuxtApp();
-
 const modal = useModal();
 
 const { can, activeChar, isSuperuser } = useAuth();
@@ -37,6 +36,8 @@ const { can, activeChar, isSuperuser } = useAuth();
 const notifications = useNotificationsStore();
 
 const historyStore = useHistoryStore();
+
+const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const editing = ref(false);
 
@@ -107,7 +108,7 @@ watchDebounced(
 
 async function editComment(documentId: number, commentId: number, values: Schema): Promise<void> {
     try {
-        const { response } = await $grpc.documents.documents.editComment({
+        const { response } = await documentsDocumentsClient.editComment({
             comment: {
                 id: commentId,
                 documentId,
@@ -140,7 +141,7 @@ async function editComment(documentId: number, commentId: number, values: Schema
 
 async function deleteComment(id: number): Promise<void> {
     try {
-        await $grpc.documents.documents.deleteComment({
+        await documentsDocumentsClient.deleteComment({
             commentId: id,
         });
 

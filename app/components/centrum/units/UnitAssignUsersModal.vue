@@ -2,6 +2,7 @@
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useCompletorStore } from '~/stores/completor';
+import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 
@@ -9,11 +10,11 @@ const props = defineProps<{
     unit: Unit;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const completorStore = useCompletorStore();
+
+const centrumCentrumClient = await getCentrumCentrumClient();
 
 const usersLoading = ref(false);
 
@@ -41,7 +42,7 @@ async function assignUnit(unitId: number): Promise<void> {
             }
         });
 
-        const call = $grpc.centrum.centrum.assignUnit({
+        const call = centrumCentrumClient.assignUnit({
             unitId: unitId,
             toAdd: toAdd,
             toRemove: toRemove,

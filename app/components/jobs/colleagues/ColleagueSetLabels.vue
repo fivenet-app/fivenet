@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
+import { getJobsJobsClient } from '~~/gen/ts/clients';
 import type { ColleagueProps } from '~~/gen/ts/resources/jobs/colleagues';
 import type { Labels } from '~~/gen/ts/resources/jobs/labels';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -18,13 +19,13 @@ const emit = defineEmits<{
 
 const labels = useVModel(props, 'modelValue', emit);
 
-const { $grpc } = useNuxtApp();
-
 const notifications = useNotificationsStore();
+
+const jobsJobsClient = await getJobsJobsClient();
 
 async function getColleagueLabels(search?: string): Promise<GetColleagueLabelsResponse> {
     try {
-        const { response } = await $grpc.jobs.jobs.getColleagueLabels({
+        const { response } = await jobsJobsClient.getColleagueLabels({
             search: search,
         });
 
@@ -68,7 +69,7 @@ async function setUserJobProp(userId: number, values: Schema): Promise<SetCollea
     };
 
     try {
-        const call = $grpc.jobs.jobs.setColleagueProps({
+        const call = jobsJobsClient.setColleagueProps({
             props: jobsUserProps,
             reason: values.reason,
         });

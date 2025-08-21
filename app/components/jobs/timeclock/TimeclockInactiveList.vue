@@ -7,17 +7,16 @@ import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import { getJobsTimeclockClient } from '~~/gen/ts/clients';
 import type { Perms } from '~~/gen/ts/perms';
 import type { ListInactiveEmployeesResponse } from '~~/gen/ts/services/jobs/timeclock';
 import ColleagueName from '../colleagues/ColleagueName.vue';
-
-const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
 
 const { can } = useAuth();
 
-const form = ref<null | Form<Schema>>();
+const jobsTimeclockClient = await getJobsTimeclockClient();
 
 const schema = z.object({
     days: z.coerce.number().min(1).max(31),
@@ -46,7 +45,7 @@ const { data, status, refresh, error } = useLazyAsyncData(
 
 async function listInactiveEmployees(values: Schema): Promise<ListInactiveEmployeesResponse> {
     try {
-        const call = $grpc.jobs.timeclock.listInactiveEmployees({
+        const call = jobsTimeclockClient.listInactiveEmployees({
             pagination: {
                 offset: calculateOffset(page.value, data.value?.pagination),
             },
@@ -62,6 +61,8 @@ async function listInactiveEmployees(values: Schema): Promise<ListInactiveEmploy
         throw e;
     }
 }
+
+const form = ref<null | Form<Schema>>();
 
 watchDebounced(
     state,

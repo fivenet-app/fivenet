@@ -6,6 +6,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import RoleViewAttr from '~/components/settings/roles/RoleViewAttr.vue';
+import { getSettingsSettingsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes';
 import type { Permission, Role } from '~~/gen/ts/resources/permissions/permissions';
@@ -21,8 +22,6 @@ const emit = defineEmits<{
     (e: 'deleted'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const { can } = useAuth();
@@ -32,6 +31,8 @@ const modal = useModal();
 const slideover = useSlideover();
 
 const notifications = useNotificationsStore();
+
+const settingsSettingsClient = await getSettingsSettingsClient();
 
 const { data: role, status, refresh, error } = useLazyAsyncData(`settings-roles-${props.roleId}`, () => getRole(props.roleId));
 
@@ -45,7 +46,7 @@ const attrList = ref<RoleAttribute[]>([]);
 
 async function getRole(id: number): Promise<Role> {
     try {
-        const call = $grpc.settings.settings.getRole({
+        const call = settingsSettingsClient.getRole({
             id: id,
         });
         const { response } = await call;
@@ -65,7 +66,7 @@ async function getRole(id: number): Promise<Role> {
 
 async function getPermissions(roleId: number): Promise<void> {
     try {
-        const call = $grpc.settings.settings.getPermissions({
+        const call = settingsSettingsClient.getPermissions({
             roleId: roleId,
         });
         const { response } = await call;
@@ -82,7 +83,7 @@ async function getPermissions(roleId: number): Promise<void> {
 
 async function deleteRole(id: number): Promise<void> {
     try {
-        await $grpc.settings.settings.deleteRole({
+        await settingsSettingsClient.deleteRole({
             id: id,
         });
 
@@ -195,7 +196,7 @@ async function updateRolePerms(): Promise<void> {
     }
 
     try {
-        await $grpc.settings.settings.updateRolePerms({
+        await settingsSettingsClient.updateRolePerms({
             id: props.roleId,
             perms: perms,
             attrs: attrs,

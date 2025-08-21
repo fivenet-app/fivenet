@@ -9,11 +9,14 @@ import (
 
 	pgs "github.com/lyft/protoc-gen-star/v2"
 	pgsgo "github.com/lyft/protoc-gen-star/v2/lang/go"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // PermifyPlugin
 type PermifyModule struct {
 	*pgs.ModuleBase
+
 	ctx pgsgo.Context
 	tpl *template.Template
 }
@@ -22,9 +25,13 @@ var fns = template.FuncMap{
 	"last": func(x int, a any) bool {
 		return x == reflect.ValueOf(a).Len()-1
 	},
+	"title": func(s string) string {
+		c := cases.Title(language.English)
+		return c.String(s)
+	},
 }
 
-// Permify returns an initialized PermifyPlugin
+// Permify returns an initialized PermifyPlugin.
 func Permify() *PermifyModule {
 	return &PermifyModule{ModuleBase: &pgs.ModuleBase{}}
 }

@@ -6,6 +6,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
+import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import { UserActivityType } from '~~/gen/ts/resources/users/activity';
 import type { ListUserActivityResponse } from '~~/gen/ts/services/citizens/citizens';
 
@@ -13,9 +14,9 @@ const props = defineProps<{
     userId: number;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { attr, activeChar } = useAuth();
+
+const citizensCitizensClient = await getCitizensCitizensClient();
 
 const activityTypes = Object.keys(UserActivityType)
     .map((aType) => UserActivityType[aType as keyof typeof UserActivityType])
@@ -47,7 +48,7 @@ const { data, status, refresh, error } = useLazyAsyncData(
 
 async function listUserActivity(): Promise<ListUserActivityResponse> {
     try {
-        const call = $grpc.citizens.citizens.listUserActivity({
+        const call = citizensCitizensClient.listUserActivity({
             pagination: {
                 offset: calculateOffset(query.page, data.value?.pagination),
             },

@@ -3,10 +3,13 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import RoleViewAttr from '~/components/settings/roles/RoleViewAttr.vue';
+import { getSettingsSettingsClient } from '~~/gen/ts/clients';
 import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes';
 import type { Permission } from '~~/gen/ts/resources/permissions/permissions';
 import type { GetEffectivePermissionsResponse } from '~~/gen/ts/services/settings/settings';
 import { isEmptyAttributes } from './helpers';
+
+const settingsSettingsClient = await getSettingsSettingsClient();
 
 const props = defineProps<{
     roleId: number;
@@ -14,13 +17,11 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useSlideover();
 
 async function getEffectivePermissions(roleId: number): Promise<GetEffectivePermissionsResponse> {
     try {
-        const call = $grpc.settings.settings.getEffectivePermissions({
+        const call = settingsSettingsClient.getEffectivePermissions({
             roleId: roleId,
         });
         const { response } = await call;

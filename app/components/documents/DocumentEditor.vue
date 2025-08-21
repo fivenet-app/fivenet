@@ -12,6 +12,7 @@ import { availableIcons, fallbackIcon } from '~/components/partials/icons';
 import { useClipboardStore } from '~/stores/clipboard';
 import { useCompletorStore } from '~/stores/completor';
 import type { Content } from '~/types/history';
+import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import { type DocumentJobAccess, type DocumentUserAccess, AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Category } from '~~/gen/ts/resources/documents/category';
@@ -29,8 +30,6 @@ const props = defineProps<{
     documentId: number;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const { can } = useAuth();
@@ -45,7 +44,9 @@ const notifications = useNotificationsStore();
 
 const historyStore = useHistoryStore();
 
-const documentsDocuments = useDocumentsDocuments();
+const documentsDocuments = await useDocumentsDocuments();
+
+const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const {
     data: document,
@@ -56,7 +57,7 @@ const {
 
 const { maxAccessEntries } = useAppConfig();
 
-const { ydoc, provider } = useCollabDoc('documents', props.documentId);
+const { ydoc, provider } = await useCollabDoc('documents', props.documentId);
 
 function setFromProps(): void {
     if (!document.value?.document) return;
@@ -90,10 +91,10 @@ provider.on('sync', onSync);
 
 watch(document, async () => {
     const [refs, rels] = await Promise.all([
-        $grpc.documents.documents.getDocumentReferences({
+        documentsDocumentsClient.getDocumentReferences({
             documentId: props.documentId,
         }),
-        $grpc.documents.documents.getDocumentRelations({
+        documentsDocumentsClient.getDocumentRelations({
             documentId: props.documentId,
         }),
     ]);
@@ -230,7 +231,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
     };
 
     try {
-        const call = $grpc.documents.documents.updateDocument(req);
+        const call = documentsDocumentsClient.updateDocument(req);
         const { response } = await call;
 
         if (canDo.value.references) {
@@ -244,7 +245,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
                     }
                 });
             referencesToRemove.forEach((id) => {
-                $grpc.documents.documents.removeDocumentReference({
+                documentsDocumentsClient.removeDocumentReference({
                     id: id,
                 });
             });
@@ -256,7 +257,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
                         return;
                     }
                     ref.sourceDocumentId = response.document!.id!;
-                    $grpc.documents.documents.addDocumentReference({
+                    documentsDocumentsClient.addDocumentReference({
                         reference: ref,
                     });
                 });
@@ -273,14 +274,14 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
                     }
                 });
             relationsToRemove.forEach((id) => {
-                $grpc.documents.documents.removeDocumentRelation({ id });
+                documentsDocumentsClient.removeDocumentRelation({ id });
             });
             // Add new relations
             state.relations
                 .filter((r) => r.id === undefined || r.id <= 0)
                 .forEach((rel) => {
                     rel.documentId = response.document!.id!;
-                    $grpc.documents.documents.addDocumentRelation({
+                    documentsDocumentsClient.addDocumentRelation({
                         relation: rel,
                     });
                 });
@@ -651,7 +652,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                 enable-collab
                                 :target-id="document.document?.id"
                                 filestore-namespace="documents"
-                                :filestore-service="(opts) => $grpc.documents.documents.uploadFile(opts)"
+                                :filestore-service="(opts) => documentsDocumentsClient.uploadFile(opts)"
                             />
                         </ClientOnly>
                     </UFormGroup>

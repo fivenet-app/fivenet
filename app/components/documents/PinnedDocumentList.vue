@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { ListDocumentPinsResponse, ToggleDocumentPinResponse } from '~~/gen/ts/services/documents/documents';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
@@ -7,9 +8,9 @@ import DocumentInfoPopover from '../partials/documents/DocumentInfoPopover.vue';
 import IDCopyBadge from '../partials/IDCopyBadge.vue';
 import Pagination from '../partials/Pagination.vue';
 
-const { $grpc } = useNuxtApp();
-
 const { attr, can } = useAuth();
+
+const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
@@ -18,7 +19,7 @@ const { data, status, error, refresh } = useLazyAsyncData(`calendars-${page.valu
 });
 
 async function listDocumentPins(): Promise<ListDocumentPinsResponse> {
-    const call = $grpc.documents.documents.listDocumentPins({
+    const call = documentsDocumentsClient.listDocumentPins({
         pagination: {
             offset: calculateOffset(page.value, data.value?.pagination),
         },
@@ -30,7 +31,7 @@ async function listDocumentPins(): Promise<ListDocumentPinsResponse> {
 
 async function togglePin(documentId: number, state: boolean, personal: boolean): Promise<ToggleDocumentPinResponse> {
     try {
-        const call = $grpc.documents.documents.toggleDocumentPin({
+        const call = documentsDocumentsClient.toggleDocumentPin({
             documentId: documentId,
             state: state,
             personal: personal,

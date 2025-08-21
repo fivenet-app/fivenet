@@ -2,6 +2,7 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import { getSettingsAccountsClient } from '~~/gen/ts/clients';
 import type { Account } from '~~/gen/ts/resources/accounts/accounts';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UpdateAccountResponse } from '~~/gen/ts/services/settings/accounts';
@@ -17,11 +18,11 @@ const emit = defineEmits<{
 
 const account = useVModel(props, 'account', emit);
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const notifications = useNotificationsStore();
+
+const settingsAccountsClient = await getSettingsAccountsClient();
 
 const schema = z.object({
     enabled: z.coerce.boolean().default(true),
@@ -36,7 +37,7 @@ const state = reactive({
 
 async function updateAccount(values: Schema): Promise<UpdateAccountResponse | undefined> {
     try {
-        const call = $grpc.settings.accounts.updateAccount({
+        const call = settingsAccountsClient.updateAccount({
             id: account.value.id,
 
             enabled: values.enabled,

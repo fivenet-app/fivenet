@@ -18,6 +18,7 @@ import {
     resultStatusToBadgeColor,
     resultStatusToTextColor,
 } from '~/components/qualifications/helpers';
+import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
 import { QualificationExamMode, RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
@@ -28,8 +29,6 @@ const props = defineProps<{
     qualificationId: number;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const { can } = useAuth();
@@ -38,13 +37,15 @@ const modal = useModal();
 
 const notifications = useNotificationsStore();
 
+const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
+
 const { data, status, refresh, error } = useLazyAsyncData(`qualification-${props.qualificationId}`, () =>
     getQualification(props.qualificationId),
 );
 
 async function getQualification(qualificationId: number): Promise<GetQualificationResponse> {
     try {
-        const call = $grpc.qualifications.qualifications.getQualification({
+        const call = qualificationsQualificationsClient.getQualification({
             qualificationId: qualificationId,
         });
         const { response } = await call;
@@ -58,7 +59,7 @@ async function getQualification(qualificationId: number): Promise<GetQualificati
 
 async function deleteQualification(qualificationId: number): Promise<DeleteQualificationResponse> {
     try {
-        const call = $grpc.qualifications.qualifications.deleteQualification({
+        const call = qualificationsQualificationsClient.deleteQualification({
             qualificationId: qualificationId,
         });
         const { response } = await call;

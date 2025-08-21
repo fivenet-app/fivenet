@@ -3,6 +3,7 @@ import CardsList from '~/components/partials/CardsList.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import type { CardElements } from '~/utils/types';
+import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { TemplateShort } from '~~/gen/ts/resources/documents/templates';
 
 defineEmits<{
@@ -13,13 +14,18 @@ defineOptions({
     inheritAttrs: false,
 });
 
-const { $grpc } = useNuxtApp();
-
 const { data: templates, status, refresh, error } = useLazyAsyncData(`documents-templates`, () => listTemplates());
+
+defineExpose({
+    status,
+    refresh,
+});
+
+const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 async function listTemplates(): Promise<TemplateShort[]> {
     try {
-        const call = $grpc.documents.documents.listTemplates({});
+        const call = documentsDocumentsClient.listTemplates({});
         const { response } = await call;
 
         return response.templates;
@@ -42,11 +48,6 @@ const items = computed<CardElements>(
 function selected(idx: number): TemplateShort | undefined {
     return templates.value?.at(idx);
 }
-
-defineExpose({
-    status,
-    refresh,
-});
 </script>
 
 <template>

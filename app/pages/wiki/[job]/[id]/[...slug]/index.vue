@@ -3,6 +3,7 @@ import type { TypedRouteFromName } from '#build/typed-router';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import PageList from '~/components/wiki/PageList.vue';
 import PageView from '~/components/wiki/PageView.vue';
+import { getWikiWikiClient } from '~~/gen/ts/clients';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 
 useHead({
@@ -23,11 +24,11 @@ definePageMeta({
     },
 });
 
-const { $grpc } = useNuxtApp();
-
 const { activeChar } = useAuth();
 
 const route = useRoute('wiki-job-id-slug');
+
+const wikiWikiClient = await getWikiWikiClient();
 
 const {
     data: pages,
@@ -38,7 +39,7 @@ const {
 async function listPages(): Promise<PageShort[]> {
     const job = route.params.job ?? activeChar.value?.job ?? '';
     try {
-        const call = $grpc.wiki.wiki.listPages({
+        const call = wikiWikiClient.listPages({
             pagination: {
                 offset: 0,
             },
@@ -65,7 +66,7 @@ const {
 
 async function getPage(id: number): Promise<Page | undefined> {
     try {
-        const call = $grpc.wiki.wiki.getPage({
+        const call = wikiWikiClient.getPage({
             id: id,
         });
         const { response } = await call;

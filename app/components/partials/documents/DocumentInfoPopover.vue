@@ -4,6 +4,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { ClassProp } from '~/utils/types';
+import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import DocumentCategoryBadge from './DocumentCategoryBadge.vue';
 
@@ -34,11 +35,11 @@ const props = withDefaults(
     },
 );
 
-const { $grpc } = useNuxtApp();
-
 const { can } = useAuth();
 
 const { popover } = useAppConfig();
+
+const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const documentId = computed(() => props.documentId ?? props.document?.id ?? 0);
 
@@ -51,7 +52,7 @@ const { data, refresh, status, error } = useLazyAsyncData(
 );
 
 async function getDocument(id: number): Promise<Document> {
-    const call = $grpc.documents.documents.getDocument({
+    const call = documentsDocumentsClient.getDocument({
         documentId: id,
         infoOnly: true,
     });

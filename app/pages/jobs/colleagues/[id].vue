@@ -5,6 +5,7 @@ import PagesJobsLayout from '~/components/jobs/PagesJobsLayout.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import { getJobsJobsClient } from '~~/gen/ts/clients';
 import type { Perms } from '~~/gen/ts/perms';
 import { ObjectType } from '~~/gen/ts/resources/notifications/client_view';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -30,8 +31,6 @@ definePageMeta({
     },
 });
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const { attr, can } = useAuth();
@@ -39,6 +38,8 @@ const { attr, can } = useAuth();
 const notifications = useNotificationsStore();
 
 const route = useRoute('jobs-colleagues-id-info');
+
+const jobsJobsClient = await getJobsJobsClient();
 
 const {
     data: colleague,
@@ -49,7 +50,7 @@ const {
 
 async function getColleague(userId: number): Promise<GetColleagueResponse> {
     try {
-        const call = $grpc.jobs.jobs.getColleague({
+        const call = jobsJobsClient.getColleague({
             userId,
         });
         const { response } = await call;

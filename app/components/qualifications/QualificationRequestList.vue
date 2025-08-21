@@ -5,6 +5,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import QualificationRequestListEntry from '~/components/qualifications/QualificationRequestListEntry.vue';
+import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { ListQualificationRequestsResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
@@ -19,7 +20,7 @@ const props = withDefaults(
     },
 );
 
-const { $grpc } = useNuxtApp();
+const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
@@ -38,7 +39,7 @@ async function listQualificationRequests(
     status?: RequestStatus[],
 ): Promise<ListQualificationRequestsResponse> {
     try {
-        const call = $grpc.qualifications.qualifications.listQualificationRequests({
+        const call = qualificationsQualificationsClient.listQualificationRequests({
             pagination: {
                 offset: calculateOffset(page.value, data.value?.pagination),
             },

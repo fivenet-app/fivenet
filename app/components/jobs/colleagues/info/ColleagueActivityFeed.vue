@@ -7,6 +7,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import { useCompletorStore } from '~/stores/completor';
+import { getJobsJobsClient } from '~~/gen/ts/clients';
 import { ColleagueActivityType } from '~~/gen/ts/resources/jobs/activity';
 import type { ListColleagueActivityResponse } from '~~/gen/ts/services/jobs/jobs';
 import ColleagueName from '../ColleagueName.vue';
@@ -22,11 +23,11 @@ const props = withDefaults(
     },
 );
 
-const { $grpc } = useNuxtApp();
-
 const { attrStringList, isSuperuser } = useAuth();
 
 const completorStore = useCompletorStore();
+
+const jobsJobsClient = await getJobsJobsClient();
 
 const usersLoading = ref(false);
 
@@ -70,7 +71,7 @@ const { data, status, refresh, error } = useLazyAsyncData(
 
 async function listColleagueActivity(values: Schema): Promise<ListColleagueActivityResponse> {
     try {
-        const call = $grpc.jobs.jobs.listColleagueActivity({
+        const call = jobsJobsClient.listColleagueActivity({
             pagination: {
                 offset: calculateOffset(values.page, data.value?.pagination),
             },

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type {
     Qualification,
     QualificationRequirement,
@@ -22,13 +23,14 @@ const emit = defineEmits<{
     (e: 'remove'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
+const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
 const qualificationsLoading = ref(false);
+
 async function listQualifications(search?: string): Promise<Qualification[]> {
     qualificationsLoading.value = true;
     try {
-        const call = $grpc.qualifications.qualifications.listQualifications({
+        const call = qualificationsQualificationsClient.listQualifications({
             pagination: {
                 offset: 0,
             },

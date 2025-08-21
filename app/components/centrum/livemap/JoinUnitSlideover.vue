@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useCentrumStore } from '~/stores/centrum';
+import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/units_access';
 import { checkUnitAccess } from '../helpers';
@@ -9,16 +10,16 @@ const emit = defineEmits<{
     (e: 'left'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useSlideover();
 
 const centrumStore = useCentrumStore();
 const { ownUnitId, getSortedUnits } = storeToRefs(centrumStore);
 
+const centrumCentrumClient = await getCentrumCentrumClient();
+
 async function joinOrLeaveUnit(unitId?: number): Promise<void> {
     try {
-        const call = $grpc.centrum.centrum.joinUnit({
+        const call = centrumCentrumClient.joinUnit({
             unitId: unitId,
         });
         const { response } = await call;

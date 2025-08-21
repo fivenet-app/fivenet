@@ -3,6 +3,7 @@ import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/stores/mailer';
+import { getMailerMailerClient } from '~~/gen/ts/clients';
 import type { Template } from '~~/gen/ts/resources/mailer/template';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateOrUpdateTemplateRequest } from '~~/gen/ts/services/mailer/mailer';
@@ -16,12 +17,12 @@ const emit = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const notifications = useNotificationsStore();
 
 const mailerStore = useMailerStore();
 const { selectedEmail } = storeToRefs(mailerStore);
+
+const mailerMailerClient = await getMailerMailerClient();
 
 const schema = z.object({
     title: z.string().min(3).max(255),
@@ -45,7 +46,7 @@ state.content = props.template?.content ?? '';
 
 async function createOrUpdateTemplate(values: Schema): Promise<CreateOrUpdateTemplateRequest> {
     try {
-        const call = $grpc.mailer.mailer.createOrUpdateTemplate({
+        const call = mailerMailerClient.createOrUpdateTemplate({
             template: {
                 id: props.template?.id ?? 0,
                 emailId: selectedEmail.value!.id,

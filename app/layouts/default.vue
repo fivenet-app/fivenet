@@ -9,9 +9,8 @@ import PenaltyCalculatorModal from '~/components/quickbuttons/penaltycalculator/
 import TopLogoDropdown from '~/components/TopLogoDropdown.vue';
 import UserDropdown from '~/components/UserDropdown.vue';
 import { useMailerStore } from '~/stores/mailer';
+import { getCitizensCitizensClient, getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { Perms } from '~~/gen/ts/perms';
-
-const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
 
@@ -25,6 +24,9 @@ const { website } = useAppConfig();
 
 const mailerStore = useMailerStore();
 const { unreadCount } = storeToRefs(mailerStore);
+
+const citizensCitizensClient = await getCitizensCitizensClient();
+const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const links = computed(() =>
     [
@@ -307,7 +309,7 @@ const groups = computed(
                     switch (searchType) {
                         case '#': {
                             try {
-                                const call = $grpc.documents.documents.listDocuments({
+                                const call = documentsDocumentsClient.listDocuments({
                                     pagination: {
                                         offset: 0,
                                         pageSize: 10,
@@ -334,7 +336,7 @@ const groups = computed(
                         case '@':
                         default: {
                             try {
-                                const call = $grpc.citizens.citizens.listCitizens({
+                                const call = citizensCitizensClient.listCitizens({
                                     pagination: {
                                         offset: 0,
                                         pageSize: 10,

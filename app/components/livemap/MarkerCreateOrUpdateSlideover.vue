@@ -7,6 +7,7 @@ import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.cli
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import { useLivemapStore } from '~/stores/livemap';
 import type { Coordinate } from '~/types/livemap';
+import { getLivemapLivemapClient } from '~~/gen/ts/clients';
 import { type MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/marker_marker';
 
 const props = defineProps<{
@@ -18,13 +19,13 @@ const emit = defineEmits<{
     (e: 'close'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useSlideover();
 
 const livemapStore = useLivemapStore();
 const { location: storeLocation } = storeToRefs(livemapStore);
 const { addOrUpdateMarkerMarker } = livemapStore;
+
+const livemapLivemapClient = await getLivemapLivemapClient();
 
 const markerTypes = [{ type: MarkerType.CIRCLE }, { type: MarkerType.DOT }, { type: MarkerType.ICON }];
 
@@ -102,7 +103,7 @@ async function createOrUpdateMarker(values: Schema): Promise<void> {
             };
         }
 
-        const call = $grpc.livemap.livemap.createOrUpdateMarker({
+        const call = livemapLivemapClient.createOrUpdateMarker({
             marker,
         });
         const { response } = await call;

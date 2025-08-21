@@ -7,6 +7,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import type { Content } from '~/types/history';
+import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { Comment } from '~~/gen/ts/resources/documents/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetCommentsResponse } from '~~/gen/ts/services/documents/documents';
@@ -30,11 +31,11 @@ const emit = defineEmits<{
     (e: 'deletedComment'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const notifications = useNotificationsStore();
 
 const historyStore = useHistoryStore();
+
+const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
@@ -48,7 +49,7 @@ const { data, status, refresh, error } = useLazyAsyncData(
 
 async function getComments(): Promise<GetCommentsResponse> {
     try {
-        const call = $grpc.documents.documents.getComments({
+        const call = documentsDocumentsClient.getComments({
             pagination: {
                 offset: calculateOffset(page.value, data.value?.pagination),
             },
@@ -147,7 +148,7 @@ async function addComment(documentId: number, values: Schema): Promise<void> {
     };
 
     try {
-        const call = $grpc.documents.documents.postComment({ comment });
+        const call = documentsDocumentsClient.postComment({ comment });
         const { response } = await call;
 
         notifications.add({

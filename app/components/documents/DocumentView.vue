@@ -19,6 +19,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import { useClipboardStore } from '~/stores/clipboard';
+import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
@@ -31,8 +32,6 @@ const props = defineProps<{
     documentId: number;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const { attr, can, activeChar, isSuperuser } = useAuth();
@@ -41,9 +40,11 @@ const clipboardStore = useClipboardStore();
 
 const notifications = useNotificationsStore();
 
-const documentsDocuments = useDocumentsDocuments();
-
 const modal = useModal();
+
+const documentsDocuments = await useDocumentsDocuments();
+
+const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const commentCount = ref<undefined | number>();
 
@@ -88,7 +89,7 @@ function openRequestsModal(): void {
 
 async function togglePin(documentId: number, state: boolean, personal: boolean): Promise<ToggleDocumentPinResponse> {
     try {
-        const call = $grpc.documents.documents.toggleDocumentPin({
+        const call = documentsDocumentsClient.toggleDocumentPin({
             documentId: documentId,
             state: state,
             personal: personal,

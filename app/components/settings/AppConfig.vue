@@ -9,14 +9,13 @@ import StreamerModeAlert from '~/components/partials/StreamerModeAlert.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { useSettingsStore } from '~/stores/settings';
 import { toDuration } from '~/utils/duration';
+import { getSettingsConfigClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { DiscordBotPresenceType } from '~~/gen/ts/resources/settings/config';
 import type { GetAppConfigResponse } from '~~/gen/ts/services/settings/config';
 import { grpcMethods, grpcServices } from '~~/gen/ts/svcs';
 import DatePickerPopoverClient from '../partials/DatePickerPopover.client.vue';
 import TiptapEditor from '../partials/editor/TiptapEditor.vue';
-
-const { $grpc } = useNuxtApp();
 
 const { t, locales } = useI18n();
 
@@ -27,11 +26,13 @@ const { streamerMode } = storeToRefs(settingsStore);
 
 const notifications = useNotificationsStore();
 
+const settingsConfigClient = await getSettingsConfigClient();
+
 const { data: config, status, refresh, error } = useLazyAsyncData(`settings-appconfig`, () => getAppConfig());
 
 async function getAppConfig(): Promise<GetAppConfigResponse> {
     try {
-        const call = $grpc.settings.config.getAppConfig({});
+        const call = settingsConfigClient.getAppConfig({});
         const { response } = await call;
 
         return response;
@@ -199,7 +200,7 @@ async function updateAppConfig(values: Schema): Promise<void> {
     };
 
     try {
-        const { response } = await $grpc.settings.config.updateAppConfig({
+        const { response } = await settingsConfigClient.updateAppConfig({
             config: config.value?.config,
         });
 

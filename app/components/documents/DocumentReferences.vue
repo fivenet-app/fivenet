@@ -5,6 +5,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import DocumentCategoryBadge from '~/components/partials/documents/DocumentCategoryBadge.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { type DocumentReference, DocReference } from '~~/gen/ts/resources/documents/documents';
 import { docReferenceToBadge } from './helpers';
 
@@ -18,9 +19,9 @@ const props = withDefaults(
     },
 );
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
+
+const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const {
     data: references,
@@ -31,7 +32,7 @@ const {
 
 async function getDocumentReferences(): Promise<DocumentReference[]> {
     try {
-        const call = $grpc.documents.documents.getDocumentReferences({
+        const call = documentsDocumentsClient.getDocumentReferences({
             documentId: props.documentId,
         });
         const { response } = await call;

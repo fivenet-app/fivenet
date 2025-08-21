@@ -3,6 +3,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import QualificationResultTutorForm from '~/components/qualifications/tutor/QualificationResultTutorForm.vue';
+import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import { QualificationExamMode } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { GetUserExamResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import ExamViewResult from '../exam/ExamViewResult.vue';
@@ -26,9 +27,9 @@ defineEmits<{
     (e: 'refresh'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
+
+const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
 const { data, status, refresh, error } = useLazyAsyncData(
     `qualification-${props.qualificationId}-result-examinfo-${props.userId}`,
@@ -36,7 +37,7 @@ const { data, status, refresh, error } = useLazyAsyncData(
 );
 
 async function getUserExam(): Promise<GetUserExamResponse> {
-    const call = $grpc.qualifications.qualifications.getUserExam({
+    const call = qualificationsQualificationsClient.getUserExam({
         qualificationId: props.qualificationId,
         userId: props.userId,
     });

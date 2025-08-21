@@ -8,15 +8,16 @@ import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useClipboardStore } from '~/stores/clipboard';
+import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { User } from '~~/gen/ts/resources/users/users';
 import type { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/services/citizens/citizens';
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const { attr, can } = useAuth();
+
+const citizensCitizensClient = await getCitizensCitizensClient();
 
 const schema = z.object({
     name: z.string().max(64).optional(),
@@ -67,7 +68,7 @@ async function listCitizens(): Promise<ListCitizensResponse> {
             req.dateofbirth = query.dateofbirth;
         }
 
-        const call = $grpc.citizens.citizens.listCitizens(req);
+        const call = citizensCitizensClient.listCitizens(req);
         const { response } = await call;
 
         return response;

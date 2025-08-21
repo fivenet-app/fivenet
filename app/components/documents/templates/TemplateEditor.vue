@@ -14,6 +14,7 @@ import { TemplateBlock } from '~/composables/tiptap/extensions/TemplateBlock';
 import { TemplateVar } from '~/composables/tiptap/extensions/TemplateVar';
 import { useAuthStore } from '~/stores/auth';
 import { useCompletorStore } from '~/stores/completor';
+import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { AccessLevel, type DocumentJobAccess, type DocumentUserAccess } from '~~/gen/ts/resources/documents/access';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { ObjectSpecs, Template, TemplateJobAccess, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
@@ -25,8 +26,6 @@ import TemplateWorkflowEditor from './TemplateWorkflowEditor.vue';
 const props = defineProps<{
     templateId?: number;
 }>();
-
-const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
 
@@ -40,6 +39,8 @@ const notifications = useNotificationsStore();
 const completorStore = useCompletorStore();
 
 const { maxAccessEntries } = useAppConfig();
+
+const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const schema = z.object({
     weight: z.coerce.number().min(0).max(999_999),
@@ -199,7 +200,7 @@ async function createOrUpdateTemplate(values: Schema, templateId?: number): Prom
 
     try {
         if (templateId === undefined) {
-            const call = $grpc.documents.documents.createTemplate(req);
+            const call = documentsDocumentsClient.createTemplate(req);
             const { response } = await call;
 
             notifications.add({
@@ -213,7 +214,7 @@ async function createOrUpdateTemplate(values: Schema, templateId?: number): Prom
                 params: { id: response.id },
             });
         } else {
-            const call = $grpc.documents.documents.updateTemplate(req);
+            const call = documentsDocumentsClient.updateTemplate(req);
             const { response } = await call;
             if (response.template) {
                 setValuesFromTemplate(response.template);
@@ -303,7 +304,7 @@ const extensions = [TemplateVar.configure(), TemplateBlock.configure()];
 onBeforeMount(async () => {
     if (props.templateId) {
         try {
-            const call = $grpc.documents.documents.getTemplate({
+            const call = documentsDocumentsClient.getTemplate({
                 templateId: props.templateId,
                 render: false,
             });

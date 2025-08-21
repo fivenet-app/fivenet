@@ -9,9 +9,8 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useSettingsStore } from '~/stores/settings';
+import { getAuthAuthClient } from '~~/gen/ts/clients';
 import type { GetAccountInfoResponse } from '~~/gen/ts/services/auth/auth';
-
-const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
 
@@ -20,11 +19,13 @@ const modal = useModal();
 const settingsStore = useSettingsStore();
 const { streamerMode } = storeToRefs(settingsStore);
 
+const authAuthClient = await getAuthAuthClient();
+
 const { data: account, status, refresh, error } = useLazyAsyncData(`accountinfo`, () => getAccountInfo());
 
 async function getAccountInfo(): Promise<GetAccountInfoResponse> {
     try {
-        const call = $grpc.auth.auth.getAccountInfo({});
+        const call = authAuthClient.getAccountInfo({});
         const { response } = await call;
 
         return response;

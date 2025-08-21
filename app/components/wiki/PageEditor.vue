@@ -6,6 +6,7 @@ import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import type { Content } from '~/types/history';
+import { getWikiWikiClient } from '~~/gen/ts/clients';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { ObjectType } from '~~/gen/ts/resources/notifications/client_view';
@@ -23,8 +24,6 @@ const props = defineProps<{
     pageId: number;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const modal = useModal();
@@ -35,6 +34,8 @@ const historyStore = useHistoryStore();
 
 const route = useRoute<'wiki-job-id-slug-edit'>();
 
+const wikiClient = await getWikiWikiClient();
+
 const {
     data: page,
     status,
@@ -44,7 +45,7 @@ const {
 
 async function getPage(id: number): Promise<Page | undefined> {
     try {
-        const call = $grpc.wiki.wiki.getPage({
+        const call = wikiClient.getPage({
             id: id,
         });
         const { response } = await call;
@@ -65,7 +66,7 @@ const notifications = useNotificationsStore();
 
 const { maxAccessEntries } = useAppConfig();
 
-const { ydoc, provider } = useCollabDoc('wiki', props.pageId);
+const { ydoc, provider } = await useCollabDoc('wiki', props.pageId);
 
 const canDo = computed(() => ({
     access: checkPageAccess(page.value?.access, page.value?.meta?.creator, AccessLevel.ACCESS),
@@ -116,7 +117,7 @@ const { data: pages, refresh: pagesRefresh } = useLazyAsyncData(`wiki-pages-${pr
 async function listPages(): Promise<PageShort[]> {
     const job = route.params.job ?? activeChar.value?.job ?? '';
     try {
-        const call = $grpc.wiki.wiki.listPages({
+        const call = wikiClient.listPages({
             pagination: {
                 offset: 0,
             },
@@ -254,7 +255,7 @@ async function updatePage(values: Schema): Promise<void> {
 
     try {
         let responsePage: Page | undefined = undefined;
-        const call = $grpc.wiki.wiki.updatePage({
+        const call = wikiClient.updatePage({
             page: req,
         });
         const { response } = await call;
@@ -562,7 +563,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                 enable-collab
                                 :target-id="page?.id"
                                 filestore-namespace="wiki"
-                                :filestore-service="(opts) => $grpc.wiki.wiki.uploadFile(opts)"
+                                :filestore-service="(opts) => wikiClient.uploadFile(opts)"
                             >
                                 <template #linkModal="{ state: linkState }">
                                     <UDivider class="mt-1" :label="$t('common.or')" orientation="horizontal" />

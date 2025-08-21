@@ -2,6 +2,7 @@
 import type { Form, FormSubmitEvent } from '#ui/types';
 import { differenceInMinutes, isPast } from 'date-fns';
 import { z } from 'zod';
+import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ExamQuestions, ExamResponse, ExamResponses, ExamUser } from '~~/gen/ts/resources/qualifications/exam';
 import type { QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
@@ -16,9 +17,9 @@ const props = defineProps<{
     responses?: ExamResponses;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const notifications = useNotificationsStore();
+
+const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
 const schema = z.object({
     responses: z.custom<ExamResponse>().array().max(100).default([]),
@@ -36,7 +37,7 @@ const state = useState<Schema>('qualifications-exam-responses', () => ({
 
 async function submitExam(values: Schema): Promise<SubmitExamResponse> {
     try {
-        const call = $grpc.qualifications.qualifications.submitExam({
+        const call = qualificationsQualificationsClient.submitExam({
             qualificationId: props.qualificationId,
             responses: {
                 qualificationId: props.qualificationId,

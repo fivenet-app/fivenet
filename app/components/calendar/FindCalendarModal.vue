@@ -6,14 +6,15 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useCalendarStore } from '~/stores/calendar';
+import { getCalendarCalendarClient } from '~~/gen/ts/clients';
 import type { ListCalendarsResponse, SubscribeToCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
-
-const { $grpc } = useNuxtApp();
 
 const { isOpen } = useModal();
 
 const calendarStore = useCalendarStore();
 const { currentDate } = storeToRefs(calendarStore);
+
+const calendarCalendarClient = await getCalendarCalendarClient();
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
@@ -31,7 +32,7 @@ async function listCalendars(): Promise<ListCalendarsResponse> {
 }
 
 async function subscribeToCalendar(calendarId: number, subscribe: boolean): Promise<SubscribeToCalendarResponse> {
-    const call = $grpc.calendar.calendar.subscribeToCalendar({
+    const call = calendarCalendarClient.subscribeToCalendar({
         delete: !subscribe,
         sub: {
             calendarId: calendarId,

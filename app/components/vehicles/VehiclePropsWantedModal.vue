@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
+import { getVehiclesVehiclesClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { VehicleProps } from '~~/gen/ts/resources/vehicles/props';
 
@@ -10,11 +11,11 @@ const props = defineProps<{
 
 const vehicleProps = defineModel<VehicleProps>('vehicleProps');
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const notifications = useNotificationsStore();
+
+const vehiclesVehiclesClient = await getVehiclesVehiclesClient();
 
 const schema = z.object({
     reason: z.string().min(3).max(255),
@@ -34,7 +35,7 @@ async function setWantedState(values: Schema): Promise<void> {
     };
 
     try {
-        const call = $grpc.vehicles.vehicles.setVehicleProps({
+        const call = vehiclesVehiclesClient.setVehicleProps({
             props: vProps,
         });
         const { response } = await call;

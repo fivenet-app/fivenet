@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import type { DocRequest } from '~~/gen/ts/resources/documents/requests';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -15,13 +16,13 @@ const emit = defineEmits<{
     (e: 'refreshRequests'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const notifications = useNotificationsStore();
+
+const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 async function updateDocumentReq(documentId: number, requestId: number, accepted: boolean): Promise<void> {
     try {
-        const call = $grpc.documents.documents.updateDocumentReq({
+        const call = documentsDocumentsClient.updateDocumentReq({
             documentId,
             requestId,
             accepted,
@@ -49,7 +50,7 @@ async function updateDocumentReq(documentId: number, requestId: number, accepted
 
 async function deleteDocumentReq(id: number): Promise<void> {
     try {
-        const call = $grpc.documents.documents.deleteDocumentReq({
+        const call = documentsDocumentsClient.deleteDocumentReq({
             requestId: id,
         });
         await call;

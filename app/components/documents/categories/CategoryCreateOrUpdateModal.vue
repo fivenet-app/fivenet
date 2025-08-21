@@ -4,6 +4,7 @@ import { ShapeIcon } from 'mdi-vue3';
 import { z } from 'zod';
 import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
+import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -15,8 +16,6 @@ const emit = defineEmits<{
     (e: 'update'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { can } = useAuth();
 
 const { fallbackColor } = useAppConfig();
@@ -24,6 +23,8 @@ const { fallbackColor } = useAppConfig();
 const notifications = useNotificationsStore();
 
 const { isOpen } = useModal();
+
+const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const canEdit = can('documents.DocumentsService/CreateOrUpdateCategory');
 
@@ -44,7 +45,7 @@ const state = reactive<Schema>({
 
 async function createOrUpdateCategory(values: Schema): Promise<void> {
     try {
-        await $grpc.documents.documents.createOrUpdateCategory({
+        await documentsDocumentsClient.createOrUpdateCategory({
             category: {
                 id: props.category?.id ?? 0,
                 name: values.name,
@@ -82,7 +83,7 @@ async function deleteCategory(): Promise<void> {
     }
 
     try {
-        await $grpc.documents.documents.deleteCategory({
+        await documentsDocumentsClient.deleteCategory({
             id: props.category.id!,
         });
 

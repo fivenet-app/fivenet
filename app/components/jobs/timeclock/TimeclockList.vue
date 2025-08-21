@@ -8,6 +8,7 @@ import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.cli
 import DateRangePickerPopoverClient from '~/components/partials/DateRangePickerPopover.client.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useCompletorStore } from '~/stores/completor';
+import { getJobsTimeclockClient } from '~~/gen/ts/clients';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import { TimeclockMode, TimeclockViewMode } from '~~/gen/ts/resources/jobs/timeclock';
 import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/services/jobs/timeclock';
@@ -33,13 +34,13 @@ const props = withDefaults(
     },
 );
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const { attr, can } = useAuth();
 
 const completorStore = useCompletorStore();
+
+const jobsTimeclockClient = await getJobsTimeclockClient();
 
 const canAccessAll = attr('jobs.TimeclockService/ListTimeclock', 'Access', 'All');
 
@@ -128,7 +129,7 @@ async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
             perDay: query.perDay,
         };
 
-        const call = $grpc.jobs.timeclock.listTimeclock(req);
+        const call = jobsTimeclockClient.listTimeclock(req);
         const { response } = await call;
 
         return response;

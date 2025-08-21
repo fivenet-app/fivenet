@@ -6,14 +6,15 @@ import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { openTokenMgmt } from '~/composables/nui';
 import { useSettingsStore } from '~/stores/settings';
+import { getAuthAuthClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-
-const { $grpc } = useNuxtApp();
 
 const notifications = useNotificationsStore();
 
 const settingsStore = useSettingsStore();
 const { nuiEnabled } = storeToRefs(settingsStore);
+
+const authAuthClient = await getAuthAuthClient();
 
 const accountError = ref<RpcError | undefined>();
 
@@ -39,7 +40,7 @@ const state = reactive<Schema>({
 
 async function createAccount(values: Schema): Promise<void> {
     try {
-        await $grpc.auth.auth.createAccount({
+        await authAuthClient.createAccount({
             regToken: values.registrationToken,
             username: values.username,
             password: values.password,

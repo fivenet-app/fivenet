@@ -7,6 +7,7 @@ import { type AccessType, enumToAccessLevelEnums } from '~/components/partials/a
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import QualificationRequirementEntry from '~/components/qualifications/QualificationRequirementEntry.vue';
 import type { Content } from '~/types/history';
+import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { type QualificationJobAccess, AccessLevel } from '~~/gen/ts/resources/qualifications/access';
@@ -19,10 +20,7 @@ import {
     AutoGradeMode,
     QualificationExamMode,
 } from '~~/gen/ts/resources/qualifications/qualifications';
-import type {
-    UpdateQualificationRequest,
-    UpdateQualificationsResponse,
-} from '~~/gen/ts/services/qualifications/qualifications';
+import type { UpdateQualificationRequest, UpdateQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import BackButton from '../partials/BackButton.vue';
 import ConfirmModal from '../partials/ConfirmModal.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
@@ -35,8 +33,6 @@ const props = defineProps<{
     qualificationId: number;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const modal = useModal();
@@ -46,6 +42,8 @@ const { attr, can, activeChar } = useAuth();
 const notifications = useNotificationsStore();
 
 const historyStore = useHistoryStore();
+
+const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
 const { maxAccessEntries } = useAppConfig();
 
@@ -192,7 +190,7 @@ const {
 
 async function getQualification(qualificationId: number): Promise<Qualification> {
     try {
-        const call = $grpc.qualifications.qualifications.getQualification({
+        const call = qualificationsQualificationsClient.getQualification({
             qualificationId: qualificationId,
             withExam: true,
         });
@@ -248,7 +246,7 @@ function setFromProps(): void {
 
 watch(qualification, () => setFromProps());
 
-async function updateQualification(values: Schema): Promise<UpdateQualificationsResponse> {
+async function updateQualification(values: Schema): Promise<UpdateQualificationResponse> {
     values.access.jobs.forEach((job) => job.id < 0 && (job.id = 0));
 
     const req: UpdateQualificationRequest = {
@@ -291,7 +289,7 @@ async function updateQualification(values: Schema): Promise<UpdateQualifications
     };
 
     try {
-        const call = $grpc.qualifications.qualifications.updateQualification(req);
+        const call = qualificationsQualificationsClient.updateQualification(req);
         const { response } = await call;
 
         notifications.add({
@@ -539,7 +537,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                     history-type="qualification"
                                     :target-id="props.qualificationId ?? 0"
                                     filestore-namespace="qualifications"
-                                    :filestore-service="(opts) => $grpc.qualifications.qualifications.uploadFile(opts)"
+                                    :filestore-service="(opts) => qualificationsQualificationsClient.uploadFile(opts)"
                                 />
                             </ClientOnly>
                         </UFormGroup>

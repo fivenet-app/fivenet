@@ -3,6 +3,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useLivemapStore } from '~/stores/livemap';
+import { getLivemapLivemapClient } from '~~/gen/ts/clients';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/marker_marker';
 import { availableIcons, fallbackIcon } from '../partials/icons';
 import MarkerCreateOrUpdateSlideover from './MarkerCreateOrUpdateSlideover.vue';
@@ -10,8 +11,6 @@ import MarkerCreateOrUpdateSlideover from './MarkerCreateOrUpdateSlideover.vue';
 defineProps<{
     marker: MarkerMarker;
 }>();
-
-const { $grpc } = useNuxtApp();
 
 const { can } = useAuth();
 
@@ -21,9 +20,11 @@ const slideover = useSlideover();
 const livemapStore = useLivemapStore();
 const { deleteMarkerMarker, goto } = livemapStore;
 
+const livemapLivemapClient = await getLivemapLivemapClient();
+
 async function deleteMarker(id: number): Promise<void> {
     try {
-        const call = $grpc.livemap.livemap.deleteMarker({
+        const call = livemapLivemapClient.deleteMarker({
             id,
         });
         await call;

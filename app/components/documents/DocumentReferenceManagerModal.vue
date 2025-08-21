@@ -5,6 +5,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { type ClipboardDocument, getDocument, useClipboardStore } from '~/stores/clipboard';
+import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { type DocumentReference, type DocumentShort, DocReference } from '~~/gen/ts/resources/documents/documents';
 
 const props = defineProps<{
@@ -16,13 +17,13 @@ const modelValue = defineModel<DocumentReference[]>('references', {
     required: true,
 });
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const { t } = useI18n();
 
 const clipboardStore = useClipboardStore();
+
+const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const items = ref<TabItem[]>([
     {
@@ -58,7 +59,7 @@ watchDebounced(queryDoc, async () => await refresh(), {
 
 async function listDocuments(): Promise<DocumentShort[]> {
     try {
-        const call = $grpc.documents.documents.listDocuments({
+        const call = documentsDocumentsClient.listDocuments({
             pagination: {
                 offset: 0,
                 pageSize: 8,

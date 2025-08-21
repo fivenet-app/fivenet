@@ -5,14 +5,15 @@ import { z } from 'zod';
 import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import { getJobsJobsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetColleagueLabelsResponse, ManageLabelsResponse } from '~~/gen/ts/services/jobs/jobs';
-
-const { $grpc } = useNuxtApp();
 
 const { isOpen } = useModal();
 
 const notifications = useNotificationsStore();
+
+const jobsJobsClient = await getJobsJobsClient();
 
 const schema = z.object({
     labels: z
@@ -35,7 +36,7 @@ const state = reactive<Schema>({
 
 async function getColleagueLabels(): Promise<GetColleagueLabelsResponse> {
     try {
-        const { response } = await $grpc.jobs.jobs.getColleagueLabels({});
+        const { response } = await jobsJobsClient.getColleagueLabels({});
 
         return response;
     } catch (e) {
@@ -48,7 +49,7 @@ const { data: labels, status, error, refresh } = useLazyAsyncData('jobs-colleagu
 
 async function manageLabels(values: Schema): Promise<ManageLabelsResponse> {
     try {
-        const { response } = await $grpc.jobs.jobs.manageLabels({
+        const { response } = await jobsJobsClient.manageLabels({
             labels: values.labels,
         });
 

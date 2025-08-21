@@ -1,12 +1,13 @@
+import { getWikiWikiClient } from '~~/gen/ts/clients';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { CreatePageResponse } from '~~/gen/ts/services/wiki/wiki';
 
-export function useWikiWiki() {
-    const { $grpc } = useNuxtApp();
+export async function useWikiWiki() {
+    const wikiWikiClient = await getWikiWikiClient();
 
     async function createPage(parentId?: number): Promise<CreatePageResponse> {
         try {
-            const call = $grpc.wiki.wiki.createPage({
+            const call = wikiWikiClient.createPage({
                 contentType: ContentType.HTML,
                 parentId: parentId,
             });

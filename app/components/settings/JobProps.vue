@@ -10,14 +10,13 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import StreamerModeAlert from '~/components/partials/StreamerModeAlert.vue';
 import { useAuthStore } from '~/stores/auth';
 import { useSettingsStore } from '~/stores/settings';
+import { getSettingsSettingsClient } from '~~/gen/ts/clients';
 import type { JobProps } from '~~/gen/ts/resources/jobs/job_props';
 import { type DiscordSyncChange, UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/jobs/job_settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import FileUpload from '../partials/elements/FileUpload.vue';
 import FormatBuilder from '../partials/FormatBuilder.vue';
 import NotSupportedTabletBlock from '../partials/NotSupportedTabletBlock.vue';
-
-const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
 
@@ -31,6 +30,8 @@ const appConfig = useAppConfig();
 const authStore = useAuthStore();
 
 const notifications = useNotificationsStore();
+
+const settingsSettingsClient = await getSettingsSettingsClient();
 
 const schema = z.object({
     livemapMarkerColor: z.string().length(7),
@@ -124,7 +125,7 @@ const state = reactive<Schema>({
 
 async function getJobProps(): Promise<JobProps> {
     try {
-        const call = $grpc.settings.settings.getJobProps({});
+        const call = settingsSettingsClient.getJobProps({});
         const { response } = await call;
 
         return response.jobProps!;
@@ -156,7 +157,7 @@ async function setJobProps(values: Schema): Promise<void> {
     jobProps.value.settings.absenceFutureDays = values.settings.absenceFutureDays;
 
     try {
-        const { response } = await $grpc.settings.settings.setJobProps({
+        const { response } = await settingsSettingsClient.setJobProps({
             jobProps: jobProps.value,
         });
 
@@ -239,7 +240,7 @@ async function listGuilds() {
     if (!canEdit.value) return [];
 
     try {
-        const call = $grpc.settings.settings.listUserGuilds({});
+        const call = settingsSettingsClient.listUserGuilds({});
         const { response } = await call;
 
         return response.guilds;
@@ -259,7 +260,7 @@ async function searchChannels() {
     if (!canEdit.value) return [];
 
     try {
-        const call = $grpc.settings.settings.listDiscordChannels({});
+        const call = settingsSettingsClient.listDiscordChannels({});
         const { response } = await call;
 
         return response.channels.sort((a, b) => a.position - b.position);
@@ -379,8 +380,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     <FileUpload
                                         v-model="jobProps.logoFile"
                                         :disabled="!canSubmit || !canEdit"
-                                        :upload-fn="(opts) => $grpc.settings.settings.uploadJobLogo(opts)"
-                                        :delete-fn="() => $grpc.settings.settings.deleteJobLogo({})"
+                                        :upload-fn="(opts) => settingsSettingsClient.uploadJobLogo(opts)"
+                                        :delete-fn="() => settingsSettingsClient.deleteJobLogo({})"
                                     />
                                 </UFormGroup>
 

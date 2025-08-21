@@ -5,14 +5,15 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import StreamerModeAlert from '~/components/partials/StreamerModeAlert.vue';
+import { getSettingsAccountsClient } from '~~/gen/ts/clients';
 import type { ListAccountsResponse } from '~~/gen/ts/services/settings/accounts';
 import AccountEditModal from './AccountEditModal.vue';
-
-const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
 
 const modal = useModal();
+
+const settingsAccountsClient = await getSettingsAccountsClient();
 
 const schema = z.object({
     license: z.string().max(64).optional(),
@@ -41,7 +42,7 @@ const {
 
 async function listAccounts(): Promise<ListAccountsResponse> {
     try {
-        const call = $grpc.settings.accounts.listAccounts({
+        const call = settingsAccountsClient.listAccounts({
             pagination: {
                 offset: calculateOffset(query.page, accounts.value?.pagination),
             },
@@ -64,7 +65,7 @@ watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
 
 async function deleteAccount(id: number): Promise<void> {
     try {
-        const call = $grpc.settings.accounts.deleteAccount({
+        const call = settingsAccountsClient.deleteAccount({
             id,
         });
         await call;

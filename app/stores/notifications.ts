@@ -4,6 +4,7 @@ import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
 import { notificationsEvents } from '~/composables/useClientUpdate';
 import { useAuthStore } from '~/stores/auth';
 import type { Notification } from '~/utils/notifications';
+import { getNotificationsNotificationsClient } from '~~/gen/ts/clients';
 import type { ObjectEvent, ObjectType } from '~~/gen/ts/resources/notifications/client_view';
 import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { MarkNotificationsRequest, StreamRequest, StreamResponse } from '~~/gen/ts/services/notifications/notifications';
@@ -19,8 +20,6 @@ const initialReconnectBackoffTime = 2;
 export const useNotificationsStore = defineStore(
     'notifications',
     () => {
-        const { $grpc } = useNuxtApp();
-
         // State
         const doNotDisturb = ref<boolean>(false);
         const notifications = ref<Notification[]>([]);
@@ -60,6 +59,8 @@ export const useNotificationsStore = defineStore(
             abort.value = new AbortController();
             reconnecting.value = false;
 
+            const notificationsNotificationsClient = await getNotificationsNotificationsClient();
+
             const authStore = useAuthStore();
             const { activeChar, can } = useAuth();
 
@@ -68,7 +69,7 @@ export const useNotificationsStore = defineStore(
             const notificationSound = useSounds('/sounds/notification.mp3');
 
             try {
-                currentStream = $grpc.notifications.notifications.stream({ abort: abort.value.signal });
+                currentStream = notificationsNotificationsClient.stream({ abort: abort.value.signal });
                 ready.value = true;
                 notificationsEvents.emit('ready', true);
 
@@ -128,10 +129,17 @@ export const useNotificationsStore = defineStore(
                             notificationsCount.value = resp.data.userEvent.data.notificationsReadCount;
                         } else if (resp.data.userEvent.data.oneofKind === 'userInfoChanged') {
                             // Update the user job info in the auth store
-                            activeChar.value!.job = resp.data.userEvent.data.userInfoChanged.newJob;
-                            activeChar.value!.jobLabel = resp.data.userEvent.data.userInfoChanged.newJobLabel;
-                            activeChar.value!.jobGrade = resp.data.userEvent.data.userInfoChanged.newJobGrade;
-                            activeChar.value!.jobGradeLabel = resp.data.userEvent.data.userInfoChanged.newJobGradeLabel;
+                            if (resp.data.userEvent.data.userInfoChanged.newJob)
+                                activeChar.value!.job = resp.data.userEvent.data.userInfoChanged.newJob;
+
+                            if (resp.data.userEvent.data.userInfoChanged.newJobLabel)
+                                activeChar.value!.jobLabel = resp.data.userEvent.data.userInfoChanged.newJobLabel;
+
+                            if (resp.data.userEvent.data.userInfoChanged.newJobGrade)
+                                activeChar.value!.jobGrade = resp.data.userEvent.data.userInfoChanged.newJobGrade;
+
+                            if (resp.data.userEvent.data.userInfoChanged.newJobGradeLabel)
+                                activeChar.value!.jobGradeLabel = resp.data.userEvent.data.userInfoChanged.newJobGradeLabel;
                         } else {
                             logger.warn('Unknown userEvent data received - oneofKind:', resp.data.oneofKind, resp.data);
                         }
@@ -231,8 +239,10 @@ export const useNotificationsStore = defineStore(
         };
 
         const markNotifications = async (req: MarkNotificationsRequest): Promise<void> => {
+            const notificationsNotificationsClient = await getNotificationsNotificationsClient();
+
             try {
-                await $grpc.notifications.notifications.markNotifications(req);
+                await notificationsNotificationsClient.markNotifications(req);
             } catch (e) {
                 handleGRPCError(e as RpcError);
                 throw e;

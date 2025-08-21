@@ -12,11 +12,12 @@ import (
 
 type DBScannerModule struct {
 	*pgs.ModuleBase
+
 	ctx pgsgo.Context
 	tpl *template.Template
 }
 
-// DBScanner returns an initialized DBScannerModule
+// DBScanner returns an initialized DBScannerModule.
 func DBScanner() *DBScannerModule { return &DBScannerModule{ModuleBase: &pgs.ModuleBase{}} }
 
 func (p *DBScannerModule) InitContext(c pgs.BuildContext) {

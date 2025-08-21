@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { unitStatusToBGColor, unitStatuses } from '~/components/centrum/helpers';
 import { useCentrumStore } from '~/stores/centrum';
 import type { Coordinate } from '~/types/livemap';
+import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import { type Unit, StatusUnit } from '~~/gen/ts/resources/centrum/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -13,14 +14,14 @@ const props = defineProps<{
     location?: Coordinate;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const centrumStore = useCentrumStore();
 const { settings } = storeToRefs(centrumStore);
 
 const notifications = useNotificationsStore();
+
+const centrumCentrumClient = await getCentrumCentrumClient();
 
 const schema = z.object({
     status: z.nativeEnum(StatusUnit),
@@ -36,7 +37,7 @@ const state = reactive<Schema>({
 
 async function updateUnitStatus(id: number, values: Schema): Promise<void> {
     try {
-        const call = $grpc.centrum.centrum.updateUnitStatus({
+        const call = centrumCentrumClient.updateUnitStatus({
             unitId: id,
             status: values.status,
             code: values.code,

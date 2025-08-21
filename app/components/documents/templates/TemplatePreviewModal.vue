@@ -5,13 +5,12 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/stores/auth';
 import { useClipboardStore } from '~/stores/clipboard';
+import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { Template } from '~~/gen/ts/resources/documents/templates';
 
 const props = defineProps<{
     templateId: number;
 }>();
-
-const { $grpc } = useNuxtApp();
 
 const { isOpen } = useModal();
 
@@ -19,6 +18,8 @@ const authStore = useAuthStore();
 const clipboardStore = useClipboardStore();
 
 const { activeChar } = storeToRefs(authStore);
+
+const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const {
     data: template,
@@ -33,7 +34,7 @@ async function getTemplate(): Promise<Template> {
         data.activeChar = activeChar.value!;
         logger.debug('Documents: Editor - Clipboard Template Data', data);
 
-        const call = $grpc.documents.documents.getTemplate({
+        const call = documentsDocumentsClient.getTemplate({
             templateId: props.templateId,
             data,
             render: true,

@@ -26,7 +26,7 @@ const completorStore = useCompletorStore();
 const settingsStore = useSettingsStore();
 const { design } = storeToRefs(settingsStore);
 
-const documentsDocuments = useDocumentsDocuments();
+const documentsDocuments = await useDocumentsDocuments();
 
 const openclose: ToggleItem[] = [
     { id: 0, label: t('common.not_selected'), value: undefined },

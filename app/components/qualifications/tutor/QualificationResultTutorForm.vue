@@ -2,6 +2,7 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import { useCompletorStore } from '~/stores/completor';
+import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ExamGrading } from '~~/gen/ts/resources/qualifications/exam';
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
@@ -32,13 +33,13 @@ const emit = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { activeChar } = useAuth();
 
 const completorStore = useCompletorStore();
 
 const notifications = useNotificationsStore();
+
+const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
 const availableStatus = [
     { status: ResultStatus.SUCCESSFUL },
@@ -68,7 +69,7 @@ async function createOrUpdateQualificationResult(
     values: Schema,
 ): Promise<CreateOrUpdateQualificationResultResponse> {
     try {
-        const call = $grpc.qualifications.qualifications.createOrUpdateQualificationResult({
+        const call = qualificationsQualificationsClient.createOrUpdateQualificationResult({
             result: {
                 id: props.resultId ?? 0,
                 qualificationId: qualificationId,

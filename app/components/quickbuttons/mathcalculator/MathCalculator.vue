@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import Big from 'big.js';
+import type Big from 'big.js';
 import { evaluateTokens } from './helpers';
 
 const powerOn = ref(true);

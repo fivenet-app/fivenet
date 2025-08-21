@@ -3,13 +3,12 @@ import { z } from 'zod';
 import { type GroupedUnits, statusOrder, unitStatusToBGColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/stores/centrum';
+import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import { type Unit, StatusUnit } from '~~/gen/ts/resources/centrum/units';
 
 const props = defineProps<{
     dispatchId: number;
 }>();
-
-const { $grpc } = useNuxtApp();
 
 const centrumStore = useCentrumStore();
 const { dispatches, getSortedUnits } = storeToRefs(centrumStore);
@@ -17,6 +16,8 @@ const { dispatches, getSortedUnits } = storeToRefs(centrumStore);
 const dispatch = computed(() => dispatches.value.get(props.dispatchId));
 
 const { isOpen } = useModal();
+
+const centrumCentrumClient = await getCentrumCentrumClient();
 
 const schema = z.object({
     units: z.custom<number>().array().max(10).default([]),
@@ -46,7 +47,7 @@ async function assignDispatch(): Promise<void> {
             }
         });
 
-        const call = $grpc.centrum.centrum.assignDispatch({
+        const call = centrumCentrumClient.assignDispatch({
             dispatchId: props.dispatchId,
             toAdd: toAdd,
             toRemove: toRemove,

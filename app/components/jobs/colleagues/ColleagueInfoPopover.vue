@@ -5,6 +5,7 @@ import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { ClassProp } from '~/utils/types';
+import { getJobsJobsClient } from '~~/gen/ts/clients';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import ColleagueName from './ColleagueName.vue';
 
@@ -27,11 +28,11 @@ const props = withDefaults(
     },
 );
 
-const { $grpc } = useNuxtApp();
-
 const { can, activeChar } = useAuth();
 
 const { popover } = useAppConfig();
+
+const jobsJobsClient = await getJobsJobsClient();
 
 const userId = computed(() => props.userId ?? props.user?.userId ?? 0);
 
@@ -41,7 +42,7 @@ const { data, refresh, status, error } = useLazyAsyncData(`colleague-info-${user
 
 async function getCitizen(id: number): Promise<Colleague> {
     try {
-        const call = $grpc.jobs.jobs.getColleague({
+        const call = jobsJobsClient.getColleague({
             userId: id,
             infoOnly: true,
         });

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
+import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -9,11 +10,11 @@ const props = defineProps<{
     documentId: number;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const notifications = useNotificationsStore();
+
+const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const accessLevels = [
     { level: AccessLevel.VIEW },
@@ -37,7 +38,7 @@ const state = reactive<Schema>({
 
 async function createDocumentRequest(values: Schema): Promise<void> {
     try {
-        const call = $grpc.documents.documents.createDocumentReq({
+        const call = documentsDocumentsClient.createDocumentReq({
             documentId: props.documentId,
             requestType: DocActivityType.REQUESTED_ACCESS,
             reason: values.reason,

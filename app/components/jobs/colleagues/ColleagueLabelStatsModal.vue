@@ -2,12 +2,13 @@
 import { StackedBar } from '@unovis/ts';
 import { VisAxis, VisStackedBar, VisTooltip, VisXYContainer } from '@unovis/vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import { getJobsJobsClient } from '~~/gen/ts/clients';
 import type { LabelCount } from '~~/gen/ts/resources/jobs/labels';
 import type { GetColleagueLabelsStatsResponse } from '~~/gen/ts/services/jobs/jobs';
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
+
+const jobsJobsClient = await getJobsJobsClient();
 
 const bodyRef = useTemplateRef('bodyRef');
 const { height, width } = useElementSize(bodyRef);
@@ -17,7 +18,7 @@ const canSubmit = ref(true);
 async function getColleagueLabelsStats(): Promise<GetColleagueLabelsStatsResponse> {
     canSubmit.value = false;
     try {
-        const { response } = await $grpc.jobs.jobs.getColleagueLabelsStats({
+        const { response } = await jobsJobsClient.getColleagueLabelsStats({
             labelIds: [],
         });
 

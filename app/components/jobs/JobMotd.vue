@@ -1,17 +1,18 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
+import { getJobsJobsClient } from '~~/gen/ts/clients';
 import type { GetMOTDResponse, SetMOTDResponse } from '~~/gen/ts/services/jobs/jobs';
 
-const { $grpc } = useNuxtApp();
-
 const { can } = useAuth();
+
+const jobsJobsClient = await getJobsJobsClient();
 
 const { data, status, refresh } = useLazyAsyncData('jobs-motd', () => getMOTD());
 
 async function getMOTD(): Promise<GetMOTDResponse> {
     try {
-        const call = $grpc.jobs.jobs.getMOTD({});
+        const call = jobsJobsClient.getMOTD({});
         const { response } = await call;
 
         return response;
@@ -41,7 +42,7 @@ watch(data, () => {
 
 async function setMOTD(values: Schema): Promise<SetMOTDResponse> {
     try {
-        const call = $grpc.jobs.jobs.setMOTD({
+        const call = jobsJobsClient.setMOTD({
             motd: values.motd,
         });
         const { response } = await call;

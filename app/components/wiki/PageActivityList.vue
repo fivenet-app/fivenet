@@ -4,13 +4,14 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import PageActivityListEntry from '~/components/wiki/PageActivityListEntry.vue';
+import { getWikiWikiClient } from '~~/gen/ts/clients';
 import type { ListPageActivityResponse } from '~~/gen/ts/services/wiki/wiki';
 
 const props = defineProps<{
     pageId: number;
 }>();
 
-const { $grpc } = useNuxtApp();
+const wikiWikiClient = await getWikiWikiClient();
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
@@ -20,7 +21,7 @@ const { data, status, refresh, error } = useLazyAsyncData(`wiki-page:${props.pag
 
 async function listPageActivity(): Promise<ListPageActivityResponse> {
     try {
-        const call = $grpc.wiki.wiki.listPageActivity({
+        const call = wikiWikiClient.listPageActivity({
             pagination: {
                 offset: calculateOffset(page.value, data.value?.pagination),
             },

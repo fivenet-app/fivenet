@@ -1,12 +1,13 @@
+import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { CreateQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
-export function useQualifications() {
-    const { $grpc } = useNuxtApp();
+export async function useQualifications() {
+    const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
     async function createQualification(): Promise<CreateQualificationResponse> {
         try {
-            const call = $grpc.qualifications.qualifications.createQualification({
+            const call = qualificationsQualificationsClient.createQualification({
                 contentType: ContentType.HTML,
             });
             const { response } = await call;

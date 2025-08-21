@@ -4,9 +4,8 @@ import { z } from 'zod';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
 import { useAuthStore } from '~/stores/auth';
+import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-
-const { $grpc } = useNuxtApp();
 
 const { isOpen } = useModal();
 
@@ -19,6 +18,8 @@ const appConfig = useAppConfig();
 
 const settingsStore = useSettingsStore();
 const { nuiEnabled } = storeToRefs(settingsStore);
+
+const citizensCitizensClient = await getCitizensCitizensClient();
 
 const schema = z
     .object({
@@ -42,7 +43,7 @@ const state = reactive<Schema>({
     reset: false,
 });
 
-const { resizeAndUpload } = useFileUploader((_) => $grpc.citizens.citizens.uploadAvatar(_), 'documents', 0);
+const { resizeAndUpload } = useFileUploader((_) => citizensCitizensClient.uploadAvatar(_), 'documents', 0);
 
 async function uploadAvatar(files: File[]): Promise<void> {
     for (const f of files) {
@@ -71,7 +72,7 @@ async function uploadAvatar(files: File[]): Promise<void> {
 
 async function deleteAvatar(): Promise<void> {
     try {
-        await $grpc.citizens.citizens.deleteAvatar({});
+        await citizensCitizensClient.deleteAvatar({});
 
         notifications.add({
             title: { key: 'notifications.action_successful.title', parameters: {} },

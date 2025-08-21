@@ -6,6 +6,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import AttrViewAttr from '~/components/settings/attrs/AttrViewAttr.vue';
+import { getSettingsSystemClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes';
 import type { Permission } from '~~/gen/ts/resources/permissions/permissions';
@@ -20,8 +21,6 @@ const emit = defineEmits<{
     (e: 'deleted', job: string): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const { isSuperuser } = useAuth();
@@ -29,6 +28,8 @@ const { isSuperuser } = useAuth();
 const modal = useModal();
 
 const notifications = useNotificationsStore();
+
+const settingsSystemClient = await getSettingsSystemClient();
 
 const {
     data: jobLimits,
@@ -47,7 +48,7 @@ const attrList = ref<RoleAttribute[]>([]);
 
 async function getJobLimits(job: string): Promise<GetJobLimitsResponse> {
     try {
-        const call = $grpc.settings.system.getJobLimits({
+        const call = settingsSystemClient.getJobLimits({
             job: job,
         });
         const { response } = await call;
@@ -61,7 +62,7 @@ async function getJobLimits(job: string): Promise<GetJobLimitsResponse> {
 
 async function getAllPermissions(job: string): Promise<void> {
     try {
-        const call = $grpc.settings.system.getAllPermissions({
+        const call = settingsSystemClient.getAllPermissions({
             job: job,
         });
         const { response } = await call;
@@ -173,7 +174,7 @@ async function updateJobLimits(): Promise<void> {
     }
 
     try {
-        await $grpc.settings.system.updateJobLimits({
+        await settingsSystemClient.updateJobLimits({
             job: props.job,
             perms: perms,
             attrs: attrs,
@@ -345,7 +346,7 @@ const accordionCategories = computed(() =>
 
 async function deleteFaction(job: string): Promise<void> {
     try {
-        await $grpc.settings.system.deleteFaction({
+        await settingsSystemClient.deleteFaction({
             job: job,
         });
 

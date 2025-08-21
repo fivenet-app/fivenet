@@ -10,17 +10,18 @@ import DateRangePickerPopoverClient from '~/components/partials/DateRangePickerP
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useCompletorStore } from '~/stores/completor';
+import { getSettingsSettingsClient } from '~~/gen/ts/clients';
 import { type AuditEntry, EventType } from '~~/gen/ts/resources/audit/audit';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ViewAuditLogRequest, ViewAuditLogResponse } from '~~/gen/ts/services/settings/settings';
 import { grpcMethods, grpcServices } from '~~/gen/ts/svcs';
 import { eventTypeToBadgeColor } from './helpers';
 
-const { $grpc } = useNuxtApp();
-
 const { d, t } = useI18n();
 
 const completorStore = useCompletorStore();
+
+const settingsSettingsClient = await getSettingsSettingsClient();
 
 const schema = z.object({
     users: z.coerce.number().array().max(5).default([]),
@@ -85,7 +86,7 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
     }
 
     try {
-        const call = $grpc.settings.settings.viewAuditLog(req);
+        const call = settingsSettingsClient.viewAuditLog(req);
         const { response } = await call;
 
         return response;

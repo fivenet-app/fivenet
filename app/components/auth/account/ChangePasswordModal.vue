@@ -3,9 +3,8 @@ import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import { useAuthStore } from '~/stores/auth';
+import { getAuthAuthClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-
-const { $grpc } = useNuxtApp();
 
 const { isOpen } = useModal();
 
@@ -13,6 +12,8 @@ const notifications = useNotificationsStore();
 
 const authStore = useAuthStore();
 const { setAccessTokenExpiration } = authStore;
+
+const authAuthClient = await getAuthAuthClient();
 
 const schema = z.object({
     currentPassword: z.string().min(6).max(70),
@@ -28,7 +29,7 @@ const state = reactive<Schema>({
 
 async function changePassword(values: Schema): Promise<void> {
     try {
-        const call = $grpc.auth.auth.changePassword({
+        const call = authAuthClient.changePassword({
             current: values.currentPassword,
             new: values.newPassword,
         });

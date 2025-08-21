@@ -6,11 +6,10 @@ import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import { CentrumAccessLevel, type CentrumJobAccess } from '~~/gen/ts/resources/centrum/access';
 import { CentrumMode, CentrumType, type Settings } from '~~/gen/ts/resources/centrum/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-
-const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
 
@@ -22,11 +21,13 @@ const notifications = useNotificationsStore();
 
 const { maxAccessEntries } = useAppConfig();
 
+const centrumCentrumClient = await getCentrumCentrumClient();
+
 const { data: settings, status, refresh, error } = useLazyAsyncData('settings-centrum-settings', () => getCentrumSettings());
 
 async function getCentrumSettings(): Promise<Settings> {
     try {
-        const call = $grpc.centrum.centrum.getSettings({});
+        const call = centrumCentrumClient.getSettings({});
         const { response } = await call;
 
         return response.settings!;
@@ -110,7 +111,7 @@ async function updateSettings(values: Schema): Promise<void> {
     values.offeredAccess.jobs.forEach((job) => job.id < 0 && (job.id = 0));
 
     try {
-        const call = $grpc.centrum.centrum.updateSettings({
+        const call = centrumCentrumClient.updateSettings({
             settings: {
                 job: '',
                 enabled: values.enabled,

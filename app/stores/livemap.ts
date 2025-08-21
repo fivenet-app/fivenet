@@ -1,6 +1,7 @@
 import type { RpcError, ServerStreamingCall } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import type { Coordinate } from '~/types/livemap';
+import { getLivemapLivemapClient } from '~~/gen/ts/clients';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/marker_marker';
 import type { UserMarker } from '~~/gen/ts/resources/livemap/user_marker';
@@ -18,8 +19,6 @@ const initialReconnectBackoffTime = 1.75;
 export const useLivemapStore = defineStore(
     'livemap',
     () => {
-        const { $grpc } = useNuxtApp();
-
         // State
         const error = ref<RpcError | undefined>(undefined);
         const abort = ref<AbortController | undefined>(undefined);
@@ -76,8 +75,10 @@ export const useLivemapStore = defineStore(
 
             cleanupMarkerMarkers();
 
+            const livemapLivemapClient = await getLivemapLivemapClient();
+
             try {
-                currentStream = $grpc.livemap.livemap.stream({}, { abort: abort.value.signal });
+                currentStream = livemapLivemapClient.stream({}, { abort: abort.value.signal });
 
                 for await (const respRaw of currentStream.responses) {
                     // The gRPC stream may yield unknown, so cast to the expected type

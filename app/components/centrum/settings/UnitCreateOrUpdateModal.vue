@@ -5,6 +5,7 @@ import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
+import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import { UnitAttribute } from '~~/gen/ts/resources/centrum/attributes';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import { UnitAccessLevel, type UnitJobAccess, type UnitQualificationAccess } from '~~/gen/ts/resources/centrum/units_access';
@@ -19,11 +20,11 @@ const emit = defineEmits<{
     (e: 'updated', unit: Unit): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const notifications = useNotificationsStore();
+
+const centrumCentrumClient = await getCentrumCentrumClient();
 
 const availableAttributes = ref<{ type: UnitAttribute }[]>([
     { type: UnitAttribute.STATIC },
@@ -68,7 +69,7 @@ async function createOrUpdateUnit(values: Schema): Promise<void> {
     values.access.qualifications.forEach((quali) => quali.id < 0 && (quali.id = 0));
 
     try {
-        const call = $grpc.centrum.centrum.createOrUpdateUnit({
+        const call = centrumCentrumClient.createOrUpdateUnit({
             unit: {
                 id: props.unit?.id ?? 0,
                 job: '',

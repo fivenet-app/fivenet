@@ -4,6 +4,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import PageSearch from '~/components/wiki/PageSearch.vue';
+import { getWikiWikiClient } from '~~/gen/ts/clients';
 import type { PageShort } from '~~/gen/ts/resources/wiki/page';
 
 useHead({
@@ -16,15 +17,15 @@ definePageMeta({
     permission: 'wiki.WikiService/ListPages',
 });
 
-const { $grpc } = useNuxtApp();
-
 const { activeChar, can } = useAuth();
+
+const wikiWikiClient = await getWikiWikiClient();
 
 const { data: pages, status, refresh, error } = useLazyAsyncData(`wiki-pages`, () => listPages());
 
 async function listPages(): Promise<PageShort[]> {
     try {
-        const call = $grpc.wiki.wiki.listPages({
+        const call = wikiWikiClient.listPages({
             pagination: {
                 offset: 0,
             },
@@ -62,7 +63,7 @@ watch(pages, async () => {
     }
 });
 
-const wikiService = useWikiWiki();
+const wikiService = await useWikiWiki();
 </script>
 
 <template>

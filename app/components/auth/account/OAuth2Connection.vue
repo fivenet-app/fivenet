@@ -4,6 +4,7 @@ import OAuth2ConnectButton from '~/components/auth/account/OAuth2ConnectButton.v
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
 import { useSettingsStore } from '~/stores/settings';
+import { getAuthAuthClient } from '~~/gen/ts/clients';
 import type { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -16,16 +17,16 @@ const emit = defineEmits<{
     (e: 'disconnected', provider: string): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const notifications = useNotificationsStore();
 
 const settingsStore = useSettingsStore();
 const { nuiEnabled } = storeToRefs(settingsStore);
 
+const authAuthClient = await getAuthAuthClient();
+
 async function disconnectOAuth2Connection(provider: OAuth2Provider): Promise<void> {
     try {
-        await $grpc.auth.auth.deleteOAuth2Connection({
+        await authAuthClient.deleteOAuth2Connection({
             provider: provider.name,
         });
 

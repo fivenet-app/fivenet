@@ -2,6 +2,7 @@ import type { RpcError, ServerStreamingCall } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import { statusOrder } from '~/components/centrum/helpers';
 import type { NotificationActionI18n } from '~/utils/notifications';
+import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import type { Dispatchers } from '~~/gen/ts/resources/centrum/dispatchers';
 import { type Dispatch, type DispatchStatus, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
 import { type EffectiveAccess, type Settings, CentrumMode, CentrumType } from '~~/gen/ts/resources/centrum/settings';
@@ -24,7 +25,6 @@ export type canDoAction = 'TakeControl' | 'TakeDispatch' | 'AssignDispatch' | 'U
 export const useCentrumStore = defineStore(
     'centrum',
     () => {
-        const { $grpc } = useNuxtApp();
         const notifications = useNotificationsStore();
 
         // State
@@ -381,8 +381,10 @@ export const useCentrumStore = defineStore(
                 cleanupIntervalId.value = setInterval(() => cleanup(), cleanupInterval);
             }
 
+            const centrumCentrumClient = await getCentrumCentrumClient();
+
             try {
-                currentStream = $grpc.centrum.centrum.stream({}, { abort: abort.value.signal });
+                currentStream = centrumCentrumClient.stream({}, { abort: abort.value.signal });
 
                 for await (const respRaw of currentStream.responses) {
                     // The gRPC stream may yield unknown, so cast to the expected type
@@ -824,8 +826,10 @@ export const useCentrumStore = defineStore(
                 return;
             }
 
+            const centrumCentrumClient = await getCentrumCentrumClient();
+
             try {
-                const call = $grpc.centrum.centrum.takeDispatch({
+                const call = centrumCentrumClient.takeDispatch({
                     dispatchIds: [id],
                     resp: TakeDispatchResp.ACCEPTED,
                 });
@@ -837,8 +841,10 @@ export const useCentrumStore = defineStore(
         };
 
         const updateDispatchers = async (toRemove: number[]): Promise<void> => {
+            const centrumCentrumClient = await getCentrumCentrumClient();
+
             try {
-                const call = $grpc.centrum.centrum.updateDispatchers({
+                const call = centrumCentrumClient.updateDispatchers({
                     toRemove: toRemove,
                 });
                 await call;

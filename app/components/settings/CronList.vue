@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { getSettingsCronClient } from '~~/gen/ts/clients';
 import { Any } from '~~/gen/ts/google/protobuf/any';
 import { CronjobState, GenericCronData } from '~~/gen/ts/resources/common/cron/cron';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -7,13 +8,13 @@ import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import GenericTime from '../partials/elements/GenericTime.vue';
 import Pagination from '../partials/Pagination.vue';
 
-const { $grpc } = useNuxtApp();
+const settingsCronClient = await getSettingsCronClient();
 
 const { data: cronjobs, status, refresh, error } = useLazyAsyncData(`settings-cronjobs`, () => listCronjobs());
 
 async function listCronjobs(): Promise<ListCronjobsResponse> {
     try {
-        const { response } = $grpc.settings.cron.listCronjobs({});
+        const { response } = settingsCronClient.listCronjobs({});
 
         start();
 

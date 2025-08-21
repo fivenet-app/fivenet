@@ -3,15 +3,16 @@ import { isStatusDispatchCompleted } from '~/components/centrum/helpers';
 import TakeDispatchEntry from '~/components/centrum/livemap/TakeDispatchEntry.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/stores/centrum';
+import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import { type Dispatch, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
-
-const { $grpc } = useNuxtApp();
 
 const { isOpen } = useSlideover();
 
 const centrumStore = useCentrumStore();
 const { dispatches, pendingDispatches, getCurrentMode } = storeToRefs(centrumStore);
+
+const centrumCentrumClient = await getCentrumCentrumClient();
 
 const selectedDispatches = ref<number[]>([]);
 const queryDispatches = ref('');
@@ -37,7 +38,7 @@ async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
         }
 
         // Make sure all selected dispatches are still existing and not in a "completed"
-        const call = $grpc.centrum.centrum.takeDispatch({
+        const call = centrumCentrumClient.takeDispatch({
             dispatchIds,
             resp,
         });

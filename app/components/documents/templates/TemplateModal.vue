@@ -34,7 +34,7 @@ watch(reqStatus.value, () => {
     readyToCreate.value = requirementTypes.every((type) => reqStatus.value[type]);
 });
 
-const documentsDocuments = useDocumentsDocuments();
+const documentsDocuments = await useDocumentsDocuments();
 
 function closeDialog(): void {
     isOpen.value = false;

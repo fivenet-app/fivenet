@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { checkDocAccess } from '~/components/documents/helpers';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { AccessLevel, type DocumentAccess } from '~~/gen/ts/resources/documents/access';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
@@ -20,13 +21,13 @@ const emit = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const { attr, can, activeChar } = useAuth();
 
 const notifications = useNotificationsStore();
+
+const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 type RequestType = { key: DocActivityType; attrKey: string };
 const requestTypes = [
@@ -63,7 +64,7 @@ const {
 
 async function listDocumnetReqs(documentId: number): Promise<ListDocumentReqsResponse> {
     try {
-        const call = $grpc.documents.documents.listDocumentReqs({
+        const call = documentsDocumentsClient.listDocumentReqs({
             pagination: {
                 offset: offset.value,
             },
@@ -84,7 +85,7 @@ async function createDocumentRequest(values: Schema): Promise<void> {
     }
 
     try {
-        const call = $grpc.documents.documents.createDocumentReq({
+        const call = documentsDocumentsClient.createDocumentReq({
             documentId: props.doc.id,
             reason: values.reason,
             requestType: values.requestType,

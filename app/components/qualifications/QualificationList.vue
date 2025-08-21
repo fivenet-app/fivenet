@@ -6,9 +6,8 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import QualificationListEntry from '~/components/qualifications/QualificationListEntry.vue';
+import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { ListQualificationsResponse } from '~~/gen/ts/services/qualifications/qualifications';
-
-const { $grpc } = useNuxtApp();
 
 const schema = z.object({
     search: z.string().max(64).optional(),
@@ -19,6 +18,8 @@ const schema = z.object({
     page: pageNumberSchema,
 });
 
+const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
+
 const query = useSearchForm('qualifications_list', schema);
 
 const { data, status, refresh, error } = useLazyAsyncData(
@@ -28,7 +29,7 @@ const { data, status, refresh, error } = useLazyAsyncData(
 
 async function listQualifications(): Promise<ListQualificationsResponse> {
     try {
-        const call = $grpc.qualifications.qualifications.listQualifications({
+        const call = qualificationsQualificationsClient.listQualifications({
             pagination: {
                 offset: calculateOffset(query.page, data.value?.pagination),
             },

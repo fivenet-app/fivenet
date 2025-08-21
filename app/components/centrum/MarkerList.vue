@@ -3,9 +3,8 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useLivemapStore } from '~/stores/livemap';
+import { getLivemapLivemapClient } from '~~/gen/ts/clients';
 import { MarkerType } from '~~/gen/ts/resources/livemap/marker_marker';
-
-const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
 
@@ -15,9 +14,11 @@ const livemapStore = useLivemapStore();
 const { deleteMarkerMarker, goto } = livemapStore;
 const { markersMarkers } = storeToRefs(livemapStore);
 
+const livemapLivemapClient = await getLivemapLivemapClient();
+
 async function deleteMarker(id: number): Promise<void> {
     try {
-        const call = $grpc.livemap.livemap.deleteMarker({
+        const call = livemapLivemapClient.deleteMarker({
             id,
         });
         await call;

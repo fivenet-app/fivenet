@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import type { Group } from '#ui/types';
+import { getWikiWikiClient } from '~~/gen/ts/clients';
 
-const { $grpc } = useNuxtApp();
+const appConfig = useAppConfig();
 
 const { t } = useI18n();
 
-const appConfig = useAppConfig();
+const wikiWikiClient = await getWikiWikiClient();
 
 const isOpen = ref(false);
 
@@ -15,7 +16,7 @@ const groups = [
         label: (q: string | undefined) => q && `${t('common.search')}: ${q}`,
         search: async (q: string) => {
             try {
-                const call = $grpc.wiki.wiki.listPages({
+                const call = wikiWikiClient.listPages({
                     pagination: {
                         offset: 0,
                     },

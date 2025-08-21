@@ -2,6 +2,7 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import { useCompletorStore } from '~/stores/completor';
+import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Labels } from '~~/gen/ts/resources/users/labels';
 import type { UserProps } from '~~/gen/ts/resources/users/props';
@@ -15,8 +16,6 @@ const emit = defineEmits<{
     (e: 'update:modelValue', labels: Labels | undefined): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { attr, can } = useAuth();
 
 const labels = useVModel(props, 'modelValue', emit);
@@ -24,6 +23,8 @@ const labels = useVModel(props, 'modelValue', emit);
 const notifications = useNotificationsStore();
 
 const completorStore = useCompletorStore();
+
+const citizensCitizensClient = await getCitizensCitizensClient();
 
 const canDo = computed(() => ({
     set:
@@ -64,7 +65,7 @@ async function setJobProp(userId: number, values: Schema): Promise<void> {
     };
 
     try {
-        const call = $grpc.citizens.citizens.setUserProps({
+        const call = citizensCitizensClient.setUserProps({
             props: userProps,
             reason: values.reason,
         });

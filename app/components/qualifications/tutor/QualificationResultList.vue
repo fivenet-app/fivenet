@@ -6,11 +6,12 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { checkQualificationAccess, resultStatusToTextColor } from '~/components/qualifications/helpers';
 import ExamViewResultModal from '~/components/qualifications/tutor/ExamViewResultModal.vue';
+import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
 import { type Qualification, QualificationExamMode, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type {
     DeleteQualificationResultResponse,
-    ListQualificationResultsResponse,
+    ListQualificationsResultsResponse,
 } from '~~/gen/ts/services/qualifications/qualifications';
 
 const props = withDefaults(
@@ -29,8 +30,6 @@ const props = withDefaults(
 const emit = defineEmits<{
     (e: 'refresh'): void;
 }>();
-
-const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
 
@@ -51,12 +50,18 @@ const { data, status, refresh, error } = useLazyAsyncData(
     },
 );
 
+defineExpose({
+    refresh,
+});
+
+const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
+
 async function listQualificationResults(
     qualificationId?: number,
     status?: ResultStatus[],
-): Promise<ListQualificationResultsResponse> {
+): Promise<ListQualificationsResultsResponse> {
     try {
-        const call = $grpc.qualifications.qualifications.listQualificationResults({
+        const call = qualificationsQualificationsClient.listQualificationsResults({
             pagination: {
                 offset: calculateOffset(page.value, data.value?.pagination),
             },
@@ -75,7 +80,7 @@ async function listQualificationResults(
 
 async function deleteQualificationResult(resultId: number): Promise<DeleteQualificationResultResponse> {
     try {
-        const call = $grpc.qualifications.qualifications.deleteQualificationResult({
+        const call = qualificationsQualificationsClient.deleteQualificationResult({
             resultId,
         });
         const { response } = await call;
@@ -127,10 +132,6 @@ async function onRefresh(): Promise<void> {
     emit('refresh');
     return refresh();
 }
-
-defineExpose({
-    refresh,
-});
 </script>
 
 <template>

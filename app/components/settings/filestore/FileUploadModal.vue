@@ -3,6 +3,7 @@ import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
 import { useSettingsStore } from '~/stores/settings';
+import { getFilestoreFilestoreClient } from '~~/gen/ts/clients';
 import type { File } from '~~/gen/ts/resources/file/file';
 import type { UploadFileResponse } from '~~/gen/ts/resources/file/filestore';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -10,8 +11,6 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 const emit = defineEmits<{
     (e: 'uploaded', file: File): void;
 }>();
-
-const { $grpc } = useNuxtApp();
 
 const { fileUpload } = useAppConfig();
 
@@ -21,6 +20,8 @@ const notifications = useNotificationsStore();
 
 const settingsStore = useSettingsStore();
 const { nuiEnabled } = storeToRefs(settingsStore);
+
+const filestoreFilestoreClient = await getFilestoreFilestoreClient();
 
 const schema = z.object({
     category: z.string().min(3).max(255),
@@ -44,7 +45,7 @@ async function upload(values: Schema): Promise<UploadFileResponse | undefined> {
     }
 
     try {
-        const call = $grpc.filestore.filestore.upload({
+        const call = filestoreFilestoreClient.upload({
             prefix: values.category,
             name: values.name,
         });

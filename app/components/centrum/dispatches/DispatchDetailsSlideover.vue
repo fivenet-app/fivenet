@@ -12,6 +12,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
+import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import { CentrumAccessLevel } from '~~/gen/ts/resources/centrum/access';
 import { type Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
@@ -19,8 +20,6 @@ const props = defineProps<{
     dispatchId: number;
     dispatch?: Dispatch;
 }>();
-
-const { $grpc } = useNuxtApp();
 
 const { can } = useAuth();
 
@@ -34,11 +33,13 @@ const centrumStore = useCentrumStore();
 const { dispatches, timeCorrection } = storeToRefs(centrumStore);
 const { canDo, selfAssign } = centrumStore;
 
+const centrumCentrumClient = await getCentrumCentrumClient();
+
 const dispatch = computed(() => (props.dispatch ? props.dispatch : dispatches.value.get(props.dispatchId)));
 
 async function deleteDispatch(id: number): Promise<void> {
     try {
-        const call = $grpc.centrum.centrum.deleteDispatch({ id });
+        const call = centrumCentrumClient.deleteDispatch({ id });
         await call;
     } catch (e) {
         handleGRPCError(e as RpcError);

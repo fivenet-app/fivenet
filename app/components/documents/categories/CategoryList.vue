@@ -5,17 +5,18 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import type { CardElements } from '~/utils/types';
+import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 
-const { $grpc } = useNuxtApp();
-
 const { can } = useAuth();
+
+const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const { data: categories, status, refresh, error } = useLazyAsyncData(`documents-categories`, () => listCategories());
 
 async function listCategories(): Promise<Category[]> {
     try {
-        const call = $grpc.documents.documents.listCategories({});
+        const call = documentsDocumentsClient.listCategories({});
         const { response } = await call;
 
         return response.categories;

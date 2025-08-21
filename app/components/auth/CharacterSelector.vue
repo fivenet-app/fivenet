@@ -4,18 +4,19 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/stores/auth';
+import { getAuthAuthClient } from '~~/gen/ts/clients';
 import type { Character } from '~~/gen/ts/resources/accounts/accounts';
 
-const { $grpc } = useNuxtApp();
-
+const authAuthClient = await getAuthAuthClient();
 const authStore = useAuthStore();
+
 const { chooseCharacter } = authStore;
 
 const { data: chars, status, refresh, error } = useLazyAsyncData('chars', () => getCharacters());
 
 async function getCharacters(): Promise<Character[]> {
     try {
-        const call = $grpc.auth.auth.getCharacters({});
+        const call = authAuthClient.getCharacters({});
         const { response } = await call;
 
         return response.chars;

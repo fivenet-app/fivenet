@@ -4,6 +4,7 @@ import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import LawEntry from '~/components/settings/laws/LawEntry.vue';
+import { getSettingsLawsClient } from '~~/gen/ts/clients';
 import type { Law, LawBook } from '~~/gen/ts/resources/laws/laws';
 
 const props = defineProps<{
@@ -19,8 +20,6 @@ const emit = defineEmits<{
     (e: 'update:law', update: { id: number; law: Law }): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const { can } = useAuth();
@@ -30,6 +29,8 @@ const lawBook = useVModel(props, 'modelValue', emit);
 const laws = useVModel(props, 'laws', emit);
 
 const modal = useModal();
+
+const settingsLawsClient = await getSettingsLawsClient();
 
 const schema = z.object({
     name: z.string().min(3).max(128),
@@ -50,7 +51,7 @@ async function deleteLawBook(id: number): Promise<void> {
     }
 
     try {
-        const call = $grpc.settings.laws.deleteLawBook({
+        const call = settingsLawsClient.deleteLawBook({
             id: id,
         });
         await call;
@@ -64,7 +65,7 @@ async function deleteLawBook(id: number): Promise<void> {
 
 async function saveLawBook(id: number, values: Schema): Promise<LawBook> {
     try {
-        const call = $grpc.settings.laws.createOrUpdateLawBook({
+        const call = settingsLawsClient.createOrUpdateLawBook({
             lawBook: {
                 id: id < 0 ? 0 : id,
                 name: values.name,
@@ -147,7 +148,7 @@ async function deleteLaw(id: number): Promise<void> {
     }
 
     try {
-        const call = $grpc.settings.laws.deleteLaw({
+        const call = settingsLawsClient.deleteLaw({
             id: id,
         });
         await call;

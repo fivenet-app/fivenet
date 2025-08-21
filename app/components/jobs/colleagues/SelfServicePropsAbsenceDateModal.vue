@@ -4,6 +4,7 @@ import { addDays, isFuture, subDays } from 'date-fns';
 import { z } from 'zod';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 import { useAuthStore } from '~/stores/auth';
+import { getJobsJobsClient } from '~~/gen/ts/clients';
 import type { ColleagueProps } from '~~/gen/ts/resources/jobs/colleagues';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
@@ -17,14 +18,14 @@ const emit = defineEmits<{
     (e: 'update:absenceDates', value: { userId: number; absenceBegin?: Timestamp; absenceEnd?: Timestamp }): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const notifications = useNotificationsStore();
 
 const authStore = useAuthStore();
 const { jobProps } = storeToRefs(authStore);
+
+const jobsJobsClient = await getJobsJobsClient();
 
 const today = new Date();
 const minStart = subDays(today, jobProps.value?.settings?.absencePastDays ?? 7);
@@ -68,7 +69,7 @@ async function setAbsenceDate(values: Schema): Promise<void> {
     }
 
     try {
-        const call = $grpc.jobs.jobs.setColleagueProps({
+        const call = jobsJobsClient.setColleagueProps({
             props: userProps,
             reason: values.reason,
         });

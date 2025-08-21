@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import type { Group } from '#ui/types';
 import { useMailerStore } from '~/stores/mailer';
-
-const { $grpc } = useNuxtApp();
+import { getMailerMailerClient } from '~~/gen/ts/clients';
 
 const { t, d } = useI18n();
 
@@ -13,13 +12,15 @@ const isOpen = ref(false);
 const mailerStore = useMailerStore();
 const { selectedEmail } = storeToRefs(mailerStore);
 
+const mailerMailerClient = await getMailerMailerClient();
+
 const groups = [
     {
         key: 'pages',
         label: (q: string | undefined) => q && `${t('common.search')}: ${q}`,
         search: async (q: string) => {
             try {
-                const call = $grpc.mailer.mailer.searchThreads({
+                const call = mailerMailerClient.searchThreads({
                     pagination: {
                         offset: 0,
                     },

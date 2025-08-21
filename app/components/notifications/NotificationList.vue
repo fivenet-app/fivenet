@@ -5,6 +5,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import { getNotificationsNotificationsClient } from '~~/gen/ts/clients';
 import { NotificationCategory } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetNotificationsResponse } from '~~/gen/ts/services/notifications/notifications';
 import { notificationCategoryToIcon } from './helpers';
@@ -13,11 +14,11 @@ defineEmits<{
     (e: 'clicked'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const notifications = useNotificationsStore();
+
+const notificationsNotificationsClient = await getNotificationsNotificationsClient();
 
 const categories: { mode: NotificationCategory }[] = [
     { mode: NotificationCategory.GENERAL },
@@ -41,7 +42,7 @@ const { data, status, refresh, error } = useLazyAsyncData(`notifications-${query
 
 async function getNotifications(): Promise<GetNotificationsResponse> {
     try {
-        const call = $grpc.notifications.notifications.getNotifications({
+        const call = notificationsNotificationsClient.getNotifications({
             pagination: {
                 offset: calculateOffset(query.page, data.value?.pagination),
             },

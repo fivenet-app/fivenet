@@ -9,6 +9,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { ToggleItem } from '~/utils/types';
+import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { DocRelation } from '~~/gen/ts/resources/documents/documents';
 import type { ListUserDocumentsResponse } from '~~/gen/ts/services/documents/documents';
 
@@ -16,9 +17,9 @@ const props = defineProps<{
     userId: number;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
+
+const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const openclose: ToggleItem[] = [
     { id: 0, label: t('common.not_selected'), value: undefined },
@@ -54,7 +55,7 @@ const { data, status, refresh, error } = useLazyAsyncData(`citizeninfo-documents
 
 async function listUserDocuments(): Promise<ListUserDocumentsResponse> {
     try {
-        const call = $grpc.documents.documents.listUserDocuments({
+        const call = documentsDocumentsClient.listUserDocuments({
             pagination: {
                 offset: calculateOffset(query.page, data.value?.pagination),
             },

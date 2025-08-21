@@ -1,18 +1,19 @@
 <script lang="ts" setup>
 import TimeclockStatsBlock from '~/components/jobs/timeclock/TimeclockStatsBlock.vue';
+import { getJobsTimeclockClient } from '~~/gen/ts/clients';
 import type { GetTimeclockStatsResponse } from '~~/gen/ts/services/jobs/timeclock';
 
 const props = defineProps<{
     userId?: number;
 }>();
 
-const { $grpc } = useNuxtApp();
+const jobsTimeclockClient = await getJobsTimeclockClient();
 
 const { data, error, status, refresh } = useLazyAsyncData(`jobs-timeclock-stats`, () => getTimeclockStats());
 
 async function getTimeclockStats(): Promise<GetTimeclockStatsResponse> {
     try {
-        const call = $grpc.jobs.timeclock.getTimeclockStats({
+        const call = jobsTimeclockClient.getTimeclockStats({
             userId: props.userId,
         });
         const { response } = await call;

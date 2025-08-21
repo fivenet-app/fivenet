@@ -3,6 +3,7 @@ import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import { getAuthAuthClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
@@ -14,11 +15,11 @@ const emit = defineEmits<{
     (e: 'toggle'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const canSubmit = useVModel(props, 'modelValue', emit);
 
 const notifications = useNotificationsStore();
+
+const authAuthClient = await getAuthAuthClient();
 
 const accountError = ref<RpcError | undefined>();
 
@@ -38,7 +39,7 @@ const state = reactive<Schema>({
 
 async function forgotPassword(values: Schema): Promise<void> {
     try {
-        await $grpc.auth.auth.forgotPassword({
+        await authAuthClient.forgotPassword({
             regToken: values.registrationToken.toString(),
             new: values.password,
         });

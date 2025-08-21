@@ -18,12 +18,13 @@ import (
 // PermifyModule
 type PermifyModule struct {
 	*pgs.ModuleBase
+
 	ctx      pgsgo.Context
 	tpl      *template.Template
 	constTpl *template.Template
 }
 
-// Permify returns an initialized PermifyModule
+// Permify returns an initialized PermifyModule.
 func Permify() *PermifyModule { return &PermifyModule{ModuleBase: &pgs.ModuleBase{}} }
 
 func (p *PermifyModule) InitContext(c pgs.BuildContext) {

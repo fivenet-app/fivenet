@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
+import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { RequestStatus, type QualificationRequest } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { CreateOrUpdateQualificationRequestResponse } from '~~/gen/ts/services/qualifications/qualifications';
@@ -20,11 +21,11 @@ const emit = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const notifications = useNotificationsStore();
+
+const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
 const availableStatus = [
     { status: RequestStatus.ACCEPTED },
@@ -50,7 +51,7 @@ async function createOrUpdateQualificationRequest(
     values: Schema,
 ): Promise<CreateOrUpdateQualificationRequestResponse> {
     try {
-        const call = $grpc.qualifications.qualifications.createOrUpdateQualificationRequest({
+        const call = qualificationsQualificationsClient.createOrUpdateQualificationRequest({
             request: {
                 qualificationId: qualificationId,
                 userId: userId,

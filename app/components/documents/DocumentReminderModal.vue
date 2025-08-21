@@ -3,6 +3,7 @@ import type { FormSubmitEvent } from '#ui/types';
 import { subDays } from 'date-fns';
 import { z } from 'zod';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
+import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { SetDocumentReminderResponse } from '~~/gen/ts/services/documents/documents';
@@ -18,11 +19,11 @@ const emit = defineEmits<{
 
 const reminderTime = useVModel(props, 'reminderTime', emit);
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const notifications = useNotificationsStore();
+
+const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const schema = z.object({
     message: z.string().min(1).max(64),
@@ -42,7 +43,7 @@ watch(reminderTime, () => (state.reminderTime = reminderTime.value ? toDate(remi
 
 async function setDocumentReminder(values: Schema): Promise<SetDocumentReminderResponse> {
     try {
-        const call = $grpc.documents.documents.setDocumentReminder({
+        const call = documentsDocumentsClient.setDocumentReminder({
             documentId: props.documentId,
             reminderTime: values.reminderTime ? toTimestamp(values.reminderTime) : undefined,
             message: values.message,

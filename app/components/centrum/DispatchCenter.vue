@@ -62,10 +62,7 @@ onBeforeRouteLeave(async (to) => {
 
                         <LivemapBase :show-unit-names="true" :show-unit-status="true">
                             <template #default>
-                                <DispatchLayer
-                                    v-if="can('centrum.CentrumService/Stream').value"
-                                    :show-all-dispatches="true"
-                                />
+                                <DispatchLayer v-if="can('centrum.CentrumService/Stream').value" :show-all-dispatches="true" />
                             </template>
                         </LivemapBase>
                     </div>

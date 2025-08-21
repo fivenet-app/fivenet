@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useMailerStore } from '~/stores/mailer';
+import { getMailerMailerClient } from '~~/gen/ts/clients';
 import type { Template } from '~~/gen/ts/resources/mailer/template';
 import type { ListTemplatesResponse } from '~~/gen/ts/services/mailer/mailer';
 
@@ -11,13 +12,13 @@ const emit = defineEmits<{
     (e: 'update:modelValue', value: string): void;
 }>();
 
+const mailerMailerClient = await getMailerMailerClient();
+
 const content = useVModel(props, 'modelValue', emit);
 
 defineOptions({
     inheritAttrs: false,
 });
-
-const { $grpc } = useNuxtApp();
 
 const mailerStore = useMailerStore();
 const { selectedEmail } = storeToRefs(mailerStore);
@@ -26,7 +27,7 @@ const { data: templates } = useLazyAsyncData(`mailer-templates:${selectedEmail.v
 
 async function listTemplates(): Promise<ListTemplatesResponse> {
     try {
-        const call = $grpc.mailer.mailer.listTemplates({
+        const call = mailerMailerClient.listTemplates({
             emailId: selectedEmail.value!.id,
         });
         const { response } = await call;

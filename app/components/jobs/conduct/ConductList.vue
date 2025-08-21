@@ -7,6 +7,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useCompletorStore } from '~/stores/completor';
+import { getJobsConductClient } from '~~/gen/ts/clients';
 import { type ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import type { ListConductEntriesResponse } from '~~/gen/ts/services/jobs/conduct';
 import ColleagueName from '../colleagues/ColleagueName.vue';
@@ -18,8 +19,6 @@ const props = defineProps<{
     hideUserSearch?: boolean;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const { can } = useAuth();
@@ -29,6 +28,8 @@ const modal = useModal();
 const slideover = useSlideover();
 
 const completorStore = useCompletorStore();
+
+const jobsConductClient = await getJobsConductClient();
 
 const availableTypes = ref<{ status: ConductType }[]>([
     { status: ConductType.NOTE },
@@ -69,7 +70,7 @@ async function listConductEntries(): Promise<ListConductEntriesResponse> {
 
     const userIds = props.userId ? [props.userId] : query.user ? [query.user] : [];
     try {
-        const call = $grpc.jobs.conduct.listConductEntries({
+        const call = jobsConductClient.listConductEntries({
             pagination: {
                 offset: calculateOffset(query.page, data.value?.pagination),
             },
@@ -90,7 +91,7 @@ async function listConductEntries(): Promise<ListConductEntriesResponse> {
 
 async function deleteConductEntry(id: number): Promise<void> {
     try {
-        const call = $grpc.jobs.conduct.deleteConductEntry({ id });
+        const call = jobsConductClient.deleteConductEntry({ id });
         await call;
 
         refresh();

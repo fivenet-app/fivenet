@@ -8,6 +8,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import DocumentCategoryBadge from '~/components/partials/documents/DocumentCategoryBadge.vue';
+import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -16,8 +17,6 @@ const props = defineProps<{
     templateId: number;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const { can } = useAuth();
@@ -25,6 +24,8 @@ const { can } = useAuth();
 const modal = useModal();
 
 const notifications = useNotificationsStore();
+
+const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const reqs = ref<undefined | TemplateRequirements>();
 
@@ -37,7 +38,7 @@ const {
 
 async function getTemplate(): Promise<Template | undefined> {
     try {
-        const call = $grpc.documents.documents.getTemplate({
+        const call = documentsDocumentsClient.getTemplate({
             templateId: props.templateId,
             render: false,
         });
@@ -56,7 +57,7 @@ async function getTemplate(): Promise<Template | undefined> {
 
 async function deleteTemplate(id: number): Promise<void> {
     try {
-        await $grpc.documents.documents.deleteTemplate({ id });
+        await documentsDocumentsClient.deleteTemplate({ id });
 
         notifications.add({
             title: { key: 'notifications.templates.deleted.title', parameters: {} },

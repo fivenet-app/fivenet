@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { dispatchStatusToBGColor, dispatchStatuses } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/stores/centrum';
+import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -12,14 +13,14 @@ const props = defineProps<{
     status?: StatusDispatch;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const centrumStore = useCentrumStore();
 const { settings } = storeToRefs(centrumStore);
 
 const notifications = useNotificationsStore();
+
+const centrumCentrumClient = await getCentrumCentrumClient();
 
 const schema = z.object({
     status: z.nativeEnum(StatusDispatch),
@@ -35,7 +36,7 @@ const state = reactive<Schema>({
 
 async function updateDispatchStatus(dispatchId: number, values: Schema): Promise<void> {
     try {
-        const call = $grpc.centrum.centrum.updateDispatchStatus({
+        const call = centrumCentrumClient.updateDispatchStatus({
             dispatchId: dispatchId,
             status: values.status,
             code: values.code,

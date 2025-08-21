@@ -1,3 +1,4 @@
+import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type {
@@ -7,8 +8,8 @@ import type {
     ListDocumentsResponse,
 } from '~~/gen/ts/services/documents/documents';
 
-export function useDocumentsDocuments() {
-    const { $grpc } = useNuxtApp();
+export async function useDocumentsDocuments() {
+    const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
     const notifications = useNotificationsStore();
 
@@ -19,7 +20,7 @@ export function useDocumentsDocuments() {
 
     const listDocuments = async (req: ListDocumentsRequest): Promise<ListDocumentsResponse> => {
         try {
-            const call = $grpc.documents.documents.listDocuments(req);
+            const call = documentsDocumentsClient.listDocuments(req);
             const { response } = await call;
 
             documents.value = response;
@@ -33,7 +34,7 @@ export function useDocumentsDocuments() {
 
     const getDocument = async (id: number, redirectOnError?: boolean): Promise<GetDocumentResponse> => {
         try {
-            const call = $grpc.documents.documents.getDocument({
+            const call = documentsDocumentsClient.getDocument({
                 documentId: id,
             });
             const { response } = await call;
@@ -54,7 +55,7 @@ export function useDocumentsDocuments() {
         templateData.activeChar = unref(activeChar.value!);
 
         try {
-            const call = $grpc.documents.documents.createDocument({
+            const call = documentsDocumentsClient.createDocument({
                 contentType: ContentType.HTML,
                 templateId: templateId,
                 templateData: templateData,
@@ -77,7 +78,7 @@ export function useDocumentsDocuments() {
 
     const deleteDocument = async (id: number, restore?: boolean, reason?: string): Promise<void> => {
         try {
-            await $grpc.documents.documents.deleteDocument({
+            await documentsDocumentsClient.deleteDocument({
                 documentId: id,
                 reason: reason,
             });
@@ -106,7 +107,7 @@ export function useDocumentsDocuments() {
 
     const toggleDocument = async (id: number, closed: boolean): Promise<boolean> => {
         try {
-            await $grpc.documents.documents.toggleDocument({
+            await documentsDocumentsClient.toggleDocument({
                 documentId: id,
                 closed: closed,
             });
@@ -134,7 +135,7 @@ export function useDocumentsDocuments() {
 
     const changeDocumentOwner = async (id: number): Promise<void> => {
         try {
-            await $grpc.documents.documents.changeDocumentOwner({
+            await documentsDocumentsClient.changeDocumentOwner({
                 documentId: id,
             });
 

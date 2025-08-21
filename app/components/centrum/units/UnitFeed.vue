@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import UnitFeedItem from '~/components/centrum/units/UnitFeedItem.vue';
+import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import type { ListUnitActivityResponse } from '~~/gen/ts/services/centrum/centrum';
 
 const props = defineProps<{
     unitId: number;
 }>();
 
-const { $grpc } = useNuxtApp();
+const centrumCentrumClient = await getCentrumCentrumClient();
 
 const offset = ref(0);
 
@@ -14,7 +15,7 @@ const { data, refresh } = useLazyAsyncData(`centrum-unit-${props.unitId}-activit
 
 async function listUnitActivity(): Promise<ListUnitActivityResponse> {
     try {
-        const call = $grpc.centrum.centrum.listUnitActivity({
+        const call = centrumCentrumClient.listUnitActivity({
             pagination: {
                 offset: offset.value,
             },

@@ -4,17 +4,18 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/stores/mailer';
+import { getMailerMailerClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 import type { ListTemplatesResponse } from '~~/gen/ts/services/mailer/mailer';
 import { canAccess } from './helpers';
 import TemplateEditForm from './TemplateEditForm.vue';
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const mailerStore = useMailerStore();
 const { selectedEmail } = storeToRefs(mailerStore);
+
+const mailerMailerClient = await getMailerMailerClient();
 
 const {
     data: templates,
@@ -25,7 +26,7 @@ const {
 
 async function listTemplates(): Promise<ListTemplatesResponse> {
     try {
-        const call = $grpc.mailer.mailer.listTemplates({
+        const call = mailerMailerClient.listTemplates({
             emailId: selectedEmail.value!.id,
         });
         const { response } = await call;

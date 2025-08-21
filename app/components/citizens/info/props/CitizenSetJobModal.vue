@@ -2,6 +2,7 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import { useCompletorStore } from '~/stores/completor';
+import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import type { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserProps } from '~~/gen/ts/resources/users/props';
@@ -15,8 +16,6 @@ const emit = defineEmits<{
     (e: 'update:job', value: { job: Job; grade: JobGrade }): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const { game } = useAppConfig();
@@ -27,6 +26,8 @@ const completorStore = useCompletorStore();
 
 const { jobs } = storeToRefs(completorStore);
 const { listJobs } = completorStore;
+
+const citizensCitizensClient = await getCitizensCitizensClient();
 
 const schema = z.object({
     reason: z.string().min(3).max(255),
@@ -59,7 +60,7 @@ async function setJobProp(values: Schema): Promise<void> {
     }
 
     try {
-        const call = $grpc.citizens.citizens.setUserProps({
+        const call = citizensCitizensClient.setUserProps({
             props: userProps,
             reason: values.reason,
         });

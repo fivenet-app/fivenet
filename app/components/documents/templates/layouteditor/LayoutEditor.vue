@@ -159,10 +159,6 @@ function updateFrame(updated: Frame) {
     if (idx >= 0) frames.value[idx] = { ...frames.value[idx], ...updated } as Frame;
 }
 
-/* Palette drag support via dataTransfer */
-function onPaletteDragStart(e: DragEvent, kind: Kind) {
-    e.dataTransfer?.setData('application/x-kind', JSON.stringify({ kind }));
-}
 /* Click-to-insert helper */
 function addFrameAt(kind: Kind, xMm: number, yMm: number) {
     const base: BaseFrame = {

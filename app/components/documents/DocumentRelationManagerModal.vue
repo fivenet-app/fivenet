@@ -4,6 +4,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { useAuthStore } from '~/stores/auth';
 import { getUser, useClipboardStore } from '~/stores/clipboard';
+import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import { type DocumentRelation, DocRelation } from '~~/gen/ts/resources/documents/documents';
 import type { User } from '~~/gen/ts/resources/users/users';
 
@@ -16,17 +17,16 @@ const modelValue = defineModel<DocumentRelation[]>('relations', {
     required: true,
 });
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const { t } = useI18n();
 
 const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
 
 const clipboardStore = useClipboardStore();
 
-const { activeChar } = storeToRefs(authStore);
+const citizensCitizensClient = await getCitizensCitizensClient();
 
 const items = ref<TabItem[]>([
     {
@@ -62,7 +62,7 @@ watchDebounced(queryCitizens, async () => await refresh(), {
 
 async function listCitizens(): Promise<User[]> {
     try {
-        const call = $grpc.citizens.citizens.listCitizens({
+        const call = citizensCitizensClient.listCitizens({
             pagination: {
                 offset: 0,
                 pageSize: 8,

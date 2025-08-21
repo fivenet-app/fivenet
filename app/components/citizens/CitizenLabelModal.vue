@@ -3,15 +3,16 @@ import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
 import { useCompletorStore } from '~/stores/completor';
+import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import type { ManageLabelsResponse } from '~~/gen/ts/services/citizens/citizens';
-
-const { $grpc } = useNuxtApp();
 
 const { can } = useAuth();
 
 const { isOpen } = useModal();
 
 const completorStore = useCompletorStore();
+
+const citizensCitizensClient = await getCitizensCitizensClient();
 
 const schema = z.object({
     labels: z
@@ -35,7 +36,7 @@ const { data: labels } = useLazyAsyncData('citizens-labels', () => completorStor
 
 async function manageLabels(values: Schema): Promise<ManageLabelsResponse> {
     try {
-        const { response } = await $grpc.citizens.citizens.manageLabels({
+        const { response } = await citizensCitizensClient.manageLabels({
             labels: values.labels ?? [],
         });
 

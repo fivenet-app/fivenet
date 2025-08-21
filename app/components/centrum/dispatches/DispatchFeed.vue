@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import DispatchFeedItem from '~/components/centrum/dispatches/DispatchFeedItem.vue';
+import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import type { ListDispatchActivityResponse } from '~~/gen/ts/services/centrum/centrum';
 
 const props = defineProps<{
     dispatchId?: number;
 }>();
 
-const { $grpc } = useNuxtApp();
+const centrumCentrumClient = await getCentrumCentrumClient();
 
 const offset = ref(0);
 
@@ -16,7 +17,7 @@ const { data, refresh } = useLazyAsyncData(`centrum-dispatch-${props.dispatchId 
 
 async function listDispatchActivity(): Promise<ListDispatchActivityResponse> {
     try {
-        const call = $grpc.centrum.centrum.listDispatchActivity({
+        const call = centrumCentrumClient.listDispatchActivity({
             pagination: {
                 offset: offset.value,
             },

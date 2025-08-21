@@ -13,11 +13,12 @@ import (
 // ListSvcMethodsModule
 type ListSvcMethodsModule struct {
 	*pgs.ModuleBase
+
 	ctx pgsgo.Context
 	tpl *template.Template
 }
 
-// Permify returns an initialized PermifyPlugin
+// ListSvcMethods returns an initialized ListSvcMethodsModule.
 func ListSvcMethods() *ListSvcMethodsModule {
 	return &ListSvcMethodsModule{ModuleBase: &pgs.ModuleBase{}}
 }

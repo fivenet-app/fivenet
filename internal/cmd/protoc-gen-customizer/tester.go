@@ -10,11 +10,12 @@ import (
 // TesterPlugin
 type TesterModule struct {
 	*pgs.ModuleBase
+
 	ctx pgsgo.Context
 	tpl *template.Template
 }
 
-// Tester returns an initialized TesterPlugin
+// Tester returns an initialized TesterModule.
 func Tester() *TesterModule { return &TesterModule{ModuleBase: &pgs.ModuleBase{}} }
 
 func (p *TesterModule) InitContext(c pgs.BuildContext) {

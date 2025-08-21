@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
+import { getSettingsLawsClient } from '~~/gen/ts/clients';
 import type { Law } from '~~/gen/ts/resources/laws/laws';
 
 const props = defineProps<{
@@ -12,7 +13,7 @@ const emit = defineEmits<{
     (e: 'close'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
+const settingsLawsClient = await getSettingsLawsClient();
 
 const schema = z.object({
     name: z.string().min(3).max(128),
@@ -36,7 +37,7 @@ const state = reactive<Schema>({
 
 async function saveLaw(lawBookId: number, id: number, values: Schema): Promise<void> {
     try {
-        const call = $grpc.settings.laws.createOrUpdateLaw({
+        const call = settingsLawsClient.createOrUpdateLaw({
             law: {
                 id: id < 0 ? 0 : id,
                 lawbookId: lawBookId,

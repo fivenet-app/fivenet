@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
+import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserProps } from '~~/gen/ts/resources/users/props';
 import type { User } from '~~/gen/ts/resources/users/users';
@@ -13,11 +14,11 @@ const emit = defineEmits<{
     (e: 'update:wantedStatus', value: boolean): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const notifications = useNotificationsStore();
+
+const citizensCitizensClient = await getCitizensCitizensClient();
 
 const schema = z.object({
     reason: z.string().min(3).max(255),
@@ -36,7 +37,7 @@ async function setWantedState(values: Schema): Promise<void> {
     };
 
     try {
-        const call = $grpc.citizens.citizens.setUserProps({
+        const call = citizensCitizensClient.setUserProps({
             props: userProps,
             reason: values.reason,
         });

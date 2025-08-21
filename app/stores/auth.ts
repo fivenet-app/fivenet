@@ -4,6 +4,7 @@ import { parseQuery } from 'vue-router';
 import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
 import { webSocket } from '~/composables/grpc/grpcws/bridge';
 import { useSettingsStore } from '~/stores/settings';
+import { getAuthAuthClient } from '~~/gen/ts/clients';
 import type { JobProps } from '~~/gen/ts/resources/jobs/job_props';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -16,7 +17,6 @@ const logger = useLogger('🔑 Auth');
 export const useAuthStore = defineStore(
     'auth',
     () => {
-        const { $grpc } = useNuxtApp();
         const notifications = useNotificationsStore();
 
         // State
@@ -107,8 +107,10 @@ export const useAuthStore = defineStore(
             setActiveChar(null);
             setPermissions([], []);
 
+            const authAuthClient = await getAuthAuthClient();
+
             try {
-                const call = $grpc.auth.auth.login({ username: user, password: pass });
+                const call = authAuthClient.login({ username: user, password: pass });
                 const { response } = await call;
 
                 loginStop(null);
@@ -146,8 +148,10 @@ export const useAuthStore = defineStore(
         const doLogout = async (): Promise<void> => {
             loggingIn.value = true;
 
+            const authAuthClient = await getAuthAuthClient();
+
             try {
-                await $grpc.auth.auth.logout({});
+                await authAuthClient.logout({});
             } catch (e) {
                 clearAuthInfo();
                 handleGRPCError(e as RpcError);
@@ -181,8 +185,10 @@ export const useAuthStore = defineStore(
                 charId = lastCharID.value;
             }
 
+            const authAuthClient = await getAuthAuthClient();
+
             try {
-                const call = $grpc.auth.auth.chooseCharacter({
+                const call = authAuthClient.chooseCharacter({
                     charId: charId,
                 });
                 const { response } = await call;
@@ -220,8 +226,10 @@ export const useAuthStore = defineStore(
         };
 
         const setSuperuserMode = async (superuser: boolean, job?: Job): Promise<void> => {
+            const authAuthClient = await getAuthAuthClient();
+
             try {
-                const call = $grpc.auth.auth.setSuperuserMode({
+                const call = authAuthClient.setSuperuserMode({
                     superuser: superuser,
                     job: job?.name,
                 });

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import DispatcherModal from '~/components/centrum/dispatchers/DispatcherModal.vue';
 import { useCentrumStore } from '~/stores/centrum';
+import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 
 const props = withDefaults(
@@ -12,16 +13,16 @@ const props = withDefaults(
     },
 );
 
-const { $grpc } = useNuxtApp();
-
 const modal = useModal();
 
 const centrumStore = useCentrumStore();
 const { getCurrentMode, getJobDispatchers, isDispatcher } = storeToRefs(centrumStore);
 
+const centrumCentrumClient = await getCentrumCentrumClient();
+
 async function takeControl(signon: boolean): Promise<void> {
     try {
-        const call = $grpc.centrum.centrum.takeControl({
+        const call = centrumCentrumClient.takeControl({
             signon,
         });
         await call;

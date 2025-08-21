@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import type { MessageAttachment } from '~~/gen/ts/resources/mailer/message';
 import type { ListDocumentsRequest } from '~~/gen/ts/services/documents/documents';
@@ -12,7 +13,7 @@ const emit = defineEmits<{
     (e: 'update:modelValue', attachments: MessageAttachment[]): void;
 }>();
 
-const { $grpc } = useNuxtApp();
+const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const attachments = useVModel(props, 'modelValue', emit);
 
@@ -29,7 +30,7 @@ async function listDocuments(search: string): Promise<DocumentShort[]> {
     };
 
     try {
-        const call = $grpc.documents.documents.listDocuments(req);
+        const call = documentsDocumentsClient.listDocuments(req);
         const { response } = await call;
 
         return response.documents;

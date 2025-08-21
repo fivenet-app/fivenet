@@ -3,6 +3,7 @@ import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import { useLivemapStore } from '~/stores/livemap';
 import type { Coordinate } from '~/types/livemap';
+import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 const props = defineProps<{
@@ -14,8 +15,6 @@ const emit = defineEmits<{
     (e: 'close'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { activeChar } = useAuth();
 
 const { isOpen } = useSlideover();
@@ -23,9 +22,11 @@ const { isOpen } = useSlideover();
 const livemapStore = useLivemapStore();
 const { location: storeLocation } = storeToRefs(livemapStore);
 
+const centrumCentrumClient = await getCentrumCentrumClient();
+
 const { data: dispatchTargetJobs } = useLazyAsyncData('centrum-dispatches-target-jobs', async () => {
     try {
-        const call = $grpc.centrum.centrum.listDispatchTargetJobs({});
+        const call = centrumCentrumClient.listDispatchTargetJobs({});
         const { response } = await call;
 
         return response.jobs ?? [];
@@ -57,7 +58,7 @@ const state = reactive<Schema>({
 
 async function createDispatch(values: Schema): Promise<void> {
     try {
-        const call = $grpc.centrum.centrum.createDispatch({
+        const call = centrumCentrumClient.createDispatch({
             dispatch: {
                 id: 0,
                 job: '',

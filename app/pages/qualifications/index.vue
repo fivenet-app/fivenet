@@ -51,7 +51,7 @@ const selectedTab = computed({
     },
 });
 
-const qualifications = useQualifications();
+const qualifications = await useQualifications();
 </script>
 
 <template>

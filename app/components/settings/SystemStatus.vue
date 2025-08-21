@@ -1,15 +1,16 @@
 <script lang="ts" setup>
+import { getSettingsSystemClient } from '~~/gen/ts/clients';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
 import GenericTime from '../partials/elements/GenericTime.vue';
 
-const { $grpc } = useNuxtApp();
+const settingsSystemClient = await getSettingsSystemClient();
 
 const { data, error, status, refresh } = useLazyAsyncData('settings-system-status', () => getStatus());
 
 async function getStatus() {
     try {
-        const call = $grpc.settings.system.getStatus({});
+        const call = settingsSystemClient.getStatus({});
         const { response } = await call;
 
         return response;

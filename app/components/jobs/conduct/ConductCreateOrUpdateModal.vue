@@ -4,6 +4,7 @@ import { z } from 'zod';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 import { useAuthStore } from '~/stores/auth';
 import { useCompletorStore } from '~/stores/completor';
+import { getJobsConductClient } from '~~/gen/ts/clients';
 import { type ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
@@ -20,8 +21,6 @@ const emit = defineEmits<{
     (e: 'updated', entry: ConductEntry): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const authStore = useAuthStore();
@@ -30,6 +29,8 @@ const { activeChar } = storeToRefs(authStore);
 const completorStore = useCompletorStore();
 
 const notifications = useNotificationsStore();
+
+const jobsConductClient = await getJobsConductClient();
 
 const usersLoading = ref(false);
 
@@ -73,12 +74,12 @@ async function conductCreateOrUpdateEntry(values: Schema, id?: number): Promise<
         };
 
         if (id === undefined) {
-            const call = $grpc.jobs.conduct.createConductEntry(req);
+            const call = jobsConductClient.createConductEntry(req);
             const { response } = await call;
 
             emit('created', response.entry!);
         } else {
-            const call = $grpc.jobs.conduct.updateConductEntry(req);
+            const call = jobsConductClient.updateConductEntry(req);
             const { response } = await call;
 
             emit('updated', response.entry!);

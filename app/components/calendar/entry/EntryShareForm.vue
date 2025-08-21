@@ -4,6 +4,7 @@ import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useAuthStore } from '~/stores/auth';
 import { useCompletorStore } from '~/stores/completor';
+import { getCalendarCalendarClient } from '~~/gen/ts/clients';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { ShareCalendarEntryResponse } from '~~/gen/ts/services/calendar/calendar';
 
@@ -16,12 +17,12 @@ const emit = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
 const completorStore = useCompletorStore();
+
+const calendarCalendarClient = await getCalendarCalendarClient();
 
 const usersLoading = ref(false);
 
@@ -41,7 +42,7 @@ async function shareCalendarEntry(values: Schema): Promise<undefined | ShareCale
         return;
     }
 
-    const call = $grpc.calendar.calendar.shareCalendarEntry({
+    const call = calendarCalendarClient.shareCalendarEntry({
         entryId: props.entryId,
         userIds: values.users.map((u) => u.userId),
     });

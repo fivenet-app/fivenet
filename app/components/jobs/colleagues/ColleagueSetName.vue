@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
+import { getJobsJobsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { SetColleaguePropsResponse } from '~~/gen/ts/services/jobs/jobs';
 
@@ -18,9 +19,9 @@ const emit = defineEmits<{
 
 const { namePrefix, nameSuffix } = useVModels(props, emit);
 
-const { $grpc } = useNuxtApp();
-
 const notifications = useNotificationsStore();
+
+const jobsJobsClient = await getJobsJobsClient();
 
 const schema = z.object({
     reason: z.string().min(3).max(255),
@@ -45,7 +46,7 @@ const changed = ref(false);
 
 async function setJobsUserNote(values: Schema): Promise<undefined | SetColleaguePropsResponse> {
     try {
-        const call = $grpc.jobs.jobs.setColleagueProps({
+        const call = jobsJobsClient.setColleagueProps({
             reason: values.reason,
             props: {
                 userId: props.userId,

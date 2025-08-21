@@ -5,28 +5,29 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useCompletorStore } from '~/stores/completor';
+import { getSettingsSettingsClient } from '~~/gen/ts/clients';
 import type { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Role } from '~~/gen/ts/resources/permissions/permissions';
-
-const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
 
 const modal = useModal();
 
-const notifications = useNotificationsStore();
-
 const { can, activeChar } = useAuth();
+
+const notifications = useNotificationsStore();
 
 const completorStore = useCompletorStore();
 const { getJobByName } = completorStore;
+
+const settingsSettingsClient = await getSettingsSettingsClient();
 
 const { data: roles, status, refresh, error } = useLazyAsyncData('settings-roles', () => getRoles());
 
 async function getRoles(): Promise<Role[]> {
     try {
-        const call = $grpc.settings.settings.getRoles({});
+        const call = settingsSettingsClient.getRoles({});
         const { response } = await call;
 
         return response.roles;
@@ -59,7 +60,7 @@ async function createRole(): Promise<void> {
     }
 
     try {
-        const call = $grpc.settings.settings.createRole({
+        const call = settingsSettingsClient.createRole({
             job: activeChar.value!.job,
             grade: state.jobGrade.grade,
         });

@@ -1,13 +1,14 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
+import { getAuthAuthClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-
-const { $grpc } = useNuxtApp();
 
 const { isOpen } = useModal();
 
 const notifications = useNotificationsStore();
+
+const authAuthClient = await getAuthAuthClient();
 
 const schema = z.object({
     currentUsername: z
@@ -31,7 +32,7 @@ const state = reactive<Schema>({
 
 async function changeUsername(values: Schema): Promise<void> {
     try {
-        const call = $grpc.auth.auth.changeUsername({
+        const call = authAuthClient.changeUsername({
             current: values.currentUsername,
             new: values.newUsername,
         });

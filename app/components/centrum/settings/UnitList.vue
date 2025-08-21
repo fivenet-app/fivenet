@@ -5,10 +5,9 @@ import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { availableIcons, fallbackIcon } from '~/components/partials/icons';
+import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ListUnitsResponse } from '~~/gen/ts/services/centrum/centrum';
-
-const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
 
@@ -18,11 +17,13 @@ const modal = useModal();
 
 const notifications = useNotificationsStore();
 
+const centrumCentrumClient = await getCentrumCentrumClient();
+
 const { data: units, status, refresh, error } = useLazyAsyncData('centrum-units', () => listUnits());
 
 async function listUnits(): Promise<ListUnitsResponse> {
     try {
-        const call = $grpc.centrum.centrum.listUnits({
+        const call = centrumCentrumClient.listUnits({
             status: [],
         });
         const { response } = await call;
@@ -36,7 +37,7 @@ async function listUnits(): Promise<ListUnitsResponse> {
 
 async function deleteUnit(id: number): Promise<void> {
     try {
-        const call = $grpc.centrum.centrum.deleteUnit({
+        const call = centrumCentrumClient.deleteUnit({
             unitId: id,
         });
         await call;

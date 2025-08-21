@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { NuxtImg } from '#components';
+import { getSettingsAccountsClient } from '~~/gen/ts/clients';
 import type { OAuth2Account } from '~~/gen/ts/resources/accounts/oauth2';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -12,13 +13,13 @@ const emit = defineEmits<{
     (e: 'deleted', providerName: string): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const notifications = useNotificationsStore();
+
+const settingsAccountsClient = await getSettingsAccountsClient();
 
 async function disconnectOAuth2Connection(accountId: number, providerName: string): Promise<void> {
     try {
-        await $grpc.settings.accounts.disconnectOAuth2Connection({
+        await settingsAccountsClient.disconnectOAuth2Connection({
             id: accountId,
             providerName: providerName,
         });

@@ -12,11 +12,12 @@ import (
 // SanitizerPlugin
 type SanitizerModule struct {
 	*pgs.ModuleBase
+
 	ctx pgsgo.Context
 	tpl *template.Template
 }
 
-// Sanitizer returns an initialized SanitizerPlugin
+// Sanitizer returns an initialized SanitizerModule.
 func Sanitizer() *SanitizerModule { return &SanitizerModule{ModuleBase: &pgs.ModuleBase{}} }
 
 func (p *SanitizerModule) InitContext(c pgs.BuildContext) {

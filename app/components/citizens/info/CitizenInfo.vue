@@ -11,6 +11,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useClipboardStore } from '~/stores/clipboard';
+import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import type { Perms } from '~~/gen/ts/perms';
 import { ObjectType } from '~~/gen/ts/resources/notifications/client_view';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -22,8 +23,6 @@ const props = defineProps<{
     userId: number;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const { attr, can } = useAuth();
@@ -31,6 +30,8 @@ const { attr, can } = useAuth();
 const clipboardStore = useClipboardStore();
 
 const notifications = useNotificationsStore();
+
+const citizensCitizensClient = await getCitizensCitizensClient();
 
 const items: TabItem[] = [
     {
@@ -63,7 +64,7 @@ const { data: user, status, refresh, error } = useLazyAsyncData(`citizen-${props
 
 async function getUser(userId: number): Promise<User> {
     try {
-        const call = $grpc.citizens.citizens.getUser({ userId });
+        const call = citizensCitizensClient.getUser({ userId });
         const { response } = await call;
 
         if (response.user?.props === undefined) {

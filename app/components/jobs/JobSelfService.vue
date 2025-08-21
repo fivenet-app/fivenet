@@ -3,20 +3,21 @@ import { isToday, parse } from 'date-fns';
 import { emojiBlasts } from 'emoji-blast';
 import SelfServicePropsAbsenceDateModal from '~/components/jobs/colleagues/SelfServicePropsAbsenceDateModal.vue';
 import SelfServicePropsAvatarModal from '~/components/jobs/colleagues/SelfServicePropsAvatarModal.vue';
+import { getJobsJobsClient } from '~~/gen/ts/clients';
 
 defineProps<{
     userId: number;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const modal = useModal();
 
 const { can, activeChar } = useAuth();
 
+const jobsJobsClient = await getJobsJobsClient();
+
 const { data: colleagueSelf } = useLazyAsyncData('jobs-selfcolleague', async () => {
     try {
-        const call = $grpc.jobs.jobs.getSelf({});
+        const call = jobsJobsClient.getSelf({});
         const { response } = await call;
 
         return response;

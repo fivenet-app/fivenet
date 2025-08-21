@@ -5,6 +5,7 @@ import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import type { ClipboardUser } from '~/stores/clipboard';
 import type { ClassProp } from '~/utils/types';
+import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import type { User, UserShort } from '~~/gen/ts/resources/users/users';
 import EmailBlock from './EmailBlock.vue';
 
@@ -29,11 +30,11 @@ const props = withDefaults(
     },
 );
 
-const { $grpc } = useNuxtApp();
-
 const { can, activeChar } = useAuth();
 
 const { popover } = useAppConfig();
+
+const citizensCitizensClient = await getCitizensCitizensClient();
 
 const userId = computed(() => props.userId ?? props.user?.userId ?? 0);
 
@@ -43,7 +44,7 @@ const { data, refresh, status, error } = useLazyAsyncData(`citizen-info-${userId
 
 async function getCitizen(id: number): Promise<User | undefined> {
     try {
-        const call = $grpc.citizens.citizens.getUser({
+        const call = citizensCitizensClient.getUser({
             userId: id,
             infoOnly: true,
         });
@@ -62,7 +63,13 @@ async function getCitizen(id: number): Promise<User | undefined> {
     }
 }
 
-const user = computed(() => ({ ...data.value, ...props.user }) as User);
+const user = computed(
+    () =>
+        ({
+            ...data.value,
+            ...props.user,
+        }) as User,
+);
 
 const { game } = useAppConfig();
 

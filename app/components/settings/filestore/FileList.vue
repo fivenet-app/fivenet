@@ -6,16 +6,17 @@ import Pagination from '~/components/partials/Pagination.vue';
 import StreamerModeAlert from '~/components/partials/StreamerModeAlert.vue';
 import FileUploadModal from '~/components/settings/filestore/FileUploadModal.vue';
 import { useSettingsStore } from '~/stores/settings';
+import { getFilestoreFilestoreClient } from '~~/gen/ts/clients';
 import type { File } from '~~/gen/ts/resources/file/file';
 import type { DeleteFileResponse } from '~~/gen/ts/resources/file/filestore';
 import type { ListFilesResponse } from '~~/gen/ts/services/filestore/filestore';
-
-const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
 
 const settingsStore = useSettingsStore();
 const { streamerMode } = storeToRefs(settingsStore);
+
+const filestoreFilestoreClient = await getFilestoreFilestoreClient();
 
 const prefix = ref('');
 
@@ -30,7 +31,7 @@ const {
 
 async function listFiles(prefix: string): Promise<ListFilesResponse> {
     try {
-        const { response } = $grpc.filestore.filestore.listFiles({
+        const { response } = filestoreFilestoreClient.listFiles({
             pagination: {
                 offset: calculateOffset(page.value, files.value?.pagination),
             },
@@ -46,7 +47,7 @@ async function listFiles(prefix: string): Promise<ListFilesResponse> {
 
 async function deleteFile(path: string): Promise<DeleteFileResponse> {
     try {
-        const { response } = $grpc.filestore.filestore.deleteFileByPath({
+        const { response } = filestoreFilestoreClient.deleteFileByPath({
             path: path,
         });
 

@@ -3,9 +3,12 @@ import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
+import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import type { File as FilestoreFile } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { User } from '~~/gen/ts/resources/users/users';
+
+const citizensCitizensClient = await getCitizensCitizensClient();
 
 const props = defineProps<{
     user: User;
@@ -17,15 +20,13 @@ const emit = defineEmits<{
 
 const modelValue = useVModel(props, 'user', emit);
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const notifications = useNotificationsStore();
 
 const appConfig = useAppConfig();
-
 const settingsStore = useSettingsStore();
+
 const { nuiEnabled } = storeToRefs(settingsStore);
 
 const schema = z
@@ -57,7 +58,7 @@ const state = reactive<Schema>({
     reset: false,
 });
 
-const { resizeAndUpload } = useFileUploader((_) => $grpc.citizens.citizens.uploadMugshot(_), 'documents', props.user.userId);
+const { resizeAndUpload } = useFileUploader((_) => citizensCitizensClient.uploadMugshot(_), 'documents', props.user.userId);
 
 async function uploadMugshot(files: File[], reason: string): Promise<void> {
     for (const f of files) {
@@ -92,7 +93,7 @@ async function deleteMugshot(fileId: number | undefined, reason: string): Promis
     if (fileId === undefined) return;
 
     try {
-        await $grpc.citizens.citizens.deleteMugshot({
+        await citizensCitizensClient.deleteMugshot({
             userId: props.user.userId,
             reason: reason,
         });
