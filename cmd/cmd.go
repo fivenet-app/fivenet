@@ -56,7 +56,6 @@ import (
 	pbcompletor "github.com/fivenet-app/fivenet/v2025/services/completor"
 	pbdocuments "github.com/fivenet-app/fivenet/v2025/services/documents"
 	pbfilestore "github.com/fivenet-app/fivenet/v2025/services/filestore"
-	pbinternet "github.com/fivenet-app/fivenet/v2025/services/internet"
 	pbjobs "github.com/fivenet-app/fivenet/v2025/services/jobs"
 	pblivemap "github.com/fivenet-app/fivenet/v2025/services/livemap"
 	pbmailer "github.com/fivenet-app/fivenet/v2025/services/mailer"
@@ -199,7 +198,6 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 			grpc.AsService(pbsettings.NewServer),
 			grpc.AsService(pbstats.NewServer),
 			grpc.AsService(pbwiki.NewServer),
-			grpc.AsService(pbinternet.NewServer),
 			pbsync.NewServer,
 			grpc.AsService(pbfilestore.NewServer),
 		),
