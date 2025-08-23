@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { getJobsJobsClient } from '~~/gen/ts/clients';
 import type { ColleagueProps } from '~~/gen/ts/resources/jobs/colleagues';
@@ -144,7 +144,7 @@ const editing = ref(false);
                     v-for="(attribute, idx) in state.labels"
                     :key="attribute.name"
                     class="justify-between gap-2"
-                    :class="isColorBright(hexToRgb(attribute.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                    :class="isColorBright(hexToRgb(attribute.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
                     :style="{ backgroundColor: attribute.color }"
                     size="lg"
                 >
@@ -156,13 +156,11 @@ const editing = ref(false);
                         <UButton
                             :class="
                                 isColorBright(hexToRgb(attribute.color, RGBBlack)!)
-                                    ? '!bg-white/20 !text-black'
-                                    : '!bg-black/20 !text-white'
+                                    ? 'bg-white/20! text-black!'
+                                    : 'bg-black/20! text-white!'
                             "
                             variant="link"
                             icon="i-mdi-close"
-                            :padded="false"
-                            :ui="{ rounded: 'rounded-full' }"
                             @click="
                                 changed = true;
                                 state.labels.splice(idx, 1);
@@ -173,7 +171,7 @@ const editing = ref(false);
             </template>
         </div>
 
-        <UFormGroup v-if="editing" name="labels">
+        <UFormField v-if="editing" name="labels">
             <ClientOnly>
                 <USelectMenu
                     v-model="state.labels"
@@ -186,13 +184,13 @@ const editing = ref(false);
                     by="name"
                     clear-search-on-close
                 >
-                    <template #label="{ selected }">
-                        <span v-if="selected.length" class="inline-flex flex-wrap gap-1 truncate">
+                    <template #item-label="{ item }">
+                        <span v-if="item.length" class="inline-flex flex-wrap gap-1 truncate">
                             <UBadge
-                                v-for="label in selected"
+                                v-for="label in item"
                                 :key="label.id"
                                 class="truncate"
-                                :class="isColorBright(label.color) ? '!text-black' : '!text-white'"
+                                :class="isColorBright(label.color) ? 'text-black!' : 'text-white!'"
                                 :style="{ backgroundColor: label.color }"
                                 :label="label.name"
                             />
@@ -203,7 +201,7 @@ const editing = ref(false);
                     <template #option="{ option }">
                         <UBadge
                             class="truncate"
-                            :class="isColorBright(option.color) ? '!text-black' : '!text-white'"
+                            :class="isColorBright(option.color) ? 'text-black!' : 'text-white!'"
                             :style="{ backgroundColor: option.color }"
                         >
                             {{ option.name }}
@@ -219,12 +217,12 @@ const editing = ref(false);
                     </template>
                 </USelectMenu>
             </ClientOnly>
-        </UFormGroup>
+        </UFormField>
 
         <template v-if="editing">
-            <UFormGroup name="reason" :label="$t('common.reason')" required>
+            <UFormField name="reason" :label="$t('common.reason')" required>
                 <UInput v-model="state.reason" type="text" :disabled="!changed" />
-            </UFormGroup>
+            </UFormField>
 
             <UButton type="submit" icon="i-mdi-content-save" :disabled="!changed || !canSubmit" :loading="!canSubmit">
                 {{ $t('common.save') }}

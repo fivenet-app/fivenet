@@ -95,36 +95,53 @@ const superuserItems = [
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel grow>
+    <UDashboardPanel>
+        <template #header>
             <UDashboardNavbar :title="$t('common.control_panel')" />
+        </template>
 
-            <UDashboardPanelContent>
-                <div class="flex flex-col gap-1">
-                    <div class="mb-4">
-                        <CardsList :items="items" />
-                    </div>
-
-                    <UDashboardSection
-                        v-if="isSuperuser"
-                        class="mb-4"
-                        :title="$t('components.settings.system_status.title')"
-                        icon="i-mdi-server"
-                        :ui="{ icon: { base: 'h-6 w-6' } }"
-                    >
-                        <SystemStatus />
-                    </UDashboardSection>
-
-                    <UDashboardSection
-                        v-if="isSuperuser"
-                        :title="$t('components.settings.system_settings')"
-                        icon="i-mdi-administrator"
-                        :ui="{ icon: { base: 'h-6 w-6' } }"
-                    >
-                        <CardsList :items="superuserItems" />
-                    </UDashboardSection>
+        <template #body>
+            <div class="flex flex-col gap-1">
+                <div class="mb-4">
+                    <CardsList :items="items" />
                 </div>
-            </UDashboardPanelContent>
-        </UDashboardPanel>
-    </UDashboardPage>
+
+                <UCard
+                    v-if="isSuperuser"
+                    class="mb-4"
+                    :title="$t('components.settings.system_status.title')"
+                    icon="i-mdi-server"
+                >
+                    <template #header>
+                        <div class="flex items-center gap-2">
+                            <UIcon name="i-mdi-server" class="size-5 text-primary" />
+                            <h3 class="text-md font-semibold">{{ $t('components.settings.system_status.title') }}</h3>
+                        </div>
+                    </template>
+
+                    <template #default>
+                        <SystemStatus />
+                    </template>
+                </UCard>
+
+                <UCard
+                    v-if="isSuperuser"
+                    class="mb-4"
+                    :title="$t('components.settings.system_settings')"
+                    icon="i-mdi-administrator"
+                >
+                    <template #header>
+                        <div class="flex items-center gap-2">
+                            <UIcon name="i-mdi-server" class="size-5 text-primary" />
+                            <h3 class="text-md font-semibold">{{ $t('components.settings.system_status.title') }}</h3>
+                        </div>
+                    </template>
+
+                    <template #default>
+                        <CardsList :items="superuserItems" />
+                    </template>
+                </UCard>
+            </div>
+        </template>
+    </UDashboardPanel>
 </template>

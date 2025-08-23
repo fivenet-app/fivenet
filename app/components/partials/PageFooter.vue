@@ -5,7 +5,7 @@ const { t } = useI18n();
 
 const { website } = useAppConfig();
 
-const footerLinks = computed(() =>
+const items = computed(() =>
     [
         {
             label: t('common.privacy_policy'),
@@ -26,7 +26,7 @@ const year = new Date().getFullYear();
 </script>
 
 <template>
-    <UFooter :links="footerLinks">
+    <UFooter>
         <template #left>
             <FiveNetLogo class="mr-1 h-auto w-8" />
 
@@ -37,10 +37,12 @@ const year = new Date().getFullYear();
             </I18nT>
         </template>
 
+        <UNavigationMenu :items="items" variant="link" />
+
         <template #right>
             <UButton
                 icon="i-simple-icons-github"
-                color="gray"
+                color="neutral"
                 variant="ghost"
                 to="https://github.com/fivenet-app/fivenet"
                 target="_blank"
@@ -48,7 +50,7 @@ const year = new Date().getFullYear();
 
             <UButton
                 icon="i-simple-icons-discord"
-                color="gray"
+                color="neutral"
                 variant="ghost"
                 to="https://discord.gg/ASRPPr8CeT"
                 target="_blank"

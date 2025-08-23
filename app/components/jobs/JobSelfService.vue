@@ -9,7 +9,7 @@ defineProps<{
     userId: number;
 }>();
 
-const modal = useModal();
+const modal = useOverlay();
 
 const { can, activeChar } = useAuth();
 

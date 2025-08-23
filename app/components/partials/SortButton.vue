@@ -15,7 +15,7 @@ const sort = useVModel(props, 'modelValue', emit, {
     deep: true,
 });
 
-const { ui } = useAppConfig();
+const { custom } = useAppConfig();
 
 function toggleDirection(): void {
     if (sort.value.direction === 'asc') {
@@ -46,11 +46,11 @@ function changeColumn(col: string): void {
                 class="w-full"
                 :model-value="sort.column"
                 :placeholder="$t('common.na')"
-                value-attribute="value"
-                :options="fields"
+                value-key="value"
+                :items="fields"
                 @update:model-value="changeColumn($event)"
             >
-                <template #label>
+                <template #item-label>
                     {{ fields.find((f) => f.value === sort.column)?.label ?? $t('common.na') }}
                 </template>
 
@@ -66,8 +66,8 @@ function changeColumn(col: string): void {
             <UButton
                 square
                 trailing
-                :icon="sort.direction === 'asc' ? ui.table.default.sortAscIcon : ui.table.default.sortDescIcon"
-                color="gray"
+                :icon="sort.direction === 'asc' ? custom.icons.sortAscIcon : custom.icons.sortDescIcon"
+                color="neutral"
                 variant="ghost"
                 @click="toggleDirection"
             />

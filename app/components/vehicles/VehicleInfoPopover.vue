@@ -5,7 +5,7 @@ import VehiclePropsWantedModal from './VehiclePropsWantedModal.vue';
 
 const vehicle = defineModel<Vehicle>({ required: true });
 
-const modal = useModal();
+const modal = useOverlay();
 
 const { can } = useAuth();
 </script>
@@ -14,7 +14,7 @@ const { can } = useAuth();
     <UPopover>
         <UButton variant="link" icon="i-mdi-car-settings" color="primary" />
 
-        <template #panel>
+        <template #content>
             <div class="p-4">
                 <div class="grid grid-cols-1 gap-2">
                     <UTooltip

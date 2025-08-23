@@ -73,7 +73,7 @@ watch(props, setFromProps);
                             >
                                 <div class="flex flex-row items-center gap-2">
                                     <div class="flex-1">
-                                        <p class="text-gray-900 dark:text-white" :title="`${$t('common.id')}: ${perm.id}`">
+                                        <p class="text-highlighted" :title="`${$t('common.id')}: ${perm.id}`">
                                             {{ $t(`perms.${perm.category}.${perm.name}.key`) }}
                                         </p>
                                         <p class="text-base-500">

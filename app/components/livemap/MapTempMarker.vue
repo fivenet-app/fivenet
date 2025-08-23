@@ -33,7 +33,7 @@ watch(showLocationMarker, () => {
         <LIcon
             :icon-size="[livemap.markerSize, livemap.markerSize]"
             :icon-anchor="iconAnchor"
-            class-name="!pointer-events-none"
+            class-name="pointer-events-none!"
             :options="{
                 pmIgnore: true,
             }"

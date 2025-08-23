@@ -8,7 +8,7 @@ const props = defineProps<{
     unit: Unit;
 }>();
 
-const slideover = useSlideover();
+const slideover = useOverlay();
 
 const unitColorHex = computed(() => hexToRgb(props.unit.color, RGBBlack)!);
 const isBright = computed(() => isColorBright(unitColorHex.value));
@@ -16,7 +16,7 @@ const isBright = computed(() => isColorBright(unitColorHex.value));
 
 <template>
     <li
-        class="col-span-1 flex rounded-md shadow-sm"
+        class="shadow-xs col-span-1 flex rounded-md"
         @click="
             slideover.open(UnitDetailsSlideover, {
                 unit: unit,

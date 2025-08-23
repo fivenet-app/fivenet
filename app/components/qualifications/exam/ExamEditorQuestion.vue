@@ -424,23 +424,23 @@ watch(
             </UTooltip>
 
             <UButtonGroup>
-                <UButton size="xs" variant="link" :padded="false" icon="i-mdi-arrow-up" @click="$emit('move-up')" />
-                <UButton size="xs" variant="link" :padded="false" icon="i-mdi-arrow-down" @click="$emit('move-down')" />
+                <UButton size="xs" variant="link" icon="i-mdi-arrow-up" @click="$emit('move-up')" />
+                <UButton size="xs" variant="link" icon="i-mdi-arrow-down" @click="$emit('move-down')" />
             </UButtonGroup>
         </div>
 
-        <UFormGroup name="data.data.oneofKind">
+        <UFormField name="data.data.oneofKind">
             <ClientOnly>
                 <USelectMenu
                     :model-value="question.data!.data.oneofKind"
                     class="w-40 max-w-40"
-                    :options="questionTypes"
+                    :items="questionTypes"
                     searchable
                     :searchable-placeholder="$t('common.search_field')"
                     :disabled="disabled"
                     @update:model-value="changeQuestionType($event)"
                 >
-                    <template #label>
+                    <template #item-label>
                         <span class="truncate">
                             {{ $t(`components.qualifications.exam_editor.question_types.${question.data!.data.oneofKind}`) }}
                         </span>
@@ -459,15 +459,15 @@ watch(
                     <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
                 </USelectMenu>
             </ClientOnly>
-        </UFormGroup>
+        </UFormField>
 
         <div class="flex flex-1 flex-col gap-2 p-4">
             <div class="flex flex-1 flex-col gap-2">
-                <UFormGroup name="title" :label="$t('common.title')" required>
+                <UFormField name="title" :label="$t('common.title')" required>
                     <UInput v-model="question.title" type="text" :placeholder="$t('common.title')" size="xl" />
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup class="flex-1" name="description" :label="$t('common.description')">
+                <UFormField class="flex-1" name="description" :label="$t('common.description')">
                     <UTextarea
                         v-model="question.description"
                         type="text"
@@ -476,15 +476,15 @@ watch(
                         :placeholder="$t('common.description')"
                         :disabled="disabled"
                     />
-                </UFormGroup>
+                </UFormField>
             </div>
             <div class="flex-1">
                 <template v-if="question.data!.data.oneofKind === 'separator'">
-                    <UDivider class="mb-2 mt-2 text-xl">
+                    <USeparator class="mb-2 mt-2 text-xl">
                         <template v-if="question.title !== ''" #default>
                             <h4 class="text-xl">{{ question.title }}</h4>
                         </template>
-                    </UDivider>
+                    </USeparator>
 
                     <p class="mb-2">{{ question.description }}</p>
                 </template>
@@ -545,7 +545,7 @@ watch(
                 >
                     <div class="flex flex-col gap-2">
                         <div class="flex gap-2">
-                            <UFormGroup class="flex-1" name="data.data.freeText.minLength" :label="$t('common.min')">
+                            <UFormField class="flex-1" name="data.data.freeText.minLength" :label="$t('common.min')">
                                 <UInput
                                     v-model="question.data!.data.freeText.minLength"
                                     type="number"
@@ -553,9 +553,9 @@ watch(
                                     :max="Number.MAX_SAFE_INTEGER"
                                     :disabled="disabled"
                                 />
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup class="flex-1" name="data.data.freeText.maxLength" :label="$t('common.max')">
+                            <UFormField class="flex-1" name="data.data.freeText.maxLength" :label="$t('common.max')">
                                 <UInput
                                     v-model="question.data!.data.freeText.maxLength"
                                     type="number"
@@ -563,7 +563,7 @@ watch(
                                     :max="Number.MAX_SAFE_INTEGER"
                                     :disabled="disabled"
                                 />
-                            </UFormGroup>
+                            </UFormField>
                         </div>
 
                         <UTextarea v-model="question.answer!.answer.freeText.text" :rows="5" resize :disabled="disabled" />
@@ -591,7 +591,7 @@ watch(
                     v-if="question.data!.data.oneofKind !== 'separator' && question.data!.data.oneofKind !== 'image'"
                     class="mt-2 flex flex-row gap-2"
                 >
-                    <UFormGroup class="flex-1" name="answer.answerKey" :label="$t('common.answer_key')">
+                    <UFormField class="flex-1" name="answer.answerKey" :label="$t('common.answer_key')">
                         <UTextarea
                             v-model="question.answer!.answerKey"
                             :placeholder="$t('common.answer_key')"
@@ -599,9 +599,9 @@ watch(
                             resize
                             :disabled="disabled"
                         />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup class="max-w-24" name="points" :label="$t('common.points', 2)">
+                    <UFormField class="max-w-24" name="points" :label="$t('common.points', 2)">
                         <UInput
                             v-model="question.points"
                             type="number"
@@ -610,18 +610,13 @@ watch(
                             :placeholder="$t('common.points', 2)"
                             :disabled="disabled"
                         />
-                    </UFormGroup>
+                    </UFormField>
                 </div>
             </div>
         </div>
 
         <UTooltip :text="$t('components.qualifications.remove_question')">
-            <UButton
-                class="mt-1 flex-initial self-start"
-                icon="i-mdi-close"
-                :ui="{ rounded: 'rounded-full' }"
-                @click="$emit('delete')"
-            />
+            <UButton class="mt-1 flex-initial self-start" icon="i-mdi-close" @click="$emit('delete')" />
         </UTooltip>
     </UForm>
 </template>

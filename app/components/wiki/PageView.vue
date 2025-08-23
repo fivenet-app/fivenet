@@ -30,7 +30,7 @@ const { t } = useI18n();
 
 const { can } = useAuth();
 
-const modal = useModal();
+const modal = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -93,10 +93,10 @@ const tocLinks = computedAsync(async () => props.page?.content?.content && jsonN
 
 const accordionItems = computed(() =>
     [
-        { slot: 'access', label: t('common.access'), icon: 'i-mdi-lock' },
+        { slot: 'access' as const, label: t('common.access'), icon: 'i-mdi-lock' },
         can('wiki.WikiService/ListPageActivity').value &&
         checkPageAccess(props.page?.access, props.page?.meta?.creator, AccessLevel.VIEW)
-            ? { slot: 'activity', label: t('common.activity'), icon: 'i-mdi-comment-quote' }
+            ? { slot: 'activity' as const, label: t('common.activity'), icon: 'i-mdi-comment-quote' }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
@@ -175,7 +175,7 @@ const scrollRef = useTemplateRef('scrollRef');
 
             <UButton
                 v-if="can('wiki.WikiService/UpdatePage').value"
-                color="gray"
+                color="neutral"
                 trailing-icon="i-mdi-plus"
                 @click="wikiService.createPage(page?.parentId ?? page?.id)"
             >
@@ -192,7 +192,7 @@ const scrollRef = useTemplateRef('scrollRef');
                 <slot name="left" />
             </template>
 
-            <UBreadcrumb class="pb-2 pt-4" :links="breadcrumbs" />
+            <UBreadcrumb class="pb-2 pt-4" :items="breadcrumbs" />
 
             <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.page')])" />
             <DataErrorBlock
@@ -202,7 +202,7 @@ const scrollRef = useTemplateRef('scrollRef');
                 :retry="refresh"
             />
             <template v-else-if="!page">
-                <ULandingHero
+                <UPageHero
                     :title="$t('pages.notfound.page_not_found')"
                     :description="$t('pages.notfound.fun_error')"
                     :links="[
@@ -210,8 +210,8 @@ const scrollRef = useTemplateRef('scrollRef');
                             label: $t('common.back'),
                             icon: 'i-mdi-arrow-back',
                             size: 'md',
-                            color: 'gray',
-                            click: () => useRouter().back(),
+                            color: 'neutral',
+                            onClick: () => useRouter().back(),
                         },
                         { label: $t('common.wiki'), icon: 'i-mdi-home', size: 'md', to: '/wiki' },
                     ]"
@@ -219,7 +219,7 @@ const scrollRef = useTemplateRef('scrollRef');
                 >
                     <template #headline>
                         <UBadge
-                            color="gray"
+                            color="neutral"
                             variant="solid"
                             size="lg"
                             @click="
@@ -230,7 +230,7 @@ const scrollRef = useTemplateRef('scrollRef');
                             >{{ $t('pages.notfound.error') }}</UBadge
                         >
                     </template>
-                </ULandingHero>
+                </UPageHero>
             </template>
 
             <template v-else>
@@ -252,7 +252,7 @@ const scrollRef = useTemplateRef('scrollRef');
                             :text="$t('common.edit')"
                         >
                             <UButton
-                                color="white"
+                                color="neutral"
                                 icon="i-mdi-pencil"
                                 :to="`/wiki/${page.job}/${page.id}/${page.meta.slug ?? ''}/edit`"
                             />
@@ -279,7 +279,7 @@ const scrollRef = useTemplateRef('scrollRef');
 
                     <template v-if="page.meta.updatedAt || page.meta.deletedAt" #description>
                         <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
-                            <UBadge v-if="page.meta.createdAt" class="inline-flex gap-1" color="black" size="md">
+                            <UBadge v-if="page.meta.createdAt" class="inline-flex gap-1" color="neutral" size="md">
                                 <UIcon class="size-5" name="i-mdi-calendar" />
                                 <span>
                                     {{ $t('common.created') }}
@@ -287,7 +287,7 @@ const scrollRef = useTemplateRef('scrollRef');
                                 </span>
                             </UBadge>
 
-                            <UBadge v-if="page.meta.updatedAt" class="inline-flex gap-1" color="black" size="md">
+                            <UBadge v-if="page.meta.updatedAt" class="inline-flex gap-1" color="neutral" size="md">
                                 <UIcon class="size-5" name="i-mdi-calendar-edit" />
                                 <span>
                                     {{ $t('common.updated') }}
@@ -295,7 +295,7 @@ const scrollRef = useTemplateRef('scrollRef');
                                 </span>
                             </UBadge>
 
-                            <UBadge v-if="page.meta.deletedAt" class="inline-flex gap-1" color="amber" size="md">
+                            <UBadge v-if="page.meta.deletedAt" class="inline-flex gap-1" color="warning" size="md">
                                 <UIcon class="size-5" name="i-mdi-calendar-remove" />
                                 <span>
                                     {{ $t('common.deleted') }}
@@ -310,7 +310,7 @@ const scrollRef = useTemplateRef('scrollRef');
                                 </span>
                             </UBadge>
 
-                            <UBadge v-if="page.meta.public" class="inline-flex gap-1" color="black" size="md">
+                            <UBadge v-if="page.meta.public" class="inline-flex gap-1" color="neutral" size="md">
                                 <UIcon class="size-5" name="i-mdi-earth" />
                                 <span>
                                     {{ $t('common.public') }}
@@ -323,12 +323,12 @@ const scrollRef = useTemplateRef('scrollRef');
                 </UPageHeader>
 
                 <UPageBody v-if="page.content?.content">
-                    <div class="rounded-lg bg-neutral-100 dark:bg-base-900">
+                    <div class="dark:bg-base-900 rounded-lg bg-neutral-100">
                         <HTMLContent class="px-4 py-2" :value="page.content.content" />
                     </div>
 
                     <template v-if="surround.length > 0">
-                        <UDivider class="mb-4 mt-4" />
+                        <USeparator class="mb-4 mt-4" />
 
                         <!-- UContentSurround doesn't seem to like our surround pages array -->
                         <div class="grid gap-8 sm:grid-cols-2">
@@ -338,7 +338,7 @@ const scrollRef = useTemplateRef('scrollRef');
                         </div>
                     </template>
 
-                    <UDivider class="mb-4 mt-4" />
+                    <USeparator class="mb-4 mt-4" />
 
                     <UAccordion class="print:hidden" multiple :items="accordionItems" :unmount="true">
                         <template #access>
@@ -369,7 +369,7 @@ const scrollRef = useTemplateRef('scrollRef');
             </template>
 
             <template v-if="page?.meta?.toc === undefined || page?.meta?.toc === true" #right>
-                <PageSearch class="mb-2 !flex lg:!hidden" />
+                <PageSearch class="flex! lg:hidden! mb-2" />
 
                 <UContentToc :title="$t('common.toc')" :links="tocLinks" />
             </template>

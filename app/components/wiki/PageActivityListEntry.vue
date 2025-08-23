@@ -60,7 +60,7 @@ function spoilerNeeded(activityType: PageActivityType): boolean {
                                 </span>
                                 <span class="ml-6 flex h-7 items-center">
                                     <UIcon
-                                        :class="[open ? '!rotate-180' : '', 'size-5 transition-transform']"
+                                        :class="[open ? 'rotate-180!' : '', 'size-5 transition-transform']"
                                         name="i-mdi-chevron-down"
                                     />
                                 </span>

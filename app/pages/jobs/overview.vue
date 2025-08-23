@@ -43,12 +43,12 @@ const showRadioFrequency = ref(false);
                                     />
 
                                     <div>
-                                        <h1 class="text-3xl font-semibold leading-6">
+                                        <h1 class="text-3xl leading-6 font-semibold">
                                             {{ activeChar?.jobLabel }}
                                         </h1>
                                         <h2
                                             v-if="activeChar?.job !== game.unemployedJobName"
-                                            class="mt-2 text-xl font-semibold leading-6"
+                                            class="mt-2 text-xl leading-6 font-semibold"
                                         >
                                             {{ $t('common.rank') }}: {{ activeChar?.jobGradeLabel }}
                                         </h2>

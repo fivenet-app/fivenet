@@ -9,7 +9,7 @@ import type { TemplateRequirements, TemplateShort } from '~~/gen/ts/resources/do
 
 const clipboardStore = useClipboardStore();
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const template = ref<undefined | TemplateShort>();
 const reqs = ref<undefined | TemplateRequirements>();
@@ -103,7 +103,7 @@ const filteredRequirementTypes = computed(() => {
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+        <UCard>
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-2xl font-semibold leading-6">
@@ -111,7 +111,7 @@ const filteredRequirementTypes = computed(() => {
                         <template v-if="template">- {{ template.title }} </template>
                     </h3>
 
-                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="closeDialog()" />
+                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="closeDialog()" />
                 </div>
             </template>
 
@@ -153,7 +153,7 @@ const filteredRequirementTypes = computed(() => {
                     v-if="template !== undefined && reqs !== undefined && steps.selectClipboard"
                     class="inline-flex w-full"
                 >
-                    <UButton class="flex-1" color="black" block @click="goBackDialog">
+                    <UButton class="flex-1" color="neutral" block @click="goBackDialog">
                         {{ $t('common.go_back') }}
                     </UButton>
 
@@ -162,7 +162,7 @@ const filteredRequirementTypes = computed(() => {
                     </UButton>
                 </UButtonGroup>
 
-                <UButton v-else class="flex-1" color="black" block @click="closeDialog">
+                <UButton v-else class="flex-1" color="neutral" block @click="closeDialog">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

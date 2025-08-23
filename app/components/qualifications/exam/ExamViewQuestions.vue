@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Form, FormSubmitEvent } from '#ui/types';
+import type { Form, FormSubmitEvent } from '@nuxt/ui';
 import { differenceInMinutes, isPast } from 'date-fns';
 import { z } from 'zod';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
@@ -256,7 +256,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
     <UDashboardPanelContent class="p-0 sm:pb-0">
         <UForm ref="form" :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ rounded: '' }">
+            <UCard>
                 <UContainer>
                     <div class="flex flex-col gap-4">
                         <ExamViewQuestion

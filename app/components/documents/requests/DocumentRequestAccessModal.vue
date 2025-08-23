@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
@@ -10,7 +10,7 @@ const props = defineProps<{
     documentId: number;
 }>();
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -76,31 +76,37 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
                             {{ $t('common.request') }}
                         </h3>
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                        <UButton
+                            class="-my-1"
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
                 <div>
-                    <UFormGroup name="reason" :label="$t('common.reason')" required>
+                    <UFormField name="reason" :label="$t('common.reason')" required>
                         <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup class="flex-1" name="requestType" :label="$t('common.access')">
+                    <UFormField class="flex-1" name="requestType" :label="$t('common.access')">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="state.accessLevel"
-                                :options="accessLevels"
+                                :items="accessLevels"
                                 :placeholder="$t('common.access')"
                                 :searchable-placeholder="$t('common.search_field')"
                             >
-                                <template #label>
+                                <template #item-label>
                                     <span v-if="state.accessLevel" class="truncate">{{
                                         $t(`enums.documents.AccessLevel.${AccessLevel[state.accessLevel]}`)
                                     }}</span>
@@ -119,12 +125,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </template>
                             </USelectMenu>
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
                 </div>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="black" block @click="isOpen = false">
+                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

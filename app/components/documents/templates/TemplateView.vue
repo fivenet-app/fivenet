@@ -21,7 +21,7 @@ const { t } = useI18n();
 
 const { can } = useAuth();
 
-const modal = useModal();
+const modal = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -89,7 +89,7 @@ const contentAccessTypes: AccessType[] = [
                     v-if="can('documents.DocumentsService/CreateTemplate').value"
                     class="flex-1"
                     block
-                    color="white"
+                    color="neutral"
                     trailing-icon="i-mdi-print-preview"
                     @click="
                         modal.open(TemplatePreviewModal, {

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { BadgeSize } from '#ui/types';
+import type { BadgeProps } from '@nuxt/ui';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
 defineOptions({
@@ -18,7 +18,7 @@ const props = withDefaults(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         updateCallback?: () => Record<string, any>;
         badge?: boolean;
-        size?: BadgeSize;
+        size?: BadgeProps['size'];
     }>(),
     {
         type: 'short',

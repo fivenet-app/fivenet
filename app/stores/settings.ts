@@ -74,7 +74,6 @@ export const useSettingsStore = defineStore(
         });
 
         const streamerMode = ref<boolean>(false);
-        const calculatorPosition = ref<'top' | 'middle' | 'bottom'>('middle');
         const jobsService = ref({
             cardView: true,
         });
@@ -167,7 +166,6 @@ export const useSettingsStore = defineStore(
             audio,
             calendar,
             streamerMode,
-            calculatorPosition,
             jobsService,
             editor,
 

@@ -237,12 +237,7 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
         />
 
         <UTooltip v-if="!disabled" :text="$t('components.access.add_entry')">
-            <UButton
-                :disabled="access.length >= maxEntries"
-                :ui="{ rounded: 'rounded-full' }"
-                icon="i-mdi-plus"
-                @click="addNewEntry"
-            />
+            <UButton :disabled="access.length >= maxEntries" icon="i-mdi-plus" @click="addNewEntry" />
         </UTooltip>
     </div>
 </template>

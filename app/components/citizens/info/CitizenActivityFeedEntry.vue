@@ -65,7 +65,7 @@ const props = defineProps<{
                     class="size-full text-info-600"
                     name="i-mdi-file-account"
                 />
-                <UIcon v-else class="size-full text-base-600" name="i-mdi-file-account-outline" />
+                <UIcon v-else class="text-base-600 size-full" name="i-mdi-file-account-outline" />
             </div>
 
             <div class="flex-1 space-y-1">
@@ -86,7 +86,6 @@ const props = defineProps<{
                                     size="xs"
                                     disable-tooltip
                                     variant="link"
-                                    :padded="false"
                                     hide-icon
                                 />
                             </template>
@@ -309,7 +308,7 @@ const props = defineProps<{
                                 v-for="attribute in activity.data.data.labelsChange.removed"
                                 :key="attribute.name"
                                 class="justify-between gap-2 line-through"
-                                :class="isColorBright(hexToRgb(attribute.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                                :class="isColorBright(hexToRgb(attribute.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
                                 :style="{ backgroundColor: attribute.color }"
                                 size="xs"
                             >
@@ -320,7 +319,7 @@ const props = defineProps<{
                                 v-for="attribute in activity.data.data.labelsChange.added"
                                 :key="attribute.name"
                                 class="justify-between gap-2"
-                                :class="isColorBright(hexToRgb(attribute.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                                :class="isColorBright(hexToRgb(attribute.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
                                 :style="{ backgroundColor: attribute.color }"
                                 size="xs"
                             >

@@ -1,8 +1,6 @@
 <script lang="ts" setup>
-import type { ButtonColor, ButtonSize } from '#ui/types';
+import type { ButtonProps } from '@nuxt/ui';
 import '~/assets/css/herofull-pattern.css';
-import LanguageSwitcherModal from '~/components/partials/LanguageSwitcherModal.vue';
-import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 import { useAuthStore } from '~/stores/auth';
 
 useHead({
@@ -18,8 +16,6 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const modal = useModal();
-
 const { login } = useAppConfig();
 
 const authStore = useAuthStore();
@@ -27,48 +23,39 @@ const { username } = storeToRefs(authStore);
 
 const appVersion = APP_VERSION.split('-')[0];
 
-const links = computed(() =>
-    [
-        username.value
-            ? { label: t('common.overview'), icon: 'i-mdi-home', size: 'lg' as ButtonSize, to: '/overview' }
-            : {
-                  label: t('components.auth.LoginForm.title'),
-                  icon: 'i-mdi-login',
-                  size: 'lg' as ButtonSize,
-                  to: '/auth/login',
-              },
-        login.signupEnabled
-            ? {
-                  label: t('components.auth.RegistrationForm.title'),
-                  trailingIcon: 'i-mdi-account-plus',
-                  color: 'white' as ButtonColor,
-                  size: 'lg' as ButtonSize,
-                  to: '/auth/registration',
-              }
-            : undefined,
-    ].flatMap((item) => (item !== undefined ? [item] : [])),
+const links = computed<ButtonProps[]>(() =>
+    (
+        [
+            username.value
+                ? { label: t('common.overview'), icon: 'i-mdi-home', size: 'lg', to: '/overview' }
+                : {
+                      label: t('components.auth.LoginForm.title'),
+                      icon: 'i-mdi-login',
+                      size: 'lg',
+                      to: '/auth/login',
+                  },
+            login.signupEnabled
+                ? {
+                      label: t('components.auth.RegistrationForm.title'),
+                      trailingIcon: 'i-mdi-account-plus',
+                      color: 'neutral',
+                      size: 'lg',
+                      to: '/auth/registration',
+                  }
+                : undefined,
+        ] as ButtonProps[]
+    ).flatMap((item) => (item !== undefined ? [item] : [])),
 );
 </script>
 
 <template>
     <div class="flex flex-1 flex-col">
-        <div class="hero absolute inset-0 z-[-1] [mask-image:radial-gradient(100%_100%_at_top,white,transparent)]" />
+        <div class="hero absolute inset-0 z-[-1] mask-[radial-gradient(100%_100%_at_top,white,transparent)]" />
 
-        <div class="flex min-h-[calc(100dvh-2*var(--header-height))] flex-col items-center justify-center">
-            <div class="absolute top-4 z-10 flex gap-2">
-                <UButton
-                    color="white"
-                    :label="$t('common.language')"
-                    icon="i-mdi-translate"
-                    @click="modal.open(LanguageSwitcherModal, {})"
-                />
-            </div>
-
-            <UCard class="w-full max-w-4xl bg-white/75 backdrop-blur dark:bg-white/5">
+        <div class="flex min-h-[calc(100dvh-var(--ui-header-height))] flex-col items-center justify-center">
+            <UCard class="w-full max-w-4xl bg-white/75 backdrop-blur-sm dark:bg-white/5">
                 <div class="space-y-4">
-                    <FiveNetLogo class="mx-auto mb-2 h-auto w-20" />
-
-                    <ULandingHero
+                    <UPageHero
                         :title="$t('pages.index.welcome')"
                         :description="$t('pages.index.subtext')"
                         :links="links"
@@ -77,7 +64,7 @@ const links = computed(() =>
                         <template #headline>
                             <UButton
                                 class="rounded-full"
-                                color="gray"
+                                color="neutral"
                                 :to="`https://github.com/fivenet-app/fivenet/releases/tag/${appVersion}`"
                                 external
                                 :label="$t('pages.index.whats_new_in', { version: appVersion })"
@@ -85,7 +72,7 @@ const links = computed(() =>
                                 size="xs"
                             />
                         </template>
-                    </ULandingHero>
+                    </UPageHero>
                 </div>
             </UCard>
         </div>

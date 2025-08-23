@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { VueDraggable } from 'vue-draggable-plus';
 import { z } from 'zod';
 import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
@@ -9,7 +9,7 @@ import { getJobsJobsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetColleagueLabelsResponse, ManageLabelsResponse } from '~~/gen/ts/services/jobs/jobs';
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -84,21 +84,27 @@ const { moveUp, moveDown } = useListReorder(toRef(state, 'labels'));
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
                             {{ $t('common.label', 2) }}
                         </h3>
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                        <UButton
+                            class="-my-1"
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
                 <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.label', 2)])" />
                 <DataErrorBlock v-else-if="error" :error="error" :retry="refresh" />
 
-                <UFormGroup v-else class="grid items-center gap-2" name="list" :ui="{ container: '' }">
+                <UFormField v-else class="grid items-center gap-2" name="list" :ui="{ container: '' }">
                     <div class="flex flex-col gap-1">
                         <VueDraggable
                             v-model="state.labels"
@@ -113,24 +119,12 @@ const { moveUp, moveDown } = useListReorder(toRef(state, 'labels'));
                                     </UTooltip>
 
                                     <UButtonGroup>
-                                        <UButton
-                                            size="xs"
-                                            variant="link"
-                                            :padded="false"
-                                            icon="i-mdi-arrow-up"
-                                            @click="moveUp(idx)"
-                                        />
-                                        <UButton
-                                            size="xs"
-                                            variant="link"
-                                            :padded="false"
-                                            icon="i-mdi-arrow-down"
-                                            @click="moveDown(idx)"
-                                        />
+                                        <UButton size="xs" variant="link" icon="i-mdi-arrow-up" @click="moveUp(idx)" />
+                                        <UButton size="xs" variant="link" icon="i-mdi-arrow-down" @click="moveDown(idx)" />
                                     </UButtonGroup>
                                 </div>
 
-                                <UFormGroup class="flex-1" :name="`labels.${idx}.name`">
+                                <UFormField class="flex-1" :name="`labels.${idx}.name`">
                                     <UInput
                                         v-model="state.labels[idx]!.name"
                                         class="w-full flex-1"
@@ -138,38 +132,32 @@ const { moveUp, moveDown } = useListReorder(toRef(state, 'labels'));
                                         type="text"
                                         :placeholder="$t('common.label', 1)"
                                     />
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UFormGroup :name="`${idx}.color`">
+                                <UFormField :name="`${idx}.color`">
                                     <ColorPickerClient
                                         v-model="state.labels[idx]!.color"
                                         class="min-w-16"
                                         :name="`${idx}.color`"
                                     />
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UButton
-                                    :ui="{ rounded: 'rounded-full' }"
-                                    :disabled="!canSubmit"
-                                    icon="i-mdi-close"
-                                    @click="state.labels.splice(idx, 1)"
-                                />
+                                <UButton :disabled="!canSubmit" icon="i-mdi-close" @click="state.labels.splice(idx, 1)" />
                             </div>
                         </VueDraggable>
                     </div>
 
                     <UButton
                         :class="state.labels.length ? 'mt-2' : ''"
-                        :ui="{ rounded: 'rounded-full' }"
                         :disabled="!canSubmit"
                         icon="i-mdi-plus"
                         @click="state.labels.push({ id: 0, name: '', color: '#ffffff', order: 0 })"
                     />
-                </UFormGroup>
+                </UFormField>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="black" block @click="isOpen = false">
+                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

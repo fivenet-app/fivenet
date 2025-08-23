@@ -13,7 +13,7 @@ const props = withDefaults(
     },
 );
 
-const modal = useModal();
+const modal = useOverlay();
 
 const centrumStore = useCentrumStore();
 const { getCurrentMode, getJobDispatchers, isDispatcher } = storeToRefs(centrumStore);
@@ -55,7 +55,7 @@ if (!props.hideJoin) {
                     :disabled="!canSubmit"
                     :loading="!canSubmit"
                     :icon="!isDispatcher ? 'i-mdi-location-enter' : 'i-mdi-location-exit'"
-                    :color="!isDispatcher ? 'primary' : 'amber'"
+                    :color="!isDispatcher ? 'primary' : 'warning'"
                     :label="!isDispatcher ? $t('common.join', 1) : $t('common.leave', 1)"
                     @click="onSubmitThrottle(!isDispatcher)"
                 />
@@ -67,9 +67,9 @@ if (!props.hideJoin) {
                 :icon="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN ? 'i-mdi-monitor' : 'i-mdi-robot'"
                 :color="
                     getCurrentMode === CentrumMode.AUTO_ROUND_ROBIN
-                        ? 'gray'
+                        ? 'neutral'
                         : dispatchers.dispatchers.length === 0
-                          ? 'amber'
+                          ? 'warning'
                           : 'success'
                 "
                 truncate

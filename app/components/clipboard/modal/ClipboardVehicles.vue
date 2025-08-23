@@ -68,7 +68,7 @@ async function remove(item: ClipboardVehicle, notify: boolean): Promise<void> {
         notifications.add({
             title: { key: 'notifications.clipboard.vehicle_removed.title', parameters: {} },
             description: { key: 'notifications.clipboard.vehicle_removed.content', parameters: {} },
-            timeout: 3250,
+            duration: 3250,
             type: NotificationType.INFO,
         });
     }
@@ -91,7 +91,7 @@ async function removeAll(): Promise<void> {
     notifications.add({
         title: { key: 'notifications.clipboard.vehicles_removed.title', parameters: {} },
         description: { key: 'notifications.clipboard.vehicles_removed.content', parameters: {} },
-        timeout: 3250,
+        duration: 3250,
         type: NotificationType.INFO,
     });
 }
@@ -155,7 +155,7 @@ watch(props, (newVal) => {
                         <UButton
                             v-if="specs && specs.max && specs.max === 1"
                             block
-                            :color="selected.includes(item) ? 'gray' : 'primary'"
+                            :color="selected.includes(item) ? 'neutral' : 'primary'"
                             @click="select(item)"
                         >
                             {{

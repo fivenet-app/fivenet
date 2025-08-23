@@ -52,10 +52,10 @@ const leeway = computed(() => props.reduction / 100);
         </span>
     </UButton>
 
-    <UTable v-else class="max-w-full divide-y divide-base-600" :columns="columns" :rows="selectedLaws">
+    <UTable v-else class="divide-base-600 max-w-full divide-y" :columns="columns" :rows="selectedLaws">
         <template #law-data="{ row: law }">
             <div class="inline-flex items-center gap-2">
-                <p class="whitespace-pre-line text-gray-900 dark:text-white">
+                <p class="text-highlighted whitespace-pre-line">
                     {{ getNameForLawBookId(law.law.lawbookId) }} - {{ law.law.name }}
                 </p>
 

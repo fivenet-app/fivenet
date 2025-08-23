@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import type { RpcError } from '@protobuf-ts/runtime-rpc';
 import { z } from 'zod';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
@@ -63,10 +63,6 @@ async function createAccount(values: Schema): Promise<void> {
 
 const passwordVisibility = ref(false);
 
-function togglePasswordVisibility() {
-    passwordVisibility.value = !passwordVisibility.value;
-}
-
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
@@ -96,7 +92,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 :actions="[
                     {
                         label: $t('common.open'),
-                        click: () => openTokenMgmt(),
+                        onClick: () => openTokenMgmt(),
                     },
                 ]"
             >
@@ -109,7 +105,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </template>
             </UAlert>
 
-            <UFormGroup name="registrationToken" :label="$t('components.auth.ForgotPassword.registration_token')">
+            <UFormField name="registrationToken" :label="$t('components.auth.ForgotPassword.registration_token')">
                 <UInput
                     v-model="state.registrationToken"
                     type="text"
@@ -119,32 +115,35 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     autocomplete="registrationToken"
                     :placeholder="$t('components.auth.ForgotPassword.registration_token')"
                 />
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup name="username" :label="$t('common.username')">
+            <UFormField name="username" :label="$t('common.username')">
                 <UInput v-model="state.username" type="text" autocomplete="username" :placeholder="$t('common.username')" />
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup name="password" :label="$t('common.password')">
+            <UFormField name="password" :label="$t('common.password')">
                 <UInput
                     v-model="state.password"
                     :type="passwordVisibility ? 'text' : 'password'"
                     autocomplete="new-password"
                     :placeholder="$t('common.password')"
-                    :ui="{ icon: { trailing: { pointer: '' } } }"
+                    :ui="{ trailing: 'pe-1' }"
                 >
                     <template #trailing>
                         <UButton
-                            color="gray"
+                            color="neutral"
                             variant="link"
+                            size="sm"
                             :icon="passwordVisibility ? 'i-mdi-eye' : 'i-mdi-eye-closed'"
-                            :padded="false"
-                            @click="togglePasswordVisibility"
+                            :aria-label="passwordVisibility ? 'Hide password' : 'Show password'"
+                            :aria-pressed="passwordVisibility"
+                            aria-controls="password"
+                            @click="passwordVisibility = !passwordVisibility"
                         />
                     </template>
                 </UInput>
                 <PasswordStrengthMeter class="mt-2" :input="state.password" />
-            </UFormGroup>
+            </UFormField>
 
             <UButton type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
                 {{ $t('components.auth.RegistrationForm.submit_button') }}
@@ -152,7 +151,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </UForm>
 
         <div class="mt-6">
-            <UButton block color="gray" trailing-icon="i-mdi-login" :to="{ name: 'auth-login' }" :disabled="!canSubmit">
+            <UButton block color="neutral" trailing-icon="i-mdi-login" :to="{ name: 'auth-login' }" :disabled="!canSubmit">
                 {{ $t('components.auth.RegistrationForm.back_to_login_button') }}
             </UButton>
         </div>

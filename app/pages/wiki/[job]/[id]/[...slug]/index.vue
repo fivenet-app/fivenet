@@ -80,20 +80,18 @@ async function getPage(id: number): Promise<Page | undefined> {
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel class="shrink-0 border-b border-gray-200 lg:border-b-0 lg:border-r dark:border-gray-800" grow>
-            <PageView :status="status" :error="error" :refresh="refresh" :page="page" :pages="pages ?? []">
-                <template #left>
-                    <DataErrorBlock v-if="pagesError" :error="pagesError" :retry="pagesRefresh" />
-                    <ClientOnly v-else>
-                        <PageList :pages="pages ?? []" />
+    <UDashboardPanel class="shrink-0 border-b border-gray-200 lg:border-r lg:border-b-0 dark:border-gray-800">
+        <PageView :status="status" :error="error" :refresh="refresh" :page="page" :pages="pages ?? []">
+            <template #left>
+                <DataErrorBlock v-if="pagesError" :error="pagesError" :retry="pagesRefresh" />
+                <ClientOnly v-else>
+                    <PageList :pages="pages ?? []" />
 
-                        <UTooltip :text="$t('common.refresh')">
-                            <UButton class="-ml-2 mt-1" variant="link" icon="i-mdi-refresh" @click="pagesRefresh" />
-                        </UTooltip>
-                    </ClientOnly>
-                </template>
-            </PageView>
-        </UDashboardPanel>
-    </UDashboardPage>
+                    <UTooltip :text="$t('common.refresh')">
+                        <UButton class="mt-1 -ml-2" variant="link" icon="i-mdi-refresh" @click="() => pagesRefresh()" />
+                    </UTooltip>
+                </ClientOnly>
+            </template>
+        </PageView>
+    </UDashboardPanel>
 </template>

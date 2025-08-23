@@ -26,7 +26,7 @@ defineEmits<{
 
 const { t } = useI18n();
 
-const modal = useModal();
+const modal = useOverlay();
 
 const calendarStore = useCalendarStore();
 const { hasEditAccessToCalendar } = storeToRefs(calendarStore);
@@ -78,7 +78,7 @@ const links = computed(() =>
             {
                 label: t('common.entry', 1),
                 icon: 'i-mdi-plus',
-                click: () =>
+                onClick: () =>
                     modal.open(EntryCreateOrUpdateModal, {
                         day: selectedCalendarDay.value!,
                     }),
@@ -105,8 +105,8 @@ defineExpose({
             </template>
         </VCalendar>
 
-        <UContextMenu v-model="isOpen" :virtual-element="virtualElement">
-            <UVerticalNavigation :links="links" />
+        <UContextMenu v-model:open="isOpen" :virtual-element="virtualElement">
+            <UNavigationMenu orientation="vertical" :items="links" />
         </UContextMenu>
     </div>
 </template>

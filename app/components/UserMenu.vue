@@ -1,11 +1,15 @@
 <script setup lang="ts">
+import type { DropdownMenuItem } from '@nuxt/ui';
 import SuperuserJobSelection from '~/components/partials/SuperuserJobSelection.vue';
 import { useAuthStore } from '~/stores/auth';
 import LanguageSwitcherModal from './partials/LanguageSwitcherModal.vue';
 import ProfilePictureImg from './partials/citizens/ProfilePictureImg.vue';
 
-const { isDashboardSearchModalOpen } = useUIState();
-const { metaSymbol } = useShortcuts();
+defineProps<{
+    collapsed?: boolean;
+}>();
+
+const { isDashboardSearchModalOpen } = useDashboard();
 
 const { can, activeChar, username, isSuperuser } = useAuth();
 
@@ -13,12 +17,14 @@ const { t } = useI18n();
 
 const authStore = useAuthStore();
 
-const modal = useModal();
+const modal = useOverlay();
 
-const items = computed(() => [
+const languageSwitcherModal = modal.create(LanguageSwitcherModal);
+
+const items = computed<DropdownMenuItem[][]>(() => [
     [
         {
-            slot: 'account',
+            slot: 'account' as const,
             label: '',
             disabled: true,
         },
@@ -37,28 +43,32 @@ const items = computed(() => [
         {
             label: t('common.commandpalette'),
             icon: 'i-mdi-terminal',
-            shortcuts: [metaSymbol.value, 'K'],
-            click: () => (isDashboardSearchModalOpen.value = true),
+            shortcuts: ['CTRL', 'K'],
+            onClick: () => (isDashboardSearchModalOpen.value = true),
         },
         can(['Superuser/CanBeSuperuser', 'Superuser/Superuser']).value
             ? {
-                  label: `${t('common.superuser')}: ${isSuperuser.value ? t('common.enabled') : t('common.disabled')}`,
+                  label: `${t('common.superuser')}`,
                   icon: 'i-mdi-square-root',
-                  click: () => authStore.setSuperuserMode(!isSuperuser.value),
+                  type: 'checkbox' as const,
+                  checked: isSuperuser.value,
+                  onUpdateChecked(_: boolean) {
+                      authStore.setSuperuserMode(!isSuperuser.value);
+                  },
               }
             : undefined,
         isSuperuser.value
             ? {
-                  slot: 'job',
+                  slot: 'job' as const,
                   label: 'Select Job',
                   icon: 'i-mdi-briefcase',
-                  click: ($event: Event) => $event.preventDefault(),
+                  onClick: ($event: Event) => $event.preventDefault(),
               }
             : undefined,
         {
             label: t('components.language_switcher.title'),
             icon: 'i-mdi-translate',
-            click: () => modal.open(LanguageSwitcherModal, {}),
+            onClick: () => languageSwitcherModal.open(),
         },
     ].flatMap((item) => (item !== undefined ? [item] : [])),
     [
@@ -80,51 +90,46 @@ const { game } = useAppConfig();
 const name = computed(() =>
     activeChar.value ? `${activeChar.value?.firstname} ${activeChar.value?.lastname}` : (username.value ?? t('common.na')),
 );
-
-const open = ref(false);
 </script>
 
 <template>
-    <UDropdown
-        v-model:open="open"
-        class="w-full"
+    <UDropdownMenu
         :items="items"
-        :ui="{ width: 'w-full', item: { disabled: 'cursor-text select-text' } }"
-        :popper="{ strategy: 'absolute', placement: 'top' }"
-        mode="hover"
+        :content="{ align: 'center', collisionPadding: 12 }"
+        :ui="{ content: collapsed ? 'w-48' : 'w-(--reka-dropdown-menu-trigger-width)' }"
     >
-        <UChip
-            class="w-full"
-            color="error"
-            :text="$t('common.superuser')"
-            position="top-left"
-            :show="isSuperuser"
-            :ui="{ base: 'top-0 left-1/2' }"
-        >
-            <UButton
-                class="w-full"
-                :class="[open && 'bg-gray-50 dark:bg-gray-800']"
-                color="gray"
-                variant="ghost"
-                :label="name"
-                @click="open = !open"
-                @touchstart.passive="open = !open"
-            >
-                <template #leading>
-                    <ProfilePictureImg :src="activeChar?.avatar" :name="name" size="2xs" />
-                </template>
+        <template #default>
+            <UChip class="w-full" color="error" position="top-left" :show="isSuperuser">
+                <UButton
+                    v-bind="{
+                        trailingIcon: collapsed ? undefined : 'i-lucide-chevrons-up-down',
+                    }"
+                    color="neutral"
+                    variant="ghost"
+                    block
+                    :square="collapsed"
+                    class="data-[state=open]:bg-elevated"
+                    :ui="{
+                        trailingIcon: 'text-dimmed',
+                    }"
+                    :label="name"
+                >
+                    <template #leading>
+                        <ProfilePictureImg :src="activeChar?.avatar" :name="name" size="xs" />
+                    </template>
 
-                <template #trailing>
-                    <UIcon class="ml-auto size-5" name="i-mdi-ellipsis-vertical" />
-                </template>
-            </UButton>
-        </UChip>
+                    <template #trailing>
+                        <UIcon class="ml-auto size-5" name="i-mdi-ellipsis-vertical" />
+                    </template>
+                </UButton>
+            </UChip>
+        </template>
 
         <template #account>
             <div class="truncate text-left">
                 <p>{{ $t('components.UserDropdown.signed_in_as') }}</p>
-                <p class="truncate font-medium text-gray-900 dark:text-white">{{ username }}</p>
-                <p v-if="activeChar" class="truncate font-medium text-gray-900 dark:text-white">
+                <p class="truncate font-medium text-highlighted">{{ username }}</p>
+                <p v-if="activeChar" class="truncate font-medium text-highlighted">
                     {{ activeChar.jobLabel
                     }}<template v-if="activeChar.job !== game.unemployedJobName"> - {{ activeChar.jobGradeLabel }}</template>
                 </p>
@@ -134,5 +139,5 @@ const open = ref(false);
         <template v-if="isSuperuser" #job>
             <SuperuserJobSelection />
         </template>
-    </UDropdown>
+    </UDropdownMenu>
 </template>

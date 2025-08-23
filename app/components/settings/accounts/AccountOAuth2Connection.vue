@@ -68,7 +68,7 @@ const provider = computed(() => login.providers.find((p) => p.name === props.con
                         :style="provider.name === 'discord' && { color: '#7289da' }"
                     />
 
-                    <div class="flex items-center gap-1.5 text-base font-semibold text-gray-900 dark:text-white">
+                    <div class="text-highlighted flex items-center gap-1.5 text-base font-semibold">
                         {{ provider?.label }}
                     </div>
                 </UButton>
@@ -88,7 +88,7 @@ const provider = computed(() => login.providers.find((p) => p.name === props.con
         <template v-if="connection" #footer>
             <div class="inline-flex items-center gap-4">
                 <template v-if="connection">
-                    <UAvatar :as="NuxtImg" size="md" :src="connection.avatar" :alt="$t('common.image')" loading="lazy" />
+                    <UAvatar size="md" :src="connection.avatar" :alt="$t('common.image')" loading="lazy" />
 
                     <UTooltip :text="`ID: ${connection.externalId}`">
                         <span class="text-left">

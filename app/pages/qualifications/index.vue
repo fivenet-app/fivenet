@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { TabItem } from '#ui/types';
+import type { TabsItem } from '@nuxt/ui';
 import QualificationList from '~/components/qualifications/QualificationList.vue';
 import QualificationRequestList from '~/components/qualifications/QualificationRequestList.vue';
 import QualificationResultList from '~/components/qualifications/QualificationResultList.vue';
@@ -18,18 +18,20 @@ const { t } = useI18n();
 
 const { can } = useAuth();
 
-const items: TabItem[] = [
+const items: TabsItem[] = [
     {
         key: 'yours',
-        slot: 'yours',
+        slot: 'yours' as const,
         label: t('components.qualifications.user_qualifications'),
         icon: 'i-mdi-account-circle',
+        value: 'yours',
     },
     {
         key: 'all',
-        slot: 'all',
+        slot: 'all' as const,
         label: t('components.qualifications.all_qualifications'),
         icon: 'i-mdi-view-list',
+        value: 'all',
     },
 ];
 
@@ -38,16 +40,11 @@ const router = useRouter();
 
 const selectedTab = computed({
     get() {
-        const index = items.findIndex((item) => item.slot === route.query.tab);
-        if (index === -1) {
-            return 0;
-        }
-
-        return index;
+        return (route.query.tab as string) || 'yours';
     },
-    set(value) {
+    set(tab) {
         // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
+        router.push({ query: { tab: tab }, hash: '#control-active-item' });
     },
 });
 
@@ -55,41 +52,39 @@ const qualifications = await useQualifications();
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('pages.qualifications.title')">
-                <template #right>
-                    <UTooltip
-                        v-if="can('qualifications.QualificationsService/UpdateQualification').value"
-                        :text="$t('common.create')"
-                    >
-                        <UButton trailing-icon="i-mdi-plus" color="gray" @click="qualifications.createQualification()">
-                            <span class="hidden truncate sm:block">
-                                {{ $t('common.qualification', 1) }}
-                            </span>
-                        </UButton>
-                    </UTooltip>
+    <UDashboardPanel>
+        <UDashboardNavbar :title="$t('pages.qualifications.title')">
+            <template #right>
+                <UTooltip
+                    v-if="can('qualifications.QualificationsService/UpdateQualification').value"
+                    :text="$t('common.create')"
+                >
+                    <UButton trailing-icon="i-mdi-plus" color="neutral" @click="qualifications.createQualification()">
+                        <span class="hidden truncate sm:block">
+                            {{ $t('common.qualification', 1) }}
+                        </span>
+                    </UButton>
+                </UTooltip>
+            </template>
+        </UDashboardNavbar>
+
+        <UDashboardPanelContent class="p-0 sm:pb-0">
+            <UTabs v-model="selectedTab" :items="items" :unmount="true">
+                <template #yours>
+                    <UContainer>
+                        <div class="flex flex-col gap-2">
+                            <QualificationResultList />
+
+                            <QualificationRequestList />
+                        </div>
+                    </UContainer>
                 </template>
-            </UDashboardNavbar>
-
-            <UDashboardPanelContent class="p-0 sm:pb-0">
-                <UTabs v-model="selectedTab" :items="items" :unmount="true" :ui="{ list: { rounded: '' } }">
-                    <template #yours>
-                        <UContainer>
-                            <div class="flex flex-col gap-2">
-                                <QualificationResultList />
-
-                                <QualificationRequestList />
-                            </div>
-                        </UContainer>
-                    </template>
-                    <template #all>
-                        <UContainer>
-                            <QualificationList />
-                        </UContainer>
-                    </template>
-                </UTabs>
-            </UDashboardPanelContent>
-        </UDashboardPanel>
-    </UDashboardPage>
+                <template #all>
+                    <UContainer>
+                        <QualificationList />
+                    </UContainer>
+                </template>
+            </UTabs>
+        </UDashboardPanelContent>
+    </UDashboardPanel>
 </template>

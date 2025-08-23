@@ -12,7 +12,7 @@ const w = window;
         :description="$t('system.not_supported_on_tablet.description')"
         icon="i-mdi-info-circle"
         variant="subtle"
-        color="yellow"
+        color="warning"
         :ui="{ inner: 'w-auto m-w-0' }"
         :actions="
             !hideButton
@@ -20,9 +20,9 @@ const w = window;
                       {
                           label: $t('system.not_supported_on_tablet.button'),
                           icon: 'i-mdi-link-variant',
-                          color: 'yellow',
+                          color: 'warning',
                           variant: 'solid',
-                          click: () => openURLInWindow(w.location.href),
+                          onClick: () => openURLInWindow(w.location.href),
                       },
                   ]
                 : undefined

@@ -11,7 +11,7 @@ const emit = defineEmits<{
     (e: 'apply', version: Version<unknown>): void;
 }>();
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const historyStore = useHistoryStore();
 
@@ -61,11 +61,9 @@ watch(showDiffModal, (val) => {
             class="flex flex-1 flex-col"
             :ui="{
                 body: {
-                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--header-height)))] max-h-[calc(100dvh-(2*var(--header-height)))] overflow-y-auto',
+                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--ui-header-height)))] max-h-[calc(100dvh-(2*var(--ui-header-height)))] overflow-y-auto',
                     padding: 'px-1 py-2 sm:p-2',
                 },
-                ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
             }"
         >
             <template #header>
@@ -74,7 +72,7 @@ watch(showDiffModal, (val) => {
                         {{ $t('common.version_history') }}
                     </h3>
 
-                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -108,7 +106,7 @@ watch(showDiffModal, (val) => {
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" block color="black" @click="isOpen = false">
+                    <UButton class="flex-1" block color="neutral" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

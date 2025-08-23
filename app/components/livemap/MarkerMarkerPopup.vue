@@ -14,8 +14,8 @@ defineProps<{
 
 const { can } = useAuth();
 
-const modal = useModal();
-const slideover = useSlideover();
+const modal = useOverlay();
+const slideover = useOverlay();
 
 const livemapStore = useLivemapStore();
 const { deleteMarkerMarker, goto } = livemapStore;
@@ -40,18 +40,13 @@ async function deleteMarker(id: number): Promise<void> {
 <template>
     <LPopup class="min-w-[175px]" :options="{ closeButton: false }">
         <UCard
-            class="-my-[13px] -ml-[20px] -mr-[24px] flex min-w-[200px] flex-col"
+            class="-my-[13px] -mr-[24px] -ml-[20px] flex min-w-[200px] flex-col"
             :ui="{ body: { padding: 'px-2 py-2 sm:px-4 sm:p-2' } }"
         >
             <template #header>
                 <div class="grid grid-cols-2 gap-2">
                     <UTooltip v-if="marker.x !== undefined && marker.y !== undefined" :text="$t('common.mark')">
-                        <UButton
-                            variant="link"
-                            icon="i-mdi-map-marker"
-                            :padded="false"
-                            @click="goto({ x: marker.x, y: marker.y })"
-                        >
+                        <UButton variant="link" icon="i-mdi-map-marker" @click="goto({ x: marker.x, y: marker.y })">
                             <span class="truncate">
                                 {{ $t('common.mark') }}
                             </span>
@@ -62,7 +57,6 @@ async function deleteMarker(id: number): Promise<void> {
                         <UButton
                             variant="link"
                             icon="i-mdi-pencil"
-                            :padded="false"
                             @click="
                                 slideover.open(MarkerCreateOrUpdateSlideover, {
                                     marker: marker,
@@ -79,7 +73,6 @@ async function deleteMarker(id: number): Promise<void> {
                         <UButton
                             variant="link"
                             icon="i-mdi-delete"
-                            :padded="false"
                             color="error"
                             @click="
                                 modal.open(ConfirmModal, {

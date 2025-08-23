@@ -1,6 +1,40 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@import "@nuxt/ui-pro";
+
+:root {
+  --ui-white: black;
+}
+
+.dark {
+    --ui-white: white;
+}
+
+@theme {
+  --font-sans: 'DM Sans', 'DM Sans fallback', 'Public Sans', sans-serif;
+
+  --animate-wiggle: wiggle 1s infinite;
+
+  @keyframes wiggle {
+    0%, 80% {
+      transform: rotate(0deg);
+    }
+    85% {
+      transform: rotate(5deg);
+    }
+    95% {
+      transform: rotate(-5deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+}
+
+@layer components {
+    .prose p:empty::after {
+        content: '\00a0'; /* non breaking space */
+    }
+}
 
 @layer base {
     input[type='number']::-webkit-inner-spin-button,
@@ -148,10 +182,10 @@ html {
 
     /* Search And Replace */
     .search-result {
-        background-color: theme('colors.warn.500')60;
+        background-color: var(--color-warn-500)60;
 
         &-current {
-            background-color: theme('colors.info.500')60;
+            background-color: var(--color-info-500)60;
         }
     }
 

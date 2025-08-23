@@ -6,7 +6,7 @@ import { getJobsJobsClient } from '~~/gen/ts/clients';
 import type { LabelCount } from '~~/gen/ts/resources/jobs/labels';
 import type { GetColleagueLabelsStatsResponse } from '~~/gen/ts/services/jobs/jobs';
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const jobsJobsClient = await getJobsJobsClient();
 
@@ -41,7 +41,7 @@ const totalCount = computed(() => stats.value?.count.reduce((stat, sum) => sum.c
 
 const x = (_: LabelCount, i: number) => i;
 const y = [(d: LabelCount) => d.count];
-const color = (d: LabelCount) => d.label?.color ?? 'gray';
+const color = (d: LabelCount) => d.label?.color ?? 'neutral';
 
 const tooltipTemplate = (d: LabelCount): string => (d.label?.name ? `${d.label?.name}: ${d.count}` : '');
 </script>
@@ -50,18 +50,16 @@ const tooltipTemplate = (d: LabelCount): string => (d.label?.name ? `${d.label?.
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }" fullscreen>
         <UCard
             :ui="{
-                ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
                 header: {
-                    base: 'h-[var(--header-height)]',
+                    base: 'h-(--ui-header-height)',
                     padding: 'p-4',
                 },
                 body: {
-                    base: 'flex-1 flex min-h-[calc(100dvh-(2*var(--header-height)))] max-h-[calc(100dvh-(2*var(--header-height)))] overflow-y-auto',
+                    base: 'flex-1 flex min-h-[calc(100dvh-(2*var(--ui-header-height)))] max-h-[calc(100dvh-(2*var(--ui-header-height)))] overflow-y-auto',
                     padding: '',
                 },
                 footer: {
-                    base: 'min-h-[var(--header-height)] max-h-[var(--header-height)]',
+                    base: 'min-h-(--ui-header-height) max-h-(--ui-header-height)',
                     padding: 'p-4',
                 },
             }"
@@ -72,7 +70,7 @@ const tooltipTemplate = (d: LabelCount): string => (d.label?.name ? `${d.label?.
                         {{ $t('common.label', 2) }} - {{ $t('common.total_count') }}: {{ totalCount }}
                     </h3>
 
-                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -102,7 +100,7 @@ const tooltipTemplate = (d: LabelCount): string => (d.label?.name ? `${d.label?.
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" color="black" block @click="isOpen = false">
+                    <UButton class="flex-1" color="neutral" block @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
 

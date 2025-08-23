@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
@@ -20,7 +20,7 @@ const emit = defineEmits<{
 
 const modelValue = useVModel(props, 'user', emit);
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -134,23 +134,29 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
                             {{ $t('components.citizens.CitizenInfoProfile.set_mugshot') }}
                         </h3>
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                        <UButton
+                            class="-my-1"
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
                 <div>
-                    <UFormGroup name="reason" :label="$t('common.reason')" required>
+                    <UFormField name="reason" :label="$t('common.reason')" required>
                         <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup name="mugshot" :label="$t('common.mugshot')">
+                    <UFormField name="mugshot" :label="$t('common.mugshot')">
                         <div class="flex flex-col gap-2">
                             <NotSupportedTabletBlock v-if="nuiEnabled" />
                             <div v-else class="flex flex-col gap-1">
@@ -179,7 +185,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 <UAlert icon="i-mdi-information-outline" :description="$t('common.image_caching')" />
                             </div>
                         </div>
-                    </UFormGroup>
+                    </UFormField>
                 </div>
 
                 <template #footer>
@@ -200,7 +206,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             {{ $t('common.reset') }}
                         </UButton>
 
-                        <UButton class="flex-1" block color="black" @click="isOpen = false">
+                        <UButton class="flex-1" block color="neutral" @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
                     </UButtonGroup>

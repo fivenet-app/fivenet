@@ -290,7 +290,7 @@ const { game } = useAppConfig();
                                     :key="value"
                                     class="flex flex-initial flex-row flex-nowrap gap-1"
                                 >
-                                    <UToggle
+                                    <USwitch
                                         :name="value"
                                         :model-value="!!attrValues.validValues.stringList.strings.find((v) => v === value)"
                                         :disabled="disabled"
@@ -308,7 +308,7 @@ const { game } = useAppConfig();
                                 v-if="!disabled"
                                 class="self-end"
                                 size="xs"
-                                color="white"
+                                color="neutral"
                                 :icon="
                                     attrValues.validValues.stringList.strings.length !==
                                     maxValues.validValues.stringList.strings.length
@@ -346,7 +346,7 @@ const { game } = useAppConfig();
                                     :key="job.name"
                                     class="flex flex-initial flex-row flex-nowrap gap-1"
                                 >
-                                    <UToggle
+                                    <USwitch
                                         :name="job.name"
                                         :model-value="!!attrValues.validValues.jobList?.strings.find((v) => v === job.name)"
                                         :disabled="disabled"
@@ -360,7 +360,7 @@ const { game } = useAppConfig();
                                 v-if="!disabled"
                                 class="self-end"
                                 size="xs"
-                                color="white"
+                                color="neutral"
                                 :icon="
                                     attrValues.validValues.jobList.strings.length !==
                                     maxValues.validValues.jobList.strings.length
@@ -399,14 +399,14 @@ const { game } = useAppConfig();
                                 :key="job.name"
                                 class="flex flex-initial flex-row flex-nowrap items-center gap-1"
                             >
-                                <UToggle
+                                <USwitch
                                     v-if="!attrValues.validValues.jobGradeList.fineGrained"
                                     :name="job.name"
                                     :model-value="attrValues.validValues?.jobGradeList.jobs[job.name] !== undefined"
                                     :disabled="disabled"
                                     @update:model-value="toggleJobGradeValue(job, $event)"
                                 />
-                                <UToggle
+                                <USwitch
                                     v-else
                                     :name="job.name"
                                     :model-value="attrValues.validValues?.jobGradeList.grades[job.name] !== undefined"
@@ -424,7 +424,7 @@ const { game } = useAppConfig();
                                         :disabled="
                                             disabled || attrValues.validValues?.jobGradeList.jobs[job.name] === undefined
                                         "
-                                        :options="
+                                        :items="
                                             job.grades.filter(
                                                 (g) =>
                                                     maxValues &&
@@ -437,16 +437,16 @@ const { game } = useAppConfig();
                                         :search-attributes="['label']"
                                         :searchable-placeholder="$t('common.search_field')"
                                         :placeholder="$t('common.rank')"
-                                        value-attribute="grade"
+                                        value-key="grade"
                                     >
-                                        <template #label>
+                                        <template #item-label>
                                             <template
                                                 v-if="
                                                     job.grades &&
                                                     attrValues.validValues.jobGradeList.jobs[job.name] !== undefined
                                                 "
                                             >
-                                                <span class="truncate text-gray-900 dark:text-white"
+                                                <span class="text-highlighted truncate"
                                                     >{{
                                                         job.grades.find(
                                                             (g) =>
@@ -480,7 +480,7 @@ const { game } = useAppConfig();
                                         :disabled="
                                             disabled || attrValues.validValues?.jobGradeList.grades[job.name] === undefined
                                         "
-                                        :options="
+                                        :items="
                                             job.grades.filter(
                                                 (g) =>
                                                     maxValues &&
@@ -494,9 +494,9 @@ const { game } = useAppConfig();
                                         :search-attributes="['label']"
                                         :searchable-placeholder="$t('common.search_field')"
                                         :placeholder="$t('common.rank')"
-                                        value-attribute="grade"
+                                        value-key="grade"
                                     >
-                                        <template #label>
+                                        <template #item-label>
                                             {{
                                                 $t(
                                                     'common.selected',
@@ -522,16 +522,16 @@ const { game } = useAppConfig();
                             </div>
 
                             <template v-if="!hideFineGrained">
-                                <UDivider />
+                                <USeparator />
 
                                 <div class="flex flex-row items-center gap-2">
-                                    <UToggle
+                                    <USwitch
                                         :model-value="attrValues.validValues.jobGradeList.fineGrained"
                                         :disabled="disabled"
                                         @update:model-value="toggleJobGradeListFineGrained($event)"
                                     />
 
-                                    <UFormGroup
+                                    <UFormField
                                         :label="$t('components.settings.role_view.fine_grained_toggle.title')"
                                         :description="$t('components.settings.role_view.fine_grained_toggle.description')"
                                     />

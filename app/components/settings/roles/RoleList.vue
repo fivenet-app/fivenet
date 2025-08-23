@@ -12,7 +12,7 @@ import type { Role } from '~~/gen/ts/resources/permissions/permissions';
 
 const { t } = useI18n();
 
-const modal = useModal();
+const modal = useOverlay();
 
 const { can, activeChar } = useAuth();
 
@@ -118,16 +118,16 @@ const onSubmitThrottle = useThrottleFn(async () => {
                 :state="state"
                 @submit="refresh()"
             >
-                <UFormGroup class="flex-1" name="grade" :label="$t('common.job_grade')">
+                <UFormField class="flex-1" name="grade" :label="$t('common.job_grade')">
                     <ClientOnly>
                         <USelectMenu
                             v-model="state.jobGrade"
-                            :options="availableJobGrades"
+                            :items="availableJobGrades"
                             by="grade"
                             searchable
                             :searchable-placeholder="$t('common.search_field')"
                         >
-                            <template #label>
+                            <template #item-label>
                                 <template v-if="state.jobGrade">
                                     <span class="truncate">{{ state.jobGrade?.label }} ({{ state.jobGrade?.grade }})</span>
                                 </template>
@@ -138,9 +138,9 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             </template>
                         </USelectMenu>
                     </ClientOnly>
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup name="submit" label="&nbsp;">
+                <UFormField name="submit" label="&nbsp;">
                     <UButton
                         class="flex-initial justify-end"
                         :disabled="state.jobGrade === undefined || state.jobGrade!.grade < 0 || !canSubmit"
@@ -151,7 +151,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                 title: $t('components.hints.settings_roles_list.title'),
                                 description: $t('components.hints.settings_roles_list.content'),
                                 icon: 'i-mdi-information-outline',
-                                color: 'amber',
+                                color: 'warning',
                                 iconClass: 'text-amber-500 dark:text-amber-400',
                                 confirm: onSubmitThrottle,
                             })
@@ -159,7 +159,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     >
                         {{ $t('common.create') }}
                     </UButton>
-                </UFormGroup>
+                </UFormField>
             </UForm>
 
             <div>
@@ -182,9 +182,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     }"
                 >
                     <template #rank-data="{ row: role }">
-                        <div class="text-gray-900 dark:text-white">
-                            {{ role.jobLabel }} - {{ role.jobGradeLabel }} ({{ role.grade }})
-                        </div>
+                        <div class="text-highlighted">{{ role.jobLabel }} - {{ role.jobGradeLabel }} ({{ role.grade }})</div>
                     </template>
 
                     <template #actions-data="{ row: role }">

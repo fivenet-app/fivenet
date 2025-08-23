@@ -1,3 +1,4 @@
+import type { NotificationActionI18n } from '~/types/notifications';
 import { getMailerMailerClient } from '~~/gen/ts/clients';
 import type { Email } from '~~/gen/ts/resources/mailer/email';
 import type { MailerEvent } from '~~/gen/ts/resources/mailer/events';

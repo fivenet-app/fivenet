@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { ButtonSize, ButtonVariant } from '#ui/types';
+import type { ButtonProps } from '@nuxt/ui';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = withDefaults(
@@ -10,9 +10,8 @@ const props = withDefaults(
         content?: I18NItem;
         action?: (id: number | number | string) => void;
         hideIcon?: boolean;
-        variant?: ButtonVariant;
-        padded?: boolean;
-        size?: ButtonSize;
+        variant?: ButtonProps['variant'];
+        size?: ButtonProps['size'];
         disableTooltip?: boolean;
     }>(),
     {
@@ -22,7 +21,6 @@ const props = withDefaults(
         action: undefined,
         hideIcon: false,
         variant: 'solid',
-        padded: true,
         size: 'sm',
         disableTooltip: false,
     },
@@ -37,7 +35,7 @@ function copyDocumentIDToClipboard(): void {
         notifications.add({
             title: props.title,
             description: props.content,
-            timeout: 3250,
+            duration: 3250,
             type: NotificationType.INFO,
         });
     }
@@ -56,10 +54,8 @@ function click(): void {
     <UTooltip :text="disableTooltip ? undefined : $t('common.copy')">
         <UButton
             class="break-keep"
-            :ui="{ round: 'rounded-md', base: '' }"
             :icon="!hideIcon ? 'i-mdi-fingerprint' : undefined"
             :variant="variant"
-            :padded="padded"
             :size="size"
             @click="click"
         >

@@ -20,7 +20,7 @@ const { settings } = storeToRefs(centrumStore);
 
 const { goto } = useLivemapStore();
 
-const slideover = useSlideover();
+const slideover = useOverlay();
 
 const dispatchTimeStyle = ref<{ ping: boolean; class: string }>({ ping: false, class: '' });
 
@@ -45,7 +45,7 @@ useIntervalFn(
                 @change="$emit('update:selectedDispatch', dispatch.id)"
             />
 
-            <UButton variant="link" :padded="false" icon="i-mdi-map-marker" @click="goto({ x: dispatch.x, y: dispatch.y })" />
+            <UButton variant="link" icon="i-mdi-map-marker" @click="goto({ x: dispatch.x, y: dispatch.y })" />
         </div>
 
         <UChip
@@ -59,7 +59,6 @@ useIntervalFn(
                 class="my-0.5 inline-flex w-full max-w-full shrink flex-col items-center p-2 text-xs"
                 block
                 color="error"
-                :padded="false"
                 @click="
                     slideover.open(DispatchDetailsSlideover, {
                         dispatchId: dispatch.id,
@@ -83,7 +82,7 @@ useIntervalFn(
                     <div class="inline-flex flex-col items-center">
                         <span class="font-medium">{{ $t('common.status') }}:</span>
                         <UBadge
-                            class="line-clamp-2 break-words px-px py-0.5"
+                            class="line-clamp-2 px-px py-0.5 break-words"
                             variant="subtle"
                             :color="dispatchStatusToBadgeColor(dispatch.status?.status)"
                         >

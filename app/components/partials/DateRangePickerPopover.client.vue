@@ -45,7 +45,7 @@ const open = ref(false);
         <template v-if="smallerThanSm">
             <UButton
                 variant="outline"
-                color="black"
+                color="neutral"
                 block
                 icon="i-mdi-calendar-month"
                 truncate
@@ -59,8 +59,8 @@ const open = ref(false);
                 @touchstart="open = true"
             />
 
-            <UModal v-model="open">
-                <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UModal v-model:open="open">
+                <UCard>
                     <template #header>
                         <div class="flex items-center justify-between">
                             <h3 class="text-2xl font-semibold leading-6">
@@ -69,7 +69,7 @@ const open = ref(false);
 
                             <UButton
                                 class="-my-1"
-                                color="gray"
+                                color="neutral"
                                 variant="ghost"
                                 icon="i-mdi-window-close"
                                 @click="open = false"
@@ -82,7 +82,7 @@ const open = ref(false);
                     </div>
 
                     <template #footer>
-                        <UButton class="flex-1" color="black" block @click="open = false">
+                        <UButton class="flex-1" color="neutral" block @click="open = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
                     </template>
@@ -93,7 +93,7 @@ const open = ref(false);
         <UPopover v-else v-model:open="open" v-bind="popover">
             <UButton
                 variant="outline"
-                color="black"
+                color="neutral"
                 block
                 truncate
                 icon="i-mdi-calendar-month"

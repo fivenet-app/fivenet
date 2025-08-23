@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { ButtonColor, FormSubmitEvent } from '#ui/types';
+import type { ButtonProps, FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 
 const props = withDefaults(
@@ -9,7 +9,7 @@ const props = withDefaults(
         cancel?: () => Promise<unknown> | unknown;
         confirm: (reason: string) => Promise<unknown>;
         icon?: string;
-        color?: ButtonColor;
+        color?: ButtonProps['color'];
         iconClass?: string;
     }>(),
     {
@@ -40,29 +40,29 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     isOpen.value = false;
 }, 1000);
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 </script>
 
 <template>
-    <UDashboardModal
+    <UModal
         :title="title ?? $t('components.partials.confirm_dialog.title')"
         :description="description ?? $t('components.partials.confirm_dialog.description')"
         :icon="icon"
         :ui="{
             icon: { base: iconClass },
-            body: { base: 'sm:p-0 sm:px-6' },
+            body: 'sm:p-0 sm:px-6',
         }"
         @update:model-value="cancel && cancel()"
     >
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UFormGroup class="sm:px-4" name="reason" :label="$t('common.reason')">
+            <UFormField class="sm:px-4" name="reason" :label="$t('common.reason')">
                 <UInput v-model="state.reason" :placeholder="$t('common.reason')" :ui="{ base: 'w-full' }" />
-            </UFormGroup>
+            </UFormField>
 
-            <div class="flex flex-shrink-0 items-center gap-x-1.5 px-4 py-4 sm:px-4">
+            <div class="flex shrink-0 items-center gap-x-1.5 px-4 py-4 sm:px-4">
                 <UButton type="submit" :color="color" :label="$t('common.confirm')" />
                 <UButton
-                    color="white"
+                    color="neutral"
                     :label="$t('common.cancel')"
                     @click="
                         if (cancel) {
@@ -73,5 +73,5 @@ const { isOpen } = useModal();
                 />
             </div>
         </UForm>
-    </UDashboardModal>
+    </UModal>
 </template>

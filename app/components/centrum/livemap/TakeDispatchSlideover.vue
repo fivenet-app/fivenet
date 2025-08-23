@@ -7,7 +7,7 @@ import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import { type Dispatch, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 
-const { isOpen } = useSlideover();
+const { isOpen } = useOverlay();
 
 const centrumStore = useCentrumStore();
 const { dispatches, pendingDispatches, getCurrentMode } = storeToRefs(centrumStore);
@@ -91,11 +91,9 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
             class="flex flex-1 flex-col"
             :ui="{
                 body: {
-                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--header-height)))] max-h-[calc(100dvh-(2*var(--header-height)))] overflow-y-auto',
+                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--ui-header-height)))] max-h-[calc(100dvh-(2*var(--ui-header-height)))] overflow-y-auto',
                     padding: 'px-1 py-2 sm:p-2',
                 },
-                ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
             }"
         >
             <template #header>
@@ -104,7 +102,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                         {{ $t('components.centrum.take_dispatch.title') }}
                     </h3>
 
-                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -124,7 +122,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                     </div>
                                 </dt>
                                 <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                    <UFormGroup name="search">
+                                    <UFormField name="search">
                                         <UInput
                                             v-model="queryDispatches"
                                             type="text"
@@ -132,7 +130,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                             :placeholder="$t('common.search')"
                                             leading-icon="i-mdi-search"
                                         />
-                                    </UFormGroup>
+                                    </UFormField>
                                 </dd>
                             </div>
 

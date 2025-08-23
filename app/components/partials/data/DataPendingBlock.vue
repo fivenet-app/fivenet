@@ -12,7 +12,7 @@ withDefaults(
 
 <template>
     <UButton
-        class="my-2 inline-flex w-full flex-col items-center gap-2 rounded-lg border border-dotted border-base-300 p-6 text-center hover:border-base-400"
+        class="border-base-300 hover:border-base-400 my-2 inline-flex w-full flex-col items-center gap-2 rounded-lg border border-dotted p-6 text-center"
         disabled
         block
     >

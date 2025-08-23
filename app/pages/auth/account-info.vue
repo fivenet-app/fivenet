@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import AccountInfo from '~/components/auth/account/AccountInfo.vue';
+import StreamerModeAlert from '~/components/partials/StreamerModeAlert.vue';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 useHead({
@@ -16,6 +17,9 @@ definePageMeta({
 const { t } = useI18n();
 
 const notifications = useNotificationsStore();
+
+const settingsStore = useSettingsStore();
+const { streamerMode } = storeToRefs(settingsStore);
 
 // `oauth2Connect` can be `failed` (with `reason`) or `success`
 const oauth2Connect = useRouteQuery('oauth2Connect');
@@ -51,15 +55,18 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel grow>
+    <UDashboardPanel>
+        <template #header>
             <UDashboardNavbar :title="$t('components.auth.AccountInfo.title')">
                 <template #right>
                     <PartialsBackButton fallback-to="/overview" />
                 </template>
             </UDashboardNavbar>
+        </template>
 
-            <AccountInfo />
-        </UDashboardPanel>
-    </UDashboardPage>
+        <template #body>
+            <StreamerModeAlert v-if="streamerMode" />
+            <AccountInfo v-else />
+        </template>
+    </UDashboardPanel>
 </template>

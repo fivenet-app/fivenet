@@ -17,7 +17,7 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-const { isOpen } = useSlideover();
+const { isOpen } = useOverlay();
 
 async function getEffectivePermissions(roleId: number): Promise<GetEffectivePermissionsResponse> {
     try {
@@ -89,11 +89,9 @@ const permCategoriesSorted = computed(() =>
             class="flex flex-1 flex-col"
             :ui="{
                 body: {
-                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--header-height)))] max-h-[calc(100dvh-(2*var(--header-height)))] overflow-y-auto',
+                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--ui-header-height)))] max-h-[calc(100dvh-(2*var(--ui-header-height)))] overflow-y-auto',
                     padding: 'px-1 py-2 sm:p-2',
                 },
-                ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
             }"
         >
             <template #header>
@@ -106,7 +104,13 @@ const permCategoriesSorted = computed(() =>
 
                         <UButton variant="link" trailing-icon="i-mdi-refresh" color="primary" @click="refresh()" />
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                        <UButton
+                            class="-my-1"
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </div>
             </template>
@@ -124,7 +128,7 @@ const permCategoriesSorted = computed(() =>
                     </template>
                 </UAlert>
 
-                <UDivider class="mb-2" />
+                <USeparator class="mb-2" />
 
                 <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.role')])" />
                 <DataErrorBlock
@@ -155,7 +159,7 @@ const permCategoriesSorted = computed(() =>
                             >
                                 <div class="flex flex-row items-center gap-2">
                                     <div class="flex-1">
-                                        <p class="text-gray-900 dark:text-white" :title="`${$t('common.id')}: ${perm.id}`">
+                                        <p class="text-highlighted" :title="`${$t('common.id')}: ${perm.id}`">
                                             {{ $t(`perms.${perm.category}.${perm.name}.key`) }}
                                         </p>
                                         <p class="text-base-500">
@@ -172,7 +176,7 @@ const permCategoriesSorted = computed(() =>
                                         />
 
                                         <UButton
-                                            color="black"
+                                            color="neutral"
                                             :variant="
                                                 !permStates.has(perm.id) || permStates.get(perm.id) === undefined
                                                     ? 'solid'
@@ -213,7 +217,7 @@ const permCategoriesSorted = computed(() =>
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" color="black" block @click="isOpen = false">
+                    <UButton class="flex-1" color="neutral" block @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { TabsItem } from '@nuxt/ui';
 import { addDays, addWeeks, isBefore, isFuture, subDays, subMonths, subWeeks } from 'date-fns';
 import { z } from 'zod';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
@@ -209,12 +210,12 @@ const columns = computed(() => [
     },
 ]);
 
-const items = computed(() =>
+const items = computed<TabsItem[]>(() =>
     [
-        { slot: 'self', label: t('common.own'), icon: 'i-mdi-selfie', userMode: TimeclockViewMode.SELF },
+        { slot: 'self' as const, label: t('common.own'), icon: 'i-mdi-selfie', userMode: TimeclockViewMode.SELF },
         canAccessAll.value
             ? {
-                  slot: 'colleagues',
+                  slot: 'colleagues' as const,
                   label: t('components.jobs.timeclock.colleagues'),
                   icon: 'i-mdi-account-group',
                   userMode: TimeclockViewMode.ALL,
@@ -243,7 +244,7 @@ const selectedUserMode = computed({
     },
 });
 
-const selfTimeRangeModes = computed(() => [
+const selfTimeRangeModes = computed<TabsItem[]>(() => [
     { label: t('common.time_range'), icon: 'i-mdi-calendar-range', mode: TimeclockMode.RANGE },
     { label: t('common.timeline'), icon: 'i-mdi-chart-timeline', mode: TimeclockMode.TIMELINE },
 ]);
@@ -263,7 +264,7 @@ const selectedSelfMode = computed({
     },
 });
 
-const timeRangeModes = computed(() => [
+const timeRangeModes = computed<TabsItem[]>(() => [
     { label: t('common.day_view'), icon: 'i-mdi-view-day', mode: TimeclockMode.DAILY },
     { label: t('common.week_view'), icon: 'i-mdi-view-week', mode: TimeclockMode.WEEKLY },
     { label: t('common.time_range'), icon: 'i-mdi-calendar-range', mode: TimeclockMode.RANGE },
@@ -293,7 +294,7 @@ const { game } = useAppConfig();
         v-model="selectedUserMode"
         :items="items"
         :ui="{
-            list: { base: props.userId !== undefined || items.length === 1 ? 'hidden' : undefined, rounded: '' },
+            list: { base: props.userId !== undefined || items.length === 1 ? 'hidden' : undefined },
         }"
     />
 
@@ -309,7 +310,7 @@ const { game } = useAppConfig();
                 </div>
 
                 <div class="flex flex-1 justify-between gap-2">
-                    <UFormGroup class="flex-1" name="date" :label="$t('common.time_range')">
+                    <UFormField class="flex-1" name="date" :label="$t('common.time_range')">
                         <DateRangePickerPopoverClient
                             v-model="query.date"
                             class="flex-1"
@@ -322,9 +323,9 @@ const { game } = useAppConfig();
                                 ],
                             }"
                         />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup
+                    <UFormField
                         v-if="query.mode !== TimeclockMode.TIMELINE"
                         class="flex flex-initial flex-col"
                         name="perDay"
@@ -332,9 +333,9 @@ const { game } = useAppConfig();
                         :ui="{ container: 'flex-1 flex' }"
                     >
                         <div class="flex flex-1 items-center">
-                            <UToggle v-model="query.perDay" />
+                            <USwitch v-model="query.perDay" />
                         </div>
-                    </UFormGroup>
+                    </UFormField>
                 </div>
             </template>
 
@@ -350,7 +351,7 @@ const { game } = useAppConfig();
                         <UButton
                             v-if="can('jobs.TimeclockService/ListInactiveEmployees').value && userId === undefined"
                             :to="{ name: 'jobs-timeclock-inactive' }"
-                            color="black"
+                            color="neutral"
                             trailing-icon="i-mdi-arrow-right"
                         >
                             {{ $t('common.inactive_colleagues') }}
@@ -363,7 +364,7 @@ const { game } = useAppConfig();
                         class="grid flex-1 gap-2"
                         :class="canAccessAll && userId === undefined ? 'grid-cols-2' : 'grid-cols-1'"
                     >
-                        <UFormGroup v-if="canAccessAll && userId === undefined" name="users" :label="$t('common.search')">
+                        <UFormField v-if="canAccessAll && userId === undefined" name="users" :label="$t('common.search')">
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="query.users"
@@ -387,11 +388,11 @@ const { game } = useAppConfig();
                                     block
                                     trailing
                                     leading-icon="i-mdi-search"
-                                    value-attribute="userId"
+                                    value-key="userId"
                                 >
-                                    <template #label="{ selected }">
-                                        <span v-if="selected.length > 0" class="truncate">
-                                            {{ usersToLabel(selected) }}
+                                    <template #item-label="{ item }">
+                                        <span v-if="item" class="truncate">
+                                            {{ usersToLabel(item) }}
                                         </span>
                                     </template>
 
@@ -408,10 +409,10 @@ const { game } = useAppConfig();
                                     </template>
                                 </USelectMenu>
                             </ClientOnly>
-                        </UFormGroup>
+                        </UFormField>
 
                         <div class="flex flex-1 flex-row gap-1">
-                            <UFormGroup
+                            <UFormField
                                 class="flex-1"
                                 name="end"
                                 :label="
@@ -495,9 +496,9 @@ const { game } = useAppConfig();
                                         ],
                                     }"
                                 />
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup
+                            <UFormField
                                 v-if="query.mode !== TimeclockMode.DAILY && query.mode !== TimeclockMode.TIMELINE"
                                 class="flex flex-initial flex-col"
                                 name="perDay"
@@ -505,9 +506,9 @@ const { game } = useAppConfig();
                                 :ui="{ container: 'flex-1 flex' }"
                             >
                                 <div class="flex flex-1 items-center">
-                                    <UToggle v-model="query.perDay" />
+                                    <USwitch v-model="query.perDay" />
                                 </div>
-                            </UFormGroup>
+                            </UFormField>
                         </div>
                     </div>
                 </div>
@@ -520,7 +521,7 @@ const { game } = useAppConfig();
     </div>
 
     <UCard v-else-if="query.userMode === TimeclockViewMode.SELF && !query.perDay">
-        <p class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
+        <p class="text-highlighted mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight">
             {{
                 totalTimeSum === 0
                     ? $t('common.not_found', [$t('common.entry', 2)])
@@ -555,7 +556,7 @@ const { game } = useAppConfig();
         </template>
 
         <template #date-data="{ row: entry }">
-            <div class="text-gray-900 dark:text-white">
+            <div class="text-highlighted">
                 {{ $d(toDate(entry.date), 'date') }}
             </div>
         </template>
@@ -628,7 +629,6 @@ const { game } = useAppConfig();
                         v-if="query.mode === TimeclockMode.TIMELINE"
                         :text="$t('components.jobs.timeclock.timeline.tooltip')"
                         :shortcuts="['CTRL', '🖱']"
-                        :popper="{ placement: 'left' }"
                         :ui="{ shortcuts: 'inline-flex' }"
                     >
                         <UIcon class="size-4" name="i-mdi-information-outline" />
@@ -641,7 +641,7 @@ const { game } = useAppConfig();
     <UAccordion
         v-if="showStats && data && data.stats"
         class="px-3 py-0.5"
-        :items="[{ slot: 'stats', label: $t('common.stats') }]"
+        :items="[{ slot: 'stats' as const, label: $t('common.stats') }]"
     >
         <template #stats>
             <TimeclockStatsBlock
@@ -650,7 +650,6 @@ const { game } = useAppConfig();
                 :hide-header="true"
                 :failed="!!error"
                 :loading="isRequestPending(status)"
-                :ui="{ rounded: '' }"
             />
         </template>
     </UAccordion>

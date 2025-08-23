@@ -13,7 +13,7 @@ definePageMeta({
     permission: 'documents.DocumentsService/ListDocuments',
 });
 
-const modal = useModal();
+const modal = useOverlay();
 
 const { can } = useAuth();
 
@@ -21,11 +21,11 @@ const isOpen = ref(false);
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel class="shrink-0 border-b border-gray-200 lg:border-b-0 lg:border-r dark:border-gray-800" grow>
+    <UDashboardPanel class="shrink-0 border-b border-gray-200 lg:border-r lg:border-b-0 dark:border-gray-800">
+        <template #header>
             <UDashboardNavbar :title="$t('pages.documents.title')">
                 <template #right>
-                    <UButton class="2xl:hidden" trailing-icon="i-mdi-pin" color="white" truncate @click="isOpen = true">
+                    <UButton class="2xl:hidden" trailing-icon="i-mdi-pin" color="neutral" truncate @click="isOpen = true">
                         <span class="hidden truncate sm:block">
                             {{ $t('common.pinned') }}
                         </span>
@@ -56,7 +56,7 @@ const isOpen = ref(false);
                     </UButtonGroup>
 
                     <UTooltip v-if="can('documents.DocumentsService/UpdateDocument').value" :text="$t('common.create')">
-                        <UButton trailing-icon="i-mdi-plus" color="gray" truncate @click="modal.open(TemplateModal, {})">
+                        <UButton trailing-icon="i-mdi-plus" color="neutral" truncate @click="modal.open(TemplateModal, {})">
                             <span class="hidden truncate sm:block">
                                 {{ $t('common.document', 1) }}
                             </span>
@@ -64,22 +64,24 @@ const isOpen = ref(false);
                     </UTooltip>
                 </template>
             </UDashboardNavbar>
+        </template>
 
+        <template #body>
             <DocumentList />
-        </UDashboardPanel>
+        </template>
+    </UDashboardPanel>
 
-        <UDashboardPanel
-            id="documentspinnedlist"
-            v-model="isOpen"
-            class="overflow-x-hidden"
-            collapsible
-            side="right"
-            breakpoint="2xl"
-            :width="350"
-            :resizable="{ min: 275, max: 600 }"
-            :ui="{ collapsible: 'lg:!hidden 2xl:!flex', slideover: 'lg:!flex 2xl:hidden' }"
-        >
-            <PinnedDocumentList />
-        </UDashboardPanel>
-    </UDashboardPage>
+    <UDashboardPanel
+        id="documentspinnedlist"
+        v-model:open="isOpen"
+        class="overflow-x-hidden"
+        side="right"
+        breakpoint="2xl"
+        :width="350"
+        :min-size="25"
+        :max-size="50"
+        :ui="{ collapsible: 'lg:hidden! 2xl:flex!', slideover: 'lg:flex! 2xl:hidden' }"
+    >
+        <PinnedDocumentList />
+    </UDashboardPanel>
 </template>

@@ -1,7 +1,7 @@
 import type { RpcError, ServerStreamingCall } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import { statusOrder } from '~/components/centrum/helpers';
-import type { NotificationActionI18n } from '~/utils/notifications';
+import type { NotificationActionI18n } from '~/types/notifications';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import type { Dispatchers } from '~~/gen/ts/resources/centrum/dispatchers';
 import { type Dispatch, type DispatchStatus, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';

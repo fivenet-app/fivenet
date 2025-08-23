@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import type { ButtonColor } from '#ui/types';
+import type { ButtonProps } from '@nuxt/ui';
 import { useSettingsStore } from '~/stores/settings';
 
 const { isHelpSlideoverOpen } = useDashboard();
-const { metaSymbol } = useShortcuts();
 
 const { t } = useI18n();
 
@@ -14,33 +13,35 @@ const shortcuts = ref(false);
 const query = ref('');
 
 const links = computed(() =>
-    [
-        {
-            label: t('common.shortcuts'),
-            icon: 'i-mdi-key',
-            trailingIcon: 'i-mdi-arrow-right',
-            color: 'gray' as ButtonColor,
-            onClick: () => {
-                shortcuts.value = true;
+    (
+        [
+            {
+                label: t('common.shortcuts'),
+                icon: 'i-mdi-key',
+                trailingIcon: 'i-mdi-arrow-right',
+                color: 'slate',
+                onClick: () => {
+                    shortcuts.value = true;
+                },
             },
-        },
-        !nuiEnabled.value
-            ? {
-                  label: t('common.help'),
-                  icon: 'i-mdi-book-open-blank-variant-outline',
-                  trailingIcon: 'i-mdi-external-link',
-                  to: generateDerefURL('https://fivenet.app/getting-started'),
-                  external: true,
-              }
-            : undefined,
-    ].flatMap((item) => (item !== undefined ? [item] : [])),
+            !nuiEnabled.value
+                ? {
+                      label: t('common.help'),
+                      icon: 'i-mdi-book-open-blank-variant-outline',
+                      trailingIcon: 'i-mdi-external-link',
+                      to: generateDerefURL('https://fivenet.app/getting-started'),
+                      external: true,
+                  }
+                : undefined,
+        ] as ButtonProps[]
+    ).flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
 const categories = computed(() => [
     {
         title: t('commandpalette.categories.general'),
         items: [
-            { shortcuts: [metaSymbol.value, 'K'], name: t('common.commandpalette') },
+            { shortcuts: ['CTRL', 'K'], name: t('common.commandpalette') },
             { shortcuts: ['B'], name: t('common.notification', 2) },
             { shortcuts: ['?'], name: t('common.help') },
             { shortcuts: ['/'], name: t('common.search') },
@@ -60,7 +61,6 @@ const categories = computed(() => [
             { shortcuts: ['G', 'M'], name: t('common.goto_item', [t('common.livemap')]) },
             { shortcuts: ['G', 'W'], name: t('common.goto_item', [t('common.dispatch_center')]) },
             { shortcuts: ['G', 'L'], name: t('common.goto_item', [t('common.wiki')]) },
-            { shortcuts: ['G', 'I'], name: t('common.goto_item', [t('common.internet')]) },
             { shortcuts: ['G', 'P'], name: t('common.goto_item', [t('common.control_panel')]) },
         ],
     },
@@ -129,11 +129,11 @@ const filteredCategories = computed(() => {
 </script>
 
 <template>
-    <UDashboardSlideover v-model="isHelpSlideoverOpen">
+    <USlideover v-model="isHelpSlideoverOpen">
         <template #title>
             <UButton
                 v-if="shortcuts"
-                color="gray"
+                color="neutral"
                 variant="ghost"
                 size="sm"
                 icon="i-mdi-arrow-left"
@@ -143,29 +143,37 @@ const filteredCategories = computed(() => {
             {{ shortcuts ? $t('common.shortcuts') : $t('common.help') }}
         </template>
 
-        <div v-if="shortcuts" class="space-y-6">
-            <UInput v-model="query" icon="i-mdi-search" :placeholder="$t('common.search_field')" autofocus color="gray" />
+        <template #content>
+            <div v-if="shortcuts" class="space-y-6">
+                <UInput
+                    v-model="query"
+                    icon="i-mdi-search"
+                    :placeholder="$t('common.search_field')"
+                    autofocus
+                    color="neutral"
+                />
 
-            <div v-for="(category, index) in filteredCategories" :key="index">
-                <p class="mb-3 text-sm font-semibold text-gray-900 dark:text-white">
-                    {{ category.title }}
-                </p>
+                <div v-for="(category, index) in filteredCategories" :key="index">
+                    <p class="mb-3 text-sm font-semibold text-highlighted">
+                        {{ category.title }}
+                    </p>
 
-                <div class="space-y-2">
-                    <div v-for="(item, i) in category.items" :key="i" class="flex items-center justify-between">
-                        <span class="text-sm text-gray-500 dark:text-gray-400">{{ item.name }}</span>
+                    <div class="space-y-2">
+                        <div v-for="(item, i) in category.items" :key="i" class="flex items-center justify-between">
+                            <span class="text-sm text-muted">{{ item.name }}</span>
 
-                        <div class="flex shrink-0 items-center justify-end gap-0.5">
-                            <UKbd v-for="(shortcut, j) in item.shortcuts" :key="j">
-                                {{ shortcut }}
-                            </UKbd>
+                            <div class="flex shrink-0 items-center justify-end gap-0.5">
+                                <UKbd v-for="(shortcut, j) in item.shortcuts" :key="j">
+                                    {{ shortcut }}
+                                </UKbd>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div v-else class="flex flex-col gap-y-3">
-            <UButton v-for="(link, index) in links" :key="index" v-bind="link" />
-        </div>
-    </UDashboardSlideover>
+            <div v-else class="flex flex-col gap-y-3">
+                <UButton v-for="(link, index) in links" :key="index" v-bind="link" />
+            </div>
+        </template>
+    </USlideover>
 </template>

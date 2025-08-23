@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -205,7 +205,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <div v-if="!closed && canComment" class="flex items-start space-x-4">
                     <div class="min-w-0 flex-1">
                         <UForm class="relative" :schema="schema" :state="state" @submit="onSubmitThrottle">
-                            <UFormGroup name="comment">
+                            <UFormField name="comment">
                                 <ClientOnly>
                                     <TiptapEditor
                                         v-model="state.content"
@@ -217,7 +217,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :saving="saving"
                                     />
                                 </ClientOnly>
-                            </UFormGroup>
+                            </UFormField>
 
                             <div class="mt-2 shrink-0">
                                 <UButton type="submit" :disabled="!canSubmit" :loading="!canSubmit">

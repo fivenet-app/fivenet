@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
@@ -7,7 +7,7 @@ import { useAuthStore } from '~/stores/auth';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
@@ -105,19 +105,25 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
                             {{ $t('components.jobs.self_service.set_profile_picture') }}
                         </h3>
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                        <UButton
+                            class="-my-1"
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
                 <div>
-                    <UFormGroup name="avatar" :label="$t('common.avatar')">
+                    <UFormField name="avatar" :label="$t('common.avatar')">
                         <div class="flex flex-col gap-2">
                             <NotSupportedTabletBlock v-if="nuiEnabled" />
                             <div v-else class="flex flex-col gap-1">
@@ -146,7 +152,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 <UAlert icon="i-mdi-information-outline" :description="$t('common.image_caching')" />
                             </div>
                         </div>
-                    </UFormGroup>
+                    </UFormField>
                 </div>
 
                 <template #footer>
@@ -167,7 +173,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             {{ $t('common.reset') }}
                         </UButton>
 
-                        <UButton class="flex-1" color="black" block @click="isOpen = false">
+                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
                     </UButtonGroup>

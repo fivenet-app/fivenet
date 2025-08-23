@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { ShapeIcon } from 'mdi-vue3';
 import { z } from 'zod';
 import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
@@ -22,7 +22,7 @@ const { fallbackColor } = useAppConfig();
 
 const notifications = useNotificationsStore();
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
@@ -133,7 +133,7 @@ watch(props, () => setFromProps());
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
@@ -150,13 +150,19 @@ watch(props, () => setFromProps());
                             </template>
                         </h3>
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                        <UButton
+                            class="-my-1"
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
                 <div>
                     <div>
-                        <UFormGroup class="flex-1" name="name" :label="$t('common.name')">
+                        <UFormField class="flex-1" name="name" :label="$t('common.name')">
                             <UInput
                                 v-model="state.name"
                                 type="text"
@@ -165,24 +171,24 @@ watch(props, () => setFromProps());
                                 :placeholder="$t('common.name', 1)"
                                 :label="$t('common.name', 1)"
                             />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup class="flex-1" name="description" :label="$t('common.description')">
+                        <UFormField class="flex-1" name="description" :label="$t('common.description')">
                             <UTextarea
                                 v-model="state.description"
                                 name="description"
                                 :disabled="!canEdit"
                                 :placeholder="$t('common.description')"
                             />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup class="flex-1 flex-row" name="color" :label="$t('common.color')">
+                        <UFormField class="flex-1 flex-row" name="color" :label="$t('common.color')">
                             <div class="flex flex-1 gap-1">
                                 <ColorPickerTW v-model="state.color" class="flex-1" :disabled="!canEdit" />
                             </div>
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup class="flex-1" name="icon" :label="$t('common.icon')">
+                        <UFormField class="flex-1" name="icon" :label="$t('common.icon')">
                             <div class="flex flex-1 gap-1">
                                 <IconSelectMenu
                                     v-model="state.icon"
@@ -194,13 +200,13 @@ watch(props, () => setFromProps());
 
                                 <UButton v-if="canEdit" icon="i-mdi-backspace" @click="state.icon = undefined" />
                             </div>
-                        </UFormGroup>
+                        </UFormField>
                     </div>
                 </div>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="black" block @click="isOpen = false">
+                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { checkDocAccess } from '~/components/documents/helpers';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -21,7 +21,7 @@ const emit = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const { attr, can, activeChar } = useAuth();
 
@@ -150,34 +150,40 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
                             {{ $t('common.request', 2) }}
                         </h3>
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                        <UButton
+                            class="-my-1"
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
                 <div>
                     <template v-if="canDo.create">
-                        <UFormGroup name="reason" :label="$t('common.reason')" required>
+                        <UFormField name="reason" :label="$t('common.reason')" required>
                             <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
-                        </UFormGroup>
+                        </UFormField>
 
                         <div class="my-2">
-                            <UFormGroup class="flex-1" name="requestsType" :label="$t('common.type', 2)">
+                            <UFormField class="flex-1" name="requestsType" :label="$t('common.type', 2)">
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="state.requestType"
-                                        :options="availableRequestTypes"
-                                        value-attribute="key"
+                                        :items="availableRequestTypes"
+                                        value-key="key"
                                         :placeholder="$t('common.type')"
                                         :searchable-placeholder="$t('common.search_field')"
                                     >
-                                        <template #label>
+                                        <template #item-label>
                                             <span v-if="state.requestType" class="truncate">
                                                 {{
                                                     $t(
@@ -203,7 +209,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         </template>
                                     </USelectMenu>
                                 </ClientOnly>
-                            </UFormGroup>
+                            </UFormField>
                         </div>
                     </template>
 
@@ -271,7 +277,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="black" block @click="isOpen = false">
+                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

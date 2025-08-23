@@ -17,8 +17,8 @@ const props = defineProps<{
 
 const { can } = useAuth();
 
-const modal = useModal();
-const { isOpen } = useSlideover();
+const modal = useOverlay();
+const { isOpen } = useOverlay();
 
 const calendarStore = useCalendarStore();
 
@@ -35,11 +35,9 @@ const calendar = computed(() => data.value?.calendar);
             class="flex flex-1 flex-col"
             :ui="{
                 body: {
-                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--header-height)))] max-h-[calc(100dvh-(2*var(--header-height)))] overflow-y-auto',
+                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--ui-header-height)))] max-h-[calc(100dvh-(2*var(--ui-header-height)))] overflow-y-auto',
                     padding: 'px-1 py-2 sm:p-2',
                 },
-                ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
             }"
         >
             <template #header>
@@ -59,7 +57,6 @@ const calendar = computed(() => data.value?.calendar);
                         >
                             <UButton
                                 variant="link"
-                                :padded="false"
                                 icon="i-mdi-pencil"
                                 @click="
                                     modal.open(CalendarCreateOrUpdateModal, {
@@ -75,7 +72,6 @@ const calendar = computed(() => data.value?.calendar);
                         >
                             <UButton
                                 variant="link"
-                                :padded="false"
                                 icon="i-mdi-delete"
                                 color="error"
                                 @click="
@@ -86,7 +82,13 @@ const calendar = computed(() => data.value?.calendar);
                             />
                         </UTooltip>
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                        <UButton
+                            class="-my-1"
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </div>
             </template>
@@ -105,7 +107,7 @@ const calendar = computed(() => data.value?.calendar);
                     <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
                         <OpenClosedBadge :closed="calendar.closed" />
 
-                        <UBadge class="inline-flex gap-1" color="black" size="md">
+                        <UBadge class="inline-flex gap-1" color="neutral" size="md">
                             <UIcon class="size-5" name="i-mdi-account" />
                             <span class="inline-flex items-center gap-1">
                                 <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
@@ -113,7 +115,7 @@ const calendar = computed(() => data.value?.calendar);
                             </span>
                         </UBadge>
 
-                        <UBadge class="inline-flex gap-1" color="black" size="md">
+                        <UBadge class="inline-flex gap-1" color="neutral" size="md">
                             <UIcon class="size-5" :name="calendar.public ? 'i-mdi-public' : 'i-mdi-calendar-lock'" />
                             <span>
                                 {{
@@ -134,7 +136,7 @@ const calendar = computed(() => data.value?.calendar);
                 <UAccordion
                     v-if="calendar?.access && (calendar?.access?.jobs.length > 0 || calendar?.access?.users.length > 0)"
                     multiple
-                    :items="[{ slot: 'access', label: $t('common.access'), icon: 'i-mdi-lock' }]"
+                    :items="[{ slot: 'access' as const, label: $t('common.access'), icon: 'i-mdi-lock' }]"
                     :unmount="true"
                 >
                     <template #access>
@@ -152,7 +154,7 @@ const calendar = computed(() => data.value?.calendar);
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" color="black" block @click="isOpen = false">
+                    <UButton class="flex-1" color="neutral" block @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

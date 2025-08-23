@@ -13,7 +13,7 @@ const { data: content, status, error, refresh } = useLazyFetch<string>(props.pat
         <code v-else-if="content" class="block whitespace-pre-line" v-text="content"></code>
         <p v-else class="text-lg">
             Unknown Error while loading license. Please check your internet connection.
-            <UButton :label="$t('common.retry')" @click="refresh" />
+            <UButton :label="$t('common.retry')" @click="() => refresh()" />
         </p>
     </div>
 </template>

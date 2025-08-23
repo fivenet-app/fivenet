@@ -120,7 +120,7 @@ watch(data, async () => {
         </UDashboardToolbar>
 
         <UDashboardPanelContent class="p-0 sm:pb-0">
-            <UCard :ui="{ rounded: '' }">
+            <UCard>
                 <UAlert v-if="data?.examUser?.endedAt || isPast(toDate(data?.examUser?.endsAt))">
                     <h3 class="text-lg">
                         {{ $t('components.qualifications.exam_view.times_up') }}
@@ -130,7 +130,7 @@ watch(data, async () => {
                     v-else-if="!data?.examUser?.endedAt"
                     class="w-full"
                     size="xl"
-                    color="gray"
+                    color="neutral"
                     icon="i-mdi-play"
                     block
                     @click="takeExam(false)"

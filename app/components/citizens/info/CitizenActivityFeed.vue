@@ -85,7 +85,7 @@ watchDebounced(query, async () => refresh(), {
         <UDashboardToolbar>
             <template #default>
                 <UForm class="flex w-full flex-row gap-2" :schema="schema" :state="query" @submit="refresh()">
-                    <UFormGroup class="flex-1 grow" name="types" :label="$t('common.type', 2)">
+                    <UFormField class="flex-1 grow" name="types" :label="$t('common.type', 2)">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="query.types"
@@ -94,11 +94,11 @@ watchDebounced(query, async () => refresh(), {
                                 block
                                 trailing
                                 option-attribute="aType"
-                                :options="options"
-                                value-attribute="aType"
+                                :items="options"
+                                value-key="aType"
                                 :searchable-placeholder="$t('common.type', 2)"
                             >
-                                <template #label>
+                                <template #item-label>
                                     {{ $t('common.selected', query.types.length) }}
                                 </template>
 
@@ -113,11 +113,11 @@ watchDebounced(query, async () => refresh(), {
                                 <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
                             </USelectMenu>
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup label="&nbsp;">
+                    <UFormField label="&nbsp;">
                         <SortButton v-model="query.sort" :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]" />
-                    </UFormGroup>
+                    </UFormField>
                 </UForm>
             </template>
         </UDashboardToolbar>

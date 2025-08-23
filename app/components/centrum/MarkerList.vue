@@ -30,7 +30,7 @@ async function deleteMarker(id: number): Promise<void> {
     }
 }
 
-const modal = useModal();
+const modal = useOverlay();
 
 const columns = [
     {
@@ -72,7 +72,7 @@ const columns = [
 <template>
     <div class="flex h-full grow flex-col px-1">
         <div class="flex justify-between">
-            <h2 class="inline-flex flex-1 items-center text-base font-semibold leading-6 text-gray-100">
+            <h2 class="inline-flex flex-1 items-center text-base leading-6 font-semibold text-gray-100">
                 {{ $t('common.marker', 2) }}
             </h2>
 
@@ -91,7 +91,6 @@ const columns = [
                     icon: 'i-mdi-map-marker',
                     label: $t('common.not_found', [$t('common.marker', 2)]),
                 }"
-                :ui="{ th: { padding: 'px-0.5 py-0.5' }, td: { padding: 'px-1 py-0.5' } }"
             >
                 <template #actions-data="{ row: marker }">
                     <div :key="marker.id">
@@ -135,7 +134,7 @@ const columns = [
                 </template>
 
                 <template #description-data="{ row: marker }">
-                    <p class="max-h-14 overflow-y-scroll truncate break-words">
+                    <p class="max-h-14 truncate overflow-y-scroll break-words">
                         {{ marker.description ?? $t('common.na') }}
                     </p>
                 </template>

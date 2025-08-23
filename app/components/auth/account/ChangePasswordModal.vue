@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import { useAuthStore } from '~/stores/auth';
 import { getAuthAuthClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -71,63 +71,75 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }" :prevent-close="!canSubmit">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
                             {{ $t('components.auth.ChangePasswordModal.change_password') }}
                         </h3>
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                        <UButton
+                            class="-my-1"
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
-                <UFormGroup name="currentPassword" :label="$t('components.auth.ChangePasswordModal.current_password')">
-                    <UInput
-                        v-model="state.currentPassword"
-                        name="currentPassword"
-                        :type="currentPasswordVisibility ? 'text' : 'password'"
-                        autocomplete="current-password"
-                        :placeholder="$t('components.auth.ChangePasswordModal.current_password')"
-                        :ui="{ icon: { trailing: { pointer: '' } } }"
-                    >
-                        <template #trailing>
-                            <UButton
-                                color="gray"
-                                variant="link"
-                                :icon="currentPasswordVisibility ? 'i-mdi-eye' : 'i-mdi-eye-closed'"
-                                :padded="false"
-                                @click="toggleCurrentPasswordVisibility"
-                            />
-                        </template>
-                    </UInput>
-                </UFormGroup>
+                <template #body>
+                    <UFormField name="currentPassword" :label="$t('components.auth.ChangePasswordModal.current_password')">
+                        <UInput
+                            v-model="state.currentPassword"
+                            name="currentPassword"
+                            :type="currentPasswordVisibility ? 'text' : 'password'"
+                            autocomplete="current-password"
+                            :placeholder="$t('components.auth.ChangePasswordModal.current_password')"
+                            :ui="{ trailing: 'pe-1' }"
+                        >
+                            <template #trailing>
+                                <UButton
+                                    color="neutral"
+                                    variant="link"
+                                    :icon="currentPasswordVisibility ? 'i-mdi-eye' : 'i-mdi-eye-closed'"
+                                    :aria-label="currentPasswordVisibility ? 'Hide password' : 'Show password'"
+                                    :aria-pressed="currentPasswordVisibility"
+                                    aria-controls="password"
+                                    @click="toggleCurrentPasswordVisibility"
+                                />
+                            </template>
+                        </UInput>
+                    </UFormField>
 
-                <UFormGroup name="newPassword" :label="$t('components.auth.ChangePasswordModal.new_password')">
-                    <UInput
-                        v-model="state.newPassword"
-                        name="newPassword"
-                        :type="newPasswordVisibility ? 'text' : 'password'"
-                        autocomplete="new-password"
-                        :placeholder="$t('components.auth.ChangePasswordModal.new_password')"
-                        :ui="{ icon: { trailing: { pointer: '' } } }"
-                    >
-                        <template #trailing>
-                            <UButton
-                                color="gray"
-                                variant="link"
-                                :icon="newPasswordVisibility ? 'i-mdi-eye' : 'i-mdi-eye-closed'"
-                                :padded="false"
-                                @click="toggleNewPasswordVisibility"
-                            />
-                        </template>
-                    </UInput>
-                    <PasswordStrengthMeter class="mt-2" :input="state.newPassword" />
-                </UFormGroup>
+                    <UFormField name="newPassword" :label="$t('components.auth.ChangePasswordModal.new_password')">
+                        <UInput
+                            v-model="state.newPassword"
+                            name="newPassword"
+                            :type="newPasswordVisibility ? 'text' : 'password'"
+                            autocomplete="new-password"
+                            :placeholder="$t('components.auth.ChangePasswordModal.new_password')"
+                            :ui="{ trailing: 'pe-1' }"
+                        >
+                            <template #trailing>
+                                <UButton
+                                    color="neutral"
+                                    variant="link"
+                                    :icon="newPasswordVisibility ? 'i-mdi-eye' : 'i-mdi-eye-closed'"
+                                    :aria-label="newPasswordVisibility ? 'Hide password' : 'Show password'"
+                                    :aria-pressed="newPasswordVisibility"
+                                    aria-controls="password"
+                                    @click="newPasswordVisibility = !newPasswordVisibility"
+                                />
+                            </template>
+                        </UInput>
+                        <PasswordStrengthMeter class="mt-2" :input="state.newPassword" />
+                    </UFormField>
+                </template>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="black" block @click="isOpen = false">
+                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

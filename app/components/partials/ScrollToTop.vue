@@ -45,7 +45,6 @@ function scrollToTop() {
             class="z-100 fixed bottom-32 right-6 transition delay-150 duration-300 ease-in-out"
             :text="$t('common.scroll_to_top')"
             :prevent="!show"
-            :popper="{ placement: 'left' }"
         >
             <UButton icon="i-mdi-arrow-top" @click="scrollToTop" />
         </UTooltip>

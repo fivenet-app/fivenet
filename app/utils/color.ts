@@ -23,7 +23,6 @@ export const primaryColors: Color[] = [
 export const backgroundColors: Color[] = [
     // Gray Colors
     { label: 'slate', chip: 'slate', class: 'bg-slate-500 dark:bg-slate-400' },
-    { label: 'cool', chip: 'cool', class: 'bg-cool-500 dark:bg-cool-400' },
     { label: 'zinc', chip: 'zinc', class: 'bg-zinc-500 dark:bg-zinc-400' },
     { label: 'neutral', chip: 'neutral', class: 'bg-neutral-500 dark:bg-neutral-400' },
     { label: 'stone', chip: 'stone', class: 'bg-stone-500 dark:bg-stone-400' },

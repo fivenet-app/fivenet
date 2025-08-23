@@ -9,7 +9,6 @@ const props = withDefaults(
         showIcon?: boolean;
         hideNumber?: boolean;
         showLabel?: boolean;
-        padded?: boolean;
         hideNaText?: boolean;
         disableTruncate?: boolean;
     }>(),
@@ -57,10 +56,10 @@ async function doCall(): Promise<void> {
 </script>
 
 <template>
-    <div class="inline-flex flex-1 items-center" :class="!padded && 'gap-1'">
+    <div class="inline-flex flex-1 items-center">
         <template v-if="number">
             <UTooltip v-if="showIcon" class="w-full" :text="$t('common.call')">
-                <UButton class="shrink-0" variant="link" icon="i-mdi-phone" :padded="padded" v-bind="$attrs" @click="doCall">
+                <UButton class="shrink-0" variant="link" icon="i-mdi-phone" v-bind="$attrs" @click="doCall">
                     <span class="sr-only">{{ $t('common.call') }}</span>
                     <span v-if="showLabel" :class="!disableTruncate && 'truncate'">{{ $t('common.call') }}</span>
                 </UButton>

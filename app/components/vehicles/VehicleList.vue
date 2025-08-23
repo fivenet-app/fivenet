@@ -103,7 +103,7 @@ function addToClipboard(vehicle: Vehicle): void {
     notifications.add({
         title: { key: 'notifications.clipboard.vehicle_added.title', parameters: {} },
         description: { key: 'notifications.clipboard.vehicle_added.content', parameters: {} },
-        timeout: 3250,
+        duration: 3250,
         type: NotificationType.INFO,
     });
 }
@@ -163,7 +163,7 @@ defineShortcuts({
     <UDashboardToolbar>
         <template #default>
             <UForm class="flex w-full flex-row gap-2" :schema="schema" :state="query" @submit="refresh()">
-                <UFormGroup class="flex-1" name="licensePlate" :label="$t('common.license_plate')">
+                <UFormField class="flex-1" name="licensePlate" :label="$t('common.license_plate')">
                     <UInput
                         ref="input"
                         v-model="query.licensePlate"
@@ -177,13 +177,13 @@ defineShortcuts({
                             <UKbd value="/" />
                         </template>
                     </UInput>
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup v-if="!hideVehicleModell" class="flex-1" name="model" :label="$t('common.model')">
+                <UFormField v-if="!hideVehicleModell" class="flex-1" name="model" :label="$t('common.model')">
                     <UInput v-model="query.model" type="text" name="model" :placeholder="$t('common.model')" block />
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup v-if="userId === undefined" class="flex-1" name="userIds" :label="$t('common.owner')">
+                <UFormField v-if="userId === undefined" class="flex-1" name="userIds" :label="$t('common.owner')">
                     <ClientOnly>
                         <USelectMenu
                             v-model="query.userIds"
@@ -206,11 +206,11 @@ defineShortcuts({
                             block
                             :placeholder="$t('common.owner')"
                             trailing
-                            value-attribute="userId"
+                            value-key="userId"
                         >
-                            <template #label="{ selected }">
-                                <span v-if="selected.length > 0" class="truncate">
-                                    {{ usersToLabel(selected) }}
+                            <template #item-label="{ item }">
+                                <span v-if="item.length > 0" class="truncate">
+                                    {{ usersToLabel(item) }}
                                 </span>
                             </template>
 
@@ -225,9 +225,9 @@ defineShortcuts({
                             <template #empty> {{ $t('common.not_found', [$t('common.owner', 2)]) }} </template>
                         </USelectMenu>
                     </ClientOnly>
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup
+                <UFormField
                     v-if="attr('vehicles.VehiclesService/ListVehicles', 'Fields', 'Wanted').value"
                     class="flex flex-initial flex-col"
                     name="wanted"
@@ -235,9 +235,9 @@ defineShortcuts({
                     :ui="{ container: 'flex-1 flex' }"
                 >
                     <div class="flex flex-1 items-center">
-                        <UToggle v-model="query.wanted" />
+                        <USwitch v-model="query.wanted" />
                     </div>
-                </UFormGroup>
+                </UFormField>
             </UForm>
         </template>
     </UDashboardToolbar>
@@ -276,7 +276,7 @@ defineShortcuts({
         </template>
 
         <template v-if="!hideOwner" #owner-data="{ row: vehicle }">
-            <p v-if="vehicle.jobLabel" class="text-gray-900 dark:text-white">{{ vehicle.jobLabel }}</p>
+            <p v-if="vehicle.jobLabel" class="text-highlighted">{{ vehicle.jobLabel }}</p>
             <CitizenInfoPopover v-if="vehicle.owner" :user="vehicle.owner" />
         </template>
 

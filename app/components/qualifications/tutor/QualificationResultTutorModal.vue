@@ -11,7 +11,7 @@ defineEmits<{
     (e: 'refresh'): void;
 }>();
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 </script>
 
 <template>

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { subDays } from 'date-fns';
 import { z } from 'zod';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
@@ -19,7 +19,7 @@ const emit = defineEmits<{
 
 const reminderTime = useVModel(props, 'reminderTime', emit);
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -78,19 +78,25 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
                             {{ $t('common.reminder') }}
                         </h3>
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                        <UButton
+                            class="-my-1"
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
                 <div>
-                    <UFormGroup
+                    <UFormField
                         class="grid items-center gap-2"
                         name="reminderTime"
                         :label="$t('common.time')"
@@ -99,7 +105,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <DatePickerPopoverClient
                             v-model="state.reminderTime"
                             date-format="dd.MM.yyyy HH:mm"
-                            :popover="{ popper: { placement: 'bottom-start' } }"
                             :date-picker="{
                                 mode: 'dateTime',
                                 is24hr: true,
@@ -107,33 +112,33 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 disabledDates: [{ start: null, end: subDays(new Date(), 1) }],
                             }"
                         />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup
+                    <UFormField
                         class="grid items-center gap-2"
                         name="message"
                         :label="$t('common.message')"
                         :ui="{ container: '' }"
                     >
                         <UInput v-model="state.message" type="text" :placeholder="$t('common.message')" />
-                    </UFormGroup>
+                    </UFormField>
 
                     <!--
                     Only show if recurring reminders are enabled
-                    <UFormGroup
+                    <UFormField
                         class="grid items-center gap-2"
                         name="message"
                         label="Max number of total reminders"
                         :ui="{ container: '' }"
                     >
                         <UInput v-model="state.maxReminderCount" type="number" :min="1" :max="10" :step="1" />
-                    </UFormGroup>
+                    </UFormField>
                     -->
                 </div>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="black" block @click="isOpen = false">
+                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

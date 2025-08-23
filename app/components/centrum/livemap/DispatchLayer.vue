@@ -12,7 +12,7 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-const slideover = useSlideover();
+const modal = useOverlay();
 
 const centrumStore = useCentrumStore();
 const { dispatches, acls, ownDispatches, settings } = storeToRefs(centrumStore);
@@ -77,6 +77,8 @@ onBeforeMount(async () => {
         order: 0,
     });
 });
+
+const dispatchDetailsSlideover = modal.create(DispatchDetailsSlideover);
 </script>
 
 <template>
@@ -87,7 +89,7 @@ onBeforeMount(async () => {
             :dispatch="dispatches.get(dispatch)!"
             :size="livemap.markerSize"
             @selected="
-                slideover.open(DispatchDetailsSlideover, {
+                dispatchDetailsSlideover.open({
                     dispatchId: $event.id,
                 })
             "
@@ -101,7 +103,7 @@ onBeforeMount(async () => {
             :dispatch="dispatch"
             :size="livemap.markerSize"
             @selected="
-                slideover.open(DispatchDetailsSlideover, {
+                dispatchDetailsSlideover.open({
                     dispatchId: $event.id,
                 })
             "
@@ -118,16 +120,16 @@ onBeforeMount(async () => {
                 size="xs"
                 :placeholder="`${$t('common.dispatch', 2)} ${$t('common.filter')}`"
                 autocomplete="off"
-                :ui="{ icon: { trailing: { pointer: '' } } }"
                 leading-icon="i-mdi-car-emergency"
+                :ui="{ trailing: 'pe-1' }"
             >
                 <template #trailing>
                     <UButton
-                        v-show="dispatchQueryRaw !== ''"
-                        color="gray"
+                        v-if="dispatchQueryRaw !== ''"
+                        color="neutral"
                         variant="link"
                         icon="i-mdi-close"
-                        :padded="false"
+                        aria-controls="search"
                         @click="dispatchQueryRaw = ''"
                     />
                 </template>

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type Table from '#ui/components/data/Table.vue';
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import LawEntry from '~/components/settings/laws/LawEntry.vue';
@@ -28,7 +28,7 @@ const lawBook = useVModel(props, 'modelValue', emit);
 
 const laws = useVModel(props, 'laws', emit);
 
-const modal = useModal();
+const modal = useOverlay();
 
 const settingsLawsClient = await getSettingsLawsClient();
 
@@ -226,7 +226,7 @@ const editing = ref(props.startInEdit);
                 </div>
 
                 <UTooltip class="shrink-0" :text="$t('pages.settings.laws.add_new_law')">
-                    <UButton color="gray" trailing-icon="i-mdi-plus" @click="addLaw">
+                    <UButton color="neutral" trailing-icon="i-mdi-plus" @click="addLaw">
                         {{ $t('pages.settings.laws.add_new_law') }}
                     </UButton>
                 </UTooltip>
@@ -253,18 +253,18 @@ const editing = ref(props.startInEdit);
                     />
                 </UTooltip>
 
-                <UFormGroup class="flex-initial" name="name" :label="$t('common.law_book')">
+                <UFormField class="flex-initial" name="name" :label="$t('common.law_book')">
                     <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.law_book')" />
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup class="flex-auto" name="description" :label="$t('common.description')">
+                <UFormField class="flex-auto" name="description" :label="$t('common.description')">
                     <UInput
                         v-model="state.description"
                         name="description"
                         type="text"
                         :placeholder="$t('common.description')"
                     />
-                </UFormGroup>
+                </UFormField>
             </UForm>
         </template>
 
@@ -312,7 +312,7 @@ const editing = ref(props.startInEdit);
             </template>
 
             <template #crime-data="{ row: law }">
-                <span :ref="(ref) => lawEntriesRefs.set(law.id, ref as Element)" class="truncate text-gray-900 dark:text-white">
+                <span :ref="(ref) => lawEntriesRefs.set(law.id, ref as Element)" class="text-highlighted truncate">
                     {{ law.name }}
                 </span>
             </template>

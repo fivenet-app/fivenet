@@ -12,7 +12,7 @@ const props = defineProps<{
     templateId: number;
 }>();
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const authStore = useAuthStore();
 const clipboardStore = useClipboardStore();
@@ -52,7 +52,7 @@ async function getTemplate(): Promise<Template> {
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <!-- eslint-disable vue/no-v-html -->
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+        <UCard>
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-2xl font-semibold leading-6">
@@ -60,7 +60,7 @@ async function getTemplate(): Promise<Template> {
                         {{ $t('common.preview') }}
                     </h3>
 
-                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -84,7 +84,7 @@ async function getTemplate(): Promise<Template> {
                         </h2>
                     </div>
 
-                    <UDivider class="mb-4" />
+                    <USeparator class="mb-4" />
 
                     <div>
                         <label class="mb-2 block text-sm text-xl font-medium leading-6">
@@ -96,7 +96,7 @@ async function getTemplate(): Promise<Template> {
                         </p>
                     </div>
 
-                    <UDivider class="mb-4" />
+                    <USeparator class="mb-4" />
 
                     <label class="mb-2 block text-sm text-xl font-medium leading-6">
                         {{ $t('common.content') }}
@@ -142,7 +142,7 @@ async function getTemplate(): Promise<Template> {
             </div>
 
             <template #footer>
-                <UButton class="flex-1" color="black" block @click="isOpen = false">
+                <UButton class="flex-1" color="neutral" block @click="isOpen = false">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

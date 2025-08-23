@@ -42,11 +42,11 @@ async function listDocuments(search: string): Promise<DocumentShort[]> {
 </script>
 
 <template>
-    <UFormGroup name="attachments" :label="$t('common.attachment', 2)">
+    <UFormField name="attachments" :label="$t('common.attachment', 2)">
         <div class="flex flex-col gap-1">
             <div v-for="(_, idx) in attachments" :key="idx" class="flex items-center gap-1">
                 <template v-if="attachments[idx]?.data.oneofKind === 'document'">
-                    <UFormGroup class="flex-1" :name="`attachments.${idx}.data.documentId`">
+                    <UFormField class="flex-1" :name="`attachments.${idx}.data.documentId`">
                         <USelectMenu
                             class="w-full flex-1"
                             option-attribute="title"
@@ -57,8 +57,8 @@ async function listDocuments(search: string): Promise<DocumentShort[]> {
                             :model-value="attachments[idx].data.document.id > 0 ? attachments[idx].data.document : undefined"
                             @update:model-value="attachments[idx] = { data: { oneofKind: 'document', document: $event } }"
                         >
-                            <template #label="{ selected }">
-                                <template v-if="selected">
+                            <template #item-label="{ item }">
+                                <template v-if="item">
                                     {{ `DOC-${attachments[idx].data.document.id}: ${attachments[idx].data.document?.title}` }}
                                 </template>
                             </template>
@@ -73,21 +73,15 @@ async function listDocuments(search: string): Promise<DocumentShort[]> {
 
                             <template #empty> {{ $t('common.not_found', [$t('common.document', 2)]) }} </template>
                         </USelectMenu>
-                    </UFormGroup>
+                    </UFormField>
                 </template>
 
-                <UButton
-                    :ui="{ rounded: 'rounded-full' }"
-                    icon="i-mdi-close"
-                    :disabled="!canSubmit"
-                    @click="attachments.splice(idx, 1)"
-                />
+                <UButton icon="i-mdi-close" :disabled="!canSubmit" @click="attachments.splice(idx, 1)" />
             </div>
         </div>
 
         <UButton
             :class="attachments.length ? 'mt-2' : ''"
-            :ui="{ rounded: 'rounded-full' }"
             icon="i-mdi-plus"
             :disabled="!canSubmit || attachments.length >= 3"
             @click="
@@ -102,5 +96,5 @@ async function listDocuments(search: string): Promise<DocumentShort[]> {
             icon="i-mdi-information-outline"
             :description="$t('components.mailer.ThreadAttachmentsForm.document_title_warning')"
         />
-    </UFormGroup>
+    </UFormField>
 </template>

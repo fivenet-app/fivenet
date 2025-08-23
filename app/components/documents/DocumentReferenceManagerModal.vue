@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { TabItem } from '#ui/types';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPopover.vue';
@@ -17,7 +16,7 @@ const modelValue = defineModel<DocumentReference[]>('references', {
     required: true,
 });
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const { t } = useI18n();
 
@@ -25,21 +24,24 @@ const clipboardStore = useClipboardStore();
 
 const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
-const items = ref<TabItem[]>([
+const items = ref<TabsItem[]>([
     {
         label: t('components.documents.document_managers.view_current'),
         icon: 'i-mdi-file-search',
-        slot: 'current',
+        slot: 'current' as const,
+        value: 'current',
     },
     {
         label: t('common.clipboard'),
         icon: 'i-mdi-clipboard-list',
-        slot: 'clipboard',
+        slot: 'clipboard' as const,
+        value: 'clipboard',
     },
     {
         label: t('components.documents.document_managers.add_new'),
         icon: 'i-mdi-file-document-plus',
-        slot: 'new',
+        slot: 'new' as const,
+        value: 'new',
     },
 ]);
 
@@ -170,7 +172,7 @@ const columnsNew = [
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }" @update:model-value="isOpen = false">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+        <UCard>
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-2xl font-semibold leading-6">
@@ -178,7 +180,7 @@ const columnsNew = [
                         {{ $t('common.reference', 2) }}
                     </h3>
 
-                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -288,7 +290,7 @@ const columnsNew = [
 
                                         <UTooltip :text="$t('components.documents.document_managers.deprecates')">
                                             <UButton
-                                                color="amber"
+                                                color="warning"
                                                 icon="i-mdi-lock-clock"
                                                 @click="addReferenceClipboard(row, DocReference.DEPRECATES)"
                                             />
@@ -300,7 +302,7 @@ const columnsNew = [
                     </template>
 
                     <template #new>
-                        <UFormGroup class="mb-2" name="title" :label="$t('common.search')">
+                        <UFormField class="mb-2" name="title" :label="$t('common.search')">
                             <UInput
                                 v-model="queryDoc"
                                 type="text"
@@ -308,7 +310,7 @@ const columnsNew = [
                                 :placeholder="`${$t('common.document', 1)} ${$t('common.title')}`"
                                 leading-icon="i-mdi-search"
                             />
-                        </UFormGroup>
+                        </UFormField>
 
                         <div>
                             <DataErrorBlock
@@ -367,7 +369,7 @@ const columnsNew = [
 
                                         <UTooltip :text="$t('components.documents.document_managers.deprecates')">
                                             <UButton
-                                                color="amber"
+                                                color="warning"
                                                 icon="i-mdi-lock-clock"
                                                 @click="addReference(row, DocReference.DEPRECATES)"
                                             />
@@ -381,7 +383,7 @@ const columnsNew = [
             </div>
 
             <template #footer>
-                <UButton class="flex-1" block color="black" @click="isOpen = false">
+                <UButton class="flex-1" block color="neutral" @click="isOpen = false">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

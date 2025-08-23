@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 import { useAuthStore } from '~/stores/auth';
@@ -21,7 +21,7 @@ const emit = defineEmits<{
     (e: 'updated', entry: ConductEntry): void;
 }>();
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
@@ -121,7 +121,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
@@ -132,7 +132,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             }}
                         </h3>
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                        <UButton
+                            class="-my-1"
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
@@ -145,17 +151,17 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="type">
+                                <UFormField name="type">
                                     <ClientOnly>
                                         <USelectMenu
                                             v-model="state.type"
-                                            :options="cTypes"
-                                            value-attribute="status"
+                                            :items="cTypes"
+                                            value-key="status"
                                             :searchable-placeholder="$t('common.search_field')"
                                         >
-                                            <template #label="{ selected }">
-                                                <UBadge :color="conductTypesToBadgeColor(selected.status)" truncate>
-                                                    {{ $t(`enums.jobs.ConductType.${ConductType[selected.status ?? 0]}`) }}
+                                            <template #item-label="{ item }">
+                                                <UBadge :color="conductTypesToBadgeColor(item.status)" truncate>
+                                                    {{ $t(`enums.jobs.ConductType.${ConductType[item.status ?? 0]}`) }}
                                                 </UBadge>
                                             </template>
 
@@ -170,7 +176,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             </template>
                                         </USelectMenu>
                                     </ClientOnly>
-                                </UFormGroup>
+                                </UFormField>
                             </dd>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -180,7 +186,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="targetUserId">
+                                <UFormField name="targetUserId">
                                     <ClientOnly>
                                         <USelectMenu
                                             v-model="state.targetUser"
@@ -204,7 +210,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             trailing
                                             by="userId"
                                         >
-                                            <template #label>
+                                            <template #item-label>
                                                 <template v-if="state.targetUser">
                                                     {{ userToLabel(state.targetUser) }}
                                                 </template>
@@ -223,7 +229,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             </template>
                                         </USelectMenu>
                                     </ClientOnly>
-                                </UFormGroup>
+                                </UFormField>
                             </dd>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -233,14 +239,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="message">
+                                <UFormField name="message">
                                     <UTextarea
                                         v-model="state.message"
                                         name="message"
                                         :rows="6"
                                         :placeholder="$t('common.message')"
                                     />
-                                </UFormGroup>
+                                </UFormField>
                             </dd>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -250,13 +256,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="expiresAt">
-                                    <DatePickerPopoverClient
-                                        v-model="state.expiresAt"
-                                        :popover="{ popper: { placement: 'bottom-start' } }"
-                                        :date-picker="{ clearable: true }"
-                                    />
-                                </UFormGroup>
+                                <UFormField name="expiresAt">
+                                    <DatePickerPopoverClient v-model="state.expiresAt" :date-picker="{ clearable: true }" />
+                                </UFormField>
                             </dd>
                         </div>
                     </dl>
@@ -264,7 +266,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="black" block @click="isOpen = false">
+                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

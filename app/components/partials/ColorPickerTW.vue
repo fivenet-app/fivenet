@@ -27,13 +27,13 @@ const availableColorOptions = [...primaryColors, ...backgroundColors];
     <ClientOnly>
         <USelectMenu
             v-model="color"
-            :options="availableColorOptions"
+            :items="availableColorOptions"
             option-attribute="label"
-            value-attribute="label"
+            value-key="label"
             :searchable-placeholder="$t('common.color')"
             v-bind="$attrs"
         >
-            <template #label>
+            <template #item-label>
                 <span class="size-2 rounded-full" :class="availableColorOptions.find((o) => o.label === color)?.class" />
                 <span class="truncate">{{ color }}</span>
             </template>

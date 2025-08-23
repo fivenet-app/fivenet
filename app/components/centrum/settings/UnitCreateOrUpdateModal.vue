@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
@@ -20,7 +20,7 @@ const emit = defineEmits<{
     (e: 'updated', unit: Unit): void;
 }>();
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -138,7 +138,7 @@ watch(props, async () => updateUnitInForm());
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
@@ -150,36 +150,42 @@ watch(props, async () => updateUnitInForm());
                             </template>
                         </h3>
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                        <UButton
+                            class="-my-1"
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
                 <div>
-                    <UFormGroup class="flex-1" name="name" :label="$t('common.name')">
+                    <UFormField class="flex-1" name="name" :label="$t('common.name')">
                         <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.name')" />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup class="flex-1" name="initials" :label="$t('common.initials')">
+                    <UFormField class="flex-1" name="initials" :label="$t('common.initials')">
                         <UInput v-model="state.initials" name="initials" type="text" :placeholder="$t('common.initials')" />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup class="flex-1" name="description" :label="$t('common.description')">
+                    <UFormField class="flex-1" name="description" :label="$t('common.description')">
                         <UInput
                             v-model="state.description"
                             name="description"
                             type="text"
                             :placeholder="$t('common.description')"
                         />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup class="flex-1" name="attributes" :label="$t('common.attributes', 2)">
+                    <UFormField class="flex-1" name="attributes" :label="$t('common.attributes', 2)">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="state.attributes"
                                 multiple
                                 nullable
-                                value-attribute="type"
-                                :options="availableAttributes"
+                                value-key="type"
+                                :items="availableAttributes"
                                 :placeholder="selectedAttributes ? selectedAttributes.join(', ') : $t('common.na')"
                                 :searchable-placeholder="$t('common.search_field')"
                             >
@@ -198,17 +204,17 @@ watch(props, async () => updateUnitInForm());
                                 </template>
                             </USelectMenu>
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup class="flex-1" name="color" :label="$t('common.color')">
+                    <UFormField class="flex-1" name="color" :label="$t('common.color')">
                         <ColorPickerClient v-model="state.color" />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup class="flex-1" name="icon" :label="$t('common.icon')">
+                    <UFormField class="flex-1" name="icon" :label="$t('common.icon')">
                         <IconSelectMenu v-model="state.icon" :color="state.color" />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup
+                    <UFormField
                         class="flex-1"
                         name="homePostal"
                         :label="`${$t('common.department')} ${$t('common.postal_code')}`"
@@ -219,9 +225,9 @@ watch(props, async () => updateUnitInForm());
                             type="text"
                             :placeholder="`${$t('common.department')} ${$t('common.postal_code')}`"
                         />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup name="access" :label="$t('common.access')">
+                    <UFormField name="access" :label="$t('common.access')">
                         <AccessManager
                             v-model:jobs="state.access.jobs"
                             v-model:qualifications="state.access.qualifications"
@@ -236,12 +242,12 @@ watch(props, async () => updateUnitInForm());
                                 { type: 'qualification', name: $t('common.qualification', 2) },
                             ]"
                         />
-                    </UFormGroup>
+                    </UFormField>
                 </div>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="black" block @click="isOpen = false">
+                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

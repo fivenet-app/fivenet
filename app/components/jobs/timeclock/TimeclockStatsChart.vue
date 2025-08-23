@@ -50,33 +50,35 @@ ${t('components.jobs.timeclock.Stats.max')}: ${n(d.max, 'decimal')} h`;
 </script>
 
 <template>
-    <UDashboardCard ref="cardRef" :ui="{ body: { padding: '!pb-3 !px-0' } as any }">
+    <UPageCard ref="cardRef" :ui="{ body: { padding: 'pb-3! px-0!' } as any }">
         <template #header>
             <div>
-                <p class="mb-1 text-sm font-medium text-gray-500 dark:text-gray-400">
+                <p class="text-muted mb-1 text-sm font-medium">
                     {{ $t('components.jobs.timeclock.Stats.sum') }}
                 </p>
                 <USkeleton v-if="loading" class="h-9 w-[275px]" />
-                <p v-else class="text-3xl font-semibold text-gray-900 dark:text-white">
+                <p v-else class="text-highlighted text-3xl font-semibold">
                     {{ fromSecondsToFormattedDuration(Math.ceil(total * 60 * 60), { seconds: false }) }}
                 </p>
             </div>
         </template>
 
-        <VisXYContainer class="h-80" :data="data" :padding="{ top: 10, left: 2, right: 2 }" :width="width">
-            <VisLine :x="x" :y="y" color="rgb(var(--color-primary-DEFAULT))" />
-            <VisArea :x="x" :y="y" color="rgb(var(--color-primary-DEFAULT))" :opacity="0.1" />
+        <template #body>
+            <VisXYContainer class="h-80" :data="data" :padding="{ top: 10, left: 2, right: 2 }" :width="width">
+                <VisLine :x="x" :y="y" color="rgb(var(--color-primary-DEFAULT))" />
+                <VisArea :x="x" :y="y" color="rgb(var(--color-primary-DEFAULT))" :opacity="0.1" />
 
-            <VisLine :x="x" :y="(d: DataRecord) => d.avg" color="rgb(var(--color-gray-500))" />
-            <VisLine :x="x" :y="(d: DataRecord) => d.max" color="orange" />
+                <VisLine :x="x" :y="(d: DataRecord) => d.avg" color="rgb(var(--color-gray-500))" />
+                <VisLine :x="x" :y="(d: DataRecord) => d.max" color="orange" />
 
-            <VisAxis type="x" :x="x" :tick-format="xTicks" />
+                <VisAxis type="x" :x="x" :tick-format="xTicks" />
 
-            <VisCrosshair color="rgb(var(--color-primary-600))" :template="template" />
+                <VisCrosshair color="rgb(var(--color-primary-600))" :template="template" />
 
-            <VisTooltip />
-        </VisXYContainer>
-    </UDashboardCard>
+                <VisTooltip />
+            </VisXYContainer>
+        </template>
+    </UPageCard>
 </template>
 
 <style scoped>

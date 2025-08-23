@@ -67,190 +67,97 @@ export default defineAppConfig({
         },
     },
 
+    custom: {
+        icons: {
+            // Custom Icons
+            sortAscIcon: 'i-mdi-sort-ascending',
+            sortDescIcon: 'i-mdi-sort-descending',
+        },
+    },
+
     // Nuxt UI and UI Pro config
     ui: {
-        primary: 'blue',
-        gray: 'neutral',
-
-        avatar: {
-            default: {
-                icon: 'i-mdi-file-image-box',
-            },
-        },
-        button: {
-            default: {
-                loadingIcon: 'i-mdi-loading',
-            },
-        },
-        input: {
-            default: {
-                loadingIcon: 'i-mdi-loading',
-            },
-        },
-        inputMenu: {
-            default: {
-                selectedIcon: 'i-mdi-check',
-                trailingIcon: 'i-mdi-chevron-down',
-            },
-        },
-        select: {
-            default: {
-                loadingIcon: 'i-mdi-loading',
-                trailingIcon: 'i-mdi-chevron-down',
-            },
-        },
-        selectMenu: {
-            default: {
-                selectedIcon: 'i-mdi-check',
-            },
-        },
-        notification: {
-            default: {
-                closeButton: {
-                    icon: 'i-mdi-window-close',
-                },
-            },
-        },
-        commandPalette: {
-            default: {
-                icon: 'i-mdi-search',
-                loadingIcon: 'i-mdi-loading',
-                selectedIcon: 'i-mdi-check',
-                emptyState: {
-                    icon: 'i-mdi-search',
-                },
-                closeButton: {
-                    icon: 'i-mdi-window-close',
-                },
-            },
-        },
-        table: {
-            default: {
-                sortAscIcon: 'i-mdi-sort-ascending',
-                sortDescIcon: 'i-mdi-sort-descending',
-                sortButton: {
-                    icon: 'i-mdi-sort',
-                },
-                loadingState: {
-                    icon: 'i-mdi-loading',
-                },
-                emptyState: {
-                    icon: 'i-mdi-database',
-                },
-                expandButton: {
-                    icon: 'i-mdi-chevron-down',
-                },
-            },
-            tr: {
-                base: 'hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white dark:border-gray-900',
-            },
-            td: {
-                padding: 'px-1.5 py-1.5',
-            },
-        },
-        pagination: {
-            default: {
-                firstButton: {
-                    icon: 'i-mdi-chevron-left-first',
-                },
-                prevButton: {
-                    icon: 'i-mdi-chevron-left',
-                },
-                nextButton: {
-                    icon: 'i-mdi-chevron-right',
-                },
-                lastButton: {
-                    icon: 'i-mdi-chevron-right-last',
-                },
-            },
-        },
-        accordion: {
-            default: {
-                openIcon: 'i-mdi-chevron-down',
-            },
-        },
-        breadcrumb: {
-            default: {
-                divider: 'i-mdi-chevron-right',
-            },
-        },
-        carousel: {
-            default: {
-                prevButton: {
-                    icon: 'i-mdi-chevron-left',
-                },
-                nextButton: {
-                    icon: 'i-mdi-chevron-right',
-                },
-            },
-        },
-        card: {
-            header: {
-                padding: 'px-2 py-3 sm:px-4',
-            },
-            body: {
-                padding: 'px-2 py-3 sm:px-4',
-            },
-            footer: {
-                padding: 'px-2 py-3 sm:px-4',
-            },
-        },
-        alert: {
-            body: { padding: 'px-2 py-2 sm:p-2' },
-            header: { padding: 'px-2 py-2 sm:p-2' },
-            footer: { padding: 'px-2 py-2 sm:p-2' },
-        },
-        content: {
-            search: {
-                fileIcon: {
-                    name: 'i-mdi-file-document',
-                },
-            },
-            surround: {
-                icon: {
-                    prev: 'i-mdi-arrow-left',
-                    next: 'i-mdi-arrow-right',
-                },
-            },
-            prose: {
-                code: {
-                    button: {
-                        icon: {
-                            copy: 'i-mdi-content-copy',
-                            copied: 'i-mdi-checkbox-marked',
-                        },
-                    },
-                    icon: {
-                        terminal: 'i-mdi-console',
-                    },
-                },
-            },
+        colors: {
+            primary: 'blue',
+            secondary: 'neutral',
+            info: 'blue',
+            success: 'green',
+            warning: 'yellow',
+            error: 'red',
+            // Palette colors
+            amber: 'amber',
+            blue: 'blue',
+            cyan: 'cyan',
+            emerald: 'emerald',
+            fuchsia: 'fuchsia',
+            green: 'green',
+            indigo: 'indigo',
+            lime: 'lime',
+            orange: 'orange',
+            pink: 'pink',
+            purple: 'purple',
+            red: 'red',
+            rose: 'rose',
+            sky: 'sky',
+            teal: 'teal',
+            violet: 'violet',
+            white: 'white',
+            yellow: 'yellow',
+            // Gray Colors
+            gray: 'gray',
+            neutral: 'neutral',
+            slate: 'slate',
+            stone: 'stone',
+            zinc: 'zinc',
         },
 
-        // Nuxt UI Pro
         icons: {
-            // Icons
-            dark: 'i-mdi-moon-and-stars',
-            light: 'i-mdi-weather-sunny',
-            system: 'i-mdi-computer',
-            search: 'i-mdi-search',
-            external: 'i-mdi-external-link',
-            chevron: 'i-mdi-chevron-down',
-            hash: 'i-mdi-hashtag',
-            menu: 'i-mdi-menu',
-            close: 'i-mdi-window-close',
-            check: 'i-mdi-check-circle',
+            arrowLeft: 'mdi-arrow-left',
+            arrowRight: 'mdi-arrow-right',
+            check: 'mdi-check',
+            chevronDoubleLeft: 'mdi-chevron-double-left',
+            chevronDoubleRight: 'mdi-chevron-double-right',
+            chevronDown: 'mdi-chevron-down',
+            chevronLeft: 'mdi-chevron-left',
+            chevronRight: 'mdi-chevron-right',
+            chevronUp: 'mdi-chevron-up',
+            close: 'mdi-close',
+            ellipsis: 'mdi-dots-horizontal',
+            external: 'mdi-arrow-top-right',
+            file: 'mdi-file-document',
+            folder: 'mdi-folder',
+            folderOpen: 'mdi-folder-open',
+            loading: 'mdi-loading',
+            minus: 'mdi-minus',
+            plus: 'mdi-plus',
+            search: 'mdi-magnify',
+            upload: 'mdi-upload',
+            arrowUp: 'mdi-arrow-up',
+            arrowDown: 'mdi-arrow-down',
+            caution: 'mdi-alert-circle',
+            copy: 'mdi-content-copy',
+            copyCheck: 'mdi-check-circle-outline',
+            dark: 'mdi-moon-waning-crescent',
+            error: 'mdi-close-circle',
+            eye: 'mdi-eye',
+            eyeOff: 'mdi-eye-off',
+            hash: 'mdi-pound',
+            info: 'mdi-information',
+            light: 'mdi-white-balance-sunny',
+            menu: 'mdi-menu',
+            panelClose: 'mdi-menu-close',
+            panelOpen: 'mdi-menu-open',
+            reload: 'mdi-reload',
+            stop: 'mdi-stop',
+            success: 'mdi-check-circle',
+            system: 'mdi-monitor',
+            tip: 'mdi-lightbulb-variant',
+            warning: 'mdi-alert',
         },
-        dashboard: {
-            panel: {
-                content: {
-                    wrapper: 'pb-24 sm:pb-4',
-                },
-            },
-        },
-        page: {
-            grid: {
-                wrapper: 'gap-4',
+
+        table: {
+            slots: {
+                tr: 'hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white dark:border-gray-900',
             },
         },
     },

@@ -21,16 +21,16 @@ const attributes = computed(() => ({
 
 <template>
     <div class="z-10 flex h-full flex-col overflow-hidden">
-        <div class="day-label my-px inline-flex justify-between text-sm text-gray-900 dark:text-white">
+        <div class="day-label text-highlighted my-px inline-flex justify-between text-sm">
             {{ day.day }}
-            <UBadge v-if="day.isToday" size="xs" color="amber" :label="$t('common.today')" />
+            <UBadge v-if="day.isToday" size="xs" color="warning" :label="$t('common.today')" />
         </div>
 
-        <div class="flex-grow overflow-x-auto overflow-y-auto">
+        <div class="grow overflow-x-auto overflow-y-auto">
             <UButton
                 v-for="attr in attributes.past"
                 :key="attr.key"
-                class="vc-day-entry mb-1 mt-0 flex w-full flex-col !items-start justify-start rounded-sm p-1 text-left text-xs leading-tight"
+                class="vc-day-entry items-start! rounded-xs mb-1 mt-0 flex w-full flex-col justify-start p-1 text-left text-xs leading-tight"
                 truncate
                 :color="attr.customData.color"
                 @click="$emit('selected', attr.customData)"
@@ -49,17 +49,17 @@ const attributes = computed(() => ({
                 </span>
             </UButton>
 
-            <UDivider
+            <USeparator
                 v-if="day.isToday && (attributes.past.length > 0 || attributes.upcoming.length > 0)"
                 class="mb-1"
                 size="sm"
-                :ui="{ border: { base: 'border-red-300 dark:border-red-600' } }"
+                :ui="{ border: 'border-red-300 dark:border-red-600' }"
             />
 
             <UButton
                 v-for="attr in attributes.upcoming"
                 :key="attr.key"
-                class="vc-day-entry mb-1 mt-0 flex w-full flex-col !items-start justify-start rounded-sm p-1 text-left text-xs leading-tight"
+                class="vc-day-entry items-start! rounded-xs mb-1 mt-0 flex w-full flex-col justify-start p-1 text-left text-xs leading-tight"
                 truncate
                 :color="attr.customData.color"
                 @click="$emit('selected', attr.customData)"

@@ -49,11 +49,11 @@ const { moveUp, moveDown } = useListReorder(toRef(questions.value.questions));
 <template>
     <div class="mt-2 flex flex-1 flex-col gap-2 px-2">
         <UForm :schema="schema" :state="settings">
-            <h2 class="text-gray-900 dark:text-white">
+            <h2 class="text-highlighted">
                 {{ $t('common.settings') }}
             </h2>
 
-            <UFormGroup
+            <UFormField
                 class="grid grid-cols-2 items-center gap-2"
                 name="settings.time"
                 :label="$t('components.qualifications.exam_editor.exam_duration')"
@@ -61,22 +61,22 @@ const { moveUp, moveDown } = useListReorder(toRef(questions.value.questions));
             >
                 <UInput v-model="settings.time!.seconds" type="number" :min="1" :step="1" :placeholder="$t('common.duration')">
                     <template #trailing>
-                        <span class="text-xs text-gray-500 dark:text-gray-400">s</span>
+                        <span class="text-muted text-xs">s</span>
                     </template>
                 </UInput>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup
+            <UFormField
                 class="grid grid-cols-2 items-center gap-2"
                 name="settings.autoGrade"
                 :label="$t('components.qualifications.exam_editor.auto_grade.title')"
                 :description="$t('components.qualifications.exam_editor.auto_grade.description')"
                 :ui="{ container: '' }"
             >
-                <UToggle v-model="settings.autoGrade" :placeholder="$t('components.qualifications.exam_editor.auto_grade')" />
-            </UFormGroup>
+                <USwitch v-model="settings.autoGrade" :placeholder="$t('components.qualifications.exam_editor.auto_grade')" />
+            </UFormField>
 
-            <UFormGroup
+            <UFormField
                 class="grid grid-cols-2 items-center gap-2"
                 name="mode"
                 :label="$t('components.qualifications.exam_editor.auto_grade_mode.title')"
@@ -86,11 +86,11 @@ const { moveUp, moveDown } = useListReorder(toRef(questions.value.questions));
                 <ClientOnly>
                     <USelectMenu
                         v-model="settings.autoGradeMode"
-                        :options="modes"
-                        value-attribute="mode"
+                        :items="modes"
+                        value-key="mode"
                         :searchable-placeholder="$t('common.search_field')"
                     >
-                        <template #label>
+                        <template #item-label>
                             <span class="truncate">{{
                                 $t(`enums.qualifications.AutoGradeMode.${AutoGradeMode[settings.autoGradeMode ?? 0]}`)
                             }}</span>
@@ -103,9 +103,9 @@ const { moveUp, moveDown } = useListReorder(toRef(questions.value.questions));
                         </template>
                     </USelectMenu>
                 </ClientOnly>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup
+            <UFormField
                 class="grid grid-cols-2 items-center gap-2"
                 name="settings.miniumPoints"
                 :label="$t('components.qualifications.exam_editor.minimum_points')"
@@ -119,9 +119,9 @@ const { moveUp, moveDown } = useListReorder(toRef(questions.value.questions));
                     :step="1"
                     :placeholder="$t('components.qualifications.exam_editor.minimum_points')"
                 />
-            </UFormGroup>
+            </UFormField>
 
-            <UDivider class="mt-2" />
+            <USeparator class="mt-2" />
 
             <h3>{{ $t('common.question', 2) }}</h3>
 
@@ -149,7 +149,6 @@ const { moveUp, moveDown } = useListReorder(toRef(questions.value.questions));
 
                 <UButton
                     icon="i-mdi-plus"
-                    :ui="{ rounded: 'rounded-full' }"
                     @click="
                         questions.questions.push({
                             id: 0,

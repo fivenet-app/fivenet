@@ -68,7 +68,7 @@ async function remove(item: ClipboardDocument, notify: boolean): Promise<void> {
         notifications.add({
             title: { key: 'notifications.clipboard.document_removed.title', parameters: {} },
             description: { key: 'notifications.clipboard.document_removed.content', parameters: {} },
-            timeout: 3250,
+            duration: 3250,
             type: NotificationType.INFO,
         });
     }
@@ -91,7 +91,7 @@ async function removeAll(): Promise<void> {
     notifications.add({
         title: { key: 'notifications.clipboard.documents_removed.title', parameters: {} },
         description: { key: 'notifications.clipboard.documents_removed.content', parameters: {} },
-        timeout: 3250,
+        duration: 3250,
         type: NotificationType.INFO,
     });
 }
@@ -152,7 +152,7 @@ watch(props, async (newVal) => {
                         <UButton
                             v-if="specs && specs.max === 1"
                             block
-                            :color="selected.includes(item) ? 'gray' : 'primary'"
+                            :color="selected.includes(item) ? 'neutral' : 'primary'"
                             @click="select(item)"
                         >
                             {{

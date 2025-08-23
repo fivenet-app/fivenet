@@ -23,7 +23,7 @@ const props = withDefaults(
 <template>
     <UAlert
         :ui="{
-            icon: { base: 'size-6' },
+            icon: 'size-6',
         }"
         icon="i-mdi-information-outline"
         v-bind="$attrs"

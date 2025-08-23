@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import type { AvatarSize } from '#ui/types';
+import type { AvatarProps } from '@nuxt/ui';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
 
 withDefaults(
     defineProps<{
         src?: string;
         name: string;
-        size?: AvatarSize;
+        size?: AvatarProps['size'];
         enablePopup?: boolean;
         noBlur?: boolean;
         alt?: string;

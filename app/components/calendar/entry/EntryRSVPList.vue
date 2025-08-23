@@ -29,7 +29,7 @@ const emit = defineEmits<{
     (e: 'update:modelValue', entry: CalendarEntryRSVP | undefined): void;
 }>();
 
-const modal = useModal();
+const modal = useOverlay();
 
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
@@ -135,7 +135,7 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
                     block
                     :disabled="!canSubmit || disabled"
                     :loading="!canSubmit"
-                    color="amber"
+                    color="warning"
                     :variant="ownEntry?.response === RsvpResponses.MAYBE ? 'soft' : 'solid'"
                     @click="onSubmitThrottle(RsvpResponses.MAYBE)"
                 >
@@ -159,7 +159,7 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
                 <UButton
                     v-if="ownEntry && showRemove"
                     icon="i-mdi-calendar-remove"
-                    color="white"
+                    color="neutral"
                     @click="
                         modal.open(ConfirmModal, {
                             confirm: async () => rsvpCalendarEntry(RsvpResponses.NO, true),
@@ -176,7 +176,7 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
         <UAccordion
             class="mt-2 flex flex-col"
             variant="ghost"
-            :items="[{ slot: 'rsvp', label: $t('common.rsvp'), icon: 'i-mdi-calendar-question' }]"
+            :items="[{ slot: 'rsvp' as const, label: $t('common.rsvp'), icon: 'i-mdi-calendar-question' }]"
         >
             <template #rsvp>
                 <UContainer>

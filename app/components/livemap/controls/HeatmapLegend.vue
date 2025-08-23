@@ -35,7 +35,7 @@ const barStyle = computed(() => {
     <LControl position="bottomright">
         <div v-if="show" class="bg-background space-y-1 rounded-md p-1 text-xs font-medium shadow-md">
             <!-- Gradient bar -->
-            <div class="h-2 w-32 rounded" :style="barStyle" />
+            <div class="h-2 w-32 rounded-sm" :style="barStyle" />
             <!-- Captions -->
             <div class="flex justify-between text-gray-900 dark:text-gray-400">
                 <span>{{ $t('common.min') }}</span>

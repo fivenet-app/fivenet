@@ -9,15 +9,13 @@ defineProps<{
     files: File[];
 }>();
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 </script>
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UCard
             :ui="{
-                ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
                 base: 'flex flex-1 flex-col',
                 body: { base: 'flex flex-1 flex-col' },
             }"
@@ -28,11 +26,11 @@ const { isOpen } = useModal();
                         {{ $t('components.partials.TiptapEditor.file_list') }}
                     </h3>
 
-                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
-            <div class="mx-auto flex w-full max-w-screen-xl flex-1 flex-col">
+            <div class="max-w-(--breakpoint-xl) mx-auto flex w-full flex-1 flex-col">
                 <DataNoDataBlock v-if="files.length === 0" :message="$t('components.partials.TiptapEditor.file_list_empty')" />
 
                 <UPageGrid v-else class="flex-1">
@@ -41,7 +39,7 @@ const { isOpen } = useModal();
                         :key="file.id"
                         :title="file.filePath"
                         icon="i-mdi-file-document"
-                        :ui="{ title: '!line-clamp-3 !whitespace-normal' }"
+                        :ui="{ title: 'line-clamp-3! whitespace-normal!' }"
                     >
                         <template #icon>
                             <div class="flex-1">
@@ -101,7 +99,7 @@ const { isOpen } = useModal();
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" block color="black" @click="isOpen = false">
+                    <UButton class="flex-1" block color="neutral" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

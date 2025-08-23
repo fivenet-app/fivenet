@@ -11,7 +11,7 @@ import AccountEditModal from './AccountEditModal.vue';
 
 const { t } = useI18n();
 
-const modal = useModal();
+const modal = useOverlay();
 
 const settingsAccountsClient = await getSettingsAccountsClient();
 
@@ -136,7 +136,7 @@ const columns = [
         <UDashboardToolbar>
             <UForm class="w-full" :schema="schema" :state="query" @submit="refresh()">
                 <div class="flex w-full flex-row gap-2">
-                    <UFormGroup class="flex-1" :label="$t('common.search')" name="license">
+                    <UFormField class="flex-1" :label="$t('common.search')" name="license">
                         <UInput
                             ref="input"
                             v-model="query.license"
@@ -151,30 +151,30 @@ const columns = [
                                 <UKbd value="/" />
                             </template>
                         </UInput>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup
+                    <UFormField
                         class="flex flex-initial flex-col"
                         name="enabled"
                         :label="$t('common.enabled')"
                         :ui="{ container: 'flex-1 flex' }"
                     >
                         <div class="flex flex-1 items-center">
-                            <UToggle v-model="query.enabled" />
+                            <USwitch v-model="query.enabled" />
                         </div>
-                    </UFormGroup>
+                    </UFormField>
                 </div>
 
                 <UAccordion
                     class="mt-2"
-                    color="white"
+                    color="neutral"
                     variant="soft"
                     size="sm"
-                    :items="[{ label: $t('common.advanced_search'), slot: 'search' }]"
+                    :items="[{ label: $t('common.advanced_search'), slot: 'search' as const }]"
                 >
                     <template #search>
                         <div class="flex flex-row flex-wrap gap-1">
-                            <UFormGroup class="flex-1" name="username" :label="$t('common.username')">
+                            <UFormField class="flex-1" name="username" :label="$t('common.username')">
                                 <UInput
                                     v-model="query.username"
                                     type="text"
@@ -182,9 +182,9 @@ const columns = [
                                     :placeholder="$t('common.username')"
                                     block
                                 />
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup
+                            <UFormField
                                 class="flex-1"
                                 name="externalId"
                                 :label="$t('components.auth.OAuth2Connections.external_id')"
@@ -196,7 +196,7 @@ const columns = [
                                     :placeholder="$t('components.auth.OAuth2Connections.external_id')"
                                     block
                                 />
-                            </UFormGroup>
+                            </UFormField>
                         </div>
                     </template>
                 </UAccordion>
@@ -248,7 +248,7 @@ const columns = [
 
             <template #username-data="{ row: account }">
                 <UTooltip :text="`${$t('common.id')}: ${account.id}`">
-                    <span class="text-gray-900 dark:text-white">
+                    <span class="text-highlighted">
                         {{ account.username === '' ? $t('common.na') : account.username }}
                     </span>
                 </UTooltip>
@@ -270,7 +270,7 @@ const columns = [
             </template>
 
             <template #license-data="{ row: account }">
-                <pre class="text-gray-900 dark:text-white" v-text="account.license" />
+                <pre class="text-highlighted" v-text="account.license" />
             </template>
         </UTable>
 

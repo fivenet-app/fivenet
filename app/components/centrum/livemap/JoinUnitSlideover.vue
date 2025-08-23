@@ -10,7 +10,7 @@ const emit = defineEmits<{
     (e: 'left'): void;
 }>();
 
-const { isOpen } = useSlideover();
+const { isOpen } = useOverlay();
 
 const centrumStore = useCentrumStore();
 const { ownUnitId, getSortedUnits } = storeToRefs(centrumStore);
@@ -70,11 +70,9 @@ const filteredUnits = computed(() => ({
         <UCard
             :ui="{
                 body: {
-                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--header-height)))] max-h-[calc(100dvh-(2*var(--header-height)))] overflow-y-auto',
+                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--ui-header-height)))] max-h-[calc(100dvh-(2*var(--ui-header-height)))] overflow-y-auto',
                     padding: 'px-1 py-2 sm:p-2',
                 },
-                ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
             }"
         >
             <template #header>
@@ -85,13 +83,13 @@ const filteredUnits = computed(() => ({
                         <UIcon v-if="!canSubmit" class="size-6 animate-spin" name="i-mdi-loading" />
                     </h3>
 
-                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
             <div>
                 <div class="flex flex-col gap-1">
-                    <UFormGroup name="search" :label="$t('common.search')">
+                    <UFormField name="search" :label="$t('common.search')">
                         <UInput
                             v-model="queryUnit"
                             type="text"
@@ -99,14 +97,14 @@ const filteredUnits = computed(() => ({
                             :placeholder="$t('common.search')"
                             leading-icon="i-mdi-search"
                         />
-                    </UFormGroup>
+                    </UFormField>
 
                     <div class="grid grid-cols-2 gap-2">
                         <UButton
                             v-for="unit in filteredUnits.available"
                             :key="unit.name"
                             class="flex flex-col"
-                            :color="ownUnitId !== undefined && ownUnitId === unit.id ? 'amber' : 'primary'"
+                            :color="ownUnitId !== undefined && ownUnitId === unit.id ? 'warning' : 'primary'"
                             :disabled="!canSubmit || !checkUnitAccess(unit.access, UnitAccessLevel.JOIN)"
                             @click="onSubmitThrottle(unit.id)"
                         >
@@ -132,7 +130,7 @@ const filteredUnits = computed(() => ({
                                 v-for="unit in filteredUnits.unavailable"
                                 :key="unit.name"
                                 class="flex flex-col"
-                                :color="ownUnitId !== undefined && ownUnitId === unit.id ? 'amber' : 'primary'"
+                                :color="ownUnitId !== undefined && ownUnitId === unit.id ? 'warning' : 'primary'"
                                 :disabled="!canSubmit || !checkUnitAccess(unit.access, UnitAccessLevel.JOIN)"
                                 @click="onSubmitThrottle(unit.id)"
                             >
@@ -166,7 +164,7 @@ const filteredUnits = computed(() => ({
                     >
                         {{ $t('common.leave') }}
                     </UButton>
-                    <UButton class="flex-1" color="black" block @click="isOpen = false">
+                    <UButton class="flex-1" color="neutral" block @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

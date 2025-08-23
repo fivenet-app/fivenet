@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { BadgeColor } from '#ui/types';
+import type { BadgeProps } from '@nuxt/ui';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -9,7 +9,7 @@ import { useCalendarStore } from '~/stores/calendar';
 import { getCalendarCalendarClient } from '~~/gen/ts/clients';
 import type { ListCalendarsResponse, SubscribeToCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const calendarStore = useCalendarStore();
 const { currentDate } = storeToRefs(calendarStore);
@@ -68,14 +68,14 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+        <UCard>
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-2xl font-semibold leading-6">
                         {{ $t('components.calendar.FindCalendarModal.title') }}
                     </h3>
 
-                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -100,7 +100,7 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
                         class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 flex flex-initial items-center justify-between gap-1 border-white py-1 dark:border-gray-900"
                     >
                         <div class="inline-flex gap-1">
-                            <UBadge :color="calendar.color as BadgeColor" :ui="{ rounded: 'rounded-full' }" size="lg" />
+                            <UBadge :color="calendar.color as BadgeProps['color']" size="lg" />
 
                             <span>{{ calendar.name }}</span>
                             <span v-if="calendar.description" class="hidden sm:block"
@@ -118,7 +118,7 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
                             >
                                 {{ $t('common.unsubscribe') }}
                             </UButton>
-                            <UButton v-else color="amber" @click="subscribeToCalendar(calendar.id, true)">
+                            <UButton v-else color="warning" @click="() => subscribeToCalendar(calendar.id, true)">
                                 {{ $t('common.subscribe') }}
                             </UButton>
                         </div>
@@ -130,7 +130,7 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" color="black" block @click="isOpen = false">
+                    <UButton class="flex-1" color="neutral" block @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

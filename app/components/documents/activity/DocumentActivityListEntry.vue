@@ -36,7 +36,7 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
                     <h3 class="inline-flex items-center gap-2 text-sm font-medium">
-                        <span class="font-bold text-gray-900 dark:text-white">
+                        <span class="text-highlighted font-bold">
                             {{ $t(`enums.documents.DocActivityType.${DocActivityType[entry.activityType]}`) }}
                         </span>
                         <span v-if="entry.data">
@@ -84,12 +84,12 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
                     <div class="flex-1 space-y-1">
                         <div class="flex items-center justify-between">
                             <h3 class="inline-flex items-center text-sm font-medium">
-                                <span class="font-bold text-gray-900 dark:text-white">
+                                <span class="text-highlighted font-bold">
                                     {{ $t(`enums.documents.DocActivityType.${DocActivityType[entry.activityType]}`) }}
                                 </span>
                                 <span class="ml-6 flex h-7 items-center">
                                     <UIcon
-                                        :class="[open ? '!rotate-180' : '', 'size-5 transition-transform']"
+                                        :class="[open ? 'rotate-180!' : '', 'size-5 transition-transform']"
                                         name="i-mdi-chevron-down"
                                     />
                                 </span>

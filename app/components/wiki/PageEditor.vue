@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { UForm } from '#components';
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
@@ -26,7 +26,7 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-const modal = useModal();
+const modal = useOverlay();
 
 const { attr, activeChar } = useAuth();
 
@@ -321,14 +321,16 @@ const parentPages = computedAsync(() => {
 
 const items = [
     {
-        slot: 'content',
+        slot: 'content' as const,
         label: t('common.content'),
         icon: 'i-mdi-pencil',
+        value: 'content',
     },
     {
-        slot: 'access',
+        slot: 'access' as const,
         label: t('common.access'),
         icon: 'i-mdi-key',
+        value: 'access',
     },
 ];
 
@@ -336,16 +338,11 @@ const router = useRouter();
 
 const selectedTab = computed({
     get() {
-        const index = items.findIndex((item) => item.slot === route.query.tab);
-        if (index === -1) {
-            return 0;
-        }
-
-        return index;
+        return (route.query.tab as string) || 'content';
     },
-    set(value) {
+    set(tab) {
         // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
+        router.push({ query: { tab: tab }, hash: '#control-active-item' });
     },
 });
 
@@ -354,13 +351,13 @@ const { sendClientView } = useClientUpdate(ObjectType.WIKI_PAGE, () =>
     notifications.add({
         title: { key: 'notifications.wiki.client_view_update.title', parameters: {} },
         description: { key: 'notifications.wiki.client_view_update.content', parameters: {} },
-        timeout: 7500,
+        duration: 7500,
         type: NotificationType.INFO,
         actions: [
             {
                 label: { key: 'common.refresh', parameters: {} },
                 icon: 'i-mdi-refresh',
-                click: () => refresh(),
+                onClick: () => refresh(),
             },
         ],
     }),
@@ -416,7 +413,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
 <template>
     <UForm
         ref="formRef"
-        class="min-h-dscreen flex w-full max-w-full flex-1 flex-col overflow-y-auto"
+        class="flex min-h-dvh w-full max-w-full flex-1 flex-col overflow-y-auto"
         :schema="schema"
         :state="state"
         @submit="onSubmitThrottle"
@@ -481,14 +478,13 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                     wrapper: 'space-y-0 overflow-y-hidden',
                     container: 'flex flex-1 flex-col overflow-y-hidden',
                     base: 'flex flex-1 flex-col overflow-y-hidden',
-                    list: { rounded: '' },
                 }"
             >
                 <template #content>
                     <UDashboardToolbar>
                         <template #default>
                             <div class="flex w-full flex-col gap-2">
-                                <UFormGroup
+                                <UFormField
                                     v-if="!(page?.meta?.createdAt && page?.parentId === undefined)"
                                     class="w-full"
                                     name="meta.parentId"
@@ -499,12 +495,12 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                             <USelectMenu
                                                 v-model="state.parentId"
                                                 class="flex-1"
-                                                value-attribute="id"
+                                                value-key="id"
                                                 searchable-lazy
                                                 :disabled="!canDo.edit"
-                                                :options="parentPages"
+                                                :items="parentPages"
                                             >
-                                                <template #label>
+                                                <template #item-label>
                                                     <span class="truncate">
                                                         {{
                                                             state.parentId
@@ -533,20 +529,20 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                             <UButton variant="link" icon="i-mdi-refresh" @click="pagesRefresh()" />
                                         </UTooltip>
                                     </div>
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UFormGroup name="meta.title" :label="$t('common.title')">
+                                <UFormField name="meta.title" :label="$t('common.title')">
                                     <UInput v-model="state.meta.title" size="xl" :disabled="!canDo.edit" />
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UFormGroup name="meta.description" :label="$t('common.description')">
+                                <UFormField name="meta.description" :label="$t('common.description')">
                                     <UTextarea v-model="state.meta.description" :rows="2" :disabled="!canDo.edit" />
-                                </UFormGroup>
+                                </UFormField>
                             </div>
                         </template>
                     </UDashboardToolbar>
 
-                    <UFormGroup
+                    <UFormField
                         class="flex flex-1 overflow-y-hidden"
                         name="content"
                         :ui="{ container: 'flex flex-1 flex-col mt-0 overflow-y-hidden', label: { wrapper: 'hidden' } }"
@@ -556,7 +552,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                             <TiptapEditor
                                 v-model="state.content"
                                 v-model:files="state.files"
-                                class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
+                                class="max-w-(--breakpoint-xl) mx-auto w-full flex-1 overflow-y-hidden"
                                 :disabled="!canDo.edit"
                                 history-type="wiki"
                                 :saving="saving"
@@ -566,14 +562,14 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                 :filestore-service="(opts) => wikiClient.uploadFile(opts)"
                             >
                                 <template #linkModal="{ state: linkState }">
-                                    <UDivider class="mt-1" :label="$t('common.or')" orientation="horizontal" />
+                                    <USeparator class="mt-1" :label="$t('common.or')" orientation="horizontal" />
 
-                                    <UFormGroup class="w-full" name="url" :label="`${$t('common.wiki')} ${$t('common.page')}`">
+                                    <UFormField class="w-full" name="url" :label="`${$t('common.wiki')} ${$t('common.page')}`">
                                         <ClientOnly>
                                             <USelectMenu
-                                                label-attribute="title"
+                                                label-key="title"
                                                 searchable-lazy
-                                                :options="pages"
+                                                :items="pages"
                                                 @update:model-value="($event) => (linkState.url = pageToURL($event, true))"
                                             >
                                                 <template #option="{ option: opt }">
@@ -589,30 +585,30 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                                 </template>
                                             </USelectMenu>
                                         </ClientOnly>
-                                    </UFormGroup>
+                                    </UFormField>
                                 </template>
                             </TiptapEditor>
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
                     <UDashboardToolbar
                         class="flex shrink-0 justify-between border-b-0 border-t border-gray-200 px-3 py-3.5 dark:border-gray-700"
                     >
                         <div class="flex flex-1 gap-2">
-                            <UFormGroup class="flex-1" name="public" :label="$t('common.public')">
-                                <UToggle v-model="state.meta.public" :disabled="!canDo.edit || !canDo.public" />
-                            </UFormGroup>
+                            <UFormField class="flex-1" name="public" :label="$t('common.public')">
+                                <USwitch v-model="state.meta.public" :disabled="!canDo.edit || !canDo.public" />
+                            </UFormField>
 
-                            <UFormGroup class="flex-1" name="closed" :label="`${$t('common.toc', 2)}?`">
-                                <UToggle v-model="state.meta.toc" :disabled="!canDo.edit" />
-                            </UFormGroup>
+                            <UFormField class="flex-1" name="closed" :label="`${$t('common.toc', 2)}?`">
+                                <USwitch v-model="state.meta.toc" :disabled="!canDo.edit" />
+                            </UFormField>
                         </div>
                     </UDashboardToolbar>
                 </template>
 
                 <template #access>
                     <div class="flex flex-1 flex-col gap-2 overflow-y-scroll px-2">
-                        <UFormGroup name="access" :label="$t('common.access')">
+                        <UFormField name="access" :label="$t('common.access')">
                             <AccessManager
                                 v-model:jobs="state.access.jobs"
                                 v-model:users="state.access.users"
@@ -620,7 +616,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                 :target-id="page.id ?? 0"
                                 :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.wiki.AccessLevel')"
                             />
-                        </UFormGroup>
+                        </UFormField>
                     </div>
                 </template>
             </UTabs>

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { getSettingsLawsClient } from '~~/gen/ts/clients';
 import type { Law } from '~~/gen/ts/resources/laws/laws';
@@ -70,7 +70,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UForm class="my-2 flex flex-1 flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
         <div class="flex flex-1 flex-row gap-2">
-            <UFormGroup class="text-sm font-medium">
+            <UFormField class="text-sm font-medium">
                 <UButtonGroup class="inline-flex w-full" orientation="vertical">
                     <UTooltip :text="$t('common.save')">
                         <UButton type="submit" variant="link" icon="i-mdi-content-save" />
@@ -80,15 +80,15 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <UButton variant="link" icon="i-mdi-cancel" @click="$emit('close')" />
                     </UTooltip>
                 </UButtonGroup>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup class="flex-1 text-sm font-medium" :label="$t('common.law')" name="name">
+            <UFormField class="flex-1 text-sm font-medium" :label="$t('common.law')" name="name">
                 <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.law')" />
-            </UFormGroup>
+            </UFormField>
         </div>
 
         <div class="flex flex-1 gap-2">
-            <UFormGroup class="whitespace-nowrap text-left" :label="$t('common.fine')" name="fine">
+            <UFormField class="whitespace-nowrap text-left" :label="$t('common.fine')" name="fine">
                 <UInput
                     v-model="state.fine"
                     name="fine"
@@ -97,9 +97,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     :placeholder="$t('common.fine')"
                     leading-icon="i-mdi-dollar"
                 />
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup class="whitespace-nowrap text-left" :label="$t('common.detention_time')" name="detentionTime">
+            <UFormField class="whitespace-nowrap text-left" :label="$t('common.detention_time')" name="detentionTime">
                 <UInput
                     v-model="state.detentionTime"
                     name="detentionTime"
@@ -107,9 +107,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     :min="0"
                     :placeholder="$t('common.detention_time')"
                 />
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup class="whitespace-nowrap text-left" :label="$t('common.traffic_infraction_points')" name="stvoPoints">
+            <UFormField class="whitespace-nowrap text-left" :label="$t('common.traffic_infraction_points')" name="stvoPoints">
                 <UInput
                     v-model="state.stvoPoints"
                     name="stvoPoints"
@@ -117,15 +117,15 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     :min="0"
                     :placeholder="$t('common.traffic_infraction_points')"
                 />
-            </UFormGroup>
+            </UFormField>
         </div>
 
-        <UFormGroup class="text-left" :label="$t('common.description')" name="description">
+        <UFormField class="text-left" :label="$t('common.description')" name="description">
             <UInput v-model="state.description" name="description" type="text" :placeholder="$t('common.description')" />
-        </UFormGroup>
+        </UFormField>
 
-        <UFormGroup class="text-left" :label="$t('common.hint')" name="hint">
+        <UFormField class="text-left" :label="$t('common.hint')" name="hint">
             <UInput v-model="state.hint" name="hint" type="text" :placeholder="$t('common.hint')" />
-        </UFormGroup>
+        </UFormField>
     </UForm>
 </template>

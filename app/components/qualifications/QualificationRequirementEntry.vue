@@ -59,7 +59,7 @@ watch(selectedQualification, () => emit('update-qualification', selectedQualific
 
 <template>
     <div class="my-2 flex flex-row items-center">
-        <UFormGroup class="flex-1" name="selectedQualification">
+        <UFormField class="flex-1" name="selectedQualification">
             <ClientOnly>
                 <USelectMenu
                     v-model="selectedQualification"
@@ -71,7 +71,7 @@ watch(selectedQualification, () => emit('update-qualification', selectedQualific
                     :searchable-placeholder="$t('common.search_field')"
                     :loading="qualificationsLoading"
                 >
-                    <template #label>
+                    <template #item-label>
                         <span v-if="selectedQualification" class="truncate">
                             {{ selectedQualification.abbreviation }}: {{ selectedQualification.title }}
                         </span>
@@ -91,10 +91,10 @@ watch(selectedQualification, () => emit('update-qualification', selectedQualific
                     <template #empty> {{ $t('common.not_found', [$t('common.qualification', 2)]) }} </template>
                 </USelectMenu>
             </ClientOnly>
-        </UFormGroup>
+        </UFormField>
 
         <UTooltip :text="$t('components.qualifications.remove_requirement')">
-            <UButton class="ml-2" :ui="{ rounded: 'rounded-full' }" icon="i-mdi-close" @click="$emit('remove')" />
+            <UButton class="ml-2" icon="i-mdi-close" @click="$emit('remove')" />
         </UTooltip>
     </div>
 </template>

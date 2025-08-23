@@ -12,7 +12,7 @@ defineProps<{
     qualification: Qualification;
 }>();
 
-const modal = useModal();
+const modal = useOverlay();
 
 const completorStore = useCompletorStore();
 
@@ -31,7 +31,7 @@ const results = ref<InstanceType<typeof QualificationResultList> | null>(null);
 <template>
     <div class="flex flex-1 flex-col gap-2">
         <UForm :schema="schema" :state="query">
-            <UFormGroup class="flex-1" name="user" :label="$t('common.search')">
+            <UFormField class="flex-1" name="user" :label="$t('common.search')">
                 <ClientOnly>
                     <UInputMenu
                         v-model="query.user"
@@ -54,11 +54,11 @@ const results = ref<InstanceType<typeof QualificationResultList> | null>(null);
                         search-lazy
                         :search-placeholder="$t('common.search_field')"
                         leading-icon="i-mdi-search"
-                        value-attribute="userId"
+                        value-key="userId"
                     >
-                        <template #label="{ selected }">
-                            <span v-if="selected" class="truncate">
-                                {{ userToLabel(selected) }}
+                        <template #item-label="{ item }">
+                            <span v-if="item" class="truncate">
+                                {{ userToLabel(item) }}
                             </span>
                         </template>
 
@@ -75,11 +75,11 @@ const results = ref<InstanceType<typeof QualificationResultList> | null>(null);
                         <template #empty> {{ $t('common.not_found', [$t('common.user', 2)]) }} </template>
                     </UInputMenu>
                 </ClientOnly>
-            </UFormGroup>
+            </UFormField>
         </UForm>
 
         <div>
-            <h2 class="text-sm text-gray-900 dark:text-white">{{ $t('common.request', 2) }}</h2>
+            <h2 class="text-highlighted text-sm">{{ $t('common.request', 2) }}</h2>
 
             <QualificationRequestList
                 ref="requests"
@@ -91,7 +91,7 @@ const results = ref<InstanceType<typeof QualificationResultList> | null>(null);
 
         <div>
             <div class="flex flex-row justify-between gap-2">
-                <h2 class="text-sm text-gray-900 dark:text-white">{{ $t('common.result', 2) }}</h2>
+                <h2 class="text-highlighted text-sm">{{ $t('common.result', 2) }}</h2>
 
                 <UButton
                     icon="i-mdi-plus"

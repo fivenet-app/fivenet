@@ -1,4 +1,4 @@
-import type { NotificationColor } from '#ui/types';
+import type { ToastProps } from '@nuxt/ui';
 import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 export function notificationTypeToIcon(t?: NotificationType): string {
@@ -15,7 +15,7 @@ export function notificationTypeToIcon(t?: NotificationType): string {
     }
 }
 
-export function notificationTypeToColor(t?: NotificationType): NotificationColor {
+export function notificationTypeToColor(t?: NotificationType): ToastProps['color'] {
     switch (t) {
         case NotificationType.SUCCESS:
             return 'success';

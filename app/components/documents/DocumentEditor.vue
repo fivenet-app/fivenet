@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { UForm } from '#components';
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import DocumentReferenceManagerModal from '~/components/documents/DocumentReferenceManagerModal.vue';
 import DocumentRelationManagerModal from '~/components/documents/DocumentRelationManagerModal.vue';
@@ -34,7 +34,7 @@ const { t } = useI18n();
 
 const { can } = useAuth();
 
-const modal = useModal();
+const modal = useOverlay();
 
 const clipboardStore = useClipboardStore();
 
@@ -306,14 +306,16 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
 
 const items = [
     {
-        slot: 'content',
+        slot: 'content' as const,
         label: t('common.content'),
         icon: 'i-mdi-pencil',
+        value: 'content',
     },
     {
-        slot: 'access',
+        slot: 'access' as const,
         label: t('common.access', 1),
         icon: 'i-mdi-key',
+        value: 'access',
     },
 ];
 
@@ -321,16 +323,11 @@ const router = useRouter();
 
 const selectedTab = computed({
     get() {
-        const index = items.findIndex((item) => item.slot === route.query.tab);
-        if (index === -1) {
-            return 0;
-        }
-
-        return index;
+        return (route.query.tab as string) || 'content';
     },
-    set(value) {
+    set(tab) {
         // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
+        router.push({ query: { tab: tab }, hash: '#control-active-item' });
     },
 });
 
@@ -360,13 +357,13 @@ const { sendClientView } = useClientUpdate(ObjectType.DOCUMENT, () =>
     notifications.add({
         title: { key: 'notifications.documents.client_view_update.title', parameters: {} },
         description: { key: 'notifications.documents.client_view_update.content', parameters: {} },
-        timeout: 7500,
+        duration: 7500,
         type: NotificationType.INFO,
         actions: [
             {
                 label: { key: 'common.refresh', parameters: {} },
                 icon: 'i-mdi-refresh',
-                click: () => refresh(),
+                onClick: () => refresh(),
             },
         ],
     }),
@@ -456,7 +453,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
 <template>
     <UForm
         ref="formRef"
-        class="min-h-dscreen flex w-full max-w-full flex-1 flex-col overflow-y-auto"
+        class="flex min-h-dvh w-full max-w-full flex-1 flex-col overflow-y-auto"
         :schema="schema"
         :state="state"
         @submit="onSubmitThrottle"
@@ -521,14 +518,13 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                     wrapper: 'space-y-0 overflow-y-hidden',
                     container: 'flex flex-1 flex-col overflow-y-hidden',
                     base: 'flex flex-1 flex-col overflow-y-hidden',
-                    list: { rounded: '' },
                 }"
             >
                 <template #content>
                     <UDashboardToolbar>
                         <template #default>
                             <div class="flex w-full flex-col gap-2">
-                                <UFormGroup name="title" :label="$t('common.title')" required>
+                                <UFormField name="title" :label="$t('common.title')" required>
                                     <UInput
                                         v-model="state.title"
                                         type="text"
@@ -536,10 +532,10 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                         :placeholder="$t('common.title')"
                                         :disabled="!canDo.edit"
                                     />
-                                </UFormGroup>
+                                </UFormField>
 
                                 <div class="flex flex-row gap-2">
-                                    <UFormGroup class="flex-1" name="category" :label="$t('common.category', 1)">
+                                    <UFormField class="flex-1" name="category" :label="$t('common.category', 1)">
                                         <ClientOnly>
                                             <USelectMenu
                                                 v-model="state.category"
@@ -573,7 +569,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                                 searchable-lazy
                                                 :searchable-placeholder="$t('common.search_field')"
                                             >
-                                                <template #label>
+                                                <template #item-label>
                                                     <span
                                                         v-if="state.category"
                                                         class="inline-flex gap-1"
@@ -616,26 +612,26 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                                 </template>
                                             </USelectMenu>
                                         </ClientOnly>
-                                    </UFormGroup>
+                                    </UFormField>
 
-                                    <UFormGroup class="flex-1" name="state" :label="$t('common.state')">
+                                    <UFormField class="flex-1" name="state" :label="$t('common.state')">
                                         <UInput
                                             v-model="state.state"
                                             type="text"
                                             :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
                                             :disabled="!canDo.edit"
                                         />
-                                    </UFormGroup>
+                                    </UFormField>
 
-                                    <UFormGroup class="flex-initial" name="closed" :label="`${$t('common.close', 2)}?`">
-                                        <UToggle v-model="state.closed" :disabled="!canDo.edit" />
-                                    </UFormGroup>
+                                    <UFormField class="flex-initial" name="closed" :label="`${$t('common.close', 2)}?`">
+                                        <USwitch v-model="state.closed" :disabled="!canDo.edit" />
+                                    </UFormField>
                                 </div>
                             </div>
                         </template>
                     </UDashboardToolbar>
 
-                    <UFormGroup
+                    <UFormField
                         class="flex flex-1 overflow-y-hidden"
                         name="content"
                         :ui="{ container: 'flex flex-1 flex-col mt-0 overflow-y-hidden', label: { wrapper: 'hidden' } }"
@@ -645,7 +641,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                             <TiptapEditor
                                 v-model="state.content"
                                 v-model:files="state.files"
-                                class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
+                                class="max-w-(--breakpoint-xl) mx-auto w-full flex-1 overflow-y-hidden"
                                 :disabled="!canDo.edit"
                                 history-type="document"
                                 :saving="saving"
@@ -655,7 +651,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                 :filestore-service="(opts) => documentsDocumentsClient.uploadFile(opts)"
                             />
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
                     <UDashboardToolbar
                         class="flex shrink-0 justify-between border-b-0 border-t border-gray-200 px-3 py-3.5 dark:border-gray-700"
@@ -698,7 +694,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
 
                 <template #access>
                     <div class="flex flex-1 flex-col gap-2 overflow-y-scroll px-2">
-                        <h2 class="text-gray-900 dark:text-white">
+                        <h2 class="text-highlighted">
                             {{ $t('common.access') }}
                         </h2>
 

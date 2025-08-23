@@ -38,5 +38,6 @@
         "active-class",
         "inactive-class"
     ],
-    "tailwind-fold.foldStyle": "QUOTES"
+    "tailwind-fold.foldStyle": "QUOTES",
+    "prettier.prettierPath": "./node_modules/prettier"
 }

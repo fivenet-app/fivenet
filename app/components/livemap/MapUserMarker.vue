@@ -33,7 +33,7 @@ const { can, activeChar } = useAuth();
 
 const { livemap } = useAppConfig();
 
-const slideover = useSlideover();
+const slideover = useOverlay();
 
 const { goto } = useLivemapStore();
 
@@ -81,7 +81,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
             <div class="flex flex-col items-center uppercase">
                 <span
                     v-if="showUnitNames && unit"
-                    class="inset-0 whitespace-nowrap rounded-md border border-black/20 bg-clip-padding"
+                    class="inset-0 rounded-md border border-black/20 bg-clip-padding whitespace-nowrap"
                     :class="isColorBright(unitInverseColor) ? 'text-black' : 'text-neutral'"
                     :style="{ backgroundColor: unit?.color ?? livemap.userMarkers.fallbackColor }"
                 >
@@ -90,7 +90,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                 <component :is="icon" class="size-full" :style="{ color: markerColor }" />
             </div>
             <div v-if="showUnitStatus && unit" class="pointer-events-none uppercase">
-                <span class="absolute right-0 top-0 -mr-2 -mt-1.5 flex size-3">
+                <span class="absolute top-0 right-0 -mt-1.5 -mr-2 flex size-3">
                     <span
                         class="relative inset-0 inline-flex size-3 rounded-full border border-black/20"
                         :class="unitStatusColor"
@@ -101,7 +101,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
 
         <LPopup class="min-w-[175px]" :options="{ closeButton: false }">
             <UCard
-                class="-my-[13px] -ml-[20px] -mr-[24px] flex flex-col"
+                class="-my-[13px] -mr-[24px] -ml-[20px] flex flex-col"
                 :ui="{ body: { padding: 'px-2 py-2 sm:px-4 sm:p-2' } }"
             >
                 <template #header>
@@ -110,7 +110,6 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                             v-if="marker.x !== undefined && marker.y !== undefined"
                             variant="link"
                             icon="i-mdi-map-marker"
-                            :padded="false"
                             block
                             @click="goto({ x: marker.x, y: marker.y })"
                         >
@@ -123,7 +122,6 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                             v-if="can('citizens.CitizensService/ListCitizens').value"
                             variant="link"
                             icon="i-mdi-account"
-                            :padded="false"
                             block
                             :to="{ name: 'citizens-id', params: { id: marker.user?.userId ?? 0 } }"
                         >
@@ -141,7 +139,6 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                             "
                             variant="link"
                             icon="i-mdi-briefcase"
-                            :padded="false"
                             block
                             :to="{ name: 'jobs-colleagues-id-info', params: { id: marker.user?.userId ?? 0 } }"
                         >
@@ -155,7 +152,6 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                             :number="marker.user?.phoneNumber"
                             :hide-number="true"
                             :show-label="true"
-                            :padded="false"
                             block
                         />
 
@@ -163,7 +159,6 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                             v-if="unit"
                             variant="link"
                             icon="i-mdi-group"
-                            :padded="false"
                             block
                             @click="
                                 slideover.open(UnitDetailsSlideover, {

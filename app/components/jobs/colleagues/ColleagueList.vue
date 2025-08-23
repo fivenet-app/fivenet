@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { TableColumn } from '#ui/types';
+import type { TableColumn } from '@nuxt/ui';
 import { isFuture } from 'date-fns';
 import { z } from 'zod';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
@@ -22,7 +22,7 @@ import SelfServicePropsAbsenceDateModal from './SelfServicePropsAbsenceDateModal
 
 const { t } = useI18n();
 
-const modal = useModal();
+const modal = useOverlay();
 
 const { attr, can, activeChar } = useAuth();
 
@@ -178,7 +178,7 @@ defineShortcuts({
     <UDashboardToolbar>
         <UForm class="w-full" :schema="schema" :state="query" @submit="refresh()">
             <div class="flex gap-2">
-                <UFormGroup class="flex-1" name="name" :label="$t('common.search')">
+                <UFormField class="flex-1" name="name" :label="$t('common.search')">
                     <UInput
                         ref="input"
                         v-model="query.name"
@@ -193,24 +193,24 @@ defineShortcuts({
                             <UKbd value="/" />
                         </template>
                     </UInput>
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup
+                <UFormField
                     class="flex flex-initial flex-col"
                     name="absent"
                     :label="$t('common.absent')"
                     :ui="{ container: 'flex-1 flex' }"
                 >
                     <div class="flex flex-1 items-center">
-                        <UToggle v-model="query.absent">
+                        <USwitch v-model="query.absent">
                             <span class="sr-only">
                                 {{ $t('common.absent') }}
                             </span>
-                        </UToggle>
+                        </USwitch>
                     </div>
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup v-if="jobsService.cardView" :label="$t('common.sort_by')">
+                <UFormField v-if="jobsService.cardView" :label="$t('common.sort_by')">
                     <SortButton
                         v-model="query.sort"
                         :fields="[
@@ -218,9 +218,9 @@ defineShortcuts({
                             { label: $t('common.name'), value: 'name' },
                         ]"
                     />
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup
+                <UFormField
                     v-if="
                         can('jobs.JobsService/ManageLabels').value ||
                         attr('jobs.JobsService/GetColleague', 'Types', 'Labels').value
@@ -236,21 +236,21 @@ defineShortcuts({
                     />
 
                     <UTooltip v-if="attr('jobs.JobsService/GetColleague', 'Types', 'Labels').value" :text="$t('common.stats')">
-                        <UButton icon="i-mdi-chart-donut" color="white" @click="modal.open(ColleagueLabelStatsModal, {})" />
+                        <UButton icon="i-mdi-chart-donut" color="neutral" @click="modal.open(ColleagueLabelStatsModal, {})" />
                     </UTooltip>
-                </UFormGroup>
+                </UFormField>
             </div>
 
             <UAccordion
                 class="mt-2"
-                color="white"
+                color="neutral"
                 variant="soft"
                 size="sm"
-                :items="[{ label: $t('common.advanced_search'), slot: 'search' }]"
+                :items="[{ label: $t('common.advanced_search'), slot: 'search' as const }]"
             >
                 <template #search>
                     <div class="flex flex-row flex-wrap gap-2">
-                        <UFormGroup
+                        <UFormField
                             v-if="attr('jobs.JobsService/GetColleague', 'Types', 'Labels').value"
                             class="flex flex-1 flex-col"
                             name="labels"
@@ -268,16 +268,16 @@ defineShortcuts({
                                     :search-attributes="['name']"
                                     option-attribute="name"
                                     clear-search-on-close
-                                    value-attribute="id"
+                                    value-key="id"
                                     :ui="{ padding: { sm: 'py-1' } }"
                                 >
-                                    <template #label="{ selected }">
-                                        <span v-if="selected.length" class="inline-flex flex-wrap gap-1 truncate">
+                                    <template #item-label="{ item }">
+                                        <span v-if="item.length" class="inline-flex flex-wrap gap-1 truncate">
                                             <UBadge
-                                                v-for="label in selected"
+                                                v-for="label in item"
                                                 :key="label.id"
                                                 class="truncate"
-                                                :class="isColorBright(label.color) ? '!text-black' : '!text-white'"
+                                                :class="isColorBright(label.color) ? 'text-black!' : 'text-white!'"
                                                 :style="{ backgroundColor: label.color }"
                                                 :label="label.name"
                                             />
@@ -288,7 +288,7 @@ defineShortcuts({
                                     <template #option="{ option }">
                                         <UBadge
                                             class="truncate"
-                                            :class="isColorBright(option.color) ? '!text-black' : '!text-white'"
+                                            :class="isColorBright(option.color) ? 'text-black!' : 'text-white!'"
                                             :style="{ backgroundColor: option.color }"
                                         >
                                             {{ option.name }}
@@ -304,36 +304,36 @@ defineShortcuts({
                                     </template>
                                 </USelectMenu>
                             </ClientOnly>
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup
+                        <UFormField
                             class="flex flex-col"
                             name="namePrefix"
                             :label="$t('common.prefix')"
                             :ui="{ container: 'flex-1 flex' }"
                         >
                             <UInput v-model="query.namePrefix" type="text" />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup
+                        <UFormField
                             class="flex flex-col"
                             name="nameSuffix"
                             :label="$t('common.suffix')"
                             :ui="{ container: 'flex-1 flex' }"
                         >
                             <UInput v-model="query.nameSuffix" type="text" />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup
+                        <UFormField
                             class="flex flex-initial flex-col"
                             name="cards"
                             :label="$t('common.card_view')"
                             :ui="{ container: 'flex-1 flex' }"
                         >
                             <div class="flex flex-1 items-center">
-                                <UToggle v-model="jobsService.cardView" />
+                                <USwitch v-model="jobsService.cardView" />
                             </div>
-                        </UFormGroup>
+                        </UFormField>
                     </div>
                 </template>
             </UAccordion>
@@ -358,7 +358,7 @@ defineShortcuts({
             sort-mode="manual"
         >
             <template #name-data="{ row: colleague }">
-                <div class="inline-flex items-center text-gray-900 dark:text-white">
+                <div class="text-highlighted inline-flex items-center">
                     <ProfilePictureImg
                         class="mr-2"
                         :src="colleague?.avatar"
@@ -421,7 +421,6 @@ defineShortcuts({
                     color="primary"
                     truncate
                     :trailing="false"
-                    :padded="false"
                     hide-na-text
                 />
             </template>
@@ -513,7 +512,7 @@ defineShortcuts({
                             <span class="flex items-center gap-1">
                                 <UIcon class="h-5 w-5 shrink-0" name="i-mdi-email" />
 
-                                <EmailInfoPopover :email="colleague.email" variant="link" :trailing="false" :padded="false" />
+                                <EmailInfoPopover :email="colleague.email" variant="link" :trailing="false" />
                             </span>
 
                             <div
@@ -530,7 +529,7 @@ defineShortcuts({
                                         v-for="label in colleague.props?.labels?.list"
                                         :key="label.name"
                                         class="justify-between gap-2"
-                                        :class="isColorBright(hexToRgb(label.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                                        :class="isColorBright(hexToRgb(label.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
                                         :style="{ backgroundColor: label.color }"
                                         size="xs"
                                         :ui="{ padding: { xs: 'px-2 py-1' } }"

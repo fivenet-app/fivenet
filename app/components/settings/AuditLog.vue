@@ -181,7 +181,7 @@ function statesToLabel(states: { eventType: EventType }[]): string {
         <template #default>
             <UForm class="w-full" :schema="schema" :state="query" @submit="refresh()">
                 <div class="flex flex-row flex-wrap gap-2">
-                    <UFormGroup class="flex-1" name="date" :label="$t('common.time_range')">
+                    <UFormField class="flex-1" name="date" :label="$t('common.time_range')">
                         <DateRangePickerPopoverClient
                             v-model="query.date"
                             class="flex-1"
@@ -194,9 +194,9 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                 clearable: true,
                             }"
                         />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup class="flex-1" name="user" :label="$t('common.user')">
+                    <UFormField class="flex-1" name="user" :label="$t('common.user')">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="query.users"
@@ -218,11 +218,11 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                 block
                                 :placeholder="$t('common.user', 2)"
                                 trailing
-                                value-attribute="userId"
+                                value-key="userId"
                             >
-                                <template #label="{ selected }">
-                                    <span v-if="selected.length > 0" class="truncate">
-                                        {{ usersToLabel(selected) }}
+                                <template #item-label="{ item }">
+                                    <span v-if="item.length > 0" class="truncate">
+                                        {{ usersToLabel(item) }}
                                     </span>
                                 </template>
 
@@ -239,9 +239,9 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                 <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
                             </USelectMenu>
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup class="flex-1" name="data" :label="$t('common.data')">
+                    <UFormField class="flex-1" name="data" :label="$t('common.data')">
                         <UInput
                             v-model="query.search"
                             type="text"
@@ -249,32 +249,34 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                             block
                             :placeholder="$t('common.search')"
                             leading-icon="i-mdi-search"
-                            :ui="{ icon: { trailing: { pointer: '' } } }"
+                            :ui="{ trailing: 'pe-1' }"
                         >
                             <template #trailing>
                                 <UButton
                                     v-show="query.search !== ''"
-                                    color="gray"
+                                    color="neutral"
                                     variant="link"
                                     icon="i-mdi-close"
-                                    :padded="false"
+                                    :aria-label="query.search ? 'Hide search' : 'Show search'"
+                                    :aria-pressed="query.search"
+                                    aria-controls="search"
                                     @click="query.search = ''"
                                 />
                             </template>
                         </UInput>
-                    </UFormGroup>
+                    </UFormField>
                 </div>
 
                 <UAccordion
                     class="mt-2"
-                    color="white"
+                    color="neutral"
                     variant="soft"
                     size="sm"
-                    :items="[{ label: $t('common.advanced_search'), slot: 'search' }]"
+                    :items="[{ label: $t('common.advanced_search'), slot: 'search' as const }]"
                 >
                     <template #search>
                         <div class="flex flex-row flex-wrap gap-1">
-                            <UFormGroup class="flex-1" name="service" :label="$t('common.service')">
+                            <UFormField class="flex-1" name="service" :label="$t('common.service')">
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="query.services"
@@ -282,7 +284,7 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                         searchable
                                         name="service"
                                         :placeholder="$t('common.service')"
-                                        :options="grpcServices.map((s) => s.split('.').pop() ?? s)"
+                                        :items="grpcServices.map((s) => s.split('.').pop() ?? s)"
                                     >
                                         <template #option="{ option }">
                                             {{ option }}
@@ -297,16 +299,16 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                         </template>
                                     </USelectMenu>
                                 </ClientOnly>
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup class="flex-1" name="method" :label="$t('common.method')">
+                            <UFormField class="flex-1" name="method" :label="$t('common.method')">
                                 <USelectMenu
                                     v-model="query.methods"
                                     multiple
                                     searchable
                                     name="method"
                                     :placeholder="$t('common.method')"
-                                    :options="grpcMethods.filter((m) => query.services.some((s) => m.includes('.' + s + '/')))"
+                                    :items="grpcMethods.filter((m) => query.services.some((s) => m.includes('.' + s + '/')))"
                                 >
                                     <template #option="{ option }">
                                         {{ option.split('/').pop() }}
@@ -320,9 +322,9 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                         {{ $t('common.not_found', [$t('common.method')]) }}
                                     </template>
                                 </USelectMenu>
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup class="flex-1" name="states" :label="$t('common.state')">
+                            <UFormField class="flex-1" name="states" :label="$t('common.state')">
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="query.states"
@@ -330,12 +332,12 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                         searchable
                                         name="states"
                                         :placeholder="$t('common.state')"
-                                        :options="statesOptions"
-                                        value-attribute="eventType"
+                                        :items="statesOptions"
+                                        value-key="eventType"
                                     >
-                                        <template #label="{ selected }">
-                                            <span v-if="selected.length > 0">
-                                                {{ statesToLabel(selected) }}
+                                        <template #item-label="{ item }">
+                                            <span v-if="item.length > 0">
+                                                {{ statesToLabel(item) }}
                                             </span>
                                         </template>
 
@@ -352,7 +354,7 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                         </template>
                                     </USelectMenu>
                                 </ClientOnly>
-                            </UFormGroup>
+                            </UFormField>
                         </div>
                     </template>
                 </UAccordion>

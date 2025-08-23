@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { vMaska } from 'maska/vue';
 import { CodeDiff } from 'v-code-diff';
 import { z } from 'zod';
@@ -272,11 +272,18 @@ async function searchChannels() {
 
 const items = [
     {
-        slot: 'jobprops',
+        slot: 'jobprops' as const,
         label: t('components.settings.job_props.job_properties'),
         icon: 'i-mdi-settings',
+        value: 'jobprops',
     },
-    { slot: 'discord', label: t('common.discord'), icon: 'i-simple-icons-discord', disabled: !appConfig.discord.botEnabled },
+    {
+        slot: 'discord' as const,
+        label: t('common.discord'),
+        icon: 'i-simple-icons-discord',
+        value: 'discord',
+        disabled: !appConfig.discord.botEnabled,
+    },
 ];
 
 const route = useRoute();
@@ -284,16 +291,11 @@ const router = useRouter();
 
 const selectedTab = computed({
     get() {
-        const index = items.findIndex((item) => item.slot === route.query.tab && !item.disabled);
-        if (index === -1) {
-            return 0;
-        }
-
-        return index;
+        return (route.query.tab as string) || 'jobprops';
     },
-    set(value) {
+    set(tab) {
         // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
+        router.push({ query: { tab: tab }, hash: '#control-active-item' });
     },
 });
 
@@ -324,7 +326,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     </template>
     <UForm
         v-else
-        class="min-h-dscreen flex w-full max-w-full flex-1 flex-col overflow-y-auto"
+        class="flex min-h-dvh w-full max-w-full flex-1 flex-col overflow-y-auto"
         :schema="schema"
         :state="state"
         @submit="onSubmitThrottle"
@@ -360,18 +362,18 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             />
 
             <template v-else-if="isRequestPending(status) || jobProps">
-                <UTabs v-model="selectedTab" class="w-full" :items="items" :ui="{ list: { rounded: '' } }">
+                <UTabs v-model="selectedTab" class="w-full" :items="items">
                     <template #jobprops>
                         <div v-if="isRequestPending(status)" class="space-y-1 px-4">
                             <USkeleton v-for="idx in 5" :key="idx" class="h-20 w-full" />
                         </div>
 
                         <UDashboardPanelContent v-else>
-                            <UDashboardSection
+                            <UPageCard
                                 :title="$t('components.settings.job_props.job_properties')"
                                 :description="$t('components.settings.job_props.your_job_properties')"
                             >
-                                <UFormGroup
+                                <UFormField
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="logoFile"
                                     :label="$t('common.logo')"
@@ -383,18 +385,18 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :upload-fn="(opts) => settingsSettingsClient.uploadJobLogo(opts)"
                                         :delete-fn="() => settingsSettingsClient.deleteJobLogo({})"
                                     />
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UFormGroup
+                                <UFormField
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="livemapMarkerColor"
                                     :label="$t('components.settings.job_props.livemap_marker_color')"
                                     :ui="{ container: '' }"
                                 >
                                     <ColorPickerClient v-model="state.livemapMarkerColor" :disabled="!canSubmit || !canEdit" />
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UFormGroup
+                                <UFormField
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="radioFrequency"
                                     :label="$t('common.radio_frequency')"
@@ -410,9 +412,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         data-maska="0.9"
                                         data-maska-tokens="0:\d:multiple|9:\d:multiple"
                                     />
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UFormGroup
+                                <UFormField
                                     v-if="jobProps.quickButtons"
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="quickButtons"
@@ -422,7 +424,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     <div class="flex flex-col gap-2">
                                         <div class="space-y-4">
                                             <div class="flex items-center gap-2">
-                                                <UToggle
+                                                <USwitch
                                                     v-model="state.quickButtons.penaltyCalculator"
                                                     :disabled="!canSubmit || !canEdit"
                                                 />
@@ -434,7 +436,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                                         <div class="space-y-4">
                                             <div class="flex items-center gap-2">
-                                                <UToggle
+                                                <USwitch
                                                     v-model="state.quickButtons.mathCalculator"
                                                     :disabled="!canSubmit || !canEdit"
                                                 />
@@ -444,13 +446,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             </div>
                                         </div>
                                     </div>
-                                </UFormGroup>
-                            </UDashboardSection>
+                                </UFormField>
+                            </UPageCard>
 
-                            <UDivider class="mb-4" />
+                            <USeparator class="mb-4" />
 
-                            <UDashboardSection :title="$t('components.settings.job_props.settings.absence.title')">
-                                <UFormGroup
+                            <UPageCard :title="$t('components.settings.job_props.settings.absence.title')">
+                                <UFormField
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="settings.absencePastDays"
                                     :label="$t('components.settings.job_props.settings.absence.past_days')"
@@ -468,9 +470,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         />
                                         <span>{{ $t('common.day', 2) }}</span>
                                     </div>
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UFormGroup
+                                <UFormField
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="settings.absenceFutureDays"
                                     :label="$t('components.settings.job_props.settings.absence.future_days')"
@@ -489,8 +491,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         />
                                         <span>{{ $t('common.day', 2) }}</span>
                                     </div>
-                                </UFormGroup>
-                            </UDashboardSection>
+                                </UFormField>
+                            </UPageCard>
                         </UDashboardPanelContent>
                     </template>
 
@@ -500,7 +502,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </div>
 
                         <UDashboardPanelContent v-else-if="jobProps.discordSyncSettings">
-                            <UDashboardSection
+                            <UPageCard
                                 :title="$t('components.settings.job_props.discord_sync_settings.title')"
                                 :description="$t('components.settings.job_props.discord_sync_settings.subtitle')"
                             >
@@ -510,7 +512,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         v-else-if="canEdit"
                                         class="mt-1"
                                         block
-                                        color="white"
+                                        color="neutral"
                                         trailing-icon="i-mdi-robot"
                                         :disabled="!canSubmit || !canEdit"
                                         to="/api/discord/invite-bot"
@@ -520,7 +522,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     </UButton>
                                 </template>
 
-                                <UFormGroup
+                                <UFormField
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="discordGuildId"
                                     :label="$t('components.settings.job_props.discord_sync_settings.discord_guild_id')"
@@ -546,21 +548,21 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     <USelectMenu
                                         v-else
                                         v-model="state.discordGuildId"
-                                        :options="userGuilds"
+                                        :items="userGuilds"
                                         searchable
                                         :search-attributes="['name', 'id']"
                                         :placeholder="
                                             $t('components.settings.job_props.discord_sync_settings.discord_guild_id')
                                         "
-                                        value-attribute="id"
+                                        value-key="id"
                                         :disabled="!canSubmit || !canEdit || userGuilds?.length === 0"
                                         size="lg"
                                     >
-                                        <template #label="{ selected }">
+                                        <template #item-label="{ item }">
                                             <div class="inline-flex items-center gap-2">
-                                                <UAvatar :src="selected?.icon" :alt="selected?.name" />
+                                                <UAvatar :src="item?.icon" :alt="item?.name" />
                                                 <span class="truncate">{{
-                                                    selected?.name ??
+                                                    item?.name ??
                                                     (state.discordGuildId !== '' ? state.discordGuildId : '&nbsp;')
                                                 }}</span>
                                             </div>
@@ -585,27 +587,27 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         {{ $t('components.settings.job_props.discord_sync_settings.last_sync') }}:
                                         <GenericTime :value="jobProps.discordLastSync" />
                                     </p>
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UFormGroup
+                                <UFormField
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="discordSyncSettings.dryRun"
                                     :label="$t('components.settings.job_props.discord_sync_settings.dry_run')"
                                     :ui="{ container: '' }"
                                 >
-                                    <UToggle v-model="state.discordSyncSettings.dryRun" :disabled="!canSubmit || !canEdit" />
-                                </UFormGroup>
+                                    <USwitch v-model="state.discordSyncSettings.dryRun" :disabled="!canSubmit || !canEdit" />
+                                </UFormField>
 
-                                <UFormGroup
+                                <UFormField
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="discordSyncSettings.statusLog"
                                     :label="$t('components.settings.job_props.discord_sync_settings.status_log')"
                                     :ui="{ container: '' }"
                                 >
-                                    <UToggle v-model="state.discordSyncSettings.statusLog" :disabled="!canSubmit || !canEdit" />
-                                </UFormGroup>
+                                    <USwitch v-model="state.discordSyncSettings.statusLog" :disabled="!canSubmit || !canEdit" />
+                                </UFormField>
 
-                                <UFormGroup
+                                <UFormField
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="discordSyncSettings.statusLogSettings.channelId"
                                     :label="
@@ -626,7 +628,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :search-attributes="['name']"
                                         searchable-lazy
                                         :searchable-placeholder="$t('common.search_field')"
-                                        value-attribute="id"
+                                        value-key="id"
                                         nullable
                                         :placeholder="
                                             $t(
@@ -634,10 +636,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             )
                                         "
                                     >
-                                        <template #label="{ selected }">
+                                        <template #item-label="{ item }">
                                             <span class="truncate">{{
-                                                selected
-                                                    ? `${selected.name} (${selected.id})`
+                                                item
+                                                    ? `${item.name} (${item.id})`
                                                     : state.discordSyncSettings.statusLogSettings!.channelId !== ''
                                                       ? state.discordSyncSettings.statusLogSettings!.channelId
                                                       : '&nbsp;'
@@ -656,7 +658,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             {{ $t('common.not_found', [$t('common.channel', 1)]) }}
                                         </template>
                                     </USelectMenu>
-                                </UFormGroup>
+                                </UFormField>
 
                                 <UAlert
                                     :ui="{
@@ -670,28 +672,28 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     "
                                     variant="subtle"
                                 />
-                            </UDashboardSection>
+                            </UPageCard>
 
-                            <UDivider class="mb-4" />
+                            <USeparator class="mb-4" />
 
-                            <UDashboardSection
+                            <UPageCard
                                 :title="$t('components.settings.job_props.discord_sync_features.title')"
                                 :description="$t('components.settings.job_props.discord_sync_features.subtitle')"
                             >
-                                <UFormGroup
+                                <UFormField
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="discordSyncSettings.userInfoSync"
                                     :label="$t('components.settings.job_props.discord_sync_settings.user_info_sync')"
                                     :ui="{ container: '' }"
                                 >
-                                    <UToggle
+                                    <USwitch
                                         v-model="state.discordSyncSettings.userInfoSync"
                                         :disabled="!canSubmit || !canEdit"
                                     />
-                                </UFormGroup>
+                                </UFormField>
 
                                 <template v-if="jobProps.discordSyncSettings.userInfoSyncSettings">
-                                    <UFormGroup
+                                    <UFormField
                                         class="grid grid-cols-2 items-center gap-2"
                                         name="discordSyncSettings.userInfoSyncSettings.gradeRoleFormat"
                                         :label="
@@ -725,9 +727,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 },
                                             ]"
                                         />
-                                    </UFormGroup>
+                                    </UFormField>
 
-                                    <UFormGroup
+                                    <UFormField
                                         class="grid grid-cols-2 items-center gap-2"
                                         name="discordSyncSettings.userInfoSyncSettings.employeeRoleEnabled"
                                         :label="
@@ -737,13 +739,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         "
                                         :ui="{ container: '' }"
                                     >
-                                        <UToggle
+                                        <USwitch
                                             v-model="state.discordSyncSettings.userInfoSyncSettings.employeeRoleEnabled"
                                             :disabled="!state.discordSyncSettings.userInfoSync || !canSubmit || !canEdit"
                                         />
-                                    </UFormGroup>
+                                    </UFormField>
 
-                                    <UFormGroup
+                                    <UFormField
                                         class="grid grid-cols-2 items-center gap-2"
                                         name="discordSyncSettings.userInfoSyncSettings.employeeRoleFormat"
                                         :label="
@@ -763,9 +765,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             "
                                             :extensions="[{ label: $t('common.job_name'), value: 'job' }]"
                                         />
-                                    </UFormGroup>
+                                    </UFormField>
 
-                                    <UFormGroup
+                                    <UFormField
                                         class="grid grid-cols-2 items-center gap-2"
                                         name="discordSyncSettings.userInfoSyncSettings.unemployedEnabled"
                                         :label="
@@ -775,13 +777,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         "
                                         :ui="{ container: '' }"
                                     >
-                                        <UToggle
+                                        <USwitch
                                             v-model="state.discordSyncSettings.userInfoSyncSettings.unemployedEnabled"
                                             :disabled="!state.discordSyncSettings.userInfoSync"
                                         />
-                                    </UFormGroup>
+                                    </UFormField>
 
-                                    <UFormGroup
+                                    <UFormField
                                         class="grid grid-cols-2 items-center gap-2"
                                         name="discordSyncSettings.userInfoSyncSettings.unemployedMode"
                                         :label="
@@ -800,8 +802,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     !canSubmit ||
                                                     !canEdit
                                                 "
-                                                value-attribute="value"
-                                                :options="[
+                                                value-key="value"
+                                                :items="[
                                                     {
                                                         label: $t('enums.settings.UserInfoSyncUnemployedMode.GIVE_ROLE'),
                                                         value: UserInfoSyncUnemployedMode.GIVE_ROLE,
@@ -813,7 +815,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 ]"
                                                 :searchable-placeholder="$t('common.search_field')"
                                             >
-                                                <template #label>
+                                                <template #item-label>
                                                     {{
                                                         $t(
                                                             `enums.settings.UserInfoSyncUnemployedMode.${
@@ -835,9 +837,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 </template>
                                             </USelectMenu>
                                         </ClientOnly>
-                                    </UFormGroup>
+                                    </UFormField>
 
-                                    <UFormGroup
+                                    <UFormField
                                         class="grid grid-cols-2 items-center gap-2"
                                         name="discordSyncSettings.userInfoSyncSettings.unemployedRoleName"
                                         :label="
@@ -863,9 +865,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 )
                                             "
                                         />
-                                    </UFormGroup>
+                                    </UFormField>
 
-                                    <UFormGroup
+                                    <UFormField
                                         class="grid grid-cols-2 items-center gap-2"
                                         name="discordSyncSettings.userInfoSyncSettings.syncNicknames"
                                         :label="
@@ -875,13 +877,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         "
                                         :ui="{ container: '' }"
                                     >
-                                        <UToggle
+                                        <USwitch
                                             v-model="state.discordSyncSettings.userInfoSyncSettings.syncNicknames"
                                             :disabled="!canSubmit || !canEdit"
                                         />
-                                    </UFormGroup>
+                                    </UFormField>
 
-                                    <UFormGroup
+                                    <UFormField
                                         class="grid grid-cols-2 items-center gap-2"
                                         name="discordSyncSettings.userInfoSyncSettings.groupMapping"
                                         :label="
@@ -903,7 +905,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 class="flex items-center gap-1"
                                             >
                                                 <div class="flex flex-col gap-1">
-                                                    <UFormGroup
+                                                    <UFormField
                                                         class="flex-1"
                                                         :name="`discordSyncSettings.userInfoSyncSettings.groupMapping.${idx}.name`"
                                                         :label="
@@ -932,10 +934,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                                 )
                                                             "
                                                         />
-                                                    </UFormGroup>
+                                                    </UFormField>
 
                                                     <div class="flex flex-row gap-1">
-                                                        <UFormGroup
+                                                        <UFormField
                                                             class="flex-1"
                                                             :name="`discordSyncSettings.userInfoSyncSettings.groupMapping.${idx}.fromGrade`"
                                                             :label="
@@ -965,8 +967,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                                     )
                                                                 "
                                                             />
-                                                        </UFormGroup>
-                                                        <UFormGroup
+                                                        </UFormField>
+                                                        <UFormField
                                                             class="flex-1"
                                                             :name="`discordSyncSettings.userInfoSyncSettings.groupMapping.${idx}.toGrade`"
                                                             :label="
@@ -996,13 +998,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                                     )
                                                                 "
                                                             />
-                                                        </UFormGroup>
+                                                        </UFormField>
                                                     </div>
                                                 </div>
 
                                                 <UButton
                                                     v-if="canEdit"
-                                                    :ui="{ rounded: 'rounded-full' }"
                                                     :disabled="!canSubmit"
                                                     icon="i-mdi-close"
                                                     @click="
@@ -1022,7 +1023,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     ? 'mt-2'
                                                     : ''
                                             "
-                                            :ui="{ rounded: 'rounded-full' }"
                                             :disabled="!canSubmit"
                                             icon="i-mdi-plus"
                                             @click="
@@ -1033,9 +1033,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 })
                                             "
                                         />
-                                    </UFormGroup>
+                                    </UFormField>
 
-                                    <UFormGroup
+                                    <UFormField
                                         class="grid grid-cols-2 items-center gap-2"
                                         name="discordSyncSettings.jobsAbsence"
                                         :label="
@@ -1045,14 +1045,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         "
                                         :ui="{ container: '' }"
                                     >
-                                        <UToggle
+                                        <USwitch
                                             v-model="state.discordSyncSettings.jobsAbsence"
                                             :disabled="!state.discordSyncSettings.userInfoSync || !canSubmit || !canEdit"
                                         />
-                                    </UFormGroup>
+                                    </UFormField>
 
                                     <template v-if="jobProps.discordSyncSettings.jobsAbsenceSettings">
-                                        <UFormGroup
+                                        <UFormField
                                             class="grid grid-cols-2 items-center gap-2"
                                             name="discordSyncSettings.jobsAbsenceSettings.absenceRole"
                                             :label="
@@ -1078,10 +1078,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     )
                                                 "
                                             />
-                                        </UFormGroup>
+                                        </UFormField>
                                     </template>
 
-                                    <UFormGroup
+                                    <UFormField
                                         class="grid grid-cols-2 items-center gap-2"
                                         name="discordSyncSettings.qualificationsRoleFormat"
                                         :label="
@@ -1104,22 +1104,24 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 { label: $t('common.abbreviation'), value: 'abbr' },
                                             ]"
                                         />
-                                    </UFormGroup>
+                                    </UFormField>
                                 </template>
-                            </UDashboardSection>
+                            </UPageCard>
 
-                            <UDashboardSection v-if="jobProps.discordSyncChanges">
+                            <UPageCard v-if="jobProps.discordSyncChanges">
                                 <UAccordion
-                                    :items="[{ label: $t('common.diff'), slot: 'diff', icon: 'i-mdi-difference-left' }]"
+                                    :items="[
+                                        { label: $t('common.diff'), slot: 'diff' as const, icon: 'i-mdi-difference-left' },
+                                    ]"
                                 >
                                     <template #diff>
                                         <ClientOnly>
                                             <USelectMenu
                                                 v-model="selectedChange"
-                                                :options="jobProps.discordSyncChanges.changes"
+                                                :items="jobProps.discordSyncChanges.changes"
                                                 :searchable-placeholder="$t('common.search_field')"
                                             >
-                                                <template #label>
+                                                <template #item-label>
                                                     <span class="truncate">{{
                                                         $d(toDate(selectedChange?.time), 'short')
                                                     }}</span>
@@ -1144,16 +1146,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         />
                                     </template>
                                 </UAccordion>
-                            </UDashboardSection>
+                            </UPageCard>
 
-                            <UDashboardSection
+                            <UPageCard
                                 v-if="jobProps.discordSyncSettings?.groupSyncSettings"
                                 :title="$t('components.settings.job_props.discord_sync_settings.group_sync_settings.title')"
                                 :description="
                                     $t('components.settings.job_props.discord_sync_settings.group_sync_settings.subtitle')
                                 "
                             >
-                                <UFormGroup
+                                <UFormField
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="groupSyncSettingsIgnoredIds"
                                     :label="
@@ -1174,7 +1176,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             :key="idx"
                                             class="flex items-center gap-1"
                                         >
-                                            <UFormGroup
+                                            <UFormField
                                                 class="flex-1"
                                                 :name="`discordSyncSettings.groupSyncSettings.ignoredRoleIds.${idx}.name`"
                                             >
@@ -1190,11 +1192,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                         )
                                                     "
                                                 />
-                                            </UFormGroup>
+                                            </UFormField>
 
                                             <UButton
                                                 v-if="canEdit"
-                                                :ui="{ rounded: 'rounded-full' }"
                                                 :disabled="!canSubmit"
                                                 icon="i-mdi-close"
                                                 @click="
@@ -1209,13 +1210,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :class="
                                             state.discordSyncSettings?.groupSyncSettings.ignoredRoleIds.length ? 'mt-2' : ''
                                         "
-                                        :ui="{ rounded: 'rounded-full' }"
                                         :disabled="!canSubmit"
                                         icon="i-mdi-plus"
                                         @click="state.discordSyncSettings?.groupSyncSettings.ignoredRoleIds.push('')"
                                     />
-                                </UFormGroup>
-                            </UDashboardSection>
+                                </UFormField>
+                            </UPageCard>
                         </UDashboardPanelContent>
                     </template>
                 </UTabs>

@@ -92,13 +92,12 @@ watchOnce(opened, async () => {
             class="inline-flex items-center gap-1 p-px"
             variant="link"
             truncate
-            :padded="false"
             :trailing-icon="trailing ? 'i-mdi-chevron-down' : undefined"
             v-bind="$attrs"
             @click="opened = true"
         >
             <template v-if="showAvatarInName" #leading>
-                <USkeleton v-if="!user && isRequestPending(status)" class="h-6 w-6" :ui="{ rounded: 'rounded-full' }" />
+                <USkeleton v-if="!user && isRequestPending(status)" class="h-6 w-6" />
                 <ProfilePictureImg v-else :src="user?.avatar" :name="`${user?.firstname} ${user?.lastname}`" size="3xs" />
             </template>
 
@@ -111,7 +110,7 @@ watchOnce(opened, async () => {
             </span>
         </UButton>
 
-        <template #panel>
+        <template #content>
             <div class="flex flex-col gap-2 p-4">
                 <div class="grid w-full grid-cols-3 gap-2">
                     <IDCopyBadge
@@ -160,7 +159,7 @@ watchOnce(opened, async () => {
                     />
                 </div>
 
-                <div v-else-if="isRequestPending(status) && !user" class="flex flex-col gap-2 text-gray-900 dark:text-white">
+                <div v-else-if="isRequestPending(status) && !user" class="text-highlighted flex flex-col gap-2">
                     <USkeleton class="h-8 w-[250px]" />
 
                     <div class="flex flex-row items-center gap-2">
@@ -169,7 +168,7 @@ watchOnce(opened, async () => {
                     </div>
                 </div>
 
-                <div v-else-if="user" class="flex flex-col gap-2 text-gray-900 dark:text-white">
+                <div v-else-if="user" class="text-highlighted flex flex-col gap-2">
                     <div class="inline-flex flex-row gap-2">
                         <ProfilePictureImg
                             v-if="showAvatar === undefined || showAvatar"
@@ -177,7 +176,7 @@ watchOnce(opened, async () => {
                             :name="`${user.firstname} ${user.lastname}`"
                         />
 
-                        <UButton variant="link" :padded="false" :to="{ name: 'citizens-id', params: { id: user.userId ?? 0 } }">
+                        <UButton variant="link" :to="{ name: 'citizens-id', params: { id: user.userId ?? 0 } }">
                             <span>{{ user.firstname }} {{ user.lastname }}</span>
                         </UButton>
                     </div>

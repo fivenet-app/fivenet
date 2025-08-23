@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { getSettingsAccountsClient } from '~~/gen/ts/clients';
@@ -18,7 +18,7 @@ const emit = defineEmits<{
 
 const account = useVModel(props, 'account', emit);
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -80,26 +80,32 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UModal>
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
                             {{ $t('components.settings.accounts.edit_account') }}: {{ account.username }} ({{ account.id }})
                         </h3>
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                        <UButton
+                            class="-my-1"
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
                 <div>
                     <div>
-                        <UFormGroup class="flex-1" name="enabled" :label="$t('common.enabled')" required>
-                            <UToggle v-model="state.enabled" name="enabled" />
-                        </UFormGroup>
+                        <UFormField class="flex-1" name="enabled" :label="$t('common.enabled')" required>
+                            <USwitch v-model="state.enabled" name="enabled" />
+                        </UFormField>
                     </div>
 
                     <div>
-                        <UFormGroup class="flex-1" name="oauth2Accounts" :label="$t('components.auth.OAuth2Connections.title')">
+                        <UFormField class="flex-1" name="oauth2Accounts" :label="$t('components.auth.OAuth2Connections.title')">
                             <div class="flex flex-col gap-2">
                                 <DataNoDataBlock
                                     v-if="account.oauth2Accounts.length === 0"
@@ -120,13 +126,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     />
                                 </template>
                             </div>
-                        </UFormGroup>
+                        </UFormField>
                     </div>
                 </div>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" block color="black" @click="isOpen = false">
+                        <UButton class="flex-1" block color="neutral" @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

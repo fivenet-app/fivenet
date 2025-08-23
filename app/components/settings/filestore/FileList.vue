@@ -76,7 +76,7 @@ function addUploadedFile(file: File): void {
     }
 }
 
-const modal = useModal();
+const modal = useOverlay();
 
 const columns = [
     {
@@ -180,7 +180,7 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
             </template>
 
             <template #name-data="{ row: file }">
-                <span class="text-gray-900 dark:text-white">
+                <span class="text-highlighted">
                     {{ file.filePath }}
                 </span>
             </template>

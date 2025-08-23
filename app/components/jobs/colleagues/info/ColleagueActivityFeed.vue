@@ -99,7 +99,7 @@ watch(props, async () => refresh());
 <template>
     <UDashboardToolbar v-if="userId === undefined || accessAttrs.some((a) => colleagueSearchAttrs.includes(a)) || isSuperuser">
         <UForm class="flex w-full gap-2" :schema="schema" :state="query" @submit="refresh()">
-            <UFormGroup v-if="userId === undefined" class="flex-1" name="colleagues" :label="$t('common.search')">
+            <UFormField v-if="userId === undefined" class="flex-1" name="colleagues" :label="$t('common.search')">
                 <ClientOnly>
                     <USelectMenu
                         v-model="query.colleagues"
@@ -123,9 +123,9 @@ watch(props, async () => refresh());
                         :placeholder="$t('common.colleague', 2)"
                         trailing
                         leading-icon="i-mdi-search"
-                        value-attribute="userId"
+                        value-key="userId"
                     >
-                        <template #label="{ selected }">
+                        <template #item-label="{ selected }">
                             <template v-if="selected.length">
                                 {{ usersToLabel(selected) }}
                             </template>
@@ -142,10 +142,10 @@ watch(props, async () => refresh());
                         <template #empty> {{ $t('common.not_found', [$t('common.colleague', 2)]) }} </template>
                     </USelectMenu>
                 </ClientOnly>
-            </UFormGroup>
+            </UFormField>
             <div v-else class="flex-1" />
 
-            <UFormGroup
+            <UFormField
                 v-if="isSuperuser || accessAttrs.some((a) => colleagueSearchAttrs.includes(a))"
                 name="types"
                 :label="$t('common.type', 2)"
@@ -158,11 +158,11 @@ watch(props, async () => refresh());
                         block
                         trailing
                         option-attribute="aType"
-                        :options="activityTypes.map((aType) => ({ aType: aType }))"
-                        value-attribute="aType"
+                        :items="activityTypes.map((aType) => ({ aType: aType }))"
+                        value-key="aType"
                         :searchable-placeholder="$t('common.type', 2)"
                     >
-                        <template #label>
+                        <template #item-label>
                             {{ $t('common.selected', query.types.length) }}
                         </template>
 
@@ -177,11 +177,11 @@ watch(props, async () => refresh());
                         <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
                     </USelectMenu>
                 </ClientOnly>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup label="&nbsp;">
+            <UFormField label="&nbsp;">
                 <SortButton v-model="query.sort" :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]" />
-            </UFormGroup>
+            </UFormField>
         </UForm>
     </UDashboardToolbar>
 
@@ -206,7 +206,7 @@ watch(props, async () => refresh());
                     <li v-for="idx in 10" :key="idx" class="px-2 py-4">
                         <div class="flex space-x-3">
                             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                                <USkeleton class="size-full" :ui="{ rounded: 'rounded-full' }" />
+                                <USkeleton class="size-full" />
                             </div>
 
                             <div class="flex-1 space-y-1">

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { unitStatusToBGColor, unitStatuses } from '~/components/centrum/helpers';
 import { useCentrumStore } from '~/stores/centrum';
@@ -14,7 +14,7 @@ const props = defineProps<{
     location?: Coordinate;
 }>();
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const centrumStore = useCentrumStore();
 const { settings } = storeToRefs(centrumStore);
@@ -84,8 +84,6 @@ function updateReasonField(value: string): void {
                     body: {
                         padding: 'px-1 py-2 sm:p-2',
                     },
-                    ring: '',
-                    divide: 'divide-y divide-gray-100 dark:divide-gray-800',
                 }"
             >
                 <template #header>
@@ -94,7 +92,13 @@ function updateReasonField(value: string): void {
                             {{ $t('components.centrum.update_unit_status.title') }}: {{ unit.name }} ({{ unit.initials }})
                         </h3>
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                        <UButton
+                            class="-my-1"
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
@@ -107,7 +111,7 @@ function updateReasonField(value: string): void {
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="status">
+                                <UFormField name="status">
                                     <div class="grid w-full grid-cols-2 gap-0.5">
                                         <UButton
                                             v-for="item in unitStatuses"
@@ -134,7 +138,7 @@ function updateReasonField(value: string): void {
                                             </span>
                                         </UButton>
                                     </div>
-                                </UFormGroup>
+                                </UFormField>
                             </dd>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -144,7 +148,7 @@ function updateReasonField(value: string): void {
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup class="flex-1" name="code">
+                                <UFormField class="flex-1" name="code">
                                     <UInput
                                         v-model="state.code"
                                         type="text"
@@ -152,7 +156,7 @@ function updateReasonField(value: string): void {
                                         :placeholder="$t('common.code')"
                                         :label="$t('common.code')"
                                     />
-                                </UFormGroup>
+                                </UFormField>
                             </dd>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -162,9 +166,9 @@ function updateReasonField(value: string): void {
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup class="flex-1" name="reason" required>
+                                <UFormField class="flex-1" name="reason" required>
                                     <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
-                                </UFormGroup>
+                                </UFormField>
                             </dd>
                         </div>
                         <div
@@ -181,7 +185,7 @@ function updateReasonField(value: string): void {
                                 <ClientOnly>
                                     <USelectMenu
                                         name="unitStatus"
-                                        :options="['&nbsp;', ...settings?.predefinedStatus.unitStatus]"
+                                        :items="['&nbsp;', ...settings?.predefinedStatus.unitStatus]"
                                         :searchable-placeholder="$t('common.search_field')"
                                         @change="updateReasonField($event)"
                                     >
@@ -199,7 +203,7 @@ function updateReasonField(value: string): void {
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="black" block @click="isOpen = false">
+                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

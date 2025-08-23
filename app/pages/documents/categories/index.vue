@@ -13,9 +13,7 @@ definePageMeta({
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel grow>
-            <CategoryList />
-        </UDashboardPanel>
-    </UDashboardPage>
+    <UDashboardPanel>
+        <CategoryList />
+    </UDashboardPanel>
 </template>

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
@@ -178,7 +178,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UForm class="flex flex-col gap-y-2" :state="state" :schema="schema" @submit="onSubmitThrottle">
-        <UFormGroup
+        <UFormField
             class="flex flex-1 flex-col"
             :label="$t('common.mail')"
             :description="
@@ -187,12 +187,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             "
         >
             <div class="flex w-full flex-1 flex-col gap-1 sm:flex-row">
-                <UFormGroup class="flex-1" name="email">
+                <UFormField class="flex-1" name="email">
                     <USelectMenu
                         v-if="proposals?.emails && proposals.emails.length > 0"
                         v-model="state.email"
                         class="flex-1"
-                        :options="proposals?.emails"
+                        :items="proposals?.emails"
                         :disabled="disabled"
                     >
                         <template #empty>
@@ -207,16 +207,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         :placeholder="$t('common.mail')"
                         :disabled="disabled"
                     />
-                </UFormGroup>
+                </UFormField>
 
                 <span class="flex-initial font-semibold">@</span>
 
-                <UFormGroup class="flex-1" name="domain">
+                <UFormField class="flex-1" name="domain">
                     <USelectMenu
                         v-if="proposals?.domains && proposals.domains.length > 1"
                         v-model="state.domain"
                         class="flex-1"
-                        :options="proposals?.domains"
+                        :items="proposals?.domains"
                         :disabled="disabled"
                     >
                         <template #empty>
@@ -231,23 +231,23 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         :placeholder="$t('common.mail')"
                         disabled
                     />
-                </UFormGroup>
+                </UFormField>
             </div>
-        </UFormGroup>
+        </UFormField>
 
-        <UFormGroup v-if="!hideLabel" name="label" :label="$t('common.label')">
+        <UFormField v-if="!hideLabel" name="label" :label="$t('common.label')">
             <UInput v-model="state.label" type="text" :disabled="disabled" />
-        </UFormGroup>
+        </UFormField>
 
-        <UFormGroup
+        <UFormField
             v-if="modelValue?.id !== undefined && (isSuperuser || state.deactivated)"
             name="disabled"
             :label="$t('common.disabled')"
         >
-            <UToggle v-model="state.deactivated" :disabled="disabled" />
-        </UFormGroup>
+            <USwitch v-model="state.deactivated" :disabled="disabled" />
+        </UFormField>
 
-        <UFormGroup v-if="!personalEmail" name="access" :label="$t('common.access')">
+        <UFormField v-if="!personalEmail" name="access" :label="$t('common.access')">
             <AccessManager
                 v-model:jobs="state.access!.jobs"
                 v-model:users="state.access!.users"
@@ -262,9 +262,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 :disabled="disabled"
                 default-access-type="job"
             />
-        </UFormGroup>
+        </UFormField>
 
-        <UFormGroup>
+        <UFormField>
             <DataErrorBlock
                 v-if="modelValue?.deactivated"
                 :title="$t('errors.MailerService.ErrEmailDisabled.title')"
@@ -277,6 +277,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 block
                 :label="modelValue?.id !== undefined ? $t('common.update') : $t('common.create')"
             />
-        </UFormGroup>
+        </UFormField>
     </UForm>
 </template>

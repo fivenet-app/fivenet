@@ -23,9 +23,9 @@ const { t } = useI18n();
 
 const { can } = useAuth();
 
-const modal = useModal();
+const modal = useOverlay();
 
-const slideover = useSlideover();
+const slideover = useOverlay();
 
 const completorStore = useCompletorStore();
 
@@ -166,7 +166,7 @@ const columns = [
         <template #default>
             <UForm class="w-full" :schema="schema" :state="query" @submit="refresh()">
                 <div class="flex flex-row gap-2">
-                    <UFormGroup v-if="hideUserSearch !== true" class="flex-1" name="user" :label="$t('common.search')">
+                    <UFormField v-if="hideUserSearch !== true" class="flex-1" name="user" :label="$t('common.search')">
                         <ClientOnly>
                             <USelectMenu
                                 ref="input"
@@ -190,12 +190,12 @@ const columns = [
                                 :placeholder="$t('common.colleague')"
                                 trailing
                                 leading-icon="i-mdi-search"
-                                value-attribute="userId"
+                                value-key="userId"
                                 @keydown.esc="$event.target.blur()"
                             >
-                                <template #label="{ selected }">
-                                    <span v-if="selected" class="truncate">
-                                        {{ userToLabel(selected) }}
+                                <template #item-label="{ item }">
+                                    <span v-if="item" class="truncate">
+                                        {{ userToLabel(item) }}
                                     </span>
                                 </template>
 
@@ -212,21 +212,21 @@ const columns = [
                                 </template>
                             </USelectMenu>
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup class="flex-1" name="types" :label="$t('common.type')">
+                    <UFormField class="flex-1" name="types" :label="$t('common.type')">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="query.types"
                                 multiple
                                 nullable
-                                :options="availableTypes"
-                                value-attribute="status"
+                                :items="availableTypes"
+                                value-key="status"
                                 :placeholder="$t('common.na')"
                                 :searchable-placeholder="$t('common.search_field')"
                                 @keydown.esc="$event.target.blur()"
                             >
-                                <template #label>
+                                <template #item-label>
                                     {{ $t('common.selected', query.types.length) }}
                                 </template>
 
@@ -243,35 +243,35 @@ const columns = [
                                 <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
                             </USelectMenu>
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup class="flex-initial" name="id" :label="$t('common.id')">
+                    <UFormField class="flex-initial" name="id" :label="$t('common.id')">
                         <UInput v-model="query.id" type="text" name="id" :placeholder="$t('common.id')" />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup
+                    <UFormField
                         class="flex flex-initial flex-col"
                         name="showExpired"
                         :label="$t('components.jobs.conduct.List.show_expired')"
                         :ui="{ container: 'flex-1 flex' }"
                     >
                         <div class="flex flex-1 items-center">
-                            <UToggle v-model="query.showExpired">
+                            <USwitch v-model="query.showExpired">
                                 <span class="sr-only">
                                     {{ $t('components.jobs.conduct.List.show_expired') }}
                                 </span>
-                            </UToggle>
+                            </USwitch>
                         </div>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup
+                    <UFormField
                         v-if="can('jobs.ConductService/CreateConductEntry').value"
                         class="flex-initial"
                         :label="$t('common.create')"
                     >
                         <UButton
                             trailing-icon="i-mdi-plus"
-                            color="gray"
+                            color="neutral"
                             truncate
                             @click="
                                 modal.open(ConductCreateOrUpdateModal, {
@@ -282,7 +282,7 @@ const columns = [
                         >
                             {{ $t('common.create') }}
                         </UButton>
-                    </UFormGroup>
+                    </UFormField>
                 </div>
             </UForm>
         </template>

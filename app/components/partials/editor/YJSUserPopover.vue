@@ -11,17 +11,17 @@ const users = computed(() => {
 </script>
 
 <template>
-    <UPopover v-if="awareness" :popper="{ placement: 'top' }" :disabled="users.length === 0">
+    <UPopover v-if="awareness" :disabled="users.length === 0">
         <UButton
             :class="users.length === 0 && 'cursor-not-allowed'"
-            color="gray"
+            color="neutral"
             variant="link"
             trailing-icon="i-heroicons-chevron-down-20-solid"
         >
             {{ users.length }} {{ $t('common.user', users.length) }}
         </UButton>
 
-        <template #panel>
+        <template #content>
             <div class="p-4">
                 <ul class="grid grid-cols-2 gap-2">
                     <li
@@ -29,12 +29,7 @@ const users = computed(() => {
                         :key="idx"
                         class="inline-flex items-center gap-1"
                     >
-                        <UBadge
-                            class="shrink-0"
-                            :style="{ backgroundColor: user.color }"
-                            :ui="{ rounded: 'rounded-full' }"
-                            size="lg"
-                        />
+                        <UBadge class="shrink-0" :style="{ backgroundColor: user.color }" size="lg" />
                         <span>
                             {{ user.name }}
                         </span>

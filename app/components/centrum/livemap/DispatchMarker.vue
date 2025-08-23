@@ -30,7 +30,7 @@ const emit = defineEmits<{
     (e: 'selected', dsp: Dispatch): void;
 }>();
 
-const modal = useModal();
+const modal = useOverlay();
 
 const { goto } = useLivemapStore();
 
@@ -61,7 +61,7 @@ const zIndexOffset = computed(() => calculateDispatchZIndexOffset(props.dispatch
         <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">
             <div class="flex flex-col items-center uppercase">
                 <span
-                    class="inset-0 whitespace-nowrap rounded-md border border-black/20 bg-neutral-50 bg-clip-padding text-black hover:bg-[#f4f4f4]"
+                    class="inset-0 rounded-md border border-black/20 bg-neutral-50 bg-clip-padding whitespace-nowrap text-black hover:bg-[#f4f4f4]"
                 >
                     DSP-{{ dispatch.id }}
                 </span>
@@ -71,7 +71,7 @@ const zIndexOffset = computed(() => calculateDispatchZIndexOffset(props.dispatch
 
         <LPopup class="min-w-[175px]" :options="{ closeButton: false }">
             <UCard
-                class="-my-[13px] -ml-[20px] -mr-[24px] flex min-w-[200px] flex-col"
+                class="-my-[13px] -mr-[24px] -ml-[20px] flex min-w-[200px] flex-col"
                 :ui="{ body: { padding: 'px-2 py-2 sm:px-4 sm:p-2' } }"
             >
                 <template #header>
@@ -80,7 +80,6 @@ const zIndexOffset = computed(() => calculateDispatchZIndexOffset(props.dispatch
                             v-if="dispatch?.x !== undefined && dispatch?.y !== undefined"
                             variant="link"
                             icon="i-mdi-map-marker"
-                            :padded="false"
                             @click="goto({ x: dispatch?.x, y: dispatch?.y })"
                         >
                             <span class="truncate">
@@ -88,7 +87,7 @@ const zIndexOffset = computed(() => calculateDispatchZIndexOffset(props.dispatch
                             </span>
                         </UButton>
 
-                        <UButton variant="link" icon="i-mdi-car-emergency" :padded="false" @click="selected(dispatch.id)">
+                        <UButton variant="link" icon="i-mdi-car-emergency" @click="selected(dispatch.id)">
                             <span class="truncate">
                                 {{ $t('common.detail', 2) }}
                             </span>
@@ -99,7 +98,6 @@ const zIndexOffset = computed(() => calculateDispatchZIndexOffset(props.dispatch
                             class="truncate"
                             icon="i-mdi-account-multiple-plus"
                             variant="link"
-                            :padded="false"
                             truncate
                             @click="
                                 modal.open(DispatchAssignModal, {
@@ -115,7 +113,6 @@ const zIndexOffset = computed(() => calculateDispatchZIndexOffset(props.dispatch
                             class="text-left"
                             icon="i-mdi-plus"
                             variant="link"
-                            :padded="false"
                             truncate
                             @click="selfAssign(dispatch.id)"
                         >
@@ -130,7 +127,6 @@ const zIndexOffset = computed(() => calculateDispatchZIndexOffset(props.dispatch
                         class="font-semibold"
                         :label="`DSP-${dispatch.id}`"
                         variant="link"
-                        :padded="false"
                         @click="selected(dispatch.id)"
                     />
                 </p>

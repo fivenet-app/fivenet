@@ -48,7 +48,7 @@ const selectedTemplate = ref<Template | undefined>(undefined);
             v-if="!selectedTemplate"
             v-model="selectedTemplate"
             class="min-w-48"
-            :options="templates?.templates"
+            :items="templates?.templates"
             option-attribute="title"
             by="id"
             searchable

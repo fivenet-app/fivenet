@@ -48,7 +48,7 @@ async function sendTestNotifications(): Promise<void> {
                 actions: [
                     {
                         label: { key: 'common.click_here' },
-                        click: () => alert('Test was successful!'),
+                        onClick: () => alert('Test was successful!'),
                     },
                 ],
             });
@@ -68,7 +68,7 @@ function triggerErrorPage(): void {
     showError(new Error('You pressed the trigger error page button'));
 }
 
-function setLogLevel(): void {
+function toggleLogLevel(): void {
     setDefaultLogLevel(getDefaultLogLevel() !== LogLevels.debug ? LogLevels.debug : LogLevels.warn);
     console.warn('Log Level set to', getDefaultLogLevel() === 4 ? 'DEBUG' : 'WARN');
 }
@@ -79,135 +79,133 @@ const version = APP_VERSION;
 </script>
 
 <template>
-    <UDashboardPanelContent>
-        <UDashboardSection :title="$t('components.debug_info.title')" :description="$t('components.debug_info.subtitle')">
-            <UFormGroup
-                class="grid grid-cols-2 items-center gap-2"
-                name="version"
-                :label="$t('components.debug_info.version')"
-                :ui="{ container: '' }"
-            >
-                <div class="inline-flex w-full justify-between">
-                    <span> {{ version }}/ {{ settings.version }} </span>
-                    <CopyToClipboardButton :value="`${version}/ ${settings.version}`" />
-                </div>
-            </UFormGroup>
+    <UPageCard :title="$t('components.debug_info.title')" :description="$t('components.debug_info.subtitle')">
+        <UFormField
+            class="grid grid-cols-2 items-center gap-2"
+            name="version"
+            :label="$t('components.debug_info.version')"
+            :ui="{ container: '' }"
+        >
+            <div class="inline-flex w-full justify-between">
+                <span> {{ version }}/ {{ settings.version }} </span>
+                <CopyToClipboardButton :value="`${version}/ ${settings.version}`" />
+            </div>
+        </UFormField>
 
-            <UFormGroup
-                v-if="activeChar"
-                class="grid grid-cols-2 items-center gap-2"
-                name="activeCharId"
-                :label="$t('components.debug_info.active_char_id')"
-                :ui="{ container: '' }"
-            >
-                <div class="inline-flex w-full justify-between">
-                    <span>
-                        {{ activeChar.userId }}
-                    </span>
-                    <CopyToClipboardButton :value="activeChar.userId" />
-                </div>
-            </UFormGroup>
+        <UFormField
+            v-if="activeChar"
+            class="grid grid-cols-2 items-center gap-2"
+            name="activeCharId"
+            :label="$t('components.debug_info.active_char_id')"
+            :ui="{ container: '' }"
+        >
+            <div class="inline-flex w-full justify-between">
+                <span>
+                    {{ activeChar.userId }}
+                </span>
+                <CopyToClipboardButton :value="activeChar.userId" />
+            </div>
+        </UFormField>
 
-            <UFormGroup
-                v-if="activeChar"
-                class="grid grid-cols-2 items-center gap-2"
-                name="activeCharJob"
-                :label="$t('common.job')"
-                :ui="{ container: '' }"
-            >
-                <div class="inline-flex w-full justify-between">
-                    <span>{{ activeChar.job }} ({{ $t('common.rank') }}: {{ activeChar.jobGrade }})</span>
-                    <CopyToClipboardButton :value="`${activeChar.job} (${$t('common.rank')}: ${activeChar.jobGrade})`" />
-                </div>
-            </UFormGroup>
+        <UFormField
+            v-if="activeChar"
+            class="grid grid-cols-2 items-center gap-2"
+            name="activeCharJob"
+            :label="$t('common.job')"
+            :ui="{ container: '' }"
+        >
+            <div class="inline-flex w-full justify-between">
+                <span>{{ activeChar.job }} ({{ $t('common.rank') }}: {{ activeChar.jobGrade }})</span>
+                <CopyToClipboardButton :value="`${activeChar.job} (${$t('common.rank')}: ${activeChar.jobGrade})`" />
+            </div>
+        </UFormField>
 
-            <UFormGroup
-                v-if="sessionExpiration"
-                class="grid grid-cols-2 items-center gap-2"
-                name="sessionExpiration"
-                :label="$t('components.debug_info.access_token_expiration')"
-                :ui="{ container: '' }"
-            >
-                <GenericTime :value="sessionExpiration" ago />
-                (<GenericTime :value="sessionExpiration" type="long" />)
-            </UFormGroup>
+        <UFormField
+            v-if="sessionExpiration"
+            class="grid grid-cols-2 items-center gap-2"
+            name="sessionExpiration"
+            :label="$t('components.debug_info.access_token_expiration')"
+            :ui="{ container: '' }"
+        >
+            <GenericTime :value="sessionExpiration" ago />
+            (<GenericTime :value="sessionExpiration" type="long" />)
+        </UFormField>
 
-            <UFormGroup
-                class="grid grid-cols-2 items-center gap-2"
-                name="nuiInfo"
-                :label="$t('components.debug_info.nui_info')"
-                :ui="{ container: '' }"
-            >
-                {{ settings.nuiEnabled ? $t('common.enabled') : $t('common.disabled') }}:
-                {{ settings.nuiResourceName ?? $t('common.na') }}
-            </UFormGroup>
+        <UFormField
+            class="grid grid-cols-2 items-center gap-2"
+            name="nuiInfo"
+            :label="$t('components.debug_info.nui_info')"
+            :ui="{ container: '' }"
+        >
+            {{ settings.nuiEnabled ? $t('common.enabled') : $t('common.disabled') }}:
+            {{ settings.nuiResourceName ?? $t('common.na') }}
+        </UFormField>
 
-            <UFormGroup
-                class="grid grid-cols-2 items-center gap-2"
-                name="status"
-                :label="$t('common.status')"
-                :ui="{ container: '' }"
-            >
-                {{ $t('common.status') }}: <code>{{ webSocket.status.value }}</code>
-            </UFormGroup>
+        <UFormField
+            class="grid grid-cols-2 items-center gap-2"
+            name="status"
+            :label="$t('common.status')"
+            :ui="{ container: '' }"
+        >
+            {{ $t('common.status') }}: <code>{{ webSocket.status.value }}</code>
+        </UFormField>
 
-            <UFormGroup
-                class="grid grid-cols-2 items-center gap-2"
-                name="debugFunctions"
-                :label="$t('components.debug_info.debug_functions')"
-                :ui="{ container: '' }"
-            >
-                <UButtonGroup class="flex w-full break-words" orientation="vertical">
-                    <UButton
-                        block
-                        @click="
-                            clipboardStore.clear();
-                            searchesStore.clear();
-                        "
-                    >
-                        <span>{{ $t('components.debug_info.reset_clipboard') }}</span>
-                    </UButton>
-                    <UButton block @click="resetLocalStorage()">
-                        <span>{{ $t('components.debug_info.reset_local_storage') }}</span>
-                    </UButton>
-                    <UButton block color="error" external to="/api/clear-site-data">
-                        <span>{{ $t('components.debug_info.factory_reset') }}</span>
-                    </UButton>
-                    <UButton block color="gray" @click="sendTestNotifications">
-                        <span>{{ $t('components.debug_info.test_notifications') }}</span>
-                    </UButton>
-                    <UButton block color="gray" @click="triggerBannerMessage">
-                        <span>{{ $t('components.debug_info.trigger_banner_message') }}</span>
-                    </UButton>
-                    <UButton block color="gray" @click="triggerErrorPage">
-                        <span>{{ $t('components.debug_info.trigger_error') }}</span>
-                    </UButton>
-                    <UButton v-if="isDevEnv || isSuperuser" block color="white" @click="setLogLevel">
-                        <span>{{ $t('components.debug_info.toggle_log_level') }}</span>
-                    </UButton>
-                </UButtonGroup>
-            </UFormGroup>
-
-            <UFormGroup
-                class="grid grid-cols-2 items-center gap-2"
-                name="permissions"
-                :label="$t('components.debug_info.perms')"
-                :ui="{ container: '' }"
-            >
-                <p v-if="!activeChar">
-                    {{ $t('components.debug_info.no_char_selected') }}
-                </p>
-                <UAccordion
-                    v-else
-                    variant="soft"
-                    :items="[{ label: $t('components.debug_info.perms'), slot: 'perms', icon: 'i-mdi-key' }]"
-                    :ui="{ wrapper: 'flex flex-col w-full' }"
+        <UFormField
+            class="grid grid-cols-2 items-center gap-2"
+            name="debugFunctions"
+            :label="$t('components.debug_info.debug_functions')"
+            :ui="{ container: '' }"
+        >
+            <UButtonGroup class="flex w-full break-words" orientation="vertical">
+                <UButton
+                    block
+                    @click="
+                        clipboardStore.clear();
+                        searchesStore.clear();
+                    "
                 >
-                    <template #perms>
-                        <PermList :permissions="permissions" :attributes="attributes" disabled />
-                    </template>
-                </UAccordion>
-            </UFormGroup>
-        </UDashboardSection>
-    </UDashboardPanelContent>
+                    <span>{{ $t('components.debug_info.reset_clipboard') }}</span>
+                </UButton>
+                <UButton block @click="() => resetLocalStorage()">
+                    <span>{{ $t('components.debug_info.reset_local_storage') }}</span>
+                </UButton>
+                <UButton block color="error" external to="/api/clear-site-data">
+                    <span>{{ $t('components.debug_info.factory_reset') }}</span>
+                </UButton>
+                <UButton block color="neutral" @click="() => sendTestNotifications()">
+                    <span>{{ $t('components.debug_info.test_notifications') }}</span>
+                </UButton>
+                <UButton block color="neutral" @click="() => triggerBannerMessage()">
+                    <span>{{ $t('components.debug_info.trigger_banner_message') }}</span>
+                </UButton>
+                <UButton block color="neutral" @click="() => triggerErrorPage()">
+                    <span>{{ $t('components.debug_info.trigger_error') }}</span>
+                </UButton>
+                <UButton v-if="isDevEnv || isSuperuser" block color="neutral" @click="() => toggleLogLevel()">
+                    <span>{{ $t('components.debug_info.toggle_log_level') }}</span>
+                </UButton>
+            </UButtonGroup>
+        </UFormField>
+
+        <UFormField
+            class="grid grid-cols-2 items-center gap-2"
+            name="permissions"
+            :label="$t('components.debug_info.perms')"
+            :ui="{ container: '' }"
+        >
+            <p v-if="!activeChar">
+                {{ $t('components.debug_info.no_char_selected') }}
+            </p>
+            <UAccordion
+                v-else
+                variant="soft"
+                :items="[{ label: $t('components.debug_info.perms'), slot: 'perms' as const, icon: 'i-mdi-key' }]"
+                :ui="{ wrapper: 'flex flex-col w-full' }"
+            >
+                <template #perms>
+                    <PermList :permissions="permissions" :attributes="attributes" disabled />
+                </template>
+            </UAccordion>
+        </UFormField>
+    </UPageCard>
 </template>

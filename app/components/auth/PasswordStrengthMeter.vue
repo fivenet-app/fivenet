@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ProgressColor } from '#ui/types';
+import type { ProgressProps } from '@nuxt/ui';
 import { zxcvbn, zxcvbnOptions } from '@zxcvbn-ts/core';
 
 const props = defineProps<{
@@ -13,7 +13,7 @@ zxcvbnOptions.setOptions({
 
 const percent = ref<number>(0);
 const feedback = ref<string | null>('');
-const color = ref<ProgressColor>('base');
+const color = ref<ProgressProps['color']>('neutral');
 
 const result = computed(() => zxcvbn(props.input));
 
@@ -22,7 +22,7 @@ watch(result, () => {
     feedback.value = result.value.feedback.warning;
 
     if (props.input.trimEnd() === '') {
-        color.value = 'base';
+        color.value = 'neutral';
         return;
     }
 
@@ -32,14 +32,14 @@ watch(result, () => {
             color.value = 'error';
             break;
         case 2:
-            color.value = 'amber';
+            color.value = 'warning';
             break;
         case 3:
         case 4:
             color.value = 'success';
             break;
         default:
-            color.value = 'base';
+            color.value = 'neutral';
             break;
     }
 });

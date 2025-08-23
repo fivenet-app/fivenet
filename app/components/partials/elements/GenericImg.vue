@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { NuxtImg } from '#components';
-import type { AvatarSize } from '#ui/types';
+import type { AvatarProps } from '@nuxt/ui';
 import { useSettingsStore } from '~/stores/settings';
 
 const props = withDefaults(
@@ -8,7 +8,7 @@ const props = withDefaults(
         src?: string;
         alt?: string;
         text?: string;
-        size?: AvatarSize;
+        size?: AvatarProps['size'];
         noBlur?: boolean;
         enablePopup?: boolean;
         disableBlurToggle?: boolean;
@@ -60,32 +60,29 @@ const src = computed(() => {
     <UAvatar
         v-if="!src || !enablePopup"
         :class="[visible ? '' : 'blur', imgClass]"
-        :as="NuxtImg"
         :size="size"
         :src="src"
         :alt="alt"
         :text="text"
-        :ui="{ rounded: rounded ? 'rounded-full' : 'rounded' }"
         :img-class="imgClass"
         loading="lazy"
         @click="toggleBlur()"
     />
     <UPopover v-else>
-        <UButton variant="link" :padded="false">
+        <UButton variant="link">
             <UAvatar
                 :class="[visible ? '' : 'blur', imgClass]"
-                :as="NuxtImg"
                 :size="size"
                 :src="src"
                 :alt="alt"
                 :text="text"
-                :ui="{ rounded: rounded ? 'rounded-full' : 'rounded' }"
+                :ui="{ rounded: rounded ? 'rounded-full' : 'rounded-sm' }"
                 :img-class="imgClass"
                 loading="lazy"
             />
         </UButton>
 
-        <template #panel>
+        <template #content>
             <div class="p-4">
                 <NuxtImg
                     class="h-96 max-w-full"

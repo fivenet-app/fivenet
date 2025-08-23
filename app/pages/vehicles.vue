@@ -13,11 +13,13 @@ definePageMeta({
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel grow>
+    <UDashboardPanel>
+        <template #header>
             <UDashboardNavbar :title="$t('pages.vehicles.title')" />
+        </template>
 
+        <template #body>
             <VehicleList />
-        </UDashboardPanel>
-    </UDashboardPage>
+        </template>
+    </UDashboardPanel>
 </template>

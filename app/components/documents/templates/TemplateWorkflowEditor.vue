@@ -19,16 +19,16 @@ const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders
 <template>
     <div class="flex flex-col gap-1">
         <!-- Auto Close -->
-        <UFormGroup name="workflow.autoClose" :label="$t('common.auto_close')">
-            <UToggle v-model="workflow.autoClose.autoClose" />
-        </UFormGroup>
+        <UFormField name="workflow.autoClose" :label="$t('common.auto_close')">
+            <USwitch v-model="workflow.autoClose.autoClose" />
+        </UFormField>
 
-        <UFormGroup
+        <UFormField
             name="workflow.autoClose.autoCloseSettings"
             :description="$t('components.documents.TemplateWorkflowEditor.auto_close.description')"
         >
             <div class="flex items-center gap-1">
-                <UFormGroup name="workflow.autoClose.autoCloseSettings.duration" :label="$t('common.time_ago.day', 2)">
+                <UFormField name="workflow.autoClose.autoCloseSettings.duration" :label="$t('common.time_ago.day', 2)">
                     <UInput
                         v-model="workflow.autoClose.autoCloseSettings.duration"
                         type="number"
@@ -38,12 +38,12 @@ const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders
                         :placeholder="$t('common.duration')"
                     >
                         <template #trailing>
-                            <span class="text-xs text-gray-500 dark:text-gray-400">{{ $t('common.time_ago.day', 2) }}</span>
+                            <span class="text-xs text-muted">{{ $t('common.time_ago.day', 2) }}</span>
                         </template>
                     </UInput>
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup
+                <UFormField
                     class="grid flex-1 grid-cols-1 items-center"
                     name="workflow.autoClose.autoCloseSettings.message"
                     :label="$t('common.message')"
@@ -55,16 +55,16 @@ const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders
                         type="text"
                         :placeholder="$t('common.message')"
                     />
-                </UFormGroup>
+                </UFormField>
             </div>
-        </UFormGroup>
+        </UFormField>
 
         <!-- Reminders -->
-        <UFormGroup name="workflow.reminders.reminder" :label="$t('common.reminder')">
-            <UToggle v-model="workflow.reminders.reminder" />
-        </UFormGroup>
+        <UFormField name="workflow.reminders.reminder" :label="$t('common.reminder')">
+            <USwitch v-model="workflow.reminders.reminder" />
+        </UFormField>
 
-        <UFormGroup
+        <UFormField
             name="workflow.reminders.reminders"
             :label="$t('common.reminder', 2)"
             :description="$t('components.documents.TemplateWorkflowEditor.reminder.description')"
@@ -87,18 +87,12 @@ const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders
                             </UTooltip>
 
                             <UButtonGroup>
-                                <UButton size="xs" variant="link" :padded="false" icon="i-mdi-arrow-up" @click="moveUp(idx)" />
-                                <UButton
-                                    size="xs"
-                                    variant="link"
-                                    :padded="false"
-                                    icon="i-mdi-arrow-down"
-                                    @click="moveDown(idx)"
-                                />
+                                <UButton size="xs" variant="link" icon="i-mdi-arrow-up" @click="moveUp(idx)" />
+                                <UButton size="xs" variant="link" icon="i-mdi-arrow-down" @click="moveDown(idx)" />
                             </UButtonGroup>
                         </div>
 
-                        <UFormGroup
+                        <UFormField
                             class="grid grid-cols-1 items-center"
                             :name="`workflow.reminders.reminders.${idx}.duration`"
                             :label="$t('common.time_ago.day', 2)"
@@ -113,14 +107,12 @@ const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders
                                 :placeholder="$t('common.duration')"
                             >
                                 <template #trailing>
-                                    <span class="text-xs text-gray-500 dark:text-gray-400">{{
-                                        $t('common.time_ago.day', 2)
-                                    }}</span>
+                                    <span class="text-xs text-muted">{{ $t('common.time_ago.day', 2) }}</span>
                                 </template>
                             </UInput>
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup
+                        <UFormField
                             class="grid flex-1 grid-cols-1 items-center"
                             :name="`workflow.reminders.reminders.${idx}.message`"
                             :label="$t('common.message')"
@@ -132,22 +124,17 @@ const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders
                                 type="text"
                                 :placeholder="$t('common.message')"
                             />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup label="&nbsp;">
-                            <UButton
-                                :ui="{ rounded: 'rounded-full' }"
-                                icon="i-mdi-close"
-                                @click="workflow.reminders.reminderSettings.reminders.splice(idx, 1)"
-                            />
-                        </UFormGroup>
+                        <UFormField label="&nbsp;">
+                            <UButton icon="i-mdi-close" @click="workflow.reminders.reminderSettings.reminders.splice(idx, 1)" />
+                        </UFormField>
                     </div>
                 </VueDraggable>
             </div>
 
             <UButton
                 :class="workflow.reminders.reminderSettings.reminders.length ? 'mt-2' : ''"
-                :ui="{ rounded: 'rounded-full' }"
                 icon="i-mdi-plus"
                 :disabled="workflow.reminders.reminderSettings.reminders.length >= 3"
                 @click="
@@ -157,14 +144,14 @@ const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders
                     })
                 "
             />
-        </UFormGroup>
+        </UFormField>
 
-        <UFormGroup
+        <UFormField
             name="workflow.reminders.maxReminderCount"
             :label="$t('components.documents.TemplateWorkflowEditor.max_reminder_count.title')"
             :description="$t('components.documents.TemplateWorkflowEditor.max_reminder_count.description')"
         >
             <UInput v-model="workflow.reminders.reminderSettings.maxReminderCount" type="number" />
-        </UFormGroup>
+        </UFormField>
     </div>
 </template>

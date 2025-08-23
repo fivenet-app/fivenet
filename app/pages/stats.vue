@@ -105,57 +105,59 @@ onBeforeMount(async () => {
 <template>
     <UPage>
         <UDashboardPanel>
-            <div class="flex flex-col justify-between">
-                <div>
-                    <div class="relative isolate px-6 py-20 lg:px-8">
-                        <div
-                            class="hero absolute inset-0 z-[-1] [mask-image:radial-gradient(100%_100%_at_top,white,transparent)]"
-                        />
+            <template #body>
+                <div class="flex flex-col justify-between">
+                    <div>
+                        <div class="relative isolate px-6 py-20 lg:px-8">
+                            <div
+                                class="hero absolute inset-0 z-[-1] mask-[radial-gradient(100%_100%_at_top,white,transparent)]"
+                            />
 
-                        <div class="mx-auto max-w-2xl text-center">
-                            <h2 class="text-4xl font-bold tracking-tight sm:text-6xl">
-                                {{ $t('pages.stats.title') }}
-                            </h2>
-                            <p class="mt-6 text-lg leading-8">
-                                {{ $t('pages.stats.subtitle') }}
-                            </p>
+                            <div class="mx-auto max-w-2xl text-center">
+                                <h2 class="text-4xl font-bold tracking-tight sm:text-6xl">
+                                    {{ $t('pages.stats.title') }}
+                                </h2>
+                                <p class="mt-6 text-lg leading-8">
+                                    {{ $t('pages.stats.subtitle') }}
+                                </p>
+                            </div>
                         </div>
-                    </div>
 
-                    <ULandingSection>
-                        <UPageGrid>
-                            <ULandingCard
-                                v-for="(stat, key) in stats?.stats"
-                                :key="key"
-                                :title="$t(`pages.stats.stats.${key}`)"
-                                :icon="stat?.icon"
-                            >
-                                <template #description>
-                                    <p
-                                        class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white"
-                                    >
-                                        <USkeleton
-                                            v-if="isRequestPending(status) || stat?.value === undefined"
-                                            class="h-8 w-[175px]"
-                                        />
-                                        <ClientOnly v-else>
-                                            <CountUp
-                                                :start-val="0"
-                                                :end-val="stat.value"
-                                                :options="{ enableScrollSpy: true, scrollSpyOnce: true }"
+                        <UPageSection>
+                            <UPageGrid>
+                                <UPageCard
+                                    v-for="(stat, key) in stats?.stats"
+                                    :key="key"
+                                    :title="$t(`pages.stats.stats.${key}`)"
+                                    :icon="stat?.icon"
+                                >
+                                    <template #description>
+                                        <p
+                                            class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-highlighted"
+                                        >
+                                            <USkeleton
+                                                v-if="isRequestPending(status) || stat?.value === undefined"
+                                                class="h-8 w-[175px]"
                                             />
+                                            <ClientOnly v-else>
+                                                <CountUp
+                                                    :start-val="0"
+                                                    :end-val="stat.value"
+                                                    :options="{ enableScrollSpy: true, scrollSpyOnce: true }"
+                                                />
 
-                                            <span v-if="stat.unit !== undefined">
-                                                {{ $t(stat.unit ?? 'common.time_ago.week', 2) }}
-                                            </span>
-                                        </ClientOnly>
-                                    </p>
-                                </template>
-                            </ULandingCard>
-                        </UPageGrid>
-                    </ULandingSection>
+                                                <span v-if="stat.unit !== undefined">
+                                                    {{ $t(stat.unit ?? 'common.time_ago.week', 2) }}
+                                                </span>
+                                            </ClientOnly>
+                                        </p>
+                                    </template>
+                                </UPageCard>
+                            </UPageGrid>
+                        </UPageSection>
+                    </div>
                 </div>
-            </div>
+            </template>
         </UDashboardPanel>
     </UPage>
 </template>

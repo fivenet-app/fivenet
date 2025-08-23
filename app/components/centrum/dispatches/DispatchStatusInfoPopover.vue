@@ -8,7 +8,7 @@ const props = defineProps<{
     status: DispatchStatus | undefined;
 }>();
 
-const modal = useModal();
+const modal = useOverlay();
 
 const centrumStore = useCentrumStore();
 
@@ -25,19 +25,13 @@ const dispatchStatusColor = computed(() => dispatchStatusToBGColor(props.status?
         </span>
     </template>
     <UPopover v-else>
-        <UButton
-            class="inline-flex items-center p-0.5"
-            variant="outline"
-            :padded="false"
-            size="xs"
-            trailing-icon="i-mdi-chevron-down"
-        >
+        <UButton class="inline-flex items-center p-0.5" variant="outline" size="xs" trailing-icon="i-mdi-chevron-down">
             <slot name="before" />
             <span> DSP-{{ status.dispatchId }} </span>
             <slot name="after" />
         </UButton>
 
-        <template #panel>
+        <template #content>
             <div class="inline-flex min-w-48 flex-col gap-1 p-4">
                 <div class="flex items-center gap-2">
                     <UTooltip :text="$t('common.detail', 2)">
@@ -55,13 +49,13 @@ const dispatchStatusColor = computed(() => dispatchStatusToBGColor(props.status?
                     </UTooltip>
                 </div>
 
-                <p class="text-base font-semibold leading-none text-gray-900 dark:text-white">DSP-{{ status.dispatchId }}</p>
+                <p class="text-highlighted text-base font-semibold leading-none">DSP-{{ status.dispatchId }}</p>
 
-                <UBadge class="rounded font-semibold" :class="dispatchStatusColor" size="xs">
+                <UBadge class="rounded-sm font-semibold" :class="dispatchStatusColor" size="xs">
                     {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[status.status ?? 0]}`) }}
                 </UBadge>
 
-                <div v-if="dispatch" class="text-gray-900 dark:text-white">
+                <div v-if="dispatch" class="text-highlighted">
                     <p class="text-sm font-medium leading-none">
                         {{ $t('common.unit', 2) }}
                     </p>

@@ -24,7 +24,7 @@ const { t } = useI18n();
 
 const { can } = useAuth();
 
-const slideover = useSlideover();
+const slideover = useOverlay();
 
 const settingsStore = useSettingsStore();
 const { nuiEnabled } = storeToRefs(settingsStore);

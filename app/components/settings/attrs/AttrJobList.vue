@@ -112,17 +112,17 @@ const onSubmitThrottle = useThrottleFn(async () => {
         <div class="mb-2">
             <UForm v-if="can('settings.SettingsService/CreateRole').value" :schema="schema" :state="state" @submit="refresh()">
                 <div class="flex flex-row gap-2">
-                    <UFormGroup class="flex-1" name="grade" :label="$t('common.job')">
+                    <UFormField class="flex-1" name="grade" :label="$t('common.job')">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="state.job"
-                                :options="availableJobs"
+                                :items="availableJobs"
                                 searchable
                                 by="label"
                                 :searchable-placeholder="$t('common.search_field')"
                                 :search-attributes="['label', 'name']"
                             >
-                                <template #label>
+                                <template #item-label>
                                     <template v-if="state.job">
                                         <span class="truncate">{{ state.job?.label }} ({{ state.job.name }})</span>
                                     </template>
@@ -133,9 +133,9 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                 </template>
                             </USelectMenu>
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup name="submit" label="&nbsp;">
+                    <UFormField name="submit" label="&nbsp;">
                         <UButton
                             :disabled="state.job === undefined || !canSubmit"
                             :loading="!canSubmit"
@@ -144,7 +144,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         >
                             {{ $t('common.create') }}
                         </UButton>
-                    </UFormGroup>
+                    </UFormField>
                 </div>
             </UForm>
 
@@ -166,7 +166,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     }"
                 >
                     <template #job-data="{ row: role }">
-                        <div class="text-gray-900 dark:text-white">{{ role.jobLabel }} ({{ role.job }})</div>
+                        <div class="text-highlighted">{{ role.jobLabel }} ({{ role.job }})</div>
                     </template>
 
                     <template #actions-data="{ row: role }">

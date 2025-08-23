@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { FileOutlineIcon } from 'mdi-vue3';
 import { z } from 'zod';
 import SingleHint from '~/components/SingleHint.vue';
@@ -336,14 +336,16 @@ onBeforeMount(async () => {
 
 const items = [
     {
-        slot: 'details',
+        slot: 'details' as const,
         label: t('common.detail', 2),
         icon: 'i-mdi-details',
+        value: 'details',
     },
     {
-        slot: 'content',
+        slot: 'content' as const,
         label: t('common.content'),
         icon: 'i-mdi-file-edit',
+        value: 'content',
     },
 ];
 
@@ -352,16 +354,11 @@ const router = useRouter();
 
 const selectedTab = computed({
     get() {
-        const index = items.findIndex((item) => item.slot === route.query.tab);
-        if (index === -1) {
-            return 0;
-        }
-
-        return index;
+        return (route.query.tab as string) || 'details';
     },
-    set(value) {
+    set(tab) {
         // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
+        router.push({ query: { tab: tab }, hash: '#control-active-item' });
     },
 });
 
@@ -370,7 +367,7 @@ const categoriesLoading = ref(false);
 
 <template>
     <UForm
-        class="min-h-dscreen flex w-full max-w-full flex-1 flex-col overflow-y-auto"
+        class="flex min-h-dvh w-full max-w-full flex-1 flex-col overflow-y-auto"
         :schema="schema"
         :state="state"
         @submit="onSubmitThrottle"
@@ -378,7 +375,7 @@ const categoriesLoading = ref(false);
         <UDashboardNavbar :title="$t('pages.documents.templates.edit.title')">
             <template #right>
                 <UButton
-                    color="black"
+                    color="neutral"
                     icon="i-mdi-arrow-left"
                     :to="templateId ? { name: 'documents-templates-id', params: { id: templateId } } : `/documents/templates`"
                 >
@@ -402,13 +399,12 @@ const categoriesLoading = ref(false);
                     wrapper: 'space-y-0 overflow-y-hidden',
                     container: 'flex flex-1 flex-col overflow-y-hidden',
                     base: 'flex flex-1 flex-col overflow-y-hidden',
-                    list: { rounded: '' },
                 }"
             >
                 <template #details>
                     <UContainer class="mt-2 w-full overflow-y-scroll">
                         <div>
-                            <UFormGroup name="weight" :label="`${$t('common.template', 1)} ${$t('common.weight')}`">
+                            <UFormField name="weight" :label="`${$t('common.template', 1)} ${$t('common.weight')}`">
                                 <UInput
                                     v-model="state.weight"
                                     type="number"
@@ -417,13 +413,13 @@ const categoriesLoading = ref(false);
                                     :max="999999"
                                     :placeholder="$t('common.weight')"
                                 />
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup name="title" :label="`${$t('common.template')} ${$t('common.title')}`" required>
+                            <UFormField name="title" :label="`${$t('common.template')} ${$t('common.title')}`" required>
                                 <UTextarea v-model="state.title" name="title" :rows="1" :placeholder="$t('common.title')" />
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup
+                            <UFormField
                                 name="description"
                                 :label="`${$t('common.template')} ${$t('common.description')}`"
                                 required
@@ -434,15 +430,15 @@ const categoriesLoading = ref(false);
                                     :rows="4"
                                     :label="$t('common.description')"
                                 />
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup class="flex-1 flex-row" name="color" :label="$t('common.color')" required>
+                            <UFormField class="flex-1 flex-row" name="color" :label="$t('common.color')" required>
                                 <div class="flex flex-1 gap-1">
                                     <ColorPickerTW v-model="state.color" class="flex-1" />
                                 </div>
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup class="flex-1" name="icon" :label="$t('common.icon')">
+                            <UFormField class="flex-1" name="icon" :label="$t('common.icon')">
                                 <div class="flex flex-1 gap-1">
                                     <IconSelectMenu
                                         v-model="state.icon"
@@ -453,7 +449,7 @@ const categoriesLoading = ref(false);
 
                                     <UButton icon="i-mdi-backspace" @click="state.icon = undefined" />
                                 </div>
-                            </UFormGroup>
+                            </UFormField>
                         </div>
 
                         <div class="my-2">
@@ -474,9 +470,9 @@ const categoriesLoading = ref(false);
                         <div class="my-2">
                             <UAccordion
                                 :items="[
-                                    { slot: 'schema', label: $t('common.requirements', 2), icon: 'i-mdi-asterisk' },
+                                    { slot: 'schema' as const, label: $t('common.requirements', 2), icon: 'i-mdi-asterisk' },
                                     {
-                                        slot: 'workflow',
+                                        slot: 'workflow' as const,
                                         label: $t('common.workflow'),
                                         icon: 'i-mdi-reminder',
                                     },
@@ -517,11 +513,11 @@ const categoriesLoading = ref(false);
                             link-target="_blank"
                         />
 
-                        <UFormGroup name="contentTitle" :label="`${$t('common.content')} ${$t('common.title')}`" required>
+                        <UFormField name="contentTitle" :label="`${$t('common.content')} ${$t('common.title')}`" required>
                             <UTextarea v-model="state.contentTitle" name="contentTitle" :rows="2" />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup name="category" :label="$t('common.category', 1)">
+                        <UFormField name="category" :label="$t('common.category', 1)">
                             <ClientOnly>
                                 <UInputMenu
                                     v-model="state.category"
@@ -554,13 +550,13 @@ const categoriesLoading = ref(false);
                                     <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
                                 </UInputMenu>
                             </ClientOnly>
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup name="contentState" :label="`${$t('common.content')} ${$t('common.state')}`">
+                        <UFormField name="contentState" :label="`${$t('common.content')} ${$t('common.state')}`">
                             <UTextarea v-model="state.contentState" name="contentState" :rows="2" />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup
+                        <UFormField
                             class="flex flex-1 flex-col overflow-y-hidden"
                             name="content"
                             :label="`${$t('common.content')} ${$t('common.template')}`"
@@ -570,7 +566,7 @@ const categoriesLoading = ref(false);
                             <ClientOnly>
                                 <TiptapEditor
                                     v-model="state.content"
-                                    class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
+                                    class="max-w-(--breakpoint-xl) mx-auto w-full flex-1 overflow-y-hidden"
                                     :extensions="extensions"
                                 >
                                     <template #toolbar="{ editor }">
@@ -578,7 +574,7 @@ const categoriesLoading = ref(false);
                                     </template>
                                 </TiptapEditor>
                             </ClientOnly>
-                        </UFormGroup>
+                        </UFormField>
                     </UContainer>
                 </template>
             </UTabs>

@@ -4,10 +4,9 @@ const appVersion: string = process.env.COMMIT_REF || 'COMMIT_REF';
 export default defineNuxtConfig({
     telemetry: false,
     ssr: false,
-    extends: ['@nuxt/ui-pro'],
 
     modules: [
-        '@nuxt/ui',
+        '@nuxt/ui-pro',
         '@pinia/nuxt',
         'pinia-plugin-persistedstate/nuxt',
         'nuxt-typed-router',
@@ -44,30 +43,45 @@ export default defineNuxtConfig({
         indexable: false,
     },
 
+    css: ['~/assets/css/main.css'],
+
     ui: {
-        safelistColors: [
-            // Primary - Default
-            'primary',
-            'green',
-            'teal',
-            'cyan',
-            'sky',
-            'blue',
-            'red',
-            'indigo',
-            'violet',
-            // Custom
-            'error',
-            'warn',
-            'info',
-            'success',
-            // Gray Colors
-            'slate',
-            'cool',
-            'zinc',
-            'neutral',
-            'stone',
-        ],
+        theme: {
+            colors: [
+                // Theme colors
+                'primary',
+                'secondary',
+                'success',
+                'info',
+                'warning',
+                'error',
+                // Palette colors
+                'amber',
+                'blue',
+                'cyan',
+                'emerald',
+                'fuchsia',
+                'green',
+                'indigo',
+                'lime',
+                'orange',
+                'pink',
+                'purple',
+                'red',
+                'rose',
+                'sky',
+                'teal',
+                'violet',
+                'white',
+                'yellow',
+                // Gray Colors
+                'gray',
+                'neutral',
+                'slate',
+                'stone',
+                'zinc',
+            ],
+        },
     },
 
     postcss: {
@@ -77,7 +91,7 @@ export default defineNuxtConfig({
     },
 
     uiPro: {
-        routerOptions: false,
+        content: true,
     },
 
     image: {
@@ -85,7 +99,7 @@ export default defineNuxtConfig({
     },
 
     icon: {
-        collections: ['simple-icons', 'mdi', 'flagpack'],
+        collections: ['simple-icons', 'lucide', 'mdi', 'flagpack'],
         provider: 'iconify',
         iconifyApiEndpoint: '/api/icons',
         fallbackToApi: false,

@@ -32,9 +32,9 @@ const props = withDefaults(
 
 const { t } = useI18n();
 
-const modal = useModal();
+const modal = useOverlay();
 
-const slideover = useSlideover();
+const slideover = useOverlay();
 
 const { goto } = useLivemapStore();
 
@@ -113,7 +113,7 @@ const columns = [
 <template>
     <div class="flex h-full flex-1 grow flex-col px-1">
         <div class="flex justify-between">
-            <h2 class="inline-flex flex-1 items-center text-base font-semibold leading-6">
+            <h2 class="inline-flex flex-1 items-center text-base leading-6 font-semibold">
                 {{ $t('common.dispatches') }}
 
                 <UTooltip v-if="showButton" :text="$t('common.archive')">
@@ -121,11 +121,11 @@ const columns = [
                 </UTooltip>
             </h2>
 
-            <UFormGroup class="grid grid-cols-2 items-center gap-2" name="cards" :label="$t('common.card_view')">
+            <UFormField class="grid grid-cols-2 items-center gap-2" name="cards" :label="$t('common.card_view')">
                 <div class="flex flex-1 items-center">
-                    <UToggle v-model="centrum.dispatchListCardStyle" />
+                    <USwitch v-model="centrum.dispatchListCardStyle" />
                 </div>
-            </UFormGroup>
+            </UFormField>
 
             <DispatchStatusBreakdown v-if="dispatches === undefined" class="justify-end font-semibold text-gray-100" />
         </div>
@@ -146,7 +146,6 @@ const columns = [
                         icon: 'i-mdi-car-emergency',
                         label: $t('common.not_found', [$t('common.dispatch', 2)]),
                     }"
-                    :ui="{ th: { padding: 'px-0.5 py-0.5' }, td: { padding: 'px-1 py-0.5' } }"
                 >
                     <template #actions-data="{ row: dispatch }">
                         <div :key="dispatch.id">
@@ -202,7 +201,7 @@ const columns = [
                     </template>
 
                     <template #createdAt-data="{ row: dispatch }">
-                        <span class="text-gray-900 dark:text-white">
+                        <span class="text-highlighted">
                             <GenericTime
                                 :value="dispatch.createdAt"
                                 type="compact"
@@ -338,7 +337,7 @@ const columns = [
                                     </div>
 
                                     <div class="flex flex-1 items-center justify-center gap-2">
-                                        <span class="text-gray-900 dark:text-white">
+                                        <span class="text-highlighted">
                                             <GenericTime
                                                 :value="dispatch.createdAt"
                                                 type="compact"

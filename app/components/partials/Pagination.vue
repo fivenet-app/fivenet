@@ -167,15 +167,15 @@ function onClickNext() {
                 <UButtonGroup v-else>
                     <UButton
                         :label="$t('common.previous')"
-                        color="gray"
+                        color="neutral"
                         icon="i-mdi-chevron-left"
                         :disabled="!canGoFirstOrPrev || isRequestPending(status)"
                         @click="onClickPrev"
                     />
-                    <UButton :label="currentPage.toString()" color="white" disabled />
+                    <UButton :label="currentPage.toString()" color="neutral" disabled />
                     <UButton
                         :label="$t('common.next')"
-                        color="gray"
+                        color="neutral"
                         :disabled="!canGoLastOrNext || isRequestPending(status)"
                         trailing
                         trailing-icon="i-mdi-chevron-right"

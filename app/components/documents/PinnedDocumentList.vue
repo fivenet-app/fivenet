@@ -61,7 +61,7 @@ const editing = ref(false);
     <div class="flex flex-1 flex-col">
         <UDashboardNavbar :title="$t('common.pinned_document', 2)">
             <template #toggle>
-                <UDashboardNavbarToggle class="lg:block 2xl:hidden" />
+                <UDashboardSidebarToggle class="lg:block 2xl:hidden" />
             </template>
 
             <template #right>
@@ -71,7 +71,6 @@ const editing = ref(false);
                 >
                     <UButton
                         variant="link"
-                        :padded="false"
                         :icon="editing ? 'i-mdi-content-save' : 'i-mdi-pencil'"
                         @click="editing = !editing"
                     />
@@ -112,7 +111,6 @@ const editing = ref(false);
                                     class="shrink-0 flex-col text-center"
                                     variant="link"
                                     size="xs"
-                                    :padded="false"
                                     :color="doc.pin?.state && doc.pin?.userId ? 'error' : 'primary'"
                                     @click="togglePin(doc.id, !doc.pin?.userId, true)"
                                 >
@@ -132,7 +130,6 @@ const editing = ref(false);
                                         class="shrink-0 flex-col text-center"
                                         variant="link"
                                         size="xs"
-                                        :padded="false"
                                         :color="doc.pin?.state && doc.pin?.job ? 'error' : 'primary'"
                                         @click="togglePin(doc.id, !doc.pin?.job, false)"
                                     >
@@ -161,7 +158,7 @@ const editing = ref(false);
                                         <DocumentCategoryBadge v-if="document?.category" :category="document?.category" />
                                     </div>
 
-                                    <span class="line-clamp-2 break-words text-left hover:line-clamp-4">{{
+                                    <span class="line-clamp-2 text-left break-words hover:line-clamp-4">{{
                                         document?.title
                                     }}</span>
                                 </template>
@@ -179,7 +176,7 @@ const editing = ref(false);
                                 <template #title>
                                     <IDCopyBadge :id="doc?.id" prefix="DOC" size="xs" disable-tooltip />
 
-                                    <UBadge :label="$t('common.no_access_to_document')" color="red" size="md" />
+                                    <UBadge :label="$t('common.no_access_to_document')" color="error" size="md" />
                                 </template>
                             </DocumentInfoPopover>
                         </div>

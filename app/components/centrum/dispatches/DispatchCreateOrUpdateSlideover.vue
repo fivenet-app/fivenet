@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { useLivemapStore } from '~/stores/livemap';
 import type { Coordinate } from '~/types/livemap';
@@ -17,7 +17,7 @@ const emit = defineEmits<{
 
 const { activeChar } = useAuth();
 
-const { isOpen } = useSlideover();
+const { isOpen } = useOverlay();
 
 const livemapStore = useLivemapStore();
 const { location: storeLocation } = storeToRefs(livemapStore);
@@ -109,11 +109,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 class="flex flex-1 flex-col"
                 :ui="{
                     body: {
-                        base: 'flex-1 h-full max-h-[calc(100dvh-(2*var(--header-height)))] overflow-y-auto',
+                        base: 'flex-1 h-full max-h-[calc(100dvh-(2*var(--ui-header-height)))] overflow-y-auto',
                         padding: 'px-1 py-2 sm:p-2',
                     },
-                    ring: '',
-                    divide: 'divide-y divide-gray-100 dark:divide-gray-800',
                 }"
             >
                 <template #header>
@@ -124,7 +122,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                         <UButton
                             class="-my-1"
-                            color="gray"
+                            color="neutral"
                             variant="ghost"
                             icon="i-mdi-window-close"
                             @click="
@@ -144,14 +142,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="message">
+                                <UFormField name="message">
                                     <UInput
                                         v-model="state.message"
                                         type="text"
                                         name="message"
                                         :placeholder="$t('common.message')"
                                     />
-                                </UFormGroup>
+                                </UFormField>
                             </dd>
                         </div>
 
@@ -162,14 +160,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="description">
+                                <UFormField name="description">
                                     <UInput
                                         v-model="state.description"
                                         type="text"
                                         name="description"
                                         :placeholder="$t('common.description')"
                                     />
-                                </UFormGroup>
+                                </UFormField>
                             </dd>
                         </div>
 
@@ -180,9 +178,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="anon">
+                                <UFormField name="anon">
                                     <UCheckbox v-model="state.anon" name="anon" :placeholder="$t('common.anon')" />
-                                </UFormGroup>
+                                </UFormField>
                             </dd>
                         </div>
 
@@ -196,7 +194,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="jobs.jobs">
+                                <UFormField name="jobs.jobs">
                                     <USelectMenu
                                         v-model="state.jobs.jobs"
                                         name="jobs.jobs"
@@ -204,17 +202,17 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :placeholder="$t('common.job')"
                                         option-attribute="label"
                                         :search-attributes="['name', 'label']"
-                                        value-attribute="name"
-                                        :options="dispatchTargetJobs"
+                                        value-key="name"
+                                        :items="dispatchTargetJobs"
                                         searchable
                                         searchable-lazy
                                         :searchable-placeholder="$t('common.search_field')"
                                         :disabled="dispatchTargetJobs.length <= 1"
                                     >
-                                        <template #label="{ selected }">
+                                        <template #item-label="{ item }">
                                             <span class="truncate">{{
-                                                selected.length > 0
-                                                    ? selected.map((j: { label: string }) => j.label).join(', ')
+                                                item.length > 0
+                                                    ? item.map((j: { label: string }) => j.label).join(', ')
                                                     : '&nbsp;'
                                             }}</span>
                                         </template>
@@ -225,7 +223,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                                         <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
                                     </USelectMenu>
-                                </UFormGroup>
+                                </UFormField>
                             </dd>
                         </div>
                     </dl>
@@ -240,7 +238,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <UButton
                             class="flex-1"
                             block
-                            color="black"
+                            color="neutral"
                             @click="
                                 $emit('close');
                                 isOpen = false;

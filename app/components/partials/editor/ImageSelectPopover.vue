@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import type { Editor } from '@tiptap/vue-3';
 import { z } from 'zod';
 import { remoteImageURLToBase64Data } from './helpers';
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const props = withDefaults(
     defineProps<{
@@ -114,16 +114,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UPopover v-model:open="open">
-        <UTooltip :text="$t('components.partials.TiptapEditor.image')" :popper="{ placement: 'top' }">
-            <UButton icon="i-mdi-image" color="gray" variant="ghost" :disabled="disabled" />
+        <UTooltip :text="$t('components.partials.TiptapEditor.image')">
+            <UButton icon="i-mdi-image" color="neutral" variant="ghost" :disabled="disabled" />
         </UTooltip>
 
-        <template #panel>
+        <template #content>
             <div class="p-4">
                 <UButtonGroup class="w-full">
                     <UButton
                         class="flex-1"
-                        color="black"
+                        color="neutral"
                         block
                         icon="i-mdi-images"
                         :label="$t('components.partials.TiptapEditor.file_list')"
@@ -133,12 +133,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     />
                 </UButtonGroup>
 
-                <UDivider class="my-2" :label="$t('common.or')" orientation="horizontal" />
+                <USeparator class="my-2" :label="$t('common.or')" orientation="horizontal" />
 
                 <UForm :schema="schema" :state="imageState" @submit="onSubmitThrottle">
-                    <UFormGroup :label="$t('common.url')">
+                    <UFormField :label="$t('common.url')">
                         <UInput v-model="imageState.url" type="text" />
-                    </UFormGroup>
+                    </UFormField>
 
                     <UButtonGroup class="mt-2 w-full">
                         <UButton
@@ -152,7 +152,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </UButtonGroup>
                 </UForm>
 
-                <UDivider class="my-2" :label="$t('common.or')" orientation="horizontal" />
+                <USeparator class="my-2" :label="$t('common.or')" orientation="horizontal" />
 
                 <ULink class="w-full" @click="chooseFiles">
                     <div ref="dropZoneRef" class="flex w-full items-center justify-center">
@@ -167,11 +167,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :name="canSubmit ? 'i-mdi-file-upload-outline' : 'i-mdi-loading'"
                                 />
 
-                                <p class="mb-2 px-2 text-base text-gray-500 dark:text-gray-400">
+                                <p class="text-muted mb-2 px-2 text-base">
                                     <span class="font-semibold">{{ $t('common.file_click_to_upload') }}</span>
                                     {{ $t('common.file_drag_n_drop') }}
                                 </p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $t('common.allowed_file_types') }}</p>
+                                <p class="text-muted text-sm">{{ $t('common.allowed_file_types') }}</p>
                             </div>
                         </label>
                     </div>

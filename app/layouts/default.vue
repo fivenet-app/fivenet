@@ -1,13 +1,11 @@
 <script lang="ts" setup>
-import type { Group } from '#ui/types';
+import type { CommandPaletteGroup } from '@nuxt/ui';
 import ClipboardModal from '~/components/clipboard/modal/ClipboardModal.vue';
-import HelpSlideover from '~/components/HelpSlideover.vue';
-import NotificationSlideover from '~/components/notifications/NotificationSlideover.vue';
 import WebSocketStatusOverlay from '~/components/partials/WebSocketStatusOverlay.vue';
-import MathCalculatorModal from '~/components/quickbuttons/mathcalculator/MathCalculatorModal.vue';
-import PenaltyCalculatorModal from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorModal.vue';
+import MathCalculatorSlideover from '~/components/quickbuttons/mathcalculator/MathCalculatorSlideover.vue';
+import PenaltyCalculatorSlideover from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorSlideover.vue';
 import TopLogoDropdown from '~/components/TopLogoDropdown.vue';
-import UserDropdown from '~/components/UserDropdown.vue';
+import UserMenu from '~/components/UserMenu.vue';
 import { useMailerStore } from '~/stores/mailer';
 import { getCitizensCitizensClient, getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { Perms } from '~~/gen/ts/perms';
@@ -16,9 +14,9 @@ const { t } = useI18n();
 
 const { can, activeChar, jobProps, isSuperuser } = useAuth();
 
-const { isHelpSlideoverOpen } = useDashboard();
+const { isDashboardSidebarSlideoverOpen, isHelpSlideoverOpen } = useDashboard();
 
-const modal = useModal();
+const modal = useOverlay();
 
 const { website } = useAppConfig();
 
@@ -27,6 +25,8 @@ const { unreadCount } = storeToRefs(mailerStore);
 
 const citizensCitizensClient = await getCitizensCitizensClient();
 const documentsDocumentsClient = await getDocumentsDocumentsClient();
+
+const open = ref(false);
 
 const links = computed(() =>
     [
@@ -191,7 +191,7 @@ const footerLinks = computed(() =>
         {
             label: t('common.help'),
             icon: 'i-mdi-question-mark-circle-outline',
-            click: () => (isHelpSlideoverOpen.value = true),
+            onClick: () => (isHelpSlideoverOpen.value = true),
         },
         {
             label: t('common.about'),
@@ -201,78 +201,92 @@ const footerLinks = computed(() =>
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
-const groups = computed(
-    () =>
-        [
+const groups = computed<CommandPaletteGroup[]>(() => [
+    {
+        id: 'links',
+        label: t('common.goto'),
+        commands: links.value.map((link) => ({ ...link, shortcuts: link.tooltip?.shortcuts })),
+    },
+    {
+        id: 'ids',
+        label: t('common.id', 2),
+        commands: [
             {
-                key: 'links',
-                label: t('common.goto'),
-                commands: links.value.map((link) => ({ ...link, shortcuts: link.tooltip?.shortcuts })),
+                id: 'cit',
+                prefix: 'CIT-',
+                icon: 'i-mdi-account-multiple-outline',
             },
             {
-                key: 'ids',
-                label: t('common.id', 2),
-                commands: [
-                    {
-                        id: 'cit',
-                        prefix: 'CIT-',
-                        icon: 'i-mdi-account-multiple-outline',
-                    },
-                    {
-                        id: 'doc',
-                        prefix: 'DOC-',
-                        icon: 'i-mdi-file-document-box-multiple-outline',
-                    },
-                ],
-                search: async (q?: string) => {
-                    const defaultCommands = [
-                        {
-                            id: 'id-doc',
-                            label: `DOC-...`,
-                        },
+                id: 'doc',
+                prefix: 'DOC-',
+                icon: 'i-mdi-file-document-box-multiple-outline',
+            },
+        ],
+        search: async (q?: string) => {
+            const defaultCommands = [
+                {
+                    id: 'id-doc',
+                    label: `DOC-...`,
+                },
+                {
+                    id: 'id-citizen',
+                    label: `CIT-...`,
+                },
+            ];
+
+            if (!q || (!q.startsWith('CIT') && !q.startsWith('DOC'))) {
+                if (q && (q.startsWith('@') || q.startsWith('#'))) {
+                    return [];
+                }
+
+                return defaultCommands.filter((c) => !q || c.label.includes(q));
+            }
+
+            const prefix = q.substring(0, q.indexOf('-')).toUpperCase();
+            const id = q.substring(q.indexOf('-') + 1).trim();
+            if (id.length > 0 && isNumber(id)) {
+                if (prefix === 'CIT') {
+                    return [
                         {
                             id: 'id-citizen',
-                            label: `CIT-...`,
+                            label: `CIT-${id}`,
+                            to: `/citizens/${id}`,
                         },
                     ];
+                } else if (prefix === 'DOC') {
+                    return [
+                        {
+                            id: 'id-doc',
+                            label: `DOC-${id}`,
+                            to: `/documents/${id}`,
+                        },
+                    ];
+                }
+            }
 
-                    if (!q || (!q.startsWith('CIT') && !q.startsWith('DOC'))) {
-                        if (q && (q.startsWith('@') || q.startsWith('#'))) {
-                            return [];
-                        }
-
-                        return defaultCommands.filter((c) => !q || c.label.includes(q));
-                    }
-
-                    const prefix = q.substring(0, q.indexOf('-')).toUpperCase();
-                    const id = q.substring(q.indexOf('-') + 1).trim();
-                    if (id.length > 0 && isNumber(id)) {
-                        if (prefix === 'CIT') {
-                            return [
-                                {
-                                    id: 'id-citizen',
-                                    label: `CIT-${id}`,
-                                    to: `/citizens/${id}`,
-                                },
-                            ];
-                        } else if (prefix === 'DOC') {
-                            return [
-                                {
-                                    id: 'id-doc',
-                                    label: `DOC-${id}`,
-                                    to: `/documents/${id}`,
-                                },
-                            ];
-                        }
-                    }
-
-                    return defaultCommands;
-                },
+            return defaultCommands;
+        },
+    },
+    {
+        id: 'search',
+        label: t('common.search'),
+        commands: [
+            {
+                id: 'cit',
+                label: t('common.citizen', 2),
+                prefix: '@',
+                icon: 'i-mdi-account-multiple-outline',
             },
             {
-                key: 'search',
-                label: t('common.search'),
-                commands: [
+                id: 'doc',
+                label: t('common.document', 2),
+                prefix: '#',
+                icon: 'i-mdi-file-document-box-multiple-outline',
+            },
+        ],
+        search: async (q?: string) => {
+            if (!q || (!q.startsWith('@') && !q.startsWith('#'))) {
+                return [
                     {
                         id: 'cit',
                         label: t('common.citizen', 2),
@@ -285,82 +299,67 @@ const groups = computed(
                         prefix: '#',
                         icon: 'i-mdi-file-document-box-multiple-outline',
                     },
-                ],
-                search: async (q?: string) => {
-                    if (!q || (!q.startsWith('@') && !q.startsWith('#'))) {
-                        return [
-                            {
-                                id: 'cit',
-                                label: t('common.citizen', 2),
-                                prefix: '@',
-                                icon: 'i-mdi-account-multiple-outline',
+                ].filter((c) => !q || c.label.includes(q));
+            }
+
+            const searchType = q[0];
+            const query = q.substring(1).trim();
+            switch (searchType) {
+                case '#': {
+                    try {
+                        const call = documentsDocumentsClient.listDocuments({
+                            pagination: {
+                                offset: 0,
+                                pageSize: 10,
                             },
-                            {
-                                id: 'doc',
-                                label: t('common.document', 2),
-                                prefix: '#',
-                                icon: 'i-mdi-file-document-box-multiple-outline',
+                            search: query,
+                            categoryIds: [],
+                            creatorIds: [],
+                            documentIds: [],
+                        });
+                        const { response } = await call;
+
+                        return response.documents.map((d) => ({
+                            id: d.id,
+                            label: d.title,
+                            suffix: d.state,
+                            to: `/documents/${d.id}`,
+                        }));
+                    } catch (e) {
+                        handleGRPCError(e as RpcError);
+                        throw e;
+                    }
+                }
+
+                case '@':
+                default: {
+                    try {
+                        const call = citizensCitizensClient.listCitizens({
+                            pagination: {
+                                offset: 0,
+                                pageSize: 10,
                             },
-                        ].filter((c) => !q || c.label.includes(q));
+                            search: query,
+                        });
+                        const { response } = await call;
+
+                        return response.users.map((u) => ({
+                            id: u.userId,
+                            label: `${u.firstname} ${u.lastname}`,
+                            suffix: u.dateofbirth,
+                            to: `/citizens/${u.userId}`,
+                        }));
+                    } catch (e) {
+                        handleGRPCError(e as RpcError);
+                        throw e;
                     }
+                }
+            }
+        },
+    },
+]);
 
-                    const searchType = q[0];
-                    const query = q.substring(1).trim();
-                    switch (searchType) {
-                        case '#': {
-                            try {
-                                const call = documentsDocumentsClient.listDocuments({
-                                    pagination: {
-                                        offset: 0,
-                                        pageSize: 10,
-                                    },
-                                    search: query,
-                                    categoryIds: [],
-                                    creatorIds: [],
-                                    documentIds: [],
-                                });
-                                const { response } = await call;
-
-                                return response.documents.map((d) => ({
-                                    id: d.id,
-                                    label: d.title,
-                                    suffix: d.state,
-                                    to: `/documents/${d.id}`,
-                                }));
-                            } catch (e) {
-                                handleGRPCError(e as RpcError);
-                                throw e;
-                            }
-                        }
-
-                        case '@':
-                        default: {
-                            try {
-                                const call = citizensCitizensClient.listCitizens({
-                                    pagination: {
-                                        offset: 0,
-                                        pageSize: 10,
-                                    },
-                                    search: query,
-                                });
-                                const { response } = await call;
-
-                                return response.users.map((u) => ({
-                                    id: u.userId,
-                                    label: `${u.firstname} ${u.lastname}`,
-                                    suffix: u.dateofbirth,
-                                    to: `/citizens/${u.userId}`,
-                                }));
-                            } catch (e) {
-                                handleGRPCError(e as RpcError);
-                                throw e;
-                            }
-                        }
-                    }
-                },
-            },
-        ] as Group[],
-);
+const clipboardModal = modal.create(ClipboardModal);
 
 const clipboardLink = computed(() =>
     [
@@ -373,13 +372,14 @@ const clipboardLink = computed(() =>
             ? {
                   label: t('common.clipboard'),
                   icon: 'i-mdi-clipboard-list-outline',
-                  click: () => modal.open(ClipboardModal, {}),
+                  onClick: () => clipboardModal.open(),
               }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
-const { isDashboardSidebarSlideoverOpen } = useUIState();
+const penaltyCalculatorModal = modal.create(PenaltyCalculatorSlideover);
+const mathCalculatorModal = modal.create(MathCalculatorSlideover);
 
 const quickAccessButtons = computed(() =>
     [
@@ -387,9 +387,9 @@ const quickAccessButtons = computed(() =>
             ? {
                   label: t('components.penaltycalculator.title'),
                   icon: 'i-mdi-gavel',
-                  click: () => {
+                  onClick: () => {
                       isDashboardSidebarSlideoverOpen.value = false;
-                      modal.open(PenaltyCalculatorModal);
+                      penaltyCalculatorModal.open();
                   },
               }
             : undefined,
@@ -397,9 +397,9 @@ const quickAccessButtons = computed(() =>
             ? {
                   label: t('components.mathcalculator.title'),
                   icon: 'i-mdi-calculator',
-                  click: () => {
+                  onClick: () => {
                       isDashboardSidebarSlideoverOpen.value = false;
-                      modal.open(MathCalculatorModal, {});
+                      mathCalculatorModal.open();
                   },
               }
             : undefined,
@@ -408,44 +408,48 @@ const quickAccessButtons = computed(() =>
 </script>
 
 <template>
-    <UDashboardLayout>
-        <UDashboardPanel id="mainleftsidebar" :width="225" :resizable="{ min: 175, max: 275 }" collapsible>
-            <UDashboardNavbar class="!border-transparent" :ui="{ left: 'flex-1' }">
-                <template #left>
-                    <TopLogoDropdown />
-                </template>
-            </UDashboardNavbar>
+    <UDashboardGroup unit="rem">
+        <UDashboardSidebar
+            id="mainleftsidebar"
+            v-model:open="open"
+            :default-size="25"
+            :min-size="20"
+            :max-size="40"
+            resizable
+            collapsible
+            class="bg-elevated/25"
+            :ui="{ footer: 'lg:border-t lg:border-default' }"
+        >
+            <template #header="{ collapsed }">
+                <TopLogoDropdown :collapsed="collapsed" />
+            </template>
 
-            <UDashboardSidebar>
-                <template #header>
-                    <UDashboardSearchButton :label="$t('common.search_field')" />
-                </template>
+            <template #default="{ collapsed }">
+                <UDashboardSearchButton :collapsed="collapsed" :label="$t('common.search_field')" />
 
-                <UDashboardSidebarLinks :links="links" />
+                <UNavigationMenu orientation="vertical" tooltip popover :items="links" />
 
                 <template v-if="clipboardLink.length > 0">
-                    <UDivider />
+                    <USeparator />
 
-                    <UDashboardSidebarLinks :links="clipboardLink" />
+                    <UNavigationMenu orientation="vertical" tooltip popover :items="clipboardLink" />
                 </template>
 
                 <template v-if="quickAccessButtons">
-                    <UDivider />
+                    <USeparator />
 
-                    <UDashboardSidebarLinks :links="quickAccessButtons" />
+                    <UNavigationMenu orientation="vertical" tooltip popover :items="quickAccessButtons" />
                 </template>
 
                 <div class="flex-1" />
 
-                <UDashboardSidebarLinks :links="footerLinks" />
+                <UNavigationMenu orientation="vertical" tooltip popover :items="footerLinks" />
+            </template>
 
-                <UDivider class="sticky bottom-0" />
-
-                <template #footer>
-                    <UserDropdown />
-                </template>
-            </UDashboardSidebar>
-        </UDashboardPanel>
+            <template #footer="{ collapsed }">
+                <UserMenu :collapsed="collapsed" />
+            </template>
+        </UDashboardSidebar>
 
         <slot />
 
@@ -456,20 +460,41 @@ const quickAccessButtons = computed(() =>
             <LazyPartialsEventsLayer />
         </ClientOnly>
 
-        <HelpSlideover />
-        <NotificationSlideover />
-
         <ClientOnly>
             <LazyUDashboardSearch
                 v-if="activeChar"
-                :empty-state="{
-                    icon: 'i-mdi-globe-model',
-                    label: $t('commandpalette.empty.title'),
-                    queryLabel: $t('commandpalette.empty.title'),
-                }"
                 :placeholder="`${$t('common.search_field')} (${$t('commandpalette.footer', { key1: '@', key2: '#' })})`"
                 :groups="groups"
-            />
+                class="flex-1"
+            >
+                <template #empty>
+                    {{ $t('commandpalette.empty.title') }}
+                </template>
+
+                <!-- TODO add footer texts
+                <template #footer>
+                    <div class="flex items-center justify-between gap-2">
+                        <UIcon name="i-simple-icons-nuxtdotjs" class="ml-1 size-5 text-dimmed" />
+                        <div class="flex items-center gap-1">
+                            <UButton color="neutral" variant="ghost" label="Open Command" class="text-dimmed" size="xs">
+                                <template #trailing>
+                                    <UKbd value="enter" />
+                                </template>
+                            </UButton>
+
+                            <USeparator orientation="vertical" class="h-4" />
+
+                            <UButton color="neutral" variant="ghost" label="Actions" class="text-dimmed" size="xs">
+                                <template #trailing>
+                                    <UKbd value="meta" />
+                                    <UKbd value="k" />
+                                </template>
+                            </UButton>
+                        </div>
+                    </div>
+                </template>
+                -->
+            </LazyUDashboardSearch>
         </ClientOnly>
-    </UDashboardLayout>
+    </UDashboardGroup>
 </template>

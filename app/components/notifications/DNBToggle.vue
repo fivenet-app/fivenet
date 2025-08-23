@@ -5,10 +5,10 @@ const { doNotDisturb } = storeToRefs(notifications);
 
 <template>
     <div class="inline-flex items-center gap-2">
-        <UToggle
+        <USwitch
             v-model="doNotDisturb"
             size="lg"
-            color="red"
+            color="error"
             on-icon="i-mdi-do-not-disturb-on"
             off-icon="i-mdi-do-not-disturb-off-outline"
         />

@@ -16,12 +16,12 @@ const props = defineProps<{
     statusSelected?: StatusUnit;
 }>();
 
-const { isOpen } = useSlideover();
+const { isOpen } = useOverlay();
 
 const { canDo } = useCentrumStore();
 const { goto } = useLivemapStore();
 
-const modal = useModal();
+const modal = useOverlay();
 
 const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.status));
 </script>
@@ -32,11 +32,9 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
             class="flex flex-1 flex-col"
             :ui="{
                 body: {
-                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--header-height)))] max-h-[calc(100dvh-(2*var(--header-height)))] overflow-y-auto',
+                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--ui-header-height)))] max-h-[calc(100dvh-(2*var(--ui-header-height)))] overflow-y-auto',
                     padding: 'px-1 py-2 sm:p-2',
                 },
-                ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
             }"
         >
             <template #header>
@@ -45,7 +43,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                         {{ $t('common.unit') }}: {{ unit.initials }} - {{ unit.name }}
                     </h3>
 
-                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -86,7 +84,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                             <UButton
-                                class="rounded px-2 py-1 text-sm font-semibold shadow-sm"
+                                class="shadow-xs rounded-sm px-2 py-1 text-sm font-semibold"
                                 :class="unitStatusColors"
                                 :disabled="!checkUnitAccess(unit.access, UnitAccessLevel.JOIN)"
                                 :icon="unitStatusToIcon(props.unit.status?.status)"
@@ -136,7 +134,6 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                     size="xs"
                                     variant="link"
                                     icon="i-mdi-map-marker"
-                                    :padded="false"
                                     @click="goto({ x: unit.status?.x, y: unit.status?.y })"
                                 >
                                     {{ $t('common.go_to_location') }}
@@ -178,7 +175,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                             <span v-if="unit.users.length === 0" class="block">
                                 {{ $t('common.member', 0) }}
                             </span>
-                            <div v-else class="rounded-md bg-neutral-100 dark:bg-base-900">
+                            <div v-else class="dark:bg-base-900 rounded-md bg-neutral-100">
                                 <ul class="divide-y divide-gray-100 text-sm font-medium dark:divide-gray-800" role="list">
                                     <li
                                         v-for="user in unit.users"
@@ -196,7 +193,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                 </ul>
                             </div>
 
-                            <span class="isolate mt-2 inline-flex rounded-md shadow-sm">
+                            <span class="shadow-xs isolate mt-2 inline-flex rounded-md">
                                 <UButton
                                     v-if="canDo('TakeControl')"
                                     icon="i-mdi-pencil"
@@ -220,7 +217,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
             </div>
 
             <template #footer>
-                <UButton class="flex-1" color="black" block @click="isOpen = false">
+                <UButton class="flex-1" color="neutral" block @click="isOpen = false">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

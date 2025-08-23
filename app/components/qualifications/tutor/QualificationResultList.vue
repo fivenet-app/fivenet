@@ -33,7 +33,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const modal = useModal();
+const modal = useOverlay();
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
@@ -191,7 +191,7 @@ async function onRefresh(): Promise<void> {
                                 <UButton
                                     variant="link"
                                     icon="i-mdi-star"
-                                    color="amber"
+                                    color="warning"
                                     @click="
                                         modal.open(ExamViewResultModal, {
                                             qualificationId: result.qualificationId,
@@ -208,7 +208,7 @@ async function onRefresh(): Promise<void> {
                                 <UButton
                                     variant="link"
                                     icon="i-mdi-star"
-                                    color="amber"
+                                    color="warning"
                                     @click="
                                         modal.open(ExamViewResultModal, {
                                             qualificationId: result.qualificationId,

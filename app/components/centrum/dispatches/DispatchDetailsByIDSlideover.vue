@@ -11,7 +11,7 @@ const props = defineProps<{
 const centrumStore = useCentrumStore();
 const { dispatches } = storeToRefs(centrumStore);
 
-const { isOpen } = useSlideover();
+const { isOpen } = useOverlay();
 
 const centrumCentrumClient = await getCentrumCentrumClient();
 

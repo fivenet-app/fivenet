@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { addHours, addMinutes, isSameDay, isSameHour, isSameMinute } from 'date-fns';
 import type { CalendarDay } from 'v-calendar/dist/types/src/utils/page.js';
 import { z } from 'zod';
@@ -23,7 +23,7 @@ const props = defineProps<{
     day?: CalendarDay;
 }>();
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const calendarStore = useCalendarStore();
 
@@ -155,7 +155,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
@@ -166,7 +166,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             }}
                         </h3>
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                        <UButton
+                            class="-my-1"
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
@@ -188,7 +194,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     />
 
                     <template v-else>
-                        <UFormGroup class="flex-1" name="calendar" :label="$t('common.calendar')" required>
+                        <UFormField class="flex-1" name="calendar" :label="$t('common.calendar')" required>
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="state.calendar"
@@ -212,7 +218,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     by="id"
                                     :placeholder="$t('common.calendar')"
                                 >
-                                    <template #label>
+                                    <template #item-label>
                                         <template v-if="state.calendar">
                                             <span
                                                 class="size-2 rounded-full"
@@ -239,45 +245,43 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     </template>
                                 </USelectMenu>
                             </ClientOnly>
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup class="flex-1" name="title" :label="$t('common.title')" required>
+                        <UFormField class="flex-1" name="title" :label="$t('common.title')" required>
                             <UInput v-model="state.title" name="title" type="text" :placeholder="$t('common.title')" />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup class="flex-1" name="startTime" :label="$t('common.begins_at')" required>
+                        <UFormField class="flex-1" name="startTime" :label="$t('common.begins_at')" required>
                             <DatePickerPopoverClient
                                 v-model="state.startTime"
                                 date-format="dd.MM.yyyy HH:mm"
-                                :popover="{ popper: { placement: 'bottom-start' } }"
                                 :date-picker="{ mode: 'dateTime', is24hr: true, clearable: true }"
                             />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup class="flex-1" name="endTime" :label="$t('common.ends_at')" required>
+                        <UFormField class="flex-1" name="endTime" :label="$t('common.ends_at')" required>
                             <DatePickerPopoverClient
                                 v-model="state.endTime"
                                 date-format="dd.MM.yyyy HH:mm"
-                                :popover="{ popper: { placement: 'bottom-start' } }"
                                 :date-picker="{ mode: 'dateTime', is24hr: true, clearable: true }"
                             />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup class="flex-1" name="content" :label="$t('common.content')" required>
+                        <UFormField class="flex-1" name="content" :label="$t('common.content')" required>
                             <ClientOnly>
                                 <TiptapEditor v-model="state.content" wrapper-class="min-h-80" />
                             </ClientOnly>
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup class="flex-1" name="closed" :label="`${$t('common.close', 2)}?`">
-                            <UToggle v-model="state.closed" />
-                        </UFormGroup>
+                        <UFormField class="flex-1" name="closed" :label="`${$t('common.close', 2)}?`">
+                            <USwitch v-model="state.closed" />
+                        </UFormField>
 
-                        <UFormGroup class="flex-1" name="rsvpOpen" :label="$t('common.rsvp')">
-                            <UToggle v-model="state.rsvpOpen" />
-                        </UFormGroup>
+                        <UFormField class="flex-1" name="rsvpOpen" :label="$t('common.rsvp')">
+                            <USwitch v-model="state.rsvpOpen" />
+                        </UFormField>
 
-                        <UFormGroup class="flex-1" name="users" :label="$t('common.guest', 2)">
+                        <UFormField class="flex-1" name="users" :label="$t('common.guest', 2)">
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="state.users"
@@ -301,7 +305,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     trailing
                                     by="userId"
                                 >
-                                    <template #label>
+                                    <template #item-label>
                                         {{ $t('common.selected', state.users.length) }}
                                     </template>
 
@@ -316,11 +320,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
                                 </USelectMenu>
                             </ClientOnly>
-                        </UFormGroup>
+                        </UFormField>
 
                         <div
                             v-if="state.users.length > 0"
-                            class="mt-2 overflow-hidden rounded-md bg-neutral-100 dark:bg-base-900"
+                            class="dark:bg-base-900 mt-2 overflow-hidden rounded-md bg-neutral-100"
                         >
                             <ul class="grid grid-cols-2 text-sm font-medium text-gray-100 lg:grid-cols-3" role="list">
                                 <li
@@ -337,7 +341,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="black" block @click="isOpen = false">
+                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

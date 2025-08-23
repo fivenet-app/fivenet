@@ -64,10 +64,10 @@ defineShortcuts({
 <template>
     <UDashboardPanelContent class="p-0 sm:pb-0">
         <div v-if="!loaded" class="space-y-2">
-            <USkeleton class="h-[73px] w-full" :ui="{ rounded: '' }" />
-            <USkeleton class="h-[73px] w-full" :ui="{ rounded: '' }" />
-            <USkeleton class="h-[73px] w-full" :ui="{ rounded: '' }" />
-            <USkeleton class="h-[73px] w-full" :ui="{ rounded: '' }" />
+            <USkeleton class="h-[73px] w-full" />
+            <USkeleton class="h-[73px] w-full" />
+            <USkeleton class="h-[73px] w-full" />
+            <USkeleton class="h-[73px] w-full" />
         </div>
 
         <template v-else>
@@ -75,7 +75,7 @@ defineShortcuts({
                 <div
                     class="cursor-pointer border-l-2 p-4 text-sm"
                     :class="[
-                        !!thread.state?.unread ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300',
+                        !!thread.state?.unread ? 'text-highlighted' : 'text-gray-600 dark:text-gray-300',
                         selectedThread && selectedThread.id === thread.id
                             ? 'border-primary-500 dark:border-primary-400 bg-primary-100 dark:bg-primary-900/25'
                             : 'hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white dark:border-gray-900',
@@ -116,7 +116,7 @@ defineShortcuts({
                     </div>
                 </div>
 
-                <UDivider v-if="index < threads.length" />
+                <USeparator v-if="index < threads.length" />
             </div>
 
             <slot name="after" />

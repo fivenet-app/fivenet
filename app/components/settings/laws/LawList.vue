@@ -52,7 +52,7 @@ function updateLaw(event: { id: number; law: Law }): void {
         <template #right>
             <PartialsBackButton fallback-to="/settings" />
 
-            <UButton color="gray" trailing-icon="i-mdi-plus" @click="addLawBook">
+            <UButton color="neutral" trailing-icon="i-mdi-plus" @click="addLawBook">
                 {{ $t('pages.settings.laws.add_new_law_book') }}
             </UButton>
         </template>

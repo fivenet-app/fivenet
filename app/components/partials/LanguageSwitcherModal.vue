@@ -5,7 +5,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 
 const { locale, locales } = useI18n();
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -45,7 +45,7 @@ async function switchLanguage(lang: LocaleObject): Promise<void> {
         title: { key: 'notifications.language_switched.title', parameters: {} },
         description: { key: 'notifications.language_switched.content', parameters: { name: lang.name ?? lang.code } },
         type: NotificationType.SUCCESS,
-        timeout: 1650,
+        duration: 1650,
         callback: () => reloadNuxtApp({ persistState: false, force: true }),
     });
 }
@@ -53,24 +53,13 @@ async function switchLanguage(lang: LocaleObject): Promise<void> {
 
 <template>
     <UModal :prevent-close="preventClose">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
-                        {{ $t('components.language_switcher.title') }}
-                    </h3>
+        <template #title>
+            <h3 class="text-2xl font-semibold leading-6">
+                {{ $t('components.language_switcher.title') }}
+            </h3>
+        </template>
 
-                    <UButton
-                        class="-my-1"
-                        :disabled="preventClose"
-                        color="gray"
-                        variant="ghost"
-                        icon="i-mdi-window-close"
-                        @click="isOpen = false"
-                    />
-                </div>
-            </template>
-
+        <template #body>
             <UPageGrid>
                 <UPageCard
                     v-for="item in languages"
@@ -80,12 +69,12 @@ async function switchLanguage(lang: LocaleObject): Promise<void> {
                     @click="switchLanguage(item)"
                 />
             </UPageGrid>
+        </template>
 
-            <template #footer>
-                <UButton class="flex-1" block color="black" :disabled="preventClose" @click="isOpen = false">
-                    {{ $t('common.close', 1) }}
-                </UButton>
-            </template>
-        </UCard>
+        <template #footer>
+            <UButton class="flex-1" block color="neutral" :disabled="preventClose" @click="isOpen = false">
+                {{ $t('common.close', 1) }}
+            </UButton>
+        </template>
     </UModal>
 </template>

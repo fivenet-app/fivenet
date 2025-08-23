@@ -1,10 +1,10 @@
-import type { BadgeColor } from '#ui/types';
+import type { BadgeProps } from '@nuxt/ui';
 import { ConductType } from '~~/gen/ts/resources/jobs/conduct';
 
-export function conductTypesToBadgeColor(status: ConductType | undefined): BadgeColor {
+export function conductTypesToBadgeColor(status: ConductType | undefined): BadgeProps['color'] {
     switch (status) {
         case ConductType.NEUTRAL:
-            return 'gray';
+            return 'neutral';
         case ConductType.POSITIVE:
             return 'success';
         case ConductType.NEGATIVE:

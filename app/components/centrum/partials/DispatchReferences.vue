@@ -6,7 +6,7 @@ defineProps<{
     references?: DispatchReferences;
 }>();
 
-const modal = useModal();
+const modal = useOverlay();
 
 const selectedDispatch = ref<number | undefined>();
 </script>

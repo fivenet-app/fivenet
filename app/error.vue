@@ -48,21 +48,21 @@ ${props.error ? JSON.stringify(props.error) : 'Unknown error'}
 }
 
 const kbdBlockClasses =
-    'inline-flex items-center rounded bg-gray-100 px-1 text-gray-900 ring-1 ring-inset ring-gray-300 dark:bg-gray-800 dark:text-white dark:ring-gray-700';
+    'inline-flex items-center rounded-sm bg-gray-100 px-1 text-gray-900 ring-1 ring-inset ring-gray-300 dark:bg-gray-800 dark:text-white dark:ring-gray-700';
 
 const isDev = import.meta.dev;
 </script>
 
 <!-- eslint-disable tailwindcss/no-custom-classname -->
 <template>
-    <div class="h-dscreen">
-        <div class="hero absolute inset-0 z-[-1] [mask-image:radial-gradient(100%_100%_at_top,white,transparent)]" />
+    <div class="h-dvh">
+        <div class="hero mask-[radial-gradient(100%_100%_at_top,white,transparent)] absolute inset-0 z-[-1]" />
         <NuxtLoadingIndicator color="repeating-linear-gradient(to right, #d72638 0%, #ac1e2d 50%, #d72638 100%)" />
 
         <div class="flex h-full flex-col items-center justify-center">
-            <UButton class="absolute top-4 z-10" icon="i-mdi-home" :label="$t('common.home')" to="/" color="black" />
+            <UButton class="absolute top-4 z-10" icon="i-mdi-home" :label="$t('common.home')" to="/" color="neutral" />
 
-            <UCard class="w-full max-w-md bg-white/75 backdrop-blur dark:bg-white/5">
+            <UCard class="w-full max-w-md bg-white/75 backdrop-blur-sm dark:bg-white/5">
                 <template #header>
                     <FiveNetLogo class="mx-auto mb-2 h-auto w-20" />
 
@@ -131,7 +131,7 @@ const isDev = import.meta.dev;
                                 block
                                 size="lg"
                                 :disabled="buttonDisabled"
-                                @click="handleError()"
+                                @click="() => handleError()"
                             >
                                 {{ $t('common.home') }}
                             </UButton>
@@ -142,7 +142,7 @@ const isDev = import.meta.dev;
                                 size="lg"
                                 color="green"
                                 :disabled="buttonDisabled"
-                                @click="handleError(route.fullPath)"
+                                @click="() => handleError(route.fullPath)"
                             >
                                 {{ $t('common.retry') }}
                             </UButton>
@@ -153,8 +153,8 @@ const isDev = import.meta.dev;
                                 class="flex-1"
                                 block
                                 size="lg"
-                                color="amber"
-                                @click="copyError"
+                                color="warning"
+                                @click="() => copyError()"
                             >
                                 {{ $t !== undefined ? $t('pages.error.copy_error') : 'Copy Error message' }}
                             </UButton>

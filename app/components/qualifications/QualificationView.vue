@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { TabsItem } from '@nuxt/ui';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
@@ -33,7 +34,7 @@ const { t } = useI18n();
 
 const { can } = useAuth();
 
-const modal = useModal();
+const modal = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -138,10 +139,12 @@ watchOnce(data, async () => {
     }
 });
 
-const items = computed(() =>
+const items = computed<TabsItem[]>(() =>
     [
-        { slot: 'info', label: t('common.content'), icon: 'i-mdi-info' },
-        canDo.value.grade ? { slot: 'tutor', label: t('common.tutor'), icon: 'i-mdi-sigma' } : undefined,
+        { slot: 'info' as const, label: t('common.content'), icon: 'i-mdi-info', value: 'info' },
+        canDo.value.grade
+            ? { slot: 'tutor' as const, label: t('common.tutor'), icon: 'i-mdi-sigma', value: 'tutor' }
+            : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
@@ -150,27 +153,22 @@ const router = useRouter();
 
 const selectedTab = computed({
     get() {
-        const index = items.value.findIndex((item) => item.slot === route.query.tab);
-        if (index === -1) {
-            return 0;
-        }
-
-        return index;
+        return (route.query.tab as string) || 'info';
     },
-    set(value) {
+    set(tab) {
         // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { tab: items.value[value]?.slot }, hash: '#' });
+        router.push({ query: { tab: tab }, hash: '#control-active-item' });
     },
 });
 
 const accordionItems = computed(() =>
     [
         qualification.value?.result
-            ? { slot: 'result', label: t('common.result', 1), icon: 'i-mdi-list-status', defaultOpen: true }
+            ? { slot: 'result' as const, label: t('common.result', 1), icon: 'i-mdi-list-status', defaultOpen: true }
             : qualification.value?.request
-              ? { slot: 'request', label: t('common.request'), icon: 'i-mdi-mail', defaultOpen: true }
+              ? { slot: 'request' as const, label: t('common.request'), icon: 'i-mdi-mail', defaultOpen: true }
               : undefined,
-        { slot: 'access', label: t('common.access'), icon: 'i-mdi-lock', defaultOpen: true },
+        { slot: 'access' as const, label: t('common.access'), icon: 'i-mdi-lock', defaultOpen: true },
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 </script>
@@ -180,7 +178,12 @@ const accordionItems = computed(() =>
         <template #right>
             <PartialsBackButton to="/qualifications" />
 
-            <UButton icon="i-mdi-refresh" :label="$t('common.refresh')" :loading="isRequestPending(status)" @click="refresh" />
+            <UButton
+                icon="i-mdi-refresh"
+                :label="$t('common.refresh')"
+                :loading="isRequestPending(status)"
+                @click="() => refresh()"
+            />
 
             <UButtonGroup class="inline-flex">
                 <IDCopyBadge
@@ -322,7 +325,7 @@ const accordionItems = computed(() =>
                             </span>
                         </UBadge>
 
-                        <UBadge v-if="qualification.public" class="inline-flex gap-1" color="black" size="md">
+                        <UBadge v-if="qualification.public" class="inline-flex gap-1" color="neutral" size="md">
                             <UIcon class="size-5" name="i-mdi-earth" />
                             <span>
                                 {{ $t('common.public') }}
@@ -372,7 +375,7 @@ const accordionItems = computed(() =>
                     </div>
 
                     <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
-                        <UBadge class="inline-flex gap-1" color="black" size="md">
+                        <UBadge class="inline-flex gap-1" color="neutral" size="md">
                             <UIcon class="size-5" name="i-mdi-account" />
                             <span class="inline-flex items-center gap-1">
                                 <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
@@ -380,7 +383,7 @@ const accordionItems = computed(() =>
                             </span>
                         </UBadge>
 
-                        <UBadge class="inline-flex gap-1" color="black" size="md">
+                        <UBadge class="inline-flex gap-1" color="neutral" size="md">
                             <UIcon class="size-5" name="i-mdi-calendar" />
 
                             <span>
@@ -389,7 +392,7 @@ const accordionItems = computed(() =>
                             </span>
                         </UBadge>
 
-                        <UBadge v-if="qualification?.updatedAt" class="inline-flex gap-1" color="black" size="md">
+                        <UBadge v-if="qualification?.updatedAt" class="inline-flex gap-1" color="neutral" size="md">
                             <UIcon class="size-5" name="i-mdi-calendar-edit" />
                             <span>
                                 {{ $t('common.updated_at') }}
@@ -397,7 +400,7 @@ const accordionItems = computed(() =>
                             </span>
                         </UBadge>
 
-                        <UBadge v-if="qualification?.deletedAt" class="inline-flex gap-1" color="amber" size="md">
+                        <UBadge v-if="qualification?.deletedAt" class="inline-flex gap-1" color="warning" size="md">
                             <UIcon class="size-5" name="i-mdi-calendar-remove" />
                             <span>
                                 {{ $t('common.deleted') }}
@@ -452,7 +455,9 @@ const accordionItems = computed(() =>
                                 {{ $t('common.content') }}
                             </h2>
 
-                            <div class="mx-auto w-full max-w-screen-xl !break-words rounded-lg bg-neutral-100 dark:bg-base-900">
+                            <div
+                                class="max-w-(--breakpoint-xl) break-words! dark:bg-base-900 mx-auto w-full rounded-lg bg-neutral-100"
+                            >
                                 <HTMLContent
                                     v-if="qualification.content?.content"
                                     class="px-4 py-2"

@@ -103,31 +103,31 @@ const canSubmit = ref(true);
         <template #default>
             <UForm class="flex-1" :schema="schema" :state="query" @submit="refresh()">
                 <div class="flex flex-row gap-2">
-                    <UFormGroup
+                    <UFormField
                         class="flex flex-initial flex-col"
                         name="includeRead"
                         :label="$t('components.notifications.include_read')"
                         :ui="{ container: 'flex-1 flex' }"
                     >
                         <div class="flex flex-1 items-center">
-                            <UToggle v-model="query.includeRead">
+                            <USwitch v-model="query.includeRead">
                                 <span class="sr-only">{{ $t('components.notifications.include_read') }}</span>
-                            </UToggle>
+                            </USwitch>
                         </div>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup class="flex-1" name="categories" :label="$t('common.category', 2)">
+                    <UFormField class="flex-1" name="categories" :label="$t('common.category', 2)">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="query.categories"
                                 multiple
                                 name="categories"
-                                :options="categories"
+                                :items="categories"
                                 option-attribute="label"
-                                value-attribute="chip"
+                                value-key="chip"
                                 :searchable-placeholder="$t('common.search_field')"
                             >
-                                <template #label>
+                                <template #item-label>
                                     <template v-if="query.categories">
                                         <span class="truncate">{{ notificationCategoriesToLabel(query.categories) }}</span>
                                     </template>
@@ -140,9 +140,9 @@ const canSubmit = ref(true);
                                 </template>
                             </USelectMenu>
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup class="flex-initial" label="&nbsp;">
+                    <UFormField class="flex-initial" label="&nbsp;">
                         <UButton
                             icon="i-mdi-notification-clear-all"
                             :disabled="!canSubmit || data?.notifications === undefined || data?.notifications.length === 0"
@@ -150,7 +150,7 @@ const canSubmit = ref(true);
                         >
                             {{ $t('components.notifications.mark_all_read') }}
                         </UButton>
-                    </UFormGroup>
+                    </UFormField>
                 </div>
             </UForm>
         </template>
@@ -175,18 +175,17 @@ const canSubmit = ref(true);
                 <li
                     v-for="not in data?.notifications"
                     :key="not.id"
-                    class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 relative flex flex-row items-center justify-between gap-2 border-white px-2 py-3 sm:px-4 dark:border-gray-900"
+                    class="relative flex flex-row items-center justify-between gap-2 border-white px-2 py-3 hover:border-primary-500/25 hover:bg-primary-100/50 sm:px-4 dark:border-gray-900 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
                 >
                     <UIcon class="size-6" :name="notificationCategoryToIcon(not.category)" />
 
                     <div class="flex flex-1 gap-x-2">
                         <div class="min-w-0 flex-auto gap-y-1">
-                            <h3 class="text-base font-semibold leading-6">
+                            <h3 class="text-base leading-6 font-semibold">
                                 <UButton
                                     v-if="not.data && not.data.link"
                                     variant="link"
-                                    :padded="false"
-                                    :color="!not.readAt ? 'primary' : 'gray'"
+                                    :color="!not.readAt ? 'primary' : 'neutral'"
                                     :to="not.data.link.to"
                                     trailing-icon="i-mdi-link-variant"
                                     @click="

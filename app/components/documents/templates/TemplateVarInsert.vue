@@ -58,70 +58,70 @@ const insertCustom = () => {
 
 <template>
     <UPopover>
-        <UTooltip :text="$t('components.partials.TiptapEditor.extensions.template_var.title')" :popper="{ placement: 'top' }">
-            <UButton color="white" variant="ghost" icon="i-mdi-variable" :disabled="disabled" />
+        <UTooltip :text="$t('components.partials.TiptapEditor.extensions.template_var.title')">
+            <UButton color="neutral" variant="ghost" icon="i-mdi-variable" :disabled="disabled" />
         </UTooltip>
 
-        <template #panel>
+        <template #content>
             <div class="flex flex-1 flex-col gap-1 p-4">
                 <h3 class="block font-medium">
                     {{ $t('components.partials.TiptapEditor.extensions.template_var.title') }}
                 </h3>
 
-                <UFormGroup :label="$t('common.category', 1)">
-                    <USelectMenu v-model="selectedCategory" class="w-full" :options="categories" />
-                </UFormGroup>
+                <UFormField :label="$t('common.category', 1)">
+                    <USelectMenu v-model="selectedCategory" class="w-full" :items="categories" />
+                </UFormField>
 
-                <UFormGroup :label="$t('common.property', 1)">
+                <UFormField :label="$t('common.property', 1)">
                     <USelectMenu
                         v-model="selectedProperty"
                         class="w-full"
-                        :options="templateVars[selectedCategory?.key ?? '']"
-                        value-attribute="value"
+                        :items="templateVars[selectedCategory?.key ?? '']"
+                        value-key="value"
                     />
-                </UFormGroup>
+                </UFormField>
 
                 <div class="flex flex-row gap-2">
-                    <UFormGroup
+                    <UFormField
                         class="justify-center"
                         :label="$t('components.partials.TiptapEditor.extensions.template_var.trim_left')"
                     >
                         <UCheckbox v-model="leftTrim" />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup
+                    <UFormField
                         class="justify-center"
                         :label="$t('components.partials.TiptapEditor.extensions.template_var.trim_right')"
                     >
                         <UCheckbox v-model="rightTrim" />
-                    </UFormGroup>
+                    </UFormField>
                 </div>
 
-                <UFormGroup>
+                <UFormField>
                     <UButton
                         block
                         :label="$t('common.insert')"
                         :disabled="!selectedCategory || !selectedProperty"
                         @click="insert"
                     />
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup :label="$t('components.partials.TiptapEditor.extensions.template_var.custom_template')">
+                <UFormField :label="$t('components.partials.TiptapEditor.extensions.template_var.custom_template')">
                     <UInput
                         v-model="customInput"
                         class="w-full"
                         :placeholder="$t('components.partials.TiptapEditor.extensions.template_var.custom_placeholder')"
                     />
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup>
+                <UFormField>
                     <UButton
                         block
                         :label="$t('components.partials.TiptapEditor.extensions.template_var.insert_custom')"
                         :disabled="!customInput"
                         @click="insertCustom"
                     />
-                </UFormGroup>
+                </UFormField>
             </div>
         </template>
     </UPopover>

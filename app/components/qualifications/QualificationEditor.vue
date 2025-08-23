@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { UForm } from '#components';
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { type AccessType, enumToAccessLevelEnums } from '~/components/partials/access/helpers';
@@ -35,7 +35,7 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-const modal = useModal();
+const modal = useOverlay();
 
 const { attr, can, activeChar } = useAuth();
 
@@ -334,24 +334,28 @@ const canDo = computed(() => ({
 
 const items = [
     {
-        slot: 'content',
+        slot: 'content' as const,
         label: t('common.edit'),
         icon: 'i-mdi-pencil',
+        value: 'content',
     },
     {
-        slot: 'details',
+        slot: 'details' as const,
         label: t('common.detail', 2),
         icon: 'i-mdi-details',
+        value: 'details',
     },
     {
-        slot: 'access',
+        slot: 'access' as const,
         label: t('common.access'),
         icon: 'i-mdi-key',
+        value: 'access',
     },
     {
-        slot: 'exam',
+        slot: 'exam' as const,
         label: t('common.exam', 1),
         icon: 'i-mdi-school',
+        value: 'exam',
     },
 ];
 
@@ -360,16 +364,11 @@ const router = useRouter();
 
 const selectedTab = computed({
     get() {
-        const index = items.findIndex((item) => item.slot === route.query.tab);
-        if (index === -1) {
-            return 0;
-        }
-
-        return index;
+        return (route.query.tab as string) || 'content';
     },
-    set(value) {
+    set(tab) {
         // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
+        router.push({ query: { tab: tab }, hash: '#control-active-item' });
     },
 });
 
@@ -379,7 +378,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
 <template>
     <UForm
         ref="formRef"
-        class="min-h-dscreen flex w-full max-w-full flex-1 flex-col overflow-y-auto"
+        class="flex min-h-dvh w-full max-w-full flex-1 flex-col overflow-y-auto"
         :schema="schema"
         :state="state"
         @submit="onSubmitThrottle"
@@ -454,7 +453,6 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                     wrapper: 'space-y-0 overflow-y-hidden',
                     container: 'flex flex-1 flex-col overflow-y-hidden',
                     base: 'flex flex-1 flex-col overflow-y-hidden',
-                    list: { rounded: '' },
                 }"
             >
                 <template #content>
@@ -467,7 +465,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                             <template #default>
                                 <div class="flex w-full flex-col gap-2">
                                     <div class="flex w-full flex-row gap-2">
-                                        <UFormGroup
+                                        <UFormField
                                             class="max-w-48 shrink"
                                             name="abbreviation"
                                             :label="$t('common.abbreviation')"
@@ -481,9 +479,9 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                                 :placeholder="$t('common.abbreviation')"
                                                 :disabled="!canDo.edit"
                                             />
-                                        </UFormGroup>
+                                        </UFormField>
 
-                                        <UFormGroup class="flex-1" name="title" :label="$t('common.title')" required>
+                                        <UFormField class="flex-1" name="title" :label="$t('common.title')" required>
                                             <UInput
                                                 v-model="state.title"
                                                 name="title"
@@ -492,11 +490,11 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                                 :placeholder="$t('common.title')"
                                                 :disabled="!canDo.edit"
                                             />
-                                        </UFormGroup>
+                                        </UFormField>
                                     </div>
 
                                     <div class="flex w-full flex-row gap-2">
-                                        <UFormGroup class="flex-1" name="description" :label="$t('common.description')">
+                                        <UFormField class="flex-1" name="description" :label="$t('common.description')">
                                             <UTextarea
                                                 v-model="state.description"
                                                 name="description"
@@ -504,23 +502,23 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                                 :placeholder="$t('common.description')"
                                                 :disabled="!canDo.edit"
                                             />
-                                        </UFormGroup>
+                                        </UFormField>
 
                                         <div class="flex flex-initial flex-col">
-                                            <UFormGroup class="flex-initial" name="closed" :label="`${$t('common.close', 2)}?`">
-                                                <UToggle v-model="state.closed" :disabled="!canDo.edit" />
-                                            </UFormGroup>
+                                            <UFormField class="flex-initial" name="closed" :label="`${$t('common.close', 2)}?`">
+                                                <USwitch v-model="state.closed" :disabled="!canDo.edit" />
+                                            </UFormField>
 
-                                            <UFormGroup class="flex-initial" name="public" :label="$t('common.public')">
-                                                <UToggle v-model="state.public" :disabled="!canDo.public" />
-                                            </UFormGroup>
+                                            <UFormField class="flex-initial" name="public" :label="$t('common.public')">
+                                                <USwitch v-model="state.public" :disabled="!canDo.public" />
+                                            </UFormField>
                                         </div>
                                     </div>
                                 </div>
                             </template>
                         </UDashboardToolbar>
 
-                        <UFormGroup
+                        <UFormField
                             v-if="canDo.edit"
                             class="flex flex-1 overflow-y-hidden"
                             name="content"
@@ -531,7 +529,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                 <TiptapEditor
                                     v-model="state.content"
                                     v-model:files="state.files"
-                                    class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
+                                    class="max-w-(--breakpoint-xl) mx-auto w-full flex-1 overflow-y-hidden"
                                     :disabled="!canDo.edit"
                                     :saving="saving"
                                     history-type="qualification"
@@ -540,14 +538,14 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                     :filestore-service="(opts) => qualificationsQualificationsClient.uploadFile(opts)"
                                 />
                             </ClientOnly>
-                        </UFormGroup>
+                        </UFormField>
                     </template>
                 </template>
 
                 <template #access>
                     <div class="flex flex-col gap-2 overflow-y-auto px-2">
                         <div>
-                            <h2 class="text-gray-900 dark:text-white">
+                            <h2 class="text-highlighted">
                                 {{ $t('common.access') }}
                             </h2>
 
@@ -565,7 +563,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                 <template #details>
                     <div class="flex flex-col gap-2 overflow-y-auto px-2">
                         <div>
-                            <h2 class="text-gray-900 dark:text-white">
+                            <h2 class="text-highlighted">
                                 {{ $t('common.requirements', 2) }}
                             </h2>
 
@@ -579,7 +577,6 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
 
                             <UTooltip :text="$t('components.qualifications.add_requirement')">
                                 <UButton
-                                    :ui="{ rounded: 'rounded-full' }"
                                     :disabled="!canSubmit"
                                     icon="i-mdi-plus"
                                     @click="state.requirements.push({ id: 0, qualificationId: 0, targetQualificationId: 0 })"
@@ -590,22 +587,22 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                         <div>
                             <UAccordion
                                 :items="[
-                                    { slot: 'discord', label: $t('common.discord'), icon: 'i-simple-icons-discord' },
-                                    { slot: 'label', label: $t('common.label', 1), icon: 'i-mdi-tag' },
+                                    { slot: 'discord' as const, label: $t('common.discord'), icon: 'i-simple-icons-discord' },
+                                    { slot: 'label' as const, label: $t('common.label', 1), icon: 'i-mdi-tag' },
                                 ]"
                             >
                                 <template #discord>
                                     <UContainer>
-                                        <UFormGroup
+                                        <UFormField
                                             class="grid grid-cols-2 items-center gap-2"
                                             name="discordSettings.enabled"
                                             :label="$t('common.enabled')"
                                             :ui="{ container: '' }"
                                         >
-                                            <UToggle v-model="state.discordSyncEnabled" :disabled="!canDo.edit" />
-                                        </UFormGroup>
+                                            <USwitch v-model="state.discordSyncEnabled" :disabled="!canDo.edit" />
+                                        </UFormField>
 
-                                        <UFormGroup name="discordSettings.roleName" :label="$t('common.role')">
+                                        <UFormField name="discordSettings.roleName" :label="$t('common.role')">
                                             <UInput
                                                 v-model="state.discordSettings.roleName"
                                                 name="discordSettings.roleName"
@@ -613,9 +610,9 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                                 :placeholder="$t('common.role')"
                                                 :disabled="!canDo.edit"
                                             />
-                                        </UFormGroup>
+                                        </UFormField>
 
-                                        <UFormGroup
+                                        <UFormField
                                             name="discordSettings.roleFormat"
                                             :label="
                                                 $t(
@@ -636,22 +633,22 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                                 ]"
                                                 :disabled="!canDo.edit"
                                             />
-                                        </UFormGroup>
+                                        </UFormField>
                                     </UContainer>
                                 </template>
 
-                                <template #label>
+                                <template #item-label>
                                     <UContainer>
-                                        <UFormGroup
+                                        <UFormField
                                             class="grid grid-cols-2 items-center gap-2"
                                             name="labelSyncEnabled"
                                             :label="$t('common.enabled')"
                                             :ui="{ container: '' }"
                                         >
-                                            <UToggle v-model="state.labelSyncEnabled" :disabled="!canDo.edit" />
-                                        </UFormGroup>
+                                            <USwitch v-model="state.labelSyncEnabled" :disabled="!canDo.edit" />
+                                        </UFormField>
 
-                                        <UFormGroup
+                                        <UFormField
                                             name="labelSyncFormat"
                                             :label="
                                                 $t('components.qualifications.qualification_editor.label_sync_format.label')
@@ -670,26 +667,26 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                                 ]"
                                                 :disabled="!canDo.edit"
                                             />
-                                        </UFormGroup>
+                                        </UFormField>
                                     </UContainer>
                                 </template>
                             </UAccordion>
                         </div>
 
                         <div>
-                            <h2 class="text-gray-900 dark:text-white">
+                            <h2 class="text-highlighted">
                                 {{ $t('common.exam', 1) }}
                             </h2>
 
-                            <UFormGroup
+                            <UFormField
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="examMode"
                                 :label="$t('components.qualifications.exam_mode')"
                                 :ui="{ container: '' }"
                             >
                                 <ClientOnly>
-                                    <USelectMenu v-model="state.examMode" :options="examModes" value-attribute="mode">
-                                        <template #label>
+                                    <USelectMenu v-model="state.examMode" :items="examModes" value-key="mode">
+                                        <template #item-label>
                                             <span class="truncate">
                                                 {{
                                                     $t(
@@ -716,7 +713,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                         <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
                                     </USelectMenu>
                                 </ClientOnly>
-                            </UFormGroup>
+                            </UFormField>
                         </div>
                     </div>
                 </template>

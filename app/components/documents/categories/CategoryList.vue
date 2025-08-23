@@ -47,7 +47,7 @@ function categorySelected(idx: number): void {
     });
 }
 
-const modal = useModal();
+const modal = useOverlay();
 </script>
 
 <template>
@@ -57,7 +57,7 @@ const modal = useModal();
 
             <UTooltip v-if="can('documents.DocumentsService/CreateOrUpdateCategory').value" :text="$t('common.create')">
                 <UButton
-                    color="gray"
+                    color="neutral"
                     trailing-icon="i-mdi-plus"
                     @click="
                         modal.open(CategoryCreateOrUpdateModal, {

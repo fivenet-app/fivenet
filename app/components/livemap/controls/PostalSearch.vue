@@ -85,12 +85,11 @@ watchDebounced(postalQuery, () => findPostal(), {
             v-model="selectedPostal"
             v-model:query="postalQuery"
             class="w-full max-w-40"
-            :options="filteredPostals"
+            :items="filteredPostals"
             nullable
             :placeholder="`${$t('common.postal')} ${$t('common.search')}`"
             option-attribute="code"
             :searchable-placeholder="$t('common.search_field')"
-            :popper="{ placement: 'top-start' }"
             size="xs"
             leading-icon="i-mdi-postage-stamp"
             v-bind="$attrs"

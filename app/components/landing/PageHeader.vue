@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import LanguageSwitcherModal from '~/components/partials/LanguageSwitcherModal.vue';
+import { de, en } from '@nuxt/ui-pro/locale';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 import { useAuthStore } from '~/stores/auth';
 
@@ -12,16 +12,18 @@ const { username } = storeToRefs(authStore);
 
 const { website } = useAppConfig();
 
-const links = computed(() =>
+const items = computed(() =>
     [
         !username.value
             ? {
                   label: t('common.home'),
                   to: '/',
+                  icon: 'i-mdi-home',
               }
             : {
                   label: t('common.overview'),
                   to: '/overview',
+                  icon: 'i-mdi-view-dashboard',
               },
         website.statsPage
             ? {
@@ -33,31 +35,41 @@ const links = computed(() =>
         {
             label: t('common.about'),
             to: '/about',
+            icon: 'i-mdi-information',
         },
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
-const modal = useModal();
+const settings = useSettingsStore();
+const { locale: userLocale } = storeToRefs(settings);
+
+const { locale, setLocale } = useI18n();
 </script>
 
 <template>
-    <UHeader :links="links" :ui="{ logo: 'inline-flex items-center gap-2' }">
-        <template #logo>
+    <UHeader :ui="{ title: 'inline-flex items-center gap-2' }">
+        <template #title>
             <FiveNetLogo class="h-10 w-auto" />
 
-            <span class="text-xl font-semibold text-gray-900 dark:text-white">FiveNet</span>
+            <span class="text-highlighted text-xl font-semibold">FiveNet</span>
         </template>
 
+        <UNavigationMenu :items="items" />
+
         <template #right>
-            <UButton
-                :label="$t('common.language')"
-                icon="i-mdi-translate"
-                color="gray"
-                @click="modal.open(LanguageSwitcherModal, {})"
+            <ULocaleSelect
+                v-model="locale"
+                :locales="[en, de]"
+                @update:model-value="
+                    ($event) => {
+                        setLocale($event as typeof userLocale);
+                        userLocale = $event as typeof userLocale;
+                    }
+                "
             />
 
             <template v-if="!username">
-                <UButton :label="$t('components.auth.LoginForm.title')" icon="i-mdi-login" color="gray" to="/auth/login" />
+                <UButton :label="$t('components.auth.LoginForm.title')" icon="i-mdi-login" color="neutral" to="/auth/login" />
 
                 <UButton
                     v-if="login.signupEnabled"
@@ -65,7 +77,7 @@ const modal = useModal();
                     :label="$t('components.auth.RegistrationForm.title')"
                     icon="i-mdi-account-plus"
                     trailing
-                    color="black"
+                    color="neutral"
                     to="/auth/registration"
                 />
             </template>

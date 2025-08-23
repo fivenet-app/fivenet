@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Form } from '#ui/types';
+import type { Form } from '@nuxt/ui';
 import { z } from 'zod';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
@@ -123,7 +123,7 @@ const { game } = useAppConfig();
                 </UButton>
 
                 <UForm ref="form" class="flex w-full flex-row gap-2" :schema="schema" :state="state" @submit="refresh()">
-                    <UFormGroup class="flex-1" name="days" :label="$t('common.time_ago.day', 2)">
+                    <UFormField class="flex-1" name="days" :label="$t('common.time_ago.day', 2)">
                         <UInput
                             v-model="state.days"
                             name="days"
@@ -132,7 +132,7 @@ const { game } = useAppConfig();
                             :max="31"
                             :placeholder="$t('common.time_ago.day', 2)"
                         />
-                    </UFormGroup>
+                    </UFormField>
                 </UForm>
             </div>
         </template>
@@ -155,7 +155,7 @@ const { game } = useAppConfig();
         sort-mode="manual"
     >
         <template #name-data="{ row: colleague }">
-            <div class="inline-flex items-center gap-1 text-gray-900 dark:text-white">
+            <div class="text-highlighted inline-flex items-center gap-1">
                 <ProfilePictureImg
                     :src="colleague.avatar"
                     :name="`${colleague.firstname} ${colleague.lastname}`"

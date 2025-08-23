@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Group } from '#ui/types';
+import type { CommandPaletteGroup } from '@nuxt/ui';
 import { getWikiWikiClient } from '~~/gen/ts/clients';
 
 const appConfig = useAppConfig();
@@ -12,7 +12,7 @@ const isOpen = ref(false);
 
 const groups = [
     {
-        key: 'pages',
+        id: 'pages',
         label: (q: string | undefined) => q && `${t('common.search')}: ${q}`,
         search: async (q: string) => {
             try {
@@ -37,14 +37,14 @@ const groups = [
             }
         },
     },
-] as Group[];
+] as CommandPaletteGroup[];
 </script>
 
 <template>
     <UButton
         class="w-full"
         :icon="appConfig.ui.icons.search"
-        color="gray"
+        color="neutral"
         :label="$t('common.search_field')"
         truncate
         aria-label="Search"
@@ -54,7 +54,7 @@ const groups = [
 
     <ClientOnly>
         <UDashboardSearch
-            v-model="isOpen"
+            v-model:open="isOpen"
             hide-color-mode
             :groups="groups"
             :empty-state="{

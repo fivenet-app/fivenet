@@ -23,9 +23,9 @@ const props = defineProps<{
 
 const { can } = useAuth();
 
-const modal = useModal();
+const modal = useOverlay();
 
-const { isOpen } = useSlideover();
+const { isOpen } = useOverlay();
 
 const { goto } = useLivemapStore();
 
@@ -67,11 +67,9 @@ const canAccessDispatch = computed(() => ({
             v-if="dispatch"
             :ui="{
                 body: {
-                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--header-height)))] max-h-[calc(100dvh-(2*var(--header-height)))] overflow-y-auto',
+                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--ui-header-height)))] max-h-[calc(100dvh-(2*var(--ui-header-height)))] overflow-y-auto',
                     padding: 'px-1 py-2 sm:p-2',
                 },
-                ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
             }"
         >
             <template #header>
@@ -84,7 +82,7 @@ const canAccessDispatch = computed(() => ({
                         </p>
                     </div>
 
-                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -140,7 +138,6 @@ const canAccessDispatch = computed(() => ({
                                         size="xs"
                                         variant="link"
                                         icon="i-mdi-map-marker"
-                                        :padded="false"
                                         @click="goto({ x: dispatch.x, y: dispatch.y })"
                                     >
                                         {{ $t('common.go_to_location') }}
@@ -186,7 +183,7 @@ const canAccessDispatch = computed(() => ({
                                 <span v-if="dispatch.units.length === 0" class="block">
                                     {{ $t('common.units', dispatch.units.length) }}
                                 </span>
-                                <div v-else class="mb-1 rounded-md bg-neutral-100 dark:bg-base-900">
+                                <div v-else class="dark:bg-base-900 mb-1 rounded-md bg-neutral-100">
                                     <ul class="divide-y divide-gray-100 text-sm font-medium dark:divide-gray-800" role="list">
                                         <li
                                             v-for="unit in dispatch.units"
@@ -269,7 +266,6 @@ const canAccessDispatch = computed(() => ({
                                         size="xs"
                                         variant="link"
                                         icon="i-mdi-map-marker"
-                                        :padded="false"
                                         @click="
                                             goto({
                                                 x: dispatch.status?.x,
@@ -290,7 +286,7 @@ const canAccessDispatch = computed(() => ({
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <UButton
-                                    class="rounded px-2 py-1 text-sm font-semibold"
+                                    class="rounded-sm px-2 py-1 text-sm font-semibold"
                                     :class="dispatchStatusColors"
                                     :icon="dispatchStatusToIcon(dispatch.status?.status)"
                                     :disabled="!canAccessDispatch.participate"
@@ -331,7 +327,7 @@ const canAccessDispatch = computed(() => ({
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" class="flex-1" block @click="isOpen = false">
+                    <UButton color="neutral" class="flex-1" block @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
 

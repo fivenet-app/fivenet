@@ -14,24 +14,22 @@ definePageMeta({
 
 const { can } = useAuth();
 
-const modal = useModal();
+const modal = useOverlay();
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('pages.citizens.title')">
-                <template #right>
-                    <UButton
-                        v-if="can('citizens.CitizensService/ManageLabels').value"
-                        :label="$t('common.label', 2)"
-                        icon="i-mdi-tag"
-                        @click="modal.open(CitizenLabelModal, {})"
-                    />
-                </template>
-            </UDashboardNavbar>
+    <UDashboardPanel>
+        <UDashboardNavbar :title="$t('pages.citizens.title')">
+            <template #right>
+                <UButton
+                    v-if="can('citizens.CitizensService/ManageLabels').value"
+                    :label="$t('common.label', 2)"
+                    icon="i-mdi-tag"
+                    @click="modal.open(CitizenLabelModal, {})"
+                />
+            </template>
+        </UDashboardNavbar>
 
-            <CitizenList />
-        </UDashboardPanel>
-    </UDashboardPage>
+        <CitizenList />
+    </UDashboardPanel>
 </template>

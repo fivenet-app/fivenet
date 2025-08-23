@@ -104,15 +104,15 @@ const columns = [
     <UDashboardToolbar>
         <template #default>
             <UForm class="flex w-full flex-row gap-2" :state="query" :schema="schema">
-                <UFormGroup class="flex-1" name="closed" :label="$t('common.close', 2)">
+                <UFormField class="flex-1" name="closed" :label="$t('common.close', 2)">
                     <ClientOnly>
                         <USelectMenu
                             v-model="query.closed"
-                            :options="openclose"
-                            value-attribute="closed"
+                            :items="openclose"
+                            value-key="closed"
                             :searchable-placeholder="$t('common.search_field')"
                         >
-                            <template #label>
+                            <template #item-label>
                                 {{
                                     query.closed === undefined
                                         ? openclose[0]!.label
@@ -121,18 +121,18 @@ const columns = [
                             </template>
                         </USelectMenu>
                     </ClientOnly>
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup class="flex-1" name="relation" :label="$t('common.relation')">
+                <UFormField class="flex-1" name="relation" :label="$t('common.relation')">
                     <ClientOnly>
                         <USelectMenu
                             v-model="query.relations"
                             multiple
-                            :options="docRelations"
-                            value-attribute="value"
+                            :items="docRelations"
+                            value-key="value"
                             :searchable-placeholder="$t('common.relation', 2)"
                         >
-                            <template #label>
+                            <template #item-label>
                                 {{ $t('common.selected', query.relations.length) }}
                             </template>
 
@@ -146,7 +146,7 @@ const columns = [
                             </template>
                         </USelectMenu>
                     </ClientOnly>
-                </UFormGroup>
+                </UFormField>
             </UForm>
         </template>
     </UDashboardToolbar>

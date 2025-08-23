@@ -10,7 +10,7 @@ const props = defineProps<{
     unit: Unit;
 }>();
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const completorStore = useCompletorStore();
 
@@ -74,8 +74,6 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     body: {
                         padding: 'px-1 py-2 sm:p-2',
                     },
-                    ring: '',
-                    divide: 'divide-y divide-gray-100 dark:divide-gray-800',
                 }"
             >
                 <template #header>
@@ -84,14 +82,20 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             {{ $t('components.centrum.assign_unit.title') }}: {{ unit.name }} ({{ unit.initials }})
                         </h3>
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                        <UButton
+                            class="-my-1"
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
                 <div>
                     <div class="flex flex-1 flex-col justify-between gap-2">
                         <div class="divide-y divide-gray-100 px-2 sm:px-6 dark:divide-gray-800">
-                            <UFormGroup class="flex-1" name="users" :label="$t('common.colleague', 2)">
+                            <UFormField class="flex-1" name="users" :label="$t('common.colleague', 2)">
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="state.users"
@@ -127,9 +131,9 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                         <template #empty> {{ $t('common.not_found', [$t('common.colleague', 2)]) }} </template>
                                     </USelectMenu>
                                 </ClientOnly>
-                            </UFormGroup>
+                            </UFormField>
 
-                            <div class="mt-2 overflow-hidden rounded-md bg-neutral-100 dark:bg-base-900">
+                            <div class="dark:bg-base-900 mt-2 overflow-hidden rounded-md bg-neutral-100">
                                 <ul
                                     class="divide-y divide-gray-100 text-sm font-medium text-gray-100 dark:divide-gray-800"
                                     role="list"
@@ -149,7 +153,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="black" block @click="isOpen = false">
+                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

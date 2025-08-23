@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { TableColumn } from '#ui/types';
+import type { TableColumn } from '@nuxt/ui';
 import { vMaska } from 'maska/vue';
 import { z } from 'zod';
 import { sexToTextColor } from '~/components/partials/citizens/helpers';
@@ -99,7 +99,7 @@ function addToClipboard(user: User): void {
     notifications.add({
         title: { key: 'notifications.clipboard.citizen_add.title', parameters: {} },
         description: { key: 'notifications.clipboard.citizen_add.content', parameters: {} },
-        timeout: 3250,
+        duration: 3250,
         type: NotificationType.INFO,
     });
 }
@@ -171,7 +171,7 @@ defineShortcuts({
     <UDashboardToolbar>
         <UForm class="w-full" :schema="schema" :state="query" @submit="refresh()">
             <div class="flex w-full flex-row gap-2">
-                <UFormGroup class="flex-1" :label="$t('common.search')" name="name">
+                <UFormField class="flex-1" :label="$t('common.search')" name="name">
                     <UInput
                         ref="input"
                         v-model="query.name"
@@ -186,9 +186,9 @@ defineShortcuts({
                             <UKbd value="/" />
                         </template>
                     </UInput>
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup name="dateofbirth" :label="$t('common.date_of_birth')">
+                <UFormField name="dateofbirth" :label="$t('common.date_of_birth')">
                     <UInput
                         v-model="query.dateofbirth"
                         v-maska
@@ -198,9 +198,9 @@ defineShortcuts({
                         block
                         data-maska="##.##.####"
                     />
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup
+                <UFormField
                     v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.Wanted').value"
                     class="flex flex-initial flex-col"
                     name="wanted"
@@ -208,21 +208,21 @@ defineShortcuts({
                     :ui="{ container: 'flex-1 flex' }"
                 >
                     <div class="flex flex-1 items-center">
-                        <UToggle v-model="query.wanted" />
+                        <USwitch v-model="query.wanted" />
                     </div>
-                </UFormGroup>
+                </UFormField>
             </div>
 
             <UAccordion
                 class="mt-2"
-                color="white"
+                color="neutral"
                 variant="soft"
                 size="sm"
-                :items="[{ label: $t('common.advanced_search'), slot: 'search' }]"
+                :items="[{ label: $t('common.advanced_search'), slot: 'search' as const }]"
             >
                 <template #search>
                     <div class="flex flex-row gap-2">
-                        <UFormGroup
+                        <UFormField
                             v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'PhoneNumber').value"
                             class="flex-1"
                             name="phoneNumber"
@@ -235,9 +235,9 @@ defineShortcuts({
                                 :placeholder="$t('common.phone_number')"
                                 block
                             />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup
+                        <UFormField
                             v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'TrafficInfractionPoints').value"
                             class="flex-1"
                             name="trafficInfractionPoints"
@@ -251,9 +251,9 @@ defineShortcuts({
                                 :placeholder="$t('common.traffic_infraction_points')"
                                 block
                             />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup
+                        <UFormField
                             v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.OpenFines').value"
                             class="flex-1"
                             name="openFines"
@@ -268,7 +268,7 @@ defineShortcuts({
                                 block
                                 leading-icon="i-mdi-dollar"
                             />
-                        </UFormGroup>
+                        </UFormField>
                     </div>
                 </template>
             </UAccordion>
@@ -292,7 +292,7 @@ defineShortcuts({
         sort-mode="manual"
     >
         <template #name-data="{ row: citizen }">
-            <div class="inline-flex items-center gap-1 text-gray-900 dark:text-white">
+            <div class="text-highlighted inline-flex items-center gap-1">
                 <ProfilePictureImg
                     :src="citizen.props?.mugshot?.filePath"
                     :name="`${citizen.firstname} ${citizen.lastname}`"

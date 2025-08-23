@@ -136,21 +136,20 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                     />
                 </UButtonGroup>
 
-                <UDropdown
+                <UDropdownMenu
                     v-if="canDelete"
                     :items="[
                         [
                             {
                                 label: $t('common.delete'),
                                 icon: 'i-mdi-delete',
-                                click: async () => deleteDocumentReq(request.id),
+                                onClick: async () => deleteDocumentReq(request.id),
                             },
                         ],
                     ]"
-                    :popper="{ placement: 'bottom-start' }"
                 >
-                    <UButton size="md" color="white" icon="i-mdi-menu" trailing-icon="i-mdi-chevron-down" />
-                </UDropdown>
+                    <UButton size="md" color="neutral" icon="i-mdi-menu" trailing-icon="i-mdi-chevron-down" />
+                </UDropdownMenu>
             </div>
         </div>
     </li>

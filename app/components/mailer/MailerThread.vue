@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { isToday } from 'date-fns';
 import { z } from 'zod';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
@@ -27,7 +27,7 @@ const props = withDefaults(
     },
 );
 
-const modal = useModal();
+const modal = useOverlay();
 
 const { can, isSuperuser } = useAuth();
 
@@ -201,7 +201,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     {{ thread.title }}
                 </h3>
 
-                <p class="shrink-0 font-medium text-gray-900 dark:text-white">
+                <p class="text-highlighted shrink-0 font-medium">
                     {{
                         isToday(toDate(thread.createdAt))
                             ? $d(toDate(thread.createdAt), 'time')
@@ -211,7 +211,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </div>
 
             <div class="w-full min-w-0 flex-1 text-sm">
-                <div class="flex snap-x flex-row flex-wrap gap-1 overflow-x-auto text-gray-500 dark:text-gray-400">
+                <div class="text-muted flex snap-x flex-row flex-wrap gap-1 overflow-x-auto">
                     <span class="text-sm font-semibold">{{ $t('common.participant', 2) }}:</span>
 
                     <EmailInfoPopover
@@ -240,11 +240,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         messageRefs[message.id] = el as Element;
                     }
                 "
-                class="hover:border-primary-500 hover:dark:border-primary-400 border-l-2 border-white px-2 pb-3 hover:bg-neutral-100 sm:pb-2 dark:border-gray-900 dark:hover:bg-base-800"
+                class="dark:hover:bg-base-800 hover:border-primary-500 hover:dark:border-primary-400 border-l-2 border-white px-2 pb-3 hover:bg-neutral-100 sm:pb-2 dark:border-gray-900"
                 :class="selectedMessage === message.id && '!border-primary-500'"
                 @click="selectedMessageId = message.id"
             >
-                <UDivider>
+                <USeparator>
                     <GenericTime :value="message.createdAt" type="short" />
 
                     <UTooltip
@@ -272,19 +272,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             "
                         />
                     </UTooltip>
-                </UDivider>
+                </USeparator>
 
                 <div class="flex flex-col gap-1">
                     <div class="inline-flex items-center gap-1 text-sm">
                         <span class="font-semibold">{{ $t('common.from') }}:</span>
 
-                        <EmailInfoPopover
-                            :email="message.sender?.email"
-                            variant="link"
-                            truncate
-                            :trailing="false"
-                            :padded="false"
-                        />
+                        <EmailInfoPopover :email="message.sender?.email" variant="link" truncate :trailing="false" />
                     </div>
 
                     <div class="inline-flex items-center gap-1">
@@ -293,14 +287,21 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </div>
                 </div>
 
-                <div class="mx-auto w-full max-w-screen-xl break-words rounded-lg bg-neutral-100 dark:bg-base-900">
+                <div class="dark:bg-base-900 max-w-(--breakpoint-xl) mx-auto w-full break-words rounded-lg bg-neutral-100">
                     <HTMLContent v-if="message.content?.content" class="px-4 py-2" :value="message.content.content" />
                 </div>
 
                 <UAccordion
                     v-if="message.data?.attachments && message.data?.attachments.length > 0"
                     class="mt-1"
-                    :items="[{ slot: 'attachments', label: $t('common.attachment', 2), color: 'white', variant: 'outline' }]"
+                    :items="[
+                        {
+                            slot: 'attachments' as const,
+                            label: $t('common.attachment', 2),
+                            color: 'neutral',
+                            variant: 'outline',
+                        },
+                    ]"
                 >
                     <template #attachments>
                         <div class="flex flex-col gap-1">
@@ -341,7 +342,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <UAccordion
             class="mt-2 max-h-[50vh] overflow-y-auto"
             variant="outline"
-            :items="[{ slot: 'compose', label: $t('components.mailer.reply'), icon: 'i-mdi-paper-airplane' }]"
+            :items="[{ slot: 'compose' as const, label: $t('components.mailer.reply'), icon: 'i-mdi-paper-airplane' }]"
             :ui="{ default: { class: 'mb-0' }, item: { base: 'overflow-x-hidden' } }"
         >
             <template #compose>
@@ -351,20 +352,20 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     :state="state"
                     @submit="onSubmitThrottle"
                 >
-                    <UFormGroup name="recipients" :label="$t('common.additional_recipients')">
+                    <UFormField name="recipients" :label="$t('common.additional_recipients')">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="state.recipients"
                                 multiple
                                 trailing
-                                :options="[...state.recipients, ...addressBook]"
+                                :items="[...state.recipients, ...addressBook]"
                                 searchable
                                 :searchable-placeholder="$t('common.recipient')"
                                 :placeholder="$t('common.recipient')"
                                 creatable
                                 :disabled="!canSubmit"
                             >
-                                <template #label>&nbsp;</template>
+                                <template #item-label>&nbsp;</template>
 
                                 <template #option-create="{ option }">
                                     <span class="shrink-0">{{ $t('common.recipient') }}: {{ option.label }}</span>
@@ -390,7 +391,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 size="sm"
                                 orientation="horizontal"
                             >
-                                <UButton variant="solid" color="gray" :label="recipient.label" />
+                                <UButton variant="solid" color="neutral" :label="recipient.label" />
 
                                 <UButton
                                     variant="outline"
@@ -400,26 +401,26 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 />
                             </UButtonGroup>
                         </div>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup name="title" :label="$t('common.title')">
+                    <UFormField name="title" :label="$t('common.title')">
                         <div class="flex flex-1 flex-col items-center gap-2 sm:flex-row">
                             <UInput
                                 v-model="state.title"
-                                class="w-full font-semibold text-gray-900 dark:text-white"
+                                class="text-highlighted w-full font-semibold"
                                 type="text"
                                 size="lg"
                                 :placeholder="$t('common.title')"
                                 :disabled="!canSubmit"
-                                :ui="{ icon: { trailing: { pointer: '' } } }"
+                                :ui="{ trailing: 'pe-1' }"
                             >
                                 <template #trailing>
                                     <UButton
                                         v-show="state.title !== ''"
-                                        color="gray"
+                                        color="neutral"
                                         variant="link"
                                         icon="i-mdi-close"
-                                        :padded="false"
+                                        aria-controls="search"
                                         @click="state.title = generateResponseTitle(selectedThread)"
                                     />
                                 </template>
@@ -427,13 +428,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                             <TemplateSelector v-model="state.content" class="ml-auto" size="lg" />
                         </div>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup name="message">
+                    <UFormField name="message">
                         <ClientOnly>
                             <TiptapEditor v-model="state.content" :disabled="!canSubmit" wrapper-class="min-h-44" />
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
                     <div class="inline-flex gap-1">
                         <UButton
@@ -449,7 +450,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :text="$t('common.attachment', 2)"
                         >
                             <UButton
-                                color="white"
+                                color="neutral"
                                 trailing-icon="i-mdi-attach-file"
                                 @click="
                                     modal.open(ThreadAttachmentsModal, {

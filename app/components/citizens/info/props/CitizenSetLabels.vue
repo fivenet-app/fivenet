@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { useCompletorStore } from '~/stores/completor';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
@@ -117,7 +117,7 @@ watch(state, () => {
                     v-for="(attribute, idx) in state.labels"
                     :key="attribute.name"
                     class="justify-between gap-2"
-                    :class="isColorBright(hexToRgb(attribute.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                    :class="isColorBright(hexToRgb(attribute.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
                     :style="{ backgroundColor: attribute.color }"
                     size="lg"
                 >
@@ -129,13 +129,11 @@ watch(state, () => {
                         v-if="canDo.set"
                         :class="
                             isColorBright(hexToRgb(attribute.color, RGBBlack)!)
-                                ? '!bg-white/20 !text-black'
-                                : '!bg-black/20 !text-white'
+                                ? 'bg-white/20! text-black!'
+                                : 'bg-black/20! text-white!'
                         "
                         variant="link"
                         icon="i-mdi-close"
-                        :padded="false"
-                        :ui="{ rounded: 'rounded-full' }"
                         @click="
                             changed = true;
                             state.labels.splice(idx, 1);
@@ -145,7 +143,7 @@ watch(state, () => {
             </div>
         </template>
 
-        <UFormGroup v-if="canDo.set && can('completor.CompletorService/CompleteCitizenLabels').value" name="labels">
+        <UFormField v-if="canDo.set && can('completor.CompletorService/CompleteCitizenLabels').value" name="labels">
             <ClientOnly>
                 <USelectMenu
                     v-model="state.labels"
@@ -165,14 +163,14 @@ watch(state, () => {
                     by="name"
                     clear-search-on-close
                 >
-                    <template #label>
+                    <template #item-label>
                         {{ $t('common.selected', state.labels.length) }}
                     </template>
 
                     <template #option="{ option }">
                         <span
                             class="truncate"
-                            :class="isColorBright(hexToRgb(option.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                            :class="isColorBright(hexToRgb(option.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
                             :style="{ backgroundColor: option.color }"
                             >{{ option.name }}</span
                         >
@@ -187,12 +185,12 @@ watch(state, () => {
                     </template>
                 </USelectMenu>
             </ClientOnly>
-        </UFormGroup>
+        </UFormField>
 
         <template v-if="changed">
-            <UFormGroup name="reason" :label="$t('common.reason')" required>
+            <UFormField name="reason" :label="$t('common.reason')" required>
                 <UInput v-model="state.reason" type="text" />
-            </UFormGroup>
+            </UFormField>
 
             <UButton type="submit" block icon="i-mdi-content-save" :disabled="!canSubmit" :loading="!canSubmit">
                 {{ $t('common.save') }}

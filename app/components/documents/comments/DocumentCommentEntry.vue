@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
@@ -29,7 +29,7 @@ const emit = defineEmits<{
 
 const comment = useVModel(props, 'modelValue', emit);
 
-const modal = useModal();
+const modal = useOverlay();
 
 const { can, activeChar, isSuperuser } = useAuth();
 
@@ -220,7 +220,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </div>
                 </div>
 
-                <div class="rounded-lg bg-neutral-100 dark:bg-base-900">
+                <div class="dark:bg-base-900 rounded-lg bg-neutral-100">
                     <HTMLContent v-if="comment.content?.content" class="px-4 py-2" :value="comment.content.content" />
                 </div>
             </div>
@@ -229,7 +229,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <div v-else-if="canComment" class="flex items-start space-x-4">
             <div class="min-w-0 flex-1">
                 <UForm class="relative" :schema="schema" :state="state" @submit="onSubmitThrottle">
-                    <UFormGroup name="comment">
+                    <UFormField name="comment">
                         <ClientOnly>
                             <TiptapEditor
                                 v-model="state.content"
@@ -240,7 +240,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 history-type="document_comments"
                             />
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
                     <div class="mt-2 shrink-0">
                         <UButton type="submit" :disabled="!canSubmit" :loading="!canSubmit">

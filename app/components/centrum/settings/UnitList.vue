@@ -13,7 +13,7 @@ const { t } = useI18n();
 
 const { can } = useAuth();
 
-const modal = useModal();
+const modal = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -108,7 +108,7 @@ const columns = [
             <UButton
                 v-if="can('centrum.CentrumService/CreateOrUpdateUnit').value"
                 trailing-icon="i-mdi-plus"
-                color="gray"
+                color="neutral"
                 @click="
                     modal.open(UnitCreateOrUpdateModal, {
                         onCreated: async () => refresh(),
@@ -132,7 +132,7 @@ const columns = [
         :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.unit', 2)]) }"
     >
         <template #name-data="{ row: unit }">
-            <div class="text-gray-900 dark:text-white">
+            <div class="text-highlighted">
                 {{ unit.name }}
             </div>
         </template>

@@ -5,29 +5,29 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const centrumStore = useCentrumStore();
 const { dispatchers, anyDispatchersActive, getCurrentMode } = storeToRefs(centrumStore);
 </script>
 
 <template>
-    <UModal :ui="{ width: '!max-w-2xl' }">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="inline-flex items-center gap-2 text-2xl font-semibold leading-6">
-                        <span>{{ $t('common.dispatchers', 2) }}</span>
+    <UModal :ui="{ width: 'max-w-2xl!' }">
+        <template #header>
+            <div class="flex items-center justify-between">
+                <h3 class="inline-flex items-center gap-2 text-2xl font-semibold leading-6">
+                    <span>{{ $t('common.dispatchers', 2) }}</span>
 
-                        <UBadge color="gray">
-                            {{ $t('common.mode') }}: {{ $t(`enums.centrum.CentrumMode.${CentrumMode[getCurrentMode ?? 0]}`) }}
-                        </UBadge>
-                    </h3>
+                    <UBadge color="neutral">
+                        {{ $t('common.mode') }}: {{ $t(`enums.centrum.CentrumMode.${CentrumMode[getCurrentMode ?? 0]}`) }}
+                    </UBadge>
+                </h3>
 
-                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                </div>
-            </template>
+                <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+            </div>
+        </template>
 
+        <template #body>
             <DataNoDataBlock
                 v-if="!dispatchers || !anyDispatchersActive"
                 icon="i-mdi-monitor"
@@ -46,7 +46,7 @@ const { dispatchers, anyDispatchersActive, getCurrentMode } = storeToRefs(centru
                             :title="`${dispatcher.firstname} ${dispatcher.lastname}`"
                             icon="i-mdi-account"
                             :ui="{
-                                title: 'text-gray-900 dark:text-white text-base font-semibold flex items-center gap-1.5 line-clamp-2 whitespace-break-spaces',
+                                title: 'text-highlighted text-base font-semibold flex items-center gap-1.5 line-clamp-2 whitespace-break-spaces',
                                 body: {
                                     padding: 'flex-0',
                                 },
@@ -70,12 +70,12 @@ const { dispatchers, anyDispatchersActive, getCurrentMode } = storeToRefs(centru
                     </UPageGrid>
                 </div>
             </div>
+        </template>
 
-            <template #footer>
-                <UButton class="flex-1" color="black" block @click="isOpen = false">
-                    {{ $t('common.close', 1) }}
-                </UButton>
-            </template>
-        </UCard>
+        <template #footer>
+            <UButton class="flex-1" color="neutral" block @click="isOpen = false">
+                {{ $t('common.close', 1) }}
+            </UButton>
+        </template>
     </UModal>
 </template>

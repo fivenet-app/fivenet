@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { dispatchStatusToBGColor, dispatchStatuses } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
@@ -13,7 +13,7 @@ const props = defineProps<{
     status?: StatusDispatch;
 }>();
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const centrumStore = useCentrumStore();
 const { settings } = storeToRefs(centrumStore);
@@ -85,8 +85,6 @@ function updateReasonField(value: string): void {
                     body: {
                         padding: 'px-1 py-2 sm:p-2',
                     },
-                    ring: '',
-                    divide: 'divide-y divide-gray-100 dark:divide-gray-800',
                 }"
             >
                 <template #header>
@@ -96,7 +94,13 @@ function updateReasonField(value: string): void {
                             <IDCopyBadge :id="dispatchId" class="ml-2" prefix="DSP" />
                         </h3>
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                        <UButton
+                            class="-my-1"
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
@@ -109,7 +113,7 @@ function updateReasonField(value: string): void {
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="status">
+                                <UFormField name="status">
                                     <div class="grid w-full grid-cols-2 gap-0.5">
                                         <UButton
                                             v-for="(item, idx) in dispatchStatuses"
@@ -137,7 +141,7 @@ function updateReasonField(value: string): void {
                                             </span>
                                         </UButton>
                                     </div>
-                                </UFormGroup>
+                                </UFormField>
                             </dd>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -147,9 +151,9 @@ function updateReasonField(value: string): void {
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup class="flex-1" name="code">
+                                <UFormField class="flex-1" name="code">
                                     <UInput v-model="state.code" type="text" name="code" :placeholder="$t('common.code')" />
-                                </UFormGroup>
+                                </UFormField>
                             </dd>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -159,9 +163,9 @@ function updateReasonField(value: string): void {
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup class="flex-1" name="reason" required>
+                                <UFormField class="flex-1" name="reason" required>
                                     <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
-                                </UFormGroup>
+                                </UFormField>
                             </dd>
                         </div>
 
@@ -179,7 +183,7 @@ function updateReasonField(value: string): void {
                                 <ClientOnly>
                                     <USelectMenu
                                         name="dispatchStatus"
-                                        :options="['&nbsp;', ...settings?.predefinedStatus.dispatchStatus]"
+                                        :items="['&nbsp;', ...settings?.predefinedStatus.dispatchStatus]"
                                         :searchable-placeholder="$t('common.search_field')"
                                         @change="updateReasonField($event)"
                                     >
@@ -197,7 +201,7 @@ function updateReasonField(value: string): void {
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="black" block @click="isOpen = false">
+                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

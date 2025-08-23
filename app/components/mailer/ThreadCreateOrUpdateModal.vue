@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/stores/mailer';
@@ -9,7 +9,7 @@ import { defaultEmptyContent } from './helpers';
 import TemplateSelector from './TemplateSelector.vue';
 import ThreadAttachmentsForm from './ThreadAttachmentsForm.vue';
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const { can, activeChar, isSuperuser } = useAuth();
 
@@ -114,8 +114,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <UForm class="flex flex-1 flex-col" :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UCard
                 :ui="{
-                    ring: '',
-                    divide: 'divide-y divide-gray-100 dark:divide-gray-800',
                     base: 'flex flex-1 flex-col',
                     body: { base: 'flex flex-1 flex-col' },
                 }"
@@ -126,14 +124,20 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             {{ $t('components.mailer.create_thread') }}
                         </h3>
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                        <UButton
+                            class="-my-1"
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
                 <div class="mx-auto">
-                    <div class="flex w-full max-w-screen-xl flex-1 flex-col">
+                    <div class="max-w-(--breakpoint-xl) flex w-full flex-1 flex-col">
                         <div class="flex w-full flex-col items-center justify-between gap-1">
-                            <UFormGroup class="w-full flex-1" name="sender" :label="$t('common.sender')">
+                            <UFormField class="w-full flex-1" name="sender" :label="$t('common.sender')">
                                 <ClientOnly>
                                     <UInput
                                         v-if="emails.length === 1"
@@ -152,7 +156,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         v-else
                                         v-model="selectedEmail"
                                         class="pt-1"
-                                        :options="emails"
+                                        :items="emails"
                                         :placeholder="$t('common.mail')"
                                         searchable
                                         :searchable-placeholder="$t('common.search_field')"
@@ -160,7 +164,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         trailing
                                         by="id"
                                     >
-                                        <template #label>
+                                        <template #item-label>
                                             <span class="overflow-hidden truncate">
                                                 {{
                                                     (selectedEmail?.label && selectedEmail?.label !== ''
@@ -209,9 +213,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         <template #empty> {{ $t('common.not_found', [$t('common.mail', 2)]) }} </template>
                                     </USelectMenu>
                                 </ClientOnly>
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup class="w-full flex-1" name="title" :label="$t('common.title')">
+                            <UFormField class="w-full flex-1" name="title" :label="$t('common.title')">
                                 <UInput
                                     v-model="state.title"
                                     class="font-semibold"
@@ -219,22 +223,22 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     size="lg"
                                     :placeholder="$t('common.title')"
                                     :disabled="!canSubmit"
-                                    :ui="{ icon: { trailing: { pointer: '' } } }"
+                                    :ui="{ trailing: 'pe-1' }"
                                 >
                                     <template #trailing>
                                         <UButton
                                             v-show="state.title !== ''"
-                                            color="gray"
+                                            color="neutral"
                                             variant="link"
                                             icon="i-mdi-close"
-                                            :padded="false"
+                                            aria-controls="search"
                                             @click="state.title = ''"
                                         />
                                     </template>
                                 </UInput>
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup class="w-full flex-1" name="recipients" :label="$t('common.recipient', 2)">
+                            <UFormField class="w-full flex-1" name="recipients" :label="$t('common.recipient', 2)">
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="state.recipients"
@@ -243,7 +247,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         multiple
                                         trailing
                                         searchable
-                                        :options="[
+                                        :items="[
                                             ...state.recipients,
                                             ...addressBook.filter((r) => !state.recipients.includes(r)),
                                         ]"
@@ -251,7 +255,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         creatable
                                         :disabled="!canSubmit"
                                     >
-                                        <template #label>&nbsp;</template>
+                                        <template #item-label>&nbsp;</template>
 
                                         <template #option-create="{ option }">
                                             <span class="shrink-0">{{ $t('common.recipient') }}: {{ option.label }}</span>
@@ -274,7 +278,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         size="sm"
                                         orientation="horizontal"
                                     >
-                                        <UButton variant="solid" color="gray" :label="recipient.label" />
+                                        <UButton variant="solid" color="neutral" :label="recipient.label" />
 
                                         <UButton
                                             variant="outline"
@@ -284,10 +288,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         />
                                     </UButtonGroup>
                                 </div>
-                            </UFormGroup>
+                            </UFormField>
                         </div>
 
-                        <UFormGroup
+                        <UFormField
                             class="flex flex-1 flex-col"
                             name="content"
                             :label="$t('common.message')"
@@ -296,7 +300,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 label: { base: 'flex flex-1' },
                             }"
                         >
-                            <template #label>
+                            <template #item-label>
                                 <div class="flex flex-1 flex-col items-center sm:flex-row">
                                     <span class="flex-1">{{ $t('common.message', 1) }}</span>
 
@@ -312,7 +316,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     wrapper-class="min-h-96"
                                 />
                             </ClientOnly>
-                        </UFormGroup>
+                        </UFormField>
 
                         <ThreadAttachmentsForm
                             v-if="can('documents.DocumentsService/ListDocuments').value"
@@ -324,7 +328,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" block color="black" @click="isOpen = false">
+                        <UButton class="flex-1" block color="neutral" @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

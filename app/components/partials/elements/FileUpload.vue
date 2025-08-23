@@ -26,7 +26,7 @@ const emit = defineEmits<{
 
 const modelValue = useVModel(props, 'modelValue', emit);
 
-const modal = useModal();
+const modal = useOverlay();
 
 const settingsStore = useSettingsStore();
 const { nuiEnabled } = storeToRefs(settingsStore);
@@ -110,10 +110,10 @@ const filePath = computed(() => {
                     block
                     :placeholder="$t('common.image')"
                     :disabled="disabled"
-                    @change="handleFileChanges"
+                    @change="($event) => handleFileChanges($event)"
                 />
 
-                <UTooltip v-if="!filePath || state.fileUrl.length > 0" :ui="{ placement: 'top' }" :text="$t('common.upload')">
+                <UTooltip v-if="!filePath || state.fileUrl.length > 0" :text="$t('common.upload')">
                     <UButton
                         icon="i-mdi-upload"
                         color="primary"
@@ -121,7 +121,7 @@ const filePath = computed(() => {
                         @click="uploadFile(state.fileUrl)"
                     />
                 </UTooltip>
-                <UTooltip v-else :ui="{ placement: 'top' }" :text="$t('common.delete')">
+                <UTooltip v-else :text="$t('common.delete')">
                     <UButton
                         icon="i-mdi-delete"
                         color="error"

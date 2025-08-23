@@ -44,9 +44,7 @@ const faqs = [
             <div class="flex flex-col justify-between">
                 <div>
                     <div class="relative isolate px-6 py-20 lg:px-8">
-                        <div
-                            class="hero absolute inset-0 z-[-1] [mask-image:radial-gradient(100%_100%_at_top,white,transparent)]"
-                        />
+                        <div class="hero mask-[radial-gradient(100%_100%_at_top,white,transparent)] absolute inset-0 z-[-1]" />
 
                         <div class="mx-auto max-w-2xl text-center">
                             <h2 class="text-4xl font-bold tracking-tight sm:text-6xl">
@@ -84,7 +82,7 @@ const faqs = [
                                 class="-ml-12 -mt-12 p-12 lg:sticky lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:overflow-hidden"
                             >
                                 <NuxtImg
-                                    class="bg-background w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem]"
+                                    class="bg-background w-3xl sm:w-228 max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10"
                                     src="/images/screenshots/overview.png"
                                     alt="FiveNet Overview - Screenshot"
                                     loading="lazy"
@@ -138,19 +136,16 @@ const faqs = [
                                 </h2>
                                 <dl class="mt-4">
                                     <UAccordion :items="faqs" multiple>
-                                        <template #item="{ item: faq }">
+                                        <template #content="{ item: faq }">
                                             <UContainer>
                                                 <!-- eslint-disable vue/no-v-html -->
-                                                <p
-                                                    class="text-base leading-7 text-gray-900 dark:text-white"
-                                                    v-html="faq.content"
-                                                ></p>
+                                                <p class="text-highlighted text-base leading-7" v-html="faq.content"></p>
                                             </UContainer>
                                         </template>
 
                                         <template #question-3>
                                             <UContainer>
-                                                <p class="text-base leading-7 text-gray-900 dark:text-white">
+                                                <p class="text-highlighted text-base leading-7">
                                                     <NuxtLink class="underline" external :to="`${repoLink}/#readme`">{{
                                                         $t('pages.about.faq.three.click_here')
                                                     }}</NuxtLink>
@@ -160,7 +155,7 @@ const faqs = [
 
                                         <template #question-4>
                                             <UContainer>
-                                                <p class="text-base leading-7 text-gray-900 dark:text-white">
+                                                <p class="text-highlighted text-base leading-7">
                                                     <I18nT keypath="pages.about.faq.four.answer">
                                                         <template #discordLink>
                                                             <NuxtLink class="underline" external :to="discordLink">{{

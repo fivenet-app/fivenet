@@ -1,10 +1,19 @@
+import { LazyHelpSlideover, LazyNotificationsNotificationSlideover } from '#components';
 import { createSharedComposable } from '@vueuse/core';
 
 const _useDashboard = () => {
     const route = useRoute();
     const router = useRouter();
+
+    const isDashboardSidebarSlideoverOpen = ref(false);
     const isHelpSlideoverOpen = ref(false);
     const isNotificationSlideoverOpen = ref(false);
+    const isDashboardSearchModalOpen = ref(false);
+
+    const modal = useOverlay();
+
+    const notificationsSlideover = modal.create(LazyNotificationsNotificationSlideover);
+    const helpSlideover = modal.create(LazyHelpSlideover);
 
     defineShortcuts({
         'g-h': () => router.push('/'),
@@ -23,6 +32,10 @@ const _useDashboard = () => {
         b: () => (isNotificationSlideoverOpen.value = true),
     });
 
+    watch(isNotificationSlideoverOpen, () => isNotificationSlideoverOpen && notificationsSlideover.open());
+
+    watch(isHelpSlideoverOpen, () => isHelpSlideoverOpen && helpSlideover.open());
+
     watch(
         () => route.fullPath,
         () => {
@@ -32,8 +45,10 @@ const _useDashboard = () => {
     );
 
     return {
+        isDashboardSidebarSlideoverOpen,
         isHelpSlideoverOpen,
         isNotificationSlideoverOpen,
+        isDashboardSearchModalOpen,
     };
 };
 

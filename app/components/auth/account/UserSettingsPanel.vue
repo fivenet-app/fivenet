@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { TabsItem } from '@nuxt/ui';
 import type { RoutePathSchema } from '@typed-router';
 import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
 import { useSettingsStore } from '~/stores/settings';
@@ -48,16 +49,18 @@ const calendarReminderTimes = [
     ...reminderTimes.map((n) => ({ label: `${n / 60} ${t('common.time_ago.minute', n / 60)}`, value: n })),
 ];
 
-const items = [
+const items: TabsItem[] = [
     {
-        slot: 'settings',
+        slot: 'settings' as const,
         label: t('common.settings'),
         icon: 'i-mdi-cog',
+        value: 'settings',
     },
     {
-        slot: 'notifications',
+        slot: 'notifications' as const,
         label: t('common.notification', 2),
         icon: 'i-mdi-notification-settings',
+        value: 'notifications',
     },
 ];
 
@@ -66,16 +69,11 @@ const router = useRouter();
 
 const selectedTab = computed({
     get() {
-        const index = items.findIndex((item) => item.slot === route.query.tab);
-        if (index === -1) {
-            return 0;
-        }
-
-        return index;
+        return (route.query.tab as string) || 'settings';
     },
-    set(value) {
+    set(tab) {
         // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
+        router.push({ query: { tab: tab }, hash: '#control-active-item' });
     },
 });
 
@@ -85,126 +83,114 @@ onBeforeMount(async () => (selectedHomepage.value = startpages.find((h) => h.pat
 </script>
 
 <template>
-    <UTabs v-model="selectedTab" class="w-full" :items="items" :ui="{ list: { rounded: '' } }">
+    <UTabs v-model="selectedTab" :items="items" variant="link">
         <template #settings>
-            <UDashboardPanelContent>
-                <UDashboardSection
-                    :title="$t('common.theme')"
-                    :description="$t('components.auth.UserSettingsPanel.customization')"
+            <UPageCard :title="$t('common.theme')" :description="$t('components.auth.UserSettingsPanel.customization')">
+                <template #links>
+                    <UColorModeSelect color="neutral" />
+                </template>
+
+                <UFormField class="grid grid-cols-2 items-center gap-2" name="primaryColor" :label="$t('common.color')">
+                    <ColorPickerTW v-model="design.ui.primary" name="primaryColor" />
+                </UFormField>
+
+                <UFormField
+                    class="grid grid-cols-2 items-center gap-2"
+                    name="grayColor"
+                    :label="$t('components.auth.UserSettingsPanel.background_color')"
                 >
-                    <template #links>
-                        <UColorModeSelect color="gray" />
-                    </template>
+                    <ColorPickerTW v-model="design.ui.gray" name="grayColor" />
+                </UFormField>
 
-                    <UFormGroup class="grid grid-cols-2 items-center gap-2" name="primaryColor" :label="$t('common.color')">
-                        <ColorPickerTW v-model="design.ui.primary" name="primaryColor" />
-                    </UFormGroup>
+                <UFormField
+                    class="grid grid-cols-2 items-center gap-2"
+                    name="streamerMode"
+                    :label="$t('components.auth.UserSettingsPanel.streamer_mode.title')"
+                    :description="$t('components.auth.UserSettingsPanel.streamer_mode.description')"
+                >
+                    <USwitch v-model="streamerMode" name="streamerMode" />
+                </UFormField>
 
-                    <UFormGroup
-                        class="grid grid-cols-2 items-center gap-2"
-                        name="grayColor"
-                        :label="$t('components.auth.UserSettingsPanel.background_color')"
-                    >
-                        <ColorPickerTW v-model="design.ui.gray" name="grayColor" />
-                    </UFormGroup>
+                <UFormField
+                    class="grid grid-cols-2 items-center gap-2"
+                    name="designDocumentListStyle"
+                    :label="$t('components.auth.UserSettingsPanel.documents_lists_style.title')"
+                >
+                    <div class="inline-flex items-center gap-2 text-sm">
+                        <span>{{ $t('components.auth.UserSettingsPanel.documents_lists_style.single') }}</span>
+                        <USwitch v-model="designDocumentListStyle" />
+                        <span>{{ $t('components.auth.UserSettingsPanel.documents_lists_style.double') }}</span>
+                    </div>
+                </UFormField>
 
-                    <UFormGroup
-                        class="grid grid-cols-2 items-center gap-2"
-                        name="streamerMode"
-                        :label="$t('components.auth.UserSettingsPanel.streamer_mode.title')"
-                        :description="$t('components.auth.UserSettingsPanel.streamer_mode.description')"
-                    >
-                        <UToggle v-model="streamerMode" name="streamerMode" />
-                    </UFormGroup>
-
-                    <UFormGroup
-                        class="grid grid-cols-2 items-center gap-2"
-                        name="designDocumentListStyle"
-                        :label="$t('components.auth.UserSettingsPanel.documents_lists_style.title')"
-                    >
-                        <div class="inline-flex items-center gap-2 text-sm">
-                            <span>{{ $t('components.auth.UserSettingsPanel.documents_lists_style.single') }}</span>
-                            <UToggle v-model="designDocumentListStyle" />
-                            <span>{{ $t('components.auth.UserSettingsPanel.documents_lists_style.double') }}</span>
-                        </div>
-                    </UFormGroup>
-
-                    <UFormGroup
-                        class="grid grid-cols-2 items-center gap-2"
-                        name="selectedHomepage"
-                        :label="$t('components.auth.UserSettingsPanel.set_startpage.title')"
-                    >
-                        <ClientOnly v-if="activeChar">
-                            <USelectMenu
-                                v-model="selectedHomepage"
-                                :options="startpages.filter((h) => h.permission === undefined || can(h.permission).value)"
-                                option-attribute="name"
-                                :searchable-placeholder="$t('common.search_field')"
-                            />
-                        </ClientOnly>
-                        <p v-else class="text-sm">
-                            {{ $t('components.auth.UserSettingsPanel.set_startpage.no_char_selected') }}
-                        </p>
-                    </UFormGroup>
-                </UDashboardSection>
-            </UDashboardPanelContent>
+                <UFormField
+                    class="grid grid-cols-2 items-center gap-2"
+                    name="selectedHomepage"
+                    :label="$t('components.auth.UserSettingsPanel.set_startpage.title')"
+                >
+                    <ClientOnly v-if="activeChar">
+                        <USelectMenu
+                            v-model="selectedHomepage"
+                            :items="startpages.filter((h) => h.permission === undefined || can(h.permission).value)"
+                            option-attribute="name"
+                            :searchable-placeholder="$t('common.search_field')"
+                        />
+                    </ClientOnly>
+                    <p v-else class="text-sm">
+                        {{ $t('components.auth.UserSettingsPanel.set_startpage.no_char_selected') }}
+                    </p>
+                </UFormField>
+            </UPageCard>
         </template>
 
         <template #notifications>
-            <UDashboardPanelContent>
-                <UDashboardSection
-                    :title="$t('components.auth.UserSettingsPanel.volumes.title')"
-                    :description="$t('components.auth.UserSettingsPanel.volumes.subtitle')"
-                >
-                    <template #links>
-                        <UButton icon="i-mdi-play" @click="notificationSound.play()" />
-                    </template>
+            <UPageCard
+                :title="$t('components.auth.UserSettingsPanel.volumes.title')"
+                :description="$t('components.auth.UserSettingsPanel.volumes.subtitle')"
+            >
+                <template #links>
+                    <UButton icon="i-mdi-play" @click="notificationSound.play()" />
+                </template>
 
-                    <UFormGroup
-                        class="grid grid-cols-2 items-center gap-2"
-                        name="notificationsVolume"
-                        :label="$t('components.auth.UserSettingsPanel.volumes.notifications_volume')"
-                    >
-                        <URange v-model="audio.notificationsVolume" :step="0.01" :min="0" :max="1" />
-                        {{ audio.notificationsVolume <= 0 ? 0 : (audio.notificationsVolume * 100).toFixed(0) }}%
-                    </UFormGroup>
-                </UDashboardSection>
-
-                <UDashboardSection
-                    :title="$t('components.auth.UserSettingsPanel.calendar_notifications.title')"
-                    :description="$t('components.auth.UserSettingsPanel.calendar_notifications.subtitle')"
+                <UFormField
+                    class="grid grid-cols-2 items-center gap-2"
+                    name="notificationsVolume"
+                    :label="$t('components.auth.UserSettingsPanel.volumes.notifications_volume')"
                 >
-                    <UFormGroup
-                        class="grid grid-cols-2 items-center gap-2"
-                        name="calendarNotifications"
-                        :label="$t('components.auth.UserSettingsPanel.calendar_notifications.reminder_times.name')"
-                    >
-                        <ClientOnly>
-                            <USelectMenu
-                                v-model="calendar.reminderTimes"
-                                multiple
-                                :options="calendarReminderTimes"
-                                value-attribute="value"
-                            >
-                                <template #label>
-                                    {{
-                                        calendar.reminderTimes.length > 0
-                                            ? [...calendar.reminderTimes]
-                                                  .sort()
-                                                  .map(
-                                                      (n) =>
-                                                          calendarReminderTimes.find((rt) => rt.value === n)?.label ??
-                                                          $t('common.na'),
-                                                  )
-                                                  .join(', ')
-                                            : $t('common.none')
-                                    }}
-                                </template>
-                            </USelectMenu>
-                        </ClientOnly>
-                    </UFormGroup>
-                </UDashboardSection>
-            </UDashboardPanelContent>
+                    <USlider v-model="audio.notificationsVolume" :step="0.01" :min="0" :max="1" />
+                    {{ audio.notificationsVolume <= 0 ? 0 : (audio.notificationsVolume * 100).toFixed(0) }}%
+                </UFormField>
+            </UPageCard>
+
+            <UPageCard
+                :title="$t('components.auth.UserSettingsPanel.calendar_notifications.title')"
+                :description="$t('components.auth.UserSettingsPanel.calendar_notifications.subtitle')"
+            >
+                <UFormField
+                    class="grid grid-cols-2 items-center gap-2"
+                    name="calendarNotifications"
+                    :label="$t('components.auth.UserSettingsPanel.calendar_notifications.reminder_times.name')"
+                >
+                    <ClientOnly>
+                        <USelectMenu v-model="calendar.reminderTimes" multiple :items="calendarReminderTimes" value-key="value">
+                            <template #item-label>
+                                {{
+                                    calendar.reminderTimes.length > 0
+                                        ? [...calendar.reminderTimes]
+                                              .sort()
+                                              .map(
+                                                  (n) =>
+                                                      calendarReminderTimes.find((rt) => rt.value === n)?.label ??
+                                                      $t('common.na'),
+                                              )
+                                              .join(', ')
+                                        : $t('common.none')
+                                }}
+                            </template>
+                        </USelectMenu>
+                    </ClientOnly>
+                </UFormField>
+            </UPageCard>
         </template>
     </UTabs>
 </template>

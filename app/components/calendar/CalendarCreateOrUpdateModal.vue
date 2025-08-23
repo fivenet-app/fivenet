@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
@@ -16,7 +16,7 @@ const props = defineProps<{
     calendarId?: number;
 }>();
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const { attr, activeChar } = useAuth();
 
@@ -137,7 +137,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
@@ -148,7 +148,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             }}
                         </h3>
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                        <UButton
+                            class="-my-1"
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
@@ -170,24 +176,24 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     />
 
                     <template v-else>
-                        <UFormGroup class="flex-1" name="title" :label="$t('common.name')" required>
+                        <UFormField class="flex-1" name="title" :label="$t('common.name')" required>
                             <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.name')" />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup class="flex-1" name="color" :label="$t('common.color')">
+                        <UFormField class="flex-1" name="color" :label="$t('common.color')">
                             <ColorPickerTW v-model="state.color" />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup class="flex-1" name="description" :label="$t('common.description')">
+                        <UFormField class="flex-1" name="description" :label="$t('common.description')">
                             <UTextarea v-model="state.description" name="description" :placeholder="$t('common.description')" />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup
+                        <UFormField
                             class="flex-1"
                             name="private"
                             :label="$t('components.calendar.CalendarCreateOrUpdateModal.private')"
                         >
-                            <UToggle
+                            <USwitch
                                 v-model="state.private"
                                 :disabled="
                                     !canDo.privateCalendar ||
@@ -195,30 +201,30 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     (!props.calendarId && hasPrivateCalendar)
                                 "
                             />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup v-if="canDo.publicCalendar" class="flex-1" name="public" :label="$t('common.public')">
-                            <UToggle v-model="state.public" />
-                        </UFormGroup>
+                        <UFormField v-if="canDo.publicCalendar" class="flex-1" name="public" :label="$t('common.public')">
+                            <USwitch v-model="state.public" />
+                        </UFormField>
 
-                        <UFormGroup class="flex-1" name="closed" :label="`${$t('common.close', 2)}?`">
-                            <UToggle v-model="state.closed" />
-                        </UFormGroup>
+                        <UFormField class="flex-1" name="closed" :label="`${$t('common.close', 2)}?`">
+                            <USwitch v-model="state.closed" />
+                        </UFormField>
 
-                        <UFormGroup class="flex-1" name="access" :label="$t('common.access')">
+                        <UFormField class="flex-1" name="access" :label="$t('common.access')">
                             <AccessManager
                                 v-model:jobs="state.access.jobs"
                                 v-model:users="state.access.users"
                                 :target-id="calendarId ?? 0"
                                 :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.calendar.AccessLevel')"
                             />
-                        </UFormGroup>
+                        </UFormField>
                     </template>
                 </div>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="black" block @click="isOpen = false">
+                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

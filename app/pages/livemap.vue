@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import LivemapHolder from '~/components/livemap/LivemapHolder.vue';
+import CentrumSidebar from '~/components/centrum/livemap/CentrumSidebar.vue';
 
 useHead({
     title: 'common.livemap',
@@ -13,7 +13,7 @@ definePageMeta({
 </script>
 
 <template>
-    <UDashboardPage>
-        <LivemapHolder />
-    </UDashboardPage>
+    <ClientOnly>
+        <CentrumSidebar />
+    </ClientOnly>
 </template>

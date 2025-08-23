@@ -14,15 +14,21 @@ definePageMeta({
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel grow>
+    <UDashboardPanel>
+        <template #header>
             <UDashboardNavbar :title="$t('components.auth.UserSettingsPanel.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #right>
                     <PartialsBackButton fallback-to="/overview" />
                 </template>
             </UDashboardNavbar>
+        </template>
 
+        <template #body>
             <UserSettingsPanel />
-        </UDashboardPanel>
-    </UDashboardPage>
+        </template>
+    </UDashboardPanel>
 </template>

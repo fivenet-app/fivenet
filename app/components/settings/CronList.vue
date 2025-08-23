@@ -35,7 +35,7 @@ function copyLinkToClipboard(text: string): void {
     notifications.add({
         title: { key: 'notifications.clipboard.link_copied.title', parameters: {} },
         description: { key: 'notifications.clipboard.link_copied.content', parameters: {} },
-        timeout: 3250,
+        duration: 3250,
         type: NotificationType.INFO,
     });
 }
@@ -154,7 +154,7 @@ const expand = ref({
                     </template>
 
                     <pre
-                        class="line-clamp-[9] hover:line-clamp-none"
+                        class="line-clamp-9 hover:line-clamp-none"
                         v-text="
                             row.lastCompletedEvent.data?.data?.typeUrl.includes('/resources.common.cron.GenericCronData')
                                 ? Any.unpack(row.lastCompletedEvent.data.data, GenericCronData)
@@ -167,7 +167,7 @@ const expand = ref({
                             <span class="font-semibold">{{ $t('pages.error.error_message') }}</span>
 
                             <pre
-                                class="line-clamp-[4] whitespace-break-spaces hover:line-clamp-none"
+                                class="line-clamp-4 whitespace-break-spaces hover:line-clamp-none"
                                 v-text="
                                     row.lastCompletedEvent.errorMessage
                                         ? row.lastCompletedEvent.errorMessage
@@ -181,7 +181,7 @@ const expand = ref({
         </template>
 
         <template #name-data="{ row }">
-            <span class="text-gray-900 dark:text-white">
+            <span class="text-highlighted">
                 <pre>{{ row.name }}</pre>
             </span>
         </template>

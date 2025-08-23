@@ -239,7 +239,7 @@ const { game } = useAppConfig();
                                     :key="value"
                                     class="flex flex-initial flex-row flex-nowrap gap-1"
                                 >
-                                    <UToggle
+                                    <USwitch
                                         :name="value"
                                         :model-value="!!attrValues.validValues.stringList.strings.find((v) => v === value)"
                                         :disabled="disabled"
@@ -257,7 +257,7 @@ const { game } = useAppConfig();
                                 v-if="!disabled"
                                 class="self-end"
                                 size="xs"
-                                color="white"
+                                color="neutral"
                                 :icon="
                                     attrValues.validValues.stringList.strings.length !==
                                     validValues.validValues.stringList.strings.length
@@ -282,7 +282,7 @@ const { game } = useAppConfig();
                     >
                         <div v-for="job in jobs" :key="job.name" class="flex flex-initial flex-row flex-nowrap gap-1">
                             <div class="flex flex-row flex-wrap gap-2">
-                                <UToggle
+                                <USwitch
                                     :name="job.name"
                                     :model-value="!!attrValues.validValues.jobList?.strings.find((v) => v === job.name)"
                                     :disabled="disabled"
@@ -296,7 +296,7 @@ const { game } = useAppConfig();
                             v-if="!disabled"
                             class="self-end"
                             size="xs"
-                            color="white"
+                            color="neutral"
                             :icon="
                                 attrValues.validValues.jobList.strings.length !== validValues.validValues.jobList.strings.length
                                     ? 'i-mdi-check-all'
@@ -323,7 +323,7 @@ const { game } = useAppConfig();
                             :key="job.name"
                             class="flex flex-initial flex-row flex-nowrap items-center gap-1"
                         >
-                            <UToggle
+                            <USwitch
                                 :name="job.name"
                                 :model-value="attrValues.validValues?.jobGradeList.jobs[job.name] !== undefined"
                                 :disabled="disabled"
@@ -338,20 +338,20 @@ const { game } = useAppConfig();
                                     v-model="attrValues.validValues.jobGradeList.jobs[job.name]"
                                     class="flex-1"
                                     :disabled="disabled || attrValues.validValues?.jobGradeList.jobs[job.name] === undefined"
-                                    :options="job.grades"
+                                    :items="job.grades"
                                     searchable
                                     :search-attributes="['label']"
                                     :searchable-placeholder="$t('common.search_field')"
                                     :placeholder="$t('common.rank')"
-                                    value-attribute="grade"
+                                    value-key="grade"
                                 >
-                                    <template #label>
+                                    <template #item-label>
                                         <template
                                             v-if="
                                                 job.grades && attrValues.validValues.jobGradeList.jobs[job.name] !== undefined
                                             "
                                         >
-                                            <span class="truncate text-gray-900 dark:text-white"
+                                            <span class="text-highlighted truncate"
                                                 >{{
                                                     job.grades.find(
                                                         (g) =>

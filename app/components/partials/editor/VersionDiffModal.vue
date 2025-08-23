@@ -86,11 +86,9 @@ function close() {
         class="flex flex-1 flex-col"
         :ui="{
             body: {
-                base: 'flex-1 min-h-[calc(100dvh-(2*var(--header-height)))] max-h-[calc(100dvh-(2*var(--header-height)))] overflow-y-auto',
+                base: 'flex-1 min-h-[calc(100dvh-(2*var(--ui-header-height)))] max-h-[calc(100dvh-(2*var(--ui-header-height)))] overflow-y-auto',
                 padding: 'px-1 py-2 sm:p-2',
             },
-            ring: '',
-            divide: 'divide-y divide-gray-100 dark:divide-gray-800',
         }"
     >
         <template #header>
@@ -99,7 +97,7 @@ function close() {
                     {{ $t('common.version_history') }}
                 </h3>
 
-                <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="close" />
+                <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="close" />
             </div>
         </template>
 
@@ -128,7 +126,7 @@ function close() {
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
                 <UButton class="flex-1" color="primary" @click="applySelected">{{ $t('common.apply') }}</UButton>
-                <UButton class="flex-1" color="gray" @click="close">{{ $t('common.cancel') }}</UButton>
+                <UButton class="flex-1" color="neutral" @click="close">{{ $t('common.cancel') }}</UButton>
             </UButtonGroup>
         </template>
     </UCard>

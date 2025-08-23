@@ -26,8 +26,8 @@ onBeforeMount(async () => {
 
 <template>
     <div class="max-w-full overflow-hidden">
-        <UContainer :ui="{ constrained: 'max-w-screen' }">
-            <UCard class="bg-white/75 backdrop-blur dark:bg-white/5">
+        <UContainer :ui="{ constrained: 'max-w-[100vw]' }">
+            <UCard class="bg-white/75 backdrop-blur-sm dark:bg-white/5">
                 <CharacterSelector />
             </UCard>
         </UContainer>
@@ -38,9 +38,9 @@ onBeforeMount(async () => {
                     icon="i-mdi-account-cog-outline"
                     :label="$t('components.auth.AccountInfo.title')"
                     to="/auth/account-info"
-                    color="white"
+                    color="neutral"
                 />
-                <UButton icon="i-mdi-logout" :label="$t('common.sign_out')" to="/auth/logout" color="white" />
+                <UButton icon="i-mdi-logout" :label="$t('common.sign_out')" to="/auth/logout" color="neutral" />
             </UButtonGroup>
         </div>
     </div>

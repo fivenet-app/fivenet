@@ -184,7 +184,7 @@ defineShortcuts({
     <UDashboardToolbar>
         <UForm class="w-full" :schema="schema" :state="query" @submit="refresh()">
             <div class="flex flex-1 flex-row gap-2">
-                <UFormGroup class="flex-1" name="title" :label="$t('common.search')">
+                <UFormField class="flex-1" name="title" :label="$t('common.search')">
                     <UInput
                         ref="inputRef"
                         v-model="query.title"
@@ -199,9 +199,9 @@ defineShortcuts({
                             <UKbd value="/" />
                         </template>
                     </UInput>
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup
+                <UFormField
                     class="flex shrink-0 grow-0 flex-col"
                     name="onlyDrafts"
                     :label="$t('common.show')"
@@ -210,12 +210,12 @@ defineShortcuts({
                     <ClientOnly>
                         <USelectMenu
                             v-model="query.onlyDrafts"
-                            :options="onlyDrafts"
-                            value-attribute="value"
+                            :items="onlyDrafts"
+                            value-key="value"
                             option-attribute="label"
                             :searchable-placeholder="$t('common.search_field')"
                         >
-                            <template #label>
+                            <template #item-label>
                                 {{
                                     query.onlyDrafts === undefined
                                         ? onlyDrafts[0]!.label
@@ -224,23 +224,23 @@ defineShortcuts({
                             </template>
                         </USelectMenu>
                     </ClientOnly>
-                </UFormGroup>
+                </UFormField>
             </div>
 
             <UAccordion
                 class="mt-2"
-                color="white"
+                color="neutral"
                 variant="soft"
                 size="sm"
-                :items="[{ label: $t('common.advanced_search'), slot: 'search' }]"
+                :items="[{ label: $t('common.advanced_search'), slot: 'search' as const }]"
             >
                 <template #search>
                     <div class="flex flex-row flex-wrap gap-1">
-                        <UFormGroup class="flex-1" name="documentIds" :label="`${$t('common.document')} ${$t('common.id')}`">
+                        <UFormField class="flex-1" name="documentIds" :label="`${$t('common.document')} ${$t('common.id')}`">
                             <UInput v-model="query.documentIds" type="text" name="documentIds" placeholder="DOC-..." block />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup class="flex-1" name="category" :label="$t('common.category', 1)">
+                        <UFormField class="flex-1" name="category" :label="$t('common.category', 1)">
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="query.categories"
@@ -266,11 +266,11 @@ defineShortcuts({
                                     "
                                     searchable-lazy
                                     :searchable-placeholder="$t('common.category', 1)"
-                                    value-attribute="id"
+                                    value-key="id"
                                 >
-                                    <template #label="{ selected }">
-                                        <div v-if="selected.length > 0" class="inline-flex gap-1">
-                                            <template v-for="category in selected" :key="category.id">
+                                    <template #item-label="{ item }">
+                                        <div v-if="item.length > 0" class="inline-flex gap-1">
+                                            <template v-for="category in item" :key="category.id">
                                                 <span class="inline-flex gap-1" :class="`bg-${category.color}-500`">
                                                     <component
                                                         :is="
@@ -308,9 +308,9 @@ defineShortcuts({
                                     <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
                                 </USelectMenu>
                             </ClientOnly>
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup class="flex-1" name="creator" :label="$t('common.creator')">
+                        <UFormField class="flex-1" name="creator" :label="$t('common.creator')">
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="query.creators"
@@ -333,11 +333,11 @@ defineShortcuts({
                                     :search-attributes="['firstname', 'lastname']"
                                     :placeholder="$t('common.creator')"
                                     trailing
-                                    value-attribute="userId"
+                                    value-key="userId"
                                 >
-                                    <template #label="{ selected }">
-                                        <template v-if="selected.length">
-                                            {{ usersToLabel(selected) }}
+                                    <template #item-label="{ item }">
+                                        <template v-if="item.length">
+                                            {{ usersToLabel(item) }}
                                         </template>
                                     </template>
 
@@ -352,20 +352,20 @@ defineShortcuts({
                                     <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
                                 </USelectMenu>
                             </ClientOnly>
-                        </UFormGroup>
+                        </UFormField>
                     </div>
 
                     <div class="flex flex-row flex-wrap gap-2">
-                        <UFormGroup class="flex-1" name="closed" :label="$t('common.close', 2)">
+                        <UFormField class="flex-1" name="closed" :label="$t('common.close', 2)">
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="query.closed"
-                                    :options="openclose"
-                                    value-attribute="value"
+                                    :items="openclose"
+                                    value-key="value"
                                     option-attribute="label"
                                     :searchable-placeholder="$t('common.search_field')"
                                 >
-                                    <template #label>
+                                    <template #item-label>
                                         <div class="inline-flex items-center gap-1 truncate">
                                             <template v-if="typeof query.closed === 'boolean'">
                                                 <UIcon
@@ -403,9 +403,9 @@ defineShortcuts({
                                     </template>
                                 </USelectMenu>
                             </ClientOnly>
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup class="flex-1" name="date" :label="$t('common.time_range')">
+                        <UFormField class="flex-1" name="date" :label="$t('common.time_range')">
                             <DateRangePickerPopoverClient
                                 v-model="query.date"
                                 class="flex-1"
@@ -418,9 +418,9 @@ defineShortcuts({
                                     clearable: true,
                                 }"
                             />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup class="flex-1 grow-0 basis-40" :label="$t('common.sort_by')">
+                        <UFormField class="flex-1 grow-0 basis-40" :label="$t('common.sort_by')">
                             <SortButton
                                 v-model="query.sort"
                                 :fields="[
@@ -428,7 +428,7 @@ defineShortcuts({
                                     { label: $t('common.title'), value: 'title' },
                                 ]"
                             />
-                        </UFormGroup>
+                        </UFormField>
                     </div>
                 </template>
             </UAccordion>
@@ -504,8 +504,8 @@ defineShortcuts({
                 </template>
             </ul>
 
-            <UContextMenu v-model="isOpen" :virtual-element="virtualElement">
-                <UVerticalNavigation :links="links" />
+            <UContextMenu v-model:open="isOpen" :virtual-element="virtualElement">
+                <UNavigationMenu orientation="vertical" :items="links" />
             </UContextMenu>
         </div>
     </UDashboardPanelContent>

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { useCompletorStore } from '~/stores/completor';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
@@ -116,14 +116,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+        <UCard>
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-2xl font-semibold leading-6">
                         {{ $t('components.qualifications.result_modal.title') }}
                     </h3>
 
-                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="$emit('close')" />
+                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="$emit('close')" />
                 </div>
             </template>
 
@@ -131,7 +131,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <slot />
 
                 <template v-if="!viewOnly">
-                    <UFormGroup v-if="userId === undefined" class="flex-1" name="selectedUser" :label="$t('common.citizen')">
+                    <UFormField v-if="userId === undefined" class="flex-1" name="selectedUser" :label="$t('common.citizen')">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="selectedUser"
@@ -155,7 +155,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 by="userId"
                                 leading-icon="i-mdi-user"
                             >
-                                <template #label>
+                                <template #item-label>
                                     <template v-if="selectedUser">
                                         {{ usersToLabel([selectedUser]) }}
                                     </template>
@@ -172,18 +172,18 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
                             </USelectMenu>
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup class="flex-1" name="status" :label="$t('common.status')">
+                    <UFormField class="flex-1" name="status" :label="$t('common.status')">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="state.status"
-                                :options="availableStatus"
-                                value-attribute="status"
+                                :items="availableStatus"
+                                value-key="status"
                                 :placeholder="$t('common.status')"
                                 :searchable-placeholder="$t('common.search_field')"
                             >
-                                <template #label>
+                                <template #item-label>
                                     <span class="size-2 rounded-full" :class="resultStatusToBgColor(state.status)" />
                                     <span class="truncate">{{
                                         $t(`enums.qualifications.ResultStatus.${ResultStatus[state.status]}`)
@@ -205,9 +205,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </template>
                             </USelectMenu>
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup class="flex-1" name="score" :label="$t('common.score')">
+                    <UFormField class="flex-1" name="score" :label="$t('common.score')">
                         <UInput
                             v-model="state.score"
                             name="score"
@@ -219,17 +219,17 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :label="$t('common.score')"
                             trailing-icon="i-mdi-star-check"
                         />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup class="flex-1" name="summary" :label="$t('common.summary')">
+                    <UFormField class="flex-1" name="summary" :label="$t('common.summary')">
                         <UTextarea v-model="state.summary" name="summary" :rows="3" :placeholder="$t('common.summary')" />
-                    </UFormGroup>
+                    </UFormField>
                 </template>
             </div>
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" color="black" block @click="$emit('close')">
+                    <UButton class="flex-1" color="neutral" block @click="$emit('close')">
                         {{ $t('common.close', 1) }}
                     </UButton>
 

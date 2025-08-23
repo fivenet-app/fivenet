@@ -24,39 +24,27 @@ const hints = shuffleArray([
 </script>
 
 <template>
-    <UCard
+    <UPageCard
         icon="i-mdi-information-outline"
+        :title="$t('components.hints.start_text')"
         :ui="{
-            icon: { base: 'size-6' },
+            wrapper: 'flex-row gap-2',
+            leadingIcon: 'size-6',
         }"
     >
-        <template #header>
-            <div class="ml-1 shrink-0 font-semibold">{{ $t('components.hints.start_text') }}</div>
-        </template>
+        <UCarousel v-slot="{ item: hint }" :items="hints" dots loop :autoplay="{ delay: 7500 }" class="mb-6">
+            <div class="mx-auto mb-2 flex items-center gap-2 text-base">
+                <span class="grow">{{ $t(`components.hints.${hint.key}.content`) }}</span>
 
-        <UCarousel :items="hints" :ui="{ item: 'basis-full' }" arrows>
-            <template #default="{ item: hint }">
-                <div class="mx-auto mb-2 flex items-center gap-2 text-base">
-                    <span class="grow">{{ $t(`components.hints.${hint.key}.content`) }}</span>
-
-                    <div v-if="hint.keyboard || hint.to" class="flex-initial shrink-0">
-                        <UKbd v-if="hint.keyboard" size="md">
-                            {{ $t(`components.hints.${hint.key}.keyboard`) }}
-                        </UKbd>
-                        <UButton v-else-if="hint.to" :to="hint.to">
-                            {{ $t('components.hints.click_me') }}
-                        </UButton>
-                    </div>
+                <div v-if="hint.keyboard || hint.to" class="flex-initial shrink-0">
+                    <UKbd v-if="hint.keyboard" size="md">
+                        {{ $t(`components.hints.${hint.key}.keyboard`) }}
+                    </UKbd>
+                    <UButton v-else-if="hint.to" :to="hint.to">
+                        {{ $t('components.hints.click_me') }}
+                    </UButton>
                 </div>
-            </template>
-
-            <template #prev="{ onClick, disabled }">
-                <UButton :disabled="disabled" variant="outline" @click="onClick">{{ $t('common.previous') }}</UButton>
-            </template>
-
-            <template #next="{ onClick, disabled }">
-                <UButton :disabled="disabled" variant="outline" @click="onClick">{{ $t('common.next') }}</UButton>
-            </template>
+            </div>
         </UCarousel>
-    </UCard>
+    </UPageCard>
 </template>

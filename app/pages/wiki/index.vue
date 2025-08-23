@@ -67,60 +67,58 @@ const wikiService = await useWikiWiki();
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('common.wiki')">
-                <template #center>
-                    <PageSearch />
-                </template>
+    <UDashboardPanel>
+        <UDashboardNavbar :title="$t('common.wiki')">
+            <template #center>
+                <PageSearch />
+            </template>
 
-                <template #right>
-                    <UTooltip v-if="can('wiki.WikiService/UpdatePage').value" :text="$t('common.create')">
-                        <UButton color="gray" trailing-icon="i-mdi-plus" @click="wikiService.createPage()">
-                            {{ $t('common.page') }}
-                        </UButton>
-                    </UTooltip>
-                </template>
-            </UDashboardNavbar>
+            <template #right>
+                <UTooltip v-if="can('wiki.WikiService/UpdatePage').value" :text="$t('common.create')">
+                    <UButton color="neutral" trailing-icon="i-mdi-plus" @click="wikiService.createPage()">
+                        {{ $t('common.page') }}
+                    </UButton>
+                </UTooltip>
+            </template>
+        </UDashboardNavbar>
 
-            <UDashboardToolbar class="!flex lg:!hidden">
-                <template #default>
-                    <PageSearch />
-                </template>
-            </UDashboardToolbar>
+        <UDashboardToolbar class="flex! lg:hidden!">
+            <template #default>
+                <PageSearch />
+            </template>
+        </UDashboardToolbar>
 
-            <UDashboardPanelContent>
-                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.page')])" />
-                <DataErrorBlock v-else-if="error" :retry="refresh" />
-                <DataNoDataBlock
-                    v-else-if="!pages"
-                    icon="i-mdi-file-search"
-                    :title="$t('common.unable_to_load', [$t('common.wiki', 2)])"
-                    :error="error"
-                    :retry="refresh"
-                />
-                <DataNoDataBlock
-                    v-else-if="pages.length === 0"
-                    icon="i-mdi-file-search"
-                    :title="$t('common.not_found', [$t('common.wiki', 2)])"
-                    :retry="refresh"
-                />
+        <UDashboardPanelContent>
+            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.page')])" />
+            <DataErrorBlock v-else-if="error" :retry="refresh" />
+            <DataNoDataBlock
+                v-else-if="!pages"
+                icon="i-mdi-file-search"
+                :title="$t('common.unable_to_load', [$t('common.wiki', 2)])"
+                :error="error"
+                :retry="refresh"
+            />
+            <DataNoDataBlock
+                v-else-if="pages.length === 0"
+                icon="i-mdi-file-search"
+                :title="$t('common.not_found', [$t('common.wiki', 2)])"
+                :retry="refresh"
+            />
 
-                <UPageGrid v-else>
-                    <UPageCard
-                        v-for="p in pages"
-                        :key="p.id"
-                        :title="`${p.jobLabel} ${$t('common.wiki')}`"
-                        :to="`/wiki/${p.job}/${p.id}/${p.slug ?? ''}`"
-                        icon="i-mdi-brain"
-                        :ui="{ title: 'text-xl' }"
-                    >
-                        <template v-if="p.rootInfo?.logo?.filePath" #icon>
-                            <GenericImg class="h-10 w-auto" :src="p.rootInfo?.logo?.filePath" :alt="$t('common.logo')" />
-                        </template>
-                    </UPageCard>
-                </UPageGrid>
-            </UDashboardPanelContent>
-        </UDashboardPanel>
-    </UDashboardPage>
+            <UPageGrid v-else>
+                <UPageCard
+                    v-for="p in pages"
+                    :key="p.id"
+                    :title="`${p.jobLabel} ${$t('common.wiki')}`"
+                    :to="`/wiki/${p.job}/${p.id}/${p.slug ?? ''}`"
+                    icon="i-mdi-brain"
+                    :ui="{ title: 'text-xl' }"
+                >
+                    <template v-if="p.rootInfo?.logo?.filePath" #icon>
+                        <GenericImg class="h-10 w-auto" :src="p.rootInfo?.logo?.filePath" :alt="$t('common.logo')" />
+                    </template>
+                </UPageCard>
+            </UPageGrid>
+        </UDashboardPanelContent>
+    </UDashboardPanel>
 </template>

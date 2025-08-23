@@ -33,7 +33,7 @@ const { game } = useAppConfig();
 </script>
 
 <template>
-    <UCard class="mx-4 flex w-full min-w-[28rem] max-w-md flex-col">
+    <UCard class="mx-4 flex w-full max-w-md min-w-md flex-col">
         <template #header>
             <div class="flex flex-col">
                 <div class="mx-auto inline-flex items-center gap-2">

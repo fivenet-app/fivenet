@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { TabItem } from '#ui/types';
+import type { TabsItem } from '@nuxt/ui';
 import CitizenActivityFeed from '~/components/citizens/info/CitizenActivityFeed.vue';
 import CitizenDocuments from '~/components/citizens/info/CitizenDocuments.vue';
 import CitizenProfile from '~/components/citizens/info/CitizenProfile.vue';
@@ -33,33 +33,6 @@ const notifications = useNotificationsStore();
 
 const citizensCitizensClient = await getCitizensCitizensClient();
 
-const items: TabItem[] = [
-    {
-        slot: 'profile',
-        label: t('common.profile'),
-        icon: 'i-mdi-account',
-        permission: 'citizens.CitizensService/ListCitizens' as Perms,
-    },
-    {
-        slot: 'vehicles',
-        label: t('common.vehicle', 2),
-        icon: 'i-mdi-car',
-        permission: 'vehicles.VehiclesService/ListVehicles' as Perms,
-    },
-    {
-        slot: 'documents',
-        label: t('common.document', 2),
-        icon: 'i-mdi-file-document-multiple',
-        permission: 'documents.DocumentsService/ListUserDocuments' as Perms,
-    },
-    {
-        slot: 'activity',
-        label: t('common.activity'),
-        icon: 'i-mdi-pulse',
-        permission: 'citizens.CitizensService/ListUserActivity' as Perms,
-    },
-].flatMap((item) => (can(item.permission).value ? [item] : []));
-
 const { data: user, status, refresh, error } = useLazyAsyncData(`citizen-${props.userId}`, () => getUser(props.userId));
 
 async function getUser(userId: number): Promise<User> {
@@ -90,7 +63,7 @@ function addToClipboard(): void {
     notifications.add({
         title: { key: 'notifications.clipboard.citizen_add.title', parameters: {} },
         description: { key: 'notifications.clipboard.citizen_add.content', parameters: {} },
-        timeout: 3250,
+        duration: 3250,
         type: NotificationType.INFO,
     });
 }
@@ -100,34 +73,60 @@ const { sendClientView } = useClientUpdate(ObjectType.CITIZEN, () =>
     notifications.add({
         title: { key: 'notifications.citizens.client_view_update.title', parameters: {} },
         description: { key: 'notifications.citizens.client_view_update.content', parameters: {} },
-        timeout: 7500,
+        duration: 7500,
         type: NotificationType.INFO,
         actions: [
             {
                 label: { key: 'common.refresh', parameters: {} },
                 icon: 'i-mdi-refresh',
-                click: () => refresh(),
+                onClick: () => refresh(),
             },
         ],
     }),
 );
 sendClientView(props.userId);
 
+const items: TabsItem[] = [
+    {
+        slot: 'profile' as const,
+        label: t('common.profile'),
+        icon: 'i-mdi-account',
+        value: 'profile',
+        permission: 'citizens.CitizensService/ListCitizens' as Perms,
+    },
+    {
+        slot: 'vehicles' as const,
+        label: t('common.vehicle', 2),
+        icon: 'i-mdi-car',
+        value: 'vehicles',
+        permission: 'vehicles.VehiclesService/ListVehicles' as Perms,
+    },
+    {
+        slot: 'documents' as const,
+        label: t('common.document', 2),
+        icon: 'i-mdi-file-document-multiple',
+        value: 'documents',
+        permission: 'documents.DocumentsService/ListUserDocuments' as Perms,
+    },
+    {
+        slot: 'activity' as const,
+        label: t('common.activity'),
+        icon: 'i-mdi-pulse',
+        value: 'activity',
+        permission: 'citizens.CitizensService/ListUserActivity' as Perms,
+    },
+].flatMap((item) => (can(item.permission).value ? [item] : []));
+
 const route = useRoute();
 const router = useRouter();
 
 const selectedTab = computed({
     get() {
-        const index = items.findIndex((item) => item.slot === route.query.tab);
-        if (index === -1) {
-            return 0;
-        }
-
-        return index;
+        return (route.query.tab as string) || 'profile';
     },
-    set(value) {
+    set(tab) {
         // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
+        router.push({ query: { tab: tab }, hash: '#control-active-item' });
     },
 });
 
@@ -137,11 +136,8 @@ const isOpen = ref(false);
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel
-            class="shrink-0 border-b border-gray-200 lg:w-[--width] lg:border-b-0 lg:border-r dark:border-gray-800"
-            grow
-        >
+    <UDashboardPanel class="shrink-0 border-b border-gray-200 lg:w-(--width) lg:border-r lg:border-b-0 dark:border-gray-800">
+        <template #header>
             <UDashboardNavbar :title="$t('pages.citizens.id.title')">
                 <template #right>
                     <PartialsBackButton fallback-to="/citizens" />
@@ -150,7 +146,7 @@ const isOpen = ref(false);
                         icon="i-mdi-refresh"
                         :label="$t('common.refresh')"
                         :loading="isRequestPending(status)"
-                        @click="refresh"
+                        @click="() => refresh()"
                     />
 
                     <UButtonGroup class="inline-flex lg:hidden">
@@ -165,139 +161,139 @@ const isOpen = ref(false);
                     </UButtonGroup>
                 </template>
             </UDashboardNavbar>
+        </template>
 
-            <UDashboardPanelContent>
-                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.citizen', 1)])" />
-                <DataErrorBlock
-                    v-else-if="error"
-                    :title="$t('common.unable_to_load', [$t('common.citizen', 1)])"
-                    :error="error"
-                    :retry="refresh"
-                />
-                <DataNoDataBlock v-else-if="!user" />
+        <template #body>
+            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.citizen', 1)])" />
+            <DataErrorBlock
+                v-else-if="error"
+                :title="$t('common.unable_to_load', [$t('common.citizen', 1)])"
+                :error="error"
+                :retry="refresh"
+            />
+            <DataNoDataBlock v-else-if="!user" />
 
-                <div v-else>
-                    <div class="mb-4 flex items-center gap-2 px-4">
-                        <ProfilePictureImg
-                            :src="user?.props?.mugshot?.filePath"
-                            :name="`${user.firstname} ${user.lastname}`"
-                            :alt="$t('common.mugshot')"
-                            :enable-popup="true"
-                            size="3xl"
-                        />
+            <div v-else>
+                <div class="mb-4 flex items-center gap-2 px-4">
+                    <ProfilePictureImg
+                        :src="user?.props?.mugshot?.filePath"
+                        :name="`${user.firstname} ${user.lastname}`"
+                        :alt="$t('common.mugshot')"
+                        :enable-popup="true"
+                        size="3xl"
+                    />
 
-                        <div class="w-full flex-1">
-                            <div class="flex snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
-                                <h1 class="flex-1 break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
-                                    {{ user?.firstname }} {{ user?.lastname }}
-                                </h1>
-                            </div>
-
-                            <div class="inline-flex gap-2">
-                                <UBadge>
-                                    {{ user.jobLabel }}
-                                    <template v-if="user.job !== game.unemployedJobName">
-                                        ({{ $t('common.rank') }}: {{ user.jobGradeLabel }})
-                                    </template>
-                                    {{ user.props?.jobName || user.props?.jobGradeNumber ? '*' : '' }}
-                                </UBadge>
-
-                                <UBadge v-if="user?.props?.wanted" color="error">
-                                    {{ $t('common.wanted').toUpperCase() }}
-                                </UBadge>
-                            </div>
+                    <div class="w-full flex-1">
+                        <div class="flex snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
+                            <h1 class="flex-1 px-0.5 py-1 text-4xl font-bold break-words sm:pl-1">
+                                {{ user?.firstname }} {{ user?.lastname }}
+                            </h1>
                         </div>
 
-                        <UButton class="lg:hidden" icon="i-mdi-menu" @click="isOpen = true">
-                            {{ $t('common.action', 2) }}
-                        </UButton>
+                        <div class="inline-flex gap-2">
+                            <UBadge>
+                                {{ user.jobLabel }}
+                                <template v-if="user.job !== game.unemployedJobName">
+                                    ({{ $t('common.rank') }}: {{ user.jobGradeLabel }})
+                                </template>
+                                {{ user.props?.jobName || user.props?.jobGradeNumber ? '*' : '' }}
+                            </UBadge>
+
+                            <UBadge v-if="user?.props?.wanted" color="error">
+                                {{ $t('common.wanted').toUpperCase() }}
+                            </UBadge>
+                        </div>
                     </div>
 
-                    <UTabs v-model="selectedTab" class="w-full" :items="items" :unmount="true">
-                        <template #profile>
-                            <UContainer>
-                                <CitizenProfile :user="user" />
-                            </UContainer>
-                        </template>
-
-                        <template #vehicles>
-                            <UContainer>
-                                <CitizenVehicles :user-id="user.userId" />
-                            </UContainer>
-                        </template>
-
-                        <template #documents>
-                            <UContainer>
-                                <CitizenDocuments :user-id="user.userId" />
-                            </UContainer>
-                        </template>
-
-                        <template #activity>
-                            <UContainer>
-                                <CitizenActivityFeed :user-id="user.userId" />
-                            </UContainer>
-                        </template>
-                    </UTabs>
+                    <UButton class="lg:hidden" icon="i-mdi-menu" @click="isOpen = true">
+                        {{ $t('common.action', 2) }}
+                    </UButton>
                 </div>
-            </UDashboardPanelContent>
-        </UDashboardPanel>
 
-        <UDashboardPanel v-if="user" v-model="isOpen" class="max-w-72 flex-1" collapsible side="right">
-            <UDashboardNavbar>
-                <template #right>
-                    <UButtonGroup class="hidden lg:inline-flex">
-                        <IDCopyBadge
-                            :id="userId"
-                            prefix="CIT"
-                            :title="{ key: 'notifications.citizens.copy_citizen_id.title', parameters: {} }"
-                            :content="{ key: 'notifications.citizens.copy_citizen_id.content', parameters: {} }"
-                        />
-
-                        <AddToButton :title="$t('components.clipboard.clipboard_button.add')" :callback="addToClipboard" />
-                    </UButtonGroup>
-                </template>
-            </UDashboardNavbar>
-
-            <UDashboardPanelContent>
-                <div class="flex flex-1 flex-col">
-                    <template v-if="user">
-                        <UDashboardSection
-                            :ui="{
-                                wrapper: 'divide-y !divide-transparent space-y-0 *:pt-2 first:*:pt-2 first:*:pt-0 mb-6',
-                            }"
-                            :title="$t('common.action', 2)"
-                        >
-                            <!-- Register shortcuts for the citizens actions here as it will always be available not like the profile tab content -->
-                            <CitizenActions
-                                :user="user"
-                                register-shortcuts
-                                @update:wanted-status="user.props!.wanted = $event"
-                                @update:job="
-                                    user.job = $event.job.name;
-                                    user.jobLabel = $event.job.label;
-                                    user.jobGrade = $event.grade.grade;
-                                    user.jobGradeLabel = $event.grade.label;
-                                "
-                                @update:traffic-infraction-points="user.props!.trafficInfractionPoints = $event"
-                                @update:mug-shot="user.props!.mugshot = $event"
-                            />
-                        </UDashboardSection>
-
-                        <UDashboardSection
-                            v-if="
-                                can('citizens.CitizensService/GetUser').value &&
-                                attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.Labels').value
-                            "
-                            :ui="{
-                                wrapper: 'divide-y !divide-transparent space-y-0 *:pt-2 first:*:pt-2 first:*:pt-0 mb-6',
-                            }"
-                            :title="$t('common.label', 2)"
-                        >
-                            <CitizenSetLabels v-model="user.props!.labels" :user-id="user.userId" />
-                        </UDashboardSection>
+                <UTabs v-model="selectedTab" class="w-full" :items="items" :unmount="true">
+                    <template #profile>
+                        <UContainer>
+                            <CitizenProfile :user="user" />
+                        </UContainer>
                     </template>
-                </div>
-            </UDashboardPanelContent>
-        </UDashboardPanel>
-    </UDashboardPage>
+
+                    <template #vehicles>
+                        <UContainer>
+                            <CitizenVehicles :user-id="user.userId" />
+                        </UContainer>
+                    </template>
+
+                    <template #documents>
+                        <UContainer>
+                            <CitizenDocuments :user-id="user.userId" />
+                        </UContainer>
+                    </template>
+
+                    <template #activity>
+                        <UContainer>
+                            <CitizenActivityFeed :user-id="user.userId" />
+                        </UContainer>
+                    </template>
+                </UTabs>
+            </div>
+        </template>
+    </UDashboardPanel>
+
+    <UDashboardPanel v-if="user" v-model:open="isOpen" class="max-w-72 flex-1" side="right">
+        <UDashboardNavbar>
+            <template #right>
+                <UButtonGroup class="hidden lg:inline-flex">
+                    <IDCopyBadge
+                        :id="userId"
+                        prefix="CIT"
+                        :title="{ key: 'notifications.citizens.copy_citizen_id.title', parameters: {} }"
+                        :content="{ key: 'notifications.citizens.copy_citizen_id.content', parameters: {} }"
+                    />
+
+                    <AddToButton :title="$t('components.clipboard.clipboard_button.add')" :callback="addToClipboard" />
+                </UButtonGroup>
+            </template>
+        </UDashboardNavbar>
+
+        <template #body>
+            <div class="flex flex-1 flex-col">
+                <template v-if="user">
+                    <UPageCard
+                        :ui="{
+                            wrapper: 'divide-y divide-transparent! space-y-0 *:pt-2 first:*:pt-2 first:*:pt-0 mb-6',
+                        }"
+                        :title="$t('common.action', 2)"
+                    >
+                        <!-- Register shortcuts for the citizens actions here as it will always be available not like the profile tab content -->
+                        <CitizenActions
+                            :user="user"
+                            register-shortcuts
+                            @update:wanted-status="user.props!.wanted = $event"
+                            @update:job="
+                                user.job = $event.job.name;
+                                user.jobLabel = $event.job.label;
+                                user.jobGrade = $event.grade.grade;
+                                user.jobGradeLabel = $event.grade.label;
+                            "
+                            @update:traffic-infraction-points="user.props!.trafficInfractionPoints = $event"
+                            @update:mug-shot="user.props!.mugshot = $event"
+                        />
+                    </UPageCard>
+
+                    <UPageCard
+                        v-if="
+                            can('citizens.CitizensService/GetUser').value &&
+                            attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.Labels').value
+                        "
+                        :ui="{
+                            wrapper: 'divide-y divide-transparent! space-y-0 *:pt-2 first:*:pt-2 first:*:pt-0 mb-6',
+                        }"
+                        :title="$t('common.label', 2)"
+                    >
+                        <CitizenSetLabels v-model="user.props!.labels" :user-id="user.userId" />
+                    </UPageCard>
+                </template>
+            </div>
+        </template>
+    </UDashboardPanel>
 </template>

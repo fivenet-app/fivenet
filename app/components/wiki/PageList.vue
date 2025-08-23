@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { NavItem } from '@nuxt/content';
+import { mapContentNavigation } from '@nuxt/ui-pro/utils/content';
 import type { PageShort } from '~~/gen/ts/resources/wiki/page';
 
 const props = defineProps<{
@@ -23,5 +24,5 @@ const navItems = computed(() => props.pages.map((p) => mapNavItemToNavItem(p)) ?
 </script>
 
 <template>
-    <UNavigationTree class="mt-2 sm:mt-0" :links="mapContentNavigation(navItems)" />
+    <UContentNavigation class="mt-2 sm:mt-0" :links="mapContentNavigation(navItems)" />
 </template>

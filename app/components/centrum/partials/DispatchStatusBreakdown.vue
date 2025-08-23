@@ -68,7 +68,7 @@ defineOptions({
     <UPopover :class="popoverClass">
         <UButton
             class="items-center"
-            :ui="{ icon: { base: 'max-md:!hidden' } }"
+            :ui="{ icon: { base: 'max-md:hidden!' } }"
             variant="ghost"
             trailing-icon="i-mdi-chevron-down"
             v-bind="$attrs"
@@ -76,7 +76,7 @@ defineOptions({
             {{ $t('components.centrum.livemap.total_dispatches') }}: {{ dispatches.size }}
         </UButton>
 
-        <template #panel>
+        <template #content>
             <div class="p-4">
                 <UIcon v-if="!counts" class="size-4 animate-spin" name="i-mdi-refresh" />
                 <div v-else class="flex flex-col gap-1 text-nowrap text-sm font-normal">

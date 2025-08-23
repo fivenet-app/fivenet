@@ -216,30 +216,30 @@ const columns = [
                 />
 
                 <div v-else>
-                    <UFormGroup name="search">
+                    <UFormField name="search">
                         <UInput
                             v-model="querySearchRaw"
                             type="text"
                             name="search"
                             :placeholder="$t('common.filter')"
-                            :ui="{ icon: { trailing: { pointer: '' } } }"
+                            :ui="{ trailing: 'pe-1' }"
                         >
                             <template #trailing>
                                 <UButton
                                     v-show="querySearchRaw !== ''"
-                                    color="gray"
+                                    color="neutral"
                                     variant="link"
                                     icon="i-mdi-close"
-                                    :padded="false"
+                                    aria-controls="search"
                                     @click="querySearchRaw = ''"
                                 />
                             </template>
                         </UInput>
-                    </UFormGroup>
+                    </UFormField>
 
                     <dl class="mt-4">
                         <UAccordion multiple :items="filteredLawBooks">
-                            <template #item="{ item: lawBook }">
+                            <template #content="{ item: lawBook }">
                                 <div class="max-w-full">
                                     <UTable
                                         :columns="columns"
@@ -251,7 +251,7 @@ const columns = [
                                     >
                                         <template #name-data="{ row: law }">
                                             <div class="inline-flex items-center gap-2">
-                                                <span class="whitespace-pre-line text-gray-900 dark:text-white">
+                                                <span class="text-highlighted whitespace-pre-line">
                                                     {{ law.name }}
                                                 </span>
 
@@ -276,11 +276,11 @@ const columns = [
                                         <template #count-data="{ row: law }">
                                             <USelect
                                                 name="count"
-                                                :options="Array.from(Array(7).keys())"
+                                                :items="Array.from(Array(7).keys())"
                                                 :model-value="
                                                     state.selectedPenalties.find((p) => p.law.id === law.id)?.count ?? 0
                                                 "
-                                                @change="calculate({ law: law, count: parseInt($event) })"
+                                                @change="($event) => calculate({ law: law, count: parseInt($event) })"
                                             />
                                         </template>
                                     </UTable>
@@ -292,7 +292,7 @@ const columns = [
             </div>
         </div>
 
-        <UDivider :label="$t('common.result')" />
+        <USeparator :label="$t('common.result')" />
 
         <div class="flow-root">
             <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -304,7 +304,7 @@ const columns = [
                             <p class="font-semibold">
                                 {{ $t('common.reduction') }}
                             </p>
-                            <URange v-model="reduction" size="sm" :min="0" :max="25" :step="1" />
+                            <USlider v-model="reduction" size="sm" :min="0" :max="25" :step="1" />
                             <p class="w-12">{{ reduction }}%</p>
                         </div>
 

@@ -27,32 +27,30 @@ const templatesListRef = useTemplateRef('templatesListRef');
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('pages.documents.templates.title')">
-                <template #right>
-                    <PartialsBackButton to="/documents" />
+    <UDashboardPanel>
+        <UDashboardNavbar :title="$t('pages.documents.templates.title')">
+            <template #right>
+                <PartialsBackButton to="/documents" />
 
-                    <UTooltip v-if="can('documents.DocumentsService/CreateTemplate').value" :text="$t('common.create')">
-                        <UButton :to="{ name: 'documents-templates-create' }" color="gray" trailing-icon="i-mdi-plus">
-                            <span class="hidden truncate sm:block">
-                                {{ $t('common.template') }}
-                            </span>
-                        </UButton>
-                    </UTooltip>
-                </template>
-            </UDashboardNavbar>
+                <UTooltip v-if="can('documents.DocumentsService/CreateTemplate').value" :text="$t('common.create')">
+                    <UButton :to="{ name: 'documents-templates-create' }" color="neutral" trailing-icon="i-mdi-plus">
+                        <span class="hidden truncate sm:block">
+                            {{ $t('common.template') }}
+                        </span>
+                    </UButton>
+                </UTooltip>
+            </template>
+        </UDashboardNavbar>
 
-            <UDashboardPanelContent>
-                <TemplateList ref="templatesListRef" @selected="selected($event)" />
-            </UDashboardPanelContent>
+        <UDashboardPanelContent>
+            <TemplateList ref="templatesListRef" @selected="selected($event)" />
+        </UDashboardPanelContent>
 
-            <Pagination
-                :loading="isRequestPending(templatesListRef?.status ?? 'pending')"
-                :refresh="templatesListRef?.refresh"
-                hide-buttons
-                hide-text
-            />
-        </UDashboardPanel>
-    </UDashboardPage>
+        <Pagination
+            :loading="isRequestPending(templatesListRef?.status ?? 'pending')"
+            :refresh="templatesListRef?.refresh"
+            hide-buttons
+            hide-text
+        />
+    </UDashboardPanel>
 </template>

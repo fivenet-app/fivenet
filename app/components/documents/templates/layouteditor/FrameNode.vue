@@ -157,7 +157,7 @@ onUnmounted(() => {
             <div class="mb-1 text-[10pt] font-semibold text-red-600">{{ frame.title || 'Section' }}</div>
         </div>
         <div
-            class="bg-primary-600 absolute -bottom-1.5 -right-1.5 h-3 w-3 cursor-nwse-resize rounded-sm opacity-0 group-hover:opacity-100"
+            class="bg-primary-600 rounded-xs absolute -bottom-1.5 -right-1.5 h-3 w-3 cursor-nwse-resize opacity-0 group-hover:opacity-100"
             @pointerdown="onResizeDown"
         ></div>
     </div>

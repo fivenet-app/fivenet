@@ -36,7 +36,7 @@ const notifications = useNotificationsStore();
 
 const w = window;
 
-const modal = useModal();
+const modal = useOverlay();
 
 function openTemplates(): void {
     if (!props.user) {
@@ -54,7 +54,7 @@ function copyLinkToClipboard(): void {
     notifications.add({
         title: { key: 'notifications.clipboard.link_copied.title', parameters: {} },
         description: { key: 'notifications.clipboard.link_copied.content', parameters: {} },
-        timeout: 3250,
+        duration: 3250,
         type: NotificationType.INFO,
     });
 }
@@ -223,7 +223,7 @@ if (props.registerShortcuts) {
             {{ $t('components.citizens.CitizenInfoProfile.go_to_colleague_info') }}
         </UButton>
 
-        <UDivider />
+        <USeparator />
 
         <UButton block icon="i-mdi-link-variant" @click="copyLinkToClipboard()">
             {{ $t('components.citizens.CitizenInfoProfile.copy_profile_link') }}

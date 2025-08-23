@@ -24,9 +24,7 @@ const route = useRoute('documents-templates-edit-id');
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel grow>
-            <TemplateEditor :template-id="parseInt(route.params.id)" />
-        </UDashboardPanel>
-    </UDashboardPage>
+    <UDashboardPanel>
+        <TemplateEditor :template-id="parseInt(route.params.id)" />
+    </UDashboardPanel>
 </template>

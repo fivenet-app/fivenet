@@ -16,7 +16,7 @@ defineEmits<{
     (e: 'update:absenceDates', value: { userId: number; absenceBegin?: Timestamp; absenceEnd?: Timestamp }): void;
 }>();
 
-const modal = useModal();
+const modal = useOverlay();
 
 const { attr, can, activeChar } = useAuth();
 

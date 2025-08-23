@@ -45,10 +45,10 @@ async function iconSearch(query: string): Promise<IconEntry[]> {
             :searchable="iconSearch"
             searchable-lazy
             :searchable-placeholder="$t('common.search_field')"
-            value-attribute="name"
+            value-key="name"
             v-bind="$attrs"
         >
-            <template #label>
+            <template #item-label>
                 <component
                     :is="availableIcons.find((item) => item.name === icon)?.component ?? fallbackIcon.component"
                     class="size-5"

@@ -40,7 +40,7 @@ const clipboardStore = useClipboardStore();
 
 const notifications = useNotificationsStore();
 
-const modal = useModal();
+const modal = useOverlay();
 
 const documentsDocuments = await useDocumentsDocuments();
 
@@ -63,7 +63,7 @@ function addToClipboard(): void {
     notifications.add({
         title: { key: 'notifications.clipboard.document_added.title', parameters: {} },
         description: { key: 'notifications.clipboard.document_added.content', parameters: {} },
-        timeout: 3250,
+        duration: 3250,
         type: NotificationType.INFO,
     });
 }
@@ -134,12 +134,12 @@ async function toggleDocument(): Promise<void> {
 
 const accordionItems = computed(() =>
     [
-        { slot: 'relations', label: t('common.relation', 2), icon: 'i-mdi-account-multiple' },
-        { slot: 'references', label: t('common.reference', 2), icon: 'i-mdi-file-document' },
-        { slot: 'access', label: t('common.access'), icon: 'i-mdi-lock', defaultOpen: true },
-        { slot: 'comments', label: t('common.comment', 2), icon: 'i-mdi-comment', defaultOpen: true },
+        { slot: 'relations' as const, label: t('common.relation', 2), icon: 'i-mdi-account-multiple' },
+        { slot: 'references' as const, label: t('common.reference', 2), icon: 'i-mdi-file-document' },
+        { slot: 'access' as const, label: t('common.access'), icon: 'i-mdi-lock', defaultOpen: true },
+        { slot: 'comments' as const, label: t('common.comment', 2), icon: 'i-mdi-comment', defaultOpen: true },
         can('documents.DocumentsService/ListDocumentActivity').value
-            ? { slot: 'activity', label: t('common.activity'), icon: 'i-mdi-comment-quote' }
+            ? { slot: 'activity' as const, label: t('common.activity'), icon: 'i-mdi-comment-quote' }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
@@ -441,7 +441,7 @@ const scrollRef = useTemplateRef('scrollRef');
                 </template>
             </UDashboardToolbar>
 
-            <UCard ref="scrollRef" class="relative overflow-x-auto" :ui="{ rounded: '' }">
+            <UCard ref="scrollRef" class="relative overflow-x-auto">
                 <template #header>
                     <div class="mb-4">
                         <h1 class="break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
@@ -466,7 +466,7 @@ const scrollRef = useTemplateRef('scrollRef');
                             </span>
                         </UBadge>
 
-                        <UBadge class="inline-flex gap-1" color="black" size="md">
+                        <UBadge class="inline-flex gap-1" color="neutral" size="md">
                             <UIcon class="size-5" name="i-mdi-comment-text-multiple" />
                             <span>
                                 {{
@@ -479,7 +479,7 @@ const scrollRef = useTemplateRef('scrollRef');
                     </div>
 
                     <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
-                        <UBadge class="inline-flex gap-1" color="black" size="md">
+                        <UBadge class="inline-flex gap-1" color="neutral" size="md">
                             <UIcon class="size-5" name="i-mdi-account" />
                             <span class="inline-flex items-center gap-1">
                                 <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
@@ -487,7 +487,7 @@ const scrollRef = useTemplateRef('scrollRef');
                             </span>
                         </UBadge>
 
-                        <UBadge class="inline-flex gap-1" color="black" size="md">
+                        <UBadge class="inline-flex gap-1" color="neutral" size="md">
                             <UIcon class="size-5" name="i-mdi-calendar" />
                             <span>
                                 {{ $t('common.created') }}
@@ -495,7 +495,7 @@ const scrollRef = useTemplateRef('scrollRef');
                             </span>
                         </UBadge>
 
-                        <UBadge v-if="doc.document?.updatedAt" class="inline-flex gap-1" color="black" size="md">
+                        <UBadge v-if="doc.document?.updatedAt" class="inline-flex gap-1" color="neutral" size="md">
                             <UIcon class="size-5" name="i-mdi-calendar-edit" />
                             <span>
                                 {{ $t('common.updated') }}
@@ -506,7 +506,7 @@ const scrollRef = useTemplateRef('scrollRef');
                         <UBadge
                             v-if="doc.document?.workflowState?.autoCloseTime"
                             class="inline-flex gap-1"
-                            color="black"
+                            color="neutral"
                             size="md"
                         >
                             <UIcon class="size-5" name="i-mdi-lock-clock" />
@@ -518,7 +518,7 @@ const scrollRef = useTemplateRef('scrollRef');
                         <UBadge
                             v-else-if="doc.document?.workflowState?.nextReminderTime"
                             class="inline-flex gap-1"
-                            color="black"
+                            color="neutral"
                             size="md"
                         >
                             <UIcon class="size-5" name="i-mdi-reminder" />
@@ -531,7 +531,7 @@ const scrollRef = useTemplateRef('scrollRef');
                         <UBadge
                             v-if="doc.document?.workflowUser?.manualReminderTime"
                             class="inline-flex gap-1"
-                            color="black"
+                            color="neutral"
                             size="md"
                         >
                             <UIcon class="size-5" name="i-mdi-reminder" />
@@ -548,7 +548,7 @@ const scrollRef = useTemplateRef('scrollRef');
                             </span>
                         </UBadge>
 
-                        <UBadge v-if="doc.document?.deletedAt" class="inline-flex gap-1" color="amber" size="md">
+                        <UBadge v-if="doc.document?.deletedAt" class="inline-flex gap-1" color="warning" size="md">
                             <UIcon class="size-5" name="i-mdi-calendar-remove" />
                             <span>
                                 {{ $t('common.deleted') }}
@@ -563,7 +563,7 @@ const scrollRef = useTemplateRef('scrollRef');
                         {{ $t('common.content') }}
                     </h2>
 
-                    <div class="mx-auto w-full max-w-screen-xl break-words rounded-lg bg-neutral-100 dark:bg-base-900">
+                    <div class="max-w-(--breakpoint-xl) dark:bg-base-900 mx-auto w-full break-words rounded-lg bg-neutral-100">
                         <HTMLContent
                             v-if="doc.document?.content?.content"
                             class="px-4 py-2"

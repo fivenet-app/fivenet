@@ -460,335 +460,320 @@ const showPreview = ref(false);
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel grow>
-            <!-- Top Toolbar -->
-            <UDashboardNavbar title="Layout Editor">
-                <template #left>
-                    <div class="mx-auto flex items-center gap-2 px-4 py-2">
-                        <UButton icon="i-heroicons-arrow-uturn-left" variant="ghost" :disabled="!canUndo" @click="undo" />
-                        <UButton icon="i-heroicons-arrow-uturn-right" variant="ghost" :disabled="!canRedo" @click="redo" />
-                        <UDivider orientation="vertical" class="mx-1" />
-                        <USelect v-model="page.size" :options="pageSizeOptions" class="w-44" />
-                        <UButton size="sm" variant="ghost" @click="zoomOut">-</UButton>
-                        <div class="w-12 text-center text-sm tabular-nums">{{ Math.round(zoom * 100) }}%</div>
-                        <UButton size="sm" variant="ghost" @click="zoomIn">+</UButton>
-                        <UDivider orientation="vertical" class="mx-1" />
-                        <UToggle v-model="snap" label="Snap" />
-                        <USelect v-model="gridStepMm" :options="gridStepOptions" class="w-24" />
-                    </div>
-                </template>
+    <UDashboardPanel>
+        <!-- Top Toolbar -->
+        <UDashboardNavbar title="Layout Editor">
+            <template #left>
+                <div class="mx-auto flex items-center gap-2 px-4 py-2">
+                    <UButton icon="i-heroicons-arrow-uturn-left" variant="ghost" :disabled="!canUndo" @click="undo" />
+                    <UButton icon="i-heroicons-arrow-uturn-right" variant="ghost" :disabled="!canRedo" @click="redo" />
+                    <USeparator orientation="vertical" class="mx-1" />
+                    <USelect v-model="page.size" :items="pageSizeOptions" class="w-44" />
+                    <UButton size="sm" variant="ghost" @click="zoomOut">-</UButton>
+                    <div class="w-12 text-center text-sm tabular-nums">{{ Math.round(zoom * 100) }}%</div>
+                    <UButton size="sm" variant="ghost" @click="zoomIn">+</UButton>
+                    <USeparator orientation="vertical" class="mx-1" />
+                    <USwitch v-model="snap" label="Snap" />
+                    <USelect v-model="gridStepMm" :items="gridStepOptions" class="w-24" />
+                </div>
+            </template>
 
-                <template #right>
-                    <UButton icon="i-heroicons-eye" @click="showPreview = true">Preview</UButton>
-                    <UButton color="primary" icon="i-heroicons-cloud-arrow-up" @click="publish">Publish</UButton>
-                </template>
-            </UDashboardNavbar>
+            <template #right>
+                <UButton icon="i-heroicons-eye" @click="showPreview = true">Preview</UButton>
+                <UButton color="primary" icon="i-heroicons-cloud-arrow-up" @click="publish">Publish</UButton>
+            </template>
+        </UDashboardNavbar>
 
-            <UDashboardPanelContent>
-                <div class="grid grid-cols-8">
-                    <!-- Left Sidebar -->
-                    <div class="col-span-2 space-y-3 overflow-auto p-3">
-                        <UCard>
-                            <template #header>Insert</template>
-                            <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
-                                <UButton
-                                    v-for="item in insertItems"
-                                    :key="item.kind"
-                                    draggable="true"
-                                    variant="soft"
-                                    @click="addFrameAt(item.kind, 10, 10)"
-                                    >{{ item.label }}</UButton
-                                >
+        <UDashboardPanelContent>
+            <div class="grid grid-cols-8">
+                <!-- Left Sidebar -->
+                <div class="col-span-2 space-y-3 overflow-auto p-3">
+                    <UCard>
+                        <template #header>Insert</template>
+                        <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
+                            <UButton
+                                v-for="item in insertItems"
+                                :key="item.kind"
+                                draggable="true"
+                                variant="soft"
+                                @click="addFrameAt(item.kind, 10, 10)"
+                                >{{ item.label }}</UButton
+                            >
+                        </div>
+                        <p class="mt-2 text-xs text-highlighted">Tip: click to insert.</p>
+                    </UCard>
+                    <UCard>
+                        <template #header>Components</template>
+                        <div class="grid grid-cols-1 gap-2">
+                            <UButton variant="soft" @click="dropPreset('icdRow')">ICD-10 Row</UButton>
+                            <UButton variant="soft" @click="dropPreset('stampBox')">Stamp Box</UButton>
+                        </div>
+                    </UCard>
+                </div>
+
+                <div class="col-span-4 flex h-full w-full">
+                    <!-- Center: Canvas -->
+                    <section
+                        ref="scrollArea"
+                        class="relative flex-1 overflow-auto bg-[linear-gradient(45deg,rgba(0,0,0,0.02)_25%,transparent_25%),linear-gradient(-45deg,rgba(0,0,0,0.02)_25%,transparent_25%),linear-gradient(45deg,transparent_75%,rgba(0,0,0,0.02)_75%),linear-gradient(-45deg,transparent_75%,rgba(0,0,0,0.02)_75%)] bg-size-[20px_20px,20px_20px,20px_20px,20px_20px] bg-position-[0_0,0_10px,10px_-10px,-10px_0]"
+                    >
+                        <!-- Rulers -->
+                        <div class="sticky top-0 left-0 z-10 flex bg-transparent backdrop-blur-sm">
+                            <div class="h-6 w-6 border-r border-b bg-gray-300/10" />
+                            <div class="relative h-6 flex-1 overflow-hidden bg-gray-300/10">
+                                <Ruler :length-px="pagePx.width" orientation="horizontal" :zoom="zoom" />
                             </div>
-                            <p class="mt-2 text-xs text-gray-900 dark:text-white">Tip: click to insert.</p>
-                        </UCard>
-                        <UCard>
-                            <template #header>Components</template>
-                            <div class="grid grid-cols-1 gap-2">
-                                <UButton variant="soft" @click="dropPreset('icdRow')">ICD-10 Row</UButton>
-                                <UButton variant="soft" @click="dropPreset('stampBox')">Stamp Box</UButton>
-                            </div>
-                        </UCard>
-                    </div>
+                        </div>
 
-                    <div class="col-span-4 flex h-full w-full">
-                        <!-- Center: Canvas -->
-                        <section
-                            ref="scrollArea"
-                            class="relative flex-1 overflow-auto bg-[linear-gradient(45deg,rgba(0,0,0,0.02)_25%,transparent_25%),linear-gradient(-45deg,rgba(0,0,0,0.02)_25%,transparent_25%),linear-gradient(45deg,transparent_75%,rgba(0,0,0,0.02)_75%),linear-gradient(-45deg,transparent_75%,rgba(0,0,0,0.02)_75%)] bg-[length:20px_20px,20px_20px,20px_20px,20px_20px] bg-[position:0_0,0_10px,10px_-10px,-10px_0]"
-                        >
-                            <!-- Rulers -->
-                            <div class="sticky left-0 top-0 z-10 flex bg-transparent backdrop-blur">
-                                <div class="h-6 w-6 border-b border-r bg-gray-300/10" />
-                                <div class="relative h-6 flex-1 overflow-hidden bg-gray-300/10">
-                                    <Ruler :length-px="pagePx.width" orientation="horizontal" :zoom="zoom" />
+                        <div class="absolute top-6 bottom-0 left-0 z-10 w-6 bg-gray-300/10">
+                            <Ruler :length-px="pagePx.height" orientation="vertical" :zoom="zoom" />
+                        </div>
+
+                        <!-- Drop target wrapper (centers page) -->
+                        <div class="flex items-start justify-center pt-8 pl-6">
+                            <div class="relative" :style="wrapperStyle" @dragover.prevent @drop.prevent="onDrop">
+                                <!-- Page -->
+                                <div class="page border bg-white shadow" :style="pageStyle">
+                                    <!-- Background color -->
+                                    <div
+                                        class="pointer-events-none absolute inset-0 h-full w-full select-none"
+                                        :style="{ background: page.bgColor, zIndex: 0 }"
+                                    />
+                                    <!-- Background behind -->
+                                    <img
+                                        v-if="page.backgroundUrl && page.bgLayer === 'behind'"
+                                        :src="page.backgroundUrl"
+                                        class="pointer-events-none absolute inset-0 h-full w-full select-none"
+                                        :style="{ opacity: page.bgOpacity, zIndex: 1 }"
+                                    />
+
+                                    <!-- Grid overlay -->
+                                    <svg
+                                        class="pointer-events-none absolute inset-0"
+                                        :width="pagePx.width"
+                                        :height="pagePx.height"
+                                    >
+                                        <line
+                                            v-for="x in Math.floor(page.widthMm / gridStepMm)"
+                                            :key="'vx-' + x"
+                                            :x1="mmToPx(x * gridStepMm)"
+                                            y1="0"
+                                            :x2="mmToPx(x * gridStepMm)"
+                                            :y2="pagePx.height"
+                                            stroke="rgba(0,0,0,0.05)"
+                                            stroke-width="1"
+                                        />
+                                        <line
+                                            v-for="y in Math.floor(page.heightMm / gridStepMm)"
+                                            :key="'hz-' + y"
+                                            x1="0"
+                                            :y1="mmToPx(y * gridStepMm)"
+                                            :x2="pagePx.width"
+                                            :y2="mmToPx(y * gridStepMm)"
+                                            stroke="rgba(0,0,0,0.05)"
+                                            stroke-width="1"
+                                        />
+                                    </svg>
+
+                                    <!-- Frames -->
+                                    <FrameNode
+                                        v-for="f in frames"
+                                        :key="f.id"
+                                        :frame="f"
+                                        :selected="selectedId === f.id"
+                                        :zoom="zoom"
+                                        :snap="snap"
+                                        :grid-step-mm="gridStepMm"
+                                        @select="select(f.id)"
+                                        @update:frame="updateFrame"
+                                    />
+
+                                    <!-- Background overlay on top -->
+                                    <img
+                                        v-if="page.backgroundUrl && page.bgLayer === 'overlay'"
+                                        :src="page.backgroundUrl"
+                                        class="pointer-events-none absolute inset-0 h-full w-full select-none"
+                                        :style="{ opacity: page.bgOpacity, mixBlendMode: page.bgBlend }"
+                                    />
                                 </div>
                             </div>
+                        </div>
+                    </section>
+                </div>
 
-                            <div class="absolute bottom-0 left-0 top-6 z-10 w-6 bg-gray-300/10">
-                                <Ruler :length-px="pagePx.height" orientation="vertical" :zoom="zoom" />
-                            </div>
-
-                            <!-- Drop target wrapper (centers page) -->
-                            <div class="flex items-start justify-center pl-6 pt-8">
-                                <div class="relative" :style="wrapperStyle" @dragover.prevent @drop.prevent="onDrop">
-                                    <!-- Page -->
-                                    <div class="page border bg-white shadow" :style="pageStyle">
-                                        <!-- Background color -->
-                                        <div
-                                            class="pointer-events-none absolute inset-0 h-full w-full select-none"
-                                            :style="{ background: page.bgColor, zIndex: 0 }"
-                                        />
-                                        <!-- Background behind -->
-                                        <img
-                                            v-if="page.backgroundUrl && page.bgLayer === 'behind'"
-                                            :src="page.backgroundUrl"
-                                            class="pointer-events-none absolute inset-0 h-full w-full select-none"
-                                            :style="{ opacity: page.bgOpacity, zIndex: 1 }"
-                                        />
-
-                                        <!-- Grid overlay -->
-                                        <svg
-                                            class="pointer-events-none absolute inset-0"
-                                            :width="pagePx.width"
-                                            :height="pagePx.height"
-                                        >
-                                            <line
-                                                v-for="x in Math.floor(page.widthMm / gridStepMm)"
-                                                :key="'vx-' + x"
-                                                :x1="mmToPx(x * gridStepMm)"
-                                                y1="0"
-                                                :x2="mmToPx(x * gridStepMm)"
-                                                :y2="pagePx.height"
-                                                stroke="rgba(0,0,0,0.05)"
-                                                stroke-width="1"
-                                            />
-                                            <line
-                                                v-for="y in Math.floor(page.heightMm / gridStepMm)"
-                                                :key="'hz-' + y"
-                                                x1="0"
-                                                :y1="mmToPx(y * gridStepMm)"
-                                                :x2="pagePx.width"
-                                                :y2="mmToPx(y * gridStepMm)"
-                                                stroke="rgba(0,0,0,0.05)"
-                                                stroke-width="1"
-                                            />
-                                        </svg>
-
-                                        <!-- Frames -->
-                                        <FrameNode
-                                            v-for="f in frames"
-                                            :key="f.id"
-                                            :frame="f"
-                                            :selected="selectedId === f.id"
-                                            :zoom="zoom"
-                                            :snap="snap"
-                                            :grid-step-mm="gridStepMm"
-                                            @select="select(f.id)"
-                                            @update:frame="updateFrame"
-                                        />
-
-                                        <!-- Background overlay on top -->
-                                        <img
-                                            v-if="page.backgroundUrl && page.bgLayer === 'overlay'"
-                                            :src="page.backgroundUrl"
-                                            class="pointer-events-none absolute inset-0 h-full w-full select-none"
-                                            :style="{ opacity: page.bgOpacity, mixBlendMode: page.bgBlend }"
-                                        />
-                                    </div>
+                <!-- Right: Properties -->
+                <div class="col-span-2 space-y-3 overflow-auto p-3">
+                    <UCard>
+                        <template #header>Page</template>
+                        <div class="grid grid-cols-2 gap-2">
+                            <UFormField label="Width (mm)">
+                                <UInput v-model.number="page.widthMm" type="number" step="1" />
+                            </UFormField>
+                            <UFormField label="Height (mm)">
+                                <UInput v-model.number="page.heightMm" type="number" step="1" />
+                            </UFormField>
+                            <UFormField label="Background" class="col-span-2">
+                                <div class="flex items-center gap-2">
+                                    <UButton size="xs" icon="i-heroicons-photo" @click="pickBg">Choose</UButton>
+                                    <USwitch v-model="page.bgLocked" label="Lock" />
+                                    <ColorPickerClient v-model="page.bgColor" class="ml-2" />
                                 </div>
-                            </div>
-                        </section>
-                    </div>
+                                <input ref="bgInput" type="file" accept="image/*" class="hidden" @change="onBgChange" />
+                            </UFormField>
+                            <UFormField label="Opacity"
+                                ><USlider v-model="page.bgOpacity" :min="0" :max="1" :step="0.05" />
+                            </UFormField>
+                            <UFormField label="Layer"><USelect v-model="page.bgLayer" :items="bgLayerOptions" /> </UFormField>
+                            <UFormField label="Blend"><USelect v-model="page.bgBlend" :items="bgBlendOptions" /> </UFormField>
+                        </div>
+                    </UCard>
 
-                    <!-- Right: Properties -->
-                    <div class="col-span-2 space-y-3 overflow-auto p-3">
-                        <UCard>
-                            <template #header>Page</template>
+                    <UCard>
+                        <template #header>Properties</template>
+                        <div v-if="selected" class="space-y-3">
+                            <UInput v-model="selected.name" placeholder="Name" />
                             <div class="grid grid-cols-2 gap-2">
-                                <UFormGroup label="Width (mm)">
-                                    <UInput v-model.number="page.widthMm" type="number" step="1" />
-                                </UFormGroup>
-                                <UFormGroup label="Height (mm)">
-                                    <UInput v-model.number="page.heightMm" type="number" step="1" />
-                                </UFormGroup>
-                                <UFormGroup label="Background" class="col-span-2">
-                                    <div class="flex items-center gap-2">
-                                        <UButton size="xs" icon="i-heroicons-photo" @click="pickBg">Choose</UButton>
-                                        <UToggle v-model="page.bgLocked" label="Lock" />
-                                        <ColorPickerClient v-model="page.bgColor" class="ml-2" />
-                                    </div>
-                                    <input ref="bgInput" type="file" accept="image/*" class="hidden" @change="onBgChange" />
-                                </UFormGroup>
-                                <UFormGroup label="Opacity"
-                                    ><URange v-model="page.bgOpacity" :min="0" :max="1" :step="0.05" />
-                                </UFormGroup>
-                                <UFormGroup label="Layer"
-                                    ><USelect v-model="page.bgLayer" :options="bgLayerOptions" />
-                                </UFormGroup>
-                                <UFormGroup label="Blend"
-                                    ><USelect v-model="page.bgBlend" :options="bgBlendOptions" />
-                                </UFormGroup>
+                                <UFormField label="X (mm)">
+                                    <UInput v-model.number="selected.xMm" type="number" step="0.5" />
+                                </UFormField>
+                                <UFormField label="Y (mm)">
+                                    <UInput v-model.number="selected.yMm" type="number" step="0.5" />
+                                </UFormField>
+                                <UFormField label="W (mm)">
+                                    <UInput v-model.number="selected.wMm" type="number" step="0.5" />
+                                </UFormField>
+                                <UFormField label="H (mm)">
+                                    <UInput v-model.number="selected.hMm" type="number" step="0.5" />
+                                </UFormField>
                             </div>
-                        </UCard>
-
-                        <UCard>
-                            <template #header>Properties</template>
-                            <div v-if="selected" class="space-y-3">
-                                <UInput v-model="selected.name" placeholder="Name" />
+                            <USelect v-model="selected.kind" :items="kindOptions" />
+                            <USeparator />
+                            <div class="grid grid-cols-2 gap-2">
+                                <UFormField label="Stroke">
+                                    <ColorPickerClient v-model="selected.strokeColor" />
+                                </UFormField>
+                                <UFormField label="Width">
+                                    <UInput v-model.number="selected.strokeWidth" type="number" step="1" />
+                                </UFormField>
+                                <UFormField label="Show Stroke" class="col-span-2">
+                                    <USwitch v-model="selected.strokeEnabled" label="Show border (stroke)" />
+                                </UFormField>
+                                <UFormField label="Fill" class="col-span-2">
+                                    <UInput v-model="selected.fill" placeholder="transparent" />
+                                </UFormField>
+                            </div>
+                            <div v-if="selected.kind === 'field'">
+                                <UFormField label="Path">
+                                    <UInput v-model="(selected as any).path" placeholder="patient.name" />
+                                </UFormField>
+                                <UFormField label="Fallback">
+                                    <UInput v-model="(selected as any).fallback" placeholder="—" />
+                                </UFormField>
+                            </div>
+                            <div v-if="selected.kind === 'text'">
+                                <UFormField label="Text"><UTextarea v-model="(selected as any).text" :rows="5" /> </UFormField>
+                            </div>
+                            <div v-if="selected.kind === 'image'">
+                                <UFormField label="Image URL">
+                                    <UInput v-model="(selected as any).src" placeholder="/logo.png" />
+                                </UFormField>
+                                <USelect v-model="(selected as any).fit" :items="imageFitOptions" />
+                            </div>
+                            <div v-if="selected.kind === 'checkbox'">
+                                <UFormField label="Path">
+                                    <UInput v-model="(selected as any).path" placeholder="case.initial" />
+                                </UFormField>
+                                <UFormField label="Label">
+                                    <UInput v-model="(selected as any).label" placeholder="Erstbescheinigung" />
+                                </UFormField>
+                                <UFormField label="Checked (preview)">
+                                    <USwitch v-model="(selected as any).checked" label="Checked (preview)" />
+                                </UFormField>
+                            </div>
+                            <div v-if="selected.kind === 'grid'">
+                                <div class="grid grid-cols-3 gap-2">
+                                    <UFormField label="Cols">
+                                        <UInput v-model.number="(selected as any).cols" type="number" />
+                                    </UFormField>
+                                    <UFormField label="Rows">
+                                        <UInput v-model.number="(selected as any).rows" type="number" />
+                                    </UFormField>
+                                    <UFormField label="Gap (mm)">
+                                        <UInput v-model.number="(selected as any).gapMm" type="number" step="0.5" />
+                                    </UFormField>
+                                </div>
+                            </div>
+                            <div v-if="selected.kind === 'text'">
+                                <UFormField label="Text">
+                                    <UTextarea v-model="(selected as any).text" :rows="5" />
+                                </UFormField>
                                 <div class="grid grid-cols-2 gap-2">
-                                    <UFormGroup label="X (mm)">
-                                        <UInput v-model.number="selected.xMm" type="number" step="0.5" />
-                                    </UFormGroup>
-                                    <UFormGroup label="Y (mm)">
-                                        <UInput v-model.number="selected.yMm" type="number" step="0.5" />
-                                    </UFormGroup>
-                                    <UFormGroup label="W (mm)">
-                                        <UInput v-model.number="selected.wMm" type="number" step="0.5" />
-                                    </UFormGroup>
-                                    <UFormGroup label="H (mm)">
-                                        <UInput v-model.number="selected.hMm" type="number" step="0.5" />
-                                    </UFormGroup>
-                                </div>
-                                <USelect v-model="selected.kind" :options="kindOptions" />
-                                <UDivider />
-                                <div class="grid grid-cols-2 gap-2">
-                                    <UFormGroup label="Stroke">
-                                        <ColorPickerClient v-model="selected.strokeColor" />
-                                    </UFormGroup>
-                                    <UFormGroup label="Width">
-                                        <UInput v-model.number="selected.strokeWidth" type="number" step="1" />
-                                    </UFormGroup>
-                                    <UFormGroup label="Show Stroke" class="col-span-2">
-                                        <UToggle v-model="selected.strokeEnabled" label="Show border (stroke)" />
-                                    </UFormGroup>
-                                    <UFormGroup label="Fill" class="col-span-2">
-                                        <UInput v-model="selected.fill" placeholder="transparent" />
-                                    </UFormGroup>
-                                </div>
-                                <div v-if="selected.kind === 'field'">
-                                    <UFormGroup label="Path">
-                                        <UInput v-model="(selected as any).path" placeholder="patient.name" />
-                                    </UFormGroup>
-                                    <UFormGroup label="Fallback">
-                                        <UInput v-model="(selected as any).fallback" placeholder="—" />
-                                    </UFormGroup>
-                                </div>
-                                <div v-if="selected.kind === 'text'">
-                                    <UFormGroup label="Text"
-                                        ><UTextarea v-model="(selected as any).text" :rows="5" />
-                                    </UFormGroup>
-                                </div>
-                                <div v-if="selected.kind === 'image'">
-                                    <UFormGroup label="Image URL">
-                                        <UInput v-model="(selected as any).src" placeholder="/logo.png" />
-                                    </UFormGroup>
-                                    <USelect v-model="(selected as any).fit" :options="imageFitOptions" />
-                                </div>
-                                <div v-if="selected.kind === 'checkbox'">
-                                    <UFormGroup label="Path">
-                                        <UInput v-model="(selected as any).path" placeholder="case.initial" />
-                                    </UFormGroup>
-                                    <UFormGroup label="Label">
-                                        <UInput v-model="(selected as any).label" placeholder="Erstbescheinigung" />
-                                    </UFormGroup>
-                                    <UFormGroup label="Checked (preview)">
-                                        <UToggle v-model="(selected as any).checked" label="Checked (preview)" />
-                                    </UFormGroup>
-                                </div>
-                                <div v-if="selected.kind === 'grid'">
-                                    <div class="grid grid-cols-3 gap-2">
-                                        <UFormGroup label="Cols">
-                                            <UInput v-model.number="(selected as any).cols" type="number" />
-                                        </UFormGroup>
-                                        <UFormGroup label="Rows">
-                                            <UInput v-model.number="(selected as any).rows" type="number" />
-                                        </UFormGroup>
-                                        <UFormGroup label="Gap (mm)">
-                                            <UInput v-model.number="(selected as any).gapMm" type="number" step="0.5" />
-                                        </UFormGroup>
-                                    </div>
-                                </div>
-                                <div v-if="selected.kind === 'text'">
-                                    <UFormGroup label="Text">
-                                        <UTextarea v-model="(selected as any).text" :rows="5" />
-                                    </UFormGroup>
-                                    <div class="grid grid-cols-2 gap-2">
-                                        <UFormGroup label="Font Size (pt)">
-                                            <UInput
-                                                v-model.number="(selected as any).fontSize"
-                                                type="number"
-                                                min="6"
-                                                max="72"
-                                                step="1"
-                                            />
-                                        </UFormGroup>
-                                        <UFormGroup label="Align">
-                                            <USelect
-                                                v-model="(selected as any).align"
-                                                :options="[
-                                                    { label: 'Left', value: 'left' },
-                                                    { label: 'Center', value: 'center' },
-                                                    { label: 'Right', value: 'right' },
-                                                ]"
-                                            />
-                                        </UFormGroup>
-                                    </div>
-                                    <div class="flex gap-2">
-                                        <UToggle v-model="(selected as any).bold" label="Bold" />
-                                        <UToggle v-model="(selected as any).italic" label="Italic" />
-                                        <UToggle v-model="(selected as any).underline" label="Underline" />
-                                    </div>
-                                    <UFormGroup label="Rotation (deg)">
+                                    <UFormField label="Font Size (pt)">
                                         <UInput
-                                            v-model.number="(selected as any).rotateDeg"
+                                            v-model.number="(selected as any).fontSize"
                                             type="number"
-                                            min="-180"
-                                            max="180"
+                                            min="6"
+                                            max="72"
                                             step="1"
                                         />
-                                    </UFormGroup>
-                                    <UFormGroup label="Custom Style (CSS)">
-                                        <UInput
-                                            v-model="(selected as any).style"
-                                            placeholder="color: red; background: yellow;"
+                                    </UFormField>
+                                    <UFormField label="Align">
+                                        <USelect
+                                            v-model="(selected as any).align"
+                                            :items="[
+                                                { label: 'Left', value: 'left' },
+                                                { label: 'Center', value: 'center' },
+                                                { label: 'Right', value: 'right' },
+                                            ]"
                                         />
-                                    </UFormGroup>
+                                    </UFormField>
                                 </div>
-                                <div v-if="selected.kind === 'section'">
-                                    <UFormGroup label="Title">
-                                        <UInput v-model="(selected as any).title" placeholder="AU-begründende Diagnose(n)" />
-                                    </UFormGroup>
+                                <div class="flex gap-2">
+                                    <USwitch v-model="(selected as any).bold" label="Bold" />
+                                    <USwitch v-model="(selected as any).italic" label="Italic" />
+                                    <USwitch v-model="(selected as any).underline" label="Underline" />
                                 </div>
+                                <UFormField label="Rotation (deg)">
+                                    <UInput
+                                        v-model.number="(selected as any).rotateDeg"
+                                        type="number"
+                                        min="-180"
+                                        max="180"
+                                        step="1"
+                                    />
+                                </UFormField>
+                                <UFormField label="Custom Style (CSS)">
+                                    <UInput v-model="(selected as any).style" placeholder="color: red; background: yellow;" />
+                                </UFormField>
                             </div>
-                            <div v-else class="text-sm text-gray-900 dark:text-white">
-                                Select a frame to edit its properties.
+                            <div v-if="selected.kind === 'section'">
+                                <UFormField label="Title">
+                                    <UInput v-model="(selected as any).title" placeholder="AU-begründende Diagnose(n)" />
+                                </UFormField>
                             </div>
-                        </UCard>
-                    </div>
+                        </div>
+                        <div v-else class="text-sm text-highlighted">Select a frame to edit its properties.</div>
+                    </UCard>
                 </div>
-            </UDashboardPanelContent>
-        </UDashboardPanel>
-    </UDashboardPage>
+            </div>
+        </UDashboardPanelContent>
+    </UDashboardPanel>
 
     <!-- Preview Modal -->
-    <UModal v-model="showPreview" fullscreen>
+    <UModal v-model:open="showPreview" fullscreen>
         <UCard
             :ui="{
-                ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
                 base: 'flex flex-1 flex-col',
                 body: { base: 'flex flex-1 flex-col' },
             }"
         >
             <template #header>
                 <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">Preview (sample data)</h3>
+                    <h3 class="text-2xl leading-6 font-semibold">Preview (sample data)</h3>
 
                     <UButton
                         class="-my-1"
-                        color="gray"
+                        color="neutral"
                         variant="ghost"
                         icon="i-mdi-window-close"
                         @click="showPreview = false"

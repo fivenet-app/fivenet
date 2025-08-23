@@ -12,6 +12,6 @@ withDefaults(
 
 <template>
     <UTooltip :text="title">
-        <UButton :ui="{ rounded: 'rounded-full' }" icon="i-mdi-clipboard-plus" color="gray" @click="callback()" />
+        <UButton icon="i-mdi-clipboard-plus" color="neutral" @click="callback()" />
     </UTooltip>
 </template>

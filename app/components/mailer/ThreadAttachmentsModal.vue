@@ -11,15 +11,13 @@ defineEmits<{
     (e: 'update:attachments', attachments: MessageAttachment[]): void;
 }>();
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 </script>
 
 <template>
     <UModal>
         <UCard
             :ui="{
-                ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
                 base: 'flex flex-1 flex-col',
                 body: { base: 'flex flex-1 flex-col' },
             }"
@@ -30,7 +28,7 @@ const { isOpen } = useModal();
                         {{ $t('common.attachment', 2) }}
                     </h3>
 
-                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -44,7 +42,7 @@ const { isOpen } = useModal();
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" block color="black" @click="isOpen = false">
+                    <UButton class="flex-1" block color="neutral" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

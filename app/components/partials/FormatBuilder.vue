@@ -173,7 +173,7 @@ const { moveUp, moveDown } = useListReorder(blocks);
     <div class="flex flex-col gap-2">
         <VueDraggable
             v-model="blocks"
-            class="flex min-h-[48px] flex-wrap items-center gap-2 rounded bg-gray-100 p-2 dark:bg-gray-800"
+            class="flex min-h-[48px] flex-wrap items-center gap-2 rounded-sm bg-gray-100 p-2 dark:bg-gray-800"
             :item-key="'id'"
             handle=".drag-handle"
             :ghost-class="'opacity-50'"
@@ -188,7 +188,7 @@ const { moveUp, moveDown } = useListReorder(blocks);
                             color="primary"
                             variant="soft"
                             size="md"
-                            :ui="{ base: '!py-0' }"
+                            :ui="{ base: 'py-0!' }"
                         >
                             <UInput
                                 class="w-28"
@@ -207,7 +207,6 @@ const { moveUp, moveDown } = useListReorder(blocks);
                                 color="error"
                                 variant="link"
                                 tabindex="-1"
-                                :padded="false"
                                 @click="removeBlock(index)"
                             />
 
@@ -218,7 +217,6 @@ const { moveUp, moveDown } = useListReorder(blocks);
                                 size="xs"
                                 variant="link"
                                 tabindex="-1"
-                                :padded="false"
                                 :disabled="disabled"
                             />
                         </UBadge>
@@ -235,27 +233,14 @@ const { moveUp, moveDown } = useListReorder(blocks);
                                 color="error"
                                 variant="link"
                                 tabindex="-1"
-                                :padded="false"
                                 :disabled="disabled"
                                 @click="removeBlock(index)"
                             />
 
                             <div class="inline-flex items-center gap-1">
                                 <UButtonGroup>
-                                    <UButton
-                                        size="xs"
-                                        variant="link"
-                                        :padded="false"
-                                        icon="i-mdi-arrow-left"
-                                        @click="moveUp(index)"
-                                    />
-                                    <UButton
-                                        size="xs"
-                                        variant="link"
-                                        :padded="false"
-                                        icon="i-mdi-arrow-right"
-                                        @click="moveDown(index)"
-                                    />
+                                    <UButton size="xs" variant="link" icon="i-mdi-arrow-left" @click="moveUp(index)" />
+                                    <UButton size="xs" variant="link" icon="i-mdi-arrow-right" @click="moveDown(index)" />
                                 </UButtonGroup>
 
                                 <UTooltip :text="$t('common.draggable')">
@@ -267,7 +252,6 @@ const { moveUp, moveDown } = useListReorder(blocks);
                                         variant="link"
                                         tabindex="-1"
                                         :disabled="disabled"
-                                        :padded="false"
                                     />
                                 </UTooltip>
                             </div>

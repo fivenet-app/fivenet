@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -25,7 +25,7 @@ const { t } = useI18n();
 
 const { isSuperuser } = useAuth();
 
-const modal = useModal();
+const modal = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -235,7 +235,7 @@ async function copyRole(): Promise<void> {
     notifications.add({
         title: { key: 'notifications.clipboard.copied.title', parameters: {} },
         description: { key: 'notifications.clipboard.copied.content', parameters: {} },
-        timeout: 3250,
+        duration: 3250,
         type: NotificationType.INFO,
     });
 }
@@ -406,7 +406,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     </UTooltip>
                 </div>
 
-                <UDivider class="mb-1" :label="$t('common.attributes', 2)" />
+                <USeparator class="mb-1" :label="$t('common.attributes', 2)" />
 
                 <div class="flex flex-col gap-2">
                     <div class="flex flex-row gap-1">
@@ -421,16 +421,16 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         </UButton>
 
                         <UPopover>
-                            <UButton :disabled="changed" color="gray" icon="i-mdi-form-textarea">
+                            <UButton :disabled="changed" color="neutral" icon="i-mdi-form-textarea">
                                 {{ $t('common.paste') }}
                             </UButton>
 
-                            <template #panel>
+                            <template #content>
                                 <div class="p-4">
                                     <UForm class="flex flex-col gap-1" :state="state" :schema="schema" @submit="pasteRole">
-                                        <UFormGroup name="input">
+                                        <UFormField name="input">
                                             <UInput v-model="state.input" type="text" name="input" />
-                                        </UFormGroup>
+                                        </UFormField>
 
                                         <UButton type="submit">
                                             {{ $t('common.save') }}
@@ -440,7 +440,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             </template>
                         </UPopover>
 
-                        <UButton icon="i-mdi-content-copy" :disabled="changed" color="white" @click="copyRole">
+                        <UButton icon="i-mdi-content-copy" :disabled="changed" color="neutral" @click="copyRole">
                             {{ $t('common.copy') }}
                         </UButton>
                     </div>
@@ -455,7 +455,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                 >
                                     <div class="flex flex-row items-center gap-2">
                                         <div class="flex-1">
-                                            <p class="text-gray-900 dark:text-white" :title="`${$t('common.id')}: ${perm.id}`">
+                                            <p class="text-highlighted" :title="`${$t('common.id')}: ${perm.id}`">
                                                 {{ $t(`perms.${perm.category}.${perm.name}.key`) }}
                                             </p>
                                             <p class="text-base-500">

@@ -83,13 +83,13 @@ const { sendClientView } = useClientUpdate(ObjectType.JOBS_COLLEAGUE, () =>
     notifications.add({
         title: { key: 'notifications.jobs.colleague.client_view_update.title', parameters: {} },
         description: { key: 'notifications.jobs.colleague.client_view_update.content', parameters: {} },
-        timeout: 7500,
+        duration: 7500,
         type: NotificationType.INFO,
         actions: [
             {
                 label: { key: 'common.refresh', parameters: {} },
                 icon: 'i-mdi-refresh',
-                click: () => refresh(),
+                onClick: () => refresh(),
             },
         ],
     }),
@@ -153,7 +153,7 @@ const links = computed(() =>
                     <ColleagueInfo :colleague="colleague.colleague" @update:absence-dates="updateColleageAbsence($event)" />
 
                     <UDashboardToolbar class="overflow-x-auto px-1.5 py-0">
-                        <UHorizontalNavigation :links="links" />
+                        <UNavigationMenu orientation="horizontal" :items="links" />
                     </UDashboardToolbar>
 
                     <NuxtPage :colleague="colleague.colleague" @refresh="refresh()" />

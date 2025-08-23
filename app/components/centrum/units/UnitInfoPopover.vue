@@ -31,7 +31,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.s
         </span>
     </template>
     <UPopover v-else>
-        <UButton class="inline-flex items-center gap-1 p-0.5" variant="outline" :padded="false" size="xs">
+        <UButton class="inline-flex items-center gap-1 p-0.5" variant="outline" size="xs">
             <slot name="before" />
 
             <span>
@@ -44,13 +44,13 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.s
             <UIcon v-if="assignment?.expiresAt" class="size-4 text-amber-600" name="i-mdi-timer" />
         </UButton>
 
-        <template #panel>
+        <template #content>
             <div class="inline-flex min-w-48 flex-col gap-1 p-4">
                 <p class="text-base font-semibold leading-none">{{ unit.name }} ({{ unit.initials }})</p>
 
                 <p v-if="unit.jobLabel" class="text-base font-semibold leading-none">({{ unit.jobLabel }})</p>
 
-                <UBadge class="rounded font-semibold" :class="unitStatusColor" size="xs">
+                <UBadge class="rounded-sm font-semibold" :class="unitStatusColor" size="xs">
                     {{ $t(`enums.centrum.StatusUnit.${StatusUnit[unit.status?.status ?? 0]}`) }}
                 </UBadge>
 
@@ -64,7 +64,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.s
                     }}
                 </p>
 
-                <div class="text-gray-900 dark:text-white">
+                <div class="text-highlighted">
                     <p class="text-sm font-medium leading-none">
                         {{ $t('common.members') }}
                     </p>

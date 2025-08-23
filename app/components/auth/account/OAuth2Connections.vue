@@ -17,7 +17,7 @@ function getProviderConnection(provider: string): undefined | OAuth2Account {
 </script>
 
 <template>
-    <UPageGrid :ui="{ wrapper: 'grid-cols-1' }">
+    <UPageGrid class="lg:grid-cols-2">
         <OAuth2Connection
             v-for="provider in providers"
             :key="provider.name"

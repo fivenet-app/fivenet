@@ -45,21 +45,19 @@ const links = [
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('pages.jobs.title')">
-                <template #right>
-                    <PartialsBackButton fallback-to="/jobs/overview" />
-                </template>
-            </UDashboardNavbar>
+    <UDashboardPanel>
+        <UDashboardNavbar :title="$t('pages.jobs.title')">
+            <template #right>
+                <PartialsBackButton fallback-to="/jobs/overview" />
+            </template>
+        </UDashboardNavbar>
 
-            <UDashboardToolbar class="overflow-x-auto px-1.5 py-0">
-                <UHorizontalNavigation :links="links" />
-            </UDashboardToolbar>
+        <UDashboardToolbar class="overflow-x-auto px-1.5 py-0">
+            <UNavigationMenu orientation="horizontal" :items="links" />
+        </UDashboardToolbar>
 
-            <UDashboardPanelContent class="p-0 sm:pb-0">
-                <slot />
-            </UDashboardPanelContent>
-        </UDashboardPanel>
-    </UDashboardPage>
+        <UDashboardPanelContent class="p-0 sm:pb-0">
+            <slot />
+        </UDashboardPanelContent>
+    </UDashboardPanel>
 </template>

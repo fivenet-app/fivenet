@@ -48,10 +48,10 @@ const { start } = useTimeoutFn(() => (disabled.value = false), 1250);
                 ? [
                       {
                           variant: 'solid',
-                          color: 'white',
+                          color: 'neutral',
                           label: retryMessage ?? $t('common.retry'),
                           disabled: disabled,
-                          click: async () => {
+                          onClick: async () => {
                               start();
                               retry && retry();
                           },
@@ -63,9 +63,8 @@ const { start } = useTimeoutFn(() => (disabled.value = false), 1250);
             close !== undefined
                 ? {
                       icon: 'i-mdi-window-close',
-                      color: 'white',
+                      color: 'neutral',
                       variant: 'link',
-                      padded: false,
                   }
                 : undefined
         "

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -21,7 +21,7 @@ const emit = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
-const { isOpen } = useModal();
+const { isOpen } = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -91,28 +91,34 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
                             {{ $t('components.qualifications.request_modal.title') }}
                         </h3>
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                        <UButton
+                            class="-my-1"
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
                 <div>
-                    <UFormGroup class="flex-1" name="status" :label="$t('common.status')">
+                    <UFormField class="flex-1" name="status" :label="$t('common.status')">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="state.status"
-                                :options="availableStatus"
-                                value-attribute="status"
+                                :items="availableStatus"
+                                value-key="status"
                                 :placeholder="$t('common.status')"
                                 :searchable-placeholder="$t('common.search_field')"
                             >
-                                <template #label>
+                                <template #item-label>
                                     <span class="size-2 rounded-full" :class="requestStatusToBgColor(state.status)" />
                                     <span class="truncate">{{
                                         $t(`enums.qualifications.RequestStatus.${RequestStatus[state.status]}`)
@@ -134,21 +140,21 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </template>
                             </USelectMenu>
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup class="flex-1" name="approverComment" :label="$t('common.message')">
+                    <UFormField class="flex-1" name="approverComment" :label="$t('common.message')">
                         <UTextarea
                             v-model="state.approverComment"
                             name="approverComment"
                             :rows="3"
                             :placeholder="$t('common.message')"
                         />
-                    </UFormGroup>
+                    </UFormField>
                 </div>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="black" block @click="isOpen = false">
+                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

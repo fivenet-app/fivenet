@@ -33,14 +33,14 @@ defineProps<{
                             </span>
                         </UBadge>
 
-                        <UBadge v-if="qualification.public" class="inline-flex gap-1" color="black" size="xs">
+                        <UBadge v-if="qualification.public" class="inline-flex gap-1" color="neutral" size="xs">
                             <UIcon class="size-5" name="i-mdi-earth" />
                             <span>
                                 {{ $t('common.public') }}
                             </span>
                         </UBadge>
 
-                        <UBadge v-if="qualification?.deletedAt" class="inline-flex gap-1" color="amber" size="xs">
+                        <UBadge v-if="qualification?.deletedAt" class="inline-flex gap-1" color="warning" size="xs">
                             <UIcon class="size-5" name="i-mdi-calendar-remove" />
                             <span>
                                 {{ $t('common.deleted') }}
