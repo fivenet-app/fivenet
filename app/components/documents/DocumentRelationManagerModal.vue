@@ -106,19 +106,19 @@ async function removeRelation(id: number): Promise<void> {
 
 const columnsCurrent = [
     {
-        key: 'name',
+        accessorKey: 'name',
         label: t('common.name'),
     },
     {
-        key: 'creator',
+        accessorKey: 'creator',
         label: t('common.creator'),
     },
     {
-        key: 'relation',
+        accessorKey: 'relation',
         label: t('common.relation', 1),
     },
     {
-        key: 'actions',
+        accessorKey: 'actions',
         label: t('common.action', 2),
         sortable: false,
     },
@@ -126,15 +126,15 @@ const columnsCurrent = [
 
 const columnsClipboard = [
     {
-        key: 'name',
+        accessorKey: 'name',
         label: t('common.name'),
     },
     {
-        key: 'job',
+        accessorKey: 'job',
         label: t('common.job'),
     },
     {
-        key: 'relations',
+        accessorKey: 'relations',
         label: t('components.documents.document_managers.add_relation'),
         sortable: false,
     },
@@ -142,15 +142,15 @@ const columnsClipboard = [
 
 const columnsNew = [
     {
-        key: 'name',
+        accessorKey: 'name',
         label: t('common.name'),
     },
     {
-        key: 'job',
+        accessorKey: 'job',
         label: t('common.job'),
     },
     {
-        key: 'relations',
+        accessorKey: 'relations',
         label: t('components.documents.document_managers.add_relation'),
         sortable: false,
     },
@@ -162,7 +162,7 @@ const columnsNew = [
         <UCard>
             <template #header>
                 <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
+                    <h3 class="text-2xl leading-6 font-semibold">
                         {{ $t('common.citizen', 1) }}
                         {{ $t('common.relation', 2) }}
                     </h3>
@@ -177,10 +177,10 @@ const columnsNew = [
                         <div>
                             <UTable
                                 :columns="columnsCurrent"
-                                :rows="modelValue"
+                                :data="modelValue"
                                 :empty-state="{ icon: 'i-mdi-file', label: $t('common.not_found', [$t('common.relation', 2)]) }"
                             >
-                                <template #name-data="{ row }">
+                                <template #name-cell="{ row }">
                                     <CitizenInfoPopover
                                         :user="!row.targetUser?.userId ? undefined : row.targetUser"
                                         :user-id="row.targetUserId"
@@ -188,7 +188,7 @@ const columnsNew = [
                                     />
                                 </template>
 
-                                <template #creator-data="{ row }">
+                                <template #creator-cell="{ row }">
                                     <CitizenInfoPopover
                                         :user="!row.sourceUser?.userId ? undefined : row.sourceUser"
                                         :user-id="row.sourceUserId"
@@ -196,11 +196,11 @@ const columnsNew = [
                                     />
                                 </template>
 
-                                <template #relation-data="{ row }">
+                                <template #relation-cell="{ row }">
                                     {{ $t(`enums.documents.DocRelation.${DocRelation[row.relation]}`) }}
                                 </template>
 
-                                <template #actions-data="{ row }">
+                                <template #actions-cell="{ row }">
                                     <UButtonGroup>
                                         <UTooltip :text="$t('components.documents.document_managers.open_citizen')">
                                             <UButton
@@ -234,18 +234,18 @@ const columnsNew = [
                         <div>
                             <UTable
                                 :columns="columnsClipboard"
-                                :rows="clipboardStore.$state.users"
+                                :data="clipboardStore.$state.users"
                                 :empty-state="{ icon: 'i-mdi-file', label: $t('common.not_found', [$t('common.citizen', 2)]) }"
                             >
-                                <template #name-data="{ row }">
+                                <template #name-cell="{ row }">
                                     <CitizenInfoPopover :user="row.targetUser" show-birthdate />
                                 </template>
 
-                                <template #job-data="{ row }">
+                                <template #job-cell="{ row }">
                                     {{ row.jobLabel }}
                                 </template>
 
-                                <template #relations-data="{ row }">
+                                <template #relations-cell="{ row }">
                                     <UButtonGroup>
                                         <UTooltip :text="$t('components.documents.document_managers.mentioned')">
                                             <UButton
@@ -299,18 +299,18 @@ const columnsNew = [
                                 v-else
                                 :columns="columnsNew"
                                 :loading="isRequestPending(status)"
-                                :rows="citizens"
+                                :data="citizens"
                                 :empty-state="{ icon: 'i-mdi-file', label: $t('common.not_found', [$t('common.citizen', 2)]) }"
                             >
-                                <template #name-data="{ row }">
+                                <template #name-cell="{ row }">
                                     <CitizenInfoPopover :user="row" show-birthdate />
                                 </template>
 
-                                <template #job-data="{ row }">
+                                <template #job-cell="{ row }">
                                     {{ row.jobLabel }}
                                 </template>
 
-                                <template #relations-data="{ row }">
+                                <template #relations-cell="{ row }">
                                     <UButtonGroup>
                                         <UTooltip :text="$t('components.documents.document_managers.mentioned')">
                                             <UButton

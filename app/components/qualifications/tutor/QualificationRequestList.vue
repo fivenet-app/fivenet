@@ -40,8 +40,8 @@ const modal = useOverlay();
 const page = useRouteQuery('page', '1', { transform: Number });
 
 const sort = useRouteQueryObject<TableSortable>('sort', {
-    column: 'createdAt',
-    direction: 'desc',
+    id: 'createdAt',
+    desc: true,
 });
 
 const { data, status, refresh, error } = useLazyAsyncData(
@@ -99,35 +99,35 @@ async function deleteQualificationRequest(qualificationId: number, userId: numbe
 
 const columns = [
     {
-        key: 'actions',
+        accessorKey: 'actions',
         label: t('common.action', 2),
         sortable: false,
     },
     {
-        key: 'citizen',
+        accessorKey: 'citizen',
         label: t('common.citizen'),
     },
     {
-        key: 'userComment',
+        accessorKey: 'userComment',
         label: t('common.comment'),
     },
     {
-        key: 'status',
+        accessorKey: 'status',
         label: t('common.status'),
         sortable: true,
     },
     {
-        key: 'createdAt',
+        accessorKey: 'createdAt',
         label: t('common.created_at'),
         sortable: true,
     },
     {
-        key: 'approvedAt',
+        accessorKey: 'approvedAt',
         label: t('common.approved_at'),
         sortable: true,
     },
     {
-        key: 'approver',
+        accessorKey: 'approver',
         label: t('common.approver'),
     },
 ];
@@ -150,18 +150,18 @@ async function onRefresh(): Promise<void> {
 
             <template v-else>
                 <UTable
-                    v-model:sort="sort"
+                    v-model:sorting="sort"
                     :loading="isRequestPending(status)"
                     :columns="columns"
-                    :rows="data?.requests"
+                    :data="data?.requests"
                     :empty-state="{ icon: 'i-mdi-account-school', label: $t('common.not_found', [$t('common.request', 2)]) }"
                     sort-mode="manual"
                 >
-                    <template #citizen-data="{ row: request }">
+                    <template #citizen-cell="{ row: request }">
                         <CitizenInfoPopover :user="request.user" />
                     </template>
 
-                    <template #status-data="{ row: request }">
+                    <template #status-cell="{ row: request }">
                         <span class="font-medium" :class="requestStatusToTextColor(request.status)">
                             <span class="font-semibold">{{
                                 $t(`enums.qualifications.RequestStatus.${RequestStatus[request.status]}`)
@@ -169,19 +169,19 @@ async function onRefresh(): Promise<void> {
                         </span>
                     </template>
 
-                    <template #createdAt-data="{ row: request }">
+                    <template #createdAt-cell="{ row: request }">
                         <GenericTime :value="request.createdAt" />
                     </template>
 
-                    <template #approvedAt-data="{ row: request }">
+                    <template #approvedAt-cell="{ row: request }">
                         <GenericTime :value="request.approvedAt" />
                     </template>
 
-                    <template #approver-data="{ row: request }">
+                    <template #approver-cell="{ row: request }">
                         <CitizenInfoPopover v-if="request.approver" :user="request.approver" />
                     </template>
 
-                    <template #actions-data="{ row: request }">
+                    <template #actions-cell="{ row: request }">
                         <div :key="`${request.userId}-${request.approverId}-${request.status}`">
                             <UTooltip v-if="request.status !== RequestStatus.DENIED" :text="$t('common.decline')">
                                 <UButton

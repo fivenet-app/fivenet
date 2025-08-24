@@ -80,7 +80,7 @@ onBeforeUnmount(() => {
 const input = useTemplateRef('input');
 
 defineShortcuts({
-    '/': () => input.value?.input?.focus(),
+    '/': () => input.value?.inputRef?.focus(),
 });
 
 const mount = ref(false);

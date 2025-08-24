@@ -59,7 +59,13 @@ const passwordVisibility = ref(false);
 <template>
     <UForm class="space-y-4" :schema="schema" :state="state" @submit="onSubmitThrottle">
         <UFormField name="username" :label="$t('common.username')">
-            <UInput v-model="state.username" type="text" autocomplete="username" :placeholder="$t('common.username')" />
+            <UInput
+                v-model="state.username"
+                type="text"
+                autocomplete="username"
+                :placeholder="$t('common.username')"
+                :ui="{ root: 'w-full' }"
+            />
         </UFormField>
 
         <UFormField name="password" :label="$t('common.password')">
@@ -68,7 +74,7 @@ const passwordVisibility = ref(false);
                 :type="passwordVisibility ? 'text' : 'password'"
                 autocomplete="current-password"
                 :placeholder="$t('common.password')"
-                :ui="{ trailing: 'pe-1' }"
+                :ui="{ trailing: 'pe-1', root: 'w-full' }"
             >
                 <template #trailing>
                     <UButton
@@ -100,7 +106,9 @@ const passwordVisibility = ref(false);
                         icon: 'i-mdi-cookie',
                         color: 'info',
                         variant: 'outline',
-                        onClick: () => (isConsentModalOpen = true),
+                        onClick: () => {
+                            isConsentModalOpen = true;
+                        },
                     },
                 ]"
             />

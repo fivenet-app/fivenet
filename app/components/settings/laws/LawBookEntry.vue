@@ -162,28 +162,28 @@ async function deleteLaw(id: number): Promise<void> {
 
 const columns = [
     {
-        key: 'actions',
+        accessorKey: 'actions',
         label: '',
         sortable: false,
     },
     {
-        key: 'crime',
+        accessorKey: 'crime',
         label: t('common.crime'),
     },
     {
-        key: 'fine',
+        accessorKey: 'fine',
         label: t('common.fine'),
     },
     {
-        key: 'detentionTime',
+        accessorKey: 'detentionTime',
         label: t('common.detention_time'),
     },
     {
-        key: 'service',
+        accessorKey: 'service',
         label: t('common.traffic_infraction_points', 2),
     },
     {
-        key: 'description',
+        accessorKey: 'description',
         label: t('common.description'),
     },
 ];
@@ -272,7 +272,7 @@ const editing = ref(props.startInEdit);
             ref="tableRef"
             v-model:expand="expand"
             :columns="columns"
-            :rows="laws"
+            :data="laws"
             :expand-button="{ icon: 'i-mdi-pencil', color: 'primary' }"
             :ui="{ wrapper: '' }"
             :empty-state="{
@@ -296,7 +296,7 @@ const editing = ref(props.startInEdit);
                 />
             </template>
 
-            <template #actions-data="{ row: law }">
+            <template #actions-cell="{ row: law }">
                 <UTooltip v-if="can('settings.LawsService/DeleteLawBook').value" :text="$t('common.delete')">
                     <UButton
                         variant="link"
@@ -311,23 +311,23 @@ const editing = ref(props.startInEdit);
                 </UTooltip>
             </template>
 
-            <template #crime-data="{ row: law }">
-                <span :ref="(ref) => lawEntriesRefs.set(law.id, ref as Element)" class="text-highlighted truncate">
+            <template #crime-cell="{ row: law }">
+                <span :ref="(ref) => lawEntriesRefs.set(law.id, ref as Element)" class="truncate text-highlighted">
                     {{ law.name }}
                 </span>
             </template>
 
-            <template #fine-data="{ row: law }">{{ $n(law.fine, 'currency') }}</template>
+            <template #fine-cell="{ row: law }">{{ $n(law.fine, 'currency') }}</template>
 
-            <template #detentionTime-data="{ row: law }">
+            <template #detentionTime-cell="{ row: law }">
                 {{ law.detentionTime }}
             </template>
 
-            <template #stvoPoints-data="{ row: law }">
+            <template #stvoPoints-cell="{ row: law }">
                 {{ law.stvoPoints }}
             </template>
 
-            <template #description-data="{ row: law }">
+            <template #description-cell="{ row: law }">
                 <span class="line-clamp-2 truncate hover:line-clamp-4">
                     {{ law.description }}
                 </span>

@@ -40,10 +40,16 @@ const schema = z.object({
         .array()
         .max(docRelations.length)
         .default(docRelationsEnum.map((r) => DocRelation[r.name as keyof typeof DocRelation])),
-    sort: z.custom<TableSortable>().default({
-        column: 'createdAt',
-        direction: 'desc',
-    }),
+    sorting: z
+        .custom<SortByColumn>()
+        .array()
+        .max(3)
+        .default([
+            {
+                id: 'createdAt',
+                desc: true,
+            },
+        ]),
     page: pageNumberSchema,
 });
 
@@ -59,7 +65,7 @@ async function listUserDocuments(): Promise<ListUserDocumentsResponse> {
             pagination: {
                 offset: calculateOffset(query.page, data.value?.pagination),
             },
-            sort: query.sort,
+            sort: { columns: query.sorting },
             userId: props.userId,
             relations: query.relations,
             closed: query.closed,
@@ -77,24 +83,24 @@ watchDebounced(query, async () => refresh(), { debounce: 250, maxWait: 1250 });
 
 const columns = [
     {
-        key: 'document',
+        accessorKey: 'document',
         label: t('common.document', 1),
     },
     {
-        key: 'closed',
+        accessorKey: 'closed',
         label: t('common.close', 2),
     },
     {
-        key: 'relation',
+        accessorKey: 'relation',
         label: t('common.relation', 1),
     },
     {
-        key: 'createdAt',
+        accessorKey: 'createdAt',
         label: t('common.created_at'),
         sortable: true,
     },
     {
-        key: 'creator',
+        accessorKey: 'creator',
         label: t('common.creator'),
     },
 ];
@@ -162,21 +168,21 @@ const columns = [
         class="flex-1"
         :loading="isRequestPending(status)"
         :columns="columns"
-        :rows="data?.relations"
+        :data="data?.relations"
         :empty-state="{
             icon: 'i-mdi-file-multiple',
             label: $t('common.not_found', [`${$t('common.citizen', 1)} ${$t('common.document', 2)}`]),
         }"
     >
-        <template #document-data="{ row: relation }">
+        <template #document-cell="{ row: relation }">
             <DocumentInfoPopover :document="relation.document" load-on-open />
         </template>
 
-        <template #closed-data="{ row: relation }">
+        <template #closed-cell="{ row: relation }">
             <OpenClosedBadge :closed="relation.document?.closed" variant="subtle" />
         </template>
 
-        <template #relation-data="{ row: relation }">
+        <template #relation-cell="{ row: relation }">
             <UBadge
                 class="font-semibold"
                 :color="docRelationToBadge(relation.relation)"
@@ -186,11 +192,11 @@ const columns = [
             </UBadge>
         </template>
 
-        <template #createdAt-data="{ row: relation }">
+        <template #createdAt-cell="{ row: relation }">
             <GenericTime :value="relation.createdAt" />
         </template>
 
-        <template #creator-data="{ row: relation }">
+        <template #creator-cell="{ row: relation }">
             <CitizenInfoPopover :user="relation.sourceUser" />
         </template>
     </UTable>

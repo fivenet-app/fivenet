@@ -62,31 +62,31 @@ watchDebounced(windowFocus, () => {
 
 const columns = [
     {
-        key: 'name',
+        accessorKey: 'name',
         label: t('common.name'),
     },
     {
-        key: 'schedule',
+        accessorKey: 'schedule',
         label: t('common.schedule'),
     },
     {
-        key: 'status',
+        accessorKey: 'status',
         label: t('common.status'),
     },
     {
-        key: 'state',
+        accessorKey: 'state',
         label: t('common.state'),
     },
     {
-        key: 'nextScheduleTime',
+        accessorKey: 'nextScheduleTime',
         label: t('common.next_schedule_time'),
     },
     {
-        key: 'lastAttemptTime',
+        accessorKey: 'lastAttemptTime',
         label: t('common.last_attempt_time'),
     },
     {
-        key: 'startedTime',
+        accessorKey: 'startedTime',
         label: t('common.started_time'),
     },
 ];
@@ -117,7 +117,7 @@ const expand = ref({
         class="flex-1"
         :loading="isRequestPending(status)"
         :columns="columns"
-        :rows="cronjobs?.jobs"
+        :data="cronjobs?.jobs"
         :empty-state="{ icon: 'i-mdi-calendar-task', label: $t('common.not_found', [$t('pages.settings.cron.title', 2)]) }"
     >
         <template #expand="{ row }">
@@ -180,34 +180,34 @@ const expand = ref({
             </div>
         </template>
 
-        <template #name-data="{ row }">
+        <template #name-cell="{ row }">
             <span class="text-highlighted">
                 <pre>{{ row.name }}</pre>
             </span>
         </template>
 
-        <template #schedule-data="{ row }">
+        <template #schedule-cell="{ row }">
             <UKbd size="md">{{ row.schedule }}</UKbd>
         </template>
 
-        <template #status-data="{ row }">
+        <template #status-cell="{ row }">
             <UBadge v-if="row.lastCompletedEvent?.success" icon="i-mdi-check-bold" color="success" />
             <UBadge v-else icon="i-mdi-exclamation-thick" color="error" />
         </template>
 
-        <template #state-data="{ row }">
+        <template #state-cell="{ row }">
             {{ $t(`enums.settings.CronjobState.${CronjobState[row.state]}`) }}
         </template>
 
-        <template #nextScheduleTime-data="{ row }">
+        <template #nextScheduleTime-cell="{ row }">
             <GenericTime v-if="row.nextScheduleTime" :value="row.nextScheduleTime" />
         </template>
 
-        <template #lastAttemptTime-data="{ row }">
+        <template #lastAttemptTime-cell="{ row }">
             <GenericTime v-if="row.lastAttemptTime" :value="row.lastAttemptTime" />
         </template>
 
-        <template #startedTime-data="{ row }">
+        <template #startedTime-cell="{ row }">
             <GenericTime v-if="row.startedTime" :value="row.startedTime" />
         </template>
     </UTable>

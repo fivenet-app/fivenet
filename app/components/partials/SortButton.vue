@@ -11,30 +11,30 @@ const emit = defineEmits<{
     (e: 'update:modelValue', v: TableSortable): void;
 }>();
 
-const sort = useVModel(props, 'modelValue', emit, {
+const sorting = useVModel(props, 'modelValue', emit, {
     deep: true,
 });
 
 const { custom } = useAppConfig();
 
 function toggleDirection(): void {
-    if (sort.value.direction === 'asc') {
-        sort.value = {
-            column: sort.value.column,
-            direction: 'desc',
+    if (sorting.value.direction === 'asc') {
+        sorting.value = {
+            id: sorting.value.id,
+            desc: true,
         };
     } else {
-        sort.value = {
-            column: sort.value.column,
-            direction: 'asc',
+        sorting.value = {
+            id: sorting.value.id,
+            desc: false,
         };
     }
 }
 
 function changeColumn(col: string): void {
-    sort.value = {
-        column: col,
-        direction: sort.value.direction,
+    sorting.value = {
+        id: col,
+        direction: sorting.value.direction,
     };
 }
 </script>
@@ -44,14 +44,14 @@ function changeColumn(col: string): void {
         <ClientOnly v-if="fields.length > 1">
             <USelectMenu
                 class="w-full"
-                :model-value="sort.column"
+                :model-value="sorting.id"
                 :placeholder="$t('common.na')"
                 value-key="value"
                 :items="fields"
                 @update:model-value="changeColumn($event)"
             >
                 <template #item-label>
-                    {{ fields.find((f) => f.value === sort.column)?.label ?? $t('common.na') }}
+                    {{ fields.find((f) => f.value === sorting.id)?.label ?? $t('common.na') }}
                 </template>
 
                 <template #option="{ option: field }">
@@ -66,7 +66,7 @@ function changeColumn(col: string): void {
             <UButton
                 square
                 trailing
-                :icon="sort.direction === 'asc' ? custom.icons.sortAscIcon : custom.icons.sortDescIcon"
+                :icon="sorting.direction === 'asc' ? custom.icons.sortAscIcon : custom.icons.sortDescIcon"
                 color="neutral"
                 variant="ghost"
                 @click="toggleDirection"

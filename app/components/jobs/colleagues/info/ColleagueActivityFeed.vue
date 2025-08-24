@@ -49,10 +49,16 @@ const schema = z.object({
         .max(10)
         .default(props.userId ? [props.userId] : []),
     types: z.nativeEnum(ColleagueActivityType).array().max(typesAttrs.length).default(activityTypes),
-    sort: z.custom<TableSortable>().default({
-        column: 'createdAt',
-        direction: 'desc',
-    }),
+    sorting: z
+        .custom<SortByColumn>()
+        .array()
+        .max(3)
+        .default([
+            {
+                id: 'createdAt',
+                desc: true,
+            },
+        ]),
     page: pageNumberSchema,
 });
 
@@ -65,7 +71,7 @@ if (props.userId !== undefined) {
 }
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `jobs-colleague-${query.sort.column}:${query.sort.direction}-${query.page}-${query.colleagues.join(',')}-${query.types.join(':')}-${props.userId}`,
+    `jobs-colleague-${query.sorting.column}:${query.sorting.direction}-${query.page}-${query.colleagues.join(',')}-${query.types.join(':')}-${props.userId}`,
     () => listColleagueActivity(query),
 );
 
@@ -180,7 +186,7 @@ watch(props, async () => refresh());
             </UFormField>
 
             <UFormField label="&nbsp;">
-                <SortButton v-model="query.sort" :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]" />
+                <SortButton v-model="query.sorting" :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]" />
             </UFormField>
         </UForm>
     </UDashboardToolbar>
@@ -237,7 +243,7 @@ watch(props, async () => refresh());
                     <li
                         v-for="activity in data?.activity"
                         :key="activity.id"
-                        class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white px-2 py-4 dark:border-gray-900"
+                        class="border-white px-2 py-4 hover:border-primary-500/25 hover:bg-primary-100/50 dark:border-gray-900 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
                     >
                         <ColleagueActivityFeedEntry :activity="activity" :show-target-user="showTargetUser" />
                     </li>

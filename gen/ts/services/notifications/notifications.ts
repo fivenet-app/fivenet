@@ -224,8 +224,8 @@ export const GetNotificationsRequest = new GetNotificationsRequest$Type();
 class GetNotificationsResponse$Type extends MessageType<GetNotificationsResponse> {
     constructor() {
         super("services.notifications.GetNotificationsResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "notifications", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Notification }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "notifications", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Notification, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<GetNotificationsResponse>): GetNotificationsResponse {

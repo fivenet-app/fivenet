@@ -73,10 +73,16 @@ const schema = z.object({
             end: new Date(),
         }),
     perDay: z.coerce.boolean().default(true),
-    sort: z.custom<TableSortable>().default({
-        column: 'id',
-        direction: 'desc',
-    }),
+    sorting: z
+        .custom<SortByColumn>()
+        .array()
+        .max(3)
+        .default([
+            {
+                id: 'id',
+                desc: true,
+            },
+        ]),
     page: pageNumberSchema,
 });
 
@@ -97,7 +103,7 @@ watch(props, setFromProps);
 const usersLoading = ref(false);
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `jobs-timeclock-${query.sort.column}:${query.sort.direction}-${query.date.start.toDateString()}-${query.date.end.toDateString()}-${query.perDay}-${query.users.join(',')}-${query.page}`,
+    `jobs-timeclock-${query.sorting.column}:${query.sorting.direction}-${query.date.start.toDateString()}-${query.date.end.toDateString()}-${query.perDay}-${query.users.join(',')}-${query.page}`,
     () => listTimeclockEntries(),
 );
 
@@ -111,7 +117,7 @@ async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
             pagination: {
                 offset: calculateOffset(query.page, data.value?.pagination),
             },
-            sort: query.sort,
+            sort: { columns: query.sorting },
             userMode: query.userMode,
             mode: query.mode,
             date: {
@@ -169,7 +175,7 @@ const totalTimeSum = computed(() => {
 
 const columns = computed(() => [
     {
-        key: 'date',
+        accessorKey: 'date',
         label: t('common.date'),
         sortable: true,
         class:
@@ -178,14 +184,14 @@ const columns = computed(() => [
             query.userMode === TimeclockViewMode.SELF || (query.mode !== TimeclockMode.DAILY && query.perDay) ? '' : 'hidden',
     },
     {
-        key: 'name',
+        accessorKey: 'name',
         label: t('common.name'),
         sortable: canAccessAll.value && props.userId === undefined,
         class: props.userId === undefined && query.userMode === TimeclockViewMode.ALL ? '' : 'hidden',
         rowClass: props.userId === undefined && query.userMode === TimeclockViewMode.ALL ? '' : 'hidden',
     },
     {
-        key: 'rank',
+        accessorKey: 'rank',
         label: t('common.rank'),
         sortable: true,
         class:
@@ -204,7 +210,7 @@ const columns = computed(() => [
                 : 'hidden',
     },
     {
-        key: 'time',
+        accessorKey: 'time',
         label: t('common.time'),
         sortable: true,
     },
@@ -521,7 +527,7 @@ const { game } = useAppConfig();
     </div>
 
     <UCard v-else-if="query.userMode === TimeclockViewMode.SELF && !query.perDay">
-        <p class="text-highlighted mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight">
+        <p class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-highlighted">
             {{
                 totalTimeSum === 0
                     ? $t('common.not_found', [$t('common.entry', 2)])
@@ -534,11 +540,11 @@ const { game } = useAppConfig();
 
     <UTable
         v-else-if="query.mode !== TimeclockMode.TIMELINE"
-        v-model:sort="query.sort"
+        v-model:sorting="query.sorting"
         class="flex-1"
         :loading="isRequestPending(status)"
         :columns="columns"
-        :rows="entries"
+        :data="entries"
         :empty-state="{
             icon: 'i-mdi-timeline-clock',
             label: $t('common.not_found', [$t('common.entry', 2)]),
@@ -555,13 +561,13 @@ const { game } = useAppConfig();
             </caption>
         </template>
 
-        <template #date-data="{ row: entry }">
+        <template #date-cell="{ row: entry }">
             <div class="text-highlighted">
                 {{ $d(toDate(entry.date), 'date') }}
             </div>
         </template>
 
-        <template #name-data="{ row: entry }">
+        <template #name-cell="{ row: entry }">
             <div class="inline-flex items-center gap-1">
                 <ProfilePictureImg
                     :src="entry.user?.avatar"
@@ -573,12 +579,12 @@ const { game } = useAppConfig();
             </div>
         </template>
 
-        <template #rank-data="{ row: entry }">
+        <template #rank-cell="{ row: entry }">
             {{ entry.user.jobGradeLabel }}
             <template v-if="entry.user.job !== game.unemployedJobName"> ({{ entry.user.jobGrade }})</template>
         </template>
 
-        <template #time-data="{ row: entry }">
+        <template #time-cell="{ row: entry }">
             {{
                 entry.spentTime > 0
                     ? fromSecondsToFormattedDuration(Math.round(entry.spentTime * 60 * 60), {

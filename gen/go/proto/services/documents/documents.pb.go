@@ -7,6 +7,7 @@
 package documents
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
 	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	documents "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
@@ -3574,7 +3575,7 @@ var File_services_documents_documents_proto protoreflect.FileDescriptor
 
 const file_services_documents_documents_proto_rawDesc = "" +
 	"\n" +
-	"\"services/documents/documents.proto\x12\x12services.documents\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a resources/documents/access.proto\x1a\"resources/documents/activity.proto\x1a\"resources/documents/category.proto\x1a!resources/documents/comment.proto\x1a#resources/documents/documents.proto\x1a\x1eresources/documents/pins.proto\x1a\"resources/documents/requests.proto\x1a#resources/documents/templates.proto\x1a\x19resources/file/file.proto\x1a\x1eresources/file/filestore.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x16\n" +
+	"\"services/documents/documents.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a resources/documents/access.proto\x1a\"resources/documents/activity.proto\x1a\"resources/documents/category.proto\x1a!resources/documents/comment.proto\x1a#resources/documents/documents.proto\x1a\x1eresources/documents/pins.proto\x1a\"resources/documents/requests.proto\x1a#resources/documents/templates.proto\x1a\x19resources/file/file.proto\x1a\x1eresources/file/filestore.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x16\n" +
 	"\x14ListTemplatesRequest\"Y\n" +
 	"\x15ListTemplatesResponse\x12@\n" +
 	"\ttemplates\x18\x01 \x03(\v2\".resources.documents.TemplateShortR\ttemplates\"\xa2\x01\n" +
@@ -3620,12 +3621,12 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x05_fromB\x05\n" +
 	"\x03_toB\t\n" +
 	"\a_closedB\x0e\n" +
-	"\f_only_drafts\"\xb0\x01\n" +
+	"\f_only_drafts\"\xb6\x01\n" +
 	"\x15ListDocumentsResponse\x12U\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
-	"pagination\x12@\n" +
-	"\tdocuments\x18\x02 \x03(\v2\".resources.documents.DocumentShortR\tdocuments\"e\n" +
+	"pagination\x12F\n" +
+	"\tdocuments\x18\x02 \x03(\v2\".resources.documents.DocumentShortB\x04\xc8\xf3\x18\x01R\tdocuments\"e\n" +
 	"\x12GetDocumentRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12 \n" +
@@ -3666,12 +3667,12 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
-	"documentId\"\x9e\x01\n" +
-	"\x13GetCommentsResponse\x12M\n" +
+	"documentId\"\xac\x01\n" +
+	"\x13GetCommentsResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x128\n" +
-	"\bcomments\x18\x02 \x03(\v2\x1c.resources.documents.CommentR\bcomments\"T\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x12>\n" +
+	"\bcomments\x18\x02 \x03(\v2\x1c.resources.documents.CommentB\x04\xc8\xf3\x18\x01R\bcomments\"T\n" +
 	"\x12PostCommentRequest\x12>\n" +
 	"\acomment\x18\x01 \x01(\v2\x1c.resources.documents.CommentB\x06\xbaH\x03\xc8\x01\x01R\acomment\"M\n" +
 	"\x13PostCommentResponse\x126\n" +
@@ -3741,23 +3742,23 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
 	"documentId\x12f\n" +
 	"\x0eactivity_types\x18\x03 \x03(\x0e2$.resources.documents.DocActivityTypeB\x19\xbaH\x16\x92\x01\x13\x10\n" +
-	"\"\x0f\x82\x01\f\x18\r\x18\x0e\x18\x0f\x18\x10\x18\x11\x18\x12R\ractivityTypes\"\xab\x01\n" +
-	"\x1cListDocumentActivityResponse\x12M\n" +
+	"\"\x0f\x82\x01\f\x18\r\x18\x0e\x18\x0f\x18\x10\x18\x11\x18\x12R\ractivityTypes\"\xb9\x01\n" +
+	"\x1cListDocumentActivityResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12<\n" +
-	"\bactivity\x18\x02 \x03(\v2 .resources.documents.DocActivityR\bactivity\"\x90\x01\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x12B\n" +
+	"\bactivity\x18\x02 \x03(\v2 .resources.documents.DocActivityB\x04\xc8\xf3\x18\x01R\bactivity\"\x90\x01\n" +
 	"\x17ListDocumentReqsRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
-	"documentId\"\xa6\x01\n" +
-	"\x18ListDocumentReqsResponse\x12M\n" +
+	"documentId\"\xb4\x01\n" +
+	"\x18ListDocumentReqsResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12;\n" +
-	"\brequests\x18\x02 \x03(\v2\x1f.resources.documents.DocRequestR\brequests\"\x92\x02\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x12A\n" +
+	"\brequests\x18\x02 \x03(\v2\x1f.resources.documents.DocRequestB\x04\xc8\xf3\x18\x01R\brequests\"\x92\x02\n" +
 	"\x18CreateDocumentReqRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12[\n" +
@@ -3803,12 +3804,12 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\trelations\x18\x04 \x03(\x0e2 .resources.documents.DocRelationB\b\xbaH\x05\x92\x01\x02\x10\x03R\trelations\x12\x1b\n" +
 	"\x06closed\x18\x05 \x01(\bH\x01R\x06closed\x88\x01\x01B\a\n" +
 	"\x05_sortB\t\n" +
-	"\a_closed\"\xaf\x01\n" +
-	"\x19ListUserDocumentsResponse\x12M\n" +
+	"\a_closed\"\xbd\x01\n" +
+	"\x19ListUserDocumentsResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12C\n" +
-	"\trelations\x18\x02 \x03(\v2%.resources.documents.DocumentRelationR\trelations\"\x17\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x12I\n" +
+	"\trelations\x18\x02 \x03(\v2%.resources.documents.DocumentRelationB\x04\xc8\xf3\x18\x01R\trelations\"\x17\n" +
 	"\x15ListCategoriesRequest\"W\n" +
 	"\x16ListCategoriesResponse\x12=\n" +
 	"\n" +
@@ -3826,12 +3827,12 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12\x1f\n" +
 	"\bpersonal\x18\x02 \x01(\bH\x00R\bpersonal\x88\x01\x01B\v\n" +
-	"\t_personal\"\xab\x01\n" +
-	"\x18ListDocumentPinsResponse\x12M\n" +
+	"\t_personal\"\xb9\x01\n" +
+	"\x18ListDocumentPinsResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12@\n" +
-	"\tdocuments\x18\x02 \x03(\v2\".resources.documents.DocumentShortR\tdocuments\"\x7f\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x12F\n" +
+	"\tdocuments\x18\x02 \x03(\v2\".resources.documents.DocumentShortB\x04\xc8\xf3\x18\x01R\tdocuments\"\x7f\n" +
 	"\x18ToggleDocumentPinRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12\x14\n" +

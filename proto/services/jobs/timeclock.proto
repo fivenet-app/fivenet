@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.jobs;
 
 import "buf/validate/validate.proto";
+import "codegen/itemslen/itemslen.proto";
 import "resources/common/database/database.proto";
 import "resources/jobs/colleagues.proto";
 import "resources/jobs/timeclock.proto";
@@ -25,7 +26,7 @@ message ListTimeclockRequest {
 }
 
 message ListTimeclockResponse {
-  resources.common.database.PaginationResponse pagination = 1;
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
   resources.jobs.TimeclockStats stats = 2;
   repeated resources.jobs.TimeclockWeeklyStats stats_weekly = 3;
 
@@ -73,8 +74,8 @@ message ListInactiveEmployeesRequest {
 }
 
 message ListInactiveEmployeesResponse {
-  resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.jobs.Colleague colleagues = 2;
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.jobs.Colleague colleagues = 2 [(codegen.itemslen.items_len) = true];
 }
 
 service TimeclockService {

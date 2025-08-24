@@ -190,8 +190,8 @@ export const ListVehiclesRequest = new ListVehiclesRequest$Type();
 class ListVehiclesResponse$Type extends MessageType<ListVehiclesResponse> {
     constructor() {
         super("services.vehicles.ListVehiclesResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "vehicles", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Vehicle }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "vehicles", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Vehicle, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListVehiclesResponse>): ListVehiclesResponse {

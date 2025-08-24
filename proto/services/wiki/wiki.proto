@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.wiki;
 
 import "buf/validate/validate.proto";
+import "codegen/itemslen/itemslen.proto";
 import "resources/common/content/content.proto";
 import "resources/common/database/database.proto";
 import "resources/file/filestore.proto";
@@ -22,7 +23,7 @@ message ListPagesRequest {
 
 message ListPagesResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.wiki.PageShort pages = 2;
+  repeated resources.wiki.PageShort pages = 2 [(codegen.itemslen.items_len) = true];
 }
 
 message GetPageRequest {
@@ -64,7 +65,7 @@ message ListPageActivityRequest {
 
 message ListPageActivityResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.wiki.PageActivity activity = 2;
+  repeated resources.wiki.PageActivity activity = 2 [(codegen.itemslen.items_len) = true];
 }
 
 service WikiService {

@@ -1284,8 +1284,8 @@ export const ViewAuditLogRequest = new ViewAuditLogRequest$Type();
 class ViewAuditLogResponse$Type extends MessageType<ViewAuditLogResponse> {
     constructor() {
         super("services.settings.ViewAuditLogResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "logs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => AuditEntry }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "logs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => AuditEntry, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ViewAuditLogResponse>): ViewAuditLogResponse {

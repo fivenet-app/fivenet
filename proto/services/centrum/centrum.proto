@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.centrum;
 
 import "buf/validate/validate.proto";
+import "codegen/itemslen/itemslen.proto";
 import "resources/centrum/dispatchers.proto";
 import "resources/centrum/dispatches.proto";
 import "resources/centrum/settings.proto";
@@ -48,7 +49,7 @@ message ListUnitsRequest {
 }
 
 message ListUnitsResponse {
-  repeated resources.centrum.Unit units = 1;
+  repeated resources.centrum.Unit units = 1 [(codegen.itemslen.items_len) = true];
 }
 
 message CreateOrUpdateUnitRequest {
@@ -100,8 +101,8 @@ message UpdateDispatchersResponse {
 }
 
 message ListUnitActivityResponse {
-  resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.centrum.UnitStatus activity = 2;
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.centrum.UnitStatus activity = 2 [(codegen.itemslen.items_len) = true];
 }
 
 // Dispatch Management
@@ -121,8 +122,8 @@ message ListDispatchesRequest {
 }
 
 message ListDispatchesResponse {
-  resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.centrum.Dispatch dispatches = 2;
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.centrum.Dispatch dispatches = 2 [(codegen.itemslen.items_len) = true];
 }
 
 message GetDispatchRequest {
@@ -158,7 +159,7 @@ message DeleteDispatchResponse {}
 message ListDispatchTargetJobsRequest {}
 
 message ListDispatchTargetJobsResponse {
-  repeated resources.jobs.Job jobs = 1;
+  repeated resources.jobs.Job jobs = 1 [(codegen.itemslen.items_len) = true];
 }
 
 message UpdateDispatchStatusRequest {
@@ -182,8 +183,8 @@ message AssignDispatchRequest {
 message AssignDispatchResponse {}
 
 message ListDispatchActivityResponse {
-  resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.centrum.DispatchStatus activity = 2;
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.centrum.DispatchStatus activity = 2 [(codegen.itemslen.items_len) = true];
 }
 
 message JoinUnitRequest {

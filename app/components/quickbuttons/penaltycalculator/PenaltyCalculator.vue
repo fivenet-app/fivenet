@@ -166,27 +166,27 @@ function reset(): void {
 
 const columns = [
     {
-        key: 'name',
+        accessorKey: 'name',
         label: t('common.law'),
     },
     {
-        key: 'fine',
+        accessorKey: 'fine',
         label: t('common.fine'),
     },
     {
-        key: 'detentionTime',
+        accessorKey: 'detentionTime',
         label: t('common.detention_time'),
     },
     {
-        key: 'stvoPoints',
+        accessorKey: 'stvoPoints',
         label: t('common.traffic_infraction_points', 2),
     },
     {
-        key: 'description',
+        accessorKey: 'description',
         label: t('common.description'),
     },
     {
-        key: 'count',
+        accessorKey: 'count',
         label: t('common.count'),
     },
 ];
@@ -243,15 +243,15 @@ const columns = [
                                 <div class="max-w-full">
                                     <UTable
                                         :columns="columns"
-                                        :rows="lawBook.book.laws"
+                                        :data="lawBook.book.laws"
                                         :empty-state="{
                                             icon: 'i-mdi-gavel',
                                             label: $t('common.not_found', [$t('common.law', 2)]),
                                         }"
                                     >
-                                        <template #name-data="{ row: law }">
+                                        <template #name-cell="{ row: law }">
                                             <div class="inline-flex items-center gap-2">
-                                                <span class="text-highlighted whitespace-pre-line">
+                                                <span class="whitespace-pre-line text-highlighted">
                                                     {{ law.name }}
                                                 </span>
 
@@ -261,19 +261,19 @@ const columns = [
                                             </div>
                                         </template>
 
-                                        <template #fine-data="{ row: law }">
+                                        <template #fine-cell="{ row: law }">
                                             {{ $n(law.fine, 'currency') }}
                                         </template>
 
-                                        <template #description-data="{ row: law }">
+                                        <template #description-cell="{ row: law }">
                                             <p
-                                                class="line-clamp-2 w-full max-w-sm whitespace-normal break-all hover:line-clamp-none"
+                                                class="line-clamp-2 w-full max-w-sm break-all whitespace-normal hover:line-clamp-none"
                                             >
                                                 {{ law.description }}
                                             </p>
                                         </template>
 
-                                        <template #count-data="{ row: law }">
+                                        <template #count-cell="{ row: law }">
                                             <USelect
                                                 name="count"
                                                 :items="Array.from(Array(7).keys())"

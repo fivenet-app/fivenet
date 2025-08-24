@@ -15,7 +15,7 @@ import (
 	pgsgo "github.com/lyft/protoc-gen-star/v2/lang/go"
 )
 
-// PermifyModule
+// PermifyModule holds all state for this plugin.
 type PermifyModule struct {
 	*pgs.ModuleBase
 

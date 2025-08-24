@@ -21,10 +21,16 @@ const schema = z.object({
     username: z.string().max(64).optional(),
     externalId: z.string().max(64).optional(),
 
-    sort: z.custom<TableSortable>().default({
-        column: 'username',
-        direction: 'asc',
-    }),
+    sorting: z
+        .custom<SortByColumn>()
+        .array()
+        .max(3)
+        .default([
+            {
+                id: 'username',
+                desc: false,
+            },
+        ]),
     page: pageNumberSchema,
 });
 
@@ -36,7 +42,7 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(
-    `settings-accounts-${query.license}-${query.enabled}-${query.username}-${query.externalId}-${query.sort.column}:${query.sort.direction}-${query.page}`,
+    `settings-accounts-${query.license}-${query.enabled}-${query.username}-${query.externalId}-${query.sorting.column}:${query.sorting.direction}-${query.page}`,
     () => listAccounts(),
 );
 
@@ -46,7 +52,7 @@ async function listAccounts(): Promise<ListAccountsResponse> {
             pagination: {
                 offset: calculateOffset(query.page, accounts.value?.pagination),
             },
-            sort: query.sort,
+            sort: { columns: query.sorting },
             enabled: query.enabled,
             license: query.license,
             username: query.username,
@@ -85,29 +91,29 @@ const { streamerMode } = storeToRefs(settingsStore);
 
 const columns = [
     {
-        key: 'actions',
+        accessorKey: 'actions',
         label: t('common.action', 2),
         sortable: false,
     },
     {
-        key: 'username',
+        accessorKey: 'username',
         label: t('common.username'),
         sortable: true,
     },
     {
-        key: 'enabled',
+        accessorKey: 'enabled',
         label: t('common.enabled'),
     },
     {
-        key: 'createdAt',
+        accessorKey: 'createdAt',
         label: t('common.created_at'),
     },
     {
-        key: 'updatedAt',
+        accessorKey: 'updatedAt',
         label: t('common.updated_at'),
     },
     {
-        key: 'license',
+        accessorKey: 'license',
         label: t('common.license'),
         sortable: true,
     },
@@ -215,10 +221,10 @@ const columns = [
             class="flex-1"
             :loading="isRequestPending(status)"
             :columns="columns"
-            :rows="accounts?.accounts"
+            :data="accounts?.accounts"
             :empty-state="{ icon: 'i-mdi-account-multiple', label: $t('common.not_found', [$t('common.account', 2)]) }"
         >
-            <template #actions-data="{ row: account }">
+            <template #actions-cell="{ row: account }">
                 <UTooltip :text="$t('common.update')">
                     <UButton
                         variant="link"
@@ -246,7 +252,7 @@ const columns = [
                 </UTooltip>
             </template>
 
-            <template #username-data="{ row: account }">
+            <template #username-cell="{ row: account }">
                 <UTooltip :text="`${$t('common.id')}: ${account.id}`">
                     <span class="text-highlighted">
                         {{ account.username === '' ? $t('common.na') : account.username }}
@@ -254,22 +260,22 @@ const columns = [
                 </UTooltip>
             </template>
 
-            <template #enabled-data="{ row: account }">
+            <template #enabled-cell="{ row: account }">
                 <UBadge
                     :color="account.enabled ? 'success' : 'error'"
                     :label="account.enabled ? t('common.yes') : t('common.no')"
                 />
             </template>
 
-            <template #createdAt-data="{ row: account }">
+            <template #createdAt-cell="{ row: account }">
                 <GenericTime :value="toDate(account.createdAt)" />
             </template>
 
-            <template #updatedAt-data="{ row: account }">
+            <template #updatedAt-cell="{ row: account }">
                 <GenericTime :value="toDate(account.updatedAt)" />
             </template>
 
-            <template #license-data="{ row: account }">
+            <template #license-cell="{ row: account }">
                 <pre class="text-highlighted" v-text="account.license" />
             </template>
         </UTable>

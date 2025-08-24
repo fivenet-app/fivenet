@@ -71,8 +71,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <div>
-        <h2 class="pb-4 text-center text-3xl">
+    <div class="space-y-4">
+        <h2 class="text-center text-3xl">
             {{ $t('components.auth.RegistrationForm.title') }}
         </h2>
 
@@ -114,11 +114,18 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     pattern="[0-9]*"
                     autocomplete="registrationToken"
                     :placeholder="$t('components.auth.ForgotPassword.registration_token')"
+                    :ui="{ root: 'w-full' }"
                 />
             </UFormField>
 
             <UFormField name="username" :label="$t('common.username')">
-                <UInput v-model="state.username" type="text" autocomplete="username" :placeholder="$t('common.username')" />
+                <UInput
+                    v-model="state.username"
+                    type="text"
+                    autocomplete="username"
+                    :placeholder="$t('common.username')"
+                    :ui="{ root: 'w-full' }"
+                />
             </UFormField>
 
             <UFormField name="password" :label="$t('common.password')">
@@ -127,7 +134,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     :type="passwordVisibility ? 'text' : 'password'"
                     autocomplete="new-password"
                     :placeholder="$t('common.password')"
-                    :ui="{ trailing: 'pe-1' }"
+                    :ui="{ trailing: 'pe-1', root: 'w-full' }"
                 >
                     <template #trailing>
                         <UButton
@@ -142,6 +149,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         />
                     </template>
                 </UInput>
+
                 <PasswordStrengthMeter class="mt-2" :input="state.password" />
             </UFormField>
 
@@ -150,7 +158,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </UButton>
         </UForm>
 
-        <div class="mt-6">
+        <div class="space-y-4">
+            <USeparator orientation="horizontal" color="primary" />
+
             <UButton block color="neutral" trailing-icon="i-mdi-login" :to="{ name: 'auth-login' }" :disabled="!canSubmit">
                 {{ $t('components.auth.RegistrationForm.back_to_login_button') }}
             </UButton>

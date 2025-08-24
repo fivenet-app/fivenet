@@ -9,9 +9,11 @@ const props = defineProps<{
     plate: string;
 }>();
 
-const vehicleProps = defineModel<VehicleProps>('vehicleProps');
+const emits = defineEmits<{
+    (e: 'close'): void;
+}>();
 
-const { isOpen } = useOverlay();
+const vehicleProps = defineModel<VehicleProps>('vehicleProps');
 
 const notifications = useNotificationsStore();
 
@@ -48,7 +50,7 @@ async function setWantedState(values: Schema): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        isOpen.value = false;
+        emits('close');
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -63,12 +65,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+    <UModal :ui="{ wrapper: 'w-full sm:max-w-5xl' }">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
+                        <h3 class="text-2xl leading-6 font-semibold">
                             {{ vehicleProps?.wanted ? $t('common.revoke_wanted') : $t('common.set_wanted') }}
                         </h3>
 
@@ -77,7 +79,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             color="neutral"
                             variant="ghost"
                             icon="i-mdi-window-close"
-                            @click="isOpen = false"
+                            @click="$emit('close')"
                         />
                     </div>
                 </template>
@@ -90,7 +92,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
+                        <UButton class="flex-1" color="neutral" block @click="$emit('close')">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

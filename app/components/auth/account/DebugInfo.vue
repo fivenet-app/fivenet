@@ -200,7 +200,6 @@ const version = APP_VERSION;
                 v-else
                 variant="soft"
                 :items="[{ label: $t('components.debug_info.perms'), slot: 'perms' as const, icon: 'i-mdi-key' }]"
-                :ui="{ wrapper: 'flex flex-col w-full' }"
             >
                 <template #perms>
                     <PermList :permissions="permissions" :attributes="attributes" disabled />

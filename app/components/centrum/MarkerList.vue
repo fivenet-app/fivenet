@@ -34,36 +34,36 @@ const modal = useOverlay();
 
 const columns = [
     {
-        key: 'actions',
+        accessorKey: 'actions',
         label: t('common.action', 2),
         sortable: false,
     },
     {
-        key: 'createdAt',
+        accessorKey: 'createdAt',
         label: t('common.created'),
     },
     {
-        key: 'expiresAt',
+        accessorKey: 'expiresAt',
         label: t('common.expires_at'),
     },
     {
-        key: 'name',
+        accessorKey: 'name',
         label: t('common.name'),
     },
     {
-        key: 'type',
+        accessorKey: 'type',
         label: t('common.type'),
     },
     {
-        key: 'description',
+        accessorKey: 'description',
         label: t('common.description'),
     },
     {
-        key: 'creator',
+        accessorKey: 'creator',
         label: t('common.creator'),
     },
     {
-        key: 'job',
+        accessorKey: 'job',
         label: t('common.job'),
     },
 ];
@@ -86,13 +86,13 @@ const columns = [
             <UTable
                 class="overflow-x-visible"
                 :columns="columns"
-                :rows="Array.from(markersMarkers.values())"
+                :data="Array.from(markersMarkers.values())"
                 :empty-state="{
                     icon: 'i-mdi-map-marker',
                     label: $t('common.not_found', [$t('common.marker', 2)]),
                 }"
             >
-                <template #actions-data="{ row: marker }">
+                <template #actions-cell="{ row: marker }">
                     <div :key="marker.id">
                         <UTooltip :text="$t('common.mark')">
                             <UButton variant="link" icon="i-mdi-map-marker" @click="goto({ x: marker.x, y: marker.y })" />
@@ -114,32 +114,32 @@ const columns = [
                     </div>
                 </template>
 
-                <template #createdAt-data="{ row: marker }">
+                <template #createdAt-cell="{ row: marker }">
                     <GenericTime :value="marker.createdAt" type="compact" />
                 </template>
 
-                <template #expiresAt-data="{ row: marker }">
+                <template #expiresAt-cell="{ row: marker }">
                     <GenericTime v-if="marker.expiresAt" :value="marker.expiresAt" type="compact" />
                     <span v-else>
                         {{ $t('common.na') }}
                     </span>
                 </template>
 
-                <template #name-data="{ row: marker }">
+                <template #name-cell="{ row: marker }">
                     {{ marker.name }}
                 </template>
 
-                <template #type-data="{ row: marker }">
+                <template #type-cell="{ row: marker }">
                     {{ $t(`enums.livemap.MarkerType.${MarkerType[marker.type]}`) }}
                 </template>
 
-                <template #description-data="{ row: marker }">
+                <template #description-cell="{ row: marker }">
                     <p class="max-h-14 truncate overflow-y-scroll break-words">
                         {{ marker.description ?? $t('common.na') }}
                     </p>
                 </template>
 
-                <template #creator-data="{ row: marker }">
+                <template #creator-cell="{ row: marker }">
                     <span v-if="marker.creator">
                         <CitizenInfoPopover :user="marker.creator" :trailing="false" />
                     </span>
@@ -148,7 +148,7 @@ const columns = [
                     </span>
                 </template>
 
-                <template #job-data="{ row: marker }">
+                <template #job-cell="{ row: marker }">
                     {{ marker.creator?.jobLabel ?? $t('common.na') }}
                 </template>
             </UTable>

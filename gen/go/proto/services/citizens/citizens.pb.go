@@ -7,6 +7,7 @@
 package citizens
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
@@ -744,7 +745,7 @@ var File_services_citizens_citizens_proto protoreflect.FileDescriptor
 
 const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\n" +
-	" services/citizens/citizens.proto\x12\x11services.citizens\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a\x1eresources/users/activity.proto\x1a\x1cresources/users/labels.proto\x1a\x1bresources/users/props.proto\x1a\x1bresources/users/users.proto\"\x8b\x04\n" +
+	" services/citizens/citizens.proto\x12\x11services.citizens\x1a\x1fcodegen/itemslen/itemslen.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a\x1eresources/users/activity.proto\x1a\x1cresources/users/labels.proto\x1a\x1bresources/users/props.proto\x1a\x1bresources/users/users.proto\"\x8b\x04\n" +
 	"\x13ListCitizensRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
@@ -763,12 +764,12 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\r_phone_numberB\x1c\n" +
 	"\x1a_traffic_infraction_pointsB\x0e\n" +
 	"\f_dateofbirthB\r\n" +
-	"\v_open_fines\"\x92\x01\n" +
-	"\x14ListCitizensResponse\x12M\n" +
+	"\v_open_fines\"\xa0\x01\n" +
+	"\x14ListCitizensResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12+\n" +
-	"\x05users\x18\x02 \x03(\v2\x15.resources.users.UserR\x05users\"b\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x121\n" +
+	"\x05users\x18\x02 \x03(\v2\x15.resources.users.UserB\x04\xc8\xf3\x18\x01R\x05users\"b\n" +
 	"\x0eGetUserRequest\x12 \n" +
 	"\auser_id\x18\x01 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\x06userId\x12 \n" +
 	"\tinfo_only\x18\x02 \x01(\bH\x00R\binfoOnly\x88\x01\x01B\f\n" +
@@ -783,12 +784,12 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12 \n" +
 	"\auser_id\x18\x03 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\x06userId\x12A\n" +
 	"\x05types\x18\x04 \x03(\x0e2!.resources.users.UserActivityTypeB\b\xbaH\x05\x92\x01\x02\x10\x14R\x05typesB\a\n" +
-	"\x05_sort\"\xa4\x01\n" +
-	"\x18ListUserActivityResponse\x12M\n" +
+	"\x05_sort\"\xb2\x01\n" +
+	"\x18ListUserActivityResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x129\n" +
-	"\bactivity\x18\x02 \x03(\v2\x1d.resources.users.UserActivityR\bactivity\"v\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x12?\n" +
+	"\bactivity\x18\x02 \x03(\v2\x1d.resources.users.UserActivityB\x04\xc8\xf3\x18\x01R\bactivity\"v\n" +
 	"\x13SetUserPropsRequest\x128\n" +
 	"\x05props\x18\x01 \x01(\v2\x1a.resources.users.UserPropsB\x06\xbaH\x03\xc8\x01\x01R\x05props\x12%\n" +
 	"\x06reason\x18\x02 \x01(\tB\r\xbaH\n" +

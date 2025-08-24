@@ -47,25 +47,25 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
 const columns = computed(() =>
     [
         {
-            key: 'targetDocument',
+            accessorKey: 'targetDocument',
             label: t('common.target'),
         },
         {
-            key: 'reference',
+            accessorKey: 'reference',
             label: t('common.reference', 1),
         },
         props.showSource
             ? {
-                  key: 'sourceDocument',
+                  accessorKey: 'sourceDocument',
                   label: t('common.source'),
               }
             : undefined,
         {
-            key: 'creator',
+            accessorKey: 'creator',
             label: t('common.creator'),
         },
         {
-            key: 'date',
+            accessorKey: 'date',
             label: t('common.date'),
         },
     ].flatMap((item) => (item !== undefined ? [item] : [])),
@@ -93,7 +93,7 @@ const columns = computed(() =>
                 <ul class="divide-y divide-gray-600 rounded-lg sm:hidden" role="list">
                     <li v-for="reference in references" :key="reference.id">
                         <ULink
-                            class="block p-4 hover:bg-base-900"
+                            class="hover:bg-base-900 block p-4"
                             :to="{
                                 name: 'documents-id',
                                 params: { id: reference.targetDocumentId },
@@ -140,14 +140,14 @@ const columns = computed(() =>
                             <UTable
                                 :loading="isRequestPending(status)"
                                 :columns="columns"
-                                :rows="references"
+                                :data="references"
                                 :empty-state="{
                                     icon: 'i-mdi-account',
                                     label: $t('common.not_found', [$t('common.reference', 2)]),
                                 }"
                                 sort-mode="auto"
                             >
-                                <template #targetDocument-data="{ row: reference }">
+                                <template #targetDocument-cell="{ row: reference }">
                                     <ULink
                                         class="inline-flex items-center gap-1 truncate"
                                         :to="{
@@ -164,12 +164,12 @@ const columns = computed(() =>
                                         </span>
                                     </ULink>
                                 </template>
-                                <template #reference-data="{ row: reference }">
+                                <template #reference-cell="{ row: reference }">
                                     <UBadge :color="docReferenceToBadge(reference.reference)">
                                         {{ $t(`enums.documents.DocReference.${DocReference[reference.reference]}`) }}
                                     </UBadge>
                                 </template>
-                                <template v-if="showSource" #sourceDocument-data="{ row: reference }">
+                                <template v-if="showSource" #sourceDocument-cell="{ row: reference }">
                                     <ULink
                                         class="inline-flex items-center gap-1 truncate"
                                         :to="{
@@ -186,10 +186,10 @@ const columns = computed(() =>
                                         </span>
                                     </ULink>
                                 </template>
-                                <template #creator-data="{ row: reference }">
+                                <template #creator-cell="{ row: reference }">
                                     <CitizenInfoPopover :user="reference.creator" />
                                 </template>
-                                <template #date-data="{ row: reference }">
+                                <template #date-cell="{ row: reference }">
                                     <GenericTime :value="reference.createdAt" />
                                 </template>
                             </UTable>

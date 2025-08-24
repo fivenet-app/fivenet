@@ -32,17 +32,23 @@ const options = activityTypes.map((aType) => ({ aType: aType }));
 
 const schema = z.object({
     types: z.nativeEnum(UserActivityType).array().max(activityTypes.length).default(activityTypes),
-    sort: z.custom<TableSortable>().default({
-        column: 'createdAt',
-        direction: 'desc',
-    }),
+    sorting: z
+        .custom<SortByColumn>()
+        .array()
+        .max(3)
+        .default([
+            {
+                id: 'createdAt',
+                desc: true,
+            },
+        ]),
     page: pageNumberSchema,
 });
 
 const query = useSearchForm('citizen_activity', schema);
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `citizeninfo-activity-${query.sort.column}:${query.sort.direction}-${props.userId}-${query.page}`,
+    `citizeninfo-activity-${query.sorting.column}:${query.sorting.direction}-${props.userId}-${query.page}`,
     () => listUserActivity(),
 );
 
@@ -52,7 +58,7 @@ async function listUserActivity(): Promise<ListUserActivityResponse> {
             pagination: {
                 offset: calculateOffset(query.page, data.value?.pagination),
             },
-            sort: query.sort,
+            sort: { columns: query.sorting },
             userId: props.userId,
             types: query.types,
         });
@@ -116,7 +122,10 @@ watchDebounced(query, async () => refresh(), {
                     </UFormField>
 
                     <UFormField label="&nbsp;">
-                        <SortButton v-model="query.sort" :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]" />
+                        <SortButton
+                            v-model="query.sorting"
+                            :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]"
+                        />
                     </UFormField>
                 </UForm>
             </template>
@@ -144,7 +153,7 @@ watchDebounced(query, async () => refresh(), {
                     <li
                         v-for="activity in data?.activity"
                         :key="activity.id"
-                        class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white py-2 dark:border-gray-900"
+                        class="border-white py-2 hover:border-primary-500/25 hover:bg-primary-100/50 dark:border-gray-900 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
                     >
                         <CitizenActivityFeedEntry :activity="activity" />
                     </li>

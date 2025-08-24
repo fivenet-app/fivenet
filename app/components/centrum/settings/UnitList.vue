@@ -55,38 +55,38 @@ async function deleteUnit(id: number): Promise<void> {
 
 const columns = [
     {
-        key: 'actions',
+        accessorKey: 'actions',
         label: t('common.action', 2),
         sortable: false,
     },
     {
-        key: 'name',
+        accessorKey: 'name',
         label: t('common.name'),
         sortable: true,
     },
     {
-        key: 'initials',
+        accessorKey: 'initials',
         label: t('common.initials'),
         sortable: true,
     },
     {
-        key: 'description',
+        accessorKey: 'description',
         label: t('common.description'),
     },
     {
-        key: 'color',
+        accessorKey: 'color',
         label: t('common.color'),
     },
     {
-        key: 'icon',
+        accessorKey: 'icon',
         label: t('common.icon'),
     },
     {
-        key: 'attributes',
+        accessorKey: 'attributes',
         label: t('common.attributes'),
     },
     {
-        key: 'homePostal',
+        accessorKey: 'homePostal',
         label: t('common.department_postal'),
     },
 ];
@@ -128,24 +128,24 @@ const columns = [
         v-else
         :loading="isRequestPending(status)"
         :columns="columns"
-        :rows="units?.units"
+        :data="units?.units"
         :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.unit', 2)]) }"
     >
-        <template #name-data="{ row: unit }">
+        <template #name-cell="{ row: unit }">
             <div class="text-highlighted">
                 {{ unit.name }}
             </div>
         </template>
 
-        <template #attributes-data="{ row: unit }">
+        <template #attributes-cell="{ row: unit }">
             <UnitAttributes :attributes="unit.attributes" />
         </template>
 
-        <template #color-data="{ row: unit }">
+        <template #color-cell="{ row: unit }">
             <ColorPickerClient v-model="unit.color" disabled hide-icon />
         </template>
 
-        <template #icon-data="{ row: unit }">
+        <template #icon-cell="{ row: unit }">
             <component
                 :is="availableIcons.find((item) => item.name === unit.icon)?.component ?? fallbackIcon.component"
                 class="size-5"
@@ -153,11 +153,11 @@ const columns = [
             />
         </template>
 
-        <template #homePostal-data="{ row: unit }">
+        <template #homePostal-cell="{ row: unit }">
             {{ unit.homePostal ?? $t('common.na') }}
         </template>
 
-        <template #actions-data="{ row: unit }">
+        <template #actions-cell="{ row: unit }">
             <div :key="unit.id" class="flex items-center">
                 <UTooltip v-if="can('centrum.CentrumService/CreateOrUpdateUnit').value" :text="$t('common.update')">
                     <UButton

@@ -25,8 +25,8 @@ const qualificationsQualificationsClient = await getQualificationsQualifications
 const page = useRouteQuery('page', '1', { transform: Number });
 
 const sort = useRouteQueryObject<TableSortable>('sort', {
-    column: 'abbreviation',
-    direction: 'desc',
+    id: 'abbreviation',
+    desc: true,
 });
 
 const { data, status, refresh, error } = useLazyAsyncData(
@@ -65,7 +65,7 @@ async function listQualificationRequests(
     >
         <template #header>
             <div class="flex items-center justify-between">
-                <h3 class="text-2xl font-semibold leading-6">
+                <h3 class="text-2xl leading-6 font-semibold">
                     {{ $t('components.qualifications.user_requests') }}
                 </h3>
 

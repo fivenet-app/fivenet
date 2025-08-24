@@ -111,19 +111,19 @@ function removeReference(id: number): void {
 
 const columnsCurrent = [
     {
-        key: 'title',
+        accessorKey: 'title',
         label: t('common.title'),
     },
     {
-        key: 'creator',
+        accessorKey: 'creator',
         label: t('common.creator'),
     },
     {
-        key: 'reference',
+        accessorKey: 'reference',
         label: t('common.reference', 1),
     },
     {
-        key: 'actions',
+        accessorKey: 'actions',
         label: t('common.action', 2),
         sortable: false,
     },
@@ -131,19 +131,19 @@ const columnsCurrent = [
 
 const columnsClipboard = [
     {
-        key: 'title',
+        accessorKey: 'title',
         label: t('common.title'),
     },
     {
-        key: 'creator',
+        accessorKey: 'creator',
         label: t('common.creator'),
     },
     {
-        key: 'createdAt',
+        accessorKey: 'createdAt',
         label: t('common.created_at'),
     },
     {
-        key: 'references',
+        accessorKey: 'references',
         label: t('components.documents.document_managers.add_reference'),
         sortable: false,
     },
@@ -151,19 +151,19 @@ const columnsClipboard = [
 
 const columnsNew = [
     {
-        key: 'title',
+        accessorKey: 'title',
         label: t('common.title'),
     },
     {
-        key: 'creator',
+        accessorKey: 'creator',
         label: t('common.creator'),
     },
     {
-        key: 'createdAt',
+        accessorKey: 'createdAt',
         label: t('common.created_at'),
     },
     {
-        key: 'references',
+        accessorKey: 'references',
         label: t('components.documents.document_managers.add_reference'),
         sortable: false,
     },
@@ -175,7 +175,7 @@ const columnsNew = [
         <UCard>
             <template #header>
                 <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
+                    <h3 class="text-2xl leading-6 font-semibold">
                         {{ $t('common.document', 1) }}
                         {{ $t('common.reference', 2) }}
                     </h3>
@@ -189,17 +189,17 @@ const columnsNew = [
                     <template #current>
                         <UTable
                             :columns="columnsCurrent"
-                            :rows="modelValue"
+                            :data="modelValue"
                             :empty-state="{ icon: 'i-mdi-file', label: $t('common.not_found', [$t('common.reference', 2)]) }"
                         >
-                            <template #title-data="{ row }">
+                            <template #title-cell="{ row }">
                                 <DocumentInfoPopover
                                     :document="!row.targetDocument?.id ? undefined : row.targetDocument"
                                     :document-id="row.targetDocumentId"
                                 />
                             </template>
 
-                            <template #creator-data="{ row }">
+                            <template #creator-cell="{ row }">
                                 <CitizenInfoPopover
                                     :user="!row.targetDocument?.creator ? undefined : row.targetDocument?.creator"
                                     :user-id="row.targetDocument?.creatorId"
@@ -207,11 +207,11 @@ const columnsNew = [
                                 />
                             </template>
 
-                            <template #reference-data="{ row }">
+                            <template #reference-cell="{ row }">
                                 {{ $t(`enums.documents.DocReference.${DocReference[row.reference]}`) }}
                             </template>
 
-                            <template #actions-data="{ row }">
+                            <template #actions-cell="{ row }">
                                 <div class="flex flex-row gap-2">
                                     <UTooltip :text="$t('components.documents.document_managers.open_document')">
                                         <UButton
@@ -244,25 +244,25 @@ const columnsNew = [
                         <div>
                             <UTable
                                 :columns="columnsClipboard"
-                                :rows="clipboardStore.$state.documents"
+                                :data="clipboardStore.$state.documents"
                                 :empty-state="{
                                     icon: 'i-mdi-file',
                                     label: $t('common.not_found', [$t('common.document', 2)]),
                                 }"
                             >
-                                <template #title-data="{ row }">
+                                <template #title-cell="{ row }">
                                     <DocumentInfoPopover :document="getDocument(row)" />
                                 </template>
 
-                                <template #creator-data="{ row }">
+                                <template #creator-cell="{ row }">
                                     <CitizenInfoPopover :user="row.creator" :trailing="false" />
                                 </template>
 
-                                <template #createdAt-data="{ row }">
+                                <template #createdAt-cell="{ row }">
                                     <GenericTime :value="row.createdAt" ago />
                                 </template>
 
-                                <template #references-data="{ row }">
+                                <template #references-cell="{ row }">
                                     <UButtonGroup>
                                         <UTooltip :text="$t('components.documents.document_managers.links')">
                                             <UButton
@@ -323,25 +323,25 @@ const columnsNew = [
                                 v-else
                                 :columns="columnsNew"
                                 :loading="isRequestPending(status)"
-                                :rows="documents"
+                                :data="documents"
                                 :empty-state="{
                                     icon: 'i-mdi-file',
                                     label: $t('common.not_found', [$t('common.reference', 2)]),
                                 }"
                             >
-                                <template #title-data="{ row }">
+                                <template #title-cell="{ row }">
                                     <DocumentInfoPopover :document="row" />
                                 </template>
 
-                                <template #creator-data="{ row }">
+                                <template #creator-cell="{ row }">
                                     <CitizenInfoPopover :user="row.creator" :trailing="false" />
                                 </template>
 
-                                <template #createdAt-data="{ row }">
+                                <template #createdAt-cell="{ row }">
                                     <GenericTime :value="row.createdAt" ago />
                                 </template>
 
-                                <template #references-data="{ row }">
+                                <template #references-cell="{ row }">
                                     <UButtonGroup>
                                         <UTooltip :text="$t('components.documents.document_managers.links')">
                                             <UButton

@@ -9,6 +9,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useClipboardStore } from '~/stores/clipboard';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
+import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { User } from '~~/gen/ts/resources/users/users';
 import type { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/services/citizens/citizens';
@@ -26,21 +27,24 @@ const schema = z.object({
     trafficInfractionPoints: z.coerce.number().nonnegative().optional(),
     openFines: z.coerce.number().nonnegative().optional(),
     dateofbirth: z.string().max(10).optional(),
-    sort: z.custom<TableSortable>().default({
-        column: 'name',
-        direction: 'asc',
-    }),
+    sorting: z
+        .custom<SortByColumn>()
+        .array()
+        .max(3)
+        .default([
+            {
+                id: 'name',
+                desc: false,
+            },
+        ]),
     page: pageNumberSchema,
 });
 
 const query = useSearchForm('citizens', schema);
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `citizens-${query.sort.column}:${query.sort.direction}-${query.page}-${JSON.stringify(query)}`,
+    `citizens-${query.sorting.column}:${query.sorting.direction}-${query.page}-${JSON.stringify(query)}`,
     () => listCitizens(),
-    {
-        transform: (input) => ({ ...input, users: wrapRows(input?.users, columns) }),
-    },
 );
 
 async function listCitizens(): Promise<ListCitizensResponse> {
@@ -49,7 +53,7 @@ async function listCitizens(): Promise<ListCitizensResponse> {
             pagination: {
                 offset: calculateOffset(query.page, data.value?.pagination),
             },
-            sort: query.sort,
+            sort: { columns: query.sorting },
             search: query.name ?? '',
         };
         if (query.wanted) {
@@ -106,54 +110,54 @@ function addToClipboard(user: User): void {
 
 const columns = [
     {
-        key: 'name',
+        accessorKey: 'name',
         label: t('common.name'),
         sortable: true,
     },
     {
-        key: 'jobLabel',
+        accessorKey: 'jobLabel',
         label: t('common.job'),
         class: 'hidden lg:table-cell',
         rowClass: 'hidden lg:table-cell',
     },
     {
-        key: 'sex',
+        accessorKey: 'sex',
         label: t('common.sex'),
         class: 'hidden lg:table-cell',
         rowClass: 'hidden lg:table-cell',
     },
     attr('citizens.CitizensService/ListCitizens', 'Fields', 'PhoneNumber').value
-        ? { key: 'phoneNumber', label: t('common.phone_number') }
+        ? { accessorKey: 'phoneNumber', label: t('common.phone_number') }
         : undefined,
     {
-        key: 'dateofbirth',
+        accessorKey: 'dateofbirth',
         label: t('common.date_of_birth'),
         class: 'hidden lg:table-cell',
         rowClass: 'hidden lg:table-cell',
     },
     attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints').value
         ? {
-              key: 'trafficInfractionPoints',
+              accessorKey: 'trafficInfractionPoints',
               label: t('common.traffic_infraction_points', 2),
               sortable: true,
           }
         : undefined,
     attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.OpenFines').value
         ? {
-              key: 'openFines',
+              accessorKey: 'openFines',
               label: t('common.fine', 2),
               sortable: true,
           }
         : undefined,
     {
-        key: 'height',
+        accessorKey: 'height',
         label: t('common.height'),
         class: 'hidden lg:table-cell',
         rowClass: 'hidden lg:table-cell',
     },
     can('citizens.CitizensService/GetUser').value
         ? {
-              key: 'actions',
+              accessorKey: 'actions',
               label: t('common.action', 2),
               sortable: false,
           }
@@ -163,7 +167,7 @@ const columns = [
 const input = useTemplateRef('input');
 
 defineShortcuts({
-    '/': () => input.value?.input?.focus(),
+    '/': () => input.value?.inputRef?.focus(),
 });
 </script>
 
@@ -283,28 +287,28 @@ defineShortcuts({
     />
     <UTable
         v-else
-        v-model:sort="query.sort"
+        v-model:sorting="query.sorting"
         class="flex-1"
         :loading="isRequestPending(status)"
         :columns="columns"
-        :rows="data?.users"
+        :data="data?.users"
         :empty-state="{ icon: 'i-mdi-accounts', label: $t('common.not_found', [$t('common.citizen', 2)]) }"
         sort-mode="manual"
     >
-        <template #name-data="{ row: citizen }">
-            <div class="text-highlighted inline-flex items-center gap-1">
+        <template #name-cell="{ row: citizen }">
+            <div class="inline-flex items-center gap-1 text-highlighted">
                 <ProfilePictureImg
-                    :src="citizen.props?.mugshot?.filePath"
-                    :name="`${citizen.firstname} ${citizen.lastname}`"
+                    :src="citizen.original.props?.mugshot?.filePath"
+                    :name="`${citizen.original.firstname} ${citizen.original.lastname}`"
                     :alt="$t('common.mugshot')"
                     :enable-popup="true"
                     size="sm"
                 />
 
-                <span>{{ citizen.firstname }} {{ citizen.lastname }}</span>
-                <span class="lg:hidden"> ({{ citizen.dateofbirth.value }}) </span>
+                <span>{{ citizen.original.firstname }} {{ citizen.original.lastname }}</span>
+                <span class="lg:hidden"> ({{ citizen.original.dateofbirth.value }}) </span>
 
-                <UBadge v-if="citizen.props?.wanted" color="error">
+                <UBadge v-if="citizen.original.props?.wanted" color="error">
                     {{ $t('common.wanted').toUpperCase() }}
                 </UBadge>
             </div>
@@ -312,43 +316,45 @@ defineShortcuts({
             <dl class="font-normal lg:hidden">
                 <dt class="sr-only">{{ $t('common.sex') }} - {{ $t('common.job') }}</dt>
                 <dd class="mt-1 truncate">
-                    {{ citizen.sex?.value.toUpperCase() ?? $t('common.na') }} -
-                    {{ citizen.jobLabel.value ?? $t('common.na') }}
+                    {{ citizen.original.sex?.value.toUpperCase() ?? $t('common.na') }} -
+                    {{ citizen.original.jobLabel.value ?? $t('common.na') }}
                 </dd>
             </dl>
         </template>
 
-        <template #jobLabel-data="{ row: citizen }">
-            {{ citizen.jobLabel.value }}
-            {{ citizen.props?.jobName || citizen.props?.jobGradeNumber ? '*' : '' }}
+        <template #jobLabel-cell="{ row: citizen }">
+            {{ citizen.original.jobLabel.value }}
+            {{ citizen.original.props?.jobName || citizen.original.props?.jobGradeNumber ? '*' : '' }}
         </template>
 
-        <template #sex-data="{ row: citizen }">
-            <span :class="sexToTextColor(citizen.sex?.value ?? '')">
-                {{ citizen.sex?.value.toUpperCase() ?? $t('common.na') }}
+        <template #sex-cell="{ row: citizen }">
+            <span :class="sexToTextColor(citizen.original.sex?.value ?? '')">
+                {{ citizen.original.sex?.value.toUpperCase() ?? $t('common.na') }}
             </span>
         </template>
 
-        <template #phoneNumber-data="{ row: citizen }">
-            <PhoneNumberBlock :number="citizen.phoneNumber" hide-na-text />
+        <template #phoneNumber-cell="{ row: citizen }">
+            <PhoneNumberBlock :number="citizen.original.phoneNumber" hide-na-text />
         </template>
 
-        <template #openFines-data="{ row: citizen }">
-            <template v-if="(citizen.props?.openFines ?? 0) > 0">
-                {{ $n(citizen.props?.openFines ?? 0, 'currency') }}
+        <template #openFines-cell="{ row: citizen }">
+            <template v-if="(citizen.original.props?.openFines ?? 0) > 0">
+                {{ $n(citizen.original.props?.openFines ?? 0, 'currency') }}
             </template>
         </template>
 
-        <template #dateofbirth-data="{ row: citizen }">
-            {{ citizen.dateofbirth.value }}
+        <template #dateofbirth-cell="{ row: citizen }">
+            {{ citizen.original.dateofbirth.value }}
         </template>
 
-        <template #height-data="{ row: citizen }"> {{ citizen.height.value ? citizen.height.value + 'cm' : '' }} </template>
+        <template #height-cell="{ row: citizen }">
+            {{ citizen.original.height.value ? citizen.original.height.value + 'cm' : '' }}
+        </template>
 
-        <template v-if="can('citizens.CitizensService/GetUser').value" #actions-data="{ row: citizen }">
-            <div :key="citizen.userId" class="flex flex-col justify-end md:flex-row">
+        <template v-if="can('citizens.CitizensService/GetUser').value" #actions-cell="{ row: citizen }">
+            <div :key="citizen.original.userId" class="flex flex-col justify-end md:flex-row">
                 <UTooltip :text="$t('components.clipboard.clipboard_button.add')">
-                    <UButton variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(citizen)" />
+                    <UButton variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(citizen.original)" />
                 </UTooltip>
 
                 <UTooltip :text="$t('common.show')">
@@ -357,7 +363,7 @@ defineShortcuts({
                         icon="i-mdi-eye"
                         :to="{
                             name: 'citizens-id',
-                            params: { id: citizen.userId ?? 0 },
+                            params: { id: citizen.original.userId ?? 0 },
                         }"
                     />
                 </UTooltip>

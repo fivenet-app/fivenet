@@ -44,7 +44,7 @@ onMounted(async () => {
     <UPage class="w-full flex-1">
         <UPageHero :title="$t('pages.auth.logout.header')" :description="$t('pages.auth.logout.subtitle')">
             <template #headline>
-                <FiveNetLogo class="mx-auto h-36 w-auto" />
+                <FiveNetLogo class="mx-auto h-auto w-20" />
             </template>
         </UPageHero>
     </UPage>

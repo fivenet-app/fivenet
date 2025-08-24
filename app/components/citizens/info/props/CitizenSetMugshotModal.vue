@@ -8,8 +8,6 @@ import type { File as FilestoreFile } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { User } from '~~/gen/ts/resources/users/users';
 
-const citizensCitizensClient = await getCitizensCitizensClient();
-
 const props = defineProps<{
     user: User;
 }>();
@@ -25,9 +23,11 @@ const { isOpen } = useOverlay();
 const notifications = useNotificationsStore();
 
 const appConfig = useAppConfig();
-const settingsStore = useSettingsStore();
 
+const settingsStore = useSettingsStore();
 const { nuiEnabled } = storeToRefs(settingsStore);
+
+const citizensCitizensClient = await getCitizensCitizensClient();
 
 const schema = z
     .object({
@@ -137,7 +137,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
+                        <h3 class="text-2xl leading-6 font-semibold">
                             {{ $t('components.citizens.CitizenInfoProfile.set_mugshot') }}
                         </h3>
 

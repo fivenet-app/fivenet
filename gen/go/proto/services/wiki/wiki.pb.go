@@ -7,6 +7,7 @@
 package wiki
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
 	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
@@ -622,7 +623,7 @@ var File_services_wiki_wiki_proto protoreflect.FileDescriptor
 
 const file_services_wiki_wiki_proto_rawDesc = "" +
 	"\n" +
-	"\x18services/wiki/wiki.proto\x12\rservices.wiki\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a\x1dresources/wiki/activity.proto\x1a\x19resources/wiki/page.proto\"\xb4\x02\n" +
+	"\x18services/wiki/wiki.proto\x12\rservices.wiki\x1a\x1fcodegen/itemslen/itemslen.proto\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a\x1dresources/wiki/activity.proto\x1a\x19resources/wiki/page.proto\"\xb4\x02\n" +
 	"\x10ListPagesRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
@@ -635,12 +636,12 @@ const file_services_wiki_wiki_proto_rawDesc = "" +
 	"\x04_jobB\f\n" +
 	"\n" +
 	"_root_onlyB\t\n" +
-	"\a_search\"\x9b\x01\n" +
+	"\a_search\"\xa1\x01\n" +
 	"\x11ListPagesResponse\x12U\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
-	"pagination\x12/\n" +
-	"\x05pages\x18\x02 \x03(\v2\x19.resources.wiki.PageShortR\x05pages\" \n" +
+	"pagination\x125\n" +
+	"\x05pages\x18\x02 \x03(\v2\x19.resources.wiki.PageShortB\x04\xc8\xf3\x18\x01R\x05pages\" \n" +
 	"\x0eGetPageRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\";\n" +
 	"\x0fGetPageResponse\x12(\n" +
@@ -664,12 +665,12 @@ const file_services_wiki_wiki_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12\x17\n" +
-	"\apage_id\x18\x02 \x01(\x03R\x06pageId\"\xab\x01\n" +
+	"\apage_id\x18\x02 \x01(\x03R\x06pageId\"\xb1\x01\n" +
 	"\x18ListPageActivityResponse\x12U\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
-	"pagination\x128\n" +
-	"\bactivity\x18\x02 \x03(\v2\x1c.resources.wiki.PageActivityR\bactivity2\xdc\x04\n" +
+	"pagination\x12>\n" +
+	"\bactivity\x18\x02 \x03(\v2\x1c.resources.wiki.PageActivityB\x04\xc8\xf3\x18\x01R\bactivity2\xdc\x04\n" +
 	"\vWikiService\x12N\n" +
 	"\tListPages\x12\x1f.services.wiki.ListPagesRequest\x1a .services.wiki.ListPagesResponse\x12H\n" +
 	"\aGetPage\x12\x1d.services.wiki.GetPageRequest\x1a\x1e.services.wiki.GetPageResponse\x12Q\n" +

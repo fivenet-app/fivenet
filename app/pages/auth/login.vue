@@ -88,9 +88,13 @@ const canSubmit = ref(true);
 </script>
 
 <template>
-    <UCard class="w-full max-w-md bg-white/75 backdrop-blur-sm dark:bg-white/5">
+    <UPageCard class="w-full max-w-md shrink-0 bg-white/75 backdrop-blur-sm dark:bg-white/5">
         <div class="space-y-4">
             <FiveNetLogo class="mx-auto mb-2 h-auto w-20" />
+
+            <h2 class="text-center text-3xl">
+                {{ $t('common.login') }}
+            </h2>
 
             <UTabs v-model="selectedTab" class="w-full" :items="items">
                 <template #login>
@@ -98,12 +102,12 @@ const canSubmit = ref(true);
                 </template>
 
                 <template #forgotPassword>
-                    <ForgotPasswordForm v-model="canSubmit" @toggle="selectedTab = 0" />
+                    <ForgotPasswordForm v-model="canSubmit" @toggle="selectedTab = 'login'" />
                 </template>
             </UTabs>
 
             <div v-if="login.signupEnabled" class="space-y-4">
-                <USeparator orientation="horizontal" />
+                <USeparator orientation="horizontal" color="primary" />
 
                 <UButton
                     block
@@ -116,5 +120,5 @@ const canSubmit = ref(true);
                 </UButton>
             </div>
         </div>
-    </UCard>
+    </UPageCard>
 </template>

@@ -5,6 +5,25 @@ description: Documentation for GRPC Protobuf files.
 
 
 
+## codegen/itemslen/itemslen.proto
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+
+### File-level Extensions
+
+| Extension | Type | Base | Number | Description |
+| --------- | ---- | ---- | ------ | ----------- |
+| `items_len` | bool | .google.protobuf.FieldOptions | 51001 |  |
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## resources/timestamp/timestamp.proto
 
 
@@ -2515,7 +2534,7 @@ States of Cronjbo
 
 
 ### resources.common.database.DateRange
-Datetime range (uses Timestamp underneath) It depends on the API method if it will use date or date + time.
+DateRange represents a datetime range (uses Timestamp underneath) It depends on the API method if it will use date or date + time.
 
 
 
@@ -2559,14 +2578,25 @@ Server Pagination Response
 
 
 ### resources.common.database.Sort
-Sort by column
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `columns` | [SortByColumn](#resourcescommondatabaseSortByColumn) | repeated |  |
+
+
+
+
+
+### resources.common.database.SortByColumn
+SortByColumn sort by column and direction
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `column` | [string](#string) |  | Column name |
-| `direction` | [string](#string) |  | Sort direction, must be `asc` (ascending) or `desc` (descending) |
+| `id` | [string](#string) |  | ID is the column name. |
+| `desc` | [bool](#bool) |  | Desc if true sorts descending, ascending otherwise. |
 
 
 

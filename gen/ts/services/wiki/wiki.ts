@@ -242,7 +242,7 @@ class ListPagesResponse$Type extends MessageType<ListPagesResponse> {
     constructor() {
         super("services.wiki.ListPagesResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "pages", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PageShort }
+            { no: 2, name: "pages", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PageShort, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListPagesResponse>): ListPagesResponse {
@@ -729,7 +729,7 @@ class ListPageActivityResponse$Type extends MessageType<ListPageActivityResponse
     constructor() {
         super("services.wiki.ListPageActivityResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PageActivity }
+            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PageActivity, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListPageActivityResponse>): ListPageActivityResponse {

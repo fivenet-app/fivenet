@@ -217,18 +217,24 @@ function calendarIdChange(calendarId: number, state: boolean): void {
 
 const entryIdQuery = useRouteQuery('entry_id', undefined, { transform: Number });
 
+const calendarViewSlideover = modal.create(CalendarViewSlideover);
+const calendarCreateOrUpdateModal = modal.create(CalendarCreateOrUpdateModal);
+const entryViewSlideover = modal.create(EntryViewSlideover);
+const entryCreateOrUpdateModal = modal.create(EntryCreateOrUpdateModal);
+const findCalendarsModal = modal.create(FindCalendarModal);
+
 watch(entryIdQuery, () => {
     if (!entryIdQuery.value) {
         return;
     }
 
-    slideover.open(EntryViewSlideover, {
+    entryViewSlideover.open({
         entryId: entryIdQuery.value,
     });
 });
 
 if (entryIdQuery.value) {
-    slideover.open(EntryViewSlideover, {
+    entryViewSlideover.open({
         entryId: entryIdQuery.value,
     });
 }
@@ -279,7 +285,7 @@ const isOpen = ref(false);
                         block
                         color="neutral"
                         trailing-icon="i-mdi-plus"
-                        @click="modal.open(CalendarCreateOrUpdateModal, {})"
+                        @click="calendarCreateOrUpdateModal.open({})"
                     >
                         {{ $t('common.calendar') }}
                     </UButton>
@@ -290,7 +296,7 @@ const isOpen = ref(false);
                         block
                         color="neutral"
                         trailing-icon="i-mdi-plus"
-                        @click="modal.open(EntryCreateOrUpdateModal, {})"
+                        @click="entryCreateOrUpdateModal.open({})"
                     >
                         {{ $t('common.entry', 1) }}
                     </UButton>
@@ -334,7 +340,7 @@ const isOpen = ref(false);
                                             <UCheckbox
                                                 class="truncate"
                                                 :model-value="activeCalendarIds.includes(calendar.id)"
-                                                @change="calendarIdChange(calendar.id, $event)"
+                                                @change="($event) => calendarIdChange(calendar.id, $event)"
                                             />
 
                                             <UBadge :color="calendar.color as ButtonProps['color']" size="lg" />
@@ -345,7 +351,7 @@ const isOpen = ref(false);
                                                 variant="link"
                                                 truncate
                                                 :label="calendar.name"
-                                                @click="slideover.open(CalendarViewSlideover, { calendarId: calendar.id })"
+                                                @click="calendarViewSlideover.open({ calendarId: calendar.id })"
                                             />
                                         </div>
                                     </div>
@@ -371,7 +377,7 @@ const isOpen = ref(false);
                 :view="view === 'week' ? 'weekly' : 'monthly'"
                 :attributes="transformedCalendarEntries"
                 @selected="
-                    slideover.open(EntryViewSlideover, {
+                    entryViewSlideover.open({
                         entryId: $event.id,
                     })
                 "
@@ -411,7 +417,7 @@ const isOpen = ref(false);
                                 <ULink
                                     class="inline-flex w-full items-center justify-between gap-1"
                                     @click="
-                                        slideover.open(EntryViewSlideover, {
+                                        entryViewSlideover.open({
                                             entryId: attr.customData.id,
                                         })
                                     "
@@ -447,7 +453,7 @@ const isOpen = ref(false);
                                 <ULink
                                     class="inline-flex w-full items-center justify-between gap-1"
                                     @click="
-                                        slideover.open(EntryViewSlideover, {
+                                        entryViewSlideover.open({
                                             entryId: attr.customData.id,
                                         })
                                     "
@@ -513,7 +519,7 @@ const isOpen = ref(false);
                 </UButton>
             </UTooltip>
 
-            <UButton class="font-semibold" icon="i-mdi-calendar-search" @click="modal.open(FindCalendarModal, {})">
+            <UButton class="font-semibold" icon="i-mdi-calendar-search" @click="findCalendarsModal.open({})">
                 {{ $t('components.calendar.FindCalendarModal.title') }}
             </UButton>
         </div>
@@ -532,7 +538,7 @@ const isOpen = ref(false);
                         block
                         color="neutral"
                         trailing-icon="i-mdi-plus"
-                        @click="modal.open(CalendarCreateOrUpdateModal, {})"
+                        @click="calendarCreateOrUpdateModal.open({})"
                     >
                         {{ $t('common.calendar') }}
                     </UButton>
@@ -543,7 +549,7 @@ const isOpen = ref(false);
                         block
                         color="neutral"
                         trailing-icon="i-mdi-plus"
-                        @click="modal.open(EntryCreateOrUpdateModal, {})"
+                        @click="entryCreateOrUpdateModal.open({})"
                     >
                         {{ $t('common.entry', 1) }}
                     </UButton>
@@ -581,7 +587,7 @@ const isOpen = ref(false);
                             size="sm"
                             truncate
                             :label="calendar.name"
-                            @click="slideover.open(CalendarViewSlideover, { calendarId: calendar.id })"
+                            @click="calendarViewSlideover.open({ calendarId: calendar.id })"
                         />
                     </div>
                 </div>
@@ -621,7 +627,7 @@ const isOpen = ref(false);
                 </UButton>
             </UTooltip>
 
-            <UButton class="font-semibold" icon="i-mdi-calendar-search" @click="modal.open(FindCalendarModal, {})">
+            <UButton class="font-semibold" icon="i-mdi-calendar-search" @click="findCalendarsModal.open({})">
                 {{ $t('components.calendar.FindCalendarModal.title') }}
             </UButton>
         </div>

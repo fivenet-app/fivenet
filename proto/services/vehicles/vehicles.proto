@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.vehicles;
 
 import "buf/validate/validate.proto";
+import "codegen/itemslen/itemslen.proto";
 import "resources/common/database/database.proto";
 import "resources/vehicles/props.proto";
 import "resources/vehicles/vehicles.proto";
@@ -21,8 +22,8 @@ message ListVehiclesRequest {
 }
 
 message ListVehiclesResponse {
-  resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.vehicles.Vehicle vehicles = 2;
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.vehicles.Vehicle vehicles = 2 [(codegen.itemslen.items_len) = true];
 }
 
 message SetVehiclePropsRequest {

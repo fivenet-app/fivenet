@@ -67,43 +67,43 @@ const grouped = computedAsync(async () => {
 
 const columns = [
     {
-        key: 'actions',
+        accessorKey: 'actions',
         label: t('common.action', 2),
         sortable: false,
     },
     {
-        key: 'id',
+        accessorKey: 'id',
         label: t('common.id'),
     },
     {
-        key: 'createdAt',
+        accessorKey: 'createdAt',
         label: t('common.created'),
     },
     {
-        key: 'status',
+        accessorKey: 'status',
         label: t('common.status'),
     },
     {
-        key: 'postal',
+        accessorKey: 'postal',
         label: t('common.postal'),
     },
     {
-        key: 'units',
+        accessorKey: 'units',
         label: t('common.unit'),
         sortable: false,
     },
     {
-        key: 'creator',
+        accessorKey: 'creator',
         label: t('common.creator'),
         sortable: false,
     },
     {
-        key: 'attributes',
+        accessorKey: 'attributes',
         label: t('common.attributes', 2),
         sortable: false,
     },
     {
-        key: 'message',
+        accessorKey: 'message',
         label: t('common.message'),
         sortable: false,
     },
@@ -141,13 +141,13 @@ const columns = [
                     v-if="!centrum.dispatchListCardStyle"
                     class="overflow-x-visible"
                     :columns="columns"
-                    :rows="group.dispatches"
+                    :data="group.dispatches"
                     :empty-state="{
                         icon: 'i-mdi-car-emergency',
                         label: $t('common.not_found', [$t('common.dispatch', 2)]),
                     }"
                 >
-                    <template #actions-data="{ row: dispatch }">
+                    <template #actions-cell="{ row: dispatch }">
                         <div :key="dispatch.id">
                             <UTooltip v-if="!hideActions" :text="$t('common.assign')">
                                 <UButton
@@ -200,7 +200,7 @@ const columns = [
                         </div>
                     </template>
 
-                    <template #createdAt-data="{ row: dispatch }">
+                    <template #createdAt-cell="{ row: dispatch }">
                         <span class="text-highlighted">
                             <GenericTime
                                 :value="dispatch.createdAt"
@@ -219,15 +219,15 @@ const columns = [
                         </span>
                     </template>
 
-                    <template #status-data="{ row: dispatch }">
+                    <template #status-cell="{ row: dispatch }">
                         <DispatchStatusBadge :status="dispatch.status?.status" />
                     </template>
 
-                    <template #postal-data="{ row: dispatch }">
+                    <template #postal-cell="{ row: dispatch }">
                         {{ dispatch.postal ?? $t('common.na') }}
                     </template>
 
-                    <template #units-data="{ row: dispatch }">
+                    <template #units-cell="{ row: dispatch }">
                         <span v-if="dispatch.units.length === 0" class="italic">{{
                             $t('enums.centrum.StatusDispatch.UNASSIGNED')
                         }}</span>
@@ -243,7 +243,7 @@ const columns = [
                         </span>
                     </template>
 
-                    <template #creator-data="{ row: dispatch }">
+                    <template #creator-cell="{ row: dispatch }">
                         <span v-if="dispatch.anon">
                             {{ $t('common.anon') }}
                         </span>
@@ -255,11 +255,11 @@ const columns = [
                         </span>
                     </template>
 
-                    <template #attributes-data="{ row: dispatch }">
+                    <template #attributes-cell="{ row: dispatch }">
                         <DispatchAttributes :attributes="dispatch.attributes" />
                     </template>
 
-                    <template #message-data="{ row: dispatch }">
+                    <template #message-cell="{ row: dispatch }">
                         <p class="line-clamp-2 hover:line-clamp-6">
                             {{ dispatch.message }}
                         </p>

@@ -50,26 +50,26 @@ const columns = computed(() =>
     [
         props.showDocument
             ? {
-                  key: 'document',
+                  accessorKey: 'document',
                   label: t('common.document'),
               }
             : undefined,
         {
-            key: 'targetUser',
+            accessorKey: 'targetUser',
             label: t('common.target'),
         },
         {
-            key: 'relation',
+            accessorKey: 'relation',
             label: t('common.relation', 1),
         },
         props.showSource
             ? {
-                  key: 'sourceUser',
+                  accessorKey: 'sourceUser',
                   label: t('common.creator'),
               }
             : undefined,
         {
-            key: 'date',
+            accessorKey: 'date',
             label: t('common.date'),
         },
     ].flatMap((item) => (item !== undefined ? [item] : [])),
@@ -95,7 +95,7 @@ const columns = computed(() =>
             <!-- Relations list (smallest breakpoint only) -->
             <div class="sm:hidden">
                 <ul class="divide-y divide-gray-600 overflow-hidden rounded-lg sm:hidden" role="list">
-                    <li v-for="relation in relations" :key="relation.id" class="block p-4 hover:bg-base-900">
+                    <li v-for="relation in relations" :key="relation.id" class="hover:bg-base-900 block p-4">
                         <span class="flex items-center space-x-4">
                             <span class="flex flex-1 space-x-2 truncate">
                                 <UIcon class="size-5 shrink-0" name="i-mdi-arrow-collapse" />
@@ -145,14 +145,14 @@ const columns = computed(() =>
                             <UTable
                                 :loading="isRequestPending(status)"
                                 :columns="columns"
-                                :rows="relations"
+                                :data="relations"
                                 :empty-state="{
                                     icon: 'i-mdi-account',
                                     label: $t('common.not_found', [$t('common.relation', 2)]),
                                 }"
                                 sort-mode="auto"
                             >
-                                <template v-if="showDocument" #document-data="{ row: relation }">
+                                <template v-if="showDocument" #document-cell="{ row: relation }">
                                     <ULink
                                         class="inline-flex items-center gap-1 truncate"
                                         :to="{
@@ -169,21 +169,21 @@ const columns = computed(() =>
                                         </span>
                                     </ULink>
                                 </template>
-                                <template #targetUser-data="{ row: relation }">
+                                <template #targetUser-cell="{ row: relation }">
                                     <span class="inline-flex items-center gap-1">
                                         <CitizenInfoPopover :user="relation.targetUser" />
                                         ({{ relation.targetUser?.dateofbirth }})
                                     </span>
                                 </template>
-                                <template #relation-data="{ row: relation }">
+                                <template #relation-cell="{ row: relation }">
                                     <UBadge :color="docRelationToBadge(relation.relation)">
                                         {{ $t(`enums.documents.DocRelation.${DocRelation[relation.relation]}`) }}
                                     </UBadge>
                                 </template>
-                                <template v-if="showSource" #sourceUser-data="{ row: relation }">
+                                <template v-if="showSource" #sourceUser-cell="{ row: relation }">
                                     <CitizenInfoPopover :user="relation.sourceUser" />
                                 </template>
-                                <template #date-data="{ row: relation }">
+                                <template #date-cell="{ row: relation }">
                                     <GenericTime :value="relation.createdAt" />
                                 </template>
                             </UTable>

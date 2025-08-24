@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import UserSettingsPanel from '~/components/auth/account/UserSettingsPanel.vue';
-
 useHead({
     title: 'components.auth.UserSettingsPanel.title',
 });
@@ -11,6 +9,22 @@ definePageMeta({
     authTokenOnly: true,
     showCookieOptions: true,
 });
+
+const { t } = useI18n();
+
+const items = [
+    {
+        label: t('common.settings'),
+        icon: 'i-mdi-cog',
+        to: '/user-settings',
+        exact: true,
+    },
+    {
+        label: t('common.notification', 2),
+        icon: 'i-mdi-notification-settings',
+        to: '/user-settings/notifications',
+    },
+];
 </script>
 
 <template>
@@ -25,10 +39,14 @@ definePageMeta({
                     <PartialsBackButton fallback-to="/overview" />
                 </template>
             </UDashboardNavbar>
+
+            <UDashboardToolbar>
+                <UNavigationMenu :items="items" highlight class="-mx-1 flex-1" />
+            </UDashboardToolbar>
         </template>
 
         <template #body>
-            <UserSettingsPanel />
+            <NuxtPage />
         </template>
     </UDashboardPanel>
 </template>

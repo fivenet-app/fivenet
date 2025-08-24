@@ -53,10 +53,16 @@ const schema = z.object({
     closed: z.coerce.boolean().optional(),
     categories: z.number().array().max(3).default([]),
     onlyDrafts: z.coerce.boolean().optional(),
-    sort: z.custom<TableSortable>().default({
-        column: 'createdAt',
-        direction: 'desc',
-    }),
+    sorting: z
+        .custom<SortByColumn>()
+        .array()
+        .max(3)
+        .default([
+            {
+                id: 'createdAt',
+                desc: true,
+            },
+        ]),
     page: pageNumberSchema,
 });
 
@@ -65,7 +71,7 @@ const query = useSearchForm('documents', schema);
 const usersLoading = ref(false);
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `documents-${query.sort.column}:${query.sort.direction}-${query.page}`,
+    `documents-${query.sorting.column}:${query.sorting.direction}-${query.page}`,
     () => listDocuments(),
 );
 
@@ -74,7 +80,7 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
         pagination: {
             offset: calculateOffset(query.page, data.value?.pagination),
         },
-        sort: query.sort,
+        sort: { columns: query.sorting },
         search: query.title ?? '',
         categoryIds: query.categories,
         creatorIds: query.creators,
@@ -176,7 +182,7 @@ const links = computed(() =>
 const inputRef = useTemplateRef('inputRef');
 
 defineShortcuts({
-    '/': () => inputRef.value?.input?.focus(),
+    '/': () => inputRef.value?.inputRef?.focus(),
 });
 </script>
 
@@ -422,7 +428,7 @@ defineShortcuts({
 
                         <UFormField class="flex-1 grow-0 basis-40" :label="$t('common.sort_by')">
                             <SortButton
-                                v-model="query.sort"
+                                v-model="query.sorting"
                                 :fields="[
                                     { label: $t('common.created_at'), value: 'createdAt' },
                                     { label: $t('common.title'), value: 'title' },

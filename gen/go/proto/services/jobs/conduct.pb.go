@@ -7,6 +7,7 @@
 package jobs
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -420,7 +421,7 @@ var File_services_jobs_conduct_proto protoreflect.FileDescriptor
 
 const file_services_jobs_conduct_proto_rawDesc = "" +
 	"\n" +
-	"\x1bservices/jobs/conduct.proto\x12\rservices.jobs\x1a(resources/common/database/database.proto\x1a\x1cresources/jobs/conduct.proto\"\xcd\x02\n" +
+	"\x1bservices/jobs/conduct.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a(resources/common/database/database.proto\x1a\x1cresources/jobs/conduct.proto\"\xcd\x02\n" +
 	"\x19ListConductEntriesRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
@@ -431,12 +432,12 @@ const file_services_jobs_conduct_proto_rawDesc = "" +
 	"\buser_ids\x18\x05 \x03(\x05R\auserIds\x12\x10\n" +
 	"\x03ids\x18\x06 \x03(\x03R\x03idsB\a\n" +
 	"\x05_sortB\x0f\n" +
-	"\r_show_expired\"\xa3\x01\n" +
-	"\x1aListConductEntriesResponse\x12M\n" +
+	"\r_show_expired\"\xb1\x01\n" +
+	"\x1aListConductEntriesResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x126\n" +
-	"\aentries\x18\x02 \x03(\v2\x1c.resources.jobs.ConductEntryR\aentries\"W\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x12<\n" +
+	"\aentries\x18\x02 \x03(\v2\x1c.resources.jobs.ConductEntryB\x04\xc8\xf3\x18\x01R\aentries\"W\n" +
 	"\x19CreateConductEntryRequest\x12:\n" +
 	"\x05entry\x18\x01 \x01(\v2\x1c.resources.jobs.ConductEntryB\x06\xbaH\x03\xc8\x01\x01R\x05entry\"P\n" +
 	"\x1aCreateConductEntryResponse\x122\n" +

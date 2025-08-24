@@ -88,11 +88,11 @@ const sortedRoles = computed(() => [...(roles.value ?? [])].sort((a, b) => (a.jo
 
 const columns = [
     {
-        key: 'job',
+        accessorKey: 'job',
         label: t('common.job'),
     },
     {
-        key: 'actions',
+        accessorKey: 'actions',
         label: t('common.action', 2),
         sortable: false,
     },
@@ -158,18 +158,18 @@ const onSubmitThrottle = useThrottleFn(async () => {
                 <UTable
                     v-else
                     :columns="columns"
-                    :rows="sortedRoles"
+                    :data="sortedRoles"
                     :loading="isRequestPending(status)"
                     :empty-state="{
                         icon: 'i-mdi-account-group',
                         label: $t('common.not_found', [$t('common.role', 2)]),
                     }"
                 >
-                    <template #job-data="{ row: role }">
+                    <template #job-cell="{ row: role }">
                         <div class="text-highlighted">{{ role.jobLabel }} ({{ role.job }})</div>
                     </template>
 
-                    <template #actions-data="{ row: role }">
+                    <template #actions-cell="{ row: role }">
                         <UTooltip :text="$t('common.show')">
                             <UButton
                                 class="place-self-end"

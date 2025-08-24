@@ -47,8 +47,7 @@ watch(result, () => {
 
 <template>
     <div>
-        <!-- @vue-expect-error seems that the `color` prop is not using the `ProgressColor` type -->
-        <UProgress :color="color" :value="percent" />
+        <UProgress :model-value="percent" :color="color" />
 
         <p v-if="showFeedback && feedback !== null" class="my-1 text-sm">
             {{ feedback }}

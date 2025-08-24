@@ -7,6 +7,7 @@
 package centrum
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
 	centrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
@@ -2466,7 +2467,7 @@ var File_services_centrum_centrum_proto protoreflect.FileDescriptor
 
 const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/centrum/centrum.proto\x12\x10services.centrum\x1a#resources/centrum/dispatchers.proto\x1a\"resources/centrum/dispatches.proto\x1a resources/centrum/settings.proto\x1a\x1dresources/centrum/units.proto\x1a(resources/common/database/database.proto\x1a\x19resources/jobs/jobs.proto\x1a\x1fresources/livemap/heatmap.proto\x1a#resources/timestamp/timestamp.proto\"\x83\x01\n" +
+	"\x1eservices/centrum/centrum.proto\x12\x10services.centrum\x1a\x1fcodegen/itemslen/itemslen.proto\x1a#resources/centrum/dispatchers.proto\x1a\"resources/centrum/dispatches.proto\x1a resources/centrum/settings.proto\x1a\x1dresources/centrum/units.proto\x1a(resources/common/database/database.proto\x1a\x19resources/jobs/jobs.proto\x1a\x1fresources/livemap/heatmap.proto\x1a#resources/timestamp/timestamp.proto\"\x83\x01\n" +
 	"\x1bListDispatchActivityRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
@@ -2487,9 +2488,9 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\bsettings\x18\x01 \x01(\v2\x1b.resources.centrum.SettingsR\bsettings\"X\n" +
 	"\x10ListUnitsRequest\x12D\n" +
 	"\x06status\x18\x01 \x03(\x0e2\x1d.resources.centrum.StatusUnitB\r\xbaH\n" +
-	"\x92\x01\a\"\x05\x82\x01\x02\x10\x01R\x06status\"B\n" +
-	"\x11ListUnitsResponse\x12-\n" +
-	"\x05units\x18\x01 \x03(\v2\x17.resources.centrum.UnitR\x05units\"P\n" +
+	"\x92\x01\a\"\x05\x82\x01\x02\x10\x01R\x06status\"H\n" +
+	"\x11ListUnitsResponse\x123\n" +
+	"\x05units\x18\x01 \x03(\v2\x17.resources.centrum.UnitB\x04\xc8\xf3\x18\x01R\x05units\"P\n" +
 	"\x19CreateOrUpdateUnitRequest\x123\n" +
 	"\x04unit\x18\x01 \x01(\v2\x17.resources.centrum.UnitB\x06\xbaH\x03\xc8\x01\x01R\x04unit\"I\n" +
 	"\x1aCreateOrUpdateUnitResponse\x12+\n" +
@@ -2519,12 +2520,12 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\tto_remove\x18\x01 \x03(\x05B\b\xbaH\x05\x92\x01\x02\x10\n" +
 	"R\btoRemove\"]\n" +
 	"\x19UpdateDispatchersResponse\x12@\n" +
-	"\vdispatchers\x18\x01 \x01(\v2\x1e.resources.centrum.DispatchersR\vdispatchers\"\xa4\x01\n" +
-	"\x18ListUnitActivityResponse\x12M\n" +
+	"\vdispatchers\x18\x01 \x01(\v2\x1e.resources.centrum.DispatchersR\vdispatchers\"\xb2\x01\n" +
+	"\x18ListUnitActivityResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x129\n" +
-	"\bactivity\x18\x02 \x03(\v2\x1d.resources.centrum.UnitStatusR\bactivity\",\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x12?\n" +
+	"\bactivity\x18\x02 \x03(\v2\x1d.resources.centrum.UnitStatusB\x04\xc8\xf3\x18\x01R\bactivity\",\n" +
 	"\x12TakeControlRequest\x12\x16\n" +
 	"\x06signon\x18\x01 \x01(\bR\x06signon\"\x15\n" +
 	"\x13TakeControlResponse\"\xd5\x02\n" +
@@ -2540,13 +2541,13 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\x03ids\x18\x04 \x03(\x03B\b\xbaH\x05\x92\x01\x02\x10\n" +
 	"R\x03ids\x12$\n" +
 	"\x06postal\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x18\fH\x00R\x06postal\x88\x01\x01B\t\n" +
-	"\a_postal\"\xa4\x01\n" +
-	"\x16ListDispatchesResponse\x12M\n" +
+	"\a_postal\"\xb2\x01\n" +
+	"\x16ListDispatchesResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12;\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x12A\n" +
 	"\n" +
-	"dispatches\x18\x02 \x03(\v2\x1b.resources.centrum.DispatchR\n" +
+	"dispatches\x18\x02 \x03(\v2\x1b.resources.centrum.DispatchB\x04\xc8\xf3\x18\x01R\n" +
 	"dispatches\"-\n" +
 	"\x12GetDispatchRequest\x12\x17\n" +
 	"\x02id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\"N\n" +
@@ -2563,9 +2564,9 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\x15DeleteDispatchRequest\x12\x17\n" +
 	"\x02id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\"\x18\n" +
 	"\x16DeleteDispatchResponse\"\x1f\n" +
-	"\x1dListDispatchTargetJobsRequest\"I\n" +
-	"\x1eListDispatchTargetJobsResponse\x12'\n" +
-	"\x04jobs\x18\x01 \x03(\v2\x13.resources.jobs.JobR\x04jobs\"\xd7\x01\n" +
+	"\x1dListDispatchTargetJobsRequest\"O\n" +
+	"\x1eListDispatchTargetJobsResponse\x12-\n" +
+	"\x04jobs\x18\x01 \x03(\v2\x13.resources.jobs.JobB\x04\xc8\xf3\x18\x01R\x04jobs\"\xd7\x01\n" +
 	"\x1bUpdateDispatchStatusRequest\x12\x1f\n" +
 	"\vdispatch_id\x18\x01 \x01(\x03R\n" +
 	"dispatchId\x12C\n" +
@@ -2582,12 +2583,12 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\tto_remove\x18\x03 \x03(\x03R\btoRemove\x12\x1b\n" +
 	"\x06forced\x18\x04 \x01(\bH\x00R\x06forced\x88\x01\x01B\t\n" +
 	"\a_forced\"\x18\n" +
-	"\x16AssignDispatchResponse\"\xac\x01\n" +
-	"\x1cListDispatchActivityResponse\x12M\n" +
+	"\x16AssignDispatchResponse\"\xba\x01\n" +
+	"\x1cListDispatchActivityResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12=\n" +
-	"\bactivity\x18\x02 \x03(\v2!.resources.centrum.DispatchStatusR\bactivity\";\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x12C\n" +
+	"\bactivity\x18\x02 \x03(\v2!.resources.centrum.DispatchStatusB\x04\xc8\xf3\x18\x01R\bactivity\";\n" +
 	"\x0fJoinUnitRequest\x12\x1c\n" +
 	"\aunit_id\x18\x01 \x01(\x03H\x00R\x06unitId\x88\x01\x01B\n" +
 	"\n" +

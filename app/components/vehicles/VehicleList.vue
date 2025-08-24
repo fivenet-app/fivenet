@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { TableColumn } from '@nuxt/ui';
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -6,6 +7,7 @@ import LicensePlate from '~/components/partials/LicensePlate.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useClipboardStore } from '~/stores/clipboard';
 import { getCompletorCompletorClient, getVehiclesVehiclesClient } from '~~/gen/ts/clients';
+import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
@@ -45,10 +47,16 @@ const schema = z.object({
     userIds: z.coerce.number().array().max(5).default([]),
     wanted: z.boolean().default(false),
 
-    sort: z.custom<TableSortable>().default({
-        column: 'plate',
-        direction: 'asc',
-    }),
+    sorting: z
+        .custom<SortByColumn>()
+        .array()
+        .max(3)
+        .default([
+            {
+                id: 'plate',
+                desc: false,
+            },
+        ]),
     page: pageNumberSchema,
 });
 
@@ -57,7 +65,7 @@ const query = useSearchForm('vehicles', schema);
 const hideVehicleModell = ref(false);
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `vehicles-${query.sort.column}:${query.sort.direction}-${query.page}`,
+    `vehicles-${query.sorting.column}:${query.sorting.direction}-${query.page}`,
     () => listVehicles(),
 );
 
@@ -67,7 +75,7 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
             pagination: {
                 offset: calculateOffset(query.page, data.value?.pagination),
             },
-            sort: query.sort,
+            sort: { columns: query.sorting },
             licensePlate: query.licensePlate,
             model: query.model,
             userIds: query.userIds,
@@ -115,38 +123,39 @@ function updateVehicle(plate: string, vehicle: Vehicle): void {
     }
 }
 
-const columns = computed(() =>
+const columns = computed<TableColumn<Vehicle>[]>(() =>
     [
         {
-            key: 'plate',
-            label: t('common.plate'),
+            accessorKey: 'plate',
+            header: t('common.plate'),
             sortable: true,
+            cell: ({ row }) => `#${row.getValue('plate')}`,
         },
         attr('vehicles.VehiclesService/ListVehicles', 'Fields', 'Wanted').value
             ? {
-                  key: 'wanted',
-                  label: t('common.wanted'),
+                  accessorKey: 'wanted',
+                  header: t('common.wanted'),
                   sortable: false,
               }
             : undefined,
         {
-            key: 'model',
-            label: t('common.model'),
+            accessorKey: 'model',
+            header: t('common.model'),
             sortable: true,
         },
         {
-            key: 'type',
-            label: t('common.type'),
+            accessorKey: 'type',
+            header: t('common.type'),
         },
         !props.hideOwner
             ? {
-                  key: 'owner',
-                  label: t('common.owner'),
+                  accessorKey: 'owner',
+                  header: t('common.owner'),
               }
             : undefined,
         {
-            key: 'actions',
-            label: t('common.action', 2),
+            accessorKey: 'actions',
+            header: t('common.action', 2),
             sortable: false,
         },
     ].flatMap((item) => (item !== undefined ? [item] : [])),
@@ -155,7 +164,7 @@ const columns = computed(() =>
 const input = useTemplateRef('input');
 
 defineShortcuts({
-    '/': () => input.value?.input?.focus(),
+    '/': () => input.value?.inputRef?.focus(),
 });
 </script>
 
@@ -251,50 +260,55 @@ defineShortcuts({
 
     <UTable
         v-else
-        v-model:sort="query.sort"
+        v-model:sorting="query.sorting"
         class="flex-1"
         :loading="isRequestPending(status)"
         :columns="columns"
-        :rows="data?.vehicles"
+        :data="data?.vehicles"
         :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.vehicle', 2)]) }"
         sort-mode="manual"
     >
-        <template #plate-data="{ row: vehicle }">
+        <template #plate-cell="{ row: vehicle }">
             <div class="inline-flex items-center gap-1">
-                <LicensePlate :plate="vehicle.plate" class="sm:min-w-40 md:min-w-48" />
+                <LicensePlate :plate="vehicle.original.plate" class="sm:min-w-40 md:min-w-48" />
             </div>
         </template>
 
-        <template #wanted-data="{ row: vehicle }">
-            <UBadge v-if="vehicle.props?.wanted" color="error">
+        <template #wanted-cell="{ row: vehicle }">
+            <UBadge v-if="vehicle.original.props?.wanted" color="error">
                 {{ $t('common.wanted').toUpperCase() }}
             </UBadge>
         </template>
 
-        <template #type-data="{ row: vehicle }">
-            {{ toTitleCase(vehicle.type) }}
+        <template #type-cell="{ row: vehicle }">
+            {{ toTitleCase(vehicle.original.type) }}
         </template>
 
-        <template v-if="!hideOwner" #owner-data="{ row: vehicle }">
-            <p v-if="vehicle.jobLabel" class="text-highlighted">{{ vehicle.jobLabel }}</p>
-            <CitizenInfoPopover v-if="vehicle.owner" :user="vehicle.owner" />
+        <template v-if="!hideOwner" #owner-cell="{ row: vehicle }">
+            <p v-if="vehicle.original.jobLabel" class="text-highlighted">{{ vehicle.original.jobLabel }}</p>
+            <CitizenInfoPopover v-if="vehicle.original.owner" :user="vehicle.original.owner" />
         </template>
 
-        <template #actions-data="{ row: vehicle }">
-            <div :key="vehicle.plate" class="flex flex-col justify-end md:flex-row">
+        <template #actions-cell="{ row: vehicle }">
+            <div class="flex flex-col justify-end md:flex-row">
                 <UTooltip
                     v-if="attrStringList('vehicles.VehiclesService/ListVehicles', 'Fields').value.length > 0 || isSuperuser"
                     :text="$t('common.propertie', 2)"
                 >
-                    <VehicleInfoPopover :model-value="vehicle" @update:model-value="updateVehicle(vehicle.plate, $event)" />
+                    <VehicleInfoPopover
+                        :model-value="vehicle.original"
+                        @update:model-value="updateVehicle(vehicle.original.plate, $event)"
+                    />
                 </UTooltip>
 
                 <UTooltip v-if="!hideCopy" :text="$t('components.clipboard.clipboard_button.add')">
-                    <UButton variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(vehicle)" />
+                    <UButton variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(vehicle.original)" />
                 </UTooltip>
 
                 <UTooltip
-                    v-if="!hideCitizenLink && vehicle.owner?.userId && can('citizens.CitizensService/ListCitizens').value"
+                    v-if="
+                        !hideCitizenLink && vehicle.original.owner?.userId && can('citizens.CitizensService/ListCitizens').value
+                    "
                     :text="$t('common.show')"
                 >
                     <UButton
@@ -302,7 +316,7 @@ defineShortcuts({
                         icon="i-mdi-account-eye"
                         :to="{
                             name: 'citizens-id',
-                            params: { id: vehicle.owner.userId },
+                            params: { id: vehicle.original.owner.userId },
                         }"
                     />
                 </UTooltip>

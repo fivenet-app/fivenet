@@ -21,24 +21,23 @@ message PaginationResponse {
   int64 page_size = 4;
 }
 
-// Sort by column
 message Sort {
-  // Column name
-  string column = 1 [(buf.validate.field).string = {
+  repeated SortByColumn columns = 1;
+}
+
+// SortByColumn sort by column and direction
+message SortByColumn {
+  // ID is the column name.
+  string id = 1 [(buf.validate.field).string = {
     min_len: 1
     max_len: 64
   }];
-  // Sort direction, must be `asc` (ascending) or `desc` (descending)
-  string direction = 2 [(buf.validate.field).string = {
-    in: [
-      "asc",
-      "desc"
-    ]
-  }];
+  // Desc if true sorts descending, ascending otherwise.
+  bool desc = 2;
 }
 
 /*
- * Datetime range (uses Timestamp underneath)
+ * DateRange represents a datetime range (uses Timestamp underneath)
  * It depends on the API method if it will use date or date + time.
  */
 message DateRange {

@@ -38,8 +38,8 @@ const modal = useOverlay();
 const page = useRouteQuery('page', '1', { transform: Number });
 
 const sort = useRouteQueryObject<TableSortable>('sort', {
-    column: 'createdAt',
-    direction: 'desc',
+    id: 'createdAt',
+    desc: true,
 });
 
 const { data, status, refresh, error } = useLazyAsyncData(
@@ -96,34 +96,34 @@ async function deleteQualificationResult(resultId: number): Promise<DeleteQualif
 
 const columns = [
     {
-        key: 'actions',
+        accessorKey: 'actions',
         label: t('common.action', 2),
         sortable: false,
     },
     {
-        key: 'citizen',
+        accessorKey: 'citizen',
         label: t('common.citizen'),
     },
     {
-        key: 'status',
+        accessorKey: 'status',
         label: t('common.status'),
         sortable: true,
     },
     {
-        key: 'score',
+        accessorKey: 'score',
         label: t('common.score'),
     },
     {
-        key: 'summary',
+        accessorKey: 'summary',
         label: t('common.summary'),
     },
     {
-        key: 'createdAt',
+        accessorKey: 'createdAt',
         label: t('common.created_at'),
         sortable: true,
     },
     {
-        key: 'creator',
+        accessorKey: 'creator',
         label: t('common.creator'),
     },
 ];
@@ -146,18 +146,18 @@ async function onRefresh(): Promise<void> {
 
             <template v-else>
                 <UTable
-                    v-model:sort="sort"
+                    v-model:sorting="sort"
                     :loading="isRequestPending(status)"
                     :columns="columns"
-                    :rows="data?.results"
+                    :data="data?.results"
                     :empty-state="{ icon: 'i-mdi-sigma', label: $t('common.not_found', [$t('common.result', 2)]) }"
                     sort-mode="manual"
                 >
-                    <template #citizen-data="{ row: result }">
+                    <template #citizen-cell="{ row: result }">
                         <CitizenInfoPopover :user="result.user" />
                     </template>
 
-                    <template #status-data="{ row: result }">
+                    <template #status-cell="{ row: result }">
                         <template v-if="result.status !== undefined">
                             <span class="font-medium" :class="resultStatusToTextColor(result.status)">
                                 <span class="font-semibold">{{
@@ -167,25 +167,25 @@ async function onRefresh(): Promise<void> {
                         </template>
                     </template>
 
-                    <template #score-data="{ row: result }">
+                    <template #score-cell="{ row: result }">
                         <template v-if="result.score">{{ $n(result.score) }}</template>
                     </template>
 
-                    <template #summary-data="{ row: result }">
+                    <template #summary-cell="{ row: result }">
                         <p v-if="result.summary" class="text-sm">
                             {{ result.summary }}
                         </p>
                     </template>
 
-                    <template #createdAt-data="{ row: result }">
+                    <template #createdAt-cell="{ row: result }">
                         <GenericTime :value="result.createdAt" />
                     </template>
 
-                    <template #creator-data="{ row: result }">
+                    <template #creator-cell="{ row: result }">
                         <CitizenInfoPopover v-if="result.creator" :user="result.creator" />
                     </template>
 
-                    <template #actions-data="{ row: result }">
+                    <template #actions-cell="{ row: result }">
                         <div :key="result.id">
                             <UTooltip v-if="result.status === ResultStatus.PENDING" :text="$t('common.grade')">
                                 <UButton

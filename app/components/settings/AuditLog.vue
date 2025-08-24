@@ -12,6 +12,7 @@ import Pagination from '~/components/partials/Pagination.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getSettingsSettingsClient } from '~~/gen/ts/clients';
 import { type AuditEntry, EventType } from '~~/gen/ts/resources/audit/audit';
+import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ViewAuditLogRequest, ViewAuditLogResponse } from '~~/gen/ts/services/settings/settings';
 import { grpcMethods, grpcServices } from '~~/gen/ts/svcs';
@@ -35,10 +36,16 @@ const schema = z.object({
     methods: z.string().max(64).array().max(10).default([]),
     states: z.nativeEnum(EventType).array().max(10).default([]),
     search: z.string().max(64).default(''),
-    sort: z.custom<TableSortable>().default({
-        column: 'createdAt',
-        direction: 'desc',
-    }),
+    sorting: z
+        .custom<SortByColumn>()
+        .array()
+        .max(3)
+        .default([
+            {
+                id: 'createdAt',
+                desc: true,
+            },
+        ]),
     page: pageNumberSchema,
 });
 
@@ -59,7 +66,7 @@ const statesOptions = eventTypes.map((eventType) => ({ eventType: eventType }));
 const usersLoading = ref(false);
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `settings-audit-${query.sort.column}:${query.sort.direction}-${query.page}-${query.date?.start}-${query.date?.end}-${query.methods}-${query.services}-${query.search}-${query.users.join(',')}`,
+    `settings-audit-${query.sorting.column}:${query.sorting.direction}-${query.page}-${query.date?.start}-${query.date?.end}-${query.methods}-${query.services}-${query.search}-${query.users.join(',')}`,
     () => viewAuditLog(),
 );
 
@@ -68,7 +75,7 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
         pagination: {
             offset: calculateOffset(query.page, data.value?.pagination),
         },
-        sort: query.sort,
+        sort: { columns: query.sorting },
         userIds: query.users,
         services: query.services,
         // Make sure to remove the service from the beginning
@@ -137,30 +144,30 @@ ${JSON.stringify(JSON.parse(logEntry.data!), undefined, 2)}
 
 const columns = [
     {
-        key: 'actions',
+        accessorKey: 'actions',
         label: t('common.action', 2),
         sortable: false,
     },
     {
-        key: 'id',
+        accessorKey: 'id',
         label: t('common.id'),
     },
     {
-        key: 'createdAt',
+        accessorKey: 'createdAt',
         label: t('common.created_at'),
         sortable: true,
     },
     {
-        key: 'user',
+        accessorKey: 'user',
         label: t('common.user', 1),
     },
     {
-        key: 'service',
+        accessorKey: 'service',
         label: `${t('common.service')}/${t('common.method')}`,
         sortable: true,
     },
     {
-        key: 'state',
+        accessorKey: 'state',
         label: t('common.state'),
         sortable: true,
     },
@@ -375,32 +382,32 @@ function statesToLabel(states: { eventType: EventType }[]): string {
         class="flex-1"
         :loading="isRequestPending(status)"
         :columns="columns"
-        :rows="data?.logs"
+        :data="data?.logs"
         :empty-state="{
             icon: 'i-mdi-math-log',
             label: $t('common.not_found', [$t('common.entry', 2)]),
         }"
         sort-mode="manual"
     >
-        <template #actions-data="{ row }">
+        <template #actions-cell="{ row }">
             <UTooltip :text="$t('components.clipboard.clipboard_button.add')">
                 <UButton variant="link" icon="i-mdi-content-copy" @click="addToClipboard(row)" />
             </UTooltip>
         </template>
 
-        <template #createdAt-data="{ row }">
+        <template #createdAt-cell="{ row }">
             <GenericTime :value="row.createdAt" type="long" />
         </template>
 
-        <template #user-data="{ row }">
+        <template #user-cell="{ row }">
             <CitizenInfoPopover :user="row.user" />
         </template>
 
-        <template #service-data="{ row }">
+        <template #service-cell="{ row }">
             <span class="dark:text-white"> {{ row.service }}/{{ row.method }} </span>
         </template>
 
-        <template #state-data="{ row }">
+        <template #state-cell="{ row }">
             <UBadge :color="eventTypeToBadgeColor(row.state)">
                 {{ $t(`enums.settings.AuditLog.EventType.${EventType[row.state]}`) }}
             </UBadge>

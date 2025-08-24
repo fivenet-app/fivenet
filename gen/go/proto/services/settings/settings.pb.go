@@ -7,6 +7,7 @@
 package settings
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
 	audit "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	discord "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/discord"
@@ -1244,7 +1245,7 @@ var File_services_settings_settings_proto protoreflect.FileDescriptor
 
 const file_services_settings_settings_proto_rawDesc = "" +
 	"\n" +
-	" services/settings/settings.proto\x12\x11services.settings\x1a\x1bresources/audit/audit.proto\x1a(resources/common/database/database.proto\x1a\x1fresources/discord/discord.proto\x1a\x1eresources/file/filestore.proto\x1a\x1eresources/jobs/job_props.proto\x1a&resources/permissions/attributes.proto\x1a'resources/permissions/permissions.proto\x1a\x1eresources/settings/perms.proto\x1a#resources/timestamp/timestamp.proto\"\x14\n" +
+	" services/settings/settings.proto\x12\x11services.settings\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x1bresources/audit/audit.proto\x1a(resources/common/database/database.proto\x1a\x1fresources/discord/discord.proto\x1a\x1eresources/file/filestore.proto\x1a\x1eresources/jobs/job_props.proto\x1a&resources/permissions/attributes.proto\x1a'resources/permissions/permissions.proto\x1a\x1eresources/settings/perms.proto\x1a#resources/timestamp/timestamp.proto\"\x14\n" +
 	"\x12GetJobPropsRequest\"L\n" +
 	"\x13GetJobPropsResponse\x125\n" +
 	"\tjob_props\x18\x01 \x01(\v2\x18.resources.jobs.JobPropsR\bjobProps\"K\n" +
@@ -1310,12 +1311,12 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\x05_sortB\a\n" +
 	"\x05_fromB\x05\n" +
 	"\x03_toB\t\n" +
-	"\a_search\"\x96\x01\n" +
-	"\x14ViewAuditLogResponse\x12M\n" +
+	"\a_search\"\xa4\x01\n" +
+	"\x14ViewAuditLogResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12/\n" +
-	"\x04logs\x18\x02 \x03(\v2\x1b.resources.audit.AuditEntryR\x04logs\"\x1c\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x125\n" +
+	"\x04logs\x18\x02 \x03(\v2\x1b.resources.audit.AuditEntryB\x04\xc8\xf3\x18\x01R\x04logs\"\x1c\n" +
 	"\x1aListDiscordChannelsRequest\"U\n" +
 	"\x1bListDiscordChannelsResponse\x126\n" +
 	"\bchannels\x18\x01 \x03(\v2\x1a.resources.discord.ChannelR\bchannels\"\x17\n" +

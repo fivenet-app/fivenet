@@ -34,10 +34,16 @@ const schema = z.object({
     labels: z.coerce.number().array().max(3).default([]),
     namePrefix: z.string().max(12).optional(),
     nameSuffix: z.string().max(12).optional(),
-    sort: z.custom<TableSortable>().default({
-        column: 'rank',
-        direction: 'asc',
-    }),
+    sorting: z
+        .custom<SortByColumn>()
+        .array()
+        .max(3)
+        .default([
+            {
+                id: 'rank',
+                desc: false,
+            },
+        ]),
     page: pageNumberSchema,
 });
 
@@ -47,11 +53,8 @@ const settingsStore = useSettingsStore();
 const { jobsService } = storeToRefs(settingsStore);
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `jobs-colleagues-${query.sort.column}:${query.sort.direction}-${query.page}-${query.name}-${query.absent}-${query.labels.join(',')}-${query.namePrefix}-${query.nameSuffix}`,
+    `jobs-colleagues-${query.sorting.column}:${query.sorting.direction}-${query.page}-${query.name}-${query.absent}-${query.labels.join(',')}-${query.namePrefix}-${query.nameSuffix}`,
     () => listColleagues(),
-    {
-        transform: (input) => ({ pagination: input.pagination, colleagues: wrapRows(input?.colleagues, columns) }),
-    },
 );
 
 async function listColleagues(): Promise<ListColleaguesResponse> {
@@ -60,7 +63,7 @@ async function listColleagues(): Promise<ListColleaguesResponse> {
             pagination: {
                 offset: calculateOffset(query.page, data.value?.pagination),
             },
-            sort: query.sort,
+            sort: { columns: query.sorting },
             search: query.name,
             userIds: [],
             absent: query.absent,
@@ -122,38 +125,38 @@ function toggleLabelInSearch(label: Label): void {
 
 const columns = [
     {
-        key: 'name',
+        accessorKey: 'name',
         label: t('common.name'),
         sortable: true,
     },
     {
-        key: 'rank',
+        accessorKey: 'rank',
         label: t('common.rank'),
         class: 'hidden lg:table-cell',
         rowClass: 'hidden lg:table-cell',
         sortable: true,
     },
     {
-        key: 'absence',
+        accessorKey: 'absence',
         label: t('common.absence_date'),
     },
     {
-        key: 'phoneNumber',
+        accessorKey: 'phoneNumber',
         label: t('common.phone_number'),
     },
     {
-        key: 'email',
+        accessorKey: 'email',
         label: t('common.mail'),
     },
     {
-        key: 'dateofbirth',
+        accessorKey: 'dateofbirth',
         label: t('common.date_of_birth'),
         class: 'hidden lg:table-cell',
         rowClass: 'hidden lg:table-cell',
     },
     can(['jobs.JobsService/GetColleague', 'jobs.JobsService/SetColleagueProps']).value
         ? {
-              key: 'actions',
+              accessorKey: 'actions',
               label: t('common.action', 2),
               sortable: false,
           }
@@ -170,7 +173,7 @@ const { game } = useAppConfig();
 const input = useTemplateRef('input');
 
 defineShortcuts({
-    '/': () => input.value?.input?.focus(),
+    '/': () => input.value?.inputRef?.focus(),
 });
 </script>
 
@@ -212,7 +215,7 @@ defineShortcuts({
 
                 <UFormField v-if="jobsService.cardView" :label="$t('common.sort_by')">
                     <SortButton
-                        v-model="query.sort"
+                        v-model="query.sorting"
                         :fields="[
                             { label: $t('common.rank'), value: 'rank' },
                             { label: $t('common.name'), value: 'name' },
@@ -349,74 +352,81 @@ defineShortcuts({
     <template v-else>
         <UTable
             v-if="!jobsService.cardView"
-            v-model:sort="query.sort"
+            v-model:sorting="query.sorting"
             class="flex-1"
             :loading="isRequestPending(status)"
             :columns="columns"
-            :rows="data?.colleagues"
+            :data="data?.colleagues"
             :empty-state="{ icon: 'i-mdi-account', label: $t('common.not_found', [$t('common.colleague', 2)]) }"
             sort-mode="manual"
         >
-            <template #name-data="{ row: colleague }">
-                <div class="text-highlighted inline-flex items-center">
+            <template #name-cell="{ row: colleague }">
+                <div class="inline-flex items-center text-highlighted">
                     <ProfilePictureImg
                         class="mr-2"
-                        :src="colleague?.avatar"
-                        :name="`${colleague.firstname} ${colleague.lastname}`"
+                        :src="colleague.original?.avatar"
+                        :name="`${colleague.original.firstname} ${colleague.original.lastname}`"
                         size="sm"
                         :enable-popup="true"
                         :alt="$t('common.avatar')"
                     />
 
-                    <ColleagueName :colleague="colleague" />
+                    <ColleagueName :colleague="colleague.original" />
                 </div>
 
                 <dl class="font-normal lg:hidden">
                     <dt class="sr-only">{{ $t('common.job_grade') }}</dt>
                     <dd class="mt-1 truncate">
-                        {{ colleague.jobGradeLabel }}
-                        <template v-if="colleague.job !== game.unemployedJobName"> ({{ colleague.jobGrade }})</template>
+                        {{ colleague.original.jobGradeLabel }}
+                        <template v-if="colleague.original.job !== game.unemployedJobName">
+                            ({{ colleague.original.jobGrade }})</template
+                        >
                     </dd>
                 </dl>
             </template>
 
-            <template #rank-data="{ row: colleague }">
-                {{ colleague.jobGradeLabel }}
-                <template v-if="colleague.job !== game.unemployedJobName"> ({{ colleague.jobGrade }})</template>
+            <template #rank-cell="{ row: colleague }">
+                {{ colleague.original.jobGradeLabel }}
+                <template v-if="colleague.original.job !== game.unemployedJobName">
+                    ({{ colleague.original.jobGrade }})</template
+                >
             </template>
 
-            <template #absence-data="{ row: colleague }">
-                <dl v-if="colleague.props?.absenceEnd && isFuture(toDate(colleague.props?.absenceEnd))" class="font-normal">
+            <template #absence-cell="{ row: colleague }">
+                <dl
+                    v-if="colleague.original.props?.absenceEnd && isFuture(toDate(colleague.original.props?.absenceEnd))"
+                    class="font-normal"
+                >
                     <dd class="truncate">
                         {{ $t('common.from') }}:
-                        <GenericTime :value="colleague.props?.absenceBegin" type="date" />
+                        <GenericTime :value="colleague.original.props?.absenceBegin" type="date" />
                     </dd>
                     <dd class="truncate">
-                        {{ $t('common.to') }}: <GenericTime :value="colleague.props?.absenceEnd" type="date" />
+                        {{ $t('common.to') }}: <GenericTime :value="colleague.original.props?.absenceEnd" type="date" />
                     </dd>
                 </dl>
             </template>
 
-            <template #phoneNumber-data="{ row: colleague }">
+            <template #phoneNumber-cell="{ row: colleague }">
                 <div>
-                    <PhoneNumberBlock :number="colleague.phoneNumber" />
+                    <PhoneNumberBlock :number="colleague.original.phoneNumber" />
                 </div>
 
                 <dl class="font-normal lg:hidden">
                     <dt class="sr-only">{{ $t('common.date_of_birth') }}</dt>
                     <dd class="mt-1 truncate">
-                        {{ colleague.dateofbirth.value }}
+                        {{ colleague.original.dateofbirth.value }}
                     </dd>
                 </dl>
             </template>
 
-            <template #dateofbirth-data="{ row: colleague }">
-                {{ colleague.dateofbirth.value }}
+            <template #dateofbirth-cell="{ row: colleague }">
+                {{ colleague.original.dateofbirth.value }}
             </template>
 
-            <template #email-data="{ row: colleague }">
+            <template #email-cell="{ row: colleague }">
                 <EmailInfoPopover
-                    :email="colleague.email"
+                    :email="colleague.original.email"
                     variant="link"
                     color="primary"
                     truncate
@@ -425,14 +435,14 @@ defineShortcuts({
                 />
             </template>
 
-            <template #actions-data="{ row: colleague }">
+            <template #actions-cell="{ row: colleague }">
                 <div :key="colleague.id" class="flex flex-col justify-end md:flex-row">
                     <UTooltip
                         v-if="
                             canDo.setJobsUerProps &&
-                            (colleague.userId === activeChar!.userId ||
+                            (colleague.original.userId === activeChar!.userId ||
                                 attr('jobs.JobsService/SetColleagueProps', 'Types', 'AbsenceDate').value) &&
-                            checkIfCanAccessColleague(colleague, 'jobs.JobsService/SetColleagueProps')
+                            checkIfCanAccessColleague(colleague.original, 'jobs.JobsService/SetColleagueProps')
                         "
                         :text="$t('components.jobs.self_service.set_absence_date')"
                     >
@@ -441,7 +451,7 @@ defineShortcuts({
                             icon="i-mdi-island"
                             @click="
                                 modal.open(SelfServicePropsAbsenceDateModal, {
-                                    userId: colleague.userId,
+                                    userId: colleague.original.userId,
                                     'onUpdate:absenceDates': ($event) => updateAbsenceDates($event),
                                 })
                             "
@@ -449,7 +459,9 @@ defineShortcuts({
                     </UTooltip>
 
                     <UTooltip
-                        v-if="canDo.getColleague && checkIfCanAccessColleague(colleague, 'jobs.JobsService/GetColleague')"
+                        v-if="
+                            canDo.getColleague && checkIfCanAccessColleague(colleague.original, 'jobs.JobsService/GetColleague')
+                        "
                         :text="$t('common.show')"
                     >
                         <UButton
@@ -457,7 +469,7 @@ defineShortcuts({
                             icon="i-mdi-eye"
                             :to="{
                                 name: 'jobs-colleagues-id-info',
-                                params: { id: colleague.userId ?? 0 },
+                                params: { id: colleague.original.userId ?? 0 },
                             }"
                         />
                     </UTooltip>

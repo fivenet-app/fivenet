@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package codegen.itemslen;
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen;itemslen";
+
+// Marks a repeated field for which we want to generate an ItemsLen() method.
+extend google.protobuf.FieldOptions {
+  bool items_len = 51001;
+}

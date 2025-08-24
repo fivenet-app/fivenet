@@ -9,6 +9,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { getJobsTimeclockClient } from '~~/gen/ts/clients';
 import type { Perms } from '~~/gen/ts/perms';
+import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import type { ListInactiveEmployeesResponse } from '~~/gen/ts/services/jobs/timeclock';
 import ColleagueName from '../colleagues/ColleagueName.vue';
 
@@ -20,27 +21,35 @@ const jobsTimeclockClient = await getJobsTimeclockClient();
 
 const schema = z.object({
     days: z.coerce.number().min(1).max(31),
+    sorting: z
+        .custom<SortByColumn>()
+        .array()
+        .max(1)
+        .default([
+            {
+                id: 'name',
+                desc: false,
+            },
+        ]),
 });
 
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
     days: 14,
+    sorting: [
+        {
+            id: 'rank',
+            desc: false,
+        },
+    ],
 });
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
-const sort = useRouteQueryObject<TableSortable>('sort', {
-    column: 'rank',
-    direction: 'asc',
-});
-
 const { data, status, refresh, error } = useLazyAsyncData(
-    `jobs-timeclock-inactive-${sort.value.column}:${sort.value.direction}-${page.value}-${state.days}`,
+    `jobs-timeclock-inactive-${state.sorting.id}:${state.sorting.desc}-${page.value}-${state.days}`,
     () => listInactiveEmployees(state),
-    {
-        watch: [sort],
-    },
 );
 
 async function listInactiveEmployees(values: Schema): Promise<ListInactiveEmployeesResponse> {
@@ -49,7 +58,7 @@ async function listInactiveEmployees(values: Schema): Promise<ListInactiveEmploy
             pagination: {
                 offset: calculateOffset(page.value, data.value?.pagination),
             },
-            sort: sort.value,
+            sort: { columns: values.sorting },
             days: values.days,
         });
 
@@ -62,12 +71,12 @@ async function listInactiveEmployees(values: Schema): Promise<ListInactiveEmploy
     }
 }
 
-const form = ref<null | Form<Schema>>();
+const formRef = ref<null | Form<Schema>>();
 
 watchDebounced(
     state,
     async () => {
-        const valid = await form.value?.validate();
+        const valid = await formRef.value?.validate();
         if (valid) {
             refresh();
         }
@@ -77,29 +86,29 @@ watchDebounced(
 
 const columns = [
     {
-        key: 'name',
+        accessorKey: 'name',
         label: t('common.name'),
         sortable: true,
     },
     {
-        key: 'rank',
+        accessorKey: 'rank',
         label: t('common.rank', 1),
         sortable: true,
     },
     {
-        key: 'phoneNumber',
+        accessorKey: 'phoneNumber',
         label: t('common.phone_number'),
     },
     {
-        key: 'absence',
+        accessorKey: 'absence',
         label: t('common.absence_date'),
     },
     {
-        key: 'dateofbirth',
+        accessorKey: 'dateofbirth',
         label: t('common.date_of_birth'),
     },
     {
-        key: 'actions',
+        accessorKey: 'actions',
         label: t('common.action', 2),
         sortable: false,
         permission: 'jobs.JobsService/GetColleague' as Perms,
@@ -122,7 +131,7 @@ const { game } = useAppConfig();
                     {{ $t('common.timeclock') }}
                 </UButton>
 
-                <UForm ref="form" class="flex w-full flex-row gap-2" :schema="schema" :state="state" @submit="refresh()">
+                <UForm ref="formRef" class="flex w-full flex-row gap-2" :schema="schema" :state="state" @submit="refresh()">
                     <UFormField class="flex-1" name="days" :label="$t('common.time_ago.day', 2)">
                         <UInput
                             v-model="state.days"
@@ -146,16 +155,16 @@ const { game } = useAppConfig();
     />
     <UTable
         v-else
-        v-model:sort="sort"
+        v-model:sorting="sort"
         class="flex-1"
         :loading="isRequestPending(status)"
         :columns="columns"
-        :rows="data?.colleagues"
+        :data="data?.colleagues"
         :empty-state="{ icon: 'i-mdi-account', label: $t('common.not_found', [$t('common.colleague', 2)]) }"
         sort-mode="manual"
     >
-        <template #name-data="{ row: colleague }">
-            <div class="text-highlighted inline-flex items-center gap-1">
+        <template #name-cell="{ row: colleague }">
+            <div class="inline-flex items-center gap-1 text-highlighted">
                 <ProfilePictureImg
                     :src="colleague.avatar"
                     :name="`${colleague.firstname} ${colleague.lastname}`"
@@ -174,16 +183,16 @@ const { game } = useAppConfig();
             </dl>
         </template>
 
-        <template #rank-data="{ row: colleague }">
+        <template #rank-cell="{ row: colleague }">
             {{ colleague.jobGradeLabel }}
             <template v-if="colleague.job !== game.unemployedJobName"> ({{ colleague.jobGrade }}) </template>
         </template>
 
-        <template #phoneNumber-data="{ row: colleague }">
+        <template #phoneNumber-cell="{ row: colleague }">
             <PhoneNumberBlock :number="colleague.phoneNumber" />
         </template>
 
-        <template #absence-data="{ row: colleague }">
+        <template #absence-cell="{ row: colleague }">
             <dl v-if="colleague.props?.absenceEnd" class="font-normal">
                 <dd class="truncate">
                     {{ $t('common.from') }}:
@@ -195,7 +204,7 @@ const { game } = useAppConfig();
             </dl>
         </template>
 
-        <template v-if="can('jobs.JobsService/GetColleague').value" #actions-data="{ row: colleague }">
+        <template v-if="can('jobs.JobsService/GetColleague').value" #actions-cell="{ row: colleague }">
             <div :key="colleague.id">
                 <UTooltip
                     v-if="checkIfCanAccessColleague(colleague, 'jobs.JobsService/GetColleague')"

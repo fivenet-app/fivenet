@@ -45,21 +45,24 @@ const schema = z.object({
     types: z.nativeEnum(ConductType).array().max(10).default([]),
     showExpired: z.coerce.boolean().default(false),
     user: z.coerce.number().min(1).optional(),
-    sort: z.custom<TableSortable>().default({
-        column: 'id',
-        direction: 'desc',
-    }),
+    sorting: z
+        .custom<SortByColumn>()
+        .array()
+        .max(3)
+        .default([
+            {
+                id: 'id',
+                desc: true,
+            },
+        ]),
     page: pageNumberSchema,
 });
 
 const query = useSearchForm('jobs_conduct', schema);
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `jobs-conduct-${query.sort.column}:${query.sort.direction}-${query.page}-${query.types.join(',')}-${query.showExpired}-${query.id}`,
+    `jobs-conduct-${query.sorting.column}:${query.sorting.direction}-${query.page}-${query.types.join(',')}-${query.showExpired}-${query.id}`,
     () => listConductEntries(),
-    {
-        transform: (input) => ({ ...input, entries: wrapRows(input?.entries, columns) }),
-    },
 );
 
 async function listConductEntries(): Promise<ListConductEntriesResponse> {
@@ -74,7 +77,7 @@ async function listConductEntries(): Promise<ListConductEntriesResponse> {
             pagination: {
                 offset: calculateOffset(query.page, data.value?.pagination),
             },
-            sort: query.sort,
+            sort: { columns: query.sorting },
             types: query.types,
             userIds: userIds,
             showExpired: query.showExpired,
@@ -120,41 +123,41 @@ async function updateEntryInPlace(entry: ConductEntry): Promise<void> {
 
 const columns = [
     {
-        key: 'id',
+        accessorKey: 'id',
         label: t('common.id'),
         sortable: true,
     },
     {
-        key: 'createdAt',
+        accessorKey: 'createdAt',
         label: t('common.created_at'),
     },
     {
-        key: 'expiresAt',
+        accessorKey: 'expiresAt',
         label: t('common.expires_at'),
         class: 'hidden lg:table-cell',
         rowClass: 'hidden lg:table-cell',
     },
     {
-        key: 'type',
+        accessorKey: 'type',
         label: t('common.type'),
         sortable: true,
     },
     {
-        key: 'message',
+        accessorKey: 'message',
         label: t('common.message'),
     },
     {
-        key: 'target',
+        accessorKey: 'target',
         label: t('common.target'),
     },
     {
-        key: 'creator',
+        accessorKey: 'creator',
         label: t('common.creator'),
         class: 'hidden lg:table-cell',
         rowClass: 'hidden lg:table-cell',
     },
     {
-        key: 'actions',
+        accessorKey: 'actions',
         label: t('common.action', 2),
         sortable: false,
     },
@@ -296,20 +299,24 @@ const columns = [
     />
     <UTable
         v-else
-        v-model:sort="query.sort"
+        v-model:sorting="query.sorting"
         class="flex-1"
         :loading="isRequestPending(status)"
         :columns="columns"
-        :rows="data?.entries"
+        :data="data?.entries"
         :empty-state="{ icon: 'i-mdi-list-status', label: $t('common.not_found', [$t('common.entry', 2)]) }"
         sort-mode="manual"
     >
-        <template #createdAt-data="{ row: conduct }">
+        <template #createdAt-cell="{ row: conduct }">
             <GenericTime :value="conduct.createdAt" />
             <dl class="font-normal lg:hidden">
                 <dt class="sr-only">{{ $t('common.expires_at') }}</dt>
                 <dd class="mt-1 truncate">
-                    <GenericTime v-if="conduct.expiresAt?.value" class="font-semibold" :value="conduct.expiresAt.value" />
+                    <GenericTime
+                        v-if="conduct.original.expiresAt?.value"
+                        class="font-semibold"
+                        :value="conduct.original.expiresAt.value"
+                    />
                     <span v-else>
                         {{ $t('components.jobs.conduct.List.no_expiration') }}
                     </span>
@@ -317,41 +324,46 @@ const columns = [
             </dl>
         </template>
 
-        <template #expiresAt-data="{ row: conduct }">
-            <GenericTime v-if="conduct.expiresAt?.value" class="font-semibold" type="date" :value="conduct.expiresAt.value" />
+        <template #expiresAt-cell="{ row: conduct }">
+            <GenericTime
+                v-if="conduct.original.expiresAt?.value"
+                class="font-semibold"
+                type="date"
+                :value="conduct.original.expiresAt.value"
+            />
             <span v-else>
                 {{ $t('components.jobs.conduct.List.no_expiration') }}
             </span>
         </template>
 
-        <template #type-data="{ row: conduct }">
-            <UBadge :color="conductTypesToBadgeColor(conduct.type)">
-                {{ $t(`enums.jobs.ConductType.${ConductType[conduct.type ?? 0]}`) }}
+        <template #type-cell="{ row: conduct }">
+            <UBadge :color="conductTypesToBadgeColor(conduct.original.type)">
+                {{ $t(`enums.jobs.ConductType.${ConductType[conduct.original.type ?? 0]}`) }}
             </UBadge>
         </template>
 
-        <template #message-data="{ row: conduct }">
-            <p class="line-clamp-2 w-full max-w-sm whitespace-normal break-all hover:line-clamp-6">
-                {{ conduct.message }}
+        <template #message-cell="{ row: conduct }">
+            <p class="line-clamp-2 w-full max-w-sm break-all whitespace-normal hover:line-clamp-6">
+                {{ conduct.original.message }}
             </p>
         </template>
 
-        <template #target-data="{ row: conduct }">
-            <ColleagueInfoPopover :user="conduct.targetUser" />
+        <template #target-cell="{ row: conduct }">
+            <ColleagueInfoPopover :user="conduct.original.targetUser" />
             <dl class="font-normal lg:hidden">
                 <dt class="sr-only">{{ $t('common.creator') }}</dt>
                 <dd class="mt-1 truncate">
-                    <ColleagueInfoPopover :user="conduct.creator.value" />
+                    <ColleagueInfoPopover :user="conduct.original.creator.value" />
                 </dd>
             </dl>
         </template>
 
-        <template #creator-data="{ row: conduct }">
-            <ColleagueInfoPopover :user="conduct.creator.value" :hide-props="true" />
+        <template #creator-cell="{ row: conduct }">
+            <ColleagueInfoPopover :user="conduct.original.creator.value" :hide-props="true" />
         </template>
 
-        <template #actions-data="{ row: conduct }">
-            <div :key="conduct.id">
+        <template #actions-cell="{ row: conduct }">
+            <div :key="conduct.original.id">
                 <UTooltip :text="$t('common.show')">
                     <UButton
                         variant="link"
@@ -387,7 +399,7 @@ const columns = [
                         color="error"
                         @click="
                             modal.open(ConfirmModal, {
-                                confirm: async () => deleteConductEntry(conduct.id),
+                                confirm: async () => deleteConductEntry(conduct.original.id),
                             })
                         "
                     />

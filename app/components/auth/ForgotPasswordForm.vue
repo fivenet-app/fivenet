@@ -88,6 +88,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 pattern="[0-9]*"
                 autocomplete="registrationToken"
                 :placeholder="$t('components.auth.ForgotPassword.registration_token')"
+                :ui="{ root: 'w-full' }"
             />
         </UFormField>
 
@@ -97,7 +98,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 :type="passwordVisibility ? 'text' : 'password'"
                 autocomplete="new-password"
                 :placeholder="$t('common.password')"
-                :ui="{ trailing: 'pe-1' }"
+                :ui="{ trailing: 'pe-1', root: 'w-full' }"
             >
                 <template #trailing>
                     <UButton

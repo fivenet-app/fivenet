@@ -80,28 +80,28 @@ const modal = useOverlay();
 
 const columns = [
     {
-        key: 'actions',
+        accessorKey: 'actions',
         label: t('common.action', 2),
         sortable: false,
     },
     {
-        key: 'preview',
+        accessorKey: 'preview',
         label: t('common.preview'),
     },
     {
-        key: 'name',
+        accessorKey: 'name',
         label: t('common.name'),
     },
     {
-        key: 'fileSize',
+        accessorKey: 'fileSize',
         label: t('common.file_size'),
     },
     {
-        key: 'updatedAt',
+        accessorKey: 'updatedAt',
         label: t('common.updated_at'),
     },
     {
-        key: 'contentType',
+        accessorKey: 'contentType',
         label: t('common.type'),
     },
 ];
@@ -151,10 +151,10 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
             class="flex-1"
             :loading="isRequestPending(status)"
             :columns="columns"
-            :rows="files?.files"
+            :data="files?.files"
             :empty-state="{ icon: 'i-mdi-file-multiple', label: $t('common.not_found', [$t('common.file', 2)]) }"
         >
-            <template #actions-data="{ row: file }">
+            <template #actions-cell="{ row: file }">
                 <UTooltip :text="$t('common.show')">
                     <UButton
                         variant="link"
@@ -179,13 +179,13 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
                 </UTooltip>
             </template>
 
-            <template #name-data="{ row: file }">
+            <template #name-cell="{ row: file }">
                 <span class="text-highlighted">
                     {{ file.filePath }}
                 </span>
             </template>
 
-            <template #preview-data="{ row: file }">
+            <template #preview-cell="{ row: file }">
                 <UIcon
                     v-if="!previewTypes.some((ext) => file.filePath.endsWith(ext))"
                     class="size-8"
@@ -194,11 +194,11 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
                 <NuxtImg v-else class="max-h-24 max-w-32" :src="`/api/filestore/${file.filePath}`" loading="lazy" />
             </template>
 
-            <template #fileSize-data="{ row: file }">
+            <template #fileSize-cell="{ row: file }">
                 {{ formatBytes(file.size) }}
             </template>
 
-            <template #updatedAt-data="{ row: file }">
+            <template #updatedAt-cell="{ row: file }">
                 <GenericTime :value="toDate(file.lastModified)" />
             </template>
         </UTable>
