@@ -205,7 +205,7 @@ func New(p Params) (Permissions, error) {
 
 	logger := p.Logger.WithOptions(
 		zap.IncreaseLevel(
-			p.Cfg.LogLevelOverrides.Get(config.LoggingComponentPerms, p.Cfg.LogLevel),
+			p.Cfg.Log.LevelOverrides.Get(config.LoggingComponentPerms, p.Cfg.LogLevel),
 		),
 	)
 

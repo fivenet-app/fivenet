@@ -5,10 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/DeRuina/timberjack"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"go.opentelemetry.io/contrib/bridges/otelzap"
-	"go.opentelemetry.io/otel/log/global"
-	"go.opentelemetry.io/otel/sdk/log"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -23,8 +21,7 @@ var LoggerModule = fx.Module("logger",
 type LoggerResults struct {
 	fx.Out
 
-	Logger  *zap.Logger
-	ZapCore zapcore.Core
+	Logger *zap.Logger
 }
 
 type LoggerParams struct {
@@ -36,70 +33,49 @@ type LoggerParams struct {
 
 func NewLogger(p LoggerParams) (LoggerResults, error) {
 	// Logger Setup
-	loggerConfig := zap.NewProductionConfig()
 	level, err := zapcore.ParseLevel(p.Config.LogLevel)
 	if err != nil {
 		return LoggerResults{}, fmt.Errorf("failed to parse log level from config. %w", err)
 	}
-	loggerConfig.Level.SetLevel(level)
 
-	logger, err := loggerConfig.Build()
-	if err != nil {
-		return LoggerResults{}, fmt.Errorf("failed to configure logger. %w", err)
-	}
+	var logger *zap.Logger
+	if p.Config.Log.LogToFile {
+		tl := &timberjack.Logger{
+			Filename:         "/var/log/myapp/foo.log",
+			MaxSize:          500,
+			MaxBackups:       3,
+			MaxAge:           28,
+			Compress:         true,
+			LocalTime:        true,
+			RotationInterval: 24 * time.Hour,
+		}
+		w := zapcore.AddSync(tl)
 
-	res, err := newAttributes(p.Config.OTLP)
-	if err != nil {
-		return LoggerResults{}, fmt.Errorf(
-			"failed to create attributes for tracer provider. %w",
-			err,
+		core := zapcore.NewCore(
+			zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig()),
+			w, level,
 		)
-	}
 
-	ctx := context.Background()
-	logExporter, err := newLoggerExporter(
-		ctx,
-		p.Config.OTLP.Type,
-		p.Config.OTLP.URL,
-		p.Config.OTLP.Insecure,
-		p.Config.OTLP.Timeout,
-		p.Config.OTLP.Headers,
-		p.Config.OTLP.Compression,
-	)
-	if err != nil {
-		return LoggerResults{}, fmt.Errorf("failed to create logger exporter. %w", err)
-	}
-
-	if p.Config.OTLP.Enabled {
-		loggerProvider := log.NewLoggerProvider(
-			log.WithProcessor(log.NewBatchProcessor(logExporter)),
-			log.WithResource(res),
-		)
-		global.SetLoggerProvider(loggerProvider)
-
-		core := zapcore.NewTee(
-			logger.Core(),
-			otelzap.NewCore(
-				"github.com/fivenet-app/fivenet",
-				otelzap.WithLoggerProvider(loggerProvider),
-			),
-		)
 		logger = zap.New(core)
+	} else {
+		loggerConfig := zap.NewProductionConfig()
+		loggerConfig.Level.SetLevel(level)
 
-		p.LC.Append(fx.StopHook(func(ctx context.Context) error {
-			ctx, cancel := context.WithTimeout(ctx, 7*time.Second)
-			defer cancel()
-
-			// Gracefully shutdown components
-			if err := loggerProvider.Shutdown(ctx); err != nil {
-				return fmt.Errorf("failed to cleanly shut down logger provider. %w", err)
-			}
-
-			return nil
-		}))
+		logger, err = loggerConfig.Build()
+		if err != nil {
+			return LoggerResults{}, fmt.Errorf("failed to configure logger. %w", err)
+		}
 	}
 
 	zap.ReplaceGlobals(logger)
+
+	p.LC.Append(fx.StopHook(func(_ context.Context) error {
+		if err := logger.Sync(); err != nil {
+			return fmt.Errorf("failed to sync logger. %w", err)
+		}
+
+		return nil
+	}))
 
 	return LoggerResults{
 		Logger: logger,

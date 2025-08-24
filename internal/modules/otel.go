@@ -10,18 +10,14 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc"
-	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
-	"go.opentelemetry.io/otel/exporters/stdout/stdoutlog"
 	"go.opentelemetry.io/otel/exporters/stdout/stdoutmetric"
 	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
 	otelmetric "go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/propagation"
-	"go.opentelemetry.io/otel/sdk/log"
 	"go.opentelemetry.io/otel/sdk/metric"
 	"go.opentelemetry.io/otel/sdk/resource"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -213,54 +209,6 @@ func newMetricsExporter(
 		fallthrough
 	default:
 		return stdoutmetric.New()
-	}
-}
-
-func newLoggerExporter(
-	ctx context.Context,
-	loggerType config.OtelExporter,
-	endpoint string,
-	insecure bool,
-	timeout time.Duration,
-	headers map[string]string,
-	compression string,
-) (log.Exporter, error) {
-	switch loggerType {
-	case config.TracingExporterOTLPGRPC:
-		secureOption := otlploggrpc.WithTLSCredentials(credentials.NewClientTLSFromCert(nil, ""))
-		if insecure {
-			secureOption = otlploggrpc.WithInsecure()
-		}
-
-		logExporter, err := otlploggrpc.New(ctx,
-			otlploggrpc.WithEndpointURL(endpoint),
-			secureOption,
-			otlploggrpc.WithCompressor(compression),
-			otlploggrpc.WithTimeout(timeout),
-			otlploggrpc.WithHeaders(headers),
-		)
-		if err != nil {
-			return nil, fmt.Errorf("failed to create log exporter. %w", err)
-		}
-
-		return logExporter, nil
-
-	case config.TracingExporterOTLPHTTP:
-		opts := []otlploghttp.Option{
-			otlploghttp.WithEndpointURL(endpoint),
-			otlploghttp.WithTimeout(timeout),
-			otlploghttp.WithHeaders(headers),
-		}
-
-		logExporter, err := otlploghttp.New(ctx, opts...)
-		if err != nil {
-			return nil, fmt.Errorf("failed to create log exporter. %w", err)
-		}
-
-		return logExporter, nil
-
-	default:
-		return stdoutlog.New()
 	}
 }
 

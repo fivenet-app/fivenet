@@ -86,9 +86,9 @@ func Load() (Result, error) {
 	}
 
 	// Ensure that all log level overrides are set to the default log level if they are empty
-	for k, v := range c.LogLevelOverrides {
+	for k, v := range c.Log.LevelOverrides {
 		if v == "" {
-			c.LogLevelOverrides[k] = c.LogLevel
+			c.Log.LevelOverrides[k] = c.LogLevel
 		}
 	}
 

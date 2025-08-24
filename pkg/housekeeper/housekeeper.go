@@ -80,7 +80,7 @@ type Result struct {
 
 // New constructs a new Housekeeper and returns it as an fx result.
 func New(p Params) Result {
-	logger := p.Logger.WithOptions(zap.IncreaseLevel(p.Cfg.LogLevelOverrides.Get(config.LoggingComponentHousekeeper, p.Cfg.LogLevel))).
+	logger := p.Logger.WithOptions(zap.IncreaseLevel(p.Cfg.Log.LevelOverrides.Get(config.LoggingComponentHousekeeper, p.Cfg.LogLevel))).
 		Named("housekeeper")
 
 	h := &Housekeeper{

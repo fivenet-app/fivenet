@@ -12,9 +12,8 @@ import (
 type Config struct {
 	Mode string `default:"release" yaml:"mode"`
 
-	LogLevel string `default:"DEBUG" yaml:"logLevel"          enum:""`
-	// Any empty log level will be set to the `.LogLevel`
-	LogLevelOverrides LogLevelOverrides `                yaml:"logLevelOverrides"`
+	LogLevel string `default:"DEBUG" yaml:"logLevel" enum:""`
+	Log      Log    `                yaml:"log"`
 
 	// Secret used to encrypt/decrypt data in, e.g., the database
 	Secret string `yaml:"secret"`
@@ -41,6 +40,34 @@ type Config struct {
 	OTLP           OTLPConfig     `yaml:"otlp"`
 	UpdateCheck    UpdateCheck    `yaml:"updateCheck"`
 	Icons          Icons          `yaml:"icons"`
+}
+
+type Log struct {
+	// LogToFile indicates whether to log to a file instead of stdout.
+	LogToFile bool `default:"false" yaml:"logToFile"`
+	// File contains the configuration for file logging (if LogToFile is true, make sure to configure this).
+	File LogFile `                yaml:"file"`
+
+	// Any empty log level will be set to the `.LogLevel`
+	LevelOverrides LogLevelOverrides `yaml:"logLevelOverrides"`
+}
+
+type LogFile struct {
+	// Path to the log file.
+	Path string `yaml:"path"     default:"./fivenet.log"`
+	// Rotation contains the configuration for log rotation.
+	Rotation LogRotation `yaml:"rotation"`
+}
+
+type LogRotation struct {
+	// MaxSize is the maximum size in megabytes of the log file before it gets rotated.
+	MaxSize int `default:"10"   yaml:"maxSize"`
+	// MaxBackups is the maximum number of old log files to retain.
+	MaxBackups int `default:"7"    yaml:"maxBackups"`
+	// MaxAge is the maximum number of days to retain old log files based on the timestamp
+	MaxAge int `default:"14"   yaml:"maxAge"`
+	// Compress determines if the rotated log files should be compressed using gzip.
+	Compress bool `default:"true" yaml:"compress"`
 }
 
 type LoggingComponent string

@@ -148,7 +148,7 @@ func New(p Params) *UnitDB {
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		storeLogger := logger.WithOptions(
 			zap.IncreaseLevel(
-				p.Cfg.LogLevelOverrides.Get(config.LoggingComponentKVStore, p.Cfg.LogLevel),
+				p.Cfg.Log.LevelOverrides.Get(config.LoggingComponentKVStore, p.Cfg.LogLevel),
 			),
 		)
 

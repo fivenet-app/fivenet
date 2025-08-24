@@ -6,12 +6,26 @@ mode: "release"
 
 # Can be "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
 logLevel: "INFO"
-# Customize log level for specific components (if empty will use the global logLevel, can never be more verbose than the global logLevel)
-logLevelOverrides:
-  kvstore: "INFO"
-  locks: "INFO"
-  cron: "INFO"
-  perms: "INFO"
+log:
+  # Indicates whether to log to a file instead of stdout.
+  logToFile: false
+  # Contains the configuration for file logging (if LogToFile is true, make sure to configure this).
+  file:
+    # Path to the log file.
+    path: "./fivenet.log"
+    # Contains the configuration for log rotation.
+    rotation:
+      # Megabytes
+      maxSize: 10
+      maxBackups: 7
+      maxAge: 14
+      compress: true
+
+  levelOverrides:
+    kvstore: "INFO"
+    locks: "INFO"
+    cron: "INFO"
+    perms: "INFO"
 
 # Must be 32 chars (bytes) long
 secret: "your_generated_db_secret_32_char"

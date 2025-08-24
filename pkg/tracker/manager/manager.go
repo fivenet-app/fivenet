@@ -124,7 +124,7 @@ func New(p Params) (*Manager, error) {
 
 		storeLogger := logger.WithOptions(
 			zap.IncreaseLevel(
-				p.Cfg.LogLevelOverrides.Get(config.LoggingComponentKVStore, p.Cfg.LogLevel),
+				p.Cfg.Log.LevelOverrides.Get(config.LoggingComponentKVStore, p.Cfg.LogLevel),
 			),
 		)
 
