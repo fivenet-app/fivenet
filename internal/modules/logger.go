@@ -70,9 +70,7 @@ func NewLogger(p LoggerParams) (LoggerResults, error) {
 	zap.ReplaceGlobals(logger)
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
-		if err := logger.Sync(); err != nil {
-			return fmt.Errorf("failed to sync logger. %w", err)
-		}
+		_ = logger.Sync()
 
 		return nil
 	}))
