@@ -1,10 +1,12 @@
 <script lang="ts" setup>
+import type { TableColumn } from '@nuxt/ui';
+import { h } from 'vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useLivemapStore } from '~/stores/livemap';
 import { getLivemapLivemapClient } from '~~/gen/ts/clients';
-import { MarkerType } from '~~/gen/ts/resources/livemap/marker_marker';
+import { type MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/marker_marker';
 
 const { t } = useI18n();
 
@@ -13,6 +15,8 @@ const { can } = useAuth();
 const livemapStore = useLivemapStore();
 const { deleteMarkerMarker, goto } = livemapStore;
 const { markersMarkers } = storeToRefs(livemapStore);
+
+const overlay = useOverlay();
 
 const livemapLivemapClient = await getLivemapLivemapClient();
 
@@ -30,43 +34,86 @@ async function deleteMarker(id: number): Promise<void> {
     }
 }
 
-const modal = useOverlay();
+const columns = computed(
+    () =>
+        [
+            {
+                accessorKey: 'actions',
+                header: t('common.action', 2),
+                cell: ({ row }) =>
+                    h('div', [
+                        h('UTooltip', { text: t('common.mark') }, () =>
+                            h('UButton', {
+                                variant: 'link',
+                                icon: 'i-mdi-map-marker',
+                                onClick: () => goto({ x: row.original.x, y: row.original.y }),
+                            }),
+                        ),
+                        h('UTooltip', { text: t('common.delete') }, () =>
+                            can('livemap.LivemapService/DeleteMarker').value
+                                ? h('UButton', {
+                                      variant: 'link',
+                                      icon: 'i-mdi-delete',
+                                      color: 'error',
+                                      onClick: () =>
+                                          confirmModal.open({
+                                              confirm: async () => deleteMarker(row.original.id),
+                                          }),
+                                  })
+                                : null,
+                        ),
+                    ]),
+            },
+            {
+                accessorKey: 'createdAt',
+                header: t('common.created'),
+                cell: ({ row }) => h(GenericTime, { value: row.original.createdAt, type: 'compact' }),
+            },
+            {
+                accessorKey: 'expiresAt',
+                header: t('common.expires_at'),
+                cell: ({ row }) =>
+                    row.original.expiresAt
+                        ? h(GenericTime, { value: row.original.expiresAt, type: 'compact' })
+                        : t('common.na'),
+            },
+            {
+                accessorKey: 'name',
+                header: t('common.name'),
+                cell: ({ row }) => row.original.name,
+            },
+            {
+                accessorKey: 'type',
+                header: t('common.type'),
+                cell: ({ row }) => t(`enums.livemap.MarkerType.${MarkerType[row.original.type]}`),
+            },
+            {
+                accessorKey: 'description',
+                header: t('common.description'),
+                cell: ({ row }) =>
+                    h(
+                        'p',
+                        { class: 'max-h-14 truncate overflow-y-scroll break-words' },
+                        row.original.description ?? t('common.na'),
+                    ),
+            },
+            {
+                accessorKey: 'creator',
+                header: t('common.creator'),
+                cell: ({ row }) =>
+                    row.original.creator
+                        ? h(CitizenInfoPopover, { user: row.original.creator, trailing: false })
+                        : t('common.unknown'),
+            },
+            {
+                accessorKey: 'job',
+                header: t('common.job'),
+                cell: ({ row }) => row.original.creator?.jobLabel ?? t('common.na'),
+            },
+        ] as TableColumn<MarkerMarker>[],
+);
 
-const columns = [
-    {
-        accessorKey: 'actions',
-        label: t('common.action', 2),
-        sortable: false,
-    },
-    {
-        accessorKey: 'createdAt',
-        label: t('common.created'),
-    },
-    {
-        accessorKey: 'expiresAt',
-        label: t('common.expires_at'),
-    },
-    {
-        accessorKey: 'name',
-        label: t('common.name'),
-    },
-    {
-        accessorKey: 'type',
-        label: t('common.type'),
-    },
-    {
-        accessorKey: 'description',
-        label: t('common.description'),
-    },
-    {
-        accessorKey: 'creator',
-        label: t('common.creator'),
-    },
-    {
-        accessorKey: 'job',
-        label: t('common.job'),
-    },
-];
+const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
@@ -87,71 +134,10 @@ const columns = [
                 class="overflow-x-visible"
                 :columns="columns"
                 :data="Array.from(markersMarkers.values())"
-                :empty-state="{
-                    icon: 'i-mdi-map-marker',
-                    label: $t('common.not_found', [$t('common.marker', 2)]),
-                }"
-            >
-                <template #actions-cell="{ row: marker }">
-                    <div :key="marker.id">
-                        <UTooltip :text="$t('common.mark')">
-                            <UButton variant="link" icon="i-mdi-map-marker" @click="goto({ x: marker.x, y: marker.y })" />
-                        </UTooltip>
-
-                        <UTooltip :text="$t('common.delete')">
-                            <UButton
-                                v-if="can('livemap.LivemapService/DeleteMarker').value"
-                                variant="link"
-                                icon="i-mdi-delete"
-                                color="error"
-                                @click="
-                                    modal.open(ConfirmModal, {
-                                        confirm: async () => deleteMarker(marker.id),
-                                    })
-                                "
-                            />
-                        </UTooltip>
-                    </div>
-                </template>
-
-                <template #createdAt-cell="{ row: marker }">
-                    <GenericTime :value="marker.createdAt" type="compact" />
-                </template>
-
-                <template #expiresAt-cell="{ row: marker }">
-                    <GenericTime v-if="marker.expiresAt" :value="marker.expiresAt" type="compact" />
-                    <span v-else>
-                        {{ $t('common.na') }}
-                    </span>
-                </template>
-
-                <template #name-cell="{ row: marker }">
-                    {{ marker.name }}
-                </template>
-
-                <template #type-cell="{ row: marker }">
-                    {{ $t(`enums.livemap.MarkerType.${MarkerType[marker.type]}`) }}
-                </template>
-
-                <template #description-cell="{ row: marker }">
-                    <p class="max-h-14 truncate overflow-y-scroll break-words">
-                        {{ marker.description ?? $t('common.na') }}
-                    </p>
-                </template>
-
-                <template #creator-cell="{ row: marker }">
-                    <span v-if="marker.creator">
-                        <CitizenInfoPopover :user="marker.creator" :trailing="false" />
-                    </span>
-                    <span v-else>
-                        {{ $t('common.unknown') }}
-                    </span>
-                </template>
-
-                <template #job-cell="{ row: marker }">
-                    {{ marker.creator?.jobLabel ?? $t('common.na') }}
-                </template>
-            </UTable>
+                :empty="$t('common.not_found', [$t('common.marker', 2)])"
+                :pagination-options="{ manualPagination: true }"
+                :sorting-options="{ manualSorting: true }"
+            />
 
             <div class="flex-1" />
         </div>

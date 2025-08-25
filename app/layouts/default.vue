@@ -412,9 +412,9 @@ const quickAccessButtons = computed(() =>
         <UDashboardSidebar
             id="mainleftsidebar"
             v-model:open="open"
-            :default-size="25"
-            :min-size="20"
-            :max-size="40"
+            :default-size="15"
+            :min-size="10"
+            :max-size="25"
             resizable
             collapsible
             class="bg-elevated/25"

@@ -29,7 +29,7 @@ const emit = defineEmits<{
     (e: 'update:modelValue', entry: CalendarEntryRSVP | undefined): void;
 }>();
 
-const modal = useOverlay();
+const overlay = useOverlay();
 
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
@@ -112,6 +112,8 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
     canSubmit.value = false;
     await rsvpCalendarEntry(rsvpResponse).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
@@ -161,7 +163,7 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
                     icon="i-mdi-calendar-remove"
                     color="neutral"
                     @click="
-                        modal.open(ConfirmModal, {
+                        confirmModal.open({
                             confirm: async () => rsvpCalendarEntry(RsvpResponses.NO, true),
                         })
                     "

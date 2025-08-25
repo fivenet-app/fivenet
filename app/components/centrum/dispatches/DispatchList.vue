@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+import { UButton, UTooltip } from '#components';
+import type { TableColumn } from '@nuxt/ui';
+import { h } from 'vue';
 import DispatchAssignModal from '~/components/centrum/dispatches/DispatchAssignModal.vue';
 import DispatchDetailsByIDSlideover from '~/components/centrum/dispatches/DispatchDetailsByIDSlideover.vue';
 import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
@@ -32,9 +35,7 @@ const props = withDefaults(
 
 const { t } = useI18n();
 
-const modal = useOverlay();
-
-const slideover = useOverlay();
+const overlay = useOverlay();
 
 const { goto } = useLivemapStore();
 
@@ -68,46 +69,153 @@ const grouped = computedAsync(async () => {
 const columns = [
     {
         accessorKey: 'actions',
-        label: t('common.action', 2),
-        sortable: false,
+        header: t('common.action', 2),
+        cell: ({ row }) =>
+            h('div', { class: 'flex items-center' }, [
+                h(
+                    UTooltip,
+                    {
+                        text: t('common.assign'),
+                        vIf: !props.hideActions,
+                    },
+                    [
+                        h(UButton, {
+                            variant: 'link',
+                            icon: 'i-mdi-account-multiple-plus',
+                            disabled: !checkDispatchAccess(row.original.jobs, CentrumAccessLevel.DISPATCH),
+                            onClick: () =>
+                                dispatchAssignModal.open({
+                                    dispatchId: row.original.id,
+                                }),
+                        }),
+                    ],
+                ),
+                h(
+                    UTooltip,
+                    {
+                        text: t('common.go_to_location'),
+                    },
+                    [
+                        h(UButton, {
+                            variant: 'link',
+                            icon: 'i-mdi-map-marker',
+                            onClick: () => goto({ x: row.original.x, y: row.original.y }),
+                        }),
+                    ],
+                ),
+                h(
+                    UTooltip,
+                    {
+                        text: t('common.status'),
+                        vIf: !props.hideActions,
+                    },
+                    [
+                        h(UButton, {
+                            variant: 'link',
+                            icon: 'i-mdi-refresh',
+                            disabled: !checkDispatchAccess(row.original.jobs, CentrumAccessLevel.DISPATCH),
+                            onClick: () =>
+                                dispatchStatusUpdateModal.open({
+                                    dispatchId: row.original.id,
+                                }),
+                        }),
+                    ],
+                ),
+                h(
+                    UTooltip,
+                    {
+                        text: t('common.detail', 2),
+                    },
+                    [
+                        h(UButton, {
+                            variant: 'link',
+                            icon: 'i-mdi-dots-vertical',
+                            onClick: () =>
+                                dispatchDetailsSlideover.open({
+                                    dispatchId: row.original.id,
+                                }),
+                        }),
+                    ],
+                ),
+            ]),
     },
     {
         accessorKey: 'id',
-        label: t('common.id'),
+        header: t('common.id'),
+        cell: ({ row }) => h(IDCopyBadge, { id: row.original.id, prefix: 'DSP', disableTooltip: true, variant: 'link' }),
     },
     {
         accessorKey: 'createdAt',
-        label: t('common.created'),
+        header: t('common.created'),
+        cell: ({ row }) =>
+            h(GenericTime, {
+                value: row.original.createdAt,
+                type: 'compact',
+                badge: true,
+                size: 'xs',
+                updateCallback: () =>
+                    dispatchTimeToBadge(
+                        row.original.createdAt,
+                        row.original.status?.status,
+                        settings.value?.timings?.dispatchMaxWait,
+                    ),
+            }),
     },
     {
         accessorKey: 'status',
-        label: t('common.status'),
+        header: t('common.status'),
+        cell: ({ row }) => h(DispatchStatusBadge, { status: row.original.status?.status }),
     },
     {
         accessorKey: 'postal',
-        label: t('common.postal'),
+        header: t('common.postal'),
+        cell: ({ row }) => h('span', {}, row.original.postal ?? t('common.na')),
     },
     {
         accessorKey: 'units',
-        label: t('common.unit'),
-        sortable: false,
+        header: t('common.unit'),
+        cell: ({ row }) =>
+            row.original.units.length === 0
+                ? h('span', { class: 'italic' }, t('enums.centrum.StatusDispatch.UNASSIGNED'))
+                : h(
+                      'span',
+                      { class: 'grid grid-flow-row auto-rows-auto gap-1 sm:grid-flow-col' },
+                      row.original.units.map((unit) =>
+                          h(UnitInfoPopover, {
+                              key: unit.unitId,
+                              unit: unit.unit,
+                              initialsOnly: true,
+                              badge: true,
+                              assignment: unit,
+                          }),
+                      ),
+                  ),
     },
     {
         accessorKey: 'creator',
-        label: t('common.creator'),
-        sortable: false,
+        header: t('common.creator'),
+        cell: ({ row }) =>
+            row.original.anon
+                ? h('span', {}, t('common.anon'))
+                : row.original.creator
+                  ? h(CitizenInfoPopover, { user: row.original.creator, trailing: false })
+                  : h('span', {}, t('common.unknown')),
     },
     {
         accessorKey: 'attributes',
-        label: t('common.attributes', 2),
-        sortable: false,
+        header: t('common.attributes', 2),
+        cell: ({ row }) => h(DispatchAttributes, { attributes: row.original.attributes }),
     },
     {
         accessorKey: 'message',
-        label: t('common.message'),
-        sortable: false,
+        header: t('common.message'),
+        cell: ({ row }) => h('p', { class: 'line-clamp-2 hover:line-clamp-6' }, row.original.message),
     },
-];
+] as TableColumn<Dispatch>[];
+
+const dispatchAssignModal = overlay.create(DispatchAssignModal);
+const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
+const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
 </script>
 
 <template>
@@ -142,148 +250,13 @@ const columns = [
                     class="overflow-x-visible"
                     :columns="columns"
                     :data="group.dispatches"
-                    :empty-state="{
-                        icon: 'i-mdi-car-emergency',
-                        label: $t('common.not_found', [$t('common.dispatch', 2)]),
-                    }"
-                >
-                    <template #actions-cell="{ row: dispatch }">
-                        <div :key="dispatch.id">
-                            <UTooltip v-if="!hideActions" :text="$t('common.assign')">
-                                <UButton
-                                    variant="link"
-                                    icon="i-mdi-account-multiple-plus"
-                                    :disabled="!checkDispatchAccess(dispatch.jobs, CentrumAccessLevel.DISPATCH)"
-                                    @click="
-                                        () =>
-                                            modal.open(DispatchAssignModal, {
-                                                dispatchId: dispatch.id,
-                                            })
-                                    "
-                                />
-                            </UTooltip>
-
-                            <UTooltip :text="$t('common.go_to_location')">
-                                <UButton
-                                    variant="link"
-                                    icon="i-mdi-map-marker"
-                                    @click="() => goto({ x: dispatch.x, y: dispatch.y })"
-                                />
-                            </UTooltip>
-
-                            <UTooltip v-if="!hideActions" :text="$t('common.status')">
-                                <UButton
-                                    variant="link"
-                                    icon="i-mdi-refresh"
-                                    :disabled="!checkDispatchAccess(dispatch.jobs, CentrumAccessLevel.DISPATCH)"
-                                    @click="
-                                        () =>
-                                            modal.open(DispatchStatusUpdateModal, {
-                                                dispatchId: dispatch.id,
-                                            })
-                                    "
-                                />
-                            </UTooltip>
-
-                            <UTooltip :text="$t('common.detail', 2)">
-                                <UButton
-                                    variant="link"
-                                    icon="i-mdi-dots-vertical"
-                                    @click="
-                                        () =>
-                                            slideover.open(DispatchDetailsByIDSlideover, {
-                                                dispatchId: dispatch.id,
-                                            })
-                                    "
-                                />
-                            </UTooltip>
-                        </div>
-                    </template>
-
-                    <template #createdAt-cell="{ row: dispatch }">
-                        <span class="text-highlighted">
-                            <GenericTime
-                                :value="dispatch.createdAt"
-                                type="compact"
-                                badge
-                                size="xs"
-                                :update-callback="
-                                    () =>
-                                        dispatchTimeToBadge(
-                                            dispatch.createdAt,
-                                            dispatch.status?.status,
-                                            settings?.timings?.dispatchMaxWait,
-                                        )
-                                "
-                            />
-                        </span>
-                    </template>
-
-                    <template #status-cell="{ row: dispatch }">
-                        <DispatchStatusBadge :status="dispatch.status?.status" />
-                    </template>
-
-                    <template #postal-cell="{ row: dispatch }">
-                        {{ dispatch.postal ?? $t('common.na') }}
-                    </template>
-
-                    <template #units-cell="{ row: dispatch }">
-                        <span v-if="dispatch.units.length === 0" class="italic">{{
-                            $t('enums.centrum.StatusDispatch.UNASSIGNED')
-                        }}</span>
-                        <span v-else class="grid grid-flow-row auto-rows-auto gap-1 sm:grid-flow-col">
-                            <UnitInfoPopover
-                                v-for="unit in dispatch.units"
-                                :key="unit.unitId"
-                                :unit="unit.unit"
-                                :initials-only="true"
-                                :badge="true"
-                                :assignment="unit"
-                            />
-                        </span>
-                    </template>
-
-                    <template #creator-cell="{ row: dispatch }">
-                        <span v-if="dispatch.anon">
-                            {{ $t('common.anon') }}
-                        </span>
-                        <span v-else-if="dispatch.creator">
-                            <CitizenInfoPopover :user="dispatch.creator" :trailing="false" />
-                        </span>
-                        <span v-else>
-                            {{ $t('common.unknown') }}
-                        </span>
-                    </template>
-
-                    <template #attributes-cell="{ row: dispatch }">
-                        <DispatchAttributes :attributes="dispatch.attributes" />
-                    </template>
-
-                    <template #message-cell="{ row: dispatch }">
-                        <p class="line-clamp-2 hover:line-clamp-6">
-                            {{ dispatch.message }}
-                        </p>
-                    </template>
-                </UTable>
+                    :empty="$t('common.not_found', [$t('common.dispatch', 2)])"
+                    :sorting-options="{ manualSorting: true }"
+                    :pagination-options="{ manualPagination: true }"
+                />
 
                 <div v-else class="grid grid-cols-1 gap-2">
-                    <UCard
-                        v-for="dispatch in group.dispatches"
-                        :key="dispatch.id"
-                        :title="dispatch.message"
-                        class="px-px"
-                        :ui="{
-                            header: {
-                                padding: 'px-2 py-1 sm:px-2',
-                            },
-                            body: {
-                                padding: 'px-2 py-1 sm:px-2 sm:p-1',
-                            },
-                            footer: {
-                                padding: 'px-2 py-1 sm:px-2',
-                            },
-                        }"
-                    >
+                    <UCard v-for="dispatch in group.dispatches" :key="dispatch.id" :title="dispatch.message" class="px-px">
                         <template #header>
                             <div class="flex items-center justify-between">
                                 <div class="flex flex-1 items-center gap-2">
@@ -294,7 +267,7 @@ const columns = [
                                                 icon="i-mdi-account-multiple-plus"
                                                 @click="
                                                     () =>
-                                                        modal.open(DispatchAssignModal, {
+                                                        dispatchAssignModal.open({
                                                             dispatchId: dispatch.id,
                                                         })
                                                 "
@@ -315,7 +288,7 @@ const columns = [
                                                 icon="i-mdi-refresh"
                                                 @click="
                                                     () =>
-                                                        modal.open(DispatchStatusUpdateModal, {
+                                                        dispatchStatusUpdateModal.open({
                                                             dispatchId: dispatch.id,
                                                         })
                                                 "
@@ -328,7 +301,7 @@ const columns = [
                                                 icon="i-mdi-dots-vertical"
                                                 @click="
                                                     () =>
-                                                        slideover.open(DispatchDetailsByIDSlideover, {
+                                                        dispatchDetailsSlideover.open({
                                                             dispatchId: dispatch.id,
                                                         })
                                                 "

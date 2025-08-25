@@ -34,7 +34,7 @@ const { t } = useI18n();
 
 const { can } = useAuth();
 
-const modal = useOverlay();
+const overlay = useOverlay();
 
 const clipboardStore = useClipboardStore();
 
@@ -444,10 +444,16 @@ logger.info(
     canDo.value.relations,
 );
 
-provide('yjsDoc', ydoc);
-provide('yjsProvider', provider);
+const confirmModal = overlay.create(ConfirmModal);
+const documentRelationManagerModal = overlay.create(DocumentRelationManagerModal, { props: { documentId: props.documentId } });
+const documentReferenceManagerModal = overlay.create(DocumentReferenceManagerModal, {
+    props: { documentId: props.documentId },
+});
 
 const formRef = useTemplateRef<typeof UForm>('formRef');
+
+provide('yjsDoc', ydoc);
+provide('yjsProvider', provider);
 </script>
 
 <template>
@@ -476,7 +482,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                     :disabled="!canSubmit"
                     :loading="!canSubmit"
                     @click.prevent="
-                        modal.open(ConfirmModal, {
+                        confirmModal.open({
                             title: $t('common.publish_confirm.title', { type: $t('common.document', 1) }),
                             description: $t('common.publish_confirm.description'),
                             color: 'info',
@@ -589,7 +595,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                                     <span v-else> &nbsp; </span>
                                                 </template>
 
-                                                <template #option="{ option }">
+                                                <template #item="{ option }">
                                                     <span class="inline-flex gap-1" :class="`bg-${option.color}-500`">
                                                         <component
                                                             :is="
@@ -601,10 +607,6 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                                         />
                                                         <span class="truncate">{{ option.name }}</span>
                                                     </span>
-                                                </template>
-
-                                                <template #option-empty="{ query: search }">
-                                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                                 </template>
 
                                                 <template #empty>
@@ -641,7 +643,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                             <TiptapEditor
                                 v-model="state.content"
                                 v-model:files="state.files"
-                                class="max-w-(--breakpoint-xl) mx-auto w-full flex-1 overflow-y-hidden"
+                                class="mx-auto w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
                                 :disabled="!canDo.edit"
                                 history-type="document"
                                 :saving="saving"
@@ -654,7 +656,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                     </UFormField>
 
                     <UDashboardToolbar
-                        class="flex shrink-0 justify-between border-b-0 border-t border-gray-200 px-3 py-3.5 dark:border-gray-700"
+                        class="flex shrink-0 justify-between border-t border-b-0 border-gray-200 px-3 py-3.5 dark:border-gray-700"
                     >
                         <UButtonGroup v-if="canDo.relations || canDo.references" class="inline-flex w-full">
                             <UButton
@@ -663,7 +665,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                 :disabled="!canDo.relations"
                                 icon="i-mdi-account-multiple"
                                 @click="
-                                    modal.open(DocumentRelationManagerModal, {
+                                    documentRelationManagerModal.open({
                                         relations: state.relations,
                                         documentId: documentId,
                                         'onUpdate:relations': (value) => (state.relations = value),
@@ -679,7 +681,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                 :disabled="!canDo.references"
                                 icon="i-mdi-file-document"
                                 @click="
-                                    modal.open(DocumentReferenceManagerModal, {
+                                    documentReferenceManagerModal.open({
                                         references: state.references,
                                         documentId: documentId,
                                         'onUpdate:references': (value) => (state.references = value),

@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+import { useAppConfig } from '#app';
+import { UBadge, UButton, ULink } from '#components';
+import type { TableColumn } from '@nuxt/ui';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -8,6 +11,8 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { type DocumentReference, DocReference } from '~~/gen/ts/resources/documents/documents';
 import { docReferenceToBadge } from './helpers';
+
+const appConfig = useAppConfig();
 
 const props = withDefaults(
     defineProps<{
@@ -45,30 +50,85 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
 }
 
 const columns = computed(() =>
-    [
-        {
-            accessorKey: 'targetDocument',
-            label: t('common.target'),
-        },
-        {
-            accessorKey: 'reference',
-            label: t('common.reference', 1),
-        },
-        props.showSource
-            ? {
-                  accessorKey: 'sourceDocument',
-                  label: t('common.source'),
-              }
-            : undefined,
-        {
-            accessorKey: 'creator',
-            label: t('common.creator'),
-        },
-        {
-            accessorKey: 'date',
-            label: t('common.date'),
-        },
-    ].flatMap((item) => (item !== undefined ? [item] : [])),
+    (
+        [
+            {
+                accessorKey: 'targetDocument',
+                header: ({ column }) => {
+                    const isSorted = column.getIsSorted();
+
+                    return h(UButton, {
+                        color: 'neutral',
+                        variant: 'ghost',
+                        label: t('common.target'),
+                        icon: isSorted
+                            ? isSorted === 'asc'
+                                ? appConfig.custom.icons.sortAsc
+                                : appConfig.custom.icons.sortDesc
+                            : appConfig.custom.icons.sort,
+                        class: '-mx-2.5',
+                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+                    });
+                },
+                cell: ({ row }) =>
+                    h(
+                        ULink,
+                        {
+                            class: 'inline-flex items-center gap-1 truncate',
+                            to: {
+                                name: 'documents-id',
+                                params: { id: row.original.targetDocumentId },
+                            },
+                        },
+                        [
+                            h(DocumentCategoryBadge, { category: row.original.targetDocument?.category }),
+                            h('span', row.original.targetDocument?.title),
+                        ],
+                    ),
+            },
+            {
+                accessorKey: 'reference',
+                header: t('common.reference', 1),
+                cell: ({ row }) =>
+                    h(
+                        UBadge,
+                        { color: docReferenceToBadge(row.original.reference) },
+                        t(`enums.documents.DocReference.${DocReference[row.original.reference]}`),
+                    ),
+            },
+            props.showSource
+                ? {
+                      accessorKey: 'sourceDocument',
+                      header: t('common.source'),
+                      cell: ({ row }) =>
+                          h(
+                              ULink,
+                              {
+                                  class: 'inline-flex items-center gap-1 truncate',
+                                  to: {
+                                      name: 'documents-id',
+                                      params: { id: row.original.sourceDocumentId },
+                                  },
+                              },
+                              [
+                                  h(DocumentCategoryBadge, { category: row.original.sourceDocument?.category }),
+                                  h('span', row.original.sourceDocument?.title),
+                              ],
+                          ),
+                  }
+                : undefined,
+            {
+                accessorKey: 'creator',
+                header: t('common.creator'),
+                cell: ({ row }) => h(CitizenInfoPopover, { user: row.original.creator }),
+            },
+            {
+                accessorKey: 'createdAt',
+                header: t('common.date'),
+                cell: ({ row }) => h(GenericTime, { value: row.original.createdAt }),
+            },
+        ] as TableColumn<DocumentReference>[]
+    ).flatMap((item) => (item !== undefined ? [item] : [])),
 );
 </script>
 
@@ -138,61 +198,13 @@ const columns = computed(() =>
                     <div class="flex flex-col">
                         <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-lg">
                             <UTable
-                                :loading="isRequestPending(status)"
                                 :columns="columns"
                                 :data="references"
-                                :empty-state="{
-                                    icon: 'i-mdi-account',
-                                    label: $t('common.not_found', [$t('common.reference', 2)]),
-                                }"
-                                sort-mode="auto"
-                            >
-                                <template #targetDocument-cell="{ row: reference }">
-                                    <ULink
-                                        class="inline-flex items-center gap-1 truncate"
-                                        :to="{
-                                            name: 'documents-id',
-                                            params: {
-                                                id: reference.targetDocumentId,
-                                            },
-                                        }"
-                                    >
-                                        <DocumentCategoryBadge :category="reference.targetDocument.category" />
-
-                                        <span>
-                                            {{ reference.targetDocument?.title }}
-                                        </span>
-                                    </ULink>
-                                </template>
-                                <template #reference-cell="{ row: reference }">
-                                    <UBadge :color="docReferenceToBadge(reference.reference)">
-                                        {{ $t(`enums.documents.DocReference.${DocReference[reference.reference]}`) }}
-                                    </UBadge>
-                                </template>
-                                <template v-if="showSource" #sourceDocument-cell="{ row: reference }">
-                                    <ULink
-                                        class="inline-flex items-center gap-1 truncate"
-                                        :to="{
-                                            name: 'documents-id',
-                                            params: {
-                                                id: reference.sourceDocumentId,
-                                            },
-                                        }"
-                                    >
-                                        <DocumentCategoryBadge :category="reference.sourceDocument.category" />
-
-                                        <span>
-                                            {{ reference.sourceDocument?.title }}
-                                        </span>
-                                    </ULink>
-                                </template>
-                                <template #creator-cell="{ row: reference }">
-                                    <CitizenInfoPopover :user="reference.creator" />
-                                </template>
-                                <template #date-cell="{ row: reference }">
-                                    <GenericTime :value="reference.createdAt" />
-                                </template>
-                            </UTable>
+                                :loading="isRequestPending(status)"
+                                :empty="$t('common.not_found', [$t('common.reference', 2)])"
+                                :pagination-options="{ manualPagination: true }"
+                                :sorting-options="{ manualSorting: true }"
+                            />
                         </div>
                     </div>
                 </div>

@@ -20,8 +20,11 @@ const props = defineProps<{
     entryId: number;
 }>();
 
-const modal = useOverlay();
-const { isOpen } = useOverlay();
+defineEmits<{
+    close: [boolean];
+}>();
+
+const overlay = useOverlay();
 
 const { can } = useAuth();
 
@@ -56,23 +59,18 @@ const canDo = computed(() => ({
     edit: checkCalendarAccess(data.value?.entry?.calendar?.access, entry.value?.creator, AccessLevel.EDIT),
     manage: checkCalendarAccess(data.value?.entry?.calendar?.access, entry.value?.creator, AccessLevel.MANAGE),
 }));
+
+const confirmModal = overlay.create(ConfirmModal);
+const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
 </script>
 
 <template>
-    <USlideover :ui="{ width: 'w-screen sm:max-w-2xl' }" :overlay="false">
-        <UCard
-            class="flex flex-1 flex-col"
-            :ui="{
-                body: {
-                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--ui-header-height)))] max-h-[calc(100dvh-(2*var(--ui-header-height)))] overflow-y-auto',
-                    padding: 'px-1 py-2 sm:p-2',
-                },
-            }"
-        >
+    <USlideover :overlay="false">
+        <UCard class="flex flex-1 flex-col">
             <template #header>
                 <div class="flex flex-col gap-1">
                     <div class="flex items-center justify-between">
-                        <h3 class="inline-flex gap-2 text-2xl font-semibold leading-6">
+                        <h3 class="inline-flex gap-2 text-2xl leading-6 font-semibold">
                             <span>{{ entry?.title ?? $t('common.appointment', 1) }}</span>
 
                             <UTooltip
@@ -83,7 +81,7 @@ const canDo = computed(() => ({
                                     variant="link"
                                     icon="i-mdi-pencil"
                                     @click="
-                                        modal.open(EntryCreateOrUpdateModal, {
+                                        entryCreateOrUpdateModal.open({
                                             calendarId: entry?.calendarId,
                                             entryId: entry?.id,
                                         })
@@ -97,7 +95,7 @@ const canDo = computed(() => ({
                                     icon="i-mdi-delete"
                                     color="error"
                                     @click="
-                                        modal.open(ConfirmModal, {
+                                        confirmModal.open({
                                             confirm: async () => calendarStore.deleteCalendarEntry(entry?.id!),
                                         })
                                     "
@@ -113,7 +111,7 @@ const canDo = computed(() => ({
                                 color="neutral"
                                 variant="ghost"
                                 icon="i-mdi-window-close"
-                                @click="isOpen = false"
+                                @click="$emit('close', false)"
                             />
                         </div>
                     </div>
@@ -201,7 +199,7 @@ const canDo = computed(() => ({
                         <USeparator />
                     </template>
 
-                    <div class="dark:bg-base-900 max-w-(--breakpoint-xl) mx-auto w-full break-words rounded-lg bg-neutral-100">
+                    <div class="dark:bg-base-900 mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 break-words">
                         <HTMLContent v-if="entry.content?.content" class="px-4 py-2" :value="entry.content.content" />
                     </div>
                 </template>
@@ -209,7 +207,7 @@ const canDo = computed(() => ({
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" color="neutral" block @click="isOpen = false">
+                    <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

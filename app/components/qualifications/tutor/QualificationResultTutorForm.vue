@@ -119,7 +119,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <UCard>
             <template #header>
                 <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
+                    <h3 class="text-2xl leading-6 font-semibold">
                         {{ $t('components.qualifications.result_modal.title') }}
                     </h3>
 
@@ -161,12 +161,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     </template>
                                 </template>
 
-                                <template #option="{ option: user }">
+                                <template #item="{ option: user }">
                                     {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                </template>
-
-                                <template #option-empty="{ query: search }">
-                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                 </template>
 
                                 <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
@@ -190,16 +186,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     }}</span>
                                 </template>
 
-                                <template #option="{ option }">
+                                <template #item="{ option }">
                                     <span class="size-2 rounded-full" :class="resultStatusToBgColor(option.status)" />
                                     <span class="truncate">{{
                                         $t(`enums.qualifications.ResultStatus.${ResultStatus[option.status]}`)
                                     }}</span>
                                 </template>
 
-                                <template #option-empty="{ query: search }">
-                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                </template>
                                 <template #empty>
                                     {{ $t('common.not_found', [$t('common.status')]) }}
                                 </template>

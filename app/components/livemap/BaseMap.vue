@@ -22,8 +22,6 @@ const emit = defineEmits<{
     (e: 'overlayremove', event: L.LayersControlEvent): void;
 }>();
 
-const slideover = useOverlay();
-
 const { can } = useAuth();
 
 const settingsStore = useSettingsStore();
@@ -80,8 +78,6 @@ const mouseLong = ref<number>(0);
 const currentLocationQuery = useRouteQuery<string>('loc', '');
 
 function getZoomOffset(zoom: number): number {
-    if (!slideover.isOpen.value) return 0;
-
     switch (zoom) {
         case 1:
             return 2150;

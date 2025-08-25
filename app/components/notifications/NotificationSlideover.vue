@@ -6,10 +6,10 @@ const { isNotificationSlideoverOpen } = useDashboard();
 </script>
 
 <template>
-    <USlideover v-model="isNotificationSlideoverOpen">
+    <USlideover v-model:open="isNotificationSlideoverOpen">
         <template #title>
             <div class="flex items-center justify-between">
-                <h3 class="inline-flex gap-2 text-2xl font-semibold leading-6">
+                <h3 class="inline-flex gap-2 text-2xl leading-6 font-semibold">
                     {{ $t('common.notification', 2) }}
                 </h3>
 

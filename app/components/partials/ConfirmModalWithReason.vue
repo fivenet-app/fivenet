@@ -22,6 +22,10 @@ const props = withDefaults(
     },
 );
 
+const emit = defineEmits<{
+    (e: 'close'): void;
+}>();
+
 const schema = z.object({
     reason: z.string().min(3).max(255),
 });
@@ -37,21 +41,14 @@ const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await props.confirm(event.data.reason).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-    isOpen.value = false;
+    emit('close');
 }, 1000);
-
-const { isOpen } = useOverlay();
 </script>
 
 <template>
     <UModal
         :title="title ?? $t('components.partials.confirm_dialog.title')"
         :description="description ?? $t('components.partials.confirm_dialog.description')"
-        :icon="icon"
-        :ui="{
-            icon: { base: iconClass },
-            body: 'sm:p-0 sm:px-6',
-        }"
         @update:model-value="cancel && cancel()"
     >
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
@@ -68,7 +65,7 @@ const { isOpen } = useOverlay();
                         if (cancel) {
                             cancel();
                         }
-                        isOpen = false;
+                        $emit('close');
                     "
                 />
             </div>

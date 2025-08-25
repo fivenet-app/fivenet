@@ -523,7 +523,6 @@ const categoriesLoading = ref(false);
                                     v-model="state.category"
                                     option-attribute="name"
                                     :search-attributes="['name']"
-                                    block
                                     nullable
                                     :search="
                                         async (search: string) => {
@@ -540,13 +539,7 @@ const categoriesLoading = ref(false);
                                             }
                                         }
                                     "
-                                    search-lazy
-                                    :search-placeholder="$t('common.search_field')"
                                 >
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                    </template>
-
                                     <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
                                 </UInputMenu>
                             </ClientOnly>
@@ -566,7 +559,7 @@ const categoriesLoading = ref(false);
                             <ClientOnly>
                                 <TiptapEditor
                                     v-model="state.content"
-                                    class="max-w-(--breakpoint-xl) mx-auto w-full flex-1 overflow-y-hidden"
+                                    class="mx-auto w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
                                     :extensions="extensions"
                                 >
                                     <template #toolbar="{ editor }">

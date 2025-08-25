@@ -106,7 +106,11 @@ const { editor: editorSettings } = storeToRefs(settingsStore);
 
 const notifications = useNotificationsStore();
 
-const modal = useOverlay();
+const overlay = useOverlay();
+
+const fileListModal = overlay.create(FileListModal);
+const sourceCodeModal = overlay.create(SourceCodeModal);
+const versionHistoryModal = overlay.create(VersionHistoryModal);
 
 const modelValue = defineModel<string>({ required: true });
 const files = defineModel<FileGrpc[]>('files', { default: () => [] });
@@ -802,20 +806,14 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                         :search-attributes="['label']"
                         :items="fonts"
                         :placeholder="$t('common.font', 1)"
-                        search-lazy
-                        :search-placeholder="$t('common.search_field')"
                         :disabled="disabled"
                     >
                         <template #item-label>
                             <span class="truncate" :style="{ fontFamily: selectedFont.value }">{{ selectedFont.label }}</span>
                         </template>
 
-                        <template #option="{ option }">
-                            <span class="truncate" :style="{ fontFamily: option.value }">{{ option.label }}</span>
-                        </template>
-
-                        <template #option-empty="{ query: search }">
-                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                        <template #item="{ item }">
+                            <span class="truncate" :style="{ fontFamily: item.value }">{{ item.label }}</span>
                         </template>
 
                         <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>>
@@ -1057,7 +1055,7 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                     :disabled="disabled"
                     :upload-handler="fileUploadHandler"
                     @open-file-list="
-                        modal.open(FileListModal, {
+                        fileListModal.open({
                             editor: unref(editor)!,
                             files: files,
                         })
@@ -1247,7 +1245,11 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                                             variant="outline"
                                             :label="$t('components.partials.TiptapEditor.replace_all')"
                                             :disabled="disabled"
-                                            @click="() => replaceAll()"
+                                            @click="
+                                                () => {
+                                                    replaceAll();
+                                                }
+                                            "
                                         />
                                     </UButtonGroup>
 
@@ -1298,7 +1300,7 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                             icon="i-mdi-file-code"
                             :disabled="disabled"
                             @click="
-                                modal.open(SourceCodeModal, {
+                                sourceCodeModal.open({
                                     content: modelValue,
                                     'onUpdate:content': ($event) => (modelValue = $event),
                                 })
@@ -1316,7 +1318,7 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                             icon="i-mdi-file-multiple"
                             :disabled="disabled"
                             @click="
-                                modal.open(FileListModal, {
+                                fileListModal.open({
                                     editor: unref(editor)!,
                                     files: files,
                                 })
@@ -1331,7 +1333,7 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                             icon="i-mdi-history"
                             :disabled="disabled"
                             @click="
-                                modal.open(VersionHistoryModal, {
+                                versionHistoryModal.open({
                                     historyType: historyType,
                                     currentContent: { content: modelValue, files: files },
                                     onApply: applyVersion,
@@ -1351,7 +1353,7 @@ onBeforeUnmount(() => unref(editor)?.destroy());
 
         <TiptapEditorContent
             ref="contentRef"
-            class="min-h-0 w-full min-w-0 max-w-full flex-auto overflow-y-auto"
+            class="min-h-0 w-full max-w-full min-w-0 flex-auto overflow-y-auto"
             :class="[
                 wrapperClass,
                 'hover:prose-a:text-blue-500',

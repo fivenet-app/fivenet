@@ -15,7 +15,7 @@ const { isOpen } = useOverlay();
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+    <UModal>
         <QualificationResultTutorForm
             :qualification-id="qualificationId"
             :user-id="userId"

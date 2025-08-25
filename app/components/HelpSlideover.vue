@@ -129,7 +129,7 @@ const filteredCategories = computed(() => {
 </script>
 
 <template>
-    <USlideover v-model="isHelpSlideoverOpen">
+    <USlideover v-model:open="isHelpSlideoverOpen">
         <template #title>
             <UButton
                 v-if="shortcuts"

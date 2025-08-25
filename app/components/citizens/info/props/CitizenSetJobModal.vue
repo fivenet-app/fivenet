@@ -94,12 +94,12 @@ onBeforeMount(async () => listJobs());
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+    <UModal>
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
+                        <h3 class="text-2xl leading-6 font-semibold">
                             {{ $t('components.citizens.CitizenInfoProfile.set_job') }}
                         </h3>
 
@@ -133,12 +133,8 @@ onBeforeMount(async () => listJobs());
                                     </template>
                                 </template>
 
-                                <template #option="{ option: job }">
+                                <template #item="{ option: job }">
                                     <span class="truncate">{{ job.label }}</span>
-                                </template>
-
-                                <template #option-empty="{ query: search }">
-                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                 </template>
 
                                 <template #empty>
@@ -162,12 +158,8 @@ onBeforeMount(async () => listJobs());
                                     >
                                 </template>
 
-                                <template #option="{ option: jobGrade }">
+                                <template #item="{ option: jobGrade }">
                                     <span class="truncate">{{ jobGrade.label }} ({{ jobGrade.grade }})</span>
-                                </template>
-
-                                <template #option-empty="{ query: search }">
-                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                 </template>
 
                                 <template #empty>

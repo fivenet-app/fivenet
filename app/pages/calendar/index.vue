@@ -498,7 +498,7 @@ const isOpen = ref(false);
                             {{ viewOptions.find((o) => o.value === view)?.label ?? $t('common.na') }}
                         </template>
 
-                        <template #option="{ option }">
+                        <template #item="{ option }">
                             <UIcon class="size-5" :name="option.icon" />
                             <span class="truncate">{{ option.label }}</span>
                         </template>
@@ -606,7 +606,7 @@ const isOpen = ref(false);
                             {{ viewOptions.find((o) => o.value === view)?.label ?? $t('common.na') }}
                         </template>
 
-                        <template #option="{ option }">
+                        <template #item="{ option }">
                             <UIcon class="size-5" :name="option.icon" />
                             <span class="truncate">{{ option.label }}</span>
                         </template>

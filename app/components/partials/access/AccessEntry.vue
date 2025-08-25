@@ -161,12 +161,8 @@ if (props.hideGrade) {
                         <span class="truncate">{{ accessTypes.find((t) => t.type === entry.type)?.name }}</span>
                     </template>
 
-                    <template #option="{ option }">
+                    <template #item="{ option }">
                         <span class="truncate">{{ option.name }}</span>
-                    </template>
-
-                    <template #option-empty="{ query: search }">
-                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                     </template>
 
                     <template #empty>
@@ -204,12 +200,8 @@ if (props.hideGrade) {
                             </template>
                         </template>
 
-                        <template #option="{ option: user }">
+                        <template #item="{ option: user }">
                             {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                        </template>
-
-                        <template #option-empty="{ query: search }">
-                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                         </template>
 
                         <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
@@ -248,12 +240,8 @@ if (props.hideGrade) {
                             </template>
                         </template>
 
-                        <template #option="{ option: qualification }">
+                        <template #item="{ option: qualification }">
                             {{ `${qualification?.abbreviation}: ${qualification?.title}` }}
-                        </template>
-
-                        <template #option-empty="{ query: search }">
-                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                         </template>
 
                         <template #empty> {{ $t('common.not_found', [$t('common.qualification', 2)]) }} </template>
@@ -277,10 +265,6 @@ if (props.hideGrade) {
                         :placeholder="$t('common.job')"
                         :searchable-placeholder="$t('common.search_field')"
                     >
-                        <template #option-empty="{ query: search }">
-                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                        </template>
-
                         <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
                     </USelectMenu>
                 </ClientOnly>
@@ -302,10 +286,6 @@ if (props.hideGrade) {
                         :searchable-placeholder="$t('common.search_field')"
                         @update:model-value="entry.minimumGrade = $event?.grade ?? undefined"
                     >
-                        <template #option-empty="{ query: search }">
-                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                        </template>
-
                         <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
                     </USelectMenu>
                 </ClientOnly>
@@ -328,10 +308,6 @@ if (props.hideGrade) {
                 >
                     <template #item-label>
                         {{ accessRoles.find((a) => a.value === entry.access)?.label ?? $t('common.na') }}
-                    </template>
-
-                    <template #option-empty="{ query: search }">
-                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                     </template>
 
                     <template #empty> {{ $t('common.not_found', [$t('common.access', 2)]) }} </template>

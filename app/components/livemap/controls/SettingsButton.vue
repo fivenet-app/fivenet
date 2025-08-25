@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import SettingsModal from '~/components/livemap/controls/SettingsModal.vue';
 
-const modal = useOverlay();
+const overlay = useOverlay();
+const settingsModal = overlay.create(SettingsModal);
 </script>
 
 <template>
@@ -12,7 +13,7 @@ const modal = useOverlay();
                 icon="i-mdi-cog"
                 size="xs"
                 block
-                @click="modal.open(SettingsModal, {})"
+                @click="settingsModal.open({})"
             />
         </UTooltip>
     </LControl>

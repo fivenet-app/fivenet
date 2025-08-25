@@ -33,7 +33,7 @@ const { can, activeChar } = useAuth();
 
 const { livemap } = useAppConfig();
 
-const slideover = useOverlay();
+const overlay = useOverlay();
 
 const { goto } = useLivemapStore();
 
@@ -61,6 +61,8 @@ const icon = computed(() =>
 );
 
 const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.status));
+
+const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
 </script>
 
 <template>
@@ -100,10 +102,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
         </LIcon>
 
         <LPopup class="min-w-[175px]" :options="{ closeButton: false }">
-            <UCard
-                class="-my-[13px] -mr-[24px] -ml-[20px] flex flex-col"
-                :ui="{ body: { padding: 'px-2 py-2 sm:px-4 sm:p-2' } }"
-            >
+            <UCard class="-my-[13px] -mr-[24px] -ml-[20px] flex flex-col">
                 <template #header>
                     <div class="grid grid-cols-2 gap-2">
                         <UButton
@@ -161,7 +160,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                             icon="i-mdi-group"
                             block
                             @click="
-                                slideover.open(UnitDetailsSlideover, {
+                                unitDetailsSlideover.open({
                                     unit: unit,
                                 })
                             "

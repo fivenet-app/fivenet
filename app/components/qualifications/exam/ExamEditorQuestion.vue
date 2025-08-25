@@ -446,14 +446,10 @@ watch(
                         </span>
                     </template>
 
-                    <template #option="{ option }">
+                    <template #item="{ option }">
                         <span class="truncate">
                             {{ $t(`components.qualifications.exam_editor.question_types.${option}`) }}
                         </span>
-                    </template>
-
-                    <template #option-empty="{ query: search }">
-                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                     </template>
 
                     <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
@@ -480,7 +476,7 @@ watch(
             </div>
             <div class="flex-1">
                 <template v-if="question.data!.data.oneofKind === 'separator'">
-                    <USeparator class="mb-2 mt-2 text-xl">
+                    <USeparator class="mt-2 mb-2 text-xl">
                         <template v-if="question.title !== ''" #default>
                             <h4 class="text-xl">{{ question.title }}</h4>
                         </template>

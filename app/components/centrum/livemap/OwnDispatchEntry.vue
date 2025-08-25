@@ -20,7 +20,13 @@ const { settings } = storeToRefs(centrumStore);
 
 const { goto } = useLivemapStore();
 
-const slideover = useOverlay();
+const overlay = useOverlay();
+
+const dispatchDetailsSlideover = overlay.create(DispatchDetailsSlideover, {
+    props: {
+        dispatchId: props.dispatch.id,
+    },
+});
 
 const dispatchTimeStyle = ref<{ ping: boolean; class: string }>({ ping: false, class: '' });
 
@@ -53,14 +59,14 @@ useIntervalFn(
             :show="dispatchTimeStyle.ping"
             position="top-left"
             size="md"
-            :ui="{ base: dispatchTimeStyle.ping ? 'animate-pulse' : '', background: dispatchTimeStyle.class }"
+            :ui="{ base: dispatchTimeStyle.ping ? 'animate-pulse' : '', root: dispatchTimeStyle.class }"
         >
             <UButton
                 class="my-0.5 inline-flex w-full max-w-full shrink flex-col items-center p-2 text-xs"
                 block
                 color="error"
                 @click="
-                    slideover.open(DispatchDetailsSlideover, {
+                    dispatchDetailsSlideover.open({
                         dispatchId: dispatch.id,
                     })
                 "

@@ -133,7 +133,7 @@ const canSubmit = ref(true);
                                     </template>
                                 </template>
 
-                                <template #option="{ option }">
+                                <template #item="{ option }">
                                     <span class="truncate">{{
                                         $t(`enums.notifications.NotificationCategory.${NotificationCategory[option.mode ?? 0]}`)
                                     }}</span>

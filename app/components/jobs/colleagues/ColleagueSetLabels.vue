@@ -198,7 +198,7 @@ const editing = ref(false);
                         <span v-else>&nbsp;</span>
                     </template>
 
-                    <template #option="{ option }">
+                    <template #item="{ option }">
                         <UBadge
                             class="truncate"
                             :class="isColorBright(option.color) ? 'text-black!' : 'text-white!'"
@@ -206,10 +206,6 @@ const editing = ref(false);
                         >
                             {{ option.name }}
                         </UBadge>
-                    </template>
-
-                    <template #option-empty="{ query: search }">
-                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                     </template>
 
                     <template #empty>

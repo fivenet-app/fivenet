@@ -66,7 +66,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+    <UModal>
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UCard
                 class="flex flex-1 flex-col"
@@ -78,7 +78,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
             >
                 <template #header>
                     <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
+                        <h3 class="text-2xl leading-6 font-semibold">
                             {{ $t('components.centrum.assign_unit.title') }}: {{ unit.name }} ({{ unit.initials }})
                         </h3>
 
@@ -120,12 +120,8 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                         by="userId"
                                         :disabled="!canSubmit"
                                     >
-                                        <template #option="{ option: user }">
+                                        <template #item="{ option: user }">
                                             {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                        </template>
-
-                                        <template #option-empty="{ query: search }">
-                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                         </template>
 
                                         <template #empty> {{ $t('common.not_found', [$t('common.colleague', 2)]) }} </template>

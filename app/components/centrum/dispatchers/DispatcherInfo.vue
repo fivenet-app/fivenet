@@ -13,7 +13,9 @@ const props = withDefaults(
     },
 );
 
-const modal = useOverlay();
+const overlay = useOverlay();
+
+const dispatcherModal = overlay.create(DispatcherModal);
 
 const centrumStore = useCentrumStore();
 const { getCurrentMode, getJobDispatchers, isDispatcher } = storeToRefs(centrumStore);
@@ -73,7 +75,7 @@ if (!props.hideJoin) {
                           : 'success'
                 "
                 truncate
-                @click="modal.open(DispatcherModal, {})"
+                @click="dispatcherModal.open({})"
             >
                 <template v-if="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN">
                     {{ $t('common.dispatcher', dispatchers.dispatchers.length) }}

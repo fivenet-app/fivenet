@@ -48,15 +48,17 @@ const schema = z.object({
     wanted: z.boolean().default(false),
 
     sorting: z
-        .custom<SortByColumn>()
-        .array()
-        .max(3)
-        .default([
-            {
-                id: 'plate',
-                desc: false,
-            },
-        ]),
+        .object({
+            columns: z.custom<SortByColumn>().array().max(3).default([]),
+        })
+        .default({
+            columns: [
+                {
+                    id: 'plate',
+                    desc: false,
+                },
+            ],
+        }),
     page: pageNumberSchema,
 });
 
@@ -65,7 +67,7 @@ const query = useSearchForm('vehicles', schema);
 const hideVehicleModell = ref(false);
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `vehicles-${query.sorting.column}:${query.sorting.direction}-${query.page}`,
+    () => `vehicles-${JSON.stringify(query.sorting)}-${query.page}`,
     () => listVehicles(),
 );
 
@@ -75,7 +77,7 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
             pagination: {
                 offset: calculateOffset(query.page, data.value?.pagination),
             },
-            sort: { columns: query.sorting },
+            sort: query.sorting,
             licensePlate: query.licensePlate,
             model: query.model,
             userIds: query.userIds,
@@ -123,42 +125,82 @@ function updateVehicle(plate: string, vehicle: Vehicle): void {
     }
 }
 
-const columns = computed<TableColumn<Vehicle>[]>(() =>
-    [
-        {
-            accessorKey: 'plate',
-            header: t('common.plate'),
-            sortable: true,
-            cell: ({ row }) => `#${row.getValue('plate')}`,
-        },
-        attr('vehicles.VehiclesService/ListVehicles', 'Fields', 'Wanted').value
-            ? {
-                  accessorKey: 'wanted',
-                  header: t('common.wanted'),
-                  sortable: false,
-              }
-            : undefined,
-        {
-            accessorKey: 'model',
-            header: t('common.model'),
-            sortable: true,
-        },
-        {
-            accessorKey: 'type',
-            header: t('common.type'),
-        },
-        !props.hideOwner
-            ? {
-                  accessorKey: 'owner',
-                  header: t('common.owner'),
-              }
-            : undefined,
-        {
-            accessorKey: 'actions',
-            header: t('common.action', 2),
-            sortable: false,
-        },
-    ].flatMap((item) => (item !== undefined ? [item] : [])),
+const UBadge = resolveComponent('UBadge');
+const UButton = resolveComponent('UButton');
+const appConfig = useAppConfig();
+
+const columns = computed(() =>
+    (
+        [
+            {
+                accessorKey: 'plate',
+                header: ({ column }) => {
+                    const isSorted = column.getIsSorted();
+
+                    return h(UButton, {
+                        color: 'neutral',
+                        variant: 'ghost',
+                        label: t('common.plate'),
+                        icon: isSorted
+                            ? isSorted === 'asc'
+                                ? appConfig.custom.icons.sortAsc
+                                : appConfig.custom.icons.sortDesc
+                            : appConfig.custom.icons.sort,
+                        class: '-mx-2.5',
+                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+                    });
+                },
+                cell: ({ row }) =>
+                    h('div', { class: 'inline-flex items-center gap-1' }, [
+                        h(LicensePlate, { plate: row.original.plate, class: 'sm:min-w-40 md:min-w-48' }),
+                    ]),
+            },
+            attr('vehicles.VehiclesService/ListVehicles', 'Fields', 'Wanted').value
+                ? {
+                      accessorKey: 'wanted',
+                      header: t('common.wanted'),
+                      cell: ({ row }) =>
+                          row.original.props?.wanted
+                              ? h(UBadge, { color: 'error' }, () => $t('common.wanted').toUpperCase())
+                              : undefined,
+                  }
+                : undefined,
+            {
+                accessorKey: 'model',
+                header: ({ column }) => {
+                    const isSorted = column.getIsSorted();
+
+                    return h(UButton, {
+                        color: 'neutral',
+                        variant: 'ghost',
+                        label: t('common.model'),
+                        icon: isSorted
+                            ? isSorted === 'asc'
+                                ? appConfig.custom.icons.sortAsc
+                                : appConfig.custom.icons.sortDesc
+                            : appConfig.custom.icons.sort,
+                        class: '-mx-2.5',
+                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+                    });
+                },
+            },
+            {
+                accessorKey: 'type',
+                header: t('common.type'),
+                cell: ({ row }) => toTitleCase(row.original.type),
+            },
+            !props.hideOwner
+                ? {
+                      accessorKey: 'owner',
+                      header: t('common.owner'),
+                  }
+                : undefined,
+            {
+                accessorKey: 'actions',
+                header: t('common.action', 2),
+            },
+        ] as TableColumn<Vehicle>[]
+    ).flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
 const input = useTemplateRef('input');
@@ -210,7 +252,6 @@ defineShortcuts({
                                 }
                             "
                             searchable-lazy
-                            :search-placeholder="$t('common.search_field')"
                             :search-attributes="['firstname', 'lastname']"
                             block
                             :placeholder="$t('common.owner')"
@@ -223,12 +264,8 @@ defineShortcuts({
                                 </span>
                             </template>
 
-                            <template #option="{ option: user }">
+                            <template #item="{ option: user }">
                                 <ColleagueName class="truncate" :colleague="user" birthday />
-                            </template>
-
-                            <template #option-empty="{ query: search }">
-                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                             </template>
 
                             <template #empty> {{ $t('common.not_found', [$t('common.owner', 2)]) }} </template>
@@ -260,30 +297,15 @@ defineShortcuts({
 
     <UTable
         v-else
-        v-model:sorting="query.sorting"
+        v-model:sorting="query.sorting.columns"
         class="flex-1"
         :loading="isRequestPending(status)"
         :columns="columns"
         :data="data?.vehicles"
-        :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.vehicle', 2)]) }"
-        sort-mode="manual"
+        :pagination-options="{ manualPagination: true }"
+        :sorting-options="{ manualSorting: true }"
+        :empty="$t('common.not_found', [$t('common.vehicle', 2)])"
     >
-        <template #plate-cell="{ row: vehicle }">
-            <div class="inline-flex items-center gap-1">
-                <LicensePlate :plate="vehicle.original.plate" class="sm:min-w-40 md:min-w-48" />
-            </div>
-        </template>
-
-        <template #wanted-cell="{ row: vehicle }">
-            <UBadge v-if="vehicle.original.props?.wanted" color="error">
-                {{ $t('common.wanted').toUpperCase() }}
-            </UBadge>
-        </template>
-
-        <template #type-cell="{ row: vehicle }">
-            {{ toTitleCase(vehicle.original.type) }}
-        </template>
-
         <template v-if="!hideOwner" #owner-cell="{ row: vehicle }">
             <p v-if="vehicle.original.jobLabel" class="text-highlighted">{{ vehicle.original.jobLabel }}</p>
             <CitizenInfoPopover v-if="vehicle.original.owner" :user="vehicle.original.owner" />

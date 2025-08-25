@@ -27,7 +27,7 @@ const props = withDefaults(
     },
 );
 
-const modal = useOverlay();
+const overlay = useOverlay();
 
 const { can, isSuperuser } = useAuth();
 
@@ -189,6 +189,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await postMessage(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 1000));
 }, 1000);
+
+const confirmModal = overlay.create(ConfirmModal);
+const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
 </script>
 
 <template>
@@ -197,11 +200,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
         <template v-else-if="thread">
             <div class="flex w-full flex-1 items-center justify-between gap-1">
-                <h3 class="line-clamp-2 break-all text-left font-semibold text-gray-900 hover:line-clamp-none dark:text-white">
+                <h3 class="line-clamp-2 text-left font-semibold break-all text-gray-900 hover:line-clamp-none dark:text-white">
                     {{ thread.title }}
                 </h3>
 
-                <p class="text-highlighted shrink-0 font-medium">
+                <p class="shrink-0 font-medium text-highlighted">
                     {{
                         isToday(toDate(thread.createdAt))
                             ? $d(toDate(thread.createdAt), 'time')
@@ -211,7 +214,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </div>
 
             <div class="w-full min-w-0 flex-1 text-sm">
-                <div class="text-muted flex snap-x flex-row flex-wrap gap-1 overflow-x-auto">
+                <div class="flex snap-x flex-row flex-wrap gap-1 overflow-x-auto text-muted">
                     <span class="text-sm font-semibold">{{ $t('common.participant', 2) }}:</span>
 
                     <EmailInfoPopover
@@ -240,7 +243,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         messageRefs[message.id] = el as Element;
                     }
                 "
-                class="dark:hover:bg-base-800 hover:border-primary-500 hover:dark:border-primary-400 border-l-2 border-white px-2 pb-3 hover:bg-neutral-100 sm:pb-2 dark:border-gray-900"
+                class="dark:hover:bg-base-800 border-l-2 border-white px-2 pb-3 hover:border-primary-500 hover:bg-neutral-100 sm:pb-2 dark:border-gray-900 hover:dark:border-primary-400"
                 :class="selectedMessage === message.id && '!border-primary-500'"
                 @click="selectedMessageId = message.id"
             >
@@ -258,7 +261,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             variant="ghost"
                             size="xs"
                             @click="
-                                modal.open(ConfirmModal, {
+                                confirmModal.open({
                                     confirm: async () =>
                                         selectedEmail?.id &&
                                         selectedThread &&
@@ -283,11 +286,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                     <div class="inline-flex items-center gap-1">
                         <span class="text-sm font-semibold">{{ $t('common.title') }}:</span>
-                        <h3 class="line-clamp-2 break-all text-xl font-bold hover:line-clamp-none">{{ message.title }}</h3>
+                        <h3 class="line-clamp-2 text-xl font-bold break-all hover:line-clamp-none">{{ message.title }}</h3>
                     </div>
                 </div>
 
-                <div class="dark:bg-base-900 max-w-(--breakpoint-xl) mx-auto w-full break-words rounded-lg bg-neutral-100">
+                <div class="dark:bg-base-900 mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 break-words">
                     <HTMLContent v-if="message.content?.content" class="px-4 py-2" :value="message.content.content" />
                 </div>
 
@@ -333,9 +336,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
     <UDashboardToolbar
         v-if="thread && canAccess(selectedEmail?.access, selectedEmail?.userId, AccessLevel.WRITE)"
-        class="flex min-w-0 justify-between overflow-y-hidden border-b-0 border-t border-gray-200 dark:border-gray-700"
+        class="flex min-w-0 justify-between overflow-y-hidden border-t border-b-0 border-gray-200 dark:border-gray-700"
         :ui="{
-            wrapper: 'p-0 gap-x-0',
             container: 'gap-x-0 justify-stretch items-stretch h-full inline-flex flex-col p-0 px-1 min-w-0',
         }"
     >
@@ -343,7 +345,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             class="mt-2 max-h-[50vh] overflow-y-auto"
             variant="outline"
             :items="[{ slot: 'compose' as const, label: $t('components.mailer.reply'), icon: 'i-mdi-paper-airplane' }]"
-            :ui="{ default: { class: 'mb-0' }, item: { base: 'overflow-x-hidden' } }"
+            :ui="{ default: { class: 'mb-0' } }"
         >
             <template #compose>
                 <UForm
@@ -369,10 +371,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                                 <template #option-create="{ option }">
                                     <span class="shrink-0">{{ $t('common.recipient') }}: {{ option.label }}</span>
-                                </template>
-
-                                <template #option-empty="{ query: search }">
-                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                 </template>
 
                                 <template #empty>
@@ -407,7 +405,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <div class="flex flex-1 flex-col items-center gap-2 sm:flex-row">
                             <UInput
                                 v-model="state.title"
-                                class="text-highlighted w-full font-semibold"
+                                class="w-full font-semibold text-highlighted"
                                 type="text"
                                 size="lg"
                                 :placeholder="$t('common.title')"
@@ -453,7 +451,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 color="neutral"
                                 trailing-icon="i-mdi-attach-file"
                                 @click="
-                                    modal.open(ThreadAttachmentsModal, {
+                                    threadAttachmentsModal.open({
                                         attachments: state.attachments,
                                         canSubmit: canSubmit,
                                         'onUpdate:attachments': ($event) => (state.attachments = $event),

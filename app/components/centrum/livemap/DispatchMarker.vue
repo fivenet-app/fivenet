@@ -30,7 +30,9 @@ const emit = defineEmits<{
     (e: 'selected', dsp: Dispatch): void;
 }>();
 
-const modal = useOverlay();
+const overlay = useOverlay();
+
+const dispatchAssignModal = overlay.create(DispatchAssignModal);
 
 const { goto } = useLivemapStore();
 
@@ -70,10 +72,7 @@ const zIndexOffset = computed(() => calculateDispatchZIndexOffset(props.dispatch
         </LIcon>
 
         <LPopup class="min-w-[175px]" :options="{ closeButton: false }">
-            <UCard
-                class="-my-[13px] -mr-[24px] -ml-[20px] flex min-w-[200px] flex-col"
-                :ui="{ body: { padding: 'px-2 py-2 sm:px-4 sm:p-2' } }"
-            >
+            <UCard class="-my-[13px] -mr-[24px] -ml-[20px] flex min-w-[200px] flex-col">
                 <template #header>
                     <div class="grid grid-cols-2 gap-2">
                         <UButton
@@ -100,7 +99,7 @@ const zIndexOffset = computed(() => calculateDispatchZIndexOffset(props.dispatch
                             variant="link"
                             truncate
                             @click="
-                                modal.open(DispatchAssignModal, {
+                                dispatchAssignModal.open({
                                     dispatchId: dispatch.id,
                                 })
                             "

@@ -1,10 +1,12 @@
 <script lang="ts" setup>
+import { UBadge, UButton, UTooltip } from '#components';
+import type { TableColumn } from '@nuxt/ui';
 import { addDays } from 'date-fns';
+import { h } from 'vue';
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
 import type { JSONDataType } from 'vue-json-pretty/types/utils';
 import { z } from 'zod';
-import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DateRangePickerPopoverClient from '~/components/partials/DateRangePickerPopover.client.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -15,7 +17,7 @@ import { type AuditEntry, EventType } from '~~/gen/ts/resources/audit/audit';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ViewAuditLogRequest, ViewAuditLogResponse } from '~~/gen/ts/services/settings/settings';
-import { grpcMethods, grpcServices } from '~~/gen/ts/svcs';
+import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 import { eventTypeToBadgeColor } from './helpers';
 
 const { d, t } = useI18n();
@@ -37,15 +39,19 @@ const schema = z.object({
     states: z.nativeEnum(EventType).array().max(10).default([]),
     search: z.string().max(64).default(''),
     sorting: z
-        .custom<SortByColumn>()
-        .array()
-        .max(3)
-        .default([
-            {
-                id: 'createdAt',
-                desc: true,
-            },
-        ]),
+        .object({
+            columns: z
+                .custom<SortByColumn>()
+                .array()
+                .max(3)
+                .default([
+                    {
+                        id: 'createdAt',
+                        desc: true,
+                    },
+                ]),
+        })
+        .default({ columns: [{ id: 'createdAt', desc: true }] }),
     page: pageNumberSchema,
 });
 
@@ -66,7 +72,8 @@ const statesOptions = eventTypes.map((eventType) => ({ eventType: eventType }));
 const usersLoading = ref(false);
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `settings-audit-${query.sorting.column}:${query.sorting.direction}-${query.page}-${query.date?.start}-${query.date?.end}-${query.methods}-${query.services}-${query.search}-${query.users.join(',')}`,
+    () =>
+        `settings-audit-${JSON.stringify(query.sorting)}-${query.page}-${query.date?.start}-${query.date?.end}-${query.methods}-${query.services}-${query.search}-${query.users.join(',')}`,
     () => viewAuditLog(),
 );
 
@@ -75,7 +82,7 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
         pagination: {
             offset: calculateOffset(query.page, data.value?.pagination),
         },
-        sort: { columns: query.sorting },
+        sort: query.sorting,
         userIds: query.users,
         services: query.services,
         // Make sure to remove the service from the beginning
@@ -142,41 +149,114 @@ ${JSON.stringify(JSON.parse(logEntry.data!), undefined, 2)}
     return copyToClipboardWrapper(text);
 }
 
-const columns = [
-    {
-        accessorKey: 'actions',
-        label: t('common.action', 2),
-        sortable: false,
-    },
-    {
-        accessorKey: 'id',
-        label: t('common.id'),
-    },
-    {
-        accessorKey: 'createdAt',
-        label: t('common.created_at'),
-        sortable: true,
-    },
-    {
-        accessorKey: 'user',
-        label: t('common.user', 1),
-    },
-    {
-        accessorKey: 'service',
-        label: `${t('common.service')}/${t('common.method')}`,
-        sortable: true,
-    },
-    {
-        accessorKey: 'state',
-        label: t('common.state'),
-        sortable: true,
-    },
-];
+const appConfig = useAppConfig();
 
-const expand = ref({
-    openedRows: [],
-    row: {},
-});
+const columns = computed(
+    () =>
+        [
+            {
+                id: 'expand',
+                cell: ({ row }) =>
+                    h(UButton, {
+                        color: 'neutral',
+                        variant: 'ghost',
+                        icon: 'i-lucide-chevron-down',
+                        square: true,
+                        'aria-label': 'Expand',
+                        ui: {
+                            leadingIcon: ['transition-transform', row.getIsExpanded() ? 'duration-200 rotate-180' : ''],
+                        },
+                        onClick: () => row.toggleExpanded(),
+                    }),
+            },
+            {
+                accessorKey: 'actions',
+                header: t('common.action', 2),
+                cell: ({ row }) =>
+                    h(UTooltip, { text: t('components.clipboard.clipboard_button.add') }, () =>
+                        h(UButton, {
+                            variant: 'link',
+                            icon: 'i-mdi-content-copy',
+                            onClick: () => addToClipboard(row.original),
+                        }),
+                    ),
+            },
+            {
+                accessorKey: 'id',
+                header: t('common.id'),
+                cell: ({ row }) => row.original.id,
+            },
+            {
+                accessorKey: 'createdAt',
+                header: ({ column }) => {
+                    const isSorted = column.getIsSorted();
+
+                    return h(UButton, {
+                        color: 'neutral',
+                        variant: 'ghost',
+                        label: t('common.created_at'),
+                        icon: isSorted
+                            ? isSorted === 'asc'
+                                ? appConfig.custom.icons.sortAsc
+                                : appConfig.custom.icons.sortDesc
+                            : appConfig.custom.icons.sort,
+                        class: '-mx-2.5',
+                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+                    });
+                },
+                cell: ({ row }) => h(GenericTime, { value: row.original.createdAt, type: 'long' }),
+            },
+            {
+                accessorKey: 'user',
+                header: t('common.user'),
+                cell: ({ row }) => h(CitizenInfoPopover, { user: row.original.user }),
+            },
+            {
+                accessorKey: 'service',
+                header: ({ column }) => {
+                    const isSorted = column.getIsSorted();
+
+                    return h(UButton, {
+                        color: 'neutral',
+                        variant: 'ghost',
+                        label: t('common.service'),
+                        icon: isSorted
+                            ? isSorted === 'asc'
+                                ? appConfig.custom.icons.sortAsc
+                                : appConfig.custom.icons.sortDesc
+                            : appConfig.custom.icons.sort,
+                        class: '-mx-2.5',
+                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+                    });
+                },
+                cell: ({ row }) => row.original.service,
+            },
+            {
+                accessorKey: 'state',
+                header: ({ column }) => {
+                    const isSorted = column.getIsSorted();
+
+                    return h(UButton, {
+                        color: 'neutral',
+                        variant: 'ghost',
+                        label: t('common.state'),
+                        icon: isSorted
+                            ? isSorted === 'asc'
+                                ? appConfig.custom.icons.sortAsc
+                                : appConfig.custom.icons.sortDesc
+                            : appConfig.custom.icons.sort,
+                        class: '-mx-2.5',
+                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+                    });
+                },
+                cell: ({ row }) =>
+                    h(UBadge, {
+                        color: eventTypeToBadgeColor(row.original.state),
+                        label: t(`enums.settings.AuditLog.EventType.${EventType[row.original.state]}`),
+                    }),
+            },
+        ] as TableColumn<AuditEntry>[],
+);
 
 function statesToLabel(states: { eventType: EventType }[]): string {
     return states.map((c) => t(`enums.settings.AuditLog.EventType.${EventType[c.eventType ?? 0]}`)).join(', ');
@@ -233,14 +313,10 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                     </span>
                                 </template>
 
-                                <template #option="{ option: user }">
+                                <template #item="{ option: user }">
                                     <span class="truncate">
                                         {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
                                     </span>
-                                </template>
-
-                                <template #option-empty="{ query: search }">
-                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                 </template>
 
                                 <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
@@ -293,12 +369,8 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                         :placeholder="$t('common.service')"
                                         :items="grpcServices.map((s) => s.split('.').pop() ?? s)"
                                     >
-                                        <template #option="{ option }">
+                                        <template #item="{ option }">
                                             {{ option }}
-                                        </template>
-
-                                        <template #option-empty="{ query: search }">
-                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                         </template>
 
                                         <template #empty>
@@ -317,12 +389,8 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                     :placeholder="$t('common.method')"
                                     :items="grpcMethods.filter((m) => query.services.some((s) => m.includes('.' + s + '/')))"
                                 >
-                                    <template #option="{ option }">
+                                    <template #item="{ option }">
                                         {{ option.split('/').pop() }}
-                                    </template>
-
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                     </template>
 
                                     <template #empty>
@@ -348,12 +416,8 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                             </span>
                                         </template>
 
-                                        <template #option="{ option }">
+                                        <template #item="{ option }">
                                             {{ $t(`enums.settings.AuditLog.EventType.${EventType[option.eventType]}`) }}
-                                        </template>
-
-                                        <template #option-empty="{ query: search }">
-                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                         </template>
 
                                         <template #empty>
@@ -378,53 +442,27 @@ function statesToLabel(states: { eventType: EventType }[]): string {
 
     <UTable
         v-else
-        v-model:expand="expand"
         class="flex-1"
         :loading="isRequestPending(status)"
         :columns="columns"
         :data="data?.logs"
-        :empty-state="{
-            icon: 'i-mdi-math-log',
-            label: $t('common.not_found', [$t('common.entry', 2)]),
-        }"
-        sort-mode="manual"
+        :pagination-options="{ manualPagination: true }"
+        :sorting-options="{ manualSorting: true }"
+        :empty="$t('common.not_found', [$t('common.entry', 2)])"
+        :ui="{ tr: 'data-[expanded=true]:bg-elevated/50' }"
     >
-        <template #actions-cell="{ row }">
-            <UTooltip :text="$t('components.clipboard.clipboard_button.add')">
-                <UButton variant="link" icon="i-mdi-content-copy" @click="addToClipboard(row)" />
-            </UTooltip>
-        </template>
-
-        <template #createdAt-cell="{ row }">
-            <GenericTime :value="row.createdAt" type="long" />
-        </template>
-
-        <template #user-cell="{ row }">
-            <CitizenInfoPopover :user="row.user" />
-        </template>
-
-        <template #service-cell="{ row }">
-            <span class="dark:text-white"> {{ row.service }}/{{ row.method }} </span>
-        </template>
-
-        <template #state-cell="{ row }">
-            <UBadge :color="eventTypeToBadgeColor(row.state)">
-                {{ $t(`enums.settings.AuditLog.EventType.${EventType[row.state]}`) }}
-            </UBadge>
-        </template>
-
-        <template #expand="{ row }">
+        <template #expanded="{ row }">
             <div class="px-2 py-1">
-                <span v-if="!row.data">{{ $t('common.na') }}</span>
-                <span v-else>
+                <span v-if="!row.original.data">{{ $t('common.na') }}</span>
+                <template v-else>
                     <VueJsonPretty
-                        :data="JSON.parse(row.data!) as JSONDataType"
+                        :data="JSON.parse(row.original.data!) as JSONDataType"
                         :show-icon="true"
                         :show-length="true"
                         :virtual="true"
                         :height="240"
                     />
-                </span>
+                </template>
             </div>
         </template>
     </UTable>

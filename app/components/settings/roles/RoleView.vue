@@ -26,9 +26,7 @@ const { t } = useI18n();
 
 const { can } = useAuth();
 
-const modal = useOverlay();
-
-const slideover = useOverlay();
+const overlay = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -357,6 +355,9 @@ const accordionCategories = computed(() =>
 
 const canUpdate = can('settings.SettingsService/UpdateRolePerms');
 
+const effectivePermsSlideover = overlay.create(EffectivePermsSlideover, { props: { roleId: props.roleId } });
+const confirmModal = overlay.create(ConfirmModal);
+
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async () => {
     canSubmit.value = false;
@@ -389,7 +390,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                 icon="i-mdi-account-key"
                                 color="primary"
                                 @click="
-                                    slideover.open(EffectivePermsSlideover, {
+                                    effectivePermsSlideover.open({
                                         roleId: role!.id,
                                     })
                                 "
@@ -407,7 +408,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                 icon="i-mdi-delete"
                                 color="error"
                                 @click="
-                                    modal.open(ConfirmModal, {
+                                    confirmModal.open({
                                         confirm: async () => deleteRole(role!.id),
                                     })
                                 "
@@ -459,7 +460,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     </div>
 
                     <UAccordion :items="accordionCategories" multiple :unmount="true">
-                        <template #item="{ item: category }">
+                        <template #content="{ item: category }">
                             <div class="flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
                                 <div
                                     v-for="perm in permList.filter((p) => p.category === category.category)"

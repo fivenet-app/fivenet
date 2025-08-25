@@ -14,8 +14,7 @@ defineProps<{
 
 const { can } = useAuth();
 
-const modal = useOverlay();
-const slideover = useOverlay();
+const overlay = useOverlay();
 
 const livemapStore = useLivemapStore();
 const { deleteMarkerMarker, goto } = livemapStore;
@@ -35,14 +34,14 @@ async function deleteMarker(id: number): Promise<void> {
         throw e;
     }
 }
+
+const confirmModal = overlay.create(ConfirmModal);
+const markerCreateOrUpdateSlideover = overlay.create(MarkerCreateOrUpdateSlideover);
 </script>
 
 <template>
     <LPopup class="min-w-[175px]" :options="{ closeButton: false }">
-        <UCard
-            class="-my-[13px] -mr-[24px] -ml-[20px] flex min-w-[200px] flex-col"
-            :ui="{ body: { padding: 'px-2 py-2 sm:px-4 sm:p-2' } }"
-        >
+        <UCard class="-my-[13px] -mr-[24px] -ml-[20px] flex min-w-[200px] flex-col">
             <template #header>
                 <div class="grid grid-cols-2 gap-2">
                     <UTooltip v-if="marker.x !== undefined && marker.y !== undefined" :text="$t('common.mark')">
@@ -58,7 +57,7 @@ async function deleteMarker(id: number): Promise<void> {
                             variant="link"
                             icon="i-mdi-pencil"
                             @click="
-                                slideover.open(MarkerCreateOrUpdateSlideover, {
+                                markerCreateOrUpdateSlideover.open({
                                     marker: marker,
                                 })
                             "
@@ -75,7 +74,7 @@ async function deleteMarker(id: number): Promise<void> {
                             icon="i-mdi-delete"
                             color="error"
                             @click="
-                                modal.open(ConfirmModal, {
+                                confirmModal.open({
                                     confirm: async () => deleteMarker(marker.id),
                                 })
                             "
@@ -111,15 +110,18 @@ async function deleteMarker(id: number): Promise<void> {
                     <span class="font-semibold">{{ $t('common.job') }}:</span>
                     {{ marker.jobLabel ?? $t('common.na') }}
                 </li>
+
                 <li>
                     <span class="font-semibold">{{ $t('common.description') }}:</span>
                     {{ marker.description ?? $t('common.na') }}
                 </li>
+
                 <li class="inline-flex gap-1">
                     <span class="font-semibold">{{ $t('common.expires_at') }}:</span>
                     <GenericTime v-if="marker.expiresAt" :value="marker.expiresAt" />
                     <span v-else>{{ $t('common.na') }}</span>
                 </li>
+
                 <li class="inline-flex gap-1">
                     <span class="flex-initial">
                         <span class="font-semibold">{{ $t('common.sent_by') }}:</span>

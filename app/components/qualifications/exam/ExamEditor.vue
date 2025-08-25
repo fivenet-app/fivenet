@@ -61,7 +61,7 @@ const { moveUp, moveDown } = useListReorder(toRef(questions.value.questions));
             >
                 <UInput v-model="settings.time!.seconds" type="number" :min="1" :step="1" :placeholder="$t('common.duration')">
                     <template #trailing>
-                        <span class="text-muted text-xs">s</span>
+                        <span class="text-xs text-muted">s</span>
                     </template>
                 </UInput>
             </UFormField>
@@ -96,7 +96,7 @@ const { moveUp, moveDown } = useListReorder(toRef(questions.value.questions));
                             }}</span>
                         </template>
 
-                        <template #option="{ option }">
+                        <template #item="{ option }">
                             <span class="truncate">{{
                                 $t(`enums.qualifications.AutoGradeMode.${AutoGradeMode[option.mode ?? 0]}`)
                             }}</span>

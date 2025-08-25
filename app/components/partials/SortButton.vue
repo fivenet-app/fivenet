@@ -54,7 +54,7 @@ function changeColumn(col: string): void {
                     {{ fields.find((f) => f.value === sorting.id)?.label ?? $t('common.na') }}
                 </template>
 
-                <template #option="{ option: field }">
+                <template #item="{ option: field }">
                     {{ field.label }}
                 </template>
 
@@ -66,7 +66,7 @@ function changeColumn(col: string): void {
             <UButton
                 square
                 trailing
-                :icon="sorting.direction === 'asc' ? custom.icons.sortAscIcon : custom.icons.sortDescIcon"
+                :icon="sorting.direction === 'asc' ? custom.icons.sortAsc : custom.icons.sortDesc"
                 color="neutral"
                 variant="ghost"
                 @click="toggleDirection"

@@ -6,7 +6,8 @@ defineProps<{
     references?: DispatchReferences;
 }>();
 
-const modal = useOverlay();
+const overlay = useOverlay();
+const dispatchDetailsByIDSlideover = overlay.create(DispatchDetailsByIDSlideover);
 
 const selectedDispatch = ref<number | undefined>();
 </script>
@@ -17,7 +18,7 @@ const selectedDispatch = ref<number | undefined>();
             <span
                 v-for="reference in references?.references"
                 :key="reference.targetDispatchId"
-                class="flex items-center rounded-md bg-info-400/10 px-2 py-1 text-xs font-medium text-info-400 ring-1 ring-inset ring-info-400/20"
+                class="flex items-center rounded-md bg-info-400/10 px-2 py-1 text-xs font-medium text-info-400 ring-1 ring-info-400/20 ring-inset"
             >
                 <span class="flex-1">
                     {{ $t(`enums.centrum.DispatchReferenceType.${DispatchReferenceType[reference.referenceType]}`) }} DSP-{{
@@ -28,7 +29,7 @@ const selectedDispatch = ref<number | undefined>();
                 <UButton
                     @click="
                         selectedDispatch = reference.targetDispatchId;
-                        modal.open(DispatchDetailsByIDSlideover, {
+                        dispatchDetailsByIDSlideover.open({
                             dispatchId: reference.targetDispatchId,
                             onClose: () => (selectedDispatch = undefined),
                         });

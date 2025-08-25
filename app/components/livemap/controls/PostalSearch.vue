@@ -94,10 +94,6 @@ watchDebounced(postalQuery, () => findPostal(), {
             leading-icon="i-mdi-postage-stamp"
             v-bind="$attrs"
         >
-            <template #option-empty="{ query: search }">
-                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-            </template>
-
             <template #empty> {{ $t('common.not_found', [$t('common.postal', 2)]) }} </template>
         </UInputMenu>
     </ClientOnly>

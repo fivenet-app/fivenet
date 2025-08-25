@@ -11,6 +11,7 @@ import Pagination from '~/components/partials/Pagination.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getJobsTimeclockClient } from '~~/gen/ts/clients';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
+import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { TimeclockMode, TimeclockViewMode } from '~~/gen/ts/resources/jobs/timeclock';
 import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/services/jobs/timeclock';
 import ColleagueInfoPopover from '../colleagues/ColleagueInfoPopover.vue';
@@ -74,15 +75,19 @@ const schema = z.object({
         }),
     perDay: z.coerce.boolean().default(true),
     sorting: z
-        .custom<SortByColumn>()
-        .array()
-        .max(3)
-        .default([
-            {
-                id: 'id',
-                desc: true,
-            },
-        ]),
+        .object({
+            columns: z
+                .custom<SortByColumn>()
+                .array()
+                .max(3)
+                .default([
+                    {
+                        id: 'plate',
+                        desc: false,
+                    },
+                ]),
+        })
+        .default({ columns: [{ id: 'plate', desc: false }] }),
     page: pageNumberSchema,
 });
 
@@ -103,7 +108,8 @@ watch(props, setFromProps);
 const usersLoading = ref(false);
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `jobs-timeclock-${query.sorting.column}:${query.sorting.direction}-${query.date.start.toDateString()}-${query.date.end.toDateString()}-${query.perDay}-${query.users.join(',')}-${query.page}`,
+    () =>
+        `jobs-timeclock-${JSON.stringify(query.sorting)}-${query.date.start.toDateString()}-${query.date.end.toDateString()}-${query.perDay}-${query.users.join(',')}-${query.page}`,
     () => listTimeclockEntries(),
 );
 
@@ -117,7 +123,7 @@ async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
             pagination: {
                 offset: calculateOffset(query.page, data.value?.pagination),
             },
-            sort: { columns: query.sorting },
+            sort: query.sorting,
             userMode: query.userMode,
             mode: query.mode,
             date: {
@@ -296,13 +302,7 @@ const { game } = useAppConfig();
 </script>
 
 <template>
-    <UTabs
-        v-model="selectedUserMode"
-        :items="items"
-        :ui="{
-            list: { base: props.userId !== undefined || items.length === 1 ? 'hidden' : undefined },
-        }"
-    />
+    <UTabs v-if="props.userId === undefined && items.length > 1" v-model="selectedUserMode" :items="items" />
 
     <UDashboardToolbar>
         <UForm class="flex w-full flex-col gap-2" :schema="schema" :state="query" @submit="refresh()">
@@ -311,7 +311,6 @@ const { game } = useAppConfig();
                     <UTabs
                         v-model="selectedSelfMode"
                         :items="selfTimeRangeModes.filter((m) => m.mode >= TimeclockMode.RANGE)"
-                        :ui="{ wrapper: 'relative space-y-0 flex-1', container: '' }"
                     />
                 </div>
 
@@ -347,11 +346,7 @@ const { game } = useAppConfig();
 
             <template v-if="query.userMode === TimeclockViewMode.ALL">
                 <div class="flex flex-1 flex-col justify-between gap-2 sm:flex-row">
-                    <UTabs
-                        v-model="selectedMode"
-                        :items="timeRangeModes"
-                        :ui="{ wrapper: 'relative space-y-0 flex-1', container: '' }"
-                    />
+                    <UTabs v-model="selectedMode" :items="timeRangeModes" />
 
                     <div class="flex items-center">
                         <UButton
@@ -402,12 +397,8 @@ const { game } = useAppConfig();
                                         </span>
                                     </template>
 
-                                    <template #option="{ option: colleague }">
+                                    <template #item="{ option: colleague }">
                                         <ColleagueName class="truncate" :colleague="colleague" birthday />
-                                    </template>
-
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                     </template>
 
                                     <template #empty>
@@ -540,8 +531,7 @@ const { game } = useAppConfig();
 
     <UTable
         v-else-if="query.mode !== TimeclockMode.TIMELINE"
-        v-model:sorting="query.sorting"
-        class="flex-1"
+        v-model:sorting="query.sorting.columns"
         :loading="isRequestPending(status)"
         :columns="columns"
         :data="entries"
@@ -549,7 +539,9 @@ const { game } = useAppConfig();
             icon: 'i-mdi-timeline-clock',
             label: $t('common.not_found', [$t('common.entry', 2)]),
         }"
-        sort-mode="manual"
+        :sorting-options="{
+            manualSorting: true,
+        }"
     >
         <template #caption>
             <caption>
@@ -561,39 +553,39 @@ const { game } = useAppConfig();
             </caption>
         </template>
 
-        <template #date-cell="{ row: entry }">
+        <template #date-cell="{ row }">
             <div class="text-highlighted">
-                {{ $d(toDate(entry.date), 'date') }}
+                {{ $d(toDate(row.original.date), 'date') }}
             </div>
         </template>
 
-        <template #name-cell="{ row: entry }">
+        <template #name-cell="{ row }">
             <div class="inline-flex items-center gap-1">
                 <ProfilePictureImg
-                    :src="entry.user?.avatar"
-                    :name="`${entry.user?.firstname} ${entry.user?.lastname}`"
+                    :src="row.original.user?.avatar"
+                    :name="`${row.original.user?.firstname} ${row.original.user?.lastname}`"
                     size="xs"
                 />
 
-                <ColleagueInfoPopover :user="entry.user" />
+                <ColleagueInfoPopover :user="row.original.user" />
             </div>
         </template>
 
-        <template #rank-cell="{ row: entry }">
-            {{ entry.user.jobGradeLabel }}
-            <template v-if="entry.user.job !== game.unemployedJobName"> ({{ entry.user.jobGrade }})</template>
+        <template #rank-cell="{ row }">
+            {{ row.original.user?.jobGradeLabel }}
+            <template v-if="row.original.user?.job !== game.unemployedJobName"> ({{ row.original.user?.jobGrade }})</template>
         </template>
 
-        <template #time-cell="{ row: entry }">
+        <template #time-cell="{ row }">
             {{
-                entry.spentTime > 0
-                    ? fromSecondsToFormattedDuration(Math.round(entry.spentTime * 60 * 60), {
+                row.original.spentTime > 0
+                    ? fromSecondsToFormattedDuration(Math.round(row.original.spentTime * 60 * 60), {
                           seconds: false,
                       })
                     : ''
             }}
 
-            <UBadge v-if="entry.startTime !== undefined && entry.endTime === undefined" color="green">
+            <UBadge v-if="row.original.startTime !== undefined && row.original.endTime === undefined" color="green">
                 {{ $t('common.active') }}
             </UBadge>
         </template>
@@ -635,7 +627,6 @@ const { game } = useAppConfig();
                         v-if="query.mode === TimeclockMode.TIMELINE"
                         :text="$t('components.jobs.timeclock.timeline.tooltip')"
                         :shortcuts="['CTRL', '🖱']"
-                        :ui="{ shortcuts: 'inline-flex' }"
                     >
                         <UIcon class="size-4" name="i-mdi-information-outline" />
                     </UTooltip>

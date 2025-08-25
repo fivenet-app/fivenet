@@ -148,12 +148,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+    <UModal>
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
+                        <h3 class="text-2xl leading-6 font-semibold">
                             {{ $t('common.request', 2) }}
                         </h3>
 
@@ -194,14 +194,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             </span>
                                         </template>
 
-                                        <template #option="{ option }">
+                                        <template #item="{ option }">
                                             <span class="truncate">{{
                                                 $t(`enums.documents.DocActivityType.${DocActivityType[option.key]}`, 2)
                                             }}</span>
-                                        </template>
-
-                                        <template #option-empty="{ query: search }">
-                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                         </template>
 
                                         <template #empty>
@@ -222,7 +218,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <li v-for="idx in 2" :key="idx" class="flex justify-between gap-x-4 py-4">
                                 <div class="flex min-w-0 gap-x-2 px-2">
                                     <div class="min-w-0 flex-auto">
-                                        <p class="text-base font-semibold leading-6 text-gray-100">
+                                        <p class="text-base leading-6 font-semibold text-gray-100">
                                             <USkeleton class="h-8 w-[325px]" />
                                         </p>
                                         <p class="mt-1 flex gap-1 text-sm leading-5">

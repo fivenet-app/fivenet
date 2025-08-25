@@ -10,6 +10,8 @@ import type { Category } from '~~/gen/ts/resources/documents/category';
 
 const { can } = useAuth();
 
+const overlay = useOverlay();
+
 const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const { data: categories, status, refresh, error } = useLazyAsyncData(`documents-categories`, () => listCategories());
@@ -36,18 +38,18 @@ const items = computed<CardElements>(
         })) ?? [],
 );
 
+const categoryCreateOrUpdateModal = overlay.create(CategoryCreateOrUpdateModal);
+
 function categorySelected(idx: number): void {
     if (!categories.value) {
         return;
     }
 
-    modal.open(CategoryCreateOrUpdateModal, {
+    categoryCreateOrUpdateModal.open({
         category: categories.value[idx],
         onUpdate: () => refresh(),
     });
 }
-
-const modal = useOverlay();
 </script>
 
 <template>
@@ -60,7 +62,7 @@ const modal = useOverlay();
                     color="neutral"
                     trailing-icon="i-mdi-plus"
                     @click="
-                        modal.open(CategoryCreateOrUpdateModal, {
+                        categoryCreateOrUpdateModal.open({
                             onUpdate: () => refresh(),
                         })
                     "

@@ -153,12 +153,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+    <UModal>
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
+                        <h3 class="text-2xl leading-6 font-semibold">
                             {{
                                 entryId
                                     ? $t('components.calendar.EntryCreateOrUpdateModal.update.title')
@@ -228,16 +228,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         </template>
                                     </template>
 
-                                    <template #option="{ option }">
+                                    <template #item="{ option }">
                                         <span
                                             class="size-2 rounded-full"
                                             :class="`bg-${option.color ?? 'primary'}-500 dark:bg-${option.color ?? 'primary'}-400`"
                                         />
                                         <span class="truncate">{{ option.name }}</span>
-                                    </template>
-
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                     </template>
 
                                     <template #empty>
@@ -309,12 +305,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         {{ $t('common.selected', state.users.length) }}
                                     </template>
 
-                                    <template #option="{ option: user }">
+                                    <template #item="{ option: user }">
                                         {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                    </template>
-
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                     </template>
 
                                     <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>

@@ -15,12 +15,18 @@ const props = defineProps<{
     calendarId: number;
 }>();
 
+defineEmits<{
+    close: [boolean];
+}>();
+
 const { can } = useAuth();
 
-const modal = useOverlay();
-const { isOpen } = useOverlay();
-
 const calendarStore = useCalendarStore();
+
+const overlay = useOverlay();
+
+const confirmModal = overlay.create(ConfirmModal);
+const calendarCreateOrUpdateModal = overlay.create(CalendarCreateOrUpdateModal);
 
 const { data, status, refresh, error } = useLazyAsyncData(`calendar-${props.calendarId}`, () =>
     calendarStore.getCalendar({ calendarId: props.calendarId }),
@@ -30,20 +36,12 @@ const calendar = computed(() => data.value?.calendar);
 </script>
 
 <template>
-    <USlideover :ui="{ width: 'w-screen sm:max-w-2xl' }" :overlay="false">
-        <UCard
-            class="flex flex-1 flex-col"
-            :ui="{
-                body: {
-                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--ui-header-height)))] max-h-[calc(100dvh-(2*var(--ui-header-height)))] overflow-y-auto',
-                    padding: 'px-1 py-2 sm:p-2',
-                },
-            }"
-        >
+    <USlideover :overlay="false">
+        <UCard class="flex flex-1 flex-col">
             <template #header>
                 <div class="flex flex-col gap-1">
                     <div class="flex items-center justify-between">
-                        <h3 class="inline-flex gap-2 text-2xl font-semibold leading-6">
+                        <h3 class="inline-flex gap-2 text-2xl leading-6 font-semibold">
                             {{ $t('common.calendar') }}: {{ calendar?.name ?? $t('common.calendar') }}
                         </h3>
 
@@ -59,7 +57,7 @@ const calendar = computed(() => data.value?.calendar);
                                 variant="link"
                                 icon="i-mdi-pencil"
                                 @click="
-                                    modal.open(CalendarCreateOrUpdateModal, {
+                                    calendarCreateOrUpdateModal.open({
                                         calendarId: calendar?.id,
                                     })
                                 "
@@ -75,7 +73,7 @@ const calendar = computed(() => data.value?.calendar);
                                 icon="i-mdi-delete"
                                 color="error"
                                 @click="
-                                    modal.open(ConfirmModal, {
+                                    confirmModal.open({
                                         confirm: async () => calendarStore.deleteCalendar(calendar?.id!),
                                     })
                                 "
@@ -87,7 +85,7 @@ const calendar = computed(() => data.value?.calendar);
                             color="neutral"
                             variant="ghost"
                             icon="i-mdi-window-close"
-                            @click="isOpen = false"
+                            @click="$emit('close', true)"
                         />
                     </div>
                 </div>
@@ -140,7 +138,7 @@ const calendar = computed(() => data.value?.calendar);
                     :unmount="true"
                 >
                     <template #access>
-                        <UContainer :ui="{ padding: 'px-2 sm:px-4 lg:px-4' }">
+                        <UContainer>
                             <AccessBadges
                                 :access-level="AccessLevel"
                                 :jobs="calendar?.access.jobs"
@@ -154,7 +152,7 @@ const calendar = computed(() => data.value?.calendar);
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" color="neutral" block @click="isOpen = false">
+                    <UButton class="flex-1" color="neutral" block @click="$emit('close', true)">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

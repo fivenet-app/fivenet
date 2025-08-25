@@ -45,7 +45,8 @@ async function disconnectOAuth2Connection(provider: OAuth2Provider): Promise<voi
     }
 }
 
-const modal = useOverlay();
+const overlay = useOverlay();
+const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
@@ -83,7 +84,7 @@ const modal = useOverlay();
                         icon="i-mdi-close-circle"
                         color="error"
                         @click="
-                            modal.open(ConfirmModal, {
+                            confirmModal.open({
                                 confirm: async () => disconnectOAuth2Connection(provider),
                             })
                         "

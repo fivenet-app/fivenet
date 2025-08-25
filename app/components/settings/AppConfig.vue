@@ -445,10 +445,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 :placeholder="$t('common.service')"
                                                 :items="grpcServices"
                                             >
-                                                <template #option-empty="{ query: search }">
-                                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                                </template>
-
                                                 <template #empty>
                                                     {{ $t('common.not_found', [$t('common.service')]) }}
                                                 </template>
@@ -467,10 +463,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     .map((m) => m.split('/').at(1) ?? m)
                                             "
                                         >
-                                            <template #option-empty="{ query: search }">
-                                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                            </template>
-
                                             <template #empty>
                                                 {{ $t('common.not_found', [$t('common.method')]) }}
                                             </template>
@@ -519,7 +511,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     </template>
                                 </template>
 
-                                <template #option="{ option: locale }">
+                                <template #item="{ option: locale }">
                                     <UIcon class="size-4" :name="locale.icon" />
                                     <span class="truncate">{{ locale.name }}</span>
                                 </template>
@@ -632,7 +624,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         </template>
                                     </template>
 
-                                    <template #option="{ option: job }">
+                                    <template #item="{ option: job }">
                                         <span class="truncate">{{ job.label }} ({{ job.name }})</span>
                                     </template>
                                 </USelectMenu>
@@ -664,7 +656,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         </template>
                                     </template>
 
-                                    <template #option="{ option: job }">
+                                    <template #item="{ option: job }">
                                         <span class="truncate">{{ job.label }} ({{ job.name }})</span>
                                     </template>
                                 </USelectMenu>
@@ -692,7 +684,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :placeholder="$t('common.duration')"
                             >
                                 <template #trailing>
-                                    <span class="text-muted text-xs">s</span>
+                                    <span class="text-xs text-muted">s</span>
                                 </template>
                             </UInput>
                         </UFormField>
@@ -711,7 +703,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :placeholder="$t('common.duration')"
                             >
                                 <template #trailing>
-                                    <span class="text-muted text-xs">s</span>
+                                    <span class="text-xs text-muted">s</span>
                                 </template>
                             </UInput>
                         </UFormField>
@@ -751,7 +743,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :placeholder="$t('common.duration')"
                             >
                                 <template #trailing>
-                                    <span class="text-muted text-xs">s</span>
+                                    <span class="text-xs text-muted">s</span>
                                 </template>
                             </UInput>
                         </UFormField>
@@ -807,7 +799,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         </template>
                                     </template>
 
-                                    <template #option="{ option: job }">
+                                    <template #item="{ option: job }">
                                         <span class="truncate">{{ job.label }} ({{ job.name }})</span>
                                     </template>
                                 </USelectMenu>
@@ -833,14 +825,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :placeholder="$t('components.settings.app_config.discord.bot_presence.type')"
                             >
                                 <template #item-label>
-                                    <span class="text-highlighted truncate">{{
+                                    <span class="truncate text-highlighted">{{
                                         $t(
                                             `enums.settings.AppConfig.DiscordBotPresenceType.${DiscordBotPresenceType[state.discord.botPresence.type ?? 0]}`,
                                         )
                                     }}</span>
                                 </template>
 
-                                <template #option="{ option }">
+                                <template #item="{ option }">
                                     <span class="truncate">{{
                                         $t(
                                             `enums.settings.AppConfig.DiscordBotPresenceType.${DiscordBotPresenceType[option.mode ?? 0]}`,

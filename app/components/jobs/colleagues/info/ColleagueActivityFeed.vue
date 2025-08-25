@@ -8,6 +8,7 @@ import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getJobsJobsClient } from '~~/gen/ts/clients';
+import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { ColleagueActivityType } from '~~/gen/ts/resources/jobs/activity';
 import type { ListColleagueActivityResponse } from '~~/gen/ts/services/jobs/jobs';
 import ColleagueName from '../ColleagueName.vue';
@@ -50,15 +51,19 @@ const schema = z.object({
         .default(props.userId ? [props.userId] : []),
     types: z.nativeEnum(ColleagueActivityType).array().max(typesAttrs.length).default(activityTypes),
     sorting: z
-        .custom<SortByColumn>()
-        .array()
-        .max(3)
-        .default([
-            {
-                id: 'createdAt',
-                desc: true,
-            },
-        ]),
+        .object({
+            columns: z
+                .custom<SortByColumn>()
+                .array()
+                .max(3)
+                .default([
+                    {
+                        id: 'createdAt',
+                        desc: true,
+                    },
+                ]),
+        })
+        .default({ columns: [{ id: 'createdAt', desc: true }] }),
     page: pageNumberSchema,
 });
 
@@ -71,7 +76,8 @@ if (props.userId !== undefined) {
 }
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `jobs-colleague-${query.sorting.column}:${query.sorting.direction}-${query.page}-${query.colleagues.join(',')}-${query.types.join(':')}-${props.userId}`,
+    () =>
+        `jobs-colleague-${JSON.stringify(query.sorting)}-${query.page}-${query.colleagues.join(',')}-${query.types.join(':')}-${props.userId}`,
     () => listColleagueActivity(query),
 );
 
@@ -81,7 +87,7 @@ async function listColleagueActivity(values: Schema): Promise<ListColleagueActiv
             pagination: {
                 offset: calculateOffset(values.page, data.value?.pagination),
             },
-            sort: values.sort,
+            sort: values.sorting,
             userIds: values.colleagues,
             activityTypes: values.types,
         });
@@ -137,12 +143,8 @@ watch(props, async () => refresh());
                             </template>
                         </template>
 
-                        <template #option="{ option: colleague }">
+                        <template #item="{ option: colleague }">
                             <ColleagueName :colleague="colleague" birthday />
-                        </template>
-
-                        <template #option-empty="{ query: search }">
-                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                         </template>
 
                         <template #empty> {{ $t('common.not_found', [$t('common.colleague', 2)]) }} </template>
@@ -172,12 +174,8 @@ watch(props, async () => refresh());
                             {{ $t('common.selected', query.types.length) }}
                         </template>
 
-                        <template #option="{ option }">
+                        <template #item="{ option }">
                             {{ $t(`enums.jobs.ColleagueActivityType.${ColleagueActivityType[option.aType]}`) }}
-                        </template>
-
-                        <template #option-empty="{ query: search }">
-                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                         </template>
 
                         <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>

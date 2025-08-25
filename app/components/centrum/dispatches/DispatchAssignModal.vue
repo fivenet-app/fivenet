@@ -121,7 +121,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl', margin: 'sm:my-2' }">
+    <UModal>
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UCard
                 class="flex flex-1 flex-col"
@@ -134,7 +134,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
             >
                 <template #header>
                     <div class="flex items-center justify-between">
-                        <h3 class="inline-flex items-center text-2xl font-semibold leading-6">
+                        <h3 class="inline-flex items-center text-2xl leading-6 font-semibold">
                             {{ $t('components.centrum.assign_dispatch.title') }}:
                             <IDCopyBadge :id="dispatch?.id ?? dispatchId" class="ml-2" prefix="DSP" />
                         </h3>
@@ -159,7 +159,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             <UButton
                                 v-for="unit in group.units"
                                 :key="unit.name"
-                                class="hover:bg-primary-100/10 inline-flex flex-row items-center gap-x-1 rounded-md p-1.5 text-sm font-medium hover:transition-all"
+                                class="inline-flex flex-row items-center gap-x-1 rounded-md p-1.5 text-sm font-medium hover:bg-primary-100/10 hover:transition-all"
                                 :class="[
                                     unitStatusToBGColor(unit.status?.status),
                                     unit.users.length === 0 ? '!bg-error-600' : '',

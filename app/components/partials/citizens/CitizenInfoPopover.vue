@@ -87,7 +87,7 @@ watchOnce(opened, async () => {
             {{ $t('common.na') }}
         </span>
     </template>
-    <UPopover v-else :ui="{ trigger: 'inline-flex w-auto', wrapper: 'inline-block' }">
+    <UPopover v-else>
         <UButton
             class="inline-flex items-center gap-1 p-px"
             variant="link"
@@ -159,7 +159,7 @@ watchOnce(opened, async () => {
                     />
                 </div>
 
-                <div v-else-if="isRequestPending(status) && !user" class="text-highlighted flex flex-col gap-2">
+                <div v-else-if="isRequestPending(status) && !user" class="flex flex-col gap-2 text-highlighted">
                     <USkeleton class="h-8 w-[250px]" />
 
                     <div class="flex flex-row items-center gap-2">
@@ -168,7 +168,7 @@ watchOnce(opened, async () => {
                     </div>
                 </div>
 
-                <div v-else-if="user" class="text-highlighted flex flex-col gap-2">
+                <div v-else-if="user" class="flex flex-col gap-2 text-highlighted">
                     <div class="inline-flex flex-row gap-2">
                         <ProfilePictureImg
                             v-if="showAvatar === undefined || showAvatar"

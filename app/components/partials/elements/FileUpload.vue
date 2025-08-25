@@ -26,7 +26,7 @@ const emit = defineEmits<{
 
 const modelValue = useVModel(props, 'modelValue', emit);
 
-const modal = useOverlay();
+const overlay = useOverlay();
 
 const settingsStore = useSettingsStore();
 const { nuiEnabled } = storeToRefs(settingsStore);
@@ -95,6 +95,8 @@ const filePath = computed(() => {
     }
     return '';
 });
+
+const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
@@ -127,7 +129,7 @@ const filePath = computed(() => {
                         color="error"
                         :disabled="disabled"
                         @click="
-                            modal.open(ConfirmModal, {
+                            confirmModal.open({
                                 confirm: async () => deleteFile(),
                             })
                         "

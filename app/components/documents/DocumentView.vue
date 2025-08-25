@@ -40,7 +40,7 @@ const clipboardStore = useClipboardStore();
 
 const notifications = useNotificationsStore();
 
-const modal = useOverlay();
+const overlay = useOverlay();
 
 const documentsDocuments = await useDocumentsDocuments();
 
@@ -75,12 +75,13 @@ if (hash.value !== undefined && hash.value !== null) {
     }
 }
 
+const documentRequestModal = overlay.create(DocumentRequestModal);
 function openRequestsModal(): void {
     if (doc.value?.access === undefined || doc.value?.document === undefined) {
         return;
     }
 
-    modal.open(DocumentRequestModal, {
+    documentRequestModal.open({
         access: doc.value.access,
         doc: doc.value.document,
         onRefresh: () => refresh(),
@@ -196,6 +197,10 @@ defineShortcuts({
 });
 
 const scrollRef = useTemplateRef('scrollRef');
+
+const confirmModal = overlay.create(ConfirmModal);
+const confirmModalWithReason = overlay.create(ConfirmModalWithReason);
+const documentReminderModal = overlay.create(DocumentReminderModal, { props: { documentId: props.documentId } });
 </script>
 
 <template>
@@ -203,7 +208,12 @@ const scrollRef = useTemplateRef('scrollRef');
         <template #right>
             <PartialsBackButton to="/documents" />
 
-            <UButton icon="i-mdi-refresh" :label="$t('common.refresh')" :loading="isRequestPending(status)" @click="refresh" />
+            <UButton
+                icon="i-mdi-refresh"
+                :label="$t('common.refresh')"
+                :loading="isRequestPending(status)"
+                @click="() => refresh()"
+            />
 
             <UButtonGroup class="inline-flex">
                 <IDCopyBadge
@@ -257,7 +267,7 @@ const scrollRef = useTemplateRef('scrollRef');
                                 class="flex-1 flex-col"
                                 block
                                 :icon="doc.document?.closed ? 'i-mdi-lock-open-variant' : 'i-mdi-lock'"
-                                :ui="{ icon: { base: doc.document?.closed ? 'text-success-500' : 'text-success-500' } }"
+                                :ui="{ leadingIcon: doc.document?.closed ? 'text-success-500' : 'text-success-500' }"
                                 @click="toggleDocument()"
                             >
                                 <template v-if="doc.document?.closed">
@@ -364,10 +374,10 @@ const scrollRef = useTemplateRef('scrollRef');
                                 block
                                 icon="i-mdi-reminder"
                                 @click="
-                                    modal.open(DocumentReminderModal, {
+                                    documentReminderModal.open({
                                         documentId: documentId,
                                         reminderTime: doc.document?.workflowUser?.manualReminderTime ?? undefined,
-                                        'onUpdate:reminderTime': () => updateReminderTime($event),
+                                        'onUpdate:reminderTime': ($event) => updateReminderTime($event),
                                     })
                                 "
                             >
@@ -396,7 +406,7 @@ const scrollRef = useTemplateRef('scrollRef');
                                 :disabled="doc?.document?.creatorId === activeChar?.userId"
                                 icon="i-mdi-creation"
                                 @click="
-                                    modal.open(ConfirmModal, {
+                                    confirmModal.open({
                                         confirm: async () => documentsDocuments.changeDocumentOwner(documentId),
                                     })
                                 "
@@ -426,7 +436,7 @@ const scrollRef = useTemplateRef('scrollRef');
                                 :icon="!doc.document?.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
                                 :label="!doc.document?.deletedAt ? $t('common.delete') : $t('common.restore')"
                                 @click="
-                                    modal.open(doc.document?.deletedAt !== undefined ? ConfirmModal : ConfirmModalWithReason, {
+                                    (doc.document?.deletedAt !== undefined ? confirmModalWithReason : confirmModal).open({
                                         confirm: async (reason?: string) =>
                                             documentsDocuments.deleteDocument(
                                                 documentId,
@@ -444,7 +454,7 @@ const scrollRef = useTemplateRef('scrollRef');
             <UCard ref="scrollRef" class="relative overflow-x-auto">
                 <template #header>
                     <div class="mb-4">
-                        <h1 class="break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
+                        <h1 class="px-0.5 py-1 text-4xl font-bold break-words sm:pl-1">
                             <span v-if="!doc.document?.title" class="italic">
                                 {{ $t('common.untitled') }}
                             </span>
@@ -563,7 +573,7 @@ const scrollRef = useTemplateRef('scrollRef');
                         {{ $t('common.content') }}
                     </h2>
 
-                    <div class="max-w-(--breakpoint-xl) dark:bg-base-900 mx-auto w-full break-words rounded-lg bg-neutral-100">
+                    <div class="dark:bg-base-900 mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 break-words">
                         <HTMLContent
                             v-if="doc.document?.content?.content"
                             class="px-4 py-2"

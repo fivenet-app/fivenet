@@ -31,7 +31,13 @@ const { ownUnitId, timeCorrection } = storeToRefs(centrumStore);
 const expiresAt = props.dispatch.units.find((u) => u.unitId === ownUnitId.value)?.expiresAt;
 const dispatchBackground = computed(() => dispatchStatusToBGColor(props.dispatch.status?.status));
 
-const slideover = useOverlay();
+const overlay = useOverlay();
+
+const dispatchDetailsSlideover = overlay.create(DispatchDetailsSlideover, {
+    props: {
+        dispatchId: props.dispatch.id,
+    },
+});
 
 const checked = ref(false);
 
@@ -55,7 +61,7 @@ onBeforeMount(() => {
                     prefix="DSP"
                     :action="
                         () =>
-                            slideover.open(DispatchDetailsSlideover, {
+                            dispatchDetailsSlideover.open({
                                 dispatchId: dispatch.id,
                             })
                     "

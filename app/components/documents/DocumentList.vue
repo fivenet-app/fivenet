@@ -13,6 +13,7 @@ import { useCompletorStore } from '~/stores/completor';
 import { useSettingsStore } from '~/stores/settings';
 import type { ToggleItem } from '~/utils/types';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
+import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/documents/documents';
@@ -54,15 +55,19 @@ const schema = z.object({
     categories: z.number().array().max(3).default([]),
     onlyDrafts: z.coerce.boolean().optional(),
     sorting: z
-        .custom<SortByColumn>()
-        .array()
-        .max(3)
-        .default([
-            {
-                id: 'createdAt',
-                desc: true,
-            },
-        ]),
+        .object({
+            columns: z
+                .custom<SortByColumn>()
+                .array()
+                .max(3)
+                .default([
+                    {
+                        id: 'createdAt',
+                        desc: true,
+                    },
+                ]),
+        })
+        .default({ columns: [{ id: 'createdAt', desc: true }] }),
     page: pageNumberSchema,
 });
 
@@ -71,7 +76,7 @@ const query = useSearchForm('documents', schema);
 const usersLoading = ref(false);
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `documents-${query.sorting.column}:${query.sorting.direction}-${query.page}`,
+    () => `documents-${JSON.stringify(query.sorting)}-${query.page}`,
     () => listDocuments(),
 );
 
@@ -80,7 +85,7 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
         pagination: {
             offset: calculateOffset(query.page, data.value?.pagination),
         },
-        sort: { columns: query.sorting },
+        sort: query.sorting,
         search: query.title ?? '',
         categoryIds: query.categories,
         creatorIds: query.creators,
@@ -293,7 +298,7 @@ defineShortcuts({
                                         <span v-else> &nbsp; </span>
                                     </template>
 
-                                    <template #option="{ option }">
+                                    <template #item="{ option }">
                                         <span class="inline-flex gap-1" :class="`bg-${option.color}-500`">
                                             <component
                                                 :is="
@@ -305,10 +310,6 @@ defineShortcuts({
                                             />
                                             <span class="truncate">{{ option.name }}</span>
                                         </span>
-                                    </template>
-
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                     </template>
 
                                     <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
@@ -347,12 +348,8 @@ defineShortcuts({
                                         </template>
                                     </template>
 
-                                    <template #option="{ option: user }">
+                                    <template #item="{ option: user }">
                                         {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                    </template>
-
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                     </template>
 
                                     <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
@@ -392,7 +389,7 @@ defineShortcuts({
                                         </div>
                                     </template>
 
-                                    <template #option="{ option }">
+                                    <template #item="{ option }">
                                         <div class="inline-flex items-center gap-1 truncate">
                                             <template v-if="typeof option.closed === 'boolean'">
                                                 <UIcon

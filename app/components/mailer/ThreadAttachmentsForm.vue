@@ -63,12 +63,8 @@ async function listDocuments(search: string): Promise<DocumentShort[]> {
                                 </template>
                             </template>
 
-                            <template #option="{ option: document }">
+                            <template #item="{ option: document }">
                                 {{ `DOC-${document.id}: ${document?.title}` }}
-                            </template>
-
-                            <template #option-empty="{ query: search }">
-                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                             </template>
 
                             <template #empty> {{ $t('common.not_found', [$t('common.document', 2)]) }} </template>

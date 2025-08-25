@@ -8,9 +8,13 @@ const props = defineProps<{
     status: DispatchStatus | undefined;
 }>();
 
-const modal = useOverlay();
+const overlay = useOverlay();
 
 const centrumStore = useCentrumStore();
+
+const dispatchDetailsByIDSlideover = overlay.create(DispatchDetailsByIDSlideover, {
+    props: { dispatchId: props.status?.dispatchId ?? 0 },
+});
 
 const dispatch = props.status?.dispatchId ? centrumStore.dispatches.get(props.status.dispatchId) : undefined;
 const dispatchStatusColor = computed(() => dispatchStatusToBGColor(props.status?.status));
@@ -39,7 +43,7 @@ const dispatchStatusColor = computed(() => dispatchStatusToBGColor(props.status?
                             variant="link"
                             icon="i-mdi-car-emergency"
                             @click="
-                                modal.open(DispatchDetailsByIDSlideover, {
+                                dispatchDetailsByIDSlideover.open({
                                     dispatchId: status.dispatchId,
                                 })
                             "
@@ -49,16 +53,17 @@ const dispatchStatusColor = computed(() => dispatchStatusToBGColor(props.status?
                     </UTooltip>
                 </div>
 
-                <p class="text-highlighted text-base font-semibold leading-none">DSP-{{ status.dispatchId }}</p>
+                <p class="text-base leading-none font-semibold text-highlighted">DSP-{{ status.dispatchId }}</p>
 
                 <UBadge class="rounded-sm font-semibold" :class="dispatchStatusColor" size="xs">
                     {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[status.status ?? 0]}`) }}
                 </UBadge>
 
                 <div v-if="dispatch" class="text-highlighted">
-                    <p class="text-sm font-medium leading-none">
+                    <p class="text-sm leading-none font-medium">
                         {{ $t('common.unit', 2) }}
                     </p>
+
                     <template v-if="dispatch.units.length === 0">
                         <p class="text-xs font-normal">
                             {{ $t('common.units', 0) }}

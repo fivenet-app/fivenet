@@ -7,6 +7,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
+import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { UserActivityType } from '~~/gen/ts/resources/users/activity';
 import type { ListUserActivityResponse } from '~~/gen/ts/services/citizens/citizens';
 
@@ -33,22 +34,26 @@ const options = activityTypes.map((aType) => ({ aType: aType }));
 const schema = z.object({
     types: z.nativeEnum(UserActivityType).array().max(activityTypes.length).default(activityTypes),
     sorting: z
-        .custom<SortByColumn>()
-        .array()
-        .max(3)
-        .default([
-            {
-                id: 'createdAt',
-                desc: true,
-            },
-        ]),
+        .object({
+            columns: z
+                .custom<SortByColumn>()
+                .array()
+                .max(3)
+                .default([
+                    {
+                        id: 'createdAt',
+                        desc: true,
+                    },
+                ]),
+        })
+        .default({ columns: [{ id: 'createdAt', desc: true }] }),
     page: pageNumberSchema,
 });
 
 const query = useSearchForm('citizen_activity', schema);
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `citizeninfo-activity-${query.sorting.column}:${query.sorting.direction}-${props.userId}-${query.page}`,
+    () => `citizeninfo-activity-${JSON.stringify(query.sorting)}-${props.userId}-${query.page}`,
     () => listUserActivity(),
 );
 
@@ -58,7 +63,7 @@ async function listUserActivity(): Promise<ListUserActivityResponse> {
             pagination: {
                 offset: calculateOffset(query.page, data.value?.pagination),
             },
-            sort: { columns: query.sorting },
+            sort: query.sorting,
             userId: props.userId,
             types: query.types,
         });
@@ -108,12 +113,8 @@ watchDebounced(query, async () => refresh(), {
                                     {{ $t('common.selected', query.types.length) }}
                                 </template>
 
-                                <template #option="{ option }">
+                                <template #item="{ option }">
                                     {{ $t(`enums.users.UserActivityType.${UserActivityType[option.aType]}`) }}
-                                </template>
-
-                                <template #option-empty="{ query: search }">
-                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                 </template>
 
                                 <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>

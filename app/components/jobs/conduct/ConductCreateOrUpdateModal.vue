@@ -119,12 +119,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+    <UModal>
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
+                        <h3 class="text-2xl leading-6 font-semibold">
                             {{
                                 entry === undefined
                                     ? $t('components.jobs.conduct.CreateOrUpdateModal.create.title')
@@ -145,8 +145,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <div>
                     <dl class="divide-neutral/10 divide-y">
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
-                                <label class="block text-sm font-medium leading-6" for="type">
+                            <dt class="text-sm leading-6 font-medium">
+                                <label class="block text-sm leading-6 font-medium" for="type">
                                     {{ $t('common.type') }}
                                 </label>
                             </dt>
@@ -165,7 +165,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 </UBadge>
                                             </template>
 
-                                            <template #option="{ option }">
+                                            <template #item="{ option }">
                                                 <UBadge :color="conductTypesToBadgeColor(option.status)" truncate>
                                                     {{ $t(`enums.jobs.ConductType.${ConductType[option.status ?? 0]}`) }}
                                                 </UBadge>
@@ -180,8 +180,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </dd>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
-                                <label class="block text-sm font-medium leading-6" for="targetUser">
+                            <dt class="text-sm leading-6 font-medium">
+                                <label class="block text-sm leading-6 font-medium" for="targetUser">
                                     {{ $t('common.target') }}
                                 </label>
                             </dt>
@@ -216,12 +216,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 </template>
                                             </template>
 
-                                            <template #option="{ option: colleague }">
+                                            <template #item="{ option: colleague }">
                                                 <ColleagueName class="truncate" :colleague="colleague" birthday />
-                                            </template>
-
-                                            <template #option-empty="{ query: search }">
-                                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                             </template>
 
                                             <template #empty>
@@ -233,8 +229,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </dd>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
-                                <label class="block text-sm font-medium leading-6" for="message">
+                            <dt class="text-sm leading-6 font-medium">
+                                <label class="block text-sm leading-6 font-medium" for="message">
                                     {{ $t('common.message') }}
                                 </label>
                             </dt>
@@ -250,8 +246,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </dd>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
-                                <label class="block text-sm font-medium leading-6" for="expiresAt">
+                            <dt class="text-sm leading-6 font-medium">
+                                <label class="block text-sm leading-6 font-medium" for="expiresAt">
                                     {{ $t('common.expires_at') }}?
                                 </label>
                             </dt>

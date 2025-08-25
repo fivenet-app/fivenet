@@ -21,18 +21,15 @@ withDefaults(
     },
 );
 
-const { isOpen } = useOverlay();
+defineEmits<{
+    (e: 'close'): void;
+}>();
 </script>
 
 <template>
     <UModal
         :title="title ?? $t('components.partials.confirm_dialog.title')"
         :description="description ?? $t('components.partials.confirm_dialog.description')"
-        :icon="icon"
-        :ui="{
-            icon: { base: iconClass },
-            footer: { base: 'ml-16' },
-        }"
         @update:model-value="cancel && cancel()"
     >
         <template #footer>
@@ -41,7 +38,7 @@ const { isOpen } = useOverlay();
                 :label="$t('common.confirm')"
                 @click="
                     confirm();
-                    isOpen = false;
+                    $emit('close');
                 "
             />
             <UButton
@@ -51,7 +48,7 @@ const { isOpen } = useOverlay();
                     if (cancel) {
                         cancel();
                     }
-                    isOpen = false;
+                    $emit('close');
                 "
             />
         </template>

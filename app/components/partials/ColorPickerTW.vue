@@ -38,7 +38,7 @@ const availableColorOptions = [...primaryColors, ...backgroundColors];
                 <span class="truncate">{{ color }}</span>
             </template>
 
-            <template #option="{ option }">
+            <template #item="{ option }">
                 <span class="size-2 rounded-full" :class="option.class" />
                 <span class="truncate">{{ option.label }}</span>
             </template>

@@ -7,7 +7,8 @@ defineProps<{
 
 const { attr, can } = useAuth();
 
-const modal = useOverlay();
+const overlay = useOverlay();
+const documentRequestAccessModal = overlay.create(DocumentRequestAccessModal);
 </script>
 
 <template>
@@ -30,7 +31,7 @@ const modal = useOverlay();
                     color: 'primary',
                     label: $t('components.documents.document_request_access.callback_message'),
                     onClick: () =>
-                        modal.open(DocumentRequestAccessModal, {
+                        documentRequestAccessModal.open({
                             documentId: documentId,
                         }),
                 },

@@ -25,7 +25,7 @@ const { t } = useI18n();
 
 const { isSuperuser } = useAuth();
 
-const modal = useOverlay();
+const overlay = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -368,6 +368,8 @@ const onSubmitThrottle = useThrottleFn(async () => {
     canSubmit.value = false;
     await updateJobLimits().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
@@ -398,7 +400,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             icon="i-mdi-delete"
                             color="error"
                             @click="
-                                modal.open(ConfirmModal, {
+                                confirmModal.open({
                                     confirm: async () => deleteFaction(jobLimits!.job),
                                 })
                             "
@@ -446,7 +448,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     </div>
 
                     <UAccordion :items="accordionCategories" multiple :unmount="true">
-                        <template #item="{ item: category }">
+                        <template #content="{ item: category }">
                             <div class="flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
                                 <div
                                     v-for="perm in permList.filter((p) => p.category === category.category)"

@@ -51,15 +51,9 @@ watch(selectedJob, async () => {
                     );
                 }
             "
-            search-lazy
-            :search-placeholder="$t('common.search_field')"
             :ui-menu="{ height: 'max-h-40' }"
             v-bind="$attrs"
         >
-            <template #option-empty="{ query: search }">
-                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-            </template>
-
             <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
         </UInputMenu>
     </ClientOnly>

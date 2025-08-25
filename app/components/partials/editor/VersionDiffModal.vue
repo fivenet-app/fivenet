@@ -86,14 +86,13 @@ function close() {
         class="flex flex-1 flex-col"
         :ui="{
             body: {
-                base: 'flex-1 min-h-[calc(100dvh-(2*var(--ui-header-height)))] max-h-[calc(100dvh-(2*var(--ui-header-height)))] overflow-y-auto',
                 padding: 'px-1 py-2 sm:p-2',
             },
         }"
     >
         <template #header>
             <div class="flex items-center justify-between">
-                <h3 class="text-2xl font-semibold leading-6">
+                <h3 class="text-2xl leading-6 font-semibold">
                     {{ $t('common.version_history') }}
                 </h3>
 

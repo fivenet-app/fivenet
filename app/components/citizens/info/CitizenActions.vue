@@ -36,7 +36,13 @@ const notifications = useNotificationsStore();
 
 const w = window;
 
-const modal = useOverlay();
+const overlay = useOverlay();
+
+const templateModal = overlay.create(TemplateModal);
+const citizenSetWantedModal = overlay.create(CitizenSetWantedModal);
+const citizenSetJobModal = overlay.create(CitizenSetJobModal);
+const citizenSetTrafficPointsModal = overlay.create(CitizenSetTrafficPointsModal);
+const citizenSetMugshotModal = overlay.create(CitizenSetMugshotModal);
 
 function openTemplates(): void {
     if (!props.user) {
@@ -45,7 +51,7 @@ function openTemplates(): void {
 
     clipboardStore.addUser(props.user, true);
 
-    modal.open(TemplateModal, {});
+    templateModal.open({});
 }
 
 function copyLinkToClipboard(): void {
@@ -66,7 +72,7 @@ if (props.registerShortcuts) {
                 return;
             }
 
-            modal.open(CitizenSetWantedModal, {
+            citizenSetWantedModal.open({
                 user: props.user,
                 'onUpdate:wantedStatus': ($event) => emit('update:wantedStatus', $event),
             });
@@ -76,7 +82,7 @@ if (props.registerShortcuts) {
                 return;
             }
 
-            modal.open(CitizenSetJobModal, {
+            citizenSetJobModal.open({
                 user: props.user,
                 'onUpdate:job': ($event) => emit('update:job', $event),
             });
@@ -86,7 +92,7 @@ if (props.registerShortcuts) {
                 return;
             }
 
-            modal.open(CitizenSetTrafficPointsModal, {
+            citizenSetTrafficPointsModal.open({
                 user: props.user,
                 'onUpdate:trafficInfractionPoints': ($event) => emit('update:trafficInfractionPoints', $event),
             });
@@ -96,7 +102,7 @@ if (props.registerShortcuts) {
                 return;
             }
 
-            modal.open(CitizenSetMugshotModal, {
+            citizenSetMugshotModal.open({
                 user: props.user,
                 'onUpdate:mugshot': ($event) => emit('update:mugshot', $event),
             });
@@ -129,7 +135,7 @@ if (props.registerShortcuts) {
                 truncate
                 :icon="user?.props?.wanted ? 'i-mdi-account-alert' : 'i-mdi-account-cancel'"
                 @click="
-                    modal.open(CitizenSetWantedModal, {
+                    citizenSetWantedModal.open({
                         user: user,
                         'onUpdate:wantedStatus': ($event) => $emit('update:wantedStatus', $event),
                     })
@@ -152,7 +158,7 @@ if (props.registerShortcuts) {
                 block
                 icon="i-mdi-briefcase"
                 @click="
-                    modal.open(CitizenSetJobModal, {
+                    citizenSetJobModal.open({
                         user: user,
                         'onUpdate:job': ($event) => $emit('update:job', $event),
                     })
@@ -171,7 +177,7 @@ if (props.registerShortcuts) {
                 block
                 icon="i-mdi-counter"
                 @click="
-                    modal.open(CitizenSetTrafficPointsModal, {
+                    citizenSetTrafficPointsModal.open({
                         user: user,
                         'onUpdate:trafficInfractionPoints': ($event) => $emit('update:trafficInfractionPoints', $event),
                     })
@@ -190,7 +196,7 @@ if (props.registerShortcuts) {
                 block
                 icon="i-mdi-camera"
                 @click="
-                    modal.open(CitizenSetMugshotModal, {
+                    citizenSetMugshotModal.open({
                         user: user,
                         'onUpdate:mugshot': ($event) => $emit('update:mugshot', $event),
                     })

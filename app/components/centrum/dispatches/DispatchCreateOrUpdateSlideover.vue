@@ -17,8 +17,6 @@ const emit = defineEmits<{
 
 const { activeChar } = useAuth();
 
-const { isOpen } = useOverlay();
-
 const livemapStore = useLivemapStore();
 const { location: storeLocation } = storeToRefs(livemapStore);
 
@@ -79,7 +77,6 @@ async function createDispatch(values: Schema): Promise<void> {
         await call;
 
         emit('close');
-        isOpen.value = false;
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -103,7 +100,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <USlideover :ui="{ width: 'w-screen max-w-xl' }" :overlay="false">
+    <USlideover :overlay="false">
         <UForm class="flex flex-1" :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UCard
                 class="flex flex-1 flex-col"
@@ -116,7 +113,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             >
                 <template #header>
                     <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
+                        <h3 class="text-2xl leading-6 font-semibold">
                             {{ $t('components.centrum.create_dispatch.title') }}
                         </h3>
 
@@ -125,10 +122,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             color="neutral"
                             variant="ghost"
                             icon="i-mdi-window-close"
-                            @click="
-                                $emit('close');
-                                isOpen = false;
-                            "
+                            @click="$emit('close')"
                         />
                     </div>
                 </template>
@@ -136,8 +130,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <div>
                     <dl class="divide-neutral/10 divide-y">
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
-                                <label class="block text-sm font-medium leading-6" for="message">
+                            <dt class="text-sm leading-6 font-medium">
+                                <label class="block text-sm leading-6 font-medium" for="message">
                                     {{ $t('common.message') }}
                                 </label>
                             </dt>
@@ -154,8 +148,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </div>
 
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
-                                <label class="block text-sm font-medium leading-6" for="description">
+                            <dt class="text-sm leading-6 font-medium">
+                                <label class="block text-sm leading-6 font-medium" for="description">
                                     {{ $t('common.description') }}
                                 </label>
                             </dt>
@@ -172,8 +166,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </div>
 
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
-                                <label class="block text-sm font-medium leading-6" for="anon">
+                            <dt class="text-sm leading-6 font-medium">
+                                <label class="block text-sm leading-6 font-medium" for="anon">
                                     {{ $t('common.anon') }}
                                 </label>
                             </dt>
@@ -188,8 +182,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             v-if="dispatchTargetJobs && dispatchTargetJobs.length > 0"
                             class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
                         >
-                            <dt class="text-sm font-medium leading-6">
-                                <label class="block text-sm font-medium leading-6" for="jobs.jobs">
+                            <dt class="text-sm leading-6 font-medium">
+                                <label class="block text-sm leading-6 font-medium" for="jobs.jobs">
                                     {{ $t('common.job') }}
                                 </label>
                             </dt>
@@ -217,10 +211,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             }}</span>
                                         </template>
 
-                                        <template #option-empty="{ query: search }">
-                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                        </template>
-
                                         <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
                                     </USelectMenu>
                                 </UFormField>
@@ -235,15 +225,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             {{ $t('common.create') }}
                         </UButton>
 
-                        <UButton
-                            class="flex-1"
-                            block
-                            color="neutral"
-                            @click="
-                                $emit('close');
-                                isOpen = false;
-                            "
-                        >
+                        <UButton class="flex-1" block color="neutral" @click="$emit('close')">
                             {{ $t('common.close', 1) }}
                         </UButton>
                     </UButtonGroup>

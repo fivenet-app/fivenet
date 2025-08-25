@@ -1,6 +1,9 @@
 <script lang="ts" setup>
+import { useAppConfig } from '#app';
+import { UButton, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import { isFuture } from 'date-fns';
+import { h } from 'vue';
 import { z } from 'zod';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
 import EmailInfoPopover from '~/components/mailer/EmailInfoPopover.vue';
@@ -12,6 +15,8 @@ import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import { useSettingsStore } from '~/stores/settings';
 import { getJobsJobsClient } from '~~/gen/ts/clients';
+import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
+import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import type { Label } from '~~/gen/ts/resources/jobs/labels';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { GetColleagueLabelsResponse, ListColleaguesResponse } from '~~/gen/ts/services/jobs/jobs';
@@ -22,7 +27,7 @@ import SelfServicePropsAbsenceDateModal from './SelfServicePropsAbsenceDateModal
 
 const { t } = useI18n();
 
-const modal = useOverlay();
+const overlay = useOverlay();
 
 const { attr, can, activeChar } = useAuth();
 
@@ -35,15 +40,19 @@ const schema = z.object({
     namePrefix: z.string().max(12).optional(),
     nameSuffix: z.string().max(12).optional(),
     sorting: z
-        .custom<SortByColumn>()
-        .array()
-        .max(3)
-        .default([
-            {
-                id: 'rank',
-                desc: false,
-            },
-        ]),
+        .object({
+            columns: z
+                .custom<SortByColumn>()
+                .array()
+                .max(3)
+                .default([
+                    {
+                        id: 'createdAt',
+                        desc: true,
+                    },
+                ]),
+        })
+        .default({ columns: [{ id: 'createdAt', desc: true }] }),
     page: pageNumberSchema,
 });
 
@@ -53,7 +62,8 @@ const settingsStore = useSettingsStore();
 const { jobsService } = storeToRefs(settingsStore);
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `jobs-colleagues-${query.sorting.column}:${query.sorting.direction}-${query.page}-${query.name}-${query.absent}-${query.labels.join(',')}-${query.namePrefix}-${query.nameSuffix}`,
+    () =>
+        `jobs-colleagues-${JSON.stringify(query.sorting)}-${query.page}-${query.name}-${query.absent}-${query.labels.join(',')}-${query.namePrefix}-${query.nameSuffix}`,
     () => listColleagues(),
 );
 
@@ -63,7 +73,7 @@ async function listColleagues(): Promise<ListColleaguesResponse> {
             pagination: {
                 offset: calculateOffset(query.page, data.value?.pagination),
             },
-            sort: { columns: query.sorting },
+            sort: query.sorting,
             search: query.name,
             userIds: [],
             absent: query.absent,
@@ -123,52 +133,141 @@ function toggleLabelInSearch(label: Label): void {
     }
 }
 
-const columns = [
-    {
-        accessorKey: 'name',
-        label: t('common.name'),
-        sortable: true,
-    },
-    {
-        accessorKey: 'rank',
-        label: t('common.rank'),
-        class: 'hidden lg:table-cell',
-        rowClass: 'hidden lg:table-cell',
-        sortable: true,
-    },
-    {
-        accessorKey: 'absence',
-        label: t('common.absence_date'),
-    },
-    {
-        accessorKey: 'phoneNumber',
-        label: t('common.phone_number'),
-    },
-    {
-        accessorKey: 'email',
-        label: t('common.mail'),
-    },
-    {
-        accessorKey: 'dateofbirth',
-        label: t('common.date_of_birth'),
-        class: 'hidden lg:table-cell',
-        rowClass: 'hidden lg:table-cell',
-    },
-    can(['jobs.JobsService/GetColleague', 'jobs.JobsService/SetColleagueProps']).value
-        ? {
-              accessorKey: 'actions',
-              label: t('common.action', 2),
-              sortable: false,
-          }
-        : undefined,
-].filter((c) => c !== undefined) as TableColumn[];
+const appConfig = useAppConfig();
+
+const columns = computed(() =>
+    (
+        [
+            {
+                accessorKey: 'name',
+                header: ({ column }) => {
+                    const isSorted = column.getIsSorted();
+
+                    return h(UButton, {
+                        color: 'neutral',
+                        variant: 'ghost',
+                        label: t('common.name'),
+                        icon: isSorted
+                            ? isSorted === 'asc'
+                                ? appConfig.custom.icons.sortAsc
+                                : appConfig.custom.icons.sortDesc
+                            : appConfig.custom.icons.sort,
+                        class: '-mx-2.5',
+                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+                    });
+                },
+            },
+            {
+                accessorKey: 'jobGrade',
+                header: ({ column }) => {
+                    const isSorted = column.getIsSorted();
+
+                    return h(UButton, {
+                        color: 'neutral',
+                        variant: 'ghost',
+                        label: t('common.rank'),
+                        icon: isSorted
+                            ? isSorted === 'asc'
+                                ? appConfig.custom.icons.sortAsc
+                                : appConfig.custom.icons.sortDesc
+                            : appConfig.custom.icons.sort,
+                        class: '-mx-2.5',
+                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+                    });
+                },
+                cell: ({ row }) => h('span', {}, row.original.jobGradeLabel),
+            },
+            {
+                accessorKey: 'absence',
+                header: t('common.absence_date'),
+            },
+            {
+                accessorKey: 'phoneNumber',
+                header: t('common.phone_number'),
+                cell: ({ row }) => h(PhoneNumberBlock, { number: row.original.phoneNumber }),
+            },
+            {
+                accessorKey: 'email',
+                header: t('common.mail'),
+                cell: ({ row }) =>
+                    h(EmailInfoPopover, {
+                        email: row.original.email,
+                        variant: 'link',
+                        color: 'primary',
+                        truncate: true,
+                        trailing: false,
+                        hideNaText: true,
+                    }),
+            },
+            {
+                accessorKey: 'dateofbirth',
+                header: t('common.date_of_birth'),
+                cell: ({ row }) => h('span', {}, row.original.dateofbirth),
+            },
+            can(['jobs.JobsService/GetColleague', 'jobs.JobsService/SetColleagueProps']).value
+                ? {
+                      accessorKey: 'actions',
+                      header: t('common.action', 2),
+                      cell: ({ row }) =>
+                          h('div', { class: 'flex flex-col justify-end md:flex-row' }, [
+                              h(
+                                  UTooltip,
+                                  {
+                                      text: t('components.jobs.self_service.set_absence_date'),
+                                      vIf:
+                                          canDo.value.setJobsUserProps &&
+                                          (row.original.userId === activeChar.value!.userId ||
+                                              attr('jobs.JobsService/SetColleagueProps', 'Types', 'AbsenceDate').value) &&
+                                          checkIfCanAccessColleague(row.original, 'jobs.JobsService/SetColleagueProps'),
+                                  },
+                                  [
+                                      h(UButton, {
+                                          variant: 'link',
+                                          icon: 'i-mdi-island',
+                                          onClick: () =>
+                                              selfServicePropsAbsenceDateModal.open({
+                                                  userId: row.original.userId,
+                                                  'onUpdate:absenceDates': ($event) => updateAbsenceDates($event),
+                                              }),
+                                      }),
+                                  ],
+                              ),
+                              h(
+                                  UTooltip,
+                                  {
+                                      text: t('common.show'),
+                                      vIf:
+                                          canDo.value.getColleague &&
+                                          checkIfCanAccessColleague(row.original, 'jobs.JobsService/GetColleague'),
+                                  },
+                                  [
+                                      h(UButton, {
+                                          variant: 'link',
+                                          icon: 'i-mdi-eye',
+                                          to: {
+                                              name: 'jobs-colleagues-id-info',
+                                              params: { id: row.original.userId ?? 0 },
+                                          },
+                                      }),
+                                  ],
+                              ),
+                          ]),
+                  }
+                : undefined,
+        ] as TableColumn<Colleague>[]
+    ).filter((c) => c !== undefined),
+);
 
 const canDo = computed(() => ({
     getColleague: can('jobs.JobsService/GetColleague').value,
-    setJobsUerProps: can('jobs.JobsService/SetColleagueProps').value,
+    setJobsUserProps: can('jobs.JobsService/SetColleagueProps').value,
 }));
 
 const { game } = useAppConfig();
+
+const selfServicePropsAbsenceDateModal = overlay.create(SelfServicePropsAbsenceDateModal);
+const jobLabelsModal = overlay.create(JobLabelsModal);
+const colleagueLabelStatsModal = overlay.create(ColleagueLabelStatsModal);
 
 const input = useTemplateRef('input');
 
@@ -235,11 +334,11 @@ defineShortcuts({
                         v-if="can('jobs.JobsService/ManageLabels').value"
                         :label="$t('common.label', 2)"
                         icon="i-mdi-tag"
-                        @click="modal.open(JobLabelsModal, {})"
+                        @click="jobLabelsModal.open({})"
                     />
 
                     <UTooltip v-if="attr('jobs.JobsService/GetColleague', 'Types', 'Labels').value" :text="$t('common.stats')">
-                        <UButton icon="i-mdi-chart-donut" color="neutral" @click="modal.open(ColleagueLabelStatsModal, {})" />
+                        <UButton icon="i-mdi-chart-donut" color="neutral" @click="colleagueLabelStatsModal.open({})" />
                     </UTooltip>
                 </UFormField>
             </div>
@@ -272,7 +371,6 @@ defineShortcuts({
                                     option-attribute="name"
                                     clear-search-on-close
                                     value-key="id"
-                                    :ui="{ padding: { sm: 'py-1' } }"
                                 >
                                     <template #item-label="{ item }">
                                         <span v-if="item.length" class="inline-flex flex-wrap gap-1 truncate">
@@ -288,7 +386,7 @@ defineShortcuts({
                                         <span v-else>&nbsp;</span>
                                     </template>
 
-                                    <template #option="{ option }">
+                                    <template #item="{ option }">
                                         <UBadge
                                             class="truncate"
                                             :class="isColorBright(option.color) ? 'text-black!' : 'text-white!'"
@@ -296,10 +394,6 @@ defineShortcuts({
                                         >
                                             {{ option.name }}
                                         </UBadge>
-                                    </template>
-
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                     </template>
 
                                     <template #empty>
@@ -352,128 +446,42 @@ defineShortcuts({
     <template v-else>
         <UTable
             v-if="!jobsService.cardView"
-            v-model:sorting="query.sorting"
-            class="flex-1"
+            v-model:sorting="query.sorting.columns"
             :loading="isRequestPending(status)"
             :columns="columns"
             :data="data?.colleagues"
-            :empty-state="{ icon: 'i-mdi-account', label: $t('common.not_found', [$t('common.colleague', 2)]) }"
-            sort-mode="manual"
+            :empty="$t('common.not_found', [$t('common.colleague', 2)])"
+            :sorting-options="{ manualSorting: true }"
+            :pagination-options="{ manualPagination: true }"
         >
-            <template #name-cell="{ row: colleague }">
+            <template #name-cell="{ row }">
                 <div class="inline-flex items-center text-highlighted">
                     <ProfilePictureImg
                         class="mr-2"
-                        :src="colleague.original?.avatar"
-                        :name="`${colleague.original.firstname} ${colleague.original.lastname}`"
+                        :src="row.original?.avatar"
+                        :name="`${row.original.firstname} ${row.original.lastname}`"
                         size="sm"
                         :enable-popup="true"
                         :alt="$t('common.avatar')"
                     />
 
-                    <ColleagueName :colleague="colleague.original" />
+                    <ColleagueName :colleague="row.original" />
                 </div>
-
-                <dl class="font-normal lg:hidden">
-                    <dt class="sr-only">{{ $t('common.job_grade') }}</dt>
-                    <dd class="mt-1 truncate">
-                        {{ colleague.original.jobGradeLabel }}
-                        <template v-if="colleague.original.job !== game.unemployedJobName">
-                            ({{ colleague.original.jobGrade }})</template
-                        >
-                    </dd>
-                </dl>
             </template>
 
-            <template #rank-cell="{ row: colleague }">
-                {{ colleague.original.jobGradeLabel }}
-                <template v-if="colleague.original.job !== game.unemployedJobName">
-                    ({{ colleague.original.jobGrade }})</template
-                >
-            </template>
-
-            <template #absence-cell="{ row: colleague }">
+            <template #absence-cell="{ row }">
                 <dl
-                    v-if="colleague.original.props?.absenceEnd && isFuture(toDate(colleague.original.props?.absenceEnd))"
+                    v-if="row.original.props?.absenceEnd && isFuture(toDate(row.original.props?.absenceEnd))"
                     class="font-normal"
                 >
                     <dd class="truncate">
                         {{ $t('common.from') }}:
-                        <GenericTime :value="colleague.original.props?.absenceBegin" type="date" />
+                        <GenericTime :value="row.original.props?.absenceBegin" type="date" />
                     </dd>
                     <dd class="truncate">
-                        {{ $t('common.to') }}: <GenericTime :value="colleague.original.props?.absenceEnd" type="date" />
+                        {{ $t('common.to') }}: <GenericTime :value="row.original.props?.absenceEnd" type="date" />
                     </dd>
                 </dl>
-            </template>
-
-            <template #phoneNumber-cell="{ row: colleague }">
-                <div>
-                    <PhoneNumberBlock :number="colleague.original.phoneNumber" />
-                </div>
-
-                <dl class="font-normal lg:hidden">
-                    <dt class="sr-only">{{ $t('common.date_of_birth') }}</dt>
-                    <dd class="mt-1 truncate">
-                        {{ colleague.original.dateofbirth.value }}
-                    </dd>
-                </dl>
-            </template>
-
-            <template #dateofbirth-cell="{ row: colleague }">
-                {{ colleague.original.dateofbirth.value }}
-            </template>
-
-            <template #email-cell="{ row: colleague }">
-                <EmailInfoPopover
-                    :email="colleague.original.email"
-                    variant="link"
-                    color="primary"
-                    truncate
-                    :trailing="false"
-                    hide-na-text
-                />
-            </template>
-
-            <template #actions-cell="{ row: colleague }">
-                <div :key="colleague.id" class="flex flex-col justify-end md:flex-row">
-                    <UTooltip
-                        v-if="
-                            canDo.setJobsUerProps &&
-                            (colleague.original.userId === activeChar!.userId ||
-                                attr('jobs.JobsService/SetColleagueProps', 'Types', 'AbsenceDate').value) &&
-                            checkIfCanAccessColleague(colleague.original, 'jobs.JobsService/SetColleagueProps')
-                        "
-                        :text="$t('components.jobs.self_service.set_absence_date')"
-                    >
-                        <UButton
-                            variant="link"
-                            icon="i-mdi-island"
-                            @click="
-                                modal.open(SelfServicePropsAbsenceDateModal, {
-                                    userId: colleague.original.userId,
-                                    'onUpdate:absenceDates': ($event) => updateAbsenceDates($event),
-                                })
-                            "
-                        />
-                    </UTooltip>
-
-                    <UTooltip
-                        v-if="
-                            canDo.getColleague && checkIfCanAccessColleague(colleague.original, 'jobs.JobsService/GetColleague')
-                        "
-                        :text="$t('common.show')"
-                    >
-                        <UButton
-                            variant="link"
-                            icon="i-mdi-eye"
-                            :to="{
-                                name: 'jobs-colleagues-id-info',
-                                params: { id: colleague.original.userId ?? 0 },
-                            }"
-                        />
-                    </UTooltip>
-                </div>
             </template>
         </UTable>
 
@@ -518,7 +526,7 @@ defineShortcuts({
                             <span class="inline-flex items-center gap-1">
                                 <UIcon class="h-5 w-5 shrink-0" name="i-mdi-birthday-cake" />
 
-                                <span>{{ colleague.dateofbirth.value }}</span>
+                                <span>{{ colleague.dateofbirth }}</span>
                             </span>
 
                             <span class="flex items-center gap-1">
@@ -544,7 +552,6 @@ defineShortcuts({
                                         :class="isColorBright(hexToRgb(label.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
                                         :style="{ backgroundColor: label.color }"
                                         size="xs"
-                                        :ui="{ padding: { xs: 'px-2 py-1' } }"
                                         @click="toggleLabelInSearch(label)"
                                     >
                                         <span class="truncate">
@@ -568,7 +575,7 @@ defineShortcuts({
 
                     <template
                         v-if="
-                            (canDo.setJobsUerProps &&
+                            (canDo.setJobsUserProps &&
                                 (colleague.userId === activeChar!.userId ||
                                     attr('jobs.JobsService/SetColleagueProps', 'Types', 'AbsenceDate').value) &&
                                 checkIfCanAccessColleague(colleague, 'jobs.JobsService/SetColleagueProps')) ||
@@ -579,7 +586,7 @@ defineShortcuts({
                         <UButtonGroup class="inline-flex w-full">
                             <UTooltip
                                 v-if="
-                                    canDo.setJobsUerProps &&
+                                    canDo.setJobsUserProps &&
                                     (colleague.userId === activeChar!.userId ||
                                         attr('jobs.JobsService/SetColleagueProps', 'Types', 'AbsenceDate').value) &&
                                     checkIfCanAccessColleague(colleague, 'jobs.JobsService/SetColleagueProps')
@@ -593,7 +600,7 @@ defineShortcuts({
                                     block
                                     truncate
                                     @click="
-                                        modal.open(SelfServicePropsAbsenceDateModal, {
+                                        selfServicePropsAbsenceDateModal.open({
                                             userId: colleague.userId,
                                             'onUpdate:absenceDates': ($event) => updateAbsenceDates($event),
                                         })

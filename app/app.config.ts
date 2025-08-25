@@ -70,8 +70,9 @@ export default defineAppConfig({
     custom: {
         icons: {
             // Custom Icons
-            sortAscIcon: 'i-mdi-sort-ascending',
-            sortDescIcon: 'i-mdi-sort-descending',
+            sort: 'i-mdi-sort',
+            sortAsc: 'i-mdi-sort-ascending',
+            sortDesc: 'i-mdi-sort-descending',
         },
     },
 
@@ -153,6 +154,18 @@ export default defineAppConfig({
             system: 'mdi-monitor',
             tip: 'mdi-lightbulb-variant',
             warning: 'mdi-alert',
+        },
+
+        inputMenu: {
+            slots: {
+                content: 'min-w-fit',
+            },
+        },
+
+        selectMenu: {
+            slots: {
+                content: 'min-w-fit',
+            },
         },
 
         table: {

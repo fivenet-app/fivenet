@@ -67,11 +67,11 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+    <UModal>
         <UCard>
             <template #header>
                 <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
+                    <h3 class="text-2xl leading-6 font-semibold">
                         {{ $t('components.calendar.FindCalendarModal.title') }}
                     </h3>
 
@@ -97,7 +97,7 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
                     <li
                         v-for="calendar in data?.calendars"
                         :key="calendar.id"
-                        class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 flex flex-initial items-center justify-between gap-1 border-white py-1 dark:border-gray-900"
+                        class="flex flex-initial items-center justify-between gap-1 border-white py-1 hover:border-primary-500/25 hover:bg-primary-100/50 dark:border-gray-900 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
                     >
                         <div class="inline-flex gap-1">
                             <UBadge :color="calendar.color as BadgeProps['color']" size="lg" />

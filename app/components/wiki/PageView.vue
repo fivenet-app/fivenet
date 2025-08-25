@@ -30,11 +30,13 @@ const { t } = useI18n();
 
 const { can } = useAuth();
 
-const modal = useOverlay();
+const overlay = useOverlay();
 
 const notifications = useNotificationsStore();
 
 const wikiWikiClient = await getWikiWikiClient();
+
+const confirmModal = overlay.create(ConfirmModal);
 
 const breadcrumbs = computed(() => [
     {
@@ -192,7 +194,7 @@ const scrollRef = useTemplateRef('scrollRef');
                 <slot name="left" />
             </template>
 
-            <UBreadcrumb class="pb-2 pt-4" :items="breadcrumbs" />
+            <UBreadcrumb class="pt-4 pb-2" :items="breadcrumbs" />
 
             <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.page')])" />
             <DataErrorBlock
@@ -269,7 +271,7 @@ const scrollRef = useTemplateRef('scrollRef');
                                 :color="!page.meta.deletedAt ? 'error' : 'success'"
                                 :icon="!page.meta.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
                                 @click="
-                                    modal.open(ConfirmModal, {
+                                    confirmModal.open({
                                         confirm: async () => page && deletePage(page.id),
                                     })
                                 "
@@ -328,7 +330,7 @@ const scrollRef = useTemplateRef('scrollRef');
                     </div>
 
                     <template v-if="surround.length > 0">
-                        <USeparator class="mb-4 mt-4" />
+                        <USeparator class="mt-4 mb-4" />
 
                         <!-- UContentSurround doesn't seem to like our surround pages array -->
                         <div class="grid gap-8 sm:grid-cols-2">
@@ -338,7 +340,7 @@ const scrollRef = useTemplateRef('scrollRef');
                         </div>
                     </template>
 
-                    <USeparator class="mb-4 mt-4" />
+                    <USeparator class="mt-4 mb-4" />
 
                     <UAccordion class="print:hidden" multiple :items="accordionItems" :unmount="true">
                         <template #access>
@@ -369,7 +371,7 @@ const scrollRef = useTemplateRef('scrollRef');
             </template>
 
             <template v-if="page?.meta?.toc === undefined || page?.meta?.toc === true" #right>
-                <PageSearch class="flex! lg:hidden! mb-2" />
+                <PageSearch class="mb-2 flex! lg:hidden!" />
 
                 <UContentToc :title="$t('common.toc')" :links="tocLinks" />
             </template>

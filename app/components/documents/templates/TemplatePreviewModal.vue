@@ -50,12 +50,12 @@ async function getTemplate(): Promise<Template> {
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+    <UModal>
         <!-- eslint-disable vue/no-v-html -->
         <UCard>
             <template #header>
                 <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
+                    <h3 class="text-2xl leading-6 font-semibold">
                         {{ $t('common.document', 1) }}
                         {{ $t('common.preview') }}
                     </h3>
@@ -76,10 +76,10 @@ async function getTemplate(): Promise<Template> {
 
                 <template v-else>
                     <div>
-                        <label class="mb-2 block text-sm text-xl font-medium leading-6">
+                        <label class="mb-2 block text-sm text-xl leading-6 font-medium">
                             {{ $t('common.title') }}
                         </label>
-                        <h2 class="mt-4 break-words rounded-lg p-2 text-2xl font-bold">
+                        <h2 class="mt-4 rounded-lg p-2 text-2xl font-bold break-words">
                             {{ template?.title }}
                         </h2>
                     </div>
@@ -87,23 +87,23 @@ async function getTemplate(): Promise<Template> {
                     <USeparator class="mb-4" />
 
                     <div>
-                        <label class="mb-2 block text-sm text-xl font-medium leading-6">
+                        <label class="mb-2 block text-sm text-xl leading-6 font-medium">
                             {{ $t('common.state') }}
                         </label>
 
-                        <p class="mt-4 break-words rounded-lg p-2 text-base font-bold">
+                        <p class="mt-4 rounded-lg p-2 text-base font-bold break-words">
                             {{ template?.state }}
                         </p>
                     </div>
 
                     <USeparator class="mb-4" />
 
-                    <label class="mb-2 block text-sm text-xl font-medium leading-6">
+                    <label class="mb-2 block text-sm text-xl leading-6 font-medium">
                         {{ $t('common.content') }}
                     </label>
-                    <div class="mt-4 break-words rounded-lg p-2">
+                    <div class="mt-4 rounded-lg p-2 break-words">
                         <div
-                            class="tiptap prose prose-sm sm:prose-base lg:prose-lg dark:prose-invert min-w-full max-w-full break-words"
+                            class="tiptap prose prose-sm sm:prose-base lg:prose-lg dark:prose-invert max-w-full min-w-full break-words"
                             :class="[
                                 'hover:prose-a:text-blue-500',
                                 'dark:hover:prose-a:text-blue-300',

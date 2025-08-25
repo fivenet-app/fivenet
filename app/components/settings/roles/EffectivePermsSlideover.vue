@@ -15,9 +15,11 @@ const props = defineProps<{
     roleId: number;
 }>();
 
-const { t } = useI18n();
+defineEmits<{
+    close: [boolean];
+}>();
 
-const { isOpen } = useOverlay();
+const { t } = useI18n();
 
 async function getEffectivePermissions(roleId: number): Promise<GetEffectivePermissionsResponse> {
     try {
@@ -84,20 +86,12 @@ const permCategoriesSorted = computed(() =>
 </script>
 
 <template>
-    <USlideover :ui="{ width: 'w-screen sm:max-w-3xl' }">
-        <UCard
-            class="flex flex-1 flex-col"
-            :ui="{
-                body: {
-                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--ui-header-height)))] max-h-[calc(100dvh-(2*var(--ui-header-height)))] overflow-y-auto',
-                    padding: 'px-1 py-2 sm:p-2',
-                },
-            }"
-        >
+    <USlideover>
+        <UCard class="flex flex-1 flex-col">
             <template #header>
                 <div class="flex flex-col gap-1">
                     <div class="flex items-center justify-between">
-                        <h3 class="inline-flex gap-2 text-2xl font-semibold leading-6">
+                        <h3 class="inline-flex gap-2 text-2xl leading-6 font-semibold">
                             {{ $t('common.effective_permissions') }}: {{ role?.role?.jobLabel! }} -
                             {{ role?.role?.jobGradeLabel }} ({{ role?.role?.grade }})
                         </h3>
@@ -109,7 +103,7 @@ const permCategoriesSorted = computed(() =>
                             color="neutral"
                             variant="ghost"
                             icon="i-mdi-window-close"
-                            @click="isOpen = false"
+                            @click="$emit('close', false)"
                         />
                     </div>
                 </div>
@@ -217,7 +211,7 @@ const permCategoriesSorted = computed(() =>
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" color="neutral" block @click="isOpen = false">
+                    <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

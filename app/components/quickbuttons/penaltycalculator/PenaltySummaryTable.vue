@@ -1,4 +1,8 @@
 <script lang="ts" setup>
+import { UButton, UIcon, UTooltip } from '#components';
+import type { TableColumn } from '@nuxt/ui';
+import { h } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { SelectedPenalty } from '~/components/quickbuttons/penaltycalculator/PenaltyCalculator.vue';
 import type { LawBook } from '~~/gen/ts/resources/laws/laws';
 
@@ -14,34 +18,88 @@ function getNameForLawBookId(id: number): string | undefined {
     return props.lawBooks?.filter((b) => b.id === id)[0]?.name;
 }
 
-const columns = [
-    {
-        accessorKey: 'law',
-        label: t('common.law'),
-    },
-    {
-        accessorKey: 'fine',
-        label: t('common.fine'),
-    },
-    {
-        accessorKey: 'detentionTime',
-        label: t('common.detention_time'),
-    },
-    {
-        accessorKey: 'trafficInfractionPoints',
-        label: t('common.traffic_infraction_points', 2),
-    },
-    {
-        accessorKey: 'description',
-        label: t('common.description'),
-    },
-    {
-        accessorKey: 'count',
-        label: t('common.count'),
-    },
-];
-
 const leeway = computed(() => props.reduction / 100);
+
+const columns = computed(
+    () =>
+        [
+            {
+                accessorKey: 'law',
+                header: t('common.law'),
+                cell: ({ row }) =>
+                    h('div', { class: 'inline-flex items-center gap-2' }, [
+                        h(
+                            'p',
+                            { class: 'whitespace-pre-line text-highlighted' },
+                            `${getNameForLawBookId(row.original.law.lawbookId)} - ${row.original.law.name}`,
+                        ),
+                        row.original.law.hint
+                            ? h(UTooltip, { text: row.original.law.hint }, () =>
+                                  h(UIcon, { class: 'size-5', name: 'i-mdi-information-outline' }),
+                              )
+                            : null,
+                    ]),
+            },
+            {
+                accessorKey: 'fine',
+                header: t('common.fine'),
+                cell: ({ row }) =>
+                    h('span', null, [
+                        `$${row.original.law.fine ? row.original.law.fine * row.original.count : 0}`,
+                        row.original.law.fine * row.original.count > 0 && leeway.value > 0
+                            ? h('span', null, ` ($-${(row.original.law.fine * row.original.count * leeway.value).toFixed(0)})`)
+                            : null,
+                    ]),
+            },
+            {
+                accessorKey: 'detentionTime',
+                header: t('common.detention_time'),
+                cell: ({ row }) =>
+                    h('span', null, [
+                        `${row.original.law.detentionTime ? row.original.law.detentionTime * row.original.count : 0}`,
+                        row.original.law.detentionTime * row.original.count > 0 && leeway.value > 0
+                            ? h(
+                                  'span',
+                                  null,
+                                  ` (-${(row.original.law.detentionTime * row.original.count * leeway.value).toFixed(0)})`,
+                              )
+                            : null,
+                    ]),
+            },
+            {
+                accessorKey: 'trafficInfractionPoints',
+                header: t('common.traffic_infraction_points', 2),
+                cell: ({ row }) =>
+                    h('span', null, [
+                        `${row.original.law.stvoPoints ? row.original.law.stvoPoints * row.original.count : 0}`,
+                        row.original.law.stvoPoints * row.original.count > 0 && leeway.value > 0
+                            ? h(
+                                  'span',
+                                  null,
+                                  ` (-${(row.original.law.stvoPoints * row.original.count * leeway.value).toFixed(0)})`,
+                              )
+                            : null,
+                    ]),
+            },
+            {
+                accessorKey: 'description',
+                header: t('common.description'),
+                cell: ({ row }) =>
+                    h(
+                        'p',
+                        {
+                            class: 'line-clamp-2 w-full max-w-sm break-all whitespace-normal hover:line-clamp-none',
+                        },
+                        row.original.law.description,
+                    ),
+            },
+            {
+                accessorKey: 'count',
+                header: t('common.count'),
+                cell: ({ row }) => row.original.count,
+            },
+        ] as TableColumn<SelectedPenalty>[],
+);
 </script>
 
 <template>
@@ -52,48 +110,11 @@ const leeway = computed(() => props.reduction / 100);
         </span>
     </UButton>
 
-    <UTable v-else class="divide-base-600 max-w-full divide-y" :columns="columns" :data="selectedLaws">
-        <template #law-cell="{ row: law }">
-            <div class="inline-flex items-center gap-2">
-                <p class="whitespace-pre-line text-highlighted">
-                    {{ getNameForLawBookId(law.law.lawbookId) }} - {{ law.law.name }}
-                </p>
-
-                <UTooltip v-if="law.law.hint" :text="law.law.hint">
-                    <UIcon class="size-5" name="i-mdi-information-outline" />
-                </UTooltip>
-            </div>
-        </template>
-
-        <template #fine-cell="{ row: law }">
-            ${{ law.law.fine ? law.law.fine * law.count : 0 }}
-            <span v-if="leeway > 0 && law.law.fine * law.count > 0">
-                ($-{{ (law.law.fine * law.count * leeway).toFixed(0) }})
-            </span>
-        </template>
-
-        <template #detentionTime-cell="{ row: law }">
-            {{ law.law.detentionTime ? law.law.detentionTime * law.count : 0 }}
-            <span v-if="leeway > 0 && law.law.detentionTime * law.count > 0">
-                (-{{ (law.law.detentionTime * law.count * leeway).toFixed(0) }})
-            </span>
-        </template>
-
-        <template #trafficInfractionPoints-cell="{ row: law }">
-            {{ law.law.stvoPoints ? law.law.stvoPoints * law.count : 0 }}
-            <span v-if="leeway > 0 && law.law.stvoPoints * law.count > 0">
-                (-{{ (law.law.stvoPoints * law.count * leeway).toFixed(0) }})
-            </span>
-        </template>
-
-        <template #description-cell="{ row: law }">
-            <p class="line-clamp-2 w-full max-w-sm break-all whitespace-normal hover:line-clamp-none">
-                {{ law.law.description }}
-            </p>
-        </template>
-
-        <template #fine-count="{ row: law }">
-            {{ law.count }}
-        </template>
-    </UTable>
+    <UTable
+        v-else
+        class="divide-base-600 max-w-full divide-y"
+        :columns="columns"
+        :data="selectedLaws"
+        :empty="$t('common.none_selected', [`${$t('common.crime')}`])"
+    />
 </template>

@@ -12,10 +12,10 @@ const { dispatchers, anyDispatchersActive, getCurrentMode } = storeToRefs(centru
 </script>
 
 <template>
-    <UModal :ui="{ width: 'max-w-2xl!' }">
+    <UModal>
         <template #header>
             <div class="flex items-center justify-between">
-                <h3 class="inline-flex items-center gap-2 text-2xl font-semibold leading-6">
+                <h3 class="inline-flex items-center gap-2 text-2xl leading-6 font-semibold">
                     <span>{{ $t('common.dispatchers', 2) }}</span>
 
                     <UBadge color="neutral">

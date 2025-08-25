@@ -68,7 +68,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <UCard :ui="{}">
             <template #header>
                 <div class="flex items-center justify-between">
-                    <h3 class="text-xl font-semibold leading-6">
+                    <h3 class="text-xl leading-6 font-semibold">
                         {{ $t('components.calendar.EntryShareModal.title') }}
                     </h3>
                 </div>
@@ -103,12 +103,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 {{ $t('common.selected', state.users.length) }}
                             </template>
 
-                            <template #option="{ option: user }">
+                            <template #item="{ option: user }">
                                 {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                            </template>
-
-                            <template #option-empty="{ query: search }">
-                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                             </template>
 
                             <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>

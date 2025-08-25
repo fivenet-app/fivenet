@@ -35,9 +35,9 @@ const selectedTab = ref('citizens');
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+    <UModal>
         <template #title>
-            <h3 class="text-2xl font-semibold leading-6">
+            <h3 class="text-2xl leading-6 font-semibold">
                 {{ $t('components.clipboard.clipboard_modal.title') }}
             </h3>
         </template>

@@ -76,7 +76,7 @@ function updateReasonField(value: string): void {
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+    <UModal>
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UCard
                 class="flex flex-1 flex-col"
@@ -88,7 +88,7 @@ function updateReasonField(value: string): void {
             >
                 <template #header>
                     <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
+                        <h3 class="text-2xl leading-6 font-semibold">
                             {{ $t('components.centrum.update_unit_status.title') }}: {{ unit.name }} ({{ unit.initials }})
                         </h3>
 
@@ -105,8 +105,8 @@ function updateReasonField(value: string): void {
                 <div>
                     <dl class="divide-neutral/10 divide-y">
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
-                                <label class="block text-sm font-medium leading-6" for="status">
+                            <dt class="text-sm leading-6 font-medium">
+                                <label class="block text-sm leading-6 font-medium" for="status">
                                     {{ $t('common.status') }}
                                 </label>
                             </dt>
@@ -116,7 +116,7 @@ function updateReasonField(value: string): void {
                                         <UButton
                                             v-for="item in unitStatuses"
                                             :key="item.name"
-                                            class="hover:bg-primary-100/10 group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:transition-all"
+                                            class="group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:bg-primary-100/10 hover:transition-all"
                                             :class="[
                                                 state.status == item.status
                                                     ? 'bg-base-500 hover:bg-base-400'
@@ -142,8 +142,8 @@ function updateReasonField(value: string): void {
                             </dd>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
-                                <label class="block text-sm font-medium leading-6" for="code">
+                            <dt class="text-sm leading-6 font-medium">
+                                <label class="block text-sm leading-6 font-medium" for="code">
                                     {{ $t('common.code') }}
                                 </label>
                             </dt>
@@ -160,8 +160,8 @@ function updateReasonField(value: string): void {
                             </dd>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
-                                <label class="block text-sm font-medium leading-6" for="reason">
+                            <dt class="text-sm leading-6 font-medium">
+                                <label class="block text-sm leading-6 font-medium" for="reason">
                                     {{ $t('common.reason') }}
                                 </label>
                             </dt>
@@ -175,8 +175,8 @@ function updateReasonField(value: string): void {
                             v-if="settings?.predefinedStatus && settings?.predefinedStatus.unitStatus.length > 0"
                             class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
                         >
-                            <dt class="text-sm font-medium leading-6">
-                                <label class="block text-sm font-medium leading-6" for="unitStatus">
+                            <dt class="text-sm leading-6 font-medium">
+                                <label class="block text-sm leading-6 font-medium" for="unitStatus">
                                     {{ $t('common.predefined', 2) }}
                                     {{ $t('common.reason', 2) }}
                                 </label>
@@ -189,7 +189,7 @@ function updateReasonField(value: string): void {
                                         :searchable-placeholder="$t('common.search_field')"
                                         @change="updateReasonField($event)"
                                     >
-                                        <template #option="{ option }">
+                                        <template #item="{ option }">
                                             <span class="truncate">
                                                 {{ option !== '' ? option : '&nbsp;' }}
                                             </span>

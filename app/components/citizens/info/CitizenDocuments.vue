@@ -1,5 +1,8 @@
 <script lang="ts" setup>
+import { UBadge, UButton } from '#components';
+import type { TableColumn } from '@nuxt/ui';
 import { listEnumValues } from '@protobuf-ts/runtime';
+import { computed, h } from 'vue';
 import { z } from 'zod';
 import { docRelationToBadge, docRelationToColor, docRelationToIcon } from '~/components/documents/helpers';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
@@ -7,10 +10,10 @@ import Pagination from '~/components/partials/Pagination.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPopover.vue';
-import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { ToggleItem } from '~/utils/types';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
-import { DocRelation } from '~~/gen/ts/resources/documents/documents';
+import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
+import { DocRelation, type DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 import type { ListUserDocumentsResponse } from '~~/gen/ts/services/documents/documents';
 
 const props = defineProps<{
@@ -41,15 +44,19 @@ const schema = z.object({
         .max(docRelations.length)
         .default(docRelationsEnum.map((r) => DocRelation[r.name as keyof typeof DocRelation])),
     sorting: z
-        .custom<SortByColumn>()
-        .array()
-        .max(3)
-        .default([
-            {
-                id: 'createdAt',
-                desc: true,
-            },
-        ]),
+        .object({
+            columns: z
+                .custom<SortByColumn>()
+                .array()
+                .max(3)
+                .default([
+                    {
+                        id: 'plate',
+                        desc: false,
+                    },
+                ]),
+        })
+        .default({ columns: [{ id: 'plate', desc: false }] }),
     page: pageNumberSchema,
 });
 
@@ -65,7 +72,7 @@ async function listUserDocuments(): Promise<ListUserDocumentsResponse> {
             pagination: {
                 offset: calculateOffset(query.page, data.value?.pagination),
             },
-            sort: { columns: query.sorting },
+            sort: query.sorting,
             userId: props.userId,
             relations: query.relations,
             closed: query.closed,
@@ -81,29 +88,61 @@ async function listUserDocuments(): Promise<ListUserDocumentsResponse> {
 
 watchDebounced(query, async () => refresh(), { debounce: 250, maxWait: 1250 });
 
-const columns = [
-    {
-        accessorKey: 'document',
-        label: t('common.document', 1),
-    },
-    {
-        accessorKey: 'closed',
-        label: t('common.close', 2),
-    },
-    {
-        accessorKey: 'relation',
-        label: t('common.relation', 1),
-    },
-    {
-        accessorKey: 'createdAt',
-        label: t('common.created_at'),
-        sortable: true,
-    },
-    {
-        accessorKey: 'creator',
-        label: t('common.creator'),
-    },
-];
+const appConfig = useAppConfig();
+
+const columns = computed(
+    () =>
+        [
+            {
+                accessorKey: 'document',
+                header: t('common.document', 1),
+                cell: ({ row }) => h(DocumentInfoPopover, { document: row.original.document, loadOnOpen: true }),
+            },
+            {
+                accessorKey: 'closed',
+                header: t('common.close', 2),
+                cell: ({ row }) => h(OpenClosedBadge, { closed: row.original.document?.closed, variant: 'subtle' }),
+            },
+            {
+                accessorKey: 'relation',
+                header: t('common.relation', 1),
+                cell: ({ row }) =>
+                    h(
+                        UBadge,
+                        {
+                            class: 'font-semibold',
+                            color: docRelationToBadge(row.original.relation),
+                            icon: docRelationToIcon(row.original.relation),
+                        },
+                        () => t(`enums.documents.DocRelation.${DocRelation[row.original.relation]}`),
+                    ),
+            },
+            {
+                accessorKey: 'createdAt',
+                header: ({ column }) => {
+                    const isSorted = column.getIsSorted();
+
+                    return h(UButton, {
+                        color: 'neutral',
+                        variant: 'ghost',
+                        label: t('common.created_at'),
+                        icon: isSorted
+                            ? isSorted === 'asc'
+                                ? appConfig.custom.icons.sortAsc
+                                : appConfig.custom.icons.sortDesc
+                            : appConfig.custom.icons.sort,
+                        class: '-mx-2.5',
+                        onClick: () => column.toggleSorting(isSorted === 'asc'),
+                    });
+                },
+            },
+            {
+                accessorKey: 'creator',
+                header: t('common.creator'),
+                cell: ({ row }) => h(CitizenInfoPopover, { user: row.original.sourceUser }),
+            },
+        ] as TableColumn<DocumentRelation>[],
+);
 </script>
 
 <template>
@@ -142,7 +181,7 @@ const columns = [
                                 {{ $t('common.selected', query.relations.length) }}
                             </template>
 
-                            <template #option="{ option }">
+                            <template #item="{ option }">
                                 <span class="inline-flex gap-1" :class="`bg-${docRelationToColor(option.value)}-500`">
                                     <UIcon class="size-4" :name="docRelationToIcon(option.value)" />
                                     <span class="truncate">
@@ -163,43 +202,17 @@ const columns = [
         :error="error"
         :retry="refresh"
     />
+
     <UTable
         v-else
         class="flex-1"
         :loading="isRequestPending(status)"
         :columns="columns"
         :data="data?.relations"
-        :empty-state="{
-            icon: 'i-mdi-file-multiple',
-            label: $t('common.not_found', [`${$t('common.citizen', 1)} ${$t('common.document', 2)}`]),
-        }"
-    >
-        <template #document-cell="{ row: relation }">
-            <DocumentInfoPopover :document="relation.document" load-on-open />
-        </template>
-
-        <template #closed-cell="{ row: relation }">
-            <OpenClosedBadge :closed="relation.document?.closed" variant="subtle" />
-        </template>
-
-        <template #relation-cell="{ row: relation }">
-            <UBadge
-                class="font-semibold"
-                :color="docRelationToBadge(relation.relation)"
-                :icon="docRelationToIcon(relation.relation)"
-            >
-                {{ $t(`enums.documents.DocRelation.${DocRelation[relation.relation]}`) }}
-            </UBadge>
-        </template>
-
-        <template #createdAt-cell="{ row: relation }">
-            <GenericTime :value="relation.createdAt" />
-        </template>
-
-        <template #creator-cell="{ row: relation }">
-            <CitizenInfoPopover :user="relation.sourceUser" />
-        </template>
-    </UTable>
+        :empty="$t('common.not_found', [`${$t('common.citizen', 1)} ${$t('common.document', 2)}`])"
+        :pagination-options="{ manualPagination: true }"
+        :sorting-options="{ manualSorting: true }"
+    />
 
     <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
 </template>

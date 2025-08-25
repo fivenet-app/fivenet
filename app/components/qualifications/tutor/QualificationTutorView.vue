@@ -8,13 +8,19 @@ import { useCompletorStore } from '~/stores/completor';
 import type { Qualification } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 
-defineProps<{
+const props = defineProps<{
     qualification: Qualification;
 }>();
 
-const modal = useOverlay();
-
 const completorStore = useCompletorStore();
+
+const overlay = useOverlay();
+const qualificationResultTutorModal = overlay.create(QualificationResultTutorModal, {
+    props: {
+        qualificationId: props.qualification.id,
+        onRefresh: undefined,
+    },
+});
 
 const schema = z.object({
     user: z.number().optional(),
@@ -35,10 +41,8 @@ const results = ref<InstanceType<typeof QualificationResultList> | null>(null);
                 <ClientOnly>
                     <UInputMenu
                         v-model="query.user"
-                        nullable
                         :search-attributes="['firstname', 'lastname']"
                         :placeholder="$t('common.citizen', 1)"
-                        block
                         trailing
                         :search="
                             async (q: string): Promise<UserShort[]> => {
@@ -51,25 +55,17 @@ const results = ref<InstanceType<typeof QualificationResultList> | null>(null);
                                 return users;
                             }
                         "
-                        search-lazy
-                        :search-placeholder="$t('common.search_field')"
                         leading-icon="i-mdi-search"
                         value-key="userId"
                     >
                         <template #item-label="{ item }">
-                            <span v-if="item" class="truncate">
-                                {{ userToLabel(item) }}
-                            </span>
+                            {{ userToLabel(item) }}
                         </template>
 
-                        <template #option="{ option: user }">
+                        <template #item="{ item }">
                             <span class="truncate">
-                                <ColleagueName :colleague="user" />
+                                <ColleagueName :colleague="item" />
                             </span>
-                        </template>
-
-                        <template #option-empty="{ query: search }">
-                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                         </template>
 
                         <template #empty> {{ $t('common.not_found', [$t('common.user', 2)]) }} </template>
@@ -79,7 +75,7 @@ const results = ref<InstanceType<typeof QualificationResultList> | null>(null);
         </UForm>
 
         <div>
-            <h2 class="text-highlighted text-sm">{{ $t('common.request', 2) }}</h2>
+            <h2 class="text-sm text-highlighted">{{ $t('common.request', 2) }}</h2>
 
             <QualificationRequestList
                 ref="requests"
@@ -91,13 +87,13 @@ const results = ref<InstanceType<typeof QualificationResultList> | null>(null);
 
         <div>
             <div class="flex flex-row justify-between gap-2">
-                <h2 class="text-highlighted text-sm">{{ $t('common.result', 2) }}</h2>
+                <h2 class="text-sm text-highlighted">{{ $t('common.result', 2) }}</h2>
 
                 <UButton
                     icon="i-mdi-plus"
                     :label="$t('common.add')"
                     @click="
-                        modal.open(QualificationResultTutorModal, {
+                        qualificationResultTutorModal.open({
                             qualificationId: qualification.id,
                             onRefresh: () => results?.refresh(),
                         })

@@ -351,7 +351,7 @@ const { game } = useAppConfig();
                                                 job.grades && attrValues.validValues.jobGradeList.jobs[job.name] !== undefined
                                             "
                                         >
-                                            <span class="text-highlighted truncate"
+                                            <span class="truncate text-highlighted"
                                                 >{{
                                                     job.grades.find(
                                                         (g) =>
@@ -366,13 +366,9 @@ const { game } = useAppConfig();
                                         </template>
                                     </template>
 
-                                    <template #option="{ option: grade }">
+                                    <template #item="{ option: grade }">
                                         {{ grade?.label
                                         }}<span v-if="grade.grade >= game.startJobGrade"> ({{ grade?.grade }})</span>
-                                    </template>
-
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                     </template>
 
                                     <template #empty> {{ $t('common.not_found', [$t('common.rank')]) }} </template>

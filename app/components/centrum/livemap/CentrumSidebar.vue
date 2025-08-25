@@ -26,8 +26,6 @@ import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const modal = useOverlay();
-
 const { can, jobProps } = useAuth();
 
 const centrumStore = useCentrumStore();
@@ -43,6 +41,8 @@ const notifications = useNotificationsStore();
 const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
 
+const overlay = useOverlay();
+
 const centrumCentrumClient = await getCentrumCentrumClient();
 
 const logger = useLogger('⛑️ Centrum');
@@ -51,11 +51,11 @@ const canStream = can('centrum.CentrumService/Stream');
 
 const selectedDispatch = ref<number | undefined>();
 
-const dispatchStatusUpdateModal = modal.create(DispatchStatusUpdateModal);
-const unitStatusUpdateModal = modal.create(UnitStatusUpdateModal);
-const joinUnitSlideover = modal.create(JoinUnitSlideover);
-const takeDispatchSlideover = modal.create(TakeDispatchSlideover);
-const unitDetailsSlideover = modal.create(UnitDetailsSlideover);
+const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
+const unitStatusUpdateModal = overlay.create(UnitStatusUpdateModal);
+const joinUnitSlideover = overlay.create(JoinUnitSlideover);
+const takeDispatchSlideover = overlay.create(TakeDispatchSlideover);
+const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
 
 async function updateDispatchStatus(dispatchId: number, status: StatusDispatch): Promise<void> {
     try {
@@ -134,7 +134,7 @@ async function toggleSidebarBasedOnUnit(): Promise<void> {
     if (getOwnUnit.value !== undefined) {
         // User has joined an unit
         open.value = true;
-        modal.closeAll();
+        overlay.closeAll();
 
         if (
             jobProps.value !== undefined &&
@@ -146,7 +146,7 @@ async function toggleSidebarBasedOnUnit(): Promise<void> {
     } else {
         // User not in an unit anymore
         open.value = false;
-        modal.closeAll();
+        overlay.closeAll();
     }
 }
 

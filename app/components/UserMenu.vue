@@ -17,9 +17,9 @@ const { t } = useI18n();
 
 const authStore = useAuthStore();
 
-const modal = useOverlay();
+const overlay = useOverlay();
 
-const languageSwitcherModal = modal.create(LanguageSwitcherModal);
+const languageSwitcherModal = overlay.create(LanguageSwitcherModal);
 
 const items = computed<DropdownMenuItem[][]>(() => [
     [

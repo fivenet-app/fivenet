@@ -568,15 +568,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             </div>
                                         </template>
 
-                                        <template #option="{ option }">
+                                        <template #item="{ option }">
                                             <div class="inline-flex items-center gap-2">
                                                 <UAvatar :src="option.icon" :alt="option.name" />
                                                 <span class="truncate">{{ option.name }}</span>
                                             </div>
-                                        </template>
-
-                                        <template #option-empty="{ query: search }">
-                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                         </template>
 
                                         <template #empty>
@@ -646,12 +642,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             }}</span>
                                         </template>
 
-                                        <template #option="{ option }">
+                                        <template #item="{ option }">
                                             <span class="truncate">{{ option.name }} ({{ option.id }})</span>
-                                        </template>
-
-                                        <template #option-empty="{ query: search }">
-                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                         </template>
 
                                         <template #empty>
@@ -828,7 +820,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     }}
                                                 </template>
 
-                                                <template #option="{ option }">
+                                                <template #item="{ option }">
                                                     <span class="truncate">{{
                                                         $t(
                                                             `enums.settings.UserInfoSyncUnemployedMode.${UserInfoSyncUnemployedMode[option.value]}`,
@@ -1127,7 +1119,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     }}</span>
                                                 </template>
 
-                                                <template #option="{ option }">
+                                                <template #item="{ option }">
                                                     <span class="truncate">{{ $d(toDate(option.time), 'short') }}</span>
                                                 </template>
                                             </USelectMenu>

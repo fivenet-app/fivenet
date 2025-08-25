@@ -34,7 +34,7 @@ const { t } = useI18n();
 
 const { can } = useAuth();
 
-const modal = useOverlay();
+const overlay = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -171,6 +171,9 @@ const accordionItems = computed(() =>
         { slot: 'access' as const, label: t('common.access'), icon: 'i-mdi-lock', defaultOpen: true },
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
+
+const confirmModal = overlay.create(ConfirmModal);
+const qualificationRequestUserModal = overlay.create(QualificationRequestUserModal);
 </script>
 
 <template>
@@ -235,7 +238,7 @@ const accordionItems = computed(() =>
                             "
                             icon="i-mdi-account-school"
                             @click="
-                                modal.open(QualificationRequestUserModal, {
+                                qualificationRequestUserModal.open({
                                     qualificationId: qualification!.id,
                                     onUpdatedRequest: ($event) => (qualification!.request = $event),
                                 })
@@ -289,7 +292,7 @@ const accordionItems = computed(() =>
                         :icon="!qualification.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
                         :label="!qualification.deletedAt ? $t('common.delete') : $t('common.restore')"
                         @click="
-                            modal.open(ConfirmModal, {
+                            confirmModal.open({
                                 confirm: async () => deleteQualification(qualification!.id),
                             })
                         "
@@ -303,14 +306,14 @@ const accordionItems = computed(() =>
                 <template #header>
                     <div class="mb-4">
                         <h1
-                            class="break-words px-0.5 py-1 text-4xl font-bold sm:pl-1"
+                            class="px-0.5 py-1 text-4xl font-bold break-words sm:pl-1"
                             :class="!qualification.title ? 'italic' : ''"
                         >
                             <template v-if="qualification.abbreviation">{{ qualification.abbreviation }}: </template>
                             {{ !qualification.title ? $t('common.untitled') : qualification.title }}
                         </h1>
 
-                        <p v-if="qualification.description" class="break-words px-0.5 py-1 text-base font-bold sm:pl-1">
+                        <p v-if="qualification.description" class="px-0.5 py-1 text-base font-bold break-words sm:pl-1">
                             {{ qualification.description }}
                         </p>
                     </div>
@@ -456,7 +459,7 @@ const accordionItems = computed(() =>
                             </h2>
 
                             <div
-                                class="max-w-(--breakpoint-xl) break-words! dark:bg-base-900 mx-auto w-full rounded-lg bg-neutral-100"
+                                class="dark:bg-base-900 mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 break-words!"
                             >
                                 <HTMLContent
                                     v-if="qualification.content?.content"

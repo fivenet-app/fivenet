@@ -85,7 +85,7 @@ const correctCount = ref(0);
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+    <UModal>
         <QualificationResultTutorForm
             :qualification-id="qualificationId"
             :user-id="userId"
@@ -164,7 +164,7 @@ const correctCount = ref(0);
                     </p>
                 </div>
 
-                <USeparator v-if="!viewOnly" class="mb-4 mt-2" />
+                <USeparator v-if="!viewOnly" class="mt-2 mb-4" />
             </template>
         </QualificationResultTutorForm>
     </UModal>

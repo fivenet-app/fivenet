@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { UButton, UIcon, USelect, UTooltip } from '#components';
+import type { TableColumn } from '@nuxt/ui';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -164,32 +166,62 @@ function reset(): void {
     state.value.stvoPoints = 0;
 }
 
-const columns = [
-    {
-        accessorKey: 'name',
-        label: t('common.law'),
-    },
-    {
-        accessorKey: 'fine',
-        label: t('common.fine'),
-    },
-    {
-        accessorKey: 'detentionTime',
-        label: t('common.detention_time'),
-    },
-    {
-        accessorKey: 'stvoPoints',
-        label: t('common.traffic_infraction_points', 2),
-    },
-    {
-        accessorKey: 'description',
-        label: t('common.description'),
-    },
-    {
-        accessorKey: 'count',
-        label: t('common.count'),
-    },
-];
+const columns = computed(
+    () =>
+        [
+            {
+                accessorKey: 'name',
+                header: t('common.law'),
+                cell: ({ row }) =>
+                    h('div', { class: 'inline-flex items-center gap-2' }, [
+                        h('span', { class: 'whitespace-pre-line text-highlighted' }, row.original.name),
+                        row.original.hint
+                            ? h(UTooltip, { text: row.original.hint }, () =>
+                                  h(UIcon, { class: 'size-5', name: 'i-mdi-information-outline' }),
+                              )
+                            : null,
+                    ]),
+            },
+            {
+                accessorKey: 'fine',
+                header: t('common.fine'),
+                cell: ({ row }) => $n(row.original.fine ?? 0, 'currency'),
+            },
+            {
+                accessorKey: 'detentionTime',
+                header: t('common.detention_time'),
+                cell: ({ row }) => row.original.detentionTime,
+            },
+            {
+                accessorKey: 'stvoPoints',
+                header: t('common.traffic_infraction_points', 2),
+                cell: ({ row }) => row.original.stvoPoints,
+            },
+            {
+                accessorKey: 'description',
+                header: t('common.description'),
+                cell: ({ row }) =>
+                    h(
+                        'p',
+                        {
+                            class: 'line-clamp-2 w-full max-w-sm break-all whitespace-normal hover:line-clamp-none',
+                        },
+                        row.original.description,
+                    ),
+            },
+            {
+                accessorKey: 'count',
+                header: t('common.count'),
+                cell: ({ row }) =>
+                    h(USelect, {
+                        modelValue: state.value.selectedPenalties.find((p) => p.law.id === row.original.id)?.count ?? 0,
+                        name: 'count',
+                        items: Array.from(Array(7).keys()).map((v) => ({ value: v, label: v.toString() })),
+                        'update:modelValue': ($event) => calculate({ law: row.original, count: parseInt($event) }),
+                    }),
+            },
+        ] as TableColumn<Law>[],
+);
 </script>
 
 <template>
@@ -240,51 +272,13 @@ const columns = [
                     <dl class="mt-4">
                         <UAccordion multiple :items="filteredLawBooks">
                             <template #content="{ item: lawBook }">
-                                <div class="max-w-full">
-                                    <UTable
-                                        :columns="columns"
-                                        :data="lawBook.book.laws"
-                                        :empty-state="{
-                                            icon: 'i-mdi-gavel',
-                                            label: $t('common.not_found', [$t('common.law', 2)]),
-                                        }"
-                                    >
-                                        <template #name-cell="{ row: law }">
-                                            <div class="inline-flex items-center gap-2">
-                                                <span class="whitespace-pre-line text-highlighted">
-                                                    {{ law.name }}
-                                                </span>
-
-                                                <UTooltip v-if="law.hint" :text="law.hint">
-                                                    <UIcon class="size-5" name="i-mdi-information-outline" />
-                                                </UTooltip>
-                                            </div>
-                                        </template>
-
-                                        <template #fine-cell="{ row: law }">
-                                            {{ $n(law.fine, 'currency') }}
-                                        </template>
-
-                                        <template #description-cell="{ row: law }">
-                                            <p
-                                                class="line-clamp-2 w-full max-w-sm break-all whitespace-normal hover:line-clamp-none"
-                                            >
-                                                {{ law.description }}
-                                            </p>
-                                        </template>
-
-                                        <template #count-cell="{ row: law }">
-                                            <USelect
-                                                name="count"
-                                                :items="Array.from(Array(7).keys())"
-                                                :model-value="
-                                                    state.selectedPenalties.find((p) => p.law.id === law.id)?.count ?? 0
-                                                "
-                                                @change="($event) => calculate({ law: law, count: parseInt($event) })"
-                                            />
-                                        </template>
-                                    </UTable>
-                                </div>
+                                <UTable
+                                    :columns="columns"
+                                    :data="lawBook.book.laws"
+                                    :empty="$t('common.not_found', [$t('common.law', 2)])"
+                                    :pagination-options="{ manualPagination: true }"
+                                    :sorting-options="{ manualSorting: true }"
+                                />
                             </template>
                         </UAccordion>
                     </dl>

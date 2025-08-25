@@ -13,15 +13,19 @@ import type { ListQualificationsResponse } from '~~/gen/ts/services/qualificatio
 const schema = z.object({
     search: z.string().max(64).optional(),
     sorting: z
-        .custom<SortByColumn>()
-        .array()
-        .max(3)
-        .default([
-            {
-                id: 'abbreviation',
-                desc: false,
-            },
-        ]),
+        .object({
+            columns: z
+                .custom<SortByColumn>()
+                .array()
+                .max(3)
+                .default([
+                    {
+                        id: 'abbreviation',
+                        desc: false,
+                    },
+                ]),
+        })
+        .default({ columns: [{ id: 'abbreviation', desc: false }] }),
     page: pageNumberSchema,
 });
 
@@ -30,7 +34,7 @@ const qualificationsQualificationsClient = await getQualificationsQualifications
 const query = useSearchForm('qualifications_list', schema);
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `qualifications-${query.sorting.column}:${query.sorting.direction}-${query.page}`,
+    () => `qualifications-${JSON.stringify(query.sorting)}-${query.page}`,
     () => listQualifications(),
 );
 
@@ -40,7 +44,7 @@ async function listQualifications(): Promise<ListQualificationsResponse> {
             pagination: {
                 offset: calculateOffset(query.page, data.value?.pagination),
             },
-            sort: { columns: query.sorting },
+            sort: query.sorting,
             search: query.search,
         });
         const { response } = await call;
@@ -56,11 +60,7 @@ watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
 </script>
 
 <template>
-    <UCard
-        :ui="{
-            body: { padding: '' },
-        }"
-    >
+    <UCard>
         <template #header>
             <div class="flex items-center justify-between gap-1">
                 <h3 class="flex-1 text-2xl leading-6 font-semibold">

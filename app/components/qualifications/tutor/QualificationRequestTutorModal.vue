@@ -89,12 +89,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+    <UModal>
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
+                        <h3 class="text-2xl leading-6 font-semibold">
                             {{ $t('components.qualifications.request_modal.title') }}
                         </h3>
 
@@ -125,16 +125,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     }}</span>
                                 </template>
 
-                                <template #option="{ option }">
+                                <template #item="{ option }">
                                     <span class="size-2 rounded-full" :class="requestStatusToBgColor(option.status)" />
                                     <span class="truncate">{{
                                         $t(`enums.qualifications.RequestStatus.${RequestStatus[option.status]}`)
                                     }}</span>
                                 </template>
 
-                                <template #option-empty="{ query: search }">
-                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                </template>
                                 <template #empty>
                                     {{ $t('common.not_found', [$t('common.status')]) }}
                                 </template>

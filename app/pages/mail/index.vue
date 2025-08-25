@@ -242,7 +242,7 @@ onBeforeMount(async () => {
                         </span>
                     </template>
 
-                    <template #option="{ option }">
+                    <template #item="{ option }">
                         <span class="truncate">
                             {{
                                 (option?.label && option?.label !== ''
@@ -257,10 +257,6 @@ onBeforeMount(async () => {
                         </span>
 
                         <UBadge v-if="option?.deactivated" color="error" size="xs" :label="$t('common.disabled')" />
-                    </template>
-
-                    <template #option-empty="{ query: search }">
-                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                     </template>
 
                     <template #empty> {{ $t('common.not_found', [$t('common.mail', 2)]) }} </template>

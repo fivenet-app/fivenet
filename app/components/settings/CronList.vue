@@ -1,7 +1,10 @@
 <script lang="ts" setup>
+import { UBadge, UButton, UKbd } from '#components';
+import type { TableColumn } from '@nuxt/ui';
+import { h } from 'vue';
 import { getSettingsCronClient } from '~~/gen/ts/clients';
 import { Any } from '~~/gen/ts/google/protobuf/any';
-import { CronjobState, GenericCronData } from '~~/gen/ts/resources/common/cron/cron';
+import { type Cronjob, CronjobState, GenericCronData } from '~~/gen/ts/resources/common/cron/cron';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ListCronjobsResponse } from '~~/gen/ts/services/settings/cron';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
@@ -60,41 +63,51 @@ watchDebounced(windowFocus, () => {
     }
 });
 
-const columns = [
-    {
-        accessorKey: 'name',
-        label: t('common.name'),
-    },
-    {
-        accessorKey: 'schedule',
-        label: t('common.schedule'),
-    },
-    {
-        accessorKey: 'status',
-        label: t('common.status'),
-    },
-    {
-        accessorKey: 'state',
-        label: t('common.state'),
-    },
-    {
-        accessorKey: 'nextScheduleTime',
-        label: t('common.next_schedule_time'),
-    },
-    {
-        accessorKey: 'lastAttemptTime',
-        label: t('common.last_attempt_time'),
-    },
-    {
-        accessorKey: 'startedTime',
-        label: t('common.started_time'),
-    },
-];
-
-const expand = ref({
-    openedRows: [],
-    row: {},
-});
+const columns = computed(
+    () =>
+        [
+            {
+                accessorKey: 'name',
+                header: t('common.name'),
+                cell: ({ row }) => h('span', { class: 'text-highlighted' }, row.original.name),
+            },
+            {
+                accessorKey: 'schedule',
+                header: t('common.schedule'),
+                cell: ({ row }) => h(UKbd, { size: 'md' }, row.original.schedule),
+            },
+            {
+                accessorKey: 'status',
+                header: t('common.status'),
+                cell: ({ row }) =>
+                    row.original.lastCompletedEvent?.success
+                        ? h(UBadge, { icon: 'i-mdi-check-bold', color: 'success' })
+                        : h(UBadge, { icon: 'i-mdi-exclamation-thick', color: 'error' }),
+            },
+            {
+                accessorKey: 'state',
+                header: t('common.state'),
+                cell: ({ row }) => t(`enums.settings.CronjobState.${CronjobState[row.original.state]}`),
+            },
+            {
+                accessorKey: 'nextScheduleTime',
+                header: t('common.next_schedule_time'),
+                cell: ({ row }) =>
+                    row.original.nextScheduleTime ? h(GenericTime, { value: row.original.nextScheduleTime }) : null,
+            },
+            {
+                accessorKey: 'lastAttemptTime',
+                header: t('common.last_attempt_time'),
+                cell: ({ row }) =>
+                    row.original.lastAttemptTime ? h(GenericTime, { value: row.original.lastAttemptTime }) : null,
+            },
+            {
+                accessorKey: 'startedTime',
+                header: t('common.started_time'),
+                cell: ({ row }) => (row.original.startedTime ? h(GenericTime, { value: row.original.startedTime }) : null),
+            },
+        ] as TableColumn<Cronjob>[],
+);
 </script>
 
 <template>
@@ -113,40 +126,47 @@ const expand = ref({
 
     <UTable
         v-else
-        v-model:expand="expand"
         class="flex-1"
         :loading="isRequestPending(status)"
         :columns="columns"
         :data="cronjobs?.jobs"
-        :empty-state="{ icon: 'i-mdi-calendar-task', label: $t('common.not_found', [$t('pages.settings.cron.title', 2)]) }"
+        :pagination-options="{ manualPagination: true }"
+        :sorting-options="{ manualSorting: true }"
+        :empty="$t('common.not_found', [$t('pages.settings.cron.title', 2)])"
     >
-        <template #expand="{ row }">
+        <template #expanded="{ row }">
             <div class="p-2">
-                <pre v-if="!row.lastCompletedEvent">{{ $t('common.unknown') }}</pre>
+                <pre v-if="!row.original.lastCompletedEvent">{{ $t('common.unknown') }}</pre>
                 <UCard v-else>
                     <template #header>
                         <div class="flex items-center justify-between gap-2">
                             <div class="flex gap-2">
-                                <UBadge v-if="row.lastCompletedEvent.success" icon="i-mdi-check-bold" color="success" />
+                                <UBadge
+                                    v-if="row.original.lastCompletedEvent.success"
+                                    icon="i-mdi-check-bold"
+                                    color="success"
+                                />
                                 <UBadge v-else icon="i-mdi-exclamation-thick" color="error" />
 
                                 <div class="font-semibold">
-                                    {{ $t('common.end_date') }}: <GenericTime :value="row.lastCompletedEvent.endDate" /> ({{
+                                    {{ $t('common.end_date') }}:
+                                    <GenericTime :value="row.original.lastCompletedEvent.endDate" /> ({{
                                         $t('common.duration')
-                                    }}: {{ fromDuration(row.lastCompletedEvent.elapsed) }}s)
+                                    }}: {{ fromDuration(row.original.lastCompletedEvent.elapsed) }}s)
                                 </div>
                             </div>
 
                             <UButton
+                                v-if="row.original.lastCompletedEvent.data?.data"
                                 variant="link"
                                 icon="i-mdi-share"
                                 @click="
                                     copyLinkToClipboard(
-                                        row.lastCompletedEvent.data?.data?.typeUrl.includes(
+                                        row.original.lastCompletedEvent.data?.data?.typeUrl.includes(
                                             '/resources.common.cron.GenericCronData',
                                         )
-                                            ? Any.unpack(row.lastCompletedEvent.data.data, GenericCronData)
-                                            : row.lastCompletedEvent.data,
+                                            ? Any.unpack(row.original.lastCompletedEvent.data.data, GenericCronData)
+                                            : row.original.lastCompletedEvent.data,
                                     )
                                 "
                             />
@@ -156,9 +176,11 @@ const expand = ref({
                     <pre
                         class="line-clamp-9 hover:line-clamp-none"
                         v-text="
-                            row.lastCompletedEvent.data?.data?.typeUrl.includes('/resources.common.cron.GenericCronData')
-                                ? Any.unpack(row.lastCompletedEvent.data.data, GenericCronData)
-                                : row.lastCompletedEvent.data
+                            row.original.lastCompletedEvent.data?.data?.typeUrl.includes(
+                                '/resources.common.cron.GenericCronData',
+                            )
+                                ? Any.unpack(row.original.lastCompletedEvent.data.data, GenericCronData)
+                                : row.original.lastCompletedEvent.data
                         "
                     />
 
@@ -169,8 +191,8 @@ const expand = ref({
                             <pre
                                 class="line-clamp-4 whitespace-break-spaces hover:line-clamp-none"
                                 v-text="
-                                    row.lastCompletedEvent.errorMessage
-                                        ? row.lastCompletedEvent.errorMessage
+                                    row.original.lastCompletedEvent.errorMessage
+                                        ? row.original.lastCompletedEvent.errorMessage
                                         : $t('common.none')
                                 "
                             />
@@ -178,37 +200,6 @@ const expand = ref({
                     </template>
                 </UCard>
             </div>
-        </template>
-
-        <template #name-cell="{ row }">
-            <span class="text-highlighted">
-                <pre>{{ row.name }}</pre>
-            </span>
-        </template>
-
-        <template #schedule-cell="{ row }">
-            <UKbd size="md">{{ row.schedule }}</UKbd>
-        </template>
-
-        <template #status-cell="{ row }">
-            <UBadge v-if="row.lastCompletedEvent?.success" icon="i-mdi-check-bold" color="success" />
-            <UBadge v-else icon="i-mdi-exclamation-thick" color="error" />
-        </template>
-
-        <template #state-cell="{ row }">
-            {{ $t(`enums.settings.CronjobState.${CronjobState[row.state]}`) }}
-        </template>
-
-        <template #nextScheduleTime-cell="{ row }">
-            <GenericTime v-if="row.nextScheduleTime" :value="row.nextScheduleTime" />
-        </template>
-
-        <template #lastAttemptTime-cell="{ row }">
-            <GenericTime v-if="row.lastAttemptTime" :value="row.lastAttemptTime" />
-        </template>
-
-        <template #startedTime-cell="{ row }">
-            <GenericTime v-if="row.startedTime" :value="row.startedTime" />
         </template>
     </UTable>
 

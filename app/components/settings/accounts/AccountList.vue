@@ -1,4 +1,8 @@
 <script lang="ts" setup>
+import { useAppConfig } from '#app';
+import { UBadge, UButton, UTooltip } from '#components';
+import type { TableColumn } from '@nuxt/ui';
+import { h } from 'vue';
 import { z } from 'zod';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -6,12 +10,14 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import StreamerModeAlert from '~/components/partials/StreamerModeAlert.vue';
 import { getSettingsAccountsClient } from '~~/gen/ts/clients';
+import type { Account } from '~~/gen/ts/resources/accounts/accounts';
+import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import type { ListAccountsResponse } from '~~/gen/ts/services/settings/accounts';
 import AccountEditModal from './AccountEditModal.vue';
 
 const { t } = useI18n();
 
-const modal = useOverlay();
+const overlay = useOverlay();
 
 const settingsAccountsClient = await getSettingsAccountsClient();
 
@@ -22,15 +28,17 @@ const schema = z.object({
     externalId: z.string().max(64).optional(),
 
     sorting: z
-        .custom<SortByColumn>()
-        .array()
-        .max(3)
-        .default([
-            {
-                id: 'username',
-                desc: false,
-            },
-        ]),
+        .object({
+            columns: z.custom<SortByColumn>().array().max(3).default([]),
+        })
+        .default({
+            columns: [
+                {
+                    id: 'username',
+                    desc: false,
+                },
+            ],
+        }),
     page: pageNumberSchema,
 });
 
@@ -42,7 +50,8 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(
-    `settings-accounts-${query.license}-${query.enabled}-${query.username}-${query.externalId}-${query.sorting.column}:${query.sorting.direction}-${query.page}`,
+    () =>
+        `settings-accounts-${query.license}-${query.enabled}-${query.username}-${query.externalId}-${JSON.stringify(query.sorting)}-${query.page}`,
     () => listAccounts(),
 );
 
@@ -52,7 +61,7 @@ async function listAccounts(): Promise<ListAccountsResponse> {
             pagination: {
                 offset: calculateOffset(query.page, accounts.value?.pagination),
             },
-            sort: { columns: query.sorting },
+            sort: query.sorting,
             enabled: query.enabled,
             license: query.license,
             username: query.username,
@@ -89,35 +98,113 @@ async function deleteAccount(id: number): Promise<void> {
 const settingsStore = useSettingsStore();
 const { streamerMode } = storeToRefs(settingsStore);
 
-const columns = [
-    {
-        accessorKey: 'actions',
-        label: t('common.action', 2),
-        sortable: false,
-    },
-    {
-        accessorKey: 'username',
-        label: t('common.username'),
-        sortable: true,
-    },
-    {
-        accessorKey: 'enabled',
-        label: t('common.enabled'),
-    },
-    {
-        accessorKey: 'createdAt',
-        label: t('common.created_at'),
-    },
-    {
-        accessorKey: 'updatedAt',
-        label: t('common.updated_at'),
-    },
-    {
-        accessorKey: 'license',
-        label: t('common.license'),
-        sortable: true,
-    },
-];
+const appConfig = useAppConfig();
+
+const columns = computed(
+    () =>
+        [
+            {
+                accessorKey: 'actions',
+                header: t('common.action', 2),
+                cell: ({ row }) =>
+                    h('div', { class: 'flex flex-row gap-2' }, [
+                        h(UTooltip, { text: t('common.update') }, [
+                            h(UButton, {
+                                variant: 'link',
+                                icon: 'i-mdi-pencil',
+                                onClick: () =>
+                                    accountEditModal.open({
+                                        account: row.original,
+                                        'onUpdate:account': () => refresh(),
+                                    }),
+                            }),
+                        ]),
+                        h(UTooltip, { text: t('common.delete') }, [
+                            h(UButton, {
+                                variant: 'link',
+                                icon: 'i-mdi-delete',
+                                color: 'error',
+                                onClick: () =>
+                                    confirmModal.open({
+                                        confirm: async () => deleteAccount(row.original.id),
+                                    }),
+                            }),
+                        ]),
+                    ]),
+            },
+            {
+                accessorKey: 'username',
+                header: ({ column }) => {
+                    const isSorted = column.getIsSorted();
+
+                    return h(UButton, {
+                        color: 'neutral',
+                        variant: 'ghost',
+                        label: t('common.username'),
+                        icon: isSorted
+                            ? isSorted === 'asc'
+                                ? appConfig.custom.icons.sortAsc
+                                : appConfig.custom.icons.sortDesc
+                            : appConfig.custom.icons.sort,
+                        class: '-mx-2.5',
+                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+                    });
+                },
+                sortable: true,
+                cell: ({ row }) =>
+                    h(UTooltip, { text: `${t('common.id')}: ${row.id}` }, [
+                        h(
+                            'span',
+                            { class: 'text-highlighted' },
+                            row.original.username === '' ? t('common.na') : row.original.username,
+                        ),
+                    ]),
+            },
+            {
+                accessorKey: 'enabled',
+                header: t('common.enabled'),
+                cell: ({ row }) =>
+                    h(UBadge, {
+                        color: row.original.enabled ? 'success' : 'error',
+                        label: row.original.enabled ? t('common.yes') : t('common.no'),
+                    }),
+            },
+            {
+                accessorKey: 'createdAt',
+                header: t('common.created_at'),
+                cell: ({ row }) => h(GenericTime, { value: toDate(row.original.createdAt) }),
+            },
+            {
+                accessorKey: 'updatedAt',
+                header: t('common.updated_at'),
+                cell: ({ row }) => h(GenericTime, { value: toDate(row.original.updatedAt) }),
+            },
+            {
+                accessorKey: 'license',
+                header: ({ column }) => {
+                    const isSorted = column.getIsSorted();
+
+                    return h(UButton, {
+                        color: 'neutral',
+                        variant: 'ghost',
+                        label: t('common.license'),
+                        icon: isSorted
+                            ? isSorted === 'asc'
+                                ? appConfig.custom.icons.sortAsc
+                                : appConfig.custom.icons.sortDesc
+                            : appConfig.custom.icons.sort,
+                        class: '-mx-2.5',
+                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+                    });
+                },
+                sortable: true,
+                cell: ({ row }) => h('pre', { class: 'text-highlighted' }, row.original.license),
+            },
+        ] as TableColumn<Account>[],
+);
+
+const confirmModal = overlay.create(ConfirmModal);
+const accountEditModal = overlay.create(AccountEditModal);
 </script>
 
 <template>
@@ -217,68 +304,15 @@ const columns = [
         />
 
         <UTable
-            v-else
+            v-model:sorting="query.sorting.columns"
             class="flex-1"
             :loading="isRequestPending(status)"
             :columns="columns"
             :data="accounts?.accounts"
-            :empty-state="{ icon: 'i-mdi-account-multiple', label: $t('common.not_found', [$t('common.account', 2)]) }"
-        >
-            <template #actions-cell="{ row: account }">
-                <UTooltip :text="$t('common.update')">
-                    <UButton
-                        variant="link"
-                        icon="i-mdi-pencil"
-                        @click="
-                            modal.open(AccountEditModal, {
-                                account: account,
-                                'onUpdate:account': () => refresh(),
-                            })
-                        "
-                    />
-                </UTooltip>
-
-                <UTooltip :text="$t('common.delete')">
-                    <UButton
-                        variant="link"
-                        icon="i-mdi-delete"
-                        color="error"
-                        @click="
-                            modal.open(ConfirmModal, {
-                                confirm: async () => deleteAccount(account.id),
-                            })
-                        "
-                    />
-                </UTooltip>
-            </template>
-
-            <template #username-cell="{ row: account }">
-                <UTooltip :text="`${$t('common.id')}: ${account.id}`">
-                    <span class="text-highlighted">
-                        {{ account.username === '' ? $t('common.na') : account.username }}
-                    </span>
-                </UTooltip>
-            </template>
-
-            <template #enabled-cell="{ row: account }">
-                <UBadge
-                    :color="account.enabled ? 'success' : 'error'"
-                    :label="account.enabled ? t('common.yes') : t('common.no')"
-                />
-            </template>
-
-            <template #createdAt-cell="{ row: account }">
-                <GenericTime :value="toDate(account.createdAt)" />
-            </template>
-
-            <template #updatedAt-cell="{ row: account }">
-                <GenericTime :value="toDate(account.updatedAt)" />
-            </template>
-
-            <template #license-cell="{ row: account }">
-                <pre class="text-highlighted" v-text="account.license" />
-            </template>
-        </UTable>
+            :empty="$t('common.not_found', [$t('common.account', 2)])"
+            :sorting-options="{ manualSorting: true }"
+            :pagination-options="{ manualPagination: true }"
+        />
 
         <Pagination v-model="query.page" :pagination="accounts?.pagination" :status="status" :refresh="refresh" />
     </template>

@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { NuxtImg, UIcon } from '#components';
+import type { TableColumn } from '@nuxt/ui';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -76,37 +78,49 @@ function addUploadedFile(file: File): void {
     }
 }
 
-const modal = useOverlay();
+const overlay = useOverlay();
 
-const columns = [
-    {
-        accessorKey: 'actions',
-        label: t('common.action', 2),
-        sortable: false,
+const fileUploadModal = overlay.create(FileUploadModal, {
+    props: {
+        onUploaded: addUploadedFile,
     },
-    {
-        accessorKey: 'preview',
-        label: t('common.preview'),
-    },
-    {
-        accessorKey: 'name',
-        label: t('common.name'),
-    },
-    {
-        accessorKey: 'fileSize',
-        label: t('common.file_size'),
-    },
-    {
-        accessorKey: 'updatedAt',
-        label: t('common.updated_at'),
-    },
-    {
-        accessorKey: 'contentType',
-        label: t('common.type'),
-    },
-];
+});
+const confirmModal = overlay.create(ConfirmModal);
 
 const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
+
+const columns = computed(
+    () =>
+        [
+            {
+                accessorKey: 'name',
+                header: t('common.name'),
+                cell: ({ row }) => h('span', { class: 'text-highlighted' }, row.original.filePath),
+            },
+            {
+                accessorKey: 'preview',
+                header: t('common.preview'),
+                cell: ({ row }) =>
+                    !previewTypes.some((ext) => row.original.filePath.endsWith(ext))
+                        ? h(UIcon, { class: 'size-8', name: 'i-mdi-file-outline' })
+                        : h(NuxtImg, {
+                              class: 'max-h-24 max-w-32',
+                              src: `/api/filestore/${row.original.filePath}`,
+                              loading: 'lazy',
+                          }),
+            },
+            {
+                accessorKey: 'fileSize',
+                header: t('common.file_size'),
+                cell: ({ row }) => formatBytes(row.original.byteSize),
+            },
+            {
+                accessorKey: 'createdAt',
+                header: t('common.created_at'),
+                cell: ({ row }) => h(GenericTime, { value: row.original.createdAt }),
+            },
+        ] as TableColumn<File>[],
+);
 </script>
 
 <template>
@@ -126,14 +140,7 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
             <template #right>
                 <PartialsBackButton fallback-to="/settings" />
 
-                <UButton
-                    trailing-icon="i-mdi-upload"
-                    @click="
-                        modal.open(FileUploadModal, {
-                            onUploaded: addUploadedFile,
-                        })
-                    "
-                >
+                <UButton trailing-icon="i-mdi-upload" @click="fileUploadModal.open()">
                     {{ $t('common.upload') }}
                 </UButton>
             </template>
@@ -152,7 +159,9 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
             :loading="isRequestPending(status)"
             :columns="columns"
             :data="files?.files"
-            :empty-state="{ icon: 'i-mdi-file-multiple', label: $t('common.not_found', [$t('common.file', 2)]) }"
+            :pagination-options="{ manualPagination: true }"
+            :sorting-options="{ manualSorting: true }"
+            :empty="$t('common.not_found', [$t('common.file', 2)])"
         >
             <template #actions-cell="{ row: file }">
                 <UTooltip :text="$t('common.show')">
@@ -161,7 +170,7 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
                         icon="i-mdi-link-variant"
                         external
                         target="_blank"
-                        :to="`/api/filestore/${file.filePath}`"
+                        :to="`/api/filestore/${file.original.filePath}`"
                     />
                 </UTooltip>
 
@@ -171,35 +180,12 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
                         icon="i-mdi-delete"
                         color="error"
                         @click="
-                            modal.open(ConfirmModal, {
-                                confirm: async () => deleteFile(file.filePath),
+                            confirmModal.open({
+                                confirm: async () => deleteFile(file.original.filePath),
                             })
                         "
                     />
                 </UTooltip>
-            </template>
-
-            <template #name-cell="{ row: file }">
-                <span class="text-highlighted">
-                    {{ file.filePath }}
-                </span>
-            </template>
-
-            <template #preview-cell="{ row: file }">
-                <UIcon
-                    v-if="!previewTypes.some((ext) => file.filePath.endsWith(ext))"
-                    class="size-8"
-                    name="i-mdi-file-outline"
-                />
-                <NuxtImg v-else class="max-h-24 max-w-32" :src="`/api/filestore/${file.filePath}`" loading="lazy" />
-            </template>
-
-            <template #fileSize-cell="{ row: file }">
-                {{ formatBytes(file.size) }}
-            </template>
-
-            <template #updatedAt-cell="{ row: file }">
-                <GenericTime :value="toDate(file.lastModified)" />
             </template>
         </UTable>
 

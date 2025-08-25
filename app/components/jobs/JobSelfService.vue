@@ -9,7 +9,7 @@ defineProps<{
     userId: number;
 }>();
 
-const modal = useOverlay();
+const overlay = useOverlay();
 
 const { can, activeChar } = useAuth();
 
@@ -42,6 +42,9 @@ onBeforeMount(() => {
         useTimeoutFn(cancel, 5000);
     }
 });
+
+const selfServicePropsAbsenceDateModal = overlay.create(SelfServicePropsAbsenceDateModal);
+const selfServicePropsAvatarModal = overlay.create(SelfServicePropsAvatarModal);
 </script>
 
 <template>
@@ -61,7 +64,7 @@ onBeforeMount(() => {
                 block
                 icon="i-mdi-island"
                 @click="
-                    modal.open(SelfServicePropsAbsenceDateModal, {
+                    selfServicePropsAbsenceDateModal.open({
                         userId: colleagueSelf.colleague.userId,
                         userProps: colleagueSelf.colleague.props,
                     })
@@ -69,7 +72,7 @@ onBeforeMount(() => {
             >
                 <span>{{ $t('components.jobs.self_service.set_absence_date') }}</span>
             </UButton>
-            <UButton class="flex-1" block icon="i-mdi-camera" @click="modal.open(SelfServicePropsAvatarModal, {})">
+            <UButton class="flex-1" block icon="i-mdi-camera" @click="selfServicePropsAvatarModal.open({})">
                 <span>{{ $t('components.jobs.self_service.set_profile_picture') }}</span>
             </UButton>
         </div>

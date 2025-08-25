@@ -1,6 +1,9 @@
 <script lang="ts" setup>
+import { useAppConfig } from '#app';
+import { UButton, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import { vMaska } from 'maska/vue';
+import { h } from 'vue';
 import { z } from 'zod';
 import { sexToTextColor } from '~/components/partials/citizens/helpers';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
@@ -28,22 +31,26 @@ const schema = z.object({
     openFines: z.coerce.number().nonnegative().optional(),
     dateofbirth: z.string().max(10).optional(),
     sorting: z
-        .custom<SortByColumn>()
-        .array()
-        .max(3)
-        .default([
-            {
-                id: 'name',
-                desc: false,
-            },
-        ]),
+        .object({
+            columns: z
+                .custom<SortByColumn>()
+                .array()
+                .max(3)
+                .default([
+                    {
+                        id: 'name',
+                        desc: false,
+                    },
+                ]),
+        })
+        .default({ columns: [{ id: 'name', desc: false }] }),
     page: pageNumberSchema,
 });
 
 const query = useSearchForm('citizens', schema);
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `citizens-${query.sorting.column}:${query.sorting.direction}-${query.page}-${JSON.stringify(query)}`,
+    () => `citizens-${JSON.stringify(query.sorting)}-${query.page}-${JSON.stringify(query)}`,
     () => listCitizens(),
 );
 
@@ -53,7 +60,7 @@ async function listCitizens(): Promise<ListCitizensResponse> {
             pagination: {
                 offset: calculateOffset(query.page, data.value?.pagination),
             },
-            sort: { columns: query.sorting },
+            sort: query.sorting,
             search: query.name ?? '',
         };
         if (query.wanted) {
@@ -88,17 +95,7 @@ const clipboardStore = useClipboardStore();
 const notifications = useNotificationsStore();
 
 function addToClipboard(user: User): void {
-    clipboardStore.addUser({
-        ...user,
-        // @ts-expect-error wrapped table rows
-        jobLabel: user.jobLabel.value,
-        // @ts-expect-error wrapped table rows
-        sex: user.sex.value,
-        // @ts-expect-error wrapped table rows
-        dateofbirth: user.dateofbirth.value,
-        // @ts-expect-error wrapped table rows
-        height: user.height.value,
-    });
+    clipboardStore.addUser(user);
 
     notifications.add({
         title: { key: 'notifications.clipboard.citizen_add.title', parameters: {} },
@@ -108,61 +105,149 @@ function addToClipboard(user: User): void {
     });
 }
 
-const columns = [
-    {
-        accessorKey: 'name',
-        label: t('common.name'),
-        sortable: true,
-    },
-    {
-        accessorKey: 'jobLabel',
-        label: t('common.job'),
-        class: 'hidden lg:table-cell',
-        rowClass: 'hidden lg:table-cell',
-    },
-    {
-        accessorKey: 'sex',
-        label: t('common.sex'),
-        class: 'hidden lg:table-cell',
-        rowClass: 'hidden lg:table-cell',
-    },
-    attr('citizens.CitizensService/ListCitizens', 'Fields', 'PhoneNumber').value
-        ? { accessorKey: 'phoneNumber', label: t('common.phone_number') }
-        : undefined,
-    {
-        accessorKey: 'dateofbirth',
-        label: t('common.date_of_birth'),
-        class: 'hidden lg:table-cell',
-        rowClass: 'hidden lg:table-cell',
-    },
-    attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints').value
-        ? {
-              accessorKey: 'trafficInfractionPoints',
-              label: t('common.traffic_infraction_points', 2),
-              sortable: true,
-          }
-        : undefined,
-    attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.OpenFines').value
-        ? {
-              accessorKey: 'openFines',
-              label: t('common.fine', 2),
-              sortable: true,
-          }
-        : undefined,
-    {
-        accessorKey: 'height',
-        label: t('common.height'),
-        class: 'hidden lg:table-cell',
-        rowClass: 'hidden lg:table-cell',
-    },
-    can('citizens.CitizensService/GetUser').value
-        ? {
-              accessorKey: 'actions',
-              label: t('common.action', 2),
-              sortable: false,
-          }
-        : undefined,
-].filter((c) => c !== undefined) as TableColumn[];
+const appConfig = useAppConfig();
+
+const columns = computed(() =>
+    (
+        [
+            {
+                accessorKey: 'name',
+                header: ({ column }) => {
+                    const isSorted = column.getIsSorted();
+
+                    return h(UButton, {
+                        color: 'neutral',
+                        variant: 'ghost',
+                        label: t('common.name'),
+                        icon: isSorted
+                            ? isSorted === 'asc'
+                                ? appConfig.custom.icons.sortAsc
+                                : appConfig.custom.icons.sortDesc
+                            : appConfig.custom.icons.sort,
+                        class: '-mx-2.5',
+                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+                    });
+                },
+            },
+            {
+                accessorKey: 'jobLabel',
+                header: t('common.job'),
+                class: 'hidden lg:table-cell',
+                rowClass: 'hidden lg:table-cell',
+                cell: ({ row }) =>
+                    `${row.original.jobLabel}${row.original.props?.jobName || row.original.props?.jobGradeNumber ? '*' : ''}`,
+            },
+            {
+                accessorKey: 'sex',
+                header: t('common.sex'),
+                class: 'hidden lg:table-cell',
+                rowClass: 'hidden lg:table-cell',
+                cell: ({ row }) =>
+                    h(
+                        'span',
+                        { class: sexToTextColor(row.original.sex ?? '') },
+                        row.original.sex?.toUpperCase() ?? t('common.na'),
+                    ),
+            },
+            attr('citizens.CitizensService/ListCitizens', 'Fields', 'PhoneNumber').value
+                ? {
+                      accessorKey: 'phoneNumber',
+                      header: t('common.phone_number'),
+                      cell: ({ row }) => h(PhoneNumberBlock, { number: row.original.phoneNumber, hideNaText: true }),
+                  }
+                : undefined,
+            {
+                accessorKey: 'dateofbirth',
+                header: t('common.date_of_birth'),
+                class: 'hidden lg:table-cell',
+                rowClass: 'hidden lg:table-cell',
+                cell: ({ row }) => row.original.dateofbirth,
+            },
+            attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints').value
+                ? {
+                      accessorKey: 'trafficInfractionPoints',
+                      header: ({ column }) => {
+                          const isSorted = column.getIsSorted();
+
+                          return h(UButton, {
+                              color: 'neutral',
+                              variant: 'ghost',
+                              label: t('common.traffic_infraction_points', 2),
+                              icon: isSorted
+                                  ? isSorted === 'asc'
+                                      ? appConfig.custom.icons.sortAsc
+                                      : appConfig.custom.icons.sortDesc
+                                  : appConfig.custom.icons.sort,
+                              class: '-mx-2.5',
+                              onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+                          });
+                      },
+                      sortable: true,
+                      cell: ({ row }) => row.original.props?.trafficInfractionPoints,
+                  }
+                : undefined,
+            attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.OpenFines').value
+                ? {
+                      accessorKey: 'openFines',
+                      header: ({ column }) => {
+                          const isSorted = column.getIsSorted();
+
+                          return h(UButton, {
+                              color: 'neutral',
+                              variant: 'ghost',
+                              label: t('common.fine', 2),
+                              icon: isSorted
+                                  ? isSorted === 'asc'
+                                      ? appConfig.custom.icons.sortAsc
+                                      : appConfig.custom.icons.sortDesc
+                                  : appConfig.custom.icons.sort,
+                              class: '-mx-2.5',
+                              onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+                          });
+                      },
+                      sortable: true,
+                      cell: ({ row }) =>
+                          row.original.props?.openFines !== undefined && row.original.props?.openFines > 0
+                              ? $n(row.original.props?.openFines, 'currency')
+                              : '',
+                  }
+                : undefined,
+            {
+                accessorKey: 'height',
+                header: t('common.height'),
+                class: 'hidden lg:table-cell',
+                rowClass: 'hidden lg:table-cell',
+                cell: ({ row }) => (row.original.height ? `${row.original.height}cm` : ''),
+            },
+            can('citizens.CitizensService/GetUser').value
+                ? {
+                      accessorKey: 'actions',
+                      header: t('common.action', 2),
+                      cell: ({ row }) =>
+                          h('div', { class: 'flex flex-col justify-end md:flex-row' }, [
+                              h(UTooltip, { text: t('components.clipboard.clipboard_button.add') }, [
+                                  h(UButton, {
+                                      variant: 'link',
+                                      icon: 'i-mdi-clipboard-plus',
+                                      onClick: () => addToClipboard(row.original),
+                                  }),
+                              ]),
+                              h(UTooltip, { text: t('common.show') }, [
+                                  h(UButton, {
+                                      variant: 'link',
+                                      icon: 'i-mdi-eye',
+                                      to: {
+                                          name: 'citizens-id',
+                                          params: { id: row.original.userId ?? 0 },
+                                      },
+                                  }),
+                              ]),
+                          ]),
+                  }
+                : undefined,
+        ] as TableColumn<User>[]
+    ).filter((c) => c !== undefined),
+);
 
 const input = useTemplateRef('input');
 
@@ -287,86 +372,30 @@ defineShortcuts({
     />
     <UTable
         v-else
-        v-model:sorting="query.sorting"
+        v-model:sorting="query.sorting.columns"
         class="flex-1"
         :loading="isRequestPending(status)"
         :columns="columns"
         :data="data?.users"
-        :empty-state="{ icon: 'i-mdi-accounts', label: $t('common.not_found', [$t('common.citizen', 2)]) }"
-        sort-mode="manual"
+        :empty="$t('common.not_found', [$t('common.citizen', 2)])"
+        :sorting-options="{ manualSorting: true }"
+        :pagination-options="{ manualPagination: true }"
     >
-        <template #name-cell="{ row: citizen }">
+        <template #name-cell="{ row }">
             <div class="inline-flex items-center gap-1 text-highlighted">
                 <ProfilePictureImg
-                    :src="citizen.original.props?.mugshot?.filePath"
-                    :name="`${citizen.original.firstname} ${citizen.original.lastname}`"
+                    :src="row.original.props?.mugshot?.filePath"
+                    :name="`${row.original.firstname} ${row.original.lastname}`"
                     :alt="$t('common.mugshot')"
                     :enable-popup="true"
                     size="sm"
                 />
 
-                <span>{{ citizen.original.firstname }} {{ citizen.original.lastname }}</span>
-                <span class="lg:hidden"> ({{ citizen.original.dateofbirth.value }}) </span>
+                <span>{{ row.original.firstname }} {{ row.original.lastname }}</span>
 
-                <UBadge v-if="citizen.original.props?.wanted" color="error">
+                <UBadge v-if="row.original.props?.wanted" color="error">
                     {{ $t('common.wanted').toUpperCase() }}
                 </UBadge>
-            </div>
-
-            <dl class="font-normal lg:hidden">
-                <dt class="sr-only">{{ $t('common.sex') }} - {{ $t('common.job') }}</dt>
-                <dd class="mt-1 truncate">
-                    {{ citizen.original.sex?.value.toUpperCase() ?? $t('common.na') }} -
-                    {{ citizen.original.jobLabel.value ?? $t('common.na') }}
-                </dd>
-            </dl>
-        </template>
-
-        <template #jobLabel-cell="{ row: citizen }">
-            {{ citizen.original.jobLabel.value }}
-            {{ citizen.original.props?.jobName || citizen.original.props?.jobGradeNumber ? '*' : '' }}
-        </template>
-
-        <template #sex-cell="{ row: citizen }">
-            <span :class="sexToTextColor(citizen.original.sex?.value ?? '')">
-                {{ citizen.original.sex?.value.toUpperCase() ?? $t('common.na') }}
-            </span>
-        </template>
-
-        <template #phoneNumber-cell="{ row: citizen }">
-            <PhoneNumberBlock :number="citizen.original.phoneNumber" hide-na-text />
-        </template>
-
-        <template #openFines-cell="{ row: citizen }">
-            <template v-if="(citizen.original.props?.openFines ?? 0) > 0">
-                {{ $n(citizen.original.props?.openFines ?? 0, 'currency') }}
-            </template>
-        </template>
-
-        <template #dateofbirth-cell="{ row: citizen }">
-            {{ citizen.original.dateofbirth.value }}
-        </template>
-
-        <template #height-cell="{ row: citizen }">
-            {{ citizen.original.height.value ? citizen.original.height.value + 'cm' : '' }}
-        </template>
-
-        <template v-if="can('citizens.CitizensService/GetUser').value" #actions-cell="{ row: citizen }">
-            <div :key="citizen.original.userId" class="flex flex-col justify-end md:flex-row">
-                <UTooltip :text="$t('components.clipboard.clipboard_button.add')">
-                    <UButton variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(citizen.original)" />
-                </UTooltip>
-
-                <UTooltip :text="$t('common.show')">
-                    <UButton
-                        variant="link"
-                        icon="i-mdi-eye"
-                        :to="{
-                            name: 'citizens-id',
-                            params: { id: citizen.original.userId ?? 0 },
-                        }"
-                    />
-                </UTooltip>
             </div>
         </template>
     </UTable>

@@ -26,7 +26,8 @@ defineEmits<{
 
 const { t } = useI18n();
 
-const modal = useOverlay();
+const overlay = useOverlay();
+const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
 
 const calendarStore = useCalendarStore();
 const { hasEditAccessToCalendar } = storeToRefs(calendarStore);
@@ -79,7 +80,7 @@ const links = computed(() =>
                 label: t('common.entry', 1),
                 icon: 'i-mdi-plus',
                 onClick: () =>
-                    modal.open(EntryCreateOrUpdateModal, {
+                    entryCreateOrUpdateModal.open({
                         day: selectedCalendarDay.value!,
                     }),
             },

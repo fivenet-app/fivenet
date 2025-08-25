@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { UButton, UTooltip } from '#components';
+import type { TabsItem } from '@nuxt/ui';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPopover.vue';
@@ -11,12 +13,14 @@ const props = defineProps<{
     documentId?: number;
 }>();
 
+defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
+
 const modelValue = defineModel<DocumentReference[]>('references', {
     type: Array,
     required: true,
 });
-
-const { isOpen } = useOverlay();
 
 const { t } = useI18n();
 
@@ -125,7 +129,6 @@ const columnsCurrent = [
     {
         accessorKey: 'actions',
         label: t('common.action', 2),
-        sortable: false,
     },
 ];
 
@@ -145,7 +148,6 @@ const columnsClipboard = [
     {
         accessorKey: 'references',
         label: t('components.documents.document_managers.add_reference'),
-        sortable: false,
     },
 ];
 
@@ -165,13 +167,12 @@ const columnsNew = [
     {
         accessorKey: 'references',
         label: t('components.documents.document_managers.add_reference'),
-        sortable: false,
     },
 ];
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }" @update:model-value="isOpen = false">
+    <UModal>
         <UCard>
             <template #header>
                 <div class="flex items-center justify-between">
@@ -180,7 +181,13 @@ const columnsNew = [
                         {{ $t('common.reference', 2) }}
                     </h3>
 
-                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                    <UButton
+                        class="-my-1"
+                        color="neutral"
+                        variant="ghost"
+                        icon="i-mdi-window-close"
+                        @click="$emit('close', false)"
+                    />
                 </div>
             </template>
 
@@ -194,21 +201,23 @@ const columnsNew = [
                         >
                             <template #title-cell="{ row }">
                                 <DocumentInfoPopover
-                                    :document="!row.targetDocument?.id ? undefined : row.targetDocument"
-                                    :document-id="row.targetDocumentId"
+                                    :document="!row.original.targetDocument?.id ? undefined : row.original.targetDocument"
+                                    :document-id="row.original.targetDocumentId"
                                 />
                             </template>
 
                             <template #creator-cell="{ row }">
                                 <CitizenInfoPopover
-                                    :user="!row.targetDocument?.creator ? undefined : row.targetDocument?.creator"
-                                    :user-id="row.targetDocument?.creatorId"
+                                    :user="
+                                        !row.original.targetDocument?.creator ? undefined : row.original.targetDocument?.creator
+                                    "
+                                    :user-id="row.original.targetDocument?.creatorId"
                                     :trailing="false"
                                 />
                             </template>
 
                             <template #reference-cell="{ row }">
-                                {{ $t(`enums.documents.DocReference.${DocReference[row.reference]}`) }}
+                                {{ $t(`enums.documents.DocReference.${DocReference[row.original.reference]}`) }}
                             </template>
 
                             <template #actions-cell="{ row }">
@@ -218,7 +227,7 @@ const columnsNew = [
                                             :to="{
                                                 name: 'documents-id',
                                                 params: {
-                                                    id: row.targetDocumentId,
+                                                    id: row.original.targetDocumentId,
                                                 },
                                             }"
                                             target="_blank"
@@ -232,7 +241,7 @@ const columnsNew = [
                                             icon="i-mdi-file-document-minus"
                                             variant="link"
                                             color="error"
-                                            @click="removeReference(row.id!)"
+                                            @click="removeReference(row.original.id!)"
                                         />
                                     </UTooltip>
                                 </div>
@@ -251,15 +260,15 @@ const columnsNew = [
                                 }"
                             >
                                 <template #title-cell="{ row }">
-                                    <DocumentInfoPopover :document="getDocument(row)" />
+                                    <DocumentInfoPopover :document="getDocument(row.original)" />
                                 </template>
 
                                 <template #creator-cell="{ row }">
-                                    <CitizenInfoPopover :user="row.creator" :trailing="false" />
+                                    <CitizenInfoPopover :user="row.original.creator" :trailing="false" />
                                 </template>
 
                                 <template #createdAt-cell="{ row }">
-                                    <GenericTime :value="row.createdAt" ago />
+                                    <GenericTime :value="new Date(row.original.createdAt ?? 'now')" ago />
                                 </template>
 
                                 <template #references-cell="{ row }">
@@ -268,7 +277,7 @@ const columnsNew = [
                                             <UButton
                                                 color="blue"
                                                 icon="i-mdi-link"
-                                                @click="addReferenceClipboard(row, DocReference.LINKED)"
+                                                @click="addReferenceClipboard(row.original, DocReference.LINKED)"
                                             />
                                         </UTooltip>
 
@@ -276,7 +285,7 @@ const columnsNew = [
                                             <UButton
                                                 color="green"
                                                 icon="i-mdi-check"
-                                                @click="addReferenceClipboard(row, DocReference.SOLVES)"
+                                                @click="addReferenceClipboard(row.original, DocReference.SOLVES)"
                                             />
                                         </UTooltip>
 
@@ -284,7 +293,7 @@ const columnsNew = [
                                             <UButton
                                                 color="error"
                                                 icon="i-mdi-close-box"
-                                                @click="addReferenceClipboard(row, DocReference.CLOSES)"
+                                                @click="addReferenceClipboard(row.original, DocReference.CLOSES)"
                                             />
                                         </UTooltip>
 
@@ -292,7 +301,7 @@ const columnsNew = [
                                             <UButton
                                                 color="warning"
                                                 icon="i-mdi-lock-clock"
-                                                @click="addReferenceClipboard(row, DocReference.DEPRECATES)"
+                                                @click="addReferenceClipboard(row.original, DocReference.DEPRECATES)"
                                             />
                                         </UTooltip>
                                     </UButtonGroup>
@@ -330,15 +339,15 @@ const columnsNew = [
                                 }"
                             >
                                 <template #title-cell="{ row }">
-                                    <DocumentInfoPopover :document="row" />
+                                    <DocumentInfoPopover :document="row.original" />
                                 </template>
 
                                 <template #creator-cell="{ row }">
-                                    <CitizenInfoPopover :user="row.creator" :trailing="false" />
+                                    <CitizenInfoPopover :user="row.original.creator" :trailing="false" />
                                 </template>
 
                                 <template #createdAt-cell="{ row }">
-                                    <GenericTime :value="row.createdAt" ago />
+                                    <GenericTime :value="row.original.createdAt" ago />
                                 </template>
 
                                 <template #references-cell="{ row }">
@@ -347,7 +356,7 @@ const columnsNew = [
                                             <UButton
                                                 color="blue"
                                                 icon="i-mdi-link"
-                                                @click="addReference(row, DocReference.LINKED)"
+                                                @click="addReference(row.original, DocReference.LINKED)"
                                             />
                                         </UTooltip>
 
@@ -355,7 +364,7 @@ const columnsNew = [
                                             <UButton
                                                 color="green"
                                                 icon="i-mdi-check"
-                                                @click="addReference(row, DocReference.SOLVES)"
+                                                @click="addReference(row.original, DocReference.SOLVES)"
                                             />
                                         </UTooltip>
 
@@ -363,7 +372,7 @@ const columnsNew = [
                                             <UButton
                                                 color="error"
                                                 icon="i-mdi-close-box"
-                                                @click="addReference(row, DocReference.CLOSES)"
+                                                @click="addReference(row.original, DocReference.CLOSES)"
                                             />
                                         </UTooltip>
 
@@ -371,7 +380,7 @@ const columnsNew = [
                                             <UButton
                                                 color="warning"
                                                 icon="i-mdi-lock-clock"
-                                                @click="addReference(row, DocReference.DEPRECATES)"
+                                                @click="addReference(row.original, DocReference.DEPRECATES)"
                                             />
                                         </UTooltip>
                                     </UButtonGroup>
@@ -383,7 +392,7 @@ const columnsNew = [
             </div>
 
             <template #footer>
-                <UButton class="flex-1" block color="neutral" @click="isOpen = false">
+                <UButton class="flex-1" block color="neutral" @click="$emit('close', false)">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

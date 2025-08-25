@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { TableColumn } from '@nuxt/ui';
 import { z } from 'zod';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -12,7 +13,7 @@ import type { Role } from '~~/gen/ts/resources/permissions/permissions';
 
 const { t } = useI18n();
 
-const modal = useOverlay();
+const overlay = useOverlay();
 
 const { can, activeChar } = useAuth();
 
@@ -87,17 +88,21 @@ async function createRole(): Promise<void> {
 
 const sortedRoles = computed(() => [...(roles.value ?? [])].sort((a, b) => a.grade - b.grade));
 
-const columns = [
-    {
-        accessorKey: 'rank',
-        label: t('common.rank'),
-    },
-    {
-        accessorKey: 'actions',
-        label: t('common.action', 2),
-        sortable: false,
-    },
-];
+const columns = computed(
+    () =>
+        [
+            {
+                accessorKey: 'rank',
+                header: t('common.rank'),
+                cell: ({ row }: { row: { original: Role } }) =>
+                    `${row.original.jobLabel} - ${row.original.jobGradeLabel} (${row.original.grade})`,
+            },
+            {
+                accessorKey: 'actions',
+                header: t('common.action', 2),
+            },
+        ] as TableColumn<Role>[],
+);
 
 const route = useRoute('settings-roles-id');
 
@@ -106,6 +111,17 @@ const onSubmitThrottle = useThrottleFn(async () => {
     canSubmit.value = false;
     await createRole().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const confirmModal = overlay.create(ConfirmModal, {
+    props: {
+        title: t('components.hints.settings_roles_list.title'),
+        description: t('components.hints.settings_roles_list.content'),
+        icon: 'i-mdi-information-outline',
+        color: 'warning',
+        iconClass: 'text-amber-500 dark:text-amber-400',
+        confirm: onSubmitThrottle,
+    },
+});
 </script>
 
 <template>
@@ -133,7 +149,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                 </template>
                             </template>
 
-                            <template #option="{ option: jobGrade }">
+                            <template #item="{ option: jobGrade }">
                                 <span class="truncate">{{ jobGrade.label }} ({{ jobGrade.grade }})</span>
                             </template>
                         </USelectMenu>
@@ -146,16 +162,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         :disabled="state.jobGrade === undefined || state.jobGrade!.grade < 0 || !canSubmit"
                         :loading="!canSubmit"
                         icon="i-mdi-plus"
-                        @click="
-                            modal.open(ConfirmModal, {
-                                title: $t('components.hints.settings_roles_list.title'),
-                                description: $t('components.hints.settings_roles_list.content'),
-                                icon: 'i-mdi-information-outline',
-                                color: 'warning',
-                                iconClass: 'text-amber-500 dark:text-amber-400',
-                                confirm: onSubmitThrottle,
-                            })
-                        "
+                        @click="confirmModal.open()"
                     >
                         {{ $t('common.create') }}
                     </UButton>
@@ -176,15 +183,10 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     :columns="columns"
                     :data="sortedRoles"
                     :loading="isRequestPending(status)"
-                    :empty-state="{
-                        icon: 'i-mdi-account-group',
-                        label: $t('common.not_found', [$t('common.role', 2)]),
-                    }"
+                    :pagination-options="{ manualPagination: true }"
+                    :sorting-options="{ manualSorting: true }"
+                    :empty="$t('common.not_found', [$t('common.role', 2)])"
                 >
-                    <template #rank-cell="{ row: role }">
-                        <div class="text-highlighted">{{ role.jobLabel }} - {{ role.jobGradeLabel }} ({{ role.grade }})</div>
-                    </template>
-
                     <template #actions-cell="{ row: role }">
                         <UTooltip :text="$t('common.show')">
                             <UButton

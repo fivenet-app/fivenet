@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { TabsItem } from '@nuxt/ui';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { useAuthStore } from '~/stores/auth';
@@ -11,12 +12,14 @@ const props = defineProps<{
     documentId?: number;
 }>();
 
+defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
+
 const modelValue = defineModel<DocumentRelation[]>('relations', {
     type: Array,
     required: true,
 });
-
-const { isOpen } = useOverlay();
 
 const { t } = useI18n();
 
@@ -120,7 +123,6 @@ const columnsCurrent = [
     {
         accessorKey: 'actions',
         label: t('common.action', 2),
-        sortable: false,
     },
 ];
 
@@ -136,7 +138,6 @@ const columnsClipboard = [
     {
         accessorKey: 'relations',
         label: t('components.documents.document_managers.add_relation'),
-        sortable: false,
     },
 ];
 
@@ -152,13 +153,12 @@ const columnsNew = [
     {
         accessorKey: 'relations',
         label: t('components.documents.document_managers.add_relation'),
-        sortable: false,
     },
 ];
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+    <UModal>
         <UCard>
             <template #header>
                 <div class="flex items-center justify-between">
@@ -167,7 +167,13 @@ const columnsNew = [
                         {{ $t('common.relation', 2) }}
                     </h3>
 
-                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                    <UButton
+                        class="-my-1"
+                        color="neutral"
+                        variant="ghost"
+                        icon="i-mdi-window-close"
+                        @click="$emit('close', false)"
+                    />
                 </div>
             </template>
 
@@ -182,22 +188,22 @@ const columnsNew = [
                             >
                                 <template #name-cell="{ row }">
                                     <CitizenInfoPopover
-                                        :user="!row.targetUser?.userId ? undefined : row.targetUser"
-                                        :user-id="row.targetUserId"
+                                        :user="!row.original.targetUser?.userId ? undefined : row.original.targetUser"
+                                        :user-id="row.original.targetUserId"
                                         show-birthdate
                                     />
                                 </template>
 
                                 <template #creator-cell="{ row }">
                                     <CitizenInfoPopover
-                                        :user="!row.sourceUser?.userId ? undefined : row.sourceUser"
-                                        :user-id="row.sourceUserId"
+                                        :user="!row.original.sourceUser?.userId ? undefined : row.original.sourceUser"
+                                        :user-id="row.original.sourceUserId"
                                         :trailing="false"
                                     />
                                 </template>
 
                                 <template #relation-cell="{ row }">
-                                    {{ $t(`enums.documents.DocRelation.${DocRelation[row.relation]}`) }}
+                                    {{ $t(`enums.documents.DocRelation.${DocRelation[row.original.relation]}`) }}
                                 </template>
 
                                 <template #actions-cell="{ row }">
@@ -207,7 +213,7 @@ const columnsNew = [
                                                 :to="{
                                                     name: 'citizens-id',
                                                     params: {
-                                                        id: row.targetUserId,
+                                                        id: row.original.targetUserId,
                                                     },
                                                 }"
                                                 target="_blank"
@@ -221,7 +227,7 @@ const columnsNew = [
                                                 variant="link"
                                                 icon="i-mdi-account-minus"
                                                 color="error"
-                                                @click="removeRelation(row.id!)"
+                                                @click="removeRelation(row.original.id!)"
                                             />
                                         </UTooltip>
                                     </UButtonGroup>
@@ -238,11 +244,11 @@ const columnsNew = [
                                 :empty-state="{ icon: 'i-mdi-file', label: $t('common.not_found', [$t('common.citizen', 2)]) }"
                             >
                                 <template #name-cell="{ row }">
-                                    <CitizenInfoPopover :user="row.targetUser" show-birthdate />
+                                    <CitizenInfoPopover :user="row.original" show-birthdate />
                                 </template>
 
                                 <template #job-cell="{ row }">
-                                    {{ row.jobLabel }}
+                                    {{ row.original.jobLabel }}
                                 </template>
 
                                 <template #relations-cell="{ row }">
@@ -251,7 +257,7 @@ const columnsNew = [
                                             <UButton
                                                 color="blue"
                                                 icon="i-mdi-at"
-                                                @click="addRelation(getUser(row), DocRelation.MENTIONED)"
+                                                @click="addRelation(getUser(row.original), DocRelation.MENTIONED)"
                                             />
                                         </UTooltip>
 
@@ -259,7 +265,7 @@ const columnsNew = [
                                             <UButton
                                                 color="warning"
                                                 icon="i-mdi-target"
-                                                @click="addRelation(getUser(row), DocRelation.TARGETS)"
+                                                @click="addRelation(getUser(row.original), DocRelation.TARGETS)"
                                             />
                                         </UTooltip>
 
@@ -267,7 +273,7 @@ const columnsNew = [
                                             <UButton
                                                 color="error"
                                                 icon="i-mdi-source-commit-start"
-                                                @click="addRelation(getUser(row), DocRelation.CAUSED)"
+                                                @click="addRelation(getUser(row.original), DocRelation.CAUSED)"
                                             />
                                         </UTooltip>
                                     </UButtonGroup>
@@ -303,11 +309,11 @@ const columnsNew = [
                                 :empty-state="{ icon: 'i-mdi-file', label: $t('common.not_found', [$t('common.citizen', 2)]) }"
                             >
                                 <template #name-cell="{ row }">
-                                    <CitizenInfoPopover :user="row" show-birthdate />
+                                    <CitizenInfoPopover :user="row.original" show-birthdate />
                                 </template>
 
                                 <template #job-cell="{ row }">
-                                    {{ row.jobLabel }}
+                                    {{ row.original.jobLabel }}
                                 </template>
 
                                 <template #relations-cell="{ row }">
@@ -316,7 +322,7 @@ const columnsNew = [
                                             <UButton
                                                 color="blue"
                                                 icon="i-mdi-at"
-                                                @click="addRelation(row, DocRelation.MENTIONED)"
+                                                @click="addRelation(row.original, DocRelation.MENTIONED)"
                                             />
                                         </UTooltip>
 
@@ -324,7 +330,7 @@ const columnsNew = [
                                             <UButton
                                                 color="warning"
                                                 icon="i-mdi-target"
-                                                @click="addRelation(row, DocRelation.TARGETS)"
+                                                @click="addRelation(row.original, DocRelation.TARGETS)"
                                             />
                                         </UTooltip>
 
@@ -332,7 +338,7 @@ const columnsNew = [
                                             <UButton
                                                 color="error"
                                                 icon="i-mdi-source-commit-start"
-                                                @click="addRelation(row, DocRelation.CAUSED)"
+                                                @click="addRelation(row.original, DocRelation.CAUSED)"
                                             />
                                         </UTooltip>
                                     </UButtonGroup>
@@ -344,7 +350,7 @@ const columnsNew = [
             </div>
 
             <template #footer>
-                <UButton class="flex-1" block color="neutral" @click="isOpen = false">
+                <UButton class="flex-1" block color="neutral" @click="$emit('close', false)">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

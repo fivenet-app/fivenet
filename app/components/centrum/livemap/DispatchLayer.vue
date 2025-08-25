@@ -12,7 +12,7 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-const modal = useOverlay();
+const overlay = useOverlay();
 
 const centrumStore = useCentrumStore();
 const { dispatches, acls, ownDispatches, settings } = storeToRefs(centrumStore);
@@ -78,7 +78,7 @@ onBeforeMount(async () => {
     });
 });
 
-const dispatchDetailsSlideover = modal.create(DispatchDetailsSlideover);
+const dispatchDetailsSlideover = overlay.create(DispatchDetailsSlideover);
 </script>
 
 <template>

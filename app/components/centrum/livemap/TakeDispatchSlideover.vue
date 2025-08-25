@@ -7,7 +7,9 @@ import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import { type Dispatch, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 
-const { isOpen } = useOverlay();
+const emit = defineEmits<{
+    close: [boolean];
+}>();
 
 const centrumStore = useCentrumStore();
 const { dispatches, pendingDispatches, getCurrentMode } = storeToRefs(centrumStore);
@@ -46,7 +48,7 @@ async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
 
         selectedDispatches.value.length = 0;
 
-        isOpen.value = false;
+        emit('close', false);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -86,23 +88,21 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
 </script>
 
 <template>
-    <USlideover :ui="{ width: 'w-screen max-w-xl' }">
-        <UCard
-            class="flex flex-1 flex-col"
-            :ui="{
-                body: {
-                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--ui-header-height)))] max-h-[calc(100dvh-(2*var(--ui-header-height)))] overflow-y-auto',
-                    padding: 'px-1 py-2 sm:p-2',
-                },
-            }"
-        >
+    <USlideover>
+        <UCard class="flex flex-1 flex-col">
             <template #header>
                 <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
+                    <h3 class="text-2xl leading-6 font-semibold">
                         {{ $t('components.centrum.take_dispatch.title') }}
                     </h3>
 
-                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                    <UButton
+                        class="-my-1"
+                        color="neutral"
+                        variant="ghost"
+                        icon="i-mdi-window-close"
+                        @click="$emit('close', false)"
+                    />
                 </div>
             </template>
 
@@ -116,7 +116,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                         />
                         <template v-else>
                             <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                <dt class="text-sm font-medium leading-6">
+                                <dt class="text-sm leading-6 font-medium">
                                     <div class="flex h-6 items-center">
                                         {{ $t('common.search') }}
                                     </div>
@@ -184,7 +184,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                         {{ $t('common.decline') }}
                     </UButton>
 
-                    <UButton class="flex-1" @click="isOpen = false">
+                    <UButton class="flex-1" @click="$emit('close', false)">
                         {{ $t('common.close') }}
                     </UButton>
                 </UButtonGroup>

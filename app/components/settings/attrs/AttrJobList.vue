@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+import { useAppConfig } from '#app';
+import { UButton, UTooltip } from '#components';
+import type { TableColumn } from '@nuxt/ui';
 import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -86,17 +89,46 @@ onBeforeMount(async () => await listJobs());
 
 const sortedRoles = computed(() => [...(roles.value ?? [])].sort((a, b) => (a.jobLabel ?? '').localeCompare(b.jobLabel ?? '')));
 
-const columns = [
-    {
-        accessorKey: 'job',
-        label: t('common.job'),
-    },
-    {
-        accessorKey: 'actions',
-        label: t('common.action', 2),
-        sortable: false,
-    },
-];
+const appConfig = useAppConfig();
+
+const columns = computed(
+    () =>
+        [
+            {
+                accessorKey: 'job',
+                header: ({ column }) => {
+                    const isSorted = column.getIsSorted();
+
+                    return h(UButton, {
+                        color: 'neutral',
+                        variant: 'ghost',
+                        label: t('common.job'),
+                        icon: isSorted
+                            ? isSorted === 'asc'
+                                ? appConfig.custom.icons.sortAsc
+                                : appConfig.custom.icons.sortDesc
+                            : appConfig.custom.icons.sort,
+                        class: '-mx-2.5',
+                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+                    });
+                },
+                cell: ({ row }) => `${row.original.jobLabel} (${row.original.job})`,
+            },
+            {
+                accessorKey: 'actions',
+                header: t('common.action', 2),
+                cell: ({ row }) =>
+                    h(UTooltip, { text: t('common.show') }, () =>
+                        h(UButton, {
+                            class: 'place-self-end',
+                            to: { name: 'settings-limiter-job', params: { job: row.original.job } },
+                            variant: 'link',
+                            icon: 'i-mdi-eye',
+                        }),
+                    ),
+            },
+        ] as TableColumn<Role>[],
+);
 
 const route = useRoute('settings-limiter-job');
 
@@ -128,7 +160,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                     </template>
                                 </template>
 
-                                <template #option="{ option: job }">
+                                <template #item="{ option: job }">
                                     <span class="truncate">{{ job.label }} ({{ job.name }})</span>
                                 </template>
                             </USelectMenu>
@@ -156,30 +188,13 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     :retry="refresh"
                 />
                 <UTable
-                    v-else
                     :columns="columns"
                     :data="sortedRoles"
                     :loading="isRequestPending(status)"
-                    :empty-state="{
-                        icon: 'i-mdi-account-group',
-                        label: $t('common.not_found', [$t('common.role', 2)]),
-                    }"
-                >
-                    <template #job-cell="{ row: role }">
-                        <div class="text-highlighted">{{ role.jobLabel }} ({{ role.job }})</div>
-                    </template>
-
-                    <template #actions-cell="{ row: role }">
-                        <UTooltip :text="$t('common.show')">
-                            <UButton
-                                class="place-self-end"
-                                :to="{ name: 'settings-limiter-job', params: { job: role.job } }"
-                                variant="link"
-                                icon="i-mdi-eye"
-                            />
-                        </UTooltip>
-                    </template>
-                </UTable>
+                    :empty="$t('common.not_found', [$t('common.role', 2)])"
+                    :pagination-options="{ manualPagination: true }"
+                    :sorting-options="{ manualSorting: true }"
+                />
 
                 <Pagination :status="status" :refresh="refresh" hide-buttons hide-text />
             </div>

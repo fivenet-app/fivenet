@@ -6,6 +6,7 @@ import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import QualificationRequestListEntry from '~/components/qualifications/QualificationRequestListEntry.vue';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
+import type { Sort } from '~~/gen/ts/resources/common/database/database';
 import type { RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { ListQualificationRequestsResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
@@ -24,13 +25,17 @@ const qualificationsQualificationsClient = await getQualificationsQualifications
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
-const sort = useRouteQueryObject<TableSortable>('sort', {
-    id: 'abbreviation',
-    desc: true,
+const sorting = useRouteQueryObject<Sort>('sort', {
+    columns: [
+        {
+            id: 'abbreviation',
+            desc: true,
+        },
+    ],
 });
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `qualifications-requests-${sort.value.column}:${sort.value.direction}-${page.value}-${props.qualificationId}`,
+    `qualifications-requests-${JSON.stringify(sorting.value)}-${page.value}-${props.qualificationId}`,
     () => listQualificationRequests(props.qualificationId),
 );
 
@@ -43,7 +48,7 @@ async function listQualificationRequests(
             pagination: {
                 offset: calculateOffset(page.value, data.value?.pagination),
             },
-            sort: sort.value,
+            sort: sorting.value,
             qualificationId: qualificationId,
             status: status ?? [],
         });
@@ -58,18 +63,14 @@ async function listQualificationRequests(
 </script>
 
 <template>
-    <UCard
-        :ui="{
-            body: { padding: '' },
-        }"
-    >
+    <UCard>
         <template #header>
             <div class="flex items-center justify-between">
                 <h3 class="text-2xl leading-6 font-semibold">
                     {{ $t('components.qualifications.user_requests') }}
                 </h3>
 
-                <SortButton v-model="sort" :fields="[{ label: $t('common.id'), value: 'id' }]" />
+                <SortButton v-model="sorting" :fields="[{ label: $t('common.id'), value: 'id' }]" />
             </div>
         </template>
 

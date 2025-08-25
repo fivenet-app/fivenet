@@ -26,7 +26,7 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-const modal = useOverlay();
+const overlay = useOverlay();
 
 const { attr, activeChar } = useAuth();
 
@@ -65,6 +65,8 @@ async function getPage(id: number): Promise<Page | undefined> {
 const notifications = useNotificationsStore();
 
 const { maxAccessEntries } = useAppConfig();
+
+const confirmModal = overlay.create(ConfirmModal);
 
 const { ydoc, provider } = await useCollabDoc('wiki', props.pageId);
 
@@ -436,7 +438,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                     :disabled="!canSubmit"
                     :loading="!canSubmit"
                     @click.prevent="
-                        modal.open(ConfirmModal, {
+                        confirmModal.open({
                             title: $t('common.publish_confirm.title', { type: $t('common.document', 1) }),
                             description: $t('common.publish_confirm.description'),
                             color: 'info',
@@ -511,12 +513,8 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                                     </span>
                                                 </template>
 
-                                                <template #option="{ option: opt }">
+                                                <template #item="{ option: opt }">
                                                     {{ opt.title }}
-                                                </template>
-
-                                                <template #option-empty="{ query: search }">
-                                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                                 </template>
 
                                                 <template #empty>
@@ -552,7 +550,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                             <TiptapEditor
                                 v-model="state.content"
                                 v-model:files="state.files"
-                                class="max-w-(--breakpoint-xl) mx-auto w-full flex-1 overflow-y-hidden"
+                                class="mx-auto w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
                                 :disabled="!canDo.edit"
                                 history-type="wiki"
                                 :saving="saving"
@@ -572,12 +570,8 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                                 :items="pages"
                                                 @update:model-value="($event) => (linkState.url = pageToURL($event, true))"
                                             >
-                                                <template #option="{ option: opt }">
+                                                <template #item="{ option: opt }">
                                                     {{ opt.title }}
-                                                </template>
-
-                                                <template #option-empty="{ query: search }">
-                                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                                 </template>
 
                                                 <template #empty>
@@ -592,7 +586,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                     </UFormField>
 
                     <UDashboardToolbar
-                        class="flex shrink-0 justify-between border-b-0 border-t border-gray-200 px-3 py-3.5 dark:border-gray-700"
+                        class="flex shrink-0 justify-between border-t border-b-0 border-gray-200 px-3 py-3.5 dark:border-gray-700"
                     >
                         <div class="flex flex-1 gap-2">
                             <UFormField class="flex-1" name="public" :label="$t('common.public')">

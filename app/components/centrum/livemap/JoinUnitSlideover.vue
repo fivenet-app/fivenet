@@ -8,6 +8,7 @@ import { checkUnitAccess } from '../helpers';
 const emit = defineEmits<{
     (e: 'joined', unit: Unit): void;
     (e: 'left'): void;
+    (e: 'close', v: boolean): void;
 }>();
 
 const { isOpen } = useOverlay();
@@ -30,7 +31,7 @@ async function joinOrLeaveUnit(unitId?: number): Promise<void> {
             emit('left');
         }
 
-        isOpen.value = false;
+        emit('close', false);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -66,24 +67,23 @@ const filteredUnits = computed(() => ({
 </script>
 
 <template>
-    <USlideover :ui="{ width: 'w-screen max-w-xl' }">
-        <UCard
-            :ui="{
-                body: {
-                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--ui-header-height)))] max-h-[calc(100dvh-(2*var(--ui-header-height)))] overflow-y-auto',
-                    padding: 'px-1 py-2 sm:p-2',
-                },
-            }"
-        >
+    <USlideover>
+        <UCard>
             <template #header>
                 <div class="flex items-center justify-between">
-                    <h3 class="inline-flex items-center gap-2 text-2xl font-semibold leading-6">
+                    <h3 class="inline-flex items-center gap-2 text-2xl leading-6 font-semibold">
                         {{ $t('common.leave_unit') }}
 
                         <UIcon v-if="!canSubmit" class="size-6 animate-spin" name="i-mdi-loading" />
                     </h3>
 
-                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                    <UButton
+                        class="-my-1"
+                        color="neutral"
+                        variant="ghost"
+                        icon="i-mdi-window-close"
+                        @click="$emit('close', false)"
+                    />
                 </div>
             </template>
 
@@ -164,7 +164,7 @@ const filteredUnits = computed(() => ({
                     >
                         {{ $t('common.leave') }}
                     </UButton>
-                    <UButton class="flex-1" color="neutral" block @click="isOpen = false">
+                    <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

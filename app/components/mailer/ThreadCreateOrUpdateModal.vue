@@ -120,7 +120,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             >
                 <template #header>
                     <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
+                        <h3 class="text-2xl leading-6 font-semibold">
                             {{ $t('components.mailer.create_thread') }}
                         </h3>
 
@@ -135,7 +135,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </template>
 
                 <div class="mx-auto">
-                    <div class="max-w-(--breakpoint-xl) flex w-full flex-1 flex-col">
+                    <div class="flex w-full max-w-(--breakpoint-xl) flex-1 flex-col">
                         <div class="flex w-full flex-col items-center justify-between gap-1">
                             <UFormField class="w-full flex-1" name="sender" :label="$t('common.sender')">
                                 <ClientOnly>
@@ -165,7 +165,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         by="id"
                                     >
                                         <template #item-label>
-                                            <span class="overflow-hidden truncate">
+                                            <span class="truncate overflow-hidden">
                                                 {{
                                                     (selectedEmail?.label && selectedEmail?.label !== ''
                                                         ? selectedEmail?.label + ' (' + selectedEmail.email + ')'
@@ -183,7 +183,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             </span>
                                         </template>
 
-                                        <template #option="{ option }">
+                                        <template #item="{ option }">
                                             <span class="truncate">
                                                 {{
                                                     (option?.label && option?.label !== ''
@@ -204,10 +204,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 size="xs"
                                                 :label="$t('common.disabled')"
                                             />
-                                        </template>
-
-                                        <template #option-empty="{ query: search }">
-                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                         </template>
 
                                         <template #empty> {{ $t('common.not_found', [$t('common.mail', 2)]) }} </template>
@@ -259,10 +255,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                                         <template #option-create="{ option }">
                                             <span class="shrink-0">{{ $t('common.recipient') }}: {{ option.label }}</span>
-                                        </template>
-
-                                        <template #option-empty="{ query: search }">
-                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                         </template>
 
                                         <template #empty>

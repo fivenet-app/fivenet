@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { UButton, UTooltip } from '#components';
+import type { TableColumn } from '@nuxt/ui';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -7,8 +9,14 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { checkQualificationAccess, resultStatusToTextColor } from '~/components/qualifications/helpers';
 import ExamViewResultModal from '~/components/qualifications/tutor/ExamViewResultModal.vue';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
+import type { Sort } from '~~/gen/ts/resources/common/database/database';
 import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
-import { type Qualification, QualificationExamMode, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
+import {
+    type Qualification,
+    QualificationExamMode,
+    type QualificationResult,
+    ResultStatus,
+} from '~~/gen/ts/resources/qualifications/qualifications';
 import type {
     DeleteQualificationResultResponse,
     ListQualificationsResultsResponse,
@@ -33,20 +41,24 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const modal = useOverlay();
+const overlay = useOverlay();
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
-const sort = useRouteQueryObject<TableSortable>('sort', {
-    id: 'createdAt',
-    desc: true,
+const sorting = useRouteQueryObject<Sort>('sort', {
+    columns: [
+        {
+            id: 'createdAt',
+            desc: true,
+        },
+    ],
 });
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `qualifications-results-${sort.value.column}:${sort.value.direction}-${page.value}-${props.qualification.id}`,
+    `qualifications-results-${JSON.stringify(sorting.value)}-${page.value}-${props.qualification.id}`,
     () => listQualificationResults(props.qualification.id, props.status),
     {
-        watch: [sort],
+        watch: [sorting],
     },
 );
 
@@ -65,7 +77,7 @@ async function listQualificationResults(
             pagination: {
                 offset: calculateOffset(page.value, data.value?.pagination),
             },
-            sort: sort.value,
+            sort: sorting.value,
             qualificationId: qualificationId,
             status: status ?? [],
         });
@@ -94,44 +106,151 @@ async function deleteQualificationResult(resultId: number): Promise<DeleteQualif
     }
 }
 
-const columns = [
-    {
-        accessorKey: 'actions',
-        label: t('common.action', 2),
-        sortable: false,
-    },
-    {
-        accessorKey: 'citizen',
-        label: t('common.citizen'),
-    },
-    {
-        accessorKey: 'status',
-        label: t('common.status'),
-        sortable: true,
-    },
-    {
-        accessorKey: 'score',
-        label: t('common.score'),
-    },
-    {
-        accessorKey: 'summary',
-        label: t('common.summary'),
-    },
-    {
-        accessorKey: 'createdAt',
-        label: t('common.created_at'),
-        sortable: true,
-    },
-    {
-        accessorKey: 'creator',
-        label: t('common.creator'),
-    },
-];
+const appConfig = useAppConfig();
+
+const columns = computed(
+    () =>
+        [
+            {
+                accessorKey: 'actions',
+                header: t('common.action', 2),
+                cell: ({ row }) =>
+                    h('div', { key: row.original.id }, [
+                        row.original.status === ResultStatus.PENDING &&
+                            h(UTooltip, { text: t('common.grade') }, () =>
+                                h(UButton, {
+                                    variant: 'link',
+                                    icon: 'i-mdi-star',
+                                    color: 'warning',
+                                    onClick: () =>
+                                        examViewResultModal.open({
+                                            qualificationId: row.original.qualificationId,
+                                            userId: row.original.userId,
+                                            resultId: row.original.id,
+                                            examMode: props.examMode,
+                                            onRefresh: onRefresh,
+                                        }),
+                                }),
+                            ),
+                        props.examMode > QualificationExamMode.DISABLED &&
+                            h(UTooltip, { text: t('common.show') }, () =>
+                                h(UButton, {
+                                    variant: 'link',
+                                    icon: 'i-mdi-star',
+                                    color: 'warning',
+                                    onClick: () =>
+                                        examViewResultModal.open({
+                                            qualificationId: row.original.qualificationId,
+                                            userId: row.original.userId,
+                                            resultId: row.original.id,
+                                            examMode: props.examMode,
+                                            viewOnly: true,
+                                            onRefresh: onRefresh,
+                                        }),
+                                }),
+                            ),
+                        checkQualificationAccess(
+                            props.qualification.access,
+                            props.qualification.creator,
+                            AccessLevel.EDIT,
+                            undefined,
+                            props.qualification?.creatorJob,
+                        ) &&
+                            h(UTooltip, { text: t('common.delete') }, () =>
+                                h(UButton, {
+                                    class: 'flex-initial',
+                                    variant: 'link',
+                                    icon: 'i-mdi-delete',
+                                    color: 'error',
+                                    onClick: () =>
+                                        confirmModal.open({
+                                            confirm: async () => deleteQualificationResult(row.original.id),
+                                        }),
+                                }),
+                            ),
+                    ]),
+            },
+            {
+                accessorKey: 'citizen',
+                header: t('common.citizen'),
+                cell: ({ row }) => h(CitizenInfoPopover, { user: row.original.user }),
+            },
+            {
+                accessorKey: 'status',
+                header: ({ column }) => {
+                    const isSorted = column.getIsSorted();
+
+                    return h(UButton, {
+                        color: 'neutral',
+                        variant: 'ghost',
+                        label: t('common.status'),
+                        icon: isSorted
+                            ? isSorted === 'asc'
+                                ? appConfig.custom.icons.sortAsc
+                                : appConfig.custom.icons.sortDesc
+                            : appConfig.custom.icons.sort,
+                        class: '-mx-2.5',
+                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+                    });
+                },
+                cell: ({ row }) =>
+                    row.original.status !== undefined
+                        ? h(
+                              'span',
+                              { class: `font-medium ${resultStatusToTextColor(row.original.status)}` },
+                              h(
+                                  'span',
+                                  { class: 'font-semibold' },
+                                  t(`enums.qualifications.ResultStatus.${ResultStatus[row.original.status]}`),
+                              ),
+                          )
+                        : null,
+            },
+            {
+                accessorKey: 'score',
+                header: t('common.score'),
+                cell: ({ row }) => (row.original.score ? $n(row.original.score) : null),
+            },
+            {
+                accessorKey: 'summary',
+                header: t('common.summary'),
+                cell: ({ row }) => (row.original.summary ? h('p', { class: 'text-sm' }, row.original.summary) : null),
+            },
+            {
+                accessorKey: 'createdAt',
+                header: ({ column }) => {
+                    const isSorted = column.getIsSorted();
+
+                    return h(UButton, {
+                        color: 'neutral',
+                        variant: 'ghost',
+                        label: t('common.created_at'),
+                        icon: isSorted
+                            ? isSorted === 'asc'
+                                ? appConfig.custom.icons.sortAsc
+                                : appConfig.custom.icons.sortDesc
+                            : appConfig.custom.icons.sort,
+                        class: '-mx-2.5',
+                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+                    });
+                },
+                cell: ({ row }) => h(GenericTime, { value: row.original.createdAt }),
+            },
+            {
+                accessorKey: 'creator',
+                header: t('common.creator'),
+                cell: ({ row }) => (row.original.creator ? h(CitizenInfoPopover, { user: row.original.creator }) : null),
+            },
+        ] as TableColumn<QualificationResult>[],
+);
 
 async function onRefresh(): Promise<void> {
     emit('refresh');
     return refresh();
 }
+
+const examViewResultModal = overlay.create(ExamViewResultModal);
+const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
@@ -146,109 +265,14 @@ async function onRefresh(): Promise<void> {
 
             <template v-else>
                 <UTable
-                    v-model:sorting="sort"
-                    :loading="isRequestPending(status)"
+                    v-model:sorting="sorting.columns"
                     :columns="columns"
                     :data="data?.results"
-                    :empty-state="{ icon: 'i-mdi-sigma', label: $t('common.not_found', [$t('common.result', 2)]) }"
-                    sort-mode="manual"
-                >
-                    <template #citizen-cell="{ row: result }">
-                        <CitizenInfoPopover :user="result.user" />
-                    </template>
-
-                    <template #status-cell="{ row: result }">
-                        <template v-if="result.status !== undefined">
-                            <span class="font-medium" :class="resultStatusToTextColor(result.status)">
-                                <span class="font-semibold">{{
-                                    $t(`enums.qualifications.ResultStatus.${ResultStatus[result.status]}`)
-                                }}</span>
-                            </span>
-                        </template>
-                    </template>
-
-                    <template #score-cell="{ row: result }">
-                        <template v-if="result.score">{{ $n(result.score) }}</template>
-                    </template>
-
-                    <template #summary-cell="{ row: result }">
-                        <p v-if="result.summary" class="text-sm">
-                            {{ result.summary }}
-                        </p>
-                    </template>
-
-                    <template #createdAt-cell="{ row: result }">
-                        <GenericTime :value="result.createdAt" />
-                    </template>
-
-                    <template #creator-cell="{ row: result }">
-                        <CitizenInfoPopover v-if="result.creator" :user="result.creator" />
-                    </template>
-
-                    <template #actions-cell="{ row: result }">
-                        <div :key="result.id">
-                            <UTooltip v-if="result.status === ResultStatus.PENDING" :text="$t('common.grade')">
-                                <UButton
-                                    variant="link"
-                                    icon="i-mdi-star"
-                                    color="warning"
-                                    @click="
-                                        modal.open(ExamViewResultModal, {
-                                            qualificationId: result.qualificationId,
-                                            userId: result.userId,
-                                            resultId: result.id,
-                                            examMode: examMode,
-                                            onRefresh: onRefresh,
-                                        })
-                                    "
-                                />
-                            </UTooltip>
-
-                            <UTooltip v-if="examMode > QualificationExamMode.DISABLED" :text="$t('common.show')">
-                                <UButton
-                                    variant="link"
-                                    icon="i-mdi-star"
-                                    color="warning"
-                                    @click="
-                                        modal.open(ExamViewResultModal, {
-                                            qualificationId: result.qualificationId,
-                                            userId: result.userId,
-                                            resultId: result.id,
-                                            examMode: examMode,
-                                            viewOnly: true,
-                                            onRefresh: onRefresh,
-                                        })
-                                    "
-                                />
-                            </UTooltip>
-
-                            <UTooltip
-                                v-if="
-                                    checkQualificationAccess(
-                                        qualification.access,
-                                        qualification.creator,
-                                        AccessLevel.EDIT,
-                                        undefined,
-                                        qualification?.creatorJob,
-                                    )
-                                "
-                                :text="$t('common.delete')"
-                            >
-                                <UButton
-                                    class="flex-initial"
-                                    variant="link"
-                                    icon="i-mdi-delete"
-                                    color="error"
-                                    @click="
-                                        modal.open(ConfirmModal, {
-                                            confirm: async () => deleteQualificationResult(result.id),
-                                        })
-                                    "
-                                />
-                            </UTooltip>
-                        </div>
-                    </template>
-                </UTable>
+                    :loading="isRequestPending(status)"
+                    :empty="$t('common.not_found', [$t('common.result', 2)])"
+                    :pagination-options="{ manualPagination: true }"
+                    :sorting-options="{ manualSorting: true }"
+                />
 
                 <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
             </template>

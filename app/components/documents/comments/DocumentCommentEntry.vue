@@ -29,7 +29,7 @@ const emit = defineEmits<{
 
 const comment = useVModel(props, 'modelValue', emit);
 
-const modal = useOverlay();
+const overlay = useOverlay();
 
 const { can, activeChar, isSuperuser } = useAuth();
 
@@ -180,6 +180,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         useTimeoutFn(() => (canSubmit.value = true), 400),
     );
 }, 1000);
+
+const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
@@ -211,7 +213,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 icon="i-mdi-delete"
                                 color="error"
                                 @click="
-                                    modal.open(ConfirmModal, {
+                                    confirmModal.open({
                                         confirm: async () => deleteComment(comment!.id),
                                     })
                                 "

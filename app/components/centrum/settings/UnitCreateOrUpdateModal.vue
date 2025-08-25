@@ -136,12 +136,12 @@ watch(props, async () => updateUnitInForm());
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+    <UModal>
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UCard>
                 <template #header>
                     <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
+                        <h3 class="text-2xl leading-6 font-semibold">
                             <template v-if="unit && unit?.id">
                                 {{ $t('components.centrum.units.update_unit') }}
                             </template>
@@ -189,14 +189,10 @@ watch(props, async () => updateUnitInForm());
                                 :placeholder="selectedAttributes ? selectedAttributes.join(', ') : $t('common.na')"
                                 :searchable-placeholder="$t('common.search_field')"
                             >
-                                <template #option="{ option }">
+                                <template #item="{ option }">
                                     <span class="truncate">{{
                                         $t(`enums.centrum.UnitAttribute.${UnitAttribute[option.type]}`, 2)
                                     }}</span>
-                                </template>
-
-                                <template #option-empty="{ query: search }">
-                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                 </template>
 
                                 <template #empty>

@@ -13,7 +13,7 @@ const { isOpen } = useOverlay();
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+    <UModal>
         <UCard
             :ui="{
                 base: 'flex flex-1 flex-col',
@@ -22,7 +22,7 @@ const { isOpen } = useOverlay();
         >
             <template #header>
                 <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
+                    <h3 class="text-2xl leading-6 font-semibold">
                         {{ $t('components.partials.TiptapEditor.file_list') }}
                     </h3>
 
@@ -30,7 +30,7 @@ const { isOpen } = useOverlay();
                 </div>
             </template>
 
-            <div class="max-w-(--breakpoint-xl) mx-auto flex w-full flex-1 flex-col">
+            <div class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-1 flex-col">
                 <DataNoDataBlock v-if="files.length === 0" :message="$t('components.partials.TiptapEditor.file_list_empty')" />
 
                 <UPageGrid v-else class="flex-1">

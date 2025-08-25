@@ -83,7 +83,7 @@ export function requestStatusToBadgeColor(status: RequestStatus): BadgeProps['co
     }
 }
 
-export function requestStatusToTextColor(status: RequestStatus): string {
+export function requestStatusToTextColor(status: RequestStatus | undefined): string {
     switch (status) {
         case RequestStatus.ACCEPTED:
         case RequestStatus.COMPLETED:

@@ -2,18 +2,18 @@
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
-import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import { ConductType, type ConductEntry } from '~~/gen/ts/resources/jobs/conduct';
 import { ObjectType } from '~~/gen/ts/resources/notifications/client_view';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { conductTypesToBadgeColor } from './helpers';
 
 const props = defineProps<{
-    entry: ConductEntry & { creator?: { value: Colleague } };
+    entry: ConductEntry;
 }>();
 
 const emits = defineEmits<{
     (e: 'refresh'): void;
+    (e: 'close', v: boolean): void;
 }>();
 
 const { isOpen } = useOverlay();
@@ -43,33 +43,31 @@ if (props.entry.id > 0) {
 </script>
 
 <template>
-    <USlideover class="flex flex-1" :ui="{ width: 'w-screen max-w-xl' }" :overlay="false">
-        <UCard
-            class="flex flex-1 flex-col"
-            :ui="{
-                body: {
-                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--ui-header-height)))] max-h-[calc(100dvh-(2*var(--ui-header-height)))] overflow-y-auto',
-                    padding: 'px-1 py-2 sm:p-2',
-                },
-            }"
-        >
+    <USlideover :overlay="false">
+        <UCard class="flex flex-1 flex-col">
             <template #header>
                 <div class="flex items-center justify-between">
                     <div class="inline-flex items-center">
                         <IDCopyBadge :id="entry.id" class="mx-2" prefix="CON" />
-                        <h3 class="text-2xl font-semibold leading-6">
+                        <h3 class="text-2xl leading-6 font-semibold">
                             {{ $t('common.entry') }}
                         </h3>
                     </div>
 
-                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                    <UButton
+                        class="-my-1"
+                        color="neutral"
+                        variant="ghost"
+                        icon="i-mdi-window-close"
+                        @click="$emit('close', false)"
+                    />
                 </div>
             </template>
 
             <div>
                 <dl class="divide-neutral/10 divide-y">
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                        <dt class="text-sm font-medium leading-6">
+                        <dt class="text-sm leading-6 font-medium">
                             {{ $t('common.created_at') }}
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
@@ -77,7 +75,7 @@ if (props.entry.id > 0) {
                         </dd>
                     </div>
                     <div v-if="entry.updatedAt" class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                        <dt class="text-sm font-medium leading-6">
+                        <dt class="text-sm leading-6 font-medium">
                             {{ $t('common.updated_at') }}
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
@@ -85,7 +83,7 @@ if (props.entry.id > 0) {
                         </dd>
                     </div>
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                        <dt class="text-sm font-medium leading-6">
+                        <dt class="text-sm leading-6 font-medium">
                             {{ $t('common.expires_at') }}
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
@@ -93,7 +91,7 @@ if (props.entry.id > 0) {
                         </dd>
                     </div>
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                        <dt class="text-sm font-medium leading-6">
+                        <dt class="text-sm leading-6 font-medium">
                             {{ $t('common.type') }}
                         </dt>
                         <dd class="mt-2 max-h-24 text-sm sm:col-span-2 sm:mt-0">
@@ -103,7 +101,7 @@ if (props.entry.id > 0) {
                         </dd>
                     </div>
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                        <dt class="text-sm font-medium leading-6">
+                        <dt class="text-sm leading-6 font-medium">
                             {{ $t('common.message') }}
                         </dt>
                         <dd class="mt-2 max-h-24 text-sm sm:col-span-2 sm:mt-0">
@@ -113,7 +111,7 @@ if (props.entry.id > 0) {
                         </dd>
                     </div>
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                        <dt class="text-sm font-medium leading-6">
+                        <dt class="text-sm leading-6 font-medium">
                             {{ $t('common.target') }}
                         </dt>
                         <dd class="mt-2 max-h-24 text-sm sm:col-span-2 sm:mt-0">
@@ -121,18 +119,18 @@ if (props.entry.id > 0) {
                         </dd>
                     </div>
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                        <dt class="text-sm font-medium leading-6">
+                        <dt class="text-sm leading-6 font-medium">
                             {{ $t('common.creator') }}
                         </dt>
                         <dd class="mt-2 max-h-24 text-sm sm:col-span-2 sm:mt-0">
-                            <CitizenInfoPopover :user="entry.creator?.value" />
+                            <CitizenInfoPopover :user="entry.creator" />
                         </dd>
                     </div>
                 </dl>
             </div>
 
             <template #footer>
-                <UButton class="flex-1" color="neutral" block @click="isOpen = false">
+                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

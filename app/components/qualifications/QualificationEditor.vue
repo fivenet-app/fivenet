@@ -35,7 +35,7 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-const modal = useOverlay();
+const overlay = useOverlay();
 
 const { attr, can, activeChar } = useAuth();
 
@@ -372,6 +372,8 @@ const selectedTab = computed({
     },
 });
 
+const confirmModal = overlay.create(ConfirmModal);
+
 const formRef = useTemplateRef<typeof UForm>('formRef');
 </script>
 
@@ -406,7 +408,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                     :disabled="!canSubmit"
                     :loading="!canSubmit"
                     @click.prevent="
-                        modal.open(ConfirmModal, {
+                        confirmModal.open({
                             title: $t('common.publish_confirm.title', { type: $t('common.qualification', 1) }),
                             description: $t('common.publish_confirm.description'),
                             color: 'info',
@@ -450,7 +452,6 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                 class="flex flex-1 flex-col"
                 :items="items"
                 :ui="{
-                    wrapper: 'space-y-0 overflow-y-hidden',
                     container: 'flex flex-1 flex-col overflow-y-hidden',
                     base: 'flex flex-1 flex-col overflow-y-hidden',
                 }"
@@ -529,7 +530,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                 <TiptapEditor
                                     v-model="state.content"
                                     v-model:files="state.files"
-                                    class="max-w-(--breakpoint-xl) mx-auto w-full flex-1 overflow-y-hidden"
+                                    class="mx-auto w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
                                     :disabled="!canDo.edit"
                                     :saving="saving"
                                     history-type="qualification"
@@ -696,7 +697,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                             </span>
                                         </template>
 
-                                        <template #option="{ option }">
+                                        <template #item="{ option }">
                                             <span class="truncate">
                                                 {{
                                                     $t(
@@ -704,10 +705,6 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                                     )
                                                 }}
                                             </span>
-                                        </template>
-
-                                        <template #option-empty="{ query: search }">
-                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                         </template>
 
                                         <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
