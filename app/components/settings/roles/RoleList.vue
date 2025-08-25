@@ -149,8 +149,8 @@ const confirmModal = overlay.create(ConfirmModal, {
                                 </template>
                             </template>
 
-                            <template #item="{ option: jobGrade }">
-                                <span class="truncate">{{ jobGrade.label }} ({{ jobGrade.grade }})</span>
+                            <template #item="{ item }">
+                                <span class="truncate">{{ item.label }} ({{ item.grade }})</span>
                             </template>
                         </USelectMenu>
                     </ClientOnly>

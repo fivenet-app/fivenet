@@ -4,8 +4,6 @@ import type { Editor } from '@tiptap/vue-3';
 import { z } from 'zod';
 import { remoteImageURLToBase64Data } from './helpers';
 
-const { isOpen } = useOverlay();
-
 const props = withDefaults(
     defineProps<{
         editor: Editor;
@@ -22,7 +20,8 @@ const props = withDefaults(
     },
 );
 
-defineEmits<{
+const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
     (e: 'openFileList'): void;
 }>();
 
@@ -77,7 +76,7 @@ function setImage(url: string | undefined): void {
         })
         .run();
 
-    isOpen.value = false;
+    emit('close', false);
 }
 
 async function onFilesHandler(files: FileList | File[] | null): Promise<void> {
@@ -89,7 +88,7 @@ async function onFilesHandler(files: FileList | File[] | null): Promise<void> {
     await setViaURL(files[0]);
 
     canSubmit.value = true;
-    isOpen.value = false;
+    emit('close', false);
 }
 
 const dropZoneRef = useTemplateRef('dropZoneRef');
@@ -160,18 +159,18 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             class="flex h-48 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-100 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:hover:border-gray-600 dark:hover:bg-gray-700"
                             for="dropzone-file"
                         >
-                            <div class="flex flex-col items-center justify-center pb-4 pt-3">
+                            <div class="flex flex-col items-center justify-center pt-3 pb-4">
                                 <UIcon
                                     class="size-14"
                                     :class="(disabled || !canSubmit) && 'animate-spin'"
                                     :name="canSubmit ? 'i-mdi-file-upload-outline' : 'i-mdi-loading'"
                                 />
 
-                                <p class="text-muted mb-2 px-2 text-base">
+                                <p class="mb-2 px-2 text-base text-muted">
                                     <span class="font-semibold">{{ $t('common.file_click_to_upload') }}</span>
                                     {{ $t('common.file_drag_n_drop') }}
                                 </p>
-                                <p class="text-muted text-sm">{{ $t('common.allowed_file_types') }}</p>
+                                <p class="text-sm text-muted">{{ $t('common.allowed_file_types') }}</p>
                             </div>
                         </label>
                     </div>

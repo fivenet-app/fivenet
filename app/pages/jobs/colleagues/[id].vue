@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { TypedRouteFromName } from '@typed-router';
 import ColleagueInfo from '~/components/jobs/colleagues/info/ColleagueInfo.vue';
-import PagesJobsLayout from '~/components/jobs/PagesJobsLayout.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -134,31 +133,27 @@ const links = computed(() =>
 </script>
 
 <template>
-    <PagesJobsLayout>
-        <template #default>
-            <UDashboardPanelContent>
-                <DataPendingBlock
-                    v-if="!colleague && isRequestPending(status)"
-                    :message="$t('common.loading', [$t('common.colleague', 1)])"
-                />
-                <DataErrorBlock
-                    v-else-if="error"
-                    :title="$t('common.unable_to_load', [$t('common.colleague', 1)])"
-                    :error="error"
-                    :retry="refresh"
-                />
-                <DataNoDataBlock v-else-if="!colleague || !colleague.colleague" />
+    <UDashboardPanelContent>
+        <DataPendingBlock
+            v-if="!colleague && isRequestPending(status)"
+            :message="$t('common.loading', [$t('common.colleague', 1)])"
+        />
+        <DataErrorBlock
+            v-else-if="error"
+            :title="$t('common.unable_to_load', [$t('common.colleague', 1)])"
+            :error="error"
+            :retry="refresh"
+        />
+        <DataNoDataBlock v-else-if="!colleague || !colleague.colleague" />
 
-                <template v-else>
-                    <ColleagueInfo :colleague="colleague.colleague" @update:absence-dates="updateColleageAbsence($event)" />
+        <template v-else>
+            <ColleagueInfo :colleague="colleague.colleague" @update:absence-dates="updateColleageAbsence($event)" />
 
-                    <UDashboardToolbar class="overflow-x-auto px-1.5 py-0">
-                        <UNavigationMenu orientation="horizontal" :items="links" />
-                    </UDashboardToolbar>
+            <UDashboardToolbar>
+                <UNavigationMenu orientation="horizontal" :items="links" />
+            </UDashboardToolbar>
 
-                    <NuxtPage :colleague="colleague.colleague" @refresh="refresh()" />
-                </template>
-            </UDashboardPanelContent>
+            <NuxtPage :colleague="colleague.colleague" @refresh="refresh()" />
         </template>
-    </PagesJobsLayout>
+    </UDashboardPanelContent>
 </template>

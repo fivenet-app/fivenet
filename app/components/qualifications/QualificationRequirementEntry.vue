@@ -77,10 +77,10 @@ watch(selectedQualification, () => emit('update-qualification', selectedQualific
                         </span>
                     </template>
 
-                    <template #item="{ option: quali }">
+                    <template #item="{ item }">
                         <span class="truncate">
-                            <template v-if="quali.abbreviation">{{ quali.abbreviation }}: </template
-                            >{{ !quali.title ? $t('common.untitled') : quali.title }}
+                            <template v-if="item.abbreviation">{{ item.abbreviation }}: </template
+                            >{{ !item.title ? $t('common.untitled') : item.title }}
                         </span>
                     </template>
 

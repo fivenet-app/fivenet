@@ -446,16 +446,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                 :retry="refresh"
             />
 
-            <UTabs
-                v-else
-                v-model="selectedTab"
-                class="flex flex-1 flex-col"
-                :items="items"
-                :ui="{
-                    container: 'flex flex-1 flex-col overflow-y-hidden',
-                    base: 'flex flex-1 flex-col overflow-y-hidden',
-                }"
-            >
+            <UTabs v-else v-model="selectedTab" class="flex flex-1 flex-col" :items="items">
                 <template #content>
                     <div v-if="isRequestPending(status)" class="flex flex-col gap-2">
                         <USkeleton v-for="idx in 6" :key="idx" class="size-24 w-full" />
@@ -697,11 +688,11 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                             </span>
                                         </template>
 
-                                        <template #item="{ option }">
+                                        <template #item="{ item }">
                                             <span class="truncate">
                                                 {{
                                                     $t(
-                                                        `enums.qualifications.QualificationExamMode.${QualificationExamMode[option.mode]}`,
+                                                        `enums.qualifications.QualificationExamMode.${QualificationExamMode[item.mode]}`,
                                                     )
                                                 }}
                                             </span>

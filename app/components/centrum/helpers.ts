@@ -51,7 +51,7 @@ export function dispatchStatusToBGColor(status: StatusDispatch | undefined): str
         case StatusDispatch.CANCELLED:
             return '!bg-success-800 text-white!';
         case StatusDispatch.ARCHIVED:
-            return '!bg-background text-white!';
+            return '!bg-default text-white!';
         case StatusDispatch.UNIT_ACCEPTED:
             return '!bg-info-600 text-white!';
         default:

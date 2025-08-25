@@ -4,9 +4,11 @@ import ClipboardCitizens from '~/components/clipboard/modal/ClipboardCitizens.vu
 import ClipboardDocuments from '~/components/clipboard/modal/ClipboardDocuments.vue';
 import ClipboardVehicles from '~/components/clipboard/modal/ClipboardVehicles.vue';
 
-const { t } = useI18n();
+defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 
-const { isOpen } = useOverlay();
+const { t } = useI18n();
 
 const clipboardStore = useClipboardStore();
 
@@ -45,20 +47,20 @@ const selectedTab = ref('citizens');
         <template #body>
             <UTabs v-model="selectedTab" :items="items" :unmount="true">
                 <template #citizens>
-                    <ClipboardCitizens hide-header @close="isOpen = false" />
+                    <ClipboardCitizens hide-header @close="$emit('close', false)" />
                 </template>
                 <template #vehicles>
-                    <ClipboardVehicles hide-header @close="isOpen = false" />
+                    <ClipboardVehicles hide-header @close="$emit('close', false)" />
                 </template>
                 <template #documents>
-                    <ClipboardDocuments hide-header @close="isOpen = false" />
+                    <ClipboardDocuments hide-header @close="$emit('close', false)" />
                 </template>
             </UTabs>
         </template>
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block @click="isOpen = false">
+                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
                     {{ $t('common.close', 1) }}
                 </UButton>
 

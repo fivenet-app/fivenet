@@ -402,11 +402,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :label="$t('components.settings.app_config.auth.sign_up')"
                             :ui="{ container: '' }"
                         >
-                            <USwitch v-model="state.auth.signupEnabled">
-                                <span class="sr-only">
-                                    {{ $t('components.settings.app_config.auth.sign_up') }}
-                                </span>
-                            </USwitch>
+                            <USwitch v-model="state.auth.signupEnabled" />
                         </UFormField>
 
                         <UFormField
@@ -415,11 +411,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :label="$t('components.settings.app_config.auth.last_char_lock')"
                             :ui="{ container: '' }"
                         >
-                            <USwitch v-model="state.auth.lastCharLock">
-                                <span class="sr-only">
-                                    {{ $t('components.settings.app_config.auth.last_char_lock') }}
-                                </span>
-                            </USwitch>
+                            <USwitch v-model="state.auth.lastCharLock" />
                         </UFormField>
                     </UPageCard>
                 </template>
@@ -511,9 +503,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     </template>
                                 </template>
 
-                                <template #item="{ option: locale }">
-                                    <UIcon class="size-4" :name="locale.icon" />
-                                    <span class="truncate">{{ locale.name }}</span>
+                                <template #item="{ item }">
+                                    <UIcon class="size-4" :name="item.icon" />
+                                    <span class="truncate">{{ item.name }}</span>
                                 </template>
                             </USelectMenu>
                         </UFormField>
@@ -554,11 +546,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :label="$t('common.stats')"
                             :ui="{ container: '' }"
                         >
-                            <USwitch v-model="state.website.statsPage">
-                                <span class="sr-only">
-                                    {{ $t('common.enabled') }}
-                                </span>
-                            </USwitch>
+                            <USwitch v-model="state.website.statsPage" />
                         </UFormField>
                     </UPageCard>
                 </template>
@@ -588,9 +576,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :label="$t('common.rank')"
                             :ui="{ container: '' }"
                         >
-                            <UInput
+                            <UInputNumber
                                 v-model="state.jobInfo.unemployedJob.grade"
-                                type="number"
                                 :min="1"
                                 :max="99"
                                 name="jobInfoUnemployedGrade"
@@ -624,8 +611,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         </template>
                                     </template>
 
-                                    <template #item="{ option: job }">
-                                        <span class="truncate">{{ job.label }} ({{ job.name }})</span>
+                                    <template #item="{ item }">
+                                        <span class="truncate">{{ item.label }} ({{ item.name }})</span>
                                     </template>
                                 </USelectMenu>
                             </ClientOnly>
@@ -656,8 +643,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         </template>
                                     </template>
 
-                                    <template #item="{ option: job }">
-                                        <span class="truncate">{{ job.label }} ({{ job.name }})</span>
+                                    <template #item="{ item }">
+                                        <span class="truncate">{{ item.label }} ({{ item.name }})</span>
                                     </template>
                                 </USelectMenu>
                             </ClientOnly>
@@ -721,11 +708,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :label="$t('common.enabled')"
                             :ui="{ container: '' }"
                         >
-                            <USwitch v-model="state.discord.enabled">
-                                <span class="sr-only">
-                                    {{ $t('common.enabled') }}
-                                </span>
-                            </USwitch>
+                            <USwitch v-model="state.discord.enabled" />
                         </UFormField>
 
                         <UFormField
@@ -799,8 +782,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         </template>
                                     </template>
 
-                                    <template #item="{ option: job }">
-                                        <span class="truncate">{{ job.label }} ({{ job.name }})</span>
+                                    <template #item="{ item }">
+                                        <span class="truncate">{{ item.label }} ({{ item.name }})</span>
                                     </template>
                                 </USelectMenu>
                             </ClientOnly>
@@ -832,10 +815,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     }}</span>
                                 </template>
 
-                                <template #item="{ option }">
+                                <template #item="{ item }">
                                     <span class="truncate">{{
                                         $t(
-                                            `enums.settings.AppConfig.DiscordBotPresenceType.${DiscordBotPresenceType[option.mode ?? 0]}`,
+                                            `enums.settings.AppConfig.DiscordBotPresenceType.${DiscordBotPresenceType[item.mode ?? 0]}`,
                                         )
                                     }}</span>
                                 </template>
@@ -877,11 +860,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :label="$t('common.enabled')"
                             :ui="{ container: '' }"
                         >
-                            <USwitch v-model="state.system.bannerMessageEnabled">
-                                <span class="sr-only">
-                                    {{ $t('common.enabled') }}
-                                </span>
-                            </USwitch>
+                            <USwitch v-model="state.system.bannerMessageEnabled" />
                         </UFormField>
 
                         <UFormField

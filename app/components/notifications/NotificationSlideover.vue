@@ -18,9 +18,7 @@ const { isNotificationSlideoverOpen } = useDashboard();
         </template>
 
         <template #body>
-            <div class="flex flex-1 flex-col">
-                <NotificationList @clicked="isNotificationSlideoverOpen = false" />
-            </div>
+            <NotificationList @clicked="isNotificationSlideoverOpen = false" />
         </template>
 
         <template #footer>

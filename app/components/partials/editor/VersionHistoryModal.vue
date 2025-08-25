@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Content, Version } from '~/types/history';
-import VersinoDiffModal from './VersionDiffModal.vue';
+import VersionDiffModal from './VersionDiffModal.vue';
 
 const props = defineProps<{
     historyType: string;
@@ -8,10 +8,9 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
     (e: 'apply', version: Version<unknown>): void;
 }>();
-
-const { isOpen } = useOverlay();
 
 const historyStore = useHistoryStore();
 
@@ -35,7 +34,7 @@ function onConfirmDiff(version: Version<Content>) {
     emit('apply', version);
     showDiffModal.value = false;
     selectedVersion.value = undefined;
-    isOpen.value = false;
+    emit('close', false);
 }
 
 watch(showDiffModal, (val) => {
@@ -48,7 +47,7 @@ watch(showDiffModal, (val) => {
 
 <template>
     <UModal fullscreen>
-        <VersinoDiffModal
+        <VersionDiffModal
             v-if="showDiffModal && selectedVersion"
             v-model="showDiffModal"
             :current-content="props.currentContent.content"
@@ -57,14 +56,10 @@ watch(showDiffModal, (val) => {
         />
 
         <UCard v-else class="flex flex-1 flex-col">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl leading-6 font-semibold">
-                        {{ $t('common.version_history') }}
-                    </h3>
-
-                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                </div>
+            <template #title>
+                <h3 class="text-2xl leading-6 font-semibold">
+                    {{ $t('common.version_history') }}
+                </h3>
             </template>
 
             <div v-if="sortedHistory.length">
@@ -97,7 +92,7 @@ watch(showDiffModal, (val) => {
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" block color="neutral" @click="isOpen = false">
+                    <UButton class="flex-1" block color="neutral" @click="$emit('close', false)">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

@@ -13,10 +13,9 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
     (e: 'update:job', value: { job: Job; grade: JobGrade }): void;
 }>();
-
-const { isOpen } = useOverlay();
 
 const { game } = useAppConfig();
 
@@ -77,7 +76,7 @@ async function setJobProp(values: Schema): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        isOpen.value = false;
+        emit('close', false);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -95,105 +94,93 @@ onBeforeMount(async () => listJobs());
 
 <template>
     <UModal>
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard>
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl leading-6 font-semibold">
-                            {{ $t('components.citizens.CitizenInfoProfile.set_job') }}
-                        </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ $t('components.citizens.CitizenInfoProfile.set_job') }}
+            </h3>
+        </template>
 
-                        <UButton
-                            class="-my-1"
-                            color="neutral"
-                            variant="ghost"
-                            icon="i-mdi-window-close"
-                            @click="isOpen = false"
-                        />
-                    </div>
-                </template>
+        <template #body>
+            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UFormField class="flex-1" name="reason" :label="$t('common.reason')" required>
+                    <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
+                </UFormField>
 
-                <div>
-                    <UFormField class="flex-1" name="reason" :label="$t('common.reason')" required>
-                        <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
-                    </UFormField>
-
-                    <UFormField class="flex-1" name="job" :label="$t('common.job')">
-                        <ClientOnly>
-                            <USelectMenu
-                                v-model="state.job"
-                                :items="jobs"
-                                by="label"
-                                :searchable-placeholder="$t('common.search_field')"
-                                :search-attributes="['label', 'name']"
-                            >
-                                <template #item-label>
-                                    <template v-if="state.job">
-                                        <span class="truncate">{{ state.job?.label }}</span>
-                                    </template>
-                                </template>
-
-                                <template #item="{ option: job }">
-                                    <span class="truncate">{{ job.label }}</span>
-                                </template>
-
-                                <template #empty>
-                                    {{ $t('common.not_found', [$t('common.job')]) }}
-                                </template>
-                            </USelectMenu>
-                        </ClientOnly>
-                    </UFormField>
-
-                    <UFormField class="flex-1" name="grade" :label="$t('common.job_grade')">
-                        <ClientOnly>
-                            <USelectMenu
-                                v-model="state.grade"
-                                :items="state.job?.grades"
-                                by="grade"
-                                :searchable-placeholder="$t('common.search_field')"
-                            >
-                                <template #item-label>
-                                    <span v-if="state.grade" class="truncate"
-                                        >{{ state.grade?.label }} ({{ state.grade?.grade }})</span
-                                    >
-                                </template>
-
-                                <template #item="{ option: jobGrade }">
-                                    <span class="truncate">{{ jobGrade.label }} ({{ jobGrade.grade }})</span>
-                                </template>
-
-                                <template #empty>
-                                    {{ $t('common.not_found', [$t('common.job_grade')]) }}
-                                </template>
-                            </USelectMenu>
-                        </ClientOnly>
-                    </UFormField>
-                </div>
-
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.save') }}
-                        </UButton>
-
-                        <UButton
-                            class="flex-1"
-                            type="submit"
-                            block
-                            color="error"
-                            :disabled="!canSubmit"
-                            :loading="!canSubmit"
-                            @click="state.reset = true"
+                <UFormField class="flex-1" name="job" :label="$t('common.job')">
+                    <ClientOnly>
+                        <USelectMenu
+                            v-model="state.job"
+                            :items="jobs"
+                            by="label"
+                            :searchable-placeholder="$t('common.search_field')"
+                            :search-attributes="['label', 'name']"
                         >
-                            {{ $t('common.reset') }}
-                        </UButton>
+                            <template #item-label>
+                                <template v-if="state.job">
+                                    <span class="truncate">{{ state.job?.label }}</span>
+                                </template>
+                            </template>
 
-                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                            <template #item="{ item }">
+                                <span class="truncate">{{ item.label }}</span>
+                            </template>
+
+                            <template #empty>
+                                {{ $t('common.not_found', [$t('common.job')]) }}
+                            </template>
+                        </USelectMenu>
+                    </ClientOnly>
+                </UFormField>
+
+                <UFormField class="flex-1" name="grade" :label="$t('common.job_grade')">
+                    <ClientOnly>
+                        <USelectMenu
+                            v-model="state.grade"
+                            :items="state.job?.grades"
+                            by="grade"
+                            :searchable-placeholder="$t('common.search_field')"
+                        >
+                            <template #item-label>
+                                <span v-if="state.grade" class="truncate"
+                                    >{{ state.grade?.label }} ({{ state.grade?.grade }})</span
+                                >
+                            </template>
+
+                            <template #item="{ item }">
+                                <span class="truncate">{{ item.label }} ({{ item.grade }})</span>
+                            </template>
+
+                            <template #empty>
+                                {{ $t('common.not_found', [$t('common.job_grade')]) }}
+                            </template>
+                        </USelectMenu>
+                    </ClientOnly>
+                </UFormField>
+            </UForm>
+        </template>
+
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
+                    {{ $t('common.save') }}
+                </UButton>
+
+                <UButton
+                    class="flex-1"
+                    type="submit"
+                    block
+                    color="error"
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    @click="state.reset = true"
+                >
+                    {{ $t('common.reset') }}
+                </UButton>
+
+                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

@@ -4,43 +4,33 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
     (e: 'update:content', val: string): void;
 }>();
-
-const { isOpen } = useOverlay();
 
 const content = useVModel(props, 'content', emit);
 </script>
 
 <template>
     <UModal fullscreen>
-        <UCard
-            :ui="{
-                base: 'flex flex-1 flex-col',
-                body: { base: 'flex flex-1 flex-col' },
-            }"
-        >
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
-                        {{ $t('common.source_code') }}
-                    </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ $t('common.source_code') }}
+            </h3>
+        </template>
 
-                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                </div>
-            </template>
-
-            <div class="max-w-(--breakpoint-xl) mx-auto flex w-full flex-1 flex-col">
+        <template #body>
+            <div class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-1 flex-col">
                 <UTextarea v-model="content" class="flex flex-1 flex-col" autoresize :ui="{ base: 'flex-1' }" />
             </div>
+        </template>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" block color="neutral" @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
-                </UButtonGroup>
-            </template>
-        </UCard>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" block color="neutral" @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import ColleagueActivityFeed from '~/components/jobs/colleagues/info/ColleagueActivityFeed.vue';
-import PagesJobsLayout from '~/components/jobs/PagesJobsLayout.vue';
+import ActivityFeed from '~/components/jobs/colleagues/info/ActivityFeed.vue';
 
 useHead({
     title: 'pages.jobs.colleagues.title',
@@ -14,9 +13,5 @@ definePageMeta({
 </script>
 
 <template>
-    <PagesJobsLayout>
-        <template #default>
-            <ColleagueActivityFeed :show-target-user="true" />
-        </template>
-    </PagesJobsLayout>
+    <ActivityFeed :show-target-user="true" />
 </template>

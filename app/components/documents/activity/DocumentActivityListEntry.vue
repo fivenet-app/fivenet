@@ -26,7 +26,7 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
 
 <template>
     <li
-        class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white px-2 py-2 dark:border-gray-900"
+        class="border-white px-2 py-2 hover:border-primary-500/25 hover:bg-primary-100/50 dark:border-gray-900 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
     >
         <div v-if="!spoilerNeeded(entry.activityType)" class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
@@ -36,7 +36,7 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
                     <h3 class="inline-flex items-center gap-2 text-sm font-medium">
-                        <span class="text-highlighted font-bold">
+                        <span class="font-bold text-highlighted">
                             {{ $t(`enums.documents.DocActivityType.${DocActivityType[entry.activityType]}`) }}
                         </span>
                         <span v-if="entry.data">
@@ -84,7 +84,7 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
                     <div class="flex-1 space-y-1">
                         <div class="flex items-center justify-between">
                             <h3 class="inline-flex items-center text-sm font-medium">
-                                <span class="text-highlighted font-bold">
+                                <span class="font-bold text-highlighted">
                                     {{ $t(`enums.documents.DocActivityType.${DocActivityType[entry.activityType]}`) }}
                                 </span>
                                 <span class="ml-6 flex h-7 items-center">
@@ -120,7 +120,7 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
 
             <template #item>
                 <template v-if="entry.activityType === DocActivityType.UPDATED">
-                    <div class="bg-background rounded-md p-2">
+                    <div class="rounded-md bg-default p-2">
                         <ActivityDocUpdatedDiff
                             v-if="entry.data?.data.oneofKind === 'updated'"
                             :update="entry.data?.data.updated"
@@ -132,7 +132,7 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
                         entry.activityType === DocActivityType.ACCESS_UPDATED && entry.data?.data.oneofKind === 'accessUpdated'
                     "
                 >
-                    <div class="bg-background rounded-md p-2">
+                    <div class="rounded-md bg-default p-2">
                         <ActivityAccessUpdated :data="entry.data?.data.accessUpdated" />
                     </div>
                 </template>

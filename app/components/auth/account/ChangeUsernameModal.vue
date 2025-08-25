@@ -4,7 +4,9 @@ import { z } from 'zod';
 import { getAuthAuthClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const { isOpen } = useOverlay();
+const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 
 const notifications = useNotificationsStore();
 
@@ -37,7 +39,7 @@ async function changeUsername(values: Schema): Promise<void> {
             new: values.newUsername,
         });
         await call;
-        isOpen.value = false;
+        emit('close', false);
 
         notifications.add({
             title: { key: 'notifications.auth.change_username.title', parameters: {} },
@@ -61,24 +63,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UModal :prevent-close="!canSubmit">
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard>
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl leading-6 font-semibold">
-                            {{ $t('components.auth.ChangeUsernameModal.change_username') }}
-                        </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ $t('components.auth.ChangeUsernameModal.change_username') }}
+            </h3>
+        </template>
 
-                        <UButton
-                            class="-my-1"
-                            color="neutral"
-                            variant="ghost"
-                            icon="i-mdi-window-close"
-                            @click="isOpen = false"
-                        />
-                    </div>
-                </template>
-
+        <template #body>
+            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField name="currentUsername" :label="$t('components.auth.ChangeUsernameModal.current_username')">
                     <UInput
                         v-model="state.currentUsername"
@@ -96,19 +88,19 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         :placeholder="$t('components.auth.ChangeUsernameModal.new_username')"
                     />
                 </UFormField>
+            </UForm>
+        </template>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
 
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('components.auth.ChangeUsernameModal.change_username') }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
+                    {{ $t('components.auth.ChangeUsernameModal.change_username') }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

@@ -10,10 +10,10 @@ const _useDashboard = () => {
     const isNotificationSlideoverOpen = ref(false);
     const isDashboardSearchModalOpen = ref(false);
 
-    const modal = useOverlay();
+    const overlay = useOverlay();
 
-    const notificationsSlideover = modal.create(LazyNotificationsNotificationSlideover);
-    const helpSlideover = modal.create(LazyHelpSlideover);
+    const notificationsSlideover = overlay.create(LazyNotificationsNotificationSlideover);
+    const helpSlideover = overlay.create(LazyHelpSlideover);
 
     defineShortcuts({
         'g-h': () => router.push('/'),

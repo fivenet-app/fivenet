@@ -391,16 +391,7 @@ const categoriesLoading = ref(false);
         </UDashboardNavbar>
 
         <UDashboardPanelContent class="p-0 sm:pb-0">
-            <UTabs
-                v-model="selectedTab"
-                class="flex flex-1 flex-col"
-                :items="items"
-                :ui="{
-                    wrapper: 'space-y-0 overflow-y-hidden',
-                    container: 'flex flex-1 flex-col overflow-y-hidden',
-                    base: 'flex flex-1 flex-col overflow-y-hidden',
-                }"
-            >
+            <UTabs v-model="selectedTab" class="flex flex-1 flex-col" :items="items">
                 <template #details>
                     <UContainer class="mt-2 w-full overflow-y-scroll">
                         <div>

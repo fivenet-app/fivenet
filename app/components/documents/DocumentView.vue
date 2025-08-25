@@ -569,10 +569,6 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                 </template>
 
                 <div>
-                    <h2 class="sr-only">
-                        {{ $t('common.content') }}
-                    </h2>
-
                     <div class="dark:bg-base-900 mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 break-words">
                         <HTMLContent
                             v-if="doc.document?.content?.content"

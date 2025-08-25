@@ -10,7 +10,9 @@ const props = defineProps<{
     documentId: number;
 }>();
 
-const { isOpen } = useOverlay();
+const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 
 const notifications = useNotificationsStore();
 
@@ -59,7 +61,7 @@ async function createDocumentRequest(values: Schema): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        isOpen.value = false;
+        emit('close', false);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -75,67 +77,55 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UModal>
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard>
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl leading-6 font-semibold">
-                            {{ $t('common.request') }}
-                        </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ $t('common.request') }}
+            </h3>
+        </template>
 
-                        <UButton
-                            class="-my-1"
-                            color="neutral"
-                            variant="ghost"
-                            icon="i-mdi-window-close"
-                            @click="isOpen = false"
-                        />
-                    </div>
-                </template>
+        <template #body>
+            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UFormField name="reason" :label="$t('common.reason')" required>
+                    <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
+                </UFormField>
 
-                <div>
-                    <UFormField name="reason" :label="$t('common.reason')" required>
-                        <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
-                    </UFormField>
+                <UFormField class="flex-1" name="requestType" :label="$t('common.access')">
+                    <ClientOnly>
+                        <USelectMenu
+                            v-model="state.accessLevel"
+                            :items="accessLevels"
+                            :placeholder="$t('common.access')"
+                            :searchable-placeholder="$t('common.search_field')"
+                        >
+                            <template #item-label>
+                                <span v-if="state.accessLevel" class="truncate">{{
+                                    $t(`enums.documents.AccessLevel.${AccessLevel[state.accessLevel]}`)
+                                }}</span>
+                            </template>
 
-                    <UFormField class="flex-1" name="requestType" :label="$t('common.access')">
-                        <ClientOnly>
-                            <USelectMenu
-                                v-model="state.accessLevel"
-                                :items="accessLevels"
-                                :placeholder="$t('common.access')"
-                                :searchable-placeholder="$t('common.search_field')"
-                            >
-                                <template #item-label>
-                                    <span v-if="state.accessLevel" class="truncate">{{
-                                        $t(`enums.documents.AccessLevel.${AccessLevel[state.accessLevel]}`)
-                                    }}</span>
-                                </template>
+                            <template #item="{ item }">
+                                <span class="truncate">{{ $t(`enums.documents.AccessLevel.${AccessLevel[item]}`) }}</span>
+                            </template>
 
-                                <template #item="{ option }">
-                                    <span class="truncate">{{ $t(`enums.documents.AccessLevel.${AccessLevel[option]}`) }}</span>
-                                </template>
+                            <template #empty>
+                                {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
+                            </template>
+                        </USelectMenu>
+                    </ClientOnly>
+                </UFormField>
+            </UForm>
+        </template>
 
-                                <template #empty>
-                                    {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
-                                </template>
-                            </USelectMenu>
-                        </ClientOnly>
-                    </UFormField>
-                </div>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
-
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.request', 2) }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
+                    {{ $t('common.request', 2) }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

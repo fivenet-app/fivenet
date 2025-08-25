@@ -56,11 +56,10 @@ async function doCall(): Promise<void> {
 </script>
 
 <template>
-    <div class="inline-flex flex-1 items-center">
+    <div class="inline-flex items-center gap-1">
         <template v-if="number">
             <UTooltip v-if="showIcon" class="w-full" :text="$t('common.call')">
-                <UButton class="shrink-0" variant="link" icon="i-mdi-phone" v-bind="$attrs" @click="doCall">
-                    <span class="sr-only">{{ $t('common.call') }}</span>
+                <UButton class="shrink-0" variant="link" icon="i-mdi-phone" @click="doCall">
                     <span v-if="showLabel" :class="!disableTruncate && 'truncate'">{{ $t('common.call') }}</span>
                 </UButton>
             </UTooltip>
@@ -69,6 +68,7 @@ async function doCall(): Promise<void> {
                 <span v-for="(part, idx) in (number ?? '').match(/.{1,3}/g)" :key="idx">{{ part }}</span>
             </span>
         </template>
+
         <template v-else-if="!hideNaText">
             {{ $t('common.na') }}
         </template>

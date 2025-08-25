@@ -366,9 +366,9 @@ const { game } = useAppConfig();
                                         </template>
                                     </template>
 
-                                    <template #item="{ option: grade }">
-                                        {{ grade?.label
-                                        }}<span v-if="grade.grade >= game.startJobGrade"> ({{ grade?.grade }})</span>
+                                    <template #item="{ item }">
+                                        {{ item?.label
+                                        }}<span v-if="item.grade >= game.startJobGrade"> ({{ item?.grade }})</span>
                                     </template>
 
                                     <template #empty> {{ $t('common.not_found', [$t('common.rank')]) }} </template>

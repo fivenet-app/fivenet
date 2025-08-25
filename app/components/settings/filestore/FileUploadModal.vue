@@ -9,12 +9,11 @@ import type { UploadFileResponse } from '~~/gen/ts/resources/file/filestore';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
     (e: 'uploaded', file: File): void;
 }>();
 
 const { fileUpload } = useAppConfig();
-
-const { isOpen } = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -61,7 +60,7 @@ async function upload(values: Schema): Promise<UploadFileResponse | undefined> {
             });
         }
 
-        isOpen.value = false;
+        emit('close', false);
 
         return response;
     } catch (e) {
@@ -79,65 +78,53 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UModal>
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard>
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl leading-6 font-semibold">
-                            {{ $t('common.upload') }}
-                        </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ $t('common.upload') }}
+            </h3>
+        </template>
 
-                        <UButton
-                            class="-my-1"
-                            color="neutral"
-                            variant="ghost"
-                            icon="i-mdi-window-close"
-                            @click="isOpen = false"
+        <template #body>
+            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UFormField class="flex-1" name="category" :label="$t('common.category')" required>
+                    <ClientOnly>
+                        <USelectMenu
+                            v-model="state.category"
+                            :items="categories"
+                            :searchable-placeholder="$t('common.search_field')"
                         />
-                    </div>
-                </template>
+                    </ClientOnly>
+                </UFormField>
 
-                <div>
-                    <UFormField class="flex-1" name="category" :label="$t('common.category')" required>
-                        <ClientOnly>
-                            <USelectMenu
-                                v-model="state.category"
-                                :items="categories"
-                                :searchable-placeholder="$t('common.search_field')"
-                            />
-                        </ClientOnly>
-                    </UFormField>
+                <UFormField class="flex-1" name="name" :label="$t('common.name')" required>
+                    <UInput v-model="state.name" type="text" name="name" :placeholder="$t('common.name')" />
+                </UFormField>
 
-                    <UFormField class="flex-1" name="name" :label="$t('common.name')" required>
-                        <UInput v-model="state.name" type="text" name="name" :placeholder="$t('common.name')" />
-                    </UFormField>
+                <UFormField class="flex-1" name="file" :label="$t('common.file')">
+                    <NotSupportedTabletBlock v-if="nuiEnabled" />
+                    <template v-else>
+                        <UInput
+                            type="file"
+                            name="file"
+                            :accept="fileUpload.types.images.join(',')"
+                            :placeholder="$t('common.image')"
+                            @change="state.file = $event"
+                        />
+                    </template>
+                </UFormField>
+            </UForm>
+        </template>
 
-                    <UFormField class="flex-1" name="file" :label="$t('common.file')">
-                        <NotSupportedTabletBlock v-if="nuiEnabled" />
-                        <template v-else>
-                            <UInput
-                                type="file"
-                                name="file"
-                                :accept="fileUpload.types.images.join(',')"
-                                :placeholder="$t('common.image')"
-                                @change="state.file = $event"
-                            />
-                        </template>
-                    </UFormField>
-                </div>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" block color="neutral" @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" block color="neutral" @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
-
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.save') }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
+                    {{ $t('common.save') }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

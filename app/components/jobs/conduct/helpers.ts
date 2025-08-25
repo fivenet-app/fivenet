@@ -21,7 +21,7 @@ export function conductTypesToBadgeColor(status: ConductType | undefined): Badge
 export function conductTypesToBGColor(status: ConductType | undefined): string {
     switch (status) {
         case ConductType.NEUTRAL:
-            return 'bg-background/10';
+            return 'bg-default/10';
         case ConductType.POSITIVE:
             return 'bg-success-600/10';
         case ConductType.NEGATIVE:
@@ -31,6 +31,6 @@ export function conductTypesToBGColor(status: ConductType | undefined): string {
         case ConductType.SUSPENSION:
             return 'bg-info-600/10';
         default:
-            return 'bg-background/10';
+            return 'bg-default/10';
     }
 }

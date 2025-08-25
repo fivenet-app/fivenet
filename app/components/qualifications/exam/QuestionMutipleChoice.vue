@@ -21,9 +21,8 @@ const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
         class="flex flex-col gap-2"
     >
         <UFormField name="data.data.multipleChoice.limit" :label="$t('common.max')">
-            <UInput
+            <UInputNumber
                 v-model="question.data!.data.multipleChoice.limit"
-                type="number"
                 :min="1"
                 :max="question.data!.data.multipleChoice.choices.length"
                 :disabled="disabled"

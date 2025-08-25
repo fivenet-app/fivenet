@@ -13,11 +13,13 @@ definePageMeta({
     permission: 'documents.DocumentsService/ListDocuments',
 });
 
-const modal = useOverlay();
+const overlay = useOverlay();
 
 const { can } = useAuth();
 
 const isOpen = ref(false);
+
+const templateModal = overlay.create(TemplateModal);
 </script>
 
 <template>
@@ -56,7 +58,7 @@ const isOpen = ref(false);
                     </UButtonGroup>
 
                     <UTooltip v-if="can('documents.DocumentsService/UpdateDocument').value" :text="$t('common.create')">
-                        <UButton trailing-icon="i-mdi-plus" color="neutral" truncate @click="modal.open(TemplateModal, {})">
+                        <UButton trailing-icon="i-mdi-plus" color="neutral" truncate @click="templateModal.open({})">
                             <span class="hidden truncate sm:block">
                                 {{ $t('common.document', 1) }}
                             </span>
@@ -72,7 +74,7 @@ const isOpen = ref(false);
     </UDashboardPanel>
 
     <UDashboardPanel
-        id="documentspinnedlist"
+        id="documents-pinnedlist"
         v-model:open="isOpen"
         class="overflow-x-hidden"
         side="right"

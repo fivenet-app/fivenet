@@ -60,33 +60,23 @@ const open = ref(false);
             />
 
             <UModal v-model:open="open">
-                <UCard>
-                    <template #header>
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-2xl font-semibold leading-6">
-                                {{ $t('common.date') }}
-                            </h3>
+                <template #title>
+                    <h3 class="text-2xl leading-6 font-semibold">
+                        {{ $t('common.date') }}
+                    </h3>
+                </template>
 
-                            <UButton
-                                class="-my-1"
-                                color="neutral"
-                                variant="ghost"
-                                icon="i-mdi-window-close"
-                                @click="open = false"
-                            />
-                        </div>
-                    </template>
-
+                <template #body>
                     <div class="flex flex-1 items-center">
                         <DateRangePickerClient v-model="date" v-bind="datePicker" @close="open = false" />
                     </div>
+                </template>
 
-                    <template #footer>
-                        <UButton class="flex-1" color="neutral" block @click="open = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
-                    </template>
-                </UCard>
+                <template #footer>
+                    <UButton class="flex-1" color="neutral" block @click="open = false">
+                        {{ $t('common.close', 1) }}
+                    </UButton>
+                </template>
             </UModal>
         </template>
 

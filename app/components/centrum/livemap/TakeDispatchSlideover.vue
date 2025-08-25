@@ -89,106 +89,90 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
 
 <template>
     <USlideover>
-        <UCard class="flex flex-1 flex-col">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl leading-6 font-semibold">
-                        {{ $t('components.centrum.take_dispatch.title') }}
-                    </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ $t('components.centrum.take_dispatch.title') }}
+            </h3>
+        </template>
 
-                    <UButton
-                        class="-my-1"
-                        color="neutral"
-                        variant="ghost"
-                        icon="i-mdi-window-close"
-                        @click="$emit('close', false)"
-                    />
-                </div>
-            </template>
-
-            <div>
-                <dl class="divide-neutral/10 divide-y">
-                    <template v-if="getCurrentMode === CentrumMode.SIMPLIFIED">
-                        <DataNoDataBlock
-                            v-if="dispatches.size === 0"
-                            icon="i-mdi-car-emergency"
-                            :type="$t('common.dispatch', 2)"
-                        />
-                        <template v-else>
-                            <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                <dt class="text-sm leading-6 font-medium">
-                                    <div class="flex h-6 items-center">
-                                        {{ $t('common.search') }}
-                                    </div>
-                                </dt>
-                                <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                    <UFormField name="search">
-                                        <UInput
-                                            v-model="queryDispatches"
-                                            type="text"
-                                            name="search"
-                                            :placeholder="$t('common.search')"
-                                            leading-icon="i-mdi-search"
-                                        />
-                                    </UFormField>
-                                </dd>
-                            </div>
-
-                            <TakeDispatchEntry
-                                v-for="pd in filteredDispatches"
-                                :key="pd"
-                                :dispatch="dispatches.get(pd)!"
-                                :preselected="false"
-                                @selected="selectDispatch(pd, $event)"
-                            />
-                        </template>
-                    </template>
-
+        <template #body>
+            <dl class="divide-neutral/10 divide-y">
+                <template v-if="getCurrentMode === CentrumMode.SIMPLIFIED">
+                    <DataNoDataBlock v-if="dispatches.size === 0" icon="i-mdi-car-emergency" :type="$t('common.dispatch', 2)" />
                     <template v-else>
-                        <DataNoDataBlock
-                            v-if="pendingDispatches.length === 0"
-                            icon="i-mdi-car-emergency"
-                            :type="$t('common.dispatch', 2)"
+                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                            <dt class="text-sm leading-6 font-medium">
+                                <div class="flex h-6 items-center">
+                                    {{ $t('common.search') }}
+                                </div>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                                <UFormField name="search">
+                                    <UInput
+                                        v-model="queryDispatches"
+                                        type="text"
+                                        name="search"
+                                        :placeholder="$t('common.search')"
+                                        leading-icon="i-mdi-search"
+                                    />
+                                </UFormField>
+                            </dd>
+                        </div>
+
+                        <TakeDispatchEntry
+                            v-for="pd in filteredDispatches"
+                            :key="pd"
+                            :dispatch="dispatches.get(pd)!"
+                            :preselected="false"
+                            @selected="selectDispatch(pd, $event)"
                         />
-                        <template v-else>
-                            <TakeDispatchEntry
-                                v-for="pd in pendingDispatches"
-                                :key="pd"
-                                :dispatch="dispatches.get(pd)!"
-                                @selected="selectDispatch(pd, $event)"
-                            />
-                        </template>
                     </template>
-                </dl>
-            </div>
+                </template>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton
-                        class="flex-1"
-                        color="green"
-                        :disabled="!canTakeDispatch || !canSubmit"
-                        :loading="!canSubmit"
-                        @click="onSubmitThrottle(TakeDispatchResp.ACCEPTED)"
-                    >
-                        {{ $t('common.accept') }}
-                    </UButton>
+                <template v-else>
+                    <DataNoDataBlock
+                        v-if="pendingDispatches.length === 0"
+                        icon="i-mdi-car-emergency"
+                        :type="$t('common.dispatch', 2)"
+                    />
+                    <template v-else>
+                        <TakeDispatchEntry
+                            v-for="pd in pendingDispatches"
+                            :key="pd"
+                            :dispatch="dispatches.get(pd)!"
+                            @selected="selectDispatch(pd, $event)"
+                        />
+                    </template>
+                </template>
+            </dl>
+        </template>
 
-                    <UButton
-                        class="flex-1"
-                        color="error"
-                        :disabled="!canTakeDispatch || !canSubmit"
-                        :loading="!canSubmit"
-                        @click="onSubmitThrottle(TakeDispatchResp.DECLINED)"
-                    >
-                        {{ $t('common.decline') }}
-                    </UButton>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton
+                    class="flex-1"
+                    color="green"
+                    :disabled="!canTakeDispatch || !canSubmit"
+                    :loading="!canSubmit"
+                    @click="onSubmitThrottle(TakeDispatchResp.ACCEPTED)"
+                >
+                    {{ $t('common.accept') }}
+                </UButton>
 
-                    <UButton class="flex-1" @click="$emit('close', false)">
-                        {{ $t('common.close') }}
-                    </UButton>
-                </UButtonGroup>
-            </template>
-        </UCard>
+                <UButton
+                    class="flex-1"
+                    color="error"
+                    :disabled="!canTakeDispatch || !canSubmit"
+                    :loading="!canSubmit"
+                    @click="onSubmitThrottle(TakeDispatchResp.DECLINED)"
+                >
+                    {{ $t('common.decline') }}
+                </UButton>
+
+                <UButton class="flex-1" @click="$emit('close', false)">
+                    {{ $t('common.close') }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </USlideover>
 </template>

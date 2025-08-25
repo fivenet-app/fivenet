@@ -11,9 +11,11 @@ import { CentrumAccessLevel, type CentrumJobAccess } from '~~/gen/ts/resources/c
 import { CentrumMode, CentrumType, type Settings } from '~~/gen/ts/resources/centrum/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const { t } = useI18n();
+const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 
-const { isOpen } = useOverlay();
+const { t } = useI18n();
 
 const { activeChar, attr } = useAuth();
 
@@ -143,7 +145,7 @@ async function updateSettings(values: Schema): Promise<void> {
 
         await refresh();
 
-        isOpen.value = false;
+        emit('close', false);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -264,16 +266,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             <DataNoDataBlock v-else-if="!settings" icon="i-mdi-tune" :type="$t('common.settings')" />
 
             <template v-else>
-                <UTabs
-                    v-model="selectedTab"
-                    class="flex flex-1 flex-col"
-                    :items="items"
-                    :ui="{
-                        wrapper: 'space-y-0 overflow-y-hidden',
-                        container: 'flex flex-1 flex-col overflow-y-hidden',
-                        base: 'flex flex-1 flex-col overflow-y-hidden',
-                    }"
-                >
+                <UTabs v-model="selectedTab" class="flex flex-1 flex-col" :items="items">
                     <template #settings>
                         <UPageCard
                             :title="$t('components.centrum.settings.title')"
@@ -323,9 +316,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             }}</span>
                                         </template>
 
-                                        <template #item="{ option }">
+                                        <template #item="{ item }">
                                             <span class="truncate">{{
-                                                $t(`enums.centrum.CentrumMode.${CentrumMode[option.mode ?? 0]}`)
+                                                $t(`enums.centrum.CentrumMode.${CentrumMode[item.mode ?? 0]}`)
                                             }}</span>
                                         </template>
                                     </USelectMenu>
@@ -352,9 +345,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             }}</span>
                                         </template>
 
-                                        <template #item="{ option }">
+                                        <template #item="{ item }">
                                             <span class="truncate">{{
-                                                $t(`enums.centrum.CentrumMode.${CentrumMode[option.mode ?? 0]}`)
+                                                $t(`enums.centrum.CentrumMode.${CentrumMode[item.mode ?? 0]}`)
                                             }}</span>
                                         </template>
                                     </USelectMenu>

@@ -14,7 +14,8 @@ definePageMeta({
 
 const { can } = useAuth();
 
-const modal = useOverlay();
+const overlay = useOverlay();
+const citizenLabelModal = overlay.create(CitizenLabelModal);
 </script>
 
 <template>
@@ -25,7 +26,7 @@ const modal = useOverlay();
                     v-if="can('citizens.CitizensService/ManageLabels').value"
                     :label="$t('common.label', 2)"
                     icon="i-mdi-tag"
-                    @click="modal.open(CitizenLabelModal, {})"
+                    @click="citizenLabelModal.open({})"
                 />
             </template>
         </UDashboardNavbar>

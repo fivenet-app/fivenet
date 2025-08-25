@@ -5,7 +5,9 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 
-const { isOpen } = useOverlay();
+defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 
 const centrumStore = useCentrumStore();
 const { dispatchers, anyDispatchersActive, getCurrentMode } = storeToRefs(centrumStore);
@@ -13,18 +15,14 @@ const { dispatchers, anyDispatchersActive, getCurrentMode } = storeToRefs(centru
 
 <template>
     <UModal>
-        <template #header>
-            <div class="flex items-center justify-between">
-                <h3 class="inline-flex items-center gap-2 text-2xl leading-6 font-semibold">
-                    <span>{{ $t('common.dispatchers', 2) }}</span>
+        <template #title>
+            <h3 class="inline-flex items-center gap-2 text-2xl leading-6 font-semibold">
+                <span>{{ $t('common.dispatchers', 2) }}</span>
 
-                    <UBadge color="neutral">
-                        {{ $t('common.mode') }}: {{ $t(`enums.centrum.CentrumMode.${CentrumMode[getCurrentMode ?? 0]}`) }}
-                    </UBadge>
-                </h3>
-
-                <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-            </div>
+                <UBadge color="neutral">
+                    {{ $t('common.mode') }}: {{ $t(`enums.centrum.CentrumMode.${CentrumMode[getCurrentMode ?? 0]}`) }}
+                </UBadge>
+            </h3>
         </template>
 
         <template #body>
@@ -33,7 +31,7 @@ const { dispatchers, anyDispatchersActive, getCurrentMode } = storeToRefs(centru
                 icon="i-mdi-monitor"
                 :type="$t('common.dispatcher')"
             />
-            <div v-else>
+            <template v-else>
                 <div v-for="dispas in dispatchers" :key="dispas.job" class="gap-4 p-4" :cols="2">
                     <h3 class="mb-4 text-lg font-semibold">
                         {{ dispas.jobLabel ?? dispas.job }}
@@ -47,9 +45,6 @@ const { dispatchers, anyDispatchersActive, getCurrentMode } = storeToRefs(centru
                             icon="i-mdi-account"
                             :ui="{
                                 title: 'text-highlighted text-base font-semibold flex items-center gap-1.5 line-clamp-2 whitespace-break-spaces',
-                                body: {
-                                    padding: 'flex-0',
-                                },
                             }"
                         >
                             <template #default>
@@ -69,11 +64,11 @@ const { dispatchers, anyDispatchersActive, getCurrentMode } = storeToRefs(centru
                         </UPageCard>
                     </UPageGrid>
                 </div>
-            </div>
+            </template>
         </template>
 
         <template #footer>
-            <UButton class="flex-1" color="neutral" block @click="isOpen = false">
+            <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
                 {{ $t('common.close', 1) }}
             </UButton>
         </template>

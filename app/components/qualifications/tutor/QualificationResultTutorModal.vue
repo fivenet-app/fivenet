@@ -8,20 +8,21 @@ defineProps<{
 }>();
 
 defineEmits<{
+    (e: 'close', v: boolean): void;
     (e: 'refresh'): void;
 }>();
-
-const { isOpen } = useOverlay();
 </script>
 
 <template>
     <UModal>
-        <QualificationResultTutorForm
-            :qualification-id="qualificationId"
-            :user-id="userId"
-            :result-id="resultId"
-            @refresh="$emit('refresh')"
-            @close="isOpen = false"
-        />
+        <template #content>
+            <QualificationResultTutorForm
+                :qualification-id="qualificationId"
+                :user-id="userId"
+                :result-id="resultId"
+                @refresh="$emit('refresh')"
+                @close="$emit('close', false)"
+            />
+        </template>
     </UModal>
 </template>

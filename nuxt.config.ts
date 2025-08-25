@@ -119,7 +119,6 @@ export default defineNuxtConfig({
             link: [{ rel: 'icon', type: 'image/png', href: '/images/logo.png' }],
             meta: [{ name: 'darkreader-lock', content: '' }],
         },
-        pageTransition: { name: 'page', mode: 'out-in' },
     },
 
     colorMode: {

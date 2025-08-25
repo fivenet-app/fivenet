@@ -269,9 +269,8 @@ const { game } = useAppConfig();
             ]"
             :unmount="true"
             :default-open="defaultOpen"
-            :ui="{ default: { class: 'mb-0.5' } }"
         >
-            <template #item>
+            <template #content>
                 <div class="flex flex-col gap-2">
                     <div
                         v-if="
@@ -461,9 +460,9 @@ const { game } = useAppConfig();
                                             </template>
                                         </template>
 
-                                        <template #item="{ option: grade }">
-                                            {{ grade?.label
-                                            }}<span v-if="grade.grade >= game.startJobGrade"> ({{ grade?.grade }})</span>
+                                        <template #item="{ item }">
+                                            {{ item?.label
+                                            }}<span v-if="item.grade >= game.startJobGrade"> ({{ item?.grade }})</span>
                                         </template>
 
                                         <template #empty> {{ $t('common.not_found', [$t('common.rank')]) }} </template>
@@ -503,9 +502,9 @@ const { game } = useAppConfig();
                                             }}
                                         </template>
 
-                                        <template #item="{ option: grade }">
-                                            {{ grade?.label
-                                            }}<span v-if="grade.grade >= game.startJobGrade"> ({{ grade?.grade }})</span>
+                                        <template #item="{ item }">
+                                            {{ item?.label
+                                            }}<span v-if="item.grade >= game.startJobGrade"> ({{ item?.grade }})</span>
                                         </template>
 
                                         <template #empty> {{ $t('common.not_found', [$t('common.rank')]) }} </template>

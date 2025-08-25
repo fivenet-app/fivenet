@@ -50,14 +50,6 @@ function changeColumn(col: string): void {
                 :items="fields"
                 @update:model-value="changeColumn($event)"
             >
-                <template #item-label>
-                    {{ fields.find((f) => f.value === sorting.id)?.label ?? $t('common.na') }}
-                </template>
-
-                <template #item="{ option: field }">
-                    {{ field.label }}
-                </template>
-
                 <template #empty> {{ $t('common.not_found', [$t('common.field', 2)]) }} </template>
             </USelectMenu>
         </ClientOnly>

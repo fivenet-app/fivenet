@@ -10,12 +10,14 @@ const props = defineProps<{
     dispatchId: number;
 }>();
 
+const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
+
 const centrumStore = useCentrumStore();
 const { dispatches, getSortedUnits } = storeToRefs(centrumStore);
 
 const dispatch = computed(() => dispatches.value.get(props.dispatchId));
-
-const { isOpen } = useOverlay();
 
 const centrumCentrumClient = await getCentrumCentrumClient();
 
@@ -56,7 +58,7 @@ async function assignDispatch(): Promise<void> {
 
         state.units.length = 0;
 
-        isOpen.value = false;
+        emit('close', false);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -122,33 +124,16 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
 <template>
     <UModal>
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard
-                class="flex flex-1 flex-col"
-                :ui="{
-                    body: {
-                        base: 'flex-1 h-full max-h-[calc(100dvh-(3*var(--ui-header-height)))] overflow-y-auto',
-                        padding: 'px-1 py-2 sm:p-2',
-                    },
-                }"
-            >
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="inline-flex items-center text-2xl leading-6 font-semibold">
-                            {{ $t('components.centrum.assign_dispatch.title') }}:
-                            <IDCopyBadge :id="dispatch?.id ?? dispatchId" class="ml-2" prefix="DSP" />
-                        </h3>
+        <template #title>
+            <h3 class="inline-flex items-center text-2xl leading-6 font-semibold">
+                {{ $t('components.centrum.assign_dispatch.title') }}:
 
-                        <UButton
-                            class="-my-1"
-                            color="neutral"
-                            variant="ghost"
-                            icon="i-mdi-window-close"
-                            @click="isOpen = false"
-                        />
-                    </div>
-                </template>
+                <IDCopyBadge :id="dispatch?.id ?? dispatchId" class="ml-2" prefix="DSP" />
+            </h3>
+        </template>
 
+        <template #body>
+            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <div class="flex flex-1 flex-col justify-between gap-1 px-2">
                     <template v-for="group in grouped" :key="group.key">
                         <h3 class="text-sm">
@@ -188,19 +173,19 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         </div>
                     </template>
                 </div>
+            </UForm>
+        </template>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
 
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.update') }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
+                    {{ $t('common.update') }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

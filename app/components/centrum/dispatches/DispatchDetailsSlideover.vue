@@ -37,7 +37,7 @@ const { canDo, selfAssign } = centrumStore;
 
 const centrumCentrumClient = await getCentrumCentrumClient();
 
-const dispatch = computed(() => (props.dispatch ? props.dispatch : dispatches.value.get(props.dispatchId)));
+const dispatch = computed(() => (props.dispatch ? props.dispatch : dispatches.value.get(props.dispatchId)!));
 
 async function deleteDispatch(id: number): Promise<void> {
     try {
@@ -69,27 +69,17 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
 
 <template>
     <USlideover :overlay="false">
-        <UCard v-if="dispatch">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <div class="inline-flex items-center">
-                        <IDCopyBadge :id="dispatch.id" class="mx-2" prefix="DSP" />
+        <template #title>
+            <div class="inline-flex items-center">
+                <IDCopyBadge :id="dispatch.id" class="mx-2" prefix="DSP" />
 
-                        <p class="max-w-80 flex-1 truncate">
-                            {{ dispatch.message }}
-                        </p>
-                    </div>
+                <p class="max-w-80 flex-1 truncate">
+                    {{ dispatch.message }}
+                </p>
+            </div>
+        </template>
 
-                    <UButton
-                        class="-my-1"
-                        color="neutral"
-                        variant="ghost"
-                        icon="i-mdi-window-close"
-                        @click="$emit('close', false)"
-                    />
-                </div>
-            </template>
-
+        <template #body>
             <div class="divide-y divide-gray-100 dark:divide-gray-800">
                 <div>
                     <dl class="divide-neutral/10 divide-y">
@@ -328,29 +318,29 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                     <DispatchFeed :dispatch-id="dispatch.id" />
                 </div>
             </div>
+        </template>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton color="neutral" class="flex-1" block @click="$emit('close', false)">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton color="neutral" class="flex-1" block @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
 
-                    <UTooltip
-                        v-if="can('centrum.CentrumService/DeleteDispatch').value && canAccessDispatch.dispatch"
-                        :text="$t('common.delete')"
-                    >
-                        <UButton
-                            icon="i-mdi-delete"
-                            color="error"
-                            @click="
-                                confirmModal.open({
-                                    confirm: async () => dispatch && deleteDispatch(dispatch.id),
-                                })
-                            "
-                        />
-                    </UTooltip>
-                </UButtonGroup>
-            </template>
-        </UCard>
+                <UTooltip
+                    v-if="can('centrum.CentrumService/DeleteDispatch').value && canAccessDispatch.dispatch"
+                    :text="$t('common.delete')"
+                >
+                    <UButton
+                        icon="i-mdi-delete"
+                        color="error"
+                        @click="
+                            confirmModal.open({
+                                confirm: async () => dispatch && deleteDispatch(dispatch.id),
+                            })
+                        "
+                    />
+                </UTooltip>
+            </UButtonGroup>
+        </template>
     </USlideover>
 </template>

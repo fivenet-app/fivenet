@@ -13,12 +13,11 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
     (e: 'update:account', account: Account | undefined): void;
 }>();
 
 const account = useVModel(props, 'account', emit);
-
-const { isOpen } = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -54,7 +53,7 @@ async function updateAccount(values: Schema): Promise<UpdateAccountResponse | un
             });
         }
 
-        isOpen.value = false;
+        emit('close', false);
 
         return response;
     } catch (e) {
@@ -79,69 +78,57 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UModal>
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard>
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
-                            {{ $t('components.settings.accounts.edit_account') }}: {{ account.username }} ({{ account.id }})
-                        </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ $t('components.settings.accounts.edit_account') }}: {{ account.username }} ({{ account.id }})
+            </h3>
+        </template>
 
-                        <UButton
-                            class="-my-1"
-                            color="neutral"
-                            variant="ghost"
-                            icon="i-mdi-window-close"
-                            @click="isOpen = false"
-                        />
-                    </div>
-                </template>
-
+        <template #body>
+            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <div>
-                    <div>
-                        <UFormField class="flex-1" name="enabled" :label="$t('common.enabled')" required>
-                            <USwitch v-model="state.enabled" name="enabled" />
-                        </UFormField>
-                    </div>
-
-                    <div>
-                        <UFormField class="flex-1" name="oauth2Accounts" :label="$t('components.auth.OAuth2Connections.title')">
-                            <div class="flex flex-col gap-2">
-                                <DataNoDataBlock
-                                    v-if="account.oauth2Accounts.length === 0"
-                                    :type="$t('components.auth.OAuth2Connections.title')"
-                                />
-
-                                <template v-else>
-                                    <AccountOAuth2Connection
-                                        v-for="connection in account.oauth2Accounts"
-                                        :key="connection.providerName"
-                                        :account-id="account.id"
-                                        :connection="connection"
-                                        @deleted="
-                                            account.oauth2Accounts = account.oauth2Accounts.filter(
-                                                (c) => c.providerName !== connection.providerName,
-                                            )
-                                        "
-                                    />
-                                </template>
-                            </div>
-                        </UFormField>
-                    </div>
+                    <UFormField class="flex-1" name="enabled" :label="$t('common.enabled')" required>
+                        <USwitch v-model="state.enabled" name="enabled" />
+                    </UFormField>
                 </div>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" block color="neutral" @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
+                <div>
+                    <UFormField class="flex-1" name="oauth2Accounts" :label="$t('components.auth.OAuth2Connections.title')">
+                        <div class="flex flex-col gap-2">
+                            <DataNoDataBlock
+                                v-if="account.oauth2Accounts.length === 0"
+                                :type="$t('components.auth.OAuth2Connections.title')"
+                            />
 
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.save') }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                            <template v-else>
+                                <AccountOAuth2Connection
+                                    v-for="connection in account.oauth2Accounts"
+                                    :key="connection.providerName"
+                                    :account-id="account.id"
+                                    :connection="connection"
+                                    @deleted="
+                                        account.oauth2Accounts = account.oauth2Accounts.filter(
+                                            (c) => c.providerName !== connection.providerName,
+                                        )
+                                    "
+                                />
+                            </template>
+                        </div>
+                    </UFormField>
+                </div>
+            </UForm>
+        </template>
+
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" block color="neutral" @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
+
+                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
+                    {{ $t('common.save') }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

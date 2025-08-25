@@ -289,8 +289,8 @@ const columns = computed(
                                     </span>
                                 </template>
 
-                                <template #item="{ option: colleague }">
-                                    <ColleagueName class="truncate" :colleague="colleague" birthday />
+                                <template #item="{ item }">
+                                    <ColleagueName class="truncate" :colleague="item" birthday />
                                 </template>
 
                                 <template #empty>
@@ -316,9 +316,9 @@ const columns = computed(
                                     {{ $t('common.selected', query.types.length) }}
                                 </template>
 
-                                <template #item="{ option }">
-                                    <span class="truncate" :class="conductTypesToBGColor(option.status)">
-                                        {{ $t(`enums.jobs.ConductType.${ConductType[option.status]}`) }}
+                                <template #item="{ item }">
+                                    <span class="truncate" :class="conductTypesToBGColor(item.status)">
+                                        {{ $t(`enums.jobs.ConductType.${ConductType[item.status]}`) }}
                                     </span>
                                 </template>
 
@@ -338,11 +338,7 @@ const columns = computed(
                         :ui="{ container: 'flex-1 flex' }"
                     >
                         <div class="flex flex-1 items-center">
-                            <USwitch v-model="query.showExpired">
-                                <span class="sr-only">
-                                    {{ $t('components.jobs.conduct.List.show_expired') }}
-                                </span>
-                            </USwitch>
+                            <USwitch v-model="query.showExpired" />
                         </div>
                     </UFormField>
 

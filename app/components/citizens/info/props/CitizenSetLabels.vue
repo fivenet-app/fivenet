@@ -167,12 +167,12 @@ watch(state, () => {
                         {{ $t('common.selected', state.labels.length) }}
                     </template>
 
-                    <template #item="{ option }">
+                    <template #item="{ item }">
                         <span
                             class="truncate"
-                            :class="isColorBright(hexToRgb(option.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
-                            :style="{ backgroundColor: option.color }"
-                            >{{ option.name }}</span
+                            :class="isColorBright(hexToRgb(item.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
+                            :style="{ backgroundColor: item.color }"
+                            >{{ item.name }}</span
                         >
                     </template>
 

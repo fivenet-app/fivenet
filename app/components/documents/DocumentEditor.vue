@@ -515,17 +515,7 @@ provide('yjsProvider', provider);
                 icon="i-mdi-file-search"
                 :message="$t('common.not_found', [$t('common.page', 1)])"
             />
-            <UTabs
-                v-else
-                v-model="selectedTab"
-                class="flex flex-1 flex-col"
-                :items="items"
-                :ui="{
-                    wrapper: 'space-y-0 overflow-y-hidden',
-                    container: 'flex flex-1 flex-col overflow-y-hidden',
-                    base: 'flex flex-1 flex-col overflow-y-hidden',
-                }"
-            >
+            <UTabs v-else v-model="selectedTab" class="flex flex-1 flex-col" :items="items">
                 <template #content>
                     <UDashboardToolbar>
                         <template #default>
@@ -595,17 +585,17 @@ provide('yjsProvider', provider);
                                                     <span v-else> &nbsp; </span>
                                                 </template>
 
-                                                <template #item="{ option }">
-                                                    <span class="inline-flex gap-1" :class="`bg-${option.color}-500`">
+                                                <template #item="{ item }">
+                                                    <span class="inline-flex gap-1" :class="`bg-${item.color}-500`">
                                                         <component
                                                             :is="
-                                                                availableIcons.find((item) => item.name === option.icon)
+                                                                availableIcons.find((item) => item.name === item.icon)
                                                                     ?.component ?? fallbackIcon.component
                                                             "
-                                                            v-if="option.icon"
+                                                            v-if="item.icon"
                                                             class="size-5"
                                                         />
-                                                        <span class="truncate">{{ option.name }}</span>
+                                                        <span class="truncate">{{ item.name }}</span>
                                                     </span>
                                                 </template>
 

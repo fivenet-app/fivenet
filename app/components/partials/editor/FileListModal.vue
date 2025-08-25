@@ -9,27 +9,20 @@ defineProps<{
     files: File[];
 }>();
 
-const { isOpen } = useOverlay();
+defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 </script>
 
 <template>
     <UModal>
-        <UCard
-            :ui="{
-                base: 'flex flex-1 flex-col',
-                body: { base: 'flex flex-1 flex-col' },
-            }"
-        >
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl leading-6 font-semibold">
-                        {{ $t('components.partials.TiptapEditor.file_list') }}
-                    </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ $t('components.partials.TiptapEditor.file_list') }}
+            </h3>
+        </template>
 
-                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                </div>
-            </template>
-
+        <template #body>
             <div class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-1 flex-col">
                 <DataNoDataBlock v-if="files.length === 0" :message="$t('components.partials.TiptapEditor.file_list_empty')" />
 
@@ -74,7 +67,7 @@ const { isOpen } = useOverlay();
                                                     fileId: file.id,
                                                 })
                                                 .run();
-                                            isOpen = false;
+                                            $emit('close', false);
                                         "
                                     />
                                 </UTooltip>
@@ -96,14 +89,14 @@ const { isOpen } = useOverlay();
                     :description="$t('components.partials.TiptapEditor.file_list_hint')"
                 />
             </div>
+        </template>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" block color="neutral" @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
-                </UButtonGroup>
-            </template>
-        </UCard>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" block color="neutral" @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

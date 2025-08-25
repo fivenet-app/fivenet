@@ -18,10 +18,9 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
     (e: 'refresh'): void;
 }>();
-
-const { isOpen } = useOverlay();
 
 const { attr, can, activeChar } = useAuth();
 
@@ -149,147 +148,121 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UModal>
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard>
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl leading-6 font-semibold">
-                            {{ $t('common.request', 2) }}
-                        </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ $t('common.request', 2) }}
+            </h3>
+        </template>
 
-                        <UButton
-                            class="-my-1"
-                            color="neutral"
-                            variant="ghost"
-                            icon="i-mdi-window-close"
-                            @click="isOpen = false"
-                        />
-                    </div>
-                </template>
+        <template #body>
+            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <template v-if="canDo.create">
+                    <UFormField name="reason" :label="$t('common.reason')" required>
+                        <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
+                    </UFormField>
 
-                <div>
-                    <template v-if="canDo.create">
-                        <UFormField name="reason" :label="$t('common.reason')" required>
-                            <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
+                    <div class="my-2">
+                        <UFormField class="flex-1" name="requestsType" :label="$t('common.type', 2)">
+                            <ClientOnly>
+                                <USelectMenu
+                                    v-model="state.requestType"
+                                    :items="availableRequestTypes"
+                                    value-key="key"
+                                    :placeholder="$t('common.type')"
+                                    :searchable-placeholder="$t('common.search_field')"
+                                >
+                                    <template #item-label>
+                                        <span v-if="state.requestType" class="truncate">
+                                            {{ $t(`enums.documents.DocActivityType.${DocActivityType[state.requestType]}`, 2) }}
+                                        </span>
+                                    </template>
+
+                                    <template #item="{ item }">
+                                        <span class="truncate">{{
+                                            $t(`enums.documents.DocActivityType.${DocActivityType[item.key]}`, 2)
+                                        }}</span>
+                                    </template>
+
+                                    <template #empty>
+                                        {{ $t('common.not_found', [$t('common.type', 2)]) }}
+                                    </template>
+                                </USelectMenu>
+                            </ClientOnly>
                         </UFormField>
-
-                        <div class="my-2">
-                            <UFormField class="flex-1" name="requestsType" :label="$t('common.type', 2)">
-                                <ClientOnly>
-                                    <USelectMenu
-                                        v-model="state.requestType"
-                                        :items="availableRequestTypes"
-                                        value-key="key"
-                                        :placeholder="$t('common.type')"
-                                        :searchable-placeholder="$t('common.search_field')"
-                                    >
-                                        <template #item-label>
-                                            <span v-if="state.requestType" class="truncate">
-                                                {{
-                                                    $t(
-                                                        `enums.documents.DocActivityType.${DocActivityType[state.requestType]}`,
-                                                        2,
-                                                    )
-                                                }}
-                                            </span>
-                                        </template>
-
-                                        <template #item="{ option }">
-                                            <span class="truncate">{{
-                                                $t(`enums.documents.DocActivityType.${DocActivityType[option.key]}`, 2)
-                                            }}</span>
-                                        </template>
-
-                                        <template #empty>
-                                            {{ $t('common.not_found', [$t('common.type', 2)]) }}
-                                        </template>
-                                    </USelectMenu>
-                                </ClientOnly>
-                            </UFormField>
-                        </div>
-                    </template>
-
-                    <div>
-                        <ul
-                            v-if="isRequestPending(status)"
-                            class="mb-6 divide-y divide-gray-800 rounded-md dark:divide-gray-500"
-                            role="list"
-                        >
-                            <li v-for="idx in 2" :key="idx" class="flex justify-between gap-x-4 py-4">
-                                <div class="flex min-w-0 gap-x-2 px-2">
-                                    <div class="min-w-0 flex-auto">
-                                        <p class="text-base leading-6 font-semibold text-gray-100">
-                                            <USkeleton class="h-8 w-[325px]" />
-                                        </p>
-                                        <p class="mt-1 flex gap-1 text-sm leading-5">
-                                            <USkeleton class="h-6 w-[350px]" />
-                                        </p>
-                                        <p class="mt-1 flex gap-1 text-sm leading-5">
-                                            <USkeleton class="h-6 w-[175px]" />
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="flex shrink-0 items-center gap-x-6 px-2">
-                                    <div class="hidden gap-1 text-sm sm:flex sm:flex-col sm:items-end">
-                                        <div class="inline-flex gap-1">
-                                            <USkeleton class="h-8 w-[250px]" />
-                                        </div>
-                                        <div>
-                                            <USkeleton class="h-8 w-[200px]" />
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <USkeleton class="h-8 w-[63px]" />
-
-                                        <USkeleton class="h-8 w-[63px]" />
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                        <DataErrorBlock
-                            v-else-if="error"
-                            :title="$t('common.unable_to_load', [$t('common.request', 2)])"
-                            :error="error"
-                            :retry="refresh"
-                        />
-                        <DataNoDataBlock
-                            v-else-if="!requests || requests.requests.length === 0"
-                            icon="i-mdi-frequently-asked-questions"
-                            :message="$t('common.not_found', [$t('common.request', 2)])"
-                        />
-
-                        <ul v-else class="mb-6 divide-y divide-gray-800 rounded-md dark:divide-gray-500" role="list">
-                            <DocumentRequestListEntry
-                                v-for="request in requests.requests"
-                                :key="request.id"
-                                :request="request"
-                                :can-update="canDo.update"
-                                :can-delete="canDo.delete"
-                                @refresh-requests="refresh()"
-                            />
-                        </ul>
                     </div>
-                </div>
-
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
-
-                        <UButton
-                            v-if="canDo.create"
-                            class="flex-1"
-                            type="submit"
-                            block
-                            :disabled="!canSubmit"
-                            :loading="!canSubmit"
-                        >
-                            {{ $t('common.add') }}
-                        </UButton>
-                    </UButtonGroup>
                 </template>
-            </UCard>
-        </UForm>
+
+                <ul
+                    v-if="isRequestPending(status)"
+                    class="mb-6 divide-y divide-gray-800 rounded-md dark:divide-gray-500"
+                    role="list"
+                >
+                    <li v-for="idx in 2" :key="idx" class="flex justify-between gap-x-4 py-4">
+                        <div class="flex min-w-0 gap-x-2 px-2">
+                            <div class="min-w-0 flex-auto">
+                                <p class="text-base leading-6 font-semibold text-gray-100">
+                                    <USkeleton class="h-8 w-[325px]" />
+                                </p>
+                                <p class="mt-1 flex gap-1 text-sm leading-5">
+                                    <USkeleton class="h-6 w-[350px]" />
+                                </p>
+                                <p class="mt-1 flex gap-1 text-sm leading-5">
+                                    <USkeleton class="h-6 w-[175px]" />
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex shrink-0 items-center gap-x-6 px-2">
+                            <div class="hidden gap-1 text-sm sm:flex sm:flex-col sm:items-end">
+                                <div class="inline-flex gap-1">
+                                    <USkeleton class="h-8 w-[250px]" />
+                                </div>
+                                <div>
+                                    <USkeleton class="h-8 w-[200px]" />
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <USkeleton class="h-8 w-[63px]" />
+
+                                <USkeleton class="h-8 w-[63px]" />
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <DataErrorBlock
+                    v-else-if="error"
+                    :title="$t('common.unable_to_load', [$t('common.request', 2)])"
+                    :error="error"
+                    :retry="refresh"
+                />
+                <DataNoDataBlock
+                    v-else-if="!requests || requests.requests.length === 0"
+                    icon="i-mdi-frequently-asked-questions"
+                    :message="$t('common.not_found', [$t('common.request', 2)])"
+                />
+
+                <ul v-else class="mb-6 divide-y divide-gray-800 rounded-md dark:divide-gray-500" role="list">
+                    <DocumentRequestListEntry
+                        v-for="request in requests.requests"
+                        :key="request.id"
+                        :request="request"
+                        :can-update="canDo.update"
+                        :can-delete="canDo.delete"
+                        @refresh-requests="refresh()"
+                    />
+                </ul>
+            </UForm>
+        </template>
+
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
+
+                <UButton v-if="canDo.create" class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
+                    {{ $t('common.add') }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

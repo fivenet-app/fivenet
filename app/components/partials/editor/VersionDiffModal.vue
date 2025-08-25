@@ -82,43 +82,31 @@ function close() {
 </script>
 
 <template>
-    <UCard
-        class="flex flex-1 flex-col"
-        :ui="{
-            body: {
-                padding: 'px-1 py-2 sm:p-2',
-            },
-        }"
-    >
-        <template #header>
-            <div class="flex items-center justify-between">
-                <h3 class="text-2xl leading-6 font-semibold">
-                    {{ $t('common.version_history') }}
-                </h3>
-
-                <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="close" />
-            </div>
+    <UCard class="flex flex-1 flex-col">
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ $t('common.version_history') }}
+            </h3>
         </template>
 
-        <div>
-            <div class="space-y-4">
-                <div>
-                    <div class="mb-1 font-semibold">{{ $t('common.content') }}</div>
-                    <CodeDiff
-                        class="rounded border"
-                        :old-string="prettyCurrent"
-                        :new-string="prettySelected"
-                        :context="3"
-                        output-format="side-by-side"
-                        language="text"
-                        :theme="colorMode.value === 'dark' ? 'dark' : 'light'"
-                    >
-                        <template #stat="{ stat }">
-                            <span class="diff-stat-added">+{{ stat.additionsNum }} additions</span>
-                            <span class="diff-stat-deleted">-{{ stat.deletionsNum }} deletions</span>
-                        </template>
-                    </CodeDiff>
-                </div>
+        <div class="space-y-4">
+            <div>
+                <div class="mb-1 font-semibold">{{ $t('common.content') }}</div>
+                <CodeDiff
+                    class="rounded border"
+                    :old-string="prettyCurrent"
+                    :new-string="prettySelected"
+                    :context="3"
+                    output-format="side-by-side"
+                    language="text"
+                    :theme="colorMode.value === 'dark' ? 'dark' : 'light'"
+                >
+                    <!-- @vue-expect-error v-code-diff doesn't type the slot vars not even the slots currently -->
+                    <template #stat="{ stat }">
+                        <span class="diff-stat-added">+{{ stat.additionsNum }} additions</span>
+                        <span class="diff-stat-deleted">-{{ stat.deletionsNum }} deletions</span>
+                    </template>
+                </CodeDiff>
             </div>
         </div>
 

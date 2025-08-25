@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { CommandPaletteGroup } from '@nuxt/ui';
 import ClipboardModal from '~/components/clipboard/modal/ClipboardModal.vue';
-import WebSocketStatusOverlay from '~/components/partials/WebSocketStatusOverlay.vue';
 import MathCalculatorSlideover from '~/components/quickbuttons/mathcalculator/MathCalculatorSlideover.vue';
 import PenaltyCalculatorSlideover from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorSlideover.vue';
 import TopLogoDropdown from '~/components/TopLogoDropdown.vue';
@@ -16,7 +15,7 @@ const { can, activeChar, jobProps, isSuperuser } = useAuth();
 
 const { isDashboardSidebarSlideoverOpen, isHelpSlideoverOpen } = useDashboard();
 
-const modal = useOverlay();
+const overlay = useOverlay();
 
 const { website } = useAppConfig();
 
@@ -359,7 +358,7 @@ const groups = computed<CommandPaletteGroup[]>(() => [
     },
 ]);
 
-const clipboardModal = modal.create(ClipboardModal);
+const clipboardModal = overlay.create(ClipboardModal);
 
 const clipboardLink = computed(() =>
     [
@@ -378,8 +377,8 @@ const clipboardLink = computed(() =>
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
-const penaltyCalculatorModal = modal.create(PenaltyCalculatorSlideover);
-const mathCalculatorModal = modal.create(MathCalculatorSlideover);
+const penaltyCalculatorModal = overlay.create(PenaltyCalculatorSlideover);
+const mathCalculatorModal = overlay.create(MathCalculatorSlideover);
 
 const quickAccessButtons = computed(() =>
     [
@@ -410,13 +409,13 @@ const quickAccessButtons = computed(() =>
 <template>
     <UDashboardGroup unit="rem">
         <UDashboardSidebar
-            id="mainleftsidebar"
+            id="default"
             v-model:open="open"
             :default-size="15"
             :min-size="10"
             :max-size="25"
-            resizable
             collapsible
+            resizable
             class="bg-elevated/25"
             :ui="{ footer: 'lg:border-t lg:border-default' }"
         >
@@ -454,13 +453,6 @@ const quickAccessButtons = computed(() =>
         <slot />
 
         <ClientOnly>
-            <WebSocketStatusOverlay hide-overlay />
-
-            <!-- Events -->
-            <LazyPartialsEventsLayer />
-        </ClientOnly>
-
-        <ClientOnly>
             <LazyUDashboardSearch
                 v-if="activeChar"
                 :placeholder="`${$t('common.search_field')} (${$t('commandpalette.footer', { key1: '@', key2: '#' })})`"
@@ -495,6 +487,11 @@ const quickAccessButtons = computed(() =>
                 </template>
                 -->
             </LazyUDashboardSearch>
+
+            <LazyPartialsWebSocketStatusOverlay hide-overlay />
+
+            <!-- Events -->
+            <LazyPartialsEventsLayer />
         </ClientOnly>
     </UDashboardGroup>
 </template>

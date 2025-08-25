@@ -2,7 +2,9 @@
 import { z } from 'zod';
 import { useSettingsStore } from '~/stores/settings';
 
-const { isOpen } = useOverlay();
+defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 
 const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
@@ -19,22 +21,16 @@ const schema = z.object({
 
 <template>
     <UModal>
-        <UCard>
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl leading-6 font-semibold">
-                        {{ $t('common.setting', 2) }}
-                    </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ $t('common.setting', 2) }}
+            </h3>
+        </template>
 
-                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                </div>
-            </template>
-
+        <template #body>
             <UForm :schema="schema" :state="livemap">
                 <UFormField name="centerSelectedMarker" :label="$t('components.livemap.center_selected_marker')">
-                    <USwitch v-model="livemap.centerSelectedMarker">
-                        <span class="sr-only">{{ $t('components.livemap.center_selected_marker') }}</span>
-                    </USwitch>
+                    <USwitch v-model="livemap.centerSelectedMarker" />
                 </UFormField>
 
                 <UFormField name="markerSize" :label="$t('components.livemap.settings.marker_size')">
@@ -64,12 +60,12 @@ const schema = z.object({
                     <USwitch v-model="livemap.showGrid" />
                 </UFormField>
             </UForm>
+        </template>
 
-            <template #footer>
-                <UButton class="flex-1" block color="neutral" @click="isOpen = false">
-                    {{ $t('common.close', 1) }}
-                </UButton>
-            </template>
-        </UCard>
+        <template #footer>
+            <UButton class="flex-1" block color="neutral" @click="$emit('close', false)">
+                {{ $t('common.close', 1) }}
+            </UButton>
+        </template>
     </UModal>
 </template>

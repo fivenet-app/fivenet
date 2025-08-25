@@ -11,10 +11,9 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
     (e: 'updatedRequest', value?: QualificationRequest): void;
 }>();
-
-const { isOpen } = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -51,7 +50,7 @@ async function createOrUpdateQualificationRequest(
         });
 
         emit('updatedRequest', response.request);
-        isOpen.value = false;
+        emit('close', false);
 
         return response;
     } catch (e) {
@@ -71,42 +70,30 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UModal>
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard>
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl leading-6 font-semibold">
-                            {{ $t('components.qualifications.request_modal.title') }}
-                        </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ $t('components.qualifications.request_modal.title') }}
+            </h3>
+        </template>
 
-                        <UButton
-                            class="-my-1"
-                            color="neutral"
-                            variant="ghost"
-                            icon="i-mdi-window-close"
-                            @click="isOpen = false"
-                        />
-                    </div>
-                </template>
+        <template #body>
+            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UFormField class="flex-1" name="userComment" :label="$t('common.message')">
+                    <UTextarea v-model="state.userComment" name="userComment" :placeholder="$t('common.message')" />
+                </UFormField>
+            </UForm>
+        </template>
 
-                <div>
-                    <UFormField class="flex-1" name="userComment" :label="$t('common.message')">
-                        <UTextarea v-model="state.userComment" name="userComment" :placeholder="$t('common.message')" />
-                    </UFormField>
-                </div>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
-
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.submit') }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
+                    {{ $t('common.submit') }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

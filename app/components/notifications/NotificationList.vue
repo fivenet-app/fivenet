@@ -110,9 +110,7 @@ const canSubmit = ref(true);
                         :ui="{ container: 'flex-1 flex' }"
                     >
                         <div class="flex flex-1 items-center">
-                            <USwitch v-model="query.includeRead">
-                                <span class="sr-only">{{ $t('components.notifications.include_read') }}</span>
-                            </USwitch>
+                            <USwitch v-model="query.includeRead" />
                         </div>
                     </UFormField>
 
@@ -124,7 +122,7 @@ const canSubmit = ref(true);
                                 name="categories"
                                 :items="categories"
                                 option-attribute="label"
-                                value-key="chip"
+                                value-key="mode"
                                 :searchable-placeholder="$t('common.search_field')"
                             >
                                 <template #item-label>
@@ -133,9 +131,9 @@ const canSubmit = ref(true);
                                     </template>
                                 </template>
 
-                                <template #item="{ option }">
+                                <template #item="{ item }">
                                     <span class="truncate">{{
-                                        $t(`enums.notifications.NotificationCategory.${NotificationCategory[option.mode ?? 0]}`)
+                                        $t(`enums.notifications.NotificationCategory.${NotificationCategory[item.mode ?? 0]}`)
                                     }}</span>
                                 </template>
                             </USelectMenu>
@@ -233,25 +231,23 @@ const canSubmit = ref(true);
                     </div>
 
                     <div class="flex">
-                        <UButton
-                            v-if="!not.readAt"
-                            class="flex shrink items-center rounded-r-md p-1 text-sm font-semibold"
-                            :disabled="!canSubmit"
-                            icon="i-mdi-check"
-                            @click="markUnread(false, not.id).finally(timeoutFn)"
-                        >
-                            <span class="sr-only">{{ $t('components.notifications.mark_read') }}</span>
-                        </UButton>
-                        <UButton
-                            v-else
-                            class="flex shrink items-center rounded-r-md p-1 text-sm font-semibold"
-                            variant="soft"
-                            :disabled="!canSubmit"
-                            icon="i-mdi-read"
-                            @click="markUnread(true, not.id).finally(timeoutFn)"
-                        >
-                            <span class="sr-only">{{ $t('components.notifications.mark_unread') }}</span>
-                        </UButton>
+                        <UTooltip v-if="!not.readAt" :text="$t('components.notifications.mark_read')">
+                            <UButton
+                                class="flex shrink items-center rounded-r-md p-1 text-sm font-semibold"
+                                :disabled="!canSubmit"
+                                icon="i-mdi-check"
+                                @click="markUnread(false, not.id).finally(timeoutFn)"
+                            />
+                        </UTooltip>
+                        <UTooltip v-else :text="$t('components.notifications.mark_unread')">
+                            <UButton
+                                class="flex shrink items-center rounded-r-md p-1 text-sm font-semibold"
+                                variant="soft"
+                                :disabled="!canSubmit"
+                                icon="i-mdi-read"
+                                @click="markUnread(true, not.id).finally(timeoutFn)"
+                            />
+                        </UTooltip>
                     </div>
                 </li>
             </ul>

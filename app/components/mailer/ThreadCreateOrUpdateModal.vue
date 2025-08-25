@@ -9,7 +9,9 @@ import { defaultEmptyContent } from './helpers';
 import TemplateSelector from './TemplateSelector.vue';
 import ThreadAttachmentsForm from './ThreadAttachmentsForm.vue';
 
-const { isOpen } = useOverlay();
+const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 
 const { can, activeChar, isSuperuser } = useAuth();
 
@@ -82,7 +84,7 @@ async function createThread(values: Schema): Promise<void> {
     state.value.recipients = [];
     state.value.attachments = [];
 
-    isOpen.value = false;
+    emit('close', false);
 }
 
 onBeforeMount(() => {
@@ -111,29 +113,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UModal fullscreen>
-        <UForm class="flex flex-1 flex-col" :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard
-                :ui="{
-                    base: 'flex flex-1 flex-col',
-                    body: { base: 'flex flex-1 flex-col' },
-                }"
-            >
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl leading-6 font-semibold">
-                            {{ $t('components.mailer.create_thread') }}
-                        </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ $t('components.mailer.create_thread') }}
+            </h3>
+        </template>
 
-                        <UButton
-                            class="-my-1"
-                            color="neutral"
-                            variant="ghost"
-                            icon="i-mdi-window-close"
-                            @click="isOpen = false"
-                        />
-                    </div>
-                </template>
-
+        <template #body>
+            <UForm class="flex flex-1 flex-col" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <div class="mx-auto">
                     <div class="flex w-full max-w-(--breakpoint-xl) flex-1 flex-col">
                         <div class="flex w-full flex-col items-center justify-between gap-1">
@@ -183,17 +170,17 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             </span>
                                         </template>
 
-                                        <template #item="{ option }">
+                                        <template #item="{ item }">
                                             <span class="truncate">
                                                 {{
-                                                    (option?.label && option?.label !== ''
-                                                        ? option?.label + ' (' + option.email + ')'
+                                                    (item?.label && item?.label !== ''
+                                                        ? item?.label + ' (' + item.email + ')'
                                                         : undefined) ??
-                                                    (option?.userId
+                                                    (item?.userId
                                                         ? $t('common.personal_email') +
-                                                          (isSuperuser ? ' (' + option.email + ')' : '')
+                                                          (isSuperuser ? ' (' + item.email + ')' : '')
                                                         : undefined) ??
-                                                    option?.email ??
+                                                    item?.email ??
                                                     $t('common.none')
                                                 }}
                                             </span>
@@ -248,13 +235,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             ...addressBook.filter((r) => !state.recipients.includes(r)),
                                         ]"
                                         :searchable-placeholder="$t('common.mail', 1)"
-                                        creatable
                                         :disabled="!canSubmit"
+                                        create-item
                                     >
                                         <template #item-label>&nbsp;</template>
 
-                                        <template #option-create="{ option }">
-                                            <span class="shrink-0">{{ $t('common.recipient') }}: {{ option.label }}</span>
+                                        <template #option-create="{ item }">
+                                            <span class="shrink-0">{{ $t('common.recipient') }}: {{ item.label }}</span>
                                         </template>
 
                                         <template #empty>
@@ -289,7 +276,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :label="$t('common.message')"
                             :ui="{
                                 container: 'flex flex-1 flex-col',
-                                label: { base: 'flex flex-1' },
                             }"
                         >
                             <template #item-label>
@@ -317,24 +303,24 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         />
                     </div>
                 </div>
+            </UForm>
+        </template>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" block color="neutral" @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" block color="neutral" @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
 
-                        <UButton
-                            class="flex-1"
-                            type="submit"
-                            :disabled="!canSubmit"
-                            block
-                            :label="$t('components.mailer.send')"
-                            trailing-icon="i-mdi-paper-airplane"
-                        />
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                <UButton
+                    class="flex-1"
+                    type="submit"
+                    :disabled="!canSubmit"
+                    block
+                    :label="$t('components.mailer.send')"
+                    trailing-icon="i-mdi-paper-airplane"
+                />
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

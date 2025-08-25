@@ -27,8 +27,7 @@ const { t, d } = useI18n();
 
 const { can } = useAuth();
 
-const modal = useOverlay();
-const slideover = useOverlay();
+const overlay = useOverlay();
 
 const calendarStore = useCalendarStore();
 const { activeCalendarIds, currentDate, view, calendars, entries, hasEditAccessToCalendar } = storeToRefs(calendarStore);
@@ -217,11 +216,11 @@ function calendarIdChange(calendarId: number, state: boolean): void {
 
 const entryIdQuery = useRouteQuery('entry_id', undefined, { transform: Number });
 
-const calendarViewSlideover = modal.create(CalendarViewSlideover);
-const calendarCreateOrUpdateModal = modal.create(CalendarCreateOrUpdateModal);
-const entryViewSlideover = modal.create(EntryViewSlideover);
-const entryCreateOrUpdateModal = modal.create(EntryCreateOrUpdateModal);
-const findCalendarsModal = modal.create(FindCalendarModal);
+const calendarViewSlideover = overlay.create(CalendarViewSlideover);
+const calendarCreateOrUpdateModal = overlay.create(CalendarCreateOrUpdateModal);
+const entryViewSlideover = overlay.create(EntryViewSlideover);
+const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
+const findCalendarsModal = overlay.create(FindCalendarModal);
 
 watch(entryIdQuery, () => {
     if (!entryIdQuery.value) {
@@ -498,9 +497,9 @@ const isOpen = ref(false);
                             {{ viewOptions.find((o) => o.value === view)?.label ?? $t('common.na') }}
                         </template>
 
-                        <template #item="{ option }">
-                            <UIcon class="size-5" :name="option.icon" />
-                            <span class="truncate">{{ option.label }}</span>
+                        <template #item="{ item }">
+                            <UIcon class="size-5" :name="item.icon" />
+                            <span class="truncate">{{ item.label }}</span>
                         </template>
                     </USelectMenu>
                 </ClientOnly>
@@ -606,9 +605,9 @@ const isOpen = ref(false);
                             {{ viewOptions.find((o) => o.value === view)?.label ?? $t('common.na') }}
                         </template>
 
-                        <template #item="{ option }">
-                            <UIcon class="size-5" :name="option.icon" />
-                            <span class="truncate">{{ option.label }}</span>
+                        <template #item="{ item }">
+                            <UIcon class="size-5" :name="item.icon" />
+                            <span class="truncate">{{ item.label }}</span>
                         </template>
                     </USelectMenu>
                 </ClientOnly>

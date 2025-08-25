@@ -17,6 +17,7 @@ import { type AuditEntry, EventType } from '~~/gen/ts/resources/audit/audit';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ViewAuditLogRequest, ViewAuditLogResponse } from '~~/gen/ts/services/settings/settings';
+import { grpcMethods, grpcServices } from '~~/gen/ts/svcs';
 import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 import { eventTypeToBadgeColor } from './helpers';
 
@@ -313,9 +314,9 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                     </span>
                                 </template>
 
-                                <template #item="{ option: user }">
+                                <template #item="{ item }">
                                     <span class="truncate">
-                                        {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                        {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
                                     </span>
                                 </template>
 
@@ -369,10 +370,6 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                         :placeholder="$t('common.service')"
                                         :items="grpcServices.map((s) => s.split('.').pop() ?? s)"
                                     >
-                                        <template #item="{ option }">
-                                            {{ option }}
-                                        </template>
-
                                         <template #empty>
                                             {{ $t('common.not_found', [$t('common.service')]) }}
                                         </template>
@@ -389,8 +386,8 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                     :placeholder="$t('common.method')"
                                     :items="grpcMethods.filter((m) => query.services.some((s) => m.includes('.' + s + '/')))"
                                 >
-                                    <template #item="{ option }">
-                                        {{ option.split('/').pop() }}
+                                    <template #item="{ item }">
+                                        {{ item.split('/').pop() }}
                                     </template>
 
                                     <template #empty>
@@ -416,8 +413,8 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                             </span>
                                         </template>
 
-                                        <template #item="{ option }">
-                                            {{ $t(`enums.settings.AuditLog.EventType.${EventType[option.eventType]}`) }}
+                                        <template #item="{ item }">
+                                            {{ $t(`enums.settings.AuditLog.EventType.${EventType[item.eventType]}`) }}
                                         </template>
 
                                         <template #empty>

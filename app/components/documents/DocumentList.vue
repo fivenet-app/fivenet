@@ -298,17 +298,17 @@ defineShortcuts({
                                         <span v-else> &nbsp; </span>
                                     </template>
 
-                                    <template #item="{ option }">
-                                        <span class="inline-flex gap-1" :class="`bg-${option.color}-500`">
+                                    <template #item="{ item }">
+                                        <span class="inline-flex gap-1" :class="`bg-${item.color}-500`">
                                             <component
                                                 :is="
-                                                    availableIcons.find((item) => item.name === option.icon)?.component ??
+                                                    availableIcons.find((item) => item.name === item.icon)?.component ??
                                                     fallbackIcon.component
                                                 "
-                                                v-if="option.icon"
+                                                v-if="item.icon"
                                                 class="size-5"
                                             />
-                                            <span class="truncate">{{ option.name }}</span>
+                                            <span class="truncate">{{ item.name }}</span>
                                         </span>
                                     </template>
 
@@ -348,8 +348,8 @@ defineShortcuts({
                                         </template>
                                     </template>
 
-                                    <template #item="{ option: user }">
-                                        {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                    <template #item="{ item }">
+                                        {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
                                     </template>
 
                                     <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
@@ -389,11 +389,11 @@ defineShortcuts({
                                         </div>
                                     </template>
 
-                                    <template #item="{ option }">
+                                    <template #item="{ item }">
                                         <div class="inline-flex items-center gap-1 truncate">
-                                            <template v-if="typeof option.closed === 'boolean'">
+                                            <template v-if="typeof item.closed === 'boolean'">
                                                 <UIcon
-                                                    v-if="!option.closed"
+                                                    v-if="!item.closed"
                                                     class="size-4"
                                                     name="i-mdi-lock-open-variant"
                                                     color="green"
@@ -401,7 +401,7 @@ defineShortcuts({
                                                 <UIcon v-else class="size-4" name="i-mdi-lock" color="error" />
                                             </template>
 
-                                            {{ option.label }}
+                                            {{ item.label }}
                                         </div>
                                     </template>
                                 </USelectMenu>

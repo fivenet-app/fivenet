@@ -7,7 +7,9 @@ import { useAuthStore } from '~/stores/auth';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const { isOpen } = useOverlay();
+const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
@@ -60,7 +62,7 @@ async function uploadAvatar(files: File[]): Promise<void> {
 
             activeChar.value!.avatar = resp.file?.filePath;
 
-            isOpen.value = false;
+            emit('close', false);
         } catch (e) {
             handleGRPCError(e as Error);
             throw e;
@@ -82,7 +84,7 @@ async function deleteAvatar(): Promise<void> {
 
         activeChar.value!.avatar = undefined;
 
-        isOpen.value = false;
+        emit('close', false);
     } catch (e) {
         handleGRPCError(e as Error);
         throw e;
@@ -104,81 +106,69 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UModal>
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard>
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl leading-6 font-semibold">
-                            {{ $t('components.jobs.self_service.set_profile_picture') }}
-                        </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ $t('components.jobs.self_service.set_profile_picture') }}
+            </h3>
+        </template>
 
-                        <UButton
-                            class="-my-1"
-                            color="neutral"
-                            variant="ghost"
-                            icon="i-mdi-window-close"
-                            @click="isOpen = false"
-                        />
-                    </div>
-                </template>
-
-                <div>
-                    <UFormField name="avatar" :label="$t('common.avatar')">
-                        <div class="flex flex-col gap-2">
-                            <NotSupportedTabletBlock v-if="nuiEnabled" />
-                            <div v-else class="flex flex-col gap-1">
-                                <div class="flex flex-1 flex-row gap-1">
-                                    <UInput
-                                        class="flex-1"
-                                        name="mugshot"
-                                        type="file"
-                                        :accept="appConfig.fileUpload.types.images.join(',')"
-                                        block
-                                        :placeholder="$t('common.image')"
-                                        :disabled="!canSubmit"
-                                        @change="handleFileChanges"
-                                    />
-                                </div>
-                            </div>
-
-                            <div class="flex w-full flex-col items-center justify-center gap-2">
-                                <GenericImg
-                                    v-if="activeChar?.avatar"
-                                    size="3xl"
-                                    :src="`${activeChar.avatar}?date=${new Date().getTime()}`"
-                                    :no-blur="true"
+        <template #body>
+            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UFormField name="avatar" :label="$t('common.avatar')">
+                    <div class="flex flex-col gap-2">
+                        <NotSupportedTabletBlock v-if="nuiEnabled" />
+                        <div v-else class="flex flex-col gap-1">
+                            <div class="flex flex-1 flex-row gap-1">
+                                <UInput
+                                    class="flex-1"
+                                    name="mugshot"
+                                    type="file"
+                                    :accept="appConfig.fileUpload.types.images.join(',')"
+                                    block
+                                    :placeholder="$t('common.image')"
+                                    :disabled="!canSubmit"
+                                    @change="handleFileChanges"
                                 />
-
-                                <UAlert icon="i-mdi-information-outline" :description="$t('common.image_caching')" />
                             </div>
                         </div>
-                    </UFormField>
-                </div>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.save') }}
-                        </UButton>
+                        <div class="flex w-full flex-col items-center justify-center gap-2">
+                            <GenericImg
+                                v-if="activeChar?.avatar"
+                                size="3xl"
+                                :src="`${activeChar.avatar}?date=${new Date().getTime()}`"
+                                :no-blur="true"
+                            />
 
-                        <UButton
-                            class="flex-1"
-                            type="submit"
-                            block
-                            color="error"
-                            :disabled="!canSubmit || !activeChar?.avatar"
-                            :loading="!canSubmit"
-                            @click="state.reset = true"
-                        >
-                            {{ $t('common.reset') }}
-                        </UButton>
+                            <UAlert icon="i-mdi-information-outline" :description="$t('common.image_caching')" />
+                        </div>
+                    </div>
+                </UFormField>
+            </UForm>
+        </template>
 
-                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
+                    {{ $t('common.save') }}
+                </UButton>
+
+                <UButton
+                    class="flex-1"
+                    type="submit"
+                    block
+                    color="error"
+                    :disabled="!canSubmit || !activeChar?.avatar"
+                    :loading="!canSubmit"
+                    @click="state.reset = true"
+                >
+                    {{ $t('common.reset') }}
+                </UButton>
+
+                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

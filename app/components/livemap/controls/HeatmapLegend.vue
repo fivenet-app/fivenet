@@ -33,7 +33,7 @@ const barStyle = computed(() => {
 
 <template>
     <LControl position="bottomright">
-        <div v-if="show" class="bg-background space-y-1 rounded-md p-1 text-xs font-medium shadow-md">
+        <div v-if="show" class="space-y-1 rounded-md bg-default p-1 text-xs font-medium shadow-md">
             <!-- Gradient bar -->
             <div class="h-2 w-32 rounded-sm" :style="barStyle" />
             <!-- Captions -->

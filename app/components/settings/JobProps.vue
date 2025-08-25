@@ -456,41 +456,33 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="settings.absencePastDays"
                                     :label="$t('components.settings.job_props.settings.absence.past_days')"
+                                    :description="$t('common.day', 2)"
                                     :ui="{ container: '' }"
                                 >
-                                    <div class="flex items-center gap-1">
-                                        <UInput
-                                            v-model="state.settings.absencePastDays"
-                                            class="flex-1"
-                                            type="number"
-                                            :disabled="!canSubmit || !canEdit"
-                                            :min="0"
-                                            :placeholder="$t('common.day', 2)"
-                                            :label="$t('common.day', 2)"
-                                        />
-                                        <span>{{ $t('common.day', 2) }}</span>
-                                    </div>
+                                    <UInputNumber
+                                        v-model="state.settings.absencePastDays"
+                                        :disabled="!canSubmit || !canEdit"
+                                        :min="0"
+                                        :placeholder="$t('common.day', 2)"
+                                        :label="$t('common.day', 2)"
+                                    />
                                 </UFormField>
 
                                 <UFormField
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="settings.absenceFutureDays"
                                     :label="$t('components.settings.job_props.settings.absence.future_days')"
+                                    :description="$t('common.day', 2)"
                                     :ui="{ container: '' }"
                                 >
-                                    <div class="flex items-center gap-1">
-                                        <UInput
-                                            v-model="state.settings.absenceFutureDays"
-                                            class="flex-1"
-                                            type="number"
-                                            :disabled="!canSubmit || !canEdit"
-                                            :min="7"
-                                            :max="186"
-                                            :placeholder="$t('common.day', 2)"
-                                            :label="$t('common.day', 2)"
-                                        />
-                                        <span>{{ $t('common.day', 2) }}</span>
-                                    </div>
+                                    <UInputNumber
+                                        v-model="state.settings.absenceFutureDays"
+                                        :disabled="!canSubmit || !canEdit"
+                                        :min="7"
+                                        :max="186"
+                                        :placeholder="$t('common.day', 2)"
+                                        :label="$t('common.day', 2)"
+                                    />'
                                 </UFormField>
                             </UPageCard>
                         </UDashboardPanelContent>
@@ -568,10 +560,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             </div>
                                         </template>
 
-                                        <template #item="{ option }">
+                                        <template #item="{ item }">
                                             <div class="inline-flex items-center gap-2">
-                                                <UAvatar :src="option.icon" :alt="option.name" />
-                                                <span class="truncate">{{ option.name }}</span>
+                                                <UAvatar :src="item.icon" :alt="item.name" />
+                                                <span class="truncate">{{ item.name }}</span>
                                             </div>
                                         </template>
 
@@ -642,8 +634,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             }}</span>
                                         </template>
 
-                                        <template #item="{ option }">
-                                            <span class="truncate">{{ option.name }} ({{ option.id }})</span>
+                                        <template #item="{ item }">
+                                            <span class="truncate">{{ item.name }} ({{ item.id }})</span>
                                         </template>
 
                                         <template #empty>
@@ -654,7 +646,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                                 <UAlert
                                     :ui="{
-                                        icon: { base: 'size-6' },
+                                        icon: 'size-6',
                                     }"
                                     icon="i-mdi-information-outline"
                                     :description="
@@ -820,10 +812,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     }}
                                                 </template>
 
-                                                <template #item="{ option }">
+                                                <template #item="{ item }">
                                                     <span class="truncate">{{
                                                         $t(
-                                                            `enums.settings.UserInfoSyncUnemployedMode.${UserInfoSyncUnemployedMode[option.value]}`,
+                                                            `enums.settings.UserInfoSyncUnemployedMode.${UserInfoSyncUnemployedMode[item.value]}`,
                                                         )
                                                     }}</span>
                                                 </template>
@@ -1119,8 +1111,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     }}</span>
                                                 </template>
 
-                                                <template #item="{ option }">
-                                                    <span class="truncate">{{ $d(toDate(option.time), 'short') }}</span>
+                                                <template #item="{ item }">
+                                                    <span class="truncate">{{ $d(toDate(item.time), 'short') }}</span>
                                                 </template>
                                             </USelectMenu>
                                         </ClientOnly>

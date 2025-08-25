@@ -22,7 +22,7 @@ function spoilerNeeded(activityType: PageActivityType): boolean {
 
 <template>
     <li
-        class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white px-2 py-2 dark:border-gray-900"
+        class="border-white px-2 py-2 hover:border-primary-500/25 hover:bg-primary-100/50 dark:border-gray-900 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
     >
         <div v-if="!spoilerNeeded(entry.activityType)" class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
@@ -78,7 +78,7 @@ function spoilerNeeded(activityType: PageActivityType): boolean {
             </template>
 
             <template v-if="entry.activityType === PageActivityType.UPDATED" #item>
-                <div class="bg-background rounded-md p-2">
+                <div class="rounded-md bg-default p-2">
                     <ActivityPageUpdatedDiff
                         v-if="entry.data?.data.oneofKind === 'updated'"
                         :update="entry.data?.data.updated"

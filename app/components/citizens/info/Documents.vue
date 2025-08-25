@@ -154,7 +154,7 @@ const columns = computed(
                         <USelectMenu
                             v-model="query.closed"
                             :items="openclose"
-                            value-key="closed"
+                            value-key="value"
                             :searchable-placeholder="$t('common.search_field')"
                         >
                             <template #item-label>
@@ -181,11 +181,11 @@ const columns = computed(
                                 {{ $t('common.selected', query.relations.length) }}
                             </template>
 
-                            <template #item="{ option }">
-                                <span class="inline-flex gap-1" :class="`bg-${docRelationToColor(option.value)}-500`">
-                                    <UIcon class="size-4" :name="docRelationToIcon(option.value)" />
+                            <template #item="{ item }">
+                                <span class="inline-flex gap-1" :class="`bg-${docRelationToColor(item.value)}-500`">
+                                    <UIcon class="size-4" :name="docRelationToIcon(item.value)" />
                                     <span class="truncate">
-                                        {{ $t(`enums.documents.DocRelation.${DocRelation[option.value]}`) }}
+                                        {{ $t(`enums.documents.DocRelation.${DocRelation[item.value]}`) }}
                                     </span>
                                 </span>
                             </template>

@@ -6,9 +6,11 @@ import { useCompletorStore } from '~/stores/completor';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import type { ManageLabelsResponse } from '~~/gen/ts/services/citizens/citizens';
 
-const { can } = useAuth();
+const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 
-const { isOpen } = useOverlay();
+const { can } = useAuth();
 
 const completorStore = useCompletorStore();
 
@@ -42,7 +44,7 @@ async function manageLabels(values: Schema): Promise<ManageLabelsResponse> {
 
         state.labels = response.labels;
 
-        isOpen.value = false;
+        emit('close', false);
 
         return response;
     } catch (e) {
@@ -62,24 +64,14 @@ watch(labels, () => (state.labels = labels.value ?? []));
 
 <template>
     <UModal>
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard>
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl leading-6 font-semibold">
-                            {{ $t('components.citizens.citizen_labels.title') }}
-                        </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ $t('components.citizens.citizen_labels.title') }}
+            </h3>
+        </template>
 
-                        <UButton
-                            class="-my-1"
-                            color="neutral"
-                            variant="ghost"
-                            icon="i-mdi-window-close"
-                            @click="isOpen = false"
-                        />
-                    </div>
-                </template>
-
+        <template #body>
+            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField
                     v-if="state && can('citizens.CitizensService/ManageLabels').value"
                     class="grid items-center gap-2"
@@ -117,19 +109,19 @@ watch(labels, () => (state.labels = labels.value ?? []));
                         @click="state.labels.push({ id: 0, name: '', color: '#ffffff' })"
                     />
                 </UFormField>
+            </UForm>
+        </template>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
 
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.save') }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
+                    {{ $t('common.save') }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

@@ -471,17 +471,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                 icon="i-mdi-file-search"
                 :message="$t('common.not_found', [$t('common.page', 1)])"
             />
-            <UTabs
-                v-else
-                v-model="selectedTab"
-                class="flex flex-1 flex-col"
-                :items="items"
-                :ui="{
-                    wrapper: 'space-y-0 overflow-y-hidden',
-                    container: 'flex flex-1 flex-col overflow-y-hidden',
-                    base: 'flex flex-1 flex-col overflow-y-hidden',
-                }"
-            >
+            <UTabs v-else v-model="selectedTab" class="flex flex-1 flex-col" :items="items">
                 <template #content>
                     <UDashboardToolbar>
                         <template #default>
@@ -498,6 +488,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                                 v-model="state.parentId"
                                                 class="flex-1"
                                                 value-key="id"
+                                                label-key="title"
                                                 searchable-lazy
                                                 :disabled="!canDo.edit"
                                                 :items="parentPages"
@@ -511,10 +502,6 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                                                 : $t('common.none_selected', [$t('common.parent_page')])
                                                         }}
                                                     </span>
-                                                </template>
-
-                                                <template #item="{ option: opt }">
-                                                    {{ opt.title }}
                                                 </template>
 
                                                 <template #empty>
@@ -570,10 +557,6 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                                 :items="pages"
                                                 @update:model-value="($event) => (linkState.url = pageToURL($event, true))"
                                             >
-                                                <template #item="{ option: opt }">
-                                                    {{ opt.title }}
-                                                </template>
-
                                                 <template #empty>
                                                     {{ $t('common.not_found', [$t('common.page', 2)]) }}
                                                 </template>

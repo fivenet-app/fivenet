@@ -20,7 +20,7 @@ definePageMeta({
     permission: 'mailer.MailerService/ListEmails',
 });
 
-const modal = useOverlay();
+const overlay = useOverlay();
 
 const mailerStore = useMailerStore();
 const { emails, getPrivateEmail, hasPrivateEmail, loaded, error, selectedEmail } = storeToRefs(mailerStore);
@@ -82,6 +82,8 @@ const canCreate = computed(
 
 const loading = ref(false);
 const creating = ref(false);
+
+const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
@@ -195,7 +197,7 @@ const creating = ref(false);
                             color="error"
                             trailing-icon="i-mdi-delete"
                             @click="
-                                modal.open(ConfirmModal, {
+                                confirmModal.open({
                                     confirm: async () =>
                                         selectedEmail?.id &&
                                         (await mailerStore.deleteEmail({

@@ -27,6 +27,7 @@ const selectedDispatch = ref<number | undefined>();
                 </span>
 
                 <UButton
+                    icon="i-mdi-link-variant"
                     @click="
                         selectedDispatch = reference.targetDispatchId;
                         dispatchDetailsByIDSlideover.open({
@@ -34,10 +35,7 @@ const selectedDispatch = ref<number | undefined>();
                             onClose: () => (selectedDispatch = undefined),
                         });
                     "
-                >
-                    <span class="sr-only">{{ $t('common.open') }}</span>
-                    <UIcon class="ml-1 size-5" name="i-mdi-link-variant" />
-                </UButton>
+                />
             </span>
         </div>
     </template>

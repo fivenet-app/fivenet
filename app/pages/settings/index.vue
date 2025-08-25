@@ -95,7 +95,7 @@ const superuserItems = [
 </script>
 
 <template>
-    <UDashboardPanel>
+    <UDashboardPanel id="settings">
         <template #header>
             <UDashboardNavbar :title="$t('common.control_panel')" />
         </template>

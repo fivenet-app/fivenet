@@ -27,7 +27,7 @@ const { t } = useI18n();
 
 const { isSuperuser } = useAuth();
 
-const modal = useOverlay();
+const overlay = useOverlay();
 
 const mailerStore = useMailerStore();
 const { draft, emails, selectedEmail, selectedThread, threads, unreadThreadIds } = storeToRefs(mailerStore);
@@ -148,6 +148,11 @@ function updateQuery(): void {
     }
 }
 
+const threadCreateOrUpdateModal = overlay.create(ThreadCreateOrUpdateModal);
+const emailSettingsModal = overlay.create(EmailSettingsModal);
+const templateModal = overlay.create(TemplateModal);
+const confirmModal = overlay.create(ConfirmModal);
+
 watch(selectedThread, () => updateQuery());
 
 onBeforeMount(async () => {
@@ -166,7 +171,7 @@ onBeforeMount(async () => {
             });
         }
 
-        modal.open(ThreadCreateOrUpdateModal, {});
+        threadCreateOrUpdateModal.open({});
     }
 });
 </script>
@@ -187,7 +192,7 @@ onBeforeMount(async () => {
                     "
                     :text="$t('components.mailer.create_thread')"
                 >
-                    <UButton color="neutral" trailing-icon="i-mdi-plus" @click="modal.open(ThreadCreateOrUpdateModal, {})">
+                    <UButton color="neutral" trailing-icon="i-mdi-plus" @click="threadCreateOrUpdateModal.open({})">
                         {{ $t('components.mailer.create_thread') }}
                     </UButton>
                 </UTooltip>
@@ -197,7 +202,6 @@ onBeforeMount(async () => {
         <UDashboardToolbar
             v-if="selectedEmail"
             :ui="{
-                wrapper: 'p-0 gap-x-0',
                 container:
                     'gap-x-0 gap-y-1 justify-stretch items-stretch h-full inline-flex flex-col bg-gray-100 p-0 px-1 dark:bg-gray-800 min-w-0',
             }"
@@ -242,21 +246,19 @@ onBeforeMount(async () => {
                         </span>
                     </template>
 
-                    <template #item="{ option }">
+                    <template #item="{ item }">
                         <span class="truncate">
                             {{
-                                (option?.label && option?.label !== ''
-                                    ? option?.label + ' (' + option.email + ')'
+                                (item?.label && item?.label !== '' ? item?.label + ' (' + item.email + ')' : undefined) ??
+                                (item?.userId
+                                    ? $t('common.personal_email') + (isSuperuser ? ' (' + item.email + ')' : '')
                                     : undefined) ??
-                                (option?.userId
-                                    ? $t('common.personal_email') + (isSuperuser ? ' (' + option.email + ')' : '')
-                                    : undefined) ??
-                                option?.email ??
+                                item?.email ??
                                 $t('common.none')
                             }}
                         </span>
 
-                        <UBadge v-if="option?.deactivated" color="error" size="xs" :label="$t('common.disabled')" />
+                        <UBadge v-if="item?.deactivated" color="error" size="xs" :label="$t('common.disabled')" />
                     </template>
 
                     <template #empty> {{ $t('common.not_found', [$t('common.mail', 2)]) }} </template>
@@ -299,7 +301,7 @@ onBeforeMount(async () => {
             >
                 <template #left>
                     <UTooltip :text="$t('common.settings')">
-                        <UButton color="neutral" trailing-icon="i-mdi-cog" @click="() => modal.open(EmailSettingsModal, {})">
+                        <UButton color="neutral" trailing-icon="i-mdi-cog" @click="() => emailSettingsModal.open({})">
                             <span class="hidden truncate md:block"> {{ $t('common.settings') }} </span>
                         </UButton>
                     </UTooltip>
@@ -311,11 +313,7 @@ onBeforeMount(async () => {
 
                 <template #right>
                     <UTooltip :text="$t('common.template', 2)">
-                        <UButton
-                            color="neutral"
-                            trailing-icon="i-mdi-file-outline"
-                            @click="() => modal.open(TemplateModal, {})"
-                        >
+                        <UButton color="neutral" trailing-icon="i-mdi-file-outline" @click="() => templateModal.open({})">
                             <span class="hidden truncate md:block">{{ $t('common.template', 2) }}</span>
                         </UButton>
                     </UTooltip>
@@ -414,7 +412,7 @@ onBeforeMount(async () => {
                             color="neutral"
                             variant="ghost"
                             @click="
-                                modal.open(ConfirmModal, {
+                                confirmModal.open({
                                     confirm: async () => {
                                         selectedThread!.state = await mailerStore.setThreadState(
                                             {
@@ -436,7 +434,7 @@ onBeforeMount(async () => {
                             :icon="!selectedThread.deletedAt ? 'i-mdi-delete-outline' : 'i-mdi-restore'"
                             variant="ghost"
                             @click="
-                                modal.open(ConfirmModal, {
+                                confirmModal.open({
                                     confirm: async () =>
                                         selectedEmail?.id &&
                                         selectedThread &&

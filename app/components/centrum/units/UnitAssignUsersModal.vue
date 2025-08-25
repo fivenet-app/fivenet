@@ -10,7 +10,9 @@ const props = defineProps<{
     unit: Unit;
 }>();
 
-const { isOpen } = useOverlay();
+const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 
 const completorStore = useCompletorStore();
 
@@ -49,7 +51,7 @@ async function assignUnit(unitId: number): Promise<void> {
         });
         await call;
 
-        isOpen.value = false;
+        emit('close', false);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -67,98 +69,75 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
 <template>
     <UModal>
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard
-                class="flex flex-1 flex-col"
-                :ui="{
-                    body: {
-                        padding: 'px-1 py-2 sm:p-2',
-                    },
-                }"
-            >
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl leading-6 font-semibold">
-                            {{ $t('components.centrum.assign_unit.title') }}: {{ unit.name }} ({{ unit.initials }})
-                        </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ $t('components.centrum.assign_unit.title') }}: {{ unit.name }} ({{ unit.initials }})
+            </h3>
+        </template>
 
-                        <UButton
-                            class="-my-1"
-                            color="neutral"
-                            variant="ghost"
-                            icon="i-mdi-window-close"
-                            @click="isOpen = false"
-                        />
-                    </div>
-                </template>
-
-                <div>
-                    <div class="flex flex-1 flex-col justify-between gap-2">
-                        <div class="divide-y divide-gray-100 px-2 sm:px-6 dark:divide-gray-800">
-                            <UFormField class="flex-1" name="users" :label="$t('common.colleague', 2)">
-                                <ClientOnly>
-                                    <USelectMenu
-                                        v-model="state.users"
-                                        multiple
-                                        :searchable="
-                                            async (q: string) => {
-                                                usersLoading = true;
-                                                const colleagues = await completorStore.completeCitizens({
-                                                    search: q,
-                                                    userIds: state.users.map((u) => u.userId),
-                                                });
-                                                usersLoading = false;
-                                                return colleagues;
-                                            }
-                                        "
-                                        searchable-lazy
-                                        :searchable-placeholder="$t('common.search_field')"
-                                        :search-attributes="['firstname', 'lastname']"
-                                        block
-                                        :placeholder="$t('common.search')"
-                                        trailing
-                                        by="userId"
-                                        :disabled="!canSubmit"
-                                    >
-                                        <template #item="{ option: user }">
-                                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                        </template>
-
-                                        <template #empty> {{ $t('common.not_found', [$t('common.colleague', 2)]) }} </template>
-                                    </USelectMenu>
-                                </ClientOnly>
-                            </UFormField>
-
-                            <div class="dark:bg-base-900 mt-2 overflow-hidden rounded-md bg-neutral-100">
-                                <ul
-                                    class="divide-y divide-gray-100 text-sm font-medium text-gray-100 dark:divide-gray-800"
-                                    role="list"
+        <template #body>
+            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <div class="flex flex-1 flex-col justify-between gap-2">
+                    <div class="divide-y divide-gray-100 px-2 sm:px-6 dark:divide-gray-800">
+                        <UFormField class="flex-1" name="users" :label="$t('common.colleague', 2)">
+                            <ClientOnly>
+                                <USelectMenu
+                                    v-model="state.users"
+                                    multiple
+                                    :searchable="
+                                        async (q: string) => {
+                                            usersLoading = true;
+                                            const colleagues = await completorStore.completeCitizens({
+                                                search: q,
+                                                userIds: state.users.map((u) => u.userId),
+                                            });
+                                            usersLoading = false;
+                                            return colleagues;
+                                        }
+                                    "
+                                    searchable-lazy
+                                    :searchable-placeholder="$t('common.search_field')"
+                                    :search-attributes="['firstname', 'lastname']"
+                                    block
+                                    :placeholder="$t('common.search')"
+                                    trailing
+                                    by="userId"
+                                    :disabled="!canSubmit"
                                 >
-                                    <li
-                                        v-for="user in state.users"
-                                        :key="user.userId"
-                                        class="inline-flex items-center px-4 py-2"
-                                    >
-                                        <CitizenInfoPopover :user="user" show-avatar show-avatar-in-name />
-                                    </li>
-                                </ul>
-                            </div>
+                                    <template #item="{ item }">
+                                        {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
+                                    </template>
+
+                                    <template #empty> {{ $t('common.not_found', [$t('common.colleague', 2)]) }} </template>
+                                </USelectMenu>
+                            </ClientOnly>
+                        </UFormField>
+
+                        <div class="dark:bg-base-900 mt-2 overflow-hidden rounded-md bg-neutral-100">
+                            <ul
+                                class="divide-y divide-gray-100 text-sm font-medium text-gray-100 dark:divide-gray-800"
+                                role="list"
+                            >
+                                <li v-for="user in state.users" :key="user.userId" class="inline-flex items-center px-4 py-2">
+                                    <CitizenInfoPopover :user="user" show-avatar show-avatar-in-name />
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
+            </UForm>
+        </template>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
 
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.update') }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
+                    {{ $t('common.update') }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

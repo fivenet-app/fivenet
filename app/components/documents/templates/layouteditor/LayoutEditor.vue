@@ -761,26 +761,11 @@ const showPreview = ref(false);
 
     <!-- Preview Modal -->
     <UModal v-model:open="showPreview" fullscreen>
-        <UCard
-            :ui="{
-                base: 'flex flex-1 flex-col',
-                body: { base: 'flex flex-1 flex-col' },
-            }"
-        >
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl leading-6 font-semibold">Preview (sample data)</h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">Preview (sample data)</h3>
+        </template>
 
-                    <UButton
-                        class="-my-1"
-                        color="neutral"
-                        variant="ghost"
-                        icon="i-mdi-window-close"
-                        @click="showPreview = false"
-                    />
-                </div>
-            </template>
-
+        <template #body>
             <div class="flex flex-1 items-center justify-center">
                 <div class="overflow-auto p-4">
                     <div class="mx-auto" :style="{ width: pagePx.width + 'px' }">
@@ -808,13 +793,13 @@ const showPreview = ref(false);
                     </div>
                 </div>
             </div>
+        </template>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" @click="showPreview = false">Close</UButton>
-                </UButtonGroup>
-            </template>
-        </UCard>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" @click="showPreview = false">Close</UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>
 

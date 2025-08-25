@@ -13,12 +13,11 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
     (e: 'update:mugshot', value?: FilestoreFile): void;
 }>();
 
 const modelValue = useVModel(props, 'user', emit);
-
-const { isOpen } = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -79,7 +78,7 @@ async function uploadMugshot(files: File[], reason: string): Promise<void> {
                 modelValue.value.props = { userId: props.user.userId, mugshot: resp.file };
             }
 
-            isOpen.value = false;
+            emit('close', false);
         } catch (e) {
             handleGRPCError(e as Error);
             throw e;
@@ -109,7 +108,7 @@ async function deleteMugshot(fileId: number | undefined, reason: string): Promis
             modelValue.value.props = { userId: props.user.userId, mugshot: undefined };
         }
 
-        isOpen.value = false;
+        emit('close', false);
     } catch (e) {
         handleGRPCError(e as Error);
         throw e;
@@ -133,85 +132,73 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UModal>
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard>
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl leading-6 font-semibold">
-                            {{ $t('components.citizens.CitizenInfoProfile.set_mugshot') }}
-                        </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ $t('components.citizens.CitizenInfoProfile.set_mugshot') }}
+            </h3>
+        </template>
 
-                        <UButton
-                            class="-my-1"
-                            color="neutral"
-                            variant="ghost"
-                            icon="i-mdi-window-close"
-                            @click="isOpen = false"
-                        />
-                    </div>
-                </template>
+        <template #body>
+            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UFormField name="reason" :label="$t('common.reason')" required>
+                    <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
+                </UFormField>
 
-                <div>
-                    <UFormField name="reason" :label="$t('common.reason')" required>
-                        <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
-                    </UFormField>
-
-                    <UFormField name="mugshot" :label="$t('common.mugshot')">
-                        <div class="flex flex-col gap-2">
-                            <NotSupportedTabletBlock v-if="nuiEnabled" />
-                            <div v-else class="flex flex-col gap-1">
-                                <div class="flex flex-1 flex-row gap-1">
-                                    <UInput
-                                        class="flex-1"
-                                        name="mugshot"
-                                        type="file"
-                                        :accept="appConfig.fileUpload.types.images.join(',')"
-                                        block
-                                        :placeholder="$t('common.image')"
-                                        :disabled="!canSubmit"
-                                        @change="handleFileChanges"
-                                    />
-                                </div>
-                            </div>
-
-                            <div class="flex w-full flex-col items-center justify-center gap-2">
-                                <GenericImg
-                                    v-if="user.props?.mugshot"
-                                    size="3xl"
-                                    :src="`${user.props?.mugshot.filePath}?date=${new Date().getTime()}`"
-                                    :no-blur="true"
+                <UFormField name="mugshot" :label="$t('common.mugshot')">
+                    <div class="flex flex-col gap-2">
+                        <NotSupportedTabletBlock v-if="nuiEnabled" />
+                        <div v-else class="flex flex-col gap-1">
+                            <div class="flex flex-1 flex-row gap-1">
+                                <UInput
+                                    class="flex-1"
+                                    name="mugshot"
+                                    type="file"
+                                    :accept="appConfig.fileUpload.types.images.join(',')"
+                                    block
+                                    :placeholder="$t('common.image')"
+                                    :disabled="!canSubmit"
+                                    @change="handleFileChanges"
                                 />
-
-                                <UAlert icon="i-mdi-information-outline" :description="$t('common.image_caching')" />
                             </div>
                         </div>
-                    </UFormField>
-                </div>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.save') }}
-                        </UButton>
+                        <div class="flex w-full flex-col items-center justify-center gap-2">
+                            <GenericImg
+                                v-if="user.props?.mugshot"
+                                size="3xl"
+                                :src="`${user.props?.mugshot.filePath}?date=${new Date().getTime()}`"
+                                :no-blur="true"
+                            />
 
-                        <UButton
-                            class="flex-1"
-                            type="submit"
-                            block
-                            color="error"
-                            :disabled="!canSubmit || !user.props?.mugshotFileId"
-                            :loading="!canSubmit"
-                            @click="state.reset = true"
-                        >
-                            {{ $t('common.reset') }}
-                        </UButton>
+                            <UAlert icon="i-mdi-information-outline" :description="$t('common.image_caching')" />
+                        </div>
+                    </div>
+                </UFormField>
+            </UForm>
+        </template>
 
-                        <UButton class="flex-1" block color="neutral" @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
+                    {{ $t('common.save') }}
+                </UButton>
+
+                <UButton
+                    class="flex-1"
+                    type="submit"
+                    block
+                    color="error"
+                    :disabled="!canSubmit || !user.props?.mugshotFileId"
+                    :loading="!canSubmit"
+                    @click="state.reset = true"
+                >
+                    {{ $t('common.reset') }}
+                </UButton>
+
+                <UButton class="flex-1" block color="neutral" @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

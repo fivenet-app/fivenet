@@ -151,7 +151,6 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
                             :number="marker.user?.phoneNumber"
                             :hide-number="true"
                             :show-label="true"
-                            block
                         />
 
                         <UButton

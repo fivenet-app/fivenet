@@ -416,7 +416,7 @@ defineShortcuts({
                                     leave-from-class="translate-x-0"
                                     leave-to-class="translate-x-full"
                                 >
-                                    <div v-if="open" class="bg-background flex h-full flex-col">
+                                    <div v-if="open" class="flex h-full flex-col bg-default">
                                         <UDashboardToolbar>
                                             <template #default>
                                                 <div class="flex flex-1 flex-col items-center">

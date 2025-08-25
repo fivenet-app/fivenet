@@ -332,9 +332,8 @@ defineShortcuts({
                             name="trafficInfractionPoints"
                             :label="$t('common.traffic_infraction_points', 2)"
                         >
-                            <UInput
+                            <UInputNumber
                                 v-model="query.trafficInfractionPoints"
-                                type="number"
                                 name="trafficInfractionPoints"
                                 :min="0"
                                 :placeholder="$t('common.traffic_infraction_points')"
@@ -348,14 +347,19 @@ defineShortcuts({
                             name="openFines"
                             :label="$t('components.citizens.CitizenList.open_fine')"
                         >
-                            <UInput
+                            <UInputNumber
                                 v-model="query.openFines"
-                                type="number"
                                 name="openFines"
                                 :min="0"
+                                :step="1000"
                                 :placeholder="`${$t('common.fine')}`"
                                 block
-                                leading-icon="i-mdi-dollar"
+                                :format-options="{
+                                    style: 'currency',
+                                    currency: 'USD',
+                                    currencyDisplay: 'code',
+                                    currencySign: 'accounting',
+                                }"
                             />
                         </UFormField>
                     </div>

@@ -446,9 +446,9 @@ watch(
                         </span>
                     </template>
 
-                    <template #item="{ option }">
+                    <template #item="{ item }">
                         <span class="truncate">
-                            {{ $t(`components.qualifications.exam_editor.question_types.${option}`) }}
+                            {{ $t(`components.qualifications.exam_editor.question_types.${item}`) }}
                         </span>
                     </template>
 
@@ -494,7 +494,7 @@ watch(
                                 :accept="appConfig.fileUpload.types.images.join(',')"
                                 :placeholder="$t('common.image')"
                                 :disabled="disabled"
-                                @change="handleImage($event)"
+                                @change="($event) => handleImage($event)"
                             />
                         </template>
 
@@ -542,9 +542,9 @@ watch(
                     <div class="flex flex-col gap-2">
                         <div class="flex gap-2">
                             <UFormField class="flex-1" name="data.data.freeText.minLength" :label="$t('common.min')">
-                                <UInput
+                                <UInputNumber
                                     v-model="question.data!.data.freeText.minLength"
-                                    type="number"
+                                    :step="10"
                                     :min="0"
                                     :max="Number.MAX_SAFE_INTEGER"
                                     :disabled="disabled"
@@ -552,9 +552,9 @@ watch(
                             </UFormField>
 
                             <UFormField class="flex-1" name="data.data.freeText.maxLength" :label="$t('common.max')">
-                                <UInput
+                                <UInputNumber
                                     v-model="question.data!.data.freeText.maxLength"
-                                    type="number"
+                                    :step="10"
                                     :min="0"
                                     :max="Number.MAX_SAFE_INTEGER"
                                     :disabled="disabled"
@@ -598,9 +598,8 @@ watch(
                     </UFormField>
 
                     <UFormField class="max-w-24" name="points" :label="$t('common.points', 2)">
-                        <UInput
+                        <UInputNumber
                             v-model="question.points"
-                            type="number"
                             name="points"
                             :min="0"
                             :placeholder="$t('common.points', 2)"

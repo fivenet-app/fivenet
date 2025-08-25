@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { listEnumValues } from '@protobuf-ts/runtime';
 import { z } from 'zod';
-import ColleagueActivityFeedEntry from '~/components/jobs/colleagues/info/ColleagueActivityFeedEntry.vue';
+import ActivityFeedEntry from '~/components/jobs/colleagues/info/ActivityFeedEntry.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
@@ -143,8 +143,8 @@ watch(props, async () => refresh());
                             </template>
                         </template>
 
-                        <template #item="{ option: colleague }">
-                            <ColleagueName :colleague="colleague" birthday />
+                        <template #item="{ item }">
+                            <ColleagueName :colleague="item" birthday />
                         </template>
 
                         <template #empty> {{ $t('common.not_found', [$t('common.colleague', 2)]) }} </template>
@@ -174,8 +174,8 @@ watch(props, async () => refresh());
                             {{ $t('common.selected', query.types.length) }}
                         </template>
 
-                        <template #item="{ option }">
-                            {{ $t(`enums.jobs.ColleagueActivityType.${ColleagueActivityType[option.aType]}`) }}
+                        <template #item="{ item }">
+                            {{ $t(`enums.jobs.ColleagueActivityType.${ColleagueActivityType[item.aType]}`) }}
                         </template>
 
                         <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
@@ -243,7 +243,7 @@ watch(props, async () => refresh());
                         :key="activity.id"
                         class="border-white px-2 py-4 hover:border-primary-500/25 hover:bg-primary-100/50 dark:border-gray-900 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
                     >
-                        <ColleagueActivityFeedEntry :activity="activity" :show-target-user="showTargetUser" />
+                        <ActivityFeedEntry :activity="activity" :show-target-user="showTargetUser" />
                     </li>
                 </template>
             </ul>

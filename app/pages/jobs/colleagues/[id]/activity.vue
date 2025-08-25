@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { TypedRouteFromName } from '@typed-router';
-import ColleagueActivityFeed from '~/components/jobs/colleagues/info/ColleagueActivityFeed.vue';
+import ActivityFeed from '~/components/jobs/colleagues/info/ActivityFeed.vue';
 
 useHead({
     title: 'pages.jobs.colleagues.single.activity',
@@ -25,6 +25,6 @@ const route = useRoute('jobs-colleagues-id-activity');
 
 <template>
     <div>
-        <ColleagueActivityFeed :user-id="parseInt(route.params.id as string)" />
+        <ActivityFeed :user-id="parseInt(route.params.id as string)" />
     </div>
 </template>

@@ -217,10 +217,10 @@ const { game } = useAppConfig();
 
                 <UForm ref="formRef" class="flex w-full flex-row gap-2" :schema="schema" :state="state" @submit="refresh()">
                     <UFormField class="flex-1" name="days" :label="$t('common.time_ago.day', 2)">
-                        <UInput
+                        <UInputNumber
                             v-model="state.days"
                             name="days"
-                            type="number"
+                            :step="1"
                             :min="1"
                             :max="31"
                             :placeholder="$t('common.time_ago.day', 2)"

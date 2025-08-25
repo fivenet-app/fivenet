@@ -65,7 +65,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-        <UCard :ui="{}">
+        <UCard>
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-xl leading-6 font-semibold">
@@ -103,8 +103,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 {{ $t('common.selected', state.users.length) }}
                             </template>
 
-                            <template #item="{ option: user }">
-                                {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                            <template #item="{ item }">
+                                {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
                             </template>
 
                             <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>

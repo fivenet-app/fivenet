@@ -8,45 +8,33 @@ defineProps<{
 }>();
 
 defineEmits<{
+    (e: 'close', v: boolean): void;
     (e: 'update:attachments', attachments: MessageAttachment[]): void;
 }>();
-
-const { isOpen } = useOverlay();
 </script>
 
 <template>
     <UModal>
-        <UCard
-            :ui="{
-                base: 'flex flex-1 flex-col',
-                body: { base: 'flex flex-1 flex-col' },
-            }"
-        >
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
-                        {{ $t('common.attachment', 2) }}
-                    </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ $t('common.attachment', 2) }}
+            </h3>
+        </template>
 
-                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                </div>
-            </template>
+        <template #body>
+            <ThreadAttachmentsForm
+                :model-value="attachments"
+                :can-submit="canSubmit"
+                @update:model-value="$emit('update:attachments', $event)"
+            />
+        </template>
 
-            <div>
-                <ThreadAttachmentsForm
-                    :model-value="attachments"
-                    :can-submit="canSubmit"
-                    @update:model-value="$emit('update:attachments', $event)"
-                />
-            </div>
-
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" block color="neutral" @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
-                </UButtonGroup>
-            </template>
-        </UCard>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" block color="neutral" @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

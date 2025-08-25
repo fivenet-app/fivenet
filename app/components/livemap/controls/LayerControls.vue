@@ -53,18 +53,18 @@ const groupedLayers = computed(() => {
 <template>
     <LControl position="topright">
         <UTooltip :text="$t('common.layer', 2)">
-            <UPopover :ui="{ arrow: { base: 'mt-2' } }">
+            <UPopover>
                 <UButton
                     class="border border-black/20 bg-clip-padding p-1.5 hover:bg-[#f4f4f4]"
                     size="xl"
                     icon="i-mdi-layers-triple"
-                    :ui="{ icon: { base: 'size-8!' } }"
+                    :ui="{ leadingIcon: 'size-8!' }"
                 />
 
                 <template #content>
                     <div class="w-full max-w-sm divide-y divide-gray-100 py-1 dark:divide-gray-800">
                         <div class="px-1">
-                            <p class="text-highlighted truncate text-sm font-bold">
+                            <p class="truncate text-sm font-bold text-highlighted">
                                 {{ $t('common.layer', 2) }}
                             </p>
 
@@ -76,8 +76,8 @@ const groupedLayers = computed(() => {
                                 :ui-radio="{ inner: 'ms-1' }"
                                 :ui="{ fieldset: 'grid auto-cols-auto grid-flow-col gap-1' }"
                             >
-                                <template #label="{ option }">
-                                    <span class="truncate">{{ $t(option.label) }}</span>
+                                <template #label="{ item }">
+                                    <span class="truncate">{{ $t(item.label) }}</span>
                                 </template>
                             </URadioGroup>
                         </div>
@@ -91,7 +91,7 @@ const groupedLayers = computed(() => {
                                 :key="key"
                                 class="grid min-w-0 grid-flow-row auto-rows-min gap-1 px-1"
                             >
-                                <p class="text-highlighted truncate text-sm font-bold">
+                                <p class="truncate text-sm font-bold text-highlighted">
                                     {{ category.category?.label ?? $t('common.na') }}
                                 </p>
 

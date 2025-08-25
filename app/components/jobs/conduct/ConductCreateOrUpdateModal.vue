@@ -17,11 +17,10 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
     (e: 'created', entry: ConductEntry): void;
     (e: 'updated', entry: ConductEntry): void;
 }>();
-
-const { isOpen } = useOverlay();
 
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
@@ -91,7 +90,7 @@ async function conductCreateOrUpdateEntry(values: Schema, id?: number): Promise<
             type: NotificationType.SUCCESS,
         });
 
-        isOpen.value = false;
+        emit('close', false);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -120,158 +119,149 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UModal>
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard>
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl leading-6 font-semibold">
-                            {{
-                                entry === undefined
-                                    ? $t('components.jobs.conduct.CreateOrUpdateModal.create.title')
-                                    : $t('components.jobs.conduct.CreateOrUpdateModal.update.title')
-                            }}
-                        </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{
+                    entry === undefined
+                        ? $t('components.jobs.conduct.CreateOrUpdateModal.create.title')
+                        : $t('components.jobs.conduct.CreateOrUpdateModal.update.title')
+                }}
+            </h3>
+        </template>
 
-                        <UButton
-                            class="-my-1"
-                            color="neutral"
-                            variant="ghost"
-                            icon="i-mdi-window-close"
-                            @click="isOpen = false"
-                        />
+        <template #body>
+            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <dl class="divide-neutral/10 divide-y">
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="type">
+                                {{ $t('common.type') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="type">
+                                <ClientOnly>
+                                    <USelectMenu
+                                        v-model="state.type"
+                                        :items="cTypes"
+                                        value-key="status"
+                                        :searchable-placeholder="$t('common.search_field')"
+                                    >
+                                        <template #item-label="{ item }">
+                                            <UBadge :color="conductTypesToBadgeColor(item.status)" truncate>
+                                                {{ $t(`enums.jobs.ConductType.${ConductType[item.status ?? 0]}`) }}
+                                            </UBadge>
+                                        </template>
+
+                                        <template #item="{ item }">
+                                            <UBadge :color="conductTypesToBadgeColor(item.status)" truncate>
+                                                {{ $t(`enums.jobs.ConductType.${ConductType[item.status ?? 0]}`) }}
+                                            </UBadge>
+                                        </template>
+
+                                        <template #empty>
+                                            {{ $t('common.not_found', [$t('common.type', 2)]) }}
+                                        </template>
+                                    </USelectMenu>
+                                </ClientOnly>
+                            </UFormField>
+                        </dd>
                     </div>
-                </template>
 
-                <div>
-                    <dl class="divide-neutral/10 divide-y">
-                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm leading-6 font-medium">
-                                <label class="block text-sm leading-6 font-medium" for="type">
-                                    {{ $t('common.type') }}
-                                </label>
-                            </dt>
-                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormField name="type">
-                                    <ClientOnly>
-                                        <USelectMenu
-                                            v-model="state.type"
-                                            :items="cTypes"
-                                            value-key="status"
-                                            :searchable-placeholder="$t('common.search_field')"
-                                        >
-                                            <template #item-label="{ item }">
-                                                <UBadge :color="conductTypesToBadgeColor(item.status)" truncate>
-                                                    {{ $t(`enums.jobs.ConductType.${ConductType[item.status ?? 0]}`) }}
-                                                </UBadge>
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="targetUser">
+                                {{ $t('common.target') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="targetUserId">
+                                <ClientOnly>
+                                    <USelectMenu
+                                        v-model="state.targetUser"
+                                        :searchable="
+                                            async (q: string) => {
+                                                usersLoading = true;
+                                                const colleagues = await completorStore.listColleagues({
+                                                    search: q,
+                                                    labelIds: [],
+                                                    userIds: [],
+                                                });
+                                                usersLoading = false;
+                                                return colleagues;
+                                            }
+                                        "
+                                        searchable-lazy
+                                        :searchable-placeholder="$t('common.search_field')"
+                                        :search-attributes="['firstname', 'lastname']"
+                                        block
+                                        :placeholder="$t('common.colleague')"
+                                        trailing
+                                        by="userId"
+                                    >
+                                        <template #item-label>
+                                            <template v-if="state.targetUser">
+                                                {{ userToLabel(state.targetUser) }}
                                             </template>
+                                        </template>
 
-                                            <template #item="{ option }">
-                                                <UBadge :color="conductTypesToBadgeColor(option.status)" truncate>
-                                                    {{ $t(`enums.jobs.ConductType.${ConductType[option.status ?? 0]}`) }}
-                                                </UBadge>
-                                            </template>
+                                        <template #item="{ item }">
+                                            <ColleagueName class="truncate" :colleague="item" birthday />
+                                        </template>
 
-                                            <template #empty>
-                                                {{ $t('common.not_found', [$t('common.type', 2)]) }}
-                                            </template>
-                                        </USelectMenu>
-                                    </ClientOnly>
-                                </UFormField>
-                            </dd>
-                        </div>
-                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm leading-6 font-medium">
-                                <label class="block text-sm leading-6 font-medium" for="targetUser">
-                                    {{ $t('common.target') }}
-                                </label>
-                            </dt>
-                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormField name="targetUserId">
-                                    <ClientOnly>
-                                        <USelectMenu
-                                            v-model="state.targetUser"
-                                            :searchable="
-                                                async (q: string) => {
-                                                    usersLoading = true;
-                                                    const colleagues = await completorStore.listColleagues({
-                                                        search: q,
-                                                        labelIds: [],
-                                                        userIds: [],
-                                                    });
-                                                    usersLoading = false;
-                                                    return colleagues;
-                                                }
-                                            "
-                                            searchable-lazy
-                                            :searchable-placeholder="$t('common.search_field')"
-                                            :search-attributes="['firstname', 'lastname']"
-                                            block
-                                            :placeholder="$t('common.colleague')"
-                                            trailing
-                                            by="userId"
-                                        >
-                                            <template #item-label>
-                                                <template v-if="state.targetUser">
-                                                    {{ userToLabel(state.targetUser) }}
-                                                </template>
-                                            </template>
+                                        <template #empty>
+                                            {{ $t('common.not_found', [$t('common.creator', 2)]) }}
+                                        </template>
+                                    </USelectMenu>
+                                </ClientOnly>
+                            </UFormField>
+                        </dd>
+                    </div>
 
-                                            <template #item="{ option: colleague }">
-                                                <ColleagueName class="truncate" :colleague="colleague" birthday />
-                                            </template>
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="message">
+                                {{ $t('common.message') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="message">
+                                <UTextarea
+                                    v-model="state.message"
+                                    name="message"
+                                    :rows="6"
+                                    :placeholder="$t('common.message')"
+                                />
+                            </UFormField>
+                        </dd>
+                    </div>
 
-                                            <template #empty>
-                                                {{ $t('common.not_found', [$t('common.creator', 2)]) }}
-                                            </template>
-                                        </USelectMenu>
-                                    </ClientOnly>
-                                </UFormField>
-                            </dd>
-                        </div>
-                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm leading-6 font-medium">
-                                <label class="block text-sm leading-6 font-medium" for="message">
-                                    {{ $t('common.message') }}
-                                </label>
-                            </dt>
-                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormField name="message">
-                                    <UTextarea
-                                        v-model="state.message"
-                                        name="message"
-                                        :rows="6"
-                                        :placeholder="$t('common.message')"
-                                    />
-                                </UFormField>
-                            </dd>
-                        </div>
-                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm leading-6 font-medium">
-                                <label class="block text-sm leading-6 font-medium" for="expiresAt">
-                                    {{ $t('common.expires_at') }}?
-                                </label>
-                            </dt>
-                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormField name="expiresAt">
-                                    <DatePickerPopoverClient v-model="state.expiresAt" :date-picker="{ clearable: true }" />
-                                </UFormField>
-                            </dd>
-                        </div>
-                    </dl>
-                </div>
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="expiresAt">
+                                {{ $t('common.expires_at') }}?
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="expiresAt">
+                                <DatePickerPopoverClient v-model="state.expiresAt" :date-picker="{ clearable: true }" />
+                            </UFormField>
+                        </dd>
+                    </div>
+                </dl>
+            </UForm>
+        </template>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
 
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ entry?.id === undefined ? $t('common.create') : $t('common.update') }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
+                    {{ entry?.id === undefined ? $t('common.create') : $t('common.update') }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

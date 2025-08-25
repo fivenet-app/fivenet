@@ -143,7 +143,7 @@ const filteredCategories = computed(() => {
             {{ shortcuts ? $t('common.shortcuts') : $t('common.help') }}
         </template>
 
-        <template #content>
+        <template #body>
             <div v-if="shortcuts" class="space-y-6">
                 <UInput
                     v-model="query"

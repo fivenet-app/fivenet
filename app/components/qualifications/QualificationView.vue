@@ -454,10 +454,6 @@ const qualificationRequestUserModal = overlay.create(QualificationRequestUserMod
 
                     <UTabs v-else v-model="selectedTab" class="w-full" :items="items">
                         <template #info>
-                            <h2 class="sr-only">
-                                {{ $t('common.content') }}
-                            </h2>
-
                             <div
                                 class="dark:bg-base-900 mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 break-words!"
                             >

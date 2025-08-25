@@ -3,9 +3,11 @@ import type { LocaleObject } from '@nuxtjs/i18n';
 import { useSettingsStore } from '~/stores/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const { locale, locales } = useI18n();
+defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 
-const { isOpen } = useOverlay();
+const { locale, locales } = useI18n();
 
 const notifications = useNotificationsStore();
 
@@ -54,7 +56,7 @@ async function switchLanguage(lang: LocaleObject): Promise<void> {
 <template>
     <UModal :prevent-close="preventClose">
         <template #title>
-            <h3 class="text-2xl font-semibold leading-6">
+            <h3 class="text-2xl leading-6 font-semibold">
                 {{ $t('components.language_switcher.title') }}
             </h3>
         </template>
@@ -72,7 +74,7 @@ async function switchLanguage(lang: LocaleObject): Promise<void> {
         </template>
 
         <template #footer>
-            <UButton class="flex-1" block color="neutral" :disabled="preventClose" @click="isOpen = false">
+            <UButton class="flex-1" block color="neutral" :disabled="preventClose" @click="$emit('close', false)">
                 {{ $t('common.close', 1) }}
             </UButton>
         </template>

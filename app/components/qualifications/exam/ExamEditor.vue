@@ -96,9 +96,9 @@ const { moveUp, moveDown } = useListReorder(toRef(questions.value.questions));
                             }}</span>
                         </template>
 
-                        <template #item="{ option }">
+                        <template #item="{ item }">
                             <span class="truncate">{{
-                                $t(`enums.qualifications.AutoGradeMode.${AutoGradeMode[option.mode ?? 0]}`)
+                                $t(`enums.qualifications.AutoGradeMode.${AutoGradeMode[item.mode ?? 0]}`)
                             }}</span>
                         </template>
                     </USelectMenu>

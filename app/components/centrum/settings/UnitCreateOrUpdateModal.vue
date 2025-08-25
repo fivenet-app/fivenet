@@ -16,11 +16,10 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
     (e: 'created', unit: Unit): void;
     (e: 'updated', unit: Unit): void;
 }>();
-
-const { isOpen } = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -100,7 +99,7 @@ async function createOrUpdateUnit(values: Schema): Promise<void> {
             emit('updated', response.unit!);
         }
 
-        isOpen.value = false;
+        emit('close', false);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -137,127 +136,109 @@ watch(props, async () => updateUnitInForm());
 
 <template>
     <UModal>
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard>
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl leading-6 font-semibold">
-                            <template v-if="unit && unit?.id">
-                                {{ $t('components.centrum.units.update_unit') }}
-                            </template>
-                            <template v-else>
-                                {{ $t('components.centrum.units.create_unit') }}
-                            </template>
-                        </h3>
-
-                        <UButton
-                            class="-my-1"
-                            color="neutral"
-                            variant="ghost"
-                            icon="i-mdi-window-close"
-                            @click="isOpen = false"
-                        />
-                    </div>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                <template v-if="unit && unit?.id">
+                    {{ $t('components.centrum.units.update_unit') }}
                 </template>
+                <template v-else>
+                    {{ $t('components.centrum.units.create_unit') }}
+                </template>
+            </h3>
+        </template>
 
-                <div>
-                    <UFormField class="flex-1" name="name" :label="$t('common.name')">
-                        <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.name')" />
-                    </UFormField>
+        <template #body>
+            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UFormField class="flex-1" name="name" :label="$t('common.name')">
+                    <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.name')" />
+                </UFormField>
 
-                    <UFormField class="flex-1" name="initials" :label="$t('common.initials')">
-                        <UInput v-model="state.initials" name="initials" type="text" :placeholder="$t('common.initials')" />
-                    </UFormField>
+                <UFormField class="flex-1" name="initials" :label="$t('common.initials')">
+                    <UInput v-model="state.initials" name="initials" type="text" :placeholder="$t('common.initials')" />
+                </UFormField>
 
-                    <UFormField class="flex-1" name="description" :label="$t('common.description')">
-                        <UInput
-                            v-model="state.description"
-                            name="description"
-                            type="text"
-                            :placeholder="$t('common.description')"
-                        />
-                    </UFormField>
+                <UFormField class="flex-1" name="description" :label="$t('common.description')">
+                    <UInput
+                        v-model="state.description"
+                        name="description"
+                        type="text"
+                        :placeholder="$t('common.description')"
+                    />
+                </UFormField>
 
-                    <UFormField class="flex-1" name="attributes" :label="$t('common.attributes', 2)">
-                        <ClientOnly>
-                            <USelectMenu
-                                v-model="state.attributes"
-                                multiple
-                                nullable
-                                value-key="type"
-                                :items="availableAttributes"
-                                :placeholder="selectedAttributes ? selectedAttributes.join(', ') : $t('common.na')"
-                                :searchable-placeholder="$t('common.search_field')"
-                            >
-                                <template #item="{ option }">
-                                    <span class="truncate">{{
-                                        $t(`enums.centrum.UnitAttribute.${UnitAttribute[option.type]}`, 2)
-                                    }}</span>
-                                </template>
+                <UFormField class="flex-1" name="attributes" :label="$t('common.attributes', 2)">
+                    <ClientOnly>
+                        <USelectMenu
+                            v-model="state.attributes"
+                            multiple
+                            nullable
+                            value-key="type"
+                            :items="availableAttributes"
+                            :placeholder="selectedAttributes ? selectedAttributes.join(', ') : $t('common.na')"
+                            :searchable-placeholder="$t('common.search_field')"
+                        >
+                            <template #item="{ item }">
+                                <span class="truncate">{{
+                                    $t(`enums.centrum.UnitAttribute.${UnitAttribute[item.type]}`, 2)
+                                }}</span>
+                            </template>
 
-                                <template #empty>
-                                    {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
-                                </template>
-                            </USelectMenu>
-                        </ClientOnly>
-                    </UFormField>
+                            <template #empty>
+                                {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
+                            </template>
+                        </USelectMenu>
+                    </ClientOnly>
+                </UFormField>
 
-                    <UFormField class="flex-1" name="color" :label="$t('common.color')">
-                        <ColorPickerClient v-model="state.color" />
-                    </UFormField>
+                <UFormField class="flex-1" name="color" :label="$t('common.color')">
+                    <ColorPickerClient v-model="state.color" />
+                </UFormField>
 
-                    <UFormField class="flex-1" name="icon" :label="$t('common.icon')">
-                        <IconSelectMenu v-model="state.icon" :color="state.color" />
-                    </UFormField>
+                <UFormField class="flex-1" name="icon" :label="$t('common.icon')">
+                    <IconSelectMenu v-model="state.icon" :color="state.color" />
+                </UFormField>
 
-                    <UFormField
-                        class="flex-1"
+                <UFormField class="flex-1" name="homePostal" :label="`${$t('common.department')} ${$t('common.postal_code')}`">
+                    <UInput
+                        v-model="state.homePostal"
                         name="homePostal"
-                        :label="`${$t('common.department')} ${$t('common.postal_code')}`"
-                    >
-                        <UInput
-                            v-model="state.homePostal"
-                            name="homePostal"
-                            type="text"
-                            :placeholder="`${$t('common.department')} ${$t('common.postal_code')}`"
-                        />
-                    </UFormField>
+                        type="text"
+                        :placeholder="`${$t('common.department')} ${$t('common.postal_code')}`"
+                    />
+                </UFormField>
 
-                    <UFormField name="access" :label="$t('common.access')">
-                        <AccessManager
-                            v-model:jobs="state.access.jobs"
-                            v-model:qualifications="state.access.qualifications"
-                            :target-id="unit?.id ?? 0"
-                            :access-roles="
-                                enumToAccessLevelEnums(UnitAccessLevel, 'enums.centrum.UnitAccessLevel').filter(
-                                    (a) => a.value > 1,
-                                )
-                            "
-                            :access-types="[
-                                { type: 'job', name: $t('common.job', 2) },
-                                { type: 'qualification', name: $t('common.qualification', 2) },
-                            ]"
-                        />
-                    </UFormField>
-                </div>
+                <UFormField name="access" :label="$t('common.access')">
+                    <AccessManager
+                        v-model:jobs="state.access.jobs"
+                        v-model:qualifications="state.access.qualifications"
+                        :target-id="unit?.id ?? 0"
+                        :access-roles="
+                            enumToAccessLevelEnums(UnitAccessLevel, 'enums.centrum.UnitAccessLevel').filter((a) => a.value > 1)
+                        "
+                        :access-types="[
+                            { type: 'job', name: $t('common.job', 2) },
+                            { type: 'qualification', name: $t('common.qualification', 2) },
+                        ]"
+                    />
+                </UFormField>
+            </UForm>
+        </template>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
 
-                        <UButton class="flex-1" type="submit" block :loading="!canSubmit" :disabled="!canSubmit">
-                            <template v-if="unit && unit?.id">
-                                {{ $t('components.centrum.units.update_unit') }}
-                            </template>
-                            <template v-else>
-                                {{ $t('components.centrum.units.create_unit') }}
-                            </template>
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                <UButton class="flex-1" type="submit" block :loading="!canSubmit" :disabled="!canSubmit">
+                    <template v-if="unit && unit?.id">
+                        {{ $t('components.centrum.units.update_unit') }}
+                    </template>
+                    <template v-else>
+                        {{ $t('components.centrum.units.create_unit') }}
+                    </template>
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

@@ -264,8 +264,8 @@ defineShortcuts({
                                 </span>
                             </template>
 
-                            <template #item="{ option: user }">
-                                <ColleagueName class="truncate" :colleague="user" birthday />
+                            <template #item="{ item }">
+                                <ColleagueName class="truncate" :colleague="item" birthday />
                             </template>
 
                             <template #empty> {{ $t('common.not_found', [$t('common.owner', 2)]) }} </template>

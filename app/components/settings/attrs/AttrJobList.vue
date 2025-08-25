@@ -160,8 +160,8 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                     </template>
                                 </template>
 
-                                <template #item="{ option: job }">
-                                    <span class="truncate">{{ job.label }} ({{ job.name }})</span>
+                                <template #item="{ item }">
+                                    <span class="truncate">{{ item.label }} ({{ item.name }})</span>
                                 </template>
                             </USelectMenu>
                         </ClientOnly>

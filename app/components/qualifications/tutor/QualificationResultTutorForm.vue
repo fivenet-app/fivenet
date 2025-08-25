@@ -161,8 +161,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     </template>
                                 </template>
 
-                                <template #item="{ option: user }">
-                                    {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                <template #item="{ item }">
+                                    {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
                                 </template>
 
                                 <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
@@ -186,10 +186,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     }}</span>
                                 </template>
 
-                                <template #item="{ option }">
-                                    <span class="size-2 rounded-full" :class="resultStatusToBgColor(option.status)" />
+                                <template #item="{ item }">
+                                    <span class="size-2 rounded-full" :class="resultStatusToBgColor(item.status)" />
                                     <span class="truncate">{{
-                                        $t(`enums.qualifications.ResultStatus.${ResultStatus[option.status]}`)
+                                        $t(`enums.qualifications.ResultStatus.${ResultStatus[item.status]}`)
                                     }}</span>
                                 </template>
 
@@ -201,10 +201,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </UFormField>
 
                     <UFormField class="flex-1" name="score" :label="$t('common.score')">
-                        <UInput
+                        <UInputNumber
                             v-model="state.score"
                             name="score"
-                            type="number"
                             :min="0"
                             :max="100"
                             :step="0.1"

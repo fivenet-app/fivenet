@@ -8,10 +8,12 @@ const props = defineProps<{
     dispatchId: number;
 }>();
 
+const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
+
 const centrumStore = useCentrumStore();
 const { dispatches } = storeToRefs(centrumStore);
-
-const { isOpen } = useOverlay();
 
 const centrumCentrumClient = await getCentrumCentrumClient();
 
@@ -31,7 +33,7 @@ async function getDispatch(id: number): Promise<GetDispatchResponse> {
         return response;
     } catch (e) {
         handleGRPCError(e as RpcError);
-        isOpen.value = false;
+        emit('close', false);
         throw e;
     }
 }
@@ -40,5 +42,10 @@ watch(props, async () => refresh());
 </script>
 
 <template>
-    <DispatchDetailsSlideover v-if="data?.dispatch" :dispatch-id="dispatchId" :dispatch="data.dispatch" />
+    <DispatchDetailsSlideover
+        v-if="data?.dispatch"
+        :dispatch-id="dispatchId"
+        :dispatch="data.dispatch"
+        @close="$emit('close', false)"
+    />
 </template>

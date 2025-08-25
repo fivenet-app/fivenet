@@ -129,26 +129,29 @@ watch(props, async (newVal) => {
         <table v-else class="min-w-full divide-y divide-gray-700">
             <thead>
                 <tr>
-                    <th v-if="showSelect" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1" scope="col">
+                    <th v-if="showSelect" class="py-3.5 pr-3 pl-4 text-left text-sm font-semibold sm:pl-1" scope="col">
                         {{ $t('common.select', 1) }}
                     </th>
-                    <th class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1" scope="col">
+
+                    <th class="py-3.5 pr-3 pl-4 text-left text-sm font-semibold sm:pl-1" scope="col">
                         {{ $t('common.title') }}
                     </th>
+
                     <th class="px-3 py-3.5 text-left text-sm font-semibold" scope="col">
                         {{ $t('common.creator') }}
                     </th>
-                    <th class="relative py-3.5 pl-3 pr-4 sm:pr-0" scope="col">
-                        <span class="sr-only">{{ $t('common.action', 2) }}</span>
+
+                    <th class="relative py-3.5 pr-4 pl-3 sm:pr-0" scope="col">
                         <UTooltip v-if="selected.length > 0" :text="$t('common.delete')">
                             <UButton variant="link" icon="i-mdi-delete" color="error" @click="removeAll()" />
                         </UTooltip>
                     </th>
                 </tr>
             </thead>
+
             <tbody class="divide-y divide-gray-800">
                 <tr v-for="item in documents" :key="item.id">
-                    <td v-if="showSelect" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-1">
+                    <td v-if="showSelect" class="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap sm:pl-1">
                         <UButton
                             v-if="specs && specs.max === 1"
                             block
@@ -171,13 +174,16 @@ watch(props, async (newVal) => {
                             @click="select(item)"
                         />
                     </td>
-                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-1">
+
+                    <td class="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap sm:pl-1">
                         {{ item.title }}
                     </td>
-                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
+
+                    <td class="px-2 py-2 text-sm whitespace-nowrap sm:px-4">
                         {{ item.creator.firstname }} {{ item.creator.lastname }}
                     </td>
-                    <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+
+                    <td class="relative py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-0">
                         <UTooltip :text="$t('common.delete')">
                             <UButton variant="link" icon="i-mdi-delete" color="error" @click="remove(item, true)" />
                         </UTooltip>

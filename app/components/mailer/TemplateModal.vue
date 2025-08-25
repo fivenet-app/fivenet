@@ -10,7 +10,9 @@ import type { ListTemplatesResponse } from '~~/gen/ts/services/mailer/mailer';
 import { canAccess } from './helpers';
 import TemplateEditForm from './TemplateEditForm.vue';
 
-const { isOpen } = useOverlay();
+defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 
 const mailerStore = useMailerStore();
 const { selectedEmail } = storeToRefs(mailerStore);
@@ -52,23 +54,14 @@ const editing = ref(false);
 
 <template>
     <UModal fullscreen>
-        <UCard
-            :ui="{
-                base: 'flex flex-1 flex-col',
-                body: { base: 'flex flex-1 flex-col' },
-            }"
-        >
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
-                        {{ $t('common.template', 2) }}
-                    </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ $t('common.template', 2) }}
+            </h3>
+        </template>
 
-                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                </div>
-            </template>
-
-            <div class="max-w-(--breakpoint-xl) mx-auto flex w-full flex-col gap-2">
+        <template #body>
+            <div class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-col gap-2">
                 <UButton
                     v-if="!creating && !editing && canManage"
                     :label="$t('common.create')"
@@ -133,14 +126,14 @@ const editing = ref(false);
                     </UAccordion>
                 </template>
             </div>
+        </template>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" block color="neutral" @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
-                </UButtonGroup>
-            </template>
-        </UCard>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" block color="neutral" @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

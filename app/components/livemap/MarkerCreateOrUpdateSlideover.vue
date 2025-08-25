@@ -126,172 +126,157 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <USlideover :overlay="false">
-        <UForm class="flex flex-1" :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard class="flex flex-1 flex-col">
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl leading-6 font-semibold">
-                            {{
-                                !marker
-                                    ? $t('components.livemap.create_marker.title')
-                                    : $t('components.livemap.update_marker.title')
-                            }}
-                        </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ !marker ? $t('components.livemap.create_marker.title') : $t('components.livemap.update_marker.title') }}
+            </h3>
+        </template>
 
-                        <UButton
-                            class="-my-1"
-                            color="neutral"
-                            variant="ghost"
-                            icon="i-mdi-window-close"
-                            @click="$emit('close', false)"
-                        />
+        <template #body>
+            <UForm class="flex flex-1" :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <dl class="divide-neutral/10 divide-y">
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="name">
+                                {{ $t('common.name') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="name">
+                                <UInput v-model="state.name" type="text" name="name" :placeholder="$t('common.name')" />
+                            </UFormField>
+                        </dd>
                     </div>
-                </template>
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="description">
+                                {{ $t('common.description') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="description">
+                                <UInput
+                                    v-model="state.description"
+                                    type="text"
+                                    name="description"
+                                    :placeholder="$t('common.description')"
+                                />
+                            </UFormField>
+                        </dd>
+                    </div>
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="expiresAt">
+                                {{ $t('common.expires_at') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="expiresAt">
+                                <DatePickerPopoverClient
+                                    v-model="state.expiresAt"
+                                    date-format="dd.MM.yyyy HH:mm"
+                                    :date-picker="{ mode: 'dateTime', is24hr: true, clearable: true }"
+                                />
+                            </UFormField>
+                        </dd>
+                    </div>
 
-                <div>
-                    <dl class="divide-neutral/10 divide-y">
-                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm leading-6 font-medium">
-                                <label class="block text-sm leading-6 font-medium" for="name">
-                                    {{ $t('common.name') }}
-                                </label>
-                            </dt>
-                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormField name="name">
-                                    <UInput v-model="state.name" type="text" name="name" :placeholder="$t('common.name')" />
-                                </UFormField>
-                            </dd>
-                        </div>
-                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm leading-6 font-medium">
-                                <label class="block text-sm leading-6 font-medium" for="description">
-                                    {{ $t('common.description') }}
-                                </label>
-                            </dt>
-                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormField name="description">
-                                    <UInput
-                                        v-model="state.description"
-                                        type="text"
-                                        name="description"
-                                        :placeholder="$t('common.description')"
-                                    />
-                                </UFormField>
-                            </dd>
-                        </div>
-                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm leading-6 font-medium">
-                                <label class="block text-sm leading-6 font-medium" for="expiresAt">
-                                    {{ $t('common.expires_at') }}
-                                </label>
-                            </dt>
-                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormField name="expiresAt">
-                                    <DatePickerPopoverClient
-                                        v-model="state.expiresAt"
-                                        date-format="dd.MM.yyyy HH:mm"
-                                        :date-picker="{ mode: 'dateTime', is24hr: true, clearable: true }"
-                                    />
-                                </UFormField>
-                            </dd>
-                        </div>
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="color">
+                                {{ $t('common.color') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="color">
+                                <ColorPickerClient v-model="state.color" />
+                            </UFormField>
+                        </dd>
+                    </div>
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="markerType">
+                                {{ $t('common.marker') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="markerType">
+                                <ClientOnly>
+                                    <USelectMenu
+                                        v-model="state.markerType"
+                                        name="markerType"
+                                        :items="markerTypes"
+                                        value-key="type"
+                                        :searchable-placeholder="$t('common.search_field')"
+                                    >
+                                        <template #item-label>
+                                            <span class="truncate">{{
+                                                $t(`enums.livemap.MarkerType.${MarkerType[state.markerType ?? 0]}`)
+                                            }}</span>
+                                        </template>
 
-                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm leading-6 font-medium">
-                                <label class="block text-sm leading-6 font-medium" for="color">
-                                    {{ $t('common.color') }}
-                                </label>
-                            </dt>
-                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormField name="color">
-                                    <ColorPickerClient v-model="state.color" />
-                                </UFormField>
-                            </dd>
-                        </div>
-                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm leading-6 font-medium">
-                                <label class="block text-sm leading-6 font-medium" for="markerType">
-                                    {{ $t('common.marker') }}
-                                </label>
-                            </dt>
-                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormField name="markerType">
-                                    <ClientOnly>
-                                        <USelectMenu
-                                            v-model="state.markerType"
-                                            name="markerType"
-                                            :items="markerTypes"
-                                            value-key="type"
-                                            :searchable-placeholder="$t('common.search_field')"
-                                        >
-                                            <template #item-label>
-                                                <span class="truncate">{{
-                                                    $t(`enums.livemap.MarkerType.${MarkerType[state.markerType ?? 0]}`)
-                                                }}</span>
-                                            </template>
+                                        <template #item="{ item }">
+                                            <span class="truncate">{{
+                                                $t(`enums.livemap.MarkerType.${MarkerType[item.type ?? 0]}`)
+                                            }}</span>
+                                        </template>
+                                    </USelectMenu>
+                                </ClientOnly>
+                            </UFormField>
+                        </dd>
+                    </div>
 
-                                            <template #item="{ option }">
-                                                <span class="truncate">{{
-                                                    $t(`enums.livemap.MarkerType.${MarkerType[option.type ?? 0]}`)
-                                                }}</span>
-                                            </template>
-                                        </USelectMenu>
-                                    </ClientOnly>
-                                </UFormField>
-                            </dd>
-                        </div>
-                        <div
-                            v-if="state.markerType === MarkerType.CIRCLE"
-                            class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
-                        >
-                            <dt class="text-sm leading-6 font-medium">
-                                <label class="block text-sm leading-6 font-medium" for="circleRadius">
-                                    {{ $t('common.radius') }}
-                                </label>
-                            </dt>
-                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormField name="circleRadius">
-                                    <UInput
-                                        v-model="state.circleRadius"
-                                        type="number"
-                                        name="circleRadius"
-                                        :min="5"
-                                        :max="250"
-                                        :placeholder="$t('common.radius')"
-                                    />
-                                </UFormField>
-                            </dd>
-                        </div>
-                        <div
-                            v-else-if="state.markerType === MarkerType.ICON"
-                            class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
-                        >
-                            <dt class="text-sm leading-6 font-medium">
-                                <label class="block text-sm leading-6 font-medium" for="icon">
-                                    {{ $t('common.icon') }}
-                                </label>
-                            </dt>
-                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormField name="icon">
-                                    <IconSelectMenu v-model="state.icon" :color="state.color" />
-                                </UFormField>
-                            </dd>
-                        </div>
-                    </dl>
-                </div>
+                    <div
+                        v-if="state.markerType === MarkerType.CIRCLE"
+                        class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
+                    >
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="circleRadius">
+                                {{ $t('common.radius') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="circleRadius">
+                                <UInputNumber
+                                    v-model="state.circleRadius"
+                                    name="circleRadius"
+                                    :min="5"
+                                    :max="250"
+                                    :placeholder="$t('common.radius')"
+                                />
+                            </UFormField>
+                        </dd>
+                    </div>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ !marker ? $t('common.create') : $t('common.save') }}
-                        </UButton>
+                    <div
+                        v-else-if="state.markerType === MarkerType.ICON"
+                        class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
+                    >
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="icon">
+                                {{ $t('common.icon') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="icon">
+                                <IconSelectMenu v-model="state.icon" :color="state.color" />
+                            </UFormField>
+                        </dd>
+                    </div>
+                </dl>
+            </UForm>
+        </template>
 
-                        <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
+                    {{ !marker ? $t('common.create') : $t('common.save') }}
+                </UButton>
+
+                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </USlideover>
 </template>

@@ -173,229 +173,215 @@ const columnsNew = [
 
 <template>
     <UModal>
-        <UCard>
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl leading-6 font-semibold">
-                        {{ $t('common.document', 1) }}
-                        {{ $t('common.reference', 2) }}
-                    </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ $t('common.document', 1) }}
+                {{ $t('common.reference', 2) }}
+            </h3>
+        </template>
 
-                    <UButton
-                        class="-my-1"
-                        color="neutral"
-                        variant="ghost"
-                        icon="i-mdi-window-close"
-                        @click="$emit('close', false)"
-                    />
-                </div>
-            </template>
+        <template #body>
+            <UTabs :items="items">
+                <template #current>
+                    <UTable
+                        :columns="columnsCurrent"
+                        :data="modelValue"
+                        :empty-state="{ icon: 'i-mdi-file', label: $t('common.not_found', [$t('common.reference', 2)]) }"
+                    >
+                        <template #title-cell="{ row }">
+                            <DocumentInfoPopover
+                                :document="!row.original.targetDocument?.id ? undefined : row.original.targetDocument"
+                                :document-id="row.original.targetDocumentId"
+                            />
+                        </template>
 
-            <div>
-                <UTabs :items="items">
-                    <template #current>
+                        <template #creator-cell="{ row }">
+                            <CitizenInfoPopover
+                                :user="!row.original.targetDocument?.creator ? undefined : row.original.targetDocument?.creator"
+                                :user-id="row.original.targetDocument?.creatorId"
+                                :trailing="false"
+                            />
+                        </template>
+
+                        <template #reference-cell="{ row }">
+                            {{ $t(`enums.documents.DocReference.${DocReference[row.original.reference]}`) }}
+                        </template>
+
+                        <template #actions-cell="{ row }">
+                            <div class="flex flex-row gap-2">
+                                <UTooltip :text="$t('components.documents.document_managers.open_document')">
+                                    <UButton
+                                        :to="{
+                                            name: 'documents-id',
+                                            params: {
+                                                id: row.original.targetDocumentId,
+                                            },
+                                        }"
+                                        target="_blank"
+                                        variant="link"
+                                        icon="i-mdi-open-in-new"
+                                    />
+                                </UTooltip>
+
+                                <UTooltip :text="$t('components.documents.document_managers.remove_reference')">
+                                    <UButton
+                                        icon="i-mdi-file-document-minus"
+                                        variant="link"
+                                        color="error"
+                                        @click="removeReference(row.original.id!)"
+                                    />
+                                </UTooltip>
+                            </div>
+                        </template>
+                    </UTable>
+                </template>
+
+                <template #clipboard>
+                    <div>
                         <UTable
-                            :columns="columnsCurrent"
-                            :data="modelValue"
-                            :empty-state="{ icon: 'i-mdi-file', label: $t('common.not_found', [$t('common.reference', 2)]) }"
+                            :columns="columnsClipboard"
+                            :data="clipboardStore.$state.documents"
+                            :empty-state="{
+                                icon: 'i-mdi-file',
+                                label: $t('common.not_found', [$t('common.document', 2)]),
+                            }"
                         >
                             <template #title-cell="{ row }">
-                                <DocumentInfoPopover
-                                    :document="!row.original.targetDocument?.id ? undefined : row.original.targetDocument"
-                                    :document-id="row.original.targetDocumentId"
-                                />
+                                <DocumentInfoPopover :document="getDocument(row.original)" />
                             </template>
 
                             <template #creator-cell="{ row }">
-                                <CitizenInfoPopover
-                                    :user="
-                                        !row.original.targetDocument?.creator ? undefined : row.original.targetDocument?.creator
-                                    "
-                                    :user-id="row.original.targetDocument?.creatorId"
-                                    :trailing="false"
-                                />
+                                <CitizenInfoPopover :user="row.original.creator" :trailing="false" />
                             </template>
 
-                            <template #reference-cell="{ row }">
-                                {{ $t(`enums.documents.DocReference.${DocReference[row.original.reference]}`) }}
+                            <template #createdAt-cell="{ row }">
+                                <GenericTime :value="new Date(row.original.createdAt ?? 'now')" ago />
                             </template>
 
-                            <template #actions-cell="{ row }">
-                                <div class="flex flex-row gap-2">
-                                    <UTooltip :text="$t('components.documents.document_managers.open_document')">
+                            <template #references-cell="{ row }">
+                                <UButtonGroup>
+                                    <UTooltip :text="$t('components.documents.document_managers.links')">
                                         <UButton
-                                            :to="{
-                                                name: 'documents-id',
-                                                params: {
-                                                    id: row.original.targetDocumentId,
-                                                },
-                                            }"
-                                            target="_blank"
-                                            variant="link"
-                                            icon="i-mdi-open-in-new"
+                                            color="blue"
+                                            icon="i-mdi-link"
+                                            @click="addReferenceClipboard(row.original, DocReference.LINKED)"
                                         />
                                     </UTooltip>
 
-                                    <UTooltip :text="$t('components.documents.document_managers.remove_reference')">
+                                    <UTooltip :text="$t('components.documents.document_managers.solves')">
                                         <UButton
-                                            icon="i-mdi-file-document-minus"
-                                            variant="link"
+                                            color="green"
+                                            icon="i-mdi-check"
+                                            @click="addReferenceClipboard(row.original, DocReference.SOLVES)"
+                                        />
+                                    </UTooltip>
+
+                                    <UTooltip :text="$t('components.documents.document_managers.closes')">
+                                        <UButton
                                             color="error"
-                                            @click="removeReference(row.original.id!)"
+                                            icon="i-mdi-close-box"
+                                            @click="addReferenceClipboard(row.original, DocReference.CLOSES)"
                                         />
                                     </UTooltip>
-                                </div>
+
+                                    <UTooltip :text="$t('components.documents.document_managers.deprecates')">
+                                        <UButton
+                                            color="warning"
+                                            icon="i-mdi-lock-clock"
+                                            @click="addReferenceClipboard(row.original, DocReference.DEPRECATES)"
+                                        />
+                                    </UTooltip>
+                                </UButtonGroup>
                             </template>
                         </UTable>
-                    </template>
+                    </div>
+                </template>
 
-                    <template #clipboard>
-                        <div>
-                            <UTable
-                                :columns="columnsClipboard"
-                                :data="clipboardStore.$state.documents"
-                                :empty-state="{
-                                    icon: 'i-mdi-file',
-                                    label: $t('common.not_found', [$t('common.document', 2)]),
-                                }"
-                            >
-                                <template #title-cell="{ row }">
-                                    <DocumentInfoPopover :document="getDocument(row.original)" />
-                                </template>
+                <template #new>
+                    <UFormField class="mb-2" name="title" :label="$t('common.search')">
+                        <UInput
+                            v-model="queryDoc"
+                            type="text"
+                            name="title"
+                            :placeholder="`${$t('common.document', 1)} ${$t('common.title')}`"
+                            leading-icon="i-mdi-search"
+                        />
+                    </UFormField>
 
-                                <template #creator-cell="{ row }">
-                                    <CitizenInfoPopover :user="row.original.creator" :trailing="false" />
-                                </template>
+                    <div>
+                        <DataErrorBlock
+                            v-if="error"
+                            :title="$t('common.unable_to_load', [$t('common.document', 2)])"
+                            :error="error"
+                            :retry="refresh"
+                        />
+                        <UTable
+                            v-else
+                            :columns="columnsNew"
+                            :loading="isRequestPending(status)"
+                            :data="documents"
+                            :empty-state="{
+                                icon: 'i-mdi-file',
+                                label: $t('common.not_found', [$t('common.reference', 2)]),
+                            }"
+                        >
+                            <template #title-cell="{ row }">
+                                <DocumentInfoPopover :document="row.original" />
+                            </template>
 
-                                <template #createdAt-cell="{ row }">
-                                    <GenericTime :value="new Date(row.original.createdAt ?? 'now')" ago />
-                                </template>
+                            <template #creator-cell="{ row }">
+                                <CitizenInfoPopover :user="row.original.creator" :trailing="false" />
+                            </template>
 
-                                <template #references-cell="{ row }">
-                                    <UButtonGroup>
-                                        <UTooltip :text="$t('components.documents.document_managers.links')">
-                                            <UButton
-                                                color="blue"
-                                                icon="i-mdi-link"
-                                                @click="addReferenceClipboard(row.original, DocReference.LINKED)"
-                                            />
-                                        </UTooltip>
+                            <template #createdAt-cell="{ row }">
+                                <GenericTime :value="row.original.createdAt" ago />
+                            </template>
 
-                                        <UTooltip :text="$t('components.documents.document_managers.solves')">
-                                            <UButton
-                                                color="green"
-                                                icon="i-mdi-check"
-                                                @click="addReferenceClipboard(row.original, DocReference.SOLVES)"
-                                            />
-                                        </UTooltip>
+                            <template #references-cell="{ row }">
+                                <UButtonGroup>
+                                    <UTooltip :text="$t('components.documents.document_managers.links')">
+                                        <UButton
+                                            color="blue"
+                                            icon="i-mdi-link"
+                                            @click="addReference(row.original, DocReference.LINKED)"
+                                        />
+                                    </UTooltip>
 
-                                        <UTooltip :text="$t('components.documents.document_managers.closes')">
-                                            <UButton
-                                                color="error"
-                                                icon="i-mdi-close-box"
-                                                @click="addReferenceClipboard(row.original, DocReference.CLOSES)"
-                                            />
-                                        </UTooltip>
+                                    <UTooltip :text="$t('components.documents.document_managers.solves')">
+                                        <UButton
+                                            color="green"
+                                            icon="i-mdi-check"
+                                            @click="addReference(row.original, DocReference.SOLVES)"
+                                        />
+                                    </UTooltip>
 
-                                        <UTooltip :text="$t('components.documents.document_managers.deprecates')">
-                                            <UButton
-                                                color="warning"
-                                                icon="i-mdi-lock-clock"
-                                                @click="addReferenceClipboard(row.original, DocReference.DEPRECATES)"
-                                            />
-                                        </UTooltip>
-                                    </UButtonGroup>
-                                </template>
-                            </UTable>
-                        </div>
-                    </template>
+                                    <UTooltip :text="$t('components.documents.document_managers.closes')">
+                                        <UButton
+                                            color="error"
+                                            icon="i-mdi-close-box"
+                                            @click="addReference(row.original, DocReference.CLOSES)"
+                                        />
+                                    </UTooltip>
 
-                    <template #new>
-                        <UFormField class="mb-2" name="title" :label="$t('common.search')">
-                            <UInput
-                                v-model="queryDoc"
-                                type="text"
-                                name="title"
-                                :placeholder="`${$t('common.document', 1)} ${$t('common.title')}`"
-                                leading-icon="i-mdi-search"
-                            />
-                        </UFormField>
+                                    <UTooltip :text="$t('components.documents.document_managers.deprecates')">
+                                        <UButton
+                                            color="warning"
+                                            icon="i-mdi-lock-clock"
+                                            @click="addReference(row.original, DocReference.DEPRECATES)"
+                                        />
+                                    </UTooltip>
+                                </UButtonGroup>
+                            </template>
+                        </UTable>
+                    </div>
+                </template>
+            </UTabs>
+        </template>
 
-                        <div>
-                            <DataErrorBlock
-                                v-if="error"
-                                :title="$t('common.unable_to_load', [$t('common.document', 2)])"
-                                :error="error"
-                                :retry="refresh"
-                            />
-                            <UTable
-                                v-else
-                                :columns="columnsNew"
-                                :loading="isRequestPending(status)"
-                                :data="documents"
-                                :empty-state="{
-                                    icon: 'i-mdi-file',
-                                    label: $t('common.not_found', [$t('common.reference', 2)]),
-                                }"
-                            >
-                                <template #title-cell="{ row }">
-                                    <DocumentInfoPopover :document="row.original" />
-                                </template>
-
-                                <template #creator-cell="{ row }">
-                                    <CitizenInfoPopover :user="row.original.creator" :trailing="false" />
-                                </template>
-
-                                <template #createdAt-cell="{ row }">
-                                    <GenericTime :value="row.original.createdAt" ago />
-                                </template>
-
-                                <template #references-cell="{ row }">
-                                    <UButtonGroup>
-                                        <UTooltip :text="$t('components.documents.document_managers.links')">
-                                            <UButton
-                                                color="blue"
-                                                icon="i-mdi-link"
-                                                @click="addReference(row.original, DocReference.LINKED)"
-                                            />
-                                        </UTooltip>
-
-                                        <UTooltip :text="$t('components.documents.document_managers.solves')">
-                                            <UButton
-                                                color="green"
-                                                icon="i-mdi-check"
-                                                @click="addReference(row.original, DocReference.SOLVES)"
-                                            />
-                                        </UTooltip>
-
-                                        <UTooltip :text="$t('components.documents.document_managers.closes')">
-                                            <UButton
-                                                color="error"
-                                                icon="i-mdi-close-box"
-                                                @click="addReference(row.original, DocReference.CLOSES)"
-                                            />
-                                        </UTooltip>
-
-                                        <UTooltip :text="$t('components.documents.document_managers.deprecates')">
-                                            <UButton
-                                                color="warning"
-                                                icon="i-mdi-lock-clock"
-                                                @click="addReference(row.original, DocReference.DEPRECATES)"
-                                            />
-                                        </UTooltip>
-                                    </UButtonGroup>
-                                </template>
-                            </UTable>
-                        </div>
-                    </template>
-                </UTabs>
-            </div>
-
-            <template #footer>
-                <UButton class="flex-1" block color="neutral" @click="$emit('close', false)">
-                    {{ $t('common.close', 1) }}
-                </UButton>
-            </template>
-        </UCard>
+        <template #footer>
+            <UButton class="flex-1" block color="neutral" @click="$emit('close', false)">
+                {{ $t('common.close', 1) }}
+            </UButton>
+        </template>
     </UModal>
 </template>

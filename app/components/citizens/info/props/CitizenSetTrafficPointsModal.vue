@@ -11,10 +11,9 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
     (e: 'update:trafficInfractionPoints', value: number): void;
 }>();
-
-const { isOpen } = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -61,20 +60,19 @@ async function setTrafficPoints(values: Schema): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        isOpen.value = false;
+        emit('close', false);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
     }
 }
 
-watch(isOpen, () => {
-    if (!isOpen.value) {
-        return;
-    }
-
-    state.trafficInfractionPoints = props.user.props?.trafficInfractionPoints ?? 0;
-});
+watch(
+    () => props.user,
+    () => {
+        state.trafficInfractionPoints = props.user.props?.trafficInfractionPoints ?? 0;
+    },
+);
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -85,64 +83,52 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UModal>
-        <UForm ref="form" :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard>
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl leading-6 font-semibold">
-                            {{ $t('components.citizens.CitizenInfoProfile.set_traffic_points') }}
-                        </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ $t('components.citizens.CitizenInfoProfile.set_traffic_points') }}
+            </h3>
+        </template>
 
-                        <UButton
-                            class="-my-1"
-                            color="neutral"
-                            variant="ghost"
-                            icon="i-mdi-window-close"
-                            @click="isOpen = false"
-                        />
-                    </div>
-                </template>
+        <template #body>
+            <UForm ref="form" :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UFormField name="reason" :label="$t('common.reason')" required>
+                    <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
+                </UFormField>
 
-                <div>
-                    <UFormField name="reason" :label="$t('common.reason')" required>
-                        <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
-                    </UFormField>
+                <UFormField name="trafficInfractionPoints" :label="$t('common.traffic_infraction_points')">
+                    <UInputNumber
+                        v-model="state.trafficInfractionPoints"
+                        :min="0"
+                        :max="9999999"
+                        :step="1"
+                        :placeholder="$t('common.traffic_infraction_points')"
+                    />
+                </UFormField>
+            </UForm>
+        </template>
 
-                    <UFormField name="trafficInfractionPoints" :label="$t('common.traffic_infraction_points')">
-                        <UInput
-                            v-model="state.trafficInfractionPoints"
-                            type="number"
-                            :min="0"
-                            :max="9999999"
-                            :placeholder="$t('common.traffic_infraction_points')"
-                        />
-                    </UFormField>
-                </div>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
+                    {{ $t('common.add') }}
+                </UButton>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.add') }}
-                        </UButton>
+                <UButton
+                    class="flex-1"
+                    type="submit"
+                    block
+                    color="error"
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    @click="state.reset = true"
+                >
+                    {{ $t('common.reset') }}
+                </UButton>
 
-                        <UButton
-                            class="flex-1"
-                            type="submit"
-                            block
-                            color="error"
-                            :disabled="!canSubmit"
-                            :loading="!canSubmit"
-                            @click="state.reset = true"
-                        >
-                            {{ $t('common.reset') }}
-                        </UButton>
-
-                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

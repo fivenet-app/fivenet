@@ -174,11 +174,7 @@ const route = router.currentRoute;
         <NuxtRouteAnnouncer />
 
         <NuxtLayout>
-            <NuxtPage
-                :transition="{
-                    onBeforeEnter,
-                }"
-            />
+            <NuxtPage :transition="{ onBeforeEnter }" />
         </NuxtLayout>
 
         <BannerMessage

@@ -24,10 +24,9 @@ const props = withDefaults(
 );
 
 defineEmits<{
+    (e: 'close', v: boolean): void;
     (e: 'refresh'): void;
 }>();
-
-const { isOpen } = useOverlay();
 
 const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
@@ -94,7 +93,7 @@ const correctCount = ref(0);
             :view-only="viewOnly"
             :grading="data?.grading"
             @refresh="$emit('refresh')"
-            @close="isOpen = false"
+            @close="$emit('close', false)"
         >
             <template v-if="examMode >= QualificationExamMode.REQUEST_NEEDED" #default>
                 <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.exam')])" />
@@ -127,10 +126,9 @@ const correctCount = ref(0);
                                 </UFormField>
 
                                 <UFormField :label="$t('common.points', 2)">
-                                    <UInput
+                                    <UInputNumber
                                         v-model="data.grading!.responses[getGradingIndex(question.question.questionId)]!.points"
                                         class="max-w-24"
-                                        type="number"
                                         :step="0.5"
                                         :min="0"
                                         :max="question.question.question?.points"

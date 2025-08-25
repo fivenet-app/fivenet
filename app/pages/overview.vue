@@ -88,9 +88,13 @@ const items = [
 </script>
 
 <template>
-    <UDashboardPanel>
+    <UDashboardPanel id="overview">
         <template #header>
-            <UDashboardNavbar :title="$t('common.overview')" />
+            <UDashboardNavbar :title="$t('common.overview')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+            </UDashboardNavbar>
         </template>
 
         <template #body>

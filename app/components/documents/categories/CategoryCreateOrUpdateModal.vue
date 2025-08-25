@@ -13,6 +13,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
     (e: 'update'): void;
 }>();
 
@@ -21,8 +22,6 @@ const { can } = useAuth();
 const { fallbackColor } = useAppConfig();
 
 const notifications = useNotificationsStore();
-
-const { isOpen } = useOverlay();
 
 const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
@@ -70,7 +69,7 @@ async function createOrUpdateCategory(values: Schema): Promise<void> {
         }
 
         emit('update');
-        isOpen.value = false;
+        emit('close', false);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -102,7 +101,7 @@ async function deleteCategory(): Promise<void> {
         }
 
         emit('update');
-        isOpen.value = false;
+        emit('close', false);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -132,102 +131,88 @@ watch(props, () => setFromProps());
 
 <template>
     <UModal>
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard>
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl leading-6 font-semibold">
-                            <template v-if="!canEdit">
-                                {{ $t('common.category') }}:
-                                {{ category?.name }}
-                            </template>
-                            <template v-else-if="category">
-                                {{ $t('components.documents.categories.modal.update_category') }}:
-                                {{ category?.name }}
-                            </template>
-                            <template v-else>
-                                {{ $t('components.documents.categories.modal.create_category') }}
-                            </template>
-                        </h3>
-
-                        <UButton
-                            class="-my-1"
-                            color="neutral"
-                            variant="ghost"
-                            icon="i-mdi-window-close"
-                            @click="isOpen = false"
-                        />
-                    </div>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                <template v-if="!canEdit">
+                    {{ $t('common.category') }}:
+                    {{ category?.name }}
                 </template>
+                <template v-else-if="category">
+                    {{ $t('components.documents.categories.modal.update_category') }}:
+                    {{ category?.name }}
+                </template>
+                <template v-else>
+                    {{ $t('components.documents.categories.modal.create_category') }}
+                </template>
+            </h3>
+        </template>
 
-                <div>
-                    <div>
-                        <UFormField class="flex-1" name="name" :label="$t('common.name')">
-                            <UInput
-                                v-model="state.name"
-                                type="text"
-                                name="name"
-                                :disabled="!canEdit"
-                                :placeholder="$t('common.name', 1)"
-                                :label="$t('common.name', 1)"
-                            />
-                        </UFormField>
+        <template #body>
+            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UFormField class="flex-1" name="name" :label="$t('common.name')">
+                    <UInput
+                        v-model="state.name"
+                        type="text"
+                        name="name"
+                        :disabled="!canEdit"
+                        :placeholder="$t('common.name', 1)"
+                        :label="$t('common.name', 1)"
+                    />
+                </UFormField>
 
-                        <UFormField class="flex-1" name="description" :label="$t('common.description')">
-                            <UTextarea
-                                v-model="state.description"
-                                name="description"
-                                :disabled="!canEdit"
-                                :placeholder="$t('common.description')"
-                            />
-                        </UFormField>
+                <UFormField class="flex-1" name="description" :label="$t('common.description')">
+                    <UTextarea
+                        v-model="state.description"
+                        name="description"
+                        :disabled="!canEdit"
+                        :placeholder="$t('common.description')"
+                    />
+                </UFormField>
 
-                        <UFormField class="flex-1 flex-row" name="color" :label="$t('common.color')">
-                            <div class="flex flex-1 gap-1">
-                                <ColorPickerTW v-model="state.color" class="flex-1" :disabled="!canEdit" />
-                            </div>
-                        </UFormField>
-
-                        <UFormField class="flex-1" name="icon" :label="$t('common.icon')">
-                            <div class="flex flex-1 gap-1">
-                                <IconSelectMenu
-                                    v-model="state.icon"
-                                    class="flex-1"
-                                    :color="state.color"
-                                    :disabled="!canEdit"
-                                    :fallback-icon="ShapeIcon"
-                                />
-
-                                <UButton v-if="canEdit" icon="i-mdi-backspace" @click="state.icon = undefined" />
-                            </div>
-                        </UFormField>
+                <UFormField class="flex-1 flex-row" name="color" :label="$t('common.color')">
+                    <div class="flex flex-1 gap-1">
+                        <ColorPickerTW v-model="state.color" class="flex-1" :disabled="!canEdit" />
                     </div>
-                </div>
+                </UFormField>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
-
-                        <UButton
-                            v-if="category !== undefined && canEdit && can('documents.DocumentsService/DeleteCategory').value"
+                <UFormField class="flex-1" name="icon" :label="$t('common.icon')">
+                    <div class="flex flex-1 gap-1">
+                        <IconSelectMenu
+                            v-model="state.icon"
                             class="flex-1"
-                            block
-                            :color="!category.deletedAt ? 'error' : 'success'"
-                            :icon="!category.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
-                            :label="!category.deletedAt ? $t('common.delete') : $t('common.restore')"
-                            :disabled="!canSubmit"
-                            :loading="!canSubmit"
-                            @click="deleteCategory()"
+                            :color="state.color"
+                            :disabled="!canEdit"
+                            :fallback-icon="ShapeIcon"
                         />
 
-                        <UButton v-if="canEdit" class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ category === undefined ? $t('common.create') : $t('common.update') }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                        <UButton v-if="canEdit" icon="i-mdi-backspace" @click="state.icon = undefined" />
+                    </div>
+                </UFormField>
+            </UForm>
+        </template>
+
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
+
+                <UButton
+                    v-if="category !== undefined && canEdit && can('documents.DocumentsService/DeleteCategory').value"
+                    class="flex-1"
+                    block
+                    :color="!category.deletedAt ? 'error' : 'success'"
+                    :icon="!category.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
+                    :label="!category.deletedAt ? $t('common.delete') : $t('common.restore')"
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    @click="deleteCategory()"
+                />
+
+                <UButton v-if="canEdit" class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
+                    {{ category === undefined ? $t('common.create') : $t('common.update') }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

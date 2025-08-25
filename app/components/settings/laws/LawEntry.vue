@@ -88,33 +88,38 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </div>
 
         <div class="flex flex-1 gap-2">
-            <UFormField class="whitespace-nowrap text-left" :label="$t('common.fine')" name="fine">
-                <UInput
+            <UFormField class="text-left whitespace-nowrap" :label="$t('common.fine')" name="fine">
+                <UInputNumber
                     v-model="state.fine"
                     name="fine"
-                    type="number"
                     :min="0"
+                    :step="1000"
+                    :format-options="{
+                        style: 'currency',
+                        currency: 'USD',
+                        currencyDisplay: 'code',
+                        currencySign: 'accounting',
+                    }"
                     :placeholder="$t('common.fine')"
-                    leading-icon="i-mdi-dollar"
                 />
             </UFormField>
 
-            <UFormField class="whitespace-nowrap text-left" :label="$t('common.detention_time')" name="detentionTime">
-                <UInput
+            <UFormField class="text-left whitespace-nowrap" :label="$t('common.detention_time')" name="detentionTime">
+                <UInputNumber
                     v-model="state.detentionTime"
                     name="detentionTime"
-                    type="number"
                     :min="0"
+                    :step="1"
                     :placeholder="$t('common.detention_time')"
                 />
             </UFormField>
 
-            <UFormField class="whitespace-nowrap text-left" :label="$t('common.traffic_infraction_points')" name="stvoPoints">
-                <UInput
+            <UFormField class="text-left whitespace-nowrap" :label="$t('common.traffic_infraction_points')" name="stvoPoints">
+                <UInputNumber
                     v-model="state.stvoPoints"
                     name="stvoPoints"
-                    type="number"
                     :min="0"
+                    :step="1"
                     :placeholder="$t('common.traffic_infraction_points')"
                 />
             </UFormField>

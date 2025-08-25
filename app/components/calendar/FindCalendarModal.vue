@@ -9,7 +9,9 @@ import { useCalendarStore } from '~/stores/calendar';
 import { getCalendarCalendarClient } from '~~/gen/ts/clients';
 import type { ListCalendarsResponse, SubscribeToCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
 
-const { isOpen } = useOverlay();
+defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 
 const calendarStore = useCalendarStore();
 const { currentDate } = storeToRefs(calendarStore);
@@ -68,73 +70,63 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
 
 <template>
     <UModal>
-        <UCard>
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl leading-6 font-semibold">
-                        {{ $t('components.calendar.FindCalendarModal.title') }}
-                    </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ $t('components.calendar.FindCalendarModal.title') }}
+            </h3>
+        </template>
 
-                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                </div>
-            </template>
+        <template #body>
+            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.calendar')])" />
+            <DataErrorBlock
+                v-else-if="error"
+                :title="$t('common.not_found', [$t('common.calendar')])"
+                :error="error"
+                :retry="refresh"
+            />
+            <DataNoDataBlock
+                v-else-if="!data?.calendars || data?.calendars.length === 0"
+                :type="`${$t('common.calendar')} ${$t('common.calendar')}`"
+                icon="i-mdi-calendar"
+            />
 
-            <div>
-                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.calendar')])" />
-                <DataErrorBlock
-                    v-else-if="error"
-                    :title="$t('common.not_found', [$t('common.calendar')])"
-                    :error="error"
-                    :retry="refresh"
-                />
-                <DataNoDataBlock
-                    v-else-if="!data?.calendars || data?.calendars.length === 0"
-                    :type="`${$t('common.calendar')} ${$t('common.calendar')}`"
-                    icon="i-mdi-calendar"
-                />
+            <ul v-else class="my-1 flex flex-col divide-y divide-gray-100 dark:divide-gray-800" role="list">
+                <li
+                    v-for="calendar in data?.calendars"
+                    :key="calendar.id"
+                    class="flex flex-initial items-center justify-between gap-1 border-white py-1 hover:border-primary-500/25 hover:bg-primary-100/50 dark:border-gray-900 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
+                >
+                    <div class="inline-flex gap-1">
+                        <UBadge :color="calendar.color as BadgeProps['color']" size="lg" />
 
-                <ul v-else class="my-1 flex flex-col divide-y divide-gray-100 dark:divide-gray-800" role="list">
-                    <li
-                        v-for="calendar in data?.calendars"
-                        :key="calendar.id"
-                        class="flex flex-initial items-center justify-between gap-1 border-white py-1 hover:border-primary-500/25 hover:bg-primary-100/50 dark:border-gray-900 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
-                    >
-                        <div class="inline-flex gap-1">
-                            <UBadge :color="calendar.color as BadgeProps['color']" size="lg" />
+                        <span>{{ calendar.name }}</span>
+                        <span v-if="calendar.description" class="hidden sm:block"
+                            >({{ $t('common.description') }}: {{ calendar.description }})</span
+                        >
 
-                            <span>{{ calendar.name }}</span>
-                            <span v-if="calendar.description" class="hidden sm:block"
-                                >({{ $t('common.description') }}: {{ calendar.description }})</span
-                            >
+                        <CitizenInfoPopover v-if="calendar.creator" :user="calendar.creator" />
+                    </div>
 
-                            <CitizenInfoPopover v-if="calendar.creator" :user="calendar.creator" />
-                        </div>
+                    <div>
+                        <UButton v-if="calendar.subscription" color="error" @click="subscribeToCalendar(calendar.id, false)">
+                            {{ $t('common.unsubscribe') }}
+                        </UButton>
+                        <UButton v-else color="warning" @click="() => subscribeToCalendar(calendar.id, true)">
+                            {{ $t('common.subscribe') }}
+                        </UButton>
+                    </div>
+                </li>
+            </ul>
 
-                        <div>
-                            <UButton
-                                v-if="calendar.subscription"
-                                color="error"
-                                @click="subscribeToCalendar(calendar.id, false)"
-                            >
-                                {{ $t('common.unsubscribe') }}
-                            </UButton>
-                            <UButton v-else color="warning" @click="() => subscribeToCalendar(calendar.id, true)">
-                                {{ $t('common.subscribe') }}
-                            </UButton>
-                        </div>
-                    </li>
-                </ul>
+            <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+        </template>
 
-                <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
-            </div>
-
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" color="neutral" block @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
-                </UButtonGroup>
-            </template>
-        </UCard>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

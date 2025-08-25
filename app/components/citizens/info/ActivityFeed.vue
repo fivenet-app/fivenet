@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { z } from 'zod';
-import CitizenActivityFeedEntry from '~/components/citizens/info/CitizenActivityFeedEntry.vue';
+import ActivityFeedEntry from '~/components/citizens/info/ActivityFeedEntry.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -113,8 +113,8 @@ watchDebounced(query, async () => refresh(), {
                                     {{ $t('common.selected', query.types.length) }}
                                 </template>
 
-                                <template #item="{ option }">
-                                    {{ $t(`enums.users.UserActivityType.${UserActivityType[option.aType]}`) }}
+                                <template #item="{ item }">
+                                    {{ $t(`enums.users.UserActivityType.${UserActivityType[item.aType]}`) }}
                                 </template>
 
                                 <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
@@ -156,7 +156,7 @@ watchDebounced(query, async () => refresh(), {
                         :key="activity.id"
                         class="border-white py-2 hover:border-primary-500/25 hover:bg-primary-100/50 dark:border-gray-900 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
                     >
-                        <CitizenActivityFeedEntry :activity="activity" />
+                        <ActivityFeedEntry :activity="activity" />
                     </li>
                 </ul>
             </div>

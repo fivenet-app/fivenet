@@ -198,13 +198,13 @@ const editing = ref(false);
                         <span v-else>&nbsp;</span>
                     </template>
 
-                    <template #item="{ option }">
+                    <template #item="{ item }">
                         <UBadge
                             class="truncate"
-                            :class="isColorBright(option.color) ? 'text-black!' : 'text-white!'"
-                            :style="{ backgroundColor: option.color }"
+                            :class="isColorBright(item.color) ? 'text-black!' : 'text-white!'"
+                            :style="{ backgroundColor: item.color }"
                         >
-                            {{ option.name }}
+                            {{ item.name }}
                         </UBadge>
                     </template>
 

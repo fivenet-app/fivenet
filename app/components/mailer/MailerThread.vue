@@ -369,8 +369,8 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                             >
                                 <template #item-label>&nbsp;</template>
 
-                                <template #option-create="{ option }">
-                                    <span class="shrink-0">{{ $t('common.recipient') }}: {{ option.label }}</span>
+                                <template #option-create="{ item }">
+                                    <span class="shrink-0">{{ $t('common.recipient') }}: {{ item.label }}</span>
                                 </template>
 
                                 <template #empty>

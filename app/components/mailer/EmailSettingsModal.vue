@@ -15,7 +15,9 @@ withDefaults(
     },
 );
 
-const { isOpen } = useOverlay();
+const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 
 const mailerStore = useMailerStore();
 const { addressBook, selectedEmail } = storeToRefs(mailerStore);
@@ -52,30 +54,18 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         })
         .finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 
-    isOpen.value = false;
+    emit('close', false);
 }, 1000);
 </script>
 
 <template>
     <UModal>
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard>
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl leading-6 font-semibold">
-                            {{ $t('common.settings') }} - {{ selectedEmail?.email }}
-                        </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">{{ $t('common.settings') }} - {{ selectedEmail?.email }}</h3>
+        </template>
 
-                        <UButton
-                            class="-my-1"
-                            color="neutral"
-                            variant="ghost"
-                            icon="i-mdi-window-close"
-                            @click="isOpen = false"
-                        />
-                    </div>
-                </template>
-
+        <template #body>
+            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <div class="flex flex-col gap-2">
                     <UFormField class="flex-1" name="emails" :label="$t('common.blocklist')">
                         <div class="flex flex-col gap-1">
@@ -125,25 +115,25 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </ClientOnly>
                     </UFormField>
                 </div>
+            </UForm>
+        </template>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
 
-                        <UButton
-                            v-if="!disabled || canManage"
-                            class="flex-1"
-                            type="submit"
-                            :label="$t('common.save')"
-                            block
-                            :disabled="!canSubmit"
-                            :loading="!canSubmit"
-                        />
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                <UButton
+                    v-if="!disabled || canManage"
+                    class="flex-1"
+                    type="submit"
+                    :label="$t('common.save')"
+                    block
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                />
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

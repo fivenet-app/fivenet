@@ -6,7 +6,9 @@ import { useAuthStore } from '~/stores/auth';
 import { getAuthAuthClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const { isOpen } = useOverlay();
+const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 
 const notifications = useNotificationsStore();
 
@@ -34,7 +36,7 @@ async function changePassword(values: Schema): Promise<void> {
             new: values.newPassword,
         });
         const { response } = await call;
-        isOpen.value = false;
+        emit('close', false);
 
         setAccessTokenExpiration(toDate(response.expires));
 
@@ -52,14 +54,7 @@ async function changePassword(values: Schema): Promise<void> {
 }
 
 const currentPasswordVisibility = ref(false);
-function toggleCurrentPasswordVisibility() {
-    currentPasswordVisibility.value = !currentPasswordVisibility.value;
-}
-
 const newPasswordVisibility = ref(false);
-function toggleNewPasswordVisibility() {
-    newPasswordVisibility.value = !newPasswordVisibility.value;
-}
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -70,85 +65,73 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UModal :prevent-close="!canSubmit">
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard>
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl leading-6 font-semibold">
-                            {{ $t('components.auth.ChangePasswordModal.change_password') }}
-                        </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ $t('components.auth.ChangePasswordModal.change_password') }}
+            </h3>
+        </template>
 
-                        <UButton
-                            class="-my-1"
-                            color="neutral"
-                            variant="ghost"
-                            icon="i-mdi-window-close"
-                            @click="isOpen = false"
-                        />
-                    </div>
-                </template>
+        <template #body>
+            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UFormField name="currentPassword" :label="$t('components.auth.ChangePasswordModal.current_password')">
+                    <UInput
+                        v-model="state.currentPassword"
+                        name="currentPassword"
+                        :type="currentPasswordVisibility ? 'text' : 'password'"
+                        autocomplete="current-password"
+                        :placeholder="$t('components.auth.ChangePasswordModal.current_password')"
+                        :ui="{ trailing: 'pe-1' }"
+                    >
+                        <template #trailing>
+                            <UButton
+                                color="neutral"
+                                variant="link"
+                                :icon="currentPasswordVisibility ? 'i-mdi-eye' : 'i-mdi-eye-closed'"
+                                :aria-label="currentPasswordVisibility ? 'Hide password' : 'Show password'"
+                                :aria-pressed="currentPasswordVisibility"
+                                aria-controls="password"
+                                @click="currentPasswordVisibility = !currentPasswordVisibility"
+                            />
+                        </template>
+                    </UInput>
+                </UFormField>
 
-                <template #body>
-                    <UFormField name="currentPassword" :label="$t('components.auth.ChangePasswordModal.current_password')">
-                        <UInput
-                            v-model="state.currentPassword"
-                            name="currentPassword"
-                            :type="currentPasswordVisibility ? 'text' : 'password'"
-                            autocomplete="current-password"
-                            :placeholder="$t('components.auth.ChangePasswordModal.current_password')"
-                            :ui="{ trailing: 'pe-1' }"
-                        >
-                            <template #trailing>
-                                <UButton
-                                    color="neutral"
-                                    variant="link"
-                                    :icon="currentPasswordVisibility ? 'i-mdi-eye' : 'i-mdi-eye-closed'"
-                                    :aria-label="currentPasswordVisibility ? 'Hide password' : 'Show password'"
-                                    :aria-pressed="currentPasswordVisibility"
-                                    aria-controls="password"
-                                    @click="toggleCurrentPasswordVisibility"
-                                />
-                            </template>
-                        </UInput>
-                    </UFormField>
+                <UFormField name="newPassword" :label="$t('components.auth.ChangePasswordModal.new_password')">
+                    <UInput
+                        v-model="state.newPassword"
+                        name="newPassword"
+                        :type="newPasswordVisibility ? 'text' : 'password'"
+                        autocomplete="new-password"
+                        :placeholder="$t('components.auth.ChangePasswordModal.new_password')"
+                        :ui="{ trailing: 'pe-1' }"
+                    >
+                        <template #trailing>
+                            <UButton
+                                color="neutral"
+                                variant="link"
+                                :icon="newPasswordVisibility ? 'i-mdi-eye' : 'i-mdi-eye-closed'"
+                                :aria-label="newPasswordVisibility ? 'Hide password' : 'Show password'"
+                                :aria-pressed="newPasswordVisibility"
+                                aria-controls="password"
+                                @click="newPasswordVisibility = !newPasswordVisibility"
+                            />
+                        </template>
+                    </UInput>
+                    <PasswordStrengthMeter class="mt-2" :input="state.newPassword" />
+                </UFormField>
+            </UForm>
+        </template>
 
-                    <UFormField name="newPassword" :label="$t('components.auth.ChangePasswordModal.new_password')">
-                        <UInput
-                            v-model="state.newPassword"
-                            name="newPassword"
-                            :type="newPasswordVisibility ? 'text' : 'password'"
-                            autocomplete="new-password"
-                            :placeholder="$t('components.auth.ChangePasswordModal.new_password')"
-                            :ui="{ trailing: 'pe-1' }"
-                        >
-                            <template #trailing>
-                                <UButton
-                                    color="neutral"
-                                    variant="link"
-                                    :icon="newPasswordVisibility ? 'i-mdi-eye' : 'i-mdi-eye-closed'"
-                                    :aria-label="newPasswordVisibility ? 'Hide password' : 'Show password'"
-                                    :aria-pressed="newPasswordVisibility"
-                                    aria-controls="password"
-                                    @click="newPasswordVisibility = !newPasswordVisibility"
-                                />
-                            </template>
-                        </UInput>
-                        <PasswordStrengthMeter class="mt-2" :input="state.newPassword" />
-                    </UFormField>
-                </template>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
-
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('components.auth.ChangePasswordModal.change_password') }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
+                    {{ $t('components.auth.ChangePasswordModal.change_password') }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

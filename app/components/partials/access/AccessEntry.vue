@@ -161,8 +161,8 @@ if (props.hideGrade) {
                         <span class="truncate">{{ accessTypes.find((t) => t.type === entry.type)?.name }}</span>
                     </template>
 
-                    <template #item="{ option }">
-                        <span class="truncate">{{ option.name }}</span>
+                    <template #item="{ item }">
+                        <span class="truncate">{{ item.name }}</span>
                     </template>
 
                     <template #empty>
@@ -200,8 +200,8 @@ if (props.hideGrade) {
                             </template>
                         </template>
 
-                        <template #item="{ option: user }">
-                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                        <template #item="{ item }">
+                            {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
                         </template>
 
                         <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
@@ -240,8 +240,8 @@ if (props.hideGrade) {
                             </template>
                         </template>
 
-                        <template #item="{ option: qualification }">
-                            {{ `${qualification?.abbreviation}: ${qualification?.title}` }}
+                        <template #item="{ item }">
+                            {{ `${item?.abbreviation}: ${item?.title}` }}
                         </template>
 
                         <template #empty> {{ $t('common.not_found', [$t('common.qualification', 2)]) }} </template>

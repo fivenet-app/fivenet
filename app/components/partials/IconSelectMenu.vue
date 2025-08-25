@@ -56,9 +56,9 @@ async function iconSearch(query: string): Promise<IconEntry[]> {
                 />
                 <span class="truncate">{{ camelCaseToTitleCase(icon ?? $t('common.unknown')) }}</span>
             </template>
-            <template #item="{ option }">
-                <component :is="option?.component" class="size-5" :style="{ color: color }" />
-                <span class="truncate">{{ camelCaseToTitleCase(option.name) }}</span>
+            <template #item="{ item }">
+                <component :is="item?.component" class="size-5" :style="{ color: color }" />
+                <span class="truncate">{{ camelCaseToTitleCase(item.name) }}</span>
             </template>
         </USelectMenu>
     </ClientOnly>

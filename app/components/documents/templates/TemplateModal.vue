@@ -9,7 +9,9 @@ import type { TemplateRequirements, TemplateShort } from '~~/gen/ts/resources/do
 
 const clipboardStore = useClipboardStore();
 
-const { isOpen } = useOverlay();
+const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 
 const template = ref<undefined | TemplateShort>();
 const reqs = ref<undefined | TemplateRequirements>();
@@ -35,10 +37,6 @@ watch(reqStatus.value, () => {
 });
 
 const documentsDocuments = await useDocumentsDocuments();
-
-function closeDialog(): void {
-    isOpen.value = false;
-}
 
 function clipboardComponent(type: RequirementType) {
     switch (type) {
@@ -70,7 +68,7 @@ async function templateSelected(t: TemplateShort | undefined): Promise<void> {
             steps.value.selectClipboard = true;
         } else {
             await documentsDocuments.createDocument(template.value.id);
-            isOpen.value = false;
+            emit('close', false);
         }
     } else {
         requirementTypes.forEach((type) => {
@@ -92,7 +90,7 @@ async function clipboardDialog(): Promise<void> {
     submit.value = true;
     await documentsDocuments.createDocument(template.value?.id);
 
-    isOpen.value = false;
+    emit('close', false);
 }
 
 const filteredRequirementTypes = computed(() => {
@@ -103,18 +101,14 @@ const filteredRequirementTypes = computed(() => {
 
 <template>
     <UModal>
-        <UCard>
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl leading-6 font-semibold">
-                        {{ $t('common.template', 2) }}
-                        <template v-if="template">- {{ template.title }} </template>
-                    </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ $t('common.template', 2) }}
+                <template v-if="template">- {{ template.title }} </template>
+            </h3>
+        </template>
 
-                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="closeDialog()" />
-                </div>
-            </template>
-
+        <template #body>
             <template v-if="steps.selectTemplate">
                 <UButton block @click="clipboardDialog()">
                     {{ $t('components.documents.templates.templates_modal.no_template') }}
@@ -132,7 +126,7 @@ const filteredRequirementTypes = computed(() => {
                             v-model:submit="submit"
                             :specs="reqs[type === 'citizens' ? 'users' : type]!"
                             @statisfied="(v: boolean) => (reqStatus[type] = v)"
-                            @close="closeDialog()"
+                            @close="$emit('close', false)"
                         >
                             <template #header>
                                 <span class="text-sm">
@@ -147,25 +141,25 @@ const filteredRequirementTypes = computed(() => {
                     </div>
                 </div>
             </div>
+        </template>
 
-            <template #footer>
-                <UButtonGroup
-                    v-if="template !== undefined && reqs !== undefined && steps.selectClipboard"
-                    class="inline-flex w-full"
-                >
-                    <UButton class="flex-1" color="neutral" block @click="goBackDialog">
-                        {{ $t('common.go_back') }}
-                    </UButton>
-
-                    <UButton class="flex-1" block :disabled="!readyToCreate" @click="clipboardDialog()">
-                        {{ $t('common.create') }}
-                    </UButton>
-                </UButtonGroup>
-
-                <UButton v-else class="flex-1" color="neutral" block @click="closeDialog">
-                    {{ $t('common.close', 1) }}
+        <template #footer>
+            <UButtonGroup
+                v-if="template !== undefined && reqs !== undefined && steps.selectClipboard"
+                class="inline-flex w-full"
+            >
+                <UButton class="flex-1" color="neutral" block @click="goBackDialog">
+                    {{ $t('common.go_back') }}
                 </UButton>
-            </template>
-        </UCard>
+
+                <UButton class="flex-1" block :disabled="!readyToCreate" @click="clipboardDialog()">
+                    {{ $t('common.create') }}
+                </UButton>
+            </UButtonGroup>
+
+            <UButton v-else class="flex-1" color="neutral" block @click="$emit('close', false)">
+                {{ $t('common.close', 1) }}
+            </UButton>
+        </template>
     </UModal>
 </template>

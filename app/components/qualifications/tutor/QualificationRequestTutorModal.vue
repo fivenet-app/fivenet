@@ -18,10 +18,9 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
     (e: 'refresh'): void;
 }>();
-
-const { isOpen } = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -68,7 +67,7 @@ async function createOrUpdateQualificationRequest(
         });
 
         emit('refresh');
-        isOpen.value = false;
+        emit('close', false);
 
         return response;
     } catch (e) {
@@ -90,77 +89,65 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UModal>
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard>
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl leading-6 font-semibold">
-                            {{ $t('components.qualifications.request_modal.title') }}
-                        </h3>
+        <template #title>
+            <h3 class="text-2xl leading-6 font-semibold">
+                {{ $t('components.qualifications.request_modal.title') }}
+            </h3>
+        </template>
 
-                        <UButton
-                            class="-my-1"
-                            color="neutral"
-                            variant="ghost"
-                            icon="i-mdi-window-close"
-                            @click="isOpen = false"
-                        />
-                    </div>
-                </template>
+        <template #body>
+            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UFormField class="flex-1" name="status" :label="$t('common.status')">
+                    <ClientOnly>
+                        <USelectMenu
+                            v-model="state.status"
+                            :items="availableStatus"
+                            value-key="status"
+                            :placeholder="$t('common.status')"
+                            :searchable-placeholder="$t('common.search_field')"
+                        >
+                            <template #item-label>
+                                <span class="size-2 rounded-full" :class="requestStatusToBgColor(state.status)" />
+                                <span class="truncate">{{
+                                    $t(`enums.qualifications.RequestStatus.${RequestStatus[state.status]}`)
+                                }}</span>
+                            </template>
 
-                <div>
-                    <UFormField class="flex-1" name="status" :label="$t('common.status')">
-                        <ClientOnly>
-                            <USelectMenu
-                                v-model="state.status"
-                                :items="availableStatus"
-                                value-key="status"
-                                :placeholder="$t('common.status')"
-                                :searchable-placeholder="$t('common.search_field')"
-                            >
-                                <template #item-label>
-                                    <span class="size-2 rounded-full" :class="requestStatusToBgColor(state.status)" />
-                                    <span class="truncate">{{
-                                        $t(`enums.qualifications.RequestStatus.${RequestStatus[state.status]}`)
-                                    }}</span>
-                                </template>
+                            <template #item="{ item }">
+                                <span class="size-2 rounded-full" :class="requestStatusToBgColor(item.status)" />
+                                <span class="truncate">{{
+                                    $t(`enums.qualifications.RequestStatus.${RequestStatus[item.status]}`)
+                                }}</span>
+                            </template>
 
-                                <template #item="{ option }">
-                                    <span class="size-2 rounded-full" :class="requestStatusToBgColor(option.status)" />
-                                    <span class="truncate">{{
-                                        $t(`enums.qualifications.RequestStatus.${RequestStatus[option.status]}`)
-                                    }}</span>
-                                </template>
+                            <template #empty>
+                                {{ $t('common.not_found', [$t('common.status')]) }}
+                            </template>
+                        </USelectMenu>
+                    </ClientOnly>
+                </UFormField>
 
-                                <template #empty>
-                                    {{ $t('common.not_found', [$t('common.status')]) }}
-                                </template>
-                            </USelectMenu>
-                        </ClientOnly>
-                    </UFormField>
+                <UFormField class="flex-1" name="approverComment" :label="$t('common.message')">
+                    <UTextarea
+                        v-model="state.approverComment"
+                        name="approverComment"
+                        :rows="3"
+                        :placeholder="$t('common.message')"
+                    />
+                </UFormField>
+            </UForm>
+        </template>
 
-                    <UFormField class="flex-1" name="approverComment" :label="$t('common.message')">
-                        <UTextarea
-                            v-model="state.approverComment"
-                            name="approverComment"
-                            :rows="3"
-                            :placeholder="$t('common.message')"
-                        />
-                    </UFormField>
-                </div>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="neutral" block @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
-
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.submit') }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
+                    {{ $t('common.submit') }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

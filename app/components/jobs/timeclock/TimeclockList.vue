@@ -182,7 +182,7 @@ const totalTimeSum = computed(() => {
 const columns = computed(() => [
     {
         accessorKey: 'date',
-        label: t('common.date'),
+        header: t('common.date'),
         sortable: true,
         class:
             query.userMode === TimeclockViewMode.SELF || (query.mode !== TimeclockMode.DAILY && query.perDay) ? '' : 'hidden',
@@ -191,14 +191,14 @@ const columns = computed(() => [
     },
     {
         accessorKey: 'name',
-        label: t('common.name'),
+        header: t('common.name'),
         sortable: canAccessAll.value && props.userId === undefined,
         class: props.userId === undefined && query.userMode === TimeclockViewMode.ALL ? '' : 'hidden',
         rowClass: props.userId === undefined && query.userMode === TimeclockViewMode.ALL ? '' : 'hidden',
     },
     {
         accessorKey: 'rank',
-        label: t('common.rank'),
+        header: t('common.rank'),
         sortable: true,
         class:
             canAccessAll.value &&
@@ -217,7 +217,7 @@ const columns = computed(() => [
     },
     {
         accessorKey: 'time',
-        label: t('common.time'),
+        header: t('common.time'),
         sortable: true,
     },
 ]);
@@ -302,15 +302,20 @@ const { game } = useAppConfig();
 </script>
 
 <template>
-    <UTabs v-if="props.userId === undefined && items.length > 1" v-model="selectedUserMode" :items="items" />
-
     <UDashboardToolbar>
         <UForm class="flex w-full flex-col gap-2" :schema="schema" :state="query" @submit="refresh()">
+            <UTabs
+                v-if="props.userId === undefined && items.length > 1"
+                v-model="selectedUserMode"
+                :items="items"
+                variant="link"
+            />
             <template v-if="query.userMode === TimeclockViewMode.SELF">
                 <div class="flex flex-1 flex-col justify-between gap-2 sm:flex-row">
                     <UTabs
                         v-model="selectedSelfMode"
                         :items="selfTimeRangeModes.filter((m) => m.mode >= TimeclockMode.RANGE)"
+                        variant="link"
                     />
                 </div>
 
@@ -397,8 +402,8 @@ const { game } = useAppConfig();
                                         </span>
                                     </template>
 
-                                    <template #item="{ option: colleague }">
-                                        <ColleagueName class="truncate" :colleague="colleague" birthday />
+                                    <template #item="{ item }">
+                                        <ColleagueName class="truncate" :colleague="item" birthday />
                                     </template>
 
                                     <template #empty>
