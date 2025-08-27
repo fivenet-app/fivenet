@@ -271,7 +271,7 @@ const isOpen = ref(false);
 </script>
 
 <template>
-    <UDashboardPanel class="shrink-0 border-b border-gray-200 lg:border-r lg:border-b-0 dark:border-gray-800">
+    <UDashboardPanel>
         <UDashboardNavbar :title="$t('common.calendar')">
             <template #right>
                 <UButtonGroup

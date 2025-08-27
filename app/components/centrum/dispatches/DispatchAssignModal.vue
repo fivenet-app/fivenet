@@ -123,13 +123,9 @@ const onSubmitThrottle = useThrottleFn(async () => {
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="inline-flex items-center text-2xl leading-6 font-semibold">
-                {{ $t('components.centrum.assign_dispatch.title') }}:
-
-                <IDCopyBadge :id="dispatch?.id ?? dispatchId" class="ml-2" prefix="DSP" />
-            </h3>
+    <UModal :title="$t('components.centrum.assign_dispatch.title')">
+        <template #actions>
+            <IDCopyBadge :id="dispatch?.id ?? dispatchId" class="ml-2" prefix="DSP" />
         </template>
 
         <template #body>

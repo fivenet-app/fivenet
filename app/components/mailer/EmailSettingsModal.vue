@@ -59,11 +59,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">{{ $t('common.settings') }} - {{ selectedEmail?.email }}</h3>
-        </template>
-
+    <UModal :title="`${$t('common.settings')} - ${selectedEmail?.email}`" :overlay="false">
         <template #body>
             <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <div class="flex flex-col gap-2">

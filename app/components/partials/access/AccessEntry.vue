@@ -144,25 +144,22 @@ if (props.hideGrade) {
         </UTooltip>
 
         <UFormField class="w-40 flex-initial">
-            <UInput v-if="accessTypes.length === 1" type="text" disabled :model-value="accessTypes[0]?.name" />
+            <UInput v-if="accessTypes.length === 1" type="text" disabled :model-value="accessTypes[0]?.label" />
             <ClientOnly v-else>
                 <USelectMenu
                     v-model="entry.type"
                     :disabled="disabled"
                     :placeholder="$t('common.type')"
-                    searchable
-                    :search-attributes="['name']"
-                    :searchable-placeholder="$t('common.search_field')"
+                    :search-input="{ placeholder: $t('common.search_field') }"
                     value-key="type"
-                    option-attribute="label"
                     :items="accessTypes"
                 >
                     <template #item-label>
-                        <span class="truncate">{{ accessTypes.find((t) => t.type === entry.type)?.name }}</span>
+                        <span class="truncate">{{ accessTypes.find((t) => t.type === entry.type)?.label }}</span>
                     </template>
 
                     <template #item="{ item }">
-                        <span class="truncate">{{ item.name }}</span>
+                        <span class="truncate">{{ item.label }}</span>
                     </template>
 
                     <template #empty>
@@ -189,9 +186,8 @@ if (props.hideGrade) {
                                 return users;
                             }
                         "
-                        searchable-lazy
                         :search-attributes="['firstname', 'lastname']"
-                        :searchable-placeholder="$t('common.search_field')"
+                        :search-input="{ placeholder: $t('common.search_field') }"
                         :placeholder="$t('common.citizen', 1)"
                     >
                         <template #item-label>
@@ -227,9 +223,8 @@ if (props.hideGrade) {
                                 return response?.qualifications ?? [];
                             }
                         "
-                        searchable-lazy
                         :search-attributes="['abbreviation', 'title']"
-                        :searchable-placeholder="$t('common.search_field')"
+                        :search-input="{ placeholder: $t('common.search_field') }"
                         :placeholder="$t('common.qualification', 1)"
                     >
                         <template #item-label>
@@ -257,13 +252,11 @@ if (props.hideGrade) {
                         v-model="entry.job"
                         class="flex-1"
                         :disabled="disabled"
-                        option-attribute="label"
-                        searchable
                         :search-attributes="['name', 'label']"
                         value-key="name"
                         :items="jobs?.filter((j) => hideJobs.length === 0 || !hideJobs.includes(j.name)) ?? []"
                         :placeholder="$t('common.job')"
-                        :searchable-placeholder="$t('common.search_field')"
+                        :search-input="{ placeholder: $t('common.search_field') }"
                     >
                         <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
                     </USelectMenu>
@@ -278,12 +271,10 @@ if (props.hideGrade) {
                             jobs.find((j) => j.name === entry.job)?.grades.find((g) => g.grade === entry.minimumGrade)
                         "
                         :disabled="disabled || !entry.job"
-                        option-attribute="label"
-                        searchable
                         :search-attributes="['name', 'label']"
                         :items="jobs.find((j) => j.name === entry.job)?.grades ?? []"
                         :placeholder="$t('common.rank')"
-                        :searchable-placeholder="$t('common.search_field')"
+                        :search-input="{ placeholder: $t('common.search_field') }"
                         @update:model-value="entry.minimumGrade = $event?.grade ?? undefined"
                     >
                         <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
@@ -298,13 +289,11 @@ if (props.hideGrade) {
                     v-model="entry.access"
                     class="flex-1"
                     :disabled="disabled"
-                    option-attribute="label"
                     value-key="value"
                     :items="accessRoles"
-                    searchable
-                    :search-attributes="['label']"
+                    :filter-fields="['label']"
                     :placeholder="$t('common.na')"
-                    :searchable-placeholder="$t('common.search_field')"
+                    :search-input="{ placeholder: $t('common.search_field') }"
                 >
                     <template #item-label>
                         {{ accessRoles.find((a) => a.value === entry.access)?.label ?? $t('common.na') }}

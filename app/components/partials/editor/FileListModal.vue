@@ -15,13 +15,7 @@ defineEmits<{
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('components.partials.TiptapEditor.file_list') }}
-            </h3>
-        </template>
-
+    <UModal :title="$t('components.partials.TiptapEditor.file_list')">
         <template #body>
             <div class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-1 flex-col">
                 <DataNoDataBlock v-if="files.length === 0" :message="$t('components.partials.TiptapEditor.file_list_empty')" />

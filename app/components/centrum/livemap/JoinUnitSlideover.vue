@@ -65,13 +65,9 @@ const filteredUnits = computed(() => ({
 </script>
 
 <template>
-    <USlideover>
-        <template #title>
-            <h3 class="inline-flex items-center gap-2 text-2xl leading-6 font-semibold">
-                {{ $t('common.leave_unit') }}
-
-                <UIcon v-if="!canSubmit" class="size-6 animate-spin" name="i-mdi-loading" />
-            </h3>
+    <USlideover :title="$t('common.leave_unit')" :overlay="false">
+        <template #actions>
+            <UIcon v-if="!canSubmit" class="size-6 animate-spin" name="i-mdi-loading" />
         </template>
 
         <template #body>

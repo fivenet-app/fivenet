@@ -88,7 +88,7 @@ const { moveUp, moveDown } = useListReorder(toRef(questions.value.questions));
                         v-model="settings.autoGradeMode"
                         :items="modes"
                         value-key="mode"
-                        :searchable-placeholder="$t('common.search_field')"
+                        :search-input="{ placeholder: $t('common.search_field') }"
                     >
                         <template #item-label>
                             <span class="truncate">{{
@@ -128,7 +128,7 @@ const { moveUp, moveDown } = useListReorder(toRef(questions.value.questions));
             <UContainer class="mb-4">
                 <VueDraggable
                     v-model="questions.questions"
-                    class="flex flex-col gap-4 divide-y divide-gray-100 dark:divide-gray-800"
+                    class="flex flex-col gap-4 divide-y divide-default"
                     :disabled="disabled"
                     handle=".handle"
                 >

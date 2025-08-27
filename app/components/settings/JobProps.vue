@@ -362,7 +362,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             />
 
             <template v-else-if="isRequestPending(status) || jobProps">
-                <UTabs v-model="selectedTab" class="w-full" :items="items">
+                <UTabs v-model="selectedTab" class="w-full" :items="items" variant="link">
                     <template #jobprops>
                         <div v-if="isRequestPending(status)" class="space-y-1 px-4">
                             <USkeleton v-for="idx in 5" :key="idx" class="h-20 w-full" />
@@ -541,7 +541,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         v-else
                                         v-model="state.discordGuildId"
                                         :items="userGuilds"
-                                        searchable
                                         :search-attributes="['name', 'id']"
                                         :placeholder="
                                             $t('components.settings.job_props.discord_sync_settings.discord_guild_id')
@@ -613,9 +612,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             !canEdit
                                         "
                                         :searchable="searchChannels"
-                                        :search-attributes="['name']"
-                                        searchable-lazy
-                                        :searchable-placeholder="$t('common.search_field')"
+                                        :filter-fields="['name']"
+                                        :search-input="{ placeholder: $t('common.search_field') }"
                                         value-key="id"
                                         nullable
                                         :placeholder="
@@ -797,7 +795,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                         value: UserInfoSyncUnemployedMode.KICK,
                                                     },
                                                 ]"
-                                                :searchable-placeholder="$t('common.search_field')"
+                                                :search-input="{ placeholder: $t('common.search_field') }"
                                             >
                                                 <template #item-label>
                                                     {{
@@ -1103,7 +1101,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             <USelectMenu
                                                 v-model="selectedChange"
                                                 :items="jobProps.discordSyncChanges.changes"
-                                                :searchable-placeholder="$t('common.search_field')"
+                                                :search-input="{ placeholder: $t('common.search_field') }"
                                             >
                                                 <template #item-label>
                                                     <span class="truncate">{{

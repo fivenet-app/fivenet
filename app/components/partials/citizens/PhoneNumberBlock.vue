@@ -58,10 +58,14 @@ async function doCall(): Promise<void> {
 <template>
     <div class="inline-flex items-center gap-1">
         <template v-if="number">
-            <UTooltip v-if="showIcon" class="w-full" :text="$t('common.call')">
-                <UButton class="shrink-0" variant="link" icon="i-mdi-phone" @click="doCall">
-                    <span v-if="showLabel" :class="!disableTruncate && 'truncate'">{{ $t('common.call') }}</span>
-                </UButton>
+            <UTooltip v-if="showIcon" :text="$t('common.call')">
+                <UButton
+                    class="shrink-0"
+                    variant="link"
+                    icon="i-mdi-phone"
+                    :label="showLabel ? $t('common.call') : undefined"
+                    @click="doCall"
+                />
             </UTooltip>
 
             <span v-if="!hideNumber" class="inline-flex gap-1" :class="[streamerMode ? 'blur' : '']">

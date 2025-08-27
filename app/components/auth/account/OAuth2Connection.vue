@@ -61,7 +61,7 @@ const confirmModal = overlay.create(ConfirmModal);
                 <div class="inline-flex flex-1 gap-2">
                     <NuxtImg
                         v-if="!provider.icon?.startsWith('i-')"
-                        class="size-12"
+                        class="size-10"
                         :src="provider.icon"
                         :alt="provider.name"
                         placeholder-class="size-10"
@@ -69,7 +69,7 @@ const confirmModal = overlay.create(ConfirmModal);
                     />
                     <UIcon
                         v-else
-                        class="size-12"
+                        class="size-10"
                         :name="provider.icon"
                         :style="provider.name === 'discord' && { color: '#7289da' }"
                     />
@@ -100,7 +100,7 @@ const confirmModal = overlay.create(ConfirmModal);
         <div v-if="account || nuiEnabled" class="flex flex-1 flex-col items-center justify-center gap-4">
             <template v-if="account">
                 <div v-if="account" class="inline-flex items-center gap-2">
-                    <UAvatar size="md" :src="account.avatar" :alt="$t('common.image')" loading="lazy" />
+                    <UAvatar size="xl" :src="account.profilePicture" :alt="$t('common.image')" loading="lazy" />
 
                     <UTooltip :text="`${$t('components.auth.OAuth2Connections.external_id')}: ${account.externalId}`">
                         <span class="text-left">

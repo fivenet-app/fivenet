@@ -622,7 +622,7 @@ func (s *Server) ListDispatchActivity(
 	}
 
 	tUsers := tables.User().AS("colleague")
-	tAvatar := table.FivenetFiles.AS("avatar")
+	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tDispatchStatus.
 		SELECT(
@@ -649,8 +649,8 @@ func (s *Server) ListDispatchActivity(
 			tColleagueProps.Job,
 			tColleagueProps.NamePrefix,
 			tColleagueProps.NameSuffix,
-			tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
-			tAvatar.FilePath.AS("colleague.avatar"),
+			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
+			tAvatar.FilePath.AS("colleague.profile_picture"),
 		).
 		FROM(
 			tDispatchStatus.

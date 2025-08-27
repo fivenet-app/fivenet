@@ -206,10 +206,9 @@ const columns = computed(() =>
             },
             can(['jobs.JobsService/GetColleague', 'jobs.JobsService/SetColleagueProps']).value
                 ? {
-                      accessorKey: 'actions',
-                      header: t('common.action', 2),
+                      id: 'actions',
                       cell: ({ row }) =>
-                          h('div', { class: 'flex flex-col justify-end md:flex-row' }, [
+                          h('div', [
                               h(
                                   UTooltip,
                                   {
@@ -361,10 +360,8 @@ defineShortcuts({
                                     class="flex-1"
                                     multiple
                                     :searchable="async (q: string) => (await getColleagueLabels(q))?.labels ?? []"
-                                    searchable-lazy
-                                    :searchable-placeholder="$t('common.search_field')"
-                                    :search-attributes="['name']"
-                                    option-attribute="name"
+                                    :search-input="{ placeholder: $t('common.search_field') }"
+                                    :filter-fields="['name']"
                                     clear-search-on-close
                                     value-key="id"
                                 >
@@ -454,11 +451,11 @@ defineShortcuts({
                 <div class="inline-flex items-center text-highlighted">
                     <ProfilePictureImg
                         class="mr-2"
-                        :src="row.original?.avatar"
+                        :src="row.original?.profilePicture"
                         :name="`${row.original.firstname} ${row.original.lastname}`"
                         size="sm"
                         :enable-popup="true"
-                        :alt="$t('common.avatar')"
+                        :alt="$t('common.profile_picture')"
                     />
 
                     <ColleagueName :colleague="row.original" />
@@ -495,13 +492,12 @@ defineShortcuts({
                     <template #header>
                         <div class="flex items-center justify-center overflow-hidden">
                             <ProfilePictureImg
-                                :src="colleague?.avatar"
+                                :src="colleague?.profilePicture"
                                 :name="`${colleague.firstname} ${colleague.lastname}`"
                                 size="3xl"
                                 :enable-popup="true"
-                                :alt="$t('common.avatar')"
+                                :alt="$t('common.profile_picture')"
                                 :rounded="false"
-                                img-class="h-40 w-40 md:h-56 md:w-56 xl:h-64 xl:w-64 max-w-full"
                             />
                         </div>
                     </template>

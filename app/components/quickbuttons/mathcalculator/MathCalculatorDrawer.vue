@@ -5,14 +5,17 @@ const emit = defineEmits<{
 </script>
 
 <template>
-    <USlideover
+    <UDrawer
         :title="$t('components.mathcalculator.title')"
         :overlay="false"
         :close="{ onClick: () => emit('close', false) }"
         side="bottom"
+        handle-only
     >
         <template #body>
-            <LazyQuickbuttonsMathcalculatorMathCalculator />
+            <div class="flex justify-center">
+                <LazyQuickbuttonsMathcalculatorMathCalculator class="w-40 min-w-1/4" />
+            </div>
         </template>
-    </USlideover>
+    </UDrawer>
 </template>

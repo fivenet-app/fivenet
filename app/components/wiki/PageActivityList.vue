@@ -52,7 +52,7 @@ async function listPageActivity(): Promise<ListPageActivityResponse> {
             :message="$t('common.not_found', [$t('common.activity')])"
         />
 
-        <ul v-else class="mb-1 divide-y divide-gray-100 dark:divide-gray-800" role="list">
+        <ul v-else class="mb-1 divide-y divide-default" role="list">
             <PageActivityListEntry v-for="item in data.activity" :key="item.id" :entry="item" />
         </ul>
 

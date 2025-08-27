@@ -121,8 +121,7 @@ const columnsCurrent = [
         label: t('common.relation', 1),
     },
     {
-        accessorKey: 'actions',
-        label: t('common.action', 2),
+        id: 'actions',
     },
 ];
 
@@ -158,14 +157,7 @@ const columnsNew = [
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('common.citizen', 1) }}
-                {{ $t('common.relation', 2) }}
-            </h3>
-        </template>
-
+    <UModal :title="`${$t('common.citizen', 1)} ${$t('common.relation', 2)}`">
         <template #body>
             <UTabs :items="items">
                 <template #current>
@@ -173,7 +165,7 @@ const columnsNew = [
                         <UTable
                             :columns="columnsCurrent"
                             :data="modelValue"
-                            :empty-state="{ icon: 'i-mdi-file', label: $t('common.not_found', [$t('common.relation', 2)]) }"
+                            :empty="$t('common.not_found', [$t('common.relation', 2)])"
                         >
                             <template #name-cell="{ row }">
                                 <CitizenInfoPopover
@@ -230,7 +222,7 @@ const columnsNew = [
                         <UTable
                             :columns="columnsClipboard"
                             :data="clipboardStore.$state.users"
-                            :empty-state="{ icon: 'i-mdi-file', label: $t('common.not_found', [$t('common.citizen', 2)]) }"
+                            :empty="$t('common.not_found', [$t('common.citizen', 2)])"
                         >
                             <template #name-cell="{ row }">
                                 <CitizenInfoPopover :user="row.original" show-birthdate />
@@ -295,7 +287,7 @@ const columnsNew = [
                             :columns="columnsNew"
                             :loading="isRequestPending(status)"
                             :data="citizens"
-                            :empty-state="{ icon: 'i-mdi-file', label: $t('common.not_found', [$t('common.citizen', 2)]) }"
+                            :empty="$t('common.not_found', [$t('common.citizen', 2)])"
                         >
                             <template #name-cell="{ row }">
                                 <CitizenInfoPopover :user="row.original" show-birthdate />

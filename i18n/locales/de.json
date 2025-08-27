@@ -470,7 +470,7 @@
         "motd": "MOTD",
         "fallback_mode": "Fallback-Modus",
         "volume": "Lautstärke",
-        "avatar": "Profilbild",
+        "profile_picture": "Profilbild",
         "image": "Bild",
         "logo": "Logo",
         "absence_date": "Abwesenheit",

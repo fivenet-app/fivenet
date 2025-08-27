@@ -87,6 +87,14 @@ async function createThread(values: Schema): Promise<void> {
     emit('close', false);
 }
 
+function onCreate(item: string): void {
+    if (state.value.recipients.findIndex((r) => r.label.toLowerCase() === item.toLowerCase()) !== -1) {
+        return;
+    }
+
+    state.value.recipients.push({ label: item });
+}
+
 onBeforeMount(() => {
     if (
         (!state.value.content || state.value.content === '' || state.value.content === '<p><br></p>') &&
@@ -112,13 +120,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UModal fullscreen>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('components.mailer.create_thread') }}
-            </h3>
-        </template>
-
+    <UModal :title="$t('components.mailer.create_thread')" fullscreen>
         <template #body>
             <UForm class="flex flex-1 flex-col" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <div class="mx-auto">
@@ -145,11 +147,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         class="pt-1"
                                         :items="emails"
                                         :placeholder="$t('common.mail')"
-                                        searchable
-                                        :searchable-placeholder="$t('common.search_field')"
+                                        :search-input="{ placeholder: $t('common.search_field') }"
                                         :search-attributes="['label', 'email']"
                                         trailing
-                                        by="id"
                                     >
                                         <template #item-label>
                                             <span class="truncate overflow-hidden">
@@ -229,7 +229,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         block
                                         multiple
                                         trailing
-                                        searchable
                                         :items="[
                                             ...state.recipients,
                                             ...addressBook.filter((r) => !state.recipients.includes(r)),
@@ -237,13 +236,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :searchable-placeholder="$t('common.mail', 1)"
                                         :disabled="!canSubmit"
                                         create-item
+                                        @create="(item) => onCreate(item)"
                                     >
-                                        <template #item-label>&nbsp;</template>
-
-                                        <template #option-create="{ item }">
-                                            <span class="shrink-0">{{ $t('common.recipient') }}: {{ item.label }}</span>
-                                        </template>
-
                                         <template #empty>
                                             {{ $t('common.not_found', [$t('common.recipient', 2)]) }}
                                         </template>

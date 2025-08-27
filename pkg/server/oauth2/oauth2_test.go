@@ -218,7 +218,7 @@ func TestCallback_LoginSuccess(t *testing.T) {
 	mockUserInfo := &providers.UserInfo{
 		ID:       "123",
 		Username: "testuser",
-		Avatar:   "avatar.png",
+		Avatar:   "profile_picture.png",
 	}
 	mockProvider.On("GetUserInfo", mock.Anything, "test-code").Return(mockUserInfo, nil)
 
@@ -280,7 +280,7 @@ func TestCallback_ConnectError(t *testing.T) {
 	mockUserInfo := &providers.UserInfo{
 		ID:       "123",
 		Username: "testuser",
-		Avatar:   "avatar.png",
+		Avatar:   "profile_picture.png",
 	}
 	mockProvider.On("GetUserInfo", mock.Anything, "test-code").Return(mockUserInfo, nil)
 
@@ -342,7 +342,7 @@ func TestCallback_ConnectErrorAlreadyInUse(t *testing.T) {
 	mockUserInfo := &providers.UserInfo{
 		ID:       "123",
 		Username: "testuser",
-		Avatar:   "avatar.png",
+		Avatar:   "profile_picture.png",
 	}
 	mockProvider.On("GetUserInfo", mock.Anything, "test-code").Return(mockUserInfo, nil)
 
@@ -400,7 +400,7 @@ func TestCallback_ConnectFlow(t *testing.T) {
 	mockUserInfo := &providers.UserInfo{
 		ID:       "123",
 		Username: "testuser",
-		Avatar:   "avatar.png",
+		Avatar:   "profile_picture.png",
 	}
 	redirectUrl := "https://example.com/redirect-url?state="
 	mockProvider.On("GetRedirect", mock.Anything).Return(redirectUrl)

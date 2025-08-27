@@ -82,13 +82,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('components.citizens.CitizenInfoProfile.set_traffic_points') }}
-            </h3>
-        </template>
-
+    <UModal :title="$t('components.citizens.CitizenInfoProfile.set_traffic_points')">
         <template #body>
             <UForm ref="form" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField name="reason" :label="$t('common.reason')" required>

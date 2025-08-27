@@ -230,7 +230,7 @@ onKeyStroke([...digitKeys, ...operatorKeys, ...resultKeys, ...clearKeys, ...eras
             <template v-if="powerOn">
                 <UTooltip :text="$t('common.delete')">
                     <UButton
-                        class="absolute left-0 top-0 m-2 p-0.5"
+                        class="absolute top-0 left-0 m-2 p-0.5"
                         size="xs"
                         icon="i-mdi-delete"
                         color="error"

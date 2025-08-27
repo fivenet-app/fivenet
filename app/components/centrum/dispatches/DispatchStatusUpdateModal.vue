@@ -79,12 +79,9 @@ function updateReasonField(value: string): void {
 </script>
 
 <template>
-    <UModal :overlay="false">
-        <template #title>
-            <h3 class="inline-flex items-center text-2xl leading-6 font-semibold">
-                {{ $t('components.centrum.update_dispatch_status.title') }}:
-                <IDCopyBadge :id="dispatchId" class="ml-2" prefix="DSP" />
-            </h3>
+    <UModal :title="$t('components.centrum.update_dispatch_status.title')" :overlay="false">
+        <template #actions>
+            <IDCopyBadge :id="dispatchId" class="ml-2" prefix="DSP" />
         </template>
 
         <template #body>
@@ -168,7 +165,7 @@ function updateReasonField(value: string): void {
                                 <USelectMenu
                                     name="dispatchStatus"
                                     :items="['&nbsp;', ...settings?.predefinedStatus.dispatchStatus]"
-                                    :searchable-placeholder="$t('common.search_field')"
+                                    :search-input="{ placeholder: $t('common.search_field') }"
                                     @change="($event) => updateReasonField($event)"
                                 >
                                     <template #item="{ item }">

@@ -65,7 +65,7 @@ watch(props, setFromProps);
             <div class="flex flex-col gap-2">
                 <UAccordion :items="accordionCategories" multiple default-open :unmount="true">
                     <template #item="{ item: category }">
-                        <div class="flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
+                        <div class="flex flex-col divide-y divide-default">
                             <div
                                 v-for="perm in permissions.filter((p) => p.category === category.category)"
                                 :key="perm.id"

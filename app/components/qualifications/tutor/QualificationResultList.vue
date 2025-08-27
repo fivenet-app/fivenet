@@ -112,10 +112,9 @@ const columns = computed(
     () =>
         [
             {
-                accessorKey: 'actions',
-                header: t('common.action', 2),
+                id: 'actions',
                 cell: ({ row }) =>
-                    h('div', { key: row.original.id }, [
+                    h('div', [
                         row.original.status === ResultStatus.PENDING &&
                             h(UTooltip, { text: t('common.grade') }, () =>
                                 h(UButton, {
@@ -162,10 +161,11 @@ const columns = computed(
                                     variant: 'link',
                                     icon: 'i-mdi-delete',
                                     color: 'error',
-                                    onClick: () =>
+                                    onClick: () => {
                                         confirmModal.open({
                                             confirm: async () => deleteQualificationResult(row.original.id),
-                                        }),
+                                        });
+                                    },
                                 }),
                             ),
                     ]),

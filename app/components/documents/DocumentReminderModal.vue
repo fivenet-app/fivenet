@@ -75,13 +75,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('common.reminder') }}
-            </h3>
-        </template>
-
+    <UModal :title="$t('common.reminder', 2)">
         <template #body>
             <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField

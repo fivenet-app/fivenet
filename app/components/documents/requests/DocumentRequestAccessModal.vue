@@ -14,16 +14,18 @@ const emit = defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
+const { t } = useI18n();
+
 const notifications = useNotificationsStore();
 
 const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const accessLevels = [
-    { level: AccessLevel.VIEW },
-    { level: AccessLevel.COMMENT },
-    { level: AccessLevel.STATUS },
-    { level: AccessLevel.ACCESS },
-    { level: AccessLevel.EDIT },
+    { label: t(`enums.documents.AccessLevel.${AccessLevel[AccessLevel.VIEW]}`), value: AccessLevel.VIEW },
+    { label: t(`enums.documents.AccessLevel.${AccessLevel[AccessLevel.COMMENT]}`), value: AccessLevel.COMMENT },
+    { label: t(`enums.documents.AccessLevel.${AccessLevel[AccessLevel.STATUS]}`), value: AccessLevel.STATUS },
+    { label: t(`enums.documents.AccessLevel.${AccessLevel[AccessLevel.ACCESS]}`), value: AccessLevel.ACCESS },
+    { label: t(`enums.documents.AccessLevel.${AccessLevel[AccessLevel.EDIT]}`), value: AccessLevel.EDIT },
 ];
 
 const schema = z.object({
@@ -76,13 +78,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('common.request') }}
-            </h3>
-        </template>
-
+    <UModal :title="$t('common.request')">
         <template #body>
             <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField name="reason" :label="$t('common.reason')" required>
@@ -95,18 +91,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             v-model="state.accessLevel"
                             :items="accessLevels"
                             :placeholder="$t('common.access')"
-                            :searchable-placeholder="$t('common.search_field')"
+                            :search-input="{ placeholder: $t('common.search_field') }"
+                            value-key="value"
                         >
-                            <template #item-label>
-                                <span v-if="state.accessLevel" class="truncate">{{
-                                    $t(`enums.documents.AccessLevel.${AccessLevel[state.accessLevel]}`)
-                                }}</span>
-                            </template>
-
-                            <template #item="{ item }">
-                                <span class="truncate">{{ $t(`enums.documents.AccessLevel.${AccessLevel[item]}`) }}</span>
-                            </template>
-
                             <template #empty>
                                 {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
                             </template>

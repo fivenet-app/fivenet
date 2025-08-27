@@ -16,7 +16,7 @@ import { type ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct
 import type { ListConductEntriesResponse } from '~~/gen/ts/services/jobs/conduct';
 import ColleagueName from '../colleagues/ColleagueName.vue';
 import ConductViewSlideover from './ConductViewSlideover.vue';
-import { conductTypesToBadgeColor, conductTypesToBGColor } from './helpers';
+import { conductTypesToBadgeColor } from './helpers';
 
 const props = defineProps<{
     userId?: number;
@@ -165,8 +165,10 @@ const columns = computed(
             {
                 accessorKey: 'expiresAt',
                 header: t('common.expires_at'),
-                class: 'hidden lg:table-cell',
-                rowClass: 'hidden lg:table-cell',
+                meta: {
+                    td: 'hidden lg:table-cell',
+                    th: 'hidden lg:table-cell',
+                },
                 cell: ({ row }) =>
                     row.original.expiresAt
                         ? h(GenericTime, { value: row.original.expiresAt, type: 'date', class: 'font-semibold' })
@@ -199,53 +201,57 @@ const columns = computed(
             {
                 accessorKey: 'creator',
                 header: t('common.creator'),
-                class: 'hidden lg:table-cell',
-                rowClass: 'hidden lg:table-cell',
+                meta: {
+                    td: 'hidden lg:table-cell',
+                    th: 'hidden lg:table-cell',
+                },
                 cell: ({ row }) => h(ColleagueInfoPopover, { user: row.original.creator, hideProps: true }),
             },
             {
-                accessorKey: 'actions',
-                header: t('common.action', 2),
-                cell: ({ row }) => [
-                    h(UTooltip, { text: t('common.show') }, () =>
-                        h(UButton, {
-                            variant: 'link',
-                            icon: 'i-mdi-eye',
-                            onClick: () => {
-                                conductViewSlideover.open({
-                                    entry: row.original,
-                                    onRefresh: async () => refresh(),
-                                });
-                            },
-                        }),
-                    ),
-                    can('jobs.ConductService/UpdateConductEntry').value &&
-                        h(UTooltip, { text: t('common.update') }, () =>
+                id: 'actions',
+                cell: ({ row }) =>
+                    h('div', [
+                        h(UTooltip, { text: t('common.show') }, () =>
                             h(UButton, {
                                 variant: 'link',
-                                icon: 'i-mdi-pencil',
-                                onClick: () =>
-                                    conductCreateOrUpdateModal.open({
+                                icon: 'i-mdi-eye',
+                                onClick: () => {
+                                    conductViewSlideover.open({
                                         entry: row.original,
-                                        userId: props.userId,
-                                        onCreated: ($event) => data.value?.entries.unshift($event),
-                                        onUpdated: ($event) => updateEntryInPlace($event),
-                                    }),
+                                        onRefresh: async () => refresh(),
+                                    });
+                                },
                             }),
                         ),
-                    can('jobs.ConductService/DeleteConductEntry').value &&
-                        h(UTooltip, { text: t('common.delete') }, () =>
-                            h(UButton, {
-                                variant: 'link',
-                                icon: 'i-mdi-delete',
-                                color: 'error',
-                                onClick: () =>
-                                    confirmModal.open({
-                                        confirm: async () => deleteConductEntry(row.original.id),
-                                    }),
-                            }),
-                        ),
-                ],
+                        can('jobs.ConductService/UpdateConductEntry').value &&
+                            h(UTooltip, { text: t('common.update') }, () =>
+                                h(UButton, {
+                                    variant: 'link',
+                                    icon: 'i-mdi-pencil',
+                                    onClick: () => {
+                                        conductCreateOrUpdateModal.open({
+                                            entry: row.original,
+                                            userId: props.userId,
+                                            onCreated: ($event) => data.value?.entries.unshift($event),
+                                            onUpdated: ($event) => updateEntryInPlace($event),
+                                        });
+                                    },
+                                }),
+                            ),
+                        can('jobs.ConductService/DeleteConductEntry').value &&
+                            h(UTooltip, { text: t('common.delete') }, () =>
+                                h(UButton, {
+                                    variant: 'link',
+                                    icon: 'i-mdi-delete',
+                                    color: 'error',
+                                    onClick: () => {
+                                        confirmModal.open({
+                                            confirm: async () => deleteConductEntry(row.original.id),
+                                        });
+                                    },
+                                }),
+                            ),
+                    ]),
             },
         ] as TableColumn<ConductEntry>[],
 );
@@ -273,8 +279,7 @@ const columns = computed(
                                         return colleagues;
                                     }
                                 "
-                                searchable-lazy
-                                :searchable-placeholder="$t('common.search_field')"
+                                :search-input="{ placeholder: $t('common.search_field') }"
                                 :search-attributes="['firstname', 'lastname']"
                                 block
                                 :placeholder="$t('common.colleague')"
@@ -309,7 +314,7 @@ const columns = computed(
                                 :items="availableTypes"
                                 value-key="status"
                                 :placeholder="$t('common.na')"
-                                :searchable-placeholder="$t('common.search_field')"
+                                :search-input="{ placeholder: $t('common.search_field') }"
                                 @keydown.esc="$event.target.blur()"
                             >
                                 <template #item-label>
@@ -317,9 +322,9 @@ const columns = computed(
                                 </template>
 
                                 <template #item="{ item }">
-                                    <span class="truncate" :class="conductTypesToBGColor(item.status)">
+                                    <UBadge class="truncate" :color="conductTypesToBadgeColor(item.status)">
                                         {{ $t(`enums.jobs.ConductType.${ConductType[item.status]}`) }}
-                                    </span>
+                                    </UBadge>
                                 </template>
 
                                 <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
@@ -372,6 +377,7 @@ const columns = computed(
         :error="error"
         :retry="refresh"
     />
+
     <UTable
         v-else
         v-model:sorting="query.sorting.columns"
@@ -382,6 +388,7 @@ const columns = computed(
         :empty="$t('common.not_found', [$t('common.entry', 2)])"
         :pagination-options="{ manualPagination: true }"
         :sorting-options="{ manualSorting: true }"
+        sticky
     />
 
     <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />

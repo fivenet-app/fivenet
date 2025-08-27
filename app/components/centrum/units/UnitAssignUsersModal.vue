@@ -68,13 +68,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('components.centrum.assign_unit.title') }}: {{ unit.name }} ({{ unit.initials }})
-            </h3>
-        </template>
-
+    <UModal :title="`${$t('components.centrum.assign_unit.title')}: ${unit.name} (${unit.initials})`">
         <template #body>
             <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <div class="flex flex-1 flex-col justify-between gap-2">
@@ -95,13 +89,11 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                             return colleagues;
                                         }
                                     "
-                                    searchable-lazy
-                                    :searchable-placeholder="$t('common.search_field')"
+                                    :search-input="{ placeholder: $t('common.search_field') }"
                                     :search-attributes="['firstname', 'lastname']"
                                     block
                                     :placeholder="$t('common.search')"
                                     trailing
-                                    by="userId"
                                     :disabled="!canSubmit"
                                 >
                                     <template #item="{ item }">

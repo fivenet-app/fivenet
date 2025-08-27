@@ -39,7 +39,7 @@ type Server struct {
 	customDB config.CustomDB
 	notifi   notifi.INotifi
 
-	avatarHandler  *filestore.Handler[int32]
+	profile_pictureHandler  *filestore.Handler[int32]
 	mugshotHandler *filestore.Handler[int32]
 }
 
@@ -59,7 +59,7 @@ type Params struct {
 func NewServer(p Params) *Server {
 	tUserProps := table.FivenetUserProps
 
-	avatarHandler := filestore.NewHandler(
+	profile_pictureHandler := filestore.NewHandler(
 		p.Storage,
 		p.DB,
 		tUserProps,
@@ -97,7 +97,7 @@ func NewServer(p Params) *Server {
 		customDB: p.Config.Database.Custom,
 		notifi:   p.Notifi,
 
-		avatarHandler:  avatarHandler,
+		profile_pictureHandler:  profile_pictureHandler,
 		mugshotHandler: mugshotHandler,
 	}
 

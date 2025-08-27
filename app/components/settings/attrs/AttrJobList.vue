@@ -115,12 +115,10 @@ const columns = computed(
                 cell: ({ row }) => `${row.original.jobLabel} (${row.original.job})`,
             },
             {
-                accessorKey: 'actions',
-                header: t('common.action', 2),
+                id: 'actions',
                 cell: ({ row }) =>
                     h(UTooltip, { text: t('common.show') }, () =>
                         h(UButton, {
-                            class: 'place-self-end',
                             to: { name: 'settings-limiter-job', params: { job: row.original.job } },
                             variant: 'link',
                             icon: 'i-mdi-eye',
@@ -149,9 +147,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             <USelectMenu
                                 v-model="state.job"
                                 :items="availableJobs"
-                                searchable
-                                by="label"
-                                :searchable-placeholder="$t('common.search_field')"
+                                :search-input="{ placeholder: $t('common.search_field') }"
                                 :search-attributes="['label', 'name']"
                             >
                                 <template #item-label>

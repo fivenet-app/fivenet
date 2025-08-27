@@ -133,6 +133,8 @@ const columns = computed(
         :pagination-options="{ manualPagination: true }"
         :sorting-options="{ manualSorting: true }"
         :empty="$t('common.not_found', [$t('pages.settings.cron.title', 2)])"
+        :ui="{ tr: 'data-[expanded=true]:bg-elevated/50' }"
+        sticky
     >
         <template #expanded="{ row }">
             <div class="p-2">

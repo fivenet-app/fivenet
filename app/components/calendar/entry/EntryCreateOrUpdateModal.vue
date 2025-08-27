@@ -155,17 +155,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{
-                    entryId
-                        ? $t('components.calendar.EntryCreateOrUpdateModal.update.title')
-                        : $t('components.calendar.EntryCreateOrUpdateModal.create.title')
-                }}
-            </h3>
-        </template>
-
+    <UModal
+        :title="
+            entryId
+                ? $t('components.calendar.EntryCreateOrUpdateModal.update.title')
+                : $t('components.calendar.EntryCreateOrUpdateModal.create.title')
+        "
+    >
         <template #body>
             <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <DataPendingBlock
@@ -202,11 +198,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             })
                                         ).calendars?.filter((c) => !c.closed)
                                 "
-                                searchable-lazy
-                                :searchable-placeholder="$t('common.search_field')"
-                                :search-attributes="['name']"
-                                option-attribute="name"
-                                by="id"
+                                :search-input="{ placeholder: $t('common.search_field') }"
+                                :filter-fields="['name']"
                                 :placeholder="$t('common.calendar')"
                             >
                                 <template #item-label>
@@ -284,13 +277,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         return users;
                                     }
                                 "
-                                searchable-lazy
-                                :searchable-placeholder="$t('common.search_field')"
+                                :search-input="{ placeholder: $t('common.search_field') }"
                                 :search-attributes="['firstname', 'lastname']"
                                 block
                                 :placeholder="$t('common.citizen', 2)"
                                 trailing
-                                by="userId"
                             >
                                 <template #item-label>
                                     {{ $t('common.selected', state.users.length) }}

@@ -84,13 +84,7 @@ const { moveUp, moveDown } = useListReorder(toRef(state, 'labels'));
 </script>
 
 <template>
-    <UModal>
-        <template #header>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('common.label', 2) }}
-            </h3>
-        </template>
-
+    <UModal :title="$t('common.label', 2)">
         <template #body>
             <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.label', 2)])" />

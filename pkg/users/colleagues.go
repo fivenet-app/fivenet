@@ -34,7 +34,7 @@ func RetrieveColleagueById(
 	tUsers := tables.User().AS("colleague")
 	tColleagueProps := table.FivenetJobColleagueProps.AS("colleague_props")
 	tUserProps := table.FivenetUserProps.AS("user_props")
-	tAvatar := table.FivenetFiles.AS("avatar")
+	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tUsers.
 		SELECT(
@@ -50,8 +50,8 @@ func RetrieveColleagueById(
 			tColleagueProps.Job,
 			tColleagueProps.NamePrefix,
 			tColleagueProps.NameSuffix,
-			tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
-			tAvatar.FilePath.AS("colleague.avatar"),
+			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
+			tAvatar.FilePath.AS("colleague.profile_picture"),
 		).
 		FROM(
 			tUsers.
@@ -128,7 +128,7 @@ func RetrieveUsersForUnit(
 func RetrieveUserById(ctx context.Context, db *sql.DB, u int32) (*users.User, error) {
 	tUsers := tables.User().AS("user")
 	tUserProps := table.FivenetUserProps.AS("user_props")
-	tAvatar := table.FivenetFiles.AS("avatar")
+	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tUsers.
 		SELECT(
@@ -140,8 +140,8 @@ func RetrieveUserById(ctx context.Context, db *sql.DB, u int32) (*users.User, er
 			tUsers.JobGrade,
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
-			tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
-			tAvatar.FilePath.AS("colleague.avatar"),
+			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
+			tAvatar.FilePath.AS("colleague.profile_picture"),
 		).
 		FROM(
 			tUsers.

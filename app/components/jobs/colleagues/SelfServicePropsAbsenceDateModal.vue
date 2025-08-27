@@ -115,13 +115,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('components.jobs.self_service.set_absence_date') }}
-            </h3>
-        </template>
-
+    <UModal :title="$t('components.jobs.self_service.set_absence_date')">
         <template #body>
             <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField name="reason" :label="$t('common.reason')" required>

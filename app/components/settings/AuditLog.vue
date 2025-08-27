@@ -171,8 +171,7 @@ const columns = computed(
                     }),
             },
             {
-                accessorKey: 'actions',
-                header: t('common.action', 2),
+                id: 'actions',
                 cell: ({ row }) =>
                     h(UTooltip, { text: t('components.clipboard.clipboard_button.add') }, () =>
                         h(UButton, {
@@ -300,8 +299,7 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                         return users;
                                     }
                                 "
-                                searchable-lazy
-                                :searchable-placeholder="$t('common.search_field')"
+                                :search-input="{ placeholder: $t('common.search_field') }"
                                 :search-attributes="['firstname', 'lastname']"
                                 block
                                 :placeholder="$t('common.user', 2)"
@@ -365,7 +363,6 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                     <USelectMenu
                                         v-model="query.services"
                                         multiple
-                                        searchable
                                         name="service"
                                         :placeholder="$t('common.service')"
                                         :items="grpcServices.map((s) => s.split('.').pop() ?? s)"
@@ -381,7 +378,6 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                 <USelectMenu
                                     v-model="query.methods"
                                     multiple
-                                    searchable
                                     name="method"
                                     :placeholder="$t('common.method')"
                                     :items="grpcMethods.filter((m) => query.services.some((s) => m.includes('.' + s + '/')))"
@@ -401,7 +397,6 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                     <USelectMenu
                                         v-model="query.states"
                                         multiple
-                                        searchable
                                         name="states"
                                         :placeholder="$t('common.state')"
                                         :items="statesOptions"
@@ -447,6 +442,7 @@ function statesToLabel(states: { eventType: EventType }[]): string {
         :sorting-options="{ manualSorting: true }"
         :empty="$t('common.not_found', [$t('common.entry', 2)])"
         :ui="{ tr: 'data-[expanded=true]:bg-elevated/50' }"
+        sticky
     >
         <template #expanded="{ row }">
             <div class="px-2 py-1">

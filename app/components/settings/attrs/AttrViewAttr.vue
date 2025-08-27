@@ -339,9 +339,8 @@ const { game } = useAppConfig();
                                     class="flex-1"
                                     :disabled="disabled || attrValues.validValues?.jobGradeList.jobs[job.name] === undefined"
                                     :items="job.grades"
-                                    searchable
-                                    :search-attributes="['label']"
-                                    :searchable-placeholder="$t('common.search_field')"
+                                    :filter-fields="['label']"
+                                    :search-input="{ placeholder: $t('common.search_field') }"
                                     :placeholder="$t('common.rank')"
                                     value-key="grade"
                                 >

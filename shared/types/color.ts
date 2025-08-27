@@ -1,6 +1,8 @@
+import type { ChipProps } from '@nuxt/ui';
+
 export type Color = {
     label: string;
-    chip: string;
+    chip?: ChipProps;
     class: string;
 };
 

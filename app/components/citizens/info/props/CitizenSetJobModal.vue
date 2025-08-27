@@ -93,13 +93,7 @@ onBeforeMount(async () => listJobs());
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('components.citizens.CitizenInfoProfile.set_job') }}
-            </h3>
-        </template>
-
+    <UModal :title="$t('components.citizens.CitizenInfoProfile.set_job')">
         <template #body>
             <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField class="flex-1" name="reason" :label="$t('common.reason')" required>
@@ -111,8 +105,7 @@ onBeforeMount(async () => listJobs());
                         <USelectMenu
                             v-model="state.job"
                             :items="jobs"
-                            by="label"
-                            :searchable-placeholder="$t('common.search_field')"
+                            :search-input="{ placeholder: $t('common.search_field') }"
                             :search-attributes="['label', 'name']"
                         >
                             <template #item-label>
@@ -137,8 +130,7 @@ onBeforeMount(async () => listJobs());
                         <USelectMenu
                             v-model="state.grade"
                             :items="state.job?.grades"
-                            by="grade"
-                            :searchable-placeholder="$t('common.search_field')"
+                            :search-input="{ placeholder: $t('common.search_field') }"
                         >
                             <template #item-label>
                                 <span v-if="state.grade" class="truncate"

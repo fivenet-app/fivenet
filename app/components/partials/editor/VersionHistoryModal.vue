@@ -12,56 +12,51 @@ const emit = defineEmits<{
     (e: 'apply', version: Version<unknown>): void;
 }>();
 
+const overlay = useOverlay();
+
 const historyStore = useHistoryStore();
 
 const history = historyStore.listHistory<Content>(props.historyType);
 
 const sortedHistory = computed(() => (history.value ?? []).slice().sort((a, b) => b.date.localeCompare(a.date)));
 
-const showDiffModal = ref(false);
 const selectedVersion = ref<Version<Content> | undefined>(undefined);
 
 function date(val: string) {
     return new Date(val).toLocaleString();
 }
 
+const versionDiffModal = overlay.create(VersionDiffModal);
+
 function emitApply(version: Version<Content>) {
     selectedVersion.value = version;
-    showDiffModal.value = true;
+
+    versionDiffModal.open({
+        currentContent: props.currentContent.content,
+        selectedVersion: version,
+        onApply: (version: Version<Content>) => onConfirmDiff(version),
+    });
 }
 
 function onConfirmDiff(version: Version<Content>) {
     emit('apply', version);
-    showDiffModal.value = false;
     selectedVersion.value = undefined;
     emit('close', false);
 }
 
-watch(showDiffModal, (val) => {
-    if (!val) {
-        selectedVersion.value = undefined;
-        showDiffModal.value = false;
-    }
-});
+watch(
+    () => versionDiffModal.isOpen,
+    (val) => {
+        if (!val) {
+            selectedVersion.value = undefined;
+        }
+    },
+);
 </script>
 
 <template>
-    <UModal fullscreen>
-        <VersionDiffModal
-            v-if="showDiffModal && selectedVersion"
-            v-model="showDiffModal"
-            :current-content="props.currentContent.content"
-            :selected-version="selectedVersion"
-            @apply="onConfirmDiff"
-        />
-
-        <UCard v-else class="flex flex-1 flex-col">
-            <template #title>
-                <h3 class="text-2xl leading-6 font-semibold">
-                    {{ $t('common.version_history') }}
-                </h3>
-            </template>
-
+    <UModal :title="$t('common.version_history')" fullscreen>
+        <template #body>
             <div v-if="sortedHistory.length">
                 <ul class="list">
                     <li v-for="version in sortedHistory" :key="version.date" class="py-2">
@@ -89,14 +84,14 @@ watch(showDiffModal, (val) => {
                 </ul>
             </div>
             <div v-else class="py-4 text-center text-gray-400">{{ $t('common.no_versions') }}</div>
+        </template>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" block color="neutral" @click="$emit('close', false)">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
-                </UButtonGroup>
-            </template>
-        </UCard>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" block color="neutral" @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

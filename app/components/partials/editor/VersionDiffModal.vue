@@ -4,20 +4,15 @@ import { computed } from 'vue';
 import type { Content, Version } from '~/types/history';
 
 const props = defineProps<{
-    modelValue: boolean;
     currentContent: string; // String for diffing
     selectedVersion: Version<Content> | null;
 }>();
 
 const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
     (e: 'apply', version: Version<Content>): void;
     (e: 'update:modelValue', value: boolean): void;
 }>();
-
-const open = computed({
-    get: () => props.modelValue,
-    set: (v) => emit('update:modelValue', v),
-});
 
 function prettyPrintHtml(html: string): string {
     // Insert newlines between tags, but not for pairs like <p>...</p>
@@ -73,48 +68,41 @@ const prettySelected = computed(() => prettyPrintHtml(selectedContent.value));
 function applySelected() {
     if (props.selectedVersion) {
         emit('apply', props.selectedVersion);
-        open.value = false;
+        emit('close', false);
     }
-}
-function close() {
-    open.value = false;
 }
 </script>
 
 <template>
-    <UCard class="flex flex-1 flex-col">
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('common.version_history') }}
-            </h3>
-        </template>
-
-        <div class="space-y-4">
-            <div>
-                <div class="mb-1 font-semibold">{{ $t('common.content') }}</div>
-                <CodeDiff
-                    class="rounded border"
-                    :old-string="prettyCurrent"
-                    :new-string="prettySelected"
-                    :context="3"
-                    output-format="side-by-side"
-                    language="text"
-                    :theme="colorMode.value === 'dark' ? 'dark' : 'light'"
-                >
-                    <!-- @vue-expect-error v-code-diff doesn't type the slot vars not even the slots currently -->
-                    <template #stat="{ stat }">
-                        <span class="diff-stat-added">+{{ stat.additionsNum }} additions</span>
-                        <span class="diff-stat-deleted">-{{ stat.deletionsNum }} deletions</span>
-                    </template>
-                </CodeDiff>
+    <UModal :title="$t('common.version')" fullscreen>
+        <template #body>
+            <div class="space-y-4">
+                <div>
+                    <div class="mb-1 font-semibold">{{ $t('common.content') }}</div>
+                    <CodeDiff
+                        class="rounded border"
+                        :old-string="prettyCurrent"
+                        :new-string="prettySelected"
+                        :context="3"
+                        output-format="side-by-side"
+                        language="text"
+                        :theme="colorMode.value === 'dark' ? 'dark' : 'light'"
+                    >
+                        <!-- @vue-expect-error v-code-diff doesn't type the slot vars not even the slots currently -->
+                        <template #stat="{ stat }">
+                            <span class="diff-stat-added">+{{ stat.additionsNum }} additions</span>
+                            <span class="diff-stat-deleted">-{{ stat.deletionsNum }} deletions</span>
+                        </template>
+                    </CodeDiff>
+                </div>
             </div>
-        </div>
+        </template>
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
                 <UButton class="flex-1" color="primary" @click="applySelected">{{ $t('common.apply') }}</UButton>
-                <UButton class="flex-1" color="neutral" @click="close">{{ $t('common.cancel') }}</UButton>
+                <UButton class="flex-1" color="neutral" @click="emit('close', false)">{{ $t('common.cancel') }}</UButton>
             </UButtonGroup>
         </template>
-    </UCard>
+    </UModal>
 </template>

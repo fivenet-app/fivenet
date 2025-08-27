@@ -25,6 +25,7 @@ import ConfirmModal from '../partials/ConfirmModal.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
+import DocumentCategoryBadge from '../partials/documents/DocumentCategoryBadge.vue';
 
 const props = defineProps<{
     documentId: number;
@@ -450,7 +451,7 @@ const documentReferenceManagerModal = overlay.create(DocumentReferenceManagerMod
     props: { documentId: props.documentId },
 });
 
-const formRef = useTemplateRef<typeof UForm>('formRef');
+const formRef = useTemplateRef('formRef');
 
 provide('yjsDoc', ydoc);
 provide('yjsProvider', provider);
@@ -535,8 +536,7 @@ provide('yjsProvider', provider);
                                         <ClientOnly>
                                             <USelectMenu
                                                 v-model="state.category"
-                                                option-attribute="name"
-                                                :search-attributes="['name']"
+                                                :filter-fields="['name']"
                                                 block
                                                 nullable
                                                 :disabled="!canDo.edit"
@@ -562,8 +562,7 @@ provide('yjsProvider', provider);
                                                         }
                                                     }
                                                 "
-                                                searchable-lazy
-                                                :searchable-placeholder="$t('common.search_field')"
+                                                :search-input="{ placeholder: $t('common.search_field') }"
                                             >
                                                 <template #item-label>
                                                     <span
@@ -586,17 +585,7 @@ provide('yjsProvider', provider);
                                                 </template>
 
                                                 <template #item="{ item }">
-                                                    <span class="inline-flex gap-1" :class="`bg-${item.color}-500`">
-                                                        <component
-                                                            :is="
-                                                                availableIcons.find((item) => item.name === item.icon)
-                                                                    ?.component ?? fallbackIcon.component
-                                                            "
-                                                            v-if="item.icon"
-                                                            class="size-5"
-                                                        />
-                                                        <span class="truncate">{{ item.name }}</span>
-                                                    </span>
+                                                    <DocumentCategoryBadge :category="item" />
                                                 </template>
 
                                                 <template #empty>
@@ -626,7 +615,7 @@ provide('yjsProvider', provider);
                     <UFormField
                         class="flex flex-1 overflow-y-hidden"
                         name="content"
-                        :ui="{ container: 'flex flex-1 flex-col mt-0 overflow-y-hidden', label: { wrapper: 'hidden' } }"
+                        :ui="{ container: 'flex flex-1 flex-col mt-0 overflow-y-hidden', label: 'hiddne' }"
                         label="&nbsp;"
                     >
                         <ClientOnly>

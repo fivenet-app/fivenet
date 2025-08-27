@@ -111,8 +111,10 @@ export function resultStatusToBadgeColor(status: ResultStatus): BadgeProps['colo
     switch (status) {
         case ResultStatus.FAILED:
             return 'error';
+
         case ResultStatus.SUCCESSFUL:
             return 'success';
+
         default:
             return 'primary';
     }

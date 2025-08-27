@@ -85,7 +85,7 @@ const groupedLayers = computed(() => {
                         <p v-if="Object.keys(groupedLayers).length === 0" class="truncate">
                             {{ $t('common.layers', 0) }}
                         </p>
-                        <div v-else class="grid auto-cols-auto grid-flow-col divide-x divide-gray-100 dark:divide-gray-800">
+                        <div v-else class="grid auto-cols-auto grid-flow-col divide-x divide-default">
                             <div
                                 v-for="(category, key) in groupedLayers"
                                 :key="key"

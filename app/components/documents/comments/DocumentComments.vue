@@ -244,7 +244,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 icon="i-mdi-comment-text-multiple"
             />
 
-            <ul v-else class="divide-y divide-gray-100 dark:divide-gray-800" role="list">
+            <ul v-else class="divide-y divide-default" role="list">
                 <DocumentCommentEntry
                     v-for="(comment, idx) in data.comments"
                     :key="comment.id"

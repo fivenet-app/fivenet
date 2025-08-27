@@ -65,13 +65,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ vehicleProps?.wanted ? $t('common.revoke_wanted') : $t('common.set_wanted') }}
-            </h3>
-        </template>
-
+    <UModal :title="vehicleProps?.wanted ? $t('common.revoke_wanted') : $t('common.set_wanted')">
         <template #body>
             <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField class="flex-1" name="reason" :label="$t('common.reason')" required>

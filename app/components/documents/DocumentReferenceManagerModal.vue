@@ -127,8 +127,7 @@ const columnsCurrent = [
         label: t('common.reference', 1),
     },
     {
-        accessorKey: 'actions',
-        label: t('common.action', 2),
+        id: 'actions',
     },
 ];
 
@@ -172,21 +171,14 @@ const columnsNew = [
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('common.document', 1) }}
-                {{ $t('common.reference', 2) }}
-            </h3>
-        </template>
-
+    <UModal :title="`$t('common.document', 1) $t('common.reference', 2)`">
         <template #body>
             <UTabs :items="items">
                 <template #current>
                     <UTable
                         :columns="columnsCurrent"
                         :data="modelValue"
-                        :empty-state="{ icon: 'i-mdi-file', label: $t('common.not_found', [$t('common.reference', 2)]) }"
+                        :empty="$t('common.not_found', [$t('common.reference', 2)])"
                     >
                         <template #title-cell="{ row }">
                             <DocumentInfoPopover
@@ -241,10 +233,7 @@ const columnsNew = [
                         <UTable
                             :columns="columnsClipboard"
                             :data="clipboardStore.$state.documents"
-                            :empty-state="{
-                                icon: 'i-mdi-file',
-                                label: $t('common.not_found', [$t('common.document', 2)]),
-                            }"
+                            :empty="$t('common.not_found', [$t('common.document', 2)])"
                         >
                             <template #title-cell="{ row }">
                                 <DocumentInfoPopover :document="getDocument(row.original)" />
@@ -320,10 +309,7 @@ const columnsNew = [
                             :columns="columnsNew"
                             :loading="isRequestPending(status)"
                             :data="documents"
-                            :empty-state="{
-                                icon: 'i-mdi-file',
-                                label: $t('common.not_found', [$t('common.reference', 2)]),
-                            }"
+                            :empty="$t('common.not_found', [$t('common.reference', 2)])"
                         >
                             <template #title-cell="{ row }">
                                 <DocumentInfoPopover :document="row.original" />

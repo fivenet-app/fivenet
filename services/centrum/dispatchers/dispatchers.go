@@ -91,7 +91,7 @@ func (s *DispatchersDB) LoadFromDB(ctx context.Context, job string) error {
 	tUserProps := table.FivenetUserProps
 	tCentrumDispatchers := table.FivenetCentrumDispatchers
 	tColleague := tables.User().AS("colleague")
-	tAvatar := table.FivenetFiles.AS("avatar")
+	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tCentrumDispatchers.
 		SELECT(
@@ -107,8 +107,8 @@ func (s *DispatchersDB) LoadFromDB(ctx context.Context, job string) error {
 			tColleagueProps.Job,
 			tColleagueProps.NamePrefix,
 			tColleagueProps.NameSuffix,
-			tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
-			tAvatar.FilePath.AS("colleague.avatar"),
+			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
+			tAvatar.FilePath.AS("colleague.profile_picture"),
 		).
 		FROM(
 			tCentrumDispatchers.

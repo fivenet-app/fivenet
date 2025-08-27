@@ -77,13 +77,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('common.upload') }}
-            </h3>
-        </template>
-
+    <UModal :title="$t('common.upload')">
         <template #body>
             <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField class="flex-1" name="category" :label="$t('common.category')" required>
@@ -91,7 +85,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <USelectMenu
                             v-model="state.category"
                             :items="categories"
-                            :searchable-placeholder="$t('common.search_field')"
+                            :search-input="{ placeholder: $t('common.search_field') }"
                         />
                     </ClientOnly>
                 </UFormField>

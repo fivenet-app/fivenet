@@ -69,13 +69,7 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('components.calendar.FindCalendarModal.title') }}
-            </h3>
-        </template>
-
+    <UModal :title="$t('components.calendar.FindCalendarModal.title')">
         <template #body>
             <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.calendar')])" />
             <DataErrorBlock
@@ -90,7 +84,7 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
                 icon="i-mdi-calendar"
             />
 
-            <ul v-else class="my-1 flex flex-col divide-y divide-gray-100 dark:divide-gray-800" role="list">
+            <ul v-else class="my-1 flex flex-col divide-y divide-default" role="list">
                 <li
                     v-for="calendar in data?.calendars"
                     :key="calendar.id"

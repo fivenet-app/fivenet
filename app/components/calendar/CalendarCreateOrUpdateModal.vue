@@ -137,17 +137,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UModal>
-        <template #header>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{
-                    calendarId
-                        ? $t('components.calendar.CalendarCreateOrUpdateModal.update.title')
-                        : $t('components.calendar.CalendarCreateOrUpdateModal.create.title')
-                }}
-            </h3>
-        </template>
-
+    <UModal
+        :title="
+            calendarId
+                ? $t('components.calendar.CalendarCreateOrUpdateModal.update.title')
+                : $t('components.calendar.CalendarCreateOrUpdateModal.create.title')
+        "
+    >
         <template #body>
             <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <DataPendingBlock

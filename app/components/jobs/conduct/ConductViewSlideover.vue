@@ -41,14 +41,9 @@ if (props.entry.id > 0) {
 </script>
 
 <template>
-    <USlideover :overlay="false">
-        <template #title>
-            <div class="inline-flex items-center">
-                <IDCopyBadge :id="entry.id" class="mx-2" prefix="CON" />
-                <h3 class="text-2xl leading-6 font-semibold">
-                    {{ $t('common.entry') }}
-                </h3>
-            </div>
+    <USlideover :title="$t('common.entry')" :overlay="false">
+        <template #actions>
+            <IDCopyBadge :id="entry.id" class="mx-2" prefix="CON" />
         </template>
 
         <template #body>

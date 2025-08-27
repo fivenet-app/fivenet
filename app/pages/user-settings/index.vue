@@ -10,22 +10,22 @@ const { can, activeChar } = useAuth();
 const settings = useSettingsStore();
 const { startpage, design, streamerMode } = storeToRefs(settings);
 
-const startpages: { name: string; path: RoutePathSchema; permission?: Perms }[] = [
-    { name: t('common.overview'), path: '/overview' },
-    { name: t('common.mail'), path: '/mail', permission: 'mailer.MailerService/ListEmails' },
-    { name: t('pages.citizens.title'), path: '/citizens', permission: 'citizens.CitizensService/ListCitizens' },
-    { name: t('pages.vehicles.title'), path: '/vehicles', permission: 'vehicles.VehiclesService/ListVehicles' },
-    { name: t('pages.documents.title'), path: '/documents', permission: 'documents.DocumentsService/ListDocuments' },
-    { name: t('pages.jobs.overview.title'), path: '/jobs/overview', permission: 'jobs.JobsService/ListColleagues' },
-    { name: t('common.calendar'), path: '/calendar' },
+const startpages: { label: string; path: RoutePathSchema; permission?: Perms }[] = [
+    { label: t('common.overview'), path: '/overview' },
+    { label: t('common.mail'), path: '/mail', permission: 'mailer.MailerService/ListEmails' },
+    { label: t('pages.citizens.title'), path: '/citizens', permission: 'citizens.CitizensService/ListCitizens' },
+    { label: t('pages.vehicles.title'), path: '/vehicles', permission: 'vehicles.VehiclesService/ListVehicles' },
+    { label: t('pages.documents.title'), path: '/documents', permission: 'documents.DocumentsService/ListDocuments' },
+    { label: t('pages.jobs.overview.title'), path: '/jobs/overview', permission: 'jobs.JobsService/ListColleagues' },
+    { label: t('common.calendar'), path: '/calendar' },
     {
-        name: t('common.qualification', 2),
+        label: t('common.qualification', 2),
         path: '/qualifications',
         permission: 'qualifications.QualificationsService/ListQualifications',
     },
-    { name: t('common.livemap'), path: '/livemap', permission: 'livemap.LivemapService/Stream' },
-    { name: t('common.dispatch_center'), path: '/centrum', permission: 'centrum.CentrumService/TakeControl' },
-    { name: t('common.wiki'), path: '/wiki', permission: 'wiki.WikiService/ListPages' },
+    { label: t('common.livemap'), path: '/livemap', permission: 'livemap.LivemapService/Stream' },
+    { label: t('common.dispatch_center'), path: '/centrum', permission: 'centrum.CentrumService/TakeControl' },
+    { label: t('common.wiki'), path: '/wiki', permission: 'wiki.WikiService/ListPages' },
 ];
 
 const selectedHomepage = ref<(typeof startpages)[0]>();
@@ -90,8 +90,7 @@ watch(designDocumentListStyle, async () => {
                 <USelectMenu
                     v-model="selectedHomepage"
                     :items="startpages.filter((h) => h.permission === undefined || can(h.permission).value)"
-                    option-attribute="name"
-                    :searchable-placeholder="$t('common.search_field')"
+                    :search-input="{ placeholder: $t('common.search_field') }"
                 />
             </ClientOnly>
             <p v-else class="text-sm">

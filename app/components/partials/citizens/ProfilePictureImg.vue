@@ -30,7 +30,7 @@ withDefaults(
         :src="src"
         :size="size"
         :text="getInitials(name)"
-        :alt="alt ?? $t('common.avatar')"
+        :alt="alt ?? $t('common.profile_picture')"
         :enable-popup="enablePopup"
         :no-blur="noBlur || src === undefined"
         :disable-blur-toggle="disableBlurToggle"

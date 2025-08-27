@@ -64,13 +64,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UModal :prevent-close="!canSubmit">
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('components.auth.ChangePasswordModal.change_password') }}
-            </h3>
-        </template>
-
+    <UModal :title="$t('components.auth.ChangePasswordModal.change_password')" :prevent-close="!canSubmit">
         <template #body>
             <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField name="currentPassword" :label="$t('components.auth.ChangePasswordModal.current_password')">

@@ -46,9 +46,9 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.s
 
         <template #content>
             <div class="inline-flex min-w-48 flex-col gap-1 p-4">
-                <p class="text-base font-semibold leading-none">{{ unit.name }} ({{ unit.initials }})</p>
+                <p class="text-base leading-none font-semibold">{{ unit.name }} ({{ unit.initials }})</p>
 
-                <p v-if="unit.jobLabel" class="text-base font-semibold leading-none">({{ unit.jobLabel }})</p>
+                <p v-if="unit.jobLabel" class="text-base leading-none font-semibold">({{ unit.jobLabel }})</p>
 
                 <UBadge class="rounded-sm font-semibold" :class="unitStatusColor" size="xs">
                     {{ $t(`enums.centrum.StatusUnit.${StatusUnit[unit.status?.status ?? 0]}`) }}
@@ -65,7 +65,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.s
                 </p>
 
                 <div class="text-highlighted">
-                    <p class="text-sm font-medium leading-none">
+                    <p class="text-sm leading-none font-medium">
                         {{ $t('common.members') }}
                     </p>
                     <template v-if="unit.users.length === 0">

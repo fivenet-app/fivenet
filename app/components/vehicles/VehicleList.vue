@@ -196,8 +196,7 @@ const columns = computed(() =>
                   }
                 : undefined,
             {
-                accessorKey: 'actions',
-                header: t('common.action', 2),
+                id: 'actions',
             },
         ] as TableColumn<Vehicle>[]
     ).flatMap((item) => (item !== undefined ? [item] : [])),
@@ -251,7 +250,6 @@ defineShortcuts({
                                     return response.users;
                                 }
                             "
-                            searchable-lazy
                             :search-attributes="['firstname', 'lastname']"
                             block
                             :placeholder="$t('common.owner')"
@@ -305,6 +303,7 @@ defineShortcuts({
         :pagination-options="{ manualPagination: true }"
         :sorting-options="{ manualSorting: true }"
         :empty="$t('common.not_found', [$t('common.vehicle', 2)])"
+        sticky
     >
         <template v-if="!hideOwner" #owner-cell="{ row: vehicle }">
             <p v-if="vehicle.original.jobLabel" class="text-highlighted">{{ vehicle.original.jobLabel }}</p>

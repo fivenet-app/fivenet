@@ -23,7 +23,7 @@ const response = useVModel(props, 'modelValue', emit);
     <div v-if="modelValue?.question" class="flex flex-1 flex-col justify-between gap-2 py-4">
         <div class="flex flex-1 flex-row gap-2">
             <div v-if="modelValue?.question.data!.data.oneofKind === 'separator'">
-                <USeparator class="mb-2 mt-2 text-xl">
+                <USeparator class="mt-2 mb-2 text-xl">
                     <template v-if="modelValue?.question.title !== ''" #default>
                         <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">
                             {{ modelValue?.question.title }}
@@ -46,7 +46,6 @@ const response = useVModel(props, 'modelValue', emit);
 
                 <GenericImg
                     class="min-h-12 min-w-12"
-                    img-class="h-96 w-full object-cover"
                     :enable-popup="true"
                     :rounded="false"
                     :src="modelValue?.question!.data?.data.image?.image?.filePath"

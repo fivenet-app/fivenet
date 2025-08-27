@@ -340,558 +340,567 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <template v-if="streamerMode">
-        <UDashboardNavbar :title="$t('pages.settings.settings.title')">
-            <template #right>
-                <PartialsBackButton fallback-to="/settings" />
-            </template>
-        </UDashboardNavbar>
+    <UDashboardPanel>
+        <template #header>
+            <UDashboardNavbar :title="$t('pages.settings.settings.title')">
+                <template #right>
+                    <PartialsBackButton fallback-to="/settings" />
 
-        <StreamerModeAlert />
-    </template>
-    <UForm
-        v-else
-        class="flex min-h-dvh w-full max-w-full flex-1 flex-col overflow-y-auto"
-        :schema="schema"
-        :state="state"
-        @submit="onSubmitThrottle"
-    >
-        <UDashboardNavbar :title="$t('pages.settings.settings.title')">
-            <template #right>
-                <PartialsBackButton fallback-to="/settings" />
-
-                <UButton
-                    v-if="config"
-                    type="submit"
-                    trailing-icon="i-mdi-content-save"
-                    :disabled="!canSubmit"
-                    :loading="!canSubmit"
-                >
-                    {{ $t('common.save', 1) }}
-                </UButton>
-            </template>
-        </UDashboardNavbar>
+                    <UButton
+                        v-if="!streamerMode && config"
+                        type="submit"
+                        trailing-icon="i-mdi-content-save"
+                        :disabled="!canSubmit"
+                        :loading="!canSubmit"
+                    >
+                        {{ $t('common.save', 1) }}
+                    </UButton>
+                </template>
+            </UDashboardNavbar>
+        </template>
 
         <template #body>
-            <div v-if="isRequestPending(status)" class="space-y-1 px-4">
-                <USkeleton class="mb-6 h-11 w-full" />
-                <USkeleton v-for="idx in 5" :key="idx" class="h-20 w-full" />
-            </div>
-            <DataErrorBlock
-                v-else-if="error"
-                :title="$t('common.unable_to_load', [$t('common.setting', 2)])"
-                :error="error"
-                :retry="refresh"
-            />
-            <DataNoDataBlock
-                v-else-if="!config"
-                icon="i-mdi-office-building-cog"
-                :type="$t('common.setting', 2)"
-                :retry="refresh"
-            />
+            <StreamerModeAlert v-if="streamerMode" />
+            <UForm
+                v-else
+                class="flex min-h-dvh w-full max-w-full flex-1 flex-col overflow-y-auto"
+                :schema="schema"
+                :state="state"
+                @submit="onSubmitThrottle"
+            >
+                <div v-if="isRequestPending(status)" class="space-y-1 px-4">
+                    <USkeleton class="mb-6 h-11 w-full" />
+                    <USkeleton v-for="idx in 5" :key="idx" class="h-20 w-full" />
+                </div>
+                <DataErrorBlock
+                    v-else-if="error"
+                    :title="$t('common.unable_to_load', [$t('common.setting', 2)])"
+                    :error="error"
+                    :retry="refresh"
+                />
+                <DataNoDataBlock
+                    v-else-if="!config"
+                    icon="i-mdi-office-building-cog"
+                    :type="$t('common.setting', 2)"
+                    :retry="refresh"
+                />
 
-            <UTabs v-else v-model="selectedTab" class="flex flex-1 flex-col" :items="items" variant="link" :unmount="false">
-                <template #auth>
-                    <UPageCard
-                        :title="$t('components.settings.app_config.auth.title')"
-                        :description="$t('components.settings.app_config.auth.description')"
-                    >
-                        <UFormField
-                            class="grid grid-cols-2 items-center gap-2"
-                            name="auth.signupEnabled"
-                            :label="$t('components.settings.app_config.auth.sign_up')"
-                            :ui="{ container: '' }"
+                <UTabs v-else v-model="selectedTab" class="flex flex-1 flex-col" :items="items" variant="link" :unmount="false">
+                    <template #auth>
+                        <UPageCard
+                            :title="$t('components.settings.app_config.auth.title')"
+                            :description="$t('components.settings.app_config.auth.description')"
                         >
-                            <USwitch v-model="state.auth.signupEnabled" />
-                        </UFormField>
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="auth.signupEnabled"
+                                :label="$t('components.settings.app_config.auth.sign_up')"
+                                :ui="{ container: '' }"
+                            >
+                                <USwitch v-model="state.auth.signupEnabled" />
+                            </UFormField>
 
-                        <UFormField
-                            class="grid grid-cols-2 items-center gap-2"
-                            name="auth.lastCharLock"
-                            :label="$t('components.settings.app_config.auth.last_char_lock')"
-                            :ui="{ container: '' }"
-                        >
-                            <USwitch v-model="state.auth.lastCharLock" />
-                        </UFormField>
-                    </UPageCard>
-                </template>
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="auth.lastCharLock"
+                                :label="$t('components.settings.app_config.auth.last_char_lock')"
+                                :ui="{ container: '' }"
+                            >
+                                <USwitch v-model="state.auth.lastCharLock" />
+                            </UFormField>
+                        </UPageCard>
+                    </template>
 
-                <template #perms>
-                    <UPageCard
-                        :title="$t('components.settings.app_config.perms.title')"
-                        :description="$t('components.settings.app_config.perms.description')"
-                    >
-                        <UFormField
-                            class="grid grid-cols-2 items-center gap-2"
-                            name="perms.default"
-                            :label="$t('components.settings.app_config.perms.default_perms')"
-                            :ui="{ container: '' }"
+                    <template #perms>
+                        <UPageCard
+                            :title="$t('components.settings.app_config.perms.title')"
+                            :description="$t('components.settings.app_config.perms.description')"
                         >
-                            <div class="flex flex-col gap-1">
-                                <div v-for="(_, idx) in state.perms.default" :key="idx" class="flex items-center gap-1">
-                                    <UFormField class="flex-1" :name="`perms.default.${idx}.category`">
-                                        <ClientOnly>
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="perms.default"
+                                :label="$t('components.settings.app_config.perms.default_perms')"
+                                :ui="{ container: '' }"
+                            >
+                                <div class="flex flex-col gap-1">
+                                    <div v-for="(_, idx) in state.perms.default" :key="idx" class="flex items-center gap-1">
+                                        <UFormField class="flex-1" :name="`perms.default.${idx}.category`">
+                                            <ClientOnly>
+                                                <USelectMenu
+                                                    v-model="state.perms.default[idx]!.category"
+                                                    :placeholder="$t('common.service')"
+                                                    :items="grpcServices"
+                                                >
+                                                    <template #empty>
+                                                        {{ $t('common.not_found', [$t('common.service')]) }}
+                                                    </template>
+                                                </USelectMenu>
+                                            </ClientOnly>
+                                        </UFormField>
+
+                                        <UFormField class="flex-1" :name="`perms.default.${idx}.name`">
                                             <USelectMenu
-                                                v-model="state.perms.default[idx]!.category"
-                                                searchable
-                                                :placeholder="$t('common.service')"
-                                                :items="grpcServices"
+                                                v-model="state.perms.default[idx]!.name"
+                                                :placeholder="$t('common.method')"
+                                                :items="
+                                                    grpcMethods
+                                                        .filter((m) => m.startsWith(state.perms.default[idx]!.category + '/'))
+                                                        .map((m) => m.split('/').at(1) ?? m)
+                                                "
                                             >
                                                 <template #empty>
-                                                    {{ $t('common.not_found', [$t('common.service')]) }}
+                                                    {{ $t('common.not_found', [$t('common.method')]) }}
                                                 </template>
                                             </USelectMenu>
-                                        </ClientOnly>
-                                    </UFormField>
+                                        </UFormField>
 
-                                    <UFormField class="flex-1" :name="`perms.default.${idx}.name`">
-                                        <USelectMenu
-                                            v-model="state.perms.default[idx]!.name"
-                                            searchable
-                                            :placeholder="$t('common.method')"
-                                            :items="
-                                                grpcMethods
-                                                    .filter((m) => m.startsWith(state.perms.default[idx]!.category + '/'))
-                                                    .map((m) => m.split('/').at(1) ?? m)
-                                            "
-                                        >
-                                            <template #empty>
-                                                {{ $t('common.not_found', [$t('common.method')]) }}
-                                            </template>
-                                        </USelectMenu>
-                                    </UFormField>
-
-                                    <UButton icon="i-mdi-close" @click="state.perms.default.splice(idx, 1)" />
+                                        <UButton icon="i-mdi-close" @click="state.perms.default.splice(idx, 1)" />
+                                    </div>
                                 </div>
-                            </div>
 
-                            <UButton
-                                :class="state.perms.default.length ? 'mt-2' : ''"
-                                :disabled="!canSubmit"
-                                icon="i-mdi-plus"
-                                @click="state.perms.default.push({ category: '', name: '' })"
-                            />
-                        </UFormField>
-                    </UPageCard>
-                </template>
+                                <UButton
+                                    :class="state.perms.default.length ? 'mt-2' : ''"
+                                    :disabled="!canSubmit"
+                                    icon="i-mdi-plus"
+                                    @click="state.perms.default.push({ category: '', name: '' })"
+                                />
+                            </UFormField>
+                        </UPageCard>
+                    </template>
 
-                <template #website>
-                    <UPageCard
-                        :title="$t('components.settings.app_config.website.title')"
-                        :description="$t('components.settings.app_config.website.description')"
-                    >
-                        <UFormField
-                            class="grid grid-cols-2 items-center gap-2"
-                            name="defaultLocale"
-                            :label="$t('common.default_lang')"
-                            :ui="{ container: '' }"
+                    <template #website>
+                        <UPageCard
+                            :title="$t('components.settings.app_config.website.title')"
+                            :description="$t('components.settings.app_config.website.description')"
                         >
-                            <USelectMenu v-model="state.defaultLocale" :placeholder="$t('common.language', 1)" :items="locales">
-                                <template #item-label>
-                                    <template v-if="state.defaultLocale">
-                                        <UIcon
-                                            class="size-4"
-                                            :name="
-                                                locales.find((l) => l.code === state.defaultLocale.code)?.icon ??
-                                                'i-mdi-question-mark'
-                                            "
-                                        />
-                                        <span class="truncate">{{ state.defaultLocale.name ?? state.defaultLocale.code }}</span>
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="defaultLocale"
+                                :label="$t('common.default_lang')"
+                                :ui="{ container: '' }"
+                            >
+                                <USelectMenu
+                                    v-model="state.defaultLocale"
+                                    :placeholder="$t('common.language', 1)"
+                                    :items="locales"
+                                >
+                                    <template #item-label>
+                                        <template v-if="state.defaultLocale">
+                                            <UIcon
+                                                class="size-4"
+                                                :name="
+                                                    locales.find((l) => l.code === state.defaultLocale.code)?.icon ??
+                                                    'i-mdi-question-mark'
+                                                "
+                                            />
+                                            <span class="truncate">{{
+                                                state.defaultLocale.name ?? state.defaultLocale.code
+                                            }}</span>
+                                        </template>
+                                        <template v-else>
+                                            <span class="truncate">{{
+                                                $t('common.none_selected', [$t('common.language')])
+                                            }}</span>
+                                        </template>
                                     </template>
-                                    <template v-else>
-                                        <span class="truncate">{{ $t('common.none_selected', [$t('common.language')]) }}</span>
+
+                                    <template #item="{ item }">
+                                        <UIcon class="size-4" :name="item.icon" />
+                                        <span class="truncate">{{ item.name }}</span>
                                     </template>
-                                </template>
+                                </USelectMenu>
+                            </UFormField>
 
-                                <template #item="{ item }">
-                                    <UIcon class="size-4" :name="item.icon" />
-                                    <span class="truncate">{{ item.name }}</span>
-                                </template>
-                            </USelectMenu>
-                        </UFormField>
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="website.links.privacyPolicy"
+                                :label="$t('common.privacy_policy')"
+                                :ui="{ container: '' }"
+                            >
+                                <UInput
+                                    v-model="state.website.links.privacyPolicy"
+                                    type="text"
+                                    :placeholder="$t('common.privacy_policy')"
+                                    maxlength="255"
+                                />
+                            </UFormField>
 
-                        <UFormField
-                            class="grid grid-cols-2 items-center gap-2"
-                            name="website.links.privacyPolicy"
-                            :label="$t('common.privacy_policy')"
-                            :ui="{ container: '' }"
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="website.links.imprint"
+                                :label="$t('common.imprint')"
+                                :ui="{ container: '' }"
+                            >
+                                <UInput
+                                    v-model="state.website.links.imprint"
+                                    type="text"
+                                    :placeholder="$t('common.imprint')"
+                                    maxlength="255"
+                                />
+                            </UFormField>
+                        </UPageCard>
+
+                        <UPageCard :title="$t('pages.stats.title')" :description="$t('pages.stats.subtitle')">
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="website.statsPage"
+                                :label="$t('common.stats')"
+                                :ui="{ container: '' }"
+                            >
+                                <USwitch v-model="state.website.statsPage" />
+                            </UFormField>
+                        </UPageCard>
+                    </template>
+
+                    <template #jobInfo>
+                        <UPageCard
+                            :title="$t('components.settings.app_config.job_info.title')"
+                            :description="$t('components.settings.app_config.job_info.description')"
                         >
-                            <UInput
-                                v-model="state.website.links.privacyPolicy"
-                                type="text"
-                                :placeholder="$t('common.privacy_policy')"
-                                maxlength="255"
-                            />
-                        </UFormField>
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="jobInfo.unemployedJob.name"
+                                :label="`${$t('common.job')} ${$t('common.name')}`"
+                                :ui="{ container: '' }"
+                            >
+                                <UInput
+                                    v-model="state.jobInfo.unemployedJob.name"
+                                    type="text"
+                                    :placeholder="$t('common.job')"
+                                    maxlength="255"
+                                />
+                            </UFormField>
 
-                        <UFormField
-                            class="grid grid-cols-2 items-center gap-2"
-                            name="website.links.imprint"
-                            :label="$t('common.imprint')"
-                            :ui="{ container: '' }"
-                        >
-                            <UInput
-                                v-model="state.website.links.imprint"
-                                type="text"
-                                :placeholder="$t('common.imprint')"
-                                maxlength="255"
-                            />
-                        </UFormField>
-                    </UPageCard>
-
-                    <UPageCard :title="$t('pages.stats.title')" :description="$t('pages.stats.subtitle')">
-                        <UFormField
-                            class="grid grid-cols-2 items-center gap-2"
-                            name="website.statsPage"
-                            :label="$t('common.stats')"
-                            :ui="{ container: '' }"
-                        >
-                            <USwitch v-model="state.website.statsPage" />
-                        </UFormField>
-                    </UPageCard>
-                </template>
-
-                <template #jobInfo>
-                    <UPageCard
-                        :title="$t('components.settings.app_config.job_info.title')"
-                        :description="$t('components.settings.app_config.job_info.description')"
-                    >
-                        <UFormField
-                            class="grid grid-cols-2 items-center gap-2"
-                            name="jobInfo.unemployedJob.name"
-                            :label="`${$t('common.job')} ${$t('common.name')}`"
-                            :ui="{ container: '' }"
-                        >
-                            <UInput
-                                v-model="state.jobInfo.unemployedJob.name"
-                                type="text"
-                                :placeholder="$t('common.job')"
-                                maxlength="255"
-                            />
-                        </UFormField>
-
-                        <UFormField
-                            class="grid grid-cols-2 items-center gap-2"
-                            name="jobInfo.unemployedJob.grade"
-                            :label="$t('common.rank')"
-                            :ui="{ container: '' }"
-                        >
-                            <UInputNumber
-                                v-model="state.jobInfo.unemployedJob.grade"
-                                :min="1"
-                                :max="99"
-                                name="jobInfoUnemployedGrade"
-                                :placeholder="$t('common.rank')"
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="jobInfo.unemployedJob.grade"
                                 :label="$t('common.rank')"
-                            />
-                        </UFormField>
-
-                        <UFormField
-                            class="grid grid-cols-2 items-center gap-2"
-                            name="jobInfo.publicJobs"
-                            :label="$t('components.settings.app_config.job_info.public_jobs')"
-                            :ui="{ container: '' }"
-                        >
-                            <ClientOnly>
-                                <USelectMenu
-                                    v-model="state.jobInfo.publicJobs"
-                                    multiple
-                                    :items="jobs ?? []"
-                                    searchable
-                                    value-key="name"
-                                    :searchable-placeholder="$t('common.search_field')"
-                                    :search-attributes="['label', 'name']"
-                                >
-                                    <template #item-label>
-                                        <template v-if="state.jobInfo.publicJobs.length">
-                                            <span class="truncate">{{ state.jobInfo.publicJobs.join(', ') }}</span>
-                                        </template>
-                                        <template v-else>
-                                            <span class="truncate">{{ $t('common.none_selected', [$t('common.job')]) }}</span>
-                                        </template>
-                                    </template>
-
-                                    <template #item="{ item }">
-                                        <span class="truncate">{{ item.label }} ({{ item.name }})</span>
-                                    </template>
-                                </USelectMenu>
-                            </ClientOnly>
-                        </UFormField>
-
-                        <UFormField
-                            class="grid grid-cols-2 items-center gap-2"
-                            name="jobInfo.hiddenJobs"
-                            :label="$t('components.settings.app_config.job_info.hidden_jobs')"
-                            :ui="{ container: '' }"
-                        >
-                            <ClientOnly>
-                                <USelectMenu
-                                    v-model="state.jobInfo.hiddenJobs"
-                                    multiple
-                                    :items="jobs ?? []"
-                                    searchable
-                                    value-key="name"
-                                    :searchable-placeholder="$t('common.search_field')"
-                                    :search-attributes="['label', 'name']"
-                                >
-                                    <template #item-label>
-                                        <template v-if="state.jobInfo.hiddenJobs.length">
-                                            <span class="truncate">{{ state.jobInfo.hiddenJobs.join(', ') }}</span>
-                                        </template>
-                                        <template v-else>
-                                            <span class="truncate">{{ $t('common.none_selected', [$t('common.job')]) }}</span>
-                                        </template>
-                                    </template>
-
-                                    <template #item="{ item }">
-                                        <span class="truncate">{{ item.label }} ({{ item.name }})</span>
-                                    </template>
-                                </USelectMenu>
-                            </ClientOnly>
-                        </UFormField>
-                    </UPageCard>
-                </template>
-
-                <template #userTracker>
-                    <UPageCard
-                        :title="$t('components.settings.app_config.user_tracker.title')"
-                        :description="$t('components.settings.app_config.user_tracker.description')"
-                    >
-                        <UFormField
-                            class="grid grid-cols-2 items-center gap-2"
-                            name="userTracker.refreshTime"
-                            :label="$t('components.settings.app_config.user_tracker.refresh_time')"
-                            :ui="{ container: '' }"
-                        >
-                            <UInput
-                                v-model="state.userTracker.refreshTime"
-                                type="number"
-                                :min="1"
-                                :step="0.01"
-                                :placeholder="$t('common.duration')"
+                                :ui="{ container: '' }"
                             >
-                                <template #trailing>
-                                    <span class="text-xs text-muted">s</span>
-                                </template>
-                            </UInput>
-                        </UFormField>
+                                <UInputNumber
+                                    v-model="state.jobInfo.unemployedJob.grade"
+                                    :min="1"
+                                    :max="99"
+                                    name="jobInfoUnemployedGrade"
+                                    :placeholder="$t('common.rank')"
+                                    :label="$t('common.rank')"
+                                />
+                            </UFormField>
 
-                        <UFormField
-                            class="grid grid-cols-2 items-center gap-2"
-                            name="userTracker.dbRefreshTime"
-                            :label="$t('components.settings.app_config.user_tracker.db_refresh_time')"
-                            :ui="{ container: '' }"
-                        >
-                            <UInput
-                                v-model="state.userTracker.dbRefreshTime"
-                                type="number"
-                                :min="1"
-                                :step="0.01"
-                                :placeholder="$t('common.duration')"
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="jobInfo.publicJobs"
+                                :label="$t('components.settings.app_config.job_info.public_jobs')"
+                                :ui="{ container: '' }"
                             >
-                                <template #trailing>
-                                    <span class="text-xs text-muted">s</span>
-                                </template>
-                            </UInput>
-                        </UFormField>
-                    </UPageCard>
-                </template>
+                                <ClientOnly>
+                                    <USelectMenu
+                                        v-model="state.jobInfo.publicJobs"
+                                        multiple
+                                        :items="jobs ?? []"
+                                        value-key="name"
+                                        :search-input="{ placeholder: $t('common.search_field') }"
+                                        :search-attributes="['label', 'name']"
+                                    >
+                                        <template #item-label>
+                                            <template v-if="state.jobInfo.publicJobs.length">
+                                                <span class="truncate">{{ state.jobInfo.publicJobs.join(', ') }}</span>
+                                            </template>
+                                            <template v-else>
+                                                <span class="truncate">{{
+                                                    $t('common.none_selected', [$t('common.job')])
+                                                }}</span>
+                                            </template>
+                                        </template>
 
-                <template #discord>
-                    <UPageCard
-                        :title="$t('common.discord')"
-                        :description="$t('components.settings.app_config.discord.description')"
-                    >
-                        <UFormField
-                            class="grid grid-cols-2 items-center gap-2"
-                            name="discordEnabled"
-                            :label="$t('common.enabled')"
-                            :ui="{ container: '' }"
-                        >
-                            <USwitch v-model="state.discord.enabled" />
-                        </UFormField>
+                                        <template #item="{ item }">
+                                            <span class="truncate">{{ item.label }} ({{ item.name }})</span>
+                                        </template>
+                                    </USelectMenu>
+                                </ClientOnly>
+                            </UFormField>
 
-                        <UFormField
-                            class="grid grid-cols-2 items-center gap-2"
-                            name="discord.syncInterval"
-                            :label="$t('components.settings.app_config.discord.sync_interval')"
-                            :ui="{ container: '' }"
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="jobInfo.hiddenJobs"
+                                :label="$t('components.settings.app_config.job_info.hidden_jobs')"
+                                :ui="{ container: '' }"
+                            >
+                                <ClientOnly>
+                                    <USelectMenu
+                                        v-model="state.jobInfo.hiddenJobs"
+                                        multiple
+                                        :items="jobs ?? []"
+                                        value-key="name"
+                                        :search-input="{ placeholder: $t('common.search_field') }"
+                                        :search-attributes="['label', 'name']"
+                                    >
+                                        <template #item-label>
+                                            <template v-if="state.jobInfo.hiddenJobs.length">
+                                                <span class="truncate">{{ state.jobInfo.hiddenJobs.join(', ') }}</span>
+                                            </template>
+                                            <template v-else>
+                                                <span class="truncate">{{
+                                                    $t('common.none_selected', [$t('common.job')])
+                                                }}</span>
+                                            </template>
+                                        </template>
+
+                                        <template #item="{ item }">
+                                            <span class="truncate">{{ item.label }} ({{ item.name }})</span>
+                                        </template>
+                                    </USelectMenu>
+                                </ClientOnly>
+                            </UFormField>
+                        </UPageCard>
+                    </template>
+
+                    <template #userTracker>
+                        <UPageCard
+                            :title="$t('components.settings.app_config.user_tracker.title')"
+                            :description="$t('components.settings.app_config.user_tracker.description')"
                         >
-                            <UInput
-                                v-model="state.discord.syncInterval"
-                                type="number"
-                                :min="1"
-                                :step="0.01"
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="userTracker.refreshTime"
+                                :label="$t('components.settings.app_config.user_tracker.refresh_time')"
+                                :ui="{ container: '' }"
+                            >
+                                <UInput
+                                    v-model="state.userTracker.refreshTime"
+                                    type="number"
+                                    :min="1"
+                                    :step="0.01"
+                                    :placeholder="$t('common.duration')"
+                                >
+                                    <template #trailing>
+                                        <span class="text-xs text-muted">s</span>
+                                    </template>
+                                </UInput>
+                            </UFormField>
+
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="userTracker.dbRefreshTime"
+                                :label="$t('components.settings.app_config.user_tracker.db_refresh_time')"
+                                :ui="{ container: '' }"
+                            >
+                                <UInput
+                                    v-model="state.userTracker.dbRefreshTime"
+                                    type="number"
+                                    :min="1"
+                                    :step="0.01"
+                                    :placeholder="$t('common.duration')"
+                                >
+                                    <template #trailing>
+                                        <span class="text-xs text-muted">s</span>
+                                    </template>
+                                </UInput>
+                            </UFormField>
+                        </UPageCard>
+                    </template>
+
+                    <template #discord>
+                        <UPageCard
+                            :title="$t('common.discord')"
+                            :description="$t('components.settings.app_config.discord.description')"
+                        >
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="discordEnabled"
+                                :label="$t('common.enabled')"
+                                :ui="{ container: '' }"
+                            >
+                                <USwitch v-model="state.discord.enabled" />
+                            </UFormField>
+
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
                                 name="discord.syncInterval"
-                                :placeholder="$t('common.duration')"
+                                :label="$t('components.settings.app_config.discord.sync_interval')"
+                                :ui="{ container: '' }"
                             >
-                                <template #trailing>
-                                    <span class="text-xs text-muted">s</span>
-                                </template>
-                            </UInput>
-                        </UFormField>
+                                <UInput
+                                    v-model="state.discord.syncInterval"
+                                    type="number"
+                                    :min="1"
+                                    :step="0.01"
+                                    name="discord.syncInterval"
+                                    :placeholder="$t('common.duration')"
+                                >
+                                    <template #trailing>
+                                        <span class="text-xs text-muted">s</span>
+                                    </template>
+                                </UInput>
+                            </UFormField>
 
-                        <UFormField
-                            class="grid grid-cols-2 items-center gap-2"
-                            name="discord.botId"
-                            :label="$t('components.settings.app_config.discord.bot_id')"
-                            :ui="{ container: '' }"
-                        >
-                            <UInput
-                                v-model="state.discord.botId"
-                                type="text"
-                                :placeholder="$t('components.settings.app_config.discord.bot_id')"
-                            />
-                        </UFormField>
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="discord.botId"
+                                :label="$t('components.settings.app_config.discord.bot_id')"
+                                :ui="{ container: '' }"
+                            >
+                                <UInput
+                                    v-model="state.discord.botId"
+                                    type="text"
+                                    :placeholder="$t('components.settings.app_config.discord.bot_id')"
+                                />
+                            </UFormField>
 
-                        <UFormField
-                            class="grid grid-cols-2 items-center gap-2"
-                            name="discord.botPermissions"
-                            :label="$t('components.settings.app_config.discord.bot_permissions')"
-                            :ui="{ container: '' }"
-                        >
-                            <UInput
-                                v-model="state.discord.botPermissions"
-                                type="text"
-                                :placeholder="$t('components.settings.app_config.discord.bot_permissions')"
-                            />
-                        </UFormField>
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="discord.botPermissions"
+                                :label="$t('components.settings.app_config.discord.bot_permissions')"
+                                :ui="{ container: '' }"
+                            >
+                                <UInput
+                                    v-model="state.discord.botPermissions"
+                                    type="text"
+                                    :placeholder="$t('components.settings.app_config.discord.bot_permissions')"
+                                />
+                            </UFormField>
 
-                        <UFormField
-                            class="grid grid-cols-2 items-center gap-2"
-                            name="discord.ignoredJobs"
-                            :label="$t('components.settings.app_config.discord.ignored_jobs')"
-                            :ui="{ container: '' }"
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="discord.ignoredJobs"
+                                :label="$t('components.settings.app_config.discord.ignored_jobs')"
+                                :ui="{ container: '' }"
+                            >
+                                <ClientOnly>
+                                    <USelectMenu
+                                        v-model="state.discord.ignoredJobs"
+                                        multiple
+                                        :items="jobs ?? []"
+                                        value-key="name"
+                                        :search-input="{ placeholder: $t('common.search_field') }"
+                                        :search-attributes="['label', 'name']"
+                                    >
+                                        <template #item-label>
+                                            <template v-if="state.discord.ignoredJobs.length > 0">
+                                                <span class="truncate">{{ state.discord.ignoredJobs.join(', ') }}</span>
+                                            </template>
+                                            <template v-else>
+                                                <span class="truncate">{{
+                                                    $t('common.none_selected', [$t('common.job')])
+                                                }}</span>
+                                            </template>
+                                        </template>
+
+                                        <template #item="{ item }">
+                                            <span class="truncate">{{ item.label }} ({{ item.name }})</span>
+                                        </template>
+                                    </USelectMenu>
+                                </ClientOnly>
+                            </UFormField>
+                        </UPageCard>
+
+                        <UPageCard
+                            v-if="state.discord.botPresence"
+                            :title="$t('components.settings.app_config.discord.bot_presence.title')"
+                            :description="$t('components.settings.app_config.discord.bot_presence.description')"
                         >
-                            <ClientOnly>
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="discord.botPresence.type"
+                                :label="$t('components.settings.app_config.discord.bot_presence.type')"
+                                :ui="{ container: '' }"
+                            >
                                 <USelectMenu
-                                    v-model="state.discord.ignoredJobs"
-                                    multiple
-                                    :items="jobs ?? []"
-                                    searchable
-                                    value-key="name"
-                                    :searchable-placeholder="$t('common.search_field')"
-                                    :search-attributes="['label', 'name']"
+                                    v-model="state.discord.botPresence.type"
+                                    :items="botPresenceTypes"
+                                    value-key="mode"
+                                    :placeholder="$t('components.settings.app_config.discord.bot_presence.type')"
                                 >
                                     <template #item-label>
-                                        <template v-if="state.discord.ignoredJobs.length > 0">
-                                            <span class="truncate">{{ state.discord.ignoredJobs.join(', ') }}</span>
-                                        </template>
-                                        <template v-else>
-                                            <span class="truncate">{{ $t('common.none_selected', [$t('common.job')]) }}</span>
-                                        </template>
+                                        <span class="truncate text-highlighted">{{
+                                            $t(
+                                                `enums.settings.AppConfig.DiscordBotPresenceType.${DiscordBotPresenceType[state.discord.botPresence.type ?? 0]}`,
+                                            )
+                                        }}</span>
                                     </template>
 
                                     <template #item="{ item }">
-                                        <span class="truncate">{{ item.label }} ({{ item.name }})</span>
+                                        <span class="truncate">{{
+                                            $t(
+                                                `enums.settings.AppConfig.DiscordBotPresenceType.${DiscordBotPresenceType[item.mode ?? 0]}`,
+                                            )
+                                        }}</span>
                                     </template>
                                 </USelectMenu>
-                            </ClientOnly>
-                        </UFormField>
-                    </UPageCard>
+                            </UFormField>
 
-                    <UPageCard
-                        v-if="state.discord.botPresence"
-                        :title="$t('components.settings.app_config.discord.bot_presence.title')"
-                        :description="$t('components.settings.app_config.discord.bot_presence.description')"
-                    >
-                        <UFormField
-                            class="grid grid-cols-2 items-center gap-2"
-                            name="discord.botPresence.type"
-                            :label="$t('components.settings.app_config.discord.bot_presence.type')"
-                            :ui="{ container: '' }"
-                        >
-                            <USelectMenu
-                                v-model="state.discord.botPresence.type"
-                                :items="botPresenceTypes"
-                                value-key="mode"
-                                :placeholder="$t('components.settings.app_config.discord.bot_presence.type')"
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="discord.botPresence.status"
+                                :label="$t('components.settings.app_config.discord.bot_presence.status')"
+                                :ui="{ container: '' }"
                             >
-                                <template #item-label>
-                                    <span class="truncate text-highlighted">{{
-                                        $t(
-                                            `enums.settings.AppConfig.DiscordBotPresenceType.${DiscordBotPresenceType[state.discord.botPresence.type ?? 0]}`,
-                                        )
-                                    }}</span>
-                                </template>
+                                <UInput
+                                    v-model="state.discord.botPresence.status"
+                                    type="text"
+                                    :placeholder="$t('common.status')"
+                                />
+                            </UFormField>
 
-                                <template #item="{ item }">
-                                    <span class="truncate">{{
-                                        $t(
-                                            `enums.settings.AppConfig.DiscordBotPresenceType.${DiscordBotPresenceType[item.mode ?? 0]}`,
-                                        )
-                                    }}</span>
-                                </template>
-                            </USelectMenu>
-                        </UFormField>
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="discord.botPresence.url"
+                                :label="$t('components.settings.app_config.discord.bot_presence.url')"
+                                :ui="{ container: '' }"
+                            >
+                                <UInput
+                                    v-model="state.discord.botPresence.url"
+                                    type="text"
+                                    :placeholder="$t('components.settings.app_config.discord.bot_presence.url')"
+                                />
+                            </UFormField>
+                        </UPageCard>
+                    </template>
 
-                        <UFormField
-                            class="grid grid-cols-2 items-center gap-2"
-                            name="discord.botPresence.status"
-                            :label="$t('components.settings.app_config.discord.bot_presence.status')"
-                            :ui="{ container: '' }"
+                    <template #system>
+                        <UPageCard
+                            :title="$t('components.settings.app_config.system.banner_message.title')"
+                            :description="$t('components.settings.app_config.system.banner_message.subtitle')"
                         >
-                            <UInput v-model="state.discord.botPresence.status" type="text" :placeholder="$t('common.status')" />
-                        </UFormField>
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="system.bannerMessageEnabled"
+                                :label="$t('common.enabled')"
+                                :ui="{ container: '' }"
+                            >
+                                <USwitch v-model="state.system.bannerMessageEnabled" />
+                            </UFormField>
 
-                        <UFormField
-                            class="grid grid-cols-2 items-center gap-2"
-                            name="discord.botPresence.url"
-                            :label="$t('components.settings.app_config.discord.bot_presence.url')"
-                            :ui="{ container: '' }"
-                        >
-                            <UInput
-                                v-model="state.discord.botPresence.url"
-                                type="text"
-                                :placeholder="$t('components.settings.app_config.discord.bot_presence.url')"
-                            />
-                        </UFormField>
-                    </UPageCard>
-                </template>
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="system.bannerMessage.title"
+                                :label="$t('common.message')"
+                                :ui="{ container: '' }"
+                            >
+                                <TiptapEditor v-model="state.system.bannerMessage.title" />
+                            </UFormField>
 
-                <template #system>
-                    <UPageCard
-                        :title="$t('components.settings.app_config.system.banner_message.title')"
-                        :description="$t('components.settings.app_config.system.banner_message.subtitle')"
-                    >
-                        <UFormField
-                            class="grid grid-cols-2 items-center gap-2"
-                            name="system.bannerMessageEnabled"
-                            :label="$t('common.enabled')"
-                            :ui="{ container: '' }"
-                        >
-                            <USwitch v-model="state.system.bannerMessageEnabled" />
-                        </UFormField>
-
-                        <UFormField
-                            class="grid grid-cols-2 items-center gap-2"
-                            name="system.bannerMessage.title"
-                            :label="$t('common.message')"
-                            :ui="{ container: '' }"
-                        >
-                            <TiptapEditor v-model="state.system.bannerMessage.title" />
-                        </UFormField>
-
-                        <UFormField
-                            class="grid grid-cols-2 items-center gap-2"
-                            name="system.bannerMessage.expiresAt"
-                            :label="$t('common.expires_at')"
-                            :ui="{ container: '' }"
-                        >
-                            <DatePickerPopoverClient
-                                v-model="state.system.bannerMessage.expiresAt"
-                                date-format="dd.MM.yyyy HH:mm"
-                                :date-picker="{
-                                    mode: 'dateTime',
-                                    is24hr: true,
-                                    clearable: true,
-                                    disabledDates: [{ start: null, end: subDays(new Date(), 1) }],
-                                }"
-                            />
-                        </UFormField>
-                    </UPageCard>
-                </template>
-            </UTabs>
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="system.bannerMessage.expiresAt"
+                                :label="$t('common.expires_at')"
+                                :ui="{ container: '' }"
+                            >
+                                <DatePickerPopoverClient
+                                    v-model="state.system.bannerMessage.expiresAt"
+                                    date-format="dd.MM.yyyy HH:mm"
+                                    :date-picker="{
+                                        mode: 'dateTime',
+                                        is24hr: true,
+                                        clearable: true,
+                                        disabledDates: [{ start: null, end: subDays(new Date(), 1) }],
+                                    }"
+                                />
+                            </UFormField>
+                        </UPageCard>
+                    </template>
+                </UTabs>
+            </UForm>
         </template>
-    </UForm>
+    </UDashboardPanel>
 </template>

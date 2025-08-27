@@ -100,7 +100,7 @@ watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
                 icon="i-mdi-school"
             />
 
-            <ul v-else class="divide-y divide-gray-100 dark:divide-gray-800" role="list">
+            <ul v-else class="divide-y divide-default" role="list">
                 <QualificationListEntry
                     v-for="qualification in data?.qualifications"
                     :key="qualification.id"

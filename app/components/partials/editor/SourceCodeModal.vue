@@ -12,17 +12,9 @@ const content = useVModel(props, 'content', emit);
 </script>
 
 <template>
-    <UModal fullscreen>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('common.source_code') }}
-            </h3>
-        </template>
-
+    <UModal :title="$t('common.source_code')" fullscreen :ui="{ body: 'flex flex-col flex-1' }">
         <template #body>
-            <div class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-1 flex-col">
-                <UTextarea v-model="content" class="flex flex-1 flex-col" autoresize :ui="{ base: 'flex-1' }" />
-            </div>
+            <UTextarea v-model="content" class="mx-auto size-full max-w-(--breakpoint-xl) flex-1" autoresize :row="0" />
         </template>
 
         <template #footer>

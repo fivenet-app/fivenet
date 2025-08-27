@@ -25,23 +25,23 @@ const citizensCitizensClient = await getCitizensCitizensClient();
 
 const schema = z
     .object({
-        avatar: z.custom<File>().array().min(1).max(1).default([]),
+        profilePicture: z.custom<File>().array().min(1).max(1).default([]),
         reset: z.coerce.boolean(),
     })
     .or(
         z.union([
             z.object({
-                avatar: z.custom<File>().array().min(1).max(1).default([]),
+                profilePicture: z.custom<File>().array().min(1).max(1).default([]),
                 reset: z.literal(false),
             }),
-            z.object({ avatar: z.custom<File>().array(), reset: z.literal(true) }),
+            z.object({ profilePicture: z.custom<File>().array(), reset: z.literal(true) }),
         ]),
     );
 
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    avatar: [],
+    profilePicture: [],
     reset: false,
 });
 
@@ -60,7 +60,7 @@ async function uploadAvatar(files: File[]): Promise<void> {
                 type: NotificationType.SUCCESS,
             });
 
-            activeChar.value!.avatar = resp.file?.filePath;
+            activeChar.value!.profilePicture = resp.file?.filePath;
 
             emit('close', false);
         } catch (e) {
@@ -82,7 +82,7 @@ async function deleteAvatar(): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        activeChar.value!.avatar = undefined;
+        activeChar.value!.profilePicture = undefined;
 
         emit('close', false);
     } catch (e) {
@@ -92,29 +92,23 @@ async function deleteAvatar(): Promise<void> {
 }
 
 function handleFileChanges(event: FileList) {
-    state.avatar = [...event];
+    state.profilePicture = [...event];
 }
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await (!event.data.reset ? uploadAvatar(event.data.avatar) : deleteAvatar()).finally(() =>
+    await (!event.data.reset ? uploadAvatar(event.data.profilePicture) : deleteAvatar()).finally(() =>
         useTimeoutFn(() => (canSubmit.value = true), 400),
     );
 }, 1000);
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('components.jobs.self_service.set_profile_picture') }}
-            </h3>
-        </template>
-
+    <UModal :title="$t('components.jobs.self_service.set_profile_picture')">
         <template #body>
             <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-                <UFormField name="avatar" :label="$t('common.avatar')">
+                <UFormField name="profilePicture" :label="$t('common.profile_picture')">
                     <div class="flex flex-col gap-2">
                         <NotSupportedTabletBlock v-if="nuiEnabled" />
                         <div v-else class="flex flex-col gap-1">
@@ -127,16 +121,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     block
                                     :placeholder="$t('common.image')"
                                     :disabled="!canSubmit"
-                                    @change="handleFileChanges"
+                                    @change="($event) => handleFileChanges($event)"
                                 />
                             </div>
                         </div>
 
                         <div class="flex w-full flex-col items-center justify-center gap-2">
                             <GenericImg
-                                v-if="activeChar?.avatar"
+                                v-if="activeChar?.profilePicture"
                                 size="3xl"
-                                :src="`${activeChar.avatar}?date=${new Date().getTime()}`"
+                                :src="`${activeChar.profilePicture}?date=${new Date().getTime()}`"
                                 :no-blur="true"
                             />
 
@@ -158,7 +152,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     type="submit"
                     block
                     color="error"
-                    :disabled="!canSubmit || !activeChar?.avatar"
+                    :disabled="!canSubmit || !activeChar?.profilePicture"
                     :loading="!canSubmit"
                     @click="state.reset = true"
                 >

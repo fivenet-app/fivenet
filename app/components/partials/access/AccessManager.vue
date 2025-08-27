@@ -57,8 +57,8 @@ const usersAccess = defineModel<UsersT[]>('users', { default: () => [] });
 const qualificationsAccess = defineModel<QualiT[]>('qualifications', { default: () => [] });
 
 const defaultAccessTypes = [
-    { type: 'user', name: t('common.citizen', 2) },
-    { type: 'job', name: t('common.job', 2) },
+    { type: 'user', label: t('common.citizen', 2) },
+    { type: 'job', label: t('common.job', 2) },
 ] as AccessType[];
 
 const aTypes = ref<AccessType[]>([]);

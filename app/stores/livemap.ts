@@ -363,8 +363,8 @@ export const useLivemapStore = defineStore(
             if (dest.phoneNumber !== src.phoneNumber) {
                 dest.phoneNumber = src.phoneNumber;
             }
-            if (dest.avatar !== src.avatar) {
-                dest.avatar = src.avatar;
+            if (dest.profilePicture !== src.profilePicture) {
+                dest.profilePicture = src.profilePicture;
             }
         };
 

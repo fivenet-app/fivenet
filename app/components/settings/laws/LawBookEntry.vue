@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { UTable } from '#components';
+import { UButton } from '#components';
 import type { FormSubmitEvent, TableColumn } from '@nuxt/ui';
 import type { ExpandedState } from '@tanstack/vue-table';
 import { z } from 'zod';
@@ -106,9 +106,7 @@ const lastNewId = ref(-1);
 const lawEntriesRefs = ref(new Map<number, Element>());
 
 function addLaw(): void {
-    if (!lawBook.value) {
-        return;
-    }
+    if (!lawBook.value) return;
 
     const law = {
         lawbookId: lawBook.value.id,
@@ -119,6 +117,12 @@ function addLaw(): void {
         stvoPoints: 0,
     };
     laws.value.push(law);
+
+    if (typeof expanded.value === 'object') {
+        expanded.value = { ...expanded.value, [laws.value.length - 1]: true };
+    } else {
+        expanded.value = { [laws.value.length - 1]: true };
+    }
 
     useTimeoutFn(() => {
         const ref = lawEntriesRefs.value.get(law.id);
@@ -159,14 +163,28 @@ async function deleteLaw(id: number): Promise<void> {
 
 const editing = ref(props.startInEdit);
 
-const expand = ref<ExpandedState>({});
+const expanded = ref<ExpandedState>({});
 
 const columns = computed(
     () =>
         [
             {
-                accessorKey: 'actions',
-                header: t('common.action', 2),
+                id: 'expand',
+                cell: ({ row }) =>
+                    h(UButton, {
+                        color: 'neutral',
+                        variant: 'ghost',
+                        icon: 'i-lucide-chevron-down',
+                        square: true,
+                        'aria-label': 'Expand',
+                        ui: {
+                            leadingIcon: ['transition-transform', row.getIsExpanded() ? 'duration-200 rotate-180' : ''],
+                        },
+                        onClick: () => row.toggleExpanded(),
+                    }),
+            },
+            {
+                id: 'actions',
             },
             {
                 accessorKey: 'crime',
@@ -278,23 +296,21 @@ const confirmModal = overlay.create(ConfirmModal);
         </template>
 
         <UTable
-            v-model:expanded="expand"
+            v-model:expanded="expanded"
             :columns="columns"
             :data="laws"
             :expand-button="{ icon: 'i-mdi-pencil', color: 'primary' }"
             :pagination-options="{ manualPagination: true }"
             :sorting-options="{ manualSorting: true }"
             :empty="$t('common.not_found', [$t('common.law', 2)])"
+            :ui="{ tr: 'data-[expanded=true]:bg-elevated/50' }"
+            sticky
         >
-            <template #expanded="{ row: law }">
+            <template #expanded="{ row }">
                 <LawEntry
-                    :law="law.original"
+                    :law="row.original"
                     @update:law="$emit('update:law', $event)"
-                    @close="
-                        if (law.original.id < 0) {
-                            deleteLaw(law.original.id);
-                        }
-                    "
+                    @close="if (row.original.id < 0) deleteLaw(row.original.id);"
                 />
             </template>
 
@@ -305,9 +321,11 @@ const confirmModal = overlay.create(ConfirmModal);
                         icon="i-mdi-delete"
                         color="error"
                         @click="
-                            confirmModal.open({
-                                confirm: async () => deleteLaw(law.original.id),
-                            })
+                            () => {
+                                confirmModal.open({
+                                    confirm: async () => deleteLaw(law.original.id),
+                                });
+                            }
                         "
                     />
                 </UTooltip>

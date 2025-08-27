@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import type { TableColumn } from '@nuxt/ui';
 import { type ClipboardVehicle, useClipboardStore } from '~/stores/clipboard';
 import type { ObjectSpecs } from '~~/gen/ts/resources/documents/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -24,25 +24,16 @@ const emit = defineEmits<{
     (e: 'close'): void;
 }>();
 
+const { t } = useI18n();
+
 const clipboardStore = useClipboardStore();
 const notifications = useNotificationsStore();
 
 const { vehicles } = storeToRefs(clipboardStore);
 
-const selected = ref<ClipboardVehicle[]>([]);
+const selected = ref<string[]>([]);
 
-async function select(item: ClipboardVehicle): Promise<void> {
-    const idx = selected.value.indexOf(item);
-    if (idx !== undefined && idx > -1) {
-        selected.value.splice(idx, 1);
-    } else {
-        // If specs are defined and max is set, clear the selection if we are over the limit
-        if (props.specs && props.specs.max !== undefined && props.specs.max > 0 && selected.value.length >= props.specs.max) {
-            selected.value.splice(0, props.specs.max);
-        }
-        selected.value.push(item);
-    }
-
+async function select(): Promise<void> {
     const selectedLength = selected.value.length;
     if (props.specs) {
         if (props.specs.min !== undefined && selectedLength >= props.specs.min) {
@@ -57,13 +48,15 @@ async function select(item: ClipboardVehicle): Promise<void> {
     }
 }
 
-async function remove(item: ClipboardVehicle, notify: boolean): Promise<void> {
+watch(selected, () => select());
+
+async function remove(item: string, notify: boolean): Promise<void> {
     const idx = selected.value.indexOf(item);
     if (idx !== undefined && idx > -1) {
         selected.value.splice(idx, 1);
     }
 
-    clipboardStore.removeVehicle(item.plate);
+    clipboardStore.removeVehicle(item);
     if (notify) {
         notifications.add({
             title: { key: 'notifications.clipboard.vehicle_removed.title', parameters: {} },
@@ -96,13 +89,45 @@ async function removeAll(): Promise<void> {
     });
 }
 
+const columns = computed(() =>
+    (
+        [
+            props.showSelect
+                ? {
+                      id: 'actions',
+                  }
+                : undefined,
+            {
+                accesssorKey: 'plate',
+                header: t('common.plate'),
+                cell: ({ row }) => h('span', { class: 'text-highlighted' }, row.original.plate),
+            },
+            {
+                accesssorKey: 'model',
+                header: t('common.model'),
+                cell: ({ row }) => h('span', {}, row.original.model),
+            },
+            {
+                accesssorKey: 'owner',
+                header: t('common.owner'),
+                cell: ({ row }) => h('span', {}, `${row.original.owner.firstname} ${row.original.owner.lastname}`),
+            },
+            {
+                id: 'delete',
+            },
+        ] as TableColumn<ClipboardVehicle>[]
+    ).filter((c) => c !== undefined),
+);
+
 watch(props, (newVal) => {
     if (newVal.submit) {
         if (clipboardStore.activeStack) {
             clipboardStore.activeStack.vehicles.length = 0;
-            selected.value.forEach((v) => clipboardStore.activeStack.vehicles.push(v));
+            selected.value.forEach((v) =>
+                clipboardStore.activeStack.vehicles.push(clipboardStore.vehicles.find((veh) => veh.plate === v)!),
+            );
         } else if (vehicles.value && vehicles.value[0]) {
-            selected.value.unshift(vehicles.value[0]);
+            selected.value.unshift(vehicles.value[0].plate);
         }
     }
 });
@@ -115,89 +140,39 @@ watch(props, (newVal) => {
             <slot name="header" />
         </h3>
 
-        <DataNoDataBlock
-            v-if="vehicles?.length === 0"
-            icon="i-mdi-car"
-            :message="$t('components.clipboard.clipboard_modal.no_data', [$t('common.vehicle', 2)])"
-            :focus="
-                async () => {
-                    navigateTo({ name: 'vehicles' });
-                    $emit('close');
-                }
-            "
-        />
-        <table v-else class="min-w-full divide-y divide-gray-700">
-            <thead>
-                <tr>
-                    <th v-if="showSelect" class="py-3.5 pr-3 pl-4 text-left text-sm font-semibold sm:pl-1" scope="col">
-                        {{ $t('common.select') }}
-                    </th>
+        <UTable :columns="columns" :data="vehicles" :empty="$t('common.not_found', [$t('common.vehicle', 2)])">
+            <template #actions-cell="{ row }">
+                <URadioGroup
+                    v-if="specs && specs.max && specs.max === 1"
+                    :model-value="selected[0]"
+                    name="selected"
+                    :items="[row.original.plate]"
+                    value-key="plate"
+                    :ui="{ label: 'hidden' }"
+                    @update:model-value="(v) => (selected = [v])"
+                />
+                <UCheckboxGroup
+                    v-else
+                    :key="row.original.plate"
+                    v-model="selected"
+                    name="selected"
+                    :items="[row.original.plate]"
+                    value-key="plate"
+                    :ui="{ label: 'hidden' }"
+                />
+            </template>
 
-                    <th class="py-3.5 pr-3 pl-4 text-left text-sm font-semibold sm:pl-1" scope="col">
-                        {{ $t('common.plate') }}
-                    </th>
+            <template v-if="selected.length > 0" #actions-header>
+                <UTooltip :text="$t('common.delete')">
+                    <UButton variant="link" icon="i-mdi-delete" color="error" size="xs" @click="removeAll()" />
+                </UTooltip>
+            </template>
 
-                    <th class="px-3 py-3.5 text-left text-sm font-semibold" scope="col">
-                        {{ $t('common.model') }}
-                    </th>
-
-                    <th class="px-3 py-3.5 text-left text-sm font-semibold" scope="col">
-                        {{ $t('common.owner') }}
-                    </th>
-
-                    <th class="relative py-3.5 pr-4 pl-3 sm:pr-0" scope="col">
-                        <UTooltip v-if="selected.length > 0" :text="$t('common.delete')">
-                            <UButton variant="link" icon="i-mdi-delete" color="error" @click="removeAll()" />
-                        </UTooltip>
-                    </th>
-                </tr>
-            </thead>
-
-            <tbody class="divide-y divide-gray-800">
-                <tr v-for="item in vehicles" :key="item.plate">
-                    <td v-if="showSelect" class="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap sm:pl-1">
-                        <UButton
-                            v-if="specs && specs.max && specs.max === 1"
-                            block
-                            :color="selected.includes(item) ? 'neutral' : 'primary'"
-                            @click="select(item)"
-                        >
-                            {{
-                                !selected.includes(item)
-                                    ? $t('common.select', 1).toUpperCase()
-                                    : $t('common.select', 2).toUpperCase()
-                            }}
-                        </UButton>
-                        <UCheckbox
-                            v-else
-                            :key="item.plate"
-                            v-model="selected"
-                            name="selected"
-                            :checked="selected.includes(item)"
-                            :value="item"
-                            @click="select(item)"
-                        />
-                    </td>
-
-                    <td class="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap sm:pl-1">
-                        {{ item.plate }}
-                    </td>
-
-                    <td class="px-2 py-2 text-sm whitespace-nowrap sm:px-4">
-                        {{ item.model }}
-                    </td>
-
-                    <td class="px-2 py-2 text-sm whitespace-nowrap sm:px-4">
-                        {{ item.owner.firstname }} {{ item.owner.lastname }}
-                    </td>
-
-                    <td class="relative py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-0">
-                        <UTooltip :text="$t('common.delete')">
-                            <UButton variant="link" icon="i-mdi-delete" color="error" @click="remove(item, true)" />
-                        </UTooltip>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+            <template #delete-cell="{ row }">
+                <UTooltip :text="$t('common.delete')">
+                    <UButton variant="link" icon="i-mdi-delete" color="error" @click="remove(row.original.plate, true)" />
+                </UTooltip>
+            </template>
+        </UTable>
     </div>
 </template>

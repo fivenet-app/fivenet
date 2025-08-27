@@ -59,13 +59,7 @@ const open = ref(false);
                 @touchstart="open = true"
             />
 
-            <UModal v-model:open="open">
-                <template #title>
-                    <h3 class="text-2xl leading-6 font-semibold">
-                        {{ $t('common.date') }}
-                    </h3>
-                </template>
-
+            <UModal v-model:open="open" :title="$t('common.date')">
                 <template #body>
                     <div class="flex flex-1 items-center">
                         <DateRangePickerClient v-model="date" v-bind="datePicker" @close="open = false" />

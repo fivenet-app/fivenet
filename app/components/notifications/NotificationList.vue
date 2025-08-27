@@ -121,9 +121,8 @@ const canSubmit = ref(true);
                                 multiple
                                 name="categories"
                                 :items="categories"
-                                option-attribute="label"
                                 value-key="mode"
-                                :searchable-placeholder="$t('common.search_field')"
+                                :search-input="{ placeholder: $t('common.search_field') }"
                             >
                                 <template #item-label>
                                     <template v-if="query.categories">
@@ -169,7 +168,7 @@ const canSubmit = ref(true);
                 icon="i-mdi-bell"
             />
 
-            <ul v-else class="flex flex-1 flex-col divide-y divide-gray-100 dark:divide-gray-800" role="list">
+            <ul v-else class="flex flex-1 flex-col divide-y divide-default" role="list">
                 <li
                     v-for="not in data?.notifications"
                     :key="not.id"

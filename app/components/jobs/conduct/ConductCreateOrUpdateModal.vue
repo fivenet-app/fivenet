@@ -118,17 +118,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{
-                    entry === undefined
-                        ? $t('components.jobs.conduct.CreateOrUpdateModal.create.title')
-                        : $t('components.jobs.conduct.CreateOrUpdateModal.update.title')
-                }}
-            </h3>
-        </template>
-
+    <UModal
+        :title="
+            entry === undefined
+                ? $t('components.jobs.conduct.CreateOrUpdateModal.create.title')
+                : $t('components.jobs.conduct.CreateOrUpdateModal.update.title')
+        "
+    >
         <template #body>
             <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <dl class="divide-neutral/10 divide-y">
@@ -145,7 +141,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         v-model="state.type"
                                         :items="cTypes"
                                         value-key="status"
-                                        :searchable-placeholder="$t('common.search_field')"
+                                        :search-input="{ placeholder: $t('common.search_field') }"
                                     >
                                         <template #item-label="{ item }">
                                             <UBadge :color="conductTypesToBadgeColor(item.status)" truncate>
@@ -191,13 +187,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 return colleagues;
                                             }
                                         "
-                                        searchable-lazy
-                                        :searchable-placeholder="$t('common.search_field')"
+                                        :search-input="{ placeholder: $t('common.search_field') }"
                                         :search-attributes="['firstname', 'lastname']"
                                         block
                                         :placeholder="$t('common.colleague')"
                                         trailing
-                                        by="userId"
                                     >
                                         <template #item-label>
                                             <template v-if="state.targetUser">

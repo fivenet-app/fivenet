@@ -14,15 +14,11 @@ const { dispatchers, anyDispatchersActive, getCurrentMode } = storeToRefs(centru
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="inline-flex items-center gap-2 text-2xl leading-6 font-semibold">
-                <span>{{ $t('common.dispatchers', 2) }}</span>
-
-                <UBadge color="neutral">
-                    {{ $t('common.mode') }}: {{ $t(`enums.centrum.CentrumMode.${CentrumMode[getCurrentMode ?? 0]}`) }}
-                </UBadge>
-            </h3>
+    <UModal :title="$t('common.dispatchers', 2)">
+        <template #actions>
+            <UBadge color="neutral">
+                {{ $t('common.mode') }}: {{ $t(`enums.centrum.CentrumMode.${CentrumMode[getCurrentMode ?? 0]}`) }}
+            </UBadge>
         </template>
 
         <template #body>
@@ -51,14 +47,14 @@ const { dispatchers, anyDispatchersActive, getCurrentMode } = storeToRefs(centru
                                 <PhoneNumberBlock :number="dispatcher.phoneNumber" />
                             </template>
 
-                            <template v-if="dispatcher.avatar" #icon>
+                            <template v-if="dispatcher.profilePicture" #icon>
                                 <ProfilePictureImg
                                     class="mr-2"
-                                    :src="dispatcher?.avatar"
+                                    :src="dispatcher?.profilePicture"
                                     :name="`${dispatcher.firstname} ${dispatcher.lastname}`"
                                     size="sm"
                                     :enable-popup="false"
-                                    :alt="$t('common.avatar')"
+                                    :alt="$t('common.profile_picture')"
                                 />
                             </template>
                         </UPageCard>

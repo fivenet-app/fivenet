@@ -2,7 +2,6 @@
 import { UButton, UTooltip } from '#components';
 import type { Form, TableColumn } from '@nuxt/ui';
 import { z } from 'zod';
-import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -117,7 +116,7 @@ const columns = computed(() =>
                 cell: ({ row }) =>
                     h('div', { class: 'inline-flex items-center gap-1 text-highlighted' }, [
                         h(ProfilePictureImg, {
-                            src: row.original.avatar,
+                            src: row.original.profilePicture,
                             name: `${row.original.firstname} ${row.original.lastname}`,
                             size: 'sm',
                             enablePopup: true,
@@ -178,21 +177,18 @@ const columns = computed(() =>
             },
             can('jobs.JobsService/GetColleague').value
                 ? {
-                      accessorKey: 'actions',
-                      header: t('common.action', 2),
+                      id: 'actions',
                       cell: ({ row }) =>
-                          checkIfCanAccessColleague(row.original, 'jobs.JobsService/GetColleague')
-                              ? h(UTooltip, { text: t('common.show') }, () =>
-                                    h(UButton, {
-                                        variant: 'link',
-                                        icon: 'i-mdi-eye',
-                                        to: {
-                                            name: 'jobs-colleagues-id-info',
-                                            params: { id: row.original.userId ?? 0 },
-                                        },
-                                    }),
-                                )
-                              : null,
+                          h(UTooltip, { text: t('common.show') }, () =>
+                              h(UButton, {
+                                  variant: 'link',
+                                  icon: 'i-mdi-eye',
+                                  to: {
+                                      name: 'jobs-colleagues-id-info',
+                                      params: { id: row.original.userId ?? 0 },
+                                  },
+                              }),
+                          ),
                   }
                 : undefined,
         ] as TableColumn<Colleague>[]
@@ -237,6 +233,7 @@ const { game } = useAppConfig();
         :error="error"
         :retry="refresh"
     />
+
     <UTable
         v-model:sorting="state.sorting.columns"
         :columns="columns"
@@ -245,6 +242,7 @@ const { game } = useAppConfig();
         :empty="$t('common.not_found', [$t('common.colleague', 2)])"
         :pagination-options="{ manualPagination: true }"
         :sorting-options="{ manualSorting: true }"
+        sticky
     />
 
     <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />

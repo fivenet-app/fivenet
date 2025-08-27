@@ -78,13 +78,7 @@ function updateReasonField(value: string): void {
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('components.centrum.update_unit_status.title') }}: {{ unit.name }} ({{ unit.initials }})
-            </h3>
-        </template>
-
+    <UModal :title="`${$t('components.centrum.update_unit_status.title')}: ${unit.name} (${unit.initials})`">
         <template #body>
             <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <dl class="divide-neutral/10 divide-y">
@@ -170,7 +164,7 @@ function updateReasonField(value: string): void {
                                 <USelectMenu
                                     name="unitStatus"
                                     :items="['&nbsp;', ...settings?.predefinedStatus.unitStatus]"
-                                    :searchable-placeholder="$t('common.search_field')"
+                                    :search-input="{ placeholder: $t('common.search_field') }"
                                     @change="($event) => updateReasonField($event)"
                                 >
                                     <template #item="{ item }">

@@ -62,10 +62,9 @@ const appConfig = useAppConfig();
 
 const columns = [
     {
-        accessorKey: 'actions',
-        header: t('common.action', 2),
+        id: 'actions',
         cell: ({ row }) =>
-            h('div', { class: 'flex items-center' }, [
+            h('div', [
                 h(
                     UTooltip,
                     {
@@ -76,11 +75,12 @@ const columns = [
                         h(UButton, {
                             variant: 'link',
                             icon: 'i-mdi-pencil',
-                            onClick: () =>
+                            onClick: () => {
                                 unitCreateOrUpdateModal.open({
                                     unit: row.original,
                                     onUpdated: async () => refresh(),
-                                }),
+                                });
+                            },
                         }),
                     ],
                 ),
@@ -95,10 +95,11 @@ const columns = [
                             variant: 'link',
                             icon: 'i-mdi-delete',
                             color: 'error',
-                            onClick: () =>
+                            onClick: () => {
                                 confirmModal.open({
                                     confirm: async () => deleteUnit(row.original.id),
-                                }),
+                                });
+                            },
                         }),
                     ],
                 ),
@@ -217,6 +218,7 @@ const confirmModal = overlay.create(ConfirmModal);
     </UDashboardNavbar>
 
     <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.unit', 2)])" :error="error" :retry="refresh" />
+
     <UTable
         class="flex-1"
         :loading="isRequestPending(status)"

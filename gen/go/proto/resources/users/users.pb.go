@@ -23,21 +23,21 @@ const (
 )
 
 type UserShort struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"id"`
-	Identifier    *string                `protobuf:"bytes,2,opt,name=identifier,proto3,oneof" json:"identifier,omitempty"`
-	Job           string                 `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty"`
-	JobLabel      *string                `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
-	JobGrade      int32                  `protobuf:"varint,5,opt,name=job_grade,json=jobGrade,proto3" json:"job_grade,omitempty"`
-	JobGradeLabel *string                `protobuf:"bytes,6,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty"`
-	Firstname     string                 `protobuf:"bytes,7,opt,name=firstname,proto3" json:"firstname,omitempty"`
-	Lastname      string                 `protobuf:"bytes,8,opt,name=lastname,proto3" json:"lastname,omitempty"`
-	Dateofbirth   string                 `protobuf:"bytes,9,opt,name=dateofbirth,proto3" json:"dateofbirth,omitempty"`
-	PhoneNumber   *string                `protobuf:"bytes,12,opt,name=phone_number,json=phoneNumber,proto3,oneof" json:"phone_number,omitempty"`
-	AvatarFileId  *int64                 `protobuf:"varint,17,opt,name=avatar_file_id,json=avatarFileId,proto3,oneof" json:"avatar_file_id,omitempty"`
-	Avatar        *string                `protobuf:"bytes,18,opt,name=avatar,proto3,oneof" json:"avatar,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	UserId               int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"id"`
+	Identifier           *string                `protobuf:"bytes,2,opt,name=identifier,proto3,oneof" json:"identifier,omitempty"`
+	Job                  string                 `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty"`
+	JobLabel             *string                `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
+	JobGrade             int32                  `protobuf:"varint,5,opt,name=job_grade,json=jobGrade,proto3" json:"job_grade,omitempty"`
+	JobGradeLabel        *string                `protobuf:"bytes,6,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty"`
+	Firstname            string                 `protobuf:"bytes,7,opt,name=firstname,proto3" json:"firstname,omitempty"`
+	Lastname             string                 `protobuf:"bytes,8,opt,name=lastname,proto3" json:"lastname,omitempty"`
+	Dateofbirth          string                 `protobuf:"bytes,9,opt,name=dateofbirth,proto3" json:"dateofbirth,omitempty"`
+	PhoneNumber          *string                `protobuf:"bytes,12,opt,name=phone_number,json=phoneNumber,proto3,oneof" json:"phone_number,omitempty"`
+	ProfilePictureFileId *int64                 `protobuf:"varint,17,opt,name=profile_picture_file_id,json=profilePictureFileId,proto3,oneof" json:"profile_picture_file_id,omitempty"`
+	ProfilePicture       *string                `protobuf:"bytes,18,opt,name=profile_picture,json=profilePicture,proto3,oneof" json:"profile_picture,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *UserShort) Reset() {
@@ -140,43 +140,43 @@ func (x *UserShort) GetPhoneNumber() string {
 	return ""
 }
 
-func (x *UserShort) GetAvatarFileId() int64 {
-	if x != nil && x.AvatarFileId != nil {
-		return *x.AvatarFileId
+func (x *UserShort) GetProfilePictureFileId() int64 {
+	if x != nil && x.ProfilePictureFileId != nil {
+		return *x.ProfilePictureFileId
 	}
 	return 0
 }
 
-func (x *UserShort) GetAvatar() string {
-	if x != nil && x.Avatar != nil {
-		return *x.Avatar
+func (x *UserShort) GetProfilePicture() string {
+	if x != nil && x.ProfilePicture != nil {
+		return *x.ProfilePicture
 	}
 	return ""
 }
 
 type User struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"id"`
-	Identifier    *string                `protobuf:"bytes,2,opt,name=identifier,proto3,oneof" json:"identifier,omitempty"`
-	Job           string                 `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty"`
-	JobLabel      *string                `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
-	JobGrade      int32                  `protobuf:"varint,5,opt,name=job_grade,json=jobGrade,proto3" json:"job_grade,omitempty"`
-	JobGradeLabel *string                `protobuf:"bytes,6,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty"`
-	Firstname     string                 `protobuf:"bytes,7,opt,name=firstname,proto3" json:"firstname,omitempty"`
-	Lastname      string                 `protobuf:"bytes,8,opt,name=lastname,proto3" json:"lastname,omitempty"`
-	Dateofbirth   string                 `protobuf:"bytes,9,opt,name=dateofbirth,proto3" json:"dateofbirth,omitempty"`
-	Sex           *string                `protobuf:"bytes,10,opt,name=sex,proto3,oneof" json:"sex,omitempty"`
-	Height        *string                `protobuf:"bytes,11,opt,name=height,proto3,oneof" json:"height,omitempty"`
-	PhoneNumber   *string                `protobuf:"bytes,12,opt,name=phone_number,json=phoneNumber,proto3,oneof" json:"phone_number,omitempty"`
-	Visum         *int32                 `protobuf:"varint,13,opt,name=visum,proto3,oneof" json:"visum,omitempty"`
-	Playtime      *int32                 `protobuf:"varint,14,opt,name=playtime,proto3,oneof" json:"playtime,omitempty"`
-	Props         *UserProps             `protobuf:"bytes,15,opt,name=props,proto3" json:"props,omitempty" alias:"fivenet_user_props"`
-	Licenses      []*License             `protobuf:"bytes,16,rep,name=licenses,proto3" json:"licenses,omitempty" alias:"user_licenses"`
-	AvatarFileId  *int64                 `protobuf:"varint,17,opt,name=avatar_file_id,json=avatarFileId,proto3,oneof" json:"avatar_file_id,omitempty"`
-	Avatar        *string                `protobuf:"bytes,18,opt,name=avatar,proto3,oneof" json:"avatar,omitempty"`
-	Group         *string                `protobuf:"bytes,20,opt,name=group,proto3,oneof" json:"group,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	UserId               int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"id"`
+	Identifier           *string                `protobuf:"bytes,2,opt,name=identifier,proto3,oneof" json:"identifier,omitempty"`
+	Job                  string                 `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty"`
+	JobLabel             *string                `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
+	JobGrade             int32                  `protobuf:"varint,5,opt,name=job_grade,json=jobGrade,proto3" json:"job_grade,omitempty"`
+	JobGradeLabel        *string                `protobuf:"bytes,6,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty"`
+	Firstname            string                 `protobuf:"bytes,7,opt,name=firstname,proto3" json:"firstname,omitempty"`
+	Lastname             string                 `protobuf:"bytes,8,opt,name=lastname,proto3" json:"lastname,omitempty"`
+	Dateofbirth          string                 `protobuf:"bytes,9,opt,name=dateofbirth,proto3" json:"dateofbirth,omitempty"`
+	Sex                  *string                `protobuf:"bytes,10,opt,name=sex,proto3,oneof" json:"sex,omitempty"`
+	Height               *string                `protobuf:"bytes,11,opt,name=height,proto3,oneof" json:"height,omitempty"`
+	PhoneNumber          *string                `protobuf:"bytes,12,opt,name=phone_number,json=phoneNumber,proto3,oneof" json:"phone_number,omitempty"`
+	Visum                *int32                 `protobuf:"varint,13,opt,name=visum,proto3,oneof" json:"visum,omitempty"`
+	Playtime             *int32                 `protobuf:"varint,14,opt,name=playtime,proto3,oneof" json:"playtime,omitempty"`
+	Props                *UserProps             `protobuf:"bytes,15,opt,name=props,proto3" json:"props,omitempty" alias:"fivenet_user_props"`
+	Licenses             []*License             `protobuf:"bytes,16,rep,name=licenses,proto3" json:"licenses,omitempty" alias:"user_licenses"`
+	ProfilePictureFileId *int64                 `protobuf:"varint,17,opt,name=profile_picture_file_id,json=profilePictureFileId,proto3,oneof" json:"profile_picture_file_id,omitempty"`
+	ProfilePicture       *string                `protobuf:"bytes,18,opt,name=profile_picture,json=profilePicture,proto3,oneof" json:"profile_picture,omitempty"`
+	Group                *string                `protobuf:"bytes,20,opt,name=group,proto3,oneof" json:"group,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *User) Reset() {
@@ -321,16 +321,16 @@ func (x *User) GetLicenses() []*License {
 	return nil
 }
 
-func (x *User) GetAvatarFileId() int64 {
-	if x != nil && x.AvatarFileId != nil {
-		return *x.AvatarFileId
+func (x *User) GetProfilePictureFileId() int64 {
+	if x != nil && x.ProfilePictureFileId != nil {
+		return *x.ProfilePictureFileId
 	}
 	return 0
 }
 
-func (x *User) GetAvatar() string {
-	if x != nil && x.Avatar != nil {
-		return *x.Avatar
+func (x *User) GetProfilePicture() string {
+	if x != nil && x.ProfilePicture != nil {
+		return *x.ProfilePicture
 	}
 	return ""
 }
@@ -346,7 +346,7 @@ var File_resources_users_users_proto protoreflect.FileDescriptor
 
 const file_resources_users_users_proto_rawDesc = "" +
 	"\n" +
-	"\x1bresources/users/users.proto\x12\x0fresources.users\x1a\x1eresources/users/licenses.proto\x1a\x1bresources/users/props.proto\x1a\x13tagger/tagger.proto\"\xec\x04\n" +
+	"\x1bresources/users/users.proto\x12\x0fresources.users\x1a\x1eresources/users/licenses.proto\x1a\x1bresources/users/props.proto\x1a\x13tagger/tagger.proto\"\xa0\x05\n" +
 	"\tUserShort\x12/\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x16\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"\xbaH\x04\x1a\x02 \x00R\x06userId\x12,\n" +
@@ -364,16 +364,16 @@ const file_resources_users_users_proto_rawDesc = "" +
 	"\vdateofbirth\x18\t \x01(\tB\n" +
 	"\xbaH\a\xd8\x01\x01r\x02\x18\n" +
 	"R\vdateofbirth\x12/\n" +
-	"\fphone_number\x18\f \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x03R\vphoneNumber\x88\x01\x01\x12)\n" +
-	"\x0eavatar_file_id\x18\x11 \x01(\x03H\x04R\favatarFileId\x88\x01\x01\x12\x1b\n" +
-	"\x06avatar\x18\x12 \x01(\tH\x05R\x06avatar\x88\x01\x01B\r\n" +
+	"\fphone_number\x18\f \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x03R\vphoneNumber\x88\x01\x01\x12:\n" +
+	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\x04R\x14profilePictureFileId\x88\x01\x01\x12,\n" +
+	"\x0fprofile_picture\x18\x12 \x01(\tH\x05R\x0eprofilePicture\x88\x01\x01B\r\n" +
 	"\v_identifierB\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
 	"\x10_job_grade_labelB\x0f\n" +
-	"\r_phone_numberB\x11\n" +
-	"\x0f_avatar_file_idB\t\n" +
-	"\a_avatar\"\xf1\a\n" +
+	"\r_phone_numberB\x1a\n" +
+	"\x18_profile_picture_file_idB\x12\n" +
+	"\x10_profile_picture\"\xa5\b\n" +
 	"\x04User\x12/\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x16\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"\xbaH\x04\x1a\x02 \x00R\x06userId\x12,\n" +
@@ -398,9 +398,9 @@ const file_resources_users_users_proto_rawDesc = "" +
 	"\x05visum\x18\r \x01(\x05B\a\xbaH\x04\x1a\x02(\x00H\x06R\x05visum\x88\x01\x01\x12(\n" +
 	"\bplaytime\x18\x0e \x01(\x05B\a\xbaH\x04\x1a\x02(\x00H\aR\bplaytime\x88\x01\x01\x12Q\n" +
 	"\x05props\x18\x0f \x01(\v2\x1a.resources.users.UserPropsB\x1f\x9a\x84\x9e\x03\x1aalias:\"fivenet_user_props\"R\x05props\x12P\n" +
-	"\blicenses\x18\x10 \x03(\v2\x18.resources.users.LicenseB\x1a\x9a\x84\x9e\x03\x15alias:\"user_licenses\"R\blicenses\x12)\n" +
-	"\x0eavatar_file_id\x18\x11 \x01(\x03H\bR\favatarFileId\x88\x01\x01\x12\x1b\n" +
-	"\x06avatar\x18\x12 \x01(\tH\tR\x06avatar\x88\x01\x01\x12\"\n" +
+	"\blicenses\x18\x10 \x03(\v2\x18.resources.users.LicenseB\x1a\x9a\x84\x9e\x03\x15alias:\"user_licenses\"R\blicenses\x12:\n" +
+	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\bR\x14profilePictureFileId\x88\x01\x01\x12,\n" +
+	"\x0fprofile_picture\x18\x12 \x01(\tH\tR\x0eprofilePicture\x88\x01\x01\x12\"\n" +
 	"\x05group\x18\x14 \x01(\tB\a\xbaH\x04r\x02\x182H\n" +
 	"R\x05group\x88\x01\x01B\r\n" +
 	"\v_identifierB\f\n" +
@@ -411,9 +411,9 @@ const file_resources_users_users_proto_rawDesc = "" +
 	"\a_heightB\x0f\n" +
 	"\r_phone_numberB\b\n" +
 	"\x06_visumB\v\n" +
-	"\t_playtimeB\x11\n" +
-	"\x0f_avatar_file_idB\t\n" +
-	"\a_avatarB\b\n" +
+	"\t_playtimeB\x1a\n" +
+	"\x18_profile_picture_file_idB\x12\n" +
+	"\x10_profile_pictureB\b\n" +
 	"\x06_groupBIZGgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users;usersb\x06proto3"
 
 var (

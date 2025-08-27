@@ -47,11 +47,9 @@ const target = route.query.target as string;
         <div class="flex w-full flex-1 items-center justify-center">
             <UCard class="w-full max-w-lg bg-white/75 backdrop-blur-sm dark:bg-white/5">
                 <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl leading-6 font-semibold">
-                            {{ $t('pages.dereferer.title') }} - {{ $t('pages.dereferer.subtitle') }}
-                        </h3>
-                    </div>
+                    <h3 class="text-2xl leading-6 font-semibold">
+                        {{ $t('pages.dereferer.title') }} - {{ $t('pages.dereferer.subtitle') }}
+                    </h3>
                 </template>
 
                 <p>{{ $t('pages.dereferer.description') }}</p>

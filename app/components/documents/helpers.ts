@@ -153,10 +153,13 @@ export function docRelationToBadge(ref: DocRelation): BadgeProps['color'] {
     switch (ref) {
         case DocRelation.MENTIONED:
             return 'blue';
+
         case DocRelation.TARGETS:
             return 'amber';
+
         case DocRelation.CAUSED:
             return 'error';
+
         default:
             return 'white';
     }

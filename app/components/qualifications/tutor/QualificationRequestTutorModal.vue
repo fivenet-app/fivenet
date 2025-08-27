@@ -5,7 +5,7 @@ import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { RequestStatus, type QualificationRequest } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { CreateOrUpdateQualificationRequestResponse } from '~~/gen/ts/services/qualifications/qualifications';
-import { requestStatusToBgColor } from '../helpers';
+import { requestStatusToBadgeColor } from '../helpers';
 
 const props = withDefaults(
     defineProps<{
@@ -88,13 +88,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('components.qualifications.request_modal.title') }}
-            </h3>
-        </template>
-
+    <UModal :title="$t('components.qualifications.request_modal.title')">
         <template #body>
             <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField class="flex-1" name="status" :label="$t('common.status')">
@@ -104,20 +98,18 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :items="availableStatus"
                             value-key="status"
                             :placeholder="$t('common.status')"
-                            :searchable-placeholder="$t('common.search_field')"
+                            :search-input="{ placeholder: $t('common.search_field') }"
                         >
                             <template #item-label>
-                                <span class="size-2 rounded-full" :class="requestStatusToBgColor(state.status)" />
-                                <span class="truncate">{{
-                                    $t(`enums.qualifications.RequestStatus.${RequestStatus[state.status]}`)
-                                }}</span>
+                                <UBadge class="truncate" :color="requestStatusToBadgeColor(state.status)">
+                                    {{ $t(`enums.qualifications.RequestStatus.${RequestStatus[state.status]}`) }}
+                                </UBadge>
                             </template>
 
                             <template #item="{ item }">
-                                <span class="size-2 rounded-full" :class="requestStatusToBgColor(item.status)" />
-                                <span class="truncate">{{
-                                    $t(`enums.qualifications.RequestStatus.${RequestStatus[item.status]}`)
-                                }}</span>
+                                <UBadge class="truncate" :color="requestStatusToBadgeColor(item.status)">
+                                    {{ $t(`enums.qualifications.RequestStatus.${RequestStatus[item.status]}`) }}
+                                </UBadge>
                             </template>
 
                             <template #empty>

@@ -58,13 +58,13 @@ export interface Colleague {
      */
     phoneNumber?: string;
     /**
-     * @generated from protobuf field: optional int64 avatar_file_id = 17
+     * @generated from protobuf field: optional int64 profile_picture_file_id = 17
      */
-    avatarFileId?: number;
+    profilePictureFileId?: number;
     /**
-     * @generated from protobuf field: optional string avatar = 18
+     * @generated from protobuf field: optional string profile_picture = 18
      */
-    avatar?: string;
+    profilePicture?: string;
     /**
      * @generated from protobuf field: resources.jobs.ColleagueProps props = 19
      */
@@ -133,8 +133,8 @@ class Colleague$Type extends MessageType<Colleague> {
             { no: 8, name: "lastname", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "50" } } } },
             { no: 9, name: "dateofbirth", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "10" } } } },
             { no: 12, name: "phone_number", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 17, name: "avatar_file_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 18, name: "avatar", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "alias:\"avatar\"" } },
+            { no: 17, name: "profile_picture_file_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 18, name: "profile_picture", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "alias:\"profile_picture\"" } },
             { no: 19, name: "props", kind: "message", T: () => ColleagueProps, options: { "tagger.tags": "alias:\"colleague_props\"" } },
             { no: 20, name: "email", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "6", maxLen: "80" } } } }
         ]);
@@ -186,11 +186,11 @@ class Colleague$Type extends MessageType<Colleague> {
                 case /* optional string phone_number */ 12:
                     message.phoneNumber = reader.string();
                     break;
-                case /* optional int64 avatar_file_id */ 17:
-                    message.avatarFileId = reader.int64().toNumber();
+                case /* optional int64 profile_picture_file_id */ 17:
+                    message.profilePictureFileId = reader.int64().toNumber();
                     break;
-                case /* optional string avatar */ 18:
-                    message.avatar = reader.string();
+                case /* optional string profile_picture */ 18:
+                    message.profilePicture = reader.string();
                     break;
                 case /* resources.jobs.ColleagueProps props */ 19:
                     message.props = ColleagueProps.internalBinaryRead(reader, reader.uint32(), options, message.props);
@@ -240,12 +240,12 @@ class Colleague$Type extends MessageType<Colleague> {
         /* optional string phone_number = 12; */
         if (message.phoneNumber !== undefined)
             writer.tag(12, WireType.LengthDelimited).string(message.phoneNumber);
-        /* optional int64 avatar_file_id = 17; */
-        if (message.avatarFileId !== undefined)
-            writer.tag(17, WireType.Varint).int64(message.avatarFileId);
-        /* optional string avatar = 18; */
-        if (message.avatar !== undefined)
-            writer.tag(18, WireType.LengthDelimited).string(message.avatar);
+        /* optional int64 profile_picture_file_id = 17; */
+        if (message.profilePictureFileId !== undefined)
+            writer.tag(17, WireType.Varint).int64(message.profilePictureFileId);
+        /* optional string profile_picture = 18; */
+        if (message.profilePicture !== undefined)
+            writer.tag(18, WireType.LengthDelimited).string(message.profilePicture);
         /* resources.jobs.ColleagueProps props = 19; */
         if (message.props)
             ColleagueProps.internalBinaryWrite(message.props, writer.tag(19, WireType.LengthDelimited).fork(), options).join();

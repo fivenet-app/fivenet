@@ -19,6 +19,9 @@ const { t } = useI18n();
 
 const overlay = useOverlay();
 
+const settingsStore = useSettingsStore();
+const { streamerMode } = storeToRefs(settingsStore);
+
 const settingsAccountsClient = await getSettingsAccountsClient();
 
 const schema = z.object({
@@ -95,8 +98,8 @@ async function deleteAccount(id: number): Promise<void> {
     }
 }
 
-const settingsStore = useSettingsStore();
-const { streamerMode } = storeToRefs(settingsStore);
+const confirmModal = overlay.create(ConfirmModal);
+const accountEditModal = overlay.create(AccountEditModal);
 
 const appConfig = useAppConfig();
 
@@ -104,19 +107,19 @@ const columns = computed(
     () =>
         [
             {
-                accessorKey: 'actions',
-                header: t('common.action', 2),
+                id: 'actions',
                 cell: ({ row }) =>
-                    h('div', { class: 'flex flex-row gap-2' }, [
+                    h('div', [
                         h(UTooltip, { text: t('common.update') }, [
                             h(UButton, {
                                 variant: 'link',
                                 icon: 'i-mdi-pencil',
-                                onClick: () =>
+                                onClick: () => {
                                     accountEditModal.open({
                                         account: row.original,
                                         'onUpdate:account': () => refresh(),
-                                    }),
+                                    });
+                                },
                             }),
                         ]),
                         h(UTooltip, { text: t('common.delete') }, [
@@ -124,10 +127,11 @@ const columns = computed(
                                 variant: 'link',
                                 icon: 'i-mdi-delete',
                                 color: 'error',
-                                onClick: () =>
+                                onClick: () => {
                                     confirmModal.open({
                                         confirm: async () => deleteAccount(row.original.id),
-                                    }),
+                                    });
+                                },
                             }),
                         ]),
                     ]),
@@ -202,9 +206,6 @@ const columns = computed(
             },
         ] as TableColumn<Account>[],
 );
-
-const confirmModal = overlay.create(ConfirmModal);
-const accountEditModal = overlay.create(AccountEditModal);
 </script>
 
 <template>
@@ -312,6 +313,7 @@ const accountEditModal = overlay.create(AccountEditModal);
             :empty="$t('common.not_found', [$t('common.account', 2)])"
             :sorting-options="{ manualSorting: true }"
             :pagination-options="{ manualPagination: true }"
+            sticky
         />
 
         <Pagination v-model="query.page" :pagination="accounts?.pagination" :status="status" :refresh="refresh" />

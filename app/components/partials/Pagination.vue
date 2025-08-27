@@ -87,13 +87,13 @@ function onClickNext() {
 <template>
     <div class="@container/pagination">
         <div
-            class="@md/pagination:flex-row flex justify-between gap-1 px-3 py-3 md:items-center"
+            class="flex justify-between gap-1 px-3 py-3 md:items-center @md/pagination:flex-row"
             :class="!disableBorder ? 'border-t border-gray-200 dark:border-gray-700' : ''"
         >
             <div v-if="!hideText" class="flex flex-col items-center gap-2">
                 <I18nT
                     v-if="!isInfinite"
-                    class="@md/pagination:block hidden truncate text-sm"
+                    class="hidden truncate text-sm @md/pagination:block"
                     keypath="components.partials.table_pagination.page_count_with_total"
                     tag="p"
                 >
@@ -121,9 +121,10 @@ function onClickNext() {
                         </span>
                     </template>
                 </I18nT>
+
                 <I18nT
                     v-else
-                    class="@md/pagination:block hidden truncate text-sm"
+                    class="hidden truncate text-sm @md/pagination:block"
                     keypath="components.partials.table_pagination.page_count"
                     tag="p"
                 >
@@ -151,7 +152,7 @@ function onClickNext() {
                     :loading="loadingState || isRequestPending(status)"
                     @click="refresh()"
                 >
-                    <span class="@md/pagination:block hidden">
+                    <span class="hidden @md/pagination:block">
                         {{ $t('common.refresh') }}
                     </span>
                 </UButton>
@@ -159,29 +160,12 @@ function onClickNext() {
 
             <template v-if="!hideButtons">
                 <UPagination
-                    v-if="!isInfinite"
-                    v-model="currentPage"
+                    v-model:page="currentPage"
                     :page-count="pagination?.pageSize ?? 0"
                     :total="pagination?.totalCount ?? 0"
+                    :show-edges="false"
+                    :ui="{ first: 'hidden', last: 'hidden' }"
                 />
-                <UButtonGroup v-else>
-                    <UButton
-                        :label="$t('common.previous')"
-                        color="neutral"
-                        icon="i-mdi-chevron-left"
-                        :disabled="!canGoFirstOrPrev || isRequestPending(status)"
-                        @click="onClickPrev"
-                    />
-                    <UButton :label="currentPage.toString()" color="neutral" disabled />
-                    <UButton
-                        :label="$t('common.next')"
-                        color="neutral"
-                        :disabled="!canGoLastOrNext || isRequestPending(status)"
-                        trailing
-                        trailing-icon="i-mdi-chevron-right"
-                        @click="onClickNext"
-                    />
-                </UButtonGroup>
             </template>
             <div v-else></div>
 

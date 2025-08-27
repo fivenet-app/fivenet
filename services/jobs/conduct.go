@@ -129,10 +129,10 @@ func (s *Server) ListConductEntries(
 
 	tColleague := tables.User().AS("target_user")
 	tUserUserProps := tUserProps.AS("target_user_props")
-	tColleagueAvatar := tAvatar.AS("target_user_avatar")
+	tColleagueAvatar := tAvatar.AS("target_user_profile_picture")
 	tCreator := tColleague.AS("creator")
 	tCreatorUserProps := tUserProps.AS("creator_props")
-	tCreatorAvatar := tAvatar.AS("creator_avatar")
+	tCreatorAvatar := tAvatar.AS("creator_profile_picture")
 
 	stmt := tConduct.
 		SELECT(
@@ -151,8 +151,8 @@ func (s *Server) ListConductEntries(
 			tColleague.Lastname,
 			tColleague.Dateofbirth,
 			tColleague.PhoneNumber,
-			tUserUserProps.AvatarFileID.AS("target_user.avatar_file_id"),
-			tColleagueAvatar.FilePath.AS("target_user.avatar"),
+			tUserUserProps.AvatarFileID.AS("target_user.profile_picture_file_id"),
+			tColleagueAvatar.FilePath.AS("target_user.profile_picture"),
 			tColleagueProps.UserID,
 			tColleagueProps.Job,
 			tColleagueProps.AbsenceBegin,
@@ -167,8 +167,8 @@ func (s *Server) ListConductEntries(
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
 			tCreator.PhoneNumber,
-			tCreatorUserProps.AvatarFileID.AS("creator.avatar_file_id"),
-			tCreatorAvatar.FilePath.AS("creator.avatar"),
+			tCreatorUserProps.AvatarFileID.AS("creator.profile_picture_file_id"),
+			tCreatorAvatar.FilePath.AS("creator.profile_picture"),
 		).
 		FROM(
 			tConduct.

@@ -2,6 +2,8 @@
 @import "@nuxt/ui-pro";
 
 :root {
+  --ui-radius: 0.25rem;
+
   --ui-white: black;
 }
 

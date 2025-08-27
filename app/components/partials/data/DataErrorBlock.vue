@@ -30,7 +30,7 @@ const { start } = useTimeoutFn(() => (disabled.value = false), 1250);
 
 <template>
     <UAlert
-        class="relative my-2 block w-full min-w-60"
+        class="relative my-2 block w-full min-w-50"
         color="error"
         icon="i-mdi-close-circle"
         :title="

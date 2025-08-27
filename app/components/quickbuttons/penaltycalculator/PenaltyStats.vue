@@ -11,18 +11,17 @@ const leeway = computed(() => props.reduction / 100);
 
 <template>
     <div class="mx-auto max-w-7xl">
-        <UPageGrid :ui="{ wrapper: 'grid-cols-1 md:grid-cols-4 xl:grid-cols-4' }">
+        <UPageGrid class="grid-cols-1 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4">
             <UPageCard
                 :ui="{
                     leadingIcon: 'mb-1',
                 }"
-                icon="i-mdi-attach-money"
             >
-                <template #icon>
+                <template #leading>
                     <div class="flex gap-1 truncate">
-                        <UIcon class="text-primary h-10 w-10" name="i-mdi-attach-money" />
+                        <UIcon class="h-6 w-6 text-primary" name="i-mdi-attach-money" />
 
-                        <div class="text-highlighted flex items-center gap-1.5 text-base font-semibold">
+                        <div class="flex items-center gap-1.5 text-base font-semibold text-highlighted">
                             {{ $t('common.fine') }}
                         </div>
                     </div>
@@ -34,7 +33,7 @@ const leeway = computed(() => props.reduction / 100);
                             <span class="text-4xl font-semibold tracking-tight">
                                 {{ summary.fine.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') }}
                             </span>
-                            <span class="text-muted text-sm">$</span>
+                            <span class="text-sm text-muted">$</span>
                         </div>
 
                         <span v-if="leeway > 0 && summary.fine > 0"> ($-{{ (summary.fine * leeway).toFixed(0) }}) </span>
@@ -48,11 +47,11 @@ const leeway = computed(() => props.reduction / 100);
                     leadingIcon: 'mb-1',
                 }"
             >
-                <template #icon>
+                <template #leading>
                     <div class="flex gap-1 truncate">
-                        <UIcon class="text-primary h-10 w-10" name="i-mdi-clock" />
+                        <UIcon class="h-6 w-6 text-primary" name="i-mdi-clock" />
 
-                        <div class="text-highlighted flex items-center gap-1.5 text-base font-semibold">
+                        <div class="flex items-center gap-1.5 text-base font-semibold text-highlighted">
                             {{ $t('common.detention_time') }}
                         </div>
                     </div>
@@ -64,7 +63,7 @@ const leeway = computed(() => props.reduction / 100);
                             <span class="text-4xl font-semibold tracking-tight">
                                 {{ summary.detentionTime }}
                             </span>
-                            <span class="text-muted text-sm">
+                            <span class="text-sm text-muted">
                                 {{ $t('common.time_ago.month', summary.detentionTime) }}
                             </span>
                         </div>
@@ -83,11 +82,11 @@ const leeway = computed(() => props.reduction / 100);
                     leadingIcon: 'mb-1',
                 }"
             >
-                <template #icon>
+                <template #leading>
                     <div class="flex gap-1 truncate">
-                        <UIcon class="text-primary h-10 w-10" name="i-mdi-car" />
+                        <UIcon class="h-6 w-6 text-primary" name="i-mdi-car" />
 
-                        <div class="text-highlighted flex items-center gap-1.5 text-base font-semibold">
+                        <div class="flex items-center gap-1.5 text-base font-semibold text-highlighted">
                             {{ $t('common.traffic_infraction_points', 2) }}
                         </div>
                     </div>
@@ -99,7 +98,7 @@ const leeway = computed(() => props.reduction / 100);
                             <span class="text-4xl font-semibold tracking-tight">
                                 {{ summary.stvoPoints }}
                             </span>
-                            <span class="text-muted text-sm">
+                            <span class="text-sm text-muted">
                                 {{ $t('common.points', summary.stvoPoints) }}
                             </span>
                         </div>
@@ -118,11 +117,11 @@ const leeway = computed(() => props.reduction / 100);
                     leadingIcon: 'mb-1',
                 }"
             >
-                <template #icon>
+                <template #leading>
                     <div class="flex gap-1 truncate">
-                        <UIcon class="text-primary h-10 w-10" name="i-mdi-equal" />
+                        <UIcon class="h-6 w-6 text-primary" name="i-mdi-equal" />
 
-                        <div class="text-highlighted flex items-center gap-1.5 text-base font-semibold">
+                        <div class="flex items-center gap-1.5 text-base font-semibold text-highlighted">
                             {{ $t('common.total_count') }}
                         </div>
                     </div>

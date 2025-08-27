@@ -1,24 +1,12 @@
 <script lang="ts" setup>
+import type { ChipProps } from '@nuxt/ui';
 import { backgroundColors, primaryColors } from '~/utils/color';
 
-const props = withDefaults(
-    defineProps<{
-        modelValue?: string | undefined;
-    }>(),
-    {
-        modelValue: 'primary',
-    },
-);
-
-const emit = defineEmits<{
-    (e: 'update:modelValue', value: string | undefined): void;
-}>();
+const color = defineModel<string | undefined>({ default: 'primary' });
 
 defineOptions({
     inheritAttrs: false,
 });
-
-const color = useVModel(props, 'modelValue', emit);
 
 const availableColorOptions = [...primaryColors, ...backgroundColors];
 </script>
@@ -28,19 +16,19 @@ const availableColorOptions = [...primaryColors, ...backgroundColors];
         <USelectMenu
             v-model="color"
             :items="availableColorOptions"
-            option-attribute="label"
+            :placeholder="$t('common.color')"
             value-key="label"
-            :searchable-placeholder="$t('common.color')"
             v-bind="$attrs"
         >
-            <template #item-label>
-                <span class="size-2 rounded-full" :class="availableColorOptions.find((o) => o.label === color)?.class" />
-                <span class="truncate">{{ color }}</span>
-            </template>
-
-            <template #item="{ item }">
-                <span class="size-2 rounded-full" :class="item.class" />
-                <span class="truncate">{{ item.label }}</span>
+            <template #leading="{ modelValue, ui }">
+                <UChip
+                    v-if="modelValue"
+                    :color="availableColorOptions.find((c) => c.label === modelValue)?.chip?.color || 'primary'"
+                    inset
+                    standalone
+                    :size="ui.itemLeadingChipSize() as ChipProps['size']"
+                    :class="ui.itemLeadingChip()"
+                />
             </template>
         </USelectMenu>
     </ClientOnly>

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -6,7 +7,7 @@ import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import QualificationRequestListEntry from '~/components/qualifications/QualificationRequestListEntry.vue';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
-import type { Sort } from '~~/gen/ts/resources/common/database/database';
+import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import type { RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { ListQualificationRequestsResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
@@ -21,21 +22,42 @@ const props = withDefaults(
     },
 );
 
-const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
-
-const page = useRouteQuery('page', '1', { transform: Number });
-
-const sorting = useRouteQueryObject<Sort>('sort', {
-    columns: [
-        {
-            id: 'abbreviation',
-            desc: true,
-        },
-    ],
+const _schema = z.object({
+    sorting: z
+        .object({
+            columns: z
+                .custom<SortByColumn>()
+                .array()
+                .max(3)
+                .default([
+                    {
+                        id: 'abbreviation',
+                        desc: true,
+                    },
+                ]),
+        })
+        .default({ columns: [{ id: 'abbreviation', desc: true }] }),
+    page: pageNumberSchema,
 });
 
+type Schema = z.output<typeof _schema>;
+
+const query = reactive<Schema>({
+    sorting: {
+        columns: [
+            {
+                id: 'abbreviation',
+                desc: true,
+            },
+        ],
+    },
+    page: 1,
+});
+
+const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
+
 const { data, status, refresh, error } = useLazyAsyncData(
-    `qualifications-requests-${JSON.stringify(sorting.value)}-${page.value}-${props.qualificationId}`,
+    `qualifications-requests-${JSON.stringify(query.sorting)}-${query.page}-${props.qualificationId}`,
     () => listQualificationRequests(props.qualificationId),
 );
 
@@ -46,9 +68,9 @@ async function listQualificationRequests(
     try {
         const call = qualificationsQualificationsClient.listQualificationRequests({
             pagination: {
-                offset: calculateOffset(page.value, data.value?.pagination),
+                offset: calculateOffset(query.page, data.value?.pagination),
             },
-            sort: sorting.value,
+            sort: query.sorting,
             qualificationId: qualificationId,
             status: status ?? [],
         });
@@ -70,7 +92,7 @@ async function listQualificationRequests(
                     {{ $t('components.qualifications.user_requests') }}
                 </h3>
 
-                <SortButton v-model="sorting" :fields="[{ label: $t('common.id'), value: 'id' }]" />
+                <SortButton v-model="query.sorting" :fields="[{ label: $t('common.id'), value: 'id' }]" />
             </div>
         </template>
 
@@ -88,7 +110,7 @@ async function listQualificationRequests(
                 icon="i-mdi-account-school"
             />
 
-            <ul v-else class="divide-y divide-gray-100 dark:divide-gray-800" role="list">
+            <ul v-else class="divide-y divide-default" role="list">
                 <QualificationRequestListEntry
                     v-for="request in data?.requests"
                     :key="`${request.qualificationId}-${request.userId}`"
@@ -98,7 +120,13 @@ async function listQualificationRequests(
         </div>
 
         <template #footer>
-            <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" disable-border />
+            <Pagination
+                v-model="query.page"
+                :pagination="data?.pagination"
+                :status="status"
+                :refresh="refresh"
+                disable-border
+            />
         </template>
     </UCard>
 </template>

@@ -32,11 +32,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
 </script>
 
 <template>
-    <USlideover :overlay="false">
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">{{ $t('common.unit') }}: {{ unit.initials }} - {{ unit.name }}</h3>
-        </template>
-
+    <USlideover :title="`${$t('common.unit')} ${unit.initials} - ${unit.name}`" :overlay="false">
         <template #body>
             <dl class="divide-neutral/10 divide-y">
                 <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">

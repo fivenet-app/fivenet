@@ -49,13 +49,7 @@ const tooltipTemplate = (d: LabelCount): string => (d.label?.name ? `${d.label?.
 </script>
 
 <template>
-    <UModal fullscreen>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('common.label', 2) }} - {{ $t('common.total_count') }}: {{ totalCount }}
-            </h3>
-        </template>
-
+    <UModal :title="`${$t('common.label', 2)} - ${$t('common.total_count')}: ${totalCount}`" fullscreen>
         <template #body>
             <div ref="bodyRef" class="flex-1">
                 <DataErrorBlock v-if="error" :error="error" :retry="refresh" />

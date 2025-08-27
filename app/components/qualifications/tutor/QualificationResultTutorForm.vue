@@ -8,7 +8,7 @@ import type { ExamGrading } from '~~/gen/ts/resources/qualifications/exam';
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { CreateOrUpdateQualificationResultResponse } from '~~/gen/ts/services/qualifications/qualifications';
-import { resultStatusToBgColor } from '../helpers';
+import { resultStatusToBadgeColor } from '../helpers';
 
 const props = withDefaults(
     defineProps<{
@@ -123,7 +123,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         {{ $t('components.qualifications.result_modal.title') }}
                     </h3>
 
-                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="$emit('close')" />
+                    <UButton color="neutral" variant="ghost" icon="i-mdi-window-close" @click="$emit('close')" />
                 </div>
             </template>
 
@@ -147,12 +147,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         return users;
                                     }
                                 "
-                                searchable-lazy
-                                :searchable-placeholder="$t('common.search_field')"
+                                :search-input="{ placeholder: $t('common.search_field') }"
                                 :search-attributes="['firstname', 'lastname']"
                                 :placeholder="$t('common.citizen', 1)"
                                 trailing
-                                by="userId"
                                 leading-icon="i-mdi-user"
                             >
                                 <template #item-label>
@@ -177,20 +175,18 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :items="availableStatus"
                                 value-key="status"
                                 :placeholder="$t('common.status')"
-                                :searchable-placeholder="$t('common.search_field')"
+                                :search-input="{ placeholder: $t('common.search_field') }"
                             >
                                 <template #item-label>
-                                    <span class="size-2 rounded-full" :class="resultStatusToBgColor(state.status)" />
-                                    <span class="truncate">{{
-                                        $t(`enums.qualifications.ResultStatus.${ResultStatus[state.status]}`)
-                                    }}</span>
+                                    <UBadge class="truncate" :color="resultStatusToBadgeColor(state.status)">
+                                        {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[state.status]}`) }}
+                                    </UBadge>
                                 </template>
 
                                 <template #item="{ item }">
-                                    <span class="size-2 rounded-full" :class="resultStatusToBgColor(item.status)" />
-                                    <span class="truncate">{{
-                                        $t(`enums.qualifications.ResultStatus.${ResultStatus[item.status]}`)
-                                    }}</span>
+                                    <UBadge class="truncate" :color="resultStatusToBadgeColor(item.status)">
+                                        {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[item.status]}`) }}
+                                    </UBadge>
                                 </template>
 
                                 <template #empty>

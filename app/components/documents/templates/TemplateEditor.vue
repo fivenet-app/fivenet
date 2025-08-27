@@ -125,10 +125,10 @@ const schemaEditor = ref<SchemaEditorValue>({
     },
 });
 
-const accessTypes: AccessType[] = [{ type: 'job', name: t('common.job', 2) }];
+const accessTypes: AccessType[] = [{ type: 'job', label: t('common.job', 2) }];
 const contentAccessTypes: AccessType[] = [
-    { type: 'user', name: t('common.citizen', 2) },
-    { type: 'job', name: t('common.job', 2) },
+    { type: 'user', label: t('common.citizen', 2) },
+    { type: 'job', label: t('common.job', 2) },
 ];
 
 function createObjectSpec(v: ObjectSpecsValue): ObjectSpecs {
@@ -390,7 +390,7 @@ const categoriesLoading = ref(false);
             </template>
         </UDashboardNavbar>
 
-        <UDashboardPanelContent class="p-0 sm:pb-0">
+        <div class="p-0 sm:pb-0">
             <UTabs v-model="selectedTab" class="flex flex-1 flex-col" :items="items">
                 <template #details>
                     <UContainer class="mt-2 w-full overflow-y-scroll">
@@ -512,8 +512,7 @@ const categoriesLoading = ref(false);
                             <ClientOnly>
                                 <UInputMenu
                                     v-model="state.category"
-                                    option-attribute="name"
-                                    :search-attributes="['name']"
+                                    :filter-fields="['name']"
                                     nullable
                                     :search="
                                         async (search: string) => {
@@ -562,6 +561,6 @@ const categoriesLoading = ref(false);
                     </UContainer>
                 </template>
             </UTabs>
-        </UDashboardPanelContent>
+        </div>
     </UForm>
 </template>

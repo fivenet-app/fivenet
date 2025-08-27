@@ -80,7 +80,7 @@ async function getPage(id: number): Promise<Page | undefined> {
 </script>
 
 <template>
-    <UDashboardPanel class="shrink-0 border-b border-gray-200 lg:border-r lg:border-b-0 dark:border-gray-800">
+    <UDashboardPanel>
         <PageView :status="status" :error="error" :refresh="refresh" :page="page" :pages="pages ?? []">
             <template #left>
                 <DataErrorBlock v-if="pagesError" :error="pagesError" :retry="pagesRefresh" />

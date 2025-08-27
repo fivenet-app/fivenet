@@ -4,7 +4,7 @@ import type { TableColumn } from '@nuxt/ui';
 import { listEnumValues } from '@protobuf-ts/runtime';
 import { computed, h } from 'vue';
 import { z } from 'zod';
-import { docRelationToBadge, docRelationToColor, docRelationToIcon } from '~/components/documents/helpers';
+import { docRelationToBadge, docRelationToIcon } from '~/components/documents/helpers';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -155,7 +155,7 @@ const columns = computed(
                             v-model="query.closed"
                             :items="openclose"
                             value-key="value"
-                            :searchable-placeholder="$t('common.search_field')"
+                            :search-input="{ placeholder: $t('common.search_field') }"
                         >
                             <template #item-label>
                                 {{
@@ -182,12 +182,13 @@ const columns = computed(
                             </template>
 
                             <template #item="{ item }">
-                                <span class="inline-flex gap-1" :class="`bg-${docRelationToColor(item.value)}-500`">
-                                    <UIcon class="size-4" :name="docRelationToIcon(item.value)" />
-                                    <span class="truncate">
-                                        {{ $t(`enums.documents.DocRelation.${DocRelation[item.value]}`) }}
-                                    </span>
-                                </span>
+                                <UBadge
+                                    class="truncate"
+                                    :color="docRelationToBadge(item.value)"
+                                    :icon="docRelationToIcon(item.value)"
+                                >
+                                    {{ $t(`enums.documents.DocRelation.${DocRelation[item.value]}`) }}
+                                </UBadge>
                             </template>
                         </USelectMenu>
                     </ClientOnly>
@@ -212,6 +213,7 @@ const columns = computed(
         :empty="$t('common.not_found', [`${$t('common.citizen', 1)} ${$t('common.document', 2)}`])"
         :pagination-options="{ manualPagination: true }"
         :sorting-options="{ manualSorting: true }"
+        sticky
     />
 
     <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />

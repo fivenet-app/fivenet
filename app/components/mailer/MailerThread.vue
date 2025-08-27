@@ -180,6 +180,19 @@ watch(messages, () => {
     }
 });
 
+function onCreate(item: string): void {
+    const email = item.trim();
+    if (
+        email.length < 6 ||
+        email.length > 80 ||
+        state.value.recipients.find((r) => r.label.toLowerCase() === email.toLowerCase())
+    ) {
+        return;
+    }
+
+    state.value.recipients.push({ label: email });
+}
+
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     if (!selectedEmail.value?.id) {
@@ -195,7 +208,7 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
 </script>
 
 <template>
-    <UDashboardToolbar :ui="{ container: 'flex-col gap-y-2' }">
+    <UDashboardToolbar>
         <USkeleton v-if="isRequestPending(status)" class="h-12 w-full" />
 
         <template v-else-if="thread">
@@ -337,15 +350,11 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
     <UDashboardToolbar
         v-if="thread && canAccess(selectedEmail?.access, selectedEmail?.userId, AccessLevel.WRITE)"
         class="flex min-w-0 justify-between overflow-y-hidden border-t border-b-0 border-gray-200 dark:border-gray-700"
-        :ui="{
-            container: 'gap-x-0 justify-stretch items-stretch h-full inline-flex flex-col p-0 px-1 min-w-0',
-        }"
     >
         <UAccordion
             class="mt-2 max-h-[50vh] overflow-y-auto"
             variant="outline"
             :items="[{ slot: 'compose' as const, label: $t('components.mailer.reply'), icon: 'i-mdi-paper-airplane' }]"
-            :ui="{ default: { class: 'mb-0' } }"
         >
             <template #compose>
                 <UForm
@@ -361,17 +370,13 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                                 multiple
                                 trailing
                                 :items="[...state.recipients, ...addressBook]"
-                                searchable
                                 :searchable-placeholder="$t('common.recipient')"
                                 :placeholder="$t('common.recipient')"
                                 creatable
                                 :disabled="!canSubmit"
+                                @create="(item: string) => onCreate(item)"
                             >
                                 <template #item-label>&nbsp;</template>
-
-                                <template #option-create="{ item }">
-                                    <span class="shrink-0">{{ $t('common.recipient') }}: {{ item.label }}</span>
-                                </template>
 
                                 <template #empty>
                                     {{ $t('common.not_found', [$t('common.recipient', 2)]) }}

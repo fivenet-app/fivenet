@@ -98,8 +98,7 @@ const columns = computed(
                     `${row.original.jobLabel} - ${row.original.jobGradeLabel} (${row.original.grade})`,
             },
             {
-                accessorKey: 'actions',
-                header: t('common.action', 2),
+                id: 'actions',
             },
         ] as TableColumn<Role>[],
 );
@@ -139,9 +138,7 @@ const confirmModal = overlay.create(ConfirmModal, {
                         <USelectMenu
                             v-model="state.jobGrade"
                             :items="availableJobGrades"
-                            by="grade"
-                            searchable
-                            :searchable-placeholder="$t('common.search_field')"
+                            :search-input="{ placeholder: $t('common.search_field') }"
                         >
                             <template #item-label>
                                 <template v-if="state.jobGrade">
@@ -186,6 +183,7 @@ const confirmModal = overlay.create(ConfirmModal, {
                     :pagination-options="{ manualPagination: true }"
                     :sorting-options="{ manualSorting: true }"
                     :empty="$t('common.not_found', [$t('common.role', 2)])"
+                    sticky
                 >
                     <template #actions-cell="{ row: role }">
                         <UTooltip :text="$t('common.show')">

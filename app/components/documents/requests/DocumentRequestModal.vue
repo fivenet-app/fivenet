@@ -147,13 +147,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('common.request', 2) }}
-            </h3>
-        </template>
-
+    <UModal :title="$t('common.request', 2)">
         <template #body>
             <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <template v-if="canDo.create">
@@ -169,7 +163,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :items="availableRequestTypes"
                                     value-key="key"
                                     :placeholder="$t('common.type')"
-                                    :searchable-placeholder="$t('common.search_field')"
+                                    :search-input="{ placeholder: $t('common.search_field') }"
                                 >
                                     <template #item-label>
                                         <span v-if="state.requestType" class="truncate">

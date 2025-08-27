@@ -65,44 +65,40 @@ const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
 </script>
 
 <template>
-    <USlideover :overlay="false">
-        <template #title>
-            <div class="flex items-center justify-between">
-                <h3 class="inline-flex gap-2 text-2xl leading-6 font-semibold">
-                    <span>{{ entry?.title ?? $t('common.appointment', 1) }}</span>
+    <USlideover :title="entry?.title ?? $t('common.appointment', 1)" :overlay="false">
+        <template #actions>
+            <div class="flex items-center justify-between gap-2">
+                <UTooltip
+                    v-if="entry && can('calendar.CalendarService/CreateCalendar').value && canDo.edit"
+                    :text="$t('common.edit')"
+                >
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-pencil"
+                        @click="
+                            entryCreateOrUpdateModal.open({
+                                calendarId: entry?.calendarId,
+                                entryId: entry?.id,
+                            })
+                        "
+                    />
+                </UTooltip>
 
-                    <UTooltip
-                        v-if="entry && can('calendar.CalendarService/CreateCalendar').value && canDo.edit"
-                        :text="$t('common.edit')"
-                    >
-                        <UButton
-                            variant="link"
-                            icon="i-mdi-pencil"
-                            @click="
-                                entryCreateOrUpdateModal.open({
-                                    calendarId: entry?.calendarId,
-                                    entryId: entry?.id,
-                                })
-                            "
-                        />
-                    </UTooltip>
-
-                    <UTooltip v-if="entry && canDo.manage" :text="$t('common.delete')">
-                        <UButton
-                            variant="link"
-                            icon="i-mdi-delete"
-                            color="error"
-                            @click="
-                                confirmModal.open({
-                                    confirm: async () => calendarStore.deleteCalendarEntry(entry?.id!),
-                                })
-                            "
-                        />
-                    </UTooltip>
-                </h3>
+                <UTooltip v-if="entry && canDo.manage" :text="$t('common.delete')">
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-delete"
+                        color="error"
+                        @click="
+                            confirmModal.open({
+                                confirm: async () => calendarStore.deleteCalendarEntry(entry?.id!),
+                            })
+                        "
+                    />
+                </UTooltip>
 
                 <div class="inline-flex gap-2">
-                    <UButton class="-my-1" icon="i-mdi-share" @click="copyLinkToClipboard()" />
+                    <UButton icon="i-mdi-share" @click="copyLinkToClipboard()" />
                 </div>
             </div>
         </template>

@@ -156,11 +156,8 @@ watch(state, () => {
                             return colleagues;
                         }
                     "
-                    searchable-lazy
-                    :searchable-placeholder="$t('common.search_field')"
+                    :search-input="{ placeholder: $t('common.search_field') }"
                     :search-labels="['name']"
-                    option-attribute="name"
-                    by="name"
                     clear-search-on-close
                 >
                     <template #item-label>

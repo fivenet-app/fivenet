@@ -115,7 +115,7 @@ const name = computed(() =>
                     :label="name"
                 >
                     <template #leading>
-                        <ProfilePictureImg :src="activeChar?.avatar" :name="name" size="xs" />
+                        <ProfilePictureImg :src="activeChar?.profilePicture" :name="name" size="xs" />
                     </template>
 
                     <template #trailing>

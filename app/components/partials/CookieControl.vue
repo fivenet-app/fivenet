@@ -29,7 +29,7 @@ const { website } = useAppConfig();
                         >
                     </h3>
 
-                    <UButton class="-my-1" color="neutral" variant="ghost" icon="i-mdi-window-close" @click="open = false" />
+                    <UButton color="neutral" variant="ghost" icon="i-mdi-window-close" @click="open = false" />
                 </div>
             </template>
 

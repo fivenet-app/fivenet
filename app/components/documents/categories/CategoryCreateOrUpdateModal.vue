@@ -130,23 +130,16 @@ watch(props, () => setFromProps());
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                <template v-if="!canEdit">
-                    {{ $t('common.category') }}:
-                    {{ category?.name }}
-                </template>
-                <template v-else-if="category">
-                    {{ $t('components.documents.categories.modal.update_category') }}:
-                    {{ category?.name }}
-                </template>
-                <template v-else>
-                    {{ $t('components.documents.categories.modal.create_category') }}
-                </template>
-            </h3>
-        </template>
-
+    <UModal
+        :title="
+            canEdit
+                ? category
+                    ? $t('components.documents.categories.modal.update_category')
+                    : $t('components.documents.categories.modal.create_category')
+                : $t('common.category') + (category ? `: ${category.name}` : '')
+        "
+        :overlay="false"
+    >
         <template #body>
             <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField class="flex-1" name="name" :label="$t('common.name')">

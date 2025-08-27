@@ -36,13 +36,9 @@ const calendar = computed(() => data.value?.calendar);
 </script>
 
 <template>
-    <USlideover :overlay="false">
-        <template #title>
-            <div class="flex items-center justify-between">
-                <h3 class="inline-flex gap-2 text-2xl leading-6 font-semibold">
-                    {{ $t('common.calendar') }}: {{ calendar?.name ?? $t('common.calendar') }}
-                </h3>
-
+    <USlideover :title="`${$t('common.calendar')}: ${calendar?.name ?? $t('common.calendar')}`" :overlay="false">
+        <template #actions>
+            <div class="flex items-center justify-between gap-2">
                 <UTooltip
                     v-if="
                         calendar &&

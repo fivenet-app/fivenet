@@ -80,7 +80,7 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
         </template>
 
         <template #body>
-            <div class="divide-y divide-gray-100 dark:divide-gray-800">
+            <div class="divide-y divide-default">
                 <div>
                     <dl class="divide-neutral/10 divide-y">
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">

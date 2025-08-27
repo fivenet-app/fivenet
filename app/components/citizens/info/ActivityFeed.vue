@@ -15,21 +15,23 @@ const props = defineProps<{
     userId: number;
 }>();
 
+const { t } = useI18n();
+
 const { attr, activeChar } = useAuth();
 
 const citizensCitizensClient = await getCitizensCitizensClient();
 
 const activityTypes = Object.keys(UserActivityType)
-    .map((aType) => UserActivityType[aType as keyof typeof UserActivityType])
-    .filter((aType) => {
-        if (typeof aType === 'string') {
+    .map((t) => UserActivityType[t as keyof typeof UserActivityType])
+    .filter((at) => {
+        if (typeof at === 'string') {
             return false;
-        } else if (typeof aType === 'number' && aType < 3) {
+        } else if (typeof at === 'number' && at < 3) {
             return false;
         }
         return true;
     });
-const options = activityTypes.map((aType) => ({ aType: aType }));
+const options = activityTypes.map((at) => ({ label: t(`enums.users.UserActivityType.${UserActivityType[at]}`), value: at }));
 
 const schema = z.object({
     types: z.nativeEnum(UserActivityType).array().max(activityTypes.length).default(activityTypes),
@@ -102,19 +104,12 @@ watchDebounced(query, async () => refresh(), {
                                 v-model="query.types"
                                 class="min-w-40 flex-1"
                                 multiple
-                                block
-                                trailing
-                                option-attribute="aType"
                                 :items="options"
-                                value-key="aType"
+                                value-key="value"
                                 :searchable-placeholder="$t('common.type', 2)"
                             >
-                                <template #item-label>
+                                <template #default>
                                     {{ $t('common.selected', query.types.length) }}
-                                </template>
-
-                                <template #item="{ item }">
-                                    {{ $t(`enums.users.UserActivityType.${UserActivityType[item.aType]}`) }}
                                 </template>
 
                                 <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
@@ -150,7 +145,7 @@ watchDebounced(query, async () => refresh(), {
             />
 
             <div v-else>
-                <ul class="divide-y divide-gray-100 dark:divide-gray-800" role="list">
+                <ul class="divide-y divide-default" role="list">
                     <li
                         v-for="activity in data?.activity"
                         :key="activity.id"

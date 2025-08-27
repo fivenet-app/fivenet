@@ -24,7 +24,5 @@ const route = useRoute('wiki-job-id-slug-edit');
 </script>
 
 <template>
-    <UDashboardPanel class="shrink-0 border-b border-gray-200 lg:border-r lg:border-b-0 dark:border-gray-800">
-        <PageEditor :page-id="parseInt(route.params.id)" />
-    </UDashboardPanel>
+    <PageEditor :page-id="parseInt(route.params.id)" />
 </template>

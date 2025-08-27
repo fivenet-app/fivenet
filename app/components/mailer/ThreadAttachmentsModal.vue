@@ -14,13 +14,7 @@ defineEmits<{
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('common.attachment', 2) }}
-            </h3>
-        </template>
-
+    <UModal :title="$t('common.attachment', 2)">
         <template #body>
             <ThreadAttachmentsForm
                 :model-value="attachments"

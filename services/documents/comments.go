@@ -93,7 +93,7 @@ func (s *Server) GetComments(
 	}
 
 	tCreator := tables.User().AS("creator")
-	tAvatar := table.FivenetFiles.AS("avatar")
+	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	columns := jet.ProjectionList{
 		tDComments.ID,
@@ -107,8 +107,8 @@ func (s *Server) GetComments(
 		tCreator.JobGrade,
 		tCreator.Firstname,
 		tCreator.Lastname,
-		tUserProps.AvatarFileID.AS("creator.avatar_file_id"),
-		tAvatar.FilePath.AS("creator.avatar"),
+		tUserProps.AvatarFileID.AS("creator.profile_picture_file_id"),
+		tAvatar.FilePath.AS("creator.profile_picture"),
 	}
 	if userInfo.GetSuperuser() {
 		columns = append(columns, tDComments.DeletedAt)
@@ -333,7 +333,7 @@ func (s *Server) getComment(
 ) (*documents.Comment, error) {
 	tDComments := tDComments.AS("comment")
 	tCreator := tables.User().AS("creator")
-	tAvatar := table.FivenetFiles.AS("avatar")
+	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tDComments.
 		SELECT(
@@ -350,8 +350,8 @@ func (s *Server) getComment(
 			tCreator.Firstname,
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
-			tUserProps.AvatarFileID.AS("creator.avatar_file_id"),
-			tAvatar.FilePath.AS("creator.avatar"),
+			tUserProps.AvatarFileID.AS("creator.profile_picture_file_id"),
+			tAvatar.FilePath.AS("creator.profile_picture"),
 		).
 		FROM(
 			tDComments.

@@ -68,7 +68,7 @@ func (c *FilestoreCmd) run(ctx context.Context) error {
 	}
 
 	if err := c.migrateAvatars(ctx); err != nil {
-		errs = multierr.Append(errs, fmt.Errorf("failed to migrate avatars. %w", err))
+		errs = multierr.Append(errs, fmt.Errorf("failed to migrate profile_pictures. %w", err))
 	}
 
 	if err := c.migrateMugshots(ctx); err != nil {
@@ -191,14 +191,14 @@ func (c *FilestoreCmd) migrateJobLogos(ctx context.Context) error {
 func (c *FilestoreCmd) migrateAvatars(ctx context.Context) error {
 	var errs error
 
-	// Query for users with non-null avatar columns
+	// Query for users with non-null profile_picture columns
 	tUserProps := table.FivenetUserProps
 	tFiles := table.FivenetFiles
 
 	stmt := tUserProps.
 		SELECT(
 			tUserProps.UserID.AS("user_id"),
-			tUserProps.Avatar.AS("avatar"),
+			tUserProps.Avatar.AS("profile_picture"),
 		).
 		WHERE(
 			tUserProps.Avatar.IS_NOT_NULL(),
@@ -206,7 +206,7 @@ func (c *FilestoreCmd) migrateAvatars(ctx context.Context) error {
 
 	var rows []struct {
 		UserId int32  `alias:"userId"`
-		Avatar string `alias:"avatar"`
+		Avatar string `alias:"profile_picture"`
 	}
 	if err := stmt.QueryContext(ctx, c.db, &rows); err != nil {
 		return err
@@ -219,7 +219,7 @@ func (c *FilestoreCmd) migrateAvatars(ctx context.Context) error {
 		if err != nil {
 			errs = multierr.Append(
 				errs,
-				fmt.Errorf("failed to stat avatar file %q. %w", row.Avatar, err),
+				fmt.Errorf("failed to stat profile_picture file %q. %w", row.Avatar, err),
 			)
 			continue
 		}
@@ -243,7 +243,7 @@ func (c *FilestoreCmd) migrateAvatars(ctx context.Context) error {
 			errs = multierr.Append(
 				errs,
 				fmt.Errorf(
-					"failed to insert avatar file %q for user %d. %w",
+					"failed to insert profile_picture file %q for user %d. %w",
 					objectInfo.GetName(),
 					row.UserId,
 					err,
@@ -256,7 +256,7 @@ func (c *FilestoreCmd) migrateAvatars(ctx context.Context) error {
 			errs = multierr.Append(
 				errs,
 				fmt.Errorf(
-					"failed to get last insert ID for avatar file %q for job %q. %w",
+					"failed to get last insert ID for profile_picture file %q for job %q. %w",
 					objectInfo.GetName(),
 					row.UserId,
 					err,
@@ -282,7 +282,7 @@ func (c *FilestoreCmd) migrateAvatars(ctx context.Context) error {
 			errs = multierr.Append(
 				errs,
 				fmt.Errorf(
-					"failed to update user %d with new avatar file ID %d. %w",
+					"failed to update user %d with new profile_picture file ID %d. %w",
 					row.UserId,
 					lastInsertID,
 					err,
@@ -291,7 +291,7 @@ func (c *FilestoreCmd) migrateAvatars(ctx context.Context) error {
 			continue
 		}
 
-		fmt.Printf("Updated user %d with new avatar file ID %d\n", row.UserId, lastInsertID)
+		fmt.Printf("Updated user %d with new profile_picture file ID %d\n", row.UserId, lastInsertID)
 	}
 
 	return errs
@@ -300,7 +300,7 @@ func (c *FilestoreCmd) migrateAvatars(ctx context.Context) error {
 func (c *FilestoreCmd) migrateMugshots(ctx context.Context) error {
 	var errs error
 
-	// Query for users with non-null avatar columns
+	// Query for users with non-null profile_picture columns
 	tUserProps := table.FivenetUserProps
 	tFiles := table.FivenetFiles
 

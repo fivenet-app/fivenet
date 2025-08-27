@@ -38,14 +38,14 @@ func (s *Server) UploadAvatar(
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 
-	meta, err := s.avatarHandler.AwaitHandshake(srv)
+	meta, err := s.profile_pictureHandler.AwaitHandshake(srv)
 	defer s.aud.Log(auditEntry, meta)
 	if err != nil {
 		return errswrap.NewError(err, filestore.ErrInvalidUploadMeta)
 	}
 
-	meta.Namespace = "user_avatars"
-	if _, err := s.avatarHandler.UploadFromMeta(ctx, meta, userInfo.GetUserId(), srv); err != nil {
+	meta.Namespace = "user_profile_pictures"
+	if _, err := s.profile_pictureHandler.UploadFromMeta(ctx, meta, userInfo.GetUserId(), srv); err != nil {
 		return err
 	}
 
@@ -70,7 +70,7 @@ func (s *Server) DeleteAvatar(
 	defer s.aud.Log(auditEntry, nil)
 
 	stmt := tUserProps.
-		SELECT(tUserProps.AvatarFileID.AS("avatar_file_id")).
+		SELECT(tUserProps.AvatarFileID.AS("profile_picture_file_id")).
 		WHERE(tUserProps.UserID.EQ(jet.Int32(userInfo.GetUserId()))).
 		LIMIT(1)
 
@@ -87,7 +87,7 @@ func (s *Server) DeleteAvatar(
 		return &pbcitizens.DeleteAvatarResponse{}, nil
 	}
 
-	if err := s.avatarHandler.Delete(ctx, userInfo.GetUserId(), *props.AvatarFileId); err != nil {
+	if err := s.profile_pictureHandler.Delete(ctx, userInfo.GetUserId(), *props.AvatarFileId); err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
@@ -128,7 +128,7 @@ func (s *Server) UploadMugshot(
 		return errorscitizens.ErrPropsMugshotDenied
 	}
 
-	meta, err := s.avatarHandler.AwaitHandshake(srv)
+	meta, err := s.profile_pictureHandler.AwaitHandshake(srv)
 	defer s.aud.Log(auditEntry, meta)
 	if err != nil {
 		return errswrap.NewError(err, filestore.ErrInvalidUploadMeta)

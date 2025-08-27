@@ -44,8 +44,6 @@ const { game } = useAppConfig();
             </div>
         </div>
 
-        <UButton class="lg:hidden" icon="i-mdi-menu" @click="$emit('toggle-actions')">
-            {{ $t('common.action', 2) }}
-        </UButton>
+        <UButton :label="$t('common.action', 2)" class="lg:hidden" icon="i-mdi-menu" @click="$emit('toggle-actions')" />
     </div>
 </template>

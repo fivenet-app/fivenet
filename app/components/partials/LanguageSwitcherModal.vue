@@ -54,13 +54,7 @@ async function switchLanguage(lang: LocaleObject): Promise<void> {
 </script>
 
 <template>
-    <UModal :prevent-close="preventClose">
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('components.language_switcher.title') }}
-            </h3>
-        </template>
-
+    <UModal :title="$t('components.language_switcher.title')" :prevent-close="preventClose">
         <template #body>
             <UPageGrid>
                 <UPageCard

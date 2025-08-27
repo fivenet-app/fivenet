@@ -204,48 +204,33 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
 </script>
 
 <template>
-    <UDashboardNavbar class="print:hidden" :title="$t('pages.documents.id.title')">
-        <template #right>
-            <PartialsBackButton to="/documents" />
+    <UDashboardPanel>
+        <template #header>
+            <UDashboardNavbar class="print:hidden" :title="$t('pages.documents.id.title')">
+                <template #right>
+                    <PartialsBackButton to="/documents" />
 
-            <UButton
-                icon="i-mdi-refresh"
-                :label="$t('common.refresh')"
-                :loading="isRequestPending(status)"
-                @click="() => refresh()"
-            />
+                    <UButton
+                        icon="i-mdi-refresh"
+                        :label="$t('common.refresh')"
+                        :loading="isRequestPending(status)"
+                        @click="() => refresh()"
+                    />
 
-            <UButtonGroup class="inline-flex">
-                <IDCopyBadge
-                    :id="doc?.document?.id ?? documentId"
-                    prefix="DOC"
-                    :title="{ key: 'notifications.document_view.copy_document_id.title', parameters: {} }"
-                    :content="{ key: 'notifications.document_view.copy_document_id.content', parameters: {} }"
-                />
+                    <UButtonGroup class="inline-flex">
+                        <IDCopyBadge
+                            :id="doc?.document?.id ?? documentId"
+                            prefix="DOC"
+                            :title="{ key: 'notifications.document_view.copy_document_id.title', parameters: {} }"
+                            :content="{ key: 'notifications.document_view.copy_document_id.content', parameters: {} }"
+                        />
 
-                <AddToButton :title="$t('components.clipboard.clipboard_button.add')" :callback="addToClipboard" />
-            </UButtonGroup>
-        </template>
-    </UDashboardNavbar>
+                        <AddToButton :title="$t('components.clipboard.clipboard_button.add')" :callback="addToClipboard" />
+                    </UButtonGroup>
+                </template>
+            </UDashboardNavbar>
 
-    <UDashboardPanelContent class="p-0 sm:pb-0">
-        <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.document', 1)])" />
-        <template v-else-if="error">
-            <DataErrorBlock :title="$t('common.unable_to_load', [$t('common.document', 1)])" :error="error" :retry="refresh" />
-            <DocumentRequestAccess
-                v-if="error.message.includes('ErrDocViewDenied')"
-                class="mt-2 w-full"
-                :document-id="documentId"
-            />
-        </template>
-        <DataNoDataBlock
-            v-else-if="!doc"
-            icon="i-mdi-file-search"
-            :message="$t('common.not_found', [$t('common.document', 1)])"
-        />
-
-        <template v-else>
-            <UDashboardToolbar class="print:hidden">
+            <UDashboardToolbar v-if="doc" class="print:hidden">
                 <template #default>
                     <div class="flex flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
                         <UTooltip
@@ -451,8 +436,8 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                 </template>
             </UDashboardToolbar>
 
-            <UCard ref="scrollRef" class="relative overflow-x-auto">
-                <template #header>
+            <UDashboardToolbar v-if="doc" class="print:hidden">
+                <div>
                     <div class="mb-4">
                         <h1 class="px-0.5 py-1 text-4xl font-bold break-words sm:pl-1">
                             <span v-if="!doc.document?.title" class="italic">
@@ -566,10 +551,35 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                             </span>
                         </UBadge>
                     </div>
-                </template>
+                </div>
+            </UDashboardToolbar>
+        </template>
 
-                <div>
-                    <div class="dark:bg-base-900 mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 break-words">
+        <template #body>
+            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.document', 1)])" />
+            <template v-else-if="error">
+                <DataErrorBlock
+                    :title="$t('common.unable_to_load', [$t('common.document', 1)])"
+                    :error="error"
+                    :retry="refresh"
+                />
+                <DocumentRequestAccess
+                    v-if="error.message.includes('ErrDocViewDenied')"
+                    class="mt-2 w-full"
+                    :document-id="documentId"
+                />
+            </template>
+            <DataNoDataBlock
+                v-else-if="!doc"
+                icon="i-mdi-file-search"
+                :message="$t('common.not_found', [$t('common.document', 1)])"
+            />
+
+            <template v-else>
+                <div ref="scrollRef">
+                    <div
+                        class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 break-words dark:bg-neutral-800"
+                    >
                         <HTMLContent
                             v-if="doc.document?.content?.content"
                             class="px-4 py-2"
@@ -578,63 +588,61 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                     </div>
                 </div>
 
-                <template #footer>
-                    <UAccordion class="print:hidden" multiple :items="accordionItems" :unmount="true">
-                        <template #relations>
-                            <UContainer>
-                                <DocumentRelations :document-id="documentId" :show-document="false" />
-                            </UContainer>
-                        </template>
+                <UAccordion class="print:hidden" multiple :items="accordionItems" :unmount="true">
+                    <template #relations>
+                        <UContainer>
+                            <DocumentRelations :document-id="documentId" :show-document="false" />
+                        </UContainer>
+                    </template>
 
-                        <template #references>
-                            <UContainer>
-                                <DocumentReferences :document-id="documentId" :show-source="false" />
-                            </UContainer>
-                        </template>
+                    <template #references>
+                        <UContainer>
+                            <DocumentReferences :document-id="documentId" :show-source="false" />
+                        </UContainer>
+                    </template>
 
-                        <template #access>
-                            <UContainer>
-                                <DataNoDataBlock
-                                    v-if="!doc.access || (doc.access?.jobs.length === 0 && doc.access?.users.length === 0)"
-                                    icon="i-mdi-file-search"
-                                    :message="$t('common.not_found', [$t('common.access', 2)])"
+                    <template #access>
+                        <UContainer>
+                            <DataNoDataBlock
+                                v-if="!doc.access || (doc.access?.jobs.length === 0 && doc.access?.users.length === 0)"
+                                icon="i-mdi-file-search"
+                                :message="$t('common.not_found', [$t('common.access', 2)])"
+                            />
+
+                            <AccessBadges
+                                v-else
+                                :access-level="AccessLevel"
+                                :jobs="doc.access.jobs"
+                                :users="doc.access.users"
+                                i18n-key="enums.documents"
+                            />
+                        </UContainer>
+                    </template>
+
+                    <template #comments>
+                        <UContainer>
+                            <div id="comments">
+                                <DocumentComments
+                                    :document-id="documentId"
+                                    :closed="doc.document?.closed"
+                                    :can-comment="checkDocAccess(doc.access, doc.document?.creator, AccessLevel.COMMENT)"
+                                    @counted="commentCount = $event"
+                                    @new-comment="commentCount && commentCount++"
+                                    @deleted-comment="commentCount && commentCount > 0 && commentCount--"
                                 />
+                            </div>
+                        </UContainer>
+                    </template>
 
-                                <AccessBadges
-                                    v-else
-                                    :access-level="AccessLevel"
-                                    :jobs="doc.access.jobs"
-                                    :users="doc.access.users"
-                                    i18n-key="enums.documents"
-                                />
-                            </UContainer>
-                        </template>
+                    <template v-if="can('documents.DocumentsService/ListDocumentActivity').value" #activity>
+                        <UContainer>
+                            <DocumentActivityList :document-id="documentId" />
+                        </UContainer>
+                    </template>
+                </UAccordion>
 
-                        <template #comments>
-                            <UContainer>
-                                <div id="comments">
-                                    <DocumentComments
-                                        :document-id="documentId"
-                                        :closed="doc.document?.closed"
-                                        :can-comment="checkDocAccess(doc.access, doc.document?.creator, AccessLevel.COMMENT)"
-                                        @counted="commentCount = $event"
-                                        @new-comment="commentCount && commentCount++"
-                                        @deleted-comment="commentCount && commentCount > 0 && commentCount--"
-                                    />
-                                </div>
-                            </UContainer>
-                        </template>
-
-                        <template v-if="can('documents.DocumentsService/ListDocumentActivity').value" #activity>
-                            <UContainer>
-                                <DocumentActivityList :document-id="documentId" />
-                            </UContainer>
-                        </template>
-                    </UAccordion>
-                </template>
-            </UCard>
-
-            <ScrollToTop :element="scrollRef?.$el" />
+                <ScrollToTop :element="scrollRef" />
+            </template>
         </template>
-    </UDashboardPanelContent>
+    </UDashboardPanel>
 </template>

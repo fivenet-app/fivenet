@@ -46,8 +46,12 @@ const columns = computed(
                 cell: ({ row }) =>
                     h('span', null, [
                         `$${row.original.law.fine ? row.original.law.fine * row.original.count : 0}`,
-                        row.original.law.fine * row.original.count > 0 && leeway.value > 0
-                            ? h('span', null, ` ($-${(row.original.law.fine * row.original.count * leeway.value).toFixed(0)})`)
+                        (row.original.law.fine ?? 0) * row.original.count > 0 && leeway.value > 0
+                            ? h(
+                                  'span',
+                                  null,
+                                  ` ($-${((row.original.law.fine ?? 0) * row.original.count * leeway.value).toFixed(0)})`,
+                              )
                             : null,
                     ]),
             },
@@ -57,11 +61,11 @@ const columns = computed(
                 cell: ({ row }) =>
                     h('span', null, [
                         `${row.original.law.detentionTime ? row.original.law.detentionTime * row.original.count : 0}`,
-                        row.original.law.detentionTime * row.original.count > 0 && leeway.value > 0
+                        (row.original.law.detentionTime ?? 0) * row.original.count > 0 && leeway.value > 0
                             ? h(
                                   'span',
                                   null,
-                                  ` (-${(row.original.law.detentionTime * row.original.count * leeway.value).toFixed(0)})`,
+                                  ` (-${((row.original.law.detentionTime ?? 0) * row.original.count * leeway.value).toFixed(0)})`,
                               )
                             : null,
                     ]),
@@ -72,11 +76,11 @@ const columns = computed(
                 cell: ({ row }) =>
                     h('span', null, [
                         `${row.original.law.stvoPoints ? row.original.law.stvoPoints * row.original.count : 0}`,
-                        row.original.law.stvoPoints * row.original.count > 0 && leeway.value > 0
+                        (row.original.law.stvoPoints ?? 0) * row.original.count > 0 && leeway.value > 0
                             ? h(
                                   'span',
                                   null,
-                                  ` (-${(row.original.law.stvoPoints * row.original.count * leeway.value).toFixed(0)})`,
+                                  ` (-${((row.original.law.stvoPoints ?? 0) * row.original.count * leeway.value).toFixed(0)})`,
                               )
                             : null,
                     ]),
@@ -104,7 +108,7 @@ const columns = computed(
 
 <template>
     <UButton v-if="selectedLaws.length === 0" class="relative block w-full p-4 text-center" disabled variant="outline">
-        <UIcon class="mx-auto size-12" name="i-mdi-calculator" />
+        <UIcon class="mx-auto size-8" name="i-mdi-calculator" />
         <span class="mt-2 block text-sm font-semibold">
             {{ $t('common.none_selected', [`${$t('common.crime')}`]) }}
         </span>

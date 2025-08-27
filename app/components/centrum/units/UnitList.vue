@@ -47,7 +47,7 @@ const grouped = computedAsync(async () => {
 <template>
     <div class="flex h-full grow flex-col overflow-y-auto px-1">
         <div class="flex justify-between">
-            <h2 class="inline-flex items-center text-base font-semibold leading-6 text-gray-100">
+            <h2 class="inline-flex items-center text-base leading-6 font-semibold text-gray-100">
                 {{ $t('common.unit', 2) }}
 
                 <UTooltip
@@ -61,7 +61,7 @@ const grouped = computedAsync(async () => {
         <div class="@container/unitlist flex-1">
             <div
                 v-if="abort === undefined && stopping"
-                class="@md/unitlist:grid-cols-2 @3xl:grid-cols-3 mt-3 grid grid-cols-1 gap-2"
+                class="mt-3 grid grid-cols-1 gap-2 @md/unitlist:grid-cols-2 @3xl:grid-cols-3"
             >
                 <USkeleton v-for="idx in 8" :key="idx" class="h-9 w-full" />
             </div>
@@ -70,7 +70,7 @@ const grouped = computedAsync(async () => {
                 <p class="-mb-1.5 text-sm">
                     {{ $t(`enums.centrum.StatusUnit.${StatusUnit[group.status]}`) }}
                 </p>
-                <ul class="@md:grid-cols-2 @3xl:grid-cols-3 mt-3 grid grid-cols-1 gap-2" role="list">
+                <ul class="mt-3 grid grid-cols-1 gap-2 @md:grid-cols-2 @3xl:grid-cols-3" role="list">
                     <UnitListEntry v-for="unit in group.units" :key="unit.id" :unit="unit" />
                 </ul>
             </template>

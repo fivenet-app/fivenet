@@ -307,7 +307,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         v-model="state.mode"
                                         :items="modes"
                                         value-key="mode"
-                                        :searchable-placeholder="$t('common.search_field')"
+                                        :search-input="{ placeholder: $t('common.search_field') }"
                                         :disabled="!canSubmit"
                                     >
                                         <template #item-label>
@@ -336,7 +336,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         v-model="state.fallbackMode"
                                         :items="modes"
                                         value-key="mode"
-                                        :searchable-placeholder="$t('common.search_field')"
+                                        :search-input="{ placeholder: $t('common.search_field') }"
                                         :disabled="!canSubmit"
                                     >
                                         <template #item-label>
@@ -570,7 +570,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             (val) => val > CentrumAccessLevel.BLOCKED,
                                         )
                                     "
-                                    :access-types="[{ type: 'job', name: $t('common.job', 2) }]"
+                                    :access-types="[{ type: 'job', label: $t('common.job', 2) }]"
                                     hide-grade
                                     :hide-jobs="[activeChar!.job]"
                                     :disabled="!attr('centrum.CentrumService/UpdateSettings', 'Access', 'Shared').value"

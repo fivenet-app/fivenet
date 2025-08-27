@@ -57,19 +57,12 @@ const src = computed(() => {
 </script>
 
 <template>
-    <UAvatar
-        v-if="!src || !enablePopup"
-        :class="[visible ? '' : 'blur', imgClass]"
-        :size="size"
-        :src="src"
-        :alt="alt"
-        :text="text"
-        :img-class="imgClass"
-        loading="lazy"
-        @click="toggleBlur()"
-    />
-    <UPopover v-else>
-        <UButton variant="link">
+    <UPopover>
+        <UButton
+            variant="link"
+            :disabled="!src || !enablePopup"
+            :ui="{ base: !src || !enablePopup ? 'disabled:cursor-default' : 'cursor-pointer' }"
+        >
             <UAvatar
                 :class="[visible ? '' : 'blur', imgClass]"
                 :size="size"
@@ -77,8 +70,6 @@ const src = computed(() => {
                 :alt="alt"
                 :text="text"
                 :ui="{ rounded: rounded ? 'rounded-full' : 'rounded-sm' }"
-                :img-class="imgClass"
-                loading="lazy"
             />
         </UButton>
 

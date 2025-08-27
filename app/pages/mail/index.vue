@@ -226,11 +226,9 @@ onBeforeMount(async () => {
                     class="pt-1"
                     :items="emails"
                     :placeholder="$t('common.mail')"
-                    searchable
-                    :searchable-placeholder="$t('common.search_field')"
+                    :search-input="{ placeholder: $t('common.search_field') }"
                     :search-attributes="['label', 'email']"
                     trailing
-                    by="id"
                 >
                     <template #item-label>
                         <span class="truncate">

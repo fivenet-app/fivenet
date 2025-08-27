@@ -68,8 +68,7 @@ const grouped = computedAsync(async () => {
 
 const columns = [
     {
-        accessorKey: 'actions',
-        header: t('common.action', 2),
+        id: 'actions',
         cell: ({ row }) =>
             h('div', { class: 'flex items-center' }, [
                 h(
@@ -83,10 +82,11 @@ const columns = [
                             variant: 'link',
                             icon: 'i-mdi-account-multiple-plus',
                             disabled: !checkDispatchAccess(row.original.jobs, CentrumAccessLevel.DISPATCH),
-                            onClick: () =>
+                            onClick: () => {
                                 dispatchAssignModal.open({
                                     dispatchId: row.original.id,
-                                }),
+                                });
+                            },
                         }),
                     ],
                 ),
@@ -114,10 +114,11 @@ const columns = [
                             variant: 'link',
                             icon: 'i-mdi-refresh',
                             disabled: !checkDispatchAccess(row.original.jobs, CentrumAccessLevel.DISPATCH),
-                            onClick: () =>
+                            onClick: () => {
                                 dispatchStatusUpdateModal.open({
                                     dispatchId: row.original.id,
-                                }),
+                                });
+                            },
                         }),
                     ],
                 ),
@@ -130,10 +131,11 @@ const columns = [
                         h(UButton, {
                             variant: 'link',
                             icon: 'i-mdi-dots-vertical',
-                            onClick: () =>
+                            onClick: () => {
                                 dispatchDetailsSlideover.open({
                                     dispatchId: row.original.id,
-                                }),
+                                });
+                            },
                         }),
                     ],
                 ),
@@ -182,7 +184,6 @@ const columns = [
                       { class: 'grid grid-flow-row auto-rows-auto gap-1 sm:grid-flow-col' },
                       row.original.units.map((unit) =>
                           h(UnitInfoPopover, {
-                              key: unit.unitId,
                               unit: unit.unit,
                               initialsOnly: true,
                               badge: true,
@@ -245,6 +246,7 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
 
             <template v-for="(group, idx) in grouped" v-else :key="group.key">
                 <h3 v-if="alwaysShowDay || idx !== 0"><GenericTime :value="group.date" type="date" /></h3>
+
                 <UTable
                     v-if="!centrum.dispatchListCardStyle"
                     class="overflow-x-visible"
@@ -266,10 +268,11 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
                                                 variant="link"
                                                 icon="i-mdi-account-multiple-plus"
                                                 @click="
-                                                    () =>
+                                                    () => {
                                                         dispatchAssignModal.open({
                                                             dispatchId: dispatch.id,
-                                                        })
+                                                        });
+                                                    }
                                                 "
                                             />
                                         </UTooltip>
@@ -287,10 +290,11 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
                                                 variant="link"
                                                 icon="i-mdi-refresh"
                                                 @click="
-                                                    () =>
+                                                    () => {
                                                         dispatchStatusUpdateModal.open({
                                                             dispatchId: dispatch.id,
-                                                        })
+                                                        });
+                                                    }
                                                 "
                                             />
                                         </UTooltip>
@@ -300,10 +304,11 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
                                                 variant="link"
                                                 icon="i-mdi-dots-vertical"
                                                 @click="
-                                                    () =>
+                                                    () => {
                                                         dispatchDetailsSlideover.open({
                                                             dispatchId: dispatch.id,
-                                                        })
+                                                        });
+                                                    }
                                                 "
                                             />
                                         </UTooltip>

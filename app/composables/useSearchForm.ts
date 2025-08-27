@@ -20,7 +20,7 @@ function fmtDate(d: Date) {
  * key:    unique identifier for this form (only for store lookup)
  * schema: your ZodObject describing the form state (with any .default()s you want)
  */
-export function useSearchForm<T extends ZodRawShape, S extends ZodObject<T>>(key: string, schema: S) {
+export function useSearchForm<T extends ZodRawShape, S extends ZodObject<T>>(key: string, schema: S): z.TypeOf<S> {
     type State = z.infer<S>;
     const route = useRoute();
     const router = useRouter();

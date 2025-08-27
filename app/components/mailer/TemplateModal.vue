@@ -42,6 +42,7 @@ async function listTemplates(): Promise<ListTemplatesResponse> {
 
 const accordionItems = computed(() =>
     templates.value?.templates.map((t) => ({
+        ...t,
         label: t.title,
     })),
 );
@@ -53,13 +54,7 @@ const editing = ref(false);
 </script>
 
 <template>
-    <UModal fullscreen>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('common.template', 2) }}
-            </h3>
-        </template>
-
+    <UModal :title="$t('common.template', 2)" fullscreen>
         <template #body>
             <div class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-col gap-2">
                 <UButton
@@ -82,13 +77,13 @@ const editing = ref(false);
                         :retry="refresh"
                     />
                     <DataNoDataBlock
-                        v-if="!templates?.templates || templates?.templates.length === 0"
+                        v-else-if="!templates?.templates || templates?.templates.length === 0"
                         :type="$t('common.template', 2)"
                         icon="i-mdi-file-outline"
                     />
 
                     <UAccordion v-else :items="accordionItems">
-                        <template #item="{ index }">
+                        <template #content="{ index }">
                             <template v-if="templates?.templates[index]">
                                 <template v-if="!editing">
                                     <UButtonGroup v-if="canManage" class="mx-4 mb-2 flex">

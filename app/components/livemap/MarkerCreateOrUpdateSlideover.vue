@@ -125,13 +125,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <USlideover :overlay="false">
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ !marker ? $t('components.livemap.create_marker.title') : $t('components.livemap.update_marker.title') }}
-            </h3>
-        </template>
-
+    <USlideover
+        :title="!marker ? $t('components.livemap.create_marker.title') : $t('components.livemap.update_marker.title')"
+        :overlay="false"
+    >
         <template #body>
             <UForm class="flex flex-1" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <dl class="divide-neutral/10 divide-y">
@@ -207,7 +204,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         name="markerType"
                                         :items="markerTypes"
                                         value-key="type"
-                                        :searchable-placeholder="$t('common.search_field')"
+                                        :search-input="{ placeholder: $t('common.search_field') }"
                                     >
                                         <template #item-label>
                                             <span class="truncate">{{

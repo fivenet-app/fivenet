@@ -315,7 +315,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     await updateQualification(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
-const accessTypes: AccessType[] = [{ type: 'job', name: t('common.job', 2) }];
+const accessTypes: AccessType[] = [{ type: 'job', label: t('common.job', 2) }];
 
 function updateQualificationRequirement(idx: number, qualification?: QualificationShort): void {
     if (!qualification || !state.requirements[idx]) {
@@ -374,7 +374,7 @@ const selectedTab = computed({
 
 const confirmModal = overlay.create(ConfirmModal);
 
-const formRef = useTemplateRef<typeof UForm>('formRef');
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
@@ -514,7 +514,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                             v-if="canDo.edit"
                             class="flex flex-1 overflow-y-hidden"
                             name="content"
-                            :ui="{ container: 'flex flex-1 flex-col mt-0 overflow-y-hidden', label: { wrapper: 'hidden' } }"
+                            :ui="{ container: 'flex flex-1 flex-col mt-0 overflow-y-hidden' }"
                             label="&nbsp;"
                         >
                             <ClientOnly>
@@ -629,7 +629,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                     </UContainer>
                                 </template>
 
-                                <template #item-label>
+                                <template #label>
                                     <UContainer>
                                         <UFormField
                                             class="grid grid-cols-2 items-center gap-2"

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 const props = withDefaults(
     defineProps<{
-        element?: HTMLElement;
+        element?: HTMLElement | null;
         showHeight?: number;
     }>(),
     {
@@ -42,7 +42,7 @@ function scrollToTop() {
     >
         <UTooltip
             v-if="show"
-            class="z-100 fixed bottom-32 right-6 transition delay-150 duration-300 ease-in-out"
+            class="fixed right-6 bottom-32 z-100 transition delay-150 duration-300 ease-in-out"
             :text="$t('common.scroll_to_top')"
             :prevent="!show"
         >

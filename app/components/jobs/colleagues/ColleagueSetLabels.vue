@@ -177,11 +177,8 @@ const editing = ref(false);
                     v-model="state.labels"
                     multiple
                     :searchable="async (q: string) => (await getColleagueLabels(q))?.labels ?? []"
-                    searchable-lazy
-                    :searchable-placeholder="$t('common.search_field')"
-                    :search-attributes="['name']"
-                    option-attribute="name"
-                    by="name"
+                    :search-input="{ placeholder: $t('common.search_field') }"
+                    :filter-fields="['name']"
                     clear-search-on-close
                 >
                     <template #item-label="{ item }">

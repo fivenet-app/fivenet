@@ -86,7 +86,12 @@ watchOnce(opened, async () => {
             <slot name="before" />
             <template v-if="showAvatar" #leading>
                 <USkeleton v-if="!user && isRequestPending(status)" class="h-6 w-6" />
-                <ProfilePictureImg v-else :src="user?.avatar" :name="`${user?.firstname} ${user?.lastname}`" size="3xs" />
+                <ProfilePictureImg
+                    v-else
+                    :src="user?.profilePicture"
+                    :name="`${user?.firstname} ${user?.lastname}`"
+                    size="3xs"
+                />
             </template>
 
             <USkeleton v-if="!user && isRequestPending(status)" class="h-8 w-[125px]" />
@@ -136,7 +141,7 @@ watchOnce(opened, async () => {
                     />
                 </div>
 
-                <div v-else-if="isRequestPending(status) && !user" class="text-highlighted flex flex-col gap-2">
+                <div v-else-if="isRequestPending(status) && !user" class="flex flex-col gap-2 text-highlighted">
                     <USkeleton class="h-8 w-[250px]" />
 
                     <div class="flex flex-row items-center gap-2">
@@ -145,9 +150,9 @@ watchOnce(opened, async () => {
                     </div>
                 </div>
 
-                <div v-else-if="user" class="text-highlighted inline-flex flex-row gap-2">
+                <div v-else-if="user" class="inline-flex flex-row gap-2 text-highlighted">
                     <div v-if="showAvatar === undefined || showAvatar">
-                        <ProfilePictureImg :src="user.avatar" :name="`${user.firstname} ${user.lastname}`" />
+                        <ProfilePictureImg :src="user.profilePicture" :name="`${user.firstname} ${user.lastname}`" />
                     </div>
                     <div>
                         <UButton

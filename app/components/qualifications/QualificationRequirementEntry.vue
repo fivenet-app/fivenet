@@ -63,12 +63,9 @@ watch(selectedQualification, () => emit('update-qualification', selectedQualific
             <ClientOnly>
                 <USelectMenu
                     v-model="selectedQualification"
-                    option-attribute="title"
-                    :search-attributes="['title', 'abbreviation']"
                     block
-                    searchable-lazy
                     :searchable="(q: string) => listQualifications(q)"
-                    :searchable-placeholder="$t('common.search_field')"
+                    :search-input="{ placeholder: $t('common.search_field') }"
                     :loading="qualificationsLoading"
                 >
                     <template #item-label>
@@ -79,7 +76,7 @@ watch(selectedQualification, () => emit('update-qualification', selectedQualific
 
                     <template #item="{ item }">
                         <span class="truncate">
-                            <template v-if="item.abbreviation">{{ item.abbreviation }}: </template
+                            <template v-if="item?.abbreviation">{{ item.abbreviation }}: </template
                             >{{ !item.title ? $t('common.untitled') : item.title }}
                         </span>
                     </template>

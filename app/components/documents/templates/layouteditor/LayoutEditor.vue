@@ -760,11 +760,7 @@ const showPreview = ref(false);
     </UDashboardPanel>
 
     <!-- Preview Modal -->
-    <UModal v-model:open="showPreview" fullscreen>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">Preview (sample data)</h3>
-        </template>
-
+    <UModal v-model:open="showPreview" title="Preview (sample data)" fullscreen>
         <template #body>
             <div class="flex flex-1 items-center justify-center">
                 <div class="overflow-auto p-4">

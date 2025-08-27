@@ -272,7 +272,7 @@ type OAuth2Endpoints struct {
 type OAuth2Mapping struct {
 	ID       string `yaml:"id"`
 	Username string `yaml:"username"`
-	Avatar   string `yaml:"avatar"`
+	Avatar   string `yaml:"profile_picture"`
 }
 
 type Auth struct {

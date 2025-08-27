@@ -38,8 +38,7 @@ const columns = computed(
     () =>
         [
             {
-                accessorKey: 'actions',
-                header: t('common.action', 2),
+                id: 'actions',
                 cell: ({ row }) =>
                     h('div', [
                         h('UTooltip', { text: t('common.mark') }, () =>

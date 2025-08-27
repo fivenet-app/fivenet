@@ -72,10 +72,10 @@ async function deleteTemplate(id: number): Promise<void> {
     }
 }
 
-const templateAccessTypes: AccessType[] = [{ type: 'job', name: t('common.job', 2) }];
+const templateAccessTypes: AccessType[] = [{ type: 'job', label: t('common.job', 2) }];
 const contentAccessTypes: AccessType[] = [
-    { type: 'user', name: t('common.citizen', 2) },
-    { type: 'job', name: t('common.job', 2) },
+    { type: 'user', label: t('common.citizen', 2) },
+    { type: 'job', label: t('common.job', 2) },
 ];
 
 const confirmModal = overlay.create(ConfirmModal);

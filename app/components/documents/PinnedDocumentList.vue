@@ -58,27 +58,37 @@ const editing = ref(false);
 </script>
 
 <template>
-    <div class="flex flex-1 flex-col">
-        <UDashboardNavbar :title="$t('common.pinned_document', 2)">
-            <template #toggle>
-                <UDashboardSidebarToggle class="lg:block 2xl:hidden" />
-            </template>
+    <UDashboardPanel
+        id="documents-pinnedlist"
+        class="overflow-x-hidden"
+        side="right"
+        breakpoint="2xl"
+        :width="350"
+        :min-size="25"
+        :max-size="50"
+    >
+        <template #header>
+            <UDashboardNavbar :title="$t('common.pinned_document', 2)">
+                <template #toggle>
+                    <UDashboardSidebarToggle class="lg:block 2xl:hidden" />
+                </template>
 
-            <template #right>
-                <UTooltip
-                    v-if="can('documents.DocumentsService/ToggleDocumentPin').value"
-                    :text="editing ? $t('common.save') : $t('common.edit')"
-                >
-                    <UButton
-                        variant="link"
-                        :icon="editing ? 'i-mdi-content-save' : 'i-mdi-pencil'"
-                        @click="editing = !editing"
-                    />
-                </UTooltip>
-            </template>
-        </UDashboardNavbar>
+                <template #right>
+                    <UTooltip
+                        v-if="can('documents.DocumentsService/ToggleDocumentPin').value"
+                        :text="editing ? $t('common.save') : $t('common.edit')"
+                    >
+                        <UButton
+                            variant="link"
+                            :icon="editing ? 'i-mdi-content-save' : 'i-mdi-pencil'"
+                            @click="editing = !editing"
+                        />
+                    </UTooltip>
+                </template>
+            </UDashboardNavbar>
+        </template>
 
-        <UDashboardPanelContent class="p-1">
+        <template #body>
             <div class="flex flex-col gap-2">
                 <DataErrorBlock
                     v-if="error"
@@ -96,11 +106,7 @@ const editing = ref(false);
                     <USkeleton v-for="idx in 10" :key="idx" class="h-16 w-full" />
                 </template>
                 <div v-else class="flex flex-col gap-2">
-                    <div
-                        v-for="doc in data?.documents"
-                        :key="doc.id"
-                        class="flex flex-row gap-1 divide-x divide-gray-100 dark:divide-gray-800"
-                    >
+                    <div v-for="doc in data?.documents" :key="doc.id" class="flex flex-row gap-1 divide-x divide-default">
                         <UButtonGroup
                             v-if="editing && can('documents.DocumentsService/ToggleDocumentPin').value"
                             class="inline-flex items-center gap-1"
@@ -183,8 +189,8 @@ const editing = ref(false);
                     </div>
                 </div>
             </div>
-        </UDashboardPanelContent>
 
-        <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
-    </div>
+            <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+        </template>
+    </UDashboardPanel>
 </template>

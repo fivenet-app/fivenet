@@ -21,13 +21,18 @@ const emit = defineEmits<{
     (e: 'updated', unit: Unit): void;
 }>();
 
+const { t } = useI18n();
+
 const notifications = useNotificationsStore();
 
 const centrumCentrumClient = await getCentrumCentrumClient();
 
-const availableAttributes = ref<{ type: UnitAttribute }[]>([
-    { type: UnitAttribute.STATIC },
-    { type: UnitAttribute.NO_DISPATCH_AUTO_ASSIGN },
+const availableAttributes = ref<{ label: string; value: UnitAttribute }[]>([
+    { label: t(`enums.centrum.UnitAttribute.${UnitAttribute.STATIC}`, 2), value: UnitAttribute.STATIC },
+    {
+        label: t(`enums.centrum.UnitAttribute.${UnitAttribute.NO_DISPATCH_AUTO_ASSIGN}`, 2),
+        value: UnitAttribute.NO_DISPATCH_AUTO_ASSIGN,
+    },
 ]);
 
 const { maxAccessEntries } = useAppConfig();
@@ -135,18 +140,7 @@ watch(props, async () => updateUnitInForm());
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                <template v-if="unit && unit?.id">
-                    {{ $t('components.centrum.units.update_unit') }}
-                </template>
-                <template v-else>
-                    {{ $t('components.centrum.units.create_unit') }}
-                </template>
-            </h3>
-        </template>
-
+    <UModal :title="unit && unit?.id ? $t('components.centrum.units.update_unit') : $t('components.centrum.units.create_unit')">
         <template #body>
             <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField class="flex-1" name="name" :label="$t('common.name')">
@@ -172,17 +166,11 @@ watch(props, async () => updateUnitInForm());
                             v-model="state.attributes"
                             multiple
                             nullable
-                            value-key="type"
                             :items="availableAttributes"
                             :placeholder="selectedAttributes ? selectedAttributes.join(', ') : $t('common.na')"
-                            :searchable-placeholder="$t('common.search_field')"
+                            :search-input="{ placeholder: $t('common.search_field') }"
+                            value-key="value"
                         >
-                            <template #item="{ item }">
-                                <span class="truncate">{{
-                                    $t(`enums.centrum.UnitAttribute.${UnitAttribute[item.type]}`, 2)
-                                }}</span>
-                            </template>
-
                             <template #empty>
                                 {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
                             </template>
@@ -216,8 +204,8 @@ watch(props, async () => updateUnitInForm());
                             enumToAccessLevelEnums(UnitAccessLevel, 'enums.centrum.UnitAccessLevel').filter((a) => a.value > 1)
                         "
                         :access-types="[
-                            { type: 'job', name: $t('common.job', 2) },
-                            { type: 'qualification', name: $t('common.qualification', 2) },
+                            { type: 'job', label: $t('common.job', 2) },
+                            { type: 'qualification', label: $t('common.qualification', 2) },
                         ]"
                     />
                 </UFormField>

@@ -63,13 +63,7 @@ watch(labels, () => (state.labels = labels.value ?? []));
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('components.citizens.citizen_labels.title') }}
-            </h3>
-        </template>
-
+    <UModal :title="$t('components.citizens.citizen_labels.title')">
         <template #body>
             <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField

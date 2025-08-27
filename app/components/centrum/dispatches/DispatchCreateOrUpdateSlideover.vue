@@ -100,13 +100,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <USlideover :overlay="false">
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('components.centrum.create_dispatch.title') }}
-            </h3>
-        </template>
-
+    <USlideover :title="$t('components.centrum.create_dispatch.title')" :overlay="false">
         <template #body>
             <UForm class="flex flex-1" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <dl class="divide-neutral/10 divide-y">
@@ -175,13 +169,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     name="jobs.jobs"
                                     multiple
                                     :placeholder="$t('common.job')"
-                                    option-attribute="label"
                                     :search-attributes="['name', 'label']"
                                     value-key="name"
                                     :items="dispatchTargetJobs"
-                                    searchable
-                                    searchable-lazy
-                                    :searchable-placeholder="$t('common.search_field')"
+                                    :search-input="{ placeholder: $t('common.search_field') }"
                                     :disabled="dispatchTargetJobs.length <= 1"
                                 >
                                     <template #item-label="{ item }">

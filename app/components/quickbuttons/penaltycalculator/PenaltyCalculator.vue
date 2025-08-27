@@ -212,13 +212,6 @@ const columns = computed(
             {
                 accessorKey: 'count',
                 header: t('common.count'),
-                cell: ({ row }) =>
-                    h(USelect, {
-                        modelValue: state.value.selectedPenalties.find((p) => p.law.id === row.original.id)?.count ?? 0,
-                        name: 'count',
-                        items: Array.from(Array(7).keys()).map((v) => ({ value: v, label: v.toString() })),
-                        'update:modelValue': ($event) => calculate({ law: row.original, count: parseInt($event) }),
-                    }),
             },
         ] as TableColumn<Law>[],
 );
@@ -278,7 +271,18 @@ const columns = computed(
                                     :empty="$t('common.not_found', [$t('common.law', 2)])"
                                     :pagination-options="{ manualPagination: true }"
                                     :sorting-options="{ manualSorting: true }"
-                                />
+                                >
+                                    <template #count-cell="{ row }">
+                                        <USelect
+                                            :model-value="
+                                                state.selectedPenalties.find((p) => p.law.id === row.original.id)?.count ?? 0
+                                            "
+                                            name="count"
+                                            :items="Array.from(Array(7).keys()).map((v) => ({ value: v, label: v.toString() }))"
+                                            @update:model-value="($event) => calculate({ law: row.original, count: $event })"
+                                        />
+                                    </template>
+                                </UTable>
                             </template>
                         </UAccordion>
                     </dl>

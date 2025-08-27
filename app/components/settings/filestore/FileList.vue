@@ -162,6 +162,7 @@ const columns = computed(
             :pagination-options="{ manualPagination: true }"
             :sorting-options="{ manualSorting: true }"
             :empty="$t('common.not_found', [$t('common.file', 2)])"
+            sticky
         >
             <template #actions-cell="{ row: file }">
                 <UTooltip :text="$t('common.show')">

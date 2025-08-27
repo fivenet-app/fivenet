@@ -43,8 +43,7 @@ async function iconSearch(query: string): Promise<IconEntry[]> {
         <USelectMenu
             v-model="icon"
             :searchable="iconSearch"
-            searchable-lazy
-            :searchable-placeholder="$t('common.search_field')"
+            :search-input="{ placeholder: $t('common.search_field') }"
             value-key="name"
             v-bind="$attrs"
         >

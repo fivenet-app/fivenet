@@ -52,14 +52,8 @@ async function getTemplate(): Promise<Template> {
 </script>
 
 <template>
-    <UModal>
+    <UModal :title="`${$t('common.template', 1)} ${$t('common.preview')}`" fullscreen>
         <!-- eslint-disable vue/no-v-html -->
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('common.document', 1) }}
-                {{ $t('common.preview') }}
-            </h3>
-        </template>
 
         <template #body>
             <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.template', 2)])" />

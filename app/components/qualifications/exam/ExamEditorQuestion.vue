@@ -435,8 +435,7 @@ watch(
                     :model-value="question.data!.data.oneofKind"
                     class="w-40 max-w-40"
                     :items="questionTypes"
-                    searchable
-                    :searchable-placeholder="$t('common.search_field')"
+                    :search-input="{ placeholder: $t('common.search_field') }"
                     :disabled="disabled"
                     @update:model-value="changeQuestionType($event)"
                 >
@@ -501,7 +500,6 @@ watch(
                         <div v-if="question.data?.data.image.image" class="flex flex-1 items-center justify-center">
                             <GenericImg
                                 class="min-h-12 min-w-12"
-                                img-class="h-96 w-full object-cover"
                                 :enable-popup="true"
                                 :rounded="false"
                                 :src="question.data?.data.image.image.filePath"

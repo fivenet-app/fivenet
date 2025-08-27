@@ -95,6 +95,21 @@ export const useCompletorStore = defineStore(
             }
         };
 
+        const completeColleagues = async (search: string): Promise<Colleague[]> => {
+            try {
+                const colleagues = await listColleagues({
+                    search: search,
+                    labelIds: [],
+                    userIds: [],
+                });
+
+                return colleagues.map((c) => ({ ...c, avatar: { src: c.profilePicture } }));
+            } catch (e) {
+                handleGRPCError(e as RpcError);
+                throw e;
+            }
+        };
+
         const completeDocumentCategories = async (search: string): Promise<Category[]> => {
             const { can } = useAuth();
             if (!can('completor.CompletorService/CompleteDocumentCategories').value) {
@@ -152,6 +167,7 @@ export const useCompletorStore = defineStore(
             completeCitizens,
             findColleague,
             listColleagues,
+            completeColleagues,
             completeDocumentCategories,
             listLawBooks,
             completeCitizenLabels,

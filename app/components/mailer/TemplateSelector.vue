@@ -49,9 +49,6 @@ const selectedTemplate = ref<Template | undefined>(undefined);
             v-model="selectedTemplate"
             class="min-w-48"
             :items="templates?.templates"
-            option-attribute="title"
-            by="id"
-            searchable
             :placeholder="$t('common.template')"
             v-bind="$attrs"
         >

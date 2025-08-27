@@ -53,8 +53,8 @@ async function getCitizen(id: number): Promise<User | undefined> {
         if (response.user!.phoneNumber && props.user?.phoneNumber) {
             response.user!.phoneNumber = props.user.phoneNumber;
         }
-        if (response.user!.avatar && props.user?.avatar) {
-            response.user!.avatar = props.user.avatar;
+        if (response.user!.profilePicture && props.user?.profilePicture) {
+            response.user!.profilePicture = props.user.profilePicture;
         }
 
         return response.user!;
@@ -98,7 +98,12 @@ watchOnce(opened, async () => {
         >
             <template v-if="showAvatarInName" #leading>
                 <USkeleton v-if="!user && isRequestPending(status)" class="h-6 w-6" />
-                <ProfilePictureImg v-else :src="user?.avatar" :name="`${user?.firstname} ${user?.lastname}`" size="3xs" />
+                <ProfilePictureImg
+                    v-else
+                    :src="user?.profilePicture"
+                    :name="`${user?.firstname} ${user?.lastname}`"
+                    size="3xs"
+                />
             </template>
 
             <USkeleton v-if="!user && isRequestPending(status)" class="h-8 w-[125px]" />
@@ -172,7 +177,7 @@ watchOnce(opened, async () => {
                     <div class="inline-flex flex-row gap-2">
                         <ProfilePictureImg
                             v-if="showAvatar === undefined || showAvatar"
-                            :src="user.avatar"
+                            :src="user.profilePicture"
                             :name="`${user.firstname} ${user.lastname}`"
                         />
 

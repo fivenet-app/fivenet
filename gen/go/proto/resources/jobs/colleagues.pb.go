@@ -24,20 +24,20 @@ const (
 )
 
 type Colleague struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"id"`
-	Identifier    *string                `protobuf:"bytes,2,opt,name=identifier,proto3,oneof" json:"identifier,omitempty"`
-	Job           string                 `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty"`
-	JobLabel      *string                `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
-	JobGrade      int32                  `protobuf:"varint,5,opt,name=job_grade,json=jobGrade,proto3" json:"job_grade,omitempty"`
-	JobGradeLabel *string                `protobuf:"bytes,6,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty"`
-	Firstname     string                 `protobuf:"bytes,7,opt,name=firstname,proto3" json:"firstname,omitempty"`
-	Lastname      string                 `protobuf:"bytes,8,opt,name=lastname,proto3" json:"lastname,omitempty"`
-	Dateofbirth   string                 `protobuf:"bytes,9,opt,name=dateofbirth,proto3" json:"dateofbirth,omitempty"`
-	PhoneNumber   *string                `protobuf:"bytes,12,opt,name=phone_number,json=phoneNumber,proto3,oneof" json:"phone_number,omitempty"`
-	AvatarFileId  *int64                 `protobuf:"varint,17,opt,name=avatar_file_id,json=avatarFileId,proto3,oneof" json:"avatar_file_id,omitempty"`
-	Avatar        *string                `protobuf:"bytes,18,opt,name=avatar,proto3,oneof" json:"avatar,omitempty" alias:"avatar"`
-	Props         *ColleagueProps        `protobuf:"bytes,19,opt,name=props,proto3" json:"props,omitempty" alias:"colleague_props"`
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	UserId               int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"id"`
+	Identifier           *string                `protobuf:"bytes,2,opt,name=identifier,proto3,oneof" json:"identifier,omitempty"`
+	Job                  string                 `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty"`
+	JobLabel             *string                `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
+	JobGrade             int32                  `protobuf:"varint,5,opt,name=job_grade,json=jobGrade,proto3" json:"job_grade,omitempty"`
+	JobGradeLabel        *string                `protobuf:"bytes,6,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty"`
+	Firstname            string                 `protobuf:"bytes,7,opt,name=firstname,proto3" json:"firstname,omitempty"`
+	Lastname             string                 `protobuf:"bytes,8,opt,name=lastname,proto3" json:"lastname,omitempty"`
+	Dateofbirth          string                 `protobuf:"bytes,9,opt,name=dateofbirth,proto3" json:"dateofbirth,omitempty"`
+	PhoneNumber          *string                `protobuf:"bytes,12,opt,name=phone_number,json=phoneNumber,proto3,oneof" json:"phone_number,omitempty"`
+	ProfilePictureFileId *int64                 `protobuf:"varint,17,opt,name=profile_picture_file_id,json=profilePictureFileId,proto3,oneof" json:"profile_picture_file_id,omitempty"`
+	ProfilePicture       *string                `protobuf:"bytes,18,opt,name=profile_picture,json=profilePicture,proto3,oneof" json:"profile_picture,omitempty" alias:"profile_picture"`
+	Props                *ColleagueProps        `protobuf:"bytes,19,opt,name=props,proto3" json:"props,omitempty" alias:"colleague_props"`
 	// @sanitize: method=StripTags
 	Email         *string `protobuf:"bytes,20,opt,name=email,proto3,oneof" json:"email,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -144,16 +144,16 @@ func (x *Colleague) GetPhoneNumber() string {
 	return ""
 }
 
-func (x *Colleague) GetAvatarFileId() int64 {
-	if x != nil && x.AvatarFileId != nil {
-		return *x.AvatarFileId
+func (x *Colleague) GetProfilePictureFileId() int64 {
+	if x != nil && x.ProfilePictureFileId != nil {
+		return *x.ProfilePictureFileId
 	}
 	return 0
 }
 
-func (x *Colleague) GetAvatar() string {
-	if x != nil && x.Avatar != nil {
-		return *x.Avatar
+func (x *Colleague) GetProfilePicture() string {
+	if x != nil && x.ProfilePicture != nil {
+		return *x.ProfilePicture
 	}
 	return ""
 }
@@ -285,7 +285,7 @@ var File_resources_jobs_colleagues_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_colleagues_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/jobs/colleagues.proto\x12\x0eresources.jobs\x1a\x1bresources/jobs/labels.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xf9\x05\n" +
+	"\x1fresources/jobs/colleagues.proto\x12\x0eresources.jobs\x1a\x1bresources/jobs/labels.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xb6\x06\n" +
 	"\tColleague\x12/\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x16\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"\xbaH\x04\x1a\x02 \x00R\x06userId\x12,\n" +
@@ -300,18 +300,18 @@ const file_resources_jobs_colleagues_proto_rawDesc = "" +
 	"\blastname\x18\b \x01(\tB\t\xbaH\x06r\x04\x10\x01\x182R\blastname\x12)\n" +
 	"\vdateofbirth\x18\t \x01(\tB\a\xbaH\x04r\x02\x18\n" +
 	"R\vdateofbirth\x12/\n" +
-	"\fphone_number\x18\f \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x03R\vphoneNumber\x88\x01\x01\x12)\n" +
-	"\x0eavatar_file_id\x18\x11 \x01(\x03H\x04R\favatarFileId\x88\x01\x01\x120\n" +
-	"\x06avatar\x18\x12 \x01(\tB\x13\x9a\x84\x9e\x03\x0ealias:\"avatar\"H\x05R\x06avatar\x88\x01\x01\x12R\n" +
+	"\fphone_number\x18\f \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x03R\vphoneNumber\x88\x01\x01\x12:\n" +
+	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\x04R\x14profilePictureFileId\x88\x01\x01\x12J\n" +
+	"\x0fprofile_picture\x18\x12 \x01(\tB\x1c\x9a\x84\x9e\x03\x17alias:\"profile_picture\"H\x05R\x0eprofilePicture\x88\x01\x01\x12R\n" +
 	"\x05props\x18\x13 \x01(\v2\x1e.resources.jobs.ColleaguePropsB\x1c\x9a\x84\x9e\x03\x17alias:\"colleague_props\"R\x05props\x12$\n" +
 	"\x05email\x18\x14 \x01(\tB\t\xbaH\x06r\x04\x10\x06\x18PH\x06R\x05email\x88\x01\x01B\r\n" +
 	"\v_identifierB\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
 	"\x10_job_grade_labelB\x0f\n" +
-	"\r_phone_numberB\x11\n" +
-	"\x0f_avatar_file_idB\t\n" +
-	"\a_avatarB\b\n" +
+	"\r_phone_numberB\x1a\n" +
+	"\x18_profile_picture_file_idB\x12\n" +
+	"\x10_profile_pictureB\b\n" +
 	"\x06_email\"\xb2\x04\n" +
 	"\x0eColleagueProps\x12 \n" +
 	"\auser_id\x18\x01 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x06userId\x12\x19\n" +

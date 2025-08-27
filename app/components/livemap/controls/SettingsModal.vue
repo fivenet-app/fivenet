@@ -20,13 +20,7 @@ const schema = z.object({
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('common.setting', 2) }}
-            </h3>
-        </template>
-
+    <UModal :title="$t('common.setting', 2)">
         <template #body>
             <UForm :schema="schema" :state="livemap">
                 <UFormField name="centerSelectedMarker" :label="$t('components.livemap.center_selected_marker')">

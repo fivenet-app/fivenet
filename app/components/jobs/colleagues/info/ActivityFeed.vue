@@ -128,12 +128,9 @@ watch(props, async () => refresh());
                                 return colleagues;
                             }
                         "
-                        searchable-lazy
-                        :searchable-placeholder="$t('common.search_field')"
+                        :search-input="{ placeholder: $t('common.search_field') }"
                         :search-attributes="['firstname', 'lastname']"
-                        block
                         :placeholder="$t('common.colleague', 2)"
-                        trailing
                         leading-icon="i-mdi-search"
                         value-key="userId"
                     >
@@ -163,9 +160,6 @@ watch(props, async () => refresh());
                         v-model="query.types"
                         class="w-48 min-w-40 flex-initial"
                         multiple
-                        block
-                        trailing
-                        option-attribute="aType"
                         :items="activityTypes.map((aType) => ({ aType: aType }))"
                         value-key="aType"
                         :searchable-placeholder="$t('common.type', 2)"
@@ -205,7 +199,7 @@ watch(props, async () => refresh());
         />
 
         <div v-else-if="isRequestPending(status) || data?.activity">
-            <ul class="divide-y divide-gray-100 dark:divide-gray-800" role="list">
+            <ul class="divide-y divide-default" role="list">
                 <template v-if="isRequestPending(status)">
                     <li v-for="idx in 10" :key="idx" class="px-2 py-4">
                         <div class="flex space-x-3">

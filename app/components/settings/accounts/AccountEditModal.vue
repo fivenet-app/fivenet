@@ -77,13 +77,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <h3 class="text-2xl leading-6 font-semibold">
-                {{ $t('components.settings.accounts.edit_account') }}: {{ account.username }} ({{ account.id }})
-            </h3>
-        </template>
-
+    <UModal :title="`${$t('components.settings.accounts.edit_account')}: ${account.username} (${account.id})`">
         <template #body>
             <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <div>

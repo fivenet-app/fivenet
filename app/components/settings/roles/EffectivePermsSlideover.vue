@@ -86,17 +86,11 @@ const permCategoriesSorted = computed(() =>
 </script>
 
 <template>
-    <USlideover>
-        <template #title>
-            <div class="flex items-center justify-between">
-                <h3 class="inline-flex gap-2 text-2xl leading-6 font-semibold">
-                    {{ $t('common.effective_permissions') }}: {{ role?.role?.jobLabel! }} - {{ role?.role?.jobGradeLabel }} ({{
-                        role?.role?.grade
-                    }})
-                </h3>
-
-                <UButton variant="link" trailing-icon="i-mdi-refresh" color="primary" @click="refresh()" />
-            </div>
+    <USlideover
+        :title="`${$t('common.effective_permissions')}: ${role?.role?.jobLabel!} - ${role?.role?.jobGradeLabel} (${role?.role?.grade})`"
+    >
+        <template #actions>
+            <UButton variant="link" trailing-icon="i-mdi-refresh" color="primary" @click="refresh()" />
         </template>
 
         <template #body>
@@ -131,7 +125,7 @@ const permCategoriesSorted = computed(() =>
                         </h3>
                     </template>
 
-                    <div class="flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
+                    <div class="flex flex-col divide-y divide-default">
                         <div
                             v-for="perm in permList.filter((p) => p.category === category.category)"
                             :key="perm.id"

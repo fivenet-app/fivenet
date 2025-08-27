@@ -428,7 +428,7 @@ func (s *Server) GetCharacters(
 
 	// Load chars from database
 	tUsers := tables.User().AS("user")
-	tAvatar := table.FivenetFiles.AS("avatar")
+	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tUsers.
 		SELECT(
@@ -444,8 +444,8 @@ func (s *Server) GetCharacters(
 				tUsers.Sex,
 				tUsers.Height,
 				tUsers.PhoneNumber,
-				tUserProps.AvatarFileID.AS("user.avatar_file_id"),
-				tAvatar.FilePath.AS("user.avatar"),
+				tUserProps.AvatarFileID.AS("user.profile_picture_file_id"),
+				tAvatar.FilePath.AS("user.profile_picture"),
 				tUsers.Group.AS("character.group"),
 				s.customDB.Columns.User.GetVisum(tUsers.Alias()),
 				s.customDB.Columns.User.GetPlaytime(tUsers.Alias()),
@@ -521,7 +521,7 @@ func (s *Server) getCharacter(
 ) (*users.User, *jobs.JobProps, string, error) {
 	tUsers := tables.User().AS("user")
 	tLogo := table.FivenetFiles.AS("logo_file")
-	tAvatar := table.FivenetFiles.AS("avatar")
+	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tUsers.
 		SELECT(
@@ -533,8 +533,8 @@ func (s *Server) getCharacter(
 			tUsers.Firstname,
 			tUsers.Lastname,
 			tUsers.Dateofbirth,
-			tUserProps.AvatarFileID.AS("user.avatar_file_id"),
-			tAvatar.FilePath.AS("user.avatar"),
+			tUserProps.AvatarFileID.AS("user.profile_picture_file_id"),
+			tAvatar.FilePath.AS("user.profile_picture"),
 			tUsers.Group.AS("group"),
 			tJobProps.Job,
 			tJobProps.DeletedAt,

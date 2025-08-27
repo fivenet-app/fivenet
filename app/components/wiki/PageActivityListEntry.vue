@@ -77,7 +77,7 @@ function spoilerNeeded(activityType: PageActivityType): boolean {
                 </div>
             </template>
 
-            <template v-if="entry.activityType === PageActivityType.UPDATED" #item>
+            <template v-if="entry.activityType === PageActivityType.UPDATED" #content>
                 <div class="rounded-md bg-default p-2">
                     <ActivityPageUpdatedDiff
                         v-if="entry.data?.data.oneofKind === 'updated'"

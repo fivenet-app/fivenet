@@ -461,7 +461,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
                     <UAccordion :items="accordionCategories" multiple :unmount="true">
                         <template #content="{ item: category }">
-                            <div class="flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
+                            <div class="flex flex-col divide-y divide-default">
                                 <div
                                     v-for="perm in permList.filter((p) => p.category === category.category)"
                                     :key="perm.id"

@@ -49,10 +49,8 @@ async function listDocuments(search: string): Promise<DocumentShort[]> {
                     <UFormField class="flex-1" :name="`attachments.${idx}.data.documentId`">
                         <USelectMenu
                             class="w-full flex-1"
-                            option-attribute="title"
                             :disabled="!canSubmit"
                             :searchable="listDocuments"
-                            searchable-lazy
                             :placeholder="$t('common.document')"
                             :model-value="attachments[idx].data.document.id > 0 ? attachments[idx].data.document : undefined"
                             @update:model-value="attachments[idx] = { data: { oneofKind: 'document', document: $event } }"

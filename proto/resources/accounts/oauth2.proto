@@ -15,7 +15,7 @@ message OAuth2Account {
   OAuth2Provider provider = 4;
   string external_id = 5 [(buf.validate.field).string.max_len = 128];
   string username = 6 [(buf.validate.field).string.max_len = 255];
-  string avatar = 7 [(buf.validate.field).string.max_len = 255];
+  string profile_picture = 7 [(buf.validate.field).string.max_len = 255];
 }
 
 message OAuth2Provider {

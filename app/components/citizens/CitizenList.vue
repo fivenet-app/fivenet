@@ -16,10 +16,13 @@ import type { SortByColumn } from '~~/gen/ts/resources/common/database/database'
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { User } from '~~/gen/ts/resources/users/users';
 import type { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/services/citizens/citizens';
+import CitizenLabelModal from './CitizenLabelModal.vue';
 
 const { t } = useI18n();
 
 const { attr, can } = useAuth();
+
+const overlay = useOverlay();
 
 const citizensCitizensClient = await getCitizensCitizensClient();
 
@@ -50,7 +53,7 @@ const schema = z.object({
 const query = useSearchForm('citizens', schema);
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    () => `citizens-${JSON.stringify(query.sorting)}-${query.page}-${JSON.stringify(query)}`,
+    `citizens-${JSON.stringify(query.sorting)}-${query.page}-${JSON.stringify(query)}`,
     () => listCitizens(),
 );
 
@@ -132,16 +135,20 @@ const columns = computed(() =>
             {
                 accessorKey: 'jobLabel',
                 header: t('common.job'),
-                class: 'hidden lg:table-cell',
-                rowClass: 'hidden lg:table-cell',
+                meta: {
+                    td: 'hidden lg:table-cell',
+                    th: 'hidden lg:table-cell',
+                },
                 cell: ({ row }) =>
                     `${row.original.jobLabel}${row.original.props?.jobName || row.original.props?.jobGradeNumber ? '*' : ''}`,
             },
             {
                 accessorKey: 'sex',
                 header: t('common.sex'),
-                class: 'hidden lg:table-cell',
-                rowClass: 'hidden lg:table-cell',
+                meta: {
+                    td: 'hidden lg:table-cell',
+                    th: 'hidden lg:table-cell',
+                },
                 cell: ({ row }) =>
                     h(
                         'span',
@@ -159,8 +166,10 @@ const columns = computed(() =>
             {
                 accessorKey: 'dateofbirth',
                 header: t('common.date_of_birth'),
-                class: 'hidden lg:table-cell',
-                rowClass: 'hidden lg:table-cell',
+                meta: {
+                    td: 'hidden lg:table-cell',
+                    th: 'hidden lg:table-cell',
+                },
                 cell: ({ row }) => row.original.dateofbirth,
             },
             attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints').value
@@ -215,16 +224,17 @@ const columns = computed(() =>
             {
                 accessorKey: 'height',
                 header: t('common.height'),
-                class: 'hidden lg:table-cell',
-                rowClass: 'hidden lg:table-cell',
+                meta: {
+                    td: 'hidden lg:table-cell',
+                    th: 'hidden lg:table-cell',
+                },
                 cell: ({ row }) => (row.original.height ? `${row.original.height}cm` : ''),
             },
             can('citizens.CitizensService/GetUser').value
                 ? {
-                      accessorKey: 'actions',
-                      header: t('common.action', 2),
+                      id: 'actions',
                       cell: ({ row }) =>
-                          h('div', { class: 'flex flex-col justify-end md:flex-row' }, [
+                          h('div', {}, [
                               h(UTooltip, { text: t('components.clipboard.clipboard_button.add') }, [
                                   h(UButton, {
                                       variant: 'link',
@@ -249,6 +259,8 @@ const columns = computed(() =>
     ).filter((c) => c !== undefined),
 );
 
+const citizenLabelModal = overlay.create(CitizenLabelModal);
+
 const input = useTemplateRef('input');
 
 defineShortcuts({
@@ -257,152 +269,177 @@ defineShortcuts({
 </script>
 
 <template>
-    <UDashboardToolbar>
-        <UForm class="w-full" :schema="schema" :state="query" @submit="refresh()">
-            <div class="flex w-full flex-row gap-2">
-                <UFormField class="flex-1" :label="$t('common.search')" name="name">
-                    <UInput
-                        ref="input"
-                        v-model="query.name"
-                        type="text"
-                        name="name"
-                        :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
-                        block
-                        leading-icon="i-mdi-search"
-                        @keydown.esc="$event.target.blur()"
-                    >
-                        <template #trailing>
-                            <UKbd value="/" />
-                        </template>
-                    </UInput>
-                </UFormField>
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+        <template #header>
+            <UDashboardNavbar :title="$t('pages.citizens.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
 
-                <UFormField name="dateofbirth" :label="$t('common.date_of_birth')">
-                    <UInput
-                        v-model="query.dateofbirth"
-                        v-maska
-                        type="text"
-                        name="dateofbirth"
-                        :placeholder="`${$t('common.date_of_birth')} (DD.MM.YYYY)`"
-                        block
-                        data-maska="##.##.####"
+                <template #right>
+                    <UButton
+                        v-if="can('citizens.CitizensService/ManageLabels').value"
+                        :label="$t('common.label', 2)"
+                        icon="i-mdi-tag"
+                        @click="citizenLabelModal.open({})"
                     />
-                </UFormField>
+                </template>
+            </UDashboardNavbar>
 
-                <UFormField
-                    v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.Wanted').value"
-                    class="flex flex-initial flex-col"
-                    name="wanted"
-                    :label="$t('common.only_wanted')"
-                    :ui="{ container: 'flex-1 flex' }"
-                >
-                    <div class="flex flex-1 items-center">
-                        <USwitch v-model="query.wanted" />
-                    </div>
-                </UFormField>
-            </div>
-
-            <UAccordion
-                class="mt-2"
-                color="neutral"
-                variant="soft"
-                size="sm"
-                :items="[{ label: $t('common.advanced_search'), slot: 'search' as const }]"
-            >
-                <template #search>
-                    <div class="flex flex-row gap-2">
-                        <UFormField
-                            v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'PhoneNumber').value"
-                            class="flex-1"
-                            name="phoneNumber"
-                            :label="$t('common.phone_number')"
-                        >
+            <UDashboardToolbar>
+                <UForm class="w-full" :schema="schema" :state="query" @submit="refresh()">
+                    <div class="flex w-full flex-row gap-2">
+                        <UFormField class="flex-1" :label="$t('common.search')" name="name">
                             <UInput
-                                v-model="query.phoneNumber"
-                                type="tel"
-                                name="phoneNumber"
-                                :placeholder="$t('common.phone_number')"
-                                block
+                                ref="input"
+                                v-model="query.name"
+                                type="text"
+                                name="name"
+                                :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
+                                class="w-full"
+                                leading-icon="i-mdi-search"
+                                @keydown.esc="$event.target.blur()"
+                            >
+                                <template #trailing>
+                                    <UKbd value="/" />
+                                </template>
+                            </UInput>
+                        </UFormField>
+
+                        <UFormField name="dateofbirth" :label="$t('common.date_of_birth')">
+                            <UInput
+                                v-model="query.dateofbirth"
+                                v-maska
+                                type="text"
+                                name="dateofbirth"
+                                :placeholder="`${$t('common.date_of_birth')} (DD.MM.YYYY)`"
+                                class="w-full"
+                                data-maska="##.##.####"
                             />
                         </UFormField>
 
                         <UFormField
-                            v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'TrafficInfractionPoints').value"
-                            class="flex-1"
-                            name="trafficInfractionPoints"
-                            :label="$t('common.traffic_infraction_points', 2)"
+                            v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.Wanted').value"
+                            class="flex flex-initial flex-col"
+                            name="wanted"
+                            :label="$t('common.only_wanted')"
+                            :ui="{ container: 'flex-1 flex' }"
                         >
-                            <UInputNumber
-                                v-model="query.trafficInfractionPoints"
-                                name="trafficInfractionPoints"
-                                :min="0"
-                                :placeholder="$t('common.traffic_infraction_points')"
-                                block
-                            />
+                            <div class="flex flex-1 items-center">
+                                <USwitch v-model="query.wanted" />
+                            </div>
                         </UFormField>
+                    </div>
 
-                        <UFormField
-                            v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.OpenFines').value"
-                            class="flex-1"
-                            name="openFines"
-                            :label="$t('components.citizens.CitizenList.open_fine')"
-                        >
-                            <UInputNumber
-                                v-model="query.openFines"
-                                name="openFines"
-                                :min="0"
-                                :step="1000"
-                                :placeholder="`${$t('common.fine')}`"
-                                block
-                                :format-options="{
-                                    style: 'currency',
-                                    currency: 'USD',
-                                    currencyDisplay: 'code',
-                                    currencySign: 'accounting',
-                                }"
-                            />
-                        </UFormField>
+                    <UAccordion
+                        class="my-2"
+                        color="neutral"
+                        variant="soft"
+                        size="sm"
+                        :items="[{ label: $t('common.advanced_search'), slot: 'search' as const }]"
+                    >
+                        <template #search>
+                            <div class="flex flex-row gap-2">
+                                <UFormField
+                                    v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'PhoneNumber').value"
+                                    class="flex-1"
+                                    name="phoneNumber"
+                                    :label="$t('common.phone_number')"
+                                >
+                                    <UInput
+                                        v-model="query.phoneNumber"
+                                        type="tel"
+                                        name="phoneNumber"
+                                        :placeholder="$t('common.phone_number')"
+                                        class="w-full"
+                                    />
+                                </UFormField>
+
+                                <UFormField
+                                    v-if="
+                                        attr('citizens.CitizensService/ListCitizens', 'Fields', 'TrafficInfractionPoints').value
+                                    "
+                                    class="flex-1"
+                                    name="trafficInfractionPoints"
+                                    :label="$t('common.traffic_infraction_points', 2)"
+                                >
+                                    <UInputNumber
+                                        v-model="query.trafficInfractionPoints"
+                                        name="trafficInfractionPoints"
+                                        :min="0"
+                                        :placeholder="$t('common.traffic_infraction_points')"
+                                        class="w-full"
+                                    />
+                                </UFormField>
+
+                                <UFormField
+                                    v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.OpenFines').value"
+                                    class="flex-1"
+                                    name="openFines"
+                                    :label="$t('components.citizens.CitizenList.open_fine')"
+                                >
+                                    <UInputNumber
+                                        v-model="query.openFines"
+                                        name="openFines"
+                                        :min="0"
+                                        :step="1000"
+                                        :placeholder="`${$t('common.fine')}`"
+                                        class="w-full"
+                                        :format-options="{
+                                            style: 'currency',
+                                            currency: 'USD',
+                                            currencyDisplay: 'code',
+                                            currencySign: 'accounting',
+                                        }"
+                                    />
+                                </UFormField>
+                            </div>
+                        </template>
+                    </UAccordion>
+                </UForm>
+            </UDashboardToolbar>
+        </template>
+
+        <template #body>
+            <DataErrorBlock
+                v-if="error"
+                :title="$t('common.unable_to_load', [$t('common.citizen', 2)])"
+                :error="error"
+                :retry="refresh"
+            />
+
+            <UTable
+                v-else
+                v-model:sorting="query.sorting.columns"
+                class="flex-1"
+                :loading="isRequestPending(status)"
+                :columns="columns"
+                :data="data?.users"
+                :empty="$t('common.not_found', [$t('common.citizen', 2)])"
+                :sorting-options="{ manualSorting: true }"
+                :pagination-options="{ manualPagination: true }"
+                sticky
+            >
+                <template #name-cell="{ row }">
+                    <div class="inline-flex items-center gap-1 text-highlighted">
+                        <ProfilePictureImg
+                            :src="row.original.props?.mugshot?.filePath"
+                            :name="`${row.original.firstname} ${row.original.lastname}`"
+                            :alt="$t('common.mugshot')"
+                            :enable-popup="true"
+                            size="sm"
+                        />
+
+                        <span>{{ row.original.firstname }} {{ row.original.lastname }}</span>
+
+                        <UBadge v-if="row.original.props?.wanted" color="error">
+                            {{ $t('common.wanted').toUpperCase() }}
+                        </UBadge>
                     </div>
                 </template>
-            </UAccordion>
-        </UForm>
-    </UDashboardToolbar>
+            </UTable>
 
-    <DataErrorBlock
-        v-if="error"
-        :title="$t('common.unable_to_load', [$t('common.citizen', 2)])"
-        :error="error"
-        :retry="refresh"
-    />
-    <UTable
-        v-else
-        v-model:sorting="query.sorting.columns"
-        class="flex-1"
-        :loading="isRequestPending(status)"
-        :columns="columns"
-        :data="data?.users"
-        :empty="$t('common.not_found', [$t('common.citizen', 2)])"
-        :sorting-options="{ manualSorting: true }"
-        :pagination-options="{ manualPagination: true }"
-    >
-        <template #name-cell="{ row }">
-            <div class="inline-flex items-center gap-1 text-highlighted">
-                <ProfilePictureImg
-                    :src="row.original.props?.mugshot?.filePath"
-                    :name="`${row.original.firstname} ${row.original.lastname}`"
-                    :alt="$t('common.mugshot')"
-                    :enable-popup="true"
-                    size="sm"
-                />
-
-                <span>{{ row.original.firstname }} {{ row.original.lastname }}</span>
-
-                <UBadge v-if="row.original.props?.wanted" color="error">
-                    {{ $t('common.wanted').toUpperCase() }}
-                </UBadge>
-            </div>
+            <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" />
         </template>
-    </UTable>
-
-    <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" />
+    </UDashboardPanel>
 </template>

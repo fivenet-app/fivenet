@@ -63,7 +63,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `provider` | [OAuth2Provider](#resourcesaccountsOAuth2Provider) |  |  |
 | `external_id` | [string](#string) |  |  |
 | `username` | [string](#string) |  |  |
-| `avatar` | [string](#string) |  |  |
+| `profile_picture` | [string](#string) |  |  |
 
 
 
@@ -332,8 +332,8 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `playtime` | [int32](#int32) | optional |  |
 | `props` | [UserProps](#resourcesusersUserProps) |  |  |
 | `licenses` | [License](#resourcesusersLicense) | repeated |  |
-| `avatar_file_id` | [int64](#int64) | optional |  |
-| `avatar` | [string](#string) | optional |  |
+| `profile_picture_file_id` | [int64](#int64) | optional |  |
+| `profile_picture` | [string](#string) | optional |  |
 | `group` | [string](#string) | optional |  |
 
 
@@ -355,8 +355,8 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `lastname` | [string](#string) |  |  |
 | `dateofbirth` | [string](#string) |  |  |
 | `phone_number` | [string](#string) | optional |  |
-| `avatar_file_id` | [int64](#int64) | optional |  |
-| `avatar` | [string](#string) | optional |  |
+| `profile_picture_file_id` | [int64](#int64) | optional |  |
+| `profile_picture` | [string](#string) | optional |  |
 
 
 
@@ -965,8 +965,8 @@ Dummy - DO NOT USE!
 | `lastname` | [string](#string) |  |  |
 | `dateofbirth` | [string](#string) |  |  |
 | `phone_number` | [string](#string) | optional |  |
-| `avatar_file_id` | [int64](#int64) | optional |  |
-| `avatar` | [string](#string) | optional |  |
+| `profile_picture_file_id` | [int64](#int64) | optional |  |
+| `profile_picture` | [string](#string) | optional |  |
 | `props` | [ColleagueProps](#resourcesjobsColleagueProps) |  |  |
 | `email` | [string](#string) | optional | @sanitize: method=StripTags |
 

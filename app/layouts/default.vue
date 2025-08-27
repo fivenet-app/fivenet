@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import type { CommandPaletteGroup } from '@nuxt/ui';
 import ClipboardModal from '~/components/clipboard/modal/ClipboardModal.vue';
-import MathCalculatorSlideover from '~/components/quickbuttons/mathcalculator/MathCalculatorSlideover.vue';
-import PenaltyCalculatorSlideover from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorSlideover.vue';
+import MathCalculatorDrawer from '~/components/quickbuttons/mathcalculator/MathCalculatorDrawer.vue';
+import PenaltyCalculatorDrawer from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorDrawer.vue';
 import TopLogoDropdown from '~/components/TopLogoDropdown.vue';
 import UserMenu from '~/components/UserMenu.vue';
 import { useMailerStore } from '~/stores/mailer';
@@ -377,8 +377,8 @@ const clipboardLink = computed(() =>
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
-const penaltyCalculatorModal = overlay.create(PenaltyCalculatorSlideover);
-const mathCalculatorModal = overlay.create(MathCalculatorSlideover);
+const penaltyCalculatorDrawer = overlay.create(PenaltyCalculatorDrawer);
+const mathCalculatorDrawer = overlay.create(MathCalculatorDrawer);
 
 const quickAccessButtons = computed(() =>
     [
@@ -388,7 +388,7 @@ const quickAccessButtons = computed(() =>
                   icon: 'i-mdi-gavel',
                   onClick: () => {
                       isDashboardSidebarSlideoverOpen.value = false;
-                      penaltyCalculatorModal.open();
+                      penaltyCalculatorDrawer.open();
                   },
               }
             : undefined,
@@ -398,7 +398,7 @@ const quickAccessButtons = computed(() =>
                   icon: 'i-mdi-calculator',
                   onClick: () => {
                       isDashboardSidebarSlideoverOpen.value = false;
-                      mathCalculatorModal.open();
+                      mathCalculatorDrawer.open();
                   },
               }
             : undefined,
@@ -426,23 +426,29 @@ const quickAccessButtons = computed(() =>
             <template #default="{ collapsed }">
                 <UDashboardSearchButton :collapsed="collapsed" :label="$t('common.search_field')" />
 
-                <UNavigationMenu orientation="vertical" tooltip popover :items="links" />
+                <UNavigationMenu orientation="vertical" tooltip popover :items="links" :collapsed="collapsed" />
 
                 <template v-if="clipboardLink.length > 0">
                     <USeparator />
 
-                    <UNavigationMenu orientation="vertical" tooltip popover :items="clipboardLink" />
+                    <UNavigationMenu orientation="vertical" tooltip popover :items="clipboardLink" :collapsed="collapsed" />
                 </template>
 
                 <template v-if="quickAccessButtons">
                     <USeparator />
 
-                    <UNavigationMenu orientation="vertical" tooltip popover :items="quickAccessButtons" />
+                    <UNavigationMenu
+                        orientation="vertical"
+                        tooltip
+                        popover
+                        :items="quickAccessButtons"
+                        :collapsed="collapsed"
+                    />
                 </template>
 
                 <div class="flex-1" />
 
-                <UNavigationMenu orientation="vertical" tooltip popover :items="footerLinks" />
+                <UNavigationMenu orientation="vertical" tooltip popover :items="footerLinks" :collapsed="collapsed" />
             </template>
 
             <template #footer="{ collapsed }">
