@@ -280,13 +280,12 @@ const columns = computed(
                                     }
                                 "
                                 :search-input="{ placeholder: $t('common.search_field') }"
-                                :search-attributes="['firstname', 'lastname']"
+                                :filter-fields="['firstname', 'lastname']"
                                 block
                                 :placeholder="$t('common.colleague')"
                                 trailing
                                 leading-icon="i-mdi-search"
                                 value-key="userId"
-                                @keydown.esc="$event.target.blur()"
                             >
                                 <template #item-label="{ item }">
                                     <span v-if="item" class="truncate">
@@ -315,7 +314,6 @@ const columns = computed(
                                 value-key="status"
                                 :placeholder="$t('common.na')"
                                 :search-input="{ placeholder: $t('common.search_field') }"
-                                @keydown.esc="$event.target.blur()"
                             >
                                 <template #item-label>
                                     {{ $t('common.selected', query.types.length) }}

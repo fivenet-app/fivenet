@@ -124,72 +124,71 @@ const columns = computed(
 </script>
 
 <template>
-    <template v-if="streamerMode">
-        <UDashboardNavbar :title="$t('pages.settings.settings.title')">
-            <template #right>
-                <PartialsBackButton fallback-to="/settings" />
-            </template>
-        </UDashboardNavbar>
+    <UDashboardPanel>
+        <template #header>
+            <UDashboardNavbar :title="$t('pages.settings.settings.title')">
+                <template #right>
+                    <PartialsBackButton fallback-to="/settings" />
 
-        <UDashboardPanelContent>
-            <StreamerModeAlert />
-        </UDashboardPanelContent>
-    </template>
-    <template v-else>
-        <UDashboardNavbar :title="$t('pages.settings.filestore.title')">
-            <template #right>
-                <PartialsBackButton fallback-to="/settings" />
-
-                <UButton trailing-icon="i-mdi-upload" @click="fileUploadModal.open()">
-                    {{ $t('common.upload') }}
-                </UButton>
-            </template>
-        </UDashboardNavbar>
-
-        <DataErrorBlock
-            v-if="error"
-            :title="$t('common.unable_to_load', [$t('common.file', 2)])"
-            :error="error"
-            :retry="refresh"
-        />
-
-        <UTable
-            v-else
-            class="flex-1"
-            :loading="isRequestPending(status)"
-            :columns="columns"
-            :data="files?.files"
-            :pagination-options="{ manualPagination: true }"
-            :sorting-options="{ manualSorting: true }"
-            :empty="$t('common.not_found', [$t('common.file', 2)])"
-            sticky
-        >
-            <template #actions-cell="{ row: file }">
-                <UTooltip :text="$t('common.show')">
                     <UButton
-                        variant="link"
-                        icon="i-mdi-link-variant"
-                        external
-                        target="_blank"
-                        :to="`/api/filestore/${file.original.filePath}`"
+                        v-if="streamerMode"
+                        :label="$t('common.upload')"
+                        trailing-icon="i-mdi-upload"
+                        @click="fileUploadModal.open()"
                     />
-                </UTooltip>
+                </template>
+            </UDashboardNavbar>
+        </template>
 
-                <UTooltip :text="$t('common.delete')">
-                    <UButton
-                        variant="link"
-                        icon="i-mdi-delete"
-                        color="error"
-                        @click="
-                            confirmModal.open({
-                                confirm: async () => deleteFile(file.original.filePath),
-                            })
-                        "
-                    />
-                </UTooltip>
+        <template #body>
+            <StreamerModeAlert v-if="streamerMode" />
+            <template v-else>
+                <DataErrorBlock
+                    v-if="error"
+                    :title="$t('common.unable_to_load', [$t('common.file', 2)])"
+                    :error="error"
+                    :retry="refresh"
+                />
+
+                <UTable
+                    v-else
+                    class="flex-1"
+                    :loading="isRequestPending(status)"
+                    :columns="columns"
+                    :data="files?.files"
+                    :pagination-options="{ manualPagination: true }"
+                    :sorting-options="{ manualSorting: true }"
+                    :empty="$t('common.not_found', [$t('common.file', 2)])"
+                    sticky
+                >
+                    <template #actions-cell="{ row: file }">
+                        <UTooltip :text="$t('common.show')">
+                            <UButton
+                                variant="link"
+                                icon="i-mdi-link-variant"
+                                external
+                                target="_blank"
+                                :to="`/api/filestore/${file.original.filePath}`"
+                            />
+                        </UTooltip>
+
+                        <UTooltip :text="$t('common.delete')">
+                            <UButton
+                                variant="link"
+                                icon="i-mdi-delete"
+                                color="error"
+                                @click="
+                                    confirmModal.open({
+                                        confirm: async () => deleteFile(file.original.filePath),
+                                    })
+                                "
+                            />
+                        </UTooltip>
+                    </template>
+                </UTable>
+
+                <Pagination v-model="page" :pagination="files?.pagination" :status="status" :refresh="refresh" />
             </template>
-        </UTable>
-
-        <Pagination v-model="page" :pagination="files?.pagination" :status="status" :refresh="refresh" />
-    </template>
+        </template>
+    </UDashboardPanel>
 </template>

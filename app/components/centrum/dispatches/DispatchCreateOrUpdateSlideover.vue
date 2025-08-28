@@ -169,7 +169,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     name="jobs.jobs"
                                     multiple
                                     :placeholder="$t('common.job')"
-                                    :search-attributes="['name', 'label']"
+                                    :filter-fields="['name', 'label']"
                                     value-key="name"
                                     :items="dispatchTargetJobs"
                                     :search-input="{ placeholder: $t('common.search_field') }"

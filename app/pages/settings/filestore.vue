@@ -13,7 +13,5 @@ definePageMeta({
 </script>
 
 <template>
-    <UDashboardPanel>
-        <FileList />
-    </UDashboardPanel>
+    <FileList />
 </template>

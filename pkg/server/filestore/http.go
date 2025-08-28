@@ -59,7 +59,7 @@ func (s *FilestoreHTTP) RegisterHTTP(e *gin.Engine) {
 
 const (
 	// fileRetrievalTimeout is the timeout for file retrieval operations.
-	fileRetrievalTimeout = 6 * time.Second
+	fileRetrievalTimeout = 5 * time.Second
 )
 
 // isPathSafe checks for path traversal attempts.
@@ -93,7 +93,10 @@ func (s *FilestoreHTTP) HEAD(c *gin.Context) {
 
 	filePath := path.Join(prefix, fileName)
 
-	objInfo, err := s.st.Stat(c, filePath)
+	ctx, cancel := context.WithTimeout(c, fileRetrievalTimeout)
+	defer cancel()
+
+	objInfo, err := s.st.Stat(ctx, filePath)
 	if err != nil {
 		if errors.Is(err, storage.ErrNotFound) {
 			c.AbortWithStatus(http.StatusNotFound)

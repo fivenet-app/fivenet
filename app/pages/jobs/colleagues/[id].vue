@@ -133,7 +133,19 @@ const links = computed(() =>
 </script>
 
 <template>
-    <UDashboardPanelContent>
+    <UDashboardPanel>
+        <template #header>
+            <UDashboardToolbar>
+                <ColleagueInfo
+                    v-if="colleague?.colleague"
+                    :colleague="colleague.colleague"
+                    @update:absence-dates="updateColleageAbsence($event)"
+                />
+            </UDashboardToolbar>
+            <UDashboardToolbar>
+                <UNavigationMenu orientation="horizontal" :items="links" />
+            </UDashboardToolbar>
+        </template>
         <DataPendingBlock
             v-if="!colleague && isRequestPending(status)"
             :message="$t('common.loading', [$t('common.colleague', 1)])"
@@ -146,14 +158,8 @@ const links = computed(() =>
         />
         <DataNoDataBlock v-else-if="!colleague || !colleague.colleague" />
 
-        <template v-else>
-            <ColleagueInfo :colleague="colleague.colleague" @update:absence-dates="updateColleageAbsence($event)" />
-
-            <UDashboardToolbar>
-                <UNavigationMenu orientation="horizontal" :items="links" />
-            </UDashboardToolbar>
-
-            <NuxtPage :colleague="colleague.colleague" @refresh="refresh()" />
+        <template #body>
+            <NuxtPage v-if="colleague?.colleague" :colleague="colleague.colleague" @refresh="refresh()" />
         </template>
-    </UDashboardPanelContent>
+    </UDashboardPanel>
 </template>

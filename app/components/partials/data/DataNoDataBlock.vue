@@ -45,8 +45,8 @@ async function click() {
 <template>
     <UAlert
         class="my-2"
-        variant="outline"
         :icon="icon"
+        variant="outline"
         :title="title"
         :description="message ?? $t('common.not_found', [type ?? $t('common.data')])"
         :actions="actions"

@@ -92,7 +92,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 }
                             "
                             :search-input="{ placeholder: $t('common.search_field') }"
-                            :search-attributes="['firstname', 'lastname']"
+                            :filter-fields="['firstname', 'lastname']"
                             block
                             :placeholder="$t('common.citizen', 2)"
                             trailing

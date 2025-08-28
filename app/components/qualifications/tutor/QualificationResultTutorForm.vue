@@ -148,7 +148,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     }
                                 "
                                 :search-input="{ placeholder: $t('common.search_field') }"
-                                :search-attributes="['firstname', 'lastname']"
+                                :filter-fields="['firstname', 'lastname']"
                                 :placeholder="$t('common.citizen', 1)"
                                 trailing
                                 leading-icon="i-mdi-user"

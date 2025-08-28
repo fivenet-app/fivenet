@@ -91,25 +91,30 @@ const links = computed(() =>
             children: [
                 {
                     label: t('common.overview'),
+                    icon: 'i-mdi-briefcase',
                     to: '/jobs/overview',
                 },
                 {
                     label: t('common.colleague', 2),
+                    icon: 'i-mdi-account-group',
                     to: '/jobs/colleagues',
                     permission: 'jobs.JobsService/ListColleagues' as Perms,
                 },
                 {
                     label: t('common.activity'),
+                    icon: 'i-mdi-pulse',
                     to: '/jobs/activity',
                     permission: 'jobs.JobsService/ListColleagueActivity' as Perms,
                 },
                 {
                     label: t('common.timeclock'),
+                    icon: 'i-mdi-timeline-clock',
                     to: '/jobs/timeclock',
                     permission: 'jobs.TimeclockService/ListTimeclock' as Perms,
                 },
                 {
                     label: t('common.conduct_register', 2),
+                    icon: 'i-mdi-list-status',
                     to: '/jobs/conduct',
                     permission: 'jobs.ConductService/ListConductEntries' as Perms,
                 },

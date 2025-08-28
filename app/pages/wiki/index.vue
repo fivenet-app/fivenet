@@ -68,27 +68,29 @@ const wikiService = await useWikiWiki();
 
 <template>
     <UDashboardPanel>
-        <UDashboardNavbar :title="$t('common.wiki')">
-            <template #center>
-                <PageSearch />
-            </template>
+        <template #header>
+            <UDashboardNavbar :title="$t('common.wiki')">
+                <template #center>
+                    <PageSearch />
+                </template>
 
-            <template #right>
-                <UTooltip v-if="can('wiki.WikiService/UpdatePage').value" :text="$t('common.create')">
-                    <UButton color="neutral" trailing-icon="i-mdi-plus" @click="wikiService.createPage()">
-                        {{ $t('common.page') }}
-                    </UButton>
-                </UTooltip>
-            </template>
-        </UDashboardNavbar>
+                <template #right>
+                    <UTooltip v-if="can('wiki.WikiService/UpdatePage').value" :text="$t('common.create')">
+                        <UButton color="neutral" trailing-icon="i-mdi-plus" @click="wikiService.createPage()">
+                            {{ $t('common.page') }}
+                        </UButton>
+                    </UTooltip>
+                </template>
+            </UDashboardNavbar>
 
-        <UDashboardToolbar class="flex! lg:hidden!">
-            <template #default>
-                <PageSearch />
-            </template>
-        </UDashboardToolbar>
+            <UDashboardToolbar class="flex lg:hidden">
+                <template #default>
+                    <PageSearch />
+                </template>
+            </UDashboardToolbar>
+        </template>
 
-        <UDashboardPanelContent>
+        <template #body>
             <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.page')])" />
             <DataErrorBlock v-else-if="error" :retry="refresh" />
             <DataNoDataBlock
@@ -119,6 +121,6 @@ const wikiService = await useWikiWiki();
                     </template>
                 </UPageCard>
             </UPageGrid>
-        </UDashboardPanelContent>
+        </template>
     </UDashboardPanel>
 </template>

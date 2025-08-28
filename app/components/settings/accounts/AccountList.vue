@@ -209,113 +209,108 @@ const columns = computed(
 </script>
 
 <template>
-    <template v-if="streamerMode">
-        <UDashboardNavbar :title="$t('pages.settings.accounts.title')">
-            <template #right>
-                <PartialsBackButton fallback-to="/settings" />
-            </template>
-        </UDashboardNavbar>
+    <UDashboardPanel>
+        <template #header>
+            <UDashboardNavbar :title="$t('pages.settings.accounts.title')">
+                <template #right>
+                    <PartialsBackButton fallback-to="/settings" />
+                </template>
+            </UDashboardNavbar>
 
-        <UDashboardPanelContent>
-            <StreamerModeAlert />
-        </UDashboardPanelContent>
-    </template>
-    <template v-else>
-        <UDashboardNavbar :title="$t('pages.settings.accounts.title')">
-            <template #right>
-                <PartialsBackButton fallback-to="/settings" />
-            </template>
-        </UDashboardNavbar>
-
-        <UDashboardToolbar>
-            <UForm class="w-full" :schema="schema" :state="query" @submit="refresh()">
-                <div class="flex w-full flex-row gap-2">
-                    <UFormField class="flex-1" :label="$t('common.search')" name="license">
-                        <UInput
-                            ref="input"
-                            v-model="query.license"
-                            type="text"
-                            name="license"
-                            :placeholder="$t('common.license')"
-                            block
-                            leading-icon="i-mdi-search"
-                            @keydown.esc="$event.target.blur()"
-                        >
-                            <template #trailing>
-                                <UKbd value="/" />
-                            </template>
-                        </UInput>
-                    </UFormField>
-
-                    <UFormField
-                        class="flex flex-initial flex-col"
-                        name="enabled"
-                        :label="$t('common.enabled')"
-                        :ui="{ container: 'flex-1 flex' }"
-                    >
-                        <div class="flex flex-1 items-center">
-                            <USwitch v-model="query.enabled" />
-                        </div>
-                    </UFormField>
-                </div>
-
-                <UAccordion
-                    class="mt-2"
-                    color="neutral"
-                    variant="soft"
-                    size="sm"
-                    :items="[{ label: $t('common.advanced_search'), slot: 'search' as const }]"
-                >
-                    <template #search>
-                        <div class="flex flex-row flex-wrap gap-1">
-                            <UFormField class="flex-1" name="username" :label="$t('common.username')">
-                                <UInput
-                                    v-model="query.username"
-                                    type="text"
-                                    name="username"
-                                    :placeholder="$t('common.username')"
-                                    block
-                                />
-                            </UFormField>
-
-                            <UFormField
-                                class="flex-1"
-                                name="externalId"
-                                :label="$t('components.auth.OAuth2Connections.external_id')"
+            <UDashboardToolbar>
+                <UForm v-if="!streamerMode" class="w-full" :schema="schema" :state="query" @submit="refresh()">
+                    <div class="flex w-full flex-row gap-2">
+                        <UFormField class="flex-1" :label="$t('common.search')" name="license">
+                            <UInput
+                                ref="input"
+                                v-model="query.license"
+                                type="text"
+                                name="license"
+                                :placeholder="$t('common.license')"
+                                block
+                                leading-icon="i-mdi-search"
                             >
-                                <UInput
-                                    v-model="query.externalId"
-                                    type="text"
+                                <template #trailing>
+                                    <UKbd value="/" />
+                                </template>
+                            </UInput>
+                        </UFormField>
+
+                        <UFormField
+                            class="flex flex-initial flex-col"
+                            name="enabled"
+                            :label="$t('common.enabled')"
+                            :ui="{ container: 'flex-1 flex' }"
+                        >
+                            <div class="flex flex-1 items-center">
+                                <USwitch v-model="query.enabled" />
+                            </div>
+                        </UFormField>
+                    </div>
+
+                    <UAccordion
+                        class="mt-2"
+                        color="neutral"
+                        variant="soft"
+                        size="sm"
+                        :items="[{ label: $t('common.advanced_search'), slot: 'search' as const }]"
+                    >
+                        <template #search>
+                            <div class="flex flex-row flex-wrap gap-1">
+                                <UFormField class="flex-1" name="username" :label="$t('common.username')">
+                                    <UInput
+                                        v-model="query.username"
+                                        type="text"
+                                        name="username"
+                                        :placeholder="$t('common.username')"
+                                        block
+                                    />
+                                </UFormField>
+
+                                <UFormField
+                                    class="flex-1"
                                     name="externalId"
-                                    :placeholder="$t('components.auth.OAuth2Connections.external_id')"
-                                    block
-                                />
-                            </UFormField>
-                        </div>
-                    </template>
-                </UAccordion>
-            </UForm>
-        </UDashboardToolbar>
+                                    :label="$t('components.auth.OAuth2Connections.external_id')"
+                                >
+                                    <UInput
+                                        v-model="query.externalId"
+                                        type="text"
+                                        name="externalId"
+                                        :placeholder="$t('components.auth.OAuth2Connections.external_id')"
+                                        block
+                                    />
+                                </UFormField>
+                            </div>
+                        </template>
+                    </UAccordion>
+                </UForm>
+            </UDashboardToolbar>
+        </template>
 
-        <DataErrorBlock
-            v-if="error"
-            :title="$t('common.unable_to_load', [$t('common.account', 2)])"
-            :error="error"
-            :retry="refresh"
-        />
+        <template #body>
+            <StreamerModeAlert v-if="streamerMode" />
+            <template v-else>
+                <DataErrorBlock
+                    v-if="error"
+                    :title="$t('common.unable_to_load', [$t('common.account', 2)])"
+                    :error="error"
+                    :retry="refresh"
+                />
 
-        <UTable
-            v-model:sorting="query.sorting.columns"
-            class="flex-1"
-            :loading="isRequestPending(status)"
-            :columns="columns"
-            :data="accounts?.accounts"
-            :empty="$t('common.not_found', [$t('common.account', 2)])"
-            :sorting-options="{ manualSorting: true }"
-            :pagination-options="{ manualPagination: true }"
-            sticky
-        />
+                <UTable
+                    v-model:sorting="query.sorting.columns"
+                    class="flex-1"
+                    :loading="isRequestPending(status)"
+                    :columns="columns"
+                    :data="accounts?.accounts"
+                    :empty="$t('common.not_found', [$t('common.account', 2)])"
+                    :sorting-options="{ manualSorting: true }"
+                    :pagination-options="{ manualPagination: true }"
+                    sticky
+                />
 
-        <Pagination v-model="query.page" :pagination="accounts?.pagination" :status="status" :refresh="refresh" />
-    </template>
+                <Pagination v-model="query.page" :pagination="accounts?.pagination" :status="status" :refresh="refresh" />
+            </template>
+        </template>
+    </UDashboardPanel>
 </template>

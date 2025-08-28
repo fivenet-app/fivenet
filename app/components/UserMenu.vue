@@ -3,7 +3,6 @@ import type { DropdownMenuItem } from '@nuxt/ui';
 import SuperuserJobSelection from '~/components/partials/SuperuserJobSelection.vue';
 import { useAuthStore } from '~/stores/auth';
 import LanguageSwitcherModal from './partials/LanguageSwitcherModal.vue';
-import ProfilePictureImg from './partials/citizens/ProfilePictureImg.vue';
 
 defineProps<{
     collapsed?: boolean;
@@ -98,32 +97,29 @@ const name = computed(() =>
         :content="{ align: 'center', collisionPadding: 12 }"
         :ui="{ content: collapsed ? 'w-48' : 'w-(--reka-dropdown-menu-trigger-width)' }"
     >
-        <template #default>
-            <UChip class="w-full" color="error" position="top-left" :show="isSuperuser">
-                <UButton
-                    v-bind="{
-                        trailingIcon: collapsed ? undefined : 'i-lucide-chevrons-up-down',
-                    }"
-                    color="neutral"
-                    variant="ghost"
-                    block
-                    :square="collapsed"
-                    class="data-[state=open]:bg-elevated"
-                    :ui="{
-                        trailingIcon: 'text-dimmed',
-                    }"
-                    :label="name"
-                >
-                    <template #leading>
-                        <ProfilePictureImg :src="activeChar?.profilePicture" :name="name" size="xs" />
-                    </template>
-
-                    <template #trailing>
-                        <UIcon class="ml-auto size-5" name="i-mdi-ellipsis-vertical" />
-                    </template>
-                </UButton>
-            </UChip>
-        </template>
+        <UChip color="error" position="top-left" :show="isSuperuser" class="w-full flex-1">
+            <UButton
+                :label="collapsed ? undefined : name"
+                color="neutral"
+                variant="ghost"
+                block
+                :square="collapsed"
+                class="data-[state=open]:bg-elevated"
+                :trailing-icon="collapsed ? undefined : 'i-mdi-ellipsis-vertical'"
+                :ui="{
+                    trailingIcon: 'text-dimmed',
+                }"
+            >
+                <template #leading>
+                    <UAvatar
+                        :src="activeChar?.profilePicture ? `/api/filestore/${activeChar.profilePicture}` : undefined"
+                        :alt="name"
+                        size="xs"
+                        :ui="{ rounded: 'rounded-full' }"
+                    />
+                </template>
+            </UButton>
+        </UChip>
 
         <template #account>
             <div class="truncate text-left">

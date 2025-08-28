@@ -41,7 +41,7 @@ const results = ref<InstanceType<typeof QualificationResultList> | null>(null);
                 <ClientOnly>
                     <UInputMenu
                         v-model="query.user"
-                        :search-attributes="['firstname', 'lastname']"
+                        :filter-fields="['firstname', 'lastname']"
                         :placeholder="$t('common.citizen', 1)"
                         trailing
                         :search="

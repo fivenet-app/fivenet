@@ -276,354 +276,369 @@ defineShortcuts({
 </script>
 
 <template>
-    <UDashboardToolbar>
-        <UForm class="w-full" :schema="schema" :state="query" @submit="refresh()">
-            <div class="flex gap-2">
-                <UFormField class="flex-1" name="name" :label="$t('common.search')">
-                    <UInput
-                        ref="input"
-                        v-model="query.name"
-                        type="text"
-                        name="name"
-                        :placeholder="$t('common.name')"
-                        block
-                        leading-icon="i-mdi-search"
-                        @keydown.esc="$event.target.blur()"
-                    >
-                        <template #trailing>
-                            <UKbd value="/" />
-                        </template>
-                    </UInput>
-                </UFormField>
-
-                <UFormField
-                    class="flex flex-initial flex-col"
-                    name="absent"
-                    :label="$t('common.absent')"
-                    :ui="{ container: 'flex-1 flex' }"
-                >
-                    <div class="flex flex-1 items-center">
-                        <USwitch v-model="query.absent" />
-                    </div>
-                </UFormField>
-
-                <UFormField v-if="jobsService.cardView" :label="$t('common.sort_by')">
-                    <SortButton
-                        v-model="query.sorting"
-                        :fields="[
-                            { label: $t('common.rank'), value: 'rank' },
-                            { label: $t('common.name'), value: 'name' },
-                        ]"
-                    />
-                </UFormField>
-
-                <UFormField
-                    v-if="
-                        can('jobs.JobsService/ManageLabels').value ||
-                        attr('jobs.JobsService/GetColleague', 'Types', 'Labels').value
-                    "
-                    label="&nbsp"
-                    :ui="{ container: 'inline-flex gap-1' }"
-                >
-                    <UButton
-                        v-if="can('jobs.JobsService/ManageLabels').value"
-                        :label="$t('common.label', 2)"
-                        icon="i-mdi-tag"
-                        @click="jobLabelsModal.open({})"
-                    />
-
-                    <UTooltip v-if="attr('jobs.JobsService/GetColleague', 'Types', 'Labels').value" :text="$t('common.stats')">
-                        <UButton icon="i-mdi-chart-donut" color="neutral" @click="colleagueLabelStatsModal.open({})" />
-                    </UTooltip>
-                </UFormField>
-            </div>
-
-            <UAccordion
-                class="mt-2"
-                color="neutral"
-                variant="soft"
-                size="sm"
-                :items="[{ label: $t('common.advanced_search'), slot: 'search' as const }]"
-            >
-                <template #search>
-                    <div class="flex flex-row flex-wrap gap-2">
-                        <UFormField
-                            v-if="attr('jobs.JobsService/GetColleague', 'Types', 'Labels').value"
-                            class="flex flex-1 flex-col"
-                            name="labels"
-                            :label="$t('common.label', 2)"
-                            :ui="{ container: 'flex-1 flex' }"
-                        >
-                            <ClientOnly>
-                                <USelectMenu
-                                    v-model="query.labels"
-                                    class="flex-1"
-                                    multiple
-                                    :searchable="async (q: string) => (await getColleagueLabels(q))?.labels ?? []"
-                                    :search-input="{ placeholder: $t('common.search_field') }"
-                                    :filter-fields="['name']"
-                                    clear-search-on-close
-                                    value-key="id"
-                                >
-                                    <template #item-label="{ item }">
-                                        <span v-if="item.length" class="inline-flex flex-wrap gap-1 truncate">
-                                            <UBadge
-                                                v-for="label in item"
-                                                :key="label.id"
-                                                class="truncate"
-                                                :class="isColorBright(label.color) ? 'text-black!' : 'text-white!'"
-                                                :style="{ backgroundColor: label.color }"
-                                                :label="label.name"
-                                            />
-                                        </span>
-                                        <span v-else>&nbsp;</span>
-                                    </template>
-
-                                    <template #item="{ item }">
-                                        <UBadge
-                                            class="truncate"
-                                            :class="isColorBright(item.color) ? 'text-black!' : 'text-white!'"
-                                            :style="{ backgroundColor: item.color }"
-                                        >
-                                            {{ item.name }}
-                                        </UBadge>
-                                    </template>
-
-                                    <template #empty>
-                                        {{ $t('common.not_found', [$t('common.label', 2)]) }}
-                                    </template>
-                                </USelectMenu>
-                            </ClientOnly>
-                        </UFormField>
-
-                        <UFormField
-                            class="flex flex-col"
-                            name="namePrefix"
-                            :label="$t('common.prefix')"
-                            :ui="{ container: 'flex-1 flex' }"
-                        >
-                            <UInput v-model="query.namePrefix" type="text" />
-                        </UFormField>
-
-                        <UFormField
-                            class="flex flex-col"
-                            name="nameSuffix"
-                            :label="$t('common.suffix')"
-                            :ui="{ container: 'flex-1 flex' }"
-                        >
-                            <UInput v-model="query.nameSuffix" type="text" />
+    <UDashboardPanel>
+        <template #header>
+            <UDashboardToolbar>
+                <UForm class="my-2 w-full" :schema="schema" :state="query" @submit="refresh()">
+                    <div class="flex gap-2">
+                        <UFormField class="flex-1" name="name" :label="$t('common.search')">
+                            <UInput
+                                ref="input"
+                                v-model="query.name"
+                                type="text"
+                                name="name"
+                                :placeholder="$t('common.name')"
+                                block
+                                leading-icon="i-mdi-search"
+                            >
+                                <template #trailing>
+                                    <UKbd value="/" />
+                                </template>
+                            </UInput>
                         </UFormField>
 
                         <UFormField
                             class="flex flex-initial flex-col"
-                            name="cards"
-                            :label="$t('common.card_view')"
+                            name="absent"
+                            :label="$t('common.absent')"
                             :ui="{ container: 'flex-1 flex' }"
                         >
                             <div class="flex flex-1 items-center">
-                                <USwitch v-model="jobsService.cardView" />
+                                <USwitch v-model="query.absent" />
                             </div>
                         </UFormField>
+
+                        <UFormField v-if="jobsService.cardView" :label="$t('common.sort_by')">
+                            <SortButton
+                                v-model="query.sorting"
+                                :fields="[
+                                    { label: $t('common.rank'), value: 'rank' },
+                                    { label: $t('common.name'), value: 'name' },
+                                ]"
+                            />
+                        </UFormField>
+
+                        <UFormField
+                            v-if="
+                                can('jobs.JobsService/ManageLabels').value ||
+                                attr('jobs.JobsService/GetColleague', 'Types', 'Labels').value
+                            "
+                            label="&nbsp"
+                            :ui="{ container: 'inline-flex gap-1' }"
+                        >
+                            <UButton
+                                v-if="can('jobs.JobsService/ManageLabels').value"
+                                :label="$t('common.label', 2)"
+                                icon="i-mdi-tag"
+                                @click="jobLabelsModal.open({})"
+                            />
+
+                            <UTooltip
+                                v-if="attr('jobs.JobsService/GetColleague', 'Types', 'Labels').value"
+                                :text="$t('common.stats')"
+                            >
+                                <UButton icon="i-mdi-chart-donut" color="neutral" @click="colleagueLabelStatsModal.open({})" />
+                            </UTooltip>
+                        </UFormField>
                     </div>
-                </template>
-            </UAccordion>
-        </UForm>
-    </UDashboardToolbar>
 
-    <DataErrorBlock
-        v-if="error"
-        :title="$t('common.unable_to_load', [$t('common.colleague', 2)])"
-        :error="error"
-        :retry="refresh"
-    />
-    <template v-else>
-        <UTable
-            v-if="!jobsService.cardView"
-            v-model:sorting="query.sorting.columns"
-            :loading="isRequestPending(status)"
-            :columns="columns"
-            :data="data?.colleagues"
-            :empty="$t('common.not_found', [$t('common.colleague', 2)])"
-            :sorting-options="{ manualSorting: true }"
-            :pagination-options="{ manualPagination: true }"
-        >
-            <template #name-cell="{ row }">
-                <div class="inline-flex items-center text-highlighted">
-                    <ProfilePictureImg
-                        class="mr-2"
-                        :src="row.original?.profilePicture"
-                        :name="`${row.original.firstname} ${row.original.lastname}`"
+                    <UAccordion
+                        class="mt-2"
+                        color="neutral"
+                        variant="soft"
                         size="sm"
-                        :enable-popup="true"
-                        :alt="$t('common.profile_picture')"
-                    />
+                        :items="[{ label: $t('common.advanced_search'), slot: 'search' as const }]"
+                    >
+                        <template #search>
+                            <div class="flex flex-row flex-wrap gap-2">
+                                <UFormField
+                                    v-if="attr('jobs.JobsService/GetColleague', 'Types', 'Labels').value"
+                                    class="flex flex-1 flex-col"
+                                    name="labels"
+                                    :label="$t('common.label', 2)"
+                                    :ui="{ container: 'flex-1 flex' }"
+                                >
+                                    <ClientOnly>
+                                        <USelectMenu
+                                            v-model="query.labels"
+                                            class="flex-1"
+                                            multiple
+                                            :searchable="async (q: string) => (await getColleagueLabels(q))?.labels ?? []"
+                                            :search-input="{ placeholder: $t('common.search_field') }"
+                                            :filter-fields="['name']"
+                                            clear-search-on-close
+                                            value-key="id"
+                                        >
+                                            <template #item-label="{ item }">
+                                                <span v-if="item.length" class="inline-flex flex-wrap gap-1 truncate">
+                                                    <UBadge
+                                                        v-for="label in item"
+                                                        :key="label.id"
+                                                        class="truncate"
+                                                        :class="isColorBright(label.color) ? 'text-black!' : 'text-white!'"
+                                                        :style="{ backgroundColor: label.color }"
+                                                        :label="label.name"
+                                                    />
+                                                </span>
+                                                <span v-else>&nbsp;</span>
+                                            </template>
 
-                    <ColleagueName :colleague="row.original" />
+                                            <template #item="{ item }">
+                                                <UBadge
+                                                    class="truncate"
+                                                    :class="isColorBright(item.color) ? 'text-black!' : 'text-white!'"
+                                                    :style="{ backgroundColor: item.color }"
+                                                >
+                                                    {{ item.name }}
+                                                </UBadge>
+                                            </template>
+
+                                            <template #empty>
+                                                {{ $t('common.not_found', [$t('common.label', 2)]) }}
+                                            </template>
+                                        </USelectMenu>
+                                    </ClientOnly>
+                                </UFormField>
+
+                                <UFormField
+                                    class="flex flex-col"
+                                    name="namePrefix"
+                                    :label="$t('common.prefix')"
+                                    :ui="{ container: 'flex-1 flex' }"
+                                >
+                                    <UInput v-model="query.namePrefix" type="text" />
+                                </UFormField>
+
+                                <UFormField
+                                    class="flex flex-col"
+                                    name="nameSuffix"
+                                    :label="$t('common.suffix')"
+                                    :ui="{ container: 'flex-1 flex' }"
+                                >
+                                    <UInput v-model="query.nameSuffix" type="text" />
+                                </UFormField>
+
+                                <UFormField
+                                    class="flex flex-initial flex-col"
+                                    name="cards"
+                                    :label="$t('common.card_view')"
+                                    :ui="{ container: 'flex-1 flex' }"
+                                >
+                                    <div class="flex flex-1 items-center">
+                                        <USwitch v-model="jobsService.cardView" />
+                                    </div>
+                                </UFormField>
+                            </div>
+                        </template>
+                    </UAccordion>
+                </UForm>
+            </UDashboardToolbar>
+        </template>
+
+        <template #body>
+            <DataErrorBlock
+                v-if="error"
+                :title="$t('common.unable_to_load', [$t('common.colleague', 2)])"
+                :error="error"
+                :retry="refresh"
+            />
+            <template v-else>
+                <UTable
+                    v-if="!jobsService.cardView"
+                    v-model:sorting="query.sorting.columns"
+                    :loading="isRequestPending(status)"
+                    :columns="columns"
+                    :data="data?.colleagues"
+                    :empty="$t('common.not_found', [$t('common.colleague', 2)])"
+                    :sorting-options="{ manualSorting: true }"
+                    :pagination-options="{ manualPagination: true }"
+                >
+                    <template #name-cell="{ row }">
+                        <div class="inline-flex items-center text-highlighted">
+                            <ProfilePictureImg
+                                class="mr-2"
+                                :src="row.original?.profilePicture"
+                                :name="`${row.original.firstname} ${row.original.lastname}`"
+                                size="sm"
+                                :enable-popup="true"
+                                :alt="$t('common.profile_picture')"
+                            />
+
+                            <ColleagueName :colleague="row.original" />
+                        </div>
+                    </template>
+
+                    <template #absence-cell="{ row }">
+                        <dl
+                            v-if="row.original.props?.absenceEnd && isFuture(toDate(row.original.props?.absenceEnd))"
+                            class="font-normal"
+                        >
+                            <dd class="truncate">
+                                {{ $t('common.from') }}:
+                                <GenericTime :value="row.original.props?.absenceBegin" type="date" />
+                            </dd>
+                            <dd class="truncate">
+                                {{ $t('common.to') }}: <GenericTime :value="row.original.props?.absenceEnd" type="date" />
+                            </dd>
+                        </dl>
+                    </template>
+                </UTable>
+
+                <div v-else class="relative flex-1 overflow-x-auto">
+                    <UPageGrid
+                        :ui="{
+                            wrapper:
+                                'grid grid-cols-1 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6',
+                        }"
+                    >
+                        <UPageCard v-for="colleague in data?.colleagues" :key="colleague.userId">
+                            <template #title>
+                                <ColleagueName :colleague="colleague" />
+                            </template>
+
+                            <template #header>
+                                <div class="flex items-center justify-center overflow-hidden">
+                                    <ProfilePictureImg
+                                        :src="colleague?.profilePicture"
+                                        :name="`${colleague.firstname} ${colleague.lastname}`"
+                                        size="3xl"
+                                        :enable-popup="true"
+                                        :alt="$t('common.profile_picture')"
+                                        :rounded="false"
+                                    />
+                                </div>
+                            </template>
+
+                            <template #description>
+                                <div class="flex flex-col gap-1 truncate">
+                                    <span>
+                                        {{ colleague.jobGradeLabel }}
+                                        <template v-if="colleague.job !== game.unemployedJobName">
+                                            ({{ colleague.jobGrade }})
+                                        </template>
+                                    </span>
+
+                                    <div>
+                                        <PhoneNumberBlock :number="colleague.phoneNumber" />
+                                    </div>
+
+                                    <span class="inline-flex items-center gap-1">
+                                        <UIcon class="h-5 w-5 shrink-0" name="i-mdi-birthday-cake" />
+
+                                        <span>{{ colleague.dateofbirth }}</span>
+                                    </span>
+
+                                    <span class="flex items-center gap-1">
+                                        <UIcon class="h-5 w-5 shrink-0" name="i-mdi-email" />
+
+                                        <EmailInfoPopover :email="colleague.email" variant="link" :trailing="false" />
+                                    </span>
+
+                                    <div
+                                        v-if="attr('jobs.JobsService/GetColleague', 'Types', 'Labels').value"
+                                        class="flex flex-row gap-1"
+                                    >
+                                        <UIcon class="h-5 w-5 shrink-0" name="i-mdi-tag" />
+
+                                        <span v-if="!colleague.props?.labels?.list.length">
+                                            {{ $t('common.none', [$t('common.label', 2)]) }}
+                                        </span>
+                                        <div v-else class="flex max-w-full flex-row flex-wrap gap-1">
+                                            <UButton
+                                                v-for="label in colleague.props?.labels?.list"
+                                                :key="label.name"
+                                                class="justify-between gap-2"
+                                                :class="
+                                                    isColorBright(hexToRgb(label.color, RGBBlack)!)
+                                                        ? 'text-black!'
+                                                        : 'text-white!'
+                                                "
+                                                :style="{ backgroundColor: label.color }"
+                                                size="xs"
+                                                @click="toggleLabelInSearch(label)"
+                                            >
+                                                <span class="truncate">
+                                                    {{ label.name }}
+                                                </span>
+                                            </UButton>
+                                        </div>
+                                    </div>
+
+                                    <span
+                                        v-if="colleague.props?.absenceEnd && isFuture(toDate(colleague.props?.absenceEnd))"
+                                        class="inline-flex items-center gap-1"
+                                    >
+                                        <UIcon class="size-5" name="i-mdi-island" />
+                                        <GenericTime :value="colleague.props?.absenceBegin" type="shortDate" />
+                                        <span>{{ $t('common.to') }}</span>
+                                        <GenericTime :value="colleague.props?.absenceEnd" type="date" />
+                                    </span>
+                                </div>
+                            </template>
+
+                            <template
+                                v-if="
+                                    (canDo.setJobsUserProps &&
+                                        (colleague.userId === activeChar!.userId ||
+                                            attr('jobs.JobsService/SetColleagueProps', 'Types', 'AbsenceDate').value) &&
+                                        checkIfCanAccessColleague(colleague, 'jobs.JobsService/SetColleagueProps')) ||
+                                    (canDo.getColleague &&
+                                        checkIfCanAccessColleague(colleague, 'jobs.JobsService/GetColleague'))
+                                "
+                                #footer
+                            >
+                                <UButtonGroup class="inline-flex w-full">
+                                    <UTooltip
+                                        v-if="
+                                            canDo.setJobsUserProps &&
+                                            (colleague.userId === activeChar!.userId ||
+                                                attr('jobs.JobsService/SetColleagueProps', 'Types', 'AbsenceDate').value) &&
+                                            checkIfCanAccessColleague(colleague, 'jobs.JobsService/SetColleagueProps')
+                                        "
+                                        class="flex-1"
+                                        :text="$t('components.jobs.self_service.set_absence_date')"
+                                    >
+                                        <UButton
+                                            :label="$t('components.jobs.self_service.set_absence_date')"
+                                            icon="i-mdi-island"
+                                            block
+                                            truncate
+                                            @click="
+                                                selfServicePropsAbsenceDateModal.open({
+                                                    userId: colleague.userId,
+                                                    'onUpdate:absenceDates': ($event) => updateAbsenceDates($event),
+                                                })
+                                            "
+                                        />
+                                    </UTooltip>
+
+                                    <UTooltip
+                                        v-if="
+                                            canDo.getColleague &&
+                                            checkIfCanAccessColleague(colleague, 'jobs.JobsService/GetColleague')
+                                        "
+                                        class="flex-1"
+                                        :text="$t('common.show')"
+                                    >
+                                        <UButton
+                                            :label="$t('common.show')"
+                                            icon="i-mdi-eye"
+                                            block
+                                            truncate
+                                            :to="{
+                                                name: 'jobs-colleagues-id-info',
+                                                params: { id: colleague.userId ?? 0 },
+                                            }"
+                                        />
+                                    </UTooltip>
+                                </UButtonGroup>
+                            </template>
+                        </UPageCard>
+                    </UPageGrid>
                 </div>
             </template>
 
-            <template #absence-cell="{ row }">
-                <dl
-                    v-if="row.original.props?.absenceEnd && isFuture(toDate(row.original.props?.absenceEnd))"
-                    class="font-normal"
-                >
-                    <dd class="truncate">
-                        {{ $t('common.from') }}:
-                        <GenericTime :value="row.original.props?.absenceBegin" type="date" />
-                    </dd>
-                    <dd class="truncate">
-                        {{ $t('common.to') }}: <GenericTime :value="row.original.props?.absenceEnd" type="date" />
-                    </dd>
-                </dl>
-            </template>
-        </UTable>
-
-        <div v-else class="relative flex-1 overflow-x-auto">
-            <UPageGrid
-                :ui="{
-                    wrapper: 'grid grid-cols-1 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6',
-                }"
-            >
-                <UPageCard v-for="colleague in data?.colleagues" :key="colleague.userId">
-                    <template #title>
-                        <ColleagueName :colleague="colleague" />
-                    </template>
-
-                    <template #header>
-                        <div class="flex items-center justify-center overflow-hidden">
-                            <ProfilePictureImg
-                                :src="colleague?.profilePicture"
-                                :name="`${colleague.firstname} ${colleague.lastname}`"
-                                size="3xl"
-                                :enable-popup="true"
-                                :alt="$t('common.profile_picture')"
-                                :rounded="false"
-                            />
-                        </div>
-                    </template>
-
-                    <template #description>
-                        <div class="flex flex-col gap-1 truncate">
-                            <span>
-                                {{ colleague.jobGradeLabel }}
-                                <template v-if="colleague.job !== game.unemployedJobName">
-                                    ({{ colleague.jobGrade }})
-                                </template>
-                            </span>
-
-                            <div>
-                                <PhoneNumberBlock :number="colleague.phoneNumber" />
-                            </div>
-
-                            <span class="inline-flex items-center gap-1">
-                                <UIcon class="h-5 w-5 shrink-0" name="i-mdi-birthday-cake" />
-
-                                <span>{{ colleague.dateofbirth }}</span>
-                            </span>
-
-                            <span class="flex items-center gap-1">
-                                <UIcon class="h-5 w-5 shrink-0" name="i-mdi-email" />
-
-                                <EmailInfoPopover :email="colleague.email" variant="link" :trailing="false" />
-                            </span>
-
-                            <div
-                                v-if="attr('jobs.JobsService/GetColleague', 'Types', 'Labels').value"
-                                class="flex flex-row gap-1"
-                            >
-                                <UIcon class="h-5 w-5 shrink-0" name="i-mdi-tag" />
-
-                                <span v-if="!colleague.props?.labels?.list.length">
-                                    {{ $t('common.none', [$t('common.label', 2)]) }}
-                                </span>
-                                <div v-else class="flex max-w-full flex-row flex-wrap gap-1">
-                                    <UButton
-                                        v-for="label in colleague.props?.labels?.list"
-                                        :key="label.name"
-                                        class="justify-between gap-2"
-                                        :class="isColorBright(hexToRgb(label.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
-                                        :style="{ backgroundColor: label.color }"
-                                        size="xs"
-                                        @click="toggleLabelInSearch(label)"
-                                    >
-                                        <span class="truncate">
-                                            {{ label.name }}
-                                        </span>
-                                    </UButton>
-                                </div>
-                            </div>
-
-                            <span
-                                v-if="colleague.props?.absenceEnd && isFuture(toDate(colleague.props?.absenceEnd))"
-                                class="inline-flex items-center gap-1"
-                            >
-                                <UIcon class="size-5" name="i-mdi-island" />
-                                <GenericTime :value="colleague.props?.absenceBegin" type="shortDate" />
-                                <span>{{ $t('common.to') }}</span>
-                                <GenericTime :value="colleague.props?.absenceEnd" type="date" />
-                            </span>
-                        </div>
-                    </template>
-
-                    <template
-                        v-if="
-                            (canDo.setJobsUserProps &&
-                                (colleague.userId === activeChar!.userId ||
-                                    attr('jobs.JobsService/SetColleagueProps', 'Types', 'AbsenceDate').value) &&
-                                checkIfCanAccessColleague(colleague, 'jobs.JobsService/SetColleagueProps')) ||
-                            (canDo.getColleague && checkIfCanAccessColleague(colleague, 'jobs.JobsService/GetColleague'))
-                        "
-                        #footer
-                    >
-                        <UButtonGroup class="inline-flex w-full">
-                            <UTooltip
-                                v-if="
-                                    canDo.setJobsUserProps &&
-                                    (colleague.userId === activeChar!.userId ||
-                                        attr('jobs.JobsService/SetColleagueProps', 'Types', 'AbsenceDate').value) &&
-                                    checkIfCanAccessColleague(colleague, 'jobs.JobsService/SetColleagueProps')
-                                "
-                                class="flex-1"
-                                :text="$t('components.jobs.self_service.set_absence_date')"
-                            >
-                                <UButton
-                                    :label="$t('components.jobs.self_service.set_absence_date')"
-                                    icon="i-mdi-island"
-                                    block
-                                    truncate
-                                    @click="
-                                        selfServicePropsAbsenceDateModal.open({
-                                            userId: colleague.userId,
-                                            'onUpdate:absenceDates': ($event) => updateAbsenceDates($event),
-                                        })
-                                    "
-                                />
-                            </UTooltip>
-
-                            <UTooltip
-                                v-if="
-                                    canDo.getColleague && checkIfCanAccessColleague(colleague, 'jobs.JobsService/GetColleague')
-                                "
-                                class="flex-1"
-                                :text="$t('common.show')"
-                            >
-                                <UButton
-                                    :label="$t('common.show')"
-                                    icon="i-mdi-eye"
-                                    block
-                                    truncate
-                                    :to="{
-                                        name: 'jobs-colleagues-id-info',
-                                        params: { id: colleague.userId ?? 0 },
-                                    }"
-                                />
-                            </UTooltip>
-                        </UButtonGroup>
-                    </template>
-                </UPageCard>
-            </UPageGrid>
-        </div>
-    </template>
-
-    <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+            <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+        </template>
+    </UDashboardPanel>
 </template>

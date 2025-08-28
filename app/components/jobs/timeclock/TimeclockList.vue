@@ -350,7 +350,7 @@ const { game } = useAppConfig();
                                         :search-input="{
                                             placeholder: $t('common.search_field'),
                                         }"
-                                        :search-attributes="['firstname', 'lastname']"
+                                        :filter-fields="['firstname', 'lastname']"
                                         :placeholder="$t('common.colleague', 2)"
                                         ignore-filter
                                         leading-icon="i-mdi-search"

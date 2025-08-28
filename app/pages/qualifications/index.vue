@@ -53,22 +53,24 @@ const qualifications = await useQualifications();
 
 <template>
     <UDashboardPanel>
-        <UDashboardNavbar :title="$t('pages.qualifications.title')">
-            <template #right>
-                <UTooltip
-                    v-if="can('qualifications.QualificationsService/UpdateQualification').value"
-                    :text="$t('common.create')"
-                >
-                    <UButton trailing-icon="i-mdi-plus" color="neutral" @click="qualifications.createQualification()">
-                        <span class="hidden truncate sm:block">
-                            {{ $t('common.qualification', 1) }}
-                        </span>
-                    </UButton>
-                </UTooltip>
-            </template>
-        </UDashboardNavbar>
+        <template #header>
+            <UDashboardNavbar :title="$t('pages.qualifications.title')">
+                <template #right>
+                    <UTooltip
+                        v-if="can('qualifications.QualificationsService/UpdateQualification').value"
+                        :text="$t('common.create')"
+                    >
+                        <UButton trailing-icon="i-mdi-plus" color="neutral" @click="qualifications.createQualification()">
+                            <span class="hidden truncate sm:block">
+                                {{ $t('common.qualification', 1) }}
+                            </span>
+                        </UButton>
+                    </UTooltip>
+                </template>
+            </UDashboardNavbar>
+        </template>
 
-        <UDashboardPanelContent class="p-0 sm:pb-0">
+        <template #body>
             <UTabs v-model="selectedTab" :items="items" :unmount="true">
                 <template #yours>
                     <UContainer>
@@ -85,6 +87,6 @@ const qualifications = await useQualifications();
                     </UContainer>
                 </template>
             </UTabs>
-        </UDashboardPanelContent>
+        </template>
     </UDashboardPanel>
 </template>

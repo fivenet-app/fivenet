@@ -32,16 +32,19 @@ const jobsJobsClient = await getJobsJobsClient();
 
 const usersLoading = ref(false);
 
-const typesAttrs = (
-    isSuperuser.value
+const typesAttrs = computed(() =>
+    (isSuperuser.value
         ? listEnumValues(ColleagueActivityType)
               .filter((t) => t.number !== 0)
               .map((t) => t.name)
         : attrStringList('jobs.JobsService/ListColleagueActivity', 'Types').value
-).map((t) => t.toUpperCase());
-const activityTypes = Object.keys(ColleagueActivityType)
-    .filter((aType) => typesAttrs.includes(aType))
-    .map((aType) => ColleagueActivityType[aType as keyof typeof ColleagueActivityType]);
+    ).map((t) => t.toUpperCase()),
+);
+const activityTypes = computed(() =>
+    Object.keys(ColleagueActivityType)
+        .filter((aType) => typesAttrs.value.includes(aType))
+        .map((aType) => ColleagueActivityType[aType as keyof typeof ColleagueActivityType]),
+);
 
 const schema = z.object({
     colleagues: z.coerce
@@ -49,7 +52,7 @@ const schema = z.object({
         .array()
         .max(10)
         .default(props.userId ? [props.userId] : []),
-    types: z.nativeEnum(ColleagueActivityType).array().max(typesAttrs.length).default(activityTypes),
+    types: z.nativeEnum(ColleagueActivityType).array().max(typesAttrs.value.length).default(activityTypes.value),
     sorting: z
         .object({
             columns: z
@@ -129,7 +132,7 @@ watch(props, async () => refresh());
                             }
                         "
                         :search-input="{ placeholder: $t('common.search_field') }"
-                        :search-attributes="['firstname', 'lastname']"
+                        :filter-fields="['firstname', 'lastname']"
                         :placeholder="$t('common.colleague', 2)"
                         leading-icon="i-mdi-search"
                         value-key="userId"
@@ -141,7 +144,7 @@ watch(props, async () => refresh());
                         </template>
 
                         <template #item="{ item }">
-                            <ColleagueName :colleague="item" birthday />
+                            <ColleagueName v-if="item" :colleague="item" birthday />
                         </template>
 
                         <template #empty> {{ $t('common.not_found', [$t('common.colleague', 2)]) }} </template>

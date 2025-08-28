@@ -220,7 +220,7 @@ defineShortcuts({
             </UDashboardNavbar>
 
             <UDashboardToolbar>
-                <UForm class="w-full" :schema="schema" :state="query" @submit="refresh()">
+                <UForm class="mt-2 w-full" :schema="schema" :state="query" @submit="refresh()">
                     <div class="flex flex-1 flex-row gap-2">
                         <UFormField class="flex-1" name="title" :label="$t('common.search')">
                             <UInput
@@ -231,7 +231,6 @@ defineShortcuts({
                                 :placeholder="$t('common.title')"
                                 class="w-full"
                                 leading-icon="i-mdi-search"
-                                @keydown.esc="$event.target.blur()"
                             >
                                 <template #trailing>
                                     <UKbd value="/" />
@@ -353,7 +352,7 @@ defineShortcuts({
                                                 }
                                             "
                                             :search-input="{ placeholder: $t('common.search_field') }"
-                                            :search-attributes="['firstname', 'lastname']"
+                                            :filter-fields="['firstname', 'lastname']"
                                             :placeholder="$t('common.creator')"
                                             trailing
                                             value-key="userId"

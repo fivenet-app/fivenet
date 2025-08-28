@@ -148,7 +148,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                 v-model="state.job"
                                 :items="availableJobs"
                                 :search-input="{ placeholder: $t('common.search_field') }"
-                                :search-attributes="['label', 'name']"
+                                :filter-fields="['label', 'name']"
                             >
                                 <template #item-label>
                                     <template v-if="state.job">

@@ -13,7 +13,6 @@ const w = window;
         icon="i-mdi-info-circle"
         variant="subtle"
         color="warning"
-        :ui="{ inner: 'w-auto m-w-0' }"
         :actions="
             !hideButton
                 ? [

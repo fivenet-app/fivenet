@@ -340,7 +340,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UDashboardPanel>
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.settings.settings.title')">
                 <template #right>
@@ -361,13 +361,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
         <template #body>
             <StreamerModeAlert v-if="streamerMode" />
-            <UForm
-                v-else
-                class="flex min-h-dvh w-full max-w-full flex-1 flex-col overflow-y-auto"
-                :schema="schema"
-                :state="state"
-                @submit="onSubmitThrottle"
-            >
+            <UForm v-else :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <div v-if="isRequestPending(status)" class="space-y-1 px-4">
                     <USkeleton class="mb-6 h-11 w-full" />
                     <USkeleton v-for="idx in 5" :key="idx" class="h-20 w-full" />
@@ -385,7 +379,15 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     :retry="refresh"
                 />
 
-                <UTabs v-else v-model="selectedTab" class="flex flex-1 flex-col" :items="items" variant="link" :unmount="false">
+                <UTabs
+                    v-else
+                    v-model="selectedTab"
+                    class="flex flex-1 flex-col"
+                    :items="items"
+                    variant="link"
+                    :unmount-on-hide="false"
+                    :ui="{ content: 'p-4' }"
+                >
                     <template #auth>
                         <UPageCard
                             :title="$t('components.settings.app_config.auth.title')"
@@ -600,7 +602,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :items="jobs ?? []"
                                         value-key="name"
                                         :search-input="{ placeholder: $t('common.search_field') }"
-                                        :search-attributes="['label', 'name']"
+                                        :filter-fields="['label', 'name']"
                                     >
                                         <template #item-label>
                                             <template v-if="state.jobInfo.publicJobs.length">
@@ -633,7 +635,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :items="jobs ?? []"
                                         value-key="name"
                                         :search-input="{ placeholder: $t('common.search_field') }"
-                                        :search-attributes="['label', 'name']"
+                                        :filter-fields="['label', 'name']"
                                     >
                                         <template #item-label>
                                             <template v-if="state.jobInfo.hiddenJobs.length">
@@ -773,7 +775,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :items="jobs ?? []"
                                         value-key="name"
                                         :search-input="{ placeholder: $t('common.search_field') }"
-                                        :search-attributes="['label', 'name']"
+                                        :filter-fields="['label', 'name']"
                                     >
                                         <template #item-label>
                                             <template v-if="state.discord.ignoredJobs.length > 0">

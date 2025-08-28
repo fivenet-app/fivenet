@@ -148,7 +148,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :items="emails"
                                         :placeholder="$t('common.mail')"
                                         :search-input="{ placeholder: $t('common.search_field') }"
-                                        :search-attributes="['label', 'email']"
+                                        :filter-fields="['label', 'email']"
                                         trailing
                                     >
                                         <template #item-label>

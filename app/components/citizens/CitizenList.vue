@@ -298,7 +298,6 @@ defineShortcuts({
                                 :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
                                 class="w-full"
                                 leading-icon="i-mdi-search"
-                                @keydown.esc="$event.target.blur()"
                             >
                                 <template #trailing>
                                     <UKbd value="/" />

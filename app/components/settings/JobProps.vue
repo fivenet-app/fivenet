@@ -301,6 +301,8 @@ const selectedTab = computed({
 
 const selectedChange = ref<DiscordSyncChange | undefined>();
 
+const formRef = useTemplateRef('formRef');
+
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     if (event.submitter?.getAttribute('role') === 'tab') {
@@ -313,62 +315,47 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <template v-if="streamerMode">
-        <UDashboardNavbar :title="$t('pages.settings.settings.title')">
-            <template #right>
-                <PartialsBackButton fallback-to="/settings" />
-            </template>
-        </UDashboardNavbar>
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0' }">
+        <template #header>
+            <UDashboardNavbar :title="$t('components.settings.job_props.job_properties')">
+                <template #right>
+                    <PartialsBackButton fallback-to="/settings" />
 
-        <UDashboardPanelContent>
-            <StreamerModeAlert />
-        </UDashboardPanelContent>
-    </template>
-    <UForm
-        v-else
-        class="flex min-h-dvh w-full max-w-full flex-1 flex-col overflow-y-auto"
-        :schema="schema"
-        :state="state"
-        @submit="onSubmitThrottle"
-    >
-        <UDashboardNavbar :title="$t('components.settings.job_props.job_properties')">
-            <template #right>
-                <PartialsBackButton fallback-to="/settings" />
+                    <UButton
+                        v-if="!!jobProps && canEdit"
+                        trailing-icon="i-mdi-content-save"
+                        :disabled="!canSubmit"
+                        :loading="!canSubmit"
+                        :label="$t('common.save', 1)"
+                        @click="() => formRef?.submit()"
+                    />
+                </template>
+            </UDashboardNavbar>
+        </template>
 
-                <UButton
-                    v-if="!!jobProps && canEdit"
-                    type="submit"
-                    trailing-icon="i-mdi-content-save"
-                    :disabled="!canSubmit"
-                    :loading="!canSubmit"
-                >
-                    {{ $t('common.save', 1) }}
-                </UButton>
-            </template>
-        </UDashboardNavbar>
+        <template #body>
+            <StreamerModeAlert v-if="streamerMode" />
+            <UForm v-else ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <DataErrorBlock
+                    v-if="error"
+                    :title="$t('common.unable_to_load', [$t('components.settings.job_props.job_properties')])"
+                    :error="error"
+                    :retry="refresh"
+                />
+                <DataNoDataBlock
+                    v-else-if="!jobProps"
+                    icon="i-mdi-tune"
+                    :type="$t('components.settings.job_props.job_properties')"
+                    :retry="refresh"
+                />
 
-        <UDashboardPanelContent class="p-0 sm:pb-0">
-            <DataErrorBlock
-                v-if="error"
-                :title="$t('common.unable_to_load', [$t('components.settings.job_props.job_properties')])"
-                :error="error"
-                :retry="refresh"
-            />
-            <DataNoDataBlock
-                v-else-if="!jobProps"
-                icon="i-mdi-tune"
-                :type="$t('components.settings.job_props.job_properties')"
-                :retry="refresh"
-            />
+                <template v-else-if="isRequestPending(status) || jobProps">
+                    <UTabs v-model="selectedTab" class="w-full" :items="items" variant="link" :ui="{ content: 'p-4' }">
+                        <template #jobprops>
+                            <div v-if="isRequestPending(status)" class="space-y-1 px-4">
+                                <USkeleton v-for="idx in 5" :key="idx" class="h-20 w-full" />
+                            </div>
 
-            <template v-else-if="isRequestPending(status) || jobProps">
-                <UTabs v-model="selectedTab" class="w-full" :items="items" variant="link">
-                    <template #jobprops>
-                        <div v-if="isRequestPending(status)" class="space-y-1 px-4">
-                            <USkeleton v-for="idx in 5" :key="idx" class="h-20 w-full" />
-                        </div>
-
-                        <UDashboardPanelContent v-else>
                             <UPageCard
                                 :title="$t('components.settings.job_props.job_properties')"
                                 :description="$t('components.settings.job_props.your_job_properties')"
@@ -485,16 +472,15 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     />'
                                 </UFormField>
                             </UPageCard>
-                        </UDashboardPanelContent>
-                    </template>
+                        </template>
 
-                    <template v-if="appConfig.discord.botEnabled" #discord>
-                        <div v-if="isRequestPending(status)" class="space-y-1 px-4">
-                            <USkeleton v-for="idx in 10" :key="idx" class="h-20 w-full" />
-                        </div>
+                        <template v-if="appConfig.discord.botEnabled" #discord>
+                            <div v-if="isRequestPending(status)" class="space-y-1 px-4">
+                                <USkeleton v-for="idx in 10" :key="idx" class="h-20 w-full" />
+                            </div>
 
-                        <UDashboardPanelContent v-else-if="jobProps.discordSyncSettings">
                             <UPageCard
+                                v-else-if="jobProps.discordSyncSettings"
                                 :title="$t('components.settings.job_props.discord_sync_settings.title')"
                                 :description="$t('components.settings.job_props.discord_sync_settings.subtitle')"
                             >
@@ -527,11 +513,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             icon="i-mdi-connection"
                                             :label="$t('common.connect')"
                                             @click="
-                                                async () =>
+                                                async () => {
                                                     await navigateTo(
                                                         generateDiscordConnectURL('discord', '/settings/props?tab=discord#'),
                                                         { external: true },
-                                                    )
+                                                    );
+                                                }
                                             "
                                         />
 
@@ -541,7 +528,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         v-else
                                         v-model="state.discordGuildId"
                                         :items="userGuilds"
-                                        :search-attributes="['name', 'id']"
+                                        :filter-fields="['name', 'id']"
                                         :placeholder="
                                             $t('components.settings.job_props.discord_sync_settings.discord_guild_id')
                                         "
@@ -1198,12 +1185,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     />
                                 </UFormField>
                             </UPageCard>
-                        </UDashboardPanelContent>
-                    </template>
-                </UTabs>
-            </template>
-        </UDashboardPanelContent>
-    </UForm>
+                        </template>
+                    </UTabs>
+                </template>
+            </UForm>
+        </template>
+    </UDashboardPanel>
 </template>
 
 <style scoped>

@@ -39,7 +39,7 @@ watch(selectedJob, async () => {
         <UInputMenu
             v-model="selectedJob"
             class="relative"
-            :search-attributes="['name', 'label']"
+            :filter-fields="['name', 'label']"
             :items="jobs"
             :placeholder="$t('common.job', 1)"
             :search="

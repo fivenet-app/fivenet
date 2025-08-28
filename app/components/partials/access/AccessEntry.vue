@@ -186,7 +186,7 @@ if (props.hideGrade) {
                                 return users;
                             }
                         "
-                        :search-attributes="['firstname', 'lastname']"
+                        :filter-fields="['firstname', 'lastname']"
                         :search-input="{ placeholder: $t('common.search_field') }"
                         :placeholder="$t('common.citizen', 1)"
                     >
@@ -223,7 +223,7 @@ if (props.hideGrade) {
                                 return response?.qualifications ?? [];
                             }
                         "
-                        :search-attributes="['abbreviation', 'title']"
+                        :filter-fields="['abbreviation', 'title']"
                         :search-input="{ placeholder: $t('common.search_field') }"
                         :placeholder="$t('common.qualification', 1)"
                     >
@@ -252,7 +252,7 @@ if (props.hideGrade) {
                         v-model="entry.job"
                         class="flex-1"
                         :disabled="disabled"
-                        :search-attributes="['name', 'label']"
+                        :filter-fields="['name', 'label']"
                         value-key="name"
                         :items="jobs?.filter((j) => hideJobs.length === 0 || !hideJobs.includes(j.name)) ?? []"
                         :placeholder="$t('common.job')"
@@ -271,7 +271,7 @@ if (props.hideGrade) {
                             jobs.find((j) => j.name === entry.job)?.grades.find((g) => g.grade === entry.minimumGrade)
                         "
                         :disabled="disabled || !entry.job"
-                        :search-attributes="['name', 'label']"
+                        :filter-fields="['name', 'label']"
                         :items="jobs.find((j) => j.name === entry.job)?.grades ?? []"
                         :placeholder="$t('common.rank')"
                         :search-input="{ placeholder: $t('common.search_field') }"

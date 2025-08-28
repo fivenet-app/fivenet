@@ -250,7 +250,7 @@ defineShortcuts({
                                     return response.users;
                                 }
                             "
-                            :search-attributes="['firstname', 'lastname']"
+                            :filter-fields="['firstname', 'lastname']"
                             block
                             :placeholder="$t('common.owner')"
                             trailing

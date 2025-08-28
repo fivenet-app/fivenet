@@ -11,16 +11,12 @@ withDefaults(
 </script>
 
 <template>
-    <UButton
-        class="border-base-300 hover:border-base-400 my-2 inline-flex w-full flex-col items-center gap-2 rounded-lg border border-dotted p-6 text-center"
-        disabled
+    <UAlert
+        class="my-2"
+        :title="message"
+        variant="subtle"
         block
-    >
-        <UIcon v-if="paused" class="mx-auto size-12" name="i-mdi-pause" />
-        <UIcon v-else class="mx-auto size-12 animate-spin" name="i-mdi-refresh" />
-
-        <span class="block text-sm font-semibold">
-            {{ message }}
-        </span>
-    </UButton>
+        :icon="paused ? 'i-mdi-pause' : 'i-mdi-refresh'"
+        :ui="{ icon: paused ? '' : 'animate-spin' }"
+    />
 </template>

@@ -53,54 +53,62 @@ function categorySelected(idx: number): void {
 </script>
 
 <template>
-    <UDashboardNavbar :title="$t('pages.documents.categories.title')">
-        <template #right>
-            <PartialsBackButton fallback-to="/documents" />
+    <UDashboardPanel>
+        <template #header>
+            <UDashboardNavbar :title="$t('pages.documents.categories.title')">
+                <template #right>
+                    <PartialsBackButton fallback-to="/documents" />
 
-            <UTooltip v-if="can('documents.DocumentsService/CreateOrUpdateCategory').value" :text="$t('common.create')">
-                <UButton
-                    color="neutral"
-                    trailing-icon="i-mdi-plus"
-                    @click="
-                        categoryCreateOrUpdateModal.open({
-                            onUpdate: () => refresh(),
-                        })
-                    "
-                >
-                    <span class="hidden truncate sm:block">
-                        {{ $t('common.category', 1) }}
-                    </span>
-                </UButton>
-            </UTooltip>
+                    <UTooltip v-if="can('documents.DocumentsService/CreateOrUpdateCategory').value" :text="$t('common.create')">
+                        <UButton
+                            color="neutral"
+                            trailing-icon="i-mdi-plus"
+                            @click="
+                                categoryCreateOrUpdateModal.open({
+                                    onUpdate: () => refresh(),
+                                })
+                            "
+                        >
+                            <span class="hidden truncate sm:block">
+                                {{ $t('common.category', 1) }}
+                            </span>
+                        </UButton>
+                    </UTooltip>
+                </template>
+            </UDashboardNavbar>
         </template>
-    </UDashboardNavbar>
 
-    <UDashboardPanelContent>
-        <div v-if="isRequestPending(status)" class="flex justify-center">
-            <UPageGrid>
-                <UPageCard v-for="idx in 6" :key="idx">
-                    <template #title>
-                        <USkeleton class="h-6 w-[275px]" />
-                    </template>
+        <template #body>
+            <div v-if="isRequestPending(status)" class="flex justify-center">
+                <UPageGrid>
+                    <UPageCard v-for="idx in 6" :key="idx">
+                        <template #title>
+                            <USkeleton class="h-6 w-[275px]" />
+                        </template>
 
-                    <template #description>
-                        <USkeleton class="h-11 w-[350px]" />
-                    </template>
-                </UPageCard>
-            </UPageGrid>
-        </div>
-        <DataErrorBlock
-            v-else-if="error"
-            :title="$t('common.unable_to_load', [$t('common.category', 2)])"
-            :error="error"
-            :retry="refresh"
-        />
-        <DataNoDataBlock v-else-if="!categories || categories.length === 0" icon="i-mdi-tag" :type="$t('common.category', 2)" />
+                        <template #description>
+                            <USkeleton class="h-11 w-[350px]" />
+                        </template>
+                    </UPageCard>
+                </UPageGrid>
+            </div>
+            <DataErrorBlock
+                v-else-if="error"
+                :title="$t('common.unable_to_load', [$t('common.category', 2)])"
+                :error="error"
+                :retry="refresh"
+            />
+            <DataNoDataBlock
+                v-else-if="!categories || categories.length === 0"
+                icon="i-mdi-tag"
+                :type="$t('common.category', 2)"
+            />
 
-        <div v-else class="flex justify-center">
-            <CardsList :items="items" @selected="categorySelected($event)" />
-        </div>
-    </UDashboardPanelContent>
+            <div v-else class="flex justify-center">
+                <CardsList :items="items" @selected="categorySelected($event)" />
+            </div>
 
-    <Pagination :status="status" :refresh="refresh" hide-buttons hide-text />
+            <Pagination :status="status" :refresh="refresh" hide-buttons hide-text />
+        </template>
+    </UDashboardPanel>
 </template>

@@ -461,30 +461,32 @@ const showPreview = ref(false);
 
 <template>
     <UDashboardPanel>
-        <!-- Top Toolbar -->
-        <UDashboardNavbar title="Layout Editor">
-            <template #left>
-                <div class="mx-auto flex items-center gap-2 px-4 py-2">
-                    <UButton icon="i-heroicons-arrow-uturn-left" variant="ghost" :disabled="!canUndo" @click="undo" />
-                    <UButton icon="i-heroicons-arrow-uturn-right" variant="ghost" :disabled="!canRedo" @click="redo" />
-                    <USeparator orientation="vertical" class="mx-1" />
-                    <USelect v-model="page.size" :items="pageSizeOptions" class="w-44" />
-                    <UButton size="sm" variant="ghost" @click="zoomOut">-</UButton>
-                    <div class="w-12 text-center text-sm tabular-nums">{{ Math.round(zoom * 100) }}%</div>
-                    <UButton size="sm" variant="ghost" @click="zoomIn">+</UButton>
-                    <USeparator orientation="vertical" class="mx-1" />
-                    <USwitch v-model="snap" label="Snap" />
-                    <USelect v-model="gridStepMm" :items="gridStepOptions" class="w-24" />
-                </div>
-            </template>
+        <template #header>
+            <!-- Top Toolbar -->
+            <UDashboardNavbar title="Layout Editor">
+                <template #left>
+                    <div class="mx-auto flex items-center gap-2 px-4 py-2">
+                        <UButton icon="i-heroicons-arrow-uturn-left" variant="ghost" :disabled="!canUndo" @click="undo" />
+                        <UButton icon="i-heroicons-arrow-uturn-right" variant="ghost" :disabled="!canRedo" @click="redo" />
+                        <USeparator orientation="vertical" class="mx-1" />
+                        <USelect v-model="page.size" :items="pageSizeOptions" class="w-44" />
+                        <UButton size="sm" variant="ghost" @click="zoomOut">-</UButton>
+                        <div class="w-12 text-center text-sm tabular-nums">{{ Math.round(zoom * 100) }}%</div>
+                        <UButton size="sm" variant="ghost" @click="zoomIn">+</UButton>
+                        <USeparator orientation="vertical" class="mx-1" />
+                        <USwitch v-model="snap" label="Snap" />
+                        <USelect v-model="gridStepMm" :items="gridStepOptions" class="w-24" />
+                    </div>
+                </template>
 
-            <template #right>
-                <UButton icon="i-heroicons-eye" @click="showPreview = true">Preview</UButton>
-                <UButton color="primary" icon="i-heroicons-cloud-arrow-up" @click="publish">Publish</UButton>
-            </template>
-        </UDashboardNavbar>
+                <template #right>
+                    <UButton icon="i-heroicons-eye" @click="showPreview = true">Preview</UButton>
+                    <UButton color="primary" icon="i-heroicons-cloud-arrow-up" @click="publish">Publish</UButton>
+                </template>
+            </UDashboardNavbar>
+        </template>
 
-        <UDashboardPanelContent>
+        <template #body>
             <div class="grid grid-cols-8">
                 <!-- Left Sidebar -->
                 <div class="col-span-2 space-y-3 overflow-auto p-3">
@@ -756,7 +758,7 @@ const showPreview = ref(false);
                     </UCard>
                 </div>
             </div>
-        </UDashboardPanelContent>
+        </template>
     </UDashboardPanel>
 
     <!-- Preview Modal -->
