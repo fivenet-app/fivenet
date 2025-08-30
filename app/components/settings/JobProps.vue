@@ -17,6 +17,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import FileUpload from '../partials/elements/FileUpload.vue';
 import FormatBuilder from '../partials/FormatBuilder.vue';
 import NotSupportedTabletBlock from '../partials/NotSupportedTabletBlock.vue';
+import SelectMenu from '../partials/SelectMenu.vue';
 
 const { t } = useI18n();
 
@@ -315,7 +316,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0' }">
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('components.settings.job_props.job_properties')">
                 <template #right>
@@ -589,7 +590,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     "
                                     :ui="{ container: '' }"
                                 >
-                                    <USelectMenu
+                                    <SelectMenu
                                         v-model="state.discordSyncSettings.statusLogSettings!.channelId"
                                         name="discordSyncSettings.statusLogSettings.channelId"
                                         :disabled="
@@ -598,7 +599,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             !canSubmit ||
                                             !canEdit
                                         "
-                                        :searchable="searchChannels"
+                                        :searchable="
+                                            () =>
+                                                searchChannels().then((channels) =>
+                                                    channels.map((c) => ({ id: c.id, type: 'item', item: c })),
+                                                )
+                                        "
                                         :filter-fields="['name']"
                                         :search-input="{ placeholder: $t('common.search_field') }"
                                         value-key="id"
@@ -612,7 +618,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         <template #item-label="{ item }">
                                             <span class="truncate">{{
                                                 item
-                                                    ? `${item.name} (${item.id})`
+                                                    ? `${item.item.name} (${item.id})`
                                                     : state.discordSyncSettings.statusLogSettings!.channelId !== ''
                                                       ? state.discordSyncSettings.statusLogSettings!.channelId
                                                       : '&nbsp;'
@@ -620,13 +626,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         </template>
 
                                         <template #item="{ item }">
-                                            <span class="truncate">{{ item.name }} ({{ item.id }})</span>
+                                            <span class="truncate">{{ item.item.name }} ({{ item.id }})</span>
                                         </template>
 
                                         <template #empty>
                                             {{ $t('common.not_found', [$t('common.channel', 1)]) }}
                                         </template>
-                                    </USelectMenu>
+                                    </SelectMenu>
                                 </UFormField>
 
                                 <UAlert
@@ -661,7 +667,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     />
                                 </UFormField>
 
-                                <template v-if="jobProps.discordSyncSettings.userInfoSyncSettings">
+                                <template v-if="jobProps.discordSyncSettings?.userInfoSyncSettings">
                                     <UFormField
                                         class="grid grid-cols-2 items-center gap-2"
                                         name="discordSyncSettings.userInfoSyncSettings.gradeRoleFormat"

@@ -8,7 +8,7 @@ import 'vue-json-pretty/lib/styles.css';
 import type { JSONDataType } from 'vue-json-pretty/types/utils';
 import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DateRangePickerPopoverClient from '~/components/partials/DateRangePickerPopover.client.vue';
+import DateRangePickerClient from '~/components/partials/DateRangePicker.client.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useCompletorStore } from '~/stores/completor';
@@ -19,6 +19,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import type { ViewAuditLogRequest, ViewAuditLogResponse } from '~~/gen/ts/services/settings/settings';
 import { grpcMethods, grpcServices } from '~~/gen/ts/svcs';
 import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
+import SelectMenu from '../partials/SelectMenu.vue';
 import { eventTypeToBadgeColor } from './helpers';
 
 const { d, t } = useI18n();
@@ -69,8 +70,6 @@ const eventTypes = Object.keys(EventType)
         return true;
     });
 const statesOptions = eventTypes.map((eventType) => ({ eventType: eventType }));
-
-const usersLoading = ref(false);
 
 const { data, status, refresh, error } = useLazyAsyncData(
     () =>
@@ -269,7 +268,7 @@ function statesToLabel(states: { eventType: EventType }[]): string {
             <UForm class="w-full" :schema="schema" :state="query" @submit="refresh()">
                 <div class="flex flex-row flex-wrap gap-2">
                     <UFormField class="flex-1" name="date" :label="$t('common.time_range')">
-                        <DateRangePickerPopoverClient
+                        <DateRangePickerClient
                             v-model="query.date"
                             class="flex-1"
                             mode="date"
@@ -284,43 +283,33 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                     </UFormField>
 
                     <UFormField class="flex-1" name="user" :label="$t('common.user')">
-                        <ClientOnly>
-                            <USelectMenu
-                                v-model="query.users"
-                                multiple
-                                :searchable="
-                                    async (q: string) => {
-                                        usersLoading = true;
-                                        const users = await completorStore.completeCitizens({
-                                            search: q,
-                                            userIds: query.users,
-                                        });
-                                        usersLoading = false;
-                                        return users;
-                                    }
-                                "
-                                :search-input="{ placeholder: $t('common.search_field') }"
-                                :filter-fields="['firstname', 'lastname']"
-                                block
-                                :placeholder="$t('common.user', 2)"
-                                trailing
-                                value-key="userId"
-                            >
-                                <template #item-label="{ item }">
-                                    <span v-if="item.length > 0" class="truncate">
-                                        {{ usersToLabel(item) }}
-                                    </span>
-                                </template>
+                        <SelectMenu
+                            v-model="query.users"
+                            multiple
+                            :searchable="
+                                async (q: string) =>
+                                    await completorStore.completeCitizens({
+                                        search: q,
+                                        userIds: query.users,
+                                    })
+                            "
+                            :search-input="{ placeholder: $t('common.search_field') }"
+                            :filter-fields="['firstname', 'lastname']"
+                            block
+                            :placeholder="$t('common.user', 2)"
+                            trailing
+                            value-key="userId"
+                        >
+                            <template #item-label="{ item }">
+                                {{ userToLabel(item) }}
+                            </template>
 
-                                <template #item="{ item }">
-                                    <span class="truncate">
-                                        {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
-                                    </span>
-                                </template>
+                            <template #item="{ item }">
+                                {{ userToLabel(item) }}
+                            </template>
 
-                                <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
-                            </USelectMenu>
-                        </ClientOnly>
+                            <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
+                        </SelectMenu>
                     </UFormField>
 
                     <UFormField class="flex-1" name="data" :label="$t('common.data')">
@@ -403,9 +392,7 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                         value-key="eventType"
                                     >
                                         <template #item-label="{ item }">
-                                            <span v-if="item.length > 0">
-                                                {{ statesToLabel(item) }}
-                                            </span>
+                                            {{ statesToLabel([item]) }}
                                         </template>
 
                                         <template #item="{ item }">

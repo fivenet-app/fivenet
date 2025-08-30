@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
+import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -47,7 +48,6 @@ const availableStatus = [
     { status: ResultStatus.PENDING },
 ];
 
-const usersLoading = ref(false);
 const selectedUser = ref<undefined | UserShort>(undefined);
 
 const schema = z.object({
@@ -112,120 +112,120 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         useTimeoutFn(() => (canSubmit.value = true), 400),
     );
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-        <UCard>
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl leading-6 font-semibold">
-                        {{ $t('components.qualifications.result_modal.title') }}
-                    </h3>
+    <UCard>
+        <template #header>
+            <div class="flex items-center justify-between">
+                <h3 class="text-2xl leading-6 font-semibold">
+                    {{ $t('components.qualifications.result_modal.title') }}
+                </h3>
 
-                    <UButton color="neutral" variant="ghost" icon="i-mdi-window-close" @click="$emit('close')" />
-                </div>
-            </template>
-
-            <div>
-                <slot />
-
-                <template v-if="!viewOnly">
-                    <UFormField v-if="userId === undefined" class="flex-1" name="selectedUser" :label="$t('common.citizen')">
-                        <ClientOnly>
-                            <USelectMenu
-                                v-model="selectedUser"
-                                class="flex-1"
-                                :searchable="
-                                    async (q: string) => {
-                                        usersLoading = true;
-                                        const users = await completorStore.completeCitizens({
-                                            search: q,
-                                            userIds: selectedUser ? [selectedUser.userId] : [],
-                                        });
-                                        usersLoading = false;
-                                        return users;
-                                    }
-                                "
-                                :search-input="{ placeholder: $t('common.search_field') }"
-                                :filter-fields="['firstname', 'lastname']"
-                                :placeholder="$t('common.citizen', 1)"
-                                trailing
-                                leading-icon="i-mdi-user"
-                            >
-                                <template #item-label>
-                                    <template v-if="selectedUser">
-                                        {{ usersToLabel([selectedUser]) }}
-                                    </template>
-                                </template>
-
-                                <template #item="{ item }">
-                                    {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
-                                </template>
-
-                                <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
-                            </USelectMenu>
-                        </ClientOnly>
-                    </UFormField>
-
-                    <UFormField class="flex-1" name="status" :label="$t('common.status')">
-                        <ClientOnly>
-                            <USelectMenu
-                                v-model="state.status"
-                                :items="availableStatus"
-                                value-key="status"
-                                :placeholder="$t('common.status')"
-                                :search-input="{ placeholder: $t('common.search_field') }"
-                            >
-                                <template #item-label>
-                                    <UBadge class="truncate" :color="resultStatusToBadgeColor(state.status)">
-                                        {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[state.status]}`) }}
-                                    </UBadge>
-                                </template>
-
-                                <template #item="{ item }">
-                                    <UBadge class="truncate" :color="resultStatusToBadgeColor(item.status)">
-                                        {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[item.status]}`) }}
-                                    </UBadge>
-                                </template>
-
-                                <template #empty>
-                                    {{ $t('common.not_found', [$t('common.status')]) }}
-                                </template>
-                            </USelectMenu>
-                        </ClientOnly>
-                    </UFormField>
-
-                    <UFormField class="flex-1" name="score" :label="$t('common.score')">
-                        <UInputNumber
-                            v-model="state.score"
-                            name="score"
-                            :min="0"
-                            :max="100"
-                            :step="0.1"
-                            :placeholder="$t('common.score')"
-                            :label="$t('common.score')"
-                            trailing-icon="i-mdi-star-check"
-                        />
-                    </UFormField>
-
-                    <UFormField class="flex-1" name="summary" :label="$t('common.summary')">
-                        <UTextarea v-model="state.summary" name="summary" :rows="3" :placeholder="$t('common.summary')" />
-                    </UFormField>
-                </template>
+                <UButton color="neutral" variant="ghost" icon="i-mdi-window-close" @click="$emit('close')" />
             </div>
+        </template>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" color="neutral" block @click="$emit('close')">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
+        <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <slot />
 
-                    <UButton v-if="!viewOnly" class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                        {{ $t('common.submit') }}
-                    </UButton>
-                </UButtonGroup>
+            <template v-if="!viewOnly">
+                <UFormField v-if="userId === undefined" class="flex-1" name="selectedUser" :label="$t('common.citizen')">
+                    <SelectMenu
+                        v-model="selectedUser"
+                        class="flex-1"
+                        :searchable="
+                            async (q: string) => {
+                                const users = await completorStore.completeCitizens({
+                                    search: q,
+                                    userIds: selectedUser ? [selectedUser.userId] : [],
+                                });
+                                return users;
+                            }
+                        "
+                        :search-input="{ placeholder: $t('common.search_field') }"
+                        :filter-fields="['firstname', 'lastname']"
+                        :placeholder="$t('common.citizen', 1)"
+                        trailing
+                        leading-icon="i-mdi-user"
+                    >
+                        <template #item-label>
+                            <template v-if="selectedUser">
+                                {{ usersToLabel([selectedUser]) }}
+                            </template>
+                        </template>
+
+                        <template #item="{ item }">
+                            {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
+                        </template>
+
+                        <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
+                    </SelectMenu>
+                </UFormField>
+
+                <UFormField class="flex-1" name="status" :label="$t('common.status')">
+                    <ClientOnly>
+                        <USelectMenu
+                            v-model="state.status"
+                            :items="availableStatus"
+                            value-key="status"
+                            :placeholder="$t('common.status')"
+                            :search-input="{ placeholder: $t('common.search_field') }"
+                        >
+                            <template #item-label>
+                                <UBadge class="truncate" :color="resultStatusToBadgeColor(state.status)">
+                                    {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[state.status]}`) }}
+                                </UBadge>
+                            </template>
+
+                            <template #item="{ item }">
+                                <UBadge class="truncate" :color="resultStatusToBadgeColor(item.status)">
+                                    {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[item.status]}`) }}
+                                </UBadge>
+                            </template>
+
+                            <template #empty>
+                                {{ $t('common.not_found', [$t('common.status')]) }}
+                            </template>
+                        </USelectMenu>
+                    </ClientOnly>
+                </UFormField>
+
+                <UFormField class="flex-1" name="score" :label="$t('common.score')">
+                    <UInputNumber
+                        v-model="state.score"
+                        name="score"
+                        :min="0"
+                        :max="100"
+                        :step="0.1"
+                        :placeholder="$t('common.score')"
+                        :label="$t('common.score')"
+                        trailing-icon="i-mdi-star-check"
+                    />
+                </UFormField>
+
+                <UFormField class="flex-1" name="summary" :label="$t('common.summary')">
+                    <UTextarea v-model="state.summary" name="summary" :rows="3" :placeholder="$t('common.summary')" />
+                </UFormField>
             </template>
-        </UCard>
-    </UForm>
+        </UForm>
+
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close')" />
+
+                <UButton
+                    v-if="!viewOnly"
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :label="$t('common.submit')"
+                    @click="formRef?.submit()"
+                />
+            </UButtonGroup>
+        </template>
+    </UCard>
 </template>

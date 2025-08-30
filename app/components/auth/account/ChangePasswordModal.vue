@@ -61,12 +61,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await changePassword(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
     <UModal :title="$t('components.auth.ChangePasswordModal.change_password')" :prevent-close="!canSubmit">
         <template #body>
-            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField name="currentPassword" :label="$t('components.auth.ChangePasswordModal.current_password')">
                     <UInput
                         v-model="state.currentPassword"
@@ -118,13 +120,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
-                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                    {{ $t('components.auth.ChangePasswordModal.change_password') }}
-                </UButton>
+                <UButton
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :label="$t('components.auth.ChangePasswordModal.change_password')"
+                    @click="formRef?.submit()"
+                />
             </UButtonGroup>
         </template>
     </UModal>

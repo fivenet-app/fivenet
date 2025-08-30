@@ -106,7 +106,7 @@ watchDebounced(query, async () => refresh(), {
                                 multiple
                                 :items="options"
                                 value-key="value"
-                                :searchable-placeholder="$t('common.type', 2)"
+                                :search-input="{ placeholder: $t('common.type', 2) }"
                             >
                                 <template #default>
                                     {{ $t('common.selected', query.types.length) }}

@@ -75,9 +75,9 @@ defineShortcuts({
                     class="cursor-pointer border-l-2 p-4 text-sm"
                     :class="[
                         selectedEmail && selectedEmail.id === email.id
-                            ? 'border-primary-500 dark:border-primary-400 bg-primary-100 dark:bg-primary-900/25'
-                            : 'hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white dark:border-gray-900',
-                        email.deactivated ? 'dark:bg-red-900/25 border-red-500 bg-red-100 dark:border-red-400' : '',
+                            ? 'border-primary-500 bg-primary-100 dark:border-primary-400 dark:bg-primary-900/25'
+                            : 'border-white hover:border-primary-500/25 hover:bg-primary-100/50 dark:border-gray-900 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10',
+                        email.deactivated ? 'border-red-500 bg-red-100 dark:border-red-400 dark:bg-red-900/25' : '',
                     ]"
                     @click="selectedEmail = email"
                 >

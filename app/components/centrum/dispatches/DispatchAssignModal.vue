@@ -120,6 +120,8 @@ const onSubmitThrottle = useThrottleFn(async () => {
     canSubmit.value = false;
     await assignDispatch().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
@@ -129,7 +131,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
         </template>
 
         <template #body>
-            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <div class="flex flex-1 flex-col justify-between gap-1 px-2">
                     <template v-for="group in grouped" :key="group.key">
                         <h3 class="text-sm">
@@ -174,13 +176,16 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
-                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                    {{ $t('common.update') }}
-                </UButton>
+                <UButton
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :label="$t('common.update')"
+                    @click="formRef?.submit()"
+                />
             </UButtonGroup>
         </template>
     </UModal>

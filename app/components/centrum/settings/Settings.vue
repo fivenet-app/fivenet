@@ -230,30 +230,29 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await updateSettings(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UForm
-        class="flex min-h-dvh w-full max-w-full flex-1 flex-col overflow-y-auto"
-        :schema="schema"
-        :state="state"
-        @submit="onSubmitThrottle"
-    >
-        <UDashboardNavbar :title="$t('components.centrum.settings.title')">
-            <template #right>
-                <PartialsBackButton fallback-to="/centrum" />
+    <UDashboardPanel>
+        <template #header>
+            <UDashboardNavbar :title="$t('components.centrum.settings.title')">
+                <template #right>
+                    <PartialsBackButton fallback-to="/centrum" />
 
-                <UButton
-                    v-if="!!settings"
-                    type="submit"
-                    trailing-icon="i-mdi-content-save"
-                    :disabled="!canSubmit"
-                    :loading="!canSubmit"
-                >
-                    {{ $t('common.save', 1) }}
-                </UButton>
-            </template>
-        </UDashboardNavbar>
+                    <UButton
+                        v-if="!!settings"
+                        trailing-icon="i-mdi-content-save"
+                        :disabled="!canSubmit"
+                        :loading="!canSubmit"
+                        @click="() => formRef?.submit()"
+                    >
+                        {{ $t('common.save', 1) }}
+                    </UButton>
+                </template>
+            </UDashboardNavbar>
+        </template>
 
         <template #body>
             <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.settings')])" />
@@ -265,7 +264,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             />
             <DataNoDataBlock v-else-if="!settings" icon="i-mdi-tune" :type="$t('common.settings')" />
 
-            <template v-else>
+            <UForm
+                v-else
+                ref="formRef"
+                class="flex min-h-dvh w-full max-w-full flex-1 flex-col overflow-y-auto"
+                :schema="schema"
+                :state="state"
+                @submit="onSubmitThrottle"
+            >
                 <UTabs v-model="selectedTab" class="flex flex-1 flex-col" :items="items">
                     <template #settings>
                         <UPageCard
@@ -570,7 +576,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             (val) => val > CentrumAccessLevel.BLOCKED,
                                         )
                                     "
-                                    :access-types="[{ type: 'job', label: $t('common.job', 2) }]"
+                                    :access-types="[{ label: $t('common.job', 2), value: 'job' }]"
                                     hide-grade
                                     :hide-jobs="[activeChar!.job]"
                                     :disabled="!attr('centrum.CentrumService/UpdateSettings', 'Access', 'Shared').value"
@@ -605,7 +611,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </UPageCard>
                     </template>
                 </UTabs>
-            </template>
+            </UForm>
         </template>
-    </UForm>
+    </UDashboardPanel>
 </template>

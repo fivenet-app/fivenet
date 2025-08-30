@@ -24,6 +24,9 @@ defineOptions({
 
 const icon = useVModel(props, 'modelValue', emit);
 
+const searchTerm = ref('');
+const searchTermDebounced = debouncedRef(searchTerm, 200);
+
 async function iconSearch(query: string): Promise<IconEntry[]> {
     // Remove spaces from query as icon names don't have spaces
     query = query.toLowerCase().replaceAll(' ', '').trim();
@@ -36,13 +39,16 @@ async function iconSearch(query: string): Promise<IconEntry[]> {
         return false;
     });
 }
+
+const foundIcons = computedAsync(() => iconSearch(searchTermDebounced.value));
 </script>
 
 <template>
     <ClientOnly>
         <USelectMenu
             v-model="icon"
-            :searchable="iconSearch"
+            v-model:search-term="searchTerm"
+            :items="foundIcons"
             :search-input="{ placeholder: $t('common.search_field') }"
             value-key="name"
             v-bind="$attrs"
@@ -55,6 +61,7 @@ async function iconSearch(query: string): Promise<IconEntry[]> {
                 />
                 <span class="truncate">{{ camelCaseToTitleCase(icon ?? $t('common.unknown')) }}</span>
             </template>
+
             <template #item="{ item }">
                 <component :is="item?.component" class="size-5" :style="{ color: color }" />
                 <span class="truncate">{{ camelCaseToTitleCase(item.name) }}</span>

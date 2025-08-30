@@ -33,7 +33,7 @@ var (
 	)
 	// fontFamilyRegex matches valid font family names for style attributes.
 	fontFamilyRegex = regexp.MustCompile(
-		`(?mi)^(arial,\shelvetica,\ssans-serif|times new roman,\stimes,\sserif|Comic Sans MS,\sComic Sans|serif|monospace|DM Sans)$`,
+		`(?mi)^(arial,\shelvetica,\ssans-serif|times new roman,\stimes,\sserif|Comic Sans MS,\sComic Sans|serif|monospace|DM Sans|Public Sans)$`,
 	)
 
 	// prosemirrorClassRegex matches ProseMirror class names for editor compatibility.

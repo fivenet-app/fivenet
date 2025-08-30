@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
+import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -31,8 +32,6 @@ const canDo = computed(() => ({
         can('citizens.CitizensService/SetUserProps').value &&
         attr('citizens.CitizensService/SetUserProps', 'Fields', 'Labels').value,
 }));
-
-const labelsLoading = ref(false);
 
 const changed = ref(false);
 
@@ -104,10 +103,12 @@ watch(state, () => {
         changed.value = true;
     }
 });
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UForm class="flex flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
+    <UForm ref="formRef" class="flex flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
         <p v-if="!state.labels.length" class="text-sm leading-6">
             {{ $t('common.none', [$t('common.label', 2)]) }}
         </p>
@@ -144,40 +145,31 @@ watch(state, () => {
         </template>
 
         <UFormField v-if="canDo.set && can('completor.CompletorService/CompleteCitizenLabels').value" name="labels">
-            <ClientOnly>
-                <USelectMenu
-                    v-model="state.labels"
-                    multiple
-                    :searchable="
-                        async (q: string) => {
-                            labelsLoading = true;
-                            const colleagues = await completorStore.completeCitizenLabels(q);
-                            labelsLoading = false;
-                            return colleagues;
-                        }
-                    "
-                    :search-input="{ placeholder: $t('common.search_field') }"
-                    :search-labels="['name']"
-                    clear-search-on-close
-                >
-                    <template #item-label>
-                        {{ $t('common.selected', state.labels.length) }}
-                    </template>
+            <SelectMenu
+                v-model="state.labels"
+                multiple
+                :searchable="async (q: string) => await completorStore.completeCitizenLabels(q)"
+                :search-input="{ placeholder: $t('common.search_field') }"
+                :search-labels="['name']"
+                clear-search-on-close
+            >
+                <template #item-label>
+                    {{ $t('common.selected', state.labels.length) }}
+                </template>
 
-                    <template #item="{ item }">
-                        <span
-                            class="truncate"
-                            :class="isColorBright(hexToRgb(item.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
-                            :style="{ backgroundColor: item.color }"
-                            >{{ item.name }}</span
-                        >
-                    </template>
+                <template #item="{ item }">
+                    <span
+                        class="truncate"
+                        :class="isColorBright(hexToRgb(item.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
+                        :style="{ backgroundColor: item.color }"
+                        >{{ item.name }}</span
+                    >
+                </template>
 
-                    <template #empty>
-                        {{ $t('common.not_found', [$t('common.label', 2)]) }}
-                    </template>
-                </USelectMenu>
-            </ClientOnly>
+                <template #empty>
+                    {{ $t('common.not_found', [$t('common.label', 2)]) }}
+                </template>
+            </SelectMenu>
         </UFormField>
 
         <template v-if="changed">
@@ -185,9 +177,14 @@ watch(state, () => {
                 <UInput v-model="state.reason" type="text" />
             </UFormField>
 
-            <UButton type="submit" block icon="i-mdi-content-save" :disabled="!canSubmit" :loading="!canSubmit">
-                {{ $t('common.save') }}
-            </UButton>
+            <UButton
+                block
+                icon="i-mdi-content-save"
+                :disabled="!canSubmit"
+                :loading="!canSubmit"
+                :label="$t('common.save')"
+                @click="formRef?.submit()"
+            />
         </template>
     </UForm>
 </template>

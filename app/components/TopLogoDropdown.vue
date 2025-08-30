@@ -39,7 +39,7 @@ watch(notificationsCount, () => {
         <span v-if="!collapsed" class="truncate font-semibold text-highlighted">FiveNet</span>
     </UButton>
 
-    <UTooltip v-if="!collapsed" :text="$t('components.partials.sidebar_notifications')" :shortcuts="['B']">
+    <UTooltip v-if="!collapsed" :text="$t('components.partials.sidebar_notifications')" :kbds="['B']">
         <UChip
             :show="notificationsCount > 0"
             color="error"
@@ -47,18 +47,19 @@ watch(notificationsCount, () => {
             :text="notificationsCount <= 9 ? notificationsCount : '9+'"
             size="xl"
         >
-            <UButton color="neutral" variant="ghost" square @click="isNotificationSlideoverOpen = true">
-                <UIcon
-                    class="size-5"
-                    :name="
-                        doNotDisturb
-                            ? 'i-mdi-bell-off-outline'
-                            : notificationsCount === 0
-                              ? 'i-mdi-notifications-none'
-                              : 'i-mdi-notifications'
-                    "
-                />
-            </UButton>
+            <UButton
+                color="neutral"
+                variant="ghost"
+                square
+                :icon="
+                    doNotDisturb
+                        ? 'i-mdi-bell-off-outline'
+                        : notificationsCount === 0
+                          ? 'i-mdi-notifications-none'
+                          : 'i-mdi-notifications'
+                "
+                @click="isNotificationSlideoverOpen = true"
+            />
         </UChip>
     </UTooltip>
 </template>

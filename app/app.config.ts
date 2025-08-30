@@ -168,12 +168,31 @@ export default defineAppConfig({
             },
         },
 
+        slideover: {
+            variants: {
+                side: {
+                    right: {
+                        content: 'max-w-xl',
+                    },
+                    left: {
+                        content: 'max-w-xl',
+                    },
+                },
+            },
+        },
+
         table: {
             slots: {
                 tr: 'hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white dark:border-gray-900',
                 th: 'px-4 py-1.5',
                 td: 'p-1.5',
             },
+        },
+    },
+
+    uiPro: {
+        pageGrid: {
+            base: 'gap-4',
         },
     },
 });

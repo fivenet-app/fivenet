@@ -9,6 +9,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
+import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCalendarStore } from '~/stores/calendar';
 import { useCompletorStore } from '~/stores/completor';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
@@ -30,8 +31,6 @@ const emit = defineEmits<{
 const calendarStore = useCalendarStore();
 
 const completorStore = useCompletorStore();
-
-const usersLoading = ref(false);
 
 const schema = z.object({
     calendar: z.custom<CalendarShort>().optional(),
@@ -152,6 +151,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await createOrUpdateCalendarEntry(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
@@ -163,7 +164,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         "
     >
         <template #body>
-            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <DataPendingBlock
                     v-if="props.entryId && isRequestPending(status)"
                     :message="$t('common.loading', [$t('common.entry', 1)])"
@@ -182,12 +183,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <template v-else>
                     <UFormField class="flex-1" name="calendar" :label="$t('common.calendar')" required>
-                        <ClientOnly>
-                            <USelectMenu
-                                v-model="state.calendar"
-                                :disabled="!!entryId"
-                                :searchable="
-                                    async () =>
+                        <SelectMenu
+                            v-model="state.calendar"
+                            label-key="name"
+                            :disabled="!!entryId"
+                            :searchable="
+                                async () =>
+                                    (
                                         (
                                             await calendarStore.listCalendars({
                                                 pagination: {
@@ -196,35 +198,36 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 onlyPublic: false,
                                                 minAccessLevel: AccessLevel.EDIT,
                                             })
-                                        ).calendars?.filter((c) => !c.closed)
-                                "
-                                :search-input="{ placeholder: $t('common.search_field') }"
-                                :filter-fields="['name']"
-                                :placeholder="$t('common.calendar')"
-                            >
-                                <template #item-label>
-                                    <template v-if="state.calendar">
-                                        <span
-                                            class="size-2 rounded-full"
-                                            :class="`bg-${state.calendar?.color ?? 'primary'}-500 dark:bg-${state.calendar?.color ?? 'primary'}-400`"
-                                        />
-                                        <span class="truncate">{{ state.calendar?.name }}</span>
-                                    </template>
-                                </template>
-
-                                <template #item="{ item }">
+                                        ).calendars as CalendarShort[]
+                                    )?.filter((c) => !c.closed)
+                            "
+                            searchable-key="calendar-entry-list"
+                            :search-input="{ placeholder: $t('common.search_field') }"
+                            :filter-fields="['name']"
+                            :placeholder="$t('common.calendar')"
+                        >
+                            <template #item-label>
+                                <template v-if="state.calendar">
                                     <span
                                         class="size-2 rounded-full"
-                                        :class="`bg-${item.color ?? 'primary'}-500 dark:bg-${item.color ?? 'primary'}-400`"
+                                        :class="`bg-${state.calendar?.color ?? 'primary'}-500 dark:bg-${state.calendar?.color ?? 'primary'}-400`"
                                     />
-                                    <span class="truncate">{{ item.name }}</span>
+                                    <span class="truncate">{{ state.calendar?.name }}</span>
                                 </template>
+                            </template>
 
-                                <template #empty>
-                                    {{ $t('common.not_found', [$t('common.calendar')]) }}
-                                </template>
-                            </USelectMenu>
-                        </ClientOnly>
+                            <template #item="{ item }">
+                                <span
+                                    class="size-2 rounded-full"
+                                    :class="`bg-${item.color ?? 'primary'}-500 dark:bg-${item.color ?? 'primary'}-400`"
+                                />
+                                <span class="truncate">{{ item.name }}</span>
+                            </template>
+
+                            <template #empty>
+                                {{ $t('common.not_found', [$t('common.calendar')]) }}
+                            </template>
+                        </SelectMenu>
                     </UFormField>
 
                     <UFormField class="flex-1" name="title" :label="$t('common.title')" required>
@@ -262,38 +265,32 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </UFormField>
 
                     <UFormField class="flex-1" name="users" :label="$t('common.guest', 2)">
-                        <ClientOnly>
-                            <USelectMenu
-                                v-model="state.users"
-                                multiple
-                                :searchable="
-                                    async (q: string) => {
-                                        usersLoading = true;
-                                        const users = await completorStore.completeCitizens({
-                                            search: q,
-                                            userIds: state.users.map((u) => u.userId),
-                                        });
-                                        usersLoading = false;
-                                        return users;
-                                    }
-                                "
-                                :search-input="{ placeholder: $t('common.search_field') }"
-                                :filter-fields="['firstname', 'lastname']"
-                                block
-                                :placeholder="$t('common.citizen', 2)"
-                                trailing
-                            >
-                                <template #item-label>
-                                    {{ $t('common.selected', state.users.length) }}
-                                </template>
+                        <SelectMenu
+                            v-model="state.users"
+                            multiple
+                            :searchable="
+                                async (q: string) =>
+                                    await completorStore.completeCitizens({
+                                        search: q,
+                                        userIds: state.users.map((u) => u.userId),
+                                    })
+                            "
+                            :search-input="{ placeholder: $t('common.search_field') }"
+                            :filter-fields="['firstname', 'lastname']"
+                            block
+                            :placeholder="$t('common.citizen', 2)"
+                            trailing
+                        >
+                            <template #item-label>
+                                {{ $t('common.selected', state.users.length) }}
+                            </template>
 
-                                <template #item="{ item: user }">
-                                    {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                </template>
+                            <template #item="{ item: user }">
+                                {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                            </template>
 
-                                <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
-                            </USelectMenu>
-                        </ClientOnly>
+                            <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
+                        </SelectMenu>
                     </UFormField>
                 </template>
             </UForm>
@@ -313,13 +310,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
-                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                    {{ data ? $t('common.save') : $t('common.create') }}
-                </UButton>
+                <UButton
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :label="data ? $t('common.save') : $t('common.create')"
+                    @click="formRef?.submit()"
+                />
             </UButtonGroup>
         </template>
     </UModal>

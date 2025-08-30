@@ -130,9 +130,14 @@ const editing = ref(false);
                 <UInput v-model="state.reason" type="text" :disabled="!changed" />
             </UFormField>
 
-            <UButton type="submit" block icon="i-mdi-content-save" :disabled="!changed || !canSubmit" :loading="!canSubmit">
-                {{ $t('common.save') }}
-            </UButton>
+            <UButton
+                type="submit"
+                block
+                icon="i-mdi-content-save"
+                :disabled="!changed || !canSubmit"
+                :loading="!canSubmit"
+                :label="$t('common.save')"
+            />
         </template>
     </UForm>
 </template>

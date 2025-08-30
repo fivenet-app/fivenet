@@ -144,9 +144,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             class="flex-1"
                             type="submit"
                             icon="i-mdi-image"
-                            :label="$t('common.insert')"
                             :disabled="disabled || !canSubmit || !imageState.url"
                             :loading="disabled || !canSubmit"
+                            :label="$t('common.insert')"
                         />
                     </UButtonGroup>
                 </UForm>

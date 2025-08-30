@@ -2,6 +2,7 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
+import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useAuthStore } from '~/stores/auth';
 import { useCompletorStore } from '~/stores/completor';
 import { getJobsConductClient } from '~~/gen/ts/clients';
@@ -30,8 +31,6 @@ const completorStore = useCompletorStore();
 const notifications = useNotificationsStore();
 
 const jobsConductClient = await getJobsConductClient();
-
-const usersLoading = ref(false);
 
 const cTypes = ref<{ status: ConductType }[]>([
     { status: ConductType.NOTE },
@@ -115,6 +114,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         useTimeoutFn(() => (canSubmit.value = true), 400),
     );
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
@@ -126,7 +127,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         "
     >
         <template #body>
-            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <dl class="divide-neutral/10 divide-y">
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm leading-6 font-medium">
@@ -172,42 +173,36 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                             <UFormField name="targetUserId">
-                                <ClientOnly>
-                                    <USelectMenu
-                                        v-model="state.targetUser"
-                                        :searchable="
-                                            async (q: string) => {
-                                                usersLoading = true;
-                                                const colleagues = await completorStore.listColleagues({
-                                                    search: q,
-                                                    labelIds: [],
-                                                    userIds: [],
-                                                });
-                                                usersLoading = false;
-                                                return colleagues;
-                                            }
-                                        "
-                                        :search-input="{ placeholder: $t('common.search_field') }"
-                                        :filter-fields="['firstname', 'lastname']"
-                                        block
-                                        :placeholder="$t('common.colleague')"
-                                        trailing
-                                    >
-                                        <template #item-label>
-                                            <template v-if="state.targetUser">
-                                                {{ userToLabel(state.targetUser) }}
-                                            </template>
+                                <SelectMenu
+                                    v-model="state.targetUser"
+                                    :searchable="
+                                        async (q: string) =>
+                                            await completorStore.listColleagues({
+                                                search: q,
+                                                labelIds: [],
+                                                userIds: [],
+                                            })
+                                    "
+                                    :search-input="{ placeholder: $t('common.search_field') }"
+                                    :filter-fields="['firstname', 'lastname']"
+                                    block
+                                    :placeholder="$t('common.colleague')"
+                                    trailing
+                                >
+                                    <template #item-label>
+                                        <template v-if="state.targetUser">
+                                            {{ userToLabel(state.targetUser) }}
                                         </template>
+                                    </template>
 
-                                        <template #item="{ item }">
-                                            <ColleagueName class="truncate" :colleague="item" birthday />
-                                        </template>
+                                    <template #item="{ item }">
+                                        <ColleagueName class="truncate" :colleague="item" birthday />
+                                    </template>
 
-                                        <template #empty>
-                                            {{ $t('common.not_found', [$t('common.creator', 2)]) }}
-                                        </template>
-                                    </USelectMenu>
-                                </ClientOnly>
+                                    <template #empty>
+                                        {{ $t('common.not_found', [$t('common.creator', 2)]) }}
+                                    </template>
+                                </SelectMenu>
                             </UFormField>
                         </dd>
                     </div>
@@ -248,13 +243,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
-                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                    {{ entry?.id === undefined ? $t('common.create') : $t('common.update') }}
-                </UButton>
+                <UButton
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :label="entry?.id === undefined ? $t('common.create') : $t('common.update')"
+                    @click="() => formRef?.submit()"
+                />
             </UButtonGroup>
         </template>
     </UModal>

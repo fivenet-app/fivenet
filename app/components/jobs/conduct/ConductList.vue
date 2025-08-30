@@ -9,6 +9,7 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getJobsConductClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
@@ -112,8 +113,6 @@ async function deleteConductEntry(id: number): Promise<void> {
 }
 
 watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
-
-const usersLoading = ref(false);
 
 async function updateEntryInPlace(entry: ConductEntry): Promise<void> {
     if (data.value === null) {
@@ -263,45 +262,41 @@ const columns = computed(
             <UForm class="w-full" :schema="schema" :state="query" @submit="refresh()">
                 <div class="flex flex-row gap-2">
                     <UFormField v-if="hideUserSearch !== true" class="flex-1" name="user" :label="$t('common.search')">
-                        <ClientOnly>
-                            <USelectMenu
-                                ref="input"
-                                v-model="query.user"
-                                :searchable="
-                                    async (q: string) => {
-                                        usersLoading = true;
-                                        const colleagues = await completorStore.listColleagues({
-                                            search: q,
-                                            labelIds: [],
-                                            userIds: query.user ? [query.user] : [],
-                                        });
-                                        usersLoading = false;
-                                        return colleagues;
-                                    }
-                                "
-                                :search-input="{ placeholder: $t('common.search_field') }"
-                                :filter-fields="['firstname', 'lastname']"
-                                block
-                                :placeholder="$t('common.colleague')"
-                                trailing
-                                leading-icon="i-mdi-search"
-                                value-key="userId"
-                            >
-                                <template #item-label="{ item }">
-                                    <span v-if="item" class="truncate">
-                                        {{ userToLabel(item) }}
-                                    </span>
-                                </template>
+                        <SelectMenu
+                            ref="input"
+                            v-model="query.user"
+                            :searchable="
+                                async (q: string) => {
+                                    const colleagues = await completorStore.listColleagues({
+                                        search: q,
+                                        labelIds: [],
+                                        userIds: query.user ? [query.user] : [],
+                                    });
+                                    return colleagues;
+                                }
+                            "
+                            :search-input="{ placeholder: $t('common.search_field') }"
+                            :filter-fields="['firstname', 'lastname']"
+                            block
+                            :placeholder="$t('common.colleague')"
+                            trailing
+                            leading-icon="i-mdi-search"
+                            value-key="userId"
+                        >
+                            <template #item-label="{ item }">
+                                <span v-if="item" class="truncate">
+                                    {{ userToLabel(item) }}
+                                </span>
+                            </template>
 
-                                <template #item="{ item }">
-                                    <ColleagueName class="truncate" :colleague="item" birthday />
-                                </template>
+                            <template #item="{ item }">
+                                <ColleagueName class="truncate" :colleague="item" birthday />
+                            </template>
 
-                                <template #empty>
-                                    {{ $t('common.not_found', [$t('common.creator', 2)]) }}
-                                </template>
-                            </USelectMenu>
-                        </ClientOnly>
+                            <template #empty>
+                                {{ $t('common.not_found', [$t('common.creator', 2)]) }}
+                            </template>
+                        </SelectMenu>
                     </UFormField>
 
                     <UFormField class="flex-1" name="types" :label="$t('common.type')">

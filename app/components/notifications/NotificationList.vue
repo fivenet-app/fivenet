@@ -101,7 +101,7 @@ const canSubmit = ref(true);
 <template>
     <UDashboardToolbar>
         <template #default>
-            <UForm class="flex-1" :schema="schema" :state="query" @submit="refresh()">
+            <UForm class="my-2 flex-1" :schema="schema" :state="query" @submit="refresh()">
                 <div class="flex flex-row gap-2">
                     <UFormField
                         class="flex flex-initial flex-col"
@@ -143,17 +143,16 @@ const canSubmit = ref(true);
                         <UButton
                             icon="i-mdi-notification-clear-all"
                             :disabled="!canSubmit || data?.notifications === undefined || data?.notifications.length === 0"
-                            @click="markAll().finally(timeoutFn)"
-                        >
-                            {{ $t('components.notifications.mark_all_read') }}
-                        </UButton>
+                            :label="$t('components.notifications.mark_all_read')"
+                            @click="() => markAll().finally(timeoutFn)"
+                        />
                     </UFormField>
                 </div>
             </UForm>
         </template>
     </UDashboardToolbar>
 
-    <UDashboardPanelContent class="p-0 sm:pb-0">
+    <div class="flex flex-1 flex-col">
         <div class="flex-1">
             <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.notification', 2)])" />
             <DataErrorBlock
@@ -253,5 +252,5 @@ const canSubmit = ref(true);
         </div>
 
         <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
-    </UDashboardPanelContent>
+    </div>
 </template>

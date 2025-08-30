@@ -26,6 +26,7 @@ import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
 import DocumentCategoryBadge from '../partials/documents/DocumentCategoryBadge.vue';
+import SelectMenu from '../partials/SelectMenu.vue';
 
 const props = defineProps<{
     documentId: number;
@@ -117,7 +118,7 @@ const schema = z.object({
     closed: z.coerce.boolean(),
     draft: z.coerce.boolean(),
     public: z.coerce.boolean(),
-    category: z.custom<Category>(),
+    category: z.custom<Category>().default({ ...emptyCategory }),
     access: z.object({
         jobs: z.custom<DocumentJobAccess>().array().max(maxAccessEntries).default([]),
         users: z.custom<DocumentUserAccess>().array().max(maxAccessEntries).default([]),
@@ -332,8 +333,6 @@ const selectedTab = computed({
     },
 });
 
-const categoriesLoading = ref(false);
-
 const canDo = computed(() => ({
     edit: checkDocAccess(
         state.access,
@@ -446,9 +445,11 @@ logger.info(
 );
 
 const confirmModal = overlay.create(ConfirmModal);
-const documentRelationManagerModal = overlay.create(DocumentRelationManagerModal, { props: { documentId: props.documentId } });
+const documentRelationManagerModal = overlay.create(DocumentRelationManagerModal, {
+    props: { documentId: props.documentId, relations: [] },
+});
 const documentReferenceManagerModal = overlay.create(DocumentReferenceManagerModal, {
-    props: { documentId: props.documentId },
+    props: { documentId: props.documentId, references: [] },
 });
 
 const formRef = useTemplateRef('formRef');
@@ -458,95 +459,100 @@ provide('yjsProvider', provider);
 </script>
 
 <template>
-    <UForm
-        ref="formRef"
-        class="flex min-h-dvh w-full max-w-full flex-1 flex-col overflow-y-auto"
-        :schema="schema"
-        :state="state"
-        @submit="onSubmitThrottle"
-    >
-        <UDashboardNavbar :title="$t('pages.documents.edit.title')">
-            <template #right>
-                <PartialsBackButton :fallback-to="{ name: 'documents-id', params: { id: documentId } }" />
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+        <template #header>
+            <UDashboardNavbar :title="$t('pages.documents.edit.title')">
+                <template #right>
+                    <PartialsBackButton :fallback-to="{ name: 'documents-id', params: { id: documentId } }" />
 
-                <UButton type="submit" trailing-icon="i-mdi-content-save" :disabled="!canSubmit" :loading="!canSubmit">
-                    <span class="hidden truncate sm:block">
-                        {{ $t('common.save') }}
-                    </span>
-                </UButton>
+                    <UButton
+                        trailing-icon="i-mdi-content-save"
+                        :disabled="!canSubmit"
+                        :loading="!canSubmit"
+                        @click="() => formRef?.submit()"
+                    >
+                        <span class="hidden truncate sm:block">
+                            {{ $t('common.save') }}
+                        </span>
+                    </UButton>
 
-                <UButton
-                    v-if="state.draft"
-                    type="submit"
-                    color="info"
-                    trailing-icon="i-mdi-publish"
-                    :disabled="!canSubmit"
-                    :loading="!canSubmit"
-                    @click.prevent="
-                        confirmModal.open({
-                            title: $t('common.publish_confirm.title', { type: $t('common.document', 1) }),
-                            description: $t('common.publish_confirm.description'),
-                            color: 'info',
-                            iconClass: 'text-info-500 dark:text-info-400',
-                            icon: 'i-mdi-publish',
-                            confirm: () => {
-                                state.draft = false;
-                                formRef?.submit();
-                            },
-                        })
-                    "
-                >
-                    <span class="hidden truncate sm:block">
-                        {{ $t('common.publish') }}
-                    </span>
-                </UButton>
-            </template>
-        </UDashboardNavbar>
+                    <UButton
+                        v-if="state.draft"
+                        color="info"
+                        trailing-icon="i-mdi-publish"
+                        :disabled="!canSubmit"
+                        :loading="!canSubmit"
+                        @click="
+                            confirmModal.open({
+                                title: $t('common.publish_confirm.title', { type: $t('common.document', 1) }),
+                                description: $t('common.publish_confirm.description'),
+                                color: 'info',
+                                iconClass: 'text-info-500 dark:text-info-400',
+                                icon: 'i-mdi-publish',
+                                confirm: () => {
+                                    state.draft = false;
+                                    formRef?.submit();
+                                },
+                            })
+                        "
+                    >
+                        <span class="hidden truncate sm:block">
+                            {{ $t('common.publish') }}
+                        </span>
+                    </UButton>
+                </template>
+            </UDashboardNavbar>
+        </template>
 
-        <UDashboardPanelContent class="p-0 sm:pb-0">
-            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.page', 1)])" />
-            <DataErrorBlock
-                v-else-if="error"
-                :title="$t('common.unable_to_load', [$t('common.page', 1)])"
-                :error="error"
-                :retry="refresh"
-            />
-            <DataNoDataBlock
-                v-else-if="!document"
-                icon="i-mdi-file-search"
-                :message="$t('common.not_found', [$t('common.page', 1)])"
-            />
-            <UTabs v-else v-model="selectedTab" class="flex flex-1 flex-col" :items="items">
-                <template #content>
-                    <UDashboardToolbar>
-                        <template #default>
-                            <div class="flex w-full flex-col gap-2">
-                                <UFormField name="title" :label="$t('common.title')" required>
-                                    <UInput
-                                        v-model="state.title"
-                                        type="text"
-                                        size="xl"
-                                        :placeholder="$t('common.title')"
-                                        :disabled="!canDo.edit"
-                                    />
-                                </UFormField>
+        <template #body>
+            <UForm
+                ref="formRef"
+                class="flex min-h-dvh w-full max-w-full flex-1 flex-col overflow-y-auto"
+                :schema="schema"
+                :state="state"
+                @submit="onSubmitThrottle"
+            >
+                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.page', 1)])" />
+                <DataErrorBlock
+                    v-else-if="error"
+                    :title="$t('common.unable_to_load', [$t('common.page', 1)])"
+                    :error="error"
+                    :retry="refresh"
+                />
+                <DataNoDataBlock
+                    v-else-if="!document"
+                    icon="i-mdi-file-search"
+                    :message="$t('common.not_found', [$t('common.page', 1)])"
+                />
 
-                                <div class="flex flex-row gap-2">
-                                    <UFormField class="flex-1" name="category" :label="$t('common.category', 1)">
-                                        <ClientOnly>
-                                            <USelectMenu
+                <UTabs v-else v-model="selectedTab" class="flex flex-1 flex-col" :items="items">
+                    <template #content>
+                        <UDashboardToolbar>
+                            <template #default>
+                                <div class="flex w-full flex-col gap-2">
+                                    <UFormField name="title" :label="$t('common.title')" required>
+                                        <UInput
+                                            v-model="state.title"
+                                            type="text"
+                                            size="xl"
+                                            :placeholder="$t('common.title')"
+                                            :disabled="!canDo.edit"
+                                        />
+                                    </UFormField>
+
+                                    <div class="flex flex-row gap-2">
+                                        <UFormField class="flex-1" name="category" :label="$t('common.category', 1)">
+                                            <SelectMenu
                                                 v-model="state.category"
                                                 :filter-fields="['name']"
                                                 block
                                                 nullable
                                                 :disabled="!canDo.edit"
                                                 :searchable="
-                                                    async (search: string) => {
+                                                    async (q: string) => {
                                                         try {
-                                                            categoriesLoading = true;
                                                             const categories =
-                                                                await completorStore.completeDocumentCategories(search);
-                                                            categoriesLoading = false;
+                                                                await completorStore.completeDocumentCategories(q);
                                                             if (!categories.find((c) => c.id === state.category.id)) {
                                                                 categories.unshift(state.category);
                                                             }
@@ -557,11 +563,10 @@ provide('yjsProvider', provider);
                                                         } catch (e) {
                                                             handleGRPCError(e as RpcError);
                                                             throw e;
-                                                        } finally {
-                                                            categoriesLoading = false;
                                                         }
                                                     }
                                                 "
+                                                searchable-key="document-category-selection"
                                                 :search-input="{ placeholder: $t('common.search_field') }"
                                             >
                                                 <template #item-label>
@@ -591,104 +596,104 @@ provide('yjsProvider', provider);
                                                 <template #empty>
                                                     {{ $t('common.not_found', [$t('common.category', 2)]) }}
                                                 </template>
-                                            </USelectMenu>
-                                        </ClientOnly>
-                                    </UFormField>
+                                            </SelectMenu>
+                                        </UFormField>
 
-                                    <UFormField class="flex-1" name="state" :label="$t('common.state')">
-                                        <UInput
-                                            v-model="state.state"
-                                            type="text"
-                                            :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
-                                            :disabled="!canDo.edit"
-                                        />
-                                    </UFormField>
+                                        <UFormField class="flex-1" name="state" :label="$t('common.state')">
+                                            <UInput
+                                                v-model="state.state"
+                                                type="text"
+                                                :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
+                                                :disabled="!canDo.edit"
+                                            />
+                                        </UFormField>
 
-                                    <UFormField class="flex-initial" name="closed" :label="`${$t('common.close', 2)}?`">
-                                        <USwitch v-model="state.closed" :disabled="!canDo.edit" />
-                                    </UFormField>
+                                        <UFormField class="flex-initial" name="closed" :label="`${$t('common.close', 2)}?`">
+                                            <USwitch v-model="state.closed" :disabled="!canDo.edit" />
+                                        </UFormField>
+                                    </div>
                                 </div>
-                            </div>
-                        </template>
-                    </UDashboardToolbar>
+                            </template>
+                        </UDashboardToolbar>
 
-                    <UFormField
-                        class="flex flex-1 overflow-y-hidden"
-                        name="content"
-                        :ui="{ container: 'flex flex-1 flex-col mt-0 overflow-y-hidden', label: 'hiddne' }"
-                        label="&nbsp;"
-                    >
-                        <ClientOnly>
-                            <TiptapEditor
-                                v-model="state.content"
-                                v-model:files="state.files"
-                                class="mx-auto w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
-                                :disabled="!canDo.edit"
-                                history-type="document"
-                                :saving="saving"
-                                enable-collab
-                                :target-id="document.document?.id"
-                                filestore-namespace="documents"
-                                :filestore-service="(opts) => documentsDocumentsClient.uploadFile(opts)"
+                        <UFormField
+                            class="flex flex-1 overflow-y-hidden"
+                            name="content"
+                            :ui="{ container: 'flex flex-1 flex-col mt-0 overflow-y-hidden', label: 'hiddne' }"
+                            label="&nbsp;"
+                        >
+                            <ClientOnly>
+                                <TiptapEditor
+                                    v-model="state.content"
+                                    v-model:files="state.files"
+                                    class="mx-auto w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
+                                    :disabled="!canDo.edit"
+                                    history-type="document"
+                                    :saving="saving"
+                                    enable-collab
+                                    :target-id="document.document?.id"
+                                    filestore-namespace="documents"
+                                    :filestore-service="(opts) => documentsDocumentsClient.uploadFile(opts)"
+                                />
+                            </ClientOnly>
+                        </UFormField>
+
+                        <UDashboardToolbar
+                            class="flex shrink-0 justify-between border-t border-b-0 border-gray-200 px-3 py-3.5 dark:border-gray-700"
+                        >
+                            <UButtonGroup v-if="canDo.relations || canDo.references" class="inline-flex w-full">
+                                <UButton
+                                    class="flex-1"
+                                    block
+                                    :disabled="!canDo.relations"
+                                    icon="i-mdi-account-multiple"
+                                    @click="
+                                        documentRelationManagerModal.open({
+                                            relations: state.relations,
+                                            documentId: documentId,
+                                            'onUpdate:relations': (value) => (state.relations = value),
+                                        })
+                                    "
+                                >
+                                    {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
+                                </UButton>
+
+                                <UButton
+                                    class="flex-1"
+                                    block
+                                    :disabled="!canDo.references"
+                                    icon="i-mdi-file-document"
+                                    @click="
+                                        documentReferenceManagerModal.open({
+                                            references: state.references,
+                                            documentId: documentId,
+                                            'onUpdate:references': (value) => (state.references = value),
+                                        })
+                                    "
+                                >
+                                    {{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}
+                                </UButton>
+                            </UButtonGroup>
+                        </UDashboardToolbar>
+                    </template>
+
+                    <template #access>
+                        <div class="flex flex-1 flex-col gap-2 overflow-y-scroll px-2">
+                            <h2 class="text-highlighted">
+                                {{ $t('common.access') }}
+                            </h2>
+
+                            <AccessManager
+                                v-model:jobs="state.access.jobs"
+                                v-model:users="state.access.users"
+                                :disabled="!canDo.access"
+                                :target-id="documentId ?? 0"
+                                :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
                             />
-                        </ClientOnly>
-                    </UFormField>
-
-                    <UDashboardToolbar
-                        class="flex shrink-0 justify-between border-t border-b-0 border-gray-200 px-3 py-3.5 dark:border-gray-700"
-                    >
-                        <UButtonGroup v-if="canDo.relations || canDo.references" class="inline-flex w-full">
-                            <UButton
-                                class="flex-1"
-                                block
-                                :disabled="!canDo.relations"
-                                icon="i-mdi-account-multiple"
-                                @click="
-                                    documentRelationManagerModal.open({
-                                        relations: state.relations,
-                                        documentId: documentId,
-                                        'onUpdate:relations': (value) => (state.relations = value),
-                                    })
-                                "
-                            >
-                                {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
-                            </UButton>
-
-                            <UButton
-                                class="flex-1"
-                                block
-                                :disabled="!canDo.references"
-                                icon="i-mdi-file-document"
-                                @click="
-                                    documentReferenceManagerModal.open({
-                                        references: state.references,
-                                        documentId: documentId,
-                                        'onUpdate:references': (value) => (state.references = value),
-                                    })
-                                "
-                            >
-                                {{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}
-                            </UButton>
-                        </UButtonGroup>
-                    </UDashboardToolbar>
-                </template>
-
-                <template #access>
-                    <div class="flex flex-1 flex-col gap-2 overflow-y-scroll px-2">
-                        <h2 class="text-highlighted">
-                            {{ $t('common.access') }}
-                        </h2>
-
-                        <AccessManager
-                            v-model:jobs="state.access.jobs"
-                            v-model:users="state.access.users"
-                            :disabled="!canDo.access"
-                            :target-id="documentId ?? 0"
-                            :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
-                        />
-                    </div>
-                </template>
-            </UTabs>
-        </UDashboardPanelContent>
-    </UForm>
+                        </div>
+                    </template>
+                </UTabs>
+            </UForm>
+        </template>
+    </UDashboardPanel>
 </template>

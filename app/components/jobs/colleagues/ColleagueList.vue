@@ -12,6 +12,7 @@ import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import SelectMenu from '~/components/partials/SelectMenu.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import { useSettingsStore } from '~/stores/settings';
 import { getJobsJobsClient } from '~~/gen/ts/clients';
@@ -358,46 +359,39 @@ defineShortcuts({
                                     :label="$t('common.label', 2)"
                                     :ui="{ container: 'flex-1 flex' }"
                                 >
-                                    <ClientOnly>
-                                        <USelectMenu
-                                            v-model="query.labels"
-                                            class="flex-1"
-                                            multiple
-                                            :searchable="async (q: string) => (await getColleagueLabels(q))?.labels ?? []"
-                                            :search-input="{ placeholder: $t('common.search_field') }"
-                                            :filter-fields="['name']"
-                                            clear-search-on-close
-                                            value-key="id"
-                                        >
-                                            <template #item-label="{ item }">
-                                                <span v-if="item.length" class="inline-flex flex-wrap gap-1 truncate">
-                                                    <UBadge
-                                                        v-for="label in item"
-                                                        :key="label.id"
-                                                        class="truncate"
-                                                        :class="isColorBright(label.color) ? 'text-black!' : 'text-white!'"
-                                                        :style="{ backgroundColor: label.color }"
-                                                        :label="label.name"
-                                                    />
-                                                </span>
-                                                <span v-else>&nbsp;</span>
-                                            </template>
+                                    <SelectMenu
+                                        v-model="query.labels"
+                                        class="flex-1"
+                                        multiple
+                                        :searchable="async (q: string) => (await getColleagueLabels(q))?.labels ?? []"
+                                        :search-input="{ placeholder: $t('common.search_field') }"
+                                        :filter-fields="['name']"
+                                        clear-search-on-close
+                                        value-key="id"
+                                    >
+                                        <template #item-label="{ item }">
+                                            <UBadge
+                                                class="truncate"
+                                                :class="isColorBright(item.color) ? 'text-black!' : 'text-white!'"
+                                                :style="{ backgroundColor: item.color }"
+                                                :label="item.name"
+                                            />
+                                        </template>
 
-                                            <template #item="{ item }">
-                                                <UBadge
-                                                    class="truncate"
-                                                    :class="isColorBright(item.color) ? 'text-black!' : 'text-white!'"
-                                                    :style="{ backgroundColor: item.color }"
-                                                >
-                                                    {{ item.name }}
-                                                </UBadge>
-                                            </template>
+                                        <template #item="{ item }">
+                                            <UBadge
+                                                class="truncate"
+                                                :class="isColorBright(item.color) ? 'text-black!' : 'text-white!'"
+                                                :style="{ backgroundColor: item.color }"
+                                            >
+                                                {{ item.name }}
+                                            </UBadge>
+                                        </template>
 
-                                            <template #empty>
-                                                {{ $t('common.not_found', [$t('common.label', 2)]) }}
-                                            </template>
-                                        </USelectMenu>
-                                    </ClientOnly>
+                                        <template #empty>
+                                            {{ $t('common.not_found', [$t('common.label', 2)]) }}
+                                        </template>
+                                    </SelectMenu>
                                 </UFormField>
 
                                 <UFormField

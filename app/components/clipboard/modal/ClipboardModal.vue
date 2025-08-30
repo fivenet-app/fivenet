@@ -54,9 +54,7 @@ const selectedTab = ref('citizens');
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
                 <UButton class="flex-1" block color="error" @click="clipboardStore.clear()">
                     {{ $t('components.clipboard.clipboard_modal.clear') }}

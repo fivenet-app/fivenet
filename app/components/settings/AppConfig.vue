@@ -337,6 +337,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await updateAppConfig(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
@@ -348,20 +350,19 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                     <UButton
                         v-if="!streamerMode && config"
-                        type="submit"
                         trailing-icon="i-mdi-content-save"
                         :disabled="!canSubmit"
                         :loading="!canSubmit"
-                    >
-                        {{ $t('common.save', 1) }}
-                    </UButton>
+                        :label="$t('common.save', 1)"
+                        @click="() => formRef?.submit()"
+                    />
                 </template>
             </UDashboardNavbar>
         </template>
 
         <template #body>
             <StreamerModeAlert v-if="streamerMode" />
-            <UForm v-else :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm v-else ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <div v-if="isRequestPending(status)" class="space-y-1 px-4">
                     <USkeleton class="mb-6 h-11 w-full" />
                     <USkeleton v-for="idx in 5" :key="idx" class="h-20 w-full" />

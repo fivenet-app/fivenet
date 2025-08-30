@@ -14,10 +14,10 @@ import type { User } from '~~/gen/ts/resources/users/users';
 const props = withDefaults(
     defineProps<{
         user: User;
-        registerShortcuts?: boolean;
+        registerKBDs?: boolean;
     }>(),
     {
-        registerShortcuts: false,
+        registerKBDs: false,
     },
 );
 
@@ -65,7 +65,7 @@ function copyLinkToClipboard(): void {
     });
 }
 
-if (props.registerShortcuts) {
+if (props.registerKBDs) {
     defineShortcuts({
         'c-w': () => {
             if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'Wanted').value) {
@@ -127,7 +127,7 @@ if (props.registerShortcuts) {
                     ? $t('components.citizens.CitizenInfoProfile.revoke_wanted')
                     : $t('components.citizens.CitizenInfoProfile.set_wanted')
             "
-            :shortcuts="['C', 'W']"
+            :kbds="['C', 'W']"
         >
             <UButton
                 :color="user?.props?.wanted ? 'error' : 'primary'"
@@ -152,7 +152,7 @@ if (props.registerShortcuts) {
         <UTooltip
             v-if="attr('citizens.CitizensService/SetUserProps', 'Fields', 'Job').value"
             :text="$t('components.citizens.CitizenInfoProfile.set_job')"
-            :shortcuts="['C', 'J']"
+            :kbds="['C', 'J']"
         >
             <UButton
                 block
@@ -171,7 +171,7 @@ if (props.registerShortcuts) {
         <UTooltip
             v-if="attr('citizens.CitizensService/SetUserProps', 'Fields', 'TrafficInfractionPoints').value"
             :text="$t('components.citizens.CitizenInfoProfile.set_traffic_points')"
-            :shortcuts="['C', 'P']"
+            :kbds="['C', 'P']"
         >
             <UButton
                 block
@@ -190,7 +190,7 @@ if (props.registerShortcuts) {
         <UTooltip
             v-if="attr('citizens.CitizensService/SetUserProps', 'Fields', 'Mugshot').value"
             :text="$t('components.citizens.CitizenInfoProfile.set_mugshot')"
-            :shortcuts="['C', 'M']"
+            :kbds="['C', 'M']"
         >
             <UButton
                 block
@@ -209,7 +209,7 @@ if (props.registerShortcuts) {
         <UTooltip
             v-if="can('documents.DocumentsService/UpdateDocument').value"
             :text="$t('components.citizens.CitizenInfoProfile.create_new_document')"
-            :shortcuts="['C', 'D']"
+            :kbds="['C', 'D']"
         >
             <UButton block icon="i-mdi-file-document-plus" @click="openTemplates()">
                 {{ $t('components.citizens.CitizenInfoProfile.create_new_document') }}

@@ -39,6 +39,10 @@ const total = computed(() => data.value.reduce((acc: number, { sum }) => acc + s
 const formatDate = (date: Date): string => format(date, `yyyy '${t('common.calendar_week')}' w`);
 
 const xTicks = (i: number) => {
+    if (i === 0 || i === data.value.length - 1 || !data.value[i]) {
+        return '';
+    }
+
     return formatDate(data.value[i]?.date ?? new Date());
 };
 
@@ -50,63 +54,46 @@ ${t('components.jobs.timeclock.Stats.max')}: ${n(d.max, 'decimal')} h`;
 </script>
 
 <template>
-    <UPageCard ref="cardRef" :ui="{ body: { padding: 'pb-3! px-0!' } as any }">
+    <UCard ref="cardRef" :ui="{ root: 'overflow-visible', body: '!px-0 !pt-0 !pb-3' }">
         <template #header>
             <div>
-                <p class="text-muted mb-1 text-sm font-medium">
+                <p class="mb-1.5 text-xs text-muted uppercase">
                     {{ $t('components.jobs.timeclock.Stats.sum') }}
                 </p>
                 <USkeleton v-if="loading" class="h-9 w-[275px]" />
-                <p v-else class="text-highlighted text-3xl font-semibold">
+                <p v-else class="text-3xl font-semibold text-highlighted">
                     {{ fromSecondsToFormattedDuration(Math.ceil(total * 60 * 60), { seconds: false }) }}
                 </p>
             </div>
         </template>
 
-        <template #body>
-            <VisXYContainer class="h-80" :data="data" :padding="{ top: 10, left: 2, right: 2 }" :width="width">
-                <VisLine :x="x" :y="y" color="rgb(var(--color-primary-DEFAULT))" />
-                <VisArea :x="x" :y="y" color="rgb(var(--color-primary-DEFAULT))" :opacity="0.1" />
+        <VisXYContainer class="h-80" :data="data" :padding="{ top: 10 }" :width="width">
+            <VisLine :x="x" :y="y" color="var(--ui-primary)" />
+            <VisArea :x="x" :y="y" color="var(--ui-primary)" :opacity="0.1" />
 
-                <VisLine :x="x" :y="(d: DataRecord) => d.avg" color="rgb(var(--color-gray-500))" />
-                <VisLine :x="x" :y="(d: DataRecord) => d.max" color="orange" />
+            <VisLine :x="x" :y="(d: DataRecord) => d.avg" color="rgb(var(--color-gray-500))" />
+            <VisLine :x="x" :y="(d: DataRecord) => d.max" color="orange" />
 
-                <VisAxis type="x" :x="x" :tick-format="xTicks" />
+            <VisAxis type="x" :x="x" :tick-format="xTicks" />
 
-                <VisCrosshair color="rgb(var(--color-primary-600))" :template="template" />
+            <VisCrosshair color="var(--ui-primary)" :template="template" />
 
-                <VisTooltip />
-            </VisXYContainer>
-        </template>
-    </UPageCard>
+            <VisTooltip />
+        </VisXYContainer>
+    </UCard>
 </template>
 
 <style scoped>
 .unovis-xy-container {
-    --vis-crosshair-line-stroke-color: rgb(var(--color-primary-500));
-    --vis-crosshair-circle-stroke-color: #fff;
+    --vis-crosshair-line-stroke-color: var(--ui-primary);
+    --vis-crosshair-circle-stroke-color: var(--ui-bg);
 
-    --vis-axis-grid-color: rgb(var(--color-gray-200));
-    --vis-axis-tick-color: rgb(var(--color-gray-200));
-    --vis-axis-tick-label-color: rgb(var(--color-gray-400));
+    --vis-axis-grid-color: var(--ui-border);
+    --vis-axis-tick-color: var(--ui-border);
+    --vis-axis-tick-label-color: var(--ui-text-dimmed);
 
-    --vis-tooltip-background-color: #fff;
-    --vis-tooltip-border-color: rgb(var(--color-gray-200));
-    --vis-tooltip-text-color: rgb(var(--color-gray-900));
-}
-
-.dark {
-    .unovis-xy-container {
-        --vis-crosshair-line-stroke-color: rgb(var(--color-primary-400));
-        --vis-crosshair-circle-stroke-color: rgb(var(--color-gray-900));
-
-        --vis-axis-grid-color: rgb(var(--color-gray-800));
-        --vis-axis-tick-color: rgb(var(--color-gray-800));
-        --vis-axis-tick-label-color: rgb(var(--color-gray-400));
-
-        --vis-tooltip-background-color: rgb(var(--color-gray-900));
-        --vis-tooltip-border-color: rgb(var(--color-gray-800));
-        --vis-tooltip-text-color: #fff;
-    }
+    --vis-tooltip-background-color: var(--ui-bg);
+    --vis-tooltip-border-color: var(--ui-border);
+    --vis-tooltip-text-color: var(--ui-text-highlighted);
 }
 </style>

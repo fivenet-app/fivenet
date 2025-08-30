@@ -1,10 +1,7 @@
 <script lang="ts" setup>
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
-import type {
-    Qualification,
-    QualificationRequirement,
-    QualificationShort,
-} from '~~/gen/ts/resources/qualifications/qualifications';
+import type { QualificationRequirement, QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
+import SelectMenu from '../partials/SelectMenu.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -25,10 +22,7 @@ const emit = defineEmits<{
 
 const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
-const qualificationsLoading = ref(false);
-
-async function listQualifications(search?: string): Promise<Qualification[]> {
-    qualificationsLoading.value = true;
+async function listQualifications(search?: string): Promise<QualificationShort[]> {
     try {
         const call = qualificationsQualificationsClient.listQualifications({
             pagination: {
@@ -38,17 +32,14 @@ async function listQualifications(search?: string): Promise<Qualification[]> {
         });
         const { response } = await call;
 
-        qualificationsLoading.value = false;
         if (props.qualificationId === undefined) {
             return response.qualifications;
         }
 
-        return response.qualifications.filter((q) => q.id !== props.qualificationId);
+        return (response.qualifications as QualificationShort[]).filter((q) => q.id !== props.qualificationId);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
-    } finally {
-        qualificationsLoading.value = false;
     }
 }
 
@@ -60,30 +51,27 @@ watch(selectedQualification, () => emit('update-qualification', selectedQualific
 <template>
     <div class="my-2 flex flex-row items-center">
         <UFormField class="flex-1" name="selectedQualification">
-            <ClientOnly>
-                <USelectMenu
-                    v-model="selectedQualification"
-                    block
-                    :searchable="(q: string) => listQualifications(q)"
-                    :search-input="{ placeholder: $t('common.search_field') }"
-                    :loading="qualificationsLoading"
-                >
-                    <template #item-label>
-                        <span v-if="selectedQualification" class="truncate">
-                            {{ selectedQualification.abbreviation }}: {{ selectedQualification.title }}
-                        </span>
-                    </template>
+            <SelectMenu
+                v-model="selectedQualification"
+                block
+                :searchable="(q: string) => listQualifications(q)"
+                :search-input="{ placeholder: $t('common.search_field') }"
+            >
+                <template #item-label>
+                    <span v-if="selectedQualification" class="truncate">
+                        {{ selectedQualification.abbreviation }}: {{ selectedQualification.title }}
+                    </span>
+                </template>
 
-                    <template #item="{ item }">
-                        <span class="truncate">
-                            <template v-if="item?.abbreviation">{{ item.abbreviation }}: </template
-                            >{{ !item.title ? $t('common.untitled') : item.title }}
-                        </span>
-                    </template>
+                <template #item="{ item }">
+                    <span class="truncate">
+                        <template v-if="item?.abbreviation">{{ item.abbreviation }}: </template
+                        >{{ !item.title ? $t('common.untitled') : item.title }}
+                    </span>
+                </template>
 
-                    <template #empty> {{ $t('common.not_found', [$t('common.qualification', 2)]) }} </template>
-                </USelectMenu>
-            </ClientOnly>
+                <template #empty> {{ $t('common.not_found', [$t('common.qualification', 2)]) }} </template>
+            </SelectMenu>
         </UFormField>
 
         <UTooltip :text="$t('components.qualifications.remove_requirement')">

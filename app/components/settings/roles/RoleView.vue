@@ -444,9 +444,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                 <UInput v-model="state.input" type="text" name="input" />
                                             </UFormField>
 
-                                            <UButton type="submit">
-                                                {{ $t('common.save') }}
-                                            </UButton>
+                                            <UButton type="submit" :label="$t('common.save')" />
                                         </UForm>
                                     </div>
                                 </template>

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { z } from 'zod';
 import ColleagueName from '~/components/jobs/colleagues/ColleagueName.vue';
+import InputMenu from '~/components/partials/InputMenu.vue';
 import QualificationRequestList from '~/components/qualifications/tutor/QualificationRequestList.vue';
 import QualificationResultList from '~/components/qualifications/tutor/QualificationResultList.vue';
 import QualificationResultTutorModal from '~/components/qualifications/tutor/QualificationResultTutorModal.vue';
@@ -28,8 +29,6 @@ const schema = z.object({
 
 const query = useSearchForm('qualifications_tutor', schema);
 
-const usersLoading = ref(false);
-
 const requests = ref<InstanceType<typeof QualificationRequestList> | null>(null);
 const results = ref<InstanceType<typeof QualificationResultList> | null>(null);
 </script>
@@ -38,39 +37,33 @@ const results = ref<InstanceType<typeof QualificationResultList> | null>(null);
     <div class="flex flex-1 flex-col gap-2">
         <UForm :schema="schema" :state="query">
             <UFormField class="flex-1" name="user" :label="$t('common.search')">
-                <ClientOnly>
-                    <UInputMenu
-                        v-model="query.user"
-                        :filter-fields="['firstname', 'lastname']"
-                        :placeholder="$t('common.citizen', 1)"
-                        trailing
-                        :search="
-                            async (q: string): Promise<UserShort[]> => {
-                                usersLoading = true;
-                                const users = await completorStore.completeCitizens({
-                                    search: q,
-                                    userIds: query.user ? [query.user] : [],
-                                });
-                                usersLoading = false;
-                                return users;
-                            }
-                        "
-                        leading-icon="i-mdi-search"
-                        value-key="userId"
-                    >
-                        <template #item-label="{ item }">
-                            {{ userToLabel(item) }}
-                        </template>
+                <InputMenu
+                    v-model="query.user"
+                    :filter-fields="['firstname', 'lastname']"
+                    :placeholder="$t('common.citizen', 1)"
+                    trailing
+                    :searchable="
+                        async (q: string): Promise<UserShort[]> =>
+                            await completorStore.completeCitizens({
+                                search: q,
+                                userIds: query.user ? [query.user] : [],
+                            })
+                    "
+                    leading-icon="i-mdi-search"
+                    value-key="userId"
+                >
+                    <template #item-label="{ item }">
+                        {{ userToLabel(item) }}
+                    </template>
 
-                        <template #item="{ item }">
-                            <span class="truncate">
-                                <ColleagueName :colleague="item" />
-                            </span>
-                        </template>
+                    <template #item="{ item }">
+                        <span class="truncate">
+                            <ColleagueName :colleague="item" />
+                        </span>
+                    </template>
 
-                        <template #empty> {{ $t('common.not_found', [$t('common.user', 2)]) }} </template>
-                    </UInputMenu>
-                </ClientOnly>
+                    <template #empty> {{ $t('common.not_found', [$t('common.user', 2)]) }} </template>
+                </InputMenu>
             </UFormField>
         </UForm>
 

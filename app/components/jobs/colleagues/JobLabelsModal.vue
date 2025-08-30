@@ -81,12 +81,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 watch(labels, () => (state.labels = labels.value?.labels ?? []));
 
 const { moveUp, moveDown } = useListReorder(toRef(state, 'labels'));
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
     <UModal :title="$t('common.label', 2)">
         <template #body>
-            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.label', 2)])" />
                 <DataErrorBlock v-else-if="error" :error="error" :retry="refresh" />
 
@@ -145,19 +147,16 @@ const { moveUp, moveDown } = useListReorder(toRef(state, 'labels'));
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
                 <UButton
                     class="flex-1"
-                    type="submit"
                     block
-                    :loading="isRequestPending(status) || !canSubmit"
                     :disabled="!canSubmit || !!error"
-                >
-                    {{ $t('common.save') }}
-                </UButton>
+                    :loading="isRequestPending(status) || !canSubmit"
+                    :label="$t('common.save')"
+                    @click="formRef?.submit()"
+                />
             </UButtonGroup>
         </template>
     </UModal>

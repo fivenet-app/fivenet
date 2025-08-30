@@ -127,6 +127,8 @@ function setFromProps(): void {
 
 setFromProps();
 watch(props, () => setFromProps());
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
@@ -141,7 +143,7 @@ watch(props, () => setFromProps());
         :overlay="false"
     >
         <template #body>
-            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField class="flex-1" name="name" :label="$t('common.name')">
                     <UInput
                         v-model="state.name"
@@ -186,9 +188,7 @@ watch(props, () => setFromProps());
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
                 <UButton
                     v-if="category !== undefined && canEdit && can('documents.DocumentsService/DeleteCategory').value"
@@ -199,12 +199,18 @@ watch(props, () => setFromProps());
                     :label="!category.deletedAt ? $t('common.delete') : $t('common.restore')"
                     :disabled="!canSubmit"
                     :loading="!canSubmit"
-                    @click="deleteCategory()"
+                    @click="() => deleteCategory()"
                 />
 
-                <UButton v-if="canEdit" class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                    {{ category === undefined ? $t('common.create') : $t('common.update') }}
-                </UButton>
+                <UButton
+                    v-if="canEdit"
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :label="category === undefined ? $t('common.create') : $t('common.update')"
+                    @click="() => formRef?.submit()"
+                />
             </UButtonGroup>
         </template>
     </UModal>

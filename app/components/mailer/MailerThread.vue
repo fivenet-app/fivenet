@@ -370,7 +370,7 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                                 multiple
                                 trailing
                                 :items="[...state.recipients, ...addressBook]"
-                                :searchable-placeholder="$t('common.recipient')"
+                                :search-input="{ placeholder: $t('common.recipient', 1) }"
                                 :placeholder="$t('common.recipient')"
                                 creatable
                                 :disabled="!canSubmit"

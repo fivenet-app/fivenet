@@ -245,9 +245,7 @@ const confirmModal = overlay.create(ConfirmModal);
                     </UFormField>
 
                     <div class="mt-2 shrink-0">
-                        <UButton type="submit" :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.edit') }}
-                        </UButton>
+                        <UButton type="submit" :disabled="!canSubmit" :loading="!canSubmit" :label="$t('common.edit')" />
                     </div>
                 </UForm>
             </div>

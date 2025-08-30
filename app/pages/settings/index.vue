@@ -132,8 +132,8 @@ const superuserItems = [
                 >
                     <template #header>
                         <div class="flex items-center gap-2">
-                            <UIcon name="i-mdi-server" class="size-5 text-primary" />
-                            <h3 class="text-md font-semibold">{{ $t('components.settings.system_status.title') }}</h3>
+                            <UIcon name="i-mdi-administrator" class="size-5 text-primary" />
+                            <h3 class="text-md font-semibold">{{ $t('components.settings.system_settings') }}</h3>
                         </div>
                     </template>
 

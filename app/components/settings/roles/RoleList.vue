@@ -111,27 +111,21 @@ const onSubmitThrottle = useThrottleFn(async () => {
     await createRole().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
-const confirmModal = overlay.create(ConfirmModal, {
-    props: {
-        title: t('components.hints.settings_roles_list.title'),
-        description: t('components.hints.settings_roles_list.content'),
-        icon: 'i-mdi-information-outline',
-        color: 'warning',
-        iconClass: 'text-amber-500 dark:text-amber-400',
-        confirm: onSubmitThrottle,
-    },
-});
+const formRef = useTemplateRef('formRef');
+
+const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
-    <UDashboardPanelContent class="grid grid-cols-1 gap-2 lg:grid-cols-3">
+    <div class="grid grid-cols-1 gap-2 lg:grid-cols-3">
         <div class="mb-2">
             <UForm
                 v-if="can('settings.SettingsService/CreateRole').value"
+                ref="formRef"
                 class="flex flex-row gap-2"
                 :schema="schema"
                 :state="state"
-                @submit="refresh()"
+                @submit="onSubmitThrottle"
             >
                 <UFormField class="flex-1" name="grade" :label="$t('common.job_grade')">
                     <ClientOnly>
@@ -141,9 +135,9 @@ const confirmModal = overlay.create(ConfirmModal, {
                             :search-input="{ placeholder: $t('common.search_field') }"
                         >
                             <template #item-label>
-                                <template v-if="state.jobGrade">
-                                    <span class="truncate">{{ state.jobGrade?.label }} ({{ state.jobGrade?.grade }})</span>
-                                </template>
+                                <span v-if="state.jobGrade" class="truncate"
+                                    >{{ state.jobGrade?.label }} ({{ state.jobGrade?.grade }})</span
+                                >
                             </template>
 
                             <template #item="{ item }">
@@ -159,7 +153,16 @@ const confirmModal = overlay.create(ConfirmModal, {
                         :disabled="state.jobGrade === undefined || state.jobGrade!.grade < 0 || !canSubmit"
                         :loading="!canSubmit"
                         icon="i-mdi-plus"
-                        @click="confirmModal.open()"
+                        @click="
+                            confirmModal.open({
+                                title: $t('components.hints.settings_roles_list.title'),
+                                description: $t('components.hints.settings_roles_list.content'),
+                                icon: 'i-mdi-information-outline',
+                                color: 'warning',
+                                iconClass: 'text-amber-500 dark:text-amber-400',
+                                confirm: async () => await formRef?.submit(),
+                            })
+                        "
                     >
                         {{ $t('common.create') }}
                     </UButton>
@@ -210,5 +213,5 @@ const confirmModal = overlay.create(ConfirmModal, {
             />
             <NuxtPage v-else @deleted="refresh()" />
         </div>
-    </UDashboardPanelContent>
+    </div>
 </template>

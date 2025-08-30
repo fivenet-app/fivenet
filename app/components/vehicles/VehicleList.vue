@@ -13,6 +13,7 @@ import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 import type { ListVehiclesResponse } from '~~/gen/ts/services/vehicles/vehicles';
 import ColleagueName from '../jobs/colleagues/ColleagueName.vue';
+import SelectMenu from '../partials/SelectMenu.vue';
 import VehicleInfoPopover from './VehicleInfoPopover.vue';
 
 const { t } = useI18n();
@@ -99,8 +100,6 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
         throw e;
     }
 }
-
-const usersLoading = ref(false);
 
 watchDebounced(query, async () => refresh(), {
     debounce: 200,
@@ -212,7 +211,7 @@ defineShortcuts({
 <template>
     <UDashboardToolbar>
         <template #default>
-            <UForm class="flex w-full flex-row gap-2" :schema="schema" :state="query" @submit="refresh()">
+            <UForm class="my-2 flex w-full flex-row gap-2" :schema="schema" :state="query" @submit="refresh()">
                 <UFormField class="flex-1" name="licensePlate" :label="$t('common.license_plate')">
                     <UInput
                         ref="input"
@@ -230,45 +229,39 @@ defineShortcuts({
                 </UFormField>
 
                 <UFormField v-if="!hideVehicleModell" class="flex-1" name="model" :label="$t('common.model')">
-                    <UInput v-model="query.model" type="text" name="model" :placeholder="$t('common.model')" block />
+                    <UInput v-model="query.model" type="text" name="model" :placeholder="$t('common.model')" class="w-full" />
                 </UFormField>
 
                 <UFormField v-if="userId === undefined" class="flex-1" name="userIds" :label="$t('common.owner')">
-                    <ClientOnly>
-                        <USelectMenu
-                            v-model="query.userIds"
-                            name="userIds"
-                            multiple
-                            :searchable="
-                                async (q: string): Promise<UserShort[]> => {
-                                    usersLoading = true;
-                                    const { response } = await completorCompletorClient.completeCitizens({
-                                        search: q,
-                                        userIds: query.userIds,
-                                    });
-                                    usersLoading = false;
-                                    return response.users;
-                                }
-                            "
-                            :filter-fields="['firstname', 'lastname']"
-                            block
-                            :placeholder="$t('common.owner')"
-                            trailing
-                            value-key="userId"
-                        >
-                            <template #item-label="{ item }">
-                                <span v-if="item.length > 0" class="truncate">
-                                    {{ usersToLabel(item) }}
-                                </span>
-                            </template>
+                    <SelectMenu
+                        v-model="query.userIds"
+                        name="userIds"
+                        multiple
+                        :searchable="
+                            async (q: string): Promise<UserShort[]> => {
+                                const { response } = await completorCompletorClient.completeCitizens({
+                                    search: q,
+                                    userIds: query.userIds,
+                                });
+                                return response.users;
+                            }
+                        "
+                        :filter-fields="['firstname', 'lastname']"
+                        class="w-full"
+                        :placeholder="$t('common.owner')"
+                        trailing
+                        value-key="userId"
+                    >
+                        <template #item-label="{ item }">
+                            {{ userToLabel(item) }}
+                        </template>
 
-                            <template #item="{ item }">
-                                <ColleagueName class="truncate" :colleague="item" birthday />
-                            </template>
+                        <template #item="{ item }">
+                            <ColleagueName class="truncate" :colleague="item" birthday />
+                        </template>
 
-                            <template #empty> {{ $t('common.not_found', [$t('common.owner', 2)]) }} </template>
-                        </USelectMenu>
-                    </ClientOnly>
+                        <template #empty> {{ $t('common.not_found', [$t('common.owner', 2)]) }} </template>
+                    </SelectMenu>
                 </UFormField>
 
                 <UFormField

@@ -137,12 +137,14 @@ async function updateUnitInForm(): Promise<void> {
 
 onBeforeMount(async () => updateUnitInForm());
 watch(props, async () => updateUnitInForm());
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
     <UModal :title="unit && unit?.id ? $t('components.centrum.units.update_unit') : $t('components.centrum.units.create_unit')">
         <template #body>
-            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField class="flex-1" name="name" :label="$t('common.name')">
                     <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.name')" />
                 </UFormField>
@@ -204,8 +206,8 @@ watch(props, async () => updateUnitInForm());
                             enumToAccessLevelEnums(UnitAccessLevel, 'enums.centrum.UnitAccessLevel').filter((a) => a.value > 1)
                         "
                         :access-types="[
-                            { type: 'job', label: $t('common.job', 2) },
-                            { type: 'qualification', label: $t('common.qualification', 2) },
+                            { label: $t('common.job', 2), value: 'job' },
+                            { label: $t('common.qualification', 2), value: 'qualification' },
                         ]"
                     />
                 </UFormField>
@@ -214,18 +216,20 @@ watch(props, async () => updateUnitInForm());
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
-                <UButton class="flex-1" type="submit" block :loading="!canSubmit" :disabled="!canSubmit">
-                    <template v-if="unit && unit?.id">
-                        {{ $t('components.centrum.units.update_unit') }}
-                    </template>
-                    <template v-else>
-                        {{ $t('components.centrum.units.create_unit') }}
-                    </template>
-                </UButton>
+                <UButton
+                    class="flex-1"
+                    block
+                    :loading="!canSubmit"
+                    :disabled="!canSubmit"
+                    :label="
+                        unit && unit?.id
+                            ? $t('components.centrum.units.update_unit')
+                            : $t('components.centrum.units.create_unit')
+                    "
+                    @click="formRef?.submit()"
+                />
             </UButtonGroup>
         </template>
     </UModal>

@@ -6,7 +6,11 @@ const { isNotificationSlideoverOpen } = useDashboard();
 </script>
 
 <template>
-    <USlideover v-model:open="isNotificationSlideoverOpen" :title="$t('common.notification', 2)">
+    <USlideover
+        v-model:open="isNotificationSlideoverOpen"
+        :title="$t('common.notification', 2)"
+        :ui="{ body: 'flex flex-col p-1 sm:p-1' }"
+    >
         <template #actions>
             <DNBToggle />
         </template>
@@ -20,17 +24,20 @@ const { isNotificationSlideoverOpen } = useDashboard();
                 <UButton
                     class="flex-1"
                     block
+                    :label="$t('components.partials.sidebar_notifications')"
                     @click="
                         navigateTo({ name: 'notifications' });
                         isNotificationSlideoverOpen = false;
                     "
-                >
-                    {{ $t('components.partials.sidebar_notifications') }}
-                </UButton>
+                />
 
-                <UButton class="flex-1" color="neutral" block @click="isNotificationSlideoverOpen = false">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButton
+                    class="flex-1"
+                    color="neutral"
+                    block
+                    :label="$t('common.close', 1)"
+                    @click="isNotificationSlideoverOpen = false"
+                />
             </UButtonGroup>
         </template>
     </USlideover>

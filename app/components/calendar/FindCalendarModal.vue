@@ -105,7 +105,15 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
                         <UButton v-if="calendar.subscription" color="error" @click="subscribeToCalendar(calendar.id, false)">
                             {{ $t('common.unsubscribe') }}
                         </UButton>
-                        <UButton v-else color="warning" @click="() => subscribeToCalendar(calendar.id, true)">
+                        <UButton
+                            v-else
+                            color="warning"
+                            @click="
+                                () => {
+                                    subscribeToCalendar(calendar.id, true);
+                                }
+                            "
+                        >
                             {{ $t('common.subscribe') }}
                         </UButton>
                     </div>
@@ -117,9 +125,7 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
             </UButtonGroup>
         </template>
     </UModal>

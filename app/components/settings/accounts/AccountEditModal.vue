@@ -74,12 +74,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await updateAccount(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
     <UModal :title="`${$t('components.settings.accounts.edit_account')}: ${account.username} (${account.id})`">
         <template #body>
-            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <div>
                     <UFormField class="flex-1" name="enabled" :label="$t('common.enabled')" required>
                         <USwitch v-model="state.enabled" name="enabled" />
@@ -115,13 +117,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" block color="neutral" @click="$emit('close', false)">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButton class="flex-1" block color="neutral" :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
-                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                    {{ $t('common.save') }}
-                </UButton>
+                <UButton
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :label="$t('common.save')"
+                    @click="() => formRef?.submit()"
+                />
             </UButtonGroup>
         </template>
     </UModal>

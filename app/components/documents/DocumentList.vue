@@ -6,7 +6,7 @@ import { z } from 'zod';
 import DocumentListEntry from '~/components/documents/DocumentListEntry.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DateRangePickerPopoverClient from '~/components/partials/DateRangePickerPopover.client.vue';
+import DateRangePickerClient from '~/components/partials/DateRangePicker.client.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import { useCompletorStore } from '~/stores/completor';
@@ -17,6 +17,7 @@ import type { SortByColumn } from '~~/gen/ts/resources/common/database/database'
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/documents/documents';
 import DocumentCategoryBadge from '../partials/documents/DocumentCategoryBadge.vue';
+import SelectMenu from '../partials/SelectMenu.vue';
 import PinnedDocumentList from './PinnedDocumentList.vue';
 import TemplateModal from './templates/TemplateModal.vue';
 
@@ -77,8 +78,6 @@ const schema = z.object({
 
 const query = useSearchForm('documents', schema);
 
-const usersLoading = ref(false);
-
 const { data, status, refresh, error } = useLazyAsyncData(
     () => `documents-${JSON.stringify(query.sorting)}-${query.page}`,
     () => listDocuments(),
@@ -120,8 +119,6 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
 
 watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
 
-const categoriesLoading = ref(false);
-
 const links = computed(() =>
     (
         [
@@ -161,6 +158,8 @@ const links = computed(() =>
     ).filter((l) => l.length > 0),
 );
 
+const isPinnedDocumentsVisible = ref(false);
+
 const inputRef = useTemplateRef('inputRef');
 
 const templateModal = overlay.create(TemplateModal);
@@ -179,7 +178,13 @@ defineShortcuts({
                 </template>
 
                 <template #right>
-                    <UButton class="2xl:hidden" trailing-icon="i-mdi-pin" color="neutral" truncate @click="isOpen = true">
+                    <UButton
+                        class="2xl:hidden"
+                        trailing-icon="i-mdi-pin"
+                        color="neutral"
+                        truncate
+                        @click="isPinnedDocumentsVisible = !isPinnedDocumentsVisible"
+                    >
                         <span class="hidden truncate sm:block">
                             {{ $t('common.pinned') }}
                         </span>
@@ -265,7 +270,7 @@ defineShortcuts({
                     </div>
 
                     <UAccordion
-                        class="mt-2"
+                        class="mb-2"
                         color="neutral"
                         variant="soft"
                         size="sm"
@@ -288,90 +293,71 @@ defineShortcuts({
                                 </UFormField>
 
                                 <UFormField class="flex-1" name="category" :label="$t('common.category', 1)">
-                                    <ClientOnly>
-                                        <USelectMenu
-                                            v-model="query.categories"
-                                            multiple
-                                            :filter-fields="['name']"
-                                            class="w-full"
-                                            :searchable="
-                                                async (search: string) => {
-                                                    try {
-                                                        categoriesLoading = true;
-                                                        const categories =
-                                                            await completorStore.completeDocumentCategories(search);
-                                                        categoriesLoading = false;
-                                                        return categories;
-                                                    } catch (e) {
-                                                        handleGRPCError(e as RpcError);
-                                                        throw e;
-                                                    } finally {
-                                                        categoriesLoading = false;
-                                                    }
+                                    <SelectMenu
+                                        v-model="query.categories"
+                                        multiple
+                                        :filter-fields="['name']"
+                                        class="w-full"
+                                        :searchable="
+                                            async (search: string) => {
+                                                try {
+                                                    return await completorStore.completeDocumentCategories(search);
+                                                } catch (e) {
+                                                    handleGRPCError(e as RpcError);
+                                                    throw e;
                                                 }
-                                            "
-                                            :searchable-placeholder="$t('common.category', 1)"
-                                            value-key="id"
-                                        >
-                                            <template #item-label="{ item }">
-                                                <div v-if="item.length > 0" class="inline-flex gap-1">
-                                                    <template v-for="category in item" :key="category.id">
-                                                        <DocumentCategoryBadge :category="category" />
-                                                    </template>
-                                                </div>
-                                                <span v-else> &nbsp; </span>
-                                            </template>
+                                            }
+                                        "
+                                        :search-input="{ placeholder: $t('common.category', 1) }"
+                                        value-key="id"
+                                    >
+                                        <template #item-label="{ item }">
+                                            <DocumentCategoryBadge :category="item" />
+                                        </template>
 
-                                            <template #item="{ item }">
-                                                <DocumentCategoryBadge :category="item" />
-                                            </template>
+                                        <template #item="{ item }">
+                                            <DocumentCategoryBadge :category="item" />
+                                        </template>
 
-                                            <template #empty>
-                                                {{ $t('common.not_found', [$t('common.category', 2)]) }}
-                                            </template>
-                                        </USelectMenu>
-                                    </ClientOnly>
+                                        <template #empty>
+                                            {{ $t('common.not_found', [$t('common.category', 2)]) }}
+                                        </template>
+                                    </SelectMenu>
                                 </UFormField>
 
                                 <UFormField class="flex-1" name="creator" :label="$t('common.creator')">
-                                    <ClientOnly>
-                                        <USelectMenu
-                                            v-model="query.creators"
-                                            multiple
-                                            nullable
-                                            class="w-full"
-                                            :searchable="
-                                                async (q: string): Promise<UserShort[]> => {
-                                                    usersLoading = true;
-                                                    const users = await completorStore.completeCitizens({
-                                                        search: q,
-                                                        userIds: query.creators,
-                                                    });
-                                                    usersLoading = false;
-                                                    return users;
-                                                }
-                                            "
-                                            :search-input="{ placeholder: $t('common.search_field') }"
-                                            :filter-fields="['firstname', 'lastname']"
-                                            :placeholder="$t('common.creator')"
-                                            trailing
-                                            value-key="userId"
-                                        >
-                                            <template #item-label="{ item }">
-                                                <template v-if="item.length">
-                                                    {{ usersToLabel(item) }}
-                                                </template>
+                                    <SelectMenu
+                                        v-model="query.creators"
+                                        multiple
+                                        nullable
+                                        class="w-full"
+                                        :searchable="
+                                            async (q: string): Promise<UserShort[]> =>
+                                                await completorStore.completeCitizens({
+                                                    search: q,
+                                                    userIds: query.creators,
+                                                })
+                                        "
+                                        :search-input="{ placeholder: $t('common.search_field') }"
+                                        :filter-fields="['firstname', 'lastname']"
+                                        :placeholder="$t('common.creator')"
+                                        trailing
+                                        value-key="userId"
+                                    >
+                                        <template #item-label="{ item }">
+                                            <template v-if="item">
+                                                {{ userToLabel(item) }}
                                             </template>
+                                        </template>
 
-                                            <template #item="{ item }">
-                                                {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
-                                            </template>
+                                        <template #item="{ item }">
+                                            {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
+                                        </template>
 
-                                            <template #empty>
-                                                {{ $t('common.not_found', [$t('common.creator', 2)]) }}
-                                            </template>
-                                        </USelectMenu>
-                                    </ClientOnly>
+                                        <template #empty>
+                                            {{ $t('common.not_found', [$t('common.creator', 2)]) }}
+                                        </template>
+                                    </SelectMenu>
                                 </UFormField>
                             </div>
 
@@ -408,9 +394,9 @@ defineShortcuts({
 
                                             <template #item="{ item }">
                                                 <div class="inline-flex items-center gap-1 truncate">
-                                                    <template v-if="typeof item.closed === 'boolean'">
+                                                    <template v-if="typeof item.value === 'boolean'">
                                                         <UIcon
-                                                            v-if="!item.closed"
+                                                            v-if="!item.value"
                                                             class="size-4"
                                                             name="i-mdi-lock-open-variant"
                                                             color="green"
@@ -426,7 +412,7 @@ defineShortcuts({
                                 </UFormField>
 
                                 <UFormField class="flex-1" name="date" :label="$t('common.time_range')">
-                                    <DateRangePickerPopoverClient
+                                    <DateRangePickerClient
                                         v-model="query.date"
                                         class="flex-1"
                                         date-format="dd.MM.yyyy HH:mm"
@@ -527,8 +513,15 @@ defineShortcuts({
         </template>
     </UDashboardPanel>
 
-    <UDashboardPanel id="documents-pinnedlist" class="overflow-x-hidden" resizable :width="15" :min-size="15" :max-size="40">
-        <!-- TODO the sidebar should be closeable -->
-        <PinnedDocumentList />
+    <UDashboardPanel
+        v-if="isPinnedDocumentsVisible"
+        id="documents-pinnedlist"
+        class="overflow-x-hidden"
+        resizable
+        :width="15"
+        :min-size="15"
+        :max-size="40"
+    >
+        <PinnedDocumentList @close="isPinnedDocumentsVisible = false" />
     </UDashboardPanel>
 </template>

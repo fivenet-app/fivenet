@@ -117,12 +117,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await createThread(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 1000));
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
     <UModal :title="$t('components.mailer.create_thread')" fullscreen>
         <template #body>
-            <UForm class="flex flex-1 flex-col" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" class="flex flex-1 flex-col" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <div class="mx-auto">
                     <div class="flex w-full max-w-(--breakpoint-xl) flex-1 flex-col">
                         <div class="flex w-full flex-col items-center justify-between gap-1">
@@ -233,7 +235,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             ...state.recipients,
                                             ...addressBook.filter((r) => !state.recipients.includes(r)),
                                         ]"
-                                        :searchable-placeholder="$t('common.mail', 1)"
+                                        :search-input="{ placeholder: $t('common.mail', 1) }"
                                         :disabled="!canSubmit"
                                         create-item
                                         @create="(item) => onCreate(item)"
@@ -302,17 +304,15 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" block color="neutral" @click="$emit('close', false)">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButton class="flex-1" block color="neutral" :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
                 <UButton
                     class="flex-1"
-                    type="submit"
                     :disabled="!canSubmit"
                     block
                     :label="$t('components.mailer.send')"
                     trailing-icon="i-mdi-paper-airplane"
+                    @click="() => formRef?.submit()"
                 />
             </UButtonGroup>
         </template>

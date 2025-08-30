@@ -138,71 +138,86 @@ const onSubmitThrottle = useThrottleFn(async () => {
 </script>
 
 <template>
-    <UDashboardPanelContent class="grid grid-cols-1 gap-2 lg:grid-cols-3">
-        <div class="mb-2">
-            <UForm v-if="can('settings.SettingsService/CreateRole').value" :schema="schema" :state="state" @submit="refresh()">
-                <div class="flex flex-row gap-2">
-                    <UFormField class="flex-1" name="grade" :label="$t('common.job')">
-                        <ClientOnly>
-                            <USelectMenu
-                                v-model="state.job"
-                                :items="availableJobs"
-                                :search-input="{ placeholder: $t('common.search_field') }"
-                                :filter-fields="['label', 'name']"
-                            >
-                                <template #item-label>
-                                    <template v-if="state.job">
-                                        <span class="truncate">{{ state.job?.label }} ({{ state.job.name }})</span>
+    <UDashboardPanel :ui="{ body: 'grid grid-cols-1 gap-2 lg:grid-cols-3' }">
+        <template #header>
+            <UDashboardNavbar :title="$t('pages.settings.limiter.title')">
+                <template #right>
+                    <PartialsBackButton fallback-to="/settings" />
+                </template>
+            </UDashboardNavbar>
+        </template>
+
+        <template #body>
+            <div class="mb-2">
+                <UForm
+                    v-if="can('settings.SettingsService/CreateRole').value"
+                    :schema="schema"
+                    :state="state"
+                    @submit="refresh()"
+                >
+                    <div class="flex flex-row gap-2">
+                        <UFormField class="flex-1" name="grade" :label="$t('common.job')">
+                            <ClientOnly>
+                                <USelectMenu
+                                    v-model="state.job"
+                                    :items="availableJobs"
+                                    :search-input="{ placeholder: $t('common.search_field') }"
+                                    :filter-fields="['label', 'name']"
+                                >
+                                    <template #item-label>
+                                        <template v-if="state.job">
+                                            <span class="truncate">{{ state.job?.label }} ({{ state.job.name }})</span>
+                                        </template>
                                     </template>
-                                </template>
 
-                                <template #item="{ item }">
-                                    <span class="truncate">{{ item.label }} ({{ item.name }})</span>
-                                </template>
-                            </USelectMenu>
-                        </ClientOnly>
-                    </UFormField>
+                                    <template #item="{ item }">
+                                        <span class="truncate">{{ item.label }} ({{ item.name }})</span>
+                                    </template>
+                                </USelectMenu>
+                            </ClientOnly>
+                        </UFormField>
 
-                    <UFormField name="submit" label="&nbsp;">
-                        <UButton
-                            :disabled="state.job === undefined || !canSubmit"
-                            :loading="!canSubmit"
-                            icon="i-mdi-plus"
-                            @click="onSubmitThrottle"
-                        >
-                            {{ $t('common.create') }}
-                        </UButton>
-                    </UFormField>
+                        <UFormField name="submit" label="&nbsp;">
+                            <UButton
+                                :disabled="state.job === undefined || !canSubmit"
+                                :loading="!canSubmit"
+                                icon="i-mdi-plus"
+                                @click="onSubmitThrottle"
+                            >
+                                {{ $t('common.create') }}
+                            </UButton>
+                        </UFormField>
+                    </div>
+                </UForm>
+
+                <div>
+                    <DataErrorBlock
+                        v-if="error"
+                        :title="$t('common.unable_to_load', [$t('common.job', 2)])"
+                        :error="error"
+                        :retry="refresh"
+                    />
+                    <UTable
+                        :columns="columns"
+                        :data="sortedRoles"
+                        :loading="isRequestPending(status)"
+                        :empty="$t('common.not_found', [$t('common.role', 2)])"
+                        :pagination-options="{ manualPagination: true }"
+                        :sorting-options="{ manualSorting: true }"
+                    />
+
+                    <Pagination :status="status" :refresh="refresh" hide-buttons hide-text />
                 </div>
-            </UForm>
-
-            <div>
-                <DataErrorBlock
-                    v-if="error"
-                    :title="$t('common.unable_to_load', [$t('common.job', 2)])"
-                    :error="error"
-                    :retry="refresh"
-                />
-                <UTable
-                    :columns="columns"
-                    :data="sortedRoles"
-                    :loading="isRequestPending(status)"
-                    :empty="$t('common.not_found', [$t('common.role', 2)])"
-                    :pagination-options="{ manualPagination: true }"
-                    :sorting-options="{ manualSorting: true }"
-                />
-
-                <Pagination :status="status" :refresh="refresh" hide-buttons hide-text />
             </div>
-        </div>
 
-        <div class="col-span-2 mb-2 w-full">
-            <DataNoDataBlock
-                v-if="!route.params.job"
-                icon="i-mdi-select"
-                :message="$t('common.none_selected', [$t('common.job')], 2)"
-            />
-            <NuxtPage v-else @deleted="refresh()" />
-        </div>
-    </UDashboardPanelContent>
+            <div class="col-span-2 mb-2 w-full">
+                <DataNoDataBlock
+                    v-if="!route.params.job"
+                    icon="i-mdi-select"
+                    :message="$t('common.none_selected', [$t('common.job')], 2)"
+                />
+                <NuxtPage v-else @deleted="refresh()" />
+            </div>
+        </template>
+    </UDashboardPanel>
 </template>

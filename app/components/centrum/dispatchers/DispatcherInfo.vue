@@ -52,7 +52,7 @@ if (!props.hideJoin) {
 <template>
     <div class="flex w-full items-center justify-items-center gap-2">
         <template v-if="!hideJoin">
-            <UTooltip :text="`${$t('common.join', 1)}/ ${$t('common.leave', 1)}`" :shortcuts="['C', 'Q']">
+            <UTooltip :text="`${$t('common.join', 1)}/ ${$t('common.leave', 1)}`" :kbds="['C', 'Q']">
                 <UButton
                     :disabled="!canSubmit"
                     :loading="!canSubmit"

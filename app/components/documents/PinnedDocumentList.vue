@@ -8,6 +8,10 @@ import DocumentInfoPopover from '../partials/documents/DocumentInfoPopover.vue';
 import IDCopyBadge from '../partials/IDCopyBadge.vue';
 import Pagination from '../partials/Pagination.vue';
 
+defineEmits<{
+    (e: 'close'): void;
+}>();
+
 const { attr, can } = useAuth();
 
 const documentsDocumentsClient = await getDocumentsDocumentsClient();
@@ -70,7 +74,13 @@ const editing = ref(false);
         <template #header>
             <UDashboardNavbar :title="$t('common.pinned_document', 2)">
                 <template #toggle>
-                    <UDashboardSidebarToggle class="lg:block 2xl:hidden" />
+                    <UButton
+                        class="lg:block 2xl:hidden"
+                        icon="i-mdi-menu"
+                        variant="ghost"
+                        color="neutral"
+                        @click="$emit('close')"
+                    />
                 </template>
 
                 <template #right>

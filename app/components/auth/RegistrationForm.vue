@@ -153,9 +153,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <PasswordStrengthMeter class="mt-2" :input="state.password" />
             </UFormField>
 
-            <UButton type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                {{ $t('components.auth.RegistrationForm.submit_button') }}
-            </UButton>
+            <UButton
+                type="submit"
+                block
+                :disabled="!canSubmit"
+                :loading="!canSubmit"
+                :label="$t('components.auth.RegistrationForm.submit_button')"
+            />
         </UForm>
 
         <div class="space-y-4">

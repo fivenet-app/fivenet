@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
+import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { getJobsJobsClient } from '~~/gen/ts/clients';
 import type { ColleagueProps } from '~~/gen/ts/resources/jobs/colleagues';
 import type { Labels } from '~~/gen/ts/resources/jobs/labels';
@@ -172,44 +173,37 @@ const editing = ref(false);
         </div>
 
         <UFormField v-if="editing" name="labels">
-            <ClientOnly>
-                <USelectMenu
-                    v-model="state.labels"
-                    multiple
-                    :searchable="async (q: string) => (await getColleagueLabels(q))?.labels ?? []"
-                    :search-input="{ placeholder: $t('common.search_field') }"
-                    :filter-fields="['name']"
-                    clear-search-on-close
-                >
-                    <template #item-label="{ item }">
-                        <span v-if="item.length" class="inline-flex flex-wrap gap-1 truncate">
-                            <UBadge
-                                v-for="label in item"
-                                :key="label.id"
-                                class="truncate"
-                                :class="isColorBright(label.color) ? 'text-black!' : 'text-white!'"
-                                :style="{ backgroundColor: label.color }"
-                                :label="label.name"
-                            />
-                        </span>
-                        <span v-else>&nbsp;</span>
-                    </template>
+            <SelectMenu
+                v-model="state.labels"
+                multiple
+                :searchable="async (q: string) => (await getColleagueLabels(q))?.labels ?? []"
+                :search-input="{ placeholder: $t('common.search_field') }"
+                :filter-fields="['name']"
+                clear-search-on-close
+            >
+                <template #item-label="{ item }">
+                    <UBadge
+                        class="truncate"
+                        :class="isColorBright(item.color) ? 'text-black!' : 'text-white!'"
+                        :style="{ backgroundColor: item.color }"
+                        :label="item.name"
+                    />
+                </template>
 
-                    <template #item="{ item }">
-                        <UBadge
-                            class="truncate"
-                            :class="isColorBright(item.color) ? 'text-black!' : 'text-white!'"
-                            :style="{ backgroundColor: item.color }"
-                        >
-                            {{ item.name }}
-                        </UBadge>
-                    </template>
+                <template #item="{ item }">
+                    <UBadge
+                        class="truncate"
+                        :class="isColorBright(item.color) ? 'text-black!' : 'text-white!'"
+                        :style="{ backgroundColor: item.color }"
+                    >
+                        {{ item.name }}
+                    </UBadge>
+                </template>
 
-                    <template #empty>
-                        {{ $t('common.not_found', [$t('common.label', 2)]) }}
-                    </template>
-                </USelectMenu>
-            </ClientOnly>
+                <template #empty>
+                    {{ $t('common.not_found', [$t('common.label', 2)]) }}
+                </template>
+            </SelectMenu>
         </UFormField>
 
         <template v-if="editing">
@@ -217,9 +211,13 @@ const editing = ref(false);
                 <UInput v-model="state.reason" type="text" :disabled="!changed" />
             </UFormField>
 
-            <UButton type="submit" icon="i-mdi-content-save" :disabled="!changed || !canSubmit" :loading="!canSubmit">
-                {{ $t('common.save') }}
-            </UButton>
+            <UButton
+                type="submit"
+                icon="i-mdi-content-save"
+                :disabled="!changed || !canSubmit"
+                :loading="!canSubmit"
+                :label="$t('common.save')"
+            />
         </template>
     </UForm>
 </template>

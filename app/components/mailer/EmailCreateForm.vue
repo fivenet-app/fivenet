@@ -254,9 +254,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 v-model:qualifications="state.access!.qualifications"
                 :target-id="modelValue?.id ?? 0"
                 :access-types="[
-                    { type: 'user', label: $t('common.citizen', 2) },
-                    { type: 'job', label: $t('common.job', 2) },
-                    { type: 'qualification', label: $t('common.qualification', 2) },
+                    { label: $t('common.citizen', 2), value: 'user' },
+                    { label: $t('common.job', 2), value: 'job' },
+                    { label: $t('common.qualification', 2), value: 'qualification' },
                 ]"
                 :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.mailer.AccessLevel')"
                 :disabled="disabled"

@@ -175,7 +175,7 @@ const columns = computed(
                             multiple
                             :items="docRelations"
                             value-key="value"
-                            :searchable-placeholder="$t('common.relation', 2)"
+                            :search-input="{ placeholder: $t('common.relation', 2) }"
                         >
                             <template #item-label>
                                 {{ $t('common.selected', query.relations.length) }}

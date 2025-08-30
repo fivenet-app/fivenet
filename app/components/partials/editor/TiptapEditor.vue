@@ -47,6 +47,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import FileListModal from './FileListModal.vue';
 import ImageSelectPopover from './ImageSelectPopover.vue';
 import SourceCodeModal from './SourceCodeModal.vue';
+import TablePopover from './TablePopover.vue';
 import VersionHistoryModal from './VersionHistoryModal.vue';
 import YJSUserPopover from './YJSUserPopover.vue';
 
@@ -408,7 +409,7 @@ if (props.filestoreService && props.filestoreNamespace && props.targetId) {
 const fonts = [
     {
         label: t('common.default'),
-        value: 'DM Sans',
+        value: 'Public Sans',
     },
     {
         label: 'Arial',
@@ -499,24 +500,6 @@ const selectedHighlightColor = ref<(typeof highlightColors)[0]>(highlightColors[
 watch(selectedHighlightColor, () =>
     unref(editor)?.chain().focus().toggleHighlight({ color: selectedHighlightColor.value.value }).run(),
 );
-
-const tableCreation = reactive({
-    rows: 2,
-    cols: 3,
-    withHeaderRow: true,
-});
-
-function createTable(): void {
-    unref(editor)
-        ?.chain()
-        .focus()
-        .insertTable({
-            rows: tableCreation.rows,
-            cols: tableCreation.cols,
-            withHeaderRow: tableCreation.withHeaderRow,
-        })
-        .run();
-}
 
 const searchAndReplace = reactive<{
     search: string;
@@ -1061,39 +1044,7 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                     "
                 />
 
-                <UPopover>
-                    <UTooltip :text="$t('components.partials.TiptapEditor.table')">
-                        <UButton
-                            :class="{ 'bg-gray-300 dark:bg-gray-900': editor.isActive('table') }"
-                            color="neutral"
-                            variant="ghost"
-                            icon="i-mdi-table"
-                            :disabled="disabled"
-                        />
-                    </UTooltip>
-
-                    <template #content>
-                        <div class="p-4">
-                            <UForm :state="{}" @submit="createTable">
-                                <UFormField :label="$t('common.rows')">
-                                    <UInput v-model="tableCreation.rows" type="text" :disabled="disabled" />
-                                </UFormField>
-
-                                <UFormField :label="$t('common.cols')">
-                                    <UInput v-model="tableCreation.cols" type="text" :disabled="disabled" />
-                                </UFormField>
-
-                                <UFormField :label="$t('common.with_header_row')">
-                                    <USwitch v-model="tableCreation.withHeaderRow" type="text" :disabled="disabled" />
-                                </UFormField>
-
-                                <UFormField>
-                                    <UButton type="submit" :label="$t('common.create')" :disabled="disabled" />
-                                </UFormField>
-                            </UForm>
-                        </div>
-                    </template>
-                </UPopover>
+                <TablePopover :editor="unref(editor)" :disabled="disabled" />
 
                 <UPopover>
                     <UTooltip :text="$t('components.partials.TiptapEditor.link')">

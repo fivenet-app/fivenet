@@ -21,10 +21,10 @@ const isOpen = ref(false);
                         }"
                         :title="$t('common.action', 2)"
                     >
-                        <!-- Register shortcuts for the citizens actions here as it will always be available not like the profile tab content -->
+                        <!-- Register kbds for the citizens actions here as it will always be available not like the profile tab content -->
                         <CitizenActions
                             :user="user"
-                            register-shortcuts
+                            register-kbds
                             @update:wanted-status="user.props!.wanted = $event"
                             @update:job="
                                 user.job = $event.job.name;

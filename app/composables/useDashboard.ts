@@ -21,7 +21,7 @@ const _useDashboard = () => {
         'g-c': () => router.push('/citizens'),
         'g-v': () => router.push('/vehicles'),
         'g-d': () => router.push('/documents'),
-        'g-j': () => router.push('/jobs'),
+        'g-j': () => router.push('/jobs/overview'),
         'g-k': () => router.push('/calendar'),
         'g-q': () => router.push('/qualifications'),
         'g-m': () => router.push('/livemap'),
@@ -32,9 +32,21 @@ const _useDashboard = () => {
         b: () => (isNotificationSlideoverOpen.value = true),
     });
 
-    watch(isNotificationSlideoverOpen, () => isNotificationSlideoverOpen && notificationsSlideover.open());
+    watch(isNotificationSlideoverOpen, () => {
+        if (isNotificationSlideoverOpen.value) {
+            notificationsSlideover.open();
+        } else {
+            notificationsSlideover.close();
+        }
+    });
 
-    watch(isHelpSlideoverOpen, () => isHelpSlideoverOpen && helpSlideover.open());
+    watch(isHelpSlideoverOpen, () => {
+        if (isHelpSlideoverOpen.value) {
+            helpSlideover.open();
+        } else {
+            helpSlideover.close();
+        }
+    });
 
     watch(
         () => route.fullPath,

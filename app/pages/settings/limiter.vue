@@ -13,13 +13,5 @@ definePageMeta({
 </script>
 
 <template>
-    <UDashboardPanel>
-        <UDashboardNavbar :title="$t('pages.settings.limiter.title')">
-            <template #right>
-                <PartialsBackButton fallback-to="/settings" />
-            </template>
-        </UDashboardNavbar>
-
-        <AttrJobList />
-    </UDashboardPanel>
+    <AttrJobList />
 </template>

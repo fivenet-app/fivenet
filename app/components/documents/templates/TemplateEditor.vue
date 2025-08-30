@@ -7,6 +7,7 @@ import TemplateSchemaEditor, { type SchemaEditorValue } from '~/components/docum
 import { zWorkflow, type ObjectSpecsValue } from '~/components/documents/templates/types';
 import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
+import InputMenu from '~/components/partials/InputMenu.vue';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums, type AccessType } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
@@ -125,10 +126,10 @@ const schemaEditor = ref<SchemaEditorValue>({
     },
 });
 
-const accessTypes: AccessType[] = [{ type: 'job', label: t('common.job', 2) }];
+const accessTypes: AccessType[] = [{ label: t('common.job', 2), value: 'job' }];
 const contentAccessTypes: AccessType[] = [
-    { type: 'user', label: t('common.citizen', 2) },
-    { type: 'job', label: t('common.job', 2) },
+    { label: t('common.citizen', 2), value: 'user' },
+    { label: t('common.job', 2), value: 'job' },
 ];
 
 function createObjectSpec(v: ObjectSpecsValue): ObjectSpecs {
@@ -362,205 +363,214 @@ const selectedTab = computed({
     },
 });
 
-const categoriesLoading = ref(false);
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UForm
-        class="flex min-h-dvh w-full max-w-full flex-1 flex-col overflow-y-auto"
-        :schema="schema"
-        :state="state"
-        @submit="onSubmitThrottle"
-    >
-        <UDashboardNavbar :title="$t('pages.documents.templates.edit.title')">
-            <template #right>
-                <UButton
-                    color="neutral"
-                    icon="i-mdi-arrow-left"
-                    :to="templateId ? { name: 'documents-templates-id', params: { id: templateId } } : `/documents/templates`"
-                >
-                    {{ $t('common.back') }}
-                </UButton>
+    <UDashboardPanel>
+        <template #header>
+            <UDashboardNavbar :title="$t('pages.documents.templates.edit.title')">
+                <template #right>
+                    <UButton
+                        color="neutral"
+                        icon="i-mdi-arrow-left"
+                        :to="
+                            templateId ? { name: 'documents-templates-id', params: { id: templateId } } : `/documents/templates`
+                        "
+                        :label="$t('common.back')"
+                    />
 
-                <UButton type="submit" trailing-icon="i-mdi-content-save" :disabled="!canSubmit" :loading="!canSubmit">
-                    <span class="hidden truncate sm:block">
-                        {{ templateId ? $t('common.save') : $t('common.create') }}
-                    </span>
-                </UButton>
-            </template>
-        </UDashboardNavbar>
-
-        <div class="p-0 sm:pb-0">
-            <UTabs v-model="selectedTab" class="flex flex-1 flex-col" :items="items">
-                <template #details>
-                    <UContainer class="mt-2 w-full overflow-y-scroll">
-                        <div>
-                            <UFormField name="weight" :label="`${$t('common.template', 1)} ${$t('common.weight')}`">
-                                <UInput
-                                    v-model="state.weight"
-                                    type="number"
-                                    name="weight"
-                                    :min="0"
-                                    :max="999999"
-                                    :placeholder="$t('common.weight')"
-                                />
-                            </UFormField>
-
-                            <UFormField name="title" :label="`${$t('common.template')} ${$t('common.title')}`" required>
-                                <UTextarea v-model="state.title" name="title" :rows="1" :placeholder="$t('common.title')" />
-                            </UFormField>
-
-                            <UFormField
-                                name="description"
-                                :label="`${$t('common.template')} ${$t('common.description')}`"
-                                required
-                            >
-                                <UTextarea
-                                    v-model="state.description"
-                                    name="description"
-                                    :rows="4"
-                                    :label="$t('common.description')"
-                                />
-                            </UFormField>
-
-                            <UFormField class="flex-1 flex-row" name="color" :label="$t('common.color')" required>
-                                <div class="flex flex-1 gap-1">
-                                    <ColorPickerTW v-model="state.color" class="flex-1" />
-                                </div>
-                            </UFormField>
-
-                            <UFormField class="flex-1" name="icon" :label="$t('common.icon')">
-                                <div class="flex flex-1 gap-1">
-                                    <IconSelectMenu
-                                        v-model="state.icon"
-                                        class="flex-1"
-                                        :color="state.color"
-                                        :fallback-icon="FileOutlineIcon"
-                                    />
-
-                                    <UButton icon="i-mdi-backspace" @click="state.icon = undefined" />
-                                </div>
-                            </UFormField>
-                        </div>
-
-                        <div class="my-2">
-                            <h2 class="text-sm">{{ $t('common.template') }} {{ $t('common.access') }}</h2>
-
-                            <AccessManager
-                                v-model:jobs="state.jobAccess"
-                                :target-id="templateId ?? 0"
-                                :access-types="accessTypes"
-                                :access-roles="
-                                    enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel').filter(
-                                        (e) => e.value === AccessLevel.VIEW || e.value === AccessLevel.EDIT,
-                                    )
-                                "
-                            />
-                        </div>
-
-                        <div class="my-2">
-                            <UAccordion
-                                :items="[
-                                    { slot: 'schema' as const, label: $t('common.requirements', 2), icon: 'i-mdi-asterisk' },
-                                    {
-                                        slot: 'workflow' as const,
-                                        label: $t('common.workflow'),
-                                        icon: 'i-mdi-reminder',
-                                    },
-                                ]"
-                            >
-                                <template #schema>
-                                    <TemplateSchemaEditor v-model="schemaEditor" />
-                                </template>
-
-                                <template #workflow>
-                                    <TemplateWorkflowEditor v-model="state.workflow" />
-                                </template>
-                            </UAccordion>
-                        </div>
-
-                        <div class="my-2">
-                            <h2 class="text-sm">{{ $t('common.content') }} {{ $t('common.access') }}</h2>
-
-                            <AccessManager
-                                v-model:jobs="state.contentAccess.jobs"
-                                v-model:users="state.contentAccess.users"
-                                :target-id="templateId ?? 0"
-                                :access-types="contentAccessTypes"
-                                :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
-                                :show-required="true"
-                            />
-                        </div>
-                    </UContainer>
+                    <UButton
+                        trailing-icon="i-mdi-content-save"
+                        :disabled="!canSubmit"
+                        :loading="!canSubmit"
+                        @click="formRef?.submit()"
+                    >
+                        <span class="hidden truncate sm:block">
+                            {{ templateId ? $t('common.save') : $t('common.create') }}
+                        </span>
+                    </UButton>
                 </template>
+            </UDashboardNavbar>
+        </template>
 
-                <template #content>
-                    <UContainer class="flex w-full flex-1 flex-col overflow-y-hidden">
-                        <SingleHint
-                            class="my-2"
-                            hint-id="template_editor_templating"
-                            to="https://fivenet.app/user-guides/documents/templates"
-                            external
-                            link-target="_blank"
-                        />
+        <template #body>
+            <UForm
+                ref="formRef"
+                class="flex min-h-dvh w-full max-w-full flex-1 flex-col overflow-y-auto"
+                :schema="schema"
+                :state="state"
+                @submit="onSubmitThrottle"
+            >
+                <UTabs v-model="selectedTab" class="flex flex-1 flex-col" :items="items">
+                    <template #details>
+                        <UContainer class="mt-2 w-full overflow-y-scroll">
+                            <div>
+                                <UFormField name="weight" :label="`${$t('common.template', 1)} ${$t('common.weight')}`">
+                                    <UInput
+                                        v-model="state.weight"
+                                        type="number"
+                                        name="weight"
+                                        :min="0"
+                                        :max="999999"
+                                        :placeholder="$t('common.weight')"
+                                    />
+                                </UFormField>
 
-                        <UFormField name="contentTitle" :label="`${$t('common.content')} ${$t('common.title')}`" required>
-                            <UTextarea v-model="state.contentTitle" name="contentTitle" :rows="2" />
-                        </UFormField>
+                                <UFormField name="title" :label="`${$t('common.template')} ${$t('common.title')}`" required>
+                                    <UTextarea v-model="state.title" name="title" :rows="1" :placeholder="$t('common.title')" />
+                                </UFormField>
 
-                        <UFormField name="category" :label="$t('common.category', 1)">
-                            <ClientOnly>
-                                <UInputMenu
+                                <UFormField
+                                    name="description"
+                                    :label="`${$t('common.template')} ${$t('common.description')}`"
+                                    required
+                                >
+                                    <UTextarea
+                                        v-model="state.description"
+                                        name="description"
+                                        :rows="4"
+                                        :label="$t('common.description')"
+                                    />
+                                </UFormField>
+
+                                <UFormField class="flex-1 flex-row" name="color" :label="$t('common.color')" required>
+                                    <div class="flex flex-1 gap-1">
+                                        <ColorPickerTW v-model="state.color" class="flex-1" />
+                                    </div>
+                                </UFormField>
+
+                                <UFormField class="flex-1" name="icon" :label="$t('common.icon')">
+                                    <div class="flex flex-1 gap-1">
+                                        <IconSelectMenu
+                                            v-model="state.icon"
+                                            class="flex-1"
+                                            :color="state.color"
+                                            :fallback-icon="FileOutlineIcon"
+                                        />
+
+                                        <UButton icon="i-mdi-backspace" @click="state.icon = undefined" />
+                                    </div>
+                                </UFormField>
+                            </div>
+
+                            <div class="my-2">
+                                <h2 class="text-sm">{{ $t('common.template') }} {{ $t('common.access') }}</h2>
+
+                                <AccessManager
+                                    v-model:jobs="state.jobAccess"
+                                    :target-id="templateId ?? 0"
+                                    :access-types="accessTypes"
+                                    :access-roles="
+                                        enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel').filter(
+                                            (e) => e.value === AccessLevel.VIEW || e.value === AccessLevel.EDIT,
+                                        )
+                                    "
+                                />
+                            </div>
+
+                            <div class="my-2">
+                                <UAccordion
+                                    :items="[
+                                        {
+                                            slot: 'schema' as const,
+                                            label: $t('common.requirements', 2),
+                                            icon: 'i-mdi-asterisk',
+                                        },
+                                        {
+                                            slot: 'workflow' as const,
+                                            label: $t('common.workflow'),
+                                            icon: 'i-mdi-reminder',
+                                        },
+                                    ]"
+                                >
+                                    <template #schema>
+                                        <TemplateSchemaEditor v-model="schemaEditor" />
+                                    </template>
+
+                                    <template #workflow>
+                                        <TemplateWorkflowEditor v-model="state.workflow" />
+                                    </template>
+                                </UAccordion>
+                            </div>
+
+                            <div class="my-2">
+                                <h2 class="text-sm">{{ $t('common.content') }} {{ $t('common.access') }}</h2>
+
+                                <AccessManager
+                                    v-model:jobs="state.contentAccess.jobs"
+                                    v-model:users="state.contentAccess.users"
+                                    :target-id="templateId ?? 0"
+                                    :access-types="contentAccessTypes"
+                                    :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
+                                    :show-required="true"
+                                />
+                            </div>
+                        </UContainer>
+                    </template>
+
+                    <template #content>
+                        <UContainer class="flex w-full flex-1 flex-col overflow-y-hidden">
+                            <SingleHint
+                                class="my-2"
+                                hint-id="template_editor_templating"
+                                to="https://fivenet.app/user-guides/documents/templates"
+                                external
+                                link-target="_blank"
+                            />
+
+                            <UFormField name="contentTitle" :label="`${$t('common.content')} ${$t('common.title')}`" required>
+                                <UTextarea v-model="state.contentTitle" name="contentTitle" :rows="2" />
+                            </UFormField>
+
+                            <UFormField name="category" :label="$t('common.category', 1)">
+                                <InputMenu
                                     v-model="state.category"
                                     :filter-fields="['name']"
                                     nullable
-                                    :search="
+                                    :searchable="
                                         async (search: string) => {
                                             try {
-                                                categoriesLoading = true;
                                                 const categories = await completorStore.completeDocumentCategories(search);
-                                                categoriesLoading = false;
                                                 return categories;
                                             } catch (e) {
                                                 handleGRPCError(e as RpcError);
                                                 throw e;
-                                            } finally {
-                                                categoriesLoading = false;
                                             }
                                         }
                                     "
                                 >
                                     <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
-                                </UInputMenu>
-                            </ClientOnly>
-                        </UFormField>
+                                </InputMenu>
+                            </UFormField>
 
-                        <UFormField name="contentState" :label="`${$t('common.content')} ${$t('common.state')}`">
-                            <UTextarea v-model="state.contentState" name="contentState" :rows="2" />
-                        </UFormField>
+                            <UFormField name="contentState" :label="`${$t('common.content')} ${$t('common.state')}`">
+                                <UTextarea v-model="state.contentState" name="contentState" :rows="2" />
+                            </UFormField>
 
-                        <UFormField
-                            class="flex flex-1 flex-col overflow-y-hidden"
-                            name="content"
-                            :label="`${$t('common.content')} ${$t('common.template')}`"
-                            required
-                            :ui="{ container: 'flex flex-1 overflow-y-hidden flex-col' }"
-                        >
-                            <ClientOnly>
-                                <TiptapEditor
-                                    v-model="state.content"
-                                    class="mx-auto w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
-                                    :extensions="extensions"
-                                >
-                                    <template #toolbar="{ editor }">
-                                        <TemplateEditorButtons :editor="editor" />
-                                    </template>
-                                </TiptapEditor>
-                            </ClientOnly>
-                        </UFormField>
-                    </UContainer>
-                </template>
-            </UTabs>
-        </div>
-    </UForm>
+                            <UFormField
+                                class="flex flex-1 flex-col overflow-y-hidden"
+                                name="content"
+                                :label="`${$t('common.content')} ${$t('common.template')}`"
+                                required
+                                :ui="{ container: 'flex flex-1 overflow-y-hidden flex-col' }"
+                            >
+                                <ClientOnly>
+                                    <TiptapEditor
+                                        v-model="state.content"
+                                        class="mx-auto w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
+                                        :extensions="extensions"
+                                    >
+                                        <template #toolbar="{ editor }">
+                                            <TemplateEditorButtons :editor="editor" />
+                                        </template>
+                                    </TiptapEditor>
+                                </ClientOnly>
+                            </UFormField>
+                        </UContainer>
+                    </template>
+                </UTabs>
+            </UForm>
+        </template>
+    </UDashboardPanel>
 </template>

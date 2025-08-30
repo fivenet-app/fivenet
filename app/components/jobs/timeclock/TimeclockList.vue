@@ -6,8 +6,9 @@ import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
-import DateRangePickerPopoverClient from '~/components/partials/DateRangePickerPopover.client.vue';
+import DateRangePickerClient from '~/components/partials/DateRangePicker.client.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getJobsTimeclockClient } from '~~/gen/ts/clients';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
@@ -307,7 +308,7 @@ const { game } = useAppConfig();
 
                     <div v-if="query.viewMode === TimeclockViewMode.SELF" class="flex flex-1 justify-between gap-2">
                         <UFormField class="flex-1" name="date" :label="$t('common.time_range')">
-                            <DateRangePickerPopoverClient
+                            <DateRangePickerClient
                                 v-model="query.date"
                                 class="flex-1"
                                 mode="date"
@@ -340,37 +341,35 @@ const { game } = useAppConfig();
                             :class="canAccessAll && userId === undefined ? 'grid-cols-2' : 'grid-cols-1'"
                         >
                             <UFormField v-if="canAccessAll && userId === undefined" name="users" :label="$t('common.search')">
-                                <ClientOnly>
-                                    <USelectMenu
-                                        v-model="query.users"
-                                        v-model:search-term="colleaguesSearchTerm"
-                                        :items="colleagues"
-                                        multiple
-                                        :loading="isRequestPending(colleaguesStatus)"
-                                        :search-input="{
-                                            placeholder: $t('common.search_field'),
-                                        }"
-                                        :filter-fields="['firstname', 'lastname']"
-                                        :placeholder="$t('common.colleague', 2)"
-                                        ignore-filter
-                                        leading-icon="i-mdi-search"
-                                        value-key="userId"
-                                    >
-                                        <template #item-label="{ item }">
-                                            <span v-if="item" class="truncate">
-                                                {{ usersToLabel(item) }}
-                                            </span>
-                                        </template>
+                                <SelectMenu
+                                    v-model="query.users"
+                                    v-model:search-term="colleaguesSearchTerm"
+                                    :items="colleagues"
+                                    multiple
+                                    :loading="isRequestPending(colleaguesStatus)"
+                                    :search-input="{
+                                        placeholder: $t('common.search_field'),
+                                    }"
+                                    :filter-fields="['firstname', 'lastname']"
+                                    :placeholder="$t('common.colleague', 2)"
+                                    ignore-filter
+                                    leading-icon="i-mdi-search"
+                                    value-key="userId"
+                                >
+                                    <template #item-label="{ item }">
+                                        <span v-if="item" class="truncate">
+                                            {{ userToLabel(item) }}
+                                        </span>
+                                    </template>
 
-                                        <template #item="{ item }">
-                                            <ColleagueName class="truncate" :colleague="item" birthday />
-                                        </template>
+                                    <template #item="{ item }">
+                                        <ColleagueName class="truncate" :colleague="item" birthday />
+                                    </template>
 
-                                        <template #empty>
-                                            {{ $t('common.not_found', [$t('common.creator', 2)]) }}
-                                        </template>
-                                    </USelectMenu>
-                                </ClientOnly>
+                                    <template #empty>
+                                        {{ $t('common.not_found', [$t('common.creator', 2)]) }}
+                                    </template>
+                                </SelectMenu>
                             </UFormField>
 
                             <div class="flex flex-1 flex-row gap-1">
@@ -448,7 +447,7 @@ const { game } = useAppConfig();
                                             @click="query.date.end = addWeeks(query.date.end, 1)"
                                         />
                                     </div>
-                                    <DateRangePickerPopoverClient
+                                    <DateRangePickerClient
                                         v-else
                                         v-model="query.date"
                                         class="flex-1"
@@ -593,7 +592,7 @@ const { game } = useAppConfig();
                     <UTooltip
                         v-if="query.mode === TimeclockMode.TIMELINE"
                         :text="$t('components.jobs.timeclock.timeline.tooltip')"
-                        :shortcuts="['CTRL', '🖱']"
+                        :kbds="['CTRL', '🖱']"
                     >
                         <UIcon class="size-4" name="i-mdi-information-outline" />
                     </UTooltip>

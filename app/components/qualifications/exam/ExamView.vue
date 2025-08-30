@@ -63,81 +63,84 @@ watch(data, async () => {
 </script>
 
 <template>
-    <UDashboardNavbar :title="$t('pages.qualifications.single.exam.title')">
-        <template #right>
-            <PartialsBackButton :fallback-to="`/qualifications/${qualificationId}`" />
-        </template>
-    </UDashboardNavbar>
-
-    <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.exam', 1)])" />
-    <DataErrorBlock
-        v-else-if="error"
-        :title="$t('common.unable_to_load', [$t('common.exam', 1)])"
-        :error="error"
-        :retry="refresh"
-    />
-    <DataNoDataBlock
-        v-else-if="!data"
-        icon="i-mdi-account-school"
-        :message="$t('common.not_found', [$t('common.qualification', 1)])"
-    />
-
     <ExamViewQuestions
-        v-else-if="exam && examUser && examUser?.endsAt"
+        v-if="data && exam && examUser && examUser?.endsAt"
         :qualification-id="qualificationId"
         :exam="exam"
         :exam-user="examUser"
         :qualification="data.qualification"
     />
+    <UDashboardPanel v-else>
+        <template #header>
+            <UDashboardNavbar :title="$t('pages.qualifications.single.exam.title')">
+                <template #right>
+                    <PartialsBackButton :fallback-to="`/qualifications/${qualificationId}`" />
+                </template>
+            </UDashboardNavbar>
 
-    <template v-else>
-        <UDashboardToolbar>
-            <template #default>
-                <div class="flex justify-between gap-2">
-                    <div class="flex gap-2">
-                        <UBadge v-if="data?.qualification?.examSettings?.time" class="inline-flex gap-1">
-                            <UIcon class="size-4" name="i-mdi-clock" />
-                            {{ $t('common.duration') }}: {{ fromDuration(data.qualification.examSettings.time) }}s
-                        </UBadge>
-                        <UBadge class="inline-flex gap-1">
-                            <UIcon class="size-4" name="i-mdi-question-mark" />
-                            {{ $t('common.count') }}: {{ data?.questionCount }}
-                            {{ $t('common.question', data?.questionCount ?? 1) }}
-                        </UBadge>
+            <UDashboardToolbar v-if="data">
+                <template #default>
+                    <div class="flex justify-between gap-2">
+                        <div class="flex gap-2">
+                            <UBadge v-if="data?.qualification?.examSettings?.time" class="inline-flex gap-1">
+                                <UIcon class="size-4" name="i-mdi-clock" />
+                                {{ $t('common.duration') }}: {{ fromDuration(data.qualification.examSettings.time) }}s
+                            </UBadge>
+                            <UBadge class="inline-flex gap-1">
+                                <UIcon class="size-4" name="i-mdi-question-mark" />
+                                {{ $t('common.count') }}: {{ data?.questionCount }}
+                                {{ $t('common.question', data?.questionCount ?? 1) }}
+                            </UBadge>
+                        </div>
+                        <div class="flex gap-2">
+                            <UBadge v-if="data.examUser?.startedAt">
+                                {{ $t('common.begins_at') }}
+                                {{ $d(toDate(data.examUser?.startedAt), 'long') }}
+                            </UBadge>
+                            <UBadge v-if="data?.examUser?.endsAt">
+                                {{ $t('common.ends_at') }}
+                                {{ $d(toDate(data?.examUser?.endsAt), 'long') }}
+                            </UBadge>
+                        </div>
                     </div>
-                    <div class="flex gap-2">
-                        <UBadge v-if="data.examUser?.startedAt">
-                            {{ $t('common.begins_at') }}
-                            {{ $d(toDate(data.examUser?.startedAt), 'long') }}
-                        </UBadge>
-                        <UBadge v-if="data?.examUser?.endsAt">
-                            {{ $t('common.ends_at') }}
-                            {{ $d(toDate(data?.examUser?.endsAt), 'long') }}
-                        </UBadge>
-                    </div>
-                </div>
+                </template>
+            </UDashboardToolbar>
+        </template>
+
+        <template #body>
+            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.exam', 1)])" />
+            <DataErrorBlock
+                v-else-if="error"
+                :title="$t('common.unable_to_load', [$t('common.exam', 1)])"
+                :error="error"
+                :retry="refresh"
+            />
+            <DataNoDataBlock
+                v-else-if="!data"
+                icon="i-mdi-account-school"
+                :message="$t('common.not_found', [$t('common.qualification', 1)])"
+            />
+
+            <template v-else>
+                <UCard>
+                    <UAlert v-if="data?.examUser?.endedAt || isPast(toDate(data?.examUser?.endsAt))">
+                        <h3 class="text-lg">
+                            {{ $t('components.qualifications.exam_view.times_up') }}
+                        </h3>
+                    </UAlert>
+                    <UButton
+                        v-else-if="!data?.examUser?.endedAt"
+                        class="w-full"
+                        size="xl"
+                        color="neutral"
+                        icon="i-mdi-play"
+                        block
+                        @click="takeExam(false)"
+                    >
+                        {{ $t('components.qualifications.take_test') }}
+                    </UButton>
+                </UCard>
             </template>
-        </UDashboardToolbar>
-
-        <UDashboardPanelContent class="p-0 sm:pb-0">
-            <UCard>
-                <UAlert v-if="data?.examUser?.endedAt || isPast(toDate(data?.examUser?.endsAt))">
-                    <h3 class="text-lg">
-                        {{ $t('components.qualifications.exam_view.times_up') }}
-                    </h3>
-                </UAlert>
-                <UButton
-                    v-else-if="!data?.examUser?.endedAt"
-                    class="w-full"
-                    size="xl"
-                    color="neutral"
-                    icon="i-mdi-play"
-                    block
-                    @click="takeExam(false)"
-                >
-                    {{ $t('components.qualifications.take_test') }}
-                </UButton>
-            </UCard>
-        </UDashboardPanelContent>
-    </template>
+        </template>
+    </UDashboardPanel>
 </template>

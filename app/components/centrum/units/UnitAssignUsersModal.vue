@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
@@ -17,8 +18,6 @@ const emit = defineEmits<{
 const completorStore = useCompletorStore();
 
 const centrumCentrumClient = await getCentrumCentrumClient();
-
-const usersLoading = ref(false);
 
 const schema = z.object({
     users: z.custom<UserShort>().array().max(10).default([]),
@@ -65,44 +64,40 @@ const onSubmitThrottle = useThrottleFn(async () => {
     canSubmit.value = false;
     await assignUnit(props.unit.id).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
     <UModal :title="`${$t('components.centrum.assign_unit.title')}: ${unit.name} (${unit.initials})`">
         <template #body>
-            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <div class="flex flex-1 flex-col justify-between gap-2">
                     <div class="divide-y divide-gray-100 px-2 sm:px-6 dark:divide-gray-800">
                         <UFormField class="flex-1" name="users" :label="$t('common.colleague', 2)">
-                            <ClientOnly>
-                                <USelectMenu
-                                    v-model="state.users"
-                                    multiple
-                                    :searchable="
-                                        async (q: string) => {
-                                            usersLoading = true;
-                                            const colleagues = await completorStore.completeCitizens({
-                                                search: q,
-                                                userIds: state.users.map((u) => u.userId),
-                                            });
-                                            usersLoading = false;
-                                            return colleagues;
-                                        }
-                                    "
-                                    :search-input="{ placeholder: $t('common.search_field') }"
-                                    :filter-fields="['firstname', 'lastname']"
-                                    block
-                                    :placeholder="$t('common.search')"
-                                    trailing
-                                    :disabled="!canSubmit"
-                                >
-                                    <template #item="{ item }">
-                                        {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
-                                    </template>
+                            <SelectMenu
+                                v-model="state.users"
+                                multiple
+                                :searchable="
+                                    async (q: string) =>
+                                        await completorStore.completeCitizens({
+                                            search: q,
+                                            userIds: state.users.map((u) => u.userId),
+                                        })
+                                "
+                                :search-input="{ placeholder: $t('common.search_field') }"
+                                :filter-fields="['firstname', 'lastname']"
+                                block
+                                :placeholder="$t('common.search')"
+                                trailing
+                                :disabled="!canSubmit"
+                            >
+                                <template #item="{ item }">
+                                    {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
+                                </template>
 
-                                    <template #empty> {{ $t('common.not_found', [$t('common.colleague', 2)]) }} </template>
-                                </USelectMenu>
-                            </ClientOnly>
+                                <template #empty> {{ $t('common.not_found', [$t('common.colleague', 2)]) }} </template>
+                            </SelectMenu>
                         </UFormField>
 
                         <div class="dark:bg-base-900 mt-2 overflow-hidden rounded-md bg-neutral-100">
@@ -122,13 +117,16 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
-                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                    {{ $t('common.update') }}
-                </UButton>
+                <UButton
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :label="$t('common.update')"
+                    @click="formRef?.submit()"
+                />
             </UButtonGroup>
         </template>
     </UModal>

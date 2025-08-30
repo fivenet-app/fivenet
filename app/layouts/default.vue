@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { LazyPartialsSuperuserJobToggle } from '#components';
 import type { CommandPaletteGroup } from '@nuxt/ui';
 import ClipboardModal from '~/components/clipboard/modal/ClipboardModal.vue';
 import MathCalculatorDrawer from '~/components/quickbuttons/mathcalculator/MathCalculatorDrawer.vue';
@@ -35,7 +36,7 @@ const links = computed(() =>
             to: '/overview',
             tooltip: {
                 text: t('common.overview'),
-                shortcuts: ['G', 'H'],
+                kbds: ['G', 'H'],
             },
         },
         {
@@ -45,7 +46,7 @@ const links = computed(() =>
             badge: unreadCount.value > 0 ? (unreadCount.value <= 9 ? unreadCount.value.toString() : '9+') : undefined,
             tooltip: {
                 text: t('common.mail'),
-                shortcuts: ['G', 'E'],
+                kbds: ['G', 'E'],
             },
             permission: 'mailer.MailerService/ListEmails' as Perms,
         },
@@ -55,7 +56,7 @@ const links = computed(() =>
             to: '/citizens',
             tooltip: {
                 text: t('common.citizen', 1),
-                shortcuts: ['G', 'C'],
+                kbds: ['G', 'C'],
             },
             permission: 'citizens.CitizensService/ListCitizens' as Perms,
         },
@@ -65,7 +66,7 @@ const links = computed(() =>
             to: '/vehicles',
             tooltip: {
                 text: t('common.vehicle', 2),
-                shortcuts: ['G', 'V'],
+                kbds: ['G', 'V'],
             },
             permission: 'vehicles.VehiclesService/ListVehicles' as Perms,
         },
@@ -75,7 +76,7 @@ const links = computed(() =>
             to: '/documents',
             tooltip: {
                 text: t('common.document', 2),
-                shortcuts: ['G', 'D'],
+                kbds: ['G', 'D'],
             },
             permission: 'documents.DocumentsService/ListDocuments' as Perms,
         },
@@ -85,7 +86,7 @@ const links = computed(() =>
             to: '/jobs/overview',
             tooltip: {
                 text: t('common.job'),
-                shortcuts: ['G', 'J'],
+                kbds: ['G', 'J'],
             },
             defaultOpen: false,
             children: [
@@ -127,7 +128,7 @@ const links = computed(() =>
             to: '/calendar',
             tooltip: {
                 text: t('common.calendar'),
-                shortcuts: ['G', 'K'],
+                kbds: ['G', 'K'],
             },
         },
         {
@@ -136,7 +137,7 @@ const links = computed(() =>
             to: '/qualifications',
             tooltip: {
                 text: t('common.qualification', 2),
-                shortcuts: ['G', 'Q'],
+                kbds: ['G', 'Q'],
             },
             permission: 'qualifications.QualificationsService/ListQualifications' as Perms,
         },
@@ -146,7 +147,7 @@ const links = computed(() =>
             to: '/livemap',
             tooltip: {
                 text: t('common.livemap'),
-                shortcuts: ['G', 'M'],
+                kbds: ['G', 'M'],
             },
             permission: 'livemap.LivemapService/Stream' as Perms,
         },
@@ -156,7 +157,7 @@ const links = computed(() =>
             to: '/centrum',
             tooltip: {
                 text: t('common.dispatch_center'),
-                shortcuts: ['G', 'W'],
+                kbds: ['G', 'W'],
             },
             permission: 'centrum.CentrumService/TakeControl' as Perms,
         },
@@ -166,7 +167,7 @@ const links = computed(() =>
             to: '/wiki',
             tooltip: {
                 text: t('common.wiki'),
-                shortcuts: ['G', 'L'],
+                kbds: ['G', 'L'],
             },
             permission: 'wiki.WikiService/ListPages' as Perms,
         },
@@ -176,7 +177,7 @@ const links = computed(() =>
             to: '/settings',
             tooltip: {
                 text: t('common.control_panel'),
-                shortcuts: ['G', 'P'],
+                kbds: ['G', 'P'],
             },
             permission: 'settings.SettingsService/GetJobProps' as Perms,
         },
@@ -205,11 +206,58 @@ const footerLinks = computed(() =>
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
+const clipboardModal = overlay.create(ClipboardModal);
+
+const clipboardLink = computed(() =>
+    [
+        activeChar.value &&
+        can([
+            'documents.DocumentsService/UpdateDocument',
+            'citizens.CitizensService/GetUser',
+            'vehicles.VehiclesService/ListVehicles',
+        ]).value
+            ? {
+                  label: t('common.clipboard'),
+                  icon: 'i-mdi-clipboard-list-outline',
+                  onClick: () => clipboardModal.open(),
+              }
+            : undefined,
+    ].flatMap((item) => (item !== undefined ? [item] : [])),
+);
+
+const penaltyCalculatorDrawer = overlay.create(PenaltyCalculatorDrawer);
+const mathCalculatorDrawer = overlay.create(MathCalculatorDrawer);
+
+const quickAccessButtons = computed(() =>
+    [
+        jobProps.value?.quickButtons?.penaltyCalculator || isSuperuser.value
+            ? {
+                  label: t('components.penaltycalculator.title'),
+                  icon: 'i-mdi-gavel',
+                  onClick: () => {
+                      isDashboardSidebarSlideoverOpen.value = false;
+                      penaltyCalculatorDrawer.open();
+                  },
+              }
+            : undefined,
+        jobProps.value?.quickButtons?.mathCalculator || isSuperuser.value
+            ? {
+                  label: t('components.mathcalculator.title'),
+                  icon: 'i-mdi-calculator',
+                  onClick: () => {
+                      isDashboardSidebarSlideoverOpen.value = false;
+                      mathCalculatorDrawer.open();
+                  },
+              }
+            : undefined,
+    ].flatMap((item) => (item !== undefined ? [item] : [])),
+);
+
 const groups = computed<CommandPaletteGroup[]>(() => [
     {
         id: 'links',
         label: t('common.goto'),
-        commands: links.value.map((link) => ({ ...link, shortcuts: link.tooltip?.shortcuts })),
+        commands: links.value.map((link) => ({ ...link, kbds: link.tooltip?.kbds })),
     },
     {
         id: 'ids',
@@ -362,53 +410,6 @@ const groups = computed<CommandPaletteGroup[]>(() => [
         },
     },
 ]);
-
-const clipboardModal = overlay.create(ClipboardModal);
-
-const clipboardLink = computed(() =>
-    [
-        activeChar.value &&
-        can([
-            'documents.DocumentsService/UpdateDocument',
-            'citizens.CitizensService/GetUser',
-            'vehicles.VehiclesService/ListVehicles',
-        ]).value
-            ? {
-                  label: t('common.clipboard'),
-                  icon: 'i-mdi-clipboard-list-outline',
-                  onClick: () => clipboardModal.open(),
-              }
-            : undefined,
-    ].flatMap((item) => (item !== undefined ? [item] : [])),
-);
-
-const penaltyCalculatorDrawer = overlay.create(PenaltyCalculatorDrawer);
-const mathCalculatorDrawer = overlay.create(MathCalculatorDrawer);
-
-const quickAccessButtons = computed(() =>
-    [
-        jobProps.value?.quickButtons?.penaltyCalculator || isSuperuser.value
-            ? {
-                  label: t('components.penaltycalculator.title'),
-                  icon: 'i-mdi-gavel',
-                  onClick: () => {
-                      isDashboardSidebarSlideoverOpen.value = false;
-                      penaltyCalculatorDrawer.open();
-                  },
-              }
-            : undefined,
-        jobProps.value?.quickButtons?.mathCalculator || isSuperuser.value
-            ? {
-                  label: t('components.mathcalculator.title'),
-                  icon: 'i-mdi-calculator',
-                  onClick: () => {
-                      isDashboardSidebarSlideoverOpen.value = false;
-                      mathCalculatorDrawer.open();
-                  },
-              }
-            : undefined,
-    ].flatMap((item) => (item !== undefined ? [item] : [])),
-);
 </script>
 
 <template>
@@ -452,6 +453,12 @@ const quickAccessButtons = computed(() =>
                 </template>
 
                 <div class="flex-1" />
+
+                <template v-if="can(['Superuser/CanBeSuperuser', 'Superuser/Superuser']).value">
+                    <LazyPartialsSuperuserJobToggle :collapsed="collapsed" />
+
+                    <USeparator />
+                </template>
 
                 <UNavigationMenu orientation="vertical" tooltip popover :items="footerLinks" :collapsed="collapsed" />
             </template>

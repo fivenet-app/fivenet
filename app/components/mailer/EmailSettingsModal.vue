@@ -56,12 +56,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
     emit('close', false);
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
     <UModal :title="`${$t('common.settings')} - ${selectedEmail?.email}`" :overlay="false">
         <template #body>
-            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <div class="flex flex-col gap-2">
                     <UFormField class="flex-1" name="emails" :label="$t('common.blocklist')">
                         <div class="flex flex-col gap-1">
@@ -116,18 +118,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
                 <UButton
                     v-if="!disabled || canManage"
                     class="flex-1"
-                    type="submit"
                     :label="$t('common.save')"
                     block
                     :disabled="!canSubmit"
                     :loading="!canSubmit"
+                    @click="formRef?.submit()"
                 />
             </UButtonGroup>
         </template>

@@ -202,8 +202,7 @@ onBeforeMount(async () => {
         <UDashboardToolbar
             v-if="selectedEmail"
             :ui="{
-                container:
-                    'gap-x-0 gap-y-1 justify-stretch items-stretch h-full inline-flex flex-col bg-gray-100 p-0 px-1 dark:bg-gray-800 min-w-0',
+                root: 'gap-x-0 gap-y-1 justify-stretch items-stretch h-full inline-flex flex-col bg-gray-100 p-0 px-1 dark:bg-gray-800 min-w-0',
             }"
         >
             <ClientOnly>

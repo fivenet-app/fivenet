@@ -25,7 +25,7 @@ const { addOrUpdateMarkerMarker } = livemapStore;
 
 const livemapLivemapClient = await getLivemapLivemapClient();
 
-const markerTypes = [{ type: MarkerType.CIRCLE }, { type: MarkerType.DOT }, { type: MarkerType.ICON }];
+const markerTypes = [{ value: MarkerType.CIRCLE }, { value: MarkerType.DOT }, { value: MarkerType.ICON }];
 
 const defaultExpiresAt = ref<Date>(new Date());
 defaultExpiresAt.value.setTime(defaultExpiresAt.value.getTime() + 1 * 60 * 60 * 1000);
@@ -122,6 +122,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await createOrUpdateMarker(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
@@ -130,7 +132,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         :overlay="false"
     >
         <template #body>
-            <UForm class="flex flex-1" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" class="flex flex-1" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <dl class="divide-neutral/10 divide-y">
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm leading-6 font-medium">
@@ -203,7 +205,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         v-model="state.markerType"
                                         name="markerType"
                                         :items="markerTypes"
-                                        value-key="type"
+                                        value-key="value"
                                         :search-input="{ placeholder: $t('common.search_field') }"
                                     >
                                         <template #item-label>
@@ -214,7 +216,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                                         <template #item="{ item }">
                                             <span class="truncate">{{
-                                                $t(`enums.livemap.MarkerType.${MarkerType[item.type ?? 0]}`)
+                                                $t(`enums.livemap.MarkerType.${MarkerType[item.value ?? 0]}`)
                                             }}</span>
                                         </template>
                                     </USelectMenu>
@@ -266,13 +268,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                    {{ !marker ? $t('common.create') : $t('common.save') }}
-                </UButton>
+                <UButton
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :label="!marker ? $t('common.create') : $t('common.save')"
+                    @click="formRef?.submit()"
+                />
 
-                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
             </UButtonGroup>
         </template>
     </USlideover>

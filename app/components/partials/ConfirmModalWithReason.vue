@@ -62,9 +62,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     color="neutral"
                     :label="$t('common.cancel')"
                     @click="
-                        if (cancel) {
-                            cancel();
-                        }
+                        if (cancel) cancel();
+
                         $emit('close');
                     "
                 />

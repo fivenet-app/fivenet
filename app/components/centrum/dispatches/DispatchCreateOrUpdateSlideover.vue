@@ -97,12 +97,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await createDispatch(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
     <USlideover :title="$t('components.centrum.create_dispatch.title')" :overlay="false">
         <template #body>
-            <UForm class="flex flex-1" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" class="flex flex-1" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <dl class="divide-neutral/10 divide-y">
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm leading-6 font-medium">
@@ -171,16 +173,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :placeholder="$t('common.job')"
                                     :filter-fields="['name', 'label']"
                                     value-key="name"
+                                    label-key="label"
                                     :items="dispatchTargetJobs"
                                     :search-input="{ placeholder: $t('common.search_field') }"
                                     :disabled="dispatchTargetJobs.length <= 1"
                                 >
-                                    <template #item-label="{ item }">
-                                        <span class="truncate">{{
-                                            item.length > 0 ? item.map((j: { label: string }) => j.label).join(', ') : '&nbsp;'
-                                        }}</span>
-                                    </template>
-
                                     <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
                                 </USelectMenu>
                             </UFormField>
@@ -192,13 +189,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                    {{ $t('common.create') }}
-                </UButton>
+                <UButton
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :label="$t('common.create')"
+                    @click="() => formRef?.submit()"
+                />
 
-                <UButton class="flex-1" block color="neutral" @click="$emit('close')">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButton class="flex-1" block color="neutral" :label="$t('common.close', 1)" @click="$emit('close')" />
             </UButtonGroup>
         </template>
     </USlideover>

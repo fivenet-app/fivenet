@@ -194,9 +194,7 @@ const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
             </UButtonGroup>
         </template>
     </USlideover>

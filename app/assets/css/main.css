@@ -12,7 +12,7 @@
 }
 
 @theme {
-  --font-sans: 'DM Sans', 'DM Sans fallback', 'Public Sans', sans-serif;
+  --font-sans: 'Public Sans', sans-serif;
 
   --animate-wiggle: wiggle 1s infinite;
 

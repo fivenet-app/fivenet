@@ -220,9 +220,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </UFormField>
 
                             <div class="mt-2 shrink-0">
-                                <UButton type="submit" :disabled="!canSubmit" :loading="!canSubmit">
-                                    {{ $t('common.post') }}
-                                </UButton>
+                                <UButton
+                                    type="submit"
+                                    :disabled="!canSubmit"
+                                    :loading="!canSubmit"
+                                    :label="$t('common.post')"
+                                />
                             </div>
                         </UForm>
                     </div>

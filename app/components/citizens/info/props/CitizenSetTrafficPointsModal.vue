@@ -79,12 +79,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await setTrafficPoints(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
     <UModal :title="$t('components.citizens.CitizenInfoProfile.set_traffic_points')">
         <template #body>
-            <UForm ref="form" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField name="reason" :label="$t('common.reason')" required>
                     <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
                 </UFormField>
@@ -103,25 +105,22 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                    {{ $t('common.add') }}
-                </UButton>
+                <UButton class="flex-1" block :disabled="!canSubmit" :loading="!canSubmit" :label="$t('common.add')" />
 
                 <UButton
-                    class="flex-1"
-                    type="submit"
-                    block
                     color="error"
+                    class="flex-1"
+                    block
                     :disabled="!canSubmit"
                     :loading="!canSubmit"
-                    @click="state.reset = true"
-                >
-                    {{ $t('common.reset') }}
-                </UButton>
+                    :label="$t('common.reset')"
+                    @click="
+                        state.reset = true;
+                        formRef?.submit();
+                    "
+                />
 
-                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
             </UButtonGroup>
         </template>
     </UModal>

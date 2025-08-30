@@ -51,8 +51,8 @@ export type MixedAccessEntry = {
 };
 
 export type AccessType = {
-    type: AccessEntryType;
     label: string;
+    value: AccessEntryType;
 };
 
 export type AccessLevelEnum = {

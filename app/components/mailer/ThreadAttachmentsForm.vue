@@ -3,6 +3,7 @@ import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import type { MessageAttachment } from '~~/gen/ts/resources/mailer/message';
 import type { ListDocumentsRequest } from '~~/gen/ts/services/documents/documents';
+import SelectMenu from '../partials/SelectMenu.vue';
 
 const props = defineProps<{
     modelValue: MessageAttachment[];
@@ -47,26 +48,28 @@ async function listDocuments(search: string): Promise<DocumentShort[]> {
             <div v-for="(_, idx) in attachments" :key="idx" class="flex items-center gap-1">
                 <template v-if="attachments[idx]?.data.oneofKind === 'document'">
                     <UFormField class="flex-1" :name="`attachments.${idx}.data.documentId`">
-                        <USelectMenu
+                        <SelectMenu
                             class="w-full flex-1"
                             :disabled="!canSubmit"
                             :searchable="listDocuments"
                             :placeholder="$t('common.document')"
-                            :model-value="attachments[idx].data.document.id > 0 ? attachments[idx].data.document : undefined"
+                            :model-value="
+                                attachments[idx].data.document.id > 0
+                                    ? (attachments[idx].data.document as DocumentShort)
+                                    : undefined
+                            "
                             @update:model-value="attachments[idx] = { data: { oneofKind: 'document', document: $event } }"
                         >
                             <template #item-label="{ item }">
-                                <template v-if="item">
-                                    {{ `DOC-${attachments[idx].data.document.id}: ${attachments[idx].data.document?.title}` }}
-                                </template>
+                                {{ `DOC-${item.id}: ${item.title}` }}
                             </template>
 
                             <template #item="{ item }">
-                                {{ `DOC-${item.id}: ${item?.title}` }}
+                                {{ `DOC-${item.id}: ${item.title}` }}
                             </template>
 
                             <template #empty> {{ $t('common.not_found', [$t('common.document', 2)]) }} </template>
-                        </USelectMenu>
+                        </SelectMenu>
                     </UFormField>
                 </template>
 

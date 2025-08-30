@@ -70,7 +70,7 @@ const onSubmitThrottle = useThrottleFn(async (charId: number) => {
                 dots
                 orientation="horizontal"
                 class="mb-8"
-                :ui="{ item: 'basis-full sm:basis-1/2 lg:basis-1/3', container: 'gap-20' }"
+                :ui="{ item: 'basis-full sm:basis-md md:basis-md lg:basis-md', container: 'gap-4' }"
             >
                 <CharacterSelectorCard
                     :key="char.char!.userId"

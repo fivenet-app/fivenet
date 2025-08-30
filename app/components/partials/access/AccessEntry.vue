@@ -5,6 +5,7 @@ import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import { QualificationExamMode, type QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
+import SelectMenu from '../SelectMenu.vue';
 import type { AccessLevelEnum, AccessType, MixedAccessEntry } from './helpers';
 
 const props = withDefaults(
@@ -63,7 +64,6 @@ watch(selectedQualification, () => {
     entry.value.qualificationId = selectedQualification.value?.id;
 });
 
-const usersLoading = ref(false);
 async function findUser(userId?: number): Promise<UserShort[]> {
     if (userId === undefined) return [];
 
@@ -151,11 +151,11 @@ if (props.hideGrade) {
                     :disabled="disabled"
                     :placeholder="$t('common.type')"
                     :search-input="{ placeholder: $t('common.search_field') }"
-                    value-key="type"
+                    value-key="value"
                     :items="accessTypes"
                 >
                     <template #item-label>
-                        <span class="truncate">{{ accessTypes.find((t) => t.type === entry.type)?.label }}</span>
+                        <span class="truncate">{{ accessTypes.find((t) => t.value === entry.type)?.label }}</span>
                     </template>
 
                     <template #item="{ item }">
@@ -171,77 +171,69 @@ if (props.hideGrade) {
 
         <template v-if="entry.type === 'user'">
             <UFormField class="flex-1" name="userId">
-                <ClientOnly>
-                    <USelectMenu
-                        v-model="selectedUser"
-                        class="flex-1"
-                        :searchable="
-                            async (q: string) => {
-                                usersLoading = true;
-                                const users = await completorStore.completeCitizens({
-                                    search: q,
-                                    userIds: entry.userId ? [entry.userId] : [],
-                                });
-                                usersLoading = false;
-                                return users;
-                            }
-                        "
-                        :filter-fields="['firstname', 'lastname']"
-                        :search-input="{ placeholder: $t('common.search_field') }"
-                        :placeholder="$t('common.citizen', 1)"
-                    >
-                        <template #item-label>
-                            <template v-if="selectedUser">
-                                {{ usersToLabel([selectedUser]) }}
-                            </template>
+                <SelectMenu
+                    v-model="selectedUser"
+                    class="flex-1"
+                    :searchable="
+                        async (q: string) =>
+                            await completorStore.completeCitizens({
+                                search: q,
+                                userIds: entry.userId ? [entry.userId] : [],
+                            })
+                    "
+                    :filter-fields="['firstname', 'lastname']"
+                    :search-input="{ placeholder: $t('common.search_field') }"
+                    :placeholder="$t('common.citizen', 1)"
+                >
+                    <template #item-label>
+                        <template v-if="selectedUser">
+                            {{ usersToLabel([selectedUser]) }}
                         </template>
+                    </template>
 
-                        <template #item="{ item }">
-                            {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
-                        </template>
+                    <template #item="{ item }">
+                        {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
+                    </template>
 
-                        <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
-                    </USelectMenu>
-                </ClientOnly>
+                    <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
+                </SelectMenu>
             </UFormField>
         </template>
 
         <template v-else-if="entry.type === 'qualification'">
             <UFormField class="flex-1" name="qualificationId">
-                <ClientOnly>
-                    <USelectMenu
-                        v-model="selectedQualification"
-                        class="flex-1"
-                        :searchable="
-                            async (q: string) => {
-                                const { response } = await qualificationsQualificationsClient.listQualifications({
-                                    pagination: {
-                                        offset: 0,
-                                    },
-                                    search: q,
-                                });
-                                return response?.qualifications ?? [];
-                            }
-                        "
-                        :filter-fields="['abbreviation', 'title']"
-                        :search-input="{ placeholder: $t('common.search_field') }"
-                        :placeholder="$t('common.qualification', 1)"
-                    >
-                        <template #item-label>
-                            <template v-if="selectedQualification">
-                                <span class="truncate">
-                                    {{ selectedQualification.abbreviation }}: {{ selectedQualification.title }}
-                                </span>
-                            </template>
+                <SelectMenu
+                    v-model="selectedQualification"
+                    class="flex-1"
+                    :searchable="
+                        async (q: string) => {
+                            const { response } = await qualificationsQualificationsClient.listQualifications({
+                                pagination: {
+                                    offset: 0,
+                                },
+                                search: q,
+                            });
+                            return (response?.qualifications ?? []) as QualificationShort[];
+                        }
+                    "
+                    :filter-fields="['abbreviation', 'title']"
+                    :search-input="{ placeholder: $t('common.search_field') }"
+                    :placeholder="$t('common.qualification', 1)"
+                >
+                    <template #item-label>
+                        <template v-if="selectedQualification">
+                            <span class="truncate">
+                                {{ selectedQualification.abbreviation }}: {{ selectedQualification.title }}
+                            </span>
                         </template>
+                    </template>
 
-                        <template #item="{ item }">
-                            {{ `${item?.abbreviation}: ${item?.title}` }}
-                        </template>
+                    <template #item="{ item }">
+                        {{ `${item?.abbreviation}: ${item?.title}` }}
+                    </template>
 
-                        <template #empty> {{ $t('common.not_found', [$t('common.qualification', 2)]) }} </template>
-                    </USelectMenu>
-                </ClientOnly>
+                    <template #empty> {{ $t('common.not_found', [$t('common.qualification', 2)]) }} </template>
+                </SelectMenu>
             </UFormField>
         </template>
 

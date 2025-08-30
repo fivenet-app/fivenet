@@ -102,12 +102,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         useTimeoutFn(() => (canSubmit.value = true), 400),
     );
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
     <UModal :title="$t('components.jobs.self_service.set_profile_picture')">
         <template #body>
-            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField name="profilePicture" :label="$t('common.profile_picture')">
                     <div class="flex flex-col gap-2">
                         <NotSupportedTabletBlock v-if="nuiEnabled" />
@@ -143,25 +145,29 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                    {{ $t('common.save') }}
-                </UButton>
+                <UButton
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :label="$t('common.save')"
+                    @click="formRef?.submit()"
+                />
 
                 <UButton
                     class="flex-1"
-                    type="submit"
                     block
                     color="error"
                     :disabled="!canSubmit || !activeChar?.profilePicture"
                     :loading="!canSubmit"
-                    @click="state.reset = true"
-                >
-                    {{ $t('common.reset') }}
-                </UButton>
+                    :label="$t('common.reset')"
+                    @click="
+                        state.reset = true;
+                        formRef?.submit();
+                    "
+                />
 
-                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
             </UButtonGroup>
         </template>
     </UModal>

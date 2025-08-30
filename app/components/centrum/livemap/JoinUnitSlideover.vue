@@ -143,13 +143,11 @@ const filteredUnits = computed(() => ({
                     color="error"
                     :disabled="!canSubmit"
                     :loading="!canSubmit"
+                    :label="$t('common.leave')"
                     @click="onSubmitThrottle()"
-                >
-                    {{ $t('common.leave') }}
-                </UButton>
-                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                />
+
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
             </UButtonGroup>
         </template>
     </USlideover>

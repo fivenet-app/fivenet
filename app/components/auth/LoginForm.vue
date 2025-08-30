@@ -90,9 +90,7 @@ const passwordVisibility = ref(false);
             </UInput>
         </UFormField>
 
-        <UButton type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-            {{ $t('common.login') }}
-        </UButton>
+        <UButton type="submit" block :disabled="!canSubmit" :loading="!canSubmit" :label="$t('common.login')" />
 
         <div v-if="!nuiEnabled && login.providers.length > 0" class="space-y-2">
             <UAlert
@@ -121,9 +119,9 @@ const passwordVisibility = ref(false);
                         block
                         color="neutral"
                         external
+                        :icon="provider.icon?.startsWith('i-') ? provider.icon : undefined"
                         :to="`/api/oauth2/login/${provider.name}`"
                         :disabled="!canSubmit"
-                        :icon="provider.icon?.startsWith('i-') ? provider.icon : undefined"
                     >
                         <NuxtImg
                             v-if="!provider.icon?.startsWith('i-')"

@@ -13,13 +13,17 @@ definePageMeta({
 </script>
 
 <template>
-    <UDashboardPanel>
-        <UDashboardNavbar :title="$t('components.notifications.title')">
-            <template #right>
-                <DNBToggle />
-            </template>
-        </UDashboardNavbar>
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+        <template #header>
+            <UDashboardNavbar :title="$t('components.notifications.title')">
+                <template #right>
+                    <DNBToggle />
+                </template>
+            </UDashboardNavbar>
+        </template>
 
-        <NotificationList />
+        <template #body>
+            <NotificationList />
+        </template>
     </UDashboardPanel>
 </template>

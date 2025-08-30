@@ -159,9 +159,8 @@ defineShortcuts({
                     doc.value?.document?.creatorJob,
                 )
             )
-        ) {
+        )
             return;
-        }
 
         documentsDocuments.toggleDocument(props.documentId, !!doc.value?.document?.closed);
     },
@@ -178,9 +177,8 @@ defineShortcuts({
                     doc.value?.document?.creatorJob,
                 )
             )
-        ) {
+        )
             return;
-        }
 
         navigateTo({
             name: 'documents-id-edit',
@@ -188,9 +186,7 @@ defineShortcuts({
         });
     },
     'd-r': () => {
-        if (!doc.value || !can('documents.DocumentsService/ListDocumentReqs').value) {
-            return;
-        }
+        if (!doc.value || !can('documents.DocumentsService/ListDocumentReqs').value) return;
 
         openRequestsModal();
     },
@@ -207,6 +203,10 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
     <UDashboardPanel>
         <template #header>
             <UDashboardNavbar class="print:hidden" :title="$t('pages.documents.id.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #right>
                     <PartialsBackButton to="/documents" />
 
@@ -246,22 +246,16 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                             "
                             class="flex-1"
                             :text="`${$t('common.open', 1)}/ ${$t('common.close')}`"
-                            :shortcuts="['D', 'T']"
+                            :kbds="['D', 'T']"
                         >
                             <UButton
                                 class="flex-1 flex-col"
                                 block
                                 :icon="doc.document?.closed ? 'i-mdi-lock-open-variant' : 'i-mdi-lock'"
+                                :label="doc.document?.closed ? $t('common.open', 1) : $t('common.close', 1)"
                                 :ui="{ leadingIcon: doc.document?.closed ? 'text-success-500' : 'text-success-500' }"
                                 @click="toggleDocument()"
-                            >
-                                <template v-if="doc.document?.closed">
-                                    {{ $t('common.open', 1) }}
-                                </template>
-                                <template v-else>
-                                    {{ $t('common.close', 1) }}
-                                </template>
-                            </UButton>
+                            />
                         </UTooltip>
 
                         <UTooltip
@@ -277,7 +271,7 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                             "
                             class="flex-1"
                             :text="$t('common.edit')"
-                            :shortcuts="['D', 'E']"
+                            :kbds="['D', 'E']"
                         >
                             <UButton
                                 class="flex-1 flex-col"
@@ -287,9 +281,8 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                                     params: { id: doc.document?.id },
                                 }"
                                 icon="i-mdi-pencil"
-                            >
-                                {{ $t('common.edit') }}
-                            </UButton>
+                                :label="$t('common.edit')"
+                            />
                         </UTooltip>
 
                         <UTooltip
@@ -302,34 +295,24 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                                     class="flex-1 flex-col"
                                     block
                                     :color="doc.document?.pin?.state && doc.document?.pin?.userId ? 'error' : 'primary'"
+                                    :icon="
+                                        doc.document?.pin?.state && doc.document?.pin?.userId
+                                            ? 'i-mdi-playlist-remove'
+                                            : 'i-mdi-playlist-plus'
+                                    "
+                                    :label="$t('common.personal')"
                                     @click="togglePin(documentId, !doc.document?.pin?.userId, true)"
-                                >
-                                    <UIcon
-                                        class="size-5"
-                                        :name="
-                                            doc.document?.pin?.state && doc.document?.pin?.userId
-                                                ? 'i-mdi-playlist-remove'
-                                                : 'i-mdi-playlist-plus'
-                                        "
-                                    />
-                                    {{ $t('common.personal') }}
-                                </UButton>
+                                />
 
                                 <UButton
                                     v-if="attr('documents.DocumentsService/ToggleDocumentPin', 'Types', 'JobWide').value"
                                     class="flex-1 flex-col"
                                     block
                                     :color="doc.document?.pin?.state && doc.document?.pin?.job ? 'error' : 'primary'"
+                                    :icon="doc.document?.pin?.state && doc.document?.pin?.job ? 'i-mdi-pin-off' : 'i-mdi-pin'"
+                                    :label="$t('common.job')"
                                     @click="togglePin(documentId, !doc.document?.pin?.job, false)"
-                                >
-                                    <UIcon
-                                        class="size-5"
-                                        :name="
-                                            doc.document?.pin?.state && doc.document?.pin?.job ? 'i-mdi-pin-off' : 'i-mdi-pin'
-                                        "
-                                    />
-                                    {{ $t('common.job') }}
-                                </UButton>
+                                />
                             </UButtonGroup>
                         </UTooltip>
 
@@ -337,16 +320,15 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                             v-if="can('documents.DocumentsService/ListDocumentReqs').value"
                             class="flex-1"
                             :text="$t('common.request', 2)"
-                            :shortcuts="['D', 'R']"
+                            :kbds="['D', 'R']"
                         >
                             <UButton
                                 class="flex-1 flex-col"
                                 block
                                 icon="i-mdi-frequently-asked-questions"
+                                :label="$t('common.request', 2)"
                                 @click="openRequestsModal"
-                            >
-                                {{ $t('common.request', 2) }}
-                            </UButton>
+                            />
                         </UTooltip>
 
                         <UTooltip
@@ -358,6 +340,7 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                                 class="flex-1 flex-col"
                                 block
                                 icon="i-mdi-reminder"
+                                :label="$t('common.reminder')"
                                 @click="
                                     documentReminderModal.open({
                                         documentId: documentId,
@@ -365,9 +348,7 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                                         'onUpdate:reminderTime': ($event) => updateReminderTime($event),
                                     })
                                 "
-                            >
-                                {{ $t('common.reminder') }}
-                            </UButton>
+                            />
                         </UTooltip>
 
                         <UTooltip
@@ -390,14 +371,13 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                                 block
                                 :disabled="doc?.document?.creatorId === activeChar?.userId"
                                 icon="i-mdi-creation"
+                                :label="$t('components.documents.document_view.take_ownership')"
                                 @click="
                                     confirmModal.open({
                                         confirm: async () => documentsDocuments.changeDocumentOwner(documentId),
                                     })
                                 "
-                            >
-                                {{ $t('components.documents.document_view.take_ownership') }}
-                            </UButton>
+                            />
                         </UTooltip>
 
                         <UTooltip
@@ -454,48 +434,49 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
 
                         <OpenClosedBadge :closed="doc.document?.closed" size="md" />
 
-                        <UBadge v-if="doc.document?.state" class="inline-flex gap-1" size="md">
-                            <UIcon class="size-5" name="i-mdi-note-check" />
-                            <span>
-                                {{ doc.document?.state }}
-                            </span>
-                        </UBadge>
+                        <UBadge
+                            v-if="doc.document?.state"
+                            class="inline-flex gap-1"
+                            size="md"
+                            icon="i-mdi-note-check"
+                            :label="doc.document?.state"
+                        />
 
-                        <UBadge class="inline-flex gap-1" color="neutral" size="md">
-                            <UIcon class="size-5" name="i-mdi-comment-text-multiple" />
-                            <span>
-                                {{
-                                    commentCount !== undefined
-                                        ? $t('common.comments', commentCount)
-                                        : '? ' + $t('common.comment', 2)
-                                }}
-                            </span>
-                        </UBadge>
+                        <UBadge
+                            class="inline-flex gap-1"
+                            color="neutral"
+                            size="md"
+                            icon="i-mdi-comment-text-multiple"
+                            :label="
+                                commentCount !== undefined
+                                    ? $t('common.comments', commentCount)
+                                    : '? ' + $t('common.comment', 2)
+                            "
+                        />
                     </div>
 
                     <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
-                        <UBadge class="inline-flex gap-1" color="neutral" size="md">
-                            <UIcon class="size-5" name="i-mdi-account" />
+                        <UBadge class="inline-flex gap-1" color="neutral" size="md" icon="i-mdi-account">
                             <span class="inline-flex items-center gap-1">
-                                <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
-                                <CitizenInfoPopover :user="doc.document?.creator" />
+                                {{ $t('common.created_by') }}
+                                <CitizenInfoPopover :user="doc.document?.creator" size="xs" />
                             </span>
                         </UBadge>
 
-                        <UBadge class="inline-flex gap-1" color="neutral" size="md">
-                            <UIcon class="size-5" name="i-mdi-calendar" />
-                            <span>
-                                {{ $t('common.created') }}
-                                <GenericTime :value="doc.document?.createdAt" type="long" />
-                            </span>
+                        <UBadge class="inline-flex gap-1" color="neutral" size="md" icon="i-mdi-calendar">
+                            {{ $t('common.created') }}
+                            <GenericTime :value="doc.document?.createdAt" type="long" />
                         </UBadge>
 
-                        <UBadge v-if="doc.document?.updatedAt" class="inline-flex gap-1" color="neutral" size="md">
-                            <UIcon class="size-5" name="i-mdi-calendar-edit" />
-                            <span>
-                                {{ $t('common.updated') }}
-                                <GenericTime :value="doc.document?.updatedAt" type="long" />
-                            </span>
+                        <UBadge
+                            v-if="doc.document?.updatedAt"
+                            class="inline-flex gap-1"
+                            color="neutral"
+                            size="md"
+                            icon="i-mdi-calendar-edit"
+                        >
+                            {{ $t('common.updated') }}
+                            <GenericTime :value="doc.document?.updatedAt" type="long" />
                         </UBadge>
 
                         <UBadge
@@ -503,24 +484,20 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                             class="inline-flex gap-1"
                             color="neutral"
                             size="md"
+                            icon="i-mdi-lock-clock"
                         >
-                            <UIcon class="size-5" name="i-mdi-lock-clock" />
-                            <span>
-                                {{ $t('common.auto_close', 2) }}
-                                <GenericTime :value="doc.document?.workflowState?.autoCloseTime" ago />
-                            </span>
+                            {{ $t('common.auto_close', 2) }}
+                            <GenericTime :value="doc.document?.workflowState?.autoCloseTime" ago />
                         </UBadge>
                         <UBadge
                             v-else-if="doc.document?.workflowState?.nextReminderTime"
                             class="inline-flex gap-1"
                             color="neutral"
                             size="md"
+                            icon="i-mdi-reminder"
                         >
-                            <UIcon class="size-5" name="i-mdi-reminder" />
-                            <span>
-                                {{ $t('common.reminder') }}
-                                <GenericTime :value="doc.document?.workflowState?.nextReminderTime" ago />
-                            </span>
+                            {{ $t('common.reminder') }}
+                            <GenericTime :value="doc.document?.workflowState?.nextReminderTime" ago />
                         </UBadge>
 
                         <UBadge
@@ -528,27 +505,30 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                             class="inline-flex gap-1"
                             color="neutral"
                             size="md"
+                            icon="i-mdi-reminder"
                         >
-                            <UIcon class="size-5" name="i-mdi-reminder" />
-                            <span>
-                                {{ $t('common.reminder') }}
-                                <GenericTime :value="doc.document?.workflowUser?.manualReminderTime" type="short" />
-                            </span>
+                            {{ $t('common.reminder') }}
+                            <GenericTime :value="doc.document?.workflowUser?.manualReminderTime" type="short" />
                         </UBadge>
 
-                        <UBadge v-if="doc.document?.draft" class="inline-flex gap-1" color="info" size="md">
-                            <UIcon class="size-5" name="i-mdi-pencil" />
-                            <span>
-                                {{ $t('common.draft') }}
-                            </span>
-                        </UBadge>
+                        <UBadge
+                            v-if="doc.document?.draft"
+                            class="inline-flex gap-1"
+                            color="info"
+                            size="md"
+                            icon="i-mdi-pencil"
+                            :label="$t('common.draft')"
+                        />
 
-                        <UBadge v-if="doc.document?.deletedAt" class="inline-flex gap-1" color="warning" size="md">
-                            <UIcon class="size-5" name="i-mdi-calendar-remove" />
-                            <span>
-                                {{ $t('common.deleted') }}
-                                <GenericTime :value="doc.document?.deletedAt" type="long" />
-                            </span>
+                        <UBadge
+                            v-if="doc.document?.deletedAt"
+                            class="inline-flex gap-1"
+                            color="warning"
+                            size="md"
+                            icon="i-mdi-calendar-remove"
+                        >
+                            {{ $t('common.deleted') }}
+                            <GenericTime :value="doc.document?.deletedAt" type="long" />
                         </UBadge>
                     </div>
                 </div>

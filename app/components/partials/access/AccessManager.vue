@@ -57,8 +57,8 @@ const usersAccess = defineModel<UsersT[]>('users', { default: () => [] });
 const qualificationsAccess = defineModel<QualiT[]>('qualifications', { default: () => [] });
 
 const defaultAccessTypes = [
-    { type: 'user', label: t('common.citizen', 2) },
-    { type: 'job', label: t('common.job', 2) },
+    { label: t('common.citizen', 2), value: 'user' },
+    { label: t('common.job', 2), value: 'job' },
 ] as AccessType[];
 
 const aTypes = ref<AccessType[]>([]);
@@ -205,12 +205,12 @@ watch(access, syncPropsFromAccess, { deep: true });
 let lastId = 0;
 
 function addNewEntry(): void {
-    let idx = aTypes.value.findIndex((at) => at.type === props.defaultAccessType);
+    let idx = aTypes.value.findIndex((at) => at.value === props.defaultAccessType);
     if (idx === -1) idx = aTypes.value.length - 1;
 
     access.value.push({
         id: lastId--,
-        type: aTypes.value[idx]?.type ?? 'job',
+        type: aTypes.value[idx]?.value ?? 'job',
         access: props.defaultAccess,
     });
 }

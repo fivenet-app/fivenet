@@ -5,6 +5,7 @@ import ActivityFeedEntry from '~/components/jobs/colleagues/info/ActivityFeedEnt
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import SelectMenu from '~/components/partials/SelectMenu.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getJobsJobsClient } from '~~/gen/ts/clients';
@@ -30,8 +31,6 @@ const completorStore = useCompletorStore();
 
 const jobsJobsClient = await getJobsJobsClient();
 
-const usersLoading = ref(false);
-
 const typesAttrs = computed(() =>
     (isSuperuser.value
         ? listEnumValues(ColleagueActivityType)
@@ -42,8 +41,8 @@ const typesAttrs = computed(() =>
 );
 const activityTypes = computed(() =>
     Object.keys(ColleagueActivityType)
-        .filter((aType) => typesAttrs.value.includes(aType))
-        .map((aType) => ColleagueActivityType[aType as keyof typeof ColleagueActivityType]),
+        .filter((at) => typesAttrs.value.includes(at))
+        .map((at) => ColleagueActivityType[at as keyof typeof ColleagueActivityType]),
 );
 
 const schema = z.object({
@@ -115,41 +114,35 @@ watch(props, async () => refresh());
     <UDashboardToolbar v-if="userId === undefined || accessAttrs.some((a) => colleagueSearchAttrs.includes(a)) || isSuperuser">
         <UForm class="flex w-full gap-2" :schema="schema" :state="query" @submit="refresh()">
             <UFormField v-if="userId === undefined" class="flex-1" name="colleagues" :label="$t('common.search')">
-                <ClientOnly>
-                    <USelectMenu
-                        v-model="query.colleagues"
-                        multiple
-                        :searchable="
-                            async (q: string) => {
-                                usersLoading = true;
-                                const colleagues = await completorStore.listColleagues({
-                                    search: q,
-                                    labelIds: [],
-                                    userIds: query.colleagues,
-                                });
-                                usersLoading = false;
-                                return colleagues;
-                            }
-                        "
-                        :search-input="{ placeholder: $t('common.search_field') }"
-                        :filter-fields="['firstname', 'lastname']"
-                        :placeholder="$t('common.colleague', 2)"
-                        leading-icon="i-mdi-search"
-                        value-key="userId"
-                    >
-                        <template #item-label="{ selected }">
-                            <template v-if="selected.length">
-                                {{ usersToLabel(selected) }}
-                            </template>
+                <SelectMenu
+                    v-model="query.colleagues"
+                    multiple
+                    :searchable="
+                        async (q: string) =>
+                            await completorStore.listColleagues({
+                                search: q,
+                                labelIds: [],
+                                userIds: query.colleagues,
+                            })
+                    "
+                    :search-input="{ placeholder: $t('common.search_field') }"
+                    :filter-fields="['firstname', 'lastname']"
+                    :placeholder="$t('common.colleague', 2)"
+                    leading-icon="i-mdi-search"
+                    value-key="userId"
+                >
+                    <template #item-label="{ item }">
+                        <template v-if="item">
+                            {{ userToLabel(item) }}
                         </template>
+                    </template>
 
-                        <template #item="{ item }">
-                            <ColleagueName v-if="item" :colleague="item" birthday />
-                        </template>
+                    <template #item="{ item }">
+                        <ColleagueName v-if="item" :colleague="item" birthday />
+                    </template>
 
-                        <template #empty> {{ $t('common.not_found', [$t('common.colleague', 2)]) }} </template>
-                    </USelectMenu>
-                </ClientOnly>
+                    <template #empty> {{ $t('common.not_found', [$t('common.colleague', 2)]) }} </template>
+                </SelectMenu>
             </UFormField>
             <div v-else class="flex-1" />
 
@@ -165,7 +158,7 @@ watch(props, async () => refresh());
                         multiple
                         :items="activityTypes.map((aType) => ({ aType: aType }))"
                         value-key="aType"
-                        :searchable-placeholder="$t('common.type', 2)"
+                        :search-input="{ placeholder: $t('common.type', 2) }"
                     >
                         <template #item-label>
                             {{ $t('common.selected', query.types.length) }}

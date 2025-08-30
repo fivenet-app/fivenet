@@ -70,12 +70,12 @@ watch(props, () => {
 });
 
 function updateReasonField(value: string): void {
-    if (value.length === 0) {
-        return;
-    }
+    if (value.length === 0) return;
 
     state.reason = value;
 }
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
@@ -85,7 +85,7 @@ function updateReasonField(value: string): void {
         </template>
 
         <template #body>
-            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <dl class="divide-neutral/10 divide-y">
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm leading-6 font-medium">
@@ -183,13 +183,16 @@ function updateReasonField(value: string): void {
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
-                <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                    {{ $t('common.update') }}
-                </UButton>
+                <UButton
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :label="$t('common.update')"
+                    @click="() => formRef?.submit()"
+                />
             </UButtonGroup>
         </template>
     </UModal>
