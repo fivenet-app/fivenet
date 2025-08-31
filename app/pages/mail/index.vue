@@ -202,7 +202,7 @@ onBeforeMount(async () => {
         <UDashboardToolbar
             v-if="selectedEmail"
             :ui="{
-                root: 'gap-x-0 gap-y-1 justify-stretch items-stretch h-full inline-flex flex-col bg-gray-100 p-0 px-1 dark:bg-gray-800 min-w-0',
+                root: 'gap-x-0 gap-y-1 justify-stretch items-stretch h-full inline-flex flex-col bg-neutral-100 p-0 px-1 dark:bg-neutral-800 min-w-0',
             }"
         >
             <ClientOnly>
@@ -294,7 +294,7 @@ onBeforeMount(async () => {
             </div>
 
             <UDashboardToolbar
-                class="flex justify-between border-t border-b-0 border-gray-200 px-3 py-3.5 dark:border-gray-700"
+                class="flex justify-between border-t border-b-0 border-neutral-200 px-3 py-3.5 dark:border-neutral-700"
             >
                 <template #left>
                     <UTooltip :text="$t('common.settings')">

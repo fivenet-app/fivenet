@@ -25,7 +25,7 @@ const showRadioFrequency = ref(false);
 </script>
 
 <template>
-    <div class="px-2 py-2">
+    <div class="overflow-y-auto px-2 py-2">
         <div class="grid gap-2">
             <div class="flex flex-row gap-2">
                 <UCard class="flex-1">

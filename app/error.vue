@@ -48,7 +48,7 @@ ${props.error ? JSON.stringify(props.error) : 'Unknown error'}
 }
 
 const kbdBlockClasses =
-    'inline-flex items-center rounded-sm bg-gray-100 px-1 text-gray-900 ring-1 ring-inset ring-gray-300 dark:bg-gray-800 dark:text-white dark:ring-gray-700';
+    'inline-flex items-center rounded-sm bg-neutral-100 px-1 text-gray-900 ring-1 ring-inset ring-gray-300 dark:bg-neutral-800 dark:text-white dark:ring-gray-700';
 
 const isDev = import.meta.dev;
 </script>
@@ -56,7 +56,7 @@ const isDev = import.meta.dev;
 <!-- eslint-disable tailwindcss/no-custom-classname -->
 <template>
     <div class="h-dvh">
-        <div class="hero mask-[radial-gradient(100%_100%_at_top,white,transparent)] absolute inset-0 z-[-1]" />
+        <div class="hero absolute inset-0 z-[-1] mask-[radial-gradient(100%_100%_at_top,white,transparent)]" />
         <NuxtLoadingIndicator color="repeating-linear-gradient(to right, #d72638 0%, #ac1e2d 50%, #d72638 100%)" />
 
         <div class="flex h-full flex-col items-center justify-center">

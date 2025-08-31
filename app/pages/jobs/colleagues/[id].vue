@@ -133,7 +133,7 @@ const links = computed(() =>
 </script>
 
 <template>
-    <UDashboardPanel>
+    <UDashboardPanel :ui="{ root: 'min-h-0', body: 'p-0 sm:p-0 gap-0 sm:gap-0 overflow-y-hidden' }">
         <template #header>
             <UDashboardToolbar>
                 <ColleagueInfo
@@ -142,24 +142,26 @@ const links = computed(() =>
                     @update:absence-dates="updateColleageAbsence($event)"
                 />
             </UDashboardToolbar>
+
             <UDashboardToolbar>
                 <UNavigationMenu orientation="horizontal" :items="links" />
             </UDashboardToolbar>
         </template>
-        <DataPendingBlock
-            v-if="!colleague && isRequestPending(status)"
-            :message="$t('common.loading', [$t('common.colleague', 1)])"
-        />
-        <DataErrorBlock
-            v-else-if="error"
-            :title="$t('common.unable_to_load', [$t('common.colleague', 1)])"
-            :error="error"
-            :retry="refresh"
-        />
-        <DataNoDataBlock v-else-if="!colleague || !colleague.colleague" />
 
         <template #body>
-            <NuxtPage v-if="colleague?.colleague" :colleague="colleague.colleague" @refresh="refresh()" />
+            <DataPendingBlock
+                v-if="!colleague && isRequestPending(status)"
+                :message="$t('common.loading', [$t('common.colleague', 1)])"
+            />
+            <DataErrorBlock
+                v-else-if="error"
+                :title="$t('common.unable_to_load', [$t('common.colleague', 1)])"
+                :error="error"
+                :retry="refresh"
+            />
+            <DataNoDataBlock v-else-if="!colleague || !colleague.colleague" />
+
+            <NuxtPage v-else :colleague="colleague.colleague" @refresh="() => refresh()" />
         </template>
     </UDashboardPanel>
 </template>

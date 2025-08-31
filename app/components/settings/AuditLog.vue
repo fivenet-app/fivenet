@@ -160,7 +160,7 @@ const columns = computed(
                     h(UButton, {
                         color: 'neutral',
                         variant: 'ghost',
-                        icon: 'i-lucide-chevron-down',
+                        icon: 'i-mdi-chevron-down',
                         square: true,
                         'aria-label': 'Expand',
                         ui: {
@@ -265,7 +265,7 @@ function statesToLabel(states: { eventType: EventType }[]): string {
 <template>
     <UDashboardToolbar>
         <template #default>
-            <UForm class="w-full" :schema="schema" :state="query" @submit="refresh()">
+            <UForm class="my-2 w-full" :schema="schema" :state="query" @submit="refresh()">
                 <div class="flex flex-row flex-wrap gap-2">
                     <UFormField class="flex-1" name="date" :label="$t('common.time_range')">
                         <DateRangePickerClient
@@ -324,7 +324,7 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                         >
                             <template #trailing>
                                 <UButton
-                                    v-show="query.search !== ''"
+                                    v-if="query.search !== ''"
                                     color="neutral"
                                     variant="link"
                                     icon="i-mdi-close"

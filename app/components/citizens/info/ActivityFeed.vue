@@ -78,6 +78,12 @@ async function listUserActivity(): Promise<ListUserActivityResponse> {
     }
 }
 
+const denyView = computed(() => {
+    return (
+        props.userId === activeChar.value?.userId && attr('citizens.CitizensService/ListUserActivity', 'Fields', 'Own').value
+    );
+});
+
 watchDebounced(query, async () => refresh(), {
     debounce: 500,
     maxWait: 1250,
@@ -85,51 +91,54 @@ watchDebounced(query, async () => refresh(), {
 </script>
 
 <template>
-    <UAlert
-        v-if="userId === activeChar?.userId && !attr('citizens.CitizensService/ListUserActivity', 'Fields', 'Own').value"
-        variant="subtle"
-        color="error"
-        icon="i-mdi-denied"
-        :title="$t('components.citizens.CitizenInfoActivityFeed.own.title')"
-        :description="$t('components.citizens.CitizenInfoActivityFeed.own.message')"
-    />
+    <UDashboardPanel :ui="{ root: 'min-h-0', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+        <template v-if="!denyView" #header>
+            <UDashboardToolbar>
+                <template #default>
+                    <UForm class="my-2 flex w-full flex-row gap-2" :schema="schema" :state="query" @submit="refresh()">
+                        <UFormField class="flex-1 grow" name="types" :label="$t('common.type', 2)">
+                            <ClientOnly>
+                                <USelectMenu
+                                    v-model="query.types"
+                                    class="min-w-40 flex-1"
+                                    multiple
+                                    :items="options"
+                                    value-key="value"
+                                    :search-input="{ placeholder: $t('common.type', 2) }"
+                                >
+                                    <template #default>
+                                        {{ $t('common.selected', query.types.length) }}
+                                    </template>
 
-    <div v-else>
-        <UDashboardToolbar>
-            <template #default>
-                <UForm class="flex w-full flex-row gap-2" :schema="schema" :state="query" @submit="refresh()">
-                    <UFormField class="flex-1 grow" name="types" :label="$t('common.type', 2)">
-                        <ClientOnly>
-                            <USelectMenu
-                                v-model="query.types"
-                                class="min-w-40 flex-1"
-                                multiple
-                                :items="options"
-                                value-key="value"
-                                :search-input="{ placeholder: $t('common.type', 2) }"
-                            >
-                                <template #default>
-                                    {{ $t('common.selected', query.types.length) }}
-                                </template>
+                                    <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
+                                </USelectMenu>
+                            </ClientOnly>
+                        </UFormField>
 
-                                <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
-                            </USelectMenu>
-                        </ClientOnly>
-                    </UFormField>
+                        <UFormField label="&nbsp;">
+                            <SortButton
+                                v-model="query.sorting"
+                                :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]"
+                            />
+                        </UFormField>
+                    </UForm>
+                </template>
+            </UDashboardToolbar>
+        </template>
 
-                    <UFormField label="&nbsp;">
-                        <SortButton
-                            v-model="query.sorting"
-                            :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]"
-                        />
-                    </UFormField>
-                </UForm>
-            </template>
-        </UDashboardToolbar>
+        <template #body>
+            <UContainer v-if="denyView" class="my-2">
+                <UAlert
+                    variant="subtle"
+                    color="error"
+                    icon="i-mdi-denied"
+                    :title="$t('components.citizens.CitizenInfoActivityFeed.own.title')"
+                    :description="$t('components.citizens.CitizenInfoActivityFeed.own.message')"
+                />
+            </UContainer>
 
-        <div class="relative mt-2 flex-1">
             <DataPendingBlock
-                v-if="isRequestPending(status)"
+                v-else-if="isRequestPending(status)"
                 :message="$t('common.loading', [`${$t('common.citizen', 1)} ${$t('common.activity')}`])"
             />
             <DataErrorBlock
@@ -144,19 +153,15 @@ watchDebounced(query, async () => refresh(), {
                 icon="i-mdi-pulse"
             />
 
-            <div v-else>
-                <ul class="divide-y divide-default" role="list">
-                    <li
-                        v-for="activity in data?.activity"
-                        :key="activity.id"
-                        class="border-white py-2 hover:border-primary-500/25 hover:bg-primary-100/50 dark:border-gray-900 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
-                    >
-                        <ActivityFeedEntry :activity="activity" />
-                    </li>
+            <div v-else class="relative m-2 flex-1">
+                <ul class="min-w-full divide-y divide-default overflow-clip" role="list">
+                    <ActivityFeedEntry v-for="activity in data?.activity" :key="activity.id" :activity="activity" />
                 </ul>
             </div>
-        </div>
+        </template>
 
-        <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
-    </div>
+        <template #footer>
+            <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+        </template>
+    </UDashboardPanel>
 </template>

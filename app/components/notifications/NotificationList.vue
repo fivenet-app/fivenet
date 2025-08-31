@@ -171,7 +171,7 @@ const canSubmit = ref(true);
                 <li
                     v-for="not in data?.notifications"
                     :key="not.id"
-                    class="relative flex flex-row items-center justify-between gap-2 border-white px-2 py-3 hover:border-primary-500/25 hover:bg-primary-100/50 sm:px-4 dark:border-gray-900 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
+                    class="relative flex flex-row items-center justify-between gap-2 border-white px-2 py-3 hover:border-primary-500/25 hover:bg-primary-100/50 sm:px-4 dark:border-neutral-900 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
                 >
                     <UIcon class="size-6" :name="notificationCategoryToIcon(not.category)" />
 

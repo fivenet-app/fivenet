@@ -246,12 +246,13 @@ const columns = computed(
                             v-model="querySearchRaw"
                             type="text"
                             name="search"
+                            class="w-full"
                             :placeholder="$t('common.filter')"
                             :ui="{ trailing: 'pe-1' }"
                         >
                             <template #trailing>
                                 <UButton
-                                    v-show="querySearchRaw !== ''"
+                                    v-if="querySearchRaw !== ''"
                                     color="neutral"
                                     variant="link"
                                     icon="i-mdi-close"

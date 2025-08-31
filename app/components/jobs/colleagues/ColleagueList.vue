@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useAppConfig } from '#app';
 import { UButton, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import { isFuture } from 'date-fns';
@@ -224,11 +223,12 @@ const columns = computed(() =>
                                       h(UButton, {
                                           variant: 'link',
                                           icon: 'i-mdi-island',
-                                          onClick: () =>
+                                          onClick: () => {
                                               selfServicePropsAbsenceDateModal.open({
                                                   userId: row.original.userId,
                                                   'onUpdate:absenceDates': ($event) => updateAbsenceDates($event),
-                                              }),
+                                              });
+                                          },
                                       }),
                                   ],
                               ),
@@ -277,7 +277,7 @@ defineShortcuts({
 </script>
 
 <template>
-    <UDashboardPanel>
+    <UDashboardPanel :ui="{ root: 'min-h-0', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardToolbar>
                 <UForm class="my-2 w-full" :schema="schema" :state="query" @submit="refresh()">
@@ -286,6 +286,7 @@ defineShortcuts({
                             <UInput
                                 ref="input"
                                 v-model="query.name"
+                                class="w-full"
                                 type="text"
                                 name="name"
                                 :placeholder="$t('common.name')"
@@ -446,6 +447,7 @@ defineShortcuts({
                     :empty="$t('common.not_found', [$t('common.colleague', 2)])"
                     :sorting-options="{ manualSorting: true }"
                     :pagination-options="{ manualPagination: true }"
+                    sticky
                 >
                     <template #name-cell="{ row }">
                         <div class="inline-flex items-center text-highlighted">
@@ -480,6 +482,7 @@ defineShortcuts({
 
                 <div v-else class="relative flex-1 overflow-x-auto">
                     <UPageGrid
+                        class="p-4 sm:p-4"
                         :ui="{
                             wrapper:
                                 'grid grid-cols-1 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6',

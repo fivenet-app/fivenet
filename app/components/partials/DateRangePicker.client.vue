@@ -32,7 +32,7 @@ const modelValue = shallowRef({
 
 <template>
     <UPopover>
-        <UButton color="neutral" variant="subtle" icon="i-lucide-calendar">
+        <UButton color="neutral" variant="subtle" icon="i-mdi-calendar">
             <template v-if="modelValue?.start">
                 <template v-if="modelValue.end">
                     {{ df.format(modelValue.start.toDate(getLocalTimeZone())) }} -

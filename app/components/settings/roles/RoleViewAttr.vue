@@ -255,23 +255,27 @@ onBeforeMount(async () => {
 });
 
 const { game } = useAppConfig();
+
+const isOpen = ref(props.defaultOpen ?? false);
 </script>
 
 <template>
     <div v-if="attribute">
-        <UAccordion
-            variant="outline"
-            :items="[
-                {
-                    label: $t(`perms.${attribute.category}.${attribute.name}.attrs_types.${attribute.key}`),
-                    disabled: defaultOpen,
-                },
-            ]"
-            :unmount="true"
-            :default-open="defaultOpen"
-        >
+        <UCollapsible :open="isOpen" :disabled="defaultOpen">
+            <UButton
+                :label="$t(`perms.${attribute.category}.${attribute.name}.attrs_types.${attribute.key}`)"
+                color="neutral"
+                variant="subtle"
+                trailing-icon="i-mdi-chevron-down"
+                :ui="{
+                    trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
+                }"
+                block
+                @click="isOpen = !isOpen"
+            />
+
             <template #content>
-                <div class="flex flex-col gap-2">
+                <div class="flex flex-col gap-2 p-1 text-sm">
                     <div
                         v-if="
                             attrValues.validValues.oneofKind === 'stringList' &&
@@ -282,6 +286,7 @@ const { game } = useAppConfig();
                         <span v-if="maxValues.validValues.stringList.strings.length === 0">
                             {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
                         </span>
+
                         <template v-else>
                             <div class="flex flex-row flex-wrap gap-2">
                                 <div
@@ -324,6 +329,7 @@ const { game } = useAppConfig();
                             />
                         </template>
                     </div>
+
                     <div
                         v-else-if="
                             attrValues.validValues.oneofKind === 'jobList' && maxValues?.validValues.oneofKind === 'jobList'
@@ -532,6 +538,6 @@ const { game } = useAppConfig();
                     <div v-else>{{ attrValues.validValues.oneofKind }} {{ validValues }}</div>
                 </div>
             </template>
-        </UAccordion>
+        </UCollapsible>
     </div>
 </template>

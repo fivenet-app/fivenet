@@ -256,7 +256,7 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                         messageRefs[message.id] = el as Element;
                     }
                 "
-                class="dark:hover:bg-base-800 border-l-2 border-white px-2 pb-3 hover:border-primary-500 hover:bg-neutral-100 sm:pb-2 dark:border-gray-900 hover:dark:border-primary-400"
+                class="dark:hover:bg-base-800 border-l-2 border-white px-2 pb-3 hover:border-primary-500 hover:bg-neutral-100 sm:pb-2 dark:border-neutral-900 hover:dark:border-primary-400"
                 :class="selectedMessage === message.id && '!border-primary-500'"
                 @click="selectedMessageId = message.id"
             >
@@ -349,7 +349,7 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
 
     <UDashboardToolbar
         v-if="thread && canAccess(selectedEmail?.access, selectedEmail?.userId, AccessLevel.WRITE)"
-        class="flex min-w-0 justify-between overflow-y-hidden border-t border-b-0 border-gray-200 dark:border-gray-700"
+        class="flex min-w-0 justify-between overflow-y-hidden border-t border-b-0 border-neutral-200 dark:border-neutral-700"
     >
         <UAccordion
             class="mt-2 max-h-[50vh] overflow-y-auto"
@@ -419,7 +419,7 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                             >
                                 <template #trailing>
                                     <UButton
-                                        v-show="state.title !== ''"
+                                        v-if="state.title !== ''"
                                         color="neutral"
                                         variant="link"
                                         icon="i-mdi-close"

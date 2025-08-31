@@ -26,6 +26,7 @@ const props = withDefaults(
             icon: 'size-6',
         }"
         icon="i-mdi-information-outline"
+        variant="subtle"
         v-bind="$attrs"
     >
         <template v-if="!hideTitle" #title>

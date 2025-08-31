@@ -13,7 +13,7 @@ const { game } = useAppConfig();
 </script>
 
 <template>
-    <div class="flex items-center gap-2 px-4 py-4">
+    <div class="flex items-center gap-2 p-4">
         <ProfilePictureImg
             :src="user?.props?.mugshot?.filePath"
             :name="`${user.firstname} ${user.lastname}`"
@@ -22,14 +22,14 @@ const { game } = useAppConfig();
             size="3xl"
         />
 
-        <div class="w-full flex-1">
+        <div class="flex-1">
             <div class="flex snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
-                <h1 class="flex-1 px-0.5 py-1 text-4xl font-bold break-words sm:pl-1">
+                <h2 class="flex-1 px-0.5 py-1 text-4xl font-bold break-words sm:pl-1">
                     {{ user?.firstname }} {{ user?.lastname }}
-                </h1>
+                </h2>
             </div>
 
-            <div class="inline-flex gap-2">
+            <div class="inline-flex flex-col gap-2 lg:flex-row">
                 <UBadge>
                     {{ user.jobLabel }}
                     <template v-if="user.job !== game.unemployedJobName">
@@ -44,6 +44,8 @@ const { game } = useAppConfig();
             </div>
         </div>
 
-        <UButton :label="$t('common.action', 2)" class="lg:hidden" icon="i-mdi-menu" @click="$emit('toggle-actions')" />
+        <div class="flex flex-col gap-1 sm:flex-row">
+            <UButton :label="$t('common.action', 2)" class="lg:hidden" icon="i-mdi-menu" @click="$emit('toggle-actions')" />
+        </div>
     </div>
 </template>

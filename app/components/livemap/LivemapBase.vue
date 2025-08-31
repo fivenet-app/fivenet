@@ -91,7 +91,7 @@ const stoppingCentrumDebounced = useDebounce(stoppingCentrum, 500);
 
 <template>
     <div class="relative size-full">
-        <div v-if="error" class="absolute inset-0 z-20 flex items-center justify-center bg-gray-600/70">
+        <div v-if="error" class="absolute inset-0 z-20 flex items-center justify-center bg-neutral-600/70">
             <DataErrorBlock :title="$t('components.livemap.failed_datastream')" :error="error" :retry="startStream" />
         </div>
 

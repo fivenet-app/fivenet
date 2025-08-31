@@ -714,6 +714,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | ----- | ---- | ----- | ----------- |
 | `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `job` | [string](#string) | optional |  |
 | `name` | [string](#string) |  | @sanitize: method=StripTags |
 | `description` | [string](#string) | optional | @sanitize: method=StripTags |
 | `public` | [bool](#bool) |  |  |
@@ -5043,6 +5044,7 @@ UserInfoChanged used to signal Job or JobGrade changes.
 | `old_job_grade` | [int32](#int32) |  | Previous job grade |
 | `new_job_grade` | [int32](#int32) | optional | New job grade |
 | `new_job_grade_label` | [string](#string) | optional | New job grade label |
+| `can_be_superuser` | [bool](#bool) | optional | Can the user be superuser (by group or license) |
 | `superuser` | [bool](#bool) | optional | Superuser state |
 | `changed_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  | Timestamp of when the change was detected |
 

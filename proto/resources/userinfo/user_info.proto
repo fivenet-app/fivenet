@@ -53,8 +53,10 @@ message UserInfoChanged {
   // New job grade label
   optional string new_job_grade_label = 8;
 
+  // Can the user be superuser (by group or license)
+  optional bool can_be_superuser = 10;
   // Superuser state
-  optional bool superuser = 10;
+  optional bool superuser = 11;
 
   // Timestamp of when the change was detected
   resources.timestamp.Timestamp changed_at = 9;

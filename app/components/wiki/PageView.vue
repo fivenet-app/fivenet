@@ -358,7 +358,7 @@ const scrollRef = useTemplateRef('scrollRef');
 
                         <USeparator class="mt-4 mb-4" />
 
-                        <UAccordion class="print:hidden" :items="accordionItems" multiple :unmount="true">
+                        <UAccordion class="print:hidden" :items="accordionItems" multiple>
                             <template #access>
                                 <UContainer>
                                     <DataNoDataBlock

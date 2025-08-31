@@ -37,11 +37,11 @@ const { attr, can } = useAuth();
 </script>
 
 <template>
-    <UContainer class="w-full">
+    <UContainer class="w-full overflow-y-auto">
         <div class="w-full grow lg:flex lg:flex-col">
             <div class="flex-1 px-4 py-5 sm:p-0">
                 <dl class="space-y-4 sm:space-y-0 xl:grid xl:grid-cols-2">
-                    <div class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800">
+                    <div class="border-b border-neutral-100 sm:flex sm:px-5 sm:py-4 dark:border-neutral-800">
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.date_of_birth') }}
                         </dt>
@@ -50,7 +50,7 @@ const { attr, can } = useAuth();
                         </dd>
                     </div>
 
-                    <div class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800">
+                    <div class="border-b border-neutral-100 sm:flex sm:px-5 sm:py-4 dark:border-neutral-800">
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.phone_number') }}
                         </dt>
@@ -59,7 +59,7 @@ const { attr, can } = useAuth();
                         </dd>
                     </div>
 
-                    <div class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800">
+                    <div class="border-b border-neutral-100 sm:flex sm:px-5 sm:py-4 dark:border-neutral-800">
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.mail') }}
                         </dt>
@@ -68,7 +68,7 @@ const { attr, can } = useAuth();
                         </dd>
                     </div>
 
-                    <div class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800">
+                    <div class="border-b border-neutral-100 sm:flex sm:px-5 sm:py-4 dark:border-neutral-800">
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.name') }}
                         </dt>
@@ -93,7 +93,7 @@ const { attr, can } = useAuth();
                     <!-- Labels -->
                     <div
                         v-if="attr('jobs.JobsService/GetColleague', 'Types', 'Labels').value"
-                        class="border-b border-gray-100 py-1 hover:bg-primary-100/50 sm:flex sm:px-5 sm:py-4 dark:border-gray-800 dark:hover:bg-primary-900/10"
+                        class="border-b border-neutral-100 py-1 hover:bg-primary-100/50 sm:flex sm:px-5 sm:py-4 dark:border-neutral-800 dark:hover:bg-primary-900/10"
                     >
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.label', 2) }}
@@ -136,7 +136,7 @@ const { attr, can } = useAuth();
                     <!-- Note -->
                     <div
                         v-if="attr('jobs.JobsService/GetColleague', 'Types', 'Note').value"
-                        class="border-b border-gray-100 py-1 hover:bg-primary-100/50 sm:flex sm:px-5 sm:py-4 dark:border-gray-800 dark:hover:bg-primary-900/10"
+                        class="border-b border-neutral-100 py-1 hover:bg-primary-100/50 sm:flex sm:px-5 sm:py-4 dark:border-neutral-800 dark:hover:bg-primary-900/10"
                     >
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.note') }}

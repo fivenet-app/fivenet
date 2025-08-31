@@ -18,7 +18,7 @@ defineProps<{
                     v-for="(question, idx) in responses?.responses"
                     :key="question.questionId"
                     v-model="responses!.responses[idx]"
-                    :disabled="true"
+                    disabled
                 >
                     <template #question-after>
                         <slot name="question-after" :question="{ question }" />

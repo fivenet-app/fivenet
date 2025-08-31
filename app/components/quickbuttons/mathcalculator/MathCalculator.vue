@@ -224,7 +224,7 @@ onKeyStroke([...digitKeys, ...operatorKeys, ...resultKeys, ...clearKeys, ...eras
         <div
             :class="[
                 'relative flex h-48 max-h-48 flex-col items-end justify-end rounded-md text-right text-white transition-colors duration-300',
-                { 'bg-red-800': lastStatus === 'ERROR', 'bg-gray-800': lastStatus !== 'ERROR' },
+                { 'bg-red-800': lastStatus === 'ERROR', 'bg-neutral-800': lastStatus !== 'ERROR' },
             ]"
         >
             <template v-if="powerOn">

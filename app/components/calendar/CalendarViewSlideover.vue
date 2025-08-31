@@ -120,7 +120,6 @@ const calendar = computed(() => data.value?.calendar);
                 v-if="calendar?.access && (calendar?.access?.jobs.length > 0 || calendar?.access?.users.length > 0)"
                 multiple
                 :items="[{ slot: 'access' as const, label: $t('common.access'), icon: 'i-mdi-lock' }]"
-                :unmount="true"
             >
                 <template #access>
                     <UContainer>

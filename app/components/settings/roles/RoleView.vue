@@ -457,24 +457,20 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         </UButton>
                     </div>
 
-                    <UAccordion :items="accordionCategories" multiple :unmount="true">
+                    <UAccordion :items="accordionCategories" multiple>
                         <template #content="{ item: category }">
                             <div class="flex flex-col divide-y divide-default">
                                 <div
                                     v-for="perm in permList.filter((p) => p.category === category.category)"
                                     :key="perm.id"
-                                    class="flex flex-col gap-1"
+                                    class="flex flex-col gap-1 py-1"
                                 >
-                                    <div class="flex flex-row items-center gap-2">
-                                        <div class="flex-1">
-                                            <p class="text-highlighted" :title="`${$t('common.id')}: ${perm.id}`">
-                                                {{ $t(`perms.${perm.category}.${perm.name}.key`) }}
-                                            </p>
-                                            <p class="text-base-500">
-                                                {{ $t(`perms.${perm.category}.${perm.name}.description`) }}
-                                            </p>
-                                        </div>
-
+                                    <UFormField
+                                        class="flex flex-1 flex-row items-center gap-2"
+                                        :label="$t(`perms.${perm.category}.${perm.name}.key`)"
+                                        :description="$t(`perms.${perm.category}.${perm.name}.description`)"
+                                        :ui="{ wrapper: 'flex-1' }"
+                                    >
                                         <UButtonGroup class="inline-flex flex-initial">
                                             <UButton
                                                 color="green"
@@ -508,7 +504,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                 @click="updatePermissionState(perm.id, false)"
                                             />
                                         </UButtonGroup>
-                                    </div>
+                                    </UFormField>
 
                                     <template v-for="(attr, idx) in attrList" :key="attr.attrId">
                                         <RoleViewAttr

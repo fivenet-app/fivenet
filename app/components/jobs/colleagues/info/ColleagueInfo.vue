@@ -26,7 +26,7 @@ const selfServicePropsAbsenceDateModal = overlay.create(SelfServicePropsAbsenceD
 </script>
 
 <template>
-    <div class="mb-4 flex items-center gap-2 px-4">
+    <div class="flex flex-1 items-center gap-2 p-4">
         <ProfilePictureImg
             :src="colleague.profilePicture"
             :name="`${colleague.firstname} ${colleague.lastname}`"
@@ -34,11 +34,11 @@ const selfServicePropsAbsenceDateModal = overlay.create(SelfServicePropsAbsenceD
             size="3xl"
         />
 
-        <div class="w-full flex-1">
+        <div class="flex-1">
             <div class="flex snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
-                <h1 class="flex-1 px-0.5 py-1 text-4xl font-bold break-words sm:pl-1">
+                <h2 class="flex-1 px-0.5 py-1 text-4xl font-bold break-words sm:pl-1">
                     <ColleagueName :colleague="colleague" />
-                </h1>
+                </h2>
             </div>
 
             <div class="inline-flex flex-col gap-2 lg:flex-row">
@@ -61,7 +61,7 @@ const selfServicePropsAbsenceDateModal = overlay.create(SelfServicePropsAbsenceD
             </div>
         </div>
 
-        <div class="inline-flex flex-initial flex-col gap-1 sm:flex-row">
+        <div class="flex flex-col gap-1 sm:flex-row">
             <PartialsBackButton fallback-to="/jobs/colleagues" />
 
             <UButton

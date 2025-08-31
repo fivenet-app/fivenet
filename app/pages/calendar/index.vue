@@ -484,7 +484,7 @@ const isOpen = ref(false);
             </UContainer>
         </div>
 
-        <div class="flex justify-between border-t border-b-0 border-gray-200 px-3 py-3.5 xl:hidden dark:border-gray-700">
+        <div class="flex justify-between border-t border-b-0 border-neutral-200 px-3 py-3.5 xl:hidden dark:border-neutral-700">
             <UFormField
                 class="flex flex-row items-center gap-2"
                 :label="$t('common.view')"

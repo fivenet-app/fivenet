@@ -88,6 +88,7 @@ const permCategoriesSorted = computed(() =>
 <template>
     <USlideover
         :title="`${$t('common.effective_permissions')}: ${role?.role?.jobLabel!} - ${role?.role?.jobGradeLabel} (${role?.role?.grade})`"
+        :ui="{ content: 'max-w-4xl' }"
     >
         <template #actions>
             <UButton variant="link" trailing-icon="i-mdi-refresh" color="primary" @click="refresh()" />
@@ -96,6 +97,7 @@ const permCategoriesSorted = computed(() =>
         <template #body>
             <UAlert
                 class="mb-2"
+                variant="subtle"
                 :ui="{
                     icon: 'size-6',
                 }"
@@ -105,8 +107,6 @@ const permCategoriesSorted = computed(() =>
                     {{ $t('components.settings.role_view.effective_permissions.description') }}
                 </template>
             </UAlert>
-
-            <USeparator class="mb-2" />
 
             <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.role')])" />
             <DataErrorBlock
@@ -129,24 +129,20 @@ const permCategoriesSorted = computed(() =>
                         <div
                             v-for="perm in permList.filter((p) => p.category === category.category)"
                             :key="perm.id"
-                            class="flex flex-col gap-1"
+                            class="flex flex-col gap-1 py-1"
                         >
-                            <div class="flex flex-row items-center gap-2">
-                                <div class="flex-1">
-                                    <p class="text-highlighted" :title="`${$t('common.id')}: ${perm.id}`">
-                                        {{ $t(`perms.${perm.category}.${perm.name}.key`) }}
-                                    </p>
-                                    <p class="text-base-500">
-                                        {{ $t(`perms.${perm.category}.${perm.name}.description`) }}
-                                    </p>
-                                </div>
-
+                            <UFormField
+                                class="flex flex-1 flex-row items-center gap-2"
+                                :label="$t(`perms.${perm.category}.${perm.name}.key`)"
+                                :description="$t(`perms.${perm.category}.${perm.name}.description`)"
+                                :ui="{ wrapper: 'flex-1' }"
+                            >
                                 <UButtonGroup class="inline-flex flex-initial">
                                     <UButton
                                         color="green"
                                         :variant="permStates.get(perm.id) ? 'solid' : 'soft'"
                                         icon="i-mdi-check"
-                                        :disabled="true"
+                                        disabled
                                     />
 
                                     <UButton
@@ -155,7 +151,7 @@ const permCategoriesSorted = computed(() =>
                                             !permStates.has(perm.id) || permStates.get(perm.id) === undefined ? 'solid' : 'soft'
                                         "
                                         icon="i-mdi-minus"
-                                        :disabled="true"
+                                        disabled
                                     />
 
                                     <UButton
@@ -164,10 +160,10 @@ const permCategoriesSorted = computed(() =>
                                             permStates.get(perm.id) !== undefined && !permStates.get(perm.id) ? 'solid' : 'soft'
                                         "
                                         icon="i-mdi-close"
-                                        :disabled="true"
+                                        disabled
                                     />
                                 </UButtonGroup>
-                            </div>
+                            </UFormField>
 
                             <template v-for="(attr, idx) in attrList" :key="attr.attrId">
                                 <RoleViewAttr

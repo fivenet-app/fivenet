@@ -71,6 +71,7 @@ func (u *UserInfo) Equal(in *UserInfo) bool {
 	if !utils.EqualInt32Ptr(u.OverrideJobGrade, in.OverrideJobGrade) {
 		return false
 	}
+
 	return true
 }
 

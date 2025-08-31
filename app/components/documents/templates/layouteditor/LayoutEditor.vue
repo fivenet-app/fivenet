@@ -521,13 +521,13 @@ const showPreview = ref(false);
                     >
                         <!-- Rulers -->
                         <div class="sticky top-0 left-0 z-10 flex bg-transparent backdrop-blur-sm">
-                            <div class="h-6 w-6 border-r border-b bg-gray-300/10" />
-                            <div class="relative h-6 flex-1 overflow-hidden bg-gray-300/10">
+                            <div class="h-6 w-6 border-r border-b bg-neutral-300/10" />
+                            <div class="relative h-6 flex-1 overflow-hidden bg-neutral-300/10">
                                 <Ruler :length-px="pagePx.width" orientation="horizontal" :zoom="zoom" />
                             </div>
                         </div>
 
-                        <div class="absolute top-6 bottom-0 left-0 z-10 w-6 bg-gray-300/10">
+                        <div class="absolute top-6 bottom-0 left-0 z-10 w-6 bg-neutral-300/10">
                             <Ruler :length-px="pagePx.height" orientation="vertical" :zoom="zoom" />
                         </div>
 

@@ -7,6 +7,7 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import LawEntry from '~/components/settings/laws/LawEntry.vue';
 import { getSettingsLawsClient } from '~~/gen/ts/clients';
 import type { Law, LawBook } from '~~/gen/ts/resources/laws/laws';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     modelValue: LawBook | undefined;
@@ -24,6 +25,8 @@ const emit = defineEmits<{
 const { t } = useI18n();
 
 const { can } = useAuth();
+
+const notifications = useNotificationsStore();
 
 const lawBook = useVModel(props, 'modelValue', emit);
 
@@ -79,6 +82,12 @@ async function saveLawBook(id: number, values: Schema): Promise<LawBook> {
         editing.value = false;
 
         lawBook.value = response.lawBook;
+
+        notifications.add({
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
 
         return response.lawBook!;
     } catch (e) {
@@ -155,6 +164,12 @@ async function deleteLaw(id: number): Promise<void> {
         await call;
 
         deletedLaw(id);
+
+        notifications.add({
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -172,9 +187,9 @@ const columns = computed(
                 id: 'expand',
                 cell: ({ row }) =>
                     h(UButton, {
-                        color: 'neutral',
+                        color: row.getIsExpanded() ? 'neutral' : 'primary',
                         variant: 'ghost',
-                        icon: 'i-lucide-chevron-down',
+                        icon: row.getIsExpanded() ? 'i-mdi-chevron-up' : 'i-mdi-pencil',
                         square: true,
                         'aria-label': 'Expand',
                         ui: {
@@ -281,7 +296,7 @@ const confirmModal = overlay.create(ConfirmModal);
                 </UTooltip>
 
                 <UFormField class="flex-initial" name="name" :label="$t('common.law_book')">
-                    <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.law_book')" />
+                    <UInput v-model="state.name" name="name" type="text" class="w-full" :placeholder="$t('common.law_book')" />
                 </UFormField>
 
                 <UFormField class="flex-auto" name="description" :label="$t('common.description')">
@@ -289,6 +304,7 @@ const confirmModal = overlay.create(ConfirmModal);
                         v-model="state.description"
                         name="description"
                         type="text"
+                        class="w-full"
                         :placeholder="$t('common.description')"
                     />
                 </UFormField>
@@ -307,11 +323,7 @@ const confirmModal = overlay.create(ConfirmModal);
             sticky
         >
             <template #expanded="{ row }">
-                <LawEntry
-                    :law="row.original"
-                    @update:law="$emit('update:law', $event)"
-                    @close="if (row.original.id < 0) deleteLaw(row.original.id);"
-                />
+                <LawEntry :law="row.original" @update:law="$emit('update:law', $event)" @close="row.toggleExpanded()" />
             </template>
 
             <template #actions-cell="{ row: law }">

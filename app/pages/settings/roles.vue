@@ -13,13 +13,5 @@ definePageMeta({
 </script>
 
 <template>
-    <UDashboardPanel>
-        <UDashboardNavbar :title="$t('pages.settings.roles.title')">
-            <template #right>
-                <PartialsBackButton fallback-to="/settings" />
-            </template>
-        </UDashboardNavbar>
-
-        <RoleList />
-    </UDashboardPanel>
+    <RoleList />
 </template>

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useAppConfig } from '#app';
 import { UBadge, UButton, ULink } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';

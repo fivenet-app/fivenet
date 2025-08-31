@@ -488,7 +488,7 @@ const qualificationRequestUserModal = overlay.create(QualificationRequestUserMod
                     </div>
 
                     <template #footer>
-                        <UAccordion :items="accordionItems" multiple :unmount="true">
+                        <UAccordion :items="accordionItems" multiple>
                             <template v-if="qualification.result" #result>
                                 <UContainer>
                                     <div class="flex flex-col gap-1">

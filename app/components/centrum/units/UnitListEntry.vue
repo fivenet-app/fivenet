@@ -29,7 +29,7 @@ const isBright = computed(() => isColorBright(unitColorHex.value));
         >
             {{ unit.initials }}
         </div>
-        <div class="flex flex-1 items-center justify-between truncate border border-gray-200">
+        <div class="flex flex-1 items-center justify-between truncate border border-neutral-200">
             <div class="flex-1 px-1 py-2 text-sm">
                 <span class="font-medium">{{ unit.name }}</span>
                 <p :class="unit.users.length === 0 ? 'text-gray-400' : 'text-gray-300'">

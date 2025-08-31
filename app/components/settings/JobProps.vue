@@ -351,7 +351,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 />
 
                 <template v-else-if="isRequestPending(status) || jobProps">
-                    <UTabs v-model="selectedTab" class="w-full" :items="items" variant="link" :ui="{ content: 'p-4' }">
+                    <UTabs
+                        v-model="selectedTab"
+                        class="w-full"
+                        :items="items"
+                        variant="link"
+                        :ui="{ content: 'p-4 flex flex-col gap-4' }"
+                    >
                         <template #jobprops>
                             <div v-if="isRequestPending(status)" class="space-y-1 px-4">
                                 <USkeleton v-for="idx in 5" :key="idx" class="h-20 w-full" />
@@ -437,8 +443,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </UFormField>
                             </UPageCard>
 
-                            <USeparator class="mb-4" />
-
                             <UPageCard :title="$t('components.settings.job_props.settings.absence.title')">
                                 <UFormField
                                     class="grid grid-cols-2 items-center gap-2"
@@ -470,7 +474,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :max="186"
                                         :placeholder="$t('common.day', 2)"
                                         :label="$t('common.day', 2)"
-                                    />'
+                                    />
                                 </UFormField>
                             </UPageCard>
                         </template>
@@ -602,9 +606,15 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :searchable="
                                             () =>
                                                 searchChannels().then((channels) =>
-                                                    channels.map((c) => ({ id: c.id, type: 'item', item: c })),
+                                                    channels.map((c) => ({
+                                                        id: c.id,
+                                                        type: 'item',
+                                                        label: `${c.name} (${c.id})`,
+                                                        item: c,
+                                                    })),
                                                 )
                                         "
+                                        searchable-key="settings-jobprops-discord-channels"
                                         :filter-fields="['name']"
                                         :search-input="{ placeholder: $t('common.search_field') }"
                                         value-key="id"
@@ -615,20 +625,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             )
                                         "
                                     >
-                                        <template #item-label="{ item }">
-                                            <span class="truncate">{{
-                                                item
-                                                    ? `${item.item.name} (${item.id})`
-                                                    : state.discordSyncSettings.statusLogSettings!.channelId !== ''
-                                                      ? state.discordSyncSettings.statusLogSettings!.channelId
-                                                      : '&nbsp;'
-                                            }}</span>
-                                        </template>
-
-                                        <template #item="{ item }">
-                                            <span class="truncate">{{ item.item.name }} ({{ item.id }})</span>
-                                        </template>
-
                                         <template #empty>
                                             {{ $t('common.not_found', [$t('common.channel', 1)]) }}
                                         </template>
@@ -648,8 +644,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     variant="subtle"
                                 />
                             </UPageCard>
-
-                            <USeparator class="mb-4" />
 
                             <UPageCard
                                 :title="$t('components.settings.job_props.discord_sync_features.title')"

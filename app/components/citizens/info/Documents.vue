@@ -10,6 +10,7 @@ import Pagination from '~/components/partials/Pagination.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPopover.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { ToggleItem } from '~/utils/types';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
@@ -135,6 +136,7 @@ const columns = computed(
                         onClick: () => column.toggleSorting(isSorted === 'asc'),
                     });
                 },
+                cell: ({ row }) => h(GenericTime, { value: row.original.createdAt }),
             },
             {
                 accessorKey: 'creator',
@@ -148,21 +150,45 @@ const columns = computed(
 <template>
     <UDashboardToolbar>
         <template #default>
-            <UForm class="flex w-full flex-row gap-2" :state="query" :schema="schema">
+            <UForm class="my-2 flex w-full flex-row gap-2" :state="query" :schema="schema">
                 <UFormField class="flex-1" name="closed" :label="$t('common.close', 2)">
                     <ClientOnly>
                         <USelectMenu
                             v-model="query.closed"
                             :items="openclose"
                             value-key="value"
+                            class="w-full"
                             :search-input="{ placeholder: $t('common.search_field') }"
                         >
                             <template #item-label>
-                                {{
-                                    query.closed === undefined
-                                        ? openclose[0]!.label
-                                        : (openclose.findLast((o) => o.value === query.closed)?.label ?? $t('common.na'))
-                                }}
+                                <div class="inline-flex items-center gap-1 truncate">
+                                    <template v-if="typeof query.closed === 'boolean'">
+                                        <UIcon
+                                            v-if="!query.closed"
+                                            class="size-4"
+                                            name="i-mdi-lock-open-variant"
+                                            color="green"
+                                        />
+                                        <UIcon v-else class="size-4" name="i-mdi-lock" color="error" />
+                                    </template>
+
+                                    {{
+                                        query.closed === undefined
+                                            ? openclose[0]!.label
+                                            : (openclose.findLast((o) => o.value === query.closed)?.label ?? $t('common.na'))
+                                    }}
+                                </div>
+                            </template>
+
+                            <template #item="{ item }">
+                                <div class="inline-flex items-center gap-1 truncate">
+                                    <template v-if="typeof item.value === 'boolean'">
+                                        <UIcon v-if="!item.value" class="size-4" name="i-mdi-lock-open-variant" color="green" />
+                                        <UIcon v-else class="size-4" name="i-mdi-lock" color="error" />
+                                    </template>
+
+                                    {{ item.label }}
+                                </div>
                             </template>
                         </USelectMenu>
                     </ClientOnly>
@@ -175,6 +201,7 @@ const columns = computed(
                             multiple
                             :items="docRelations"
                             value-key="value"
+                            class="w-full"
                             :search-input="{ placeholder: $t('common.relation', 2) }"
                         >
                             <template #item-label>

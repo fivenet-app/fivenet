@@ -212,7 +212,7 @@ const formRef = useTemplateRef('formRef');
                                 >
                                     <template #trailing>
                                         <UButton
-                                            v-show="state.title !== ''"
+                                            v-if="state.title !== ''"
                                             color="neutral"
                                             variant="link"
                                             icon="i-mdi-close"

@@ -69,7 +69,8 @@ const src = computed(() => {
                 :src="src"
                 :alt="alt"
                 :text="text"
-                :ui="{ rounded: rounded ? 'rounded-full' : 'rounded-sm' }"
+                :ui="{ root: rounded ? 'rounded-full' : 'rounded-sm' }"
+                v-bind="$attrs"
             />
         </UButton>
 

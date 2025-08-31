@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useAppConfig } from '#app';
 import { UButton, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import { h } from 'vue';

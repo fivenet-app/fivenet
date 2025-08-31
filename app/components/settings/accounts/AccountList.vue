@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useAppConfig } from '#app';
 import { UBadge, UButton, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import { h } from 'vue';
@@ -156,7 +155,7 @@ const columns = computed(
                 },
                 sortable: true,
                 cell: ({ row }) =>
-                    h(UTooltip, { text: `${t('common.id')}: ${row.id}` }, [
+                    h(UTooltip, { text: `${t('common.id')}: ${row.original.id}` }, [
                         h(
                             'span',
                             { class: 'text-highlighted' },

@@ -567,7 +567,7 @@ const formRef = useTemplateRef('formRef');
                         </UFormField>
 
                         <UDashboardToolbar
-                            class="flex shrink-0 justify-between border-t border-b-0 border-gray-200 px-3 py-3.5 dark:border-gray-700"
+                            class="flex shrink-0 justify-between border-t border-b-0 border-neutral-200 px-3 py-3.5 dark:border-neutral-700"
                         >
                             <div class="flex flex-1 gap-2">
                                 <UFormField class="flex-1" name="public" :label="$t('common.public')">

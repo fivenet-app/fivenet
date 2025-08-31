@@ -3,6 +3,7 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { getSettingsLawsClient } from '~~/gen/ts/clients';
 import type { Law } from '~~/gen/ts/resources/laws/laws';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     law: Law;
@@ -12,6 +13,8 @@ const emit = defineEmits<{
     (e: 'update:law', update: { id: number; law: Law }): void;
     (e: 'close'): void;
 }>();
+
+const notifications = useNotificationsStore();
 
 const settingsLawsClient = await getSettingsLawsClient();
 
@@ -52,6 +55,12 @@ async function saveLaw(lawBookId: number, id: number, values: Schema): Promise<v
         const { response } = await call;
 
         emit('update:law', { id: id, law: response.law! });
+
+        notifications.add({
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -83,12 +92,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </UFormField>
 
             <UFormField class="flex-1 text-sm font-medium" :label="$t('common.law')" name="name">
-                <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.law')" />
+                <UInput v-model="state.name" name="name" type="text" class="w-full" :placeholder="$t('common.law')" />
             </UFormField>
         </div>
 
-        <div class="flex flex-1 gap-2">
-            <UFormField class="text-left whitespace-nowrap" :label="$t('common.fine')" name="fine">
+        <div class="flex flex-1 justify-between gap-2">
+            <UFormField :label="$t('common.fine')" name="fine">
                 <UInputNumber
                     v-model="state.fine"
                     name="fine"
@@ -104,7 +113,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 />
             </UFormField>
 
-            <UFormField class="text-left whitespace-nowrap" :label="$t('common.detention_time')" name="detentionTime">
+            <UFormField :label="$t('common.detention_time')" name="detentionTime">
                 <UInputNumber
                     v-model="state.detentionTime"
                     name="detentionTime"
@@ -114,7 +123,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 />
             </UFormField>
 
-            <UFormField class="text-left whitespace-nowrap" :label="$t('common.traffic_infraction_points')" name="stvoPoints">
+            <UFormField :label="$t('common.traffic_infraction_points')" name="stvoPoints">
                 <UInputNumber
                     v-model="state.stvoPoints"
                     name="stvoPoints"
@@ -125,12 +134,18 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </UFormField>
         </div>
 
-        <UFormField class="text-left" :label="$t('common.description')" name="description">
-            <UInput v-model="state.description" name="description" type="text" :placeholder="$t('common.description')" />
+        <UFormField :label="$t('common.description')" name="description">
+            <UTextarea
+                v-model="state.description"
+                name="description"
+                type="text"
+                class="w-full"
+                :placeholder="$t('common.description')"
+            />
         </UFormField>
 
-        <UFormField class="text-left" :label="$t('common.hint')" name="hint">
-            <UInput v-model="state.hint" name="hint" type="text" :placeholder="$t('common.hint')" />
+        <UFormField :label="$t('common.hint')" name="hint">
+            <UTextarea v-model="state.hint" name="hint" type="text" class="w-full" :placeholder="$t('common.hint')" />
         </UFormField>
     </UForm>
 </template>

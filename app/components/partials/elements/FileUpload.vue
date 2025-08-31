@@ -139,9 +139,15 @@ const confirmModal = overlay.create(ConfirmModal);
         </div>
 
         <div class="flex w-full flex-col items-center justify-center gap-2">
-            <GenericImg v-if="filePath" size="3xl" :src="`${filePath}?date=${new Date().getTime()}`" :no-blur="true" />
+            <GenericImg
+                v-if="filePath"
+                size="3xl"
+                :src="`${filePath}?date=${new Date().getTime()}`"
+                :no-blur="true"
+                img-class="h-30 w-auto"
+            />
 
-            <UAlert icon="i-mdi-information-outline" :description="$t('common.image_caching')" />
+            <UAlert variant="subtle" icon="i-mdi-information-outline" :description="$t('common.image_caching')" />
         </div>
     </div>
 </template>

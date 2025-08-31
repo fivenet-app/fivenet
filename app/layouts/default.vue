@@ -26,6 +26,8 @@ const { unreadCount } = storeToRefs(mailerStore);
 const citizensCitizensClient = await getCitizensCitizensClient();
 const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
+const route = useRoute();
+
 const open = ref(false);
 
 const links = computed(() =>
@@ -49,6 +51,7 @@ const links = computed(() =>
                 kbds: ['G', 'E'],
             },
             permission: 'mailer.MailerService/ListEmails' as Perms,
+            active: route.name.startsWith('mail'),
         },
         {
             label: t('common.citizen', 1),
@@ -59,6 +62,7 @@ const links = computed(() =>
                 kbds: ['G', 'C'],
             },
             permission: 'citizens.CitizensService/ListCitizens' as Perms,
+            active: route.name.startsWith('citizens'),
         },
         {
             label: t('common.vehicle', 2),
@@ -79,6 +83,7 @@ const links = computed(() =>
                 kbds: ['G', 'D'],
             },
             permission: 'documents.DocumentsService/ListDocuments' as Perms,
+            active: route.name.startsWith('documents'),
         },
         {
             label: t('common.job'),
@@ -92,7 +97,7 @@ const links = computed(() =>
             children: [
                 {
                     label: t('common.overview'),
-                    icon: 'i-mdi-briefcase',
+                    icon: 'i-mdi-briefcase-outline',
                     to: '/jobs/overview',
                 },
                 {
@@ -121,6 +126,7 @@ const links = computed(() =>
                 },
             ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
             permission: 'jobs.JobsService/ListColleagues' as Perms,
+            active: route.name.startsWith('jobs'),
         },
         {
             label: t('common.calendar'),
@@ -130,6 +136,7 @@ const links = computed(() =>
                 text: t('common.calendar'),
                 kbds: ['G', 'K'],
             },
+            active: route.name.startsWith('calendar'),
         },
         {
             label: t('common.qualification', 2),
@@ -140,6 +147,7 @@ const links = computed(() =>
                 kbds: ['G', 'Q'],
             },
             permission: 'qualifications.QualificationsService/ListQualifications' as Perms,
+            active: route.name.startsWith('qualifications'),
         },
         {
             label: t('common.livemap'),
@@ -160,6 +168,7 @@ const links = computed(() =>
                 kbds: ['G', 'W'],
             },
             permission: 'centrum.CentrumService/TakeControl' as Perms,
+            active: route.name.startsWith('centrum'),
         },
         {
             label: t('common.wiki'),
@@ -170,6 +179,7 @@ const links = computed(() =>
                 kbds: ['G', 'L'],
             },
             permission: 'wiki.WikiService/ListPages' as Perms,
+            active: route.name.startsWith('wiki'),
         },
         {
             label: t('common.control_panel'),
@@ -180,6 +190,7 @@ const links = computed(() =>
                 kbds: ['G', 'P'],
             },
             permission: 'settings.SettingsService/GetJobProps' as Perms,
+            active: route.name.startsWith('settings'),
         },
     ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
 );

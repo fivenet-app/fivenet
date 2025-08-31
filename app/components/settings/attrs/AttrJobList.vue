@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useAppConfig } from '#app';
 import { UButton, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import { z } from 'zod';
@@ -112,6 +111,11 @@ const columns = computed(
                         onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                     });
                 },
+                meta: {
+                    class: {
+                        td: 'text-highlighted',
+                    },
+                },
                 cell: ({ row }) => `${row.original.jobLabel} (${row.original.job})`,
             },
             {
@@ -138,7 +142,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ body: 'grid grid-cols-1 gap-2 lg:grid-cols-3' }">
+    <UDashboardPanel>
         <template #header>
             <UDashboardNavbar :title="$t('pages.settings.limiter.title')">
                 <template #right>
@@ -148,18 +152,20 @@ const onSubmitThrottle = useThrottleFn(async () => {
         </template>
 
         <template #body>
-            <div class="mb-2">
-                <UForm
-                    v-if="can('settings.SettingsService/CreateRole').value"
-                    :schema="schema"
-                    :state="state"
-                    @submit="refresh()"
-                >
-                    <div class="flex flex-row gap-2">
+            <div class="grid grid-cols-1 gap-2 lg:grid-cols-3">
+                <div class="mb-2">
+                    <UForm
+                        v-if="can('settings.SettingsService/CreateRole').value"
+                        class="flex flex-row gap-2"
+                        :schema="schema"
+                        :state="state"
+                        @submit="refresh()"
+                    >
                         <UFormField class="flex-1" name="grade" :label="$t('common.job')">
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="state.job"
+                                    class="w-full"
                                     :items="availableJobs"
                                     :search-input="{ placeholder: $t('common.search_field') }"
                                     :filter-fields="['label', 'name']"
@@ -187,36 +193,38 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                 {{ $t('common.create') }}
                             </UButton>
                         </UFormField>
+                    </UForm>
+
+                    <div>
+                        <DataErrorBlock
+                            v-if="error"
+                            :title="$t('common.unable_to_load', [$t('common.job', 2)])"
+                            :error="error"
+                            :retry="refresh"
+                        />
+                        <UTable
+                            v-else
+                            :columns="columns"
+                            :data="sortedRoles"
+                            :loading="isRequestPending(status)"
+                            :pagination-options="{ manualPagination: true }"
+                            :sorting-options="{ manualSorting: true }"
+                            :empty="$t('common.not_found', [$t('common.role', 2)])"
+                            sticky
+                        />
+
+                        <Pagination :status="status" :refresh="refresh" hide-buttons hide-text />
                     </div>
-                </UForm>
-
-                <div>
-                    <DataErrorBlock
-                        v-if="error"
-                        :title="$t('common.unable_to_load', [$t('common.job', 2)])"
-                        :error="error"
-                        :retry="refresh"
-                    />
-                    <UTable
-                        :columns="columns"
-                        :data="sortedRoles"
-                        :loading="isRequestPending(status)"
-                        :empty="$t('common.not_found', [$t('common.role', 2)])"
-                        :pagination-options="{ manualPagination: true }"
-                        :sorting-options="{ manualSorting: true }"
-                    />
-
-                    <Pagination :status="status" :refresh="refresh" hide-buttons hide-text />
                 </div>
-            </div>
 
-            <div class="col-span-2 mb-2 w-full">
-                <DataNoDataBlock
-                    v-if="!route.params.job"
-                    icon="i-mdi-select"
-                    :message="$t('common.none_selected', [$t('common.job')], 2)"
-                />
-                <NuxtPage v-else @deleted="refresh()" />
+                <div class="col-span-2 mb-2 w-full">
+                    <DataNoDataBlock
+                        v-if="!route.params.job"
+                        icon="i-mdi-select"
+                        :message="$t('common.none_selected', [$t('common.job')], 2)"
+                    />
+                    <NuxtPage v-else @deleted="refresh()" />
+                </div>
             </div>
         </template>
     </UDashboardPanel>

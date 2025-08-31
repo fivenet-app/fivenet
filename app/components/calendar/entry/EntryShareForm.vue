@@ -111,7 +111,7 @@ const formRef = useTemplateRef('formRef');
                     <li
                         v-for="user in state.users"
                         :key="user.userId"
-                        class="flex items-center border-b border-gray-100 px-4 py-2 dark:border-gray-800"
+                        class="flex items-center border-b border-neutral-100 px-4 py-2 dark:border-neutral-800"
                     >
                         <CitizenInfoPopover :user="user" show-avatar show-avatar-in-name />
                     </li>

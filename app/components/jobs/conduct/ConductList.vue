@@ -165,8 +165,10 @@ const columns = computed(
                 accessorKey: 'expiresAt',
                 header: t('common.expires_at'),
                 meta: {
-                    td: 'hidden lg:table-cell',
-                    th: 'hidden lg:table-cell',
+                    class: {
+                        td: 'hidden lg:table-cell',
+                        th: 'hidden lg:table-cell',
+                    },
                 },
                 cell: ({ row }) =>
                     row.original.expiresAt
@@ -201,8 +203,10 @@ const columns = computed(
                 accessorKey: 'creator',
                 header: t('common.creator'),
                 meta: {
-                    td: 'hidden lg:table-cell',
-                    th: 'hidden lg:table-cell',
+                    class: {
+                        td: 'hidden lg:table-cell',
+                        th: 'hidden lg:table-cell',
+                    },
                 },
                 cell: ({ row }) => h(ColleagueInfoPopover, { user: row.original.creator, hideProps: true }),
             },
@@ -257,132 +261,140 @@ const columns = computed(
 </script>
 
 <template>
-    <UDashboardToolbar>
-        <template #default>
-            <UForm class="w-full" :schema="schema" :state="query" @submit="refresh()">
-                <div class="flex flex-row gap-2">
-                    <UFormField v-if="hideUserSearch !== true" class="flex-1" name="user" :label="$t('common.search')">
-                        <SelectMenu
-                            ref="input"
-                            v-model="query.user"
-                            :searchable="
-                                async (q: string) => {
-                                    const colleagues = await completorStore.listColleagues({
-                                        search: q,
-                                        labelIds: [],
-                                        userIds: query.user ? [query.user] : [],
-                                    });
-                                    return colleagues;
-                                }
-                            "
-                            :search-input="{ placeholder: $t('common.search_field') }"
-                            :filter-fields="['firstname', 'lastname']"
-                            block
-                            :placeholder="$t('common.colleague')"
-                            trailing
-                            leading-icon="i-mdi-search"
-                            value-key="userId"
-                        >
-                            <template #item-label="{ item }">
-                                <span v-if="item" class="truncate">
-                                    {{ userToLabel(item) }}
-                                </span>
-                            </template>
+    <UDashboardPanel :ui="{ root: 'min-h-0' }">
+        <template #header>
+            <UDashboardToolbar>
+                <template #default>
+                    <UForm class="my-2 w-full" :schema="schema" :state="query" @submit="refresh()">
+                        <div class="flex flex-row gap-2">
+                            <UFormField v-if="hideUserSearch !== true" class="flex-1" name="user" :label="$t('common.search')">
+                                <SelectMenu
+                                    ref="input"
+                                    v-model="query.user"
+                                    :searchable="
+                                        async (q: string) => {
+                                            const colleagues = await completorStore.listColleagues({
+                                                search: q,
+                                                labelIds: [],
+                                                userIds: query.user ? [query.user] : [],
+                                            });
+                                            return colleagues;
+                                        }
+                                    "
+                                    :search-input="{ placeholder: $t('common.search_field') }"
+                                    :filter-fields="['firstname', 'lastname']"
+                                    block
+                                    :placeholder="$t('common.colleague')"
+                                    trailing
+                                    leading-icon="i-mdi-search"
+                                    value-key="userId"
+                                >
+                                    <template #item-label="{ item }">
+                                        <span v-if="item" class="truncate">
+                                            {{ userToLabel(item) }}
+                                        </span>
+                                    </template>
 
-                            <template #item="{ item }">
-                                <ColleagueName class="truncate" :colleague="item" birthday />
-                            </template>
+                                    <template #item="{ item }">
+                                        <ColleagueName class="truncate" :colleague="item" birthday />
+                                    </template>
 
-                            <template #empty>
-                                {{ $t('common.not_found', [$t('common.creator', 2)]) }}
-                            </template>
-                        </SelectMenu>
-                    </UFormField>
+                                    <template #empty>
+                                        {{ $t('common.not_found', [$t('common.creator', 2)]) }}
+                                    </template>
+                                </SelectMenu>
+                            </UFormField>
 
-                    <UFormField class="flex-1" name="types" :label="$t('common.type')">
-                        <ClientOnly>
-                            <USelectMenu
-                                v-model="query.types"
-                                multiple
-                                nullable
-                                :items="availableTypes"
-                                value-key="status"
-                                :placeholder="$t('common.na')"
-                                :search-input="{ placeholder: $t('common.search_field') }"
+                            <UFormField class="flex-1" name="types" :label="$t('common.type')">
+                                <ClientOnly>
+                                    <USelectMenu
+                                        v-model="query.types"
+                                        multiple
+                                        nullable
+                                        :items="availableTypes"
+                                        value-key="status"
+                                        :placeholder="$t('common.na')"
+                                        :search-input="{ placeholder: $t('common.search_field') }"
+                                    >
+                                        <template #item-label>
+                                            {{ $t('common.selected', query.types.length) }}
+                                        </template>
+
+                                        <template #item="{ item }">
+                                            <UBadge class="truncate" :color="conductTypesToBadgeColor(item.status)">
+                                                {{ $t(`enums.jobs.ConductType.${ConductType[item.status]}`) }}
+                                            </UBadge>
+                                        </template>
+
+                                        <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
+                                    </USelectMenu>
+                                </ClientOnly>
+                            </UFormField>
+
+                            <UFormField class="flex-initial" name="id" :label="$t('common.id')">
+                                <UInput v-model="query.id" type="text" name="id" :placeholder="$t('common.id')" />
+                            </UFormField>
+
+                            <UFormField
+                                class="flex flex-initial flex-col"
+                                name="showExpired"
+                                :label="$t('components.jobs.conduct.List.show_expired')"
+                                :ui="{ container: 'flex-1 flex' }"
                             >
-                                <template #item-label>
-                                    {{ $t('common.selected', query.types.length) }}
-                                </template>
+                                <div class="flex flex-1 items-center">
+                                    <USwitch v-model="query.showExpired" />
+                                </div>
+                            </UFormField>
 
-                                <template #item="{ item }">
-                                    <UBadge class="truncate" :color="conductTypesToBadgeColor(item.status)">
-                                        {{ $t(`enums.jobs.ConductType.${ConductType[item.status]}`) }}
-                                    </UBadge>
-                                </template>
-
-                                <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
-                            </USelectMenu>
-                        </ClientOnly>
-                    </UFormField>
-
-                    <UFormField class="flex-initial" name="id" :label="$t('common.id')">
-                        <UInput v-model="query.id" type="text" name="id" :placeholder="$t('common.id')" />
-                    </UFormField>
-
-                    <UFormField
-                        class="flex flex-initial flex-col"
-                        name="showExpired"
-                        :label="$t('components.jobs.conduct.List.show_expired')"
-                        :ui="{ container: 'flex-1 flex' }"
-                    >
-                        <div class="flex flex-1 items-center">
-                            <USwitch v-model="query.showExpired" />
+                            <UFormField
+                                v-if="can('jobs.ConductService/CreateConductEntry').value"
+                                class="flex-initial"
+                                :label="$t('common.create')"
+                            >
+                                <UButton
+                                    trailing-icon="i-mdi-plus"
+                                    color="neutral"
+                                    truncate
+                                    @click="
+                                        conductCreateOrUpdateModal.open({
+                                            onCreated: ($event) => data?.entries.unshift($event),
+                                            onUpdated: ($event) => updateEntryInPlace($event),
+                                        })
+                                    "
+                                >
+                                    {{ $t('common.create') }}
+                                </UButton>
+                            </UFormField>
                         </div>
-                    </UFormField>
-
-                    <UFormField
-                        v-if="can('jobs.ConductService/CreateConductEntry').value"
-                        class="flex-initial"
-                        :label="$t('common.create')"
-                    >
-                        <UButton
-                            trailing-icon="i-mdi-plus"
-                            color="neutral"
-                            truncate
-                            @click="
-                                conductCreateOrUpdateModal.open({
-                                    onCreated: ($event) => data?.entries.unshift($event),
-                                    onUpdated: ($event) => updateEntryInPlace($event),
-                                })
-                            "
-                        >
-                            {{ $t('common.create') }}
-                        </UButton>
-                    </UFormField>
-                </div>
-            </UForm>
+                    </UForm>
+                </template>
+            </UDashboardToolbar>
         </template>
-    </UDashboardToolbar>
 
-    <DataErrorBlock
-        v-if="error"
-        :title="$t('common.unable_to_load', [$t('common.conduct_register')])"
-        :error="error"
-        :retry="refresh"
-    />
+        <template #body>
+            <DataErrorBlock
+                v-if="error"
+                :title="$t('common.unable_to_load', [$t('common.conduct_register')])"
+                :error="error"
+                :retry="refresh"
+            />
 
-    <UTable
-        v-else
-        v-model:sorting="query.sorting.columns"
-        class="flex-1"
-        :loading="isRequestPending(status)"
-        :columns="columns"
-        :data="data?.entries"
-        :empty="$t('common.not_found', [$t('common.entry', 2)])"
-        :pagination-options="{ manualPagination: true }"
-        :sorting-options="{ manualSorting: true }"
-        sticky
-    />
+            <UTable
+                v-else
+                v-model:sorting="query.sorting.columns"
+                class="flex-1"
+                :loading="isRequestPending(status)"
+                :columns="columns"
+                :data="data?.entries"
+                :empty="$t('common.not_found', [$t('common.entry', 2)])"
+                :pagination-options="{ manualPagination: true }"
+                :sorting-options="{ manualSorting: true }"
+                sticky
+            />
+        </template>
 
-    <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+        <template #footer>
+            <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+        </template>
+    </UDashboardPanel>
 </template>

@@ -90,9 +90,10 @@ watchOnce(opened, async () => {
             </span>
         </slot>
     </template>
-    <UPopover v-else :ui="{ content: 'max-w-[50%]' }">
+
+    <UPopover v-else :ui="{ content: 'max-w-xl' }">
         <UButton
-            class="line-clamp-2 inline-flex w-full gap-1 whitespace-normal break-words p-px"
+            class="line-clamp-2 inline-flex gap-1 p-1 break-words whitespace-normal"
             :class="buttonClass"
             variant="link"
             :trailing-icon="!hideTrailing ? 'i-mdi-chevron-down' : undefined"
@@ -109,7 +110,7 @@ watchOnce(opened, async () => {
                     <IDCopyBadge v-if="showId" :id="documentId" prefix="DOC" hide-icon :disable-tooltip="disableTooltip" />
                     <DocumentCategoryBadge v-if="document?.category && !hideCategory" :category="document?.category" />
 
-                    <span v-bind="$attrs">{{ document?.title }} </span>
+                    <span class="text-left" v-bind="$attrs">{{ document?.title }} </span>
                 </template>
             </slot>
         </UButton>
@@ -145,7 +146,7 @@ watchOnce(opened, async () => {
                     />
                 </div>
 
-                <div v-else-if="isRequestPending(status) && !document" class="text-highlighted flex flex-col gap-2">
+                <div v-else-if="isRequestPending(status) && !document" class="flex flex-col gap-2 text-highlighted">
                     <USkeleton class="h-8 w-[250px]" />
 
                     <div class="flex flex-row items-center gap-2">
@@ -154,11 +155,15 @@ watchOnce(opened, async () => {
                     </div>
                 </div>
 
-                <div v-else-if="document" class="text-highlighted flex flex-col gap-2">
-                    <UButton variant="link" :to="{ name: 'documents-id', params: { id: document.id ?? 0 } }">
+                <div v-else-if="document" class="flex flex-col gap-2 text-highlighted">
+                    <UButton
+                        variant="link"
+                        :to="{ name: 'documents-id', params: { id: document.id ?? 0 } }"
+                        :ui="{ base: 'p-0' }"
+                    >
                         <DocumentCategoryBadge v-if="document?.category" :category="document?.category" size="xs" />
 
-                        <span class="line-clamp-1 text-lg hover:line-clamp-2">{{ document.title }}</span>
+                        <span class="line-clamp-1 text-lg hover:line-clamp-3">{{ document.title }}</span>
                     </UButton>
 
                     <div>

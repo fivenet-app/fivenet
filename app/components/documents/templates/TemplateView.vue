@@ -193,7 +193,7 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                                             )
                                         "
                                         :access-types="templateAccessTypes"
-                                        :disabled="true"
+                                        disabled
                                     />
                                 </div>
                             </div>
@@ -285,7 +285,7 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                                         :target-id="templateId ?? 0"
                                         :access-types="contentAccessTypes"
                                         :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
-                                        :disabled="true"
+                                        disabled
                                         :show-required="true"
                                     />
                                 </div>

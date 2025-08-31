@@ -135,7 +135,7 @@ const items = computed<NavigationMenuItem[]>(() =>
 </script>
 
 <template>
-    <UDashboardPanel class="shrink-0 border-b border-gray-200 lg:w-(--width) lg:border-r lg:border-b-0 dark:border-gray-800">
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.citizens.id.title')">
                 <template #right>
@@ -184,7 +184,7 @@ const items = computed<NavigationMenuItem[]>(() =>
             />
             <DataNoDataBlock v-else-if="!user" />
 
-            <NuxtPage v-else v-model:user="user" />
+            <NuxtPage v-else v-model:user="user" @refresh="() => refresh()" />
         </template>
     </UDashboardPanel>
 </template>

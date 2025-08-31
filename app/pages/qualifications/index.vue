@@ -71,7 +71,7 @@ const qualifications = await useQualifications();
         </template>
 
         <template #body>
-            <UTabs v-model="selectedTab" :items="items" :unmount="true">
+            <UTabs v-model="selectedTab" :items="items">
                 <template #yours>
                     <UContainer>
                         <div class="flex flex-col gap-2">

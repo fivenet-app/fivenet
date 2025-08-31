@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import CitizenSetJobModal from '~/components/citizens/info/props/CitizenSetJobModal.vue';
-import CitizenSetMugshotModal from '~/components/citizens/info/props/CitizenSetMugshotModal.vue';
-import CitizenSetTrafficPointsModal from '~/components/citizens/info/props/CitizenSetTrafficPointsModal.vue';
-import CitizenSetWantedModal from '~/components/citizens/info/props/CitizenSetWantedModal.vue';
+import SetJobModal from '~/components/citizens/info/props/SetJobModal.vue';
+import SetMugshotModal from '~/components/citizens/info/props/SetMugshotModal.vue';
+import SetTrafficPointsModal from '~/components/citizens/info/props/SetTrafficPointsModal.vue';
+import SetWantedModal from '~/components/citizens/info/props/SetWantedModal.vue';
 import TemplateModal from '~/components/documents/templates/TemplateModal.vue';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
 import { useClipboardStore } from '~/stores/clipboard';
@@ -34,15 +34,13 @@ const clipboardStore = useClipboardStore();
 
 const notifications = useNotificationsStore();
 
-const w = window;
-
 const overlay = useOverlay();
 
 const templateModal = overlay.create(TemplateModal);
-const citizenSetWantedModal = overlay.create(CitizenSetWantedModal);
-const citizenSetJobModal = overlay.create(CitizenSetJobModal);
-const citizenSetTrafficPointsModal = overlay.create(CitizenSetTrafficPointsModal);
-const citizenSetMugshotModal = overlay.create(CitizenSetMugshotModal);
+const setWantedModal = overlay.create(SetWantedModal);
+const setJobModal = overlay.create(SetJobModal);
+const setTrafficPointsModal = overlay.create(SetTrafficPointsModal);
+const setMugshotModal = overlay.create(SetMugshotModal);
 
 function openTemplates(): void {
     if (!props.user) {
@@ -55,7 +53,7 @@ function openTemplates(): void {
 }
 
 function copyLinkToClipboard(): void {
-    copyToClipboardWrapper(w.location.href);
+    copyToClipboardWrapper(window.location.href);
 
     notifications.add({
         title: { key: 'notifications.clipboard.link_copied.title', parameters: {} },
@@ -72,7 +70,7 @@ if (props.registerKBDs) {
                 return;
             }
 
-            citizenSetWantedModal.open({
+            setWantedModal.open({
                 user: props.user,
                 'onUpdate:wantedStatus': ($event) => emit('update:wantedStatus', $event),
             });
@@ -82,7 +80,7 @@ if (props.registerKBDs) {
                 return;
             }
 
-            citizenSetJobModal.open({
+            setJobModal.open({
                 user: props.user,
                 'onUpdate:job': ($event) => emit('update:job', $event),
             });
@@ -92,7 +90,7 @@ if (props.registerKBDs) {
                 return;
             }
 
-            citizenSetTrafficPointsModal.open({
+            setTrafficPointsModal.open({
                 user: props.user,
                 'onUpdate:trafficInfractionPoints': ($event) => emit('update:trafficInfractionPoints', $event),
             });
@@ -102,7 +100,7 @@ if (props.registerKBDs) {
                 return;
             }
 
-            citizenSetMugshotModal.open({
+            setMugshotModal.open({
                 user: props.user,
                 'onUpdate:mugshot': ($event) => emit('update:mugshot', $event),
             });
@@ -135,7 +133,7 @@ if (props.registerKBDs) {
                 truncate
                 :icon="user?.props?.wanted ? 'i-mdi-account-alert' : 'i-mdi-account-cancel'"
                 @click="
-                    citizenSetWantedModal.open({
+                    setWantedModal.open({
                         user: user,
                         'onUpdate:wantedStatus': ($event) => $emit('update:wantedStatus', $event),
                     })
@@ -158,7 +156,7 @@ if (props.registerKBDs) {
                 block
                 icon="i-mdi-briefcase"
                 @click="
-                    citizenSetJobModal.open({
+                    setJobModal.open({
                         user: user,
                         'onUpdate:job': ($event) => $emit('update:job', $event),
                     })
@@ -177,7 +175,7 @@ if (props.registerKBDs) {
                 block
                 icon="i-mdi-counter"
                 @click="
-                    citizenSetTrafficPointsModal.open({
+                    setTrafficPointsModal.open({
                         user: user,
                         'onUpdate:trafficInfractionPoints': ($event) => $emit('update:trafficInfractionPoints', $event),
                     })
@@ -196,7 +194,7 @@ if (props.registerKBDs) {
                 block
                 icon="i-mdi-camera"
                 @click="
-                    citizenSetMugshotModal.open({
+                    setMugshotModal.open({
                         user: user,
                         'onUpdate:mugshot': ($event) => $emit('update:mugshot', $event),
                     })

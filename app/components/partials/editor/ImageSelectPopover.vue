@@ -156,7 +156,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <ULink class="w-full" @click="chooseFiles">
                     <div ref="dropZoneRef" class="flex w-full items-center justify-center">
                         <label
-                            class="flex h-48 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-100 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:hover:border-gray-600 dark:hover:bg-gray-700"
+                            class="flex h-48 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-neutral-300 bg-neutral-100 hover:bg-neutral-200 dark:border-neutral-600 dark:bg-neutral-800 dark:hover:border-neutral-600 dark:hover:bg-neutral-700"
                             for="dropzone-file"
                         >
                             <div class="flex flex-col items-center justify-center pt-3 pb-4">

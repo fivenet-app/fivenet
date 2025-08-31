@@ -111,134 +111,147 @@ watch(props, async () => refresh());
 </script>
 
 <template>
-    <UDashboardToolbar v-if="userId === undefined || accessAttrs.some((a) => colleagueSearchAttrs.includes(a)) || isSuperuser">
-        <UForm class="flex w-full gap-2" :schema="schema" :state="query" @submit="refresh()">
-            <UFormField v-if="userId === undefined" class="flex-1" name="colleagues" :label="$t('common.search')">
-                <SelectMenu
-                    v-model="query.colleagues"
-                    multiple
-                    :searchable="
-                        async (q: string) =>
-                            await completorStore.listColleagues({
-                                search: q,
-                                labelIds: [],
-                                userIds: query.colleagues,
-                            })
-                    "
-                    :search-input="{ placeholder: $t('common.search_field') }"
-                    :filter-fields="['firstname', 'lastname']"
-                    :placeholder="$t('common.colleague', 2)"
-                    leading-icon="i-mdi-search"
-                    value-key="userId"
-                >
-                    <template #item-label="{ item }">
-                        <template v-if="item">
-                            {{ userToLabel(item) }}
-                        </template>
-                    </template>
-
-                    <template #item="{ item }">
-                        <ColleagueName v-if="item" :colleague="item" birthday />
-                    </template>
-
-                    <template #empty> {{ $t('common.not_found', [$t('common.colleague', 2)]) }} </template>
-                </SelectMenu>
-            </UFormField>
-            <div v-else class="flex-1" />
-
-            <UFormField
-                v-if="isSuperuser || accessAttrs.some((a) => colleagueSearchAttrs.includes(a))"
-                name="types"
-                :label="$t('common.type', 2)"
+    <UDashboardPanel :ui="{ root: 'min-h-0', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+        <template #header>
+            <UDashboardToolbar
+                v-if="userId === undefined || accessAttrs.some((a) => colleagueSearchAttrs.includes(a)) || isSuperuser"
             >
-                <ClientOnly>
-                    <USelectMenu
-                        v-model="query.types"
-                        class="w-48 min-w-40 flex-initial"
-                        multiple
-                        :items="activityTypes.map((aType) => ({ aType: aType }))"
-                        value-key="aType"
-                        :search-input="{ placeholder: $t('common.type', 2) }"
+                <UForm class="my-2 flex w-full gap-2" :schema="schema" :state="query" @submit="refresh()">
+                    <UFormField v-if="userId === undefined" class="flex-1" name="colleagues" :label="$t('common.search')">
+                        <SelectMenu
+                            v-model="query.colleagues"
+                            multiple
+                            class="w-full"
+                            :searchable="
+                                async (q: string) =>
+                                    await completorStore.listColleagues({
+                                        search: q,
+                                        labelIds: [],
+                                        userIds: query.colleagues,
+                                    })
+                            "
+                            :search-input="{ placeholder: $t('common.search_field') }"
+                            :filter-fields="['firstname', 'lastname']"
+                            :placeholder="$t('common.colleague', 2)"
+                            leading-icon="i-mdi-search"
+                            value-key="userId"
+                        >
+                            <template #item-label="{ item }">
+                                <template v-if="item">
+                                    {{ userToLabel(item) }}
+                                </template>
+                            </template>
+
+                            <template #item="{ item }">
+                                <ColleagueName v-if="item" :colleague="item" birthday />
+                            </template>
+
+                            <template #empty> {{ $t('common.not_found', [$t('common.colleague', 2)]) }} </template>
+                        </SelectMenu>
+                    </UFormField>
+                    <div v-else class="flex-1" />
+
+                    <UFormField
+                        v-if="isSuperuser || accessAttrs.some((a) => colleagueSearchAttrs.includes(a))"
+                        name="types"
+                        :label="$t('common.type', 2)"
                     >
-                        <template #item-label>
-                            {{ $t('common.selected', query.types.length) }}
+                        <ClientOnly>
+                            <USelectMenu
+                                v-model="query.types"
+                                class="w-48 min-w-40 flex-initial"
+                                multiple
+                                :items="activityTypes.map((aType) => ({ aType: aType }))"
+                                value-key="aType"
+                                :search-input="{ placeholder: $t('common.type', 2) }"
+                            >
+                                <template #item-label>
+                                    {{ $t('common.selected', query.types.length) }}
+                                </template>
+
+                                <template #item="{ item }">
+                                    {{ $t(`enums.jobs.ColleagueActivityType.${ColleagueActivityType[item.aType]}`) }}
+                                </template>
+
+                                <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
+                            </USelectMenu>
+                        </ClientOnly>
+                    </UFormField>
+
+                    <UFormField label="&nbsp;">
+                        <SortButton
+                            v-model="query.sorting"
+                            :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]"
+                        />
+                    </UFormField>
+                </UForm>
+            </UDashboardToolbar>
+        </template>
+
+        <template #body>
+            <div class="relative flex-1 overflow-x-auto">
+                <DataErrorBlock
+                    v-if="error"
+                    class="w-full"
+                    :title="$t('common.not_found', [`${$t('common.colleague', 1)} ${$t('common.activity')}`])"
+                    :error="error"
+                    :retry="refresh"
+                />
+                <DataNoDataBlock
+                    v-else-if="data?.activity.length === 0"
+                    class="w-full"
+                    icon="i-mdi-pulse"
+                    :type="`${$t('common.colleague', 1)} ${$t('common.activity')}`"
+                />
+
+                <div v-else-if="isRequestPending(status) || data?.activity">
+                    <ul class="divide-y divide-default" role="list">
+                        <template v-if="isRequestPending(status)">
+                            <li v-for="idx in 10" :key="idx" class="px-2 py-4">
+                                <div class="flex space-x-3">
+                                    <div class="my-auto flex size-10 items-center justify-center rounded-full">
+                                        <USkeleton class="size-full" />
+                                    </div>
+
+                                    <div class="flex-1 space-y-1">
+                                        <div class="flex items-center justify-between">
+                                            <h3 class="text-sm font-medium">
+                                                <USkeleton class="h-5 w-[350px]" />
+                                            </h3>
+
+                                            <p>
+                                                <USkeleton class="h-5 w-[175px]" />
+                                            </p>
+                                        </div>
+
+                                        <div class="flex items-center justify-between">
+                                            <p class="flex flex-col gap-1 text-sm">
+                                                <USkeleton class="h-8 w-[200px]" />
+                                            </p>
+                                            <p class="inline-flex items-center gap-1 text-sm">
+                                                <USkeleton class="h-5 w-[175px]" />
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
                         </template>
 
-                        <template #item="{ item }">
-                            {{ $t(`enums.jobs.ColleagueActivityType.${ColleagueActivityType[item.aType]}`) }}
+                        <template v-else>
+                            <ActivityFeedEntry
+                                v-for="activity in data?.activity"
+                                :key="activity.id"
+                                :activity="activity"
+                                :show-target-user="showTargetUser"
+                            />
                         </template>
+                    </ul>
+                </div>
+            </div>
+        </template>
 
-                        <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
-                    </USelectMenu>
-                </ClientOnly>
-            </UFormField>
-
-            <UFormField label="&nbsp;">
-                <SortButton v-model="query.sorting" :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]" />
-            </UFormField>
-        </UForm>
-    </UDashboardToolbar>
-
-    <div class="relative flex-1 overflow-x-auto">
-        <DataErrorBlock
-            v-if="error"
-            class="w-full"
-            :title="$t('common.not_found', [`${$t('common.colleague', 1)} ${$t('common.activity')}`])"
-            :error="error"
-            :retry="refresh"
-        />
-        <DataNoDataBlock
-            v-else-if="data?.activity.length === 0"
-            class="w-full"
-            icon="i-mdi-pulse"
-            :type="`${$t('common.colleague', 1)} ${$t('common.activity')}`"
-        />
-
-        <div v-else-if="isRequestPending(status) || data?.activity">
-            <ul class="divide-y divide-default" role="list">
-                <template v-if="isRequestPending(status)">
-                    <li v-for="idx in 10" :key="idx" class="px-2 py-4">
-                        <div class="flex space-x-3">
-                            <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                                <USkeleton class="size-full" />
-                            </div>
-
-                            <div class="flex-1 space-y-1">
-                                <div class="flex items-center justify-between">
-                                    <h3 class="text-sm font-medium">
-                                        <USkeleton class="h-5 w-[350px]" />
-                                    </h3>
-
-                                    <p>
-                                        <USkeleton class="h-5 w-[175px]" />
-                                    </p>
-                                </div>
-
-                                <div class="flex items-center justify-between">
-                                    <p class="flex flex-col gap-1 text-sm">
-                                        <USkeleton class="h-8 w-[200px]" />
-                                    </p>
-                                    <p class="inline-flex items-center gap-1 text-sm">
-                                        <USkeleton class="h-5 w-[175px]" />
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                </template>
-
-                <template v-else>
-                    <li
-                        v-for="activity in data?.activity"
-                        :key="activity.id"
-                        class="border-white px-2 py-4 hover:border-primary-500/25 hover:bg-primary-100/50 dark:border-gray-900 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
-                    >
-                        <ActivityFeedEntry :activity="activity" :show-target-user="showTargetUser" />
-                    </li>
-                </template>
-            </ul>
-        </div>
-    </div>
-
-    <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+        <template #footer>
+            <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+        </template>
+    </UDashboardPanel>
 </template>

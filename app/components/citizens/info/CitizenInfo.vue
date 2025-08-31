@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { User } from '~~/gen/ts/resources/users/users';
 import CitizenActions from './CitizenActions.vue';
-import CitizenSetLabels from './props/CitizenSetLabels.vue';
+import SetLabels from './props/SetLabels.vue';
 
 const user = defineModel<User>({ required: true });
 
@@ -47,7 +47,7 @@ const isOpen = ref(false);
                         }"
                         :title="$t('common.label', 2)"
                     >
-                        <CitizenSetLabels v-model="user.props!.labels" :user-id="user.userId" />
+                        <SetLabels v-model="user.props!.labels" :user-id="user.userId" />
                     </UPageCard>
                 </template>
             </div>

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useAppConfig } from '#app';
 import { UButton, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import { vMaska } from 'maska/vue';
@@ -136,8 +135,10 @@ const columns = computed(() =>
                 accessorKey: 'jobLabel',
                 header: t('common.job'),
                 meta: {
-                    td: 'hidden lg:table-cell',
-                    th: 'hidden lg:table-cell',
+                    class: {
+                        td: 'hidden lg:table-cell',
+                        th: 'hidden lg:table-cell',
+                    },
                 },
                 cell: ({ row }) =>
                     `${row.original.jobLabel}${row.original.props?.jobName || row.original.props?.jobGradeNumber ? '*' : ''}`,
@@ -146,8 +147,10 @@ const columns = computed(() =>
                 accessorKey: 'sex',
                 header: t('common.sex'),
                 meta: {
-                    td: 'hidden lg:table-cell',
-                    th: 'hidden lg:table-cell',
+                    class: {
+                        td: 'hidden lg:table-cell',
+                        th: 'hidden lg:table-cell',
+                    },
                 },
                 cell: ({ row }) =>
                     h(
@@ -167,8 +170,10 @@ const columns = computed(() =>
                 accessorKey: 'dateofbirth',
                 header: t('common.date_of_birth'),
                 meta: {
-                    td: 'hidden lg:table-cell',
-                    th: 'hidden lg:table-cell',
+                    class: {
+                        td: 'hidden lg:table-cell',
+                        th: 'hidden lg:table-cell',
+                    },
                 },
                 cell: ({ row }) => row.original.dateofbirth,
             },
@@ -225,8 +230,10 @@ const columns = computed(() =>
                 accessorKey: 'height',
                 header: t('common.height'),
                 meta: {
-                    td: 'hidden lg:table-cell',
-                    th: 'hidden lg:table-cell',
+                    class: {
+                        td: 'hidden lg:table-cell',
+                        th: 'hidden lg:table-cell',
+                    },
                 },
                 cell: ({ row }) => (row.original.height ? `${row.original.height}cm` : ''),
             },

@@ -22,10 +22,10 @@ const { goto } = useLivemapStore();
                 'absolute top-0 left-0 flex w-6 justify-center',
             ]"
         >
-            <div class="w-px bg-gray-200" />
+            <div class="w-px bg-neutral-200" />
         </div>
         <template v-if="item.status === StatusUnit.USER_ADDED">
-            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
+            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-neutral-300">
                 <UIcon class="size-5 text-primary-500" name="i-mdi-account-plus" />
             </div>
 
@@ -54,7 +54,7 @@ const { goto } = useLivemapStore();
         </template>
 
         <template v-else-if="item.status === StatusUnit.USER_REMOVED">
-            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
+            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-neutral-300">
                 <UIcon class="size-5 text-primary-500" name="i-mdi-account-remove" />
             </div>
 
@@ -83,7 +83,7 @@ const { goto } = useLivemapStore();
         </template>
 
         <template v-else-if="item.status === StatusUnit.UNAVAILABLE">
-            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
+            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-neutral-300">
                 <UIcon class="size-5 text-primary-500" name="i-mdi-stop" />
             </div>
 
@@ -112,7 +112,7 @@ const { goto } = useLivemapStore();
         </template>
 
         <template v-else-if="item.status === StatusUnit.AVAILABLE">
-            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
+            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-neutral-300">
                 <UIcon class="size-5 text-primary-500" name="i-mdi-play" />
             </div>
 
@@ -141,7 +141,7 @@ const { goto } = useLivemapStore();
         </template>
 
         <template v-else-if="item.status === StatusUnit.ON_BREAK">
-            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
+            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-neutral-300">
                 <UIcon class="size-5 text-primary-500" name="i-mdi-coffee" />
             </div>
 
@@ -170,7 +170,7 @@ const { goto } = useLivemapStore();
         </template>
 
         <template v-else-if="item.status === StatusUnit.BUSY">
-            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
+            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-neutral-300">
                 <UIcon class="size-5 text-primary-500" name="i-mdi-briefcase" />
             </div>
 
@@ -199,7 +199,7 @@ const { goto } = useLivemapStore();
         </template>
 
         <template v-else>
-            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
+            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-neutral-300">
                 <UIcon class="size-5 text-primary-500" name="i-mdi-help" />
             </div>
 

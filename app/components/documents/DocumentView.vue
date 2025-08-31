@@ -568,7 +568,7 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                     </div>
                 </div>
 
-                <UAccordion class="print:hidden" multiple :items="accordionItems" :unmount="true">
+                <UAccordion class="print:hidden" multiple :items="accordionItems">
                     <template #relations>
                         <UContainer>
                             <DocumentRelations :document-id="documentId" :show-document="false" />

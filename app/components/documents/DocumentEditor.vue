@@ -639,7 +639,7 @@ provide('yjsProvider', provider);
                         </UFormField>
 
                         <UDashboardToolbar
-                            class="flex shrink-0 justify-between border-t border-b-0 border-gray-200 px-3 py-3.5 dark:border-gray-700"
+                            class="flex shrink-0 justify-between border-t border-b-0 border-neutral-200 px-3 py-3.5 dark:border-neutral-700"
                         >
                             <UButtonGroup v-if="canDo.relations || canDo.references" class="inline-flex w-full">
                                 <UButton
