@@ -345,6 +345,10 @@ const formRef = useTemplateRef('formRef');
     <UDashboardPanel :ui="{ body: 'p-0 sm:p-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.settings.settings.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #right>
                     <PartialsBackButton fallback-to="/settings" />
 

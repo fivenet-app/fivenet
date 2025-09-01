@@ -133,6 +133,10 @@ const confirmModal = overlay.create(ConfirmModal);
     <UDashboardPanel>
         <template #header>
             <UDashboardNavbar :title="$t('pages.settings.roles.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #right>
                     <PartialsBackButton fallback-to="/settings" />
                 </template>

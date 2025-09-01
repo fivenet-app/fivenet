@@ -368,6 +368,10 @@ defineShortcuts({
     <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('common.livemap')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #right>
                     <DispatcherInfo v-if="canStream && settings?.enabled" :hide-join="true" />
                 </template>

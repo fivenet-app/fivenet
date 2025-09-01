@@ -89,7 +89,11 @@ const confirmModal = overlay.create(ConfirmModal);
 <template>
     <UDashboardPanel v-if="route.query?.tab === 'new' || getPrivateEmail?.deactivated === true" id="maileremaillist">
         <template #header>
-            <UDashboardNavbar :title="$t('pages.mailer.manage.title')" />
+            <UDashboardNavbar :title="$t('pages.mailer.manage.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+            </UDashboardNavbar>
         </template>
 
         <template #body>

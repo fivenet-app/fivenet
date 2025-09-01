@@ -145,6 +145,10 @@ const onSubmitThrottle = useThrottleFn(async () => {
     <UDashboardPanel>
         <template #header>
             <UDashboardNavbar :title="$t('pages.settings.limiter.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #right>
                     <PartialsBackButton fallback-to="/settings" />
                 </template>

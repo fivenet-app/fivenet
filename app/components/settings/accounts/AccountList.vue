@@ -211,6 +211,10 @@ const columns = computed(
     <UDashboardPanel>
         <template #header>
             <UDashboardNavbar :title="$t('pages.settings.accounts.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #right>
                     <PartialsBackButton fallback-to="/settings" />
                 </template>

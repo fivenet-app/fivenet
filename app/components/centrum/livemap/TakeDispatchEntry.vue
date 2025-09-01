@@ -53,7 +53,7 @@ onBeforeMount(() => {
     <div class="flex px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-2 sm:px-0">
         <dt class="flex flex-initial flex-col gap-1 text-sm leading-6 font-medium">
             <div class="flex items-center">
-                <UCheckbox v-model="checked" name="selected" @change="$emit('selected', checked)" />
+                <UCheckbox v-model="checked" name="selected" @update:model-value="$emit('selected', checked)" />
 
                 <IDCopyBadge
                     :id="dispatch.id"

@@ -319,6 +319,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('components.settings.job_props.job_properties')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #right>
                     <PartialsBackButton fallback-to="/settings" />
 
@@ -357,6 +361,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         :items="items"
                         variant="link"
                         :ui="{ content: 'p-4 flex flex-col gap-4' }"
+                        :unmount-on-hide="false"
                     >
                         <template #jobprops>
                             <div v-if="isRequestPending(status)" class="space-y-1 px-4">

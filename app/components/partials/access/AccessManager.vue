@@ -220,7 +220,7 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
 </script>
 
 <template>
-    <div>
+    <div class="flex flex-col gap-2 divide-y divide-neutral-100 md:divide-y-0 dark:divide-neutral-800">
         <AccessEntry
             v-for="(entry, idx) in access"
             :key="entry.id"
@@ -236,8 +236,17 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
             @delete="access?.splice(idx, 1)"
         />
 
-        <UTooltip v-if="!disabled" :text="$t('components.access.add_entry')">
-            <UButton :disabled="access.length >= maxEntries" icon="i-mdi-plus" @click="addNewEntry" />
-        </UTooltip>
+        <div>
+            <UTooltip v-if="!disabled" :text="$t('components.access.add_entry')">
+                <UButton
+                    class="w-full justify-center md:w-auto"
+                    :disabled="access.length >= maxEntries"
+                    icon="i-mdi-plus"
+                    :label="$t('components.access.add_entry')"
+                    :ui="{ label: 'md:hidden' }"
+                    @click="addNewEntry"
+                />
+            </UTooltip>
+        </div>
     </div>
 </template>

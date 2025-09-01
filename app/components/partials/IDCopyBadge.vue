@@ -57,7 +57,7 @@ function click(): void {
             :icon="!hideIcon ? 'i-mdi-fingerprint' : undefined"
             :variant="variant"
             :size="size"
-            @click="click"
+            @click.prevent="() => click()"
         >
             <span class="hidden sm:block">
                 <template v-if="prefix">{{ prefix }}-</template>{{ id }}

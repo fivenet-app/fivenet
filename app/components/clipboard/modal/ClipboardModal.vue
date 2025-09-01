@@ -39,13 +39,15 @@ const selectedTab = ref('citizens');
 <template>
     <UModal :title="$t('components.clipboard.clipboard_modal.title')">
         <template #body>
-            <UTabs v-model="selectedTab" :items="items">
+            <UTabs v-model="selectedTab" :items="items" variant="link">
                 <template #citizens>
                     <ClipboardCitizens hide-header @close="$emit('close', false)" />
                 </template>
+
                 <template #vehicles>
                     <ClipboardVehicles hide-header @close="$emit('close', false)" />
                 </template>
+
                 <template #documents>
                     <ClipboardDocuments hide-header @close="$emit('close', false)" />
                 </template>

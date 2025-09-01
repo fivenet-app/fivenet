@@ -17,7 +17,7 @@ const { login } = useAppConfig();
 
 onBeforeMount(() => {
     if (!login.signupEnabled) {
-        navigateTo({ name: 'auth-login' });
+        navigateTo('/auth/login');
     }
 });
 </script>

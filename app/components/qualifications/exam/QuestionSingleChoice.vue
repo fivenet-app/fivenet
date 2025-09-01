@@ -43,7 +43,7 @@ const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
                         </UButtonGroup>
                     </div>
 
-                    <URadio
+                    <URadioGroup
                         v-model="question.answer!.answer.singleChoice.choice"
                         :value="question.data!.data.singleChoice.choices[idx]"
                         :disabled="disabled"

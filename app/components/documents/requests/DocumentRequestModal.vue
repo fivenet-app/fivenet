@@ -149,44 +149,45 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :title="$t('common.request', 2)">
+    <UDrawer :title="$t('common.request', 2)" :overlay="false">
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
-                <template v-if="canDo.create">
-                    <UFormField name="reason" :label="$t('common.reason')" required>
-                        <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
+                <div v-if="canDo.create" class="flex flex-row gap-2 md:flex-col">
+                    <UFormField class="flex-1" name="requestsType" :label="$t('common.type', 2)" required>
+                        <ClientOnly>
+                            <USelectMenu
+                                v-model="state.requestType"
+                                class="w-full"
+                                :items="availableRequestTypes"
+                                value-key="key"
+                                :placeholder="$t('common.type')"
+                                :search-input="{ placeholder: $t('common.search_field') }"
+                            >
+                                <template #item-label>
+                                    <span v-if="state.requestType" class="truncate">
+                                        {{ $t(`enums.documents.DocActivityType.${DocActivityType[state.requestType]}`, 2) }}
+                                    </span>
+                                </template>
+
+                                <template #item="{ item }">
+                                    <span class="truncate">{{
+                                        $t(`enums.documents.DocActivityType.${DocActivityType[item.key]}`, 2)
+                                    }}</span>
+                                </template>
+
+                                <template #empty>
+                                    {{ $t('common.not_found', [$t('common.type', 2)]) }}
+                                </template>
+                            </USelectMenu>
+                        </ClientOnly>
                     </UFormField>
 
-                    <div class="my-2">
-                        <UFormField class="flex-1" name="requestsType" :label="$t('common.type', 2)">
-                            <ClientOnly>
-                                <USelectMenu
-                                    v-model="state.requestType"
-                                    :items="availableRequestTypes"
-                                    value-key="key"
-                                    :placeholder="$t('common.type')"
-                                    :search-input="{ placeholder: $t('common.search_field') }"
-                                >
-                                    <template #item-label>
-                                        <span v-if="state.requestType" class="truncate">
-                                            {{ $t(`enums.documents.DocActivityType.${DocActivityType[state.requestType]}`, 2) }}
-                                        </span>
-                                    </template>
+                    <UFormField name="reason" :label="$t('common.reason')" required>
+                        <UTextarea v-model="state.reason" class="w-full" :placeholder="$t('common.reason')" :rows="4" />
+                    </UFormField>
+                </div>
 
-                                    <template #item="{ item }">
-                                        <span class="truncate">{{
-                                            $t(`enums.documents.DocActivityType.${DocActivityType[item.key]}`, 2)
-                                        }}</span>
-                                    </template>
-
-                                    <template #empty>
-                                        {{ $t('common.not_found', [$t('common.type', 2)]) }}
-                                    </template>
-                                </USelectMenu>
-                            </ClientOnly>
-                        </UFormField>
-                    </div>
-                </template>
+                <USeparator class="my-2" />
 
                 <ul
                     v-if="isRequestPending(status)"
@@ -264,5 +265,5 @@ const formRef = useTemplateRef('formRef');
                 />
             </UButtonGroup>
         </template>
-    </UModal>
+    </UDrawer>
 </template>

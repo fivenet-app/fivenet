@@ -77,8 +77,9 @@ watchDebounced(
                         variant="link"
                         icon="i-mdi-refresh"
                         :disabled="loading || loadingState"
-                        :loading="loading || loadingState"
                         :label="$t('common.refresh')"
+                        :loading="loading || loadingState"
+                        :ui="{ label: 'hidden sm:inline-flex' }"
                         @click="$emit('refresh')"
                     />
                 </UTooltip>

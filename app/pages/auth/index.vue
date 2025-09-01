@@ -6,7 +6,7 @@ useHead({
 definePageMeta({
     title: 'components.auth.LoginForm.title',
     requiresAuth: false,
-    redirect: { name: 'auth-login' },
+    redirect: '/auth/login',
 });
 </script>
 

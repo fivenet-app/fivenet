@@ -97,7 +97,11 @@ const superuserItems = [
 <template>
     <UDashboardPanel id="settings">
         <template #header>
-            <UDashboardNavbar :title="$t('common.control_panel')" />
+            <UDashboardNavbar :title="$t('common.control_panel')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+            </UDashboardNavbar>
         </template>
 
         <template #body>

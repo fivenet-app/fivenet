@@ -138,6 +138,10 @@ const items = computed<NavigationMenuItem[]>(() =>
     <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.citizens.id.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #right>
                     <PartialsBackButton fallback-to="/citizens" />
 
@@ -145,6 +149,7 @@ const items = computed<NavigationMenuItem[]>(() =>
                         icon="i-mdi-refresh"
                         :label="$t('common.refresh')"
                         :loading="isRequestPending(status)"
+                        :ui="{ label: 'hidden sm:inline-flex' }"
                         @click="() => refresh()"
                     />
                 </template>

@@ -138,42 +138,51 @@ if (props.hideGrade) {
 </script>
 
 <template>
-    <UForm class="my-2 flex flex-row items-center gap-1" :schema="schema" :state="entry">
-        <UTooltip v-if="showRequired" class="flex-initial" :text="$t('common.require')">
-            <UCheckbox v-model="entry.required" :disabled="disabled" name="required" />
-        </UTooltip>
+    <UForm class="flex flex-1 flex-col gap-1 pb-2 md:flex-row md:pb-0" :schema="schema" :state="entry">
+        <div class="grid grid-cols-2 gap-2 md:flex md:flex-1">
+            <div class="flex flex-initial flex-col gap-2">
+                <UTooltip v-if="showRequired" class="flex-initial" :text="$t('common.require')">
+                    <UCheckbox v-model="entry.required" :disabled="disabled" name="required" />
+                </UTooltip>
 
-        <UFormField class="w-40 flex-initial">
-            <UInput v-if="accessTypes.length === 1" type="text" disabled :model-value="accessTypes[0]?.label" />
-            <ClientOnly v-else>
-                <USelectMenu
-                    v-model="entry.type"
-                    :disabled="disabled"
-                    :placeholder="$t('common.type')"
-                    :search-input="{ placeholder: $t('common.search_field') }"
-                    value-key="value"
-                    :items="accessTypes"
-                >
-                    <template #item-label>
-                        <span class="truncate">{{ accessTypes.find((t) => t.value === entry.type)?.label }}</span>
-                    </template>
+                <UFormField class="min-w-40 flex-initial" :label="$t('common.type')" :ui="{ label: 'md:hidden' }">
+                    <UInput v-if="accessTypes.length === 1" type="text" disabled :model-value="accessTypes[0]?.label" />
+                    <ClientOnly v-else>
+                        <USelectMenu
+                            v-model="entry.type"
+                            class="w-full"
+                            :disabled="disabled"
+                            :placeholder="$t('common.type')"
+                            :search-input="{ placeholder: $t('common.search_field') }"
+                            value-key="value"
+                            :items="accessTypes"
+                        >
+                            <template #item-label>
+                                <span class="truncate">{{ accessTypes.find((t) => t.value === entry.type)?.label }}</span>
+                            </template>
 
-                    <template #item="{ item }">
-                        <span class="truncate">{{ item.label }}</span>
-                    </template>
+                            <template #item="{ item }">
+                                <span class="truncate">{{ item.label }}</span>
+                            </template>
 
-                    <template #empty>
-                        {{ $t('common.not_found', [$t('common.type')]) }}
-                    </template>
-                </USelectMenu>
-            </ClientOnly>
-        </UFormField>
+                            <template #empty>
+                                {{ $t('common.not_found', [$t('common.type')]) }}
+                            </template>
+                        </USelectMenu>
+                    </ClientOnly>
+                </UFormField>
+            </div>
 
-        <template v-if="entry.type === 'user'">
-            <UFormField class="flex-1" name="userId">
+            <UFormField
+                v-if="entry.type === 'user'"
+                class="flex-1"
+                name="userId"
+                :label="$t('common.user')"
+                :ui="{ label: 'md:hidden' }"
+            >
                 <SelectMenu
                     v-model="selectedUser"
-                    class="flex-1"
+                    class="w-full"
                     :searchable="
                         async (q: string) =>
                             await completorStore.completeCitizens({
@@ -198,13 +207,17 @@ if (props.hideGrade) {
                     <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
                 </SelectMenu>
             </UFormField>
-        </template>
 
-        <template v-else-if="entry.type === 'qualification'">
-            <UFormField class="flex-1" name="qualificationId">
+            <UFormField
+                v-else-if="entry.type === 'qualification'"
+                class="flex-1"
+                name="qualificationId"
+                :label="$t('common.qualification')"
+                :ui="{ label: 'md:hidden' }"
+            >
                 <SelectMenu
                     v-model="selectedQualification"
-                    class="flex-1"
+                    class="w-full"
                     :searchable="
                         async (q: string) => {
                             const { response } = await qualificationsQualificationsClient.listQualifications({
@@ -235,69 +248,84 @@ if (props.hideGrade) {
                     <template #empty> {{ $t('common.not_found', [$t('common.qualification', 2)]) }} </template>
                 </SelectMenu>
             </UFormField>
-        </template>
 
-        <template v-else>
-            <UFormField class="flex-1" name="job">
-                <ClientOnly>
-                    <USelectMenu
-                        v-model="entry.job"
-                        class="flex-1"
-                        :disabled="disabled"
-                        :filter-fields="['name', 'label']"
-                        value-key="name"
-                        :items="jobs?.filter((j) => hideJobs.length === 0 || !hideJobs.includes(j.name)) ?? []"
-                        :placeholder="$t('common.job')"
-                        :search-input="{ placeholder: $t('common.search_field') }"
-                    >
-                        <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
-                    </USelectMenu>
-                </ClientOnly>
-            </UFormField>
+            <template v-else>
+                <UFormField class="flex-1" name="job" :label="$t('common.job')" :ui="{ label: 'md:hidden' }">
+                    <ClientOnly>
+                        <USelectMenu
+                            v-model="entry.job"
+                            class="w-full"
+                            :disabled="disabled"
+                            :filter-fields="['name', 'label']"
+                            value-key="name"
+                            :items="jobs?.filter((j) => hideJobs.length === 0 || !hideJobs.includes(j.name)) ?? []"
+                            :placeholder="$t('common.job')"
+                            :search-input="{ placeholder: $t('common.search_field') }"
+                        >
+                            <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
+                        </USelectMenu>
+                    </ClientOnly>
+                </UFormField>
 
-            <UFormField v-if="!hideGrade" class="flex-1" name="minimumGrade">
-                <ClientOnly>
-                    <USelectMenu
-                        class="flex-1"
-                        :model-value="
-                            jobs.find((j) => j.name === entry.job)?.grades.find((g) => g.grade === entry.minimumGrade)
-                        "
-                        :disabled="disabled || !entry.job"
-                        :filter-fields="['name', 'label']"
-                        :items="jobs.find((j) => j.name === entry.job)?.grades ?? []"
-                        :placeholder="$t('common.rank')"
-                        :search-input="{ placeholder: $t('common.search_field') }"
-                        @update:model-value="entry.minimumGrade = $event?.grade ?? undefined"
-                    >
-                        <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
-                    </USelectMenu>
-                </ClientOnly>
-            </UFormField>
-        </template>
-
-        <UFormField class="w-60 flex-initial" name="access">
-            <ClientOnly>
-                <USelectMenu
-                    v-model="entry.access"
+                <UFormField
+                    v-if="!hideGrade"
                     class="flex-1"
-                    :disabled="disabled"
-                    value-key="value"
-                    :items="accessRoles"
-                    :filter-fields="['label']"
-                    :placeholder="$t('common.na')"
-                    :search-input="{ placeholder: $t('common.search_field') }"
+                    name="minimumGrade"
+                    :label="$t('common.rank')"
+                    :ui="{ label: 'md:hidden' }"
                 >
-                    <template #item-label>
-                        {{ accessRoles.find((a) => a.value === entry.access)?.label ?? $t('common.na') }}
-                    </template>
+                    <ClientOnly>
+                        <USelectMenu
+                            class="w-full"
+                            :model-value="
+                                jobs.find((j) => j.name === entry.job)?.grades.find((g) => g.grade === entry.minimumGrade)
+                            "
+                            :disabled="disabled || !entry.job"
+                            :filter-fields="['name', 'label']"
+                            :items="jobs.find((j) => j.name === entry.job)?.grades ?? []"
+                            :placeholder="$t('common.rank')"
+                            :search-input="{ placeholder: $t('common.search_field') }"
+                            @update:model-value="entry.minimumGrade = $event?.grade ?? undefined"
+                        >
+                            <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
+                        </USelectMenu>
+                    </ClientOnly>
+                </UFormField>
+            </template>
 
-                    <template #empty> {{ $t('common.not_found', [$t('common.access', 2)]) }} </template>
-                </USelectMenu>
-            </ClientOnly>
+            <UFormField class="min-w-60 flex-initial" name="access" :label="$t('common.access')" :ui="{ label: 'md:hidden' }">
+                <ClientOnly>
+                    <USelectMenu
+                        v-model="entry.access"
+                        class="w-full"
+                        :disabled="disabled"
+                        value-key="value"
+                        :items="accessRoles"
+                        :filter-fields="['label']"
+                        :placeholder="$t('common.na')"
+                        :search-input="{ placeholder: $t('common.search_field') }"
+                    >
+                        <template #item-label>
+                            {{ accessRoles.find((a) => a.value === entry.access)?.label ?? $t('common.na') }}
+                        </template>
+
+                        <template #empty> {{ $t('common.not_found', [$t('common.access', 2)]) }} </template>
+                    </USelectMenu>
+                </ClientOnly>
+            </UFormField>
+        </div>
+
+        <UFormField class="md:mt-1" :ui="{ container: 'flex justify-end-safe md:inline' }">
+            <UTooltip v-if="!disabled" :text="$t('components.access.remove_entry')">
+                <UButton
+                    color="red"
+                    class="flex-initial"
+                    icon="i-mdi-close"
+                    :label="$t('components.access.remove_entry')"
+                    :ui="{ label: 'md:hidden' }"
+                    @click="$emit('delete')"
+                />
+            </UTooltip>
         </UFormField>
-
-        <UTooltip v-if="!disabled" :text="$t('components.access.remove_entry')">
-            <UButton class="flex-initial" icon="i-mdi-close" @click="$emit('delete')" />
-        </UTooltip>
     </UForm>
 </template>

@@ -52,7 +52,7 @@ async function createAccount(values: Schema): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        await navigateTo({ name: 'auth-login' });
+        await navigateTo('/auth/login');
     } catch (e) {
         const err = e as RpcError;
         accountError.value = err;
@@ -165,7 +165,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <div class="space-y-4">
             <USeparator orientation="horizontal" color="primary" />
 
-            <UButton block color="neutral" trailing-icon="i-mdi-login" :to="{ name: 'auth-login' }" :disabled="!canSubmit">
+            <UButton block color="neutral" trailing-icon="i-mdi-login" :to="'/auth/login'" :disabled="!canSubmit">
                 {{ $t('components.auth.RegistrationForm.back_to_login_button') }}
             </UButton>
         </div>

@@ -70,6 +70,10 @@ const wikiService = await useWikiWiki();
     <UDashboardPanel>
         <template #header>
             <UDashboardNavbar :title="$t('common.wiki')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #center>
                     <PageSearch />
                 </template>

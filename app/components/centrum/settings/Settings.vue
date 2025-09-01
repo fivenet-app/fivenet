@@ -235,9 +235,13 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UDashboardPanel>
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('components.centrum.settings.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #right>
                     <PartialsBackButton fallback-to="/centrum" />
 
@@ -272,7 +276,14 @@ const formRef = useTemplateRef('formRef');
                 :state="state"
                 @submit="onSubmitThrottle"
             >
-                <UTabs v-model="selectedTab" class="flex flex-1 flex-col" :items="items">
+                <UTabs
+                    v-model="selectedTab"
+                    class="flex flex-1 flex-col"
+                    :items="items"
+                    variant="link"
+                    :ui="{ content: 'p-4' }"
+                    :unmount-on-hide="false"
+                >
                     <template #settings>
                         <UPageCard
                             :title="$t('components.centrum.settings.title')"

@@ -381,6 +381,10 @@ const formRef = useTemplateRef('formRef');
     <UDashboardPanel>
         <template #header>
             <UDashboardNavbar :title="$t('pages.qualifications.edit.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #right>
                     <BackButton :disabled="!canSubmit" />
 
@@ -442,7 +446,14 @@ const formRef = useTemplateRef('formRef');
                     :retry="refresh"
                 />
 
-                <UTabs v-else v-model="selectedTab" class="flex flex-1 flex-col" :items="items">
+                <UTabs
+                    v-else
+                    v-model="selectedTab"
+                    class="flex flex-1 flex-col"
+                    :items="items"
+                    variant="link"
+                    :unmount-on-hide="false"
+                >
                     <template #content>
                         <div v-if="isRequestPending(status)" class="flex flex-col gap-2">
                             <USkeleton v-for="idx in 6" :key="idx" class="size-24 w-full" />

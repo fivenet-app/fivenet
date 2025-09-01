@@ -55,6 +55,10 @@ const qualifications = await useQualifications();
     <UDashboardPanel>
         <template #header>
             <UDashboardNavbar :title="$t('pages.qualifications.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #right>
                     <UTooltip
                         v-if="can('qualifications.QualificationsService/UpdateQualification').value"
@@ -71,7 +75,7 @@ const qualifications = await useQualifications();
         </template>
 
         <template #body>
-            <UTabs v-model="selectedTab" :items="items">
+            <UTabs v-model="selectedTab" :items="items" variant="link">
                 <template #yours>
                     <UContainer>
                         <div class="flex flex-col gap-2">

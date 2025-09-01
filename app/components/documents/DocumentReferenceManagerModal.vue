@@ -173,7 +173,7 @@ const columnsNew = [
 <template>
     <UModal :title="`$t('common.document', 1) $t('common.reference', 2)`">
         <template #body>
-            <UTabs :items="items">
+            <UTabs :items="items" variant="link">
                 <template #current>
                     <UTable
                         :columns="columnsCurrent"

@@ -180,6 +180,10 @@ const qualificationRequestUserModal = overlay.create(QualificationRequestUserMod
     <UDashboardPanel>
         <template #header>
             <UDashboardNavbar :title="$t('pages.qualifications.single.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #right>
                     <PartialsBackButton to="/qualifications" />
 
@@ -187,6 +191,7 @@ const qualificationRequestUserModal = overlay.create(QualificationRequestUserMod
                         icon="i-mdi-refresh"
                         :label="$t('common.refresh')"
                         :loading="isRequestPending(status)"
+                        :ui="{ label: 'hidden sm:inline-flex' }"
                         @click="() => refresh()"
                     />
 
@@ -463,7 +468,7 @@ const qualificationRequestUserModal = overlay.create(QualificationRequestUserMod
                             :description="$t('components.qualifications.content_unavailable')"
                         />
 
-                        <UTabs v-else v-model="selectedTab" class="w-full" :items="items">
+                        <UTabs v-else v-model="selectedTab" class="w-full" :items="items" variant="link">
                             <template #info>
                                 <div
                                     class="dark:bg-base-900 mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 break-words!"

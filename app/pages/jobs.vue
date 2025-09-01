@@ -69,6 +69,10 @@ inject('links', items);
     <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0 overflow-y-hidden' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.jobs.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #right>
                     <PartialsBackButton fallback-to="/jobs/overview" />
                 </template>

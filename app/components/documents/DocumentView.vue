@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { DropdownMenuItem, NavigationMenuItem } from '@nuxt/ui';
 import AddToButton from '~/components/clipboard/AddToButton.vue';
 import DocumentActivityList from '~/components/documents/activity/DocumentActivityList.vue';
 import DocumentComments from '~/components/documents/comments/DocumentComments.vue';
@@ -133,6 +134,179 @@ async function toggleDocument(): Promise<void> {
     doc.value.document!.closed = await documentsDocuments.toggleDocument(props.documentId, !doc.value.document?.closed);
 }
 
+const items = computed(
+    () =>
+        [
+            can('documents.DocumentsService/ToggleDocument').value &&
+            checkDocAccess(
+                doc.value?.access,
+                doc.value?.document?.creator,
+                AccessLevel.STATUS,
+                'documents.DocumentsService/ToggleDocument',
+                doc.value?.document?.creatorJob,
+            )
+                ? {
+                      label: doc.value?.document?.closed ? t('common.open', 1) : t('common.close', 1),
+                      icon: doc.value?.document?.closed ? 'i-mdi-lock-open-variant' : 'i-mdi-lock',
+                      color: doc.value?.document?.closed ? '500' : 'error',
+                      tooltip: {
+                          text: `${$t('common.open', 1)}/ ${$t('common.close')}`,
+                          kbds: ['D', 'T'],
+                      },
+                      onSelect: () => {
+                          toggleDocument();
+                      },
+                  }
+                : undefined,
+            can('documents.DocumentsService/UpdateDocument').value &&
+            checkDocAccess(
+                doc.value?.access,
+                doc.value?.document?.creator,
+                AccessLevel.ACCESS,
+                'documents.DocumentsService/UpdateDocument',
+                doc.value?.document?.creatorJob,
+            )
+                ? {
+                      label: t('common.edit'),
+                      icon: 'i-mdi-pencil',
+                      tooltip: {
+                          text: t('common.edit'),
+                          kbds: ['D', 'E'],
+                      },
+                      onSelect: () => {
+                          navigateTo({
+                              name: 'documents-id-edit',
+                              params: { id: doc.value?.document?.id ?? 0 },
+                          });
+                      },
+                  }
+                : undefined,
+            can('documents.DocumentsService/ToggleDocumentPin').value
+                ? {
+                      label: `${t('common.pin', 1)}/ ${t('common.unpin')}`,
+                      icon:
+                          doc.value?.document?.pin?.state && doc.value?.document?.pin?.userId
+                              ? 'i-mdi-playlist-remove'
+                              : 'i-mdi-playlist-plus',
+                      tooltip: {
+                          text: `${t('common.pin', 1)}/ ${t('common.unpin')}`,
+                      },
+                      children: [
+                          {
+                              label: t('common.personal'),
+                              icon:
+                                  doc.value?.document?.pin?.state && doc.value?.document?.pin?.userId
+                                      ? 'i-mdi-playlist-remove'
+                                      : 'i-mdi-playlist-plus',
+                              tooltip: {
+                                  text: t('common.personal'),
+                              },
+                              onSelect: () => {
+                                  togglePin(props.documentId, !doc.value?.document?.pin?.userId, true);
+                              },
+                          },
+                          attr('documents.DocumentsService/ToggleDocumentPin', 'Types', 'JobWide').value
+                              ? {
+                                    label: t('common.job'),
+                                    icon:
+                                        doc.value?.document?.pin?.state && doc.value?.document?.pin?.job
+                                            ? 'i-mdi-pin-off'
+                                            : 'i-mdi-pin',
+                                    tooltip: {
+                                        text: t('common.job'),
+                                    },
+                                    onSelect: () => {
+                                        togglePin(props.documentId, !doc.value?.document?.pin?.job, false);
+                                    },
+                                }
+                              : undefined,
+                      ].flatMap((item) => (item?.label !== undefined ? [item] : [])),
+                  }
+                : undefined,
+            can('documents.DocumentsService/ListDocumentReqs').value
+                ? {
+                      label: t('common.request', 2),
+                      icon: 'i-mdi-frequently-asked-questions',
+                      tooltip: {
+                          text: t('common.request', 2),
+                          kbds: ['D', 'R'],
+                      },
+                      onSelect: () => {
+                          openRequestsModal();
+                      },
+                  }
+                : undefined,
+            can('documents.DocumentsService/SetDocumentReminder').value
+                ? {
+                      label: t('common.reminder'),
+                      icon: 'i-mdi-reminder',
+                      tooltip: {
+                          text: t('common.reminder'),
+                      },
+                      onSelect: () => {
+                          documentReminderModal.open({
+                              documentId: props.documentId,
+                              reminderTime: doc.value?.document?.workflowUser?.manualReminderTime ?? undefined,
+                              'onUpdate:reminderTime': ($event) => updateReminderTime($event),
+                          });
+                      },
+                  }
+                : undefined,
+            (doc.value?.document?.creatorJob === activeChar.value?.job || isSuperuser.value) &&
+            can('documents.DocumentsService/ChangeDocumentOwner').value &&
+            checkDocAccess(
+                doc.value?.access,
+                doc.value?.document?.creator,
+                AccessLevel.EDIT,
+                'documents.DocumentsService/ChangeDocumentOwner',
+                doc.value?.document?.creatorJob,
+            )
+                ? [
+                      {
+                          label: t('components.documents.document_view.take_ownership'),
+                          icon: 'i-mdi-creation',
+                          tooltip: {
+                              text: t('components.documents.document_view.take_ownership'),
+                          },
+                          disabled: doc.value?.document?.creatorId === activeChar.value?.userId,
+                          onSelect: () => {
+                              confirmModal.open({
+                                  confirm: async () => documentsDocuments.changeDocumentOwner(props.documentId),
+                              });
+                          },
+                      },
+                  ]
+                : undefined,
+            can('documents.DocumentsService/DeleteDocument').value &&
+            checkDocAccess(
+                doc.value?.access,
+                doc.value?.document?.creator,
+                AccessLevel.EDIT,
+                'documents.DocumentsService/DeleteDocument',
+                doc.value?.document?.creatorJob,
+            )
+                ? {
+                      label: !doc.value?.document?.deletedAt ? t('common.delete') : t('common.restore'),
+                      icon: !doc.value?.document?.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore',
+                      tooltip: {
+                          text: t('common.delete'),
+                      },
+                      ui: { linkLeadingIcon: doc.value?.document?.deletedAt ? 'text-error-500' : 'text-success-500' },
+                      onSelect: () => {
+                          (doc.value?.document?.deletedAt !== undefined ? confirmModalWithReason : confirmModal).open({
+                              confirm: async (reason?: string) =>
+                                  documentsDocuments.deleteDocument(
+                                      props.documentId,
+                                      isSuperuser.value && doc.value?.document?.deletedAt !== undefined,
+                                      reason,
+                                  ),
+                          });
+                      },
+                  }
+                : undefined,
+        ].flatMap((item) => (item !== undefined ? [item] : [])) as NavigationMenuItem[],
+);
+
 const accordionItems = computed(() =>
     [
         { slot: 'relations' as const, label: t('common.relation', 2), icon: 'i-mdi-account-multiple' },
@@ -214,6 +388,7 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                         icon="i-mdi-refresh"
                         :label="$t('common.refresh')"
                         :loading="isRequestPending(status)"
+                        :ui="{ label: 'hidden sm:inline-flex' }"
                         @click="() => refresh()"
                     />
 
@@ -230,7 +405,7 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                 </template>
             </UDashboardNavbar>
 
-            <UDashboardToolbar v-if="doc" class="print:hidden">
+            <UDashboardToolbar v-if="doc" class="p-1 print:hidden">
                 <template #default>
                     <div class="flex flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
                         <UTooltip
@@ -249,10 +424,11 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                             :kbds="['D', 'T']"
                         >
                             <UButton
-                                class="flex-1 flex-col"
                                 block
-                                :icon="doc.document?.closed ? 'i-mdi-lock-open-variant' : 'i-mdi-lock'"
                                 :label="doc.document?.closed ? $t('common.open', 1) : $t('common.close', 1)"
+                                :icon="doc.document?.closed ? 'i-mdi-lock-open-variant' : 'i-mdi-lock'"
+                                color="neutral"
+                                variant="ghost"
                                 :ui="{ leadingIcon: doc.document?.closed ? 'text-success-500' : 'text-success-500' }"
                                 @click="toggleDocument()"
                             />
@@ -274,12 +450,13 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                             :kbds="['D', 'E']"
                         >
                             <UButton
-                                class="flex-1 flex-col"
                                 block
                                 :to="{
                                     name: 'documents-id-edit',
                                     params: { id: doc.document?.id },
                                 }"
+                                color="neutral"
+                                variant="ghost"
                                 icon="i-mdi-pencil"
                                 :label="$t('common.edit')"
                             />
@@ -290,30 +467,45 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                             class="flex flex-1"
                             :text="`${$t('common.pin', 1)}/ ${$t('common.unpin')}`"
                         >
-                            <UButtonGroup class="flex flex-1">
-                                <UButton
-                                    class="flex-1 flex-col"
-                                    block
-                                    :color="doc.document?.pin?.state && doc.document?.pin?.userId ? 'error' : 'primary'"
-                                    :icon="
-                                        doc.document?.pin?.state && doc.document?.pin?.userId
-                                            ? 'i-mdi-playlist-remove'
-                                            : 'i-mdi-playlist-plus'
-                                    "
-                                    :label="$t('common.personal')"
-                                    @click="togglePin(documentId, !doc.document?.pin?.userId, true)"
-                                />
-
-                                <UButton
-                                    v-if="attr('documents.DocumentsService/ToggleDocumentPin', 'Types', 'JobWide').value"
-                                    class="flex-1 flex-col"
-                                    block
-                                    :color="doc.document?.pin?.state && doc.document?.pin?.job ? 'error' : 'primary'"
-                                    :icon="doc.document?.pin?.state && doc.document?.pin?.job ? 'i-mdi-pin-off' : 'i-mdi-pin'"
-                                    :label="$t('common.job')"
-                                    @click="togglePin(documentId, !doc.document?.pin?.job, false)"
-                                />
-                            </UButtonGroup>
+                            <UDropdownMenu
+                                :items="
+                                    (
+                                        [
+                                            {
+                                                label: $t('common.personal'),
+                                                color: doc.document?.pin?.state && doc.document?.pin?.job ? 'error' : undefined,
+                                                icon:
+                                                    doc.document?.pin?.state && doc.document?.pin?.userId
+                                                        ? 'i-mdi-playlist-remove'
+                                                        : 'i-mdi-playlist-plus',
+                                                onSelect: () => {
+                                                    togglePin(documentId, !doc?.document?.pin?.userId, true);
+                                                },
+                                            },
+                                            attr('documents.DocumentsService/ToggleDocumentPin', 'Types', 'JobWide').value
+                                                ? {
+                                                      label: $t('common.job'),
+                                                      color:
+                                                          doc.document?.pin?.state && doc.document?.pin?.job
+                                                              ? 'error'
+                                                              : undefined,
+                                                      icon:
+                                                          doc.document?.pin?.state && doc.document?.pin?.job
+                                                              ? 'i-mdi-pin-off'
+                                                              : 'i-mdi-pin',
+                                                      onSelect: () => {
+                                                          togglePin(documentId, !doc?.document?.pin?.job, false);
+                                                      },
+                                                  }
+                                                : undefined,
+                                        ] as DropdownMenuItem[]
+                                    ).flatMap((item) => (item !== undefined ? [item] : []))
+                                "
+                                :content="{ align: 'start' }"
+                                :ui="{ content: 'w-48' }"
+                            >
+                                <UButton :label="$t('common.pin')" color="neutral" variant="ghost" icon="i-mdi-pin" />
+                            </UDropdownMenu>
                         </UTooltip>
 
                         <UTooltip
@@ -323,8 +515,9 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                             :kbds="['D', 'R']"
                         >
                             <UButton
-                                class="flex-1 flex-col"
                                 block
+                                color="neutral"
+                                variant="ghost"
                                 icon="i-mdi-frequently-asked-questions"
                                 :label="$t('common.request', 2)"
                                 @click="openRequestsModal"
@@ -337,8 +530,9 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                             :text="$t('common.reminder')"
                         >
                             <UButton
-                                class="flex-1 flex-col"
                                 block
+                                color="neutral"
+                                variant="ghost"
                                 icon="i-mdi-reminder"
                                 :label="$t('common.reminder')"
                                 @click="
@@ -367,10 +561,11 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                             :text="$t('components.documents.document_view.take_ownership')"
                         >
                             <UButton
-                                class="flex-1 flex-col"
                                 block
                                 :disabled="doc?.document?.creatorId === activeChar?.userId"
                                 icon="i-mdi-creation"
+                                color="neutral"
+                                variant="ghost"
                                 :label="$t('components.documents.document_view.take_ownership')"
                                 @click="
                                     confirmModal.open({
@@ -395,11 +590,11 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                             :text="$t('common.delete')"
                         >
                             <UButton
-                                class="flex-1 flex-col"
                                 block
                                 :color="!doc.document?.deletedAt ? 'error' : 'success'"
                                 :icon="!doc.document?.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
                                 :label="!doc.document?.deletedAt ? $t('common.delete') : $t('common.restore')"
+                                variant="ghost"
                                 @click="
                                     (doc.document?.deletedAt !== undefined ? confirmModalWithReason : confirmModal).open({
                                         confirm: async (reason?: string) =>

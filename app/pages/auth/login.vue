@@ -107,7 +107,7 @@ const canSubmit = ref(true);
             </UTabs>
 
             <div v-if="login.signupEnabled" class="space-y-4">
-                <USeparator orientation="horizontal" color="primary" />
+                <USeparator orientation="horizontal" color="gray" />
 
                 <UButton
                     block

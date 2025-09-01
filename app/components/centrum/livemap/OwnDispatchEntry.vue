@@ -44,11 +44,11 @@ useIntervalFn(
 <template>
     <li class="flex flex-row items-center gap-1">
         <div class="flex flex-col items-center gap-2">
-            <URadio
+            <URadioGroup
                 :value="dispatch.id"
                 name="active"
                 :checked="selectedDispatch === dispatch.id"
-                @change="$emit('update:selectedDispatch', dispatch.id)"
+                @update:model-value="$emit('update:selectedDispatch', dispatch.id)"
             />
 
             <UButton variant="link" icon="i-mdi-map-marker" @click="goto({ x: dispatch.x, y: dispatch.y })" />

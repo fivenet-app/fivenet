@@ -370,6 +370,10 @@ const formRef = useTemplateRef('formRef');
     <UDashboardPanel>
         <template #header>
             <UDashboardNavbar :title="$t('pages.documents.templates.edit.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #right>
                     <UButton
                         color="neutral"
@@ -402,7 +406,13 @@ const formRef = useTemplateRef('formRef');
                 :state="state"
                 @submit="onSubmitThrottle"
             >
-                <UTabs v-model="selectedTab" class="flex flex-1 flex-col" :items="items">
+                <UTabs
+                    v-model="selectedTab"
+                    class="flex flex-1 flex-col"
+                    :items="items"
+                    variant="link"
+                    :unmount-on-hide="false"
+                >
                     <template #details>
                         <UContainer class="mt-2 w-full overflow-y-scroll">
                             <div>

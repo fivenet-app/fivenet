@@ -73,6 +73,10 @@ watch(data, async () => {
     <UDashboardPanel v-else>
         <template #header>
             <UDashboardNavbar :title="$t('pages.qualifications.single.exam.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #right>
                     <PartialsBackButton :fallback-to="`/qualifications/${qualificationId}`" />
                 </template>

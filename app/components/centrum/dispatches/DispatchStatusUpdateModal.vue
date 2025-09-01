@@ -166,7 +166,7 @@ const formRef = useTemplateRef('formRef');
                                     name="dispatchStatus"
                                     :items="['&nbsp;', ...settings?.predefinedStatus.dispatchStatus]"
                                     :search-input="{ placeholder: $t('common.search_field') }"
-                                    @change="($event) => updateReasonField($event)"
+                                    @update:model-value="($event) => updateReasonField($event)"
                                 >
                                     <template #item="{ item }">
                                         <span class="truncate">

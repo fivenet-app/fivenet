@@ -86,6 +86,10 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
     <UDashboardPanel>
         <template #header>
             <UDashboardNavbar :title="$t('pages.documents.templates.view.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #right>
                     <PartialsBackButton to="/documents/templates" />
 

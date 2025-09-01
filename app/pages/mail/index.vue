@@ -262,12 +262,7 @@ onBeforeMount(async () => {
                 </USelectMenu>
             </ClientOnly>
 
-            <UTabs
-                v-if="!selectedEmail?.deactivated"
-                v-model="selectedTab"
-                :items="items"
-                :ui="{ wrapper: 'w-full h-full space-y-0' }"
-            />
+            <UTabs v-if="!selectedEmail?.deactivated" v-model="selectedTab" :items="items" variant="link" />
         </UDashboardToolbar>
 
         <template v-if="selectedEmail">

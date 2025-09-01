@@ -140,6 +140,7 @@ async function findSurroundingPages(
 
 const surround = computedAsync(async () => {
     const { prev, next } = await findSurroundingPages(props.pages, props.page);
+
     return [
         prev
             ? {
@@ -170,6 +171,10 @@ const scrollRef = useTemplateRef('scrollRef');
     <UDashboardPanel>
         <template #header>
             <UDashboardNavbar :title="`${page?.jobLabel ? page?.jobLabel + ': ' : ''}${$t('common.wiki')}`">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #center>
                     <PageSearch />
                 </template>

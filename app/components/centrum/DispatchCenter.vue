@@ -42,6 +42,10 @@ onBeforeRouteLeave(async (to) => {
     <UDashboardPanel>
         <template #header>
             <UDashboardNavbar :title="$t('common.dispatch_center')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #right>
                     <ClientOnly>
                         <DispatcherInfo />

@@ -287,50 +287,13 @@ const { game } = useAppConfig();
             <UDashboardToolbar>
                 <template #default>
                     <UForm :schema="schema" :state="query" class="flex flex-1 flex-col gap-1" @submit="refresh">
-                        <div class="flex w-full flex-col sm:flex-row">
+                        <div class="flex min-w-0 flex-col justify-between lg:flex-row">
                             <UTabs
                                 v-if="props.userId === undefined && items.length > 1"
                                 v-model="query.viewMode"
                                 :items="items"
                                 variant="link"
                             />
-
-                            <div class="flex-1" />
-
-                            <div v-if="showStats && data && data.stats" class="inline-flex items-center">
-                                <UButtonGroup>
-                                    <UButton
-                                        color="neutral"
-                                        variant="subtle"
-                                        icon="i-mdi-account-remove"
-                                        :label="$t('common.inactive_colleagues')"
-                                        to="/jobs/timeclock/inactive"
-                                    />
-
-                                    <UDrawer>
-                                        <UButton
-                                            :label="$t('common.stats')"
-                                            color="neutral"
-                                            variant="subtle"
-                                            icon="i-mdi-graph-line"
-                                        />
-
-                                        <template #content>
-                                            <div class="p-4">
-                                                <LazyJobsTimeclockStatsBlock
-                                                    :weekly="data?.statsWeekly"
-                                                    :stats="data?.stats"
-                                                    :hide-header="true"
-                                                    :failed="!!error"
-                                                    :loading="isRequestPending(status)"
-                                                />
-                                            </div>
-                                        </template>
-                                    </UDrawer>
-                                </UButtonGroup>
-                            </div>
-
-                            <div class="flex-1" />
 
                             <UTabs
                                 v-if="query.viewMode === TimeclockViewMode.SELF"
@@ -376,7 +339,7 @@ const { game } = useAppConfig();
                             </UFormField>
                         </div>
 
-                        <div v-if="query.viewMode === TimeclockViewMode.ALL" class="mb-2 flex w-full flex-row">
+                        <div v-if="query.viewMode === TimeclockViewMode.ALL" class="mb-2 flex flex-1 flex-row">
                             <div
                                 class="grid flex-1 gap-2"
                                 :class="canAccessAll && userId === undefined ? 'grid-cols-2' : 'grid-cols-1'"
@@ -635,6 +598,39 @@ const { game } = useAppConfig();
             >
                 <template #default>
                     <div>
+                        <div v-if="showStats && data && data.stats" class="inline-flex items-center">
+                            <UButtonGroup>
+                                <UButton
+                                    color="neutral"
+                                    variant="subtle"
+                                    icon="i-mdi-account-remove"
+                                    :label="$t('common.inactive_colleagues')"
+                                    to="/jobs/timeclock/inactive"
+                                />
+
+                                <UDrawer>
+                                    <UButton
+                                        :label="$t('common.stats')"
+                                        color="neutral"
+                                        variant="subtle"
+                                        icon="i-mdi-graph-line"
+                                    />
+
+                                    <template #content>
+                                        <div class="p-4">
+                                            <LazyJobsTimeclockStatsBlock
+                                                :weekly="data?.statsWeekly"
+                                                :stats="data?.stats"
+                                                :hide-header="true"
+                                                :failed="!!error"
+                                                :loading="isRequestPending(status)"
+                                            />
+                                        </div>
+                                    </template>
+                                </UDrawer>
+                            </UButtonGroup>
+                        </div>
+
                         <UTooltip
                             v-if="query.mode === TimeclockMode.TIMELINE"
                             :text="$t('components.jobs.timeclock.timeline.tooltip')"

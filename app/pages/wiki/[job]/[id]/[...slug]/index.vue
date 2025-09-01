@@ -80,18 +80,16 @@ async function getPage(id: number): Promise<Page | undefined> {
 </script>
 
 <template>
-    <UDashboardPanel>
-        <PageView :status="status" :error="error" :refresh="refresh" :page="page" :pages="pages ?? []">
-            <template #left>
-                <DataErrorBlock v-if="pagesError" :error="pagesError" :retry="pagesRefresh" />
-                <ClientOnly v-else>
-                    <PageList :pages="pages ?? []" />
+    <PageView :status="status" :error="error" :refresh="refresh" :page="page" :pages="pages ?? []">
+        <template #left>
+            <DataErrorBlock v-if="pagesError" :error="pagesError" :retry="pagesRefresh" />
+            <ClientOnly v-else>
+                <PageList :pages="pages ?? []" />
 
-                    <UTooltip :text="$t('common.refresh')">
-                        <UButton class="mt-1 -ml-2" variant="link" icon="i-mdi-refresh" @click="() => pagesRefresh()" />
-                    </UTooltip>
-                </ClientOnly>
-            </template>
-        </PageView>
-    </UDashboardPanel>
+                <UTooltip :text="$t('common.refresh')">
+                    <UButton class="mt-1 -ml-2" variant="link" icon="i-mdi-refresh" @click="() => pagesRefresh()" />
+                </UTooltip>
+            </ClientOnly>
+        </template>
+    </PageView>
 </template>

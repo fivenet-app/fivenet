@@ -462,6 +462,10 @@ provide('yjsProvider', provider);
     <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.documents.edit.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #right>
                     <PartialsBackButton :fallback-to="{ name: 'documents-id', params: { id: documentId } }" />
 
@@ -525,16 +529,24 @@ provide('yjsProvider', provider);
                     :message="$t('common.not_found', [$t('common.page', 1)])"
                 />
 
-                <UTabs v-else v-model="selectedTab" class="flex flex-1 flex-col" :items="items">
+                <UTabs
+                    v-else
+                    v-model="selectedTab"
+                    class="flex flex-1 flex-col"
+                    :items="items"
+                    variant="link"
+                    :unmount-on-hide="false"
+                >
                     <template #content>
                         <UDashboardToolbar>
                             <template #default>
-                                <div class="flex w-full flex-col gap-2">
+                                <div class="mb-2 flex w-full flex-col gap-2">
                                     <UFormField name="title" :label="$t('common.title')" required>
                                         <UInput
                                             v-model="state.title"
                                             type="text"
                                             size="xl"
+                                            class="w-full"
                                             :placeholder="$t('common.title')"
                                             :disabled="!canDo.edit"
                                         />
@@ -548,6 +560,7 @@ provide('yjsProvider', provider);
                                                 block
                                                 nullable
                                                 :disabled="!canDo.edit"
+                                                class="w-full"
                                                 :searchable="
                                                     async (q: string) => {
                                                         try {
@@ -603,6 +616,7 @@ provide('yjsProvider', provider);
                                             <UInput
                                                 v-model="state.state"
                                                 type="text"
+                                                class="w-full"
                                                 :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
                                                 :disabled="!canDo.edit"
                                             />
