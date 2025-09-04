@@ -74,9 +74,9 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
             </div>
         </div>
 
-        <UAccordion v-else :items="[{}]">
+        <UAccordion v-else :items="[{}]" :ui="{ label: 'w-full', trailingIcon: 'hidden' }">
             <template #default="{ open }">
-                <div class="flex space-x-3">
+                <div class="flex w-full flex-1 space-x-3">
                     <div class="my-auto flex size-10 items-center justify-center rounded-full">
                         <UIcon class="size-7" :name="getDocAtivityIcon(entry.activityType)" />
                     </div>
@@ -118,7 +118,7 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
                 </div>
             </template>
 
-            <template #item>
+            <template #content>
                 <template v-if="entry.activityType === DocActivityType.UPDATED">
                     <div class="rounded-md bg-default p-2">
                         <ActivityDocUpdatedDiff

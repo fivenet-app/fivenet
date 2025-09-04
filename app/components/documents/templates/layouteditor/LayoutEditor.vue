@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { useToast } from '#imports';
 import { computed, h, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
-import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
+import ColorPicker from '~/components/partials/ColorPicker.vue';
 import FrameNode from './FrameNode.vue';
 import Ruler from './Ruler.vue';
 import type {
@@ -464,6 +464,10 @@ const showPreview = ref(false);
         <template #header>
             <!-- Top Toolbar -->
             <UDashboardNavbar title="Layout Editor">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #left>
                     <div class="mx-auto flex items-center gap-2 px-4 py-2">
                         <UButton icon="i-heroicons-arrow-uturn-left" variant="ghost" :disabled="!canUndo" @click="undo" />
@@ -618,7 +622,7 @@ const showPreview = ref(false);
                                 <div class="flex items-center gap-2">
                                     <UButton size="xs" icon="i-heroicons-photo" @click="pickBg">Choose</UButton>
                                     <USwitch v-model="page.bgLocked" label="Lock" />
-                                    <ColorPickerClient v-model="page.bgColor" class="ml-2" />
+                                    <ColorPicker v-model="page.bgColor" class="ml-2" />
                                 </div>
                                 <input ref="bgInput" type="file" accept="image/*" class="hidden" @change="onBgChange" />
                             </UFormField>
@@ -652,7 +656,7 @@ const showPreview = ref(false);
                             <USeparator />
                             <div class="grid grid-cols-2 gap-2">
                                 <UFormField label="Stroke">
-                                    <ColorPickerClient v-model="selected.strokeColor" />
+                                    <ColorPicker v-model="selected.strokeColor" />
                                 </UFormField>
                                 <UFormField label="Width">
                                     <UInput v-model.number="selected.strokeWidth" type="number" step="1" />

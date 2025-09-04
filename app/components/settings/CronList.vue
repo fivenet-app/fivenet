@@ -164,11 +164,13 @@ const columns = computed(
                                 icon="i-mdi-share"
                                 @click="
                                     copyLinkToClipboard(
-                                        row.original.lastCompletedEvent.data?.data?.typeUrl.includes(
-                                            '/resources.common.cron.GenericCronData',
-                                        )
-                                            ? Any.unpack(row.original.lastCompletedEvent.data.data, GenericCronData)
-                                            : row.original.lastCompletedEvent.data,
+                                        JSON.stringify(
+                                            row.original.lastCompletedEvent.data?.data?.typeUrl.includes(
+                                                '/resources.common.cron.GenericCronData',
+                                            )
+                                                ? Any.unpack(row.original.lastCompletedEvent.data.data, GenericCronData)
+                                                : row.original.lastCompletedEvent.data,
+                                        ),
                                     )
                                 "
                             />

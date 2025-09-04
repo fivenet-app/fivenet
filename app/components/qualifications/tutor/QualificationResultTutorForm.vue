@@ -137,14 +137,13 @@ const formRef = useTemplateRef('formRef');
                         v-model="selectedUser"
                         class="flex-1"
                         :searchable="
-                            async (q: string) => {
-                                const users = await completorStore.completeCitizens({
+                            async (q: string) =>
+                                await completorStore.completeCitizens({
                                     search: q,
                                     userIds: selectedUser ? [selectedUser.userId] : [],
-                                });
-                                return users;
-                            }
+                                })
                         "
+                        searchable-key="completor-citizens"
                         :search-input="{ placeholder: $t('common.search_field') }"
                         :filter-fields="['firstname', 'lastname']"
                         :placeholder="$t('common.citizen', 1)"

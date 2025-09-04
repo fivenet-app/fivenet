@@ -3,7 +3,7 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
-import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
+import ColorPicker from '~/components/partials/ColorPicker.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import { UnitAttribute } from '~~/gen/ts/resources/centrum/attributes';
@@ -28,9 +28,9 @@ const notifications = useNotificationsStore();
 const centrumCentrumClient = await getCentrumCentrumClient();
 
 const availableAttributes = ref<{ label: string; value: UnitAttribute }[]>([
-    { label: t(`enums.centrum.UnitAttribute.${UnitAttribute.STATIC}`, 2), value: UnitAttribute.STATIC },
+    { label: t(`enums.centrum.UnitAttribute.${UnitAttribute[UnitAttribute.STATIC]}`, 2), value: UnitAttribute.STATIC },
     {
-        label: t(`enums.centrum.UnitAttribute.${UnitAttribute.NO_DISPATCH_AUTO_ASSIGN}`, 2),
+        label: t(`enums.centrum.UnitAttribute.${UnitAttribute[UnitAttribute.NO_DISPATCH_AUTO_ASSIGN]}`, 2),
         value: UnitAttribute.NO_DISPATCH_AUTO_ASSIGN,
     },
 ]);
@@ -65,8 +65,6 @@ const state = reactive<Schema>({
         qualifications: [],
     },
 });
-
-const selectedAttributes = ref<string[]>([]);
 
 async function createOrUpdateUnit(values: Schema): Promise<void> {
     values.access.jobs.forEach((job) => job.id < 0 && (job.id = 0));
@@ -142,15 +140,23 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :title="unit && unit?.id ? $t('components.centrum.units.update_unit') : $t('components.centrum.units.create_unit')">
+    <USlideover
+        :title="unit && unit?.id ? $t('components.centrum.units.update_unit') : $t('components.centrum.units.create_unit')"
+    >
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField class="flex-1" name="name" :label="$t('common.name')">
-                    <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.name')" />
+                    <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.name')" class="w-full" />
                 </UFormField>
 
                 <UFormField class="flex-1" name="initials" :label="$t('common.initials')">
-                    <UInput v-model="state.initials" name="initials" type="text" :placeholder="$t('common.initials')" />
+                    <UInput
+                        v-model="state.initials"
+                        name="initials"
+                        type="text"
+                        :placeholder="$t('common.initials')"
+                        class="w-full"
+                    />
                 </UFormField>
 
                 <UFormField class="flex-1" name="description" :label="$t('common.description')">
@@ -159,6 +165,7 @@ const formRef = useTemplateRef('formRef');
                         name="description"
                         type="text"
                         :placeholder="$t('common.description')"
+                        class="w-full"
                     />
                 </UFormField>
 
@@ -169,9 +176,9 @@ const formRef = useTemplateRef('formRef');
                             multiple
                             nullable
                             :items="availableAttributes"
-                            :placeholder="selectedAttributes ? selectedAttributes.join(', ') : $t('common.na')"
                             :search-input="{ placeholder: $t('common.search_field') }"
                             value-key="value"
+                            class="w-full"
                         >
                             <template #empty>
                                 {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
@@ -181,11 +188,11 @@ const formRef = useTemplateRef('formRef');
                 </UFormField>
 
                 <UFormField class="flex-1" name="color" :label="$t('common.color')">
-                    <ColorPickerClient v-model="state.color" />
+                    <ColorPicker v-model="state.color" />
                 </UFormField>
 
                 <UFormField class="flex-1" name="icon" :label="$t('common.icon')">
-                    <IconSelectMenu v-model="state.icon" :color="state.color" />
+                    <IconSelectMenu v-model="state.icon" :color="state.color" class="w-full" />
                 </UFormField>
 
                 <UFormField class="flex-1" name="homePostal" :label="`${$t('common.department')} ${$t('common.postal_code')}`">
@@ -194,6 +201,7 @@ const formRef = useTemplateRef('formRef');
                         name="homePostal"
                         type="text"
                         :placeholder="`${$t('common.department')} ${$t('common.postal_code')}`"
+                        class="w-full"
                     />
                 </UFormField>
 
@@ -232,5 +240,5 @@ const formRef = useTemplateRef('formRef');
                 />
             </UButtonGroup>
         </template>
-    </UModal>
+    </USlideover>
 </template>

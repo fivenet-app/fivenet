@@ -3,7 +3,7 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import { vMaska } from 'maska/vue';
 import { CodeDiff } from 'v-code-diff';
 import { z } from 'zod';
-import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
+import ColorPicker from '~/components/partials/ColorPicker.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -392,7 +392,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :label="$t('components.settings.job_props.livemap_marker_color')"
                                     :ui="{ container: '' }"
                                 >
-                                    <ColorPickerClient v-model="state.livemapMarkerColor" :disabled="!canSubmit || !canEdit" />
+                                    <ColorPicker v-model="state.livemapMarkerColor" :disabled="!canSubmit || !canEdit" />
                                 </UFormField>
 
                                 <UFormField

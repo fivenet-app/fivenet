@@ -130,6 +130,7 @@ watch(props, async () => refresh());
                                         userIds: query.colleagues,
                                     })
                             "
+                            searchable-key="completor-colleagues"
                             :search-input="{ placeholder: $t('common.search_field') }"
                             :filter-fields="['firstname', 'lastname']"
                             :placeholder="$t('common.colleague', 2)"

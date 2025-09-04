@@ -10,7 +10,7 @@ import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ListDocumentReqsResponse } from '~~/gen/ts/services/documents/documents';
-import DocumentRequestListEntry from './DocumentRequestListEntry.vue';
+import RequestListEntry from './RequestListEntry.vue';
 
 const props = defineProps<{
     access: DocumentAccess;
@@ -163,8 +163,8 @@ const formRef = useTemplateRef('formRef');
                                 :placeholder="$t('common.type')"
                                 :search-input="{ placeholder: $t('common.search_field') }"
                             >
-                                <template #item-label>
-                                    <span v-if="state.requestType" class="truncate">
+                                <template v-if="state.requestType" #default>
+                                    <span class="truncate">
                                         {{ $t(`enums.documents.DocActivityType.${DocActivityType[state.requestType]}`, 2) }}
                                     </span>
                                 </template>
@@ -238,7 +238,7 @@ const formRef = useTemplateRef('formRef');
                 />
 
                 <ul v-else class="mb-6 divide-y divide-gray-800 rounded-md dark:divide-gray-500" role="list">
-                    <DocumentRequestListEntry
+                    <RequestListEntry
                         v-for="request in requests.requests"
                         :key="request.id"
                         :request="request"

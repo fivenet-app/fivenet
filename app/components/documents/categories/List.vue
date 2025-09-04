@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import CategoryCreateOrUpdateModal from '~/components/documents/categories/CategoryCreateOrUpdateModal.vue';
+import CreateOrUpdateModal from '~/components/documents/categories/CreateOrUpdateModal.vue';
 import CardsList from '~/components/partials/CardsList.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -38,7 +38,7 @@ const items = computed<CardElements>(
         })) ?? [],
 );
 
-const categoryCreateOrUpdateModal = overlay.create(CategoryCreateOrUpdateModal);
+const categoryCreateOrUpdateModal = overlay.create(CreateOrUpdateModal);
 
 function categorySelected(idx: number): void {
     if (!categories.value) {

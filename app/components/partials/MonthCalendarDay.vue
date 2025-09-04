@@ -21,7 +21,7 @@ const attributes = computed(() => ({
 
 <template>
     <div class="z-10 flex h-full flex-col overflow-hidden">
-        <div class="day-label text-highlighted my-px inline-flex justify-between text-sm">
+        <div class="day-label my-px inline-flex justify-between text-sm text-highlighted">
             {{ day.day }}
             <UBadge v-if="day.isToday" size="xs" color="warning" :label="$t('common.today')" />
         </div>
@@ -30,7 +30,7 @@ const attributes = computed(() => ({
             <UButton
                 v-for="attr in attributes.past"
                 :key="attr.key"
-                class="vc-day-entry items-start! rounded-xs mb-1 mt-0 flex w-full flex-col justify-start p-1 text-left text-xs leading-tight"
+                class="vc-day-entry mt-0 mb-1 flex w-full flex-col items-start! justify-start rounded-xs p-1 text-left text-xs leading-tight"
                 truncate
                 :color="attr.customData.color"
                 @click="$emit('selected', attr.customData)"
@@ -59,7 +59,7 @@ const attributes = computed(() => ({
             <UButton
                 v-for="attr in attributes.upcoming"
                 :key="attr.key"
-                class="vc-day-entry items-start! rounded-xs mb-1 mt-0 flex w-full flex-col justify-start p-1 text-left text-xs leading-tight"
+                class="vc-day-entry mt-0 mb-1 flex w-full flex-col items-start! justify-start rounded-xs p-1 text-left text-xs leading-tight"
                 truncate
                 :color="attr.customData.color"
                 @click="$emit('selected', attr.customData)"

@@ -25,7 +25,7 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const { isSuperuser } = useAuth();
+const { activeChar, isSuperuser } = useAuth();
 
 const overlay = useOverlay();
 
@@ -37,16 +37,19 @@ const items = [
         label: t('common.all'),
         slot: 'all' as const,
         value: 'all',
+        icon: 'i-mdi-email-fast',
     },
     {
         label: t('common.unread'),
         slot: 'unread' as const,
         value: 'unread',
+        icon: 'i-mdi-markunread',
     },
     {
         label: t('common.archive'),
         slot: 'archive' as const,
         value: 'archive',
+        icon: 'i-mdi-archive',
     },
 ];
 
@@ -176,9 +179,14 @@ onBeforeMount(async () => {
 });
 </script>
 
+<!-- eslint-disable vue/no-multiple-template-root -->
 <template>
-    <UDashboardPanel id="mailerthreadlist" resizable :width="40" :min-size="35" :max-size="60">
+    <UDashboardPanel id="mailerthreadlist" resizable :width="30" :min-size="20" :max-size="60">
         <UDashboardNavbar :title="$t('common.mail')" :badge="threads?.pagination?.totalCount ?? 0">
+            <template #leading>
+                <UDashboardSidebarCollapse />
+            </template>
+
             <template #center>
                 <MessageSearch />
             </template>
@@ -192,44 +200,40 @@ onBeforeMount(async () => {
                     "
                     :text="$t('components.mailer.create_thread')"
                 >
-                    <UButton color="neutral" trailing-icon="i-mdi-plus" @click="threadCreateOrUpdateModal.open({})">
-                        {{ $t('components.mailer.create_thread') }}
-                    </UButton>
+                    <UButton
+                        color="neutral"
+                        trailing-icon="i-mdi-plus"
+                        :label="$t('components.mailer.create_thread')"
+                        @click="threadCreateOrUpdateModal.open({})"
+                    />
                 </UTooltip>
             </template>
         </UDashboardNavbar>
 
-        <UDashboardToolbar
-            v-if="selectedEmail"
-            :ui="{
-                root: 'gap-x-0 gap-y-1 justify-stretch items-stretch h-full inline-flex flex-col bg-neutral-100 p-0 px-1 dark:bg-neutral-800 min-w-0',
-            }"
-        >
-            <ClientOnly>
-                <UInput
-                    v-if="emails.length === 1"
-                    class="pt-1"
-                    type="text"
-                    disabled
-                    :model-value="
-                        (selectedEmail?.label && selectedEmail?.label !== ''
-                            ? selectedEmail?.label + ' (' + selectedEmail.email + ')'
-                            : undefined) ??
-                        selectedEmail?.email ??
-                        $t('common.none')
-                    "
-                />
+        <UDashboardToolbar v-if="selectedEmail">
+            <UInput
+                v-if="emails.length === 1"
+                class="w-full pt-1"
+                type="text"
+                disabled
+                :model-value="
+                    (selectedEmail?.label && selectedEmail?.label !== ''
+                        ? selectedEmail?.label + ' (' + selectedEmail.email + ')'
+                        : undefined) ??
+                    selectedEmail?.email ??
+                    $t('common.none')
+                "
+            />
+            <ClientOnly v-else>
                 <USelectMenu
-                    v-else
                     v-model="selectedEmail"
-                    class="pt-1"
+                    class="w-full pt-1"
                     :items="emails"
                     :placeholder="$t('common.mail')"
                     :search-input="{ placeholder: $t('common.search_field') }"
                     :filter-fields="['label', 'email']"
-                    trailing
                 >
-                    <template #item-label>
+                    <template #default>
                         <span class="truncate">
                             {{
                                 (selectedEmail?.label && selectedEmail?.label !== ''
@@ -247,7 +251,7 @@ onBeforeMount(async () => {
                         <span class="truncate">
                             {{
                                 (item?.label && item?.label !== '' ? item?.label + ' (' + item.email + ')' : undefined) ??
-                                (item?.userId
+                                (item?.userId === activeChar?.userId
                                     ? $t('common.personal_email') + (isSuperuser ? ' (' + item.email + ')' : '')
                                     : undefined) ??
                                 item?.email ??
@@ -261,39 +265,52 @@ onBeforeMount(async () => {
                     <template #empty> {{ $t('common.not_found', [$t('common.mail', 2)]) }} </template>
                 </USelectMenu>
             </ClientOnly>
-
-            <UTabs v-if="!selectedEmail?.deactivated" v-model="selectedTab" :items="items" variant="link" />
         </UDashboardToolbar>
 
-        <template v-if="selectedEmail">
-            <div class="relative flex flex-1 overflow-x-auto">
-                <DataErrorBlock
-                    v-if="selectedEmail.deactivated"
-                    :title="$t('errors.MailerService.ErrEmailDisabled.title')"
-                    :message="$t('errors.MailerService.ErrEmailDisabled.content')"
-                />
+        <UDashboardToolbar v-if="selectedEmail">
+            <UTabs
+                v-if="!selectedEmail?.deactivated"
+                v-model="selectedTab"
+                :items="items"
+                variant="link"
+                class="w-full flex-1"
+                :ui="{ trigger: ['w-full'] }"
+            />
+        </UDashboardToolbar>
 
-                <ThreadList v-else v-model="selectedThread" :threads="threads?.threads ?? []" :loaded="true">
-                    <template #after>
-                        <div class="flex-1" />
+        <template v-if="selectedEmail" #body>
+            <DataErrorBlock
+                v-if="selectedEmail.deactivated"
+                :title="$t('errors.MailerService.ErrEmailDisabled.title')"
+                :message="$t('errors.MailerService.ErrEmailDisabled.content')"
+            />
 
-                        <Pagination
-                            v-model="page"
-                            :pagination="threads?.pagination"
-                            :status="status"
-                            :refresh="refresh"
-                            hide-text
-                        />
-                    </template>
-                </ThreadList>
-            </div>
+            <ThreadList v-else v-model="selectedThread" :threads="threads?.threads ?? []" :loaded="true">
+                <template #after>
+                    <Pagination
+                        v-model="page"
+                        :pagination="threads?.pagination"
+                        :status="status"
+                        :refresh="refresh"
+                        hide-text
+                    />
+                </template>
+            </ThreadList>
+        </template>
 
-            <UDashboardToolbar
-                class="flex justify-between border-t border-b-0 border-neutral-200 px-3 py-3.5 dark:border-neutral-700"
-            >
+        <template #footer>
+            <UDashboardToolbar>
                 <template #left>
                     <UTooltip :text="$t('common.settings')">
-                        <UButton color="neutral" trailing-icon="i-mdi-cog" @click="() => emailSettingsModal.open({})">
+                        <UButton
+                            color="neutral"
+                            trailing-icon="i-mdi-cog"
+                            @click="
+                                () => {
+                                    emailSettingsModal.open({});
+                                }
+                            "
+                        >
                             <span class="hidden truncate md:block"> {{ $t('common.settings') }} </span>
                         </UButton>
                     </UTooltip>
@@ -305,7 +322,15 @@ onBeforeMount(async () => {
 
                 <template #right>
                     <UTooltip :text="$t('common.template', 2)">
-                        <UButton color="neutral" trailing-icon="i-mdi-file-outline" @click="() => templateModal.open({})">
+                        <UButton
+                            color="neutral"
+                            trailing-icon="i-mdi-file-outline"
+                            @click="
+                                () => {
+                                    templateModal.open({});
+                                }
+                            "
+                        >
                             <span class="hidden truncate md:block">{{ $t('common.template', 2) }}</span>
                         </UButton>
                     </UTooltip>
@@ -314,7 +339,7 @@ onBeforeMount(async () => {
         </template>
     </UDashboardPanel>
 
-    <UDashboardPanel v-if="selectedEmail" id="mailerthreadview" v-model="isMailerPanelOpen" side="right">
+    <UDashboardPanel v-if="selectedEmail" id="mailerthreadview" v-model="isMailerPanelOpen">
         <template v-if="selectedThread">
             <UDashboardNavbar>
                 <template #toggle>
@@ -330,14 +355,15 @@ onBeforeMount(async () => {
                             color="neutral"
                             variant="ghost"
                             @click="
-                                async () =>
-                                    (selectedThread!.state = await mailerStore.setThreadState(
+                                async () => {
+                                    selectedThread!.state = await mailerStore.setThreadState(
                                         {
                                             threadId: selectedThread!.id,
                                             unread: !threadState?.unread,
                                         },
                                         true,
-                                    ))
+                                    );
+                                }
                             "
                         />
                     </UTooltip>
@@ -348,14 +374,15 @@ onBeforeMount(async () => {
                             color="neutral"
                             variant="ghost"
                             @click="
-                                async () =>
-                                    (selectedThread!.state = await mailerStore.setThreadState(
+                                async () => {
+                                    selectedThread!.state = await mailerStore.setThreadState(
                                         {
                                             threadId: selectedThread!.id,
                                             important: !threadState?.important,
                                         },
                                         true,
-                                    ))
+                                    );
+                                }
                             "
                         />
                     </UTooltip>
@@ -368,14 +395,15 @@ onBeforeMount(async () => {
                             color="neutral"
                             variant="ghost"
                             @click="
-                                async () =>
-                                    (selectedThread!.state = await mailerStore.setThreadState(
+                                async () => {
+                                    selectedThread!.state = await mailerStore.setThreadState(
                                         {
                                             threadId: selectedThread!.id,
                                             favorite: !threadState?.favorite,
                                         },
                                         true,
-                                    ))
+                                    );
+                                }
                             "
                         />
                     </UTooltip>
@@ -386,14 +414,15 @@ onBeforeMount(async () => {
                             color="neutral"
                             variant="ghost"
                             @click="
-                                async () =>
-                                    (selectedThread!.state = await mailerStore.setThreadState(
+                                async () => {
+                                    selectedThread!.state = await mailerStore.setThreadState(
                                         {
                                             threadId: selectedThread!.id,
                                             muted: !threadState?.muted,
                                         },
                                         true,
-                                    ))
+                                    );
+                                }
                             "
                         />
                     </UTooltip>

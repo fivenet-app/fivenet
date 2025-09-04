@@ -3,7 +3,7 @@ import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { ListDocumentPinsResponse, ToggleDocumentPinResponse } from '~~/gen/ts/services/documents/documents';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
-import DocumentCategoryBadge from '../partials/documents/DocumentCategoryBadge.vue';
+import CategoryBadge from '../partials/documents/CategoryBadge.vue';
 import DocumentInfoPopover from '../partials/documents/DocumentInfoPopover.vue';
 import IDCopyBadge from '../partials/IDCopyBadge.vue';
 import Pagination from '../partials/Pagination.vue';
@@ -171,7 +171,7 @@ const editing = ref(false);
                                 <template #title="{ document }">
                                     <div class="inline-flex items-center gap-1 overflow-hidden">
                                         <IDCopyBadge :id="document?.id" prefix="DOC" size="xs" disable-tooltip />
-                                        <DocumentCategoryBadge v-if="document?.category" :category="document?.category" />
+                                        <CategoryBadge v-if="document?.category" :category="document?.category" />
                                     </div>
 
                                     <span class="line-clamp-2 text-left break-words hover:line-clamp-4">{{

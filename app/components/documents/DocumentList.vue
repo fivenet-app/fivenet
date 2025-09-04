@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { fromDate, getLocalTimeZone } from '@internationalized/date';
 import type { ContextMenuItem } from '@nuxt/ui';
 import { watchDebounced } from '@vueuse/shared';
 import { addDays } from 'date-fns';
@@ -6,7 +7,7 @@ import { z } from 'zod';
 import DocumentListEntry from '~/components/documents/DocumentListEntry.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DateRangePickerClient from '~/components/partials/DateRangePicker.client.vue';
+import InputDateRangePopover from '~/components/partials/InputDateRangePopover.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import { useCompletorStore } from '~/stores/completor';
@@ -16,7 +17,7 @@ import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/documents/documents';
-import DocumentCategoryBadge from '../partials/documents/DocumentCategoryBadge.vue';
+import CategoryBadge from '../partials/documents/CategoryBadge.vue';
 import SelectMenu from '../partials/SelectMenu.vue';
 import PinnedDocumentList from './PinnedDocumentList.vue';
 import TemplateModal from './templates/TemplateModal.vue';
@@ -308,15 +309,16 @@ defineShortcuts({
                                                 }
                                             }
                                         "
+                                        searchable-key="completor-document-categories"
                                         :search-input="{ placeholder: $t('common.category', 1) }"
                                         value-key="id"
                                     >
                                         <template #item-label="{ item }">
-                                            <DocumentCategoryBadge :category="item" />
+                                            <CategoryBadge :category="item" />
                                         </template>
 
                                         <template #item="{ item }">
-                                            <DocumentCategoryBadge :category="item" />
+                                            <CategoryBadge :category="item" />
                                         </template>
 
                                         <template #empty>
@@ -338,6 +340,7 @@ defineShortcuts({
                                                     userIds: query.creators,
                                                 })
                                         "
+                                        searchable-key="completor-citizens"
                                         :search-input="{ placeholder: $t('common.search_field') }"
                                         :filter-fields="['firstname', 'lastname']"
                                         :placeholder="$t('common.creator')"
@@ -412,17 +415,14 @@ defineShortcuts({
                                 </UFormField>
 
                                 <UFormField class="flex-1" name="date" :label="$t('common.time_range')">
-                                    <DateRangePickerClient
+                                    <InputDateRangePopover
                                         v-model="query.date"
                                         class="flex-1"
                                         date-format="dd.MM.yyyy HH:mm"
-                                        :popover="{ class: 'flex-1' }"
-                                        :date-picker="{
-                                            mode: 'dateTime',
-                                            disabledDates: [{ start: addDays(new Date(), 1), end: null }],
-                                            is24Hr: true,
-                                            clearable: true,
-                                        }"
+                                        :min-value="fromDate(addDays(new Date(), 1), getLocalTimeZone())"
+                                        clearable
+                                        time
+                                        :range="false"
                                     />
                                 </UFormField>
 
@@ -505,7 +505,7 @@ defineShortcuts({
                     <DocumentListEntry v-for="doc in data?.documents" :key="doc.id" :document="doc" />
                 </template>
             </ul>
-            <UContextMenu :items="links"> </UContextMenu>
+            <!-- <UContextMenu :items="links" /> -->
         </template>
 
         <template #footer>

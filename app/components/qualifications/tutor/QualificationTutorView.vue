@@ -35,37 +35,41 @@ const results = ref<InstanceType<typeof QualificationResultList> | null>(null);
 
 <template>
     <div class="flex flex-1 flex-col gap-2">
-        <UForm :schema="schema" :state="query">
-            <UFormField class="flex-1" name="user" :label="$t('common.search')">
-                <InputMenu
-                    v-model="query.user"
-                    :filter-fields="['firstname', 'lastname']"
-                    :placeholder="$t('common.citizen', 1)"
-                    trailing
-                    :searchable="
-                        async (q: string): Promise<UserShort[]> =>
-                            await completorStore.completeCitizens({
-                                search: q,
-                                userIds: query.user ? [query.user] : [],
-                            })
-                    "
-                    leading-icon="i-mdi-search"
-                    value-key="userId"
-                >
-                    <template #item-label="{ item }">
-                        {{ userToLabel(item) }}
-                    </template>
+        <UDashboardToolbar>
+            <UForm :schema="schema" :state="query" class="mb-2 flex-1">
+                <UFormField class="flex-1" name="user" :label="$t('common.search')">
+                    <InputMenu
+                        v-model="query.user"
+                        :filter-fields="['firstname', 'lastname']"
+                        :placeholder="$t('common.citizen', 1)"
+                        trailing
+                        :searchable="
+                            async (q: string): Promise<UserShort[]> =>
+                                await completorStore.completeCitizens({
+                                    search: q,
+                                    userIds: query.user ? [query.user] : [],
+                                })
+                        "
+                        searchable-key="completor-citizens"
+                        leading-icon="i-mdi-search"
+                        value-key="userId"
+                        class="w-full"
+                    >
+                        <template #item-label="{ item }">
+                            {{ userToLabel(item) }}
+                        </template>
 
-                    <template #item="{ item }">
-                        <span class="truncate">
-                            <ColleagueName :colleague="item" />
-                        </span>
-                    </template>
+                        <template #item="{ item }">
+                            <span class="truncate">
+                                <ColleagueName :colleague="item" />
+                            </span>
+                        </template>
 
-                    <template #empty> {{ $t('common.not_found', [$t('common.user', 2)]) }} </template>
-                </InputMenu>
-            </UFormField>
-        </UForm>
+                        <template #empty> {{ $t('common.not_found', [$t('common.user', 2)]) }} </template>
+                    </InputMenu>
+                </UFormField>
+            </UForm>
+        </UDashboardToolbar>
 
         <div>
             <h2 class="text-sm text-highlighted">{{ $t('common.request', 2) }}</h2>

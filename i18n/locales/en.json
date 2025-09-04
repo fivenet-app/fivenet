@@ -681,7 +681,9 @@
         "only_wanted": "Only Wanted",
         "no_actions_available": "No actions available.",
         "dispatch_center_settings": "Dispatch Center Settings",
-        "accepted_at": "Accepted At"
+        "accepted_at": "Accepted At",
+        "choose_color": "Choose Color",
+        "pick_date": "Pick a date"
     },
     "components": {
         "partials": {
@@ -2468,6 +2470,7 @@
                 "ACCESS_UPDATED": "Document Access updated",
                 "OWNER_CHANGED": "Document Owner changed",
                 "DELETED": "Document deleted",
+                "DRAFT_TOGGLED": "Draft status updated",
                 "REQUESTED_ACCESS": "Document access requested",
                 "REQUESTED_CLOSURE": "Document closure requested",
                 "REQUESTED_UPDATE": "Document update requested",

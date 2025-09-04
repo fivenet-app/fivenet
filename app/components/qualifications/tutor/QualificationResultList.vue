@@ -121,14 +121,15 @@ const columns = computed(
                                     variant: 'link',
                                     icon: 'i-mdi-star',
                                     color: 'warning',
-                                    onClick: () =>
+                                    onClick: () => {
                                         examViewResultModal.open({
                                             qualificationId: row.original.qualificationId,
                                             userId: row.original.userId,
                                             resultId: row.original.id,
                                             examMode: props.examMode,
                                             onRefresh: onRefresh,
-                                        }),
+                                        });
+                                    },
                                 }),
                             ),
                         props.examMode > QualificationExamMode.DISABLED &&
@@ -137,7 +138,7 @@ const columns = computed(
                                     variant: 'link',
                                     icon: 'i-mdi-star',
                                     color: 'warning',
-                                    onClick: () =>
+                                    onClick: () => {
                                         examViewResultModal.open({
                                             qualificationId: row.original.qualificationId,
                                             userId: row.original.userId,
@@ -145,7 +146,8 @@ const columns = computed(
                                             examMode: props.examMode,
                                             viewOnly: true,
                                             onRefresh: onRefresh,
-                                        }),
+                                        });
+                                    },
                                 }),
                             ),
                         checkQualificationAccess(

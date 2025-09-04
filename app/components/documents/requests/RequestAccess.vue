@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import DocumentRequestAccessModal from '~/components/documents/requests/DocumentRequestAccessModal.vue';
+import RequestAccessModal from '~/components/documents/requests/RequestAccessModal.vue';
 
 defineProps<{
     documentId: number;
@@ -8,7 +8,7 @@ defineProps<{
 const { attr, can } = useAuth();
 
 const overlay = useOverlay();
-const documentRequestAccessModal = overlay.create(DocumentRequestAccessModal);
+const documentRequestAccessModal = overlay.create(RequestAccessModal);
 </script>
 
 <template>

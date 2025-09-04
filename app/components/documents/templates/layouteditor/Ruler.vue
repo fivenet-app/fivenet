@@ -1,5 +1,5 @@
 <template>
-    <div class="relative h-full w-full select-none text-[10px] text-gray-500 dark:text-white">
+    <div class="relative h-full w-full text-[10px] text-gray-500 select-none dark:text-white">
         <div v-for="mm in ticks" :key="mm" :style="getTickStyle(mm)">
             <div v-if="orientation === 'horizontal'" class="h-3 w-px bg-transparent"></div>
             <div v-if="orientation === 'horizontal'" class="absolute top-3 -translate-x-1/2">{{ mm }}mm</div>

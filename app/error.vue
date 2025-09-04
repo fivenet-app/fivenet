@@ -47,6 +47,11 @@ ${props.error ? JSON.stringify(props.error) : 'Unknown error'}
 `);
 }
 
+function setDevConfig(): void {
+    updateAppConfig({ version: 'UNKNOWN' });
+    clearError();
+}
+
 const kbdBlockClasses =
     'inline-flex items-center rounded-sm bg-neutral-100 px-1 text-gray-900 ring-1 ring-inset ring-gray-300 dark:bg-neutral-800 dark:text-white dark:ring-gray-700';
 
@@ -97,6 +102,7 @@ const isDev = import.meta.dev;
                         <!-- @vue-ignore -->
                         <pre
                             v-if="error.statusMessage"
+                            class="text-wrap"
                             :class="kbdBlockClasses"
                             v-text="
                                 // @ts-expect-error
@@ -109,6 +115,7 @@ const isDev = import.meta.dev;
                                 // @ts-expect-error
                                 error.message
                             "
+                            class="text-wrap"
                             :class="kbdBlockClasses"
                             v-text="
                                 // @ts-expect-error
@@ -160,15 +167,7 @@ const isDev = import.meta.dev;
                             </UButton>
                         </div>
 
-                        <UButton
-                            v-if="isDev"
-                            @click="
-                                updateAppConfig({ version: 'UNKNOWN' });
-                                clearError();
-                            "
-                        >
-                            Set Dev App Config
-                        </UButton>
+                        <UButton v-if="isDev" @click="() => setDevConfig()"> Set Dev App Config </UButton>
                     </div>
                 </template>
             </UCard>

@@ -61,7 +61,7 @@ function copyEmail(): void {
                     <UButton icon="i-mdi-content-copy" :label="$t('common.copy')" variant="link" @click="copyEmail" />
                 </div>
 
-                <div class="text-highlighted flex flex-col gap-2">
+                <div class="flex flex-col gap-2 text-highlighted">
                     <div class="flex flex-col gap-1 text-sm font-normal">
                         <p>
                             <span class="font-semibold">{{ $t('common.mail') }}:</span>

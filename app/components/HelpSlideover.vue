@@ -129,11 +129,7 @@ const filteredCategories = computed(() => {
 </script>
 
 <template>
-    <USlideover v-model:open="isHelpSlideoverOpen">
-        <template #title>
-            {{ shortcuts ? $t('common.shortcuts') : $t('common.help') }}
-        </template>
-
+    <USlideover v-model:open="isHelpSlideoverOpen" :title="shortcuts ? $t('common.shortcuts') : $t('common.help')">
         <template #actions>
             <UButton
                 v-if="shortcuts"

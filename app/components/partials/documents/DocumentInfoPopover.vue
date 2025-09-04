@@ -6,7 +6,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { ClassProp } from '~/utils/types';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
-import DocumentCategoryBadge from './DocumentCategoryBadge.vue';
+import CategoryBadge from './CategoryBadge.vue';
 
 defineOptions({
     inheritAttrs: false,
@@ -108,7 +108,7 @@ watchOnce(opened, async () => {
 
                 <template v-else>
                     <IDCopyBadge v-if="showId" :id="documentId" prefix="DOC" hide-icon :disable-tooltip="disableTooltip" />
-                    <DocumentCategoryBadge v-if="document?.category && !hideCategory" :category="document?.category" />
+                    <CategoryBadge v-if="document?.category && !hideCategory" :category="document?.category" />
 
                     <span class="text-left" v-bind="$attrs">{{ document?.title }} </span>
                 </template>
@@ -161,7 +161,7 @@ watchOnce(opened, async () => {
                         :to="{ name: 'documents-id', params: { id: document.id ?? 0 } }"
                         :ui="{ base: 'p-0' }"
                     >
-                        <DocumentCategoryBadge v-if="document?.category" :category="document?.category" size="xs" />
+                        <CategoryBadge v-if="document?.category" :category="document?.category" size="xs" />
 
                         <span class="line-clamp-1 text-lg hover:line-clamp-3">{{ document.title }}</span>
                     </UButton>

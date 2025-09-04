@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
-import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
+import InputDatePicker from '~/components/partials/InputDatePicker.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useAuthStore } from '~/stores/auth';
 import { useCompletorStore } from '~/stores/completor';
@@ -183,6 +183,7 @@ const formRef = useTemplateRef('formRef');
                                                 userIds: [],
                                             })
                                     "
+                                    searchable-key="completor-colleagues"
                                     :search-input="{ placeholder: $t('common.search_field') }"
                                     :filter-fields="['firstname', 'lastname']"
                                     block
@@ -233,7 +234,7 @@ const formRef = useTemplateRef('formRef');
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                             <UFormField name="expiresAt">
-                                <DatePickerPopoverClient v-model="state.expiresAt" :date-picker="{ clearable: true }" />
+                                <InputDatePicker v-model="state.expiresAt" clearable time />
                             </UFormField>
                         </dd>
                     </div>

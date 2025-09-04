@@ -91,7 +91,7 @@ export const useSettingsStore = defineStore(
             updateAvailable.value = newVersion;
         };
 
-        const setNuiSettings = (enabled: boolean, resourceName: string | undefined): void => {
+        const setNuiSettings = (enabled: boolean, resourceName?: string | undefined): void => {
             nuiEnabled.value = enabled;
             nuiResourceName.value = resourceName;
         };

@@ -1,12 +1,13 @@
 <script lang="ts" setup>
+import { CalendarDate } from '@internationalized/date';
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { subDays } from 'date-fns';
 import { z } from 'zod';
-import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { SetDocumentReminderResponse } from '~~/gen/ts/services/documents/documents';
+import InputDatePicker from '../partials/InputDatePicker.vue';
 
 const props = defineProps<{
     documentId: number;
@@ -73,6 +74,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     await setDocumentReminder(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
+const today = new Date();
+const yesterday = subDays(today, 1);
+
 const formRef = useTemplateRef('formRef');
 </script>
 
@@ -80,40 +84,26 @@ const formRef = useTemplateRef('formRef');
     <UModal :title="$t('common.reminder', 2)">
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
-                <UFormField
-                    class="grid items-center gap-2"
-                    name="reminderTime"
-                    :label="$t('common.time')"
-                    :ui="{ container: '' }"
-                >
-                    <DatePickerPopoverClient
+                <UFormField name="reminderTime" :label="$t('common.time')">
+                    <InputDatePicker
                         v-model="state.reminderTime"
                         date-format="dd.MM.yyyy HH:mm"
-                        :date-picker="{
-                            mode: 'dateTime',
-                            is24hr: true,
-                            clearable: true,
-                            disabledDates: [{ start: null, end: subDays(new Date(), 1) }],
-                        }"
+                        time
+                        clearable
+                        :max-value="new CalendarDate(yesterday.getFullYear(), yesterday.getMonth() + 1, yesterday.getDate())"
                     />
                 </UFormField>
 
-                <UFormField
-                    class="grid items-center gap-2"
-                    name="message"
-                    :label="$t('common.message')"
-                    :ui="{ container: '' }"
-                >
-                    <UInput v-model="state.message" type="text" :placeholder="$t('common.message')" />
+                <UFormField name="message" :label="$t('common.message')">
+                    <UInput v-model="state.message" type="text" :placeholder="$t('common.message')" class="w-full" />
                 </UFormField>
 
                 <!--
                     Only show if recurring reminders are enabled
                     <UFormField
-                        class="grid items-center gap-2"
                         name="message"
                         label="Max number of total reminders"
-                        :ui="{ container: '' }"
+                        class="w-full"
                     >
                         <UInput v-model="state.maxReminderCount" type="number" :min="1" :max="10" :step="1" />
                     </UFormField>

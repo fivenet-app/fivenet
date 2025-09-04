@@ -99,7 +99,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <UFormField
             class="flex flex-1 overflow-y-hidden"
             name="content"
-            :ui="{ container: 'flex flex-1 flex-col mt-0 overflow-y-hidden', label: 'hiddne' }"
+            :ui="{ container: 'flex flex-1 flex-col mt-0 overflow-y-hidden', label: 'hidden' }"
             label="&nbsp;"
         >
             <ClientOnly>

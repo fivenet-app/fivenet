@@ -336,7 +336,7 @@ func (r *CollabRoom) shutdown(ctx context.Context) {
 			StreamName,
 			r.consumer.CachedInfo().Name,
 		)
-		if err != nil {
+		if err != nil && !errors.Is(err, jetstream.ErrConsumerNotFound) {
 			r.logger.Error("failed to delete collab room consumer", zap.Error(err))
 		}
 	}()

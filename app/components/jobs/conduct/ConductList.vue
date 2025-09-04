@@ -281,6 +281,7 @@ const columns = computed(
                                             return colleagues;
                                         }
                                     "
+                                    searchable-key="completor-colleagues"
                                     :search-input="{ placeholder: $t('common.search_field') }"
                                     :filter-fields="['firstname', 'lastname']"
                                     block

@@ -177,12 +177,12 @@ const route = router.currentRoute;
             <NuxtPage :transition="{ onBeforeEnter }" />
         </NuxtLayout>
 
-        <BannerMessage
-            v-if="appConfig.system.bannerMessageEnabled && appConfig.system.bannerMessage"
-            :message="appConfig.system.bannerMessage"
-        />
-
         <ClientOnly>
+            <BannerMessage
+                v-if="appConfig.system.bannerMessageEnabled && appConfig.system.bannerMessage"
+                :message="appConfig.system.bannerMessage"
+            />
+
             <NotificationProvider />
         </ClientOnly>
 

@@ -1,8 +1,9 @@
 <script lang="ts" setup>
+import { CalendarDate, type DateValue } from '@internationalized/date';
 import type { FormSubmitEvent } from '@nuxt/ui';
-import { addDays, isFuture, subDays } from 'date-fns';
+import { addDays, isBefore, isFuture, subDays } from 'date-fns';
 import { z } from 'zod';
-import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
+import InputDateRangePopover from '~/components/partials/InputDateRangePopover.vue';
 import { useAuthStore } from '~/stores/auth';
 import { getJobsJobsClient } from '~~/gen/ts/clients';
 import type { ColleagueProps } from '~~/gen/ts/resources/jobs/colleagues';
@@ -33,14 +34,20 @@ const maxEnd = addDays(today, jobProps.value?.settings?.absenceFutureDays ?? 93)
 const schema = z.union([
     z.object({
         reason: z.string().min(3).max(255),
-        absenceBegin: z.date().min(minStart),
-        absenceEnd: z.date().min(today).max(maxEnd),
+        absence: z.object({
+            start: z.date().min(minStart).max(maxEnd),
+            end: z.date().min(minStart).max(maxEnd),
+        }),
         reset: z.literal(false),
     }),
     z.object({
         reason: z.string().min(3).max(255),
-        absenceBegin: z.date().optional(),
-        absenceEnd: z.date().optional(),
+        absence: z
+            .object({
+                start: z.date(),
+                end: z.date(),
+            })
+            .optional(),
         reset: z.literal(true),
     }),
 ]);
@@ -49,8 +56,10 @@ type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
     reason: '',
-    absenceBegin: today,
-    absenceEnd: addDays(today, 1),
+    absence: {
+        start: today,
+        end: addDays(today, 1),
+    },
     reset: false,
 });
 
@@ -58,8 +67,8 @@ async function setAbsenceDate(values: Schema): Promise<void> {
     const userProps: ColleagueProps = {
         userId: props.userId,
         job: '',
-        absenceBegin: values.absenceBegin ? toTimestamp(values.absenceBegin) : {},
-        absenceEnd: values.absenceEnd ? toTimestamp(values.absenceEnd) : {},
+        absenceBegin: values.absence?.start ? toTimestamp(values.absence.start) : {},
+        absenceEnd: values.absence?.end ? toTimestamp(values.absence.end) : {},
     };
 
     if (values.reset) {
@@ -94,14 +103,25 @@ async function setAbsenceDate(values: Schema): Promise<void> {
 }
 
 function updateAbsenceDateField(): void {
-    if (props.userProps?.absenceBegin && isFuture(toDate(props.userProps.absenceBegin))) {
-        state.absenceBegin = toDate(props.userProps.absenceBegin);
-    }
-
-    if (props.userProps?.absenceEnd && isFuture(toDate(props.userProps.absenceEnd))) {
-        state.absenceEnd = toDate(props.userProps.absenceEnd);
+    if (
+        props.userProps?.absenceBegin &&
+        isFuture(toDate(props.userProps.absenceBegin)) &&
+        props.userProps?.absenceEnd &&
+        isFuture(toDate(props.userProps.absenceEnd))
+    ) {
+        if (!state.absence)
+            state.absence = {
+                start: toDate(props.userProps.absenceBegin),
+                end: toDate(props.userProps.absenceEnd),
+            };
+    } else {
+        state.absence = undefined;
     }
 }
+
+const isDateDisabled = (date: DateValue) => {
+    return isBefore(date.toDate('UTC'), subDays(today, 1));
+};
 
 watch(props, () => updateAbsenceDateField());
 
@@ -119,36 +139,20 @@ const formRef = useTemplateRef('formRef');
 <template>
     <UModal :title="$t('components.jobs.self_service.set_absence_date')">
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
                 <UFormField name="reason" :label="$t('common.reason')" required>
-                    <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
+                    <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" class="w-full" />
                 </UFormField>
 
-                <div class="flex flex-col gap-1 sm:flex-row">
-                    <UFormField class="flex-1" name="absenceBegin" :label="$t('common.from')">
-                        <PartialsDatePickerPopover
-                            v-model="state.absenceBegin"
-                            :date-picker="{
-                                disabledDates: [
-                                    { start: null, end: minStart },
-                                    { start: maxEnd, end: null },
-                                ],
-                            }"
-                        />
-                    </UFormField>
-
-                    <UFormField class="flex-1" name="absenceEnd" :label="$t('common.to')">
-                        <DatePickerPopoverClient
-                            v-model="state.absenceEnd"
-                            :date-picker="{
-                                disabledDates: [
-                                    { start: null, end: subDays(today, 1) },
-                                    { start: maxEnd, end: null },
-                                ],
-                            }"
-                        />
-                    </UFormField>
-                </div>
+                <UFormField name="absenceBegin" :label="$t('common.time_range')">
+                    <InputDateRangePopover
+                        v-model="state.absence"
+                        range
+                        :is-date-disabled="isDateDisabled"
+                        :min-value="new CalendarDate(today.getFullYear(), today.getMonth() + 1, today.getDate())"
+                        :max-value="new CalendarDate(maxEnd.getFullYear(), maxEnd.getMonth() + 1, maxEnd.getDate())"
+                    />
+                </UFormField>
             </UForm>
         </template>
 

@@ -38,7 +38,7 @@ watch(showLocationMarker, () => {
                 pmIgnore: true,
             }"
         >
-            <MapMarkerDownIcon class="text-primary-500 size-full animate-pulse" />
+            <MapMarkerDownIcon class="size-full animate-pulse text-primary-500" />
         </LIcon>
     </LMarker>
 </template>

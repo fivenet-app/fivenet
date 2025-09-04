@@ -177,6 +177,7 @@ const editing = ref(false);
                 v-model="state.labels"
                 multiple
                 :searchable="async (q: string) => (await getColleagueLabels(q))?.labels ?? []"
+                searchable-key="completor-jobs-colleague-labels"
                 :search-input="{ placeholder: $t('common.search_field') }"
                 :filter-fields="['name']"
                 clear-search-on-close

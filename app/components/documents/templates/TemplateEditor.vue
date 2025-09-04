@@ -549,6 +549,7 @@ const formRef = useTemplateRef('formRef');
                                             }
                                         }
                                     "
+                                    searchable-key="documentss-categories"
                                 >
                                     <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
                                 </InputMenu>

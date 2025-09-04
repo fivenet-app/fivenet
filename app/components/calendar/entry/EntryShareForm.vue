@@ -88,6 +88,7 @@ const formRef = useTemplateRef('formRef');
                             return users.filter((u) => u.userId !== activeChar?.userId);
                         }
                     "
+                    searchable-key="completor-citizens"
                     :search-input="{ placeholder: $t('common.search_field') }"
                     :filter-fields="['firstname', 'lastname']"
                     block

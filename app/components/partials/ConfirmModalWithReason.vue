@@ -43,6 +43,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     await props.confirm(event.data.reason).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
     emit('close');
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
@@ -51,23 +53,26 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         :description="description ?? $t('components.partials.confirm_dialog.description')"
         @update:model-value="cancel && cancel()"
     >
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UFormField class="sm:px-4" name="reason" :label="$t('common.reason')">
-                <UInput v-model="state.reason" :placeholder="$t('common.reason')" :ui="{ base: 'w-full' }" />
-            </UFormField>
+        <template #body>
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UFormField name="reason" :label="$t('common.reason')">
+                    <UInput v-model="state.reason" :placeholder="$t('common.reason')" class="w-full" />
+                </UFormField>
+            </UForm>
+        </template>
 
-            <div class="flex shrink-0 items-center gap-x-1.5 px-4 py-4 sm:px-4">
-                <UButton type="submit" :color="color" :label="$t('common.confirm')" />
-                <UButton
-                    color="neutral"
-                    :label="$t('common.cancel')"
-                    @click="
-                        if (cancel) cancel();
+        <template #footer>
+            <UButton :color="color" :label="$t('common.confirm')" @click="formRef?.submit()" />
 
-                        $emit('close');
-                    "
-                />
-            </div>
-        </UForm>
+            <UButton
+                color="neutral"
+                :label="$t('common.cancel')"
+                @click="
+                    if (cancel) cancel();
+
+                    $emit('close');
+                "
+            />
+        </template>
     </UModal>
 </template>

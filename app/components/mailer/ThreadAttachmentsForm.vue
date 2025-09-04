@@ -52,6 +52,7 @@ async function listDocuments(search: string): Promise<DocumentShort[]> {
                             class="w-full flex-1"
                             :disabled="!canSubmit"
                             :searchable="listDocuments"
+                            :searchable-key="`mailer-thread-attachment-documents-search`"
                             :placeholder="$t('common.document')"
                             :model-value="
                                 attachments[idx].data.document.id > 0

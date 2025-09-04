@@ -52,7 +52,7 @@ const qualifications = await useQualifications();
 </script>
 
 <template>
-    <UDashboardPanel>
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.qualifications.title')">
                 <template #leading>

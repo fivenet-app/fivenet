@@ -55,6 +55,7 @@ watch(selectedQualification, () => emit('update-qualification', selectedQualific
                 v-model="selectedQualification"
                 block
                 :searchable="(q: string) => listQualifications(q)"
+                :searchable-key="`qualification-${qualificationId}-requirement-entry`"
                 :search-input="{ placeholder: $t('common.search_field') }"
             >
                 <template #item-label>

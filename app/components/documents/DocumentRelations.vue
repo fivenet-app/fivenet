@@ -5,7 +5,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import DocumentCategoryBadge from '~/components/partials/documents/DocumentCategoryBadge.vue';
+import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { type DocumentRelation, DocRelation } from '~~/gen/ts/resources/documents/documents';
@@ -83,7 +83,7 @@ const columns = computed(() =>
                                   },
                               },
                               [
-                                  h(DocumentCategoryBadge, { category: row.original.document?.category }),
+                                  h(CategoryBadge, { category: row.original.document?.category }),
                                   h('span', row.original.document?.title),
                               ],
                           ),
@@ -159,7 +159,7 @@ const columns = computed(() =>
                                                 },
                                             }"
                                         >
-                                            <DocumentCategoryBadge :category="relation.document?.category" />
+                                            <CategoryBadge :category="relation.document?.category" />
 
                                             <span>
                                                 {{ relation.document?.title }}

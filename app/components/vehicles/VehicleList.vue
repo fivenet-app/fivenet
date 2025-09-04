@@ -246,16 +246,13 @@ defineShortcuts({
                                 return response.users;
                             }
                         "
+                        searchable-key="completor-citizens"
                         :filter-fields="['firstname', 'lastname']"
                         class="w-full"
                         :placeholder="$t('common.owner')"
                         trailing
                         value-key="userId"
                     >
-                        <template #item-label="{ item }">
-                            {{ userToLabel(item) }}
-                        </template>
-
                         <template #item="{ item }">
                             <ColleagueName class="truncate" :colleague="item" birthday />
                         </template>

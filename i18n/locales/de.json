@@ -681,7 +681,9 @@
         "only_wanted": "Nur Gesuchte",
         "no_actions_available": "Keine Aktionen verfügbar.",
         "dispatch_center_settings": "Leitstellen-Einstellungen",
-        "accepted_at": "Akzeptiert am"
+        "accepted_at": "Akzeptiert am",
+        "choose_color": "Farbe wählen",
+        "pick_date": "Datum auswählen"
     },
     "components": {
         "partials": {
@@ -2468,6 +2470,7 @@
                 "ACCESS_UPDATED": "Dokument Zugriff aktualisiert",
                 "OWNER_CHANGED": "Dokument Besitzer geändert",
                 "DELETED": "Dokument gelöscht",
+                "DRAFT_TOGGLED": "Entwurfstatus aktualisiert",
                 "REQUESTED_ACCESS": "Zugriff auf Dokument beantragt | Zugriff auf Dokument",
                 "REQUESTED_CLOSURE": "Schließung des Dokument beantragt | Schließung des Dokument",
                 "REQUESTED_UPDATE": "Aktualisierung des Dokument beantragt | Aktualisierung des Dokument",

@@ -1,14 +1,14 @@
 <script lang="ts" setup>
+import { CalendarDate } from '@internationalized/date';
 import type { TabsItem } from '@nuxt/ui';
 import { addDays, addWeeks, isBefore, isFuture, subDays, subMonths, subWeeks } from 'date-fns';
 import { z } from 'zod';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
-import DateRangePickerClient from '~/components/partials/DateRangePicker.client.vue';
+import InputDatePicker from '~/components/partials/InputDatePicker.vue';
+import InputDateRangePopover from '~/components/partials/InputDateRangePopover.vue';
 import Pagination from '~/components/partials/Pagination.vue';
-import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getJobsTimeclockClient } from '~~/gen/ts/clients';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
@@ -51,6 +51,9 @@ const canAccessAll = attr('jobs.TimeclockService/ListTimeclock', 'Access', 'All'
 const route = useRoute();
 
 const dateLowerLimit = new Date(2022, 1, 1);
+const today = new Date();
+const tomorrow = addDays(today, 1);
+const minMonth = subMonths(today, 6);
 
 const schema = z.object({
     viewMode: z
@@ -312,17 +315,15 @@ const { game } = useAppConfig();
 
                         <div v-if="query.viewMode === TimeclockViewMode.SELF" class="mb-2 flex flex-1 justify-between gap-2">
                             <UFormField class="flex-1" name="date" :label="$t('common.time_range')">
-                                <DateRangePickerClient
+                                <InputDateRangePopover
                                     v-model="query.date"
                                     class="flex-1"
-                                    mode="date"
-                                    :popover="{ class: 'flex-1' }"
-                                    :date-picker="{
-                                        disabledDates: [
-                                            { start: addDays(new Date(), 1), end: null },
-                                            { end: subMonths(new Date(), 6) },
-                                        ],
-                                    }"
+                                    :min-value="
+                                        new CalendarDate(minMonth.getFullYear(), minMonth.getMonth() + 1, minMonth.getDate())
+                                    "
+                                    :max-value="
+                                        new CalendarDate(tomorrow.getFullYear(), tomorrow.getMonth() + 1, tomorrow.getDate())
+                                    "
                                 />
                             </UFormField>
 
@@ -339,7 +340,7 @@ const { game } = useAppConfig();
                             </UFormField>
                         </div>
 
-                        <div v-if="query.viewMode === TimeclockViewMode.ALL" class="mb-2 flex flex-1 flex-row">
+                        <div v-else-if="query.viewMode === TimeclockViewMode.ALL" class="mb-2 flex flex-1 flex-row">
                             <div
                                 class="grid flex-1 gap-2"
                                 :class="canAccessAll && userId === undefined ? 'grid-cols-2' : 'grid-cols-1'"
@@ -349,7 +350,7 @@ const { game } = useAppConfig();
                                     name="users"
                                     :label="$t('common.search')"
                                 >
-                                    <SelectMenu
+                                    <USelectMenu
                                         v-model="query.users"
                                         v-model:search-term="colleaguesSearchTerm"
                                         :items="colleagues"
@@ -363,6 +364,7 @@ const { game } = useAppConfig();
                                         ignore-filter
                                         leading-icon="i-mdi-search"
                                         value-key="userId"
+                                        class="w-full"
                                     >
                                         <template #item-label="{ item }">
                                             <span v-if="item" class="truncate">
@@ -377,7 +379,7 @@ const { game } = useAppConfig();
                                         <template #empty>
                                             {{ $t('common.not_found', [$t('common.creator', 2)]) }}
                                         </template>
-                                    </SelectMenu>
+                                    </USelectMenu>
                                 </UFormField>
 
                                 <div class="flex flex-1 flex-row gap-1">
@@ -392,10 +394,7 @@ const { game } = useAppConfig();
                                                   : $t('common.time_range')
                                         "
                                     >
-                                        <div
-                                            v-if="query.mode === TimeclockMode.DAILY"
-                                            class="flex flex-1 flex-col gap-1 sm:flex-row"
-                                        >
+                                        <div v-if="query.mode === TimeclockMode.DAILY" class="flex flex-1 flex-row gap-1">
                                             <UButton
                                                 class="flex-initial"
                                                 square
@@ -404,15 +403,22 @@ const { game } = useAppConfig();
                                                 @click="query.date.end = subDays(query.date.end, 1)"
                                             />
 
-                                            <DatePickerPopoverClient
+                                            <InputDatePicker
                                                 v-model="query.date.end"
-                                                :popover="{ class: 'flex-1' }"
-                                                :date-picker="{
-                                                    disabledDates: [
-                                                        { start: addDays(new Date(), 1), end: null },
-                                                        { end: subMonths(new Date(), 6) },
-                                                    ],
-                                                }"
+                                                :min-value="
+                                                    new CalendarDate(
+                                                        minMonth.getFullYear(),
+                                                        minMonth.getMonth() + 1,
+                                                        minMonth.getDate(),
+                                                    )
+                                                "
+                                                :max-value="
+                                                    new CalendarDate(
+                                                        tomorrow.getFullYear(),
+                                                        tomorrow.getMonth() + 1,
+                                                        tomorrow.getDate(),
+                                                    )
+                                                "
                                             />
 
                                             <UButton
@@ -435,16 +441,23 @@ const { game } = useAppConfig();
                                                 @click="query.date.end = subWeeks(query.date.end, 1)"
                                             />
 
-                                            <DatePickerPopoverClient
+                                            <InputDatePicker
                                                 v-model="query.date.end"
-                                                :popover="{ class: 'flex-1' }"
                                                 :date-format="`yyyy '${$t('common.calendar_week')}' w`"
-                                                :date-picker="{
-                                                    disabledDates: [
-                                                        { start: addDays(new Date(), 1), end: null },
-                                                        { end: subMonths(new Date(), 6) },
-                                                    ],
-                                                }"
+                                                :min-value="
+                                                    new CalendarDate(
+                                                        minMonth.getFullYear(),
+                                                        minMonth.getMonth() + 1,
+                                                        minMonth.getDate(),
+                                                    )
+                                                "
+                                                :max-value="
+                                                    new CalendarDate(
+                                                        tomorrow.getFullYear(),
+                                                        tomorrow.getMonth() + 1,
+                                                        tomorrow.getDate(),
+                                                    )
+                                                "
                                             />
 
                                             <UButton
@@ -455,18 +468,25 @@ const { game } = useAppConfig();
                                                 @click="query.date.end = addWeeks(query.date.end, 1)"
                                             />
                                         </div>
-                                        <DateRangePickerClient
+
+                                        <InputDateRangePopover
                                             v-else
                                             v-model="query.date"
                                             class="flex-1"
-                                            mode="date"
-                                            :popover="{ class: 'flex-1' }"
-                                            :date-picker="{
-                                                disabledDates: [
-                                                    { start: addDays(new Date(), 1), end: null },
-                                                    { end: subMonths(new Date(), 6) },
-                                                ],
-                                            }"
+                                            :min-value="
+                                                new CalendarDate(
+                                                    minMonth.getFullYear(),
+                                                    minMonth.getMonth() + 1,
+                                                    minMonth.getDate(),
+                                                )
+                                            "
+                                            :max-value="
+                                                new CalendarDate(
+                                                    tomorrow.getFullYear(),
+                                                    tomorrow.getMonth() + 1,
+                                                    tomorrow.getDate(),
+                                                )
+                                            "
                                         />
                                     </UFormField>
 
@@ -598,14 +618,15 @@ const { game } = useAppConfig();
             >
                 <template #default>
                     <div>
-                        <div v-if="showStats && data && data.stats" class="inline-flex items-center">
-                            <UButtonGroup>
+                        <div v-if="showStats && data && data.stats" class="inline-flex min-w-0 items-center">
+                            <UButtonGroup class="truncate">
                                 <UButton
                                     color="neutral"
                                     variant="subtle"
                                     icon="i-mdi-account-remove"
                                     :label="$t('common.inactive_colleagues')"
                                     to="/jobs/timeclock/inactive"
+                                    :ui="{ leadingIcon: 'hidden sm:block' }"
                                 />
 
                                 <UDrawer>
@@ -614,6 +635,7 @@ const { game } = useAppConfig();
                                         color="neutral"
                                         variant="subtle"
                                         icon="i-mdi-graph-line"
+                                        :ui="{ leadingIcon: 'hidden sm:block' }"
                                     />
 
                                     <template #content>

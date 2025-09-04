@@ -51,7 +51,7 @@ const { locale, setLocale } = useI18n();
         <template #title>
             <FiveNetLogo class="h-10 w-auto" />
 
-            <span class="text-highlighted text-xl font-semibold">FiveNet</span>
+            <span class="text-xl font-semibold text-highlighted">FiveNet</span>
         </template>
 
         <UNavigationMenu :items="items" />

@@ -2,7 +2,7 @@
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import DocumentCategoryBadge from '~/components/partials/documents/DocumentCategoryBadge.vue';
+import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 
@@ -54,7 +54,7 @@ defineProps<{
                 <div class="flex max-w-full shrink flex-col gap-2">
                     <div class="flex flex-col gap-1 md:flex-row">
                         <div>
-                            <DocumentCategoryBadge :category="document.category" />
+                            <CategoryBadge :category="document.category" />
                         </div>
 
                         <h2

@@ -1,10 +1,8 @@
 import { parseQuery, type RouteLocationNormalized } from 'vue-router';
-import { useAuthStore } from '~/stores/auth';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, from: RouteLocationNormalized) => {
     const { can, activeChar, username } = useAuth();
-    const authStore = useAuthStore();
 
     // Default is that a page requires authentication, but if it doesn't exit quickly
     if (to.meta.requiresAuth === false) {
@@ -23,9 +21,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
     }
 
     // Auth token is not null and only needed by route
-    if (to.meta.authTokenOnly && username.value !== null) {
-        return true;
-    }
+    if (to.meta.authTokenOnly && username.value !== null) return true;
 
     const redirect = getRedirectPath((to.query.redirect ?? to.fullPath) as string);
     // Check if user has access token
@@ -33,6 +29,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
         // If the user has an acitve char, check for perms otherwise, redirect to char selector
         if (activeChar.value === null) {
             // If we don't have an active char, but a last char ID set, try to choose it and immidiately continue
+            const authStore = useAuthStore();
             if (authStore.lastCharID !== undefined && authStore.lastCharID > 0) {
                 const { setActiveChar, setPermissions, setJobProps } = authStore;
                 try {

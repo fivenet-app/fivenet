@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
 import type { LocaleObject } from '@nuxtjs/i18n';
-import { subDays } from 'date-fns';
 import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -14,8 +13,8 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import { DiscordBotPresenceType } from '~~/gen/ts/resources/settings/config';
 import type { GetAppConfigResponse } from '~~/gen/ts/services/settings/config';
 import { grpcMethods, grpcServices } from '~~/gen/ts/svcs';
-import DatePickerPopoverClient from '../partials/DatePickerPopover.client.vue';
 import TiptapEditor from '../partials/editor/TiptapEditor.vue';
+import InputDatePicker from '../partials/InputDatePicker.vue';
 
 const { t, locales } = useI18n();
 
@@ -366,6 +365,7 @@ const formRef = useTemplateRef('formRef');
 
         <template #body>
             <StreamerModeAlert v-if="streamerMode" />
+
             <UForm v-else ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <div v-if="isRequestPending(status)" class="space-y-1 px-4">
                     <USkeleton class="mb-6 h-11 w-full" />
@@ -391,7 +391,7 @@ const formRef = useTemplateRef('formRef');
                     :items="items"
                     variant="link"
                     :unmount-on-hide="false"
-                    :ui="{ content: 'p-4' }"
+                    :ui="{ content: 'p-4 flex flex-col gap-4' }"
                 >
                     <template #auth>
                         <UPageCard
@@ -424,10 +424,10 @@ const formRef = useTemplateRef('formRef');
                             :description="$t('components.settings.app_config.perms.description')"
                         >
                             <UFormField
-                                class="grid grid-cols-2 items-center gap-2"
+                                class="grid grid-cols-3 items-center gap-2"
                                 name="perms.default"
                                 :label="$t('components.settings.app_config.perms.default_perms')"
-                                :ui="{ container: '' }"
+                                :ui="{ container: 'col-span-2' }"
                             >
                                 <div class="flex flex-col gap-1">
                                     <div v-for="(_, idx) in state.perms.default" :key="idx" class="flex items-center gap-1">
@@ -437,6 +437,7 @@ const formRef = useTemplateRef('formRef');
                                                     v-model="state.perms.default[idx]!.category"
                                                     :placeholder="$t('common.service')"
                                                     :items="grpcServices"
+                                                    class="w-full"
                                                 >
                                                     <template #empty>
                                                         {{ $t('common.not_found', [$t('common.service')]) }}
@@ -454,6 +455,7 @@ const formRef = useTemplateRef('formRef');
                                                         .filter((m) => m.startsWith(state.perms.default[idx]!.category + '/'))
                                                         .map((m) => m.split('/').at(1) ?? m)
                                                 "
+                                                class="w-full"
                                             >
                                                 <template #empty>
                                                     {{ $t('common.not_found', [$t('common.method')]) }}
@@ -490,6 +492,7 @@ const formRef = useTemplateRef('formRef');
                                     v-model="state.defaultLocale"
                                     :placeholder="$t('common.language', 1)"
                                     :items="locales"
+                                    class="w-full"
                                 >
                                     <template #item-label>
                                         <template v-if="state.defaultLocale">
@@ -529,6 +532,7 @@ const formRef = useTemplateRef('formRef');
                                     type="text"
                                     :placeholder="$t('common.privacy_policy')"
                                     maxlength="255"
+                                    class="w-full"
                                 />
                             </UFormField>
 
@@ -543,6 +547,7 @@ const formRef = useTemplateRef('formRef');
                                     type="text"
                                     :placeholder="$t('common.imprint')"
                                     maxlength="255"
+                                    class="w-full"
                                 />
                             </UFormField>
                         </UPageCard>
@@ -575,6 +580,7 @@ const formRef = useTemplateRef('formRef');
                                     type="text"
                                     :placeholder="$t('common.job')"
                                     maxlength="255"
+                                    class="w-full"
                                 />
                             </UFormField>
 
@@ -591,6 +597,7 @@ const formRef = useTemplateRef('formRef');
                                     name="jobInfoUnemployedGrade"
                                     :placeholder="$t('common.rank')"
                                     :label="$t('common.rank')"
+                                    class="w-full"
                                 />
                             </UFormField>
 
@@ -608,6 +615,7 @@ const formRef = useTemplateRef('formRef');
                                         value-key="name"
                                         :search-input="{ placeholder: $t('common.search_field') }"
                                         :filter-fields="['label', 'name']"
+                                        class="w-full"
                                     >
                                         <template #item-label>
                                             <template v-if="state.jobInfo.publicJobs.length">
@@ -641,6 +649,7 @@ const formRef = useTemplateRef('formRef');
                                         value-key="name"
                                         :search-input="{ placeholder: $t('common.search_field') }"
                                         :filter-fields="['label', 'name']"
+                                        class="w-full"
                                     >
                                         <template #item-label>
                                             <template v-if="state.jobInfo.hiddenJobs.length">
@@ -679,6 +688,7 @@ const formRef = useTemplateRef('formRef');
                                     :min="1"
                                     :step="0.01"
                                     :placeholder="$t('common.duration')"
+                                    class="w-full"
                                 >
                                     <template #trailing>
                                         <span class="text-xs text-muted">s</span>
@@ -698,6 +708,7 @@ const formRef = useTemplateRef('formRef');
                                     :min="1"
                                     :step="0.01"
                                     :placeholder="$t('common.duration')"
+                                    class="w-full"
                                 >
                                     <template #trailing>
                                         <span class="text-xs text-muted">s</span>
@@ -734,6 +745,7 @@ const formRef = useTemplateRef('formRef');
                                     :step="0.01"
                                     name="discord.syncInterval"
                                     :placeholder="$t('common.duration')"
+                                    class="w-full"
                                 >
                                     <template #trailing>
                                         <span class="text-xs text-muted">s</span>
@@ -764,6 +776,7 @@ const formRef = useTemplateRef('formRef');
                                     v-model="state.discord.botPermissions"
                                     type="text"
                                     :placeholder="$t('components.settings.app_config.discord.bot_permissions')"
+                                    class="w-full"
                                 />
                             </UFormField>
 
@@ -781,6 +794,7 @@ const formRef = useTemplateRef('formRef');
                                         value-key="name"
                                         :search-input="{ placeholder: $t('common.search_field') }"
                                         :filter-fields="['label', 'name']"
+                                        class="w-full"
                                     >
                                         <template #item-label>
                                             <template v-if="state.discord.ignoredJobs.length > 0">
@@ -817,6 +831,7 @@ const formRef = useTemplateRef('formRef');
                                     :items="botPresenceTypes"
                                     value-key="mode"
                                     :placeholder="$t('components.settings.app_config.discord.bot_presence.type')"
+                                    class="w-full"
                                 >
                                     <template #item-label>
                                         <span class="truncate text-highlighted">{{
@@ -846,6 +861,7 @@ const formRef = useTemplateRef('formRef');
                                     v-model="state.discord.botPresence.status"
                                     type="text"
                                     :placeholder="$t('common.status')"
+                                    class="w-full"
                                 />
                             </UFormField>
 
@@ -859,6 +875,7 @@ const formRef = useTemplateRef('formRef');
                                     v-model="state.discord.botPresence.url"
                                     type="text"
                                     :placeholder="$t('components.settings.app_config.discord.bot_presence.url')"
+                                    class="w-full"
                                 />
                             </UFormField>
                         </UPageCard>
@@ -893,16 +910,7 @@ const formRef = useTemplateRef('formRef');
                                 :label="$t('common.expires_at')"
                                 :ui="{ container: '' }"
                             >
-                                <DatePickerPopoverClient
-                                    v-model="state.system.bannerMessage.expiresAt"
-                                    date-format="dd.MM.yyyy HH:mm"
-                                    :date-picker="{
-                                        mode: 'dateTime',
-                                        is24hr: true,
-                                        clearable: true,
-                                        disabledDates: [{ start: null, end: subDays(new Date(), 1) }],
-                                    }"
-                                />
+                                <InputDatePicker v-model="state.system.bannerMessage.expiresAt" clearable time />
                             </UFormField>
                         </UPageCard>
                     </template>

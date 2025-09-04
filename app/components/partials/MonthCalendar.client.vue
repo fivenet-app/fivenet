@@ -106,9 +106,7 @@ defineExpose({
             </template>
         </VCalendar>
 
-        <UContextMenu v-model:open="isOpen" :virtual-element="virtualElement">
-            <UNavigationMenu orientation="vertical" :items="links" />
-        </UContextMenu>
+        <!-- <UContextMenu v-model:open="isOpen" :virtual-element="virtualElement" :items="links" /> -->
     </div>
 </template>
 

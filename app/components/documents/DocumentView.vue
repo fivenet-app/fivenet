@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-import type { DropdownMenuItem, NavigationMenuItem } from '@nuxt/ui';
+import type { DropdownMenuItem } from '@nuxt/ui';
 import AddToButton from '~/components/clipboard/AddToButton.vue';
-import DocumentActivityList from '~/components/documents/activity/DocumentActivityList.vue';
+import ActivityList from '~/components/documents/activity/ActivityList.vue';
 import DocumentComments from '~/components/documents/comments/DocumentComments.vue';
 import DocumentReferences from '~/components/documents/DocumentReferences.vue';
 import DocumentRelations from '~/components/documents/DocumentRelations.vue';
 import { checkDocAccess } from '~/components/documents/helpers';
-import DocumentRequestAccess from '~/components/documents/requests/DocumentRequestAccess.vue';
-import DocumentRequestModal from '~/components/documents/requests/DocumentRequestModal.vue';
+import RequestAccess from '~/components/documents/requests/RequestAccess.vue';
+import RequestModal from '~/components/documents/requests/RequestModal.vue';
 import AccessBadges from '~/components/partials/access/AccessBadges.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
@@ -15,7 +15,7 @@ import HTMLContent from '~/components/partials/content/HTMLContent.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import DocumentCategoryBadge from '~/components/partials/documents/DocumentCategoryBadge.vue';
+import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
@@ -27,7 +27,7 @@ import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/documents/documents';
 import ConfirmModalWithReason from '../partials/ConfirmModalWithReason.vue';
 import ScrollToTop from '../partials/ScrollToTop.vue';
-import DocumentReminderModal from './DocumentReminderModal.vue';
+import ReminderModal from './ReminderModal.vue';
 
 const props = defineProps<{
     documentId: number;
@@ -76,7 +76,7 @@ if (hash.value !== undefined && hash.value !== null) {
     }
 }
 
-const documentRequestModal = overlay.create(DocumentRequestModal);
+const documentRequestModal = overlay.create(RequestModal);
 function openRequestsModal(): void {
     if (doc.value?.access === undefined || doc.value?.document === undefined) {
         return;
@@ -134,187 +134,14 @@ async function toggleDocument(): Promise<void> {
     doc.value.document!.closed = await documentsDocuments.toggleDocument(props.documentId, !doc.value.document?.closed);
 }
 
-const items = computed(
-    () =>
-        [
-            can('documents.DocumentsService/ToggleDocument').value &&
-            checkDocAccess(
-                doc.value?.access,
-                doc.value?.document?.creator,
-                AccessLevel.STATUS,
-                'documents.DocumentsService/ToggleDocument',
-                doc.value?.document?.creatorJob,
-            )
-                ? {
-                      label: doc.value?.document?.closed ? t('common.open', 1) : t('common.close', 1),
-                      icon: doc.value?.document?.closed ? 'i-mdi-lock-open-variant' : 'i-mdi-lock',
-                      color: doc.value?.document?.closed ? '500' : 'error',
-                      tooltip: {
-                          text: `${$t('common.open', 1)}/ ${$t('common.close')}`,
-                          kbds: ['D', 'T'],
-                      },
-                      onSelect: () => {
-                          toggleDocument();
-                      },
-                  }
-                : undefined,
-            can('documents.DocumentsService/UpdateDocument').value &&
-            checkDocAccess(
-                doc.value?.access,
-                doc.value?.document?.creator,
-                AccessLevel.ACCESS,
-                'documents.DocumentsService/UpdateDocument',
-                doc.value?.document?.creatorJob,
-            )
-                ? {
-                      label: t('common.edit'),
-                      icon: 'i-mdi-pencil',
-                      tooltip: {
-                          text: t('common.edit'),
-                          kbds: ['D', 'E'],
-                      },
-                      onSelect: () => {
-                          navigateTo({
-                              name: 'documents-id-edit',
-                              params: { id: doc.value?.document?.id ?? 0 },
-                          });
-                      },
-                  }
-                : undefined,
-            can('documents.DocumentsService/ToggleDocumentPin').value
-                ? {
-                      label: `${t('common.pin', 1)}/ ${t('common.unpin')}`,
-                      icon:
-                          doc.value?.document?.pin?.state && doc.value?.document?.pin?.userId
-                              ? 'i-mdi-playlist-remove'
-                              : 'i-mdi-playlist-plus',
-                      tooltip: {
-                          text: `${t('common.pin', 1)}/ ${t('common.unpin')}`,
-                      },
-                      children: [
-                          {
-                              label: t('common.personal'),
-                              icon:
-                                  doc.value?.document?.pin?.state && doc.value?.document?.pin?.userId
-                                      ? 'i-mdi-playlist-remove'
-                                      : 'i-mdi-playlist-plus',
-                              tooltip: {
-                                  text: t('common.personal'),
-                              },
-                              onSelect: () => {
-                                  togglePin(props.documentId, !doc.value?.document?.pin?.userId, true);
-                              },
-                          },
-                          attr('documents.DocumentsService/ToggleDocumentPin', 'Types', 'JobWide').value
-                              ? {
-                                    label: t('common.job'),
-                                    icon:
-                                        doc.value?.document?.pin?.state && doc.value?.document?.pin?.job
-                                            ? 'i-mdi-pin-off'
-                                            : 'i-mdi-pin',
-                                    tooltip: {
-                                        text: t('common.job'),
-                                    },
-                                    onSelect: () => {
-                                        togglePin(props.documentId, !doc.value?.document?.pin?.job, false);
-                                    },
-                                }
-                              : undefined,
-                      ].flatMap((item) => (item?.label !== undefined ? [item] : [])),
-                  }
-                : undefined,
-            can('documents.DocumentsService/ListDocumentReqs').value
-                ? {
-                      label: t('common.request', 2),
-                      icon: 'i-mdi-frequently-asked-questions',
-                      tooltip: {
-                          text: t('common.request', 2),
-                          kbds: ['D', 'R'],
-                      },
-                      onSelect: () => {
-                          openRequestsModal();
-                      },
-                  }
-                : undefined,
-            can('documents.DocumentsService/SetDocumentReminder').value
-                ? {
-                      label: t('common.reminder'),
-                      icon: 'i-mdi-reminder',
-                      tooltip: {
-                          text: t('common.reminder'),
-                      },
-                      onSelect: () => {
-                          documentReminderModal.open({
-                              documentId: props.documentId,
-                              reminderTime: doc.value?.document?.workflowUser?.manualReminderTime ?? undefined,
-                              'onUpdate:reminderTime': ($event) => updateReminderTime($event),
-                          });
-                      },
-                  }
-                : undefined,
-            (doc.value?.document?.creatorJob === activeChar.value?.job || isSuperuser.value) &&
-            can('documents.DocumentsService/ChangeDocumentOwner').value &&
-            checkDocAccess(
-                doc.value?.access,
-                doc.value?.document?.creator,
-                AccessLevel.EDIT,
-                'documents.DocumentsService/ChangeDocumentOwner',
-                doc.value?.document?.creatorJob,
-            )
-                ? [
-                      {
-                          label: t('components.documents.document_view.take_ownership'),
-                          icon: 'i-mdi-creation',
-                          tooltip: {
-                              text: t('components.documents.document_view.take_ownership'),
-                          },
-                          disabled: doc.value?.document?.creatorId === activeChar.value?.userId,
-                          onSelect: () => {
-                              confirmModal.open({
-                                  confirm: async () => documentsDocuments.changeDocumentOwner(props.documentId),
-                              });
-                          },
-                      },
-                  ]
-                : undefined,
-            can('documents.DocumentsService/DeleteDocument').value &&
-            checkDocAccess(
-                doc.value?.access,
-                doc.value?.document?.creator,
-                AccessLevel.EDIT,
-                'documents.DocumentsService/DeleteDocument',
-                doc.value?.document?.creatorJob,
-            )
-                ? {
-                      label: !doc.value?.document?.deletedAt ? t('common.delete') : t('common.restore'),
-                      icon: !doc.value?.document?.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore',
-                      tooltip: {
-                          text: t('common.delete'),
-                      },
-                      ui: { linkLeadingIcon: doc.value?.document?.deletedAt ? 'text-error-500' : 'text-success-500' },
-                      onSelect: () => {
-                          (doc.value?.document?.deletedAt !== undefined ? confirmModalWithReason : confirmModal).open({
-                              confirm: async (reason?: string) =>
-                                  documentsDocuments.deleteDocument(
-                                      props.documentId,
-                                      isSuperuser.value && doc.value?.document?.deletedAt !== undefined,
-                                      reason,
-                                  ),
-                          });
-                      },
-                  }
-                : undefined,
-        ].flatMap((item) => (item !== undefined ? [item] : [])) as NavigationMenuItem[],
-);
-
 const accordionItems = computed(() =>
     [
-        { slot: 'relations' as const, label: t('common.relation', 2), icon: 'i-mdi-account-multiple' },
-        { slot: 'references' as const, label: t('common.reference', 2), icon: 'i-mdi-file-document' },
-        { slot: 'access' as const, label: t('common.access'), icon: 'i-mdi-lock', defaultOpen: true },
-        { slot: 'comments' as const, label: t('common.comment', 2), icon: 'i-mdi-comment', defaultOpen: true },
+        { value: 'relations', slot: 'relations' as const, label: t('common.relation', 2), icon: 'i-mdi-account-multiple' },
+        { value: 'references', slot: 'references' as const, label: t('common.reference', 2), icon: 'i-mdi-file-document' },
+        { value: 'access', slot: 'access' as const, label: t('common.access'), icon: 'i-mdi-lock' },
+        { value: 'comments', slot: 'comments' as const, label: t('common.comment', 2), icon: 'i-mdi-comment' },
         can('documents.DocumentsService/ListDocumentActivity').value
-            ? { slot: 'activity' as const, label: t('common.activity'), icon: 'i-mdi-comment-quote' }
+            ? { value: 'activity', slot: 'activity' as const, label: t('common.activity'), icon: 'i-mdi-comment-quote' }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
@@ -370,7 +197,7 @@ const scrollRef = useTemplateRef('scrollRef');
 
 const confirmModal = overlay.create(ConfirmModal);
 const confirmModalWithReason = overlay.create(ConfirmModalWithReason);
-const documentReminderModal = overlay.create(DocumentReminderModal, { props: { documentId: props.documentId } });
+const reminderModal = overlay.create(ReminderModal, { props: { documentId: props.documentId } });
 </script>
 
 <template>
@@ -427,9 +254,8 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                                 block
                                 :label="doc.document?.closed ? $t('common.open', 1) : $t('common.close', 1)"
                                 :icon="doc.document?.closed ? 'i-mdi-lock-open-variant' : 'i-mdi-lock'"
-                                color="neutral"
+                                :color="doc.document?.closed ? 'success' : 'error'"
                                 variant="ghost"
-                                :ui="{ leadingIcon: doc.document?.closed ? 'text-success-500' : 'text-success-500' }"
                                 @click="toggleDocument()"
                             />
                         </UTooltip>
@@ -536,11 +362,13 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                                 icon="i-mdi-reminder"
                                 :label="$t('common.reminder')"
                                 @click="
-                                    documentReminderModal.open({
-                                        documentId: documentId,
-                                        reminderTime: doc.document?.workflowUser?.manualReminderTime ?? undefined,
-                                        'onUpdate:reminderTime': ($event) => updateReminderTime($event),
-                                    })
+                                    () => {
+                                        reminderModal.open({
+                                            documentId: documentId,
+                                            reminderTime: doc?.document?.workflowUser?.manualReminderTime ?? undefined,
+                                            'onUpdate:reminderTime': ($event) => updateReminderTime($event),
+                                        });
+                                    }
                                 "
                             />
                         </UTooltip>
@@ -612,8 +440,8 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
             </UDashboardToolbar>
 
             <UDashboardToolbar v-if="doc" class="print:hidden">
-                <div>
-                    <div class="mb-4">
+                <div class="mb-2">
+                    <div class="mt-2 mb-4">
                         <h1 class="px-0.5 py-1 text-4xl font-bold break-words sm:pl-1">
                             <span v-if="!doc.document?.title" class="italic">
                                 {{ $t('common.untitled') }}
@@ -625,7 +453,7 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                     </div>
 
                     <div class="mb-2 flex gap-2">
-                        <DocumentCategoryBadge :category="doc.document?.category" />
+                        <CategoryBadge :category="doc.document?.category" />
 
                         <OpenClosedBadge :closed="doc.document?.closed" size="md" />
 
@@ -738,7 +566,7 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                     :error="error"
                     :retry="refresh"
                 />
-                <DocumentRequestAccess
+                <RequestAccess
                     v-if="error.message.includes('ErrDocViewDenied')"
                     class="mt-2 w-full"
                     :document-id="documentId"
@@ -757,27 +585,32 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                     >
                         <HTMLContent
                             v-if="doc.document?.content?.content"
-                            class="px-4 py-2"
+                            class="px-2 py-2"
                             :value="doc.document.content.content"
                         />
                     </div>
                 </div>
 
-                <UAccordion class="print:hidden" multiple :items="accordionItems">
+                <UAccordion
+                    :default-value="['access', 'comments']"
+                    class="print:hidden"
+                    type="multiple"
+                    :items="accordionItems"
+                >
                     <template #relations>
-                        <UContainer>
+                        <UContainer class="mb-2">
                             <DocumentRelations :document-id="documentId" :show-document="false" />
                         </UContainer>
                     </template>
 
                     <template #references>
-                        <UContainer>
+                        <UContainer class="mb-2">
                             <DocumentReferences :document-id="documentId" :show-source="false" />
                         </UContainer>
                     </template>
 
                     <template #access>
-                        <UContainer>
+                        <UContainer class="mb-2">
                             <DataNoDataBlock
                                 v-if="!doc.access || (doc.access?.jobs.length === 0 && doc.access?.users.length === 0)"
                                 icon="i-mdi-file-search"
@@ -795,7 +628,7 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                     </template>
 
                     <template #comments>
-                        <UContainer>
+                        <UContainer class="mb-2">
                             <div id="comments">
                                 <DocumentComments
                                     :document-id="documentId"
@@ -810,8 +643,8 @@ const documentReminderModal = overlay.create(DocumentReminderModal, { props: { d
                     </template>
 
                     <template v-if="can('documents.DocumentsService/ListDocumentActivity').value" #activity>
-                        <UContainer>
-                            <DocumentActivityList :document-id="documentId" />
+                        <UContainer class="mb-2">
+                            <ActivityList :document-id="documentId" />
                         </UContainer>
                     </template>
                 </UAccordion>

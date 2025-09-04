@@ -149,6 +149,7 @@ const formRef = useTemplateRef('formRef');
                 v-model="state.labels"
                 multiple
                 :searchable="async (q: string) => await completorStore.completeCitizenLabels(q)"
+                searchable-key="completor-citizens-labels"
                 :search-input="{ placeholder: $t('common.search_field') }"
                 :search-labels="['name']"
                 clear-search-on-close

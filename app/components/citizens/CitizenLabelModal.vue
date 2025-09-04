@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
-import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
+import ColorPicker from '~/components/partials/ColorPicker.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import type { ManageLabelsResponse } from '~~/gen/ts/services/citizens/citizens';
@@ -87,7 +87,7 @@ const formRef = useTemplateRef('formRef');
                             </UFormField>
 
                             <UFormField :name="`labels.${idx}.color`">
-                                <ColorPickerClient
+                                <ColorPicker
                                     v-model="state.labels[idx]!.color"
                                     class="min-w-16"
                                     :name="`labels.${idx}.color`"

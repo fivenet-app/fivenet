@@ -77,9 +77,7 @@ async function createOrUpdateCategory(values: Schema): Promise<void> {
 }
 
 async function deleteCategory(): Promise<void> {
-    if (props.category === undefined) {
-        return;
-    }
+    if (props.category === undefined) return;
 
     try {
         await documentsDocumentsClient.deleteCategory({
@@ -140,7 +138,6 @@ const formRef = useTemplateRef('formRef');
                     : $t('components.documents.categories.modal.create_category')
                 : $t('common.category') + (category ? `: ${category.name}` : '')
         "
-        :overlay="false"
     >
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
@@ -152,6 +149,7 @@ const formRef = useTemplateRef('formRef');
                         :disabled="!canEdit"
                         :placeholder="$t('common.name', 1)"
                         :label="$t('common.name', 1)"
+                        class="w-full"
                     />
                 </UFormField>
 
@@ -161,6 +159,7 @@ const formRef = useTemplateRef('formRef');
                         name="description"
                         :disabled="!canEdit"
                         :placeholder="$t('common.description')"
+                        class="w-full"
                     />
                 </UFormField>
 
@@ -180,7 +179,7 @@ const formRef = useTemplateRef('formRef');
                             :fallback-icon="ShapeIcon"
                         />
 
-                        <UButton v-if="canEdit" icon="i-mdi-backspace" @click="state.icon = undefined" />
+                        <UButton v-if="canEdit" color="error" icon="i-mdi-backspace" @click="state.icon = undefined" />
                     </div>
                 </UFormField>
             </UForm>

@@ -68,17 +68,13 @@ const canGoLastOrNext = computed(
 );
 
 function onClickPrev() {
-    if (!canGoFirstOrPrev.value) {
-        return;
-    }
+    if (!canGoFirstOrPrev.value) return;
 
     currentPage.value--;
 }
 
 function onClickNext() {
-    if (!canGoLastOrNext.value) {
-        return;
-    }
+    if (!canGoLastOrNext.value) return;
 
     currentPage.value++;
 }

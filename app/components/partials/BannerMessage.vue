@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { ButtonProps } from '@nuxt/ui';
 import type { BannerMessage } from '~~/gen/ts/resources/settings/banner';
 
 const props = defineProps<{
@@ -24,19 +25,22 @@ function onClose() {
     dismissedBannerMessageID.value = props.message.id;
     emit('close');
 }
+
+const color = computed(() => (props.message.color ?? 'primary') as ButtonProps['color']);
+
+const appConfig = useAppConfig();
 </script>
 
 <template>
-    <div v-if="!hide" class="fixed top-0 z-50 w-full">
-        <div class="bg-primary-600 flex justify-between gap-1 p-2" :class="`bg-${message.color ?? 'primary'}-600`">
-            <div class="flex flex-1 items-center justify-center gap-1">
-                <UIcon class="size-6" :name="message.icon ?? 'i-mdi-information-outline'" />
-
-                <!-- eslint-disable-next-line vue/no-v-html -->
-                <p class="text-highlighted font-medium" v-html="message.title"></p>
-            </div>
-
-            <UButton class="self-end" variant="link" icon="i-mdi-close" color="neutral" @click="onClose" />
-        </div>
-    </div>
+    <UBanner
+        v-if="appConfig.system.bannerMessage && !hide"
+        :icon="appConfig.system.bannerMessage.icon ?? 'i-mdi-information-outline'"
+        :color="color"
+        @close="onClose"
+    >
+        <template #title>
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <p class="font-medium text-highlighted" v-html="appConfig.system.bannerMessage.title"></p>
+        </template>
+    </UBanner>
 </template>

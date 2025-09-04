@@ -15,6 +15,10 @@ definePageMeta({
 <template>
     <UDashboardPanel>
         <UDashboardNavbar :title="$t('common.audit_log')">
+            <template #leading>
+                <UDashboardSidebarCollapse />
+            </template>
+
             <template #right>
                 <PartialsBackButton fallback-to="/settings" />
             </template>

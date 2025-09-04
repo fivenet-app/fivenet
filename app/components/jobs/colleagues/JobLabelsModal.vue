@@ -2,7 +2,7 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { VueDraggable } from 'vue-draggable-plus';
 import { z } from 'zod';
-import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
+import ColorPicker from '~/components/partials/ColorPicker.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { getJobsJobsClient } from '~~/gen/ts/clients';
@@ -123,11 +123,7 @@ const formRef = useTemplateRef('formRef');
                                 </UFormField>
 
                                 <UFormField :name="`${idx}.color`">
-                                    <ColorPickerClient
-                                        v-model="state.labels[idx]!.color"
-                                        class="min-w-16"
-                                        :name="`${idx}.color`"
-                                    />
+                                    <ColorPicker v-model="state.labels[idx]!.color" class="min-w-16" :name="`${idx}.color`" />
                                 </UFormField>
 
                                 <UButton :disabled="!canSubmit" icon="i-mdi-close" @click="state.labels.splice(idx, 1)" />

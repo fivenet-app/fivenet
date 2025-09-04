@@ -7,7 +7,7 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import DocumentCategoryBadge from '~/components/partials/documents/DocumentCategoryBadge.vue';
+import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
@@ -238,7 +238,7 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                                     {{ $t('common.category') }}
                                 </h3>
                                 <div class="my-2">
-                                    <DocumentCategoryBadge :category="template.category" />
+                                    <CategoryBadge :category="template.category" />
                                 </div>
                             </div>
 

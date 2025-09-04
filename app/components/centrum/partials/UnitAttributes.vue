@@ -12,7 +12,7 @@ defineProps<{
             <span
                 v-for="attribute in attributes?.list"
                 :key="attribute"
-                class="inline-flex items-center rounded-md bg-warn-400/10 px-2 py-1 text-xs font-medium text-warn-400 ring-1 ring-inset ring-warn-400/20"
+                class="bg-warn-400/10 text-warn-400 ring-warn-400/20 inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
             >
                 {{ $t(`enums.centrum.UnitAttribute.${UnitAttribute[attribute]}`) }}
             </span>

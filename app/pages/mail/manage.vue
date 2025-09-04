@@ -86,6 +86,7 @@ const creating = ref(false);
 const confirmModal = overlay.create(ConfirmModal);
 </script>
 
+<!-- eslint-disable vue/no-multiple-template-root -->
 <template>
     <UDashboardPanel v-if="route.query?.tab === 'new' || getPrivateEmail?.deactivated === true" id="maileremaillist">
         <template #header>
@@ -126,113 +127,115 @@ const confirmModal = overlay.create(ConfirmModal);
         </template>
     </UDashboardPanel>
 
-    <template v-else>
-        <UDashboardPanel id="maileremailslist" :width="450" :min-size="25" :max-size="65">
-            <template #header>
-                <UDashboardNavbar :title="$t('pages.mailer.manage.title')">
-                    <template #right>
-                        <UButton
-                            v-if="canCreate"
-                            :label="$t('common.create')"
-                            trailing-icon="i-mdi-plus"
-                            color="neutral"
-                            @click="
-                                creating = !creating;
-                                selectedEmail = undefined;
-                            "
-                        />
-                    </template>
-                </UDashboardNavbar>
-            </template>
+    <UDashboardPanel v-else id="maileremailslist" :width="450" :min-size="25" :max-size="65">
+        <template #header>
+            <UDashboardNavbar :title="$t('pages.mailer.manage.title')"
+                ><template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
 
-            <div class="relative flex-1 overflow-x-auto">
-                <EmailList v-model="selectedEmail" :emails="emails" :loaded="loaded">
-                    <Pagination
-                        v-if="emails.length > (pagination?.pageSize ?? 20)"
-                        v-model="page"
-                        :pagination="pagination"
-                        :refresh="async () => await listEmails()"
-                    />
-                </EmailList>
-            </div>
-        </UDashboardPanel>
-
-        <UDashboardPanel id="maileremailsview" v-model="isMailerPanelOpen" side="right">
-            <template #header>
-                <UDashboardNavbar :title="$t('pages.mailer.manage.title')">
-                    <template #right>
-                        <UButton
-                            v-if="creating"
-                            :label="$t('common.back')"
-                            icon="i-mdi-arrow-back"
-                            color="neutral"
-                            @click="creating = false"
-                        />
-
-                        <template v-else-if="selectedEmail">
-                            <UButton
-                                class="hidden md:flex"
-                                color="neutral"
-                                icon="i-mdi-arrow-back"
-                                :label="$t('common.back')"
-                                @click="selectedEmail = undefined"
-                            />
-
-                            <UButton
-                                v-if="
-                                    selectedEmail &&
-                                    selectedEmail.id !== 0 &&
-                                    selectedEmail.job !== undefined &&
-                                    canAccess(selectedEmail.access, selectedEmail.userId, AccessLevel.MANAGE)
-                                "
-                                color="error"
-                                trailing-icon="i-mdi-delete"
-                                :label="$t('common.delete')"
-                                @click="
-                                    confirmModal.open({
-                                        confirm: async () =>
-                                            selectedEmail?.id &&
-                                            (await mailerStore.deleteEmail({
-                                                id: selectedEmail.id,
-                                            })),
-                                    })
-                                "
-                            />
-                        </template>
-
-                        <PartialsBackButton v-else to="/mail" />
-                    </template>
-                </UDashboardNavbar>
-            </template>
-
-            <template #body>
-                <div v-if="creating" class="flex flex-1 flex-col items-center">
-                    <div class="flex flex-1 flex-col items-center justify-center gap-2 text-gray-400 dark:text-gray-500">
-                        <UIcon class="h-32 w-32" name="i-mdi-email-multiple" />
-                        <EmailCreateForm v-if="canCreate" :personal-email="false" @refresh="creating = false" />
-                    </div>
-                </div>
-
-                <template v-else-if="selectedEmail">
-                    <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.mail')])" />
-                    <EmailCreateForm
-                        v-else
-                        v-model="selectedEmail"
-                        :personal-email="selectedEmail.userId !== undefined"
-                        :disabled="
-                            !canAccess(selectedEmail.access, selectedEmail.userId, AccessLevel.MANAGE) ||
-                            (!isSuperuser && selectedEmail.deactivated)
+                <template #right>
+                    <UButton
+                        v-if="canCreate"
+                        :label="$t('common.create')"
+                        trailing-icon="i-mdi-plus"
+                        color="neutral"
+                        @click="
+                            creating = !creating;
+                            selectedEmail = undefined;
                         "
                     />
                 </template>
-                <div
-                    v-else
-                    class="hidden flex-1 flex-col items-center justify-center gap-2 text-gray-400 lg:flex dark:text-gray-500"
-                >
+            </UDashboardNavbar>
+        </template>
+
+        <div class="relative flex-1 overflow-x-auto">
+            <EmailList v-model="selectedEmail" :emails="emails" :loaded="loaded">
+                <Pagination
+                    v-if="emails.length > (pagination?.pageSize ?? 20)"
+                    v-model="page"
+                    :pagination="pagination"
+                    :refresh="async () => await listEmails()"
+                />
+            </EmailList>
+        </div>
+    </UDashboardPanel>
+
+    <UDashboardPanel id="maileremailsview" v-model="isMailerPanelOpen" side="right">
+        <template #header>
+            <UDashboardNavbar :title="$t('pages.mailer.manage.title')">
+                <template #right>
+                    <UButton
+                        v-if="creating"
+                        :label="$t('common.back')"
+                        icon="i-mdi-arrow-back"
+                        color="neutral"
+                        @click="creating = false"
+                    />
+
+                    <template v-else-if="selectedEmail">
+                        <UButton
+                            class="hidden md:flex"
+                            color="neutral"
+                            icon="i-mdi-arrow-back"
+                            :label="$t('common.back')"
+                            @click="selectedEmail = undefined"
+                        />
+
+                        <UButton
+                            v-if="
+                                selectedEmail &&
+                                selectedEmail.id !== 0 &&
+                                selectedEmail.job !== undefined &&
+                                canAccess(selectedEmail.access, selectedEmail.userId, AccessLevel.MANAGE)
+                            "
+                            color="error"
+                            trailing-icon="i-mdi-delete"
+                            :label="$t('common.delete')"
+                            @click="
+                                confirmModal.open({
+                                    confirm: async () =>
+                                        selectedEmail?.id &&
+                                        (await mailerStore.deleteEmail({
+                                            id: selectedEmail.id,
+                                        })),
+                                })
+                            "
+                        />
+                    </template>
+
+                    <PartialsBackButton v-else to="/mail" />
+                </template>
+            </UDashboardNavbar>
+        </template>
+
+        <template #body>
+            <div v-if="creating" class="flex flex-1 flex-col items-center">
+                <div class="flex flex-1 flex-col items-center justify-center gap-2 text-gray-400 dark:text-gray-500">
                     <UIcon class="h-32 w-32" name="i-mdi-email-multiple" />
-                    <p>{{ $t('common.none_selected', [$t('common.mail')]) }}</p>
+                    <EmailCreateForm v-if="canCreate" :personal-email="false" @refresh="creating = false" />
                 </div>
+            </div>
+
+            <template v-else-if="selectedEmail">
+                <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.mail')])" />
+                <EmailCreateForm
+                    v-else
+                    v-model="selectedEmail"
+                    :personal-email="selectedEmail.userId !== undefined"
+                    :disabled="
+                        !canAccess(selectedEmail.access, selectedEmail.userId, AccessLevel.MANAGE) ||
+                        (!isSuperuser && selectedEmail.deactivated)
+                    "
+                />
             </template>
-        </UDashboardPanel>
-    </template>
+            <div
+                v-else
+                class="hidden flex-1 flex-col items-center justify-center gap-2 text-gray-400 lg:flex dark:text-gray-500"
+            >
+                <UIcon class="h-32 w-32" name="i-mdi-email-multiple" />
+                <p>{{ $t('common.none_selected', [$t('common.mail')]) }}</p>
+            </div>
+        </template>
+    </UDashboardPanel>
 </template>

@@ -209,10 +209,14 @@ func (r *Retriever) GetUserInfo(
 ) (*pbuserinfo.UserInfo, error) {
 	key := userAccountKey{UserID: userId, AccountID: accountId}
 	if dest, ok := r.userCache.Get(key); ok {
+		if !dest.GetEnabled() {
+			return nil, ErrAccountError
+		}
+
 		return dest, nil
 	}
 
-	dest, err := r.getUserInfo(ctx, userId, accountId)
+	dest, err := r.getUserInfoFromDB(ctx, userId, accountId)
 	if err != nil {
 		return nil, err
 	}
@@ -230,7 +234,7 @@ func (r *Retriever) GetUserInfo(
 	return dest, nil
 }
 
-func (r *Retriever) getUserInfo(
+func (r *Retriever) getUserInfoFromDB(
 	ctx context.Context,
 	userId int32,
 	accountId int64,
@@ -295,7 +299,7 @@ func (r *Retriever) GetUserInfoWithoutAccountId(
 		return nil, errswrap.NewError(err, ErrAccountError)
 	}
 
-	// Set superuser status
+	// Set superuser status if applicable
 	r.checkAndSetSuperuser(dest)
 
 	return dest, nil
@@ -398,7 +402,7 @@ func (r *Retriever) SetUserInfo(
 }
 
 func (r *Retriever) RefreshUserInfo(ctx context.Context, userId int32, accountId int64) error {
-	dest, err := r.getUserInfo(ctx, userId, accountId)
+	dest, err := r.getUserInfoFromDB(ctx, userId, accountId)
 	if err != nil {
 		return err
 	}

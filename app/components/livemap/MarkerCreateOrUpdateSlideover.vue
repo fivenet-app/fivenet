@@ -2,13 +2,13 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { HelpIcon } from 'mdi-vue3';
 import { z } from 'zod';
-import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
-import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
+import ColorPicker from '~/components/partials/ColorPicker.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import { useLivemapStore } from '~/stores/livemap';
 import type { Coordinate } from '~/types/livemap';
 import { getLivemapLivemapClient } from '~~/gen/ts/clients';
 import { type MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/marker_marker';
+import InputDatePicker from '../partials/InputDatePicker.vue';
 
 const props = defineProps<{
     location?: Coordinate;
@@ -171,11 +171,7 @@ const formRef = useTemplateRef('formRef');
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                             <UFormField name="expiresAt">
-                                <DatePickerPopoverClient
-                                    v-model="state.expiresAt"
-                                    date-format="dd.MM.yyyy HH:mm"
-                                    :date-picker="{ mode: 'dateTime', is24hr: true, clearable: true }"
-                                />
+                                <InputDatePicker v-model="state.expiresAt" date-format="dd.MM.yyyy HH:mm" clearable time />
                             </UFormField>
                         </dd>
                     </div>
@@ -188,7 +184,7 @@ const formRef = useTemplateRef('formRef');
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                             <UFormField name="color">
-                                <ColorPickerClient v-model="state.color" />
+                                <ColorPicker v-model="state.color" />
                             </UFormField>
                         </dd>
                     </div>

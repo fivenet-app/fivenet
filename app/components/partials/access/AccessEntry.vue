@@ -190,6 +190,7 @@ if (props.hideGrade) {
                                 userIds: entry.userId ? [entry.userId] : [],
                             })
                     "
+                    searchable-key="completor-citizens"
                     :filter-fields="['firstname', 'lastname']"
                     :search-input="{ placeholder: $t('common.search_field') }"
                     :placeholder="$t('common.citizen', 1)"
@@ -229,6 +230,7 @@ if (props.hideGrade) {
                             return (response?.qualifications ?? []) as QualificationShort[];
                         }
                     "
+                    searchable-key="complete-qualifications"
                     :filter-fields="['abbreviation', 'title']"
                     :search-input="{ placeholder: $t('common.search_field') }"
                     :placeholder="$t('common.qualification', 1)"

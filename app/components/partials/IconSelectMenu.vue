@@ -2,9 +2,8 @@
 import type { DefineComponent } from 'vue';
 import { availableIcons, fallbackIcon as defaultIcon, type IconEntry } from './icons';
 
-const props = withDefaults(
+withDefaults(
     defineProps<{
-        modelValue: string | undefined;
         color?: string;
         fallbackIcon?: DefineComponent | IconEntry;
     }>(),
@@ -14,15 +13,11 @@ const props = withDefaults(
     },
 );
 
-const emit = defineEmits<{
-    (e: 'update:modelValue', value: string | undefined): void;
-}>();
-
 defineOptions({
     inheritAttrs: false,
 });
 
-const icon = useVModel(props, 'modelValue', emit);
+const icon = defineModel<string | undefined>('modelValue');
 
 const searchTerm = ref('');
 const searchTermDebounced = debouncedRef(searchTerm, 200);
@@ -53,17 +48,17 @@ const foundIcons = computedAsync(() => iconSearch(searchTermDebounced.value));
             value-key="name"
             v-bind="$attrs"
         >
-            <template #item-label>
+            <template v-if="icon" #default>
                 <component
                     :is="availableIcons.find((item) => item.name === icon)?.component ?? fallbackIcon.component"
                     class="size-5"
-                    :style="{ fill: color }"
+                    :style="{ color: `var(--color-${color ?? 'primary'}-500)` }"
                 />
                 <span class="truncate">{{ camelCaseToTitleCase(icon ?? $t('common.unknown')) }}</span>
             </template>
 
             <template #item="{ item }">
-                <component :is="item?.component" class="size-5" :style="{ color: color }" />
+                <component :is="item?.component" class="size-5" :style="{ color: `var(--color-${color ?? 'primary'}-500)` }" />
                 <span class="truncate">{{ camelCaseToTitleCase(item.name) }}</span>
             </template>
         </USelectMenu>

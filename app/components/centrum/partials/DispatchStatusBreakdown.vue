@@ -68,7 +68,7 @@ defineOptions({
     <UPopover :class="popoverClass">
         <UButton
             class="items-center"
-            :ui="{ icon: { base: 'max-md:hidden!' } }"
+            :ui="{ trailingIcon: 'max-md:hidden!' }"
             variant="ghost"
             trailing-icon="i-mdi-chevron-down"
             v-bind="$attrs"
@@ -79,7 +79,7 @@ defineOptions({
         <template #content>
             <div class="p-4">
                 <UIcon v-if="!counts" class="size-4 animate-spin" name="i-mdi-refresh" />
-                <div v-else class="flex flex-col gap-1 text-nowrap text-sm font-normal">
+                <div v-else class="flex flex-col gap-1 text-sm font-normal text-nowrap">
                     <div class="inline-flex justify-between gap-1.5">
                         <UBadge class="px-2 py-1" :class="dispatchStatusToBGColor(StatusDispatch.UNASSIGNED)" size="sm">
                             {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[StatusDispatch.UNASSIGNED]}`) }}

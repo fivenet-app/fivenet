@@ -113,7 +113,7 @@ const state = reactive<Schema>({
 });
 
 const { data: pages, refresh: pagesRefresh } = useLazyAsyncData(`wiki-pages-${props.pageId}-editor`, () => listPages(), {
-    default: () => [],
+    default: () => [] as PageShort[],
 });
 
 async function listPages(): Promise<PageShort[]> {
@@ -459,103 +459,131 @@ const formRef = useTemplateRef('formRef');
         </template>
 
         <template #body>
-            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.page', 1)])" />
-            <DataErrorBlock
-                v-else-if="error"
-                :title="$t('common.unable_to_load', [$t('common.page', 1)])"
-                :error="error"
-                :retry="refresh"
-            />
-            <DataNoDataBlock
-                v-else-if="!page"
-                icon="i-mdi-file-search"
-                :message="$t('common.not_found', [$t('common.page', 1)])"
-            />
+            <UForm
+                ref="formRef"
+                :schema="schema"
+                :state="state"
+                class="flex min-h-full w-full max-w-full flex-1 flex-col overflow-y-auto"
+                @submit="onSubmitThrottle"
+            >
+                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.page', 1)])" />
+                <DataErrorBlock
+                    v-else-if="error"
+                    :title="$t('common.unable_to_load', [$t('common.page', 1)])"
+                    :error="error"
+                    :retry="refresh"
+                />
+                <DataNoDataBlock
+                    v-else-if="!page"
+                    icon="i-mdi-file-search"
+                    :message="$t('common.not_found', [$t('common.page', 1)])"
+                />
 
-            <UForm v-else ref="formRef" :schema="schema" :state="state" class="flex flex-1 flex-col" @submit="onSubmitThrottle">
                 <UTabs
+                    v-else
                     v-model="selectedTab"
                     class="flex flex-1 flex-col"
                     :items="items"
                     variant="link"
                     :unmount-on-hide="false"
+                    :ui="{ content: 'h-full' }"
                 >
                     <template #content>
-                        <UDashboardPanel>
-                            <UDashboardToolbar>
-                                <template #default>
-                                    <div class="my-2 flex w-full flex-col gap-2">
-                                        <UFormField
-                                            v-if="!(page?.meta?.createdAt && page?.parentId === undefined)"
-                                            class="flex-1"
-                                            name="meta.parentId"
-                                            :label="$t('common.parent_page')"
-                                        >
-                                            <div class="flex items-center gap-1">
-                                                <ClientOnly>
-                                                    <USelectMenu
-                                                        v-model="state.parentId"
-                                                        class="flex-1"
-                                                        value-key="id"
-                                                        label-key="title"
-                                                        :disabled="!canDo.edit"
-                                                        :items="parentPages"
-                                                    >
-                                                        <template #item-label>
-                                                            <span class="truncate">
-                                                                {{
-                                                                    state.parentId
-                                                                        ? (parentPages?.find((p) => p.id === state.parentId)
-                                                                              ?.title ?? $t('common.na'))
-                                                                        : $t('common.none_selected', [$t('common.parent_page')])
-                                                                }}
-                                                            </span>
-                                                        </template>
+                        <UDashboardPanel :ui="{ root: 'h-full min-h-0', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+                            <template #header>
+                                <UDashboardToolbar>
+                                    <template #default>
+                                        <div class="my-2 flex w-full flex-col gap-2">
+                                            <UFormField
+                                                v-if="!(page?.meta?.createdAt && page?.parentId === undefined)"
+                                                class="flex-1"
+                                                name="meta.parentId"
+                                                :label="$t('common.parent_page')"
+                                            >
+                                                <div class="flex items-center gap-1">
+                                                    <ClientOnly>
+                                                        <USelectMenu
+                                                            v-model="state.parentId"
+                                                            class="flex-1"
+                                                            value-key="id"
+                                                            label-key="title"
+                                                            :disabled="!canDo.edit"
+                                                            :items="parentPages"
+                                                        >
+                                                            <template #default>
+                                                                <span class="truncate">
+                                                                    {{
+                                                                        state.parentId
+                                                                            ? (parentPages?.find((p) => p.id === state.parentId)
+                                                                                  ?.title ?? $t('common.na'))
+                                                                            : $t('common.none_selected', [
+                                                                                  $t('common.parent_page'),
+                                                                              ])
+                                                                    }}
+                                                                </span>
+                                                            </template>
 
-                                                        <template #empty>
-                                                            {{ $t('common.not_found', [$t('common.page', 2)]) }}
-                                                        </template>
-                                                    </USelectMenu>
-                                                </ClientOnly>
+                                                            <template #empty>
+                                                                {{ $t('common.not_found', [$t('common.page', 2)]) }}
+                                                            </template>
+                                                        </USelectMenu>
+                                                    </ClientOnly>
 
-                                                <UTooltip :text="$t('common.refresh')">
-                                                    <UButton variant="link" icon="i-mdi-refresh" @click="pagesRefresh()" />
-                                                </UTooltip>
+                                                    <UTooltip :text="$t('common.refresh')">
+                                                        <UButton variant="link" icon="i-mdi-refresh" @click="pagesRefresh()" />
+                                                    </UTooltip>
+                                                </div>
+                                            </UFormField>
+
+                                            <UFormField name="meta.title" :label="$t('common.title')">
+                                                <UInput
+                                                    v-model="state.meta.title"
+                                                    size="xl"
+                                                    class="w-full"
+                                                    :disabled="!canDo.edit"
+                                                />
+                                            </UFormField>
+
+                                            <UFormField name="meta.description" :label="$t('common.description')">
+                                                <UTextarea
+                                                    v-model="state.meta.description"
+                                                    class="w-full"
+                                                    :rows="2"
+                                                    :disabled="!canDo.edit"
+                                                />
+                                            </UFormField>
+
+                                            <div class="flex flex-1 gap-2">
+                                                <UFormField
+                                                    class="flex-1 md:grid md:grid-cols-2 md:items-center"
+                                                    name="public"
+                                                    :label="$t('common.public')"
+                                                >
+                                                    <USwitch
+                                                        v-model="state.meta.public"
+                                                        :disabled="!canDo.edit || !canDo.public"
+                                                    />
+                                                </UFormField>
+
+                                                <UFormField
+                                                    class="flex-1 md:grid md:grid-cols-2 md:items-center"
+                                                    name="closed"
+                                                    :label="`${$t('common.toc', 2)}?`"
+                                                >
+                                                    <USwitch v-model="state.meta.toc" :disabled="!canDo.edit" />
+                                                </UFormField>
                                             </div>
-                                        </UFormField>
+                                        </div>
+                                    </template>
+                                </UDashboardToolbar>
+                            </template>
 
-                                        <UFormField name="meta.title" :label="$t('common.title')">
-                                            <UInput
-                                                v-model="state.meta.title"
-                                                size="xl"
-                                                class="w-full"
-                                                :disabled="!canDo.edit"
-                                            />
-                                        </UFormField>
-
-                                        <UFormField name="meta.description" :label="$t('common.description')">
-                                            <UTextarea
-                                                v-model="state.meta.description"
-                                                class="w-full"
-                                                :rows="2"
-                                                :disabled="!canDo.edit"
-                                            />
-                                        </UFormField>
-                                    </div>
-                                </template>
-                            </UDashboardToolbar>
-
-                            <UFormField
-                                class="flex flex-1 overflow-y-hidden"
-                                name="content"
-                                :ui="{ container: 'flex flex-1 flex-col mt-0 overflow-y-hidden', label: 'hidden' }"
-                                label="&nbsp;"
-                            >
+                            <template #body>
                                 <ClientOnly>
                                     <TiptapEditor
                                         v-model="state.content"
                                         v-model:files="state.files"
-                                        class="mx-auto w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
+                                        class="mx-auto h-full w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
                                         :disabled="!canDo.edit"
                                         history-type="wiki"
                                         :saving="saving"
@@ -589,36 +617,24 @@ const formRef = useTemplateRef('formRef');
                                         </template>
                                     </TiptapEditor>
                                 </ClientOnly>
-                            </UFormField>
-
-                            <UDashboardToolbar
-                                class="flex shrink-0 justify-between border-t border-b-0 border-neutral-200 px-3 py-3.5 dark:border-neutral-700"
-                            >
-                                <div class="flex flex-1 gap-2">
-                                    <UFormField class="flex-1" name="public" :label="$t('common.public')">
-                                        <USwitch v-model="state.meta.public" :disabled="!canDo.edit || !canDo.public" />
-                                    </UFormField>
-
-                                    <UFormField class="flex-1" name="closed" :label="`${$t('common.toc', 2)}?`">
-                                        <USwitch v-model="state.meta.toc" :disabled="!canDo.edit" />
-                                    </UFormField>
-                                </div>
-                            </UDashboardToolbar>
+                            </template>
                         </UDashboardPanel>
                     </template>
 
                     <template #access>
-                        <div class="flex flex-1 flex-col gap-2 overflow-y-scroll px-2">
-                            <UFormField name="access" :label="$t('common.access')">
-                                <AccessManager
-                                    v-model:jobs="state.access.jobs"
-                                    v-model:users="state.access.users"
-                                    :disabled="!canDo.access"
-                                    :target-id="page.id ?? 0"
-                                    :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.wiki.AccessLevel')"
-                                />
-                            </UFormField>
-                        </div>
+                        <UDashboardPanel :ui="{ root: 'min-h-0' }">
+                            <template #body>
+                                <UFormField name="access" :label="$t('common.access')">
+                                    <AccessManager
+                                        v-model:jobs="state.access.jobs"
+                                        v-model:users="state.access.users"
+                                        :disabled="!canDo.access"
+                                        :target-id="page.id ?? 0"
+                                        :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.wiki.AccessLevel')"
+                                    />
+                                </UFormField>
+                            </template>
+                        </UDashboardPanel>
                     </template>
                 </UTabs>
             </UForm>

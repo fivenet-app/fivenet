@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { UBadge, UButton, UTooltip } from '#components';
+import { CalendarDate } from '@internationalized/date';
 import type { TableColumn } from '@nuxt/ui';
 import { addDays } from 'date-fns';
 import { h } from 'vue';
@@ -8,8 +9,8 @@ import 'vue-json-pretty/lib/styles.css';
 import type { JSONDataType } from 'vue-json-pretty/types/utils';
 import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DateRangePickerClient from '~/components/partials/DateRangePicker.client.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import InputDateRangePopover from '~/components/partials/InputDateRangePopover.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getSettingsSettingsClient } from '~~/gen/ts/clients';
@@ -232,22 +233,7 @@ const columns = computed(
             },
             {
                 accessorKey: 'state',
-                header: ({ column }) => {
-                    const isSorted = column.getIsSorted();
-
-                    return h(UButton, {
-                        color: 'neutral',
-                        variant: 'ghost',
-                        label: t('common.state'),
-                        icon: isSorted
-                            ? isSorted === 'asc'
-                                ? appConfig.custom.icons.sortAsc
-                                : appConfig.custom.icons.sortDesc
-                            : appConfig.custom.icons.sort,
-                        class: '-mx-2.5',
-                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
-                    });
-                },
+                header: t('common.state'),
                 cell: ({ row }) =>
                     h(UBadge, {
                         color: eventTypeToBadgeColor(row.original.state),
@@ -260,6 +246,9 @@ const columns = computed(
 function statesToLabel(states: { eventType: EventType }[]): string {
     return states.map((c) => t(`enums.settings.AuditLog.EventType.${EventType[c.eventType ?? 0]}`)).join(', ');
 }
+
+const today = new Date();
+const tomorrow = addDays(today, 1);
 </script>
 
 <template>
@@ -268,17 +257,12 @@ function statesToLabel(states: { eventType: EventType }[]): string {
             <UForm class="my-2 w-full" :schema="schema" :state="query" @submit="refresh()">
                 <div class="flex flex-row flex-wrap gap-2">
                     <UFormField class="flex-1" name="date" :label="$t('common.time_range')">
-                        <DateRangePickerClient
+                        <InputDateRangePopover
                             v-model="query.date"
-                            class="flex-1"
-                            mode="date"
-                            :popover="{ class: 'flex-1' }"
-                            :date-picker="{
-                                mode: 'dateTime',
-                                disabledDates: [{ start: addDays(new Date(), 1), end: null }],
-                                is24Hr: true,
-                                clearable: true,
-                            }"
+                            class="w-full"
+                            :max-value="new CalendarDate(tomorrow.getFullYear(), tomorrow.getMonth() + 1, tomorrow.getDate())"
+                            time
+                            clearable
                         />
                     </UFormField>
 
@@ -293,12 +277,14 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                         userIds: query.users,
                                     })
                             "
+                            searchable-key="completor-citizens"
                             :search-input="{ placeholder: $t('common.search_field') }"
                             :filter-fields="['firstname', 'lastname']"
                             block
                             :placeholder="$t('common.user', 2)"
                             trailing
                             value-key="userId"
+                            class="w-full"
                         >
                             <template #item-label="{ item }">
                                 {{ userToLabel(item) }}
@@ -320,6 +306,7 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                             block
                             :placeholder="$t('common.search')"
                             leading-icon="i-mdi-search"
+                            class="w-full"
                             :ui="{ trailing: 'pe-1' }"
                         >
                             <template #trailing>
@@ -355,6 +342,7 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                         name="service"
                                         :placeholder="$t('common.service')"
                                         :items="grpcServices.map((s) => s.split('.').pop() ?? s)"
+                                        class="w-full"
                                     >
                                         <template #empty>
                                             {{ $t('common.not_found', [$t('common.service')]) }}
@@ -370,6 +358,7 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                     name="method"
                                     :placeholder="$t('common.method')"
                                     :items="grpcMethods.filter((m) => query.services.some((s) => m.includes('.' + s + '/')))"
+                                    class="w-full"
                                 >
                                     <template #item="{ item }">
                                         {{ item.split('/').pop() }}
@@ -390,6 +379,7 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                         :placeholder="$t('common.state')"
                                         :items="statesOptions"
                                         value-key="eventType"
+                                        class="w-full"
                                     >
                                         <template #item-label="{ item }">
                                             {{ statesToLabel([item]) }}
@@ -421,6 +411,7 @@ function statesToLabel(states: { eventType: EventType }[]): string {
 
     <UTable
         v-else
+        v-model:sorting="query.sorting.columns"
         class="flex-1"
         :loading="isRequestPending(status)"
         :columns="columns"

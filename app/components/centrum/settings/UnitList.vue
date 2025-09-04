@@ -3,8 +3,8 @@ import { UButton, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import { h } from 'vue';
 import UnitAttributes from '~/components/centrum/partials/UnitAttributes.vue';
-import UnitCreateOrUpdateModal from '~/components/centrum/settings/UnitCreateOrUpdateModal.vue';
-import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
+import UnitCreateOrUpdateSlideover from '~/components/centrum/settings/UnitCreateOrUpdateSlideover.vue';
+import ColorPicker from '~/components/partials/ColorPicker.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { availableIcons, fallbackIcon } from '~/components/partials/icons';
@@ -75,7 +75,7 @@ const columns = [
                             variant: 'link',
                             icon: 'i-mdi-pencil',
                             onClick: () => {
-                                unitCreateOrUpdateModal.open({
+                                unitCreateOrUpdateSlideover.open({
                                     unit: row.original,
                                     onUpdated: async () => refresh(),
                                 });
@@ -153,10 +153,10 @@ const columns = [
         accessorKey: 'color',
         header: t('common.color'),
         cell: ({ row }) =>
-            h(ColorPickerClient, {
+            h(ColorPicker, {
                 modelValue: row.original.color,
                 disabled: true,
-                hideIcon: true,
+                hideLabel: true,
             }),
     },
     {
@@ -181,7 +181,7 @@ const columns = [
     },
 ] as TableColumn<Unit>[];
 
-const unitCreateOrUpdateModal = overlay.create(UnitCreateOrUpdateModal);
+const unitCreateOrUpdateSlideover = overlay.create(UnitCreateOrUpdateSlideover);
 const confirmModal = overlay.create(ConfirmModal);
 </script>
 
@@ -203,7 +203,7 @@ const confirmModal = overlay.create(ConfirmModal);
                 trailing-icon="i-mdi-plus"
                 color="neutral"
                 @click="
-                    unitCreateOrUpdateModal.open({
+                    unitCreateOrUpdateSlideover.open({
                         onCreated: async () => refresh(),
                         onUpdated: async () => refresh(),
                     })

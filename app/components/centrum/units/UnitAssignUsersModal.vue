@@ -85,6 +85,7 @@ const formRef = useTemplateRef('formRef');
                                             userIds: state.users.map((u) => u.userId),
                                         })
                                 "
+                                searchable-key="completor-citizens"
                                 :search-input="{ placeholder: $t('common.search_field') }"
                                 :filter-fields="['firstname', 'lastname']"
                                 block

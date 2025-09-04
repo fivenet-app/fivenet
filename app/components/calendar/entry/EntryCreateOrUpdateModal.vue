@@ -7,8 +7,8 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
+import InputDatePicker from '~/components/partials/InputDatePicker.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCalendarStore } from '~/stores/calendar';
 import { useCompletorStore } from '~/stores/completor';
@@ -201,7 +201,7 @@ const formRef = useTemplateRef('formRef');
                                         ).calendars as CalendarShort[]
                                     )?.filter((c) => !c.closed)
                             "
-                            searchable-key="calendar-entry-list"
+                            searchable-key="calendar-list"
                             :search-input="{ placeholder: $t('common.search_field') }"
                             :filter-fields="['name']"
                             :placeholder="$t('common.calendar')"
@@ -235,19 +235,11 @@ const formRef = useTemplateRef('formRef');
                     </UFormField>
 
                     <UFormField class="flex-1" name="startTime" :label="$t('common.begins_at')" required>
-                        <DatePickerPopoverClient
-                            v-model="state.startTime"
-                            date-format="dd.MM.yyyy HH:mm"
-                            :date-picker="{ mode: 'dateTime', is24hr: true, clearable: true }"
-                        />
+                        <InputDatePicker v-model="state.startTime" date-format="dd.MM.yyyy HH:mm" clearable time />
                     </UFormField>
 
                     <UFormField class="flex-1" name="endTime" :label="$t('common.ends_at')" required>
-                        <DatePickerPopoverClient
-                            v-model="state.endTime"
-                            date-format="dd.MM.yyyy HH:mm"
-                            :date-picker="{ mode: 'dateTime', is24hr: true, clearable: true }"
-                        />
+                        <InputDatePicker v-model="state.endTime" date-format="dd.MM.yyyy HH:mm" clearable time />
                     </UFormField>
 
                     <UFormField class="flex-1" name="content" :label="$t('common.content')" required>
@@ -275,6 +267,7 @@ const formRef = useTemplateRef('formRef');
                                         userIds: state.users.map((u) => u.userId),
                                     })
                             "
+                            searchable-key="completor-citizens"
                             :search-input="{ placeholder: $t('common.search_field') }"
                             :filter-fields="['firstname', 'lastname']"
                             block
