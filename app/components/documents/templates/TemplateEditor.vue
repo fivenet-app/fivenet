@@ -401,7 +401,7 @@ const formRef = useTemplateRef('formRef');
         <template #body>
             <UForm
                 ref="formRef"
-                class="flex min-h-dvh w-full max-w-full flex-1 flex-col overflow-y-auto"
+                class="flex w-full max-w-full flex-1 flex-col overflow-y-auto"
                 :schema="schema"
                 :state="state"
                 @submit="onSubmitThrottle"

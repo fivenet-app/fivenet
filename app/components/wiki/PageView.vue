@@ -14,8 +14,8 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import { AccessLevel } from '~~/gen/ts/resources/wiki/access';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 import ScrollToTop from '../partials/ScrollToTop.vue';
+import ActivityList from './ActivityList.vue';
 import { checkPageAccess } from './helpers';
-import PageActivityList from './PageActivityList.vue';
 import PageSearch from './PageSearch.vue';
 
 const props = defineProps<{
@@ -147,7 +147,7 @@ const surround = computedAsync(async () => {
                   _id: prev.id,
                   title: prev.title || '',
                   description: prev.description ?? '',
-                  _path: `/wiki/${prev.job}/${prev.id}/${prev.slug}`,
+                  path: `/wiki/${prev.job}/${prev.id}/${prev.slug}`,
               }
             : undefined,
         next
@@ -155,7 +155,7 @@ const surround = computedAsync(async () => {
                   _id: next.id,
                   title: next.title || '',
                   description: next.description ?? '',
-                  _path: `/wiki/${next.job}/${next.id}/${next.slug}`,
+                  path: `/wiki/${next.job}/${next.id}/${next.slug}`,
               }
             : undefined,
     ];
@@ -175,7 +175,7 @@ const scrollRef = useTemplateRef('scrollRef');
                     <UDashboardSidebarCollapse />
                 </template>
 
-                <template #center>
+                <template #default>
                     <PageSearch />
                 </template>
 
@@ -194,6 +194,12 @@ const scrollRef = useTemplateRef('scrollRef');
                     </UButton>
                 </template>
             </UDashboardNavbar>
+
+            <UDashboardToolbar class="flex lg:hidden">
+                <template #default>
+                    <PageSearch />
+                </template>
+            </UDashboardToolbar>
         </template>
 
         <template #body>
@@ -346,7 +352,7 @@ const scrollRef = useTemplateRef('scrollRef');
                     </UPageHeader>
 
                     <UPageBody v-if="page.content?.content">
-                        <div class="dark:bg-base-900 rounded-lg bg-neutral-100">
+                        <div class="rounded-lg bg-neutral-100 dark:bg-neutral-900">
                             <HTMLContent class="px-4 py-2" :value="page.content.content" />
                         </div>
 
@@ -355,17 +361,19 @@ const scrollRef = useTemplateRef('scrollRef');
 
                             <!-- UContentSurround doesn't seem to like our surround pages array -->
                             <div class="grid gap-8 sm:grid-cols-2">
-                                <UContentSurroundLink v-if="prev" :link="prev" icon="i-mdi-arrow-left" />
-                                <span v-else class="hidden sm:block">&nbsp;</span>
-                                <UContentSurroundLink v-if="next" class="text-right" :link="next" icon="i-mdi-arrow-right" />
+                                <UContentSurround
+                                    :surround="[prev, next]"
+                                    prev-icon="i-mdi-arrow-left"
+                                    next-icon="i-mdi-arrow-right"
+                                />
                             </div>
                         </template>
 
                         <USeparator class="mt-4 mb-4" />
 
-                        <UAccordion class="print:hidden" :items="accordionItems" multiple>
+                        <UAccordion class="print:hidden" :items="accordionItems" multiple :unmount-on-hide="false">
                             <template #access>
-                                <UContainer>
+                                <UContainer class="mb-4">
                                     <DataNoDataBlock
                                         v-if="
                                             !page.access || (page.access?.jobs.length === 0 && page.access?.users.length === 0)
@@ -385,8 +393,8 @@ const scrollRef = useTemplateRef('scrollRef');
                             </template>
 
                             <template v-if="can('wiki.WikiService/ListPageActivity').value" #activity>
-                                <UContainer>
-                                    <PageActivityList :page-id="page.id" />
+                                <UContainer class="mb-4">
+                                    <ActivityList :page-id="page.id" />
                                 </UContainer>
                             </template>
                         </UAccordion>

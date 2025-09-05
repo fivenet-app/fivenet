@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { NavigationMenuItem } from '@nuxt/ui';
 import type { TypedRouteFromName } from '@typed-router';
+import CitizenInfo from '~/components/citizens/info/CitizenInfo.vue';
 import Header from '~/components/citizens/info/Header.vue';
 import AddToButton from '~/components/clipboard/AddToButton.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -134,6 +135,7 @@ const items = computed<NavigationMenuItem[]>(() =>
 );
 </script>
 
+<!-- eslint-disable vue/no-multiple-template-root -->
 <template>
     <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
@@ -174,7 +176,7 @@ const items = computed<NavigationMenuItem[]>(() =>
                 </div>
             </UDashboardToolbar>
 
-            <UDashboardToolbar>
+            <UDashboardToolbar v-if="user">
                 <UNavigationMenu orientation="horizontal" :items="items" class="-mx-1 flex-1" />
             </UDashboardToolbar>
         </template>
@@ -192,4 +194,6 @@ const items = computed<NavigationMenuItem[]>(() =>
             <NuxtPage v-else v-model:user="user" @refresh="() => refresh()" />
         </template>
     </UDashboardPanel>
+
+    <CitizenInfo v-if="user" v-model="user" />
 </template>

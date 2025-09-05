@@ -439,7 +439,7 @@ watch(
                     :disabled="disabled"
                     @update:model-value="changeQuestionType($event)"
                 >
-                    <template #item-label>
+                    <template #default>
                         <span class="truncate">
                             {{ $t(`components.qualifications.exam_editor.question_types.${question.data!.data.oneofKind}`) }}
                         </span>

@@ -153,7 +153,7 @@ const formRef = useTemplateRef('formRef');
                                         :filter-fields="['label', 'email']"
                                         trailing
                                     >
-                                        <template #item-label>
+                                        <template #default>
                                             <span class="truncate overflow-hidden">
                                                 {{
                                                     (selectedEmail?.label && selectedEmail?.label !== ''
@@ -274,13 +274,11 @@ const formRef = useTemplateRef('formRef');
                                 container: 'flex flex-1 flex-col',
                             }"
                         >
-                            <template #item-label>
-                                <div class="flex flex-1 flex-col items-center sm:flex-row">
-                                    <span class="flex-1">{{ $t('common.message', 1) }}</span>
+                            <div class="flex flex-1 flex-col items-center sm:flex-row">
+                                <span class="flex-1">{{ $t('common.message', 1) }}</span>
 
-                                    <TemplateSelector v-model="state.content" class="ml-auto" />
-                                </div>
-                            </template>
+                                <TemplateSelector v-model="state.content" class="ml-auto" />
+                            </div>
 
                             <ClientOnly>
                                 <TiptapEditor

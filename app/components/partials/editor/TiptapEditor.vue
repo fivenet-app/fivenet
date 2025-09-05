@@ -801,7 +801,7 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                         :placeholder="$t('common.font', 1)"
                         :disabled="disabled"
                     >
-                        <template #item-label>
+                        <template #default>
                             <span class="truncate" :style="{ fontFamily: selectedFont.value }">{{ selectedFont.label }}</span>
                         </template>
 
@@ -809,7 +809,7 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                             <span class="truncate" :style="{ fontFamily: item.value }">{{ item.label }}</span>
                         </template>
 
-                        <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>>
+                        <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
                     </UInputMenu>
                 </UTooltip>
 

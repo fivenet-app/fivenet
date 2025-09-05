@@ -160,7 +160,7 @@ const columns = computed(
                             class="w-full"
                             :search-input="{ placeholder: $t('common.search_field') }"
                         >
-                            <template #item-label>
+                            <template #default>
                                 <div class="inline-flex items-center gap-1 truncate">
                                     <template v-if="typeof query.closed === 'boolean'">
                                         <UIcon
@@ -204,7 +204,7 @@ const columns = computed(
                             class="w-full"
                             :search-input="{ placeholder: $t('common.relation', 2) }"
                         >
-                            <template #item-label>
+                            <template #default>
                                 {{ $t('common.selected', query.relations.length) }}
                             </template>
 

@@ -102,7 +102,7 @@ const formRef = useTemplateRef('formRef');
                             :placeholder="$t('common.status')"
                             :search-input="{ placeholder: $t('common.search_field') }"
                         >
-                            <template #item-label>
+                            <template #default>
                                 <UBadge class="truncate" :color="requestStatusToBadgeColor(state.status)">
                                     {{ $t(`enums.qualifications.RequestStatus.${RequestStatus[state.status]}`) }}
                                 </UBadge>

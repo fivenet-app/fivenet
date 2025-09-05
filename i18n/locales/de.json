@@ -683,7 +683,8 @@
         "dispatch_center_settings": "Leitstellen-Einstellungen",
         "accepted_at": "Akzeptiert am",
         "choose_color": "Farbe wählen",
-        "pick_date": "Datum auswählen"
+        "pick_date": "Datum auswählen",
+        "open_command": "Ausführen"
     },
     "components": {
         "partials": {
@@ -1335,6 +1336,7 @@
         },
         "mailer": {
             "mark_unread": "Als ungelesen markieren",
+            "mark_read": "Als gelesen markieren",
             "mark_important": "Als wichtig markieren",
             "star_thread": "Favorisieren",
             "mute_thread": "Stummschalten",

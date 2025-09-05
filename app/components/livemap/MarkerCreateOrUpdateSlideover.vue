@@ -204,7 +204,7 @@ const formRef = useTemplateRef('formRef');
                                         value-key="value"
                                         :search-input="{ placeholder: $t('common.search_field') }"
                                     >
-                                        <template #item-label>
+                                        <template #default>
                                             <span class="truncate">{{
                                                 $t(`enums.livemap.MarkerType.${MarkerType[state.markerType ?? 0]}`)
                                             }}</span>

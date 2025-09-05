@@ -695,7 +695,7 @@ const formRef = useTemplateRef('formRef');
                                 >
                                     <ClientOnly>
                                         <USelectMenu v-model="state.examMode" :items="examModes" value-key="mode">
-                                            <template #item-label>
+                                            <template #default>
                                                 <span class="truncate">
                                                     {{
                                                         $t(

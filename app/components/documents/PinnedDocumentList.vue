@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { ListDocumentPinsResponse, ToggleDocumentPinResponse } from '~~/gen/ts/services/documents/documents';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
@@ -14,33 +13,22 @@ defineEmits<{
 
 const { attr, can } = useAuth();
 
-const documentsDocumentsClient = await getDocumentsDocumentsClient();
+const documentsDocuments = await useDocumentsDocuments();
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
-const { data, status, error, refresh } = useLazyAsyncData(`calendars-${page.value}`, () => listDocumentPins(), {
+const { data, status, error, refresh } = useLazyAsyncData(`documents-pins-${page.value}`, () => listDocumentPins(), {
     immediate: can('documents.DocumentsService/ToggleDocumentPin').value,
 });
 
 async function listDocumentPins(): Promise<ListDocumentPinsResponse> {
-    const call = documentsDocumentsClient.listDocumentPins({
-        pagination: {
-            offset: calculateOffset(page.value, data.value?.pagination),
-        },
-    });
-    const { response } = await call;
-
-    return response;
+    const call = documentsDocuments.listDocumentPins(page.value);
+    return await call;
 }
 
 async function togglePin(documentId: number, state: boolean, personal: boolean): Promise<ToggleDocumentPinResponse> {
     try {
-        const call = documentsDocumentsClient.toggleDocumentPin({
-            documentId: documentId,
-            state: state,
-            personal: personal,
-        });
-        const { response } = await call;
+        const response = await documentsDocuments.togglePin(documentId, state, personal);
 
         const idx = data.value?.documents.findIndex((d) => d.id === documentId);
         if (idx && idx > -1 && data.value?.documents[idx]) {
@@ -65,11 +53,11 @@ const editing = ref(false);
     <UDashboardPanel
         id="documents-pinnedlist"
         class="overflow-x-hidden"
-        side="right"
         breakpoint="2xl"
-        :width="350"
+        :width="30"
         :min-size="25"
         :max-size="50"
+        :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }"
     >
         <template #header>
             <UDashboardNavbar :title="$t('common.pinned_document', 2)">

@@ -19,11 +19,15 @@ const emit = defineEmits<{
 
 const threadRefs = ref(new Map<number, Element>());
 
+const routeParams = useRouteParams('thread');
+
 const selectedThread = computed({
     get() {
         return props.modelValue;
     },
     set(value: Thread | undefined) {
+        routeParams.value = value ? String(value.id) : '';
+
         emit('update:modelValue', value);
     },
 });
@@ -62,7 +66,7 @@ defineShortcuts({
 </script>
 
 <template>
-    <div>
+    <div class="flex flex-1 flex-col">
         <div v-if="!loaded" class="space-y-2">
             <USkeleton class="h-[73px] w-full" />
             <USkeleton class="h-[73px] w-full" />

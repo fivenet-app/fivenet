@@ -137,12 +137,6 @@ watch(props, async () => refresh());
                             leading-icon="i-mdi-search"
                             value-key="userId"
                         >
-                            <template #item-label="{ item }">
-                                <template v-if="item">
-                                    {{ userToLabel(item) }}
-                                </template>
-                            </template>
-
                             <template #item="{ item }">
                                 <ColleagueName v-if="item" :colleague="item" birthday />
                             </template>
@@ -166,7 +160,7 @@ watch(props, async () => refresh());
                                 value-key="aType"
                                 :search-input="{ placeholder: $t('common.type', 2) }"
                             >
-                                <template #item-label>
+                                <template #default>
                                     {{ $t('common.selected', query.types.length) }}
                                 </template>
 

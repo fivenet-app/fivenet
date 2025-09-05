@@ -105,11 +105,11 @@ onBeforeRouteLeave(async (to) => {
 <style>
 .splitpanes--vertical > .splitpanes__splitter {
     min-width: 2px;
-    background-color: rgb(var(--color-gray-800));
+    background-color: var(--color-gray-800);
 }
 
 .splitpanes--horizontal > .splitpanes__splitter {
     min-height: 2px;
-    background-color: rgb(var(--color-gray-800));
+    background-color: var(--color-gray-800);
 }
 </style>

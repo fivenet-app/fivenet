@@ -154,7 +154,7 @@ const formRef = useTemplateRef('formRef');
                 :search-labels="['name']"
                 clear-search-on-close
             >
-                <template #item-label>
+                <template #default>
                     {{ $t('common.selected', state.labels.length) }}
                 </template>
 

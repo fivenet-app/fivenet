@@ -150,10 +150,8 @@ const formRef = useTemplateRef('formRef');
                         trailing
                         leading-icon="i-mdi-user"
                     >
-                        <template #item-label>
-                            <template v-if="selectedUser">
-                                {{ usersToLabel([selectedUser]) }}
-                            </template>
+                        <template v-if="selectedUser" #default>
+                            {{ usersToLabel([selectedUser]) }}
                         </template>
 
                         <template #item="{ item }">
@@ -173,7 +171,7 @@ const formRef = useTemplateRef('formRef');
                             :placeholder="$t('common.status')"
                             :search-input="{ placeholder: $t('common.search_field') }"
                         >
-                            <template #item-label>
+                            <template #default>
                                 <UBadge class="truncate" :color="resultStatusToBadgeColor(state.status)">
                                     {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[state.status]}`) }}
                                 </UBadge>

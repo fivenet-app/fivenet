@@ -55,10 +55,6 @@ const results = ref<InstanceType<typeof QualificationResultList> | null>(null);
                         value-key="userId"
                         class="w-full"
                     >
-                        <template #item-label="{ item }">
-                            {{ userToLabel(item) }}
-                        </template>
-
                         <template #item="{ item }">
                             <span class="truncate">
                                 <ColleagueName :colleague="item" />

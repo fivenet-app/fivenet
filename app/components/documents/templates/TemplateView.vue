@@ -224,7 +224,7 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                                 </h3>
                                 <div class="my-2">
                                     <UInput
-                                        class="bg-base-900 focus:ring-base-300 block w-full rounded-md border-0 py-1.5 whitespace-pre-wrap focus:ring-1 focus:ring-inset sm:text-sm sm:leading-6"
+                                        class="focus:ring-base-300 block w-full rounded-md border-0 bg-neutral-900 py-1.5 whitespace-pre-wrap focus:ring-1 focus:ring-inset sm:text-sm sm:leading-6"
                                         type="text"
                                         name="state"
                                         disabled

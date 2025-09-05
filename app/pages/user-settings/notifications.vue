@@ -45,7 +45,7 @@ const calendarReminderTimes = [
             >
                 <ClientOnly>
                     <USelectMenu v-model="calendar.reminderTimes" multiple :items="calendarReminderTimes" value-key="value">
-                        <template #item-label>
+                        <template #default>
                             {{
                                 calendar.reminderTimes.length > 0
                                     ? [...calendar.reminderTimes]

@@ -90,7 +90,7 @@ const { moveUp, moveDown } = useListReorder(toRef(questions.value.questions));
                         value-key="mode"
                         :search-input="{ placeholder: $t('common.search_field') }"
                     >
-                        <template #item-label>
+                        <template #default>
                             <span class="truncate">{{
                                 $t(`enums.qualifications.AutoGradeMode.${AutoGradeMode[settings.autoGradeMode ?? 0]}`)
                             }}</span>

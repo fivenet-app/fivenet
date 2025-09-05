@@ -61,10 +61,6 @@ async function listDocuments(search: string): Promise<DocumentShort[]> {
                             "
                             @update:model-value="attachments[idx] = { data: { oneofKind: 'document', document: $event } }"
                         >
-                            <template #item-label="{ item }">
-                                {{ `DOC-${item.id}: ${item.title}` }}
-                            </template>
-
                             <template #item="{ item }">
                                 {{ `DOC-${item.id}: ${item.title}` }}
                             </template>

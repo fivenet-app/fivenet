@@ -206,14 +206,12 @@ const formRef = useTemplateRef('formRef');
                             :filter-fields="['name']"
                             :placeholder="$t('common.calendar')"
                         >
-                            <template #item-label>
-                                <template v-if="state.calendar">
-                                    <span
-                                        class="size-2 rounded-full"
-                                        :class="`bg-${state.calendar?.color ?? 'primary'}-500 dark:bg-${state.calendar?.color ?? 'primary'}-400`"
-                                    />
-                                    <span class="truncate">{{ state.calendar?.name }}</span>
-                                </template>
+                            <template v-if="state.calendar" #default>
+                                <span
+                                    class="size-2 rounded-full"
+                                    :class="`bg-${state.calendar?.color ?? 'primary'}-500 dark:bg-${state.calendar?.color ?? 'primary'}-400`"
+                                />
+                                <span class="truncate">{{ state.calendar?.name }}</span>
                             </template>
 
                             <template #item="{ item }">
@@ -274,7 +272,7 @@ const formRef = useTemplateRef('formRef');
                             :placeholder="$t('common.citizen', 2)"
                             trailing
                         >
-                            <template #item-label>
+                            <template #default>
                                 {{ $t('common.selected', state.users.length) }}
                             </template>
 
@@ -288,7 +286,7 @@ const formRef = useTemplateRef('formRef');
                 </template>
             </UForm>
 
-            <div v-if="state.users.length > 0" class="dark:bg-base-900 mt-2 overflow-hidden rounded-md bg-neutral-100">
+            <div v-if="state.users.length > 0" class="mt-2 overflow-hidden rounded-md bg-neutral-100 dark:bg-neutral-900">
                 <ul class="grid grid-cols-2 text-sm font-medium text-gray-100 lg:grid-cols-3" role="list">
                     <li
                         v-for="user in state.users"

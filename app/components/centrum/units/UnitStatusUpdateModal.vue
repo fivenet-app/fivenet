@@ -97,7 +97,7 @@ const formRef = useTemplateRef('formRef');
                                         class="group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:bg-primary-100/10 hover:transition-all"
                                         :class="[
                                             state.status == item.status
-                                                ? 'bg-base-500 hover:bg-base-400'
+                                                ? 'bg-neutral-500 hover:bg-neutral-400'
                                                 : item.status
                                                   ? unitStatusToBGColor(item.status)
                                                   : '',

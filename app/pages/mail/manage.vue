@@ -161,7 +161,7 @@ const confirmModal = overlay.create(ConfirmModal);
         </div>
     </UDashboardPanel>
 
-    <UDashboardPanel id="maileremailsview" v-model="isMailerPanelOpen" side="right">
+    <UDashboardPanel id="maileremailsview" v-model="isMailerPanelOpen">
         <template #header>
             <UDashboardNavbar :title="$t('pages.mailer.manage.title')">
                 <template #right>

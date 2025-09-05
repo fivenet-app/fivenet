@@ -443,26 +443,24 @@ const isOpen = ref(props.defaultOpen ?? false);
                                         :placeholder="$t('common.rank')"
                                         value-key="grade"
                                     >
-                                        <template #item-label>
-                                            <template
-                                                v-if="
-                                                    job.grades &&
-                                                    attrValues.validValues.jobGradeList.jobs[job.name] !== undefined
-                                                "
+                                        <template
+                                            v-if="
+                                                job.grades && attrValues.validValues.jobGradeList.jobs[job.name] !== undefined
+                                            "
+                                            #default
+                                        >
+                                            <span class="truncate text-highlighted"
+                                                >{{
+                                                    job.grades.find(
+                                                        (g) =>
+                                                            attrValues.validValues.oneofKind === 'jobGradeList' &&
+                                                            g.grade ===
+                                                                (attrValues.validValues.jobGradeList.jobs[job.name] ??
+                                                                    game.startJobGrade),
+                                                    )?.label ?? $t('common.na')
+                                                }}
+                                                ({{ attrValues.validValues.jobGradeList.jobs[job.name] }})</span
                                             >
-                                                <span class="truncate text-highlighted"
-                                                    >{{
-                                                        job.grades.find(
-                                                            (g) =>
-                                                                attrValues.validValues.oneofKind === 'jobGradeList' &&
-                                                                g.grade ===
-                                                                    (attrValues.validValues.jobGradeList.jobs[job.name] ??
-                                                                        game.startJobGrade),
-                                                        )?.label ?? $t('common.na')
-                                                    }}
-                                                    ({{ attrValues.validValues.jobGradeList.jobs[job.name] }})</span
-                                                >
-                                            </template>
                                         </template>
 
                                         <template #item="{ item }">
@@ -495,7 +493,7 @@ const isOpen = ref(props.defaultOpen ?? false);
                                         :placeholder="$t('common.rank')"
                                         value-key="grade"
                                     >
-                                        <template #item-label>
+                                        <template #default>
                                             {{
                                                 $t(
                                                     'common.selected',

@@ -71,7 +71,7 @@ ${t('components.jobs.timeclock.Stats.max')}: ${n(d.max, 'decimal')} h`;
             <VisLine :x="x" :y="y" color="var(--ui-primary)" />
             <VisArea :x="x" :y="y" color="var(--ui-primary)" :opacity="0.1" />
 
-            <VisLine :x="x" :y="(d: DataRecord) => d.avg" color="rgb(var(--color-gray-500))" />
+            <VisLine :x="x" :y="(d: DataRecord) => d.avg" color="var(--color-gray-500)" />
             <VisLine :x="x" :y="(d: DataRecord) => d.max" color="orange" />
 
             <VisAxis type="x" :x="x" :tick-format="xTicks" />

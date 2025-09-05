@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { UButton, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import { h } from 'vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -41,23 +42,24 @@ const columns = computed(
                 id: 'actions',
                 cell: ({ row }) =>
                     h('div', [
-                        h('UTooltip', { text: t('common.mark') }, () =>
-                            h('UButton', {
+                        h(UTooltip, { text: t('common.mark') }, () =>
+                            h(UButton, {
                                 variant: 'link',
                                 icon: 'i-mdi-map-marker',
                                 onClick: () => goto({ x: row.original.x, y: row.original.y }),
                             }),
                         ),
-                        h('UTooltip', { text: t('common.delete') }, () =>
+                        h(UTooltip, { text: t('common.delete') }, () =>
                             can('livemap.LivemapService/DeleteMarker').value
-                                ? h('UButton', {
+                                ? h(UButton, {
                                       variant: 'link',
                                       icon: 'i-mdi-delete',
                                       color: 'error',
-                                      onClick: () =>
+                                      onClick: () => {
                                           confirmModal.open({
                                               confirm: async () => deleteMarker(row.original.id),
-                                          }),
+                                          });
+                                      },
                                   })
                                 : null,
                         ),

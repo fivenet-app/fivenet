@@ -163,10 +163,8 @@ const confirmModal = overlay.create(ConfirmModal);
                                     :search-input="{ placeholder: $t('common.search_field') }"
                                     :disabled="availableJobGrades.length === 0"
                                 >
-                                    <template #item-label>
-                                        <span v-if="state.jobGrade" class="truncate"
-                                            >{{ state.jobGrade?.label }} ({{ state.jobGrade?.grade }})</span
-                                        >
+                                    <template v-if="state.jobGrade" #default>
+                                        <span class="truncate">{{ state.jobGrade?.label }} ({{ state.jobGrade?.grade }})</span>
                                     </template>
 
                                     <template #item="{ item }">

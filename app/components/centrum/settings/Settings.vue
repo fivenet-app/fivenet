@@ -271,7 +271,7 @@ const formRef = useTemplateRef('formRef');
             <UForm
                 v-else
                 ref="formRef"
-                class="flex min-h-dvh w-full max-w-full flex-1 flex-col overflow-y-auto"
+                class="flex w-full max-w-full flex-1 flex-col overflow-y-auto"
                 :schema="schema"
                 :state="state"
                 @submit="onSubmitThrottle"
@@ -281,7 +281,7 @@ const formRef = useTemplateRef('formRef');
                     class="flex flex-1 flex-col"
                     :items="items"
                     variant="link"
-                    :ui="{ content: 'p-4' }"
+                    :ui="{ content: 'flex flex-col p-4 gap-4 sm:gap-4' }"
                     :unmount-on-hide="false"
                 >
                     <template #settings>
@@ -327,7 +327,7 @@ const formRef = useTemplateRef('formRef');
                                         :search-input="{ placeholder: $t('common.search_field') }"
                                         :disabled="!canSubmit"
                                     >
-                                        <template #item-label>
+                                        <template #default>
                                             <span class="truncate">{{
                                                 $t(`enums.centrum.CentrumMode.${CentrumMode[state.mode ?? 0]}`)
                                             }}</span>
@@ -356,7 +356,7 @@ const formRef = useTemplateRef('formRef');
                                         :search-input="{ placeholder: $t('common.search_field') }"
                                         :disabled="!canSubmit"
                                     >
-                                        <template #item-label>
+                                        <template #default>
                                             <span class="truncate">{{
                                                 $t(`enums.centrum.CentrumMode.${CentrumMode[state.fallbackMode ?? 0]}`)
                                             }}</span>
@@ -371,8 +371,6 @@ const formRef = useTemplateRef('formRef');
                                 </ClientOnly>
                             </UFormField>
                         </UPageCard>
-
-                        <USeparator class="mb-4" />
 
                         <UPageCard
                             :title="$t('components.centrum.settings.deduplication.title')"
@@ -593,12 +591,13 @@ const formRef = useTemplateRef('formRef');
                                     :disabled="!attr('centrum.CentrumService/UpdateSettings', 'Access', 'Shared').value"
                                 />
                             </UFormField>
+                        </UPageCard>
 
-                            <UFormField
-                                name="offeredAccess"
-                                :label="$t('components.centrum.settings.offered_access.title')"
-                                :description="$t('components.centrum.settings.offered_access.description')"
-                            >
+                        <UPageCard
+                            :title="$t('components.centrum.settings.offered_access.title')"
+                            :description="$t('components.centrum.settings.offered_access.description')"
+                        >
+                            <UFormField name="offeredAccess" :label="$t('common.access')">
                                 <UPageGrid class="mt-2">
                                     <UCard v-for="(ja, idx) in state.offeredAccess.jobs" :key="ja.id">
                                         <div class="flex items-center gap-2">

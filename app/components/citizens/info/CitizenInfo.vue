@@ -11,45 +11,35 @@ const isOpen = ref(false);
 </script>
 
 <template>
-    <UDashboardPanel v-if="user" v-model:open="isOpen" class="max-w-72 flex-1" side="right">
+    <UDashboardPanel v-model:open="isOpen" class="max-w-90 flex-1" resizeable :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #body>
-            <div class="flex flex-1 flex-col">
-                <template v-if="user">
-                    <UPageCard
-                        :ui="{
-                            wrapper: 'divide-y divide-transparent! space-y-0 *:pt-2 first:*:pt-2 first:*:pt-0 mb-6',
-                        }"
-                        :title="$t('common.action', 2)"
-                    >
-                        <!-- Register kbds for the citizens actions here as it will always be available not like the profile tab content -->
-                        <CitizenActions
-                            :user="user"
-                            register-kbds
-                            @update:wanted-status="user.props!.wanted = $event"
-                            @update:job="
-                                user.job = $event.job.name;
-                                user.jobLabel = $event.job.label;
-                                user.jobGrade = $event.grade.grade;
-                                user.jobGradeLabel = $event.grade.label;
-                            "
-                            @update:traffic-infraction-points="user.props!.trafficInfractionPoints = $event"
-                            @update:mug-shot="user.props!.mugshot = $event"
-                        />
-                    </UPageCard>
-
-                    <UPageCard
-                        v-if="
-                            can('citizens.CitizensService/GetUser').value &&
-                            attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.Labels').value
+            <div class="flex flex-1 flex-col gap-4">
+                <UPageCard :title="$t('common.action', 2)">
+                    <!-- Register kbds for the citizens actions here as it will always be available not like the profile tab content -->
+                    <CitizenActions
+                        :user="user"
+                        register-kbds
+                        @update:wanted-status="user.props!.wanted = $event"
+                        @update:job="
+                            user.job = $event.job.name;
+                            user.jobLabel = $event.job.label;
+                            user.jobGrade = $event.grade.grade;
+                            user.jobGradeLabel = $event.grade.label;
                         "
-                        :ui="{
-                            wrapper: 'divide-y divide-transparent! space-y-0 *:pt-2 first:*:pt-2 first:*:pt-0 mb-6',
-                        }"
-                        :title="$t('common.label', 2)"
-                    >
-                        <SetLabels v-model="user.props!.labels" :user-id="user.userId" />
-                    </UPageCard>
-                </template>
+                        @update:traffic-infraction-points="user.props!.trafficInfractionPoints = $event"
+                        @update:mug-shot="user.props!.mugshot = $event"
+                    />
+                </UPageCard>
+
+                <UPageCard
+                    v-if="
+                        can('citizens.CitizensService/GetUser').value &&
+                        attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.Labels').value
+                    "
+                    :title="$t('common.label', 2)"
+                >
+                    <SetLabels v-model="user.props!.labels" :user-id="user.userId" />
+                </UPageCard>
             </div>
         </template>
     </UDashboardPanel>

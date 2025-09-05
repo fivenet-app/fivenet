@@ -3,15 +3,6 @@ import type { WebSocketStatus } from '@vueuse/core';
 import { v4 as uuidv4 } from 'uuid';
 import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
 
-withDefaults(
-    defineProps<{
-        hideOverlay?: boolean;
-    }>(),
-    {
-        hideOverlay: false,
-    },
-);
-
 const { t } = useI18n();
 
 const { timeouts } = useAppConfig();
@@ -23,8 +14,6 @@ const toast = useToast();
 const status = useDebounce(webSocket.status, 150);
 
 const notificationId = ref<string | undefined>();
-
-const overlayRef = useTemplateRef('overlayRef');
 
 async function checkWebSocketStatus(previousStatus: WebSocketStatus, status: WebSocketStatus): Promise<void> {
     if (notificationId.value !== undefined && status === 'OPEN') {
@@ -39,8 +28,6 @@ async function checkWebSocketStatus(previousStatus: WebSocketStatus, status: Web
             description: t('notifications.grpc_errors.available.content'),
             duration: timeouts.notification,
         });
-
-        overlayRef.value?.blur();
     } else if (previousStatus === 'CONNECTING' && status === 'CLOSED') {
         if (notificationId.value !== undefined) {
             return;
@@ -70,8 +57,6 @@ async function checkWebSocketStatus(previousStatus: WebSocketStatus, status: Web
                 },
             ],
         });
-
-        overlayRef.value?.focus();
     }
 }
 
@@ -95,18 +80,5 @@ useTimeoutFn(() => {
 </script>
 
 <template>
-    <div
-        v-if="notificationId && !hideOverlay"
-        ref="overlayRef"
-        class="relative z-999999"
-        :class="hideOverlay && 'pointer-events-none'"
-    >
-        <div class="fixed inset-0 bg-neutral-200/75 transition-opacity dark:bg-neutral-800/75" />
-
-        <div class="fixed inset-0 overflow-y-auto">
-            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                <UIcon class="size-32 animate-spin" name="i-mdi-loading" />
-            </div>
-        </div>
-    </div>
+    <div></div>
 </template>

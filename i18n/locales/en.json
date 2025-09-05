@@ -683,7 +683,8 @@
         "dispatch_center_settings": "Dispatch Center Settings",
         "accepted_at": "Accepted At",
         "choose_color": "Choose Color",
-        "pick_date": "Pick a date"
+        "pick_date": "Pick a date",
+        "open_command": "Open Command"
     },
     "components": {
         "partials": {
@@ -1335,6 +1336,7 @@
         },
         "mailer": {
             "mark_unread": "Mark as unread",
+            "mark_read": "Mark as read",
             "mark_important": "Mark as important",
             "star_thread": "Star thread",
             "mute_thread": "Mute thread",

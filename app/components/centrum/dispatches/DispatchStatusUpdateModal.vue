@@ -103,7 +103,7 @@ const formRef = useTemplateRef('formRef');
                                         :class="[
                                             idx >= dispatchStatuses.length - 1 ? 'col-span-2' : '',
                                             state.status == item.status
-                                                ? 'bg-base-500 hover:bg-base-400'
+                                                ? 'bg-neutral-500 hover:bg-neutral-400'
                                                 : item.status
                                                   ? dispatchStatusToBGColor(item.status)
                                                   : '',

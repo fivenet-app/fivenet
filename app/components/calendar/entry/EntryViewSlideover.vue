@@ -185,7 +185,9 @@ const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
                         <USeparator />
                     </template>
 
-                    <div class="dark:bg-base-900 mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 break-words">
+                    <div
+                        class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 break-words dark:bg-neutral-900"
+                    >
                         <HTMLContent v-if="entry.content?.content" class="px-4 py-2" :value="entry.content.content" />
                     </div>
                 </template>

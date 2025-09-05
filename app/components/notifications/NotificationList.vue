@@ -124,10 +124,8 @@ const canSubmit = ref(true);
                                 value-key="mode"
                                 :search-input="{ placeholder: $t('common.search_field') }"
                             >
-                                <template #item-label>
-                                    <template v-if="query.categories">
-                                        <span class="truncate">{{ notificationCategoriesToLabel(query.categories) }}</span>
-                                    </template>
+                                <template v-if="query.categories" #default>
+                                    <span class="truncate">{{ notificationCategoriesToLabel(query.categories) }}</span>
                                 </template>
 
                                 <template #item="{ item }">

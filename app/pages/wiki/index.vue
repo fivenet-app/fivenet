@@ -74,7 +74,7 @@ const wikiService = await useWikiWiki();
                     <UDashboardSidebarCollapse />
                 </template>
 
-                <template #center>
+                <template #default>
                     <PageSearch />
                 </template>
 

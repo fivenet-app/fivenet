@@ -371,23 +371,13 @@ defineShortcuts({
                                         clear-search-on-close
                                         value-key="id"
                                     >
-                                        <template #item-label="{ item }">
+                                        <template #item="{ item }">
                                             <UBadge
                                                 class="truncate"
                                                 :class="isColorBright(item.color) ? 'text-black!' : 'text-white!'"
                                                 :style="{ backgroundColor: item.color }"
                                                 :label="item.name"
                                             />
-                                        </template>
-
-                                        <template #item="{ item }">
-                                            <UBadge
-                                                class="truncate"
-                                                :class="isColorBright(item.color) ? 'text-black!' : 'text-white!'"
-                                                :style="{ backgroundColor: item.color }"
-                                            >
-                                                {{ item.name }}
-                                            </UBadge>
                                         </template>
 
                                         <template #empty>

@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import type { ButtonProps } from '@nuxt/ui';
 import { isFuture, isPast, isSameDay, isToday } from 'date-fns';
-import { Calendar } from 'reka-ui/namespaced';
 import type { DateRangeSource } from 'v-calendar/dist/types/src/utils/date/range.js';
 import CalendarCreateOrUpdateModal from '~/components/calendar/CalendarCreateOrUpdateModal.vue';
 import CalendarViewSlideover from '~/components/calendar/CalendarViewSlideover.vue';
 import FindCalendarModal from '~/components/calendar/FindCalendarModal.vue';
 import EntryCreateOrUpdateModal from '~/components/calendar/entry/EntryCreateOrUpdateModal.vue';
 import EntryViewSlideover from '~/components/calendar/entry/EntryViewSlideover.vue';
+import MonthCalendarClient from '~/components/partials/MonthCalendar.client.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCalendarStore } from '~/stores/calendar';
@@ -31,6 +31,8 @@ const overlay = useOverlay();
 
 const calendarStore = useCalendarStore();
 const { activeCalendarIds, currentDate, view, calendars, entries, hasEditAccessToCalendar } = storeToRefs(calendarStore);
+
+const calRef = useTemplateRef('calRef');
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
@@ -372,30 +374,6 @@ const isOpen = ref(false);
             <DataErrorBlock v-if="error" :error="error" :retry="refresh" />
 
             <div v-else class="relative flex flex-1 overflow-x-auto">
-                <Calendar.Root v-if="view !== 'summary'" v-slot="{ weekDays, grid }">
-                    <div>
-                        <Calendar.Grid v-for="month in grid" :key="month.value.toString()">
-                            <Calendar.GridHead>
-                                <Calendar.GridRow>
-                                    <Calendar.HeadCell v-for="day in weekDays" :key="day">
-                                        {{ day }}
-                                    </Calendar.HeadCell>
-                                </Calendar.GridRow>
-                            </Calendar.GridHead>
-                            <Calendar.GridBody>
-                                <Calendar.GridRow v-for="(weekDates, index) in month.rows" :key="`weekDate-${index}`">
-                                    <Calendar.Cell v-for="weekDate in weekDates" :key="weekDate.toString()" :date="weekDate">
-                                        <Calendar.CellTrigger :day="weekDate" :month="month.value">
-                                            {{ weekDate.day }}
-                                        </Calendar.CellTrigger>
-                                    </Calendar.Cell>
-                                </Calendar.GridRow>
-                            </Calendar.GridBody>
-                        </Calendar.Grid>
-                    </div>
-                </Calendar.Root>
-
-                <!--
                 <MonthCalendarClient
                     v-if="view !== 'summary'"
                     ref="calRef"
@@ -411,7 +389,7 @@ const isOpen = ref(false);
                         currentDate.year = $event[0].year;
                         currentDate.month = $event[0].month;
                     "
-                />-->
+                />
 
                 <UContainer v-else class="flex flex-1 flex-col py-2">
                     <DataErrorBlock
@@ -523,7 +501,7 @@ const isOpen = ref(false);
                 >
                     <ClientOnly>
                         <USelectMenu v-model="view" :items="viewOptions" value-key="value">
-                            <template #item-label>
+                            <template #default>
                                 <UIcon
                                     class="size-5"
                                     :name="viewOptions.find((o) => o.value === view)?.icon ?? 'i-mdi-view-'"
@@ -565,7 +543,7 @@ const isOpen = ref(false);
         </template>
     </UDashboardPanel>
 
-    <UDashboardPanel v-if="isOpen" side="right">
+    <UDashboardPanel v-if="isOpen">
         <template #header>
             <UDashboardNavbar>
                 <template #leading>
@@ -645,7 +623,7 @@ const isOpen = ref(false);
                 <UFormField class="flex flex-row items-center gap-2" :label="$t('common.view')">
                     <ClientOnly>
                         <USelectMenu v-model="view" class="min-w-44" :items="viewOptions" value-key="value">
-                            <template #item-label>
+                            <template #default>
                                 <UIcon
                                     class="size-5"
                                     :name="viewOptions.find((o) => o.value === view)?.icon ?? 'i-mdi-view-'"

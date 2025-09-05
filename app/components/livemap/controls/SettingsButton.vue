@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import SettingsModal from '~/components/livemap/controls/SettingsModal.vue';
+import SettingsDrawer from '~/components/livemap/controls/SettingsDrawer.vue';
 
 const overlay = useOverlay();
-const settingsModal = overlay.create(SettingsModal);
+const settingsModal = overlay.create(SettingsDrawer);
 </script>
 
 <template>

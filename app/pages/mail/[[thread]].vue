@@ -103,7 +103,12 @@ watch(threads, () => {
     }
 });
 
-const selectedThreadId = useRouteQuery('thread', '', { transform: Number });
+const routeParams = useRouteParams('thread');
+
+const selectedThreadId = computed(() =>
+    routeParams.value && typeof routeParams.value === 'string' ? parseInt(routeParams.value) : 0,
+);
+
 watch(selectedThreadId, async () => {
     if (selectedThreadId.value <= 0) {
         return;
@@ -117,17 +122,6 @@ watch(selectedThreadId, async () => {
 watch(selectedTab, async () => await refresh());
 
 const threadState = computed(() => selectedThread.value?.state);
-
-const isMailerPanelOpen = computed({
-    get() {
-        return !!selectedThread.value;
-    },
-    set(value: boolean) {
-        if (!value) {
-            selectedThread.value = undefined;
-        }
-    },
-});
 
 // Set thread as query param for persistence between reloads
 function updateQuery(): void {
@@ -181,102 +175,116 @@ onBeforeMount(async () => {
 
 <!-- eslint-disable vue/no-multiple-template-root -->
 <template>
-    <UDashboardPanel id="mailerthreadlist" resizable :width="30" :min-size="20" :max-size="60">
-        <UDashboardNavbar :title="$t('common.mail')" :badge="threads?.pagination?.totalCount ?? 0">
-            <template #leading>
-                <UDashboardSidebarCollapse />
-            </template>
+    <UDashboardPanel
+        id="mailerthreadlist"
+        resizable
+        :width="30"
+        :min-size="20"
+        :max-size="60"
+        :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }"
+    >
+        <template #header>
+            <UDashboardNavbar :title="$t('common.mail')" :badge="threads?.pagination?.totalCount ?? 0">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
 
-            <template #center>
-                <MessageSearch />
-            </template>
+                <template #default>
+                    <MessageSearch />
+                </template>
 
-            <template #right>
-                <UTooltip
-                    v-if="
-                        selectedEmail &&
-                        !selectedEmail.deactivated &&
-                        canAccess(selectedEmail.access, selectedEmail.userId, AccessLevel.WRITE)
-                    "
-                    :text="$t('components.mailer.create_thread')"
-                >
-                    <UButton
-                        color="neutral"
-                        trailing-icon="i-mdi-plus"
-                        :label="$t('components.mailer.create_thread')"
-                        @click="threadCreateOrUpdateModal.open({})"
-                    />
-                </UTooltip>
-            </template>
-        </UDashboardNavbar>
+                <template #right>
+                    <UTooltip
+                        v-if="
+                            selectedEmail &&
+                            !selectedEmail.deactivated &&
+                            canAccess(selectedEmail.access, selectedEmail.userId, AccessLevel.WRITE)
+                        "
+                        :text="$t('components.mailer.create_thread')"
+                    >
+                        <UButton
+                            color="neutral"
+                            trailing-icon="i-mdi-plus"
+                            :label="$t('components.mailer.create_thread')"
+                            @click="threadCreateOrUpdateModal.open({})"
+                        />
+                    </UTooltip>
+                </template>
+            </UDashboardNavbar>
 
-        <UDashboardToolbar v-if="selectedEmail">
-            <UInput
-                v-if="emails.length === 1"
-                class="w-full pt-1"
-                type="text"
-                disabled
-                :model-value="
-                    (selectedEmail?.label && selectedEmail?.label !== ''
-                        ? selectedEmail?.label + ' (' + selectedEmail.email + ')'
-                        : undefined) ??
-                    selectedEmail?.email ??
-                    $t('common.none')
-                "
-            />
-            <ClientOnly v-else>
-                <USelectMenu
-                    v-model="selectedEmail"
+            <UDashboardToolbar v-if="selectedEmail">
+                <UInput
+                    v-if="emails.length === 1"
                     class="w-full pt-1"
-                    :items="emails"
-                    :placeholder="$t('common.mail')"
-                    :search-input="{ placeholder: $t('common.search_field') }"
-                    :filter-fields="['label', 'email']"
-                >
-                    <template #default>
-                        <span class="truncate">
-                            {{
-                                (selectedEmail?.label && selectedEmail?.label !== ''
-                                    ? selectedEmail?.label + ' (' + selectedEmail.email + ')'
-                                    : undefined) ??
-                                selectedEmail?.email ??
-                                $t('common.none')
-                            }}
+                    type="text"
+                    disabled
+                    :model-value="
+                        (selectedEmail?.label && selectedEmail?.label !== ''
+                            ? selectedEmail?.label + ' (' + selectedEmail.email + ')'
+                            : undefined) ??
+                        selectedEmail?.email ??
+                        $t('common.none')
+                    "
+                />
+                <ClientOnly v-else>
+                    <USelectMenu
+                        v-model="selectedEmail"
+                        class="w-full pt-1"
+                        :items="emails"
+                        :placeholder="$t('common.mail')"
+                        :search-input="{ placeholder: $t('common.search_field') }"
+                        :filter-fields="['label', 'email']"
+                    >
+                        <template #default>
+                            <span class="truncate">
+                                {{
+                                    (selectedEmail?.label && selectedEmail?.label !== ''
+                                        ? selectedEmail?.label + ' (' + selectedEmail.email + ')'
+                                        : undefined) ??
+                                    selectedEmail?.email ??
+                                    $t('common.none')
+                                }}
 
-                            <UBadge v-if="selectedEmail?.deactivated" color="error" size="xs" :label="$t('common.disabled')" />
-                        </span>
-                    </template>
+                                <UBadge
+                                    v-if="selectedEmail?.deactivated"
+                                    color="error"
+                                    size="xs"
+                                    :label="$t('common.disabled')"
+                                />
+                            </span>
+                        </template>
 
-                    <template #item="{ item }">
-                        <span class="truncate">
-                            {{
-                                (item?.label && item?.label !== '' ? item?.label + ' (' + item.email + ')' : undefined) ??
-                                (item?.userId === activeChar?.userId
-                                    ? $t('common.personal_email') + (isSuperuser ? ' (' + item.email + ')' : '')
-                                    : undefined) ??
-                                item?.email ??
-                                $t('common.none')
-                            }}
-                        </span>
+                        <template #item="{ item }">
+                            <span class="truncate">
+                                {{
+                                    (item?.label && item?.label !== '' ? item?.label + ' (' + item.email + ')' : undefined) ??
+                                    (item?.userId === activeChar?.userId
+                                        ? $t('common.personal_email') + (isSuperuser ? ' (' + item.email + ')' : '')
+                                        : undefined) ??
+                                    item?.email ??
+                                    $t('common.none')
+                                }}
+                            </span>
 
-                        <UBadge v-if="item?.deactivated" color="error" size="xs" :label="$t('common.disabled')" />
-                    </template>
+                            <UBadge v-if="item?.deactivated" color="error" size="xs" :label="$t('common.disabled')" />
+                        </template>
 
-                    <template #empty> {{ $t('common.not_found', [$t('common.mail', 2)]) }} </template>
-                </USelectMenu>
-            </ClientOnly>
-        </UDashboardToolbar>
+                        <template #empty> {{ $t('common.not_found', [$t('common.mail', 2)]) }} </template>
+                    </USelectMenu>
+                </ClientOnly>
+            </UDashboardToolbar>
 
-        <UDashboardToolbar v-if="selectedEmail">
-            <UTabs
-                v-if="!selectedEmail?.deactivated"
-                v-model="selectedTab"
-                :items="items"
-                variant="link"
-                class="w-full flex-1"
-                :ui="{ trigger: ['w-full'] }"
-            />
-        </UDashboardToolbar>
+            <UDashboardToolbar v-if="selectedEmail" :ui="{ root: 'px-2 sm:px-2' }">
+                <UTabs
+                    v-if="!selectedEmail?.deactivated"
+                    v-model="selectedTab"
+                    :items="items"
+                    variant="link"
+                    class="w-full flex-1"
+                    :ui="{ trigger: ['w-full'] }"
+                />
+            </UDashboardToolbar>
+        </template>
 
         <template v-if="selectedEmail" #body>
             <DataErrorBlock
@@ -285,17 +293,11 @@ onBeforeMount(async () => {
                 :message="$t('errors.MailerService.ErrEmailDisabled.content')"
             />
 
-            <ThreadList v-else v-model="selectedThread" :threads="threads?.threads ?? []" :loaded="true">
-                <template #after>
-                    <Pagination
-                        v-model="page"
-                        :pagination="threads?.pagination"
-                        :status="status"
-                        :refresh="refresh"
-                        hide-text
-                    />
-                </template>
-            </ThreadList>
+            <template v-else>
+                <ThreadList v-model="selectedThread" :threads="threads?.threads ?? []" :loaded="true" />
+
+                <Pagination v-model="page" :pagination="threads?.pagination" :status="status" :refresh="refresh" hide-text />
+            </template>
         </template>
 
         <template #footer>
@@ -339,8 +341,8 @@ onBeforeMount(async () => {
         </template>
     </UDashboardPanel>
 
-    <UDashboardPanel v-if="selectedEmail" id="mailerthreadview" v-model="isMailerPanelOpen">
-        <template v-if="selectedThread">
+    <UDashboardPanel id="mailerthreadview" :ui="{ root: 'min-h-full', body: 'p-0 sm:p-0 gap-0 sm:gap-0 overflow-y-hidden' }">
+        <template v-if="selectedThread && selectedEmail" #header>
             <UDashboardNavbar>
                 <template #toggle>
                     <UDashboardSidebarToggle icon="i-mdi-close" />
@@ -349,10 +351,12 @@ onBeforeMount(async () => {
                 </template>
 
                 <template #left>
-                    <UTooltip :text="$t('components.mailer.mark_unread')">
+                    <UTooltip
+                        :text="!threadState?.unread ? $t('components.mailer.mark_unread') : $t('components.mailer.mark_read')"
+                    >
                         <UButton
                             :icon="!threadState?.unread ? 'i-mdi-check-circle-outline' : 'i-mdi-check-circle'"
-                            color="neutral"
+                            :color="!threadState?.unread ? 'neutral' : 'green'"
                             variant="ghost"
                             @click="
                                 async () => {
@@ -371,7 +375,7 @@ onBeforeMount(async () => {
                     <UTooltip :text="$t('components.mailer.mark_important')">
                         <UButton
                             :icon="!threadState?.important ? 'i-mdi-alert-circle-outline' : 'i-mdi-alert-circle'"
-                            color="neutral"
+                            :color="!threadState?.important ? 'neutral' : 'red'"
                             variant="ghost"
                             @click="
                                 async () => {
@@ -392,7 +396,7 @@ onBeforeMount(async () => {
                     <UTooltip :text="$t('components.mailer.star_thread')">
                         <UButton
                             :icon="!threadState?.favorite ? 'i-mdi-star-circle-outline' : 'i-mdi-star-circle'"
-                            color="neutral"
+                            :color="!threadState?.favorite ? 'neutral' : 'amber'"
                             variant="ghost"
                             @click="
                                 async () => {
@@ -411,7 +415,7 @@ onBeforeMount(async () => {
                     <UTooltip :text="$t('components.mailer.mute_thread')">
                         <UButton
                             :icon="!threadState?.muted ? 'i-mdi-pause-circle-outline' : 'i-mdi-pause-circle'"
-                            color="neutral"
+                            :color="!threadState?.muted ? 'neutral' : 'orange'"
                             variant="ghost"
                             @click="
                                 async () => {
@@ -430,7 +434,7 @@ onBeforeMount(async () => {
                     <UTooltip :text="threadState?.archived ? $t('common.unarchive') : $t('common.archive')">
                         <UButton
                             :icon="threadState?.archived ? 'i-mdi-archive' : 'i-mdi-archive-outline'"
-                            color="neutral"
+                            :color="threadState?.archived ? 'neutral' : 'gray'"
                             variant="ghost"
                             @click="
                                 confirmModal.open({
@@ -469,13 +473,17 @@ onBeforeMount(async () => {
                     </UTooltip>
                 </template>
             </UDashboardNavbar>
-
-            <MailerThread :thread-id="selectedThread.id" />
         </template>
 
-        <div v-else class="hidden flex-1 flex-col items-center justify-center gap-2 text-gray-400 lg:flex dark:text-gray-500">
-            <UIcon class="h-32 w-32" name="i-mdi-email-multiple" />
-            <p>{{ $t('common.none_selected', [$t('common.mail')]) }}</p>
-        </div>
+        <template #body>
+            <div
+                v-if="!selectedThread"
+                class="hidden flex-1 flex-col items-center justify-center gap-2 text-gray-400 lg:flex dark:text-gray-500"
+            >
+                <UIcon class="h-32 w-32" name="i-mdi-email-multiple" />
+                <p>{{ $t('common.none_selected', [$t('common.mail')]) }}</p>
+            </div>
+            <MailerThread v-else :thread-id="selectedThread.id" />
+        </template>
     </UDashboardPanel>
 </template>

@@ -110,10 +110,8 @@ onBeforeMount(async () => listJobs());
                             :search-input="{ placeholder: $t('common.search_field') }"
                             :filter-fields="['label', 'name']"
                         >
-                            <template #item-label>
-                                <template v-if="state.job">
-                                    <span class="truncate">{{ state.job?.label }}</span>
-                                </template>
+                            <template v-if="state.job" #default>
+                                <span class="truncate">{{ state.job?.label }}</span>
                             </template>
 
                             <template #item="{ item }">
@@ -134,10 +132,8 @@ onBeforeMount(async () => listJobs());
                             :items="state.job?.grades"
                             :search-input="{ placeholder: $t('common.search_field') }"
                         >
-                            <template #item-label>
-                                <span v-if="state.grade" class="truncate"
-                                    >{{ state.grade?.label }} ({{ state.grade?.grade }})</span
-                                >
+                            <template v-if="state.grade" #default>
+                                <span class="truncate">{{ state.grade?.label }} ({{ state.grade?.grade }})</span>
                             </template>
 
                             <template #item="{ item }">

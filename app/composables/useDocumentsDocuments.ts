@@ -4,8 +4,10 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import type {
     CreateDocumentResponse,
     GetDocumentResponse,
+    ListDocumentPinsResponse,
     ListDocumentsRequest,
     ListDocumentsResponse,
+    ToggleDocumentPinResponse,
 } from '~~/gen/ts/services/documents/documents';
 
 export async function useDocumentsDocuments() {
@@ -17,6 +19,7 @@ export async function useDocumentsDocuments() {
     const { getTemplateData } = clipboardStore;
 
     const documents = ref<ListDocumentsResponse | undefined>();
+    const pinnedDocuments = ref<ListDocumentPinsResponse | undefined>();
 
     const listDocuments = async (req: ListDocumentsRequest): Promise<ListDocumentsResponse> => {
         try {
@@ -150,9 +153,39 @@ export async function useDocumentsDocuments() {
         }
     };
 
+    const listDocumentPins = async (page: number): Promise<ListDocumentPinsResponse> => {
+        const call = documentsDocumentsClient.listDocumentPins({
+            pagination: {
+                offset: calculateOffset(page, pinnedDocuments.value?.pagination),
+            },
+        });
+        const { response } = await call;
+
+        pinnedDocuments.value = response;
+
+        return response;
+    };
+
+    const togglePin = async (documentId: number, state: boolean, personal: boolean): Promise<ToggleDocumentPinResponse> => {
+        try {
+            const call = documentsDocumentsClient.toggleDocumentPin({
+                documentId: documentId,
+                state: state,
+                personal: personal,
+            });
+            const { response } = await call;
+
+            return response;
+        } catch (e) {
+            handleGRPCError(e as RpcError);
+            throw e;
+        }
+    };
+
     return {
         // State
         documents,
+        pinnedDocuments,
 
         // Actions
         listDocuments,
@@ -161,5 +194,7 @@ export async function useDocumentsDocuments() {
         deleteDocument,
         toggleDocument,
         changeDocumentOwner,
+        listDocumentPins,
+        togglePin,
     };
 }

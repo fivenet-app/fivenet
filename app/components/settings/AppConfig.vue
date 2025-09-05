@@ -494,7 +494,7 @@ const formRef = useTemplateRef('formRef');
                                     :items="locales"
                                     class="w-full"
                                 >
-                                    <template #item-label>
+                                    <template v-if="state.defaultLocale" #default>
                                         <template v-if="state.defaultLocale">
                                             <UIcon
                                                 class="size-4"
@@ -507,11 +507,9 @@ const formRef = useTemplateRef('formRef');
                                                 state.defaultLocale.name ?? state.defaultLocale.code
                                             }}</span>
                                         </template>
-                                        <template v-else>
-                                            <span class="truncate">{{
-                                                $t('common.none_selected', [$t('common.language')])
-                                            }}</span>
-                                        </template>
+                                        <span v-else class="truncate">{{
+                                            $t('common.none_selected', [$t('common.language')])
+                                        }}</span>
                                     </template>
 
                                     <template #item="{ item }">
@@ -617,15 +615,13 @@ const formRef = useTemplateRef('formRef');
                                         :filter-fields="['label', 'name']"
                                         class="w-full"
                                     >
-                                        <template #item-label>
-                                            <template v-if="state.jobInfo.publicJobs.length">
-                                                <span class="truncate">{{ state.jobInfo.publicJobs.join(', ') }}</span>
-                                            </template>
-                                            <template v-else>
-                                                <span class="truncate">{{
-                                                    $t('common.none_selected', [$t('common.job')])
-                                                }}</span>
-                                            </template>
+                                        <template #default>
+                                            <span v-if="state.jobInfo.publicJobs.length" class="truncate">{{
+                                                state.jobInfo.publicJobs.join(', ')
+                                            }}</span>
+                                            <span v-else class="truncate">{{
+                                                $t('common.none_selected', [$t('common.job')])
+                                            }}</span>
                                         </template>
 
                                         <template #item="{ item }">
@@ -651,15 +647,13 @@ const formRef = useTemplateRef('formRef');
                                         :filter-fields="['label', 'name']"
                                         class="w-full"
                                     >
-                                        <template #item-label>
-                                            <template v-if="state.jobInfo.hiddenJobs.length">
-                                                <span class="truncate">{{ state.jobInfo.hiddenJobs.join(', ') }}</span>
-                                            </template>
-                                            <template v-else>
-                                                <span class="truncate">{{
-                                                    $t('common.none_selected', [$t('common.job')])
-                                                }}</span>
-                                            </template>
+                                        <template #default>
+                                            <span v-if="state.jobInfo.hiddenJobs.length" class="truncate">{{
+                                                state.jobInfo.hiddenJobs.join(', ')
+                                            }}</span>
+                                            <span v-else class="truncate">{{
+                                                $t('common.none_selected', [$t('common.job')])
+                                            }}</span>
                                         </template>
 
                                         <template #item="{ item }">
@@ -796,15 +790,13 @@ const formRef = useTemplateRef('formRef');
                                         :filter-fields="['label', 'name']"
                                         class="w-full"
                                     >
-                                        <template #item-label>
-                                            <template v-if="state.discord.ignoredJobs.length > 0">
-                                                <span class="truncate">{{ state.discord.ignoredJobs.join(', ') }}</span>
-                                            </template>
-                                            <template v-else>
-                                                <span class="truncate">{{
-                                                    $t('common.none_selected', [$t('common.job')])
-                                                }}</span>
-                                            </template>
+                                        <template #default>
+                                            <span v-if="state.discord.ignoredJobs.length > 0" class="truncate">{{
+                                                state.discord.ignoredJobs.join(', ')
+                                            }}</span>
+                                            <span v-else class="truncate">{{
+                                                $t('common.none_selected', [$t('common.job')])
+                                            }}</span>
                                         </template>
 
                                         <template #item="{ item }">
@@ -833,8 +825,8 @@ const formRef = useTemplateRef('formRef');
                                     :placeholder="$t('components.settings.app_config.discord.bot_presence.type')"
                                     class="w-full"
                                 >
-                                    <template #item-label>
-                                        <span class="truncate text-highlighted">{{
+                                    <template #default>
+                                        <span class="truncate">{{
                                             $t(
                                                 `enums.settings.AppConfig.DiscordBotPresenceType.${DiscordBotPresenceType[state.discord.botPresence.type ?? 0]}`,
                                             )

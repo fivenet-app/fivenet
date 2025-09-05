@@ -366,12 +366,6 @@ const { game } = useAppConfig();
                                         value-key="userId"
                                         class="w-full"
                                     >
-                                        <template #item-label="{ item }">
-                                            <span v-if="item" class="truncate">
-                                                {{ userToLabel(item) }}
-                                            </span>
-                                        </template>
-
                                         <template #item="{ item }">
                                             <ColleagueName class="truncate" :colleague="item" birthday />
                                         </template>

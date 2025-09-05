@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { fromDate, getLocalTimeZone } from '@internationalized/date';
-import type { ContextMenuItem } from '@nuxt/ui';
 import { watchDebounced } from '@vueuse/shared';
 import { addDays } from 'date-fns';
 import { z } from 'zod';
@@ -24,7 +23,7 @@ import TemplateModal from './templates/TemplateModal.vue';
 
 const { t } = useI18n();
 
-const { can, attr, isSuperuser } = useAuth();
+const { can } = useAuth();
 
 const overlay = useOverlay();
 
@@ -119,45 +118,6 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
 }
 
 watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
-
-const links = computed(() =>
-    (
-        [
-            [
-                {
-                    label: t('common.open'),
-                    icon: 'i-mdi-eye',
-                    onSelect: () => navigateTo(`/documents/0`),
-                },
-                isSuperuser.value // && selectedDocument.value?.deletedAt
-                    ? {
-                          label: t('common.restore'),
-                          icon: 'i-mdi-restore',
-                          onSelect: () => navigateTo(`/documents/0`),
-                      }
-                    : undefined,
-            ].filter((l) => l != undefined),
-            [
-                ...(can('documents.DocumentsService/ToggleDocumentPin').value
-                    ? [
-                          {
-                              label: `${t('common.pin')}: ${t('common.personal')}`,
-                              icon: 'i-mdi-playlist-plus',
-                              to: '/components/vertical-navigation',
-                          },
-                          attr('documents.DocumentsService/ToggleDocumentPin', 'Types', 'JobWide').value
-                              ? {
-                                    label: `${t('common.pin')}: ${t('common.job')}`,
-                                    icon: 'i-mdi-pin',
-                                    to: '/components/vertical-navigation',
-                                }
-                              : undefined,
-                      ].filter((l) => l != undefined)
-                    : []),
-            ],
-        ] as ContextMenuItem[][]
-    ).filter((l) => l.length > 0),
-);
 
 const isPinnedDocumentsVisible = ref(false);
 
@@ -313,10 +273,6 @@ defineShortcuts({
                                         :search-input="{ placeholder: $t('common.category', 1) }"
                                         value-key="id"
                                     >
-                                        <template #item-label="{ item }">
-                                            <CategoryBadge :category="item" />
-                                        </template>
-
                                         <template #item="{ item }">
                                             <CategoryBadge :category="item" />
                                         </template>
@@ -347,14 +303,8 @@ defineShortcuts({
                                         trailing
                                         value-key="userId"
                                     >
-                                        <template #item-label="{ item }">
-                                            <template v-if="item">
-                                                {{ userToLabel(item) }}
-                                            </template>
-                                        </template>
-
                                         <template #item="{ item }">
-                                            {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
+                                            {{ userToLabel(item) }}
                                         </template>
 
                                         <template #empty>
@@ -374,7 +324,7 @@ defineShortcuts({
                                             class="w-full"
                                             :search-input="{ placeholder: $t('common.search_field') }"
                                         >
-                                            <template #item-label>
+                                            <template #default>
                                                 <div class="inline-flex items-center gap-1 truncate">
                                                     <template v-if="typeof query.closed === 'boolean'">
                                                         <UIcon
@@ -505,7 +455,6 @@ defineShortcuts({
                     <DocumentListEntry v-for="doc in data?.documents" :key="doc.id" :document="doc" />
                 </template>
             </ul>
-            <!-- <UContextMenu :items="links" /> -->
         </template>
 
         <template #footer>

@@ -208,16 +208,14 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ body: 'p-0 sm:pb-0' }">
+    <UDashboardPanel :ui="{ root: 'min-h-full', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardToolbar>
                 <USkeleton v-if="isRequestPending(status)" class="h-12 w-full" />
 
                 <template v-else-if="thread">
                     <div class="flex w-full flex-1 items-center justify-between gap-1">
-                        <h3
-                            class="line-clamp-2 text-left font-semibold break-all text-gray-900 hover:line-clamp-none dark:text-white"
-                        >
+                        <h3 class="line-clamp-2 text-left font-semibold break-all text-highlighted hover:line-clamp-none">
                             {{ thread.title }}
                         </h3>
 
@@ -238,6 +236,8 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                                 v-for="recipient in thread.recipients"
                                 :key="recipient.emailId"
                                 :email="recipient.email?.email"
+                                variant="link"
+                                color="primary"
                             />
                         </div>
                     </div>
@@ -252,7 +252,7 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                 <USkeleton class="h-32 w-full" />
             </div>
 
-            <div v-else class="flex flex-1 shrink-0 flex-col overflow-y-auto">
+            <template v-else>
                 <div
                     v-for="message in messages?.messages"
                     :key="message.id"
@@ -261,7 +261,7 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                             messageRefs[message.id] = el as Element;
                         }
                     "
-                    class="dark:hover:bg-base-800 border-l-2 border-white px-2 pb-3 hover:border-primary-500 hover:bg-neutral-100 sm:pb-2 dark:border-neutral-900 hover:dark:border-primary-400"
+                    class="border-l-2 border-white px-2 pb-3 hover:border-primary-500 hover:bg-neutral-100 sm:pb-2 dark:border-neutral-900 hover:dark:border-primary-400 dark:hover:bg-neutral-800"
                     :class="selectedMessage === message.id && '!border-primary-500'"
                     @click="selectedMessageId = message.id"
                 >
@@ -308,24 +308,23 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                         </div>
                     </div>
 
-                    <div class="dark:bg-base-900 mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 break-words">
+                    <div
+                        class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 break-words dark:bg-neutral-800"
+                    >
                         <HTMLContent v-if="message.content?.content" class="px-4 py-2" :value="message.content.content" />
                     </div>
 
-                    <UAccordion
-                        v-if="message.data?.attachments && message.data?.attachments.length > 0"
-                        class="mt-1"
-                        :items="[
-                            {
-                                slot: 'attachments' as const,
-                                label: $t('common.attachment', 2),
-                                color: 'neutral',
-                                variant: 'outline',
-                            },
-                        ]"
-                    >
-                        <template #attachments>
-                            <div class="flex flex-col gap-1">
+                    <UCollapsible v-if="message.data?.attachments && message.data?.attachments.length > 0" class="my-2">
+                        <UButton
+                            :label="`${$t('common.attachment', 2)} (${message.data.attachments.length})`"
+                            color="neutral"
+                            variant="outline"
+                            trailing-icon="i-mdi-chevron-down"
+                            block
+                        />
+
+                        <template #content>
+                            <div class="flex flex-col gap-1 p-1">
                                 <template v-for="(attachment, idx) in message.data.attachments" :key="idx">
                                     <DocumentInfoPopover
                                         v-if="attachment.data.oneofKind === 'document'"
@@ -339,10 +338,12 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                                 </template>
                             </div>
                         </template>
-                    </UAccordion>
+                    </UCollapsible>
                 </div>
-            </div>
+            </template>
+        </template>
 
+        <template #footer>
             <Pagination
                 v-if="messages?.pagination"
                 v-model="page"
@@ -350,15 +351,13 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                 :loading="isRequestPending(messagesStatus)"
                 :refresh="refreshMessages"
             />
-        </template>
 
-        <template #footer>
             <UDashboardToolbar
                 v-if="thread && canAccess(selectedEmail?.access, selectedEmail?.userId, AccessLevel.WRITE)"
                 class="flex min-w-0 justify-between overflow-y-hidden border-t border-b-0 border-neutral-200 dark:border-neutral-700"
             >
                 <UAccordion
-                    class="mt-2 max-h-[50vh] overflow-y-auto"
+                    class="mb-2 max-h-[50vh] overflow-y-auto"
                     variant="outline"
                     :items="[{ slot: 'compose' as const, label: $t('components.mailer.reply'), icon: 'i-mdi-paper-airplane' }]"
                 >
@@ -369,10 +368,11 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                             :state="state"
                             @submit="onSubmitThrottle"
                         >
-                            <UFormField name="recipients" :label="$t('common.additional_recipients')">
+                            <UFormField name="recipients" :label="$t('common.additional_recipients')" class="flex-1">
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="state.recipients"
+                                        class="w-full"
                                         multiple
                                         trailing
                                         :items="[...state.recipients, ...addressBook]"
@@ -382,7 +382,7 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                                         :disabled="!canSubmit"
                                         @create="(item: string) => onCreate(item)"
                                     >
-                                        <template #item-label>&nbsp;</template>
+                                        <template #default>&nbsp;</template>
 
                                         <template #empty>
                                             {{ $t('common.not_found', [$t('common.recipient', 2)]) }}

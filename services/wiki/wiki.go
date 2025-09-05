@@ -40,25 +40,19 @@ func (s *Server) ListPages(
 	}
 	defer s.aud.Log(auditEntry, req)
 
+	tPageShort := table.FivenetWikiPages.AS("page_short")
+	tPAccess := table.FivenetWikiPagesAccess.AS("access")
+	tJobProps := table.FivenetJobProps
+
 	condition := jet.Bool(true)
 	if req.Search != nil && req.GetSearch() != "" {
 		*req.Search = strings.TrimRight(req.GetSearch(), "*") + "*"
 
 		condition = jet.OR(
-			jet.BoolExp(
-				jet.Raw("MATCH(`title`) AGAINST ($search IN BOOLEAN MODE)",
-					jet.RawArgs{"$search": req.GetSearch()}),
-			),
-			jet.BoolExp(
-				jet.Raw("MATCH(`content`) AGAINST ($search IN BOOLEAN MODE)",
-					jet.RawArgs{"$search": req.GetSearch()}),
-			),
+			dbutils.MATCH(tPageShort.Title, jet.String(req.GetSearch())),
+			dbutils.MATCH(tPageShort.Content, jet.String(req.GetSearch())),
 		)
 	}
-
-	tPageShort := table.FivenetWikiPages.AS("page_short")
-	tPAccess := table.FivenetWikiPagesAccess.AS("access")
-	tJobProps := table.FivenetJobProps
 
 	groupBys := []jet.GroupByClause{tPageShort.ID}
 	if req.RootOnly != nil && req.GetRootOnly() {

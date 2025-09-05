@@ -243,8 +243,8 @@ const columns = computed(
         ] as TableColumn<AuditEntry>[],
 );
 
-function statesToLabel(states: { eventType: EventType }[]): string {
-    return states.map((c) => t(`enums.settings.AuditLog.EventType.${EventType[c.eventType ?? 0]}`)).join(', ');
+function statesToLabel(states: EventType[]): string {
+    return states.map((c) => t(`enums.settings.AuditLog.EventType.${EventType[c ?? 0]}`)).join(', ');
 }
 
 const today = new Date();
@@ -286,10 +286,6 @@ const tomorrow = addDays(today, 1);
                             value-key="userId"
                             class="w-full"
                         >
-                            <template #item-label="{ item }">
-                                {{ userToLabel(item) }}
-                            </template>
-
                             <template #item="{ item }">
                                 {{ userToLabel(item) }}
                             </template>
@@ -381,8 +377,8 @@ const tomorrow = addDays(today, 1);
                                         value-key="eventType"
                                         class="w-full"
                                     >
-                                        <template #item-label="{ item }">
-                                            {{ statesToLabel([item]) }}
+                                        <template #default>
+                                            {{ statesToLabel(query.states) }}
                                         </template>
 
                                         <template #item="{ item }">

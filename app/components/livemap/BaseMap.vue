@@ -314,10 +314,10 @@ onBeforeUnmount(() => {
     font-family: var(--font-sans);
 
     .leaflet-container a {
-        color: rgb(var(--color-primary-500));
+        color: var(--color-primary-500);
     }
     .leaflet-container a:hover {
-        color: rgb(var(--color-primary-400));
+        color: var(--color-primary-400);
     }
 
     .leaflet-map-pane {
@@ -351,34 +351,34 @@ onBeforeUnmount(() => {
     }
 
     .leaflet-popup-content-wrapper {
-        background-color: rgb(var(--ui-background)) !important;
+        background-color: var(--ui-background) !important;
         color: #ffffff;
     }
     .leaflet-popup-content p {
         margin: 0.25em 0;
     }
     .leaflet-popup-tip {
-        background-color: rgb(var(--ui-background)) !important;
+        background-color: var(--ui-background) !important;
     }
 
     .leaflet-control-layers-toggle {
-        background-color: rgb(var(--color-primary-500)) !important;
+        background-color: var(--color-primary-500) !important;
     }
     .leaflet-control-layers {
-        color: rgb(var(--color-primary-500));
-        background-color: rgb(var(--ui-background)) !important;
+        color: var(--color-primary-500);
+        background-color: var(--ui-background) !important;
     }
 
     .leaflet-control-attribution {
-        color: rgb(var(--color-primary-500));
-        background-color: rgb(var(--ui-background)) !important;
+        color: var(--color-primary-500);
+        background-color: var(--ui-background) !important;
     }
 
     .leaflet-control-attribution a {
-        color: rgb(var(--color-primary-500));
+        color: var(--color-primary-500);
     }
     .leaflet-control-attribution a:hover {
-        color: rgb(var(--color-primary-400));
+        color: var(--color-primary-400);
     }
 
     /* Leaflet Contextmenu */
@@ -388,7 +388,7 @@ onBeforeUnmount(() => {
         -webkit-border-radius: 2px;
         border-radius: 2px;
         padding: 4px 0;
-        background-color: rgb(var(--ui-background));
+        background-color: var(--ui-background);
         cursor: default;
         -webkit-user-select: none;
         -moz-user-select: none;
@@ -397,7 +397,7 @@ onBeforeUnmount(() => {
 
     .leaflet-contextmenu a.leaflet-contextmenu-item {
         display: block;
-        color: rgb(var(--color-primary-500));
+        color: var(--color-primary-500);
         font-size: 12px;
         line-height: 20px;
         text-decoration: none;
@@ -411,7 +411,7 @@ onBeforeUnmount(() => {
     }
 
     .leaflet-contextmenu a.leaflet-contextmenu-item.over {
-        background-color: rgb(var(--color-primary-100));
+        background-color: var(--color-primary-100);
     }
 
     .leaflet-contextmenu a.leaflet-contextmenu-item-disabled.over {

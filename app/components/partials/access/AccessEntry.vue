@@ -157,7 +157,7 @@ if (props.hideGrade) {
                             value-key="value"
                             :items="accessTypes"
                         >
-                            <template #item-label>
+                            <template #default>
                                 <span class="truncate">{{ accessTypes.find((t) => t.value === entry.type)?.label }}</span>
                             </template>
 
@@ -195,10 +195,8 @@ if (props.hideGrade) {
                     :search-input="{ placeholder: $t('common.search_field') }"
                     :placeholder="$t('common.citizen', 1)"
                 >
-                    <template #item-label>
-                        <template v-if="selectedUser">
-                            {{ usersToLabel([selectedUser]) }}
-                        </template>
+                    <template v-if="selectedUser" #default>
+                        {{ usersToLabel([selectedUser]) }}
                     </template>
 
                     <template #item="{ item }">
@@ -235,12 +233,10 @@ if (props.hideGrade) {
                     :search-input="{ placeholder: $t('common.search_field') }"
                     :placeholder="$t('common.qualification', 1)"
                 >
-                    <template #item-label>
-                        <template v-if="selectedQualification">
-                            <span class="truncate">
-                                {{ selectedQualification.abbreviation }}: {{ selectedQualification.title }}
-                            </span>
-                        </template>
+                    <template v-if="selectedQualification" #default>
+                        <span class="truncate">
+                            {{ selectedQualification.abbreviation }}: {{ selectedQualification.title }}
+                        </span>
                     </template>
 
                     <template #item="{ item }">
@@ -307,7 +303,7 @@ if (props.hideGrade) {
                         :placeholder="$t('common.na')"
                         :search-input="{ placeholder: $t('common.search_field') }"
                     >
-                        <template #item-label>
+                        <template #default>
                             {{ accessRoles.find((a) => a.value === entry.access)?.label ?? $t('common.na') }}
                         </template>
 

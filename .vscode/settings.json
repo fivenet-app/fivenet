@@ -39,5 +39,6 @@
         "inactive-class"
     ],
     "tailwind-fold.foldStyle": "QUOTES",
-    "prettier.prettierPath": "./node_modules/prettier"
+    "prettier.prettierPath": "./node_modules/prettier",
+    "javascript.updateImportsOnFileMove.enabled": "never"
 }

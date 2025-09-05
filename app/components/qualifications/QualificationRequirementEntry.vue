@@ -58,10 +58,8 @@ watch(selectedQualification, () => emit('update-qualification', selectedQualific
                 :searchable-key="`qualification-${qualificationId}-requirement-entry`"
                 :search-input="{ placeholder: $t('common.search_field') }"
             >
-                <template #item-label>
-                    <span v-if="selectedQualification" class="truncate">
-                        {{ selectedQualification.abbreviation }}: {{ selectedQualification.title }}
-                    </span>
+                <template v-if="selectedQualification" #default>
+                    <span class="truncate"> {{ selectedQualification.abbreviation }}: {{ selectedQualification.title }} </span>
                 </template>
 
                 <template #item="{ item }">

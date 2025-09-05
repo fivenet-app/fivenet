@@ -144,9 +144,9 @@ const formRef = useTemplateRef('formRef');
                                         value-key="status"
                                         :search-input="{ placeholder: $t('common.search_field') }"
                                     >
-                                        <template #item-label="{ item }">
-                                            <UBadge :color="conductTypesToBadgeColor(item.status)" truncate>
-                                                {{ $t(`enums.jobs.ConductType.${ConductType[item.status ?? 0]}`) }}
+                                        <template #default>
+                                            <UBadge :color="conductTypesToBadgeColor(state.type)" truncate>
+                                                {{ $t(`enums.jobs.ConductType.${ConductType[state.type ?? 0]}`) }}
                                             </UBadge>
                                         </template>
 
@@ -190,10 +190,8 @@ const formRef = useTemplateRef('formRef');
                                     :placeholder="$t('common.colleague')"
                                     trailing
                                 >
-                                    <template #item-label>
-                                        <template v-if="state.targetUser">
-                                            {{ userToLabel(state.targetUser) }}
-                                        </template>
+                                    <template v-if="state.targetUser" #default>
+                                        {{ userToLabel(state.targetUser) }}
                                     </template>
 
                                     <template #item="{ item }">

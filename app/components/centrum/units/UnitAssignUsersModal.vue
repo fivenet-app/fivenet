@@ -101,7 +101,7 @@ const formRef = useTemplateRef('formRef');
                             </SelectMenu>
                         </UFormField>
 
-                        <div class="dark:bg-base-900 mt-2 overflow-hidden rounded-md bg-neutral-100">
+                        <div class="mt-2 overflow-hidden rounded-md bg-neutral-100 dark:bg-neutral-900">
                             <ul
                                 class="divide-y divide-gray-100 text-sm font-medium text-gray-100 dark:divide-gray-800"
                                 role="list"

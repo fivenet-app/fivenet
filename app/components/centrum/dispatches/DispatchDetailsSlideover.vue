@@ -177,7 +177,7 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                 <span v-if="dispatch.units.length === 0" class="block">
                                     {{ $t('common.units', dispatch.units.length) }}
                                 </span>
-                                <div v-else class="dark:bg-base-900 mb-1 rounded-md bg-neutral-100">
+                                <div v-else class="mb-1 rounded-md bg-neutral-100 dark:bg-neutral-900">
                                     <ul class="divide-y divide-gray-100 text-sm font-medium dark:divide-gray-800" role="list">
                                         <li
                                             v-for="unit in dispatch.units"

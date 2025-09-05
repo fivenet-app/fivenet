@@ -156,12 +156,30 @@ function onClickNext() {
 
             <template v-if="!hideButtons">
                 <UPagination
+                    v-if="!isInfinite"
                     v-model:page="currentPage"
                     :page-count="pagination?.pageSize ?? 0"
                     :total="pagination?.totalCount ?? 0"
                     :show-edges="false"
                     :ui="{ first: 'hidden', last: 'hidden' }"
                 />
+                <UButtonGroup v-else>
+                    <UButton
+                        color="neutral"
+                        variant="outline"
+                        icon="i-mdi-chevron-left"
+                        :disabled="!canGoFirstOrPrev || isRequestPending(status)"
+                        @click="onClickPrev"
+                    />
+                    <UButton :label="currentPage.toString()" color="primary" variant="solid" />
+                    <UButton
+                        color="neutral"
+                        variant="outline"
+                        :disabled="!canGoLastOrNext || isRequestPending(status)"
+                        icon="i-mdi-chevron-right"
+                        @click="onClickNext"
+                    />
+                </UButtonGroup>
             </template>
             <div v-else></div>
 

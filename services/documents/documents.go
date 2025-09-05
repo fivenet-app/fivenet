@@ -14,6 +14,7 @@ import (
 	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
 	permsdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/access"
+	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
@@ -48,14 +49,7 @@ func (s *Server) ListDocuments(
 	condition := jet.Bool(true)
 	if req.Search != nil && req.GetSearch() != "" {
 		logRequest = true
-		condition = jet.BoolExp(
-			jet.Raw(
-				"MATCH(`title`) AGAINST ($search IN BOOLEAN MODE)",
-				jet.RawArgs{
-					"$search": req.GetSearch(),
-				},
-			),
-		)
+		condition = dbutils.MATCH(tDocumentShort.Title, jet.String(req.GetSearch()))
 	}
 	if len(req.GetCategoryIds()) > 0 {
 		ids := make([]jet.Expression, len(req.GetCategoryIds()))

@@ -290,12 +290,6 @@ const columns = computed(
                                     leading-icon="i-mdi-search"
                                     value-key="userId"
                                 >
-                                    <template #item-label="{ item }">
-                                        <span v-if="item" class="truncate">
-                                            {{ userToLabel(item) }}
-                                        </span>
-                                    </template>
-
                                     <template #item="{ item }">
                                         <ColleagueName class="truncate" :colleague="item" birthday />
                                     </template>
@@ -317,7 +311,7 @@ const columns = computed(
                                         :placeholder="$t('common.na')"
                                         :search-input="{ placeholder: $t('common.search_field') }"
                                     >
-                                        <template #item-label>
+                                        <template #default>
                                             {{ $t('common.selected', query.types.length) }}
                                         </template>
 

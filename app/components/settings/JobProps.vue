@@ -546,11 +546,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :disabled="!canSubmit || !canEdit || userGuilds?.length === 0"
                                         size="lg"
                                     >
-                                        <template #item-label="{ item }">
+                                        <template #default>
                                             <div class="inline-flex items-center gap-2">
-                                                <UAvatar :src="item?.icon" :alt="item?.name" />
+                                                <UAvatar
+                                                    :src="userGuilds?.find((g) => g.id === state.discordGuildId)?.icon"
+                                                    :alt="userGuilds?.find((g) => g.id === state.discordGuildId)?.name"
+                                                />
                                                 <span class="truncate">{{
-                                                    item?.name ??
+                                                    userGuilds?.find((g) => g.id === state.discordGuildId)?.name ??
                                                     (state.discordGuildId !== '' ? state.discordGuildId : '&nbsp;')
                                                 }}</span>
                                             </div>
@@ -789,7 +792,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 ]"
                                                 :search-input="{ placeholder: $t('common.search_field') }"
                                             >
-                                                <template #item-label>
+                                                <template #default>
                                                     {{
                                                         $t(
                                                             `enums.settings.UserInfoSyncUnemployedMode.${
@@ -1095,7 +1098,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 :items="jobProps.discordSyncChanges.changes"
                                                 :search-input="{ placeholder: $t('common.search_field') }"
                                             >
-                                                <template #item-label>
+                                                <template #default>
                                                     <span class="truncate">{{
                                                         $d(toDate(selectedChange?.time), 'short')
                                                     }}</span>

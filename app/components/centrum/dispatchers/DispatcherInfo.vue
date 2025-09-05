@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import DispatcherModal from '~/components/centrum/dispatchers/DispatcherModal.vue';
+import DispatcherDrawer from '~/components/centrum/dispatchers/DispatcherDrawer.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
@@ -15,7 +15,7 @@ const props = withDefaults(
 
 const overlay = useOverlay();
 
-const dispatcherModal = overlay.create(DispatcherModal);
+const dispatcherDrawer = overlay.create(DispatcherDrawer);
 
 const centrumStore = useCentrumStore();
 const { getCurrentMode, getJobDispatchers, isDispatcher } = storeToRefs(centrumStore);
@@ -75,7 +75,7 @@ if (!props.hideJoin) {
                           : 'success'
                 "
                 truncate
-                @click="dispatcherModal.open({})"
+                @click="dispatcherDrawer.open({})"
             >
                 <template v-if="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN">
                     {{ $t('common.dispatcher', dispatchers.dispatchers.length) }}

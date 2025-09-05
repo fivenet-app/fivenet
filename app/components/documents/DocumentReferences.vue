@@ -152,7 +152,7 @@ const columns = computed(() =>
                 <ul class="divide-y divide-gray-600 rounded-lg sm:hidden" role="list">
                     <li v-for="reference in references" :key="reference.id">
                         <ULink
-                            class="hover:bg-base-900 block p-4"
+                            class="block p-4 hover:bg-neutral-900"
                             :to="{
                                 name: 'documents-id',
                                 params: { id: reference.targetDocumentId },

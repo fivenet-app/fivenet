@@ -1,13 +1,11 @@
 <script lang="ts" setup>
-import { LazyPartialsSuperuserJobToggle } from '#components';
-import type { CommandPaletteGroup } from '@nuxt/ui';
 import ClipboardModal from '~/components/clipboard/modal/ClipboardModal.vue';
+import SuperuserJobToggle from '~/components/partials/SuperuserJobToggle.vue';
 import MathCalculatorDrawer from '~/components/quickbuttons/mathcalculator/MathCalculatorDrawer.vue';
 import PenaltyCalculatorDrawer from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorDrawer.vue';
 import TopLogoDropdown from '~/components/TopLogoDropdown.vue';
 import UserMenu from '~/components/UserMenu.vue';
 import { useMailerStore } from '~/stores/mailer';
-import { getCitizensCitizensClient, getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { Perms } from '~~/gen/ts/perms';
 
 const { t } = useI18n();
@@ -22,9 +20,6 @@ const { website } = useAppConfig();
 
 const mailerStore = useMailerStore();
 const { unreadCount } = storeToRefs(mailerStore);
-
-const citizensCitizensClient = await getCitizensCitizensClient();
-const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const route = useRoute();
 
@@ -207,6 +202,9 @@ const footerLinks = computed(() =>
         {
             label: t('common.help'),
             icon: 'i-mdi-question-mark-circle-outline',
+            tooltip: {
+                kbds: ['?'],
+            },
             onClick: () => (isHelpSlideoverOpen.value = true),
         },
         {
@@ -264,163 +262,7 @@ const quickAccessButtons = computed(() =>
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
-const groups = computed<CommandPaletteGroup[]>(() => [
-    {
-        id: 'links',
-        label: t('common.goto'),
-        commands: links.value.map((link) => ({ ...link, kbds: link.tooltip?.kbds })),
-    },
-    {
-        id: 'ids',
-        label: t('common.id', 2),
-        commands: [
-            {
-                id: 'cit',
-                prefix: 'CIT-',
-                icon: 'i-mdi-account-multiple-outline',
-            },
-            {
-                id: 'doc',
-                prefix: 'DOC-',
-                icon: 'i-mdi-file-document-box-multiple-outline',
-            },
-        ],
-        search: async (q?: string) => {
-            const defaultCommands = [
-                {
-                    id: 'id-doc',
-                    label: `DOC-...`,
-                },
-                {
-                    id: 'id-citizen',
-                    label: `CIT-...`,
-                },
-            ];
-
-            if (!q || (!q.startsWith('CIT') && !q.startsWith('DOC'))) {
-                if (q && (q.startsWith('@') || q.startsWith('#'))) {
-                    return [];
-                }
-
-                return defaultCommands.filter((c) => !q || c.label.includes(q));
-            }
-
-            const prefix = q.substring(0, q.indexOf('-')).toUpperCase();
-            const id = q.substring(q.indexOf('-') + 1).trim();
-            if (id.length > 0 && isNumber(id)) {
-                if (prefix === 'CIT') {
-                    return [
-                        {
-                            id: 'id-citizen',
-                            label: `CIT-${id}`,
-                            to: `/citizens/${id}`,
-                        },
-                    ];
-                } else if (prefix === 'DOC') {
-                    return [
-                        {
-                            id: 'id-doc',
-                            label: `DOC-${id}`,
-                            to: `/documents/${id}`,
-                        },
-                    ];
-                }
-            }
-
-            return defaultCommands;
-        },
-    },
-    {
-        id: 'search',
-        label: t('common.search'),
-        commands: [
-            {
-                id: 'cit',
-                label: t('common.citizen', 2),
-                prefix: '@',
-                icon: 'i-mdi-account-multiple-outline',
-            },
-            {
-                id: 'doc',
-                label: t('common.document', 2),
-                prefix: '#',
-                icon: 'i-mdi-file-document-box-multiple-outline',
-            },
-        ],
-        search: async (q?: string) => {
-            if (!q || (!q.startsWith('@') && !q.startsWith('#'))) {
-                return [
-                    {
-                        id: 'cit',
-                        label: t('common.citizen', 2),
-                        prefix: '@',
-                        icon: 'i-mdi-account-multiple-outline',
-                    },
-                    {
-                        id: 'doc',
-                        label: t('common.document', 2),
-                        prefix: '#',
-                        icon: 'i-mdi-file-document-box-multiple-outline',
-                    },
-                ].filter((c) => !q || c.label.includes(q));
-            }
-
-            const searchType = q[0];
-            const query = q.substring(1).trim();
-            switch (searchType) {
-                case '#': {
-                    try {
-                        const call = documentsDocumentsClient.listDocuments({
-                            pagination: {
-                                offset: 0,
-                                pageSize: 10,
-                            },
-                            search: query,
-                            categoryIds: [],
-                            creatorIds: [],
-                            documentIds: [],
-                        });
-                        const { response } = await call;
-
-                        return response.documents.map((d) => ({
-                            id: d.id,
-                            label: d.title,
-                            suffix: d.state,
-                            to: `/documents/${d.id}`,
-                        }));
-                    } catch (e) {
-                        handleGRPCError(e as RpcError);
-                        throw e;
-                    }
-                }
-
-                case '@':
-                default: {
-                    try {
-                        const call = citizensCitizensClient.listCitizens({
-                            pagination: {
-                                offset: 0,
-                                pageSize: 10,
-                            },
-                            search: query,
-                        });
-                        const { response } = await call;
-
-                        return response.users.map((u) => ({
-                            id: u.userId,
-                            label: `${u.firstname} ${u.lastname}`,
-                            suffix: u.dateofbirth,
-                            to: `/citizens/${u.userId}`,
-                        }));
-                    } catch (e) {
-                        handleGRPCError(e as RpcError);
-                        throw e;
-                    }
-                }
-            }
-        },
-    },
-]);
+defineShortcuts(extractShortcuts(links.value));
 </script>
 
 <template>
@@ -466,7 +308,7 @@ const groups = computed<CommandPaletteGroup[]>(() => [
                 <div class="flex-1" />
 
                 <template v-if="can(['Superuser/CanBeSuperuser', 'Superuser/Superuser']).value">
-                    <LazyPartialsSuperuserJobToggle :collapsed="collapsed" />
+                    <SuperuserJobToggle :collapsed="collapsed" />
 
                     <USeparator />
                 </template>
@@ -482,42 +324,9 @@ const groups = computed<CommandPaletteGroup[]>(() => [
         <slot />
 
         <ClientOnly>
-            <LazyUDashboardSearch
-                v-if="activeChar"
-                :placeholder="`${$t('common.search_field')} (${$t('commandpalette.footer', { key1: '@', key2: '#' })})`"
-                :groups="groups"
-                class="flex-1"
-            >
-                <template #empty>
-                    {{ $t('commandpalette.empty.title') }}
-                </template>
+            <LazyPartialsCommandSearch v-if="activeChar" :links="links" />
 
-                <!-- TODO add footer texts
-                <template #footer>
-                    <div class="flex items-center justify-between gap-2">
-                        <UIcon name="i-simple-icons-nuxtdotjs" class="ml-1 size-5 text-dimmed" />
-                        <div class="flex items-center gap-1">
-                            <UButton color="neutral" variant="ghost" label="Open Command" class="text-dimmed" size="xs">
-                                <template #trailing>
-                                    <UKbd value="enter" />
-                                </template>
-                            </UButton>
-
-                            <USeparator orientation="vertical" class="h-4" />
-
-                            <UButton color="neutral" variant="ghost" label="Actions" class="text-dimmed" size="xs">
-                                <template #trailing>
-                                    <UKbd value="meta" />
-                                    <UKbd value="k" />
-                                </template>
-                            </UButton>
-                        </div>
-                    </div>
-                </template>
-                -->
-            </LazyUDashboardSearch>
-
-            <LazyPartialsWebSocketStatusOverlay hide-overlay />
+            <LazyPartialsWebSocketStatusOverlay />
 
             <!-- Events -->
             <LazyPartialsEventsLayer />
