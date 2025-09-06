@@ -10,7 +10,7 @@ import type { Content } from '~/types/history';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { type QualificationJobAccess, AccessLevel } from '~~/gen/ts/resources/qualifications/access';
+import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
 import type { ExamQuestions } from '~~/gen/ts/resources/qualifications/exam';
 import {
     type Qualification,
@@ -21,6 +21,7 @@ import {
     QualificationExamMode,
 } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { UpdateQualificationRequest, UpdateQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
+import { jobAccessEntry } from '~~/shared/types/validation';
 import BackButton from '../partials/BackButton.vue';
 import ConfirmModal from '../partials/ConfirmModal.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
@@ -71,7 +72,7 @@ const schema = z.object({
     examSettings: z.custom<QualificationExamSettings>(),
     exam: z.custom<ExamQuestions>(),
     access: z.object({
-        jobs: z.custom<QualificationJobAccess>().array().max(maxAccessEntries).default([]),
+        jobs: jobAccessEntry.array().max(maxAccessEntries).default([]),
     }),
     labelSyncEnabled: z.coerce.boolean(),
     labelSyncFormat: z.string().max(128).optional(),
@@ -378,7 +379,7 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UDashboardPanel>
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.qualifications.edit.title')">
                 <template #leading>
@@ -428,7 +429,7 @@ const formRef = useTemplateRef('formRef');
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" class="flex flex-1 flex-col" @submit="onSubmitThrottle">
                 <DataPendingBlock
                     v-if="isRequestPending(status)"
                     :message="$t('common.loading', [$t('common.qualification', 1)])"
@@ -453,6 +454,7 @@ const formRef = useTemplateRef('formRef');
                     :items="items"
                     variant="link"
                     :unmount-on-hide="false"
+                    :ui="{ content: 'h-full flex flex-1 flex-col' }"
                 >
                     <template #content>
                         <div v-if="isRequestPending(status)" class="flex flex-col gap-2">
@@ -462,7 +464,7 @@ const formRef = useTemplateRef('formRef');
                         <template v-else>
                             <UDashboardToolbar>
                                 <template #default>
-                                    <div class="flex w-full flex-col gap-2">
+                                    <div class="my-2 flex w-full flex-col gap-2">
                                         <div class="flex w-full flex-row gap-2">
                                             <UFormField
                                                 class="max-w-48 shrink"
@@ -477,6 +479,7 @@ const formRef = useTemplateRef('formRef');
                                                     size="xl"
                                                     :placeholder="$t('common.abbreviation')"
                                                     :disabled="!canDo.edit"
+                                                    class="w-full"
                                                 />
                                             </UFormField>
 
@@ -488,6 +491,7 @@ const formRef = useTemplateRef('formRef');
                                                     size="xl"
                                                     :placeholder="$t('common.title')"
                                                     :disabled="!canDo.edit"
+                                                    class="w-full"
                                                 />
                                             </UFormField>
                                         </div>
@@ -500,6 +504,7 @@ const formRef = useTemplateRef('formRef');
                                                     block
                                                     :placeholder="$t('common.description')"
                                                     :disabled="!canDo.edit"
+                                                    class="w-full"
                                                 />
                                             </UFormField>
 
@@ -521,13 +526,7 @@ const formRef = useTemplateRef('formRef');
                                 </template>
                             </UDashboardToolbar>
 
-                            <UFormField
-                                v-if="canDo.edit"
-                                class="flex flex-1 overflow-y-hidden"
-                                name="content"
-                                :ui="{ container: 'flex flex-1 flex-col mt-0 overflow-y-hidden' }"
-                                label="&nbsp;"
-                            >
+                            <div v-if="canDo.edit" class="flex flex-1 flex-col overflow-y-hidden">
                                 <ClientOnly>
                                     <TiptapEditor
                                         v-model="state.content"
@@ -541,7 +540,7 @@ const formRef = useTemplateRef('formRef');
                                         :filestore-service="(opts) => qualificationsQualificationsClient.uploadFile(opts)"
                                     />
                                 </ClientOnly>
-                            </UFormField>
+                            </div>
                         </template>
                     </template>
 
@@ -558,6 +557,7 @@ const formRef = useTemplateRef('formRef');
                                     :disabled="!canDo.access"
                                     :access-types="accessTypes"
                                     :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.qualifications.AccessLevel')"
+                                    name="access"
                                 />
                             </div>
                         </div>
@@ -601,7 +601,7 @@ const formRef = useTemplateRef('formRef');
                                     ]"
                                 >
                                     <template #discord>
-                                        <UContainer>
+                                        <UContainer class="mb-2">
                                             <UFormField
                                                 class="grid grid-cols-2 items-center gap-2"
                                                 name="discordSettings.enabled"
@@ -618,6 +618,7 @@ const formRef = useTemplateRef('formRef');
                                                     type="text"
                                                     :placeholder="$t('common.role')"
                                                     :disabled="!canDo.edit"
+                                                    class="w-full"
                                                 />
                                             </UFormField>
 
@@ -647,7 +648,7 @@ const formRef = useTemplateRef('formRef');
                                     </template>
 
                                     <template #label>
-                                        <UContainer>
+                                        <UContainer class="mb-2">
                                             <UFormField
                                                 class="grid grid-cols-2 items-center gap-2"
                                                 name="labelSyncEnabled"
@@ -694,7 +695,12 @@ const formRef = useTemplateRef('formRef');
                                     :ui="{ container: '' }"
                                 >
                                     <ClientOnly>
-                                        <USelectMenu v-model="state.examMode" :items="examModes" value-key="mode">
+                                        <USelectMenu
+                                            v-model="state.examMode"
+                                            :items="examModes"
+                                            value-key="mode"
+                                            class="w-full"
+                                        >
                                             <template #default>
                                                 <span class="truncate">
                                                     {{

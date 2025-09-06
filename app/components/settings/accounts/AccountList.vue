@@ -173,6 +173,10 @@ const columns = computed(
                     }),
             },
             {
+                accessorKey: 'lastChar',
+                header: t('common.last_char'),
+            },
+            {
                 accessorKey: 'createdAt',
                 header: t('common.created_at'),
                 cell: ({ row }) => h(GenericTime, { value: toDate(row.original.createdAt) }),

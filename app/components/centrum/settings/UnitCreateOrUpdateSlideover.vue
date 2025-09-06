@@ -8,8 +8,9 @@ import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import { UnitAttribute } from '~~/gen/ts/resources/centrum/attributes';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
-import { UnitAccessLevel, type UnitJobAccess, type UnitQualificationAccess } from '~~/gen/ts/resources/centrum/units_access';
+import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/units_access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import { jobAccessEntry, qualificationAccessEntry } from '~~/shared/types/validation';
 
 const props = defineProps<{
     unit?: Unit;
@@ -46,8 +47,8 @@ const schema = z.object({
     homePostal: z.union([z.string().min(1).max(48), z.string().length(0).optional()]),
     attributes: z.nativeEnum(UnitAttribute).array().max(5).default([]),
     access: z.object({
-        jobs: z.custom<UnitJobAccess>().array().max(maxAccessEntries).default([]),
-        qualifications: z.custom<UnitQualificationAccess>().array().max(maxAccessEntries).default([]),
+        jobs: jobAccessEntry.array().max(maxAccessEntries).default([]),
+        qualifications: qualificationAccessEntry.array().max(maxAccessEntries).default([]),
     }),
 });
 
@@ -217,6 +218,7 @@ const formRef = useTemplateRef('formRef');
                             { label: $t('common.job', 2), value: 'job' },
                             { label: $t('common.qualification', 2), value: 'qualification' },
                         ]"
+                        name="access"
                     />
                 </UFormField>
             </UForm>

@@ -104,15 +104,14 @@ const confirmModal = overlay.create(ConfirmModal);
         <NotSupportedTabletBlock v-if="nuiEnabled" />
         <div v-else class="flex flex-col gap-1">
             <div class="flex flex-1 flex-row gap-1">
-                <UInput
+                <UFileUpload
                     class="flex-1"
                     name="jobLogo"
-                    type="file"
                     :accept="appConfig.fileUpload.types.images.join(',')"
                     block
                     :placeholder="$t('common.image')"
                     :disabled="disabled"
-                    @change="($event) => handleFileChanges($event)"
+                    @update:model-value="($event) => handleFileChanges($event)"
                 />
 
                 <UTooltip v-if="!filePath || state.fileUrl.length > 0" :text="$t('common.upload')">

@@ -132,7 +132,7 @@ const formRef = useTemplateRef('formRef');
                                 <ClientOnly>
                                     <UInput
                                         v-if="emails.length === 1"
-                                        class="pt-1"
+                                        class="w-full pt-1"
                                         type="text"
                                         disabled
                                         :model-value="
@@ -140,13 +140,13 @@ const formRef = useTemplateRef('formRef');
                                                 ? selectedEmail?.label + ' (' + selectedEmail.email + ')'
                                                 : undefined) ??
                                             selectedEmail?.email ??
-                                            $t('common.none')
+                                            $t('common.none', [$t('common.mail', 1)])
                                         "
                                     />
                                     <USelectMenu
                                         v-else
                                         v-model="selectedEmail"
-                                        class="pt-1"
+                                        class="w-full pt-1"
                                         :items="emails"
                                         :placeholder="$t('common.mail')"
                                         :search-input="{ placeholder: $t('common.search_field') }"
@@ -203,7 +203,7 @@ const formRef = useTemplateRef('formRef');
                             <UFormField class="w-full flex-1" name="title" :label="$t('common.title')">
                                 <UInput
                                     v-model="state.title"
-                                    class="font-semibold"
+                                    class="w-full font-semibold"
                                     type="text"
                                     size="lg"
                                     :placeholder="$t('common.title')"
@@ -237,6 +237,7 @@ const formRef = useTemplateRef('formRef');
                                         ]"
                                         :search-input="{ placeholder: $t('common.mail', 1) }"
                                         :disabled="!canSubmit"
+                                        class="w-full"
                                         create-item
                                         @create="(item) => onCreate(item)"
                                     >
@@ -275,7 +276,7 @@ const formRef = useTemplateRef('formRef');
                             }"
                         >
                             <div class="flex flex-1 flex-col items-center sm:flex-row">
-                                <span class="flex-1">{{ $t('common.message', 1) }}</span>
+                                <span class="flex-1">{{ $t('common.template', 1) }}</span>
 
                                 <TemplateSelector v-model="state.content" class="ml-auto" />
                             </div>
@@ -309,7 +310,7 @@ const formRef = useTemplateRef('formRef');
                     :disabled="!canSubmit"
                     block
                     :label="$t('components.mailer.send')"
-                    trailing-icon="i-mdi-paper-airplane"
+                    icon="i-mdi-paper-airplane"
                     @click="() => formRef?.submit()"
                 />
             </UButtonGroup>

@@ -8,9 +8,10 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCalendarStore } from '~/stores/calendar';
-import { AccessLevel, type CalendarJobAccess, type CalendarUserAccess } from '~~/gen/ts/resources/calendar/access';
+import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateCalendarResponse, UpdateCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
+import { jobAccessEntry, userAccessEntry } from '~~/shared/types/validation';
 
 const props = defineProps<{
     calendarId?: number;
@@ -42,8 +43,8 @@ const schema = z.object({
     closed: z.coerce.boolean(),
     color: z.string().max(12),
     access: z.object({
-        jobs: z.custom<CalendarJobAccess>().array().max(maxAccessEntries).default([]),
-        users: z.custom<CalendarUserAccess>().array().max(maxAccessEntries).default([]),
+        jobs: jobAccessEntry.array().max(maxAccessEntries).default([]),
+        users: userAccessEntry.array().max(maxAccessEntries).default([]),
     }),
 });
 

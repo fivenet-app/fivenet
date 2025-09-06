@@ -430,26 +430,33 @@ function publish() {
     console.log('Publish payload', payload);
     useToast().add({ title: 'Published (console)', description: 'See devtools for payload JSON.' });
 }
+
 const history: string[] = [];
 let historyIdx = -1;
+
 function snapshot() {
     history.splice(historyIdx + 1);
     history.push(JSON.stringify({ page, frames: frames.value }));
     historyIdx = history.length - 1;
 }
+
 watch([page, frames], () => snapshot(), { deep: true, immediate: true });
+
 const canUndo = computed(() => historyIdx > 0);
 const canRedo = computed(() => historyIdx < history.length - 1);
+
 function undo() {
     if (!canUndo.value) return;
     historyIdx--;
     restore(history[historyIdx]!);
 }
+
 function redo() {
     if (!canRedo.value) return;
     historyIdx++;
     restore(history[historyIdx]!);
 }
+
 function restore(s: string) {
     const st = JSON.parse(s);
     Object.assign(page, st.page);
@@ -624,7 +631,7 @@ const showPreview = ref(false);
                                     <USwitch v-model="page.bgLocked" label="Lock" />
                                     <ColorPicker v-model="page.bgColor" class="ml-2" />
                                 </div>
-                                <input ref="bgInput" type="file" accept="image/*" class="hidden" @change="onBgChange" />
+                                <UFileUpload ref="bgInput" accept="image/*" class="hidden" @update:model-value="onBgChange" />
                             </UFormField>
                             <UFormField label="Opacity"
                                 ><USlider v-model="page.bgOpacity" :min="0" :max="1" :step="0.05" />

@@ -145,15 +145,14 @@ const formRef = useTemplateRef('formRef');
                         <NotSupportedTabletBlock v-if="nuiEnabled" />
                         <div v-else class="flex flex-col gap-1">
                             <div class="flex flex-1 flex-row gap-1">
-                                <UInput
+                                <UFileUpload
                                     class="flex-1"
                                     name="mugshot"
-                                    type="file"
                                     :accept="appConfig.fileUpload.types.images.join(',')"
                                     block
                                     :placeholder="$t('common.image')"
                                     :disabled="!canSubmit"
-                                    @change="($event) => handleFileChanges($event)"
+                                    @update:model-value="($event) => handleFileChanges($event)"
                                 />
                             </div>
                         </div>

@@ -684,7 +684,8 @@
         "accepted_at": "Accepted At",
         "choose_color": "Choose Color",
         "pick_date": "Pick a date",
-        "open_command": "Open Command"
+        "open_command": "Open Command",
+        "last_char": "Last Char ID"
     },
     "components": {
         "partials": {

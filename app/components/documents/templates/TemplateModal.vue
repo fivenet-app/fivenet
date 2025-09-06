@@ -107,9 +107,9 @@ const filteredRequirementTypes = computed(() => {
                     {{ $t('components.documents.templates.templates_modal.no_template') }}
                 </UButton>
 
-                <div class="pt-6">
-                    <TemplateList @selected="templateSelected($event)" />
-                </div>
+                <USeparator class="my-4" />
+
+                <TemplateList @selected="templateSelected($event)" />
             </template>
             <div v-else-if="template !== undefined && reqs !== undefined && steps.selectClipboard">
                 <div>

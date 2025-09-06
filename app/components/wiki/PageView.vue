@@ -144,7 +144,7 @@ const surround = computedAsync(async () => {
     return [
         prev
             ? {
-                  _id: prev.id,
+                  id: prev.id,
                   title: prev.title || '',
                   description: prev.description ?? '',
                   path: `/wiki/${prev.job}/${prev.id}/${prev.slug}`,
@@ -152,7 +152,7 @@ const surround = computedAsync(async () => {
             : undefined,
         next
             ? {
-                  _id: next.id,
+                  id: next.id,
                   title: next.title || '',
                   description: next.description ?? '',
                   path: `/wiki/${next.job}/${next.id}/${next.slug}`,
@@ -203,12 +203,12 @@ const scrollRef = useTemplateRef('scrollRef');
         </template>
 
         <template #body>
-            <UPage ref="scrollRef" class="px-8 py-2 pt-4">
+            <UPage ref="scrollRef">
                 <template #left>
                     <slot name="left" />
                 </template>
 
-                <UBreadcrumb class="pt-4 pb-2" :items="breadcrumbs" />
+                <UBreadcrumb class="pb-1" :items="breadcrumbs" />
 
                 <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.page')])" />
                 <DataErrorBlock
@@ -357,23 +357,20 @@ const scrollRef = useTemplateRef('scrollRef');
                         </div>
 
                         <template v-if="surround.length > 0">
-                            <USeparator class="mt-4 mb-4" />
+                            <USeparator class="my-2" />
 
-                            <!-- UContentSurround doesn't seem to like our surround pages array -->
-                            <div class="grid gap-8 sm:grid-cols-2">
-                                <UContentSurround
-                                    :surround="[prev, next]"
-                                    prev-icon="i-mdi-arrow-left"
-                                    next-icon="i-mdi-arrow-right"
-                                />
-                            </div>
+                            <UContentSurround
+                                :surround="[prev, next]"
+                                prev-icon="i-mdi-arrow-left"
+                                next-icon="i-mdi-arrow-right"
+                            />
                         </template>
 
-                        <USeparator class="mt-4 mb-4" />
+                        <USeparator class="my-2" />
 
                         <UAccordion class="print:hidden" :items="accordionItems" multiple :unmount-on-hide="false">
                             <template #access>
-                                <UContainer class="mb-4">
+                                <UContainer class="mb-2">
                                     <DataNoDataBlock
                                         v-if="
                                             !page.access || (page.access?.jobs.length === 0 && page.access?.users.length === 0)
@@ -393,7 +390,7 @@ const scrollRef = useTemplateRef('scrollRef');
                             </template>
 
                             <template v-if="can('wiki.WikiService/ListPageActivity').value" #activity>
-                                <UContainer class="mb-4">
+                                <UContainer class="mb-2">
                                     <ActivityList :page-id="page.id" />
                                 </UContainer>
                             </template>

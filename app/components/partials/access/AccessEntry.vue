@@ -17,6 +17,7 @@ const props = withDefaults(
         jobs?: Job[] | undefined;
         hideGrade?: boolean;
         hideJobs?: string[];
+        name?: string;
     }>(),
     {
         disabled: false,
@@ -25,6 +26,7 @@ const props = withDefaults(
         jobs: () => [],
         hideGrade: false,
         hideJobs: () => [],
+        name: undefined,
     },
 );
 
@@ -138,14 +140,21 @@ if (props.hideGrade) {
 </script>
 
 <template>
-    <UForm class="flex flex-1 flex-col gap-1 pb-2 md:flex-row md:pb-0" :schema="schema" :state="entry">
+    <div class="flex flex-1 flex-col gap-1 pb-2 md:flex-row md:pb-0">
         <div class="grid grid-cols-2 gap-2 md:flex md:flex-1">
-            <div class="flex flex-initial flex-col gap-2">
-                <UTooltip v-if="showRequired" class="flex-initial" :text="$t('common.require')">
-                    <UCheckbox v-model="entry.required" :disabled="disabled" name="required" />
-                </UTooltip>
+            <div class="flex flex-initial flex-row items-center gap-2">
+                <UFormField v-if="showRequired">
+                    <UTooltip class="flex-initial" :text="$t('common.require')">
+                        <UCheckbox v-model="entry.required" :disabled="disabled" name="required" />
+                    </UTooltip>
+                </UFormField>
 
-                <UFormField class="min-w-40 flex-initial" :label="$t('common.type')" :ui="{ label: 'md:hidden' }">
+                <UFormField
+                    :name="`${name}.type`"
+                    class="min-w-40 flex-initial"
+                    :label="$t('common.type')"
+                    :ui="{ label: 'md:hidden' }"
+                >
                     <UInput v-if="accessTypes.length === 1" type="text" disabled :model-value="accessTypes[0]?.label" />
                     <ClientOnly v-else>
                         <USelectMenu
@@ -176,7 +185,7 @@ if (props.hideGrade) {
             <UFormField
                 v-if="entry.type === 'user'"
                 class="flex-1"
-                name="userId"
+                :name="`${name}.userId`"
                 :label="$t('common.user')"
                 :ui="{ label: 'md:hidden' }"
             >
@@ -210,7 +219,7 @@ if (props.hideGrade) {
             <UFormField
                 v-else-if="entry.type === 'qualification'"
                 class="flex-1"
-                name="qualificationId"
+                :name="`${name}.qualificationId`"
                 :label="$t('common.qualification')"
                 :ui="{ label: 'md:hidden' }"
             >
@@ -248,7 +257,7 @@ if (props.hideGrade) {
             </UFormField>
 
             <template v-else>
-                <UFormField class="flex-1" name="job" :label="$t('common.job')" :ui="{ label: 'md:hidden' }">
+                <UFormField class="flex-1" :name="`${name}.job`" :label="$t('common.job')" :ui="{ label: 'md:hidden' }">
                     <ClientOnly>
                         <USelectMenu
                             v-model="entry.job"
@@ -268,7 +277,7 @@ if (props.hideGrade) {
                 <UFormField
                     v-if="!hideGrade"
                     class="flex-1"
-                    name="minimumGrade"
+                    :name="`${name}.minimumGrade`"
                     :label="$t('common.rank')"
                     :ui="{ label: 'md:hidden' }"
                 >
@@ -291,7 +300,12 @@ if (props.hideGrade) {
                 </UFormField>
             </template>
 
-            <UFormField class="min-w-60 flex-initial" name="access" :label="$t('common.access')" :ui="{ label: 'md:hidden' }">
+            <UFormField
+                class="min-w-60 flex-initial"
+                :name="`${name}.access`"
+                :label="$t('common.access')"
+                :ui="{ label: 'md:hidden' }"
+            >
                 <ClientOnly>
                     <USelectMenu
                         v-model="entry.access"
@@ -325,5 +339,5 @@ if (props.hideGrade) {
                 />
             </UTooltip>
         </UFormField>
-    </UForm>
+    </div>
 </template>

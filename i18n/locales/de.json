@@ -684,7 +684,8 @@
         "accepted_at": "Akzeptiert am",
         "choose_color": "Farbe wählen",
         "pick_date": "Datum auswählen",
-        "open_command": "Ausführen"
+        "open_command": "Ausführen",
+        "last_char": "Letzte Charakter ID"
     },
     "components": {
         "partials": {

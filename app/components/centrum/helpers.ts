@@ -71,7 +71,7 @@ export function dispatchStatusToBadgeColor(status: StatusDispatch | undefined): 
         case StatusDispatch.ON_SCENE:
             return 'info';
         case StatusDispatch.NEED_ASSISTANCE:
-            return 'warn';
+            return 'warning';
         case StatusDispatch.COMPLETED:
             return 'success';
         case StatusDispatch.CANCELLED:
@@ -97,7 +97,7 @@ export function dispatchStatusToButtonColor(status: StatusDispatch | undefined):
         case StatusDispatch.ON_SCENE:
             return 'info';
         case StatusDispatch.NEED_ASSISTANCE:
-            return 'warn';
+            return 'warning';
         case StatusDispatch.COMPLETED:
             return 'success';
         case StatusDispatch.CANCELLED:

@@ -168,6 +168,16 @@ export default defineAppConfig({
             },
         },
 
+        modal: {
+            variants: {
+                fullscreen: {
+                    false: {
+                        content: 'max-w-3xl',
+                    },
+                },
+            },
+        },
+
         slideover: {
             variants: {
                 side: {

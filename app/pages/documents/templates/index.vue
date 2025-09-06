@@ -44,7 +44,9 @@ const templatesListRef = useTemplateRef('templatesListRef');
 
         <template #body>
             <TemplateList ref="templatesListRef" @selected="selected($event)" />
+        </template>
 
+        <template #footer>
             <Pagination
                 :loading="isRequestPending(templatesListRef?.status ?? 'pending')"
                 :refresh="templatesListRef?.refresh"

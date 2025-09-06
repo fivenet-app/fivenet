@@ -179,7 +179,7 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                                     {{ $t('common.template', 2) }} {{ $t('common.weight') }}
                                 </h3>
                                 <div class="my-2">
-                                    <UInput type="text" name="weight" disabled :value="template.weight" />
+                                    <UInputNumber type="text" name="weight" disabled :value="template.weight" />
                                 </div>
                             </div>
 
@@ -198,6 +198,8 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                                         "
                                         :access-types="templateAccessTypes"
                                         disabled
+                                        name="jobAccess"
+                                        full-name
                                     />
                                 </div>
                             </div>
@@ -290,7 +292,7 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                                         :access-types="contentAccessTypes"
                                         :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
                                         disabled
-                                        :show-required="true"
+                                        show-required
                                     />
                                 </div>
                             </div>

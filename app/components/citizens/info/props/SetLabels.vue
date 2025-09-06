@@ -153,6 +153,7 @@ const formRef = useTemplateRef('formRef');
                 :search-input="{ placeholder: $t('common.search_field') }"
                 :search-labels="['name']"
                 clear-search-on-close
+                class="w-full"
             >
                 <template #default>
                     {{ $t('common.selected', state.labels.length) }}

@@ -13,6 +13,7 @@ import { ObjectType } from '~~/gen/ts/resources/notifications/client_view';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { type PageJobAccess, type PageUserAccess, AccessLevel } from '~~/gen/ts/resources/wiki/access';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
+import { jobAccessEntry, userAccessEntry } from '~~/shared/types/validation';
 import BackButton from '../partials/BackButton.vue';
 import ConfirmModal from '../partials/ConfirmModal.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
@@ -87,8 +88,8 @@ const schema = z.object({
     }),
     content: z.string().min(3).max(1750000),
     access: z.object({
-        jobs: z.custom<PageJobAccess>().array().max(maxAccessEntries).default([]),
-        users: z.custom<PageUserAccess>().array().max(maxAccessEntries).default([]),
+        jobs: jobAccessEntry.array().max(maxAccessEntries).default([]),
+        users: userAccessEntry.array().max(maxAccessEntries).default([]),
     }),
     files: z.custom<File>().array().max(5).default([]),
 });
@@ -631,6 +632,7 @@ const formRef = useTemplateRef('formRef');
                                         :disabled="!canDo.access"
                                         :target-id="page.id ?? 0"
                                         :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.wiki.AccessLevel')"
+                                        name="access"
                                     />
                                 </UFormField>
                             </template>

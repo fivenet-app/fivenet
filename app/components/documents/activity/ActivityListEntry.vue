@@ -74,7 +74,7 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
             </div>
         </div>
 
-        <UAccordion v-else :items="[{}]" :ui="{ label: 'w-full', trailingIcon: 'hidden' }">
+        <UCollapsible v-else :items="[{}]" :ui="{ label: 'w-full', trailingIcon: 'hidden' }">
             <template #default="{ open }">
                 <div class="flex w-full flex-1 space-x-3">
                     <div class="my-auto flex size-10 items-center justify-center rounded-full">
@@ -119,24 +119,27 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
             </template>
 
             <template #content>
-                <template v-if="entry.activityType === DocActivityType.UPDATED">
-                    <div class="rounded-md bg-default p-2">
-                        <ActivityDocUpdatedDiff
-                            v-if="entry.data?.data.oneofKind === 'updated'"
-                            :update="entry.data?.data.updated"
-                        />
-                    </div>
-                </template>
-                <template
-                    v-else-if="
-                        entry.activityType === DocActivityType.ACCESS_UPDATED && entry.data?.data.oneofKind === 'accessUpdated'
-                    "
-                >
-                    <div class="rounded-md bg-default p-2">
-                        <ActivityAccessUpdated :data="entry.data?.data.accessUpdated" />
-                    </div>
-                </template>
+                <div class="p-2">
+                    <template v-if="entry.activityType === DocActivityType.UPDATED">
+                        <div class="rounded-md bg-default p-2">
+                            <ActivityDocUpdatedDiff
+                                v-if="entry.data?.data.oneofKind === 'updated'"
+                                :update="entry.data?.data.updated"
+                            />
+                        </div>
+                    </template>
+                    <template
+                        v-else-if="
+                            entry.activityType === DocActivityType.ACCESS_UPDATED &&
+                            entry.data?.data.oneofKind === 'accessUpdated'
+                        "
+                    >
+                        <div class="rounded-md bg-default p-2">
+                            <ActivityAccessUpdated :data="entry.data?.data.accessUpdated" />
+                        </div>
+                    </template>
+                </div>
             </template>
-        </UAccordion>
+        </UCollapsible>
     </li>
 </template>

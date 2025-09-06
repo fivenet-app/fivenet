@@ -147,11 +147,11 @@ const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders
         </UFormField>
 
         <UFormField
-            name="workflow.reminders.maxReminderCount"
+            name="workflow.reminders.reminderSettings.maxReminderCount"
             :label="$t('components.documents.TemplateWorkflowEditor.max_reminder_count.title')"
             :description="$t('components.documents.TemplateWorkflowEditor.max_reminder_count.description')"
         >
-            <UInput v-model="workflow.reminders.reminderSettings.maxReminderCount" type="number" />
+            <UInputNumber v-model="workflow.reminders.reminderSettings.maxReminderCount" :min="1" :max="10" :step="1" />
         </UFormField>
     </div>
 </template>

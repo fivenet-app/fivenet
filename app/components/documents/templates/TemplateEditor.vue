@@ -16,11 +16,12 @@ import { TemplateVar } from '~/composables/tiptap/extensions/TemplateVar';
 import { useAuthStore } from '~/stores/auth';
 import { useCompletorStore } from '~/stores/completor';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
-import { AccessLevel, type DocumentJobAccess, type DocumentUserAccess } from '~~/gen/ts/resources/documents/access';
+import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Category } from '~~/gen/ts/resources/documents/category';
-import type { ObjectSpecs, Template, TemplateJobAccess, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
+import type { ObjectSpecs, Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/documents/documents';
+import { jobAccessEntry, userAccessEntry } from '~~/shared/types/validation';
 import TemplateEditorButtons from './TemplateEditorButtons.vue';
 import TemplateWorkflowEditor from './TemplateWorkflowEditor.vue';
 
@@ -53,10 +54,10 @@ const schema = z.object({
     content: z.string().min(3).max(1500000),
     contentState: z.union([z.string().min(1).max(512), z.string().length(0)]),
     category: z.custom<Category>().optional(),
-    jobAccess: z.custom<TemplateJobAccess>().array().max(maxAccessEntries).default([]),
+    jobAccess: jobAccessEntry.array().max(maxAccessEntries).default([]),
     contentAccess: z.object({
-        jobs: z.custom<DocumentJobAccess>().array().max(maxAccessEntries).default([]),
-        users: z.custom<DocumentUserAccess>().array().max(maxAccessEntries).default([]),
+        jobs: jobAccessEntry.array().max(maxAccessEntries).default([]),
+        users: userAccessEntry.array().max(maxAccessEntries).default([]),
     }),
     workflow: zWorkflow,
 });
@@ -367,7 +368,7 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UDashboardPanel>
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.documents.templates.edit.title')">
                 <template #leading>
@@ -417,18 +418,24 @@ const formRef = useTemplateRef('formRef');
                         <UContainer class="mt-2 w-full overflow-y-scroll">
                             <div>
                                 <UFormField name="weight" :label="`${$t('common.template', 1)} ${$t('common.weight')}`">
-                                    <UInput
+                                    <UInputNumber
                                         v-model="state.weight"
-                                        type="number"
                                         name="weight"
                                         :min="0"
                                         :max="999999"
+                                        :step="1"
                                         :placeholder="$t('common.weight')"
                                     />
                                 </UFormField>
 
                                 <UFormField name="title" :label="`${$t('common.template')} ${$t('common.title')}`" required>
-                                    <UTextarea v-model="state.title" name="title" :rows="1" :placeholder="$t('common.title')" />
+                                    <UInput
+                                        v-model="state.title"
+                                        name="title"
+                                        :placeholder="$t('common.title')"
+                                        size="lg"
+                                        class="w-full"
+                                    />
                                 </UFormField>
 
                                 <UFormField
@@ -441,6 +448,7 @@ const formRef = useTemplateRef('formRef');
                                         name="description"
                                         :rows="4"
                                         :label="$t('common.description')"
+                                        class="w-full"
                                     />
                                 </UFormField>
 
@@ -476,6 +484,8 @@ const formRef = useTemplateRef('formRef');
                                             (e) => e.value === AccessLevel.VIEW || e.value === AccessLevel.EDIT,
                                         )
                                     "
+                                    name="jobAccess"
+                                    full-name
                                 />
                             </div>
 
@@ -513,7 +523,8 @@ const formRef = useTemplateRef('formRef');
                                     :target-id="templateId ?? 0"
                                     :access-types="contentAccessTypes"
                                     :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
-                                    :show-required="true"
+                                    show-required
+                                    name="contentAccess"
                                 />
                             </div>
                         </UContainer>
@@ -530,7 +541,7 @@ const formRef = useTemplateRef('formRef');
                             />
 
                             <UFormField name="contentTitle" :label="`${$t('common.content')} ${$t('common.title')}`" required>
-                                <UTextarea v-model="state.contentTitle" name="contentTitle" :rows="2" />
+                                <UTextarea v-model="state.contentTitle" name="contentTitle" :rows="2" class="w-full" />
                             </UFormField>
 
                             <UFormField name="category" :label="$t('common.category', 1)">
@@ -538,6 +549,7 @@ const formRef = useTemplateRef('formRef');
                                     v-model="state.category"
                                     :filter-fields="['name']"
                                     nullable
+                                    class="w-full"
                                     :searchable="
                                         async (search: string) => {
                                             try {
@@ -556,7 +568,7 @@ const formRef = useTemplateRef('formRef');
                             </UFormField>
 
                             <UFormField name="contentState" :label="`${$t('common.content')} ${$t('common.state')}`">
-                                <UTextarea v-model="state.contentState" name="contentState" :rows="2" />
+                                <UTextarea v-model="state.contentState" name="contentState" :rows="2" class="w-full" />
                             </UFormField>
 
                             <UFormField
@@ -569,7 +581,7 @@ const formRef = useTemplateRef('formRef');
                                 <ClientOnly>
                                     <TiptapEditor
                                         v-model="state.content"
-                                        class="mx-auto w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
+                                        class="mx-auto min-h-120 w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
                                         :extensions="extensions"
                                     >
                                         <template #toolbar="{ editor }">

@@ -221,6 +221,7 @@ defineShortcuts({
                         :placeholder="$t('common.license_plate')"
                         block
                         leading-icon="i-mdi-search"
+                        class="w-full"
                     >
                         <template #trailing>
                             <UKbd value="/" />

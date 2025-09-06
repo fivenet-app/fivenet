@@ -140,12 +140,13 @@ const columns = computed(
                                     variant: 'link',
                                     icon: 'i-mdi-check-bold',
                                     color: 'green',
-                                    onClick: () =>
+                                    onClick: () => {
                                         qualificationRequestTutorModal.open({
                                             request: row.original,
                                             status: RequestStatus.ACCEPTED,
                                             onRefresh: onRefresh,
-                                        }),
+                                        });
+                                    },
                                 }),
                             ),
                         (row.original.status === RequestStatus.ACCEPTED ||
@@ -155,7 +156,7 @@ const columns = computed(
                                     variant: 'link',
                                     icon: 'i-mdi-star',
                                     color: 'warning',
-                                    onClick: () =>
+                                    onClick: () => {
                                         (row.original.status === RequestStatus.EXAM_GRADING
                                             ? examViewResultModal
                                             : qualificationResultTutorModal
@@ -164,7 +165,8 @@ const columns = computed(
                                             examMode: props.examMode,
                                             userId: row.original.userId,
                                             onRefresh: onRefresh,
-                                        }),
+                                        });
+                                    },
                                 }),
                             ),
                         checkQualificationAccess(

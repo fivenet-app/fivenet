@@ -30,6 +30,8 @@ const props = withDefaults(
         totalLimit?: number;
         hideGrade?: boolean;
         hideJobs?: string[];
+        name?: string;
+        fullName?: boolean;
     }>(),
     {
         jobs: () => [],
@@ -43,6 +45,8 @@ const props = withDefaults(
         totalLimit: undefined,
         hideGrade: false,
         hideJobs: () => [],
+        name: undefined,
+        fullName: false,
     },
 );
 
@@ -220,7 +224,7 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
 </script>
 
 <template>
-    <div class="flex flex-col gap-2 divide-y divide-neutral-100 md:divide-y-0 dark:divide-neutral-800">
+    <div class="flex flex-col gap-1 divide-y divide-neutral-100 md:divide-y-0 dark:divide-neutral-800">
         <AccessEntry
             v-for="(entry, idx) in access"
             :key="entry.id"
@@ -233,6 +237,7 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
             v-bind="$attrs"
             :hide-grade="hideGrade"
             :hide-jobs="hideJobs"
+            :name="`${name}${fullName ? '' : `.${entry.type}s`}.${idx}`"
             @delete="access?.splice(idx, 1)"
         />
 

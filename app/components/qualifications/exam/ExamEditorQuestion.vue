@@ -459,7 +459,7 @@ watch(
         <div class="flex flex-1 flex-col gap-2 p-4">
             <div class="flex flex-1 flex-col gap-2">
                 <UFormField name="title" :label="$t('common.title')" required>
-                    <UInput v-model="question.title" type="text" :placeholder="$t('common.title')" size="xl" />
+                    <UInput v-model="question.title" type="text" :placeholder="$t('common.title')" size="xl" class="w-full" />
                 </UFormField>
 
                 <UFormField class="flex-1" name="description" :label="$t('common.description')">
@@ -470,6 +470,7 @@ watch(
                         resize
                         :placeholder="$t('common.description')"
                         :disabled="disabled"
+                        class="w-full"
                     />
                 </UFormField>
             </div>
@@ -488,12 +489,12 @@ watch(
                     <div class="flex flex-col gap-2">
                         <NotSupportedTabletBlock v-if="nuiEnabled" />
                         <template v-else>
-                            <UInput
-                                type="file"
+                            <UFileUpload
                                 :accept="appConfig.fileUpload.types.images.join(',')"
                                 :placeholder="$t('common.image')"
                                 :disabled="disabled"
-                                @change="($event) => handleImage($event)"
+                                class="w-full"
+                                @update:model-value="($event) => handleImage($event)"
                             />
                         </template>
 
@@ -560,7 +561,13 @@ watch(
                             </UFormField>
                         </div>
 
-                        <UTextarea v-model="question.answer!.answer.freeText.text" :rows="5" resize :disabled="disabled" />
+                        <UTextarea
+                            v-model="question.answer!.answer.freeText.text"
+                            :rows="5"
+                            resize
+                            :disabled="disabled"
+                            class="w-full"
+                        />
                     </div>
                 </template>
 
@@ -592,6 +599,7 @@ watch(
                             :rows="2"
                             resize
                             :disabled="disabled"
+                            class="w-full"
                         />
                     </UFormField>
 

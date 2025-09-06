@@ -53,7 +53,7 @@ function categorySelected(idx: number): void {
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+    <UDashboardPanel :ui="{ body: 'gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.documents.categories.title')">
                 <template #leading>
@@ -111,9 +111,9 @@ function categorySelected(idx: number): void {
             <div v-else class="flex justify-center">
                 <CardsList :items="items" @selected="categorySelected($event)" />
             </div>
+        </template>
 
-            <div class="flex-1" />
-
+        <template #footer>
             <Pagination :status="status" :refresh="refresh" hide-buttons hide-text />
         </template>
     </UDashboardPanel>

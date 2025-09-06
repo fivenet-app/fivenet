@@ -28,10 +28,10 @@ const templateSchema = useVModel(props, 'modelValue', emit);
             </UFormField>
 
             <UFormField class="flex-1" name="users.min" :label="$t('common.min')">
-                <UInput
+                <UInputNumber
                     v-model="templateSchema.users.min"
-                    type="number"
                     :min="0"
+                    :max="100"
                     :disabled="!templateSchema.users.req"
                     oninput="validity.valid||(value='');"
                     name="users"
@@ -39,10 +39,10 @@ const templateSchema = useVModel(props, 'modelValue', emit);
             </UFormField>
 
             <UFormField class="flex-1" name="users.max" :label="$t('common.max')">
-                <UInput
+                <UInputNumber
                     v-model="templateSchema.users.max"
-                    type="number"
                     :min="0"
+                    :max="100"
                     oninput="validity.valid||(value='');"
                     name="users"
                 />
@@ -55,10 +55,10 @@ const templateSchema = useVModel(props, 'modelValue', emit);
             </UFormField>
 
             <UFormField class="flex-1" name="documents.min" :label="$t('common.min')">
-                <UInput
+                <UInputNumber
                     v-model="templateSchema.documents.min"
-                    type="number"
                     :min="0"
+                    :max="100"
                     :disabled="!templateSchema.documents.req"
                     oninput="validity.valid||(value='');"
                     name="documents"
@@ -66,10 +66,10 @@ const templateSchema = useVModel(props, 'modelValue', emit);
             </UFormField>
 
             <UFormField class="flex-1" name="documents.max" :label="$t('common.max')">
-                <UInput
+                <UInputNumber
                     v-model="templateSchema.documents.max"
-                    type="number"
                     :min="0"
+                    :max="100"
                     oninput="validity.valid||(value='');"
                     name="documents"
                 />

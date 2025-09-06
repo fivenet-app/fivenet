@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { NuxtImg, UIcon } from '#components';
+import { NuxtImg, UButton, UIcon, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -93,6 +93,51 @@ const columns = computed(
     () =>
         [
             {
+                id: 'actions',
+                cell: ({ row }) =>
+                    h('div', { class: 'flex items-center gap-2' }, [
+                        h(
+                            UTooltip,
+                            { text: t('common.show') },
+                            {
+                                default: () =>
+                                    h(
+                                        UButton,
+                                        {
+                                            variant: 'link',
+                                            icon: 'i-mdi-link-variant',
+                                            external: true,
+                                            target: '_blank',
+                                            to: `/api/filestore/${row.original.filePath}`,
+                                        },
+                                        {},
+                                    ),
+                            },
+                        ),
+                        h(
+                            UTooltip,
+                            { text: t('common.delete') },
+                            {
+                                default: () =>
+                                    h(
+                                        UButton,
+                                        {
+                                            variant: 'link',
+                                            icon: 'i-mdi-delete',
+                                            color: 'error',
+                                            onClick: () => {
+                                                confirmModal.open({
+                                                    confirm: async () => deleteFile(row.original.filePath),
+                                                });
+                                            },
+                                        },
+                                        {},
+                                    ),
+                            },
+                        ),
+                    ]),
+            },
+            {
                 accessorKey: 'name',
                 header: t('common.name'),
                 cell: ({ row }) => h('span', { class: 'text-highlighted' }, row.original.filePath),
@@ -105,7 +150,7 @@ const columns = computed(
                         ? h(UIcon, { class: 'size-8', name: 'i-mdi-file-outline' })
                         : h(NuxtImg, {
                               class: 'max-h-24 max-w-32',
-                              src: `/api/filestore/${row.original.filePath}`,
+                              src: `/api/filestore/${row.original.filePath.replace(/^\//, '')}`,
                               loading: 'lazy',
                           }),
             },
@@ -124,7 +169,7 @@ const columns = computed(
 </script>
 
 <template>
-    <UDashboardPanel>
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.settings.settings.title')">
                 <template #leading>
@@ -135,7 +180,7 @@ const columns = computed(
                     <PartialsBackButton fallback-to="/settings" />
 
                     <UButton
-                        v-if="streamerMode"
+                        v-if="!streamerMode"
                         :label="$t('common.upload')"
                         trailing-icon="i-mdi-upload"
                         @click="fileUploadModal.open()"
@@ -146,53 +191,28 @@ const columns = computed(
 
         <template #body>
             <StreamerModeAlert v-if="streamerMode" />
-            <template v-else>
-                <DataErrorBlock
-                    v-if="error"
-                    :title="$t('common.unable_to_load', [$t('common.file', 2)])"
-                    :error="error"
-                    :retry="refresh"
-                />
+            <DataErrorBlock
+                v-else-if="error"
+                :title="$t('common.unable_to_load', [$t('common.file', 2)])"
+                :error="error"
+                :retry="refresh"
+            />
 
-                <UTable
-                    v-else
-                    class="flex-1"
-                    :loading="isRequestPending(status)"
-                    :columns="columns"
-                    :data="files?.files"
-                    :pagination-options="{ manualPagination: true }"
-                    :sorting-options="{ manualSorting: true }"
-                    :empty="$t('common.not_found', [$t('common.file', 2)])"
-                    sticky
-                >
-                    <template #actions-cell="{ row: file }">
-                        <UTooltip :text="$t('common.show')">
-                            <UButton
-                                variant="link"
-                                icon="i-mdi-link-variant"
-                                external
-                                target="_blank"
-                                :to="`/api/filestore/${file.original.filePath}`"
-                            />
-                        </UTooltip>
+            <UTable
+                v-else
+                class="flex-1"
+                :loading="isRequestPending(status)"
+                :columns="columns"
+                :data="files?.files"
+                :empty="$t('common.not_found', [$t('common.file', 2)])"
+                :pagination-options="{ manualPagination: true }"
+                :sorting-options="{ manualSorting: true }"
+                sticky
+            />
+        </template>
 
-                        <UTooltip :text="$t('common.delete')">
-                            <UButton
-                                variant="link"
-                                icon="i-mdi-delete"
-                                color="error"
-                                @click="
-                                    confirmModal.open({
-                                        confirm: async () => deleteFile(file.original.filePath),
-                                    })
-                                "
-                            />
-                        </UTooltip>
-                    </template>
-                </UTable>
-
-                <Pagination v-model="page" :pagination="files?.pagination" :status="status" :refresh="refresh" />
-            </template>
+        <template #footer>
+            <Pagination v-model="page" :pagination="files?.pagination" :status="status" :refresh="refresh" />
         </template>
     </UDashboardPanel>
 </template>

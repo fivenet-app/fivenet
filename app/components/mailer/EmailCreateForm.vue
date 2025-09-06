@@ -6,10 +6,11 @@ import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { useMailerStore } from '~/stores/mailer';
 import { getMailerMailerClient } from '~~/gen/ts/clients';
-import { type Access, AccessLevel } from '~~/gen/ts/resources/mailer/access';
+import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 import type { Email } from '~~/gen/ts/resources/mailer/email';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetEmailProposalsResponse } from '~~/gen/ts/services/mailer/mailer';
+import { jobAccessEntry, qualificationAccessEntry, userAccessEntry } from '~~/shared/types/validation';
 
 const props = withDefaults(
     defineProps<{
@@ -34,6 +35,8 @@ const emit = defineEmits<{
 const { t } = useI18n();
 
 const { activeChar, isSuperuser } = useAuth();
+
+const { maxAccessEntries } = useAppConfig();
 
 const notifications = useNotificationsStore();
 
@@ -90,7 +93,11 @@ const schema = z.object({
         }),
     label: z.string().max(128).optional(),
     deactivated: z.coerce.boolean(),
-    access: z.custom<Access>(),
+    access: z.object({
+        jobs: jobAccessEntry.array().max(maxAccessEntries).default([]),
+        users: userAccessEntry.array().max(maxAccessEntries).default([]),
+        qualifications: qualificationAccessEntry.array().max(maxAccessEntries).default([]),
+    }),
 });
 
 type Schema = z.output<typeof schema>;
@@ -155,7 +162,7 @@ async function createOrUpdateEmail(values: Schema): Promise<undefined> {
     });
 
     if (redirectToMail) {
-        await navigateTo({ name: 'mail' });
+        await navigateTo({ name: 'mail-thread', params: { thread: undefined } });
     }
 
     if (response.email) {
@@ -261,6 +268,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.mailer.AccessLevel')"
                 :disabled="disabled"
                 default-access-type="job"
+                name="access"
             />
         </UFormField>
 

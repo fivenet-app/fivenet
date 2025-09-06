@@ -288,6 +288,7 @@ const columns = computed(
                                     :placeholder="$t('common.colleague')"
                                     trailing
                                     leading-icon="i-mdi-search"
+                                    class="w-full"
                                     value-key="userId"
                                 >
                                     <template #item="{ item }">
@@ -310,6 +311,7 @@ const columns = computed(
                                         value-key="status"
                                         :placeholder="$t('common.na')"
                                         :search-input="{ placeholder: $t('common.search_field') }"
+                                        class="w-full"
                                     >
                                         <template #default>
                                             {{ $t('common.selected', query.types.length) }}
@@ -327,7 +329,13 @@ const columns = computed(
                             </UFormField>
 
                             <UFormField class="flex-initial" name="id" :label="$t('common.id')">
-                                <UInput v-model="query.id" type="text" name="id" :placeholder="$t('common.id')" />
+                                <UInput
+                                    v-model="query.id"
+                                    type="text"
+                                    name="id"
+                                    :placeholder="$t('common.id')"
+                                    class="w-full"
+                                />
                             </UFormField>
 
                             <UFormField

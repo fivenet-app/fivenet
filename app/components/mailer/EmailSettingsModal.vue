@@ -74,6 +74,7 @@ const formRef = useTemplateRef('formRef');
                                         type="text"
                                         :placeholder="$t('common.mail')"
                                         :disabled="disabled || !canManage"
+                                        class="w-full"
                                     />
                                 </UFormField>
 

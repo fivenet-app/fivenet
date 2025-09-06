@@ -47,7 +47,7 @@ const { moveUp, moveDown } = useListReorder(toRef(questions.value.questions));
 </script>
 
 <template>
-    <div class="mt-2 flex flex-1 flex-col gap-2 px-2">
+    <div class="flex flex-1 flex-col gap-2 px-2">
         <UForm :schema="schema" :state="settings">
             <h2 class="text-highlighted">
                 {{ $t('common.settings') }}
@@ -59,11 +59,17 @@ const { moveUp, moveDown } = useListReorder(toRef(questions.value.questions));
                 :label="$t('components.qualifications.exam_editor.exam_duration')"
                 :ui="{ container: '' }"
             >
-                <UInput v-model="settings.time!.seconds" type="number" :min="1" :step="1" :placeholder="$t('common.duration')">
+                <UInputNumber
+                    v-model="settings.time!.seconds"
+                    :min="1"
+                    :step="1"
+                    :placeholder="$t('common.duration')"
+                    class="w-full"
+                >
                     <template #trailing>
                         <span class="text-xs text-muted">s</span>
                     </template>
-                </UInput>
+                </UInputNumber>
             </UFormField>
 
             <UFormField
@@ -89,6 +95,7 @@ const { moveUp, moveDown } = useListReorder(toRef(questions.value.questions));
                         :items="modes"
                         value-key="mode"
                         :search-input="{ placeholder: $t('common.search_field') }"
+                        class="w-full"
                     >
                         <template #default>
                             <span class="truncate">{{
@@ -111,13 +118,13 @@ const { moveUp, moveDown } = useListReorder(toRef(questions.value.questions));
                 :label="$t('components.qualifications.exam_editor.minimum_points')"
                 :ui="{ container: '' }"
             >
-                <UInput
+                <UInputNumber
                     v-model="settings.minimumPoints"
-                    type="number"
                     :min="0"
                     :max="999999"
                     :step="1"
                     :placeholder="$t('components.qualifications.exam_editor.minimum_points')"
+                    class="w-full"
                 />
             </UFormField>
 

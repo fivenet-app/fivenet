@@ -143,6 +143,7 @@ const formRef = useTemplateRef('formRef');
                                         :items="cTypes"
                                         value-key="status"
                                         :search-input="{ placeholder: $t('common.search_field') }"
+                                        class="w-full"
                                     >
                                         <template #default>
                                             <UBadge :color="conductTypesToBadgeColor(state.type)" truncate>
@@ -189,6 +190,7 @@ const formRef = useTemplateRef('formRef');
                                     block
                                     :placeholder="$t('common.colleague')"
                                     trailing
+                                    class="w-full"
                                 >
                                     <template v-if="state.targetUser" #default>
                                         {{ userToLabel(state.targetUser) }}
@@ -219,6 +221,7 @@ const formRef = useTemplateRef('formRef');
                                     name="message"
                                     :rows="6"
                                     :placeholder="$t('common.message')"
+                                    class="w-full"
                                 />
                             </UFormField>
                         </dd>

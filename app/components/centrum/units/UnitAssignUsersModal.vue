@@ -92,6 +92,7 @@ const formRef = useTemplateRef('formRef');
                                 :placeholder="$t('common.search')"
                                 trailing
                                 :disabled="!canSubmit"
+                                class="w-full"
                             >
                                 <template #item="{ item }">
                                     {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}

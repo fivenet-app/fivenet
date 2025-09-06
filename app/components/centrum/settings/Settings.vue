@@ -589,6 +589,7 @@ const formRef = useTemplateRef('formRef');
                                     hide-grade
                                     :hide-jobs="[activeChar!.job]"
                                     :disabled="!attr('centrum.CentrumService/UpdateSettings', 'Access', 'Shared').value"
+                                    name="access"
                                 />
                             </UFormField>
                         </UPageCard>

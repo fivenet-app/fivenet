@@ -20,6 +20,7 @@ import type { File } from '~~/gen/ts/resources/file/file';
 import { ObjectType } from '~~/gen/ts/resources/notifications/client_view';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UpdateDocumentRequest } from '~~/gen/ts/services/documents/documents';
+import { jobAccessEntry, userAccessEntry } from '~~/shared/types/validation';
 import ConfirmModal from '../partials/ConfirmModal.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
@@ -118,10 +119,12 @@ const schema = z.object({
     draft: z.coerce.boolean(),
     public: z.coerce.boolean(),
     category: z.custom<Category>().default({ ...emptyCategory }),
-    access: z.object({
-        jobs: z.custom<DocumentJobAccess>().array().max(maxAccessEntries).default([]),
-        users: z.custom<DocumentUserAccess>().array().max(maxAccessEntries).default([]),
-    }),
+    access: z
+        .object({
+            jobs: jobAccessEntry.array().max(maxAccessEntries).default([]),
+            users: userAccessEntry.array().max(maxAccessEntries).default([]),
+        })
+        .default({ jobs: [], users: [] }),
     files: z.custom<File>().array().max(5).default([]),
     references: z.custom<DocumentReference>().array().max(15).default([]),
     relations: z.custom<DocumentRelation>().array().max(15).default([]),
@@ -684,13 +687,14 @@ provide('yjsProvider', provider);
                     <template #access>
                         <UDashboardPanel :ui="{ root: 'min-h-0' }">
                             <template #body>
-                                <UFormField name="access" :label="$t('common.access')">
+                                <UFormField :label="$t('common.access')">
                                     <AccessManager
                                         v-model:jobs="state.access.jobs"
                                         v-model:users="state.access.users"
                                         :disabled="!canDo.access"
                                         :target-id="documentId ?? 0"
                                         :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
+                                        name="access"
                                     />
                                 </UFormField>
                             </template>

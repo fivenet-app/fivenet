@@ -95,6 +95,7 @@ const formRef = useTemplateRef('formRef');
                             :placeholder="$t('common.access')"
                             :search-input="{ placeholder: $t('common.search_field') }"
                             value-key="value"
+                            class="w-full"
                         >
                             <template #empty>
                                 {{ $t('common.not_found', [$t('common.attributes', 2)]) }}

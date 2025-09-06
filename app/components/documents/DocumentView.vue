@@ -330,7 +330,7 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                                 :content="{ align: 'start' }"
                                 :ui="{ content: 'w-48' }"
                             >
-                                <UButton :label="$t('common.pin')" color="neutral" variant="ghost" icon="i-mdi-pin" />
+                                <UButton :label="$t('common.pin')" color="neutral" variant="ghost" block icon="i-mdi-pin" />
                             </UDropdownMenu>
                         </UTooltip>
 

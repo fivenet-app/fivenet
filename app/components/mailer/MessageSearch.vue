@@ -74,7 +74,6 @@ const groups = computed(
         :icon="appConfig.ui.icons.search"
         color="neutral"
         variant="outline"
-        :label="$t('common.search_field')"
         truncate
         aria-label="Search"
         v-bind="$attrs"

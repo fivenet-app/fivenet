@@ -21,7 +21,7 @@ const props = withDefaults(
     },
 );
 
-const emit = defineEmits<{
+const emits = defineEmits<{
     (e: 'update:wantedStatus', value: boolean): void;
     (e: 'update:job', value: { job: Job; grade: JobGrade }): void;
     (e: 'update:trafficInfractionPoints', value: number): void;
@@ -72,7 +72,7 @@ if (props.registerKBDs) {
 
             setWantedModal.open({
                 user: props.user,
-                'onUpdate:wantedStatus': ($event) => emit('update:wantedStatus', $event),
+                'onUpdate:wantedStatus': ($event) => emits('update:wantedStatus', $event),
             });
         },
         'c-j': () => {
@@ -82,7 +82,7 @@ if (props.registerKBDs) {
 
             setJobModal.open({
                 user: props.user,
-                'onUpdate:job': ($event) => emit('update:job', $event),
+                'onUpdate:job': ($event) => emits('update:job', $event),
             });
         },
         'c-p': () => {
@@ -92,7 +92,7 @@ if (props.registerKBDs) {
 
             setTrafficPointsModal.open({
                 user: props.user,
-                'onUpdate:trafficInfractionPoints': ($event) => emit('update:trafficInfractionPoints', $event),
+                'onUpdate:trafficInfractionPoints': ($event) => emits('update:trafficInfractionPoints', $event),
             });
         },
         'c-m': () => {
@@ -102,7 +102,7 @@ if (props.registerKBDs) {
 
             setMugshotModal.open({
                 user: props.user,
-                'onUpdate:mugshot': ($event) => emit('update:mugshot', $event),
+                'onUpdate:mugshot': ($event) => emits('update:mugshot', $event),
             });
         },
         'c-d': () => {

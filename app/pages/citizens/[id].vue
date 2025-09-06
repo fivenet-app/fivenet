@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import type { NavigationMenuItem } from '@nuxt/ui';
 import type { TypedRouteFromName } from '@typed-router';
-import CitizenInfo from '~/components/citizens/info/CitizenInfo.vue';
-import Header from '~/components/citizens/info/Header.vue';
+import CitizenActions from '~/components/citizens/info/CitizenActions.vue';
+import SetLabels from '~/components/citizens/info/props/SetLabels.vue';
 import AddToButton from '~/components/clipboard/AddToButton.vue';
+import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -31,6 +32,8 @@ definePageMeta({
         return !!(route.params.id && !isNaN(Number(route.params.id))) && Number(route.params.id) > -1;
     },
 });
+
+const { game } = useAppConfig();
 
 const { t } = useI18n();
 
@@ -133,6 +136,8 @@ const items = computed<NavigationMenuItem[]>(() =>
         },
     ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
 );
+
+const isOpen = ref(false);
 </script>
 
 <!-- eslint-disable vue/no-multiple-template-root -->
@@ -158,8 +163,48 @@ const items = computed<NavigationMenuItem[]>(() =>
             </UDashboardNavbar>
 
             <UDashboardToolbar v-if="user">
-                <div class="flex flex-1 flex-row items-center gap-1">
-                    <Header :user="user" class="flex-1" />
+                <div class="my-2 flex flex-1 flex-row items-center gap-1">
+                    <div class="flex flex-1 items-center gap-2">
+                        <ProfilePictureImg
+                            :src="user?.props?.mugshot?.filePath"
+                            :name="`${user.firstname} ${user.lastname}`"
+                            :alt="$t('common.mugshot')"
+                            :enable-popup="true"
+                            size="3xl"
+                            class="shrink-0"
+                        />
+
+                        <div class="flex-1">
+                            <div class="flex snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
+                                <h2 class="flex-1 px-0.5 py-1 text-4xl font-bold break-words sm:pl-1">
+                                    {{ user?.firstname }} {{ user?.lastname }}
+                                </h2>
+                            </div>
+
+                            <div class="inline-flex flex-col gap-2 lg:flex-row">
+                                <UBadge>
+                                    {{ user.jobLabel }}
+                                    <template v-if="user.job !== game.unemployedJobName">
+                                        ({{ $t('common.rank') }}: {{ user.jobGradeLabel }})
+                                    </template>
+                                    {{ user.props?.jobName || user.props?.jobGradeNumber ? '*' : '' }}
+                                </UBadge>
+
+                                <UBadge v-if="user?.props?.wanted" color="error">
+                                    {{ $t('common.wanted').toUpperCase() }}
+                                </UBadge>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-1 sm:flex-row">
+                            <UButton
+                                :label="$t('common.action', 2)"
+                                class="lg:hidden"
+                                icon="i-mdi-menu"
+                                @click="isOpen = true"
+                            />
+                        </div>
+                    </div>
 
                     <div>
                         <UButtonGroup v-if="user">
@@ -195,5 +240,43 @@ const items = computed<NavigationMenuItem[]>(() =>
         </template>
     </UDashboardPanel>
 
-    <CitizenInfo v-if="user" v-model="user" />
+    <UDashboardSidebar id="citizen-id-actions" v-model:open="isOpen" side="right" class="bg-elevated/25">
+        <template #header>
+            <div class="flex min-w-0 items-center gap-1.5">
+                <h1 class="flex items-center gap-1.5 truncate font-semibold text-highlighted">
+                    {{ $t('common.action', 2) }}
+                </h1>
+            </div>
+        </template>
+
+        <!-- Register kbds for the citizens actions here as it will always be available not like the profile tab content -->
+        <CitizenActions
+            v-if="user"
+            :user="user"
+            register-kbds
+            @update:wanted-status="user.props!.wanted = $event"
+            @update:job="
+                user.job = $event.job.name;
+                user.jobLabel = $event.job.label;
+                user.jobGrade = $event.grade.grade;
+                user.jobGradeLabel = $event.grade.label;
+            "
+            @update:traffic-infraction-points="user.props!.trafficInfractionPoints = $event"
+            @update:mug-shot="user.props!.mugshot = $event"
+        />
+
+        <USeparator />
+
+        <template v-if="user">
+            <div class="flex shrink-0 items-center gap-1.5">
+                <div class="flex min-w-0 items-center gap-1.5">
+                    <h1 class="flex items-center gap-1.5 truncate font-semibold text-highlighted">
+                        {{ $t('common.label', 2) }}
+                    </h1>
+                </div>
+            </div>
+
+            <SetLabels v-model="user.props!.labels" :user-id="user.userId" class="flex-1" />
+        </template>
+    </UDashboardSidebar>
 </template>

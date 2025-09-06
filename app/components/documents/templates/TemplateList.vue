@@ -48,9 +48,12 @@ const items = computed<CardElements>(
 function selected(idx: number): TemplateShort | undefined {
     return templates.value?.at(idx);
 }
+
+console.log('TEST123');
 </script>
 
 <template>
+    TESt123
     <div v-if="isRequestPending(status)" class="flex justify-center">
         <UPageGrid>
             <UPageCard v-for="idx in 6" :key="idx">
@@ -70,7 +73,7 @@ function selected(idx: number): TemplateShort | undefined {
         :error="error"
         :retry="refresh"
     />
-    <DataNoDataBlock v-else-if="templates && templates.length === 0" :type="$t('common.template', 2)" />
+    <DataNoDataBlock v-else-if="!templates || templates.length === 0" :type="$t('common.template', 2)" />
 
     <div v-else class="flex justify-center">
         <CardsList :class="$attrs.class" :items="items" @selected="$emit('selected', selected($event))" />
