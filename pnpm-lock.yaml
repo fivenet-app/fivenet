@@ -184,8 +184,8 @@ importers:
         specifier: 3.21.4
         version: 3.21.4
       grpc-web:
-        specifier: 1.5.0
-        version: 1.5.0
+        specifier: 2.0.1
+        version: 2.0.1
       leaflet:
         specifier: 1.9.4
         version: 1.9.4
@@ -5511,8 +5511,8 @@ packages:
   graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
 
-  grpc-web@1.5.0:
-    resolution: {integrity: sha512-y1tS3BBIoiVSzKTDF3Hm7E8hV2n7YY7pO0Uo7depfWJqKzWE+SKr0jvHNIJsJJYILQlpYShpi/DRJJMbosgDMQ==}
+  grpc-web@2.0.1:
+    resolution: {integrity: sha512-jo5b5HKDUlBrCgs0SKleMwQGgYOX0Lhhb4OGyTcVCR1/68IbG4tc/N2RBT6qLNxukeGlebyYGpA9I1dN6HFivQ==}
 
   gzip-size@7.0.0:
     resolution: {integrity: sha512-O1Ld7Dr+nqPnmGpdhzLmMTQ4vAsD+rHwMm1NLUmoUFFymBOMKxCCrtDxqdBRYXdeEPEi3SyoR4TizJLQrnKBNA==}
@@ -14726,7 +14726,7 @@ snapshots:
 
   graphemer@1.4.0: {}
 
-  grpc-web@1.5.0: {}
+  grpc-web@2.0.1: {}
 
   gzip-size@7.0.0:
     dependencies:
