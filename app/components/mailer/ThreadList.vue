@@ -75,52 +75,56 @@ defineShortcuts({
         </div>
 
         <template v-else>
-            <div v-for="(thread, index) in threads" :key="index" :ref="(el) => threadRefs.set(thread.id, el as Element)">
-                <div
-                    class="cursor-pointer border-l-2 p-4 text-sm"
-                    :class="[
-                        !!thread.state?.unread ? 'text-highlighted' : 'text-gray-600 dark:text-gray-300',
-                        selectedThread && selectedThread.id === thread.id
-                            ? 'border-primary-500 bg-primary-100 dark:border-primary-400 dark:bg-primary-900/25'
-                            : 'border-white hover:border-primary-500/25 hover:bg-primary-100/50 dark:border-neutral-900 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10',
-                    ]"
-                    @click="selectedThread = thread"
-                >
-                    <div class="flex items-center justify-between gap-1" :class="[thread.state?.unread && 'font-semibold']">
-                        <div class="flex items-center gap-3 truncate font-semibold">
-                            <span class="truncate">
-                                {{ thread.title }}
-                            </span>
+            <div class="divide-y divide-default overflow-y-auto">
+                <div v-for="(thread, index) in threads" :key="index" :ref="(el) => threadRefs.set(thread.id, el as Element)">
+                    <div
+                        class="cursor-pointer border-l-2 p-4 text-sm transition-colors sm:px-6"
+                        :class="[
+                            !!thread.state?.unread ? 'text-highlighted' : 'text-toned',
+                            selectedThread && selectedThread.id === thread.id
+                                ? 'border-primary bg-primary/10'
+                                : 'border-(--ui-bg) hover:border-primary hover:bg-primary/5',
+                        ]"
+                        @click="selectedThread = thread"
+                    >
+                        <div class="flex items-center justify-between gap-1" :class="[thread.state?.unread && 'font-semibold']">
+                            <div class="flex items-center gap-3 truncate font-semibold">
+                                <span class="truncate">
+                                    {{ thread.title }}
+                                </span>
 
-                            <UChip v-if="!!thread.state?.unread" class="mr-1" />
+                                <UChip v-if="!!thread.state?.unread" class="mr-1" />
+                            </div>
+
+                            <div
+                                v-if="thread.deletedAt"
+                                class="flex shrink-0 flex-row items-center justify-center gap-1.5 font-bold"
+                            >
+                                <UIcon class="size-4 shrink-0" name="i-mdi-delete" />
+                                {{ $t('common.deleted') }}
+                            </div>
+                            <UTooltip v-else class="shrink-0" :text="$d(toDate(thread.updatedAt ?? thread.createdAt), 'long')">
+                                {{
+                                    isToday(toDate(thread.updatedAt ?? thread.createdAt))
+                                        ? $d(toDate(thread.updatedAt ?? thread.createdAt), 'time')
+                                        : $d(toDate(thread.updatedAt ?? thread.createdAt), 'date')
+                                }}
+                            </UTooltip>
                         </div>
+                        <div class="flex items-center justify-between">
+                            <p>{{ thread.creatorEmail?.email }}</p>
 
-                        <div
-                            v-if="thread.deletedAt"
-                            class="flex shrink-0 flex-row items-center justify-center gap-1.5 font-bold"
-                        >
-                            <UIcon class="size-4 shrink-0" name="i-mdi-delete" />
-                            {{ $t('common.deleted') }}
-                        </div>
-                        <UTooltip v-else class="shrink-0" :text="$d(toDate(thread.updatedAt ?? thread.createdAt), 'long')">
-                            {{
-                                isToday(toDate(thread.updatedAt ?? thread.createdAt))
-                                    ? $d(toDate(thread.updatedAt ?? thread.createdAt), 'time')
-                                    : $d(toDate(thread.updatedAt ?? thread.createdAt), 'date')
-                            }}
-                        </UTooltip>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <p>{{ thread.creatorEmail?.email }}</p>
-
-                        <div class="inline-flex gap-1">
-                            <UIcon v-if="thread.state?.important" class="size-5 text-red-500" name="i-mdi-exclamation-thick" />
-                            <UIcon v-if="thread.state?.favorite" class="size-5 text-yellow-500" name="i-mdi-star" />
+                            <div class="inline-flex gap-1">
+                                <UIcon
+                                    v-if="thread.state?.important"
+                                    class="size-5 text-red-500"
+                                    name="i-mdi-exclamation-thick"
+                                />
+                                <UIcon v-if="thread.state?.favorite" class="size-5 text-yellow-500" name="i-mdi-star" />
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <USeparator v-if="index < threads.length" />
             </div>
 
             <slot name="after" />

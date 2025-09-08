@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 const props = defineProps<{
     content: string;
+    disabled?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -14,7 +15,13 @@ const content = useVModel(props, 'content', emit);
 <template>
     <UModal :title="$t('common.source_code')" fullscreen :ui="{ body: 'flex flex-col flex-1' }">
         <template #body>
-            <UTextarea v-model="content" class="mx-auto size-full max-w-(--breakpoint-xl) flex-1" autoresize :row="0" />
+            <UTextarea
+                v-model="content"
+                class="mx-auto size-full max-w-(--breakpoint-xl) flex-1"
+                :disabled="disabled"
+                autoresize
+                :row="0"
+            />
         </template>
 
         <template #footer>

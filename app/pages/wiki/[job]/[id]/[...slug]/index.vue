@@ -33,6 +33,7 @@ const wikiWikiClient = await getWikiWikiClient();
 const {
     data: pages,
     error: pagesError,
+    status: pagesStatus,
     refresh: pagesRefresh,
 } = useLazyAsyncData(`wiki-pages:${route.path}`, () => listPages());
 
@@ -83,13 +84,21 @@ async function getPage(id: number): Promise<Page | undefined> {
     <PageView :status="status" :error="error" :refresh="refresh" :page="page" :pages="pages ?? []">
         <template #left>
             <DataErrorBlock v-if="pagesError" :error="pagesError" :retry="pagesRefresh" />
-            <ClientOnly v-else>
-                <PageList :pages="pages ?? []" />
+            <UPageAside v-else :ui="{ root: 'px-0 lg:pe-3' }">
+                <ClientOnly>
+                    <PageList :pages="pages ?? []" />
 
-                <UTooltip :text="$t('common.refresh')">
-                    <UButton class="mt-1 -ml-2" variant="link" icon="i-mdi-refresh" @click="() => pagesRefresh()" />
-                </UTooltip>
-            </ClientOnly>
+                    <UTooltip :text="$t('common.refresh')">
+                        <UButton
+                            class="mt-1 -ml-2"
+                            variant="link"
+                            icon="i-mdi-refresh"
+                            :loading="isRequestPending(pagesStatus)"
+                            @click="() => pagesRefresh()"
+                        />
+                    </UTooltip>
+                </ClientOnly>
+            </UPageAside>
         </template>
     </PageView>
 </template>

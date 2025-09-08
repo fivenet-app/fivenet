@@ -13,7 +13,7 @@ const { doNotDisturb } = storeToRefs(notifications);
             unchecked-icon="i-mdi-do-not-disturb-off-outline"
         />
 
-        <span class="text-sm font-medium text-gray-700 dark:text-gray-200">
+        <span class="text-sm font-medium text-default">
             {{ $t('components.notifications.do_not_disturb') }}
         </span>
     </div>

@@ -81,85 +81,68 @@ const formRef = useTemplateRef('formRef');
     <UModal :title="`${$t('components.centrum.update_unit_status.title')}: ${unit.name} (${unit.initials})`">
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
-                <dl class="divide-neutral/10 divide-y">
-                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                        <dt class="text-sm leading-6 font-medium">
-                            <label class="block text-sm leading-6 font-medium" for="status">
-                                {{ $t('common.status') }}
-                            </label>
-                        </dt>
-                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="status">
-                                <div class="grid w-full grid-cols-2 gap-0.5">
-                                    <UButton
-                                        v-for="item in unitStatuses"
-                                        :key="item.name"
-                                        class="group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:bg-primary-100/10 hover:transition-all"
-                                        :class="[
-                                            state.status == item.status
-                                                ? 'bg-neutral-500 hover:bg-neutral-400'
-                                                : item.status
-                                                  ? unitStatusToBGColor(item.status)
-                                                  : '',
-                                            ,
-                                        ]"
-                                        :disabled="state.status == item.status"
-                                        @click="state.status = item.status ?? StatusUnit.UNAVAILABLE"
-                                    >
-                                        <UIcon class="size-5 shrink-0" :name="item.icon" />
-                                        <span class="mt-1">
-                                            {{
-                                                item.status
-                                                    ? $t(`enums.centrum.StatusUnit.${StatusUnit[item.status ?? 0]}`)
-                                                    : $t(item.name)
-                                            }}
-                                        </span>
-                                    </UButton>
-                                </div>
-                            </UFormField>
-                        </dd>
-                    </div>
-                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                        <dt class="text-sm leading-6 font-medium">
-                            <label class="block text-sm leading-6 font-medium" for="code">
-                                {{ $t('common.code') }}
-                            </label>
-                        </dt>
-                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField class="flex-1" name="code">
-                                <UInput
-                                    v-model="state.code"
-                                    type="text"
-                                    name="code"
-                                    :placeholder="$t('common.code')"
-                                    :label="$t('common.code')"
-                                />
-                            </UFormField>
-                        </dd>
-                    </div>
-                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                        <dt class="text-sm leading-6 font-medium">
-                            <label class="block text-sm leading-6 font-medium" for="reason">
-                                {{ $t('common.reason') }}
-                            </label>
-                        </dt>
-                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField class="flex-1" name="reason" required>
-                                <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
-                            </UFormField>
-                        </dd>
-                    </div>
-                    <div
-                        v-if="settings?.predefinedStatus && settings?.predefinedStatus.unitStatus.length > 0"
-                        class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
-                    >
-                        <dt class="text-sm leading-6 font-medium">
-                            <label class="block text-sm leading-6 font-medium" for="unitStatus">
-                                {{ $t('common.predefined', 2) }}
-                                {{ $t('common.reason', 2) }}
-                            </label>
-                        </dt>
-                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                <dl class="divide-y divide-default">
+                    <div class="flex flex-col gap-4 px-4 py-3 sm:px-0">
+                        <UFormField
+                            class="grid grid-cols-2 items-center gap-2"
+                            name="status"
+                            :label="$t('common.status')"
+                            required
+                        >
+                            <div class="grid w-full grid-cols-2 gap-0.5">
+                                <UButton
+                                    v-for="item in unitStatuses"
+                                    :key="item.name"
+                                    class="group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:bg-primary-100/10 hover:transition-all"
+                                    :class="[
+                                        state.status == item.status
+                                            ? 'bg-neutral-500 hover:bg-neutral-400'
+                                            : item.status
+                                              ? unitStatusToBGColor(item.status)
+                                              : '',
+                                        ,
+                                    ]"
+                                    :disabled="state.status == item.status"
+                                    @click="state.status = item.status ?? StatusUnit.UNAVAILABLE"
+                                >
+                                    <UIcon class="size-5 shrink-0" :name="item.icon" />
+                                    <span class="mt-1">
+                                        {{
+                                            item.status
+                                                ? $t(`enums.centrum.StatusUnit.${StatusUnit[item.status ?? 0]}`)
+                                                : $t(item.name)
+                                        }}
+                                    </span>
+                                </UButton>
+                            </div>
+                        </UFormField>
+
+                        <UFormField class="grid grid-cols-2 items-center gap-2" name="code" :label="$t('common.code')">
+                            <UInput
+                                v-model="state.code"
+                                type="text"
+                                class="w-full"
+                                name="code"
+                                :placeholder="$t('common.code')"
+                                :label="$t('common.code')"
+                            />
+                        </UFormField>
+
+                        <UFormField
+                            name="reason"
+                            class="grid grid-cols-2 items-center gap-2"
+                            :label="$t('common.reason')"
+                            required
+                        >
+                            <UInput v-model="state.reason" class="w-full" type="text" :placeholder="$t('common.reason')" />
+                        </UFormField>
+
+                        <UFormField
+                            v-if="settings?.predefinedStatus && settings?.predefinedStatus.unitStatus.length > 0"
+                            name="unitStatus"
+                            class="grid grid-cols-2 items-center gap-2"
+                            :label="`${$t('common.predefined', 2)} ${$t('common.reason', 2)}`"
+                        >
                             <ClientOnly>
                                 <USelectMenu
                                     name="unitStatus"
@@ -174,7 +157,7 @@ const formRef = useTemplateRef('formRef');
                                     </template>
                                 </USelectMenu>
                             </ClientOnly>
-                        </dd>
+                        </UFormField>
                     </div>
                 </dl>
             </UForm>

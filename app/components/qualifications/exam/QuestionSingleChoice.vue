@@ -43,11 +43,6 @@ const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
                         </UButtonGroup>
                     </div>
 
-                    <URadioGroup
-                        v-model="question.answer!.answer.singleChoice.choice"
-                        :value="question.data!.data.singleChoice.choices[idx]"
-                        :disabled="disabled"
-                    />
                     <UFormField :name="`data.data.singleChoices.choices.${idx}`" class="w-full">
                         <UInput
                             v-model="question.data!.data.singleChoice.choices[idx]"
@@ -77,6 +72,14 @@ const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
                     @click="question.data!.data.singleChoice.choices.push('')"
                 />
             </UTooltip>
+
+            <UFormField :label="$t('common.answer')" class="mt-2">
+                <USelect
+                    v-model="question.answer!.answer.singleChoice.choice"
+                    :items="question.data!.data.singleChoice?.choices"
+                    class="w-full"
+                />
+            </UFormField>
         </UFormField>
     </div>
 </template>

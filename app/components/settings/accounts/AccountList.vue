@@ -3,6 +3,7 @@ import { UBadge, UButton, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import { h } from 'vue';
 import { z } from 'zod';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -175,6 +176,16 @@ const columns = computed(
             {
                 accessorKey: 'lastChar',
                 header: t('common.last_char'),
+                cell: ({ row }) =>
+                    row.original.lastChar
+                        ? h(
+                              CitizenInfoPopover,
+                              {
+                                  userId: row.original.lastChar,
+                              },
+                              row.original.lastChar,
+                          )
+                        : undefined,
             },
             {
                 accessorKey: 'createdAt',
@@ -212,7 +223,7 @@ const columns = computed(
 </script>
 
 <template>
-    <UDashboardPanel>
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.settings.accounts.title')">
                 <template #leading>

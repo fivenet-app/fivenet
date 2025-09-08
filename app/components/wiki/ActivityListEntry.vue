@@ -35,7 +35,7 @@ function spoilerNeeded(activityType: PageActivityType): boolean {
                             {{ $t(`enums.wiki.PageActivityType.${PageActivityType[entry.activityType]}`) }}
                         </span>
                     </h3>
-                    <p class="text-sm text-gray-400">
+                    <p class="text-sm text-dimmed">
                         <GenericTime :value="entry.createdAt" type="long" />
                     </p>
                 </div>
@@ -65,7 +65,7 @@ function spoilerNeeded(activityType: PageActivityType): boolean {
                                     />
                                 </span>
                             </h3>
-                            <p class="text-sm text-gray-400">
+                            <p class="text-sm text-dimmed">
                                 <GenericTime :value="entry.createdAt" type="long" />
                             </p>
                         </div>

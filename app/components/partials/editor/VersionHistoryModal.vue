@@ -83,7 +83,7 @@ watch(
                     </li>
                 </ul>
             </div>
-            <div v-else class="py-4 text-center text-gray-400">{{ $t('common.no_versions') }}</div>
+            <div v-else class="py-4 text-center text-dimmed">{{ $t('common.no_versions') }}</div>
         </template>
 
         <template #footer>

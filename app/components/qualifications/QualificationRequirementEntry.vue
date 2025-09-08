@@ -49,7 +49,7 @@ watch(selectedQualification, () => emit('update-qualification', selectedQualific
 </script>
 
 <template>
-    <div class="my-2 flex flex-row items-center">
+    <div class="flex flex-row items-center">
         <UFormField class="flex-1" name="selectedQualification">
             <SelectMenu
                 v-model="selectedQualification"
@@ -57,6 +57,7 @@ watch(selectedQualification, () => emit('update-qualification', selectedQualific
                 :searchable="(q: string) => listQualifications(q)"
                 :searchable-key="`qualification-${qualificationId}-requirement-entry`"
                 :search-input="{ placeholder: $t('common.search_field') }"
+                class="w-full"
             >
                 <template v-if="selectedQualification" #default>
                     <span class="truncate"> {{ selectedQualification.abbreviation }}: {{ selectedQualification.title }} </span>
@@ -74,7 +75,7 @@ watch(selectedQualification, () => emit('update-qualification', selectedQualific
         </UFormField>
 
         <UTooltip :text="$t('components.qualifications.remove_requirement')">
-            <UButton class="ml-2" icon="i-mdi-close" @click="$emit('remove')" />
+            <UButton class="ml-2" icon="i-mdi-close" color="error" @click="$emit('remove')" />
         </UTooltip>
     </div>
 </template>

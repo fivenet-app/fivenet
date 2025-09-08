@@ -138,7 +138,7 @@ func New(cfg *config.Config) (*bluemonday.Policy, error) {
 	}
 
 	// Use Image Proxy if enabled using the rewrite src function
-	proxyUrl, err := url.Parse(imageproxy.Path)
+	proxyUrl, err := url.Parse(strings.TrimRight(imageproxy.Path, "/"))
 	if err != nil {
 		return nil, err
 	}

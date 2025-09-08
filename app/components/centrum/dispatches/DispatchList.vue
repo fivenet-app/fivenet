@@ -236,7 +236,7 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
                 </div>
             </UFormField>
 
-            <DispatchStatusBreakdown v-if="dispatches === undefined" class="justify-end font-semibold text-gray-100" />
+            <DispatchStatusBreakdown v-if="dispatches === undefined" class="justify-end font-semibold text-toned" />
         </div>
 
         <div class="flex flex-1 flex-col overflow-x-auto overflow-y-auto">

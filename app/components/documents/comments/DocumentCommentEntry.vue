@@ -187,7 +187,7 @@ const confirmModal = overlay.create(ConfirmModal);
 <template>
     <li v-if="comment" class="py-2">
         <div v-if="!editing" class="flex space-x-3">
-            <div :class="[comment.deletedAt ? 'bg-warn-800' : '', 'flex-1 space-y-1']">
+            <div :class="[comment.deletedAt ? 'bg-warning-800' : '', 'flex-1 space-y-1']">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
                         <CitizenInfoPopover :user="comment.creator" show-avatar-in-name />

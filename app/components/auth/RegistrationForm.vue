@@ -150,7 +150,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </template>
                 </UInput>
 
-                <PasswordStrengthMeter class="mt-2" :input="state.password" />
+                <PasswordStrengthMeter class="mt-1" :input="state.password" />
             </UFormField>
 
             <UButton

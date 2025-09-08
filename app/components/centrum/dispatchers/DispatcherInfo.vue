@@ -75,15 +75,13 @@ if (!props.hideJoin) {
                           : 'success'
                 "
                 truncate
+                :label="
+                    getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN
+                        ? $t('common.dispatcher', dispatchers.dispatchers.length)
+                        : $t('enums.centrum.CentrumMode.AUTO_ROUND_ROBIN')
+                "
                 @click="dispatcherDrawer.open({})"
-            >
-                <template v-if="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN">
-                    {{ $t('common.dispatcher', dispatchers.dispatchers.length) }}
-                </template>
-                <template v-else>
-                    {{ $t('enums.centrum.CentrumMode.AUTO_ROUND_ROBIN') }}
-                </template>
-            </UButton>
+            />
         </UTooltip>
     </div>
 </template>

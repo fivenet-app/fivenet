@@ -71,7 +71,7 @@ const filteredUnits = computed(() => ({
         </template>
 
         <template #body>
-            <div class="flex flex-col gap-1">
+            <div class="flex flex-col gap-y-2">
                 <UFormField name="search" :label="$t('common.search')">
                     <UInput
                         v-model="queryUnit"
@@ -79,6 +79,7 @@ const filteredUnits = computed(() => ({
                         name="search"
                         :placeholder="$t('common.search')"
                         leading-icon="i-mdi-search"
+                        class="w-full"
                     />
                 </UFormField>
 

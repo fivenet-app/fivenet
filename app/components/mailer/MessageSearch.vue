@@ -88,14 +88,13 @@ const groups = computed(
                     :loading="isRequestPending(status)"
                     :color-mode="false"
                     :groups="groups"
-                    :empty-state="{
-                        icon: 'i-mdi-email',
-                        label: $t('commandpalette.empty.title'),
-                        queryLabel: $t('commandpalette.empty.title'),
-                    }"
                     :placeholder="`${$t('common.search_field')}`"
                     :fuse="{ resultLimit: 6, fuseOptions: { threshold: 0.1 } }"
-                />
+                >
+                    <template #empty>
+                        {{ $t('commandpalette.empty.title') }}
+                    </template>
+                </UCommandPalette>
             </ClientOnly>
         </template>
     </UModal>

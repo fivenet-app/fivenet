@@ -72,7 +72,7 @@ const faqs = [
                                         <h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
                                             {{ $t('pages.about.introduction.title') }}
                                         </h1>
-                                        <p class="mt-6 text-xl leading-8 text-gray-100">
+                                        <p class="mt-6 text-xl leading-8 text-toned">
                                             {{ $t('pages.about.introduction.content') }}
                                         </p>
                                     </div>
@@ -92,7 +92,7 @@ const faqs = [
                                 class="lg:col-span-2 lg:col-start-1 lg:row-start-2 lg:mx-auto lg:grid lg:w-full lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8"
                             >
                                 <div class="lg:pr-4">
-                                    <div class="max-w-xl text-base leading-7 text-gray-100 lg:max-w-lg">
+                                    <div class="max-w-xl text-base leading-7 text-toned lg:max-w-lg">
                                         <ul class="mt-8 space-y-8" role="list">
                                             <li class="flex gap-x-3">
                                                 <UIcon class="mt-1 size-5 flex-none text-primary-300" name="i-mdi-magnify" />

@@ -105,7 +105,7 @@ const formRef = useTemplateRef('formRef');
     <USlideover :title="$t('components.centrum.create_dispatch.title')" :overlay="false">
         <template #body>
             <UForm ref="formRef" class="flex flex-1" :schema="schema" :state="state" @submit="onSubmitThrottle">
-                <dl class="divide-neutral/10 divide-y">
+                <dl class="divide-y divide-default">
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm leading-6 font-medium">
                             <label class="block text-sm leading-6 font-medium" for="message">

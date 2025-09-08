@@ -102,9 +102,12 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
         </LIcon>
 
         <LPopup class="min-w-[175px]" :options="{ closeButton: false }">
-            <UCard class="-my-[13px] -mr-[24px] -ml-[20px] flex flex-col">
+            <UCard
+                class="-my-[13px] -mr-[24px] -ml-[20px] flex flex-col"
+                :ui="{ header: 'p-1 sm:px-2', body: 'p-1 sm:p-2', footer: 'p-1 sm:px-2' }"
+            >
                 <template #header>
-                    <div class="grid grid-cols-2 gap-2">
+                    <div class="grid grid-cols-2 gap-2 !text-primary">
                         <UButton
                             v-if="marker.x !== undefined && marker.y !== undefined"
                             variant="link"
@@ -122,6 +125,7 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
                             variant="link"
                             icon="i-mdi-account"
                             block
+                            class="!text-(--ui-primary)"
                             :to="{ name: 'citizens-id', params: { id: marker.user?.userId ?? 0 } }"
                         >
                             <span class="truncate">
@@ -139,6 +143,7 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
                             variant="link"
                             icon="i-mdi-briefcase"
                             block
+                            class="!text-(--ui-primary)"
                             :to="{ name: 'jobs-colleagues-id-info', params: { id: marker.user?.userId ?? 0 } }"
                         >
                             <span class="truncate">

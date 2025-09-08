@@ -456,6 +456,10 @@ const stopWatch = watch(modelValue, (value) => {
     }
 });
 
+function setContent(value: string): void {
+    unref(editor)?.commands.setContent(value, { emitUpdate: true });
+}
+
 watch(disabled, () => {
     unref(editor)?.setEditable(!disabled.value);
     unref(editor)?.view.updateState(unref(editor)!.view.state);
@@ -1275,7 +1279,8 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                             @click="
                                 sourceCodeModal.open({
                                     content: modelValue,
-                                    'onUpdate:content': ($event) => (modelValue = $event),
+                                    disabled: disabled,
+                                    'onUpdate:content': ($event) => setContent($event),
                                 })
                             "
                         />

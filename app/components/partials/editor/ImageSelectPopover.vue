@@ -2,6 +2,7 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import type { Editor } from '@tiptap/vue-3';
 import { z } from 'zod';
+import { safeImagePaths } from '~/types/editor';
 import { remoteImageURLToBase64Data } from './helpers';
 
 const props = withDefaults(
@@ -45,10 +46,16 @@ async function setViaURL(urlOrBlob: string | File): Promise<void> {
         let dataUrl: string | undefined = undefined;
         // If Image Proxy is enabled use it to load the image
         if (featureGates.imageProxy && urlOrBlob.startsWith('http')) {
-            if (props.uploadHandler) {
+            const url = new URL(urlOrBlob);
+            // Check if image is already served by our host and one of the paths
+            const isSameHost = url.host === window.location.host;
+            const isServedPath = safeImagePaths.some((path) => url.pathname.startsWith(path));
+            if (isSameHost && isServedPath) {
+                url.pathname = url.pathname.replace(/(?<!:)\/\//, '/');
+                dataUrl = urlOrBlob;
+            } else if (props.uploadHandler) {
                 dataUrl = `/api/image_proxy/${urlOrBlob}`;
             } else {
-                const url = new URL(urlOrBlob);
                 dataUrl = await remoteImageURLToBase64Data(`/api/image_proxy/${url.toString()}`);
             }
         } else {
@@ -108,7 +115,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
 
     await setViaURL(event.data.url).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+
+    open.value = false;
+    imageState.url = '';
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
@@ -134,12 +146,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <USeparator class="my-2" :label="$t('common.or')" orientation="horizontal" />
 
-                <UForm :schema="schema" :state="imageState" @submit="onSubmitThrottle">
-                    <UFormField :label="$t('common.url')">
-                        <UInput v-model="imageState.url" type="text" />
+                <UForm ref="formRef" :schema="schema" :state="imageState" @submit="onSubmitThrottle">
+                    <UFormField name="url" :label="$t('common.url')">
+                        <UInput v-model="imageState.url" type="text" name="url" class="w-full" />
                     </UFormField>
 
-                    <UButtonGroup class="mt-2 w-full">
+                    <UFormField class="mt-2 w-full">
                         <UButton
                             class="flex-1"
                             type="submit"
@@ -147,8 +159,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :disabled="disabled || !canSubmit || !imageState.url"
                             :loading="disabled || !canSubmit"
                             :label="$t('common.insert')"
+                            block
+                            @click="formRef?.submit()"
                         />
-                    </UButtonGroup>
+                    </UFormField>
                 </UForm>
 
                 <USeparator class="my-2" :label="$t('common.or')" orientation="horizontal" />

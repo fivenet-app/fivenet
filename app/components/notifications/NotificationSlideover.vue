@@ -9,7 +9,7 @@ const { isNotificationSlideoverOpen } = useDashboard();
     <USlideover
         v-model:open="isNotificationSlideoverOpen"
         :title="$t('common.notification', 2)"
-        :ui="{ body: 'flex flex-col p-1 sm:p-1' }"
+        :ui="{ body: 'flex flex-col p-0 sm:p-0' }"
     >
         <template #actions>
             <DNBToggle />

@@ -14,8 +14,6 @@ defineEmits<{
     (e: 'clicked'): void;
 }>();
 
-const { t } = useI18n();
-
 const notifications = useNotificationsStore();
 
 const notificationsNotificationsClient = await getNotificationsNotificationsClient();
@@ -88,10 +86,6 @@ async function markUnread(unread: boolean, ...ids: number[]): Promise<void> {
     });
 }
 
-function notificationCategoriesToLabel(categories: NotificationCategory[]): string {
-    return categories.map((c) => t(`enums.notifications.NotificationCategory.${NotificationCategory[c ?? 0]}`)).join(', ');
-}
-
 watchDebounced(query, async () => refresh(), { debounce: 500, maxWait: 1500 });
 
 const { start: timeoutFn } = useTimeoutFn(() => (canSubmit.value = true), 400, { immediate: false });
@@ -123,12 +117,20 @@ const canSubmit = ref(true);
                                 :items="categories"
                                 value-key="mode"
                                 :search-input="{ placeholder: $t('common.search_field') }"
+                                class="w-full"
                             >
-                                <template v-if="query.categories" #default>
-                                    <span class="truncate">{{ notificationCategoriesToLabel(query.categories) }}</span>
+                                <template #default>
+                                    <span class="truncate">{{
+                                        query.categories.length === 0 || query.categories.length === categories.length
+                                            ? $t('components.notifications.all_categories')
+                                            : query.categories
+                                                  .map((c) =>
+                                                      $t(`enums.notifications.NotificationCategory.${NotificationCategory[c]}`),
+                                                  )
+                                                  .join(', ')
+                                    }}</span>
                                 </template>
-
-                                <template #item="{ item }">
+                                <template #item-label="{ item }">
                                     <span class="truncate">{{
                                         $t(`enums.notifications.NotificationCategory.${NotificationCategory[item.mode ?? 0]}`)
                                     }}</span>

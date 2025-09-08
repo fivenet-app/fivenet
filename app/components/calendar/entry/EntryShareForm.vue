@@ -108,7 +108,7 @@ const formRef = useTemplateRef('formRef');
             </UFormField>
 
             <div class="mt-2 overflow-hidden rounded-md bg-neutral-100 dark:bg-neutral-900">
-                <ul class="grid grid-cols-2 text-sm font-medium text-gray-100 lg:grid-cols-3" role="list">
+                <ul class="grid grid-cols-2 text-sm font-medium text-toned lg:grid-cols-3" role="list">
                     <li
                         v-for="user in state.users"
                         :key="user.userId"

@@ -113,7 +113,7 @@ const formRef = useTemplateRef('formRef');
                             />
                         </template>
                     </UInput>
-                    <PasswordStrengthMeter class="mt-2" :input="state.newPassword" />
+                    <PasswordStrengthMeter class="mt-1" :input="state.newPassword" />
                 </UFormField>
             </UForm>
         </template>

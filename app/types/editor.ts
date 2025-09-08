@@ -1,3 +1,5 @@
+export const safeImagePaths = ['/api/image_proxy/', '/api/filestore/'] as const;
+
 export const fontColors = {
     // Color list copied from Jodit editor to keep the same colors for Tiptap Editor now
     // https://github.com/xdan/jodit/blob/4d5a1b4dee874457e7b82be50693cf70e0cba4d4/src/config.ts#L561

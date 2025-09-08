@@ -98,6 +98,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 :type="passwordVisibility ? 'text' : 'password'"
                 autocomplete="new-password"
                 :placeholder="$t('common.password')"
+                aria-describedby="password-strength"
                 :ui="{ trailing: 'pe-1', root: 'w-full' }"
             >
                 <template #trailing>
@@ -112,7 +113,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     />
                 </template>
             </UInput>
-            <PasswordStrengthMeter class="mt-2" :input="state.password" />
+
+            <PasswordStrengthMeter class="mt-1" :input="state.password" />
         </UFormField>
 
         <UButton

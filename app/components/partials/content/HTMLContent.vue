@@ -13,7 +13,7 @@ defineOptions({
 
 <template>
     <HTMLContentRenderer
-        class="tiptap prose prose-sm sm:prose-base lg:prose-lg dark:prose-invert hyphen-auto max-w-full min-w-full break-words whitespace-pre-line"
+        class="tiptap hyphen-auto prose prose-sm max-w-full min-w-full break-words whitespace-pre-line sm:prose-base lg:prose-lg dark:prose-invert"
         :class="[
             'hover:prose-a:text-blue-500',
             'dark:hover:prose-a:text-blue-300',

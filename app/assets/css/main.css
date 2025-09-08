@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import "@nuxt/ui-pro";
+@plugin '@tailwindcss/typography';
 
 :root {
   --ui-radius: 0.25rem;
@@ -184,7 +185,7 @@ html {
 
     /* Search And Replace */
     .search-result {
-        background-color: var(--color-warn-500)60;
+        background-color: var(--color-warning-500)60;
 
         &-current {
             background-color: var(--color-info-500)60;

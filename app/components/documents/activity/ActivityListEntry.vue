@@ -51,7 +51,7 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
                         </span>
                     </h3>
 
-                    <p class="text-sm text-gray-400">
+                    <p class="text-sm text-dimmed">
                         <GenericTime :value="entry.createdAt" type="long" />
                     </p>
                 </div>
@@ -74,7 +74,7 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
             </div>
         </div>
 
-        <UCollapsible v-else :items="[{}]" :ui="{ label: 'w-full', trailingIcon: 'hidden' }">
+        <UCollapsible v-else>
             <template #default="{ open }">
                 <div class="flex w-full flex-1 space-x-3">
                     <div class="my-auto flex size-10 items-center justify-center rounded-full">
@@ -94,7 +94,7 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
                                     />
                                 </span>
                             </h3>
-                            <p class="text-sm text-gray-400">
+                            <p class="text-sm text-dimmed">
                                 <GenericTime :value="entry.createdAt" type="long" />
                             </p>
                         </div>

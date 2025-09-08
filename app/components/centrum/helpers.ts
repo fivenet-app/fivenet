@@ -19,7 +19,7 @@ export function dispatchStatusToFillColor(status: StatusDispatch | undefined): s
         case StatusDispatch.ON_SCENE:
             return '!text-info-700';
         case StatusDispatch.NEED_ASSISTANCE:
-            return '!text-warn-600';
+            return '!text-warning-600';
         case StatusDispatch.COMPLETED:
             return '!text-success-600';
         case StatusDispatch.CANCELLED:
@@ -45,7 +45,7 @@ export function dispatchStatusToBGColor(status: StatusDispatch | undefined): str
         case StatusDispatch.ON_SCENE:
             return '!bg-info-700 text-white!';
         case StatusDispatch.NEED_ASSISTANCE:
-            return '!bg-warn-600 text-white!';
+            return '!bg-warning-600 text-white!';
         case StatusDispatch.COMPLETED:
             return '!bg-success-600 text-white!';
         case StatusDispatch.CANCELLED:
@@ -139,12 +139,30 @@ export function unitStatusToBGColor(status: StatusUnit | undefined): string {
         case StatusUnit.AVAILABLE:
             return '!bg-success-600';
         case StatusUnit.BUSY:
-            return '!bg-warn-600';
+            return '!bg-warning-600';
         case StatusUnit.UNSPECIFIED:
         case StatusUnit.UNKNOWN:
         case StatusUnit.UNAVAILABLE:
         default:
             return '!bg-error-600';
+    }
+}
+
+export function unitStatusToBadgeColor(status: StatusUnit | undefined): BadgeProps['color'] {
+    switch (status) {
+        case StatusUnit.ON_BREAK:
+        case StatusUnit.USER_ADDED:
+        case StatusUnit.USER_REMOVED:
+            return 'info';
+        case StatusUnit.AVAILABLE:
+            return 'success';
+        case StatusUnit.BUSY:
+            return 'warning';
+        case StatusUnit.UNSPECIFIED:
+        case StatusUnit.UNKNOWN:
+        case StatusUnit.UNAVAILABLE:
+        default:
+            return 'error';
     }
 }
 

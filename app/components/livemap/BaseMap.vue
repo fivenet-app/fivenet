@@ -295,7 +295,7 @@ onBeforeUnmount(() => {
             </LayerControls>
 
             <!-- eslint-disable-next-line tailwindcss/no-custom-classname -->
-            <LControl class="leaflet-control-attribution" position="bottomleft">
+            <LControl class="leaflet-control-attribution !rounded-tl-none rounded-tr-sm" position="bottomleft">
                 <span class="font-semibold">{{ $t('common.longitude') }}:</span> {{ mouseLat.toFixed(3) }} |
                 <span class="font-semibold">{{ $t('common.latitude') }}:</span> {{ mouseLong.toFixed(3) }}
             </LControl>
@@ -351,14 +351,14 @@ onBeforeUnmount(() => {
     }
 
     .leaflet-popup-content-wrapper {
-        background-color: var(--ui-background) !important;
+        background-color: var(--ui-bg) !important;
         color: #ffffff;
     }
     .leaflet-popup-content p {
         margin: 0.25em 0;
     }
     .leaflet-popup-tip {
-        background-color: var(--ui-background) !important;
+        background-color: var(--ui-bg) !important;
     }
 
     .leaflet-control-layers-toggle {
@@ -366,12 +366,13 @@ onBeforeUnmount(() => {
     }
     .leaflet-control-layers {
         color: var(--color-primary-500);
-        background-color: var(--ui-background) !important;
+        background-color: var(--ui-bg) !important;
     }
 
     .leaflet-control-attribution {
         color: var(--color-primary-500);
-        background-color: var(--ui-background) !important;
+        background-color: var(--ui-bg) !important;
+        border-top-left-radius: var(--radius-sm);
     }
 
     .leaflet-control-attribution a {
@@ -388,7 +389,7 @@ onBeforeUnmount(() => {
         -webkit-border-radius: 2px;
         border-radius: 2px;
         padding: 4px 0;
-        background-color: var(--ui-background);
+        background-color: var(--ui-bg);
         cursor: default;
         -webkit-user-select: none;
         -moz-user-select: none;

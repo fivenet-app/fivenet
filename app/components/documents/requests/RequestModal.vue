@@ -197,7 +197,7 @@ const formRef = useTemplateRef('formRef');
                     <li v-for="idx in 2" :key="idx" class="flex justify-between gap-x-4 py-4">
                         <div class="flex min-w-0 gap-x-2 px-2">
                             <div class="min-w-0 flex-auto">
-                                <p class="text-base leading-6 font-semibold text-gray-100">
+                                <p class="text-base leading-6 font-semibold text-toned">
                                     <USkeleton class="h-8 w-[325px]" />
                                 </p>
                                 <p class="mt-1 flex gap-1 text-sm leading-5">

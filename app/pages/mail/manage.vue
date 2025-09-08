@@ -113,7 +113,7 @@ const confirmModal = overlay.create(ConfirmModal);
             />
 
             <div v-else class="flex flex-1 flex-col items-center">
-                <div class="flex flex-1 flex-col items-center justify-center gap-2 text-gray-400 dark:text-gray-500">
+                <div class="flex flex-1 flex-col items-center justify-center gap-2 text-dimmed">
                     <UIcon class="h-32 w-32" name="i-mdi-email-multiple" />
 
                     <div class="text-center text-highlighted">
@@ -211,7 +211,7 @@ const confirmModal = overlay.create(ConfirmModal);
 
         <template #body>
             <div v-if="creating" class="flex flex-1 flex-col items-center">
-                <div class="flex flex-1 flex-col items-center justify-center gap-2 text-gray-400 dark:text-gray-500">
+                <div class="flex flex-1 flex-col items-center justify-center gap-2 text-dimmed">
                     <UIcon class="h-32 w-32" name="i-mdi-email-multiple" />
                     <EmailCreateForm v-if="canCreate" :personal-email="false" @refresh="creating = false" />
                 </div>
@@ -229,10 +229,7 @@ const confirmModal = overlay.create(ConfirmModal);
                     "
                 />
             </template>
-            <div
-                v-else
-                class="hidden flex-1 flex-col items-center justify-center gap-2 text-gray-400 lg:flex dark:text-gray-500"
-            >
+            <div v-else class="hidden flex-1 flex-col items-center justify-center gap-2 text-dimmed lg:flex">
                 <UIcon class="h-32 w-32" name="i-mdi-email-multiple" />
                 <p>{{ $t('common.none_selected', [$t('common.mail')]) }}</p>
             </div>

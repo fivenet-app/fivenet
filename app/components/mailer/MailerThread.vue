@@ -27,6 +27,11 @@ const props = withDefaults(
     },
 );
 
+defineEmits<{
+    (e: 'close'): void;
+    (e: 'refresh'): void;
+}>();
+
 const overlay = useOverlay();
 
 const { can, isSuperuser } = useAuth();
@@ -72,7 +77,7 @@ const { data: thread, status } = useLazyAsyncData(
 const page = useRouteQuery('page', '1', { transform: Number });
 
 const { status: messagesStatus, refresh: refreshMessages } = useLazyAsyncData(
-    `mailer-thread:${props.threadId}-messages:${page.value}`,
+    () => `mailer-thread:${props.threadId}-messages:${page.value}`,
     async () => {
         const response = await mailerStore.listThreadMessages({
             pagination: {
@@ -110,6 +115,8 @@ watchDebounced(
         maxWait: 2500,
     },
 );
+
+const threadState = computed(() => selectedThread.value?.state);
 
 async function postMessage(values: Schema): Promise<void> {
     if (!selectedEmail.value?.id) {
@@ -208,28 +215,154 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ root: 'min-h-full', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+    <UDashboardPanel id="mail-thread-view" :ui="{ root: 'min-h-full', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
-            <UDashboardToolbar>
+            <UDashboardNavbar :title="thread?.title" :toggle="false">
+                <template #title>
+                    <h3 class="line-clamp-2 text-left font-semibold break-all text-highlighted hover:line-clamp-none">
+                        {{ thread?.title }}
+                    </h3>
+                </template>
+
+                <template #leading>
+                    <UButton icon="i-lucide-x" color="neutral" variant="ghost" class="-ms-1.5" @click="$emit('close')" />
+                </template>
+            </UDashboardNavbar>
+
+            <UDashboardNavbar :ui="{ toggle: 'hidden' }">
+                <template #left>
+                    <UTooltip
+                        :text="!threadState?.unread ? $t('components.mailer.mark_unread') : $t('components.mailer.mark_read')"
+                    >
+                        <UButton
+                            :icon="!threadState?.unread ? 'i-mdi-check-circle-outline' : 'i-mdi-check-circle'"
+                            :color="!threadState?.unread ? 'neutral' : 'green'"
+                            variant="ghost"
+                            @click="
+                                async () => {
+                                    selectedThread!.state = await mailerStore.setThreadState(
+                                        {
+                                            threadId: selectedThread!.id,
+                                            unread: !threadState?.unread,
+                                        },
+                                        true,
+                                    );
+                                }
+                            "
+                        />
+                    </UTooltip>
+
+                    <UTooltip :text="$t('components.mailer.mark_important')">
+                        <UButton
+                            :icon="!threadState?.important ? 'i-mdi-alert-circle-outline' : 'i-mdi-alert-circle'"
+                            :color="!threadState?.important ? 'neutral' : 'red'"
+                            variant="ghost"
+                            @click="
+                                async () => {
+                                    selectedThread!.state = await mailerStore.setThreadState(
+                                        {
+                                            threadId: selectedThread!.id,
+                                            important: !threadState?.important,
+                                        },
+                                        true,
+                                    );
+                                }
+                            "
+                        />
+                    </UTooltip>
+                </template>
+
+                <template #right>
+                    <UTooltip :text="$t('components.mailer.star_thread')">
+                        <UButton
+                            :icon="!threadState?.favorite ? 'i-mdi-star-circle-outline' : 'i-mdi-star-circle'"
+                            :color="!threadState?.favorite ? 'neutral' : 'amber'"
+                            variant="ghost"
+                            @click="
+                                async () => {
+                                    selectedThread!.state = await mailerStore.setThreadState(
+                                        {
+                                            threadId: selectedThread!.id,
+                                            favorite: !threadState?.favorite,
+                                        },
+                                        true,
+                                    );
+                                }
+                            "
+                        />
+                    </UTooltip>
+
+                    <UTooltip :text="$t('components.mailer.mute_thread')">
+                        <UButton
+                            :icon="!threadState?.muted ? 'i-mdi-pause-circle-outline' : 'i-mdi-pause-circle'"
+                            :color="!threadState?.muted ? 'neutral' : 'orange'"
+                            variant="ghost"
+                            @click="
+                                async () => {
+                                    selectedThread!.state = await mailerStore.setThreadState(
+                                        {
+                                            threadId: selectedThread!.id,
+                                            muted: !threadState?.muted,
+                                        },
+                                        true,
+                                    );
+                                }
+                            "
+                        />
+                    </UTooltip>
+
+                    <UTooltip :text="threadState?.archived ? $t('common.unarchive') : $t('common.archive')">
+                        <UButton
+                            :icon="threadState?.archived ? 'i-mdi-archive' : 'i-mdi-archive-outline'"
+                            :color="threadState?.archived ? 'neutral' : 'gray'"
+                            variant="ghost"
+                            @click="
+                                confirmModal.open({
+                                    confirm: async () => {
+                                        selectedThread!.state = await mailerStore.setThreadState(
+                                            {
+                                                threadId: selectedThread!.id,
+                                                archived: !threadState?.archived,
+                                            },
+                                            true,
+                                        );
+                                        $emit('refresh');
+                                    },
+                                })
+                            "
+                        />
+                    </UTooltip>
+
+                    <UTooltip
+                        v-if="isSuperuser && selectedThread"
+                        :text="!selectedThread?.deletedAt ? $t('common.delete') : $t('common.restore')"
+                    >
+                        <UButton
+                            :color="!selectedThread.deletedAt ? 'error' : 'success'"
+                            :icon="!selectedThread.deletedAt ? 'i-mdi-delete-outline' : 'i-mdi-restore'"
+                            variant="ghost"
+                            @click="
+                                confirmModal.open({
+                                    confirm: async () =>
+                                        selectedEmail?.id &&
+                                        selectedThread &&
+                                        mailerStore.deleteThread({
+                                            emailId: selectedEmail.id,
+                                            threadId: selectedThread.id,
+                                        }),
+                                })
+                            "
+                        />
+                    </UTooltip>
+                </template>
+            </UDashboardNavbar>
+
+            <div class="flex flex-col justify-between gap-1 border-b border-default p-4 sm:flex-row sm:px-6">
                 <USkeleton v-if="isRequestPending(status)" class="h-12 w-full" />
 
                 <template v-else-if="thread">
-                    <div class="flex w-full flex-1 items-center justify-between gap-1">
-                        <h3 class="line-clamp-2 text-left font-semibold break-all text-highlighted hover:line-clamp-none">
-                            {{ thread.title }}
-                        </h3>
-
-                        <p class="shrink-0 font-medium text-highlighted">
-                            {{
-                                isToday(toDate(thread.createdAt))
-                                    ? $d(toDate(thread.createdAt), 'time')
-                                    : $d(toDate(thread.createdAt), 'date')
-                            }}
-                        </p>
-                    </div>
-
-                    <div class="w-full min-w-0 flex-1 text-sm">
-                        <div class="flex snap-x flex-row flex-wrap gap-1 overflow-x-auto text-muted">
+                    <div class="flex items-start gap-4 sm:my-1.5">
+                        <div class="min-w-0">
                             <span class="text-sm font-semibold">{{ $t('common.participant', 2) }}:</span>
 
                             <EmailInfoPopover
@@ -238,11 +371,21 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                                 :email="recipient.email?.email"
                                 variant="link"
                                 color="primary"
+                                :padded="false"
+                                :ui="{ base: 'px-2 py-1' }"
                             />
                         </div>
                     </div>
+
+                    <p class="text-sm text-muted max-sm:pl-16 sm:mt-2">
+                        {{
+                            isToday(toDate(thread.createdAt))
+                                ? $d(toDate(thread.createdAt), 'time')
+                                : $d(toDate(thread.createdAt), 'date')
+                        }}
+                    </p>
                 </template>
-            </UDashboardToolbar>
+            </div>
         </template>
 
         <template #body>
@@ -261,7 +404,7 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                             messageRefs[message.id] = el as Element;
                         }
                     "
-                    class="border-l-2 border-white px-2 pb-3 hover:border-primary-500 hover:bg-neutral-100 sm:pb-2 dark:border-neutral-900 hover:dark:border-primary-400 dark:hover:bg-neutral-800"
+                    class="border-l-2 border-default px-2 pb-3 hover:border-primary-500 hover:bg-neutral-100 sm:pb-2 hover:dark:border-primary-400 dark:hover:bg-neutral-800"
                     :class="selectedMessage === message.id && '!border-primary-500'"
                     @click="selectedMessageId = message.id"
                 >
@@ -348,132 +491,145 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                 v-if="messages?.pagination"
                 v-model="page"
                 :pagination="messages?.pagination"
-                :loading="isRequestPending(messagesStatus)"
+                :status="messagesStatus"
                 :refresh="refreshMessages"
+                compact
             />
 
             <UDashboardToolbar
                 v-if="thread && canAccess(selectedEmail?.access, selectedEmail?.userId, AccessLevel.WRITE)"
-                class="flex min-w-0 justify-between overflow-y-hidden border-t border-b-0 border-neutral-200 dark:border-neutral-700"
+                class="flex justify-between overflow-y-hidden border-t border-b-0 border-default"
             >
-                <UAccordion
-                    class="mb-2 max-h-[50vh] overflow-y-auto"
-                    variant="outline"
-                    :items="[{ slot: 'compose' as const, label: $t('components.mailer.reply'), icon: 'i-mdi-paper-airplane' }]"
+                <UCollapsible
+                    class="my-1 flex flex-1 flex-col gap-1"
+                    :unmount-on-hide="false"
+                    :ui="{ content: 'max-h-[50vh] overflow-y-auto' }"
                 >
-                    <template #compose>
-                        <UForm
-                            class="flex flex-1 grow-0 flex-col gap-2 px-1"
-                            :schema="schema"
-                            :state="state"
-                            @submit="onSubmitThrottle"
-                        >
-                            <UFormField name="recipients" :label="$t('common.additional_recipients')" class="flex-1">
-                                <ClientOnly>
-                                    <USelectMenu
-                                        v-model="state.recipients"
-                                        class="w-full"
-                                        multiple
-                                        trailing
-                                        :items="[...state.recipients, ...addressBook]"
-                                        :search-input="{ placeholder: $t('common.recipient', 1) }"
-                                        :placeholder="$t('common.recipient')"
-                                        creatable
-                                        :disabled="!canSubmit"
-                                        @create="(item: string) => onCreate(item)"
+                    <UButton
+                        :label="$t('components.mailer.reply')"
+                        icon="i-mdi-paper-airplane"
+                        variant="subtle"
+                        color="neutral"
+                        class="w-full"
+                        block
+                        truncate
+                    />
+
+                    <template #content>
+                        <UCard variant="subtle" class="mt-auto" :ui="{ body: 'min-w-0 p-2 sm:p-2' }">
+                            <UForm
+                                class="flex flex-1 grow-0 flex-col gap-2 px-1"
+                                :schema="schema"
+                                :state="state"
+                                @submit="onSubmitThrottle"
+                            >
+                                <UFormField name="recipients" :label="$t('common.additional_recipients')" class="flex-1">
+                                    <ClientOnly>
+                                        <USelectMenu
+                                            v-model="state.recipients"
+                                            class="w-full"
+                                            multiple
+                                            trailing
+                                            :items="[...state.recipients, ...addressBook]"
+                                            :search-input="{ placeholder: $t('common.recipient', 1) }"
+                                            :placeholder="$t('common.recipient')"
+                                            creatable
+                                            :disabled="!canSubmit"
+                                            @create="(item: string) => onCreate(item)"
+                                        >
+                                            <template #default>&nbsp;</template>
+
+                                            <template #empty>
+                                                {{ $t('common.not_found', [$t('common.recipient', 2)]) }}
+                                            </template>
+                                        </USelectMenu>
+                                    </ClientOnly>
+
+                                    <div
+                                        v-if="state.recipients.length > 0"
+                                        class="mt-2 flex snap-x flex-row flex-wrap gap-2 overflow-x-auto"
                                     >
-                                        <template #default>&nbsp;</template>
+                                        <UButtonGroup
+                                            v-for="(recipient, idx) in state.recipients"
+                                            :key="idx"
+                                            size="sm"
+                                            orientation="horizontal"
+                                        >
+                                            <UButton variant="solid" color="neutral" :label="recipient.label" />
 
-                                        <template #empty>
-                                            {{ $t('common.not_found', [$t('common.recipient', 2)]) }}
-                                        </template>
-                                    </USelectMenu>
-                                </ClientOnly>
-
-                                <div
-                                    v-if="state.recipients.length > 0"
-                                    class="mt-2 flex snap-x flex-row flex-wrap gap-2 overflow-x-auto"
-                                >
-                                    <UButtonGroup
-                                        v-for="(recipient, idx) in state.recipients"
-                                        :key="idx"
-                                        size="sm"
-                                        orientation="horizontal"
-                                    >
-                                        <UButton variant="solid" color="neutral" :label="recipient.label" />
-
-                                        <UButton
-                                            variant="outline"
-                                            icon="i-mdi-close"
-                                            color="error"
-                                            @click="state.recipients.splice(idx, 1)"
-                                        />
-                                    </UButtonGroup>
-                                </div>
-                            </UFormField>
-
-                            <UFormField name="title" :label="$t('common.title')">
-                                <div class="flex flex-1 flex-col items-center gap-2 sm:flex-row">
-                                    <UInput
-                                        v-model="state.title"
-                                        class="w-full font-semibold text-highlighted"
-                                        type="text"
-                                        size="lg"
-                                        :placeholder="$t('common.title')"
-                                        :disabled="!canSubmit"
-                                        :ui="{ trailing: 'pe-1' }"
-                                    >
-                                        <template #trailing>
                                             <UButton
-                                                v-if="state.title !== ''"
-                                                color="neutral"
-                                                variant="link"
-                                                icon="i-mdi-close"
-                                                aria-controls="search"
-                                                @click="state.title = generateResponseTitle(selectedThread)"
+                                                variant="outline"
+                                                icon="i-mdi-clear"
+                                                color="error"
+                                                @click="state.recipients.splice(idx, 1)"
                                             />
-                                        </template>
-                                    </UInput>
+                                        </UButtonGroup>
+                                    </div>
+                                </UFormField>
 
-                                    <TemplateSelector v-model="state.content" class="ml-auto" size="lg" />
-                                </div>
-                            </UFormField>
+                                <UFormField name="title" :label="$t('common.title')">
+                                    <div class="flex flex-1 flex-col items-center gap-2 sm:flex-row">
+                                        <UInput
+                                            v-model="state.title"
+                                            class="w-full font-semibold text-highlighted"
+                                            type="text"
+                                            size="lg"
+                                            :placeholder="$t('common.title')"
+                                            :disabled="!canSubmit"
+                                            :ui="{ trailing: 'pe-1' }"
+                                        >
+                                            <template #trailing>
+                                                <UButton
+                                                    v-if="state.title !== ''"
+                                                    color="neutral"
+                                                    variant="link"
+                                                    icon="i-mdi-close"
+                                                    aria-controls="search"
+                                                    @click="state.title = generateResponseTitle(selectedThread)"
+                                                />
+                                            </template>
+                                        </UInput>
 
-                            <UFormField name="message">
-                                <ClientOnly>
-                                    <TiptapEditor v-model="state.content" :disabled="!canSubmit" wrapper-class="min-h-44" />
-                                </ClientOnly>
-                            </UFormField>
+                                        <TemplateSelector v-model="state.content" class="ml-auto" size="lg" />
+                                    </div>
+                                </UFormField>
 
-                            <div class="inline-flex gap-1">
-                                <UButton
-                                    class="flex-1"
-                                    type="submit"
-                                    :disabled="!canSubmit"
-                                    :label="$t('components.mailer.send')"
-                                    trailing-icon="i-mdi-paper-airplane"
-                                />
+                                <UFormField name="message">
+                                    <ClientOnly>
+                                        <TiptapEditor v-model="state.content" :disabled="!canSubmit" wrapper-class="min-h-44" />
+                                    </ClientOnly>
+                                </UFormField>
 
-                                <UTooltip
-                                    v-if="can('documents.DocumentsService/ListDocuments').value"
-                                    :text="$t('common.attachment', 2)"
-                                >
+                                <div class="inline-flex gap-1">
                                     <UButton
-                                        color="neutral"
-                                        trailing-icon="i-mdi-attach-file"
-                                        @click="
-                                            threadAttachmentsModal.open({
-                                                attachments: state.attachments,
-                                                canSubmit: canSubmit,
-                                                'onUpdate:attachments': ($event) => (state.attachments = $event),
-                                            })
-                                        "
+                                        class="flex-1"
+                                        type="submit"
+                                        :disabled="!canSubmit"
+                                        :label="$t('components.mailer.send')"
+                                        trailing-icon="i-mdi-paper-airplane"
                                     />
-                                </UTooltip>
-                            </div>
-                        </UForm>
+
+                                    <UTooltip
+                                        v-if="can('documents.DocumentsService/ListDocuments').value"
+                                        :text="$t('common.attachment', 2)"
+                                    >
+                                        <UButton
+                                            color="neutral"
+                                            trailing-icon="i-mdi-attach-file"
+                                            @click="
+                                                threadAttachmentsModal.open({
+                                                    attachments: state.attachments,
+                                                    canSubmit: canSubmit,
+                                                    'onUpdate:attachments': ($event) => (state.attachments = $event),
+                                                })
+                                            "
+                                        />
+                                    </UTooltip>
+                                </div>
+                            </UForm>
+                        </UCard>
                     </template>
-                </UAccordion>
+                </UCollapsible>
             </UDashboardToolbar>
         </template>
     </UDashboardPanel>

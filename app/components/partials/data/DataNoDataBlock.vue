@@ -43,13 +43,14 @@ async function click() {
 </script>
 
 <template>
-    <UAlert
-        class="my-2"
-        :icon="icon"
-        variant="outline"
-        :title="title"
-        :description="message ?? $t('common.not_found', [type ?? $t('common.data')])"
-        :actions="actions"
-        @click="click()"
-    />
+    <div class="m-2">
+        <UAlert
+            :icon="icon"
+            variant="outline"
+            :title="title"
+            :description="message ?? $t('common.not_found', [type ?? $t('common.data')])"
+            :actions="actions"
+            @click="click()"
+        />
+    </div>
 </template>

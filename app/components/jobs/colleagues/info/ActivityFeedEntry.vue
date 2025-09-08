@@ -101,7 +101,7 @@ withDefaults(
                         </template>
                     </h3>
 
-                    <p class="text-sm text-gray-400">
+                    <p class="text-sm text-dimmed">
                         <GenericTime :value="activity.createdAt" type="long" />
                     </p>
                 </div>

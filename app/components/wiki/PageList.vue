@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { ContentNavigationItem } from '@nuxt/content';
-import { mapContentNavigation } from '@nuxt/ui-pro/utils/content';
 import type { PageShort } from '~~/gen/ts/resources/wiki/page';
 
 const props = defineProps<{
@@ -23,5 +22,5 @@ const navItems = computed(() => props.pages.map((p) => mapNavItemToNavItem(p)) ?
 </script>
 
 <template>
-    <UContentNavigation class="mt-1 sm:mt-0" :navigation="mapContentNavigation(navItems)" type="multiple" />
+    <UContentNavigation class="mt-1 sm:mt-0" :navigation="navItems" type="multiple" highlight default-open />
 </template>

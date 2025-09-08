@@ -15,7 +15,7 @@ defineProps<{
     >
         <div class="flex min-w-0 gap-x-2">
             <div class="min-w-0 flex-auto">
-                <p class="text-sm leading-6 font-semibold text-gray-100">
+                <p class="text-sm leading-6 font-semibold text-toned">
                     <ULink
                         class="inline-flex items-center gap-2"
                         :to="{ name: 'qualifications-id', params: { id: qualification.id } }"

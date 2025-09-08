@@ -72,7 +72,10 @@ const zIndexOffset = computed(() => calculateDispatchZIndexOffset(props.dispatch
         </LIcon>
 
         <LPopup class="min-w-[175px]" :options="{ closeButton: false }">
-            <UCard class="-my-[13px] -mr-[24px] -ml-[20px] flex min-w-[200px] flex-col">
+            <UCard
+                class="-my-[13px] -mr-[24px] -ml-[20px] flex min-w-[200px] flex-col"
+                :ui="{ header: 'p-1 sm:px-2', body: 'p-1 sm:p-2', footer: 'p-1 sm:px-2' }"
+            >
                 <template #header>
                     <div class="grid grid-cols-2 gap-2">
                         <UButton

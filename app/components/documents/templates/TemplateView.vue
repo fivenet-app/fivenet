@@ -175,7 +175,7 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                     <div class="mt-4 mb-6 flow-root">
                         <div class="mx-0 -my-2 overflow-x-auto">
                             <div class="my-2">
-                                <h3 class="block text-base leading-6 font-medium text-gray-100">
+                                <h3 class="block text-base leading-6 font-medium text-toned">
                                     {{ $t('common.template', 2) }} {{ $t('common.weight') }}
                                 </h3>
                                 <div class="my-2">
@@ -184,7 +184,7 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                             </div>
 
                             <div v-if="template.jobAccess" class="my-2">
-                                <h3 class="block text-base leading-6 font-medium text-gray-100">
+                                <h3 class="block text-base leading-6 font-medium text-toned">
                                     {{ $t('common.template', 2) }} {{ $t('common.access') }}
                                 </h3>
                                 <div class="my-2">
@@ -205,7 +205,7 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                             </div>
 
                             <div class="my-2">
-                                <h3 class="block text-base leading-6 font-medium text-gray-100">
+                                <h3 class="block text-base leading-6 font-medium text-toned">
                                     {{ $t('common.content') }} {{ $t('common.title') }}
                                 </h3>
                                 <div class="my-2">
@@ -221,7 +221,7 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                             </div>
 
                             <div v-if="template.state">
-                                <h3 class="block text-base leading-6 font-medium text-gray-100">
+                                <h3 class="block text-base leading-6 font-medium text-toned">
                                     {{ $t('common.content') }} {{ $t('common.state') }}
                                 </h3>
                                 <div class="my-2">
@@ -236,7 +236,7 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                             </div>
 
                             <div v-if="template.category">
-                                <h3 class="block text-base leading-6 font-medium text-gray-100">
+                                <h3 class="block text-base leading-6 font-medium text-toned">
                                     {{ $t('common.category') }}
                                 </h3>
                                 <div class="my-2">
@@ -245,7 +245,7 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                             </div>
 
                             <div class="my-2">
-                                <h3 class="block text-base leading-6 font-medium text-gray-100">
+                                <h3 class="block text-base leading-6 font-medium text-toned">
                                     {{ $t('common.content') }}
                                 </h3>
                                 <div class="my-2">
@@ -261,13 +261,11 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                             </div>
 
                             <div v-if="reqs">
-                                <h3 class="block text-base leading-6 font-medium text-gray-100">
+                                <h3 class="block text-base leading-6 font-medium text-toned">
                                     {{ $t('common.schema') }}
                                 </h3>
                                 <div class="my-2">
-                                    <ul
-                                        class="mb-2 max-w-md list-inside space-y-1 text-sm font-medium text-gray-100 dark:text-gray-300"
-                                    >
+                                    <ul class="mb-2 max-w-md list-inside space-y-1 text-sm font-medium text-toned">
                                         <li v-if="reqs.users">
                                             <TemplateRequirementsList name="User" :specs="reqs.users!" />
                                         </li>
@@ -282,7 +280,7 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                             </div>
 
                             <div v-if="template.contentAccess" class="my-2">
-                                <h3 class="block text-base leading-6 font-medium text-gray-100">
+                                <h3 class="block text-base leading-6 font-medium text-toned">
                                     {{ $t('common.access') }}
                                 </h3>
                                 <div class="my-2">
@@ -301,7 +299,7 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                                 {{ $t('common.none', [$t('common.workflow')]) }}
                             </div>
                             <div v-else>
-                                <h3 class="block text-base leading-6 font-medium text-gray-100">
+                                <h3 class="block text-base leading-6 font-medium text-toned">
                                     {{ $t('common.auto_close') }}
                                 </h3>
 
@@ -326,7 +324,7 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                                     >
                                 </div>
 
-                                <h3 class="block text-base leading-6 font-medium text-gray-100">
+                                <h3 class="block text-base leading-6 font-medium text-toned">
                                     {{ $t('common.reminder', 2) }}
                                 </h3>
 

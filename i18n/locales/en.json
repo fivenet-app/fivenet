@@ -1090,7 +1090,8 @@
             "include_read": "Read Notifications",
             "unread": "Unread",
             "do_not_disturb": "Do Not Disturb",
-            "mark_unread": "Mark as unread"
+            "mark_unread": "Mark as unread",
+            "all_categories": "All Categories"
         },
         "qualifications": {
             "user_qualifications": "Your Qualifications",

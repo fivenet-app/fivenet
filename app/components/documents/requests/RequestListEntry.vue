@@ -81,7 +81,7 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
     <li :key="request.id" class="hover:bg-neutral/5 flex justify-between gap-x-4 py-4 transition-colors">
         <div class="flex min-w-0 gap-x-2 px-2">
             <div class="min-w-0 flex-auto">
-                <p class="text-base leading-6 font-semibold text-gray-100" :title="`${$t('common.id')}: ${request.id}`">
+                <p class="text-base leading-6 font-semibold text-toned" :title="`${$t('common.id')}: ${request.id}`">
                     {{ $t(`enums.documents.DocActivityType.${DocActivityType[request.requestType]}`) }}
                 </p>
                 <p class="mt-1 flex gap-1 text-sm leading-5">

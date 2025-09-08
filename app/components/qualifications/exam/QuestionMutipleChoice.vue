@@ -52,7 +52,7 @@ const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
                         </UButtonGroup>
                     </div>
 
-                    <UCheckbox
+                    <UCheckboxGroup
                         v-model="question.answer!.answer.multipleChoice.choices"
                         :value="question.data!.data.multipleChoice.choices[idx]"
                         :disabled="disabled"
@@ -84,6 +84,15 @@ const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
                     @click="question.data!.data.multipleChoice.choices.push('')"
                 />
             </UTooltip>
+
+            <UFormField :label="$t('common.answer')" class="mt-2">
+                <USelect
+                    v-model="question.answer!.answer.multipleChoice.choices"
+                    multiple
+                    :items="question.data!.data.multipleChoice?.choices"
+                    class="w-full"
+                />
+            </UFormField>
         </UFormField>
     </div>
 </template>

@@ -14,20 +14,18 @@ const qualificationsQualificationsClient = await getQualificationsQualifications
 
 const props = defineProps<{
     qualificationId: number;
-    modelValue?: ExamQuestion;
     index: number;
     disabled?: boolean;
 }>();
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', value: ExamQuestion): void;
     (e: 'delete'): void;
     (e: 'fileUploaded', file: File): void;
     (e: 'move-down'): void;
     (e: 'move-up'): void;
 }>();
 
-const question = useVModel(props, 'modelValue', emit);
+const question = defineModel<ExamQuestion>();
 
 const appConfig = useAppConfig();
 const settingsStore = useSettingsStore();
@@ -41,6 +39,9 @@ const schema = z.object({
     data: z.object({
         data: z.union([
             z.object({
+                oneofKind: z.literal(undefined),
+            }),
+            z.object({
                 oneofKind: z.literal('separator'),
                 separator: z.object({}),
             }),
@@ -48,9 +49,7 @@ const schema = z.object({
                 oneofKind: z.literal('image'),
                 image: z.object({
                     alt: z.string().max(128).optional(),
-                    image: z.object({
-                        url: z.string().optional(),
-                    }),
+                    image: z.custom<File>().optional(),
                 }),
             }),
             z.object({
@@ -65,11 +64,16 @@ const schema = z.object({
                 }),
             }),
             z.object({
+                oneofKind: z.literal('singleChoice'),
+                singleChoice: z.object({
+                    choices: z.string().max(255).array().max(1).default(['']),
+                }),
+            }),
+            z.object({
                 oneofKind: z.literal('multipleChoice'),
                 multipleChoice: z.object({
-                    multi: z.coerce.boolean(),
-                    limit: z.coerce.number().positive().optional(),
                     choices: z.string().max(255).array().max(10).default([]),
+                    limit: z.coerce.number().positive().min(0).max(10).default(10).optional(),
                 }),
             }),
         ]),
@@ -134,7 +138,7 @@ function handleQuestionChange(): void {
                     answer: {
                         oneofKind: 'singleChoice',
                         singleChoice: {
-                            choice: '__UNDEFINED__', // Placeholder for an undefined choice
+                            choice: '',
                         },
                     },
                 };
@@ -184,16 +188,10 @@ const { resizeAndUpload } = useFileUploader(
     props.qualificationId,
 );
 
-async function handleImage(files: FileList): Promise<void> {
-    if (question.value!.data!.data.oneofKind !== 'image') {
-        return;
-    }
+async function handleImage(file: globalThis.File | null | undefined): Promise<void> {
+    if (!file || question.value!.data!.data.oneofKind !== 'image') return;
 
-    if (!files || files.length === 0 || !files[0]) {
-        return;
-    }
-
-    const resp = await resizeAndUpload(files[0]);
+    const resp = await resizeAndUpload(file);
     if (question.value?.data?.data.oneofKind === 'image') {
         question.value.data.data.image.image = resp.file;
     }
@@ -275,7 +273,6 @@ function changeQuestionType(qt: string): void {
             } else {
                 choices.push(''); // Start with an empty choice
             }
-            console.log('singleChoice', choices);
 
             question.value.data = {
                 data: {
@@ -290,7 +287,7 @@ function changeQuestionType(qt: string): void {
                 answer: {
                     oneofKind: 'singleChoice',
                     singleChoice: {
-                        choice: '__UNDEFINED__', // Placeholder for an undefined choice
+                        choice: '', // Placeholder for an undefined choice
                     },
                 },
             };
@@ -307,7 +304,6 @@ function changeQuestionType(qt: string): void {
             } else {
                 choices.push(''); // Start with an empty choice
             }
-            console.log('multipleChoice', choices);
 
             question.value.data = {
                 data: {
@@ -396,7 +392,7 @@ watch(
                     ) {
                         // Reset singleChoice answer if it becomes invalid
                         if (!newChoices?.includes(question.value.answer.answer.singleChoice.choice)) {
-                            question.value.answer.answer.singleChoice.choice = '__UNDEFINED__'; // Reset to a placeholder
+                            question.value.answer.answer.singleChoice.choice = ''; // Reset to a placeholder
                         }
                     }
                 },
@@ -617,7 +613,7 @@ watch(
         </div>
 
         <UTooltip :text="$t('components.qualifications.remove_question')">
-            <UButton class="mt-1 flex-initial self-start" icon="i-mdi-close" @click="$emit('delete')" />
+            <UButton class="mt-1 flex-initial self-start" icon="i-mdi-close" color="error" @click="$emit('delete')" />
         </UTooltip>
     </UForm>
 </template>

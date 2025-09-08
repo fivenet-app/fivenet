@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { breakpointsTailwind } from '@vueuse/core';
 import EmailSettingsModal from '~/components/mailer/EmailSettingsModal.vue';
 import { canAccess } from '~/components/mailer/helpers';
 import MailerThread from '~/components/mailer/MailerThread.vue';
@@ -6,7 +7,6 @@ import MessageSearch from '~/components/mailer/MessageSearch.vue';
 import TemplateModal from '~/components/mailer/TemplateModal.vue';
 import ThreadCreateOrUpdateModal from '~/components/mailer/ThreadCreateOrUpdateModal.vue';
 import ThreadList from '~/components/mailer/ThreadList.vue';
-import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useMailerStore } from '~/stores/mailer';
@@ -121,8 +121,6 @@ watch(selectedThreadId, async () => {
 // Refresh threads when unread tab is selected
 watch(selectedTab, async () => await refresh());
 
-const threadState = computed(() => selectedThread.value?.state);
-
 // Set thread as query param for persistence between reloads
 function updateQuery(): void {
     if (!selectedThread.value || !selectedEmail.value) {
@@ -148,7 +146,6 @@ function updateQuery(): void {
 const threadCreateOrUpdateModal = overlay.create(ThreadCreateOrUpdateModal);
 const emailSettingsModal = overlay.create(EmailSettingsModal);
 const templateModal = overlay.create(TemplateModal);
-const confirmModal = overlay.create(ConfirmModal);
 
 watch(selectedThread, () => updateQuery());
 
@@ -171,12 +168,26 @@ onBeforeMount(async () => {
         threadCreateOrUpdateModal.open({});
     }
 });
+
+const isMailPanelOpen = computed({
+    get() {
+        return !!selectedThread.value;
+    },
+    set(value: boolean) {
+        if (!value) {
+            selectedThread.value = undefined;
+        }
+    },
+});
+
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller('lg');
 </script>
 
 <!-- eslint-disable vue/no-multiple-template-root -->
 <template>
     <UDashboardPanel
-        id="mailerthreadlist"
+        id="mail-threads"
         resizable
         :width="30"
         :min-size="20"
@@ -342,148 +353,25 @@ onBeforeMount(async () => {
     </UDashboardPanel>
 
     <UDashboardPanel id="mailerthreadview" :ui="{ root: 'min-h-full', body: 'p-0 sm:p-0 gap-0 sm:gap-0 overflow-y-hidden' }">
-        <template v-if="selectedThread && selectedEmail" #header>
-            <UDashboardNavbar>
-                <template #toggle>
-                    <UDashboardSidebarToggle icon="i-mdi-close" />
-
-                    <USeparator class="mx-1.5 lg:hidden" orientation="vertical" />
-                </template>
-
-                <template #left>
-                    <UTooltip
-                        :text="!threadState?.unread ? $t('components.mailer.mark_unread') : $t('components.mailer.mark_read')"
-                    >
-                        <UButton
-                            :icon="!threadState?.unread ? 'i-mdi-check-circle-outline' : 'i-mdi-check-circle'"
-                            :color="!threadState?.unread ? 'neutral' : 'green'"
-                            variant="ghost"
-                            @click="
-                                async () => {
-                                    selectedThread!.state = await mailerStore.setThreadState(
-                                        {
-                                            threadId: selectedThread!.id,
-                                            unread: !threadState?.unread,
-                                        },
-                                        true,
-                                    );
-                                }
-                            "
-                        />
-                    </UTooltip>
-
-                    <UTooltip :text="$t('components.mailer.mark_important')">
-                        <UButton
-                            :icon="!threadState?.important ? 'i-mdi-alert-circle-outline' : 'i-mdi-alert-circle'"
-                            :color="!threadState?.important ? 'neutral' : 'red'"
-                            variant="ghost"
-                            @click="
-                                async () => {
-                                    selectedThread!.state = await mailerStore.setThreadState(
-                                        {
-                                            threadId: selectedThread!.id,
-                                            important: !threadState?.important,
-                                        },
-                                        true,
-                                    );
-                                }
-                            "
-                        />
-                    </UTooltip>
-                </template>
-
-                <template #right>
-                    <UTooltip :text="$t('components.mailer.star_thread')">
-                        <UButton
-                            :icon="!threadState?.favorite ? 'i-mdi-star-circle-outline' : 'i-mdi-star-circle'"
-                            :color="!threadState?.favorite ? 'neutral' : 'amber'"
-                            variant="ghost"
-                            @click="
-                                async () => {
-                                    selectedThread!.state = await mailerStore.setThreadState(
-                                        {
-                                            threadId: selectedThread!.id,
-                                            favorite: !threadState?.favorite,
-                                        },
-                                        true,
-                                    );
-                                }
-                            "
-                        />
-                    </UTooltip>
-
-                    <UTooltip :text="$t('components.mailer.mute_thread')">
-                        <UButton
-                            :icon="!threadState?.muted ? 'i-mdi-pause-circle-outline' : 'i-mdi-pause-circle'"
-                            :color="!threadState?.muted ? 'neutral' : 'orange'"
-                            variant="ghost"
-                            @click="
-                                async () => {
-                                    selectedThread!.state = await mailerStore.setThreadState(
-                                        {
-                                            threadId: selectedThread!.id,
-                                            muted: !threadState?.muted,
-                                        },
-                                        true,
-                                    );
-                                }
-                            "
-                        />
-                    </UTooltip>
-
-                    <UTooltip :text="threadState?.archived ? $t('common.unarchive') : $t('common.archive')">
-                        <UButton
-                            :icon="threadState?.archived ? 'i-mdi-archive' : 'i-mdi-archive-outline'"
-                            :color="threadState?.archived ? 'neutral' : 'gray'"
-                            variant="ghost"
-                            @click="
-                                confirmModal.open({
-                                    confirm: async () => {
-                                        selectedThread!.state = await mailerStore.setThreadState(
-                                            {
-                                                threadId: selectedThread!.id,
-                                                archived: !threadState?.archived,
-                                            },
-                                            true,
-                                        );
-                                        await refresh();
-                                    },
-                                })
-                            "
-                        />
-                    </UTooltip>
-
-                    <UTooltip v-if="isSuperuser" :text="!selectedThread.deletedAt ? $t('common.delete') : $t('common.restore')">
-                        <UButton
-                            :color="!selectedThread.deletedAt ? 'error' : 'success'"
-                            :icon="!selectedThread.deletedAt ? 'i-mdi-delete-outline' : 'i-mdi-restore'"
-                            variant="ghost"
-                            @click="
-                                confirmModal.open({
-                                    confirm: async () =>
-                                        selectedEmail?.id &&
-                                        selectedThread &&
-                                        mailerStore.deleteThread({
-                                            emailId: selectedEmail.id,
-                                            threadId: selectedThread.id,
-                                        }),
-                                })
-                            "
-                        />
-                    </UTooltip>
-                </template>
-            </UDashboardNavbar>
-        </template>
-
-        <template #body>
-            <div
-                v-if="!selectedThread"
-                class="hidden flex-1 flex-col items-center justify-center gap-2 text-gray-400 lg:flex dark:text-gray-500"
-            >
+        <template #default>
+            <MailerThread v-if="selectedThread" :thread-id="selectedThread.id" @close="selectedThread = undefined" />
+            <div v-else class="hidden flex-1 flex-col items-center justify-center gap-2 text-dimmed lg:flex">
                 <UIcon class="h-32 w-32" name="i-mdi-email-multiple" />
                 <p>{{ $t('common.none_selected', [$t('common.mail')]) }}</p>
             </div>
-            <MailerThread v-else :thread-id="selectedThread.id" />
         </template>
     </UDashboardPanel>
+
+    <ClientOnly>
+        <USlideover v-if="isMobile" v-model:open="isMailPanelOpen">
+            <template #content>
+                <MailerThread
+                    v-if="selectedThread"
+                    :thread-id="selectedThread.id"
+                    @close="selectedThread = undefined"
+                    @refresh="refresh"
+                />
+            </template>
+        </USlideover>
+    </ClientOnly>
 </template>

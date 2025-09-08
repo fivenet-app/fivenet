@@ -38,26 +38,21 @@ const { pause, resume } = useIntervalFn(async () => {
 </script>
 
 <template>
-    <div class="h-full px-4 sm:px-6 lg:px-8">
-        <div class="sm:flex sm:items-center">
-            <div class="sm:flex-auto">
-                <h2 class="text-base leading-6 font-semibold text-gray-100">{{ $t('common.feed') }}</h2>
-            </div>
+    <div class="my-1 flex h-full flex-1 grow flex-col gap-2 px-1">
+        <div class="flex justify-between">
+            <h2 class="inline-flex flex-1 items-center text-base leading-6 font-semibold">{{ $t('common.feed') }}</h2>
         </div>
-        <div class="mt-2 flow-root">
-            <div class="-m-2 overflow-y-auto sm:-mx-6 lg:-mx-8">
-                <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
-                    <ul class="space-y-2" role="list">
-                        <UnitFeedItem
-                            v-for="(activityItem, activityItemIdx) in data?.activity"
-                            :key="activityItem.id"
-                            :activity-length="data?.activity?.length ?? 0"
-                            :item="activityItem"
-                            :activity-item-idx="activityItemIdx"
-                        />
-                    </ul>
-                </div>
-            </div>
+
+        <div class="flex flex-1 flex-col overflow-x-auto overflow-y-auto">
+            <ul class="space-y-2" role="list">
+                <UnitFeedItem
+                    v-for="(activityItem, activityItemIdx) in data?.activity"
+                    :key="activityItem.id"
+                    :activity-length="data?.activity?.length ?? 0"
+                    :item="activityItem"
+                    :activity-item-idx="activityItemIdx"
+                />
+            </ul>
         </div>
     </div>
 </template>

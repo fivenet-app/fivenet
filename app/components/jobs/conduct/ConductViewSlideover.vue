@@ -47,7 +47,7 @@ if (props.entry.id > 0) {
         </template>
 
         <template #body>
-            <dl class="divide-neutral/10 divide-y">
+            <dl class="divide-y divide-default">
                 <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                     <dt class="text-sm leading-6 font-medium">
                         {{ $t('common.created_at') }}

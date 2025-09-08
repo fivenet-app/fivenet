@@ -12,6 +12,7 @@ const props = withDefaults(
         status?: AsyncDataRequestStatus;
         hideText?: boolean;
         hideButtons?: boolean;
+        compact?: boolean;
     }>(),
     {
         modelValue: 0,
@@ -21,6 +22,7 @@ const props = withDefaults(
         status: 'pending',
         hideText: false,
         hideButtons: false,
+        compact: false,
     },
 );
 
@@ -83,8 +85,11 @@ function onClickNext() {
 <template>
     <div class="@container/pagination">
         <div
-            class="flex justify-between gap-1 px-3 py-3 md:items-center @md/pagination:flex-row"
-            :class="!disableBorder ? 'border-t border-neutral-200 dark:border-neutral-700' : ''"
+            class="flex justify-between gap-1 md:items-center @md/pagination:flex-row"
+            :class="[
+                !disableBorder ? 'border-t border-neutral-200 dark:border-neutral-700' : '',
+                compact ? 'px-1 py-1' : 'px-3 py-3',
+            ]"
         >
             <div v-if="!hideText" class="flex flex-col items-center gap-2">
                 <I18nT

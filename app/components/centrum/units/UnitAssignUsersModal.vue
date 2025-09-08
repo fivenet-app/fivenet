@@ -104,7 +104,7 @@ const formRef = useTemplateRef('formRef');
 
                         <div class="mt-2 overflow-hidden rounded-md bg-neutral-100 dark:bg-neutral-900">
                             <ul
-                                class="divide-y divide-gray-100 text-sm font-medium text-gray-100 dark:divide-gray-800"
+                                class="divide-y divide-gray-100 text-sm font-medium text-toned dark:divide-gray-800"
                                 role="list"
                             >
                                 <li v-for="user in state.users" :key="user.userId" class="inline-flex items-center px-4 py-2">

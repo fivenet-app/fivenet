@@ -687,16 +687,18 @@ provide('yjsProvider', provider);
                     <template #access>
                         <UDashboardPanel :ui="{ root: 'min-h-0' }">
                             <template #body>
-                                <UFormField :label="$t('common.access')">
-                                    <AccessManager
-                                        v-model:jobs="state.access.jobs"
-                                        v-model:users="state.access.users"
-                                        :disabled="!canDo.access"
-                                        :target-id="documentId ?? 0"
-                                        :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
-                                        name="access"
-                                    />
-                                </UFormField>
+                                <UPageCard :title="$t('common.access')">
+                                    <UFormField name="access">
+                                        <AccessManager
+                                            v-model:jobs="state.access.jobs"
+                                            v-model:users="state.access.users"
+                                            :disabled="!canDo.access"
+                                            :target-id="documentId ?? 0"
+                                            :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
+                                            name="access"
+                                        />
+                                    </UFormField>
+                                </UPageCard>
                             </template>
                         </UDashboardPanel>
                     </template>

@@ -48,8 +48,14 @@ function copyEmail(): void {
             </template>
         </span>
     </template>
-    <UPopover v-else :ui="{ trigger: 'inline-flex w-auto', wrapper: 'inline-block' }">
-        <UButton :variant="variant" :color="color" :trailing-icon="trailing ? 'i-mdi-chevron-down' : undefined" v-bind="$attrs">
+    <UPopover v-else>
+        <UButton
+            class="inline-flex w-auto"
+            :variant="variant"
+            :color="color"
+            :trailing-icon="trailing ? 'i-mdi-chevron-down' : undefined"
+            v-bind="$attrs"
+        >
             <span class="truncate" :class="textClass"> {{ email ?? $t('common.na') }} </span>
         </UButton>
 

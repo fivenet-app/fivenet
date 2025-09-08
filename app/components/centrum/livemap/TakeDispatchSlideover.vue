@@ -90,7 +90,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
 <template>
     <USlideover :title="$t('components.centrum.take_dispatch.title')">
         <template #body>
-            <dl class="divide-neutral/10 divide-y">
+            <dl class="divide-y divide-default">
                 <template v-if="getCurrentMode === CentrumMode.SIMPLIFIED">
                     <DataNoDataBlock v-if="dispatches.size === 0" icon="i-mdi-car-emergency" :type="$t('common.dispatch', 2)" />
                     <template v-else>
@@ -108,6 +108,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                         name="search"
                                         :placeholder="$t('common.search')"
                                         leading-icon="i-mdi-search"
+                                        class="w-full"
                                     />
                                 </UFormField>
                             </dd>

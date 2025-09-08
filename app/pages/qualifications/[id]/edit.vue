@@ -24,7 +24,5 @@ const route = useRoute('qualifications-id-edit');
 </script>
 
 <template>
-    <UDashboardPanel>
-        <QualificationEditor :qualification-id="parseInt(route.params.id)" />
-    </UDashboardPanel>
+    <QualificationEditor :qualification-id="parseInt(route.params.id)" />
 </template>

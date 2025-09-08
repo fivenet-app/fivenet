@@ -120,11 +120,11 @@ const confirmModal = overlay.create(ConfirmModal);
 <template>
     <div class="flex h-full grow flex-col px-1">
         <div class="flex justify-between">
-            <h2 class="inline-flex flex-1 items-center text-base leading-6 font-semibold text-gray-100">
+            <h2 class="inline-flex flex-1 items-center text-base leading-6 font-semibold text-toned">
                 {{ $t('common.marker', 2) }}
             </h2>
 
-            <h2 class="text-base font-semibold text-gray-100">
+            <h2 class="text-base font-semibold text-toned">
                 {{ $t('common.count') }}:
                 {{ [...markersMarkers.values()].length }}
             </h2>

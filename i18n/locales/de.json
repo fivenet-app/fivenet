@@ -1090,7 +1090,8 @@
             "include_read": "Gelesene Benachrichtigungen",
             "unread": "Ungelesen",
             "do_not_disturb": "Bitte nicht stören",
-            "mark_unread": "Als ungelesen markieren"
+            "mark_unread": "Als ungelesen markieren",
+            "all_categories": "Alle Kategorien"
         },
         "qualifications": {
             "user_qualifications": "Ihre Qualifizierungen",

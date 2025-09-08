@@ -168,7 +168,7 @@ const scrollRef = useTemplateRef('scrollRef');
 </script>
 
 <template>
-    <UDashboardPanel>
+    <UDashboardPanel :ui="{ body: 'gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="`${page?.jobLabel ? page?.jobLabel + ': ' : ''}${$t('common.wiki')}`">
                 <template #leading>
@@ -352,15 +352,17 @@ const scrollRef = useTemplateRef('scrollRef');
                     </UPageHeader>
 
                     <UPageBody v-if="page.content?.content">
-                        <div class="rounded-lg bg-neutral-100 dark:bg-neutral-900">
-                            <HTMLContent class="px-4 py-2" :value="page.content.content" />
+                        <div
+                            class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 break-words dark:bg-neutral-800"
+                        >
+                            <HTMLContent class="px-2 py-2" :value="page.content.content" />
                         </div>
 
                         <template v-if="surround.length > 0">
                             <USeparator class="my-2" />
 
                             <UContentSurround
-                                :surround="[prev, next]"
+                                :surround="[prev!, next!]"
                                 prev-icon="i-mdi-arrow-left"
                                 next-icon="i-mdi-arrow-right"
                             />
@@ -399,9 +401,7 @@ const scrollRef = useTemplateRef('scrollRef');
                 </template>
 
                 <template v-if="page?.meta?.toc === undefined || page?.meta?.toc === true" #right>
-                    <PageSearch class="mb-2 flex! lg:hidden!" />
-
-                    <UContentToc :title="$t('common.toc')" :links="tocLinks" />
+                    <UContentToc class="lg:col-span-2" :title="$t('common.toc')" :links="tocLinks" />
                 </template>
             </UPage>
 
