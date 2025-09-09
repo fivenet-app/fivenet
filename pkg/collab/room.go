@@ -16,7 +16,11 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-const StreamName = "COLLAB"
+const (
+	StreamName = "COLLAB"
+
+	feedFetch = 24
+)
 
 // metricTotalConnectedClients tracks the number of connected clients by category for Prometheus monitoring.
 var metricTotalConnectedClients = promauto.NewGaugeVec(prometheus.GaugeOpts{
@@ -196,8 +200,8 @@ func (r *CollabRoom) SendToClient(fromId uint64, toId uint64, msg *collab.Server
 // consumeLoop is the JetStream pull loop for receiving and forwarding messages to local clients.
 func (r *CollabRoom) consumeLoop() {
 	for {
-		batch, err := r.consumer.Fetch(32,
-			jetstream.FetchMaxWait(2*time.Second),
+		batch, err := r.consumer.Fetch(feedFetch,
+			jetstream.FetchMaxWait(3*time.Second),
 		)
 		if err != nil {
 			if errors.Is(err, context.DeadlineExceeded) ||

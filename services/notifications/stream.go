@@ -240,7 +240,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 			}
 
 			batch, err := consumer.Fetch(feedFetch,
-				jetstream.FetchMaxWait(2*time.Second))
+				jetstream.FetchMaxWait(3*time.Second))
 			if err != nil {
 				if errors.Is(err, context.DeadlineExceeded) ||
 					errors.Is(err, jetstream.ErrNoMessages) {

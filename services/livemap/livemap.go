@@ -27,7 +27,7 @@ import (
 const (
 	markerMarkerChunkSize = 75
 
-	feedFetch = 32
+	feedFetch = 16
 )
 
 func (s *Server) getAndSendACL(
@@ -283,7 +283,7 @@ func (s *Server) Stream(
 			}
 
 			batch, err := consumer.Fetch(feedFetch,
-				jetstream.FetchMaxWait(2*time.Second))
+				jetstream.FetchMaxWait(3*time.Second))
 			if err != nil {
 				if errors.Is(err, context.DeadlineExceeded) ||
 					errors.Is(err, jetstream.ErrNoMessages) {
