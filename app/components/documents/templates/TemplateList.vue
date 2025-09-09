@@ -48,12 +48,9 @@ const items = computed<CardElements>(
 function selected(idx: number): TemplateShort | undefined {
     return templates.value?.at(idx);
 }
-
-console.log('TEST123');
 </script>
 
 <template>
-    TESt123
     <div v-if="isRequestPending(status)" class="flex justify-center">
         <UPageGrid>
             <UPageCard v-for="idx in 6" :key="idx">

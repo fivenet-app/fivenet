@@ -198,6 +198,13 @@ async function getQualification(qualificationId: number): Promise<Qualification>
     }
 }
 
+useHead({
+    title: () =>
+        qualification.value?.title
+            ? `${qualification.value.abbreviation}: ${qualification.value.title} - ${t('pages.qualifications.edit.title')}`
+            : t('pages.qualifications.edit.title'),
+});
+
 function setFromProps(): void {
     if (!qualification.value) return;
 
@@ -381,7 +388,7 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0 overflow-y-hidden' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.qualifications.edit.title')">
                 <template #leading>
@@ -431,7 +438,13 @@ const formRef = useTemplateRef('formRef');
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" class="flex flex-1 flex-col" @submit="onSubmitThrottle">
+            <UForm
+                ref="formRef"
+                :schema="schema"
+                :state="state"
+                class="flex min-h-0 w-full flex-1 flex-col overflow-y-hidden"
+                @submit="onSubmitThrottle"
+            >
                 <DataPendingBlock
                     v-if="isRequestPending(status)"
                     :message="$t('common.loading', [$t('common.qualification', 1)])"
@@ -452,11 +465,11 @@ const formRef = useTemplateRef('formRef');
                 <UTabs
                     v-else
                     v-model="selectedTab"
-                    class="flex flex-1 flex-col"
+                    class="flex-1 flex-col overflow-y-hidden"
                     :items="items"
                     variant="link"
                     :unmount-on-hide="false"
-                    :ui="{ content: 'h-full flex flex-1 flex-col overflow-y-auto' }"
+                    :ui="{ content: 'flex flex-col flex-1 min-h-0 max-h-full overflow-y-hidden' }"
                 >
                     <template #content>
                         <div v-if="isRequestPending(status)" class="flex flex-col gap-2">
@@ -528,21 +541,19 @@ const formRef = useTemplateRef('formRef');
                                 </template>
                             </UDashboardToolbar>
 
-                            <div v-if="canDo.edit" class="flex flex-1 flex-col">
-                                <ClientOnly>
-                                    <TiptapEditor
-                                        v-model="state.content"
-                                        v-model:files="state.files"
-                                        class="mx-auto w-full max-w-(--breakpoint-xl) flex-1"
-                                        :disabled="!canDo.edit"
-                                        :saving="saving"
-                                        history-type="qualification"
-                                        :target-id="props.qualificationId ?? 0"
-                                        filestore-namespace="qualifications"
-                                        :filestore-service="(opts) => qualificationsQualificationsClient.uploadFile(opts)"
-                                    />
-                                </ClientOnly>
-                            </div>
+                            <ClientOnly v-if="canDo.edit">
+                                <TiptapEditor
+                                    v-model="state.content"
+                                    v-model:files="state.files"
+                                    class="m-2 mx-auto w-full max-w-(--breakpoint-xl) flex-1"
+                                    :disabled="!canDo.edit"
+                                    :saving="saving"
+                                    history-type="qualification"
+                                    :target-id="props.qualificationId ?? 0"
+                                    filestore-namespace="qualifications"
+                                    :filestore-service="(opts) => qualificationsQualificationsClient.uploadFile(opts)"
+                                />
+                            </ClientOnly>
                         </template>
                     </template>
 

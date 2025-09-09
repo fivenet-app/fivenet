@@ -90,24 +90,22 @@ const calendar = computed(() => data.value?.calendar);
                 <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
                     <OpenClosedBadge :closed="calendar.closed" />
 
-                    <UBadge class="inline-flex gap-1" color="neutral" size="md">
-                        <UIcon class="size-5" name="i-mdi-account" />
-                        <span class="inline-flex items-center gap-1">
-                            <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
-                            <CitizenInfoPopover :user="calendar.creator" show-avatar-in-name />
-                        </span>
+                    <UBadge class="inline-flex gap-1" color="neutral" size="md" icon="i-mdi-account">
+                        <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
+                        <CitizenInfoPopover :user="calendar.creator" show-avatar-in-name />
                     </UBadge>
 
-                    <UBadge class="inline-flex gap-1" color="neutral" size="md">
-                        <UIcon class="size-5" :name="calendar.public ? 'i-mdi-public' : 'i-mdi-calendar-lock'" />
-                        <span>
-                            {{
-                                calendar.public
-                                    ? $t('components.calendar.CalendarCreateOrUpdateModal.public')
-                                    : $t('components.calendar.CalendarCreateOrUpdateModal.private')
-                            }}
-                        </span>
-                    </UBadge>
+                    <UBadge
+                        class="inline-flex gap-1"
+                        color="neutral"
+                        size="md"
+                        :icon="calendar.public ? 'i-mdi-public' : 'i-mdi-calendar-lock'"
+                        :label="
+                            calendar.public
+                                ? $t('components.calendar.CalendarCreateOrUpdateModal.public')
+                                : $t('components.calendar.CalendarCreateOrUpdateModal.private')
+                        "
+                    />
                 </div>
 
                 <p>

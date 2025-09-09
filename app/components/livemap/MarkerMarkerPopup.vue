@@ -48,27 +48,25 @@ const markerCreateOrUpdateSlideover = overlay.create(MarkerCreateOrUpdateSlideov
             <template #header>
                 <div class="grid grid-cols-2 gap-2">
                     <UTooltip v-if="marker.x !== undefined && marker.y !== undefined" :text="$t('common.mark')">
-                        <UButton variant="link" icon="i-mdi-map-marker" @click="goto({ x: marker.x, y: marker.y })">
-                            <span class="truncate">
-                                {{ $t('common.mark') }}
-                            </span>
-                        </UButton>
+                        <UButton
+                            variant="link"
+                            icon="i-mdi-map-marker"
+                            :label="$t('common.mark')"
+                            @click="goto({ x: marker.x, y: marker.y })"
+                        />
                     </UTooltip>
 
                     <UTooltip v-if="can('livemap.LivemapService/CreateOrUpdateMarker').value" :text="$t('common.edit')">
                         <UButton
                             variant="link"
                             icon="i-mdi-pencil"
+                            :label="$t('common.edit')"
                             @click="
                                 markerCreateOrUpdateSlideover.open({
                                     marker: marker,
                                 })
                             "
-                        >
-                            <span class="truncate">
-                                {{ $t('common.edit') }}
-                            </span>
-                        </UButton>
+                        />
                     </UTooltip>
 
                     <UTooltip v-if="can('livemap.LivemapService/DeleteMarker').value" :text="$t('common.delete')">
@@ -76,16 +74,13 @@ const markerCreateOrUpdateSlideover = overlay.create(MarkerCreateOrUpdateSlideov
                             variant="link"
                             icon="i-mdi-delete"
                             color="error"
+                            :label="$t('common.delete')"
                             @click="
                                 confirmModal.open({
                                     confirm: async () => deleteMarker(marker.id),
                                 })
                             "
-                        >
-                            <span class="truncate">
-                                {{ $t('common.delete') }}
-                            </span>
-                        </UButton>
+                        />
                     </UTooltip>
                 </div>
             </template>

@@ -116,57 +116,48 @@ const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
 
                 <template v-else>
                     <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
-                        <UBadge class="inline-flex items-center gap-1" color="neutral" size="lg">
-                            <UIcon class="size-5" name="i-mdi-access-time" />
-                            <span>
-                                {{ $t('common.date') }}
-                                <GenericTime :value="entry?.startTime" type="long" />
-                                <template v-if="entry.endTime">
-                                    -
-                                    <GenericTime
-                                        :value="entry?.endTime"
-                                        :type="isSameDay(toDate(entry?.startTime), toDate(entry?.endTime)) ? 'time' : 'long'"
-                                    />
-                                </template>
-                            </span>
+                        <UBadge class="inline-flex items-center gap-1" color="neutral" size="lg" icon="i-mdi-access-time">
+                            {{ $t('common.date') }}
+                            <GenericTime :value="entry?.startTime" type="long" />
+                            <template v-if="entry.endTime">
+                                -
+                                <GenericTime
+                                    :value="entry?.endTime"
+                                    :type="isSameDay(toDate(entry?.startTime), toDate(entry?.endTime)) ? 'time' : 'long'"
+                                />
+                            </template>
                         </UBadge>
 
-                        <UBadge class="inline-flex items-center gap-1" color="neutral" size="md">
-                            <UIcon class="size-5" name="i-mdi-calendar" />
-                            <span>
-                                {{ $t('common.calendar') }}
-                                <UBadge :color="color" size="lg" />
+                        <UBadge class="inline-flex items-center gap-1" color="neutral" size="md" icon="i-mdi-calendar">
+                            {{ $t('common.calendar') }}
+                            <UBadge :color="color" size="lg" />
 
-                                {{ entry.calendar?.name ?? $t('common.na') }}
-                            </span>
+                            {{ entry.calendar?.name ?? $t('common.na') }}
                         </UBadge>
                     </div>
 
                     <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
                         <OpenClosedBadge :closed="entry.closed" />
 
-                        <UBadge class="inline-flex gap-1" color="neutral" size="md">
-                            <UIcon class="size-5" name="i-mdi-account" />
-                            <span class="inline-flex items-center gap-1">
-                                <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
-                                <CitizenInfoPopover :user="entry.creator" show-avatar-in-name />
-                            </span>
+                        <UBadge class="inline-flex gap-1" color="neutral" size="md" icon="i-mdi-account">
+                            <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
+                            <CitizenInfoPopover :user="entry.creator" show-avatar-in-name />
                         </UBadge>
 
-                        <UBadge class="inline-flex gap-1" color="neutral" size="md">
-                            <UIcon class="size-5" name="i-mdi-calendar" />
-                            <span>
-                                {{ $t('common.created_at') }}
-                                <GenericTime :value="entry.createdAt" type="long" />
-                            </span>
+                        <UBadge class="inline-flex gap-1" color="neutral" size="md" icon="i-mdi-calendar">
+                            {{ $t('common.created_at') }}
+                            <GenericTime :value="entry.createdAt" type="long" />
                         </UBadge>
 
-                        <UBadge v-if="entry.updatedAt" class="inline-flex gap-1" color="neutral" size="md">
-                            <UIcon class="size-5" name="i-mdi-calendar-edit" />
-                            <span>
-                                {{ $t('common.updated_at') }}
-                                <GenericTime :value="entry.updatedAt" type="long" />
-                            </span>
+                        <UBadge
+                            v-if="entry.updatedAt"
+                            class="inline-flex gap-1"
+                            color="neutral"
+                            size="md"
+                            icon="i-mdi-calendar-edit"
+                        >
+                            {{ $t('common.updated_at') }}
+                            <GenericTime :value="entry.updatedAt" type="long" />
                         </UBadge>
                     </div>
 
@@ -186,9 +177,9 @@ const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
                     </template>
 
                     <div
-                        class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 break-words dark:bg-neutral-900"
+                        class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-900"
                     >
-                        <HTMLContent v-if="entry.content?.content" class="px-4 py-2" :value="entry.content.content" />
+                        <HTMLContent v-if="entry.content?.content" :value="entry.content.content" />
                     </div>
                 </template>
             </div>

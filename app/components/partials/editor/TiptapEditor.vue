@@ -96,6 +96,9 @@ const emits = defineEmits<{
     (e: 'file-uploaded', file: FileGrpc): void;
 }>();
 
+const modelValue = defineModel<string>({ required: true });
+const files = defineModel<FileGrpc[]>('files', { default: () => [] });
+
 const { t } = useI18n();
 
 const logger = useLogger('📄 Editor');
@@ -112,9 +115,6 @@ const overlay = useOverlay();
 const fileListModal = overlay.create(FileListModal);
 const sourceCodeModal = overlay.create(SourceCodeModal);
 const versionHistoryModal = overlay.create(VersionHistoryModal);
-
-const modelValue = defineModel<string>({ required: true });
-const files = defineModel<FileGrpc[]>('files', { default: () => [] });
 
 const extensions = [
     UniqueID.configure({
@@ -364,8 +364,9 @@ const editor = useEditor({
     },
     onUpdate: () => {
         modelValue.value = unref(editor)?.getHTML() ?? '';
-        // TODO
+        /* TODO
         console.log('Editor JSON: ', unref(editor)?.getJSON());
+        */
     },
 });
 
@@ -640,8 +641,15 @@ onBeforeUnmount(() => unref(editor)?.destroy());
 </script>
 
 <template>
-    <div class="relative flex flex-col">
-        <div v-if="editor && !hideToolbar" class="shrink-0 bg-neutral-100 p-0.5 dark:bg-neutral-800">
+    <UCard
+        class="relative flex min-h-0 flex-1 flex-col overflow-y-hidden"
+        :ui="{
+            header: 'p-0 sm:px-2 sticky inset-x-0 top-0 z-[1] shrink-0 bg-neutral-100/75 p-0.5 backdrop-blur dark:bg-neutral-800/75',
+            body: 'p-0 sm:p-0 overflow-y-auto flex-1',
+            footer: 'p-0 sm:px-2 sticky inset-x-0 bottom-0 z-[1] flex w-full flex-none justify-between bg-neutral-100 px-1 text-center dark:bg-neutral-800',
+        }"
+    >
+        <template v-if="editor && !hideToolbar" #header>
             <div class="flex snap-x flex-wrap gap-1">
                 <UButtonGroup>
                     <UTooltip :text="$t('components.partials.TiptapEditor.bold')">
@@ -798,17 +806,14 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                 <UTooltip :text="$t('components.partials.TiptapEditor.font_family')">
                     <UInputMenu
                         v-model="selectedFont"
-                        class="max-w-40"
+                        class="w-full max-w-44"
                         name="selectedFont"
                         :filter-fields="['label']"
                         :items="fonts"
                         :placeholder="$t('common.font', 1)"
                         :disabled="disabled"
+                        :style="{ fontFamily: selectedFont.value }"
                     >
-                        <template #default>
-                            <span class="truncate" :style="{ fontFamily: selectedFont.value }">{{ selectedFont.label }}</span>
-                        </template>
-
                         <template #item="{ item }">
                             <span class="truncate" :style="{ fontFamily: item.value }">{{ item.label }}</span>
                         </template>
@@ -1321,7 +1326,7 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                     </UTooltip>
                 </UButtonGroup>
             </div>
-        </div>
+        </template>
 
         <DragHandle v-if="editor !== undefined" :editor="editor">
             <div class="tiptap-drag-handle h-5 w-6 after:flex after:cursor-grab after:items-center after:justify-center">
@@ -1331,7 +1336,7 @@ onBeforeUnmount(() => unref(editor)?.destroy());
 
         <TiptapEditorContent
             ref="contentRef"
-            class="min-h-0 w-full max-w-full min-w-0 flex-auto overflow-y-auto"
+            class="min-h-0 w-full max-w-full min-w-0 flex-1 flex-auto overflow-y-auto py-2"
             :class="[
                 wrapperClass,
                 'hover:prose-a:text-blue-500',
@@ -1367,7 +1372,7 @@ onBeforeUnmount(() => unref(editor)?.destroy());
             :editor="editor"
         />
 
-        <div v-if="editor" class="flex w-full flex-none justify-between bg-neutral-100 px-1 text-center dark:bg-neutral-800">
+        <template v-if="editor" #footer>
             <div class="flex" :class="[{ 'flex-1': targetId }]">
                 <template v-if="$slots.footer">
                     <slot name="footer" />
@@ -1393,8 +1398,8 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                 |
                 {{ editor.storage.characterCount.words() }} {{ $t('common.word', editor.storage.characterCount.words()) }}
             </div>
-        </div>
-    </div>
+        </template>
+    </UCard>
 </template>
 
 <style lang="scss">

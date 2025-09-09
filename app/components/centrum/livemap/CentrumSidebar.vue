@@ -509,10 +509,9 @@ defineShortcuts({
                                 size="xs"
                                 block
                                 icon="i-mdi-account-plus"
+                                :label="$t('common.join_unit')"
                                 @click="joinUnitSlideover.open({})"
-                            >
-                                <span class="truncate">{{ $t('common.join_unit') }}</span>
-                            </UButton>
+                            />
                         </UButtonGroup>
                     </div>
                 </template>

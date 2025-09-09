@@ -512,6 +512,7 @@ const isOpen = ref(false);
 
                             <template #item="{ item }">
                                 <UIcon class="size-5" :name="item.icon" />
+
                                 <span class="truncate">{{ item.label }}</span>
                             </template>
                         </USelectMenu>

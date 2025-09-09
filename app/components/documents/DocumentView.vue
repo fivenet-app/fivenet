@@ -56,6 +56,13 @@ const {
     error,
 } = useLazyAsyncData(`document-${props.documentId}`, () => documentsDocuments.getDocument(props.documentId));
 
+useHead({
+    title: () =>
+        doc.value?.document?.title
+            ? `${doc.value.document.title} - ${t('pages.documents.id.title')}`
+            : t('pages.documents.id.title'),
+});
+
 function addToClipboard(): void {
     if (doc.value?.document) {
         clipboardStore.addDocument(doc.value.document);
@@ -581,13 +588,9 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
             <template v-else>
                 <div ref="scrollRef">
                     <div
-                        class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 break-words dark:bg-neutral-800"
+                        class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-800"
                     >
-                        <HTMLContent
-                            v-if="doc.document?.content?.content"
-                            class="px-2 py-2"
-                            :value="doc.document.content.content"
-                        />
+                        <HTMLContent v-if="doc.document?.content?.content" :value="doc.document.content.content" />
                     </div>
                 </div>
 

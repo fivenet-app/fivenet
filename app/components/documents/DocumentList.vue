@@ -273,6 +273,14 @@ defineShortcuts({
                                         :search-input="{ placeholder: $t('common.category', 1) }"
                                         value-key="id"
                                     >
+                                        <template v-if="query.categories" #default="{ items }">
+                                            <CategoryBadge
+                                                v-for="category in query.categories"
+                                                :key="category"
+                                                :category="items.find((c) => c.id === category)"
+                                            />
+                                        </template>
+
                                         <template #item="{ item }">
                                             <CategoryBadge :category="item" />
                                         </template>

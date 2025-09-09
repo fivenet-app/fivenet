@@ -211,6 +211,7 @@ const formRef = useTemplateRef('formRef');
                                     class="size-2 rounded-full"
                                     :class="`bg-${state.calendar?.color ?? 'primary'}-500 dark:bg-${state.calendar?.color ?? 'primary'}-400`"
                                 />
+
                                 <span class="truncate">{{ state.calendar?.name }}</span>
                             </template>
 
@@ -219,6 +220,7 @@ const formRef = useTemplateRef('formRef');
                                     class="size-2 rounded-full"
                                     :class="`bg-${item.color ?? 'primary'}-500 dark:bg-${item.color ?? 'primary'}-400`"
                                 />
+
                                 <span class="truncate">{{ item.name }}</span>
                             </template>
 

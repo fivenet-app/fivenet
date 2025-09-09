@@ -173,7 +173,7 @@ const formRef = useTemplateRef('formRef');
                                         </template>
 
                                         <template #item="{ item }">
-                                            <span class="truncate">
+                                            <span>
                                                 {{
                                                     (item?.label && item?.label !== ''
                                                         ? item?.label + ' (' + item.email + ')'

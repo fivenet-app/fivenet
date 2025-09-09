@@ -52,8 +52,8 @@ const selfServicePropsAbsenceDateModal = overlay.create(SelfServicePropsAbsenceD
                 <UBadge
                     v-if="colleague.props?.absenceEnd && isFuture(toDate(colleague.props?.absenceEnd))"
                     class="inline-flex items-center gap-1"
+                    icon="i-mdi-island"
                 >
-                    <UIcon class="size-5" name="i-mdi-island" />
                     <GenericTime :value="colleague.props?.absenceBegin" type="date" />
                     <span>{{ $t('common.to') }}</span>
                     <GenericTime :value="colleague.props?.absenceEnd" type="date" />

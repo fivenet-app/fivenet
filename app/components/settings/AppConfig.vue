@@ -503,6 +503,7 @@ const formRef = useTemplateRef('formRef');
                                                     'i-mdi-question-mark'
                                                 "
                                             />
+
                                             <span class="truncate">{{
                                                 state.defaultLocale.name ?? state.defaultLocale.code
                                             }}</span>
@@ -514,6 +515,7 @@ const formRef = useTemplateRef('formRef');
 
                                     <template #item="{ item }">
                                         <UIcon class="size-4" :name="item.icon" />
+
                                         <span class="truncate">{{ item.name }}</span>
                                     </template>
                                 </USelectMenu>
@@ -656,9 +658,7 @@ const formRef = useTemplateRef('formRef');
                                             }}</span>
                                         </template>
 
-                                        <template #item="{ item }">
-                                            <span class="truncate">{{ item.label }} ({{ item.name }})</span>
-                                        </template>
+                                        <template #item="{ item }"> {{ item.label }} ({{ item.name }}) </template>
                                     </USelectMenu>
                                 </ClientOnly>
                             </UFormField>
@@ -799,9 +799,7 @@ const formRef = useTemplateRef('formRef');
                                             }}</span>
                                         </template>
 
-                                        <template #item="{ item }">
-                                            <span class="truncate">{{ item.label }} ({{ item.name }})</span>
-                                        </template>
+                                        <template #item="{ item }"> {{ item.label }} ({{ item.name }}) </template>
                                     </USelectMenu>
                                 </ClientOnly>
                             </UFormField>
@@ -826,19 +824,19 @@ const formRef = useTemplateRef('formRef');
                                     class="w-full"
                                 >
                                     <template #default>
-                                        <span class="truncate">{{
+                                        {{
                                             $t(
                                                 `enums.settings.AppConfig.DiscordBotPresenceType.${DiscordBotPresenceType[state.discord.botPresence.type ?? 0]}`,
                                             )
-                                        }}</span>
+                                        }}
                                     </template>
 
                                     <template #item="{ item }">
-                                        <span class="truncate">{{
+                                        {{
                                             $t(
                                                 `enums.settings.AppConfig.DiscordBotPresenceType.${DiscordBotPresenceType[item.mode ?? 0]}`,
                                             )
-                                        }}</span>
+                                        }}
                                     </template>
                                 </USelectMenu>
                             </UFormField>

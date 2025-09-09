@@ -164,12 +164,10 @@ const confirmModal = overlay.create(ConfirmModal);
                                     :disabled="availableJobGrades.length === 0"
                                 >
                                     <template v-if="state.jobGrade" #default>
-                                        <span class="truncate">{{ state.jobGrade?.label }} ({{ state.jobGrade?.grade }})</span>
+                                        {{ state.jobGrade?.label }} ({{ state.jobGrade?.grade }})
                                     </template>
 
-                                    <template #item="{ item }">
-                                        <span class="truncate">{{ item.label }} ({{ item.grade }})</span>
-                                    </template>
+                                    <template #item="{ item }"> {{ item.label }} ({{ item.grade }}) </template>
                                 </USelectMenu>
                             </ClientOnly>
                         </UFormField>

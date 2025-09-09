@@ -574,9 +574,11 @@ const { game } = useAppConfig();
                             : ''
                     }}
 
-                    <UBadge v-if="row.original.startTime !== undefined && row.original.endTime === undefined" color="green">
-                        {{ $t('common.active') }}
-                    </UBadge>
+                    <UBadge
+                        v-if="row.original.startTime !== undefined && row.original.endTime === undefined"
+                        color="green"
+                        :label="$t('common.active')"
+                    />
                 </template>
             </UTable>
 

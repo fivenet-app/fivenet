@@ -86,27 +86,17 @@ function setImage(url: string | undefined): void {
     emit('close', false);
 }
 
-async function onFilesHandler(files: FileList | File[] | null): Promise<void> {
-    if (!files || !files[0]) {
+async function onFileHandler(file: File | null | undefined): Promise<void> {
+    if (!file) {
         canSubmit.value = true;
         return;
     }
 
-    await setViaURL(files[0]);
+    await setViaURL(file);
 
     canSubmit.value = true;
     emit('close', false);
 }
-
-const dropZoneRef = useTemplateRef('dropZoneRef');
-
-const { chooseFiles } = useFileSelection({
-    dropzone: dropZoneRef,
-    onFiles: onFilesHandler,
-    // Specify the types of data to be received.
-    allowedDataTypes: fileUpload.types.images,
-    multiple: false,
-});
 
 const open = ref(false);
 
@@ -148,7 +138,7 @@ const formRef = useTemplateRef('formRef');
 
                 <UForm ref="formRef" :schema="schema" :state="imageState" @submit="onSubmitThrottle">
                     <UFormField name="url" :label="$t('common.url')">
-                        <UInput v-model="imageState.url" type="text" name="url" class="w-full" />
+                        <UInput v-model="imageState.url" type="text" name="url" class="w-full" :disabled="disabled" />
                     </UFormField>
 
                     <UFormField class="mt-2 w-full">
@@ -167,28 +157,16 @@ const formRef = useTemplateRef('formRef');
 
                 <USeparator class="my-2" :label="$t('common.or')" orientation="horizontal" />
 
-                <ULink class="w-full" @click="chooseFiles">
-                    <div ref="dropZoneRef" class="flex w-full items-center justify-center">
-                        <label
-                            class="flex h-48 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-neutral-300 bg-neutral-100 hover:bg-neutral-200 dark:border-neutral-600 dark:bg-neutral-800 dark:hover:border-neutral-600 dark:hover:bg-neutral-700"
-                            for="dropzone-file"
-                        >
-                            <div class="flex flex-col items-center justify-center pt-3 pb-4">
-                                <UIcon
-                                    class="size-14"
-                                    :class="(disabled || !canSubmit) && 'animate-spin'"
-                                    :name="canSubmit ? 'i-mdi-file-upload-outline' : 'i-mdi-loading'"
-                                />
-
-                                <p class="mb-2 px-2 text-base text-muted">
-                                    <span class="font-semibold">{{ $t('common.file_click_to_upload') }}</span>
-                                    {{ $t('common.file_drag_n_drop') }}
-                                </p>
-                                <p class="text-sm text-muted">{{ $t('common.allowed_file_types') }}</p>
-                            </div>
-                        </label>
-                    </div>
-                </ULink>
+                <UFileUpload
+                    name="file"
+                    :accept="fileUpload.types.images.join(',')"
+                    block
+                    :disabled="disabled || !canSubmit"
+                    :placeholder="$t('common.image')"
+                    :label="$t('common.file_upload_label')"
+                    :description="$t('common.allowed_file_types')"
+                    @update:model-value="($event) => onFileHandler($event)"
+                />
             </div>
         </template>
     </UPopover>

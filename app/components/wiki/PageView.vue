@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { AsyncDataRequestStatus } from '#app';
+import type { ContentSurroundLink } from '@nuxt/ui-pro/runtime/components/content/ContentSurround.vue.js';
 import { emojiBlast } from 'emoji-blast';
 import AccessBadges from '~/components/partials/access/AccessBadges.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
@@ -160,9 +161,6 @@ const surround = computedAsync(async () => {
             : undefined,
     ];
 }, []);
-
-const prev = computed(() => surround.value[0]);
-const next = computed(() => surround.value[1]);
 
 const scrollRef = useTemplateRef('scrollRef');
 </script>
@@ -353,16 +351,16 @@ const scrollRef = useTemplateRef('scrollRef');
 
                     <UPageBody v-if="page.content?.content">
                         <div
-                            class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 break-words dark:bg-neutral-800"
+                            class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-800"
                         >
-                            <HTMLContent class="px-2 py-2" :value="page.content.content" />
+                            <HTMLContent :value="page.content.content" />
                         </div>
 
-                        <template v-if="surround.length > 0">
+                        <template v-if="surround.filter((s) => s !== undefined).length > 0">
                             <USeparator class="my-2" />
 
                             <UContentSurround
-                                :surround="[prev!, next!]"
+                                :surround="surround as ContentSurroundLink[]"
                                 prev-icon="i-mdi-arrow-left"
                                 next-icon="i-mdi-arrow-right"
                             />

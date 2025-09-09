@@ -83,12 +83,13 @@ const links = computed(() =>
                             />
                         </div>
 
-                        <UBadge v-if="document.state" class="inline-flex gap-1" size="md">
-                            <UIcon class="size-4" name="i-mdi-note-check" />
-                            <span>
-                                {{ document.state }}
-                            </span>
-                        </UBadge>
+                        <UBadge
+                            v-if="document.state"
+                            class="inline-flex gap-1"
+                            size="md"
+                            icon="i-mdi-note-check"
+                            :label="document.state"
+                        />
 
                         <div
                             v-if="document.deletedAt"
@@ -120,12 +121,14 @@ const links = computed(() =>
                                 </span>
                             </h2>
 
-                            <UBadge v-if="document.draft" class="inline-flex grow-0 gap-1 self-start" color="info" size="md">
-                                <UIcon class="size-5" name="i-mdi-pencil" />
-                                <span>
-                                    {{ $t('common.draft') }}
-                                </span>
-                            </UBadge>
+                            <UBadge
+                                v-if="document.draft"
+                                class="inline-flex grow-0 gap-1 self-start"
+                                color="info"
+                                size="md"
+                                icon="i-mdi-pencil"
+                                :label="$t('common.draft')"
+                            />
                         </div>
                     </div>
 

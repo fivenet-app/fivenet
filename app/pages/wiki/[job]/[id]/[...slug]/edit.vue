@@ -3,11 +3,11 @@ import type { TypedRouteFromName } from '@typed-router';
 import PageEditor from '~/components/wiki/PageEditor.vue';
 
 useHead({
-    title: 'common.wiki',
+    title: 'pages.wiki.edit.title',
 });
 
 definePageMeta({
-    title: 'common.wiki',
+    title: 'pages.wiki.edit.title',
     requiresAuth: true,
     permission: 'wiki.WikiService/ListPages',
     validate: async (route) => {

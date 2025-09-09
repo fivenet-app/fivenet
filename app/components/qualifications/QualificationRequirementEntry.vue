@@ -60,14 +60,12 @@ watch(selectedQualification, () => emit('update-qualification', selectedQualific
                 class="w-full"
             >
                 <template v-if="selectedQualification" #default>
-                    <span class="truncate"> {{ selectedQualification.abbreviation }}: {{ selectedQualification.title }} </span>
+                    {{ selectedQualification.abbreviation }}: {{ selectedQualification.title }}
                 </template>
 
                 <template #item="{ item }">
-                    <span class="truncate">
-                        <template v-if="item?.abbreviation">{{ item.abbreviation }}: </template
-                        >{{ !item.title ? $t('common.untitled') : item.title }}
-                    </span>
+                    <template v-if="item?.abbreviation">{{ item.abbreviation }}: </template
+                    >{{ !item.title ? $t('common.untitled') : item.title }}
                 </template>
 
                 <template #empty> {{ $t('common.not_found', [$t('common.qualification', 2)]) }} </template>

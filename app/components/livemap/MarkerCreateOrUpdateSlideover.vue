@@ -205,15 +205,11 @@ const formRef = useTemplateRef('formRef');
                                         :search-input="{ placeholder: $t('common.search_field') }"
                                     >
                                         <template #default>
-                                            <span class="truncate">{{
-                                                $t(`enums.livemap.MarkerType.${MarkerType[state.markerType ?? 0]}`)
-                                            }}</span>
+                                            {{ $t(`enums.livemap.MarkerType.${MarkerType[state.markerType ?? 0]}`) }}
                                         </template>
 
                                         <template #item="{ item }">
-                                            <span class="truncate">{{
-                                                $t(`enums.livemap.MarkerType.${MarkerType[item.value ?? 0]}`)
-                                            }}</span>
+                                            {{ $t(`enums.livemap.MarkerType.${MarkerType[item.value ?? 0]}`) }}
                                         </template>
                                     </USelectMenu>
                                 </ClientOnly>

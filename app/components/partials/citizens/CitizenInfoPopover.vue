@@ -130,21 +130,17 @@ watchOnce(opened, async () => {
                         v-if="can('citizens.CitizensService/ListCitizens').value"
                         variant="link"
                         icon="i-mdi-account"
+                        :label="$t('common.profile')"
                         :to="{ name: 'citizens-id', params: { id: userId ?? user?.userId ?? 0 } }"
-                    >
-                        {{ $t('common.profile') }}
-                    </UButton>
+                    />
 
                     <UButton
                         v-if="can('jobs.JobsService/GetColleague').value && user?.job === activeChar?.job"
                         variant="link"
                         icon="i-mdi-briefcase"
+                        :label="$t('common.colleague')"
                         :to="{ name: 'jobs-colleagues-id-info', params: { id: userId ?? user?.userId ?? 0 } }"
-                    >
-                        <span class="truncate">
-                            {{ $t('common.colleague') }}
-                        </span>
-                    </UButton>
+                    />
 
                     <PhoneNumberBlock
                         v-if="user?.phoneNumber"
@@ -181,9 +177,11 @@ watchOnce(opened, async () => {
                             :name="`${user.firstname} ${user.lastname}`"
                         />
 
-                        <UButton variant="link" :to="{ name: 'citizens-id', params: { id: user.userId ?? 0 } }">
-                            <span>{{ user.firstname }} {{ user.lastname }}</span>
-                        </UButton>
+                        <UButton
+                            variant="link"
+                            :label="`${user.firstname} ${user.lastname}`"
+                            :to="{ name: 'citizens-id', params: { id: user.userId ?? 0 } }"
+                        />
                     </div>
 
                     <div class="flex flex-col gap-1 text-sm font-normal">

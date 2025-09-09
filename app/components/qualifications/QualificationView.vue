@@ -58,6 +58,13 @@ async function getQualification(qualificationId: number): Promise<GetQualificati
     }
 }
 
+useHead({
+    title: () =>
+        data.value?.qualification?.title
+            ? `${data.value.qualification.abbreviation}: ${data.value.qualification.title} - ${t('pages.qualifications.id.title')}`
+            : t('pages.qualifications.id.title'),
+});
+
 async function deleteQualification(qualificationId: number): Promise<DeleteQualificationResponse> {
     try {
         const call = qualificationsQualificationsClient.deleteQualification({
@@ -179,7 +186,7 @@ const qualificationRequestUserModal = overlay.create(QualificationRequestUserMod
 <template>
     <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
-            <UDashboardNavbar :title="$t('pages.qualifications.single.title')">
+            <UDashboardNavbar :title="$t('pages.qualifications.id.title')">
                 <template #leading>
                     <UDashboardSidebarCollapse />
                 </template>
@@ -500,9 +507,9 @@ const qualificationRequestUserModal = overlay.create(QualificationRequestUserMod
                             <template #body>
                                 <div
                                     v-if="qualification.content?.content"
-                                    class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 break-words dark:bg-neutral-800"
+                                    class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-800"
                                 >
-                                    <HTMLContent class="px-4 py-2" :value="qualification.content.content" />
+                                    <HTMLContent :value="qualification.content.content" />
                                 </div>
                                 <UAlert
                                     v-else

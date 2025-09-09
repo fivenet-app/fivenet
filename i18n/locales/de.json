@@ -60,7 +60,7 @@
             "title": "Beruf",
             "colleagues": {
                 "title": "Kollegen",
-                "single": {
+                "id": {
                     "title": "Kollegen-Info",
                     "activity": "Kollegen-Info: Aktivität",
                     "conduct": "Kollegen-Info: Führungsregister",
@@ -76,6 +76,9 @@
             },
             "overview": {
                 "title": "Berufsübersicht"
+            },
+            "activity": {
+                "title": "Aktivität"
             }
         },
         "vehicles": {
@@ -89,7 +92,7 @@
         },
         "qualifications": {
             "title": "Qualifizierungen",
-            "single": {
+            "id": {
                 "title": "Qualifizierung",
                 "exam": {
                     "title": "Qualifizierungsprüfung",
@@ -222,6 +225,11 @@
             },
             "accounts": {
                 "title": "Konten"
+            }
+        },
+        "wiki": {
+            "edit": {
+                "title": "Seite bearbeiten"
             }
         }
     },
@@ -598,8 +606,6 @@
         "unlink": "Auflösen",
         "editor": "Editor",
         "source_code": "Quellcode",
-        "file_click_to_upload": "Datei auswählen",
-        "file_drag_n_drop": "oder ziehen Sie sie hierher.",
         "insert": "Einfügen",
         "allowed_file_types": "PNG, JPG (MAX. 2000x1500px)",
         "default_lang": "Standardsprache",
@@ -685,7 +691,8 @@
         "choose_color": "Farbe wählen",
         "pick_date": "Datum auswählen",
         "open_command": "Ausführen",
-        "last_char": "Letzte Charakter ID"
+        "last_char": "Letzte Charakter ID",
+        "file_upload_label": "Datei hier ablegen oder zum Hochladen klicken"
     },
     "components": {
         "partials": {
@@ -2675,7 +2682,7 @@
                     "name": "discord",
                     "desc": "Anleitung um Discord mit FiveNet zu verknüpfen.",
                     "title": "Discord Account verknüpfen",
-                    "msg": "1. Navigiere zu [deiner FiveNet Konto-Informationen Seite]({url}/auth/account-info?tab=oauth2Connections#).\n 2. Sollte der \"Social Login-Verbindungen\" Tab noch nicht ausgewählt sein, so wählen sie diesen aus.\n3. Klicken sie auf den \"Verbinden\"-Knopf für Discord.\n4. Es kann sein dass sie sich bei Discord anmelden müssen, bevor sie bestätigen dass ihr Discord Account mit FiveNet verknüpft wird.\n5. Glückwunsch, damit sollte die Verbindung hergestellt sein! Sollten sie den richtigen Discord Account verknüpft haben, wird der FiveNet Discord Sync in wenigen Minuten ihre Rollen entsprechend setzen.\n\n(Sollten sie sich mit dem falschen Discord Account verknüpft haben, so nutzen sie den \"Trennen\"-Knopf, um die Verbindung zu trennen, und fangen bei Schritt 3 erneut an)"
+                    "msg": "1. Navigiere zu [deiner FiveNet Konto-Informationen Seite]({url}/auth/account-info/oauth2#).\n 2. Sollte der \"Social Login-Verbindungen\" Tab noch nicht ausgewählt sein, so wählen sie diesen aus.\n3. Klicken sie auf den \"Verbinden\"-Knopf für Discord.\n4. Es kann sein dass sie sich bei Discord anmelden müssen, bevor sie bestätigen dass ihr Discord Account mit FiveNet verknüpft wird.\n5. Glückwunsch, damit sollte die Verbindung hergestellt sein! Sollten sie den richtigen Discord Account verknüpft haben, wird der FiveNet Discord Sync in wenigen Minuten ihre Rollen entsprechend setzen.\n\n(Sollten sie sich mit dem falschen Discord Account verknüpft haben, so nutzen sie den \"Trennen\"-Knopf, um die Verbindung zu trennen, und fangen bei Schritt 3 erneut an)"
                 },
                 "registration": {
                     "name": "registrierung",

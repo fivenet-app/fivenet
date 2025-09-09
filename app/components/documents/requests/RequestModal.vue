@@ -164,15 +164,11 @@ const formRef = useTemplateRef('formRef');
                                 :search-input="{ placeholder: $t('common.search_field') }"
                             >
                                 <template v-if="state.requestType" #default>
-                                    <span class="truncate">
-                                        {{ $t(`enums.documents.DocActivityType.${DocActivityType[state.requestType]}`, 2) }}
-                                    </span>
+                                    {{ $t(`enums.documents.DocActivityType.${DocActivityType[state.requestType]}`, 2) }}
                                 </template>
 
                                 <template #item="{ item }">
-                                    <span class="truncate">{{
-                                        $t(`enums.documents.DocActivityType.${DocActivityType[item.key]}`, 2)
-                                    }}</span>
+                                    {{ $t(`enums.documents.DocActivityType.${DocActivityType[item.key]}`, 2) }}
                                 </template>
 
                                 <template #empty>

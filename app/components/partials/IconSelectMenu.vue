@@ -54,11 +54,13 @@ const foundIcons = computedAsync(() => iconSearch(searchTermDebounced.value));
                     class="size-5"
                     :style="{ color: `var(--color-${color ?? 'primary'}-500)` }"
                 />
+
                 <span class="truncate">{{ camelCaseToTitleCase(icon ?? $t('common.unknown')) }}</span>
             </template>
 
             <template #item="{ item }">
                 <component :is="item?.component" class="size-5" :style="{ color: `var(--color-${color ?? 'primary'}-500)` }" />
+
                 <span class="truncate">{{ camelCaseToTitleCase(item.name) }}</span>
             </template>
         </USelectMenu>

@@ -169,9 +169,7 @@ const formRef = useTemplateRef('formRef');
                                     @update:model-value="($event) => updateReasonField($event)"
                                 >
                                     <template #item="{ item }">
-                                        <span class="truncate">
-                                            {{ item !== '' ? item : '&nbsp;' }}
-                                        </span>
+                                        {{ item !== '' ? item : '&nbsp;' }}
                                     </template>
                                 </USelectMenu>
                             </ClientOnly>

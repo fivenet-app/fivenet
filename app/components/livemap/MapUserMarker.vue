@@ -113,12 +113,9 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
                             variant="link"
                             icon="i-mdi-map-marker"
                             block
+                            :label="$t('common.mark')"
                             @click="goto({ x: marker.x, y: marker.y })"
-                        >
-                            <span class="truncate">
-                                {{ $t('common.mark') }}
-                            </span>
-                        </UButton>
+                        />
 
                         <UButton
                             v-if="can('citizens.CitizensService/ListCitizens').value"
@@ -126,12 +123,9 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
                             icon="i-mdi-account"
                             block
                             class="!text-(--ui-primary)"
+                            :label="$t('common.profile')"
                             :to="{ name: 'citizens-id', params: { id: marker.user?.userId ?? 0 } }"
-                        >
-                            <span class="truncate">
-                                {{ $t('common.profile') }}
-                            </span>
-                        </UButton>
+                        />
 
                         <UButton
                             v-if="
@@ -144,12 +138,9 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
                             icon="i-mdi-briefcase"
                             block
                             class="!text-(--ui-primary)"
+                            :label="$t('common.colleague')"
                             :to="{ name: 'jobs-colleagues-id-info', params: { id: marker.user?.userId ?? 0 } }"
-                        >
-                            <span class="truncate">
-                                {{ $t('common.colleague') }}
-                            </span>
-                        </UButton>
+                        />
 
                         <PhoneNumberBlock
                             v-if="marker.user?.phoneNumber"
@@ -163,16 +154,13 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
                             variant="link"
                             icon="i-mdi-group"
                             block
+                            :label="$t('common.unit')"
                             @click="
                                 unitDetailsSlideover.open({
                                     unit: unit,
                                 })
                             "
-                        >
-                            <span class="truncate">
-                                {{ $t('common.unit') }}
-                            </span>
-                        </UButton>
+                        />
                     </div>
                 </template>
 

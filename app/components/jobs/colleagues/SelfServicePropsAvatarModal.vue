@@ -23,52 +23,41 @@ const { nuiEnabled } = storeToRefs(settingsStore);
 
 const citizensCitizensClient = await getCitizensCitizensClient();
 
-const schema = z
-    .object({
-        profilePicture: z.custom<File>().array().min(1).max(1).default([]),
-        reset: z.coerce.boolean(),
-    })
-    .or(
-        z.union([
-            z.object({
-                profilePicture: z.custom<File>().array().min(1).max(1).default([]),
-                reset: z.literal(false),
-            }),
-            z.object({ profilePicture: z.custom<File>().array(), reset: z.literal(true) }),
-        ]),
-    );
+const schema = z.union([
+    z.object({
+        profilePicture: z.instanceof(File).optional(),
+        reset: z.literal(false),
+    }),
+    z.object({ profilePicture: z.custom<File>().optional(), reset: z.literal(true) }),
+]);
 
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    profilePicture: [],
+    profilePicture: undefined,
     reset: false,
 });
 
 const { resizeAndUpload } = useFileUploader((_) => citizensCitizensClient.uploadAvatar(_), 'documents', 0);
 
-async function uploadAvatar(files: File[]): Promise<void> {
-    for (const f of files) {
-        if (!f.type.startsWith('image/')) continue;
+async function uploadAvatar(f: File): Promise<void> {
+    if (!f.type.startsWith('image/')) return;
 
-        try {
-            const resp = await resizeAndUpload(f);
+    try {
+        const resp = await resizeAndUpload(f);
 
-            notifications.add({
-                title: { key: 'notifications.action_successful.title', parameters: {} },
-                description: { key: 'notifications.action_successful.content', parameters: {} },
-                type: NotificationType.SUCCESS,
-            });
+        notifications.add({
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
 
-            activeChar.value!.profilePicture = resp.file?.filePath;
+        activeChar.value!.profilePicture = resp.file?.filePath;
 
-            emit('close', false);
-        } catch (e) {
-            handleGRPCError(e as Error);
-            throw e;
-        }
-
-        return;
+        emit('close', false);
+    } catch (e) {
+        handleGRPCError(e as Error);
+        throw e;
     }
 }
 
@@ -91,16 +80,15 @@ async function deleteAvatar(): Promise<void> {
     }
 }
 
-function handleFileChanges(event: FileList) {
-    state.profilePicture = [...event];
-}
-
-const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await (!event.data.reset ? uploadAvatar(event.data.profilePicture) : deleteAvatar()).finally(() =>
-        useTimeoutFn(() => (canSubmit.value = true), 400),
-    );
+    if (event.data.reset) {
+        await deleteAvatar();
+        return;
+    }
+
+    if (!event.data.profilePicture) return;
+
+    await uploadAvatar(event.data.profilePicture);
 }, 1000);
 
 const formRef = useTemplateRef('formRef');
@@ -116,13 +104,15 @@ const formRef = useTemplateRef('formRef');
                         <div v-else class="flex flex-col gap-1">
                             <div class="flex flex-1 flex-row gap-1">
                                 <UFileUpload
+                                    v-model="state.profilePicture"
                                     class="flex-1"
                                     name="mugshot"
                                     :accept="appConfig.fileUpload.types.images.join(',')"
                                     block
+                                    :disabled="formRef?.loading"
                                     :placeholder="$t('common.image')"
-                                    :disabled="!canSubmit"
-                                    @update:model-value="($event) => handleFileChanges($event)"
+                                    :label="$t('common.file_upload_label')"
+                                    :description="$t('common.allowed_file_types')"
                                 />
                             </div>
                         </div>
@@ -147,8 +137,8 @@ const formRef = useTemplateRef('formRef');
                 <UButton
                     class="flex-1"
                     block
-                    :disabled="!canSubmit"
-                    :loading="!canSubmit"
+                    :disabled="formRef?.loading"
+                    :loading="formRef?.loading"
                     :label="$t('common.save')"
                     @click="formRef?.submit()"
                 />
@@ -157,8 +147,8 @@ const formRef = useTemplateRef('formRef');
                     class="flex-1"
                     block
                     color="error"
-                    :disabled="!canSubmit || !activeChar?.profilePicture"
-                    :loading="!canSubmit"
+                    :disabled="formRef?.loading || !activeChar?.profilePicture"
+                    :loading="formRef?.loading"
                     :label="$t('common.reset')"
                     @click="
                         state.reset = true;

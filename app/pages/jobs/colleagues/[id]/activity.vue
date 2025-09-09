@@ -3,11 +3,11 @@ import type { TypedRouteFromName } from '@typed-router';
 import ActivityFeed from '~/components/jobs/colleagues/info/ActivityFeed.vue';
 
 useHead({
-    title: 'pages.jobs.colleagues.single.activity',
+    title: 'pages.jobs.colleagues.id.activity',
 });
 
 definePageMeta({
-    title: 'pages.jobs.colleagues.single.activity',
+    title: 'pages.jobs.colleagues.id.activity',
     requiresAuth: true,
     permission: 'jobs.JobsService/GetColleague',
     validate: async (route) => {

@@ -452,9 +452,9 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                     </div>
 
                     <div
-                        class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 break-words dark:bg-neutral-800"
+                        class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-800"
                     >
-                        <HTMLContent v-if="message.content?.content" class="px-4 py-2" :value="message.content.content" />
+                        <HTMLContent v-if="message.content?.content" :value="message.content.content" />
                     </div>
 
                     <UCollapsible v-if="message.data?.attachments && message.data?.attachments.length > 0" class="my-2">

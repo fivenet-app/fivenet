@@ -15,10 +15,6 @@ import { ObjectType } from '~~/gen/ts/resources/notifications/client_view';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { User } from '~~/gen/ts/resources/users/users';
 
-useHead({
-    title: 'pages.citizens.id.title',
-});
-
 definePageMeta({
     title: 'pages.citizens.id.title',
     requiresAuth: true,
@@ -73,6 +69,13 @@ async function getUser(userId: number): Promise<User> {
         throw e;
     }
 }
+
+useHead({
+    title: () =>
+        user.value
+            ? `${user.value.firstname} ${user.value.lastname} (${user.value.dateofbirth}) - ${t('pages.citizens.id.title')}`
+            : t('pages.citizens.id.title'),
+});
 
 function addToClipboard(): void {
     if (!user.value) {

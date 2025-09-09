@@ -70,9 +70,10 @@ watch(data, async () => {
         :exam-user="examUser"
         :qualification="data.qualification"
     />
+
     <UDashboardPanel v-else>
         <template #header>
-            <UDashboardNavbar :title="$t('pages.qualifications.single.exam.title')">
+            <UDashboardNavbar :title="$t('pages.qualifications.id.exam.title')">
                 <template #leading>
                     <UDashboardSidebarCollapse />
                 </template>
@@ -86,16 +87,15 @@ watch(data, async () => {
                 <template #default>
                     <div class="flex justify-between gap-2">
                         <div class="flex gap-2">
-                            <UBadge v-if="data?.qualification?.examSettings?.time" class="inline-flex gap-1">
-                                <UIcon class="size-4" name="i-mdi-clock" />
+                            <UBadge v-if="data?.qualification?.examSettings?.time" class="inline-flex gap-1" icon="i-mdi-clock">
                                 {{ $t('common.duration') }}: {{ fromDuration(data.qualification.examSettings.time) }}s
                             </UBadge>
-                            <UBadge class="inline-flex gap-1">
-                                <UIcon class="size-4" name="i-mdi-question-mark" />
+                            <UBadge class="inline-flex gap-1" icon="i-mdi-question-mark">
                                 {{ $t('common.count') }}: {{ data?.questionCount }}
                                 {{ $t('common.question', data?.questionCount ?? 1) }}
                             </UBadge>
                         </div>
+
                         <div class="flex gap-2">
                             <UBadge v-if="data.examUser?.startedAt">
                                 {{ $t('common.begins_at') }}

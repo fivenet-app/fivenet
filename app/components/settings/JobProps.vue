@@ -552,6 +552,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     :src="userGuilds?.find((g) => g.id === state.discordGuildId)?.icon"
                                                     :alt="userGuilds?.find((g) => g.id === state.discordGuildId)?.name"
                                                 />
+
                                                 <span class="truncate">{{
                                                     userGuilds?.find((g) => g.id === state.discordGuildId)?.name ??
                                                     (state.discordGuildId !== '' ? state.discordGuildId : '&nbsp;')
@@ -562,6 +563,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         <template #item="{ item }">
                                             <div class="inline-flex items-center gap-2">
                                                 <UAvatar :src="item.icon" :alt="item.name" />
+
                                                 <span class="truncate">{{ item.name }}</span>
                                             </div>
                                         </template>
@@ -806,11 +808,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 </template>
 
                                                 <template #item="{ item }">
-                                                    <span class="truncate">{{
+                                                    {{
                                                         $t(
                                                             `enums.settings.UserInfoSyncUnemployedMode.${UserInfoSyncUnemployedMode[item.value]}`,
                                                         )
-                                                    }}</span>
+                                                    }}
                                                 </template>
                                             </USelectMenu>
                                         </ClientOnly>
@@ -1099,13 +1101,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 :search-input="{ placeholder: $t('common.search_field') }"
                                             >
                                                 <template #default>
-                                                    <span class="truncate">{{
-                                                        $d(toDate(selectedChange?.time), 'short')
-                                                    }}</span>
+                                                    {{ $d(toDate(selectedChange?.time), 'short') }}
                                                 </template>
 
                                                 <template #item="{ item }">
-                                                    <span class="truncate">{{ $d(toDate(item.time), 'short') }}</span>
+                                                    {{ $d(toDate(item.time), 'short') }}
                                                 </template>
                                             </USelectMenu>
                                         </ClientOnly>

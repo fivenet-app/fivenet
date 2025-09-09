@@ -38,9 +38,7 @@ const { game } = useAppConfig();
                     {{ user.props?.jobName || user.props?.jobGradeNumber ? '*' : '' }}
                 </UBadge>
 
-                <UBadge v-if="user?.props?.wanted" color="error">
-                    {{ $t('common.wanted').toUpperCase() }}
-                </UBadge>
+                <UBadge v-if="user?.props?.wanted" color="error" :label="$t('common.wanted').toUpperCase()" />
             </div>
         </div>
 

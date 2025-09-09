@@ -82,44 +82,38 @@ const zIndexOffset = computed(() => calculateDispatchZIndexOffset(props.dispatch
                             v-if="dispatch?.x !== undefined && dispatch?.y !== undefined"
                             variant="link"
                             icon="i-mdi-map-marker"
+                            :label="$t('common.mark')"
                             @click="goto({ x: dispatch?.x, y: dispatch?.y })"
-                        >
-                            <span class="truncate">
-                                {{ $t('common.mark') }}
-                            </span>
-                        </UButton>
+                        />
 
-                        <UButton variant="link" icon="i-mdi-car-emergency" @click="selected(dispatch.id)">
-                            <span class="truncate">
-                                {{ $t('common.detail', 2) }}
-                            </span>
-                        </UButton>
+                        <UButton
+                            variant="link"
+                            icon="i-mdi-car-emergency"
+                            :label="$t('common.detail', 2)"
+                            @click="selected(dispatch.id)"
+                        />
 
                         <UButton
                             v-if="canDo('TakeControl') && checkDispatchAccess(dispatch.jobs, CentrumAccessLevel.DISPATCH)"
                             class="truncate"
                             icon="i-mdi-account-multiple-plus"
                             variant="link"
-                            truncate
+                            :label="$t('common.assign')"
                             @click="
                                 dispatchAssignModal.open({
                                     dispatchId: dispatch.id,
                                 })
                             "
-                        >
-                            {{ $t('common.assign') }}
-                        </UButton>
+                        />
 
                         <UButton
                             v-if="canDo('TakeDispatch') && checkDispatchAccess(dispatch.jobs, CentrumAccessLevel.PARTICIPATE)"
                             class="text-left"
                             icon="i-mdi-plus"
                             variant="link"
-                            truncate
+                            :label="$t('common.self_assign')"
                             @click="selfAssign(dispatch.id)"
-                        >
-                            {{ $t('common.self_assign') }}
-                        </UButton>
+                        />
                     </div>
                 </template>
 

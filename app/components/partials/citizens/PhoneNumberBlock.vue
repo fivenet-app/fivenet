@@ -64,6 +64,7 @@ async function doCall(): Promise<void> {
                     variant="link"
                     icon="i-mdi-phone"
                     :label="showLabel ? $t('common.call') : undefined"
+                    :ui="{ base: 'py-0 sm:py-0 px-0 sm:px-0' }"
                     @click="doCall"
                 />
             </UTooltip>

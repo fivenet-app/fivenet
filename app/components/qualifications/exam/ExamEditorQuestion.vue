@@ -436,15 +436,11 @@ watch(
                     @update:model-value="changeQuestionType($event)"
                 >
                     <template #default>
-                        <span class="truncate">
-                            {{ $t(`components.qualifications.exam_editor.question_types.${question.data!.data.oneofKind}`) }}
-                        </span>
+                        {{ $t(`components.qualifications.exam_editor.question_types.${question.data!.data.oneofKind}`) }}
                     </template>
 
                     <template #item="{ item }">
-                        <span class="truncate">
-                            {{ $t(`components.qualifications.exam_editor.question_types.${item}`) }}
-                        </span>
+                        {{ $t(`components.qualifications.exam_editor.question_types.${item}`) }}
                     </template>
 
                     <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
@@ -487,9 +483,11 @@ watch(
                         <template v-else>
                             <UFileUpload
                                 :accept="appConfig.fileUpload.types.images.join(',')"
-                                :placeholder="$t('common.image')"
                                 :disabled="disabled"
                                 class="w-full"
+                                :placeholder="$t('common.image')"
+                                :label="$t('common.file_upload_label')"
+                                :description="$t('common.allowed_file_types')"
                                 @update:model-value="($event) => handleImage($event)"
                             />
                         </template>

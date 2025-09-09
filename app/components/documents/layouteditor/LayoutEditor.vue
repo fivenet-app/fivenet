@@ -1,23 +1,14 @@
 <!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <script setup lang="ts">
 import { useToast } from '#imports';
-import { computed, h, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import FrameNode from './FrameNode.vue';
+import PreviewCell from './PreviewCell.vue';
 import Ruler from './Ruler.vue';
-import type {
-    BaseFrame,
-    CheckboxFrame,
-    FieldFrame,
-    Frame,
-    GridFrame,
-    ImageFrame,
-    Kind,
-    LineFrame,
-    RepeatFrame,
-    SectionFrame,
-    TextFrame,
-} from './types';
+import type { Frame, WidgetFrame } from './types';
+
+const { fileUpload } = useAppConfig();
 
 /* Units */
 const DPI = 96;
@@ -43,6 +34,7 @@ const pageSizeOptions = [
     { label: 'A5 portrait', value: 'A5 portrait' },
     { label: 'A5 landscape', value: 'A5 landscape' },
 ];
+
 watch(
     () => page.size,
     (s) => {
@@ -64,19 +56,22 @@ watch(
         }
     },
 );
+
 const bgLayerOptions = [
     { label: 'Behind content', value: 'behind' },
     { label: 'Overlay on top', value: 'overlay' },
 ];
 const bgBlendOptions = ['normal', 'multiply', 'screen', 'overlay', 'darken', 'lighten'].map((v) => ({ label: v, value: v }));
-const bgInput = ref<HTMLInputElement | null>(null);
-function pickBg() {
-    bgInput.value?.click();
-}
-function onBgChange(e: Event) {
-    const file = (e.target as HTMLInputElement).files?.[0];
+
+function onBgChange(file: File | null | undefined) {
     if (!file) return;
     page.backgroundUrl = URL.createObjectURL(file);
+}
+
+const formData = reactive<Record<string, unknown>>({});
+
+function setData(path: string, v: unknown) {
+    formData[path] = v;
 }
 
 /* Canvas */
@@ -87,30 +82,6 @@ const gridStepOptions = [
     { label: '2 mm', value: 2 },
     { label: '5 mm', value: 5 },
 ];
-const imageFitOptions = [
-    { label: 'Contain', value: 'contain' },
-    { label: 'Cover', value: 'cover' },
-    { label: 'Stretch', value: 'stretch' },
-];
-const kindOptions = [
-    { label: 'Text', value: 'text' },
-    { label: 'Field', value: 'field' },
-    { label: 'Image', value: 'image' },
-    { label: 'Checkbox', value: 'checkbox' },
-    { label: 'Grid', value: 'grid' },
-    { label: 'Line', value: 'line' },
-    { label: 'Rotated Text', value: 'rotatedText' },
-    { label: 'Section', value: 'section' },
-];
-const insertItems = [
-    { label: 'Text', kind: 'text' },
-    { label: 'Field', kind: 'field' },
-    { label: 'Image', kind: 'image' },
-    { label: 'Checkbox', kind: 'checkbox' },
-    { label: 'Grid', kind: 'grid' },
-    { label: 'Line', kind: 'line' },
-    { label: 'Section', kind: 'section' },
-] as const;
 
 // Default for new frames: strokeEnabled true
 
@@ -159,60 +130,6 @@ function updateFrame(updated: Frame) {
     if (idx >= 0) frames.value[idx] = { ...frames.value[idx], ...updated } as Frame;
 }
 
-/* Click-to-insert helper */
-function addFrameAt(kind: Kind, xMm: number, yMm: number) {
-    const base: BaseFrame = {
-        id: crypto.randomUUID(),
-        kind,
-        name: '',
-        xMm,
-        yMm,
-        wMm: 40,
-        hMm: 8,
-        strokeColor: '#e03131',
-        strokeWidth: 1,
-        strokeEnabled: true,
-    };
-    let f: Frame;
-    switch (kind) {
-        case 'text':
-            f = {
-                ...(base as any),
-                text: 'Edit via right sidebar',
-                fontSize: 12,
-                bold: false,
-                italic: false,
-                underline: false,
-                align: 'left',
-                rotateDeg: 0,
-                style: '',
-            };
-            break;
-        case 'image':
-            f = { ...(base as any), src: '/logo.svg', fit: 'contain' } as ImageFrame;
-            break;
-        case 'repeat':
-            f = { ...(base as any), path: 'items' } as RepeatFrame;
-            break;
-        case 'checkbox':
-            f = { ...(base as any), label: 'Checkbox', checked: false } as CheckboxFrame;
-            break;
-        case 'grid':
-            f = { ...(base as any), cols: 8, rows: 1, gapMm: 1 } as GridFrame;
-            break;
-        case 'line':
-            f = { ...(base as any) } as LineFrame;
-            break;
-        case 'section':
-            f = { ...(base as any), title: 'Section' } as SectionFrame;
-            break;
-        default:
-            f = { ...(base as any) } as any;
-    }
-    frames.value.push(f);
-    selectedId.value = f.id;
-}
-
 /* Drag & drop onto canvas */
 function pagePointFromEvent(e: DragEvent) {
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
@@ -223,35 +140,22 @@ function pagePointFromEvent(e: DragEvent) {
 function snapMm(v: number) {
     return snap.value ? Math.round(v / gridStepMm.value) * gridStepMm.value : v;
 }
+
 // Unified drop handler (palette kind + data leaf)
 function onDrop(e: DragEvent) {
-    const point = pagePointFromEvent(e);
-    const dataLeaf = e.dataTransfer?.getData('text/x-datapath');
-    const kindStr = e.dataTransfer?.getData('application/x-kind');
-    const snappedX = snapMm(point.xMm),
-        snappedY = snapMm(point.yMm);
-    if (dataLeaf) {
-        frames.value.push({
-            id: crypto.randomUUID(),
-            kind: 'field',
-            name: '',
-            xMm: snappedX,
-            yMm: snappedY,
-            wMm: 40,
-            hMm: 8,
-            strokeColor: '#e03131',
-            strokeWidth: 1,
-            path: dataLeaf,
-        } as FieldFrame);
+    const pt = pagePointFromEvent(e);
+    const x = snapMm(pt.xMm),
+        y = snapMm(pt.yMm);
 
-        selectedId.value = frames.value[frames.value.length - 1]?.id;
+    // widgets only
+    const widgetStr = e.dataTransfer?.getData('application/x-widget');
+    if (widgetStr) {
+        addWidgetAt(JSON.parse(widgetStr) as NewWidgetPayload, x, y);
         return;
     }
-    if (kindStr) {
-        const { kind } = JSON.parse(kindStr) as { kind: Kind };
-        addFrameAt(kind, snappedX, snappedY);
-        return;
-    }
+
+    // If you still support non-input shapes (lines, images), keep that branch.
+    // Anything that used to create 'field'/'text' input frames should be removed.
 }
 
 /* Delete key support (CHANGE) */
@@ -274,154 +178,8 @@ function onKey(e: KeyboardEvent) {
     }
 }
 
-/* Preview helpers */
-const sampleData = reactive({
-    patient: { name: 'Max Mustermann', birthDate: '1980-05-01' },
-    case: { startDate: '2025-08-01', initial: true },
-    employer: { name: 'ACME GmbH' },
-    items: [{ a: 1 }, { a: 2 }],
-});
-function fieldLookup(path?: string) {
-    if (!path) return '';
-    const parts = path.split('.');
-    let cur: any = sampleData;
-    for (const p of parts) cur = cur?.[p];
-    return cur ?? '';
-}
-
-const PreviewCell = (props: { frame: Frame; sample: any }) => {
-    const f = props.frame as Frame;
-    // Only show border if strokeEnabled is not false (default true)
-    const border =
-        f.kind !== 'line' && f.strokeEnabled !== false && f.strokeWidth
-            ? `${f.strokeWidth}px solid ${f.strokeColor || '#e03131'}`
-            : undefined;
-    const baseStyle: any = {
-        width: '100%',
-        height: '100%',
-        boxSizing: 'border-box',
-        background: (f as any).fill || undefined,
-        border,
-    };
-    if (f.kind === 'text') return h('div', { style: { ...baseStyle, padding: '1.5mm', color: '#222' } }, (f as TextFrame).text);
-    if (f.kind === 'field')
-        return h(
-            'div',
-            { style: { ...baseStyle, padding: '1.5mm' } },
-            String(fieldLookup((f as FieldFrame).path) || (f as FieldFrame).fallback || ''),
-        );
-    if (f.kind === 'image')
-        return h('img', {
-            src: (f as ImageFrame).src,
-            style: { width: '100%', height: '100%', objectFit: (f as ImageFrame).fit || 'contain' },
-        });
-    if (f.kind === 'checkbox') {
-        const on = (f as CheckboxFrame).path ? !!fieldLookup((f as CheckboxFrame).path) : !!(f as CheckboxFrame).checked;
-        return h('div', { style: { ...baseStyle, display: 'flex', alignItems: 'center', gap: '2mm', padding: '1mm' } }, [
-            h(
-                'div',
-                {
-                    style: {
-                        width: '5mm',
-                        height: '5mm',
-                        border: '1px solid ' + (f.strokeColor || '#e03131'),
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    },
-                },
-                on ? '✓' : '',
-            ),
-            h('span', (f as CheckboxFrame).label || ''),
-        ]);
-    }
-    if (f.kind === 'grid') {
-        const { cols = 8, rows = 1, gapMm = 1 } = f as GridFrame;
-        const cells: any[] = [];
-        for (let r = 0; r < rows; r++)
-            for (let c = 0; c < cols; c++)
-                cells.push(h('div', { style: { border: '1px solid ' + (f.strokeColor || '#e03131') } }));
-        return h(
-            'div',
-            { style: { ...baseStyle, display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: `${gapMm}mm` } },
-            cells,
-        );
-    }
-    if (f.kind === 'line')
-        return h('div', {
-            style: {
-                position: 'absolute',
-                bottom: '1.5mm',
-                left: 0,
-                right: 0,
-                borderBottom: '1px solid ' + (f.strokeColor || '#e03131'),
-            },
-        });
-    // Removed rotatedText handling
-    if (f.kind === 'section') {
-        const title = (f as SectionFrame).title || '';
-        return h('div', { style: { ...baseStyle, padding: '1.5mm' } }, [
-            h('div', { style: { color: '#e03131', fontWeight: 600, marginBottom: '1mm' } }, title),
-        ]);
-    }
-    return h('div', { style: baseStyle }, 'Repeat region');
-};
-
 function frameAbsStyle(f: Frame) {
     return { left: mmToPx(f.xMm) + 'px', top: mmToPx(f.yMm) + 'px', width: mmToPx(f.wMm) + 'px', height: mmToPx(f.hMm) + 'px' };
-}
-
-/* Presets */
-function dropPreset(kind: 'icdRow' | 'stampBox') {
-    if (kind === 'icdRow') {
-        const baseY = 110,
-            colW = 55,
-            gap = 5;
-        const framesToAdd: Frame[] = Array.from({ length: 4 }).map((_, i) => ({
-            id: crypto.randomUUID(),
-            kind: 'grid',
-            name: `ICD ${i + 1}`,
-            xMm: 15 + i * (colW + gap),
-            yMm: baseY,
-            wMm: colW,
-            hMm: 12,
-            cols: 6,
-            rows: 1,
-            gapMm: 1,
-            strokeColor: '#e03131',
-            strokeWidth: 1,
-        })) as any;
-        frames.value.push(...framesToAdd);
-        return;
-    }
-    if (kind === 'stampBox') {
-        frames.value.push({
-            id: crypto.randomUUID(),
-            kind: 'section',
-            name: 'Stamp',
-            xMm: 150,
-            yMm: 60,
-            wMm: 50,
-            hMm: 50,
-            title: '',
-            strokeColor: '#e03131',
-            strokeWidth: 1,
-        });
-        frames.value.push({
-            id: crypto.randomUUID(),
-            kind: 'text',
-            name: 'StampText',
-            xMm: 155,
-            yMm: 65,
-            wMm: 40,
-            hMm: 40,
-            text: 'Verbindliches Muster',
-            fontSize: 14,
-            bold: true,
-            rotateDeg: -24,
-            style: 'color: #e03131; display: flex; align-items: center; justify-content: center; font-weight: 700;',
-        });
-    }
 }
 
 /* Publish & history */
@@ -458,9 +216,39 @@ function redo() {
 }
 
 function restore(s: string) {
-    const st = JSON.parse(s);
+    const st = JSON.parse(s) as { page: typeof page; frames: Frame[] };
     Object.assign(page, st.page);
     frames.value = st.frames;
+}
+
+type NewWidgetPayload = { widget: 'text' | 'textarea' | 'boxed-text'; rows?: number; boxCharCount?: number };
+
+function onWidgetDragStart(e: DragEvent, payload: NewWidgetPayload) {
+    e.dataTransfer?.setData('application/x-widget', JSON.stringify(payload));
+    e.dataTransfer?.setData('text/plain', 'widget'); // cursor hint
+}
+
+function addWidgetAt(payload: NewWidgetPayload, xMm: number, yMm: number) {
+    const baseW = payload.widget === 'textarea' ? 60 : payload.widget === 'boxed-text' ? 40 : 40;
+    const baseH = payload.widget === 'textarea' ? 20 : 8;
+
+    const f: WidgetFrame = {
+        id: crypto.randomUUID(),
+        kind: 'widget',
+        name: '',
+        xMm,
+        yMm,
+        wMm: baseW,
+        hMm: baseH,
+        strokeColor: '#000000',
+        strokeWidth: 1,
+        strokeEnabled: true,
+        widget: payload.widget,
+        rows: payload.rows,
+        boxCharCount: payload.boxCharCount,
+    };
+    frames.value.push(f as Frame);
+    selectedId.value = f.id;
 }
 
 const showPreview = ref(false);
@@ -476,6 +264,8 @@ const showPreview = ref(false);
                 </template>
 
                 <template #left>
+                    <UDashboardSidebarCollapse />
+
                     <div class="mx-auto flex items-center gap-2 px-4 py-2">
                         <UButton icon="i-heroicons-arrow-uturn-left" variant="ghost" :disabled="!canUndo" @click="undo" />
                         <UButton icon="i-heroicons-arrow-uturn-right" variant="ghost" :disabled="!canRedo" @click="redo" />
@@ -491,36 +281,48 @@ const showPreview = ref(false);
                 </template>
 
                 <template #right>
-                    <UButton icon="i-heroicons-eye" @click="showPreview = true">Preview</UButton>
+                    <UButton icon="i-mdi-eye" @click="showPreview = true">Preview</UButton>
                     <UButton color="primary" icon="i-heroicons-cloud-arrow-up" @click="publish">Publish</UButton>
                 </template>
             </UDashboardNavbar>
         </template>
 
         <template #body>
-            <div class="grid grid-cols-8">
+            <div class="grid h-full grid-cols-8">
                 <!-- Left Sidebar -->
-                <div class="col-span-2 space-y-3 overflow-auto p-3">
+                <div class="col-span-2 space-y-3 overflow-auto p-2">
+                    <!-- In <template> Left Sidebar, below the existing <UCard> Insert -->
                     <UCard>
-                        <template #header>Insert</template>
+                        <template #header>Widgets</template>
                         <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
                             <UButton
-                                v-for="item in insertItems"
-                                :key="item.kind"
-                                draggable="true"
                                 variant="soft"
-                                @click="addFrameAt(item.kind, 10, 10)"
-                                >{{ item.label }}</UButton
+                                draggable="true"
+                                @dragstart="onWidgetDragStart($event, { widget: 'text' })"
+                                @click="addWidgetAt({ widget: 'text' }, 10, 10)"
                             >
+                                Text
+                            </UButton>
+
+                            <UButton
+                                variant="soft"
+                                draggable="true"
+                                @dragstart="onWidgetDragStart($event, { widget: 'textarea', rows: 3 })"
+                                @click="addWidgetAt({ widget: 'textarea', rows: 3 }, 10, 10)"
+                            >
+                                Textarea
+                            </UButton>
+
+                            <UButton
+                                variant="soft"
+                                draggable="true"
+                                @dragstart="onWidgetDragStart($event, { widget: 'boxed-text', boxCharCount: 8 })"
+                                @click="addWidgetAt({ widget: 'boxed-text', boxCharCount: 8 }, 10, 10)"
+                            >
+                                Boxed text
+                            </UButton>
                         </div>
-                        <p class="mt-2 text-xs text-highlighted">Tip: click to insert.</p>
-                    </UCard>
-                    <UCard>
-                        <template #header>Components</template>
-                        <div class="grid grid-cols-1 gap-2">
-                            <UButton variant="soft" @click="dropPreset('icdRow')">ICD-10 Row</UButton>
-                            <UButton variant="soft" @click="dropPreset('stampBox')">Stamp Box</UButton>
-                        </div>
+                        <p class="mt-2 text-xs text-highlighted">Drag onto the page or click to insert.</p>
                     </UCard>
                 </div>
 
@@ -589,17 +391,17 @@ const showPreview = ref(false);
                                     </svg>
 
                                     <!-- Frames -->
-                                    <FrameNode
-                                        v-for="f in frames"
-                                        :key="f.id"
-                                        :frame="f"
-                                        :selected="selectedId === f.id"
-                                        :zoom="zoom"
-                                        :snap="snap"
-                                        :grid-step-mm="gridStepMm"
-                                        @select="select(f.id)"
-                                        @update:frame="updateFrame"
-                                    />
+                                    <template v-for="f in frames" :key="f.id">
+                                        <FrameNode
+                                            v-if="f.kind === 'widget'"
+                                            :node="f as WidgetFrame"
+                                            mode="fill"
+                                            :data="formData"
+                                            :set-data="setData"
+                                            @select="select(f.id)"
+                                            @update:frame="updateFrame"
+                                        />
+                                    </template>
 
                                     <!-- Background overlay on top -->
                                     <img
@@ -615,7 +417,7 @@ const showPreview = ref(false);
                 </div>
 
                 <!-- Right: Properties -->
-                <div class="col-span-2 space-y-3 overflow-auto p-3">
+                <div class="col-span-2 space-y-3 overflow-auto p-2">
                     <UCard>
                         <template #header>Page</template>
                         <div class="grid grid-cols-2 gap-2">
@@ -627,11 +429,11 @@ const showPreview = ref(false);
                             </UFormField>
                             <UFormField label="Background" class="col-span-2">
                                 <div class="flex items-center gap-2">
-                                    <UButton size="xs" icon="i-heroicons-photo" @click="pickBg">Choose</UButton>
                                     <USwitch v-model="page.bgLocked" label="Lock" />
                                     <ColorPicker v-model="page.bgColor" class="ml-2" />
                                 </div>
-                                <UFileUpload ref="bgInput" accept="image/*" class="hidden" @update:model-value="onBgChange" />
+
+                                <UFileUpload :accept="fileUpload.types.images.join(',')" @update:model-value="onBgChange" />
                             </UFormField>
                             <UFormField label="Opacity"
                                 ><USlider v-model="page.bgOpacity" :min="0" :max="1" :step="0.05" />
@@ -659,7 +461,6 @@ const showPreview = ref(false);
                                     <UInput v-model.number="selected.hMm" type="number" step="0.5" />
                                 </UFormField>
                             </div>
-                            <USelect v-model="selected.kind" :items="kindOptions" />
                             <USeparator />
                             <div class="grid grid-cols-2 gap-2">
                                 <UFormField label="Stroke">
@@ -675,94 +476,51 @@ const showPreview = ref(false);
                                     <UInput v-model="selected.fill" placeholder="transparent" />
                                 </UFormField>
                             </div>
-                            <div v-if="selected.kind === 'field'">
-                                <UFormField label="Path">
-                                    <UInput v-model="(selected as any).path" placeholder="patient.name" />
-                                </UFormField>
-                                <UFormField label="Fallback">
-                                    <UInput v-model="(selected as any).fallback" placeholder="—" />
-                                </UFormField>
-                            </div>
-                            <div v-if="selected.kind === 'text'">
-                                <UFormField label="Text"><UTextarea v-model="(selected as any).text" :rows="5" /> </UFormField>
-                            </div>
-                            <div v-if="selected.kind === 'image'">
-                                <UFormField label="Image URL">
-                                    <UInput v-model="(selected as any).src" placeholder="/logo.png" />
-                                </UFormField>
-                                <USelect v-model="(selected as any).fit" :items="imageFitOptions" />
-                            </div>
-                            <div v-if="selected.kind === 'checkbox'">
-                                <UFormField label="Path">
-                                    <UInput v-model="(selected as any).path" placeholder="case.initial" />
-                                </UFormField>
-                                <UFormField label="Label">
-                                    <UInput v-model="(selected as any).label" placeholder="Erstbescheinigung" />
-                                </UFormField>
-                                <UFormField label="Checked (preview)">
-                                    <USwitch v-model="(selected as any).checked" label="Checked (preview)" />
-                                </UFormField>
-                            </div>
-                            <div v-if="selected.kind === 'grid'">
-                                <div class="grid grid-cols-3 gap-2">
-                                    <UFormField label="Cols">
-                                        <UInput v-model.number="(selected as any).cols" type="number" />
-                                    </UFormField>
-                                    <UFormField label="Rows">
-                                        <UInput v-model.number="(selected as any).rows" type="number" />
-                                    </UFormField>
-                                    <UFormField label="Gap (mm)">
-                                        <UInput v-model.number="(selected as any).gapMm" type="number" step="0.5" />
-                                    </UFormField>
-                                </div>
-                            </div>
-                            <div v-if="selected.kind === 'text'">
-                                <UFormField label="Text">
-                                    <UTextarea v-model="(selected as any).text" :rows="5" />
-                                </UFormField>
-                                <div class="grid grid-cols-2 gap-2">
-                                    <UFormField label="Font Size (pt)">
-                                        <UInput
-                                            v-model.number="(selected as any).fontSize"
-                                            type="number"
-                                            min="6"
-                                            max="72"
-                                            step="1"
-                                        />
-                                    </UFormField>
-                                    <UFormField label="Align">
-                                        <USelect
-                                            v-model="(selected as any).align"
-                                            :items="[
-                                                { label: 'Left', value: 'left' },
-                                                { label: 'Center', value: 'center' },
-                                                { label: 'Right', value: 'right' },
-                                            ]"
-                                        />
-                                    </UFormField>
-                                </div>
-                                <div class="flex gap-2">
-                                    <USwitch v-model="(selected as any).bold" label="Bold" />
-                                    <USwitch v-model="(selected as any).italic" label="Italic" />
-                                    <USwitch v-model="(selected as any).underline" label="Underline" />
-                                </div>
-                                <UFormField label="Rotation (deg)">
-                                    <UInput
-                                        v-model.number="(selected as any).rotateDeg"
-                                        type="number"
-                                        min="-180"
-                                        max="180"
-                                        step="1"
+                            <!-- Only when a widget is selected -->
+                            <div v-if="selected?.kind === 'widget'">
+                                <UFormGroup label="Widget type">
+                                    <USelect
+                                        v-model="(selected as any).widget"
+                                        :options="[
+                                            { label: 'Text', value: 'text' },
+                                            { label: 'Textarea', value: 'textarea' },
+                                            { label: 'Boxed text', value: 'boxed-text' },
+                                        ]"
                                     />
-                                </UFormField>
-                                <UFormField label="Custom Style (CSS)">
-                                    <UInput v-model="(selected as any).style" placeholder="color: red; background: yellow;" />
-                                </UFormField>
-                            </div>
-                            <div v-if="selected.kind === 'section'">
-                                <UFormField label="Title">
-                                    <UInput v-model="(selected as any).title" placeholder="AU-begründende Diagnose(n)" />
-                                </UFormField>
+                                </UFormGroup>
+
+                                <UFormGroup label="Bind to field (path)">
+                                    <PathPicker v-model="(selected as any).binding" />
+                                    <!-- binding.path, formatter, fit -->
+                                </UFormGroup>
+
+                                <UFormGroup v-if="(selected as any).widget === 'textarea'" label="Rows">
+                                    <UInput v-model.number="(selected as any).rows" type="number" :min="2" :max="20" />
+                                </UFormGroup>
+
+                                <UFormGroup v-if="(selected as any).widget === 'boxed-text'" label="Box count">
+                                    <UInput v-model.number="(selected as any).boxCharCount" type="number" :min="1" :max="64" />
+                                </UFormGroup>
+
+                                <UFormGroup label="Max characters">
+                                    <UInput v-model.number="(selected as any).maxChars" type="number" :min="1" :max="512" />
+                                </UFormGroup>
+
+                                <UFormGroup label="Fit strategy">
+                                    <USelect
+                                        v-model="(selected as any).binding.fit"
+                                        :options="['wrap', 'truncate', 'shrink']"
+                                    />
+                                </UFormGroup>
+
+                                <UFormGroup v-if="(selected as any).binding?.fit === 'shrink'" label="Min font size">
+                                    <UInput
+                                        v-model.number="(selected as any).binding.minFontSize"
+                                        type="number"
+                                        :min="6"
+                                        :max="18"
+                                    />
+                                </UFormGroup>
                             </div>
                         </div>
                         <div v-else class="text-sm text-highlighted">Select a frame to edit its properties.</div>
@@ -795,8 +553,8 @@ const showPreview = ref(false);
                                 class="pointer-events-none absolute inset-0 h-full w-full select-none"
                                 :style="{ opacity: page.bgOpacity, zIndex: 1 }"
                             />
-                            <div v-for="f in frames" :key="'pv-' + f.id" class="absolute" :style="frameAbsStyle(f)">
-                                <component :is="PreviewCell" :frame="f" :sample="sampleData" />
+                            <div v-for="frame in frames" :key="'pv-' + frame.id" class="absolute" :style="frameAbsStyle(f)">
+                                <PreviewCell v-if="frame.kind === 'widget'" :node="frame" :data="formData" />
                             </div>
                         </div>
                     </div>
@@ -806,7 +564,7 @@ const showPreview = ref(false);
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" @click="showPreview = false">Close</UButton>
+                <UButton class="flex-1" :label="$t('common.close')" @click="showPreview = false" />
             </UButtonGroup>
         </template>
     </UModal>

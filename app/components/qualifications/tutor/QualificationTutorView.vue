@@ -56,9 +56,7 @@ const results = ref<InstanceType<typeof QualificationResultList> | null>(null);
                         class="w-full"
                     >
                         <template #item="{ item }">
-                            <span class="truncate">
-                                <ColleagueName :colleague="item" />
-                            </span>
+                            <ColleagueName :colleague="item" />
                         </template>
 
                         <template #empty> {{ $t('common.not_found', [$t('common.user', 2)]) }} </template>

@@ -12,11 +12,11 @@ import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { GetColleagueResponse } from '~~/gen/ts/services/jobs/jobs';
 
 useHead({
-    title: 'pages.jobs.colleagues.single.title',
+    title: 'pages.jobs.colleagues.id.title',
 });
 
 definePageMeta({
-    title: 'pages.jobs.colleagues.single.title',
+    title: 'pages.jobs.colleagues.id.title',
     requiresAuth: true,
     permission: 'jobs.JobsService/GetColleague',
     redirect: { name: 'jobs-colleagues-id-info' },
@@ -60,6 +60,13 @@ async function getColleague(userId: number): Promise<GetColleagueResponse> {
         throw e;
     }
 }
+
+useHead({
+    title: () =>
+        colleague.value?.colleague
+            ? `${colleague.value.colleague.firstname} ${colleague.value.colleague.lastname} (${colleague.value.colleague.dateofbirth} - ${t('pages.jobs.colleagues.id.title')}`
+            : t('pages.jobs.colleagues.id.title'),
+});
 
 function updateColleageAbsence(value: { userId: number; absenceBegin?: Timestamp; absenceEnd?: Timestamp }): void {
     if (colleague.value?.colleague === undefined) {

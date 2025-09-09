@@ -120,7 +120,7 @@ const canSubmit = ref(true);
                                 class="w-full"
                             >
                                 <template #default>
-                                    <span class="truncate">{{
+                                    {{
                                         query.categories.length === 0 || query.categories.length === categories.length
                                             ? $t('components.notifications.all_categories')
                                             : query.categories
@@ -128,12 +128,10 @@ const canSubmit = ref(true);
                                                       $t(`enums.notifications.NotificationCategory.${NotificationCategory[c]}`),
                                                   )
                                                   .join(', ')
-                                    }}</span>
+                                    }}
                                 </template>
                                 <template #item-label="{ item }">
-                                    <span class="truncate">{{
-                                        $t(`enums.notifications.NotificationCategory.${NotificationCategory[item.mode ?? 0]}`)
-                                    }}</span>
+                                    {{ $t(`enums.notifications.NotificationCategory.${NotificationCategory[item.mode ?? 0]}`) }}
                                 </template>
                             </USelectMenu>
                         </ClientOnly>

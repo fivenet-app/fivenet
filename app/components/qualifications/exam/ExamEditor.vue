@@ -59,15 +59,11 @@ export type ExamSettingsSchema = z.output<typeof examSettings>;
                     <ClientOnly>
                         <USelectMenu v-model="examMode" :items="examModes" value-key="mode" class="w-full">
                             <template #default>
-                                <span class="truncate">
-                                    {{ $t(`enums.qualifications.QualificationExamMode.${QualificationExamMode[examMode]}`) }}
-                                </span>
+                                {{ $t(`enums.qualifications.QualificationExamMode.${QualificationExamMode[examMode]}`) }}
                             </template>
 
                             <template #item="{ item }">
-                                <span class="truncate">
-                                    {{ $t(`enums.qualifications.QualificationExamMode.${QualificationExamMode[item.mode]}`) }}
-                                </span>
+                                {{ $t(`enums.qualifications.QualificationExamMode.${QualificationExamMode[item.mode]}`) }}
                             </template>
 
                             <template #empty>
@@ -125,15 +121,11 @@ export type ExamSettingsSchema = z.output<typeof examSettings>;
                             class="w-full"
                         >
                             <template #default>
-                                <span class="truncate">{{
-                                    $t(`enums.qualifications.AutoGradeMode.${AutoGradeMode[settings.autoGradeMode ?? 0]}`)
-                                }}</span>
+                                {{ $t(`enums.qualifications.AutoGradeMode.${AutoGradeMode[settings.autoGradeMode ?? 0]}`) }}
                             </template>
 
                             <template #item="{ item }">
-                                <span class="truncate">{{
-                                    $t(`enums.qualifications.AutoGradeMode.${AutoGradeMode[item.mode ?? 0]}`)
-                                }}</span>
+                                {{ $t(`enums.qualifications.AutoGradeMode.${AutoGradeMode[item.mode ?? 0]}`) }}
                             </template>
                         </USelectMenu>
                     </ClientOnly>

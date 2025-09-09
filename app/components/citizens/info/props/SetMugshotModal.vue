@@ -31,19 +31,19 @@ const citizensCitizensClient = await getCitizensCitizensClient();
 const schema = z
     .object({
         reason: z.string().min(3).max(255),
-        mugshot: z.custom<File>().array().min(1).max(1).default([]),
+        mugshot: z.instanceof(File).optional(),
         reset: z.coerce.boolean(),
     })
     .or(
         z.union([
             z.object({
                 reason: z.string().min(3).max(255),
-                mugshot: z.custom<File>().array().min(1).max(1).default([]),
+                mugshot: z.instanceof(File).optional(),
                 reset: z.literal(false),
             }),
             z.object({
                 reason: z.string().min(3).max(255),
-                mugshot: z.custom<File>().array().default([]),
+                mugshot: z.custom<File>().optional(),
                 reset: z.literal(true),
             }),
         ]),
@@ -53,38 +53,34 @@ type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
     reason: '',
-    mugshot: [],
+    mugshot: undefined,
     reset: false,
 });
 
 const { resizeAndUpload } = useFileUploader((_) => citizensCitizensClient.uploadMugshot(_), 'documents', props.user.userId);
 
-async function uploadMugshot(files: File[], reason: string): Promise<void> {
-    for (const f of files) {
-        if (!f.type.startsWith('image/')) continue;
+async function uploadMugshot(f: File, reason: string): Promise<void> {
+    if (!f.type.startsWith('image/')) return;
 
-        try {
-            const resp = await resizeAndUpload(f, reason);
+    try {
+        const resp = await resizeAndUpload(f, reason);
 
-            notifications.add({
-                title: { key: 'notifications.action_successful.title', parameters: {} },
-                description: { key: 'notifications.action_successful.content', parameters: {} },
-                type: NotificationType.SUCCESS,
-            });
+        notifications.add({
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
 
-            if (modelValue.value.props) {
-                modelValue.value.props.mugshot = resp.file;
-            } else {
-                modelValue.value.props = { userId: props.user.userId, mugshot: resp.file };
-            }
-
-            emit('close', false);
-        } catch (e) {
-            handleGRPCError(e as Error);
-            throw e;
+        if (modelValue.value.props) {
+            modelValue.value.props.mugshot = resp.file;
+        } else {
+            modelValue.value.props = { userId: props.user.userId, mugshot: resp.file };
         }
 
-        return;
+        emit('close', false);
+    } catch (e) {
+        handleGRPCError(e as Error);
+        throw e;
     }
 }
 
@@ -115,18 +111,15 @@ async function deleteMugshot(fileId: number | undefined, reason: string): Promis
     }
 }
 
-function handleFileChanges(event: FileList) {
-    state.mugshot = [...event];
-}
-
-const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await (
-        !event.data.reset
-            ? uploadMugshot(event.data.mugshot, event.data.reason)
-            : deleteMugshot(props.user.props?.mugshotFileId, event.data.reason)
-    ).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    if (event.data.reset) {
+        await deleteMugshot(props.user.props?.mugshotFileId, event.data.reason);
+        return;
+    }
+
+    if (!event.data.mugshot) return;
+
+    await uploadMugshot(event.data.mugshot, event.data.reason);
 }, 1000);
 
 const formRef = useTemplateRef('formRef');
@@ -146,13 +139,15 @@ const formRef = useTemplateRef('formRef');
                         <div v-else class="flex flex-col gap-1">
                             <div class="flex flex-1 flex-row gap-1">
                                 <UFileUpload
+                                    v-model="state.mugshot"
                                     class="flex-1"
                                     name="mugshot"
                                     :accept="appConfig.fileUpload.types.images.join(',')"
                                     block
+                                    :disabled="formRef?.loading"
                                     :placeholder="$t('common.image')"
-                                    :disabled="!canSubmit"
-                                    @update:model-value="($event) => handleFileChanges($event)"
+                                    :label="$t('common.file_upload_label')"
+                                    :description="$t('common.allowed_file_types')"
                                 />
                             </div>
                         </div>
@@ -177,8 +172,8 @@ const formRef = useTemplateRef('formRef');
                 <UButton
                     class="flex-1"
                     block
-                    :disabled="!canSubmit"
-                    :loading="!canSubmit"
+                    :disabled="formRef?.loading"
+                    :loading="formRef?.loading"
                     :label="$t('common.save')"
                     @click="formRef?.submit()"
                 />
@@ -187,8 +182,8 @@ const formRef = useTemplateRef('formRef');
                     class="flex-1"
                     block
                     color="error"
-                    :disabled="!canSubmit || !user.props?.mugshotFileId"
-                    :loading="!canSubmit"
+                    :disabled="formRef?.loading || !user.props?.mugshotFileId"
+                    :loading="formRef?.loading"
                     :label="$t('common.reset')"
                     @click="
                         state.reset = true;

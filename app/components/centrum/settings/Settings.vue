@@ -328,15 +328,11 @@ const formRef = useTemplateRef('formRef');
                                         :disabled="!canSubmit"
                                     >
                                         <template #default>
-                                            <span class="truncate">{{
-                                                $t(`enums.centrum.CentrumMode.${CentrumMode[state.mode ?? 0]}`)
-                                            }}</span>
+                                            {{ $t(`enums.centrum.CentrumMode.${CentrumMode[state.mode ?? 0]}`) }}
                                         </template>
 
                                         <template #item="{ item }">
-                                            <span class="truncate">{{
-                                                $t(`enums.centrum.CentrumMode.${CentrumMode[item.mode ?? 0]}`)
-                                            }}</span>
+                                            {{ $t(`enums.centrum.CentrumMode.${CentrumMode[item.mode ?? 0]}`) }}
                                         </template>
                                     </USelectMenu>
                                 </ClientOnly>
@@ -357,15 +353,11 @@ const formRef = useTemplateRef('formRef');
                                         :disabled="!canSubmit"
                                     >
                                         <template #default>
-                                            <span class="truncate">{{
-                                                $t(`enums.centrum.CentrumMode.${CentrumMode[state.fallbackMode ?? 0]}`)
-                                            }}</span>
+                                            {{ $t(`enums.centrum.CentrumMode.${CentrumMode[state.fallbackMode ?? 0]}`) }}
                                         </template>
 
                                         <template #item="{ item }">
-                                            <span class="truncate">{{
-                                                $t(`enums.centrum.CentrumMode.${CentrumMode[item.mode ?? 0]}`)
-                                            }}</span>
+                                            {{ $t(`enums.centrum.CentrumMode.${CentrumMode[item.mode ?? 0]}`) }}
                                         </template>
                                     </USelectMenu>
                                 </ClientOnly>

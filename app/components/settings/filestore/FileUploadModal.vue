@@ -106,6 +106,8 @@ const formRef = useTemplateRef('formRef');
                         class="w-full"
                         :accept="fileUpload.types.images.join(',')"
                         :placeholder="$t('common.image')"
+                        :label="$t('common.file_upload_label')"
+                        :description="$t('common.allowed_file_types')"
                     />
                 </UFormField>
             </UForm>

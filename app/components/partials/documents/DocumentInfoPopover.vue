@@ -161,18 +161,19 @@ watchOnce(opened, async () => {
                         :to="{ name: 'documents-id', params: { id: document.id ?? 0 } }"
                         :ui="{ base: 'p-0' }"
                     >
-                        <CategoryBadge v-if="document?.category" :category="document?.category" size="xs" />
+                        <CategoryBadge v-if="document?.category" :category="document?.category" />
 
                         <span class="line-clamp-1 text-lg hover:line-clamp-3">{{ document.title }}</span>
                     </UButton>
 
                     <div>
-                        <UBadge v-if="document.state" class="inline-flex gap-1" size="xs">
-                            <UIcon class="size-5" name="i-mdi-note-check" />
-                            <span>
-                                {{ document.state }}
-                            </span>
-                        </UBadge>
+                        <UBadge
+                            v-if="document.state"
+                            class="inline-flex gap-1"
+                            icon="i-mdi-note-check"
+                            :label="document.state"
+                            size="xs"
+                        />
                     </div>
 
                     <div class="flex flex-row flex-wrap gap-2">

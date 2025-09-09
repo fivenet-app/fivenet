@@ -63,57 +63,55 @@ function copyLinkToClipboard(): void {
     });
 }
 
-if (props.registerKBDs) {
-    defineShortcuts({
-        'c-w': () => {
-            if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'Wanted').value) {
-                return;
-            }
+defineShortcuts({
+    'c-w': () => {
+        if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'Wanted').value) {
+            return;
+        }
 
-            setWantedModal.open({
-                user: props.user,
-                'onUpdate:wantedStatus': ($event) => emits('update:wantedStatus', $event),
-            });
-        },
-        'c-j': () => {
-            if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'Job').value) {
-                return;
-            }
+        setWantedModal.open({
+            user: props.user,
+            'onUpdate:wantedStatus': ($event) => emits('update:wantedStatus', $event),
+        });
+    },
+    'c-j': () => {
+        if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'Job').value) {
+            return;
+        }
 
-            setJobModal.open({
-                user: props.user,
-                'onUpdate:job': ($event) => emits('update:job', $event),
-            });
-        },
-        'c-p': () => {
-            if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'TrafficInfractionPoints').value) {
-                return;
-            }
+        setJobModal.open({
+            user: props.user,
+            'onUpdate:job': ($event) => emits('update:job', $event),
+        });
+    },
+    'c-p': () => {
+        if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'TrafficInfractionPoints').value) {
+            return;
+        }
 
-            setTrafficPointsModal.open({
-                user: props.user,
-                'onUpdate:trafficInfractionPoints': ($event) => emits('update:trafficInfractionPoints', $event),
-            });
-        },
-        'c-m': () => {
-            if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'Mugshot').value) {
-                return;
-            }
+        setTrafficPointsModal.open({
+            user: props.user,
+            'onUpdate:trafficInfractionPoints': ($event) => emits('update:trafficInfractionPoints', $event),
+        });
+    },
+    'c-m': () => {
+        if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'Mugshot').value) {
+            return;
+        }
 
-            setMugshotModal.open({
-                user: props.user,
-                'onUpdate:mugshot': ($event) => emits('update:mugshot', $event),
-            });
-        },
-        'c-d': () => {
-            if (!can('documents.DocumentsService/UpdateDocument').value) {
-                return;
-            }
+        setMugshotModal.open({
+            user: props.user,
+            'onUpdate:mugshot': ($event) => emits('update:mugshot', $event),
+        });
+    },
+    'c-d': () => {
+        if (!can('documents.DocumentsService/UpdateDocument').value) {
+            return;
+        }
 
-            openTemplates();
-        },
-    });
-}
+        openTemplates();
+    },
+});
 </script>
 
 <template>

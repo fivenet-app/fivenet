@@ -222,8 +222,8 @@ const confirmModal = overlay.create(ConfirmModal);
                     </div>
                 </div>
 
-                <div class="rounded-lg bg-neutral-100 dark:bg-neutral-900">
-                    <HTMLContent v-if="comment.content?.content" class="px-4 py-2" :value="comment.content.content" />
+                <div class="rounded-lg bg-neutral-100 p-4 dark:bg-neutral-900">
+                    <HTMLContent v-if="comment.content?.content" :value="comment.content.content" />
                 </div>
             </div>
         </div>

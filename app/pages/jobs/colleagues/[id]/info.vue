@@ -8,11 +8,11 @@ import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vu
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 
 useHead({
-    title: 'pages.jobs.colleagues.single.title',
+    title: 'pages.jobs.colleagues.id.title',
 });
 
 definePageMeta({
-    title: 'pages.jobs.colleagues.single.title',
+    title: 'pages.jobs.colleagues.id.title',
     requiresAuth: true,
     permission: 'jobs.JobsService/GetColleague',
     validate: async (route) => {

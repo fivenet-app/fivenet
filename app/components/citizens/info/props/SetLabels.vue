@@ -122,9 +122,7 @@ const formRef = useTemplateRef('formRef');
                     :style="{ backgroundColor: attribute.color }"
                     size="lg"
                 >
-                    <span class="truncate">
-                        {{ attribute.name }}
-                    </span>
+                    <span>{{ attribute.name }}</span>
 
                     <UButton
                         v-if="canDo.set"

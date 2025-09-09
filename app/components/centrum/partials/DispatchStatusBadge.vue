@@ -18,7 +18,6 @@ withDefaults(
         :class="dispatchStatusAnimate(status) ? 'animate-pulse' : ''"
         :color="dispatchStatusToBadgeColor(status)"
         size="xs"
-    >
-        {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[status ?? 0]}`) }}
-    </UBadge>
+        :label="$t(`enums.centrum.StatusDispatch.${StatusDispatch[status ?? 0]}`)"
+    />
 </template>

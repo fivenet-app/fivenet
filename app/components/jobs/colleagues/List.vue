@@ -473,19 +473,19 @@ defineShortcuts({
 
                 <div v-else class="relative flex-1 overflow-x-auto">
                     <UPageGrid
-                        class="p-4 sm:p-4"
-                        :ui="{
-                            wrapper:
-                                'grid grid-cols-1 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6',
-                        }"
+                        class="grid-cols-1 p-4 sm:grid-cols-2 sm:p-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
                     >
-                        <UPageCard v-for="colleague in data?.colleagues" :key="colleague.userId">
+                        <UPageCard
+                            v-for="colleague in data?.colleagues"
+                            :key="colleague.userId"
+                            :ui="{ header: 'w-full', footer: 'w-full' }"
+                        >
                             <template #title>
                                 <ColleagueName :colleague="colleague" />
                             </template>
 
                             <template #header>
-                                <div class="flex items-center justify-center overflow-hidden">
+                                <div class="flex w-full items-center justify-center overflow-hidden">
                                     <ProfilePictureImg
                                         :src="colleague?.profilePicture"
                                         :name="`${colleague.firstname} ${colleague.lastname}`"
@@ -493,6 +493,7 @@ defineShortcuts({
                                         :enable-popup="true"
                                         :alt="$t('common.profile_picture')"
                                         :rounded="false"
+                                        img-class="size-42"
                                     />
                                 </div>
                             </template>
@@ -519,7 +520,12 @@ defineShortcuts({
                                     <span class="flex items-center gap-1">
                                         <UIcon class="h-5 w-5 shrink-0" name="i-mdi-email" />
 
-                                        <EmailInfoPopover :email="colleague.email" variant="link" :trailing="false" />
+                                        <EmailInfoPopover
+                                            :email="colleague.email"
+                                            variant="link"
+                                            :trailing="false"
+                                            :ui="{ base: 'px-1 sm:px-1' }"
+                                        />
                                     </span>
 
                                     <div
@@ -543,12 +549,9 @@ defineShortcuts({
                                                 "
                                                 :style="{ backgroundColor: label.color }"
                                                 size="xs"
+                                                :label="label.name"
                                                 @click="toggleLabelInSearch(label)"
-                                            >
-                                                <span class="truncate">
-                                                    {{ label.name }}
-                                                </span>
-                                            </UButton>
+                                            />
                                         </div>
                                     </div>
 
@@ -575,7 +578,7 @@ defineShortcuts({
                                 "
                                 #footer
                             >
-                                <UButtonGroup class="inline-flex w-full">
+                                <UButtonGroup class="inline-flex w-full flex-1">
                                     <UTooltip
                                         v-if="
                                             canDo.setJobsUserProps &&

@@ -28,19 +28,21 @@ const templatesListRef = useTemplateRef('templatesListRef');
 
 <template>
     <UDashboardPanel>
-        <UDashboardNavbar :title="$t('pages.documents.templates.title')">
-            <template #right>
-                <PartialsBackButton to="/documents" />
+        <template #header>
+            <UDashboardNavbar :title="$t('pages.documents.templates.title')">
+                <template #right>
+                    <PartialsBackButton to="/documents" />
 
-                <UTooltip v-if="can('documents.DocumentsService/CreateTemplate').value" :text="$t('common.create')">
-                    <UButton :to="{ name: 'documents-templates-create' }" color="neutral" trailing-icon="i-mdi-plus">
-                        <span class="hidden truncate sm:block">
-                            {{ $t('common.template') }}
-                        </span>
-                    </UButton>
-                </UTooltip>
-            </template>
-        </UDashboardNavbar>
+                    <UTooltip v-if="can('documents.DocumentsService/CreateTemplate').value" :text="$t('common.create')">
+                        <UButton :to="{ name: 'documents-templates-create' }" color="neutral" trailing-icon="i-mdi-plus">
+                            <span class="hidden truncate sm:block">
+                                {{ $t('common.template') }}
+                            </span>
+                        </UButton>
+                    </UTooltip>
+                </template>
+            </UDashboardNavbar>
+        </template>
 
         <template #body>
             <TemplateList ref="templatesListRef" @selected="selected($event)" />
@@ -48,7 +50,7 @@ const templatesListRef = useTemplateRef('templatesListRef');
 
         <template #footer>
             <Pagination
-                :loading="isRequestPending(templatesListRef?.status ?? 'pending')"
+                :status="templatesListRef?.status ?? 'pending'"
                 :refresh="templatesListRef?.refresh"
                 hide-buttons
                 hide-text

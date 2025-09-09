@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="R extends boolean, M extends boolean">
-import { CalendarDate, DateFormatter, getLocalTimeZone } from '@internationalized/date';
+import { CalendarDate, getLocalTimeZone } from '@internationalized/date';
 import type { CalendarProps } from '@nuxt/ui';
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
 
@@ -10,12 +10,14 @@ export interface Props<R extends boolean = false, M extends boolean = false>
     modelValue: Date | undefined;
     clearable?: boolean;
     time?: boolean;
+    dateFormat?: string | undefined;
 }
 
 const props = withDefaults(defineProps<Props<R, M>>(), {
     clearable: false,
     time: false,
     class: '',
+    dateFormat: 'short',
 });
 
 const emits = defineEmits<{
@@ -26,14 +28,8 @@ defineOptions({
     inheritAttrs: false,
 });
 
-const { locale } = useI18n();
-
-const df = new DateFormatter(locale.value, {
-    dateStyle: 'medium',
-});
-
 // State derived from modelValue
-const state = computed({
+const timeState = computed({
     get() {
         if (!props.modelValue) {
             return {
@@ -48,8 +44,8 @@ const state = computed({
         };
     },
     set(value) {
-        if (props.modelValue && value) {
-            const updatedValue: Date = new Date(props.modelValue);
+        if (value) {
+            const updatedValue: Date = props.modelValue ? new Date(props.modelValue) : new Date();
             updatedValue.setHours(value.hours, value.minutes);
 
             emits('update:modelValue', updatedValue);
@@ -69,7 +65,7 @@ const internalModelValue = computed({
             const date = value.toDate(getLocalTimeZone());
 
             // Apply the time state to the dates
-            date.setHours(state.value.hours, state.value.minutes);
+            date.setHours(timeState.value.hours, timeState.value.minutes);
 
             emits('update:modelValue', date);
         } else {
@@ -93,7 +89,7 @@ const smallerThanSm = breakpoints.smaller('sm');
             block
         >
             <template v-if="modelValue">
-                {{ df.format(modelValue) }}
+                {{ $d(modelValue, dateFormat) }}
             </template>
             <template v-else> {{ $t('common.pick_date') }} </template>
         </UButton>
@@ -111,15 +107,29 @@ const smallerThanSm = breakpoints.smaller('sm');
                 <UForm
                     v-if="time"
                     :schema="{}"
-                    :state="state"
+                    :state="timeState"
                     class="pb-02 flex w-full flex-col items-center justify-center gap-2 md:flex-row"
                 >
                     <div class="flex flex-1 items-center justify-center">
                         <UFormField :label="$t('common.time')">
-                            <div class="inline-flex flex-row gap-1">
-                                <UInputNumber v-model="state.hours" class="max-w-24" :min="0" :max="23" />
+                            <div class="inline-flex flex-row items-center gap-1">
+                                <UInputNumber
+                                    :model-value="timeState.hours"
+                                    class="max-w-24"
+                                    :min="0"
+                                    :max="23"
+                                    @update:model-value="
+                                        ($event) => (timeState = { hours: $event, minutes: timeState.minutes })
+                                    "
+                                />
                                 <span class="font-bold">:</span>
-                                <UInputNumber v-model="state.minutes" class="max-w-24" :min="0" :max="59" />
+                                <UInputNumber
+                                    :model-value="timeState.minutes"
+                                    class="max-w-24"
+                                    :min="0"
+                                    :max="59"
+                                    @update:model-value="($event) => (timeState = { hours: timeState.hours, minutes: $event })"
+                                />
                             </div>
                         </UFormField>
                     </div>

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import { useCompletorStore } from '~/stores/completor';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
@@ -41,18 +40,6 @@ const completorStore = useCompletorStore();
 const { game } = useAppConfig();
 
 const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
-
-const schema = z.object({
-    id: z.coerce.number(),
-    type: z.coerce.number(),
-    userId: z.coerce.number().optional(),
-    user: z.custom<UserShort>().optional(),
-    job: z.string().optional(),
-    minimumGrade: z.coerce.number().optional(),
-    qualificationId: z.coerce.number().optional(),
-    access: z.coerce.number(),
-    required: z.coerce.boolean().optional(),
-});
 
 const selectedUser = ref<UserShort | undefined>();
 watch(selectedUser, () => {
@@ -167,11 +154,11 @@ if (props.hideGrade) {
                             :items="accessTypes"
                         >
                             <template #default>
-                                <span class="truncate">{{ accessTypes.find((t) => t.value === entry.type)?.label }}</span>
+                                {{ accessTypes.find((t) => t.value === entry.type)?.label }}
                             </template>
 
                             <template #item="{ item }">
-                                <span class="truncate">{{ item.label }}</span>
+                                {{ item.label }}
                             </template>
 
                             <template #empty>
@@ -243,9 +230,7 @@ if (props.hideGrade) {
                     :placeholder="$t('common.qualification', 1)"
                 >
                     <template v-if="selectedQualification" #default>
-                        <span class="truncate">
-                            {{ selectedQualification.abbreviation }}: {{ selectedQualification.title }}
-                        </span>
+                        {{ selectedQualification.abbreviation }}: {{ selectedQualification.title }}
                     </template>
 
                     <template #item="{ item }">

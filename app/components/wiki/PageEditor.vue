@@ -63,6 +63,11 @@ async function getPage(id: number): Promise<Page | undefined> {
     }
 }
 
+useHead({
+    title: () =>
+        page.value?.meta?.title ? `${page.value.meta.title} - ${t('pages.wiki.edit.title')}` : t('pages.wiki.edit.title'),
+});
+
 const notifications = useNotificationsStore();
 
 const { maxAccessEntries } = useAppConfig();
@@ -512,16 +517,12 @@ const formRef = useTemplateRef('formRef');
                                                             :items="parentPages"
                                                         >
                                                             <template #default>
-                                                                <span class="truncate">
-                                                                    {{
-                                                                        state.parentId
-                                                                            ? (parentPages?.find((p) => p.id === state.parentId)
-                                                                                  ?.title ?? $t('common.na'))
-                                                                            : $t('common.none_selected', [
-                                                                                  $t('common.parent_page'),
-                                                                              ])
-                                                                    }}
-                                                                </span>
+                                                                {{
+                                                                    state.parentId
+                                                                        ? (parentPages?.find((p) => p.id === state.parentId)
+                                                                              ?.title ?? $t('common.na'))
+                                                                        : $t('common.none_selected', [$t('common.parent_page')])
+                                                                }}
                                                             </template>
 
                                                             <template #empty>

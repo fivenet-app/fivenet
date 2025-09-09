@@ -2,11 +2,11 @@
 import ActivityFeed from '~/components/jobs/colleagues/info/ActivityFeed.vue';
 
 useHead({
-    title: 'pages.jobs.colleagues.title',
+    title: 'pages.jobs.activity.title',
 });
 
 definePageMeta({
-    title: 'pages.jobs.colleagues.title',
+    title: 'pages.jobs.activity.title',
     requiresAuth: true,
     permission: 'jobs.JobsService/ListColleagueActivity',
 });

@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from 'vue';
+import { computed, defineComponent, type StyleValue } from 'vue';
 
 function mmToPx(mm: number): number {
     // Replace this with your actual mm to px conversion logic
@@ -34,7 +34,7 @@ export default defineComponent({
             return result;
         });
 
-        const getTickStyle = (mm: number) => {
+        const getTickStyle = (mm: number): StyleValue => {
             if (props.orientation === 'horizontal') {
                 return {
                     position: 'absolute',

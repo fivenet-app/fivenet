@@ -255,14 +255,9 @@ const isMobile = breakpoints.smaller('lg');
                                     selectedEmail?.email ??
                                     $t('common.none')
                                 }}
-
-                                <UBadge
-                                    v-if="selectedEmail?.deactivated"
-                                    color="error"
-                                    size="xs"
-                                    :label="$t('common.disabled')"
-                                />
                             </span>
+
+                            <UBadge v-if="selectedEmail?.deactivated" color="error" size="xs" :label="$t('common.disabled')" />
                         </template>
 
                         <template #item="{ item }">

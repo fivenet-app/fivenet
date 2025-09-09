@@ -16,7 +16,7 @@ const props = withDefaults(
     {
         textClass: '',
         trailing: true,
-        variant: 'solid',
+        variant: 'link',
         color: 'neutral',
         hideNaText: false,
     },
@@ -54,6 +54,7 @@ function copyEmail(): void {
             :variant="variant"
             :color="color"
             :trailing-icon="trailing ? 'i-mdi-chevron-down' : undefined"
+            :ui="{ base: 'py-0 sm:py-0 px-0 sm:px-0' }"
             v-bind="$attrs"
         >
             <span class="truncate" :class="textClass"> {{ email ?? $t('common.na') }} </span>

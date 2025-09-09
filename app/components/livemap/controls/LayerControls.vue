@@ -77,7 +77,7 @@ const groupedLayers = computed(() => {
                                 :ui="{ fieldset: 'grid auto-cols-auto grid-flow-col gap-1' }"
                             >
                                 <template #label="{ item }">
-                                    <span class="truncate">{{ $t(item.label) }}</span>
+                                    {{ $t(item.label) }}
                                 </template>
                             </URadioGroup>
                         </div>
@@ -101,6 +101,7 @@ const groupedLayers = computed(() => {
                                     class="inline-flex gap-1 overflow-y-hidden"
                                 >
                                     <USwitch v-model="layer.visible" :disabled="!!layer.disabled" />
+
                                     <span class="truncate hover:line-clamp-2">{{ layer.label }}</span>
                                 </div>
                             </div>

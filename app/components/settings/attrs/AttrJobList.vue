@@ -175,12 +175,10 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                     :filter-fields="['label', 'name']"
                                 >
                                     <template v-if="state.job" #default>
-                                        <span class="truncate">{{ state.job?.label }} ({{ state.job.name }})</span>
+                                        {{ state.job?.label }} ({{ state.job.name }})
                                     </template>
 
-                                    <template #item="{ item }">
-                                        <span class="truncate">{{ item.label }} ({{ item.name }})</span>
-                                    </template>
+                                    <template #item="{ item }"> {{ item.label }} ({{ item.name }}) </template>
                                 </USelectMenu>
                             </ClientOnly>
                         </UFormField>

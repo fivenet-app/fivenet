@@ -6,10 +6,6 @@ import PageView from '~/components/wiki/PageView.vue';
 import { getWikiWikiClient } from '~~/gen/ts/clients';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 
-useHead({
-    title: 'common.wiki',
-});
-
 definePageMeta({
     title: 'common.wiki',
     requiresAuth: true,
@@ -23,6 +19,8 @@ definePageMeta({
         return !!(route.params.id && !isNaN(Number(route.params.id))) && Number(route.params.id) > -1;
     },
 });
+
+const { t } = useI18n();
 
 const { activeChar } = useAuth();
 
@@ -78,6 +76,11 @@ async function getPage(id: number): Promise<Page | undefined> {
         throw e;
     }
 }
+
+useHead({
+    title: () =>
+        page.value?.meta?.title ? `${page.value.meta.title} - ${t('pages.wiki.id.title')}` : t('pages.wiki.id.title'),
+});
 </script>
 
 <template>

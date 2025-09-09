@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
+import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import InputDatePicker from '~/components/partials/InputDatePicker.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useAuthStore } from '~/stores/auth';
@@ -8,7 +9,6 @@ import { useCompletorStore } from '~/stores/completor';
 import { getJobsConductClient } from '~~/gen/ts/clients';
 import { type ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
 import ColleagueName from '../colleagues/ColleagueName.vue';
 import { conductTypesToBadgeColor } from './helpers';
 
@@ -42,7 +42,7 @@ const cTypes = ref<{ status: ConductType }[]>([
 ]);
 
 const schema = z.object({
-    targetUser: z.custom<UserShort>(),
+    targetUser: z.coerce.number().positive(),
     type: z.nativeEnum(ConductType),
     message: z.string().min(3).max(2000),
     expiresAt: z.date().optional(),
@@ -50,8 +50,8 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
-const state = reactive<Partial<Schema>>({
-    targetUser: undefined,
+const state = reactive<Schema>({
+    targetUser: 0,
     type: ConductType.NOTE,
     message: '',
     expiresAt: undefined,
@@ -66,7 +66,7 @@ async function conductCreateOrUpdateEntry(values: Schema, id?: number): Promise<
                 creatorId: activeChar.value?.userId ?? 0,
                 type: values.type,
                 message: values.message,
-                targetUserId: values.targetUser.userId,
+                targetUserId: values.targetUser,
                 expiresAt: values.expiresAt ? toTimestamp(values.expiresAt) : undefined,
             },
         };
@@ -97,7 +97,7 @@ async function conductCreateOrUpdateEntry(values: Schema, id?: number): Promise<
 }
 
 async function setFromProps(): Promise<void> {
-    state.targetUser = props.entry?.targetUser;
+    state.targetUser = props.entry?.targetUserId ?? 0;
     state.type = props.entry?.type ?? ConductType.NOTE;
     state.message = props.entry?.message ?? '';
     state.expiresAt = props.entry?.expiresAt ? toDate(props.entry?.expiresAt) : undefined;
@@ -191,12 +191,18 @@ const formRef = useTemplateRef('formRef');
                                     :placeholder="$t('common.colleague')"
                                     trailing
                                     class="w-full"
+                                    value-key="userId"
                                 >
-                                    <template v-if="state.targetUser" #default>
-                                        {{ userToLabel(state.targetUser) }}
+                                    <template #default="{ items }">
+                                        <ColleagueName
+                                            v-if="items.find((c) => c.userId === state.targetUser)"
+                                            class="truncate"
+                                            :colleague="items.find((c) => c.userId === state.targetUser)!"
+                                            birthday
+                                        />
+                                        <span v-else>&nbsp;</span>
                                     </template>
-
-                                    <template #item="{ item }">
+                                    <template #item-label="{ item }">
                                         <ColleagueName class="truncate" :colleague="item" birthday />
                                     </template>
 
@@ -216,13 +222,9 @@ const formRef = useTemplateRef('formRef');
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                             <UFormField name="message">
-                                <UTextarea
-                                    v-model="state.message"
-                                    name="message"
-                                    :rows="6"
-                                    :placeholder="$t('common.message')"
-                                    class="w-full"
-                                />
+                                <ClientOnly>
+                                    <TiptapEditor v-model="state.message" class="min-h-100 w-full" />
+                                </ClientOnly>
                             </UFormField>
                         </dd>
                     </div>

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { FormSubmitEvent } from '@nuxt/ui';
 import type { ClientStreamingCall, RpcOptions, UnaryCall } from '@protobuf-ts/runtime-rpc';
 import { z } from 'zod';
 import type { File as FileGRPC } from '~~/gen/ts/resources/file/file';
@@ -35,36 +36,33 @@ const notifications = useNotificationsStore();
 
 const appConfig = useAppConfig();
 
-const _schema = z.object({
-    fileUrl: z.custom<File>().array().min(1).max(1).default([]),
+const schema = z.object({
+    file: z.instanceof(File).optional(),
 });
 
-type Schema = z.output<typeof _schema>;
+type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    fileUrl: [] as File[],
+    file: undefined,
 });
 
 const { resizeAndUpload } = useFileUploader(props.uploadFn, 'documents', 0);
 
-async function uploadFile(files: File[]): Promise<void> {
-    for (const f of files) {
-        if (!f.type.startsWith('image/')) continue;
+async function uploadFile(f: File): Promise<void> {
+    if (!f.type.startsWith('image/')) return;
 
-        const resp = await resizeAndUpload(f);
+    const resp = await resizeAndUpload(f);
 
-        notifications.add({
-            title: { key: 'notifications.action_successful.title', parameters: {} },
-            description: { key: 'notifications.action_successful.content', parameters: {} },
-            type: NotificationType.SUCCESS,
-        });
+    notifications.add({
+        title: { key: 'notifications.action_successful.title', parameters: {} },
+        description: { key: 'notifications.action_successful.content', parameters: {} },
+        type: NotificationType.SUCCESS,
+    });
 
-        if (modelValue.value === undefined || typeof modelValue.value === 'string') {
-            modelValue.value = resp.url;
-        } else {
-            modelValue.value = resp.file;
-        }
-        return;
+    if (modelValue.value === undefined || typeof modelValue.value === 'string') {
+        modelValue.value = resp.url;
+    } else {
+        modelValue.value = resp.file;
     }
 }
 
@@ -83,10 +81,6 @@ async function deleteFile(): Promise<void> {
     }
 }
 
-function handleFileChanges(event: File[]) {
-    state.fileUrl = event;
-}
-
 const filePath = computed(() => {
     if (typeof modelValue.value === 'string') {
         return modelValue.value;
@@ -96,37 +90,47 @@ const filePath = computed(() => {
     return '';
 });
 
+async function onSubmit(event: FormSubmitEvent<Schema>) {
+    await uploadFile(event.data.file!);
+    state.file = undefined;
+}
+
 const confirmModal = overlay.create(ConfirmModal);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
     <div class="flex flex-col gap-2">
         <NotSupportedTabletBlock v-if="nuiEnabled" />
-        <div v-else class="flex flex-col gap-1">
+        <UForm v-else ref="formRef" :schema="schema" :state="state" class="flex flex-col gap-1" @submit="onSubmit">
             <div class="flex flex-1 flex-row gap-1">
                 <UFileUpload
+                    v-model="state.file"
                     class="flex-1"
                     name="jobLogo"
                     :accept="appConfig.fileUpload.types.images.join(',')"
                     block
                     :placeholder="$t('common.image')"
                     :disabled="disabled"
-                    @update:model-value="($event) => handleFileChanges($event)"
                 />
 
-                <UTooltip v-if="!filePath || state.fileUrl.length > 0" :text="$t('common.upload')">
+                <UTooltip v-if="!filePath || !state.file" :text="$t('common.upload')">
                     <UButton
+                        type="submit"
                         icon="i-mdi-upload"
                         color="primary"
-                        :disabled="state.fileUrl.length === 0 || disabled"
-                        @click="uploadFile(state.fileUrl)"
+                        :disabled="!state.file || disabled"
+                        :loading="formRef?.loading"
                     />
                 </UTooltip>
+
                 <UTooltip v-else :text="$t('common.delete')">
                     <UButton
                         icon="i-mdi-delete"
                         color="error"
                         :disabled="disabled"
+                        :loading="formRef?.loading"
                         @click="
                             confirmModal.open({
                                 confirm: async () => deleteFile(),
@@ -135,7 +139,7 @@ const confirmModal = overlay.create(ConfirmModal);
                     />
                 </UTooltip>
             </div>
-        </div>
+        </UForm>
 
         <div class="flex w-full flex-col items-center justify-center gap-2">
             <GenericImg

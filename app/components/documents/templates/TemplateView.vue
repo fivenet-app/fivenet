@@ -55,6 +55,13 @@ async function getTemplate(): Promise<Template | undefined> {
     }
 }
 
+useHead({
+    title: () =>
+        template.value?.title
+            ? `${template.value?.title} - ${t('pages.documents.templates.view.title')}`
+            : t('pages.documents.templates.view.title'),
+});
+
 async function deleteTemplate(id: number): Promise<void> {
     try {
         await documentsDocumentsClient.deleteTemplate({ id });

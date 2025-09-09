@@ -3,11 +3,11 @@ import type { TypedRouteFromName } from '@typed-router';
 import QualificationResultList from '~/components/qualifications/QualificationResultList.vue';
 
 useHead({
-    title: 'pages.jobs.colleagues.single.qualifications',
+    title: 'pages.jobs.colleagues.id.qualifications',
 });
 
 definePageMeta({
-    title: 'pages.jobs.colleagues.single.qualifications',
+    title: 'pages.jobs.colleagues.id.qualifications',
     requiresAuth: true,
     permission: 'qualifications.QualificationsService/ListQualifications',
     validate: async (route) => {
