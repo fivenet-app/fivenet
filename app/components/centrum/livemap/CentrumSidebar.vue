@@ -180,7 +180,10 @@ watch(open, async () => {
     if (open.value === true && getOwnUnit.value === undefined) {
         const result = joinUnitSlideover.open({});
         result.then(() => {
-            open.value = false;
+            if (getOwnUnit.value === undefined) {
+                // User closed the slideover without joining an unit, so close the sidebar again
+                open.value = false;
+            }
         });
     }
 });
@@ -559,10 +562,9 @@ defineShortcuts({
                                             color="primary"
                                             size="xs"
                                             block
+                                            :label="$t('components.centrum.update_unit_status.title')"
                                             @click="onSubmitUnitStatusThrottle(getOwnUnit.id)"
-                                        >
-                                            {{ $t('components.centrum.update_unit_status.title') }}
-                                        </UButton>
+                                        />
                                     </UTooltip>
                                 </div>
                             </li>

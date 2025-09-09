@@ -192,18 +192,15 @@ const response = useVModel(props, 'modelValue', emit);
                     </UBadge>
                 </div>
 
-                <UFormField class="flex-1" :label="$t('common.option', 2)" required> </UFormField>
-                <div class="flex flex-1 flex-col gap-2">
-                    <UCheckbox
-                        v-for="choice in modelValue?.question.data.data.multipleChoice.choices"
-                        :key="choice"
-                        v-model="response.response.response.multipleChoice.choices"
-                        name="data.data.multipleChoice.choices"
-                        :label="choice"
-                        :disabled="disabled"
-                        :value="choice"
-                    />
-                </div>
+                <UFormField class="flex-1" :label="$t('common.option', 2)" required>
+                    <div class="flex flex-1 flex-col gap-2">
+                        <UCheckboxGroup
+                            v-model="response.response.response.multipleChoice.choices"
+                            name="data.data.multipleChoice.choices"
+                            :disabled="disabled"
+                        />
+                    </div>
+                </UFormField>
             </div>
 
             <slot name="question-after" :question="modelValue?.question" />

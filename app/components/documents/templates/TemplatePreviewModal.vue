@@ -94,7 +94,7 @@ async function getTemplate(): Promise<Template> {
                 </label>
                 <div class="mt-4 rounded-lg p-2 break-words">
                     <div
-                        class="tiptap prose prose-sm sm:prose-base lg:prose-lg dark:prose-invert max-w-full min-w-full break-words"
+                        class="tiptap prose prose-sm max-w-full min-w-full break-words sm:prose-base lg:prose-lg dark:prose-invert"
                         :class="[
                             'hover:prose-a:text-blue-500',
                             'dark:hover:prose-a:text-blue-300',

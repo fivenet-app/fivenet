@@ -62,8 +62,10 @@ const { locale, setLocale } = useI18n();
                 :locales="[en, de]"
                 @update:model-value="
                     ($event) => {
-                        setLocale($event as typeof userLocale);
-                        userLocale = $event as typeof userLocale;
+                        let l = $event as typeof userLocale;
+                        if (!l) l = 'en';
+                        setLocale(l);
+                        userLocale = l as typeof userLocale;
                     }
                 "
             />

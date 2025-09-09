@@ -264,8 +264,6 @@ const viewOptions = [
     { label: t('common.monthly_view'), icon: 'i-mdi-view-headline', value: 'month' },
     { label: t('common.summary'), icon: 'i-mdi-view-agenda-outline', value: 'summary' },
 ];
-
-const isOpen = ref(false);
 </script>
 
 <!-- eslint-disable vue/no-multiple-template-root -->

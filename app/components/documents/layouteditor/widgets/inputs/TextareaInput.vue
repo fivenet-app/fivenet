@@ -1,10 +1,17 @@
 <script setup lang="ts">
-const props = defineProps<{ modelValue: string; binding?: any }>();
+const props = defineProps<{
+    modelValue: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    binding?: any;
+}>();
+
 const emit = defineEmits<{ (e: 'update:modelValue', v: string): void }>();
+
 function onInput(e: Event) {
     const v = (e.target as HTMLTextAreaElement).value ?? '';
     emit('update:modelValue', applyMax(v, props.binding?.maxChars));
 }
+
 function applyMax(v: string, n?: number) {
     return n ? v.slice(0, n) : v;
 }

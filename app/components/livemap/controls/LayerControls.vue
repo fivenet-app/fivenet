@@ -53,7 +53,7 @@ const groupedLayers = computed(() => {
 <template>
     <LControl position="topright">
         <UTooltip :text="$t('common.layer', 2)">
-            <UPopover>
+            <UPopover :ui="{ content: 'w-full' }">
                 <UButton
                     class="border border-black/20 bg-clip-padding p-1.5 hover:bg-[#f4f4f4]"
                     size="xl"
@@ -62,7 +62,7 @@ const groupedLayers = computed(() => {
                 />
 
                 <template #content>
-                    <div class="w-full max-w-sm divide-y divide-gray-100 py-1 dark:divide-gray-800">
+                    <div class="w-full max-w-xl divide-y divide-gray-100 py-1 dark:divide-gray-800">
                         <div class="px-1">
                             <p class="truncate text-sm font-bold text-highlighted">
                                 {{ $t('common.layer', 2) }}

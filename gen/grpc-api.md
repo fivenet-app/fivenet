@@ -9351,8 +9351,8 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `jobs` | [JobsList](#serviceslivemapJobsList) |  |  |
 | `markers` | [MarkerMarkersUpdates](#serviceslivemapMarkerMarkersUpdates) |  |  |
 | `snapshot` | [Snapshot](#serviceslivemapSnapshot) |  |  |
-| `user_update` | [resources.livemap.UserMarker](#resourceslivemapUserMarker) |  |  |
-| `user_delete` | [UserDelete](#serviceslivemapUserDelete) |  |  |
+| `user_updates` | [UserUpdates](#serviceslivemapUserUpdates) |  |  |
+| `user_deletes` | [UserDeletes](#serviceslivemapUserDeletes) |  |  |
 
 
 
@@ -9363,8 +9363,30 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [int32](#int32) |  | The user ID of the user that was deleted. |
+| `id` | [int32](#int32) |  | The user ID of an user marker that was deleted. |
 | `job` | [string](#string) |  | The job of the user that was deleted. |
+
+
+
+
+
+### services.livemap.UserDeletes
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `deletes` | [UserDelete](#serviceslivemapUserDelete) | repeated |  |
+
+
+
+
+
+### services.livemap.UserUpdates
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `updates` | [resources.livemap.UserMarker](#resourceslivemapUserMarker) | repeated |  |
 
 
 

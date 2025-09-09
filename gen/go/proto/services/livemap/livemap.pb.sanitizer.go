@@ -164,16 +164,16 @@ func (m *StreamResponse) Sanitize() error {
 			}
 		}
 
-		// Field: UserDelete
-	case *StreamResponse_UserDelete:
+		// Field: UserDeletes
+	case *StreamResponse_UserDeletes:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
 		}
 
-		// Field: UserUpdate
-	case *StreamResponse_UserUpdate:
+		// Field: UserUpdates
+	case *StreamResponse_UserUpdates:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
@@ -188,6 +188,46 @@ func (m *StreamResponse) Sanitize() error {
 func (m *UserDelete) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	return nil
+}
+
+func (m *UserDeletes) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Deletes
+	for idx, item := range m.Deletes {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *UserUpdates) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Updates
+	for idx, item := range m.Updates {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	return nil

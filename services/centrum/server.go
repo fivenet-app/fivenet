@@ -253,14 +253,14 @@ func (s *Server) loadData(ctx context.Context) error {
 	})
 
 	g.Go(func() error {
-		if err := s.dispatchers.LoadFromDB(ctx, ""); err != nil {
+		if err := s.dispatchers.LoadFromDB(gctx, ""); err != nil {
 			return fmt.Errorf("failed to load dispatchers from DB. %w", err)
 		}
 		return nil
 	})
 
 	g.Go(func() error {
-		if err := s.units.LoadFromDB(ctx, 0); err != nil {
+		if err := s.units.LoadFromDB(gctx, 0); err != nil {
 			return fmt.Errorf("failed to load units from DB. %w", err)
 		}
 		return nil

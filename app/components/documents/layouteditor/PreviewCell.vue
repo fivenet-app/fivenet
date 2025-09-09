@@ -74,11 +74,6 @@ function measureTextWidth(text: string, font: string): number {
     return ctx.measureText(text).width;
 }
 
-function getComputedFont(hostEl: HTMLElement): string {
-    const cs = getComputedStyle(hostEl);
-    return `${cs.fontStyle} ${cs.fontVariant} ${cs.fontWeight} ${cs.fontSize} / ${cs.lineHeight} ${cs.fontFamily}`;
-}
-
 function recalcShrink() {
     if (!host.value) return;
     if (props.node.binding?.fit !== 'shrink') return;

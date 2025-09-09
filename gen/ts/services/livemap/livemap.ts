@@ -12,9 +12,9 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { UserMarker } from "../../resources/livemap/user_marker";
 import { MarkerMarker } from "../../resources/livemap/marker_marker";
 import { Job } from "../../resources/jobs/jobs";
-import { UserMarker } from "../../resources/livemap/user_marker";
 /**
  * @generated from protobuf message services.livemap.StreamRequest
  */
@@ -50,17 +50,17 @@ export interface StreamResponse {
          */
         snapshot: Snapshot;
     } | {
-        oneofKind: "userUpdate";
+        oneofKind: "userUpdates";
         /**
-         * @generated from protobuf field: resources.livemap.UserMarker user_update = 5
+         * @generated from protobuf field: services.livemap.UserUpdates user_updates = 5
          */
-        userUpdate: UserMarker;
+        userUpdates: UserUpdates;
     } | {
-        oneofKind: "userDelete";
+        oneofKind: "userDeletes";
         /**
-         * @generated from protobuf field: services.livemap.UserDelete user_delete = 6
+         * @generated from protobuf field: services.livemap.UserDeletes user_deletes = 6
          */
-        userDelete: UserDelete;
+        userDeletes: UserDeletes;
     } | {
         oneofKind: undefined;
     };
@@ -118,11 +118,29 @@ export interface Snapshot {
     markers: UserMarker[];
 }
 /**
+ * @generated from protobuf message services.livemap.UserUpdates
+ */
+export interface UserUpdates {
+    /**
+     * @generated from protobuf field: repeated resources.livemap.UserMarker updates = 1
+     */
+    updates: UserMarker[];
+}
+/**
+ * @generated from protobuf message services.livemap.UserDeletes
+ */
+export interface UserDeletes {
+    /**
+     * @generated from protobuf field: repeated services.livemap.UserDelete deletes = 1
+     */
+    deletes: UserDelete[];
+}
+/**
  * @generated from protobuf message services.livemap.UserDelete
  */
 export interface UserDelete {
     /**
-     * The user ID of the user that was deleted.
+     * The user ID of an user marker that was deleted.
      *
      * @generated from protobuf field: int32 id = 1
      */
@@ -212,8 +230,8 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
             { no: 2, name: "jobs", kind: "message", oneof: "data", T: () => JobsList },
             { no: 3, name: "markers", kind: "message", oneof: "data", T: () => MarkerMarkersUpdates },
             { no: 4, name: "snapshot", kind: "message", oneof: "data", T: () => Snapshot },
-            { no: 5, name: "user_update", kind: "message", oneof: "data", T: () => UserMarker },
-            { no: 6, name: "user_delete", kind: "message", oneof: "data", T: () => UserDelete }
+            { no: 5, name: "user_updates", kind: "message", oneof: "data", T: () => UserUpdates },
+            { no: 6, name: "user_deletes", kind: "message", oneof: "data", T: () => UserDeletes }
         ]);
     }
     create(value?: PartialMessage<StreamResponse>): StreamResponse {
@@ -249,16 +267,16 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
                         snapshot: Snapshot.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).snapshot)
                     };
                     break;
-                case /* resources.livemap.UserMarker user_update */ 5:
+                case /* services.livemap.UserUpdates user_updates */ 5:
                     message.data = {
-                        oneofKind: "userUpdate",
-                        userUpdate: UserMarker.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).userUpdate)
+                        oneofKind: "userUpdates",
+                        userUpdates: UserUpdates.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).userUpdates)
                     };
                     break;
-                case /* services.livemap.UserDelete user_delete */ 6:
+                case /* services.livemap.UserDeletes user_deletes */ 6:
                     message.data = {
-                        oneofKind: "userDelete",
-                        userDelete: UserDelete.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).userDelete)
+                        oneofKind: "userDeletes",
+                        userDeletes: UserDeletes.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).userDeletes)
                     };
                     break;
                 default:
@@ -285,12 +303,12 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         /* services.livemap.Snapshot snapshot = 4; */
         if (message.data.oneofKind === "snapshot")
             Snapshot.internalBinaryWrite(message.data.snapshot, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* resources.livemap.UserMarker user_update = 5; */
-        if (message.data.oneofKind === "userUpdate")
-            UserMarker.internalBinaryWrite(message.data.userUpdate, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* services.livemap.UserDelete user_delete = 6; */
-        if (message.data.oneofKind === "userDelete")
-            UserDelete.internalBinaryWrite(message.data.userDelete, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* services.livemap.UserUpdates user_updates = 5; */
+        if (message.data.oneofKind === "userUpdates")
+            UserUpdates.internalBinaryWrite(message.data.userUpdates, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* services.livemap.UserDeletes user_deletes = 6; */
+        if (message.data.oneofKind === "userDeletes")
+            UserDeletes.internalBinaryWrite(message.data.userDeletes, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -482,6 +500,100 @@ class Snapshot$Type extends MessageType<Snapshot> {
  * @generated MessageType for protobuf message services.livemap.Snapshot
  */
 export const Snapshot = new Snapshot$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UserUpdates$Type extends MessageType<UserUpdates> {
+    constructor() {
+        super("services.livemap.UserUpdates", [
+            { no: 1, name: "updates", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UserMarker }
+        ]);
+    }
+    create(value?: PartialMessage<UserUpdates>): UserUpdates {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.updates = [];
+        if (value !== undefined)
+            reflectionMergePartial<UserUpdates>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserUpdates): UserUpdates {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.livemap.UserMarker updates */ 1:
+                    message.updates.push(UserMarker.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UserUpdates, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.livemap.UserMarker updates = 1; */
+        for (let i = 0; i < message.updates.length; i++)
+            UserMarker.internalBinaryWrite(message.updates[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.livemap.UserUpdates
+ */
+export const UserUpdates = new UserUpdates$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UserDeletes$Type extends MessageType<UserDeletes> {
+    constructor() {
+        super("services.livemap.UserDeletes", [
+            { no: 1, name: "deletes", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UserDelete }
+        ]);
+    }
+    create(value?: PartialMessage<UserDeletes>): UserDeletes {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.deletes = [];
+        if (value !== undefined)
+            reflectionMergePartial<UserDeletes>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserDeletes): UserDeletes {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated services.livemap.UserDelete deletes */ 1:
+                    message.deletes.push(UserDelete.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UserDeletes, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated services.livemap.UserDelete deletes = 1; */
+        for (let i = 0; i < message.deletes.length; i++)
+            UserDelete.internalBinaryWrite(message.deletes[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.livemap.UserDeletes
+ */
+export const UserDeletes = new UserDeletes$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UserDelete$Type extends MessageType<UserDelete> {
     constructor() {

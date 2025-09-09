@@ -98,7 +98,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             <template v-if="!editing">
                 <USkeleton v-if="isRequestPending(status)" class="h-7 w-full" />
                 <div v-else class="w-full flex-1">
-                    <p class="prose dark:prose-invert line-clamp-5 max-w-full whitespace-pre-wrap">
+                    <p class="prose line-clamp-5 max-w-full whitespace-pre-wrap dark:prose-invert">
                         {{ state.motd }}
                     </p>
                 </div>

@@ -30,10 +30,11 @@ const documentRequestAccessModal = overlay.create(RequestAccessModal);
                     variant: 'solid',
                     color: 'primary',
                     label: $t('components.documents.document_request_access.callback_message'),
-                    onClick: () =>
+                    onClick: () => {
                         documentRequestAccessModal.open({
                             documentId: documentId,
-                        }),
+                        });
+                    },
                 },
             ]"
         />

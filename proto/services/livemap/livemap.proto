@@ -20,8 +20,8 @@ message StreamResponse {
     JobsList jobs = 2;
     MarkerMarkersUpdates markers = 3;
     Snapshot snapshot = 4;
-    resources.livemap.UserMarker user_update = 5;
-    UserDelete user_delete = 6;
+    UserUpdates user_updates = 5;
+    UserDeletes user_deletes = 6;
   }
 }
 
@@ -48,8 +48,16 @@ message Snapshot {
   repeated resources.livemap.UserMarker markers = 1;
 }
 
+message UserUpdates {
+  repeated resources.livemap.UserMarker updates = 1;
+}
+
+message UserDeletes {
+  repeated UserDelete deletes = 1;
+}
+
 message UserDelete {
-  // The user ID of the user that was deleted.
+  // The user ID of an user marker that was deleted.
   int32 id = 1;
 
   // The job of the user that was deleted.

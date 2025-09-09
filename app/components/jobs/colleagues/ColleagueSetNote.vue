@@ -110,7 +110,7 @@ const editing = ref(false);
         <div class="flex flex-1 flex-col gap-2 sm:flex-row">
             <UFormField class="flex-1" name="note" :label="$t('common.note')">
                 <UTextarea v-if="editing" v-model="state.note" block :rows="6" :maxrows="10" name="note" />
-                <p v-else class="prose dark:prose-invert text-base-800 dark:text-base-300 whitespace-pre-wrap">
+                <p v-else class="text-base-800 dark:text-base-300 prose whitespace-pre-wrap dark:prose-invert">
                     {{ modelValue ?? $t('common.na') }}
                 </p>
             </UFormField>

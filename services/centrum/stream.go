@@ -275,6 +275,13 @@ func (s *Server) stream(
 
 		// Pull loop
 		for {
+			select {
+			case <-gctx.Done():
+				return gctx.Err()
+
+			default:
+			}
+
 			batch, err := consumer.Fetch(32,
 				jetstream.FetchMaxWait(2*time.Second))
 			if err != nil {
@@ -367,6 +374,13 @@ func (s *Server) stream(
 
 			// Pull loop
 			for {
+				select {
+				case <-gctx.Done():
+					return gctx.Err()
+
+				default:
+				}
+
 				batch, err := consumer.Fetch(32,
 					jetstream.FetchMaxWait(2*time.Second))
 				if err != nil {

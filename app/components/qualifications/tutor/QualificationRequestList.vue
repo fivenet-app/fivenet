@@ -124,12 +124,13 @@ const columns = computed(
                                     variant: 'link',
                                     icon: 'i-mdi-close-thick',
                                     color: 'orange',
-                                    onClick: () =>
+                                    onClick: () => {
                                         qualificationRequestTutorModal.open({
                                             request: row.original,
                                             status: RequestStatus.DENIED,
                                             onRefresh: onRefresh,
-                                        }),
+                                        });
+                                    },
                                 }),
                             ),
                         row.original.status !== RequestStatus.ACCEPTED &&

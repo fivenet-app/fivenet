@@ -49,7 +49,7 @@ watch(designDocumentListStyle, async () => {
         </template>
 
         <UFormField class="grid grid-cols-2 items-center gap-2" name="primaryColor" :label="$t('common.color')">
-            <ColorPickerTW v-model="design.ui.primary" name="primaryColor" />
+            <ColorPickerTW v-model="design.ui.primary" name="primaryColor" class="w-full" />
         </UFormField>
 
         <UFormField
@@ -57,7 +57,7 @@ watch(designDocumentListStyle, async () => {
             name="grayColor"
             :label="$t('components.auth.UserSettingsPanel.background_color')"
         >
-            <ColorPickerTW v-model="design.ui.gray" name="grayColor" />
+            <ColorPickerTW v-model="design.ui.gray" name="grayColor" class="w-full" />
         </UFormField>
 
         <UFormField
@@ -91,6 +91,7 @@ watch(designDocumentListStyle, async () => {
                     v-model="selectedHomepage"
                     :items="startpages.filter((h) => h.permission === undefined || can(h.permission).value)"
                     :search-input="{ placeholder: $t('common.search_field') }"
+                    class="w-full"
                 />
             </ClientOnly>
             <p v-else class="text-sm">
