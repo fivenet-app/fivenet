@@ -4,7 +4,7 @@ import { isFuture, isPast, isSameDay, isToday } from 'date-fns';
 import type { DateRangeSource } from 'v-calendar/dist/types/src/utils/date/range.js';
 import CalendarCreateOrUpdateModal from '~/components/calendar/CalendarCreateOrUpdateModal.vue';
 import CalendarViewSlideover from '~/components/calendar/CalendarViewSlideover.vue';
-import FindCalendarModal from '~/components/calendar/FindCalendarModal.vue';
+import FindCalendarDrawer from '~/components/calendar/FindCalendarDrawer.vue';
 import EntryCreateOrUpdateModal from '~/components/calendar/entry/EntryCreateOrUpdateModal.vue';
 import EntryViewSlideover from '~/components/calendar/entry/EntryViewSlideover.vue';
 import MonthCalendarClient from '~/components/partials/MonthCalendar.client.vue';
@@ -218,7 +218,7 @@ const calendarViewSlideover = overlay.create(CalendarViewSlideover);
 const calendarCreateOrUpdateModal = overlay.create(CalendarCreateOrUpdateModal);
 const entryViewSlideover = overlay.create(EntryViewSlideover);
 const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
-const findCalendarsModal = overlay.create(FindCalendarModal);
+const findCalendarsDrawer = overlay.create(FindCalendarDrawer);
 
 watch(entryIdQuery, () => {
     if (!entryIdQuery.value) {
@@ -536,21 +536,17 @@ const isOpen = ref(false);
                     <UButton
                         class="font-semibold"
                         icon="i-mdi-calendar-search"
-                        :label="$t('components.calendar.FindCalendarModal.title')"
-                        @click="findCalendarsModal.open({})"
+                        :label="$t('components.calendar.FindCalendarDrawer.title')"
+                        @click="findCalendarsDrawer.open({})"
                     />
                 </div>
             </div>
         </template>
     </UDashboardPanel>
 
-    <UDashboardPanel v-if="isOpen">
+    <UDashboardPanel :ui="{ root: 'hidden xl:flex max-w-90', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar>
-                <template #leading>
-                    <UDashboardSidebarCollapse />
-                </template>
-
                 <template #right>
                     <UButtonGroup
                         v-if="can('calendar.CalendarService/CreateCalendar').value || hasEditAccessToCalendar"
@@ -603,11 +599,9 @@ const isOpen = ref(false);
                                 @update:model-value="($event) => calendarIdChange(calendar.id, $event as boolean)"
                             />
 
-                            <UBadge :color="calendar.color as ButtonProps['color']" />
-
                             <UButton
                                 :color="calendar.color as ButtonProps['color']"
-                                variant="link"
+                                variant="solid"
                                 size="sm"
                                 truncate
                                 :label="calendar.name"
@@ -618,12 +612,20 @@ const isOpen = ref(false);
                 </div>
 
                 <div class="flex-1" />
+            </div>
+        </template>
 
-                <USeparator class="sticky bottom-0" />
+        <template #footer>
+            <USeparator class="sticky bottom-0" />
 
-                <UFormField class="flex flex-row items-center gap-2" :label="$t('common.view')">
+            <div class="flex flex-col gap-2 p-2">
+                <UFormField
+                    class="flex flex-1 flex-row items-center gap-2"
+                    :label="$t('common.view')"
+                    :ui="{ container: 'flex-1' }"
+                >
                     <ClientOnly>
-                        <USelectMenu v-model="view" class="min-w-44" :items="viewOptions" value-key="value">
+                        <USelectMenu v-model="view" class="w-full min-w-44" :items="viewOptions" value-key="value">
                             <template #default>
                                 <UIcon
                                     class="size-5"
@@ -657,8 +659,8 @@ const isOpen = ref(false);
                 <UButton
                     class="font-semibold"
                     icon="i-mdi-calendar-search"
-                    :label="$t('components.calendar.FindCalendarModal.title')"
-                    @click="findCalendarsModal.open({})"
+                    :label="$t('components.calendar.FindCalendarDrawer.title')"
+                    @click="findCalendarsDrawer.open({})"
                 />
             </div>
         </template>

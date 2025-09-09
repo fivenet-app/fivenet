@@ -437,7 +437,7 @@ const { game } = useAppConfig();
 
                                             <InputDatePicker
                                                 v-model="query.date.end"
-                                                :date-format="`yyyy '${$t('common.calendar_week')}' w`"
+                                                :custom-date-format="`yyyy '${$t('common.calendar_week')}' w`"
                                                 :min-value="
                                                     new CalendarDate(
                                                         minMonth.getFullYear(),

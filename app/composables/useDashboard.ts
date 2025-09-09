@@ -1,5 +1,4 @@
 import { LazyHelpSlideover, LazyNotificationsNotificationSlideover } from '#components';
-import { createSharedComposable } from '@vueuse/core';
 
 const _useDashboard = () => {
     const route = useRoute();
@@ -17,16 +16,16 @@ const _useDashboard = () => {
         b: () => (isNotificationSlideoverOpen.value = true),
     });
 
-    watch(isNotificationSlideoverOpen, () => {
-        if (isNotificationSlideoverOpen.value) {
+    watch(isNotificationSlideoverOpen, (value) => {
+        if (value) {
             notificationsSlideover.open();
         } else {
             notificationsSlideover.close();
         }
     });
 
-    watch(isHelpSlideoverOpen, () => {
-        if (isHelpSlideoverOpen.value) {
+    watch(isHelpSlideoverOpen, (value) => {
+        if (value) {
             helpSlideover.open();
         } else {
             helpSlideover.close();
@@ -40,6 +39,10 @@ const _useDashboard = () => {
             isNotificationSlideoverOpen.value = false;
         },
     );
+
+    defineShortcuts({
+        '?': () => (isHelpSlideoverOpen.value = true),
+    });
 
     return {
         isDashboardSidebarSlideoverOpen,

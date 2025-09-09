@@ -1333,7 +1333,7 @@
                     "title": "Kalendereintrag aktualisieren"
                 }
             },
-            "FindCalendarModal": {
+            "FindCalendarDrawer": {
                 "title": "Kalender finden"
             },
             "EntryShareModal": {

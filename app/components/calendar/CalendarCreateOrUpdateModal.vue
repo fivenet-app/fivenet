@@ -148,7 +148,7 @@ const formRef = useTemplateRef('formRef');
         "
     >
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
                 <DataPendingBlock
                     v-if="props.calendarId && isRequestPending(status)"
                     :message="$t('common.loading', [$t('common.calendar')])"
@@ -167,15 +167,20 @@ const formRef = useTemplateRef('formRef');
 
                 <template v-else>
                     <UFormField class="flex-1" name="title" :label="$t('common.name')" required>
-                        <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.name')" />
+                        <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.name')" class="w-full" />
                     </UFormField>
 
                     <UFormField class="flex-1" name="color" :label="$t('common.color')">
-                        <ColorPickerTW v-model="state.color" />
+                        <ColorPickerTW v-model="state.color" class="w-full" />
                     </UFormField>
 
                     <UFormField class="flex-1" name="description" :label="$t('common.description')">
-                        <UTextarea v-model="state.description" name="description" :placeholder="$t('common.description')" />
+                        <UTextarea
+                            v-model="state.description"
+                            name="description"
+                            :placeholder="$t('common.description')"
+                            class="w-full"
+                        />
                     </UFormField>
 
                     <UFormField

@@ -87,7 +87,6 @@ const formRef = useTemplateRef('formRef');
                 <UFormField name="reminderTime" :label="$t('common.time')">
                     <InputDatePicker
                         v-model="state.reminderTime"
-                        date-format="dd.MM.yyyy HH:mm"
                         time
                         clearable
                         :max-value="new CalendarDate(yesterday.getFullYear(), yesterday.getMonth() + 1, yesterday.getDate())"

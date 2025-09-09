@@ -164,7 +164,7 @@ const formRef = useTemplateRef('formRef');
         "
     >
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
                 <DataPendingBlock
                     v-if="props.entryId && isRequestPending(status)"
                     :message="$t('common.loading', [$t('common.entry', 1)])"
@@ -205,6 +205,7 @@ const formRef = useTemplateRef('formRef');
                             :search-input="{ placeholder: $t('common.search_field') }"
                             :filter-fields="['name']"
                             :placeholder="$t('common.calendar')"
+                            class="w-full"
                         >
                             <template v-if="state.calendar" #default>
                                 <span
@@ -231,20 +232,26 @@ const formRef = useTemplateRef('formRef');
                     </UFormField>
 
                     <UFormField class="flex-1" name="title" :label="$t('common.title')" required>
-                        <UInput v-model="state.title" name="title" type="text" :placeholder="$t('common.title')" />
+                        <UInput
+                            v-model="state.title"
+                            name="title"
+                            type="text"
+                            :placeholder="$t('common.title')"
+                            class="w-full"
+                        />
                     </UFormField>
 
                     <UFormField class="flex-1" name="startTime" :label="$t('common.begins_at')" required>
-                        <InputDatePicker v-model="state.startTime" date-format="dd.MM.yyyy HH:mm" clearable time />
+                        <InputDatePicker v-model="state.startTime" clearable time class="w-full" />
                     </UFormField>
 
                     <UFormField class="flex-1" name="endTime" :label="$t('common.ends_at')" required>
-                        <InputDatePicker v-model="state.endTime" date-format="dd.MM.yyyy HH:mm" clearable time />
+                        <InputDatePicker v-model="state.endTime" clearable time class="w-full" />
                     </UFormField>
 
                     <UFormField class="flex-1" name="content" :label="$t('common.content')" required>
                         <ClientOnly>
-                            <TiptapEditor v-model="state.content" wrapper-class="min-h-80" />
+                            <TiptapEditor v-model="state.content" wrapper-class="min-h-80" class="w-full" />
                         </ClientOnly>
                     </UFormField>
 
@@ -260,6 +267,7 @@ const formRef = useTemplateRef('formRef');
                         <SelectMenu
                             v-model="state.users"
                             multiple
+                            class="w-full"
                             :searchable="
                                 async (q: string) =>
                                     await completorStore.completeCitizens({

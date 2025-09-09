@@ -2,6 +2,7 @@
 import { CalendarDate, getLocalTimeZone } from '@internationalized/date';
 import type { CalendarProps } from '@nuxt/ui';
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
+import { format } from 'date-fns';
 
 export type TimeSplit = { hours: number; minutes: number };
 
@@ -11,6 +12,7 @@ export interface Props<R extends boolean = false, M extends boolean = false>
     clearable?: boolean;
     time?: boolean;
     dateFormat?: string | undefined;
+    customDateFormat?: string | undefined;
 }
 
 const props = withDefaults(defineProps<Props<R, M>>(), {
@@ -18,6 +20,7 @@ const props = withDefaults(defineProps<Props<R, M>>(), {
     time: false,
     class: '',
     dateFormat: 'short',
+    customDateFormat: undefined,
 });
 
 const emits = defineEmits<{
@@ -89,7 +92,7 @@ const smallerThanSm = breakpoints.smaller('sm');
             block
         >
             <template v-if="modelValue">
-                {{ $d(modelValue, dateFormat) }}
+                {{ customDateFormat ? format(modelValue, customDateFormat) : $d(modelValue, dateFormat) }}
             </template>
             <template v-else> {{ $t('common.pick_date') }} </template>
         </UButton>

@@ -171,7 +171,7 @@ const formRef = useTemplateRef('formRef');
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                             <UFormField name="expiresAt">
-                                <InputDatePicker v-model="state.expiresAt" date-format="dd.MM.yyyy HH:mm" clearable time />
+                                <InputDatePicker v-model="state.expiresAt" clearable time />
                             </UFormField>
                         </dd>
                     </div>

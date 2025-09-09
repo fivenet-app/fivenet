@@ -376,7 +376,6 @@ defineShortcuts({
                                     <InputDateRangePopover
                                         v-model="query.date"
                                         class="flex-1"
-                                        date-format="dd.MM.yyyy HH:mm"
                                         :min-value="fromDate(addDays(new Date(), 1), getLocalTimeZone())"
                                         clearable
                                         time

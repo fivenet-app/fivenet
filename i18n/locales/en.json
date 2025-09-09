@@ -1336,7 +1336,7 @@
                     "title": "Update Calendar Entry"
                 }
             },
-            "FindCalendarModal": {
+            "FindCalendarDrawer": {
                 "title": "Find Calendars"
             },
             "EntryShareModal": {
