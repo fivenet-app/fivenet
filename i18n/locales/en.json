@@ -695,7 +695,9 @@
         "pick_date": "Pick a date",
         "open_command": "Open Command",
         "last_char": "Last Char ID",
-        "file_upload_label": "Choose a file or drag it here."
+        "file_upload_label": "Choose a file or drag it here.",
+        "latitude_short": "Lat",
+        "longitude_short": "Long"
     },
     "components": {
         "partials": {

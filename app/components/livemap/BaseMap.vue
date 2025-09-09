@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { breakpointsTailwind } from '@vueuse/core';
 import L, { CRS, extend, LatLng, latLngBounds, type PointExpression, Projection, Transformation } from 'leaflet';
 import 'leaflet-contextmenu';
 import 'leaflet.heat';
@@ -230,6 +231,9 @@ async function onMapReady(m: L.Map): Promise<void> {
     }
 }
 
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller('lg');
+
 provide('heat', heat);
 
 watch(
@@ -296,8 +300,10 @@ onBeforeUnmount(() => {
 
             <!-- eslint-disable-next-line tailwindcss/no-custom-classname -->
             <LControl class="leaflet-control-attribution !rounded-tl-none rounded-tr-sm" position="bottomleft">
-                <span class="font-semibold">{{ $t('common.longitude') }}:</span> {{ mouseLat.toFixed(3) }} |
-                <span class="font-semibold">{{ $t('common.latitude') }}:</span> {{ mouseLong.toFixed(3) }}
+                <span class="font-semibold">{{ isMobile ? $t('common.longitude_short') : $t('common.longitude') }}:</span>
+                {{ mouseLat.toFixed(3) }} |
+                <span class="font-semibold">{{ isMobile ? $t('common.latitude_short') : $t('common.latitude') }}:</span>
+                {{ mouseLong.toFixed(3) }}
             </LControl>
 
             <slot />
