@@ -306,7 +306,10 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                                         [
                                             {
                                                 label: $t('common.personal'),
-                                                color: doc.document?.pin?.state && doc.document?.pin?.job ? 'error' : undefined,
+                                                color:
+                                                    doc.document?.pin?.state && doc.document?.pin?.userId
+                                                        ? 'primary'
+                                                        : undefined,
                                                 icon:
                                                     doc.document?.pin?.state && doc.document?.pin?.userId
                                                         ? 'i-mdi-playlist-remove'
@@ -320,7 +323,7 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                                                       label: $t('common.job'),
                                                       color:
                                                           doc.document?.pin?.state && doc.document?.pin?.job
-                                                              ? 'error'
+                                                              ? 'primary'
                                                               : undefined,
                                                       icon:
                                                           doc.document?.pin?.state && doc.document?.pin?.job
@@ -334,7 +337,7 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                                         ] as DropdownMenuItem[]
                                     ).flatMap((item) => (item !== undefined ? [item] : []))
                                 "
-                                :content="{ align: 'start' }"
+                                :content="{ align: 'center' }"
                                 :ui="{ content: 'w-48' }"
                             >
                                 <UButton :label="$t('common.pin')" color="neutral" variant="ghost" block icon="i-mdi-pin" />
