@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.17-labs
 
 # Frontend Build
-FROM docker.io/library/node:23.11.1-alpine3.20 AS nodebuilder
+FROM docker.io/library/node:23.11.1-alpine3.22 AS nodebuilder
 
 ARG NUXT_UI_PRO_LICENSE
 
@@ -11,7 +11,7 @@ COPY --exclude=public/images/livemap/ . ./
 
 RUN apk add --no-cache git && \
     corepack enable && \
-    corepack prepare pnpm@10.4.0 --activate && \
+    corepack prepare pnpm@10.15.1 --activate && \
     pnpm install && \
     NODE_OPTIONS="--max-old-space-size=8192" \
         NUXT_UI_PRO_LICENSE=${NUXT_UI_PRO_LICENSE} \

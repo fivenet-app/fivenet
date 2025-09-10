@@ -163,9 +163,11 @@
     "pnpm": {
         "onlyBuiltDependencies": [
             "@tailwindcss/oxide",
+            "better-sqlite3",
             "core-js-pure",
             "sharp",
-            "unrs-resolver"
+            "unrs-resolver",
+            "v-code-diff"
         ]
     }
 }
