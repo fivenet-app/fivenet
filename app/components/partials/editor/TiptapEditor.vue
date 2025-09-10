@@ -31,6 +31,7 @@ import UniqueID from '@tiptap/extension-unique-id';
 import { CharacterCount, Dropcursor, Gapcursor, Placeholder, UndoRedo } from '@tiptap/extensions';
 import type { Schema } from '@tiptap/pm/model';
 import { initProseMirrorDoc, prosemirrorJSONToYDoc } from '@tiptap/y-tiptap';
+import { v4 as uuidv4 } from 'uuid';
 import * as Y from 'yjs';
 import { CheckboxStandalone } from '~/composables/tiptap/extensions/CheckboxStandalone';
 import { DeleteImageTracker } from '~/composables/tiptap/extensions/DeleteImageTracker';
@@ -120,6 +121,7 @@ const extensions = [
     UniqueID.configure({
         attributeName: 'id',
         types: ['heading'],
+        generateID: ({ node }) => `${node.type.name}-${uuidv4()}`,
         filterTransaction: (transaction) => !isChangeOrigin(transaction),
     }),
     NodeRange.configure({
