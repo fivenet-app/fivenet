@@ -4,6 +4,7 @@ package services.jobs;
 
 import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
+import "codegen/perms/perms.proto";
 import "resources/common/database/database.proto";
 import "resources/jobs/activity.proto";
 import "resources/jobs/colleagues.proto";
@@ -117,26 +118,112 @@ message SetMOTDResponse {
 }
 
 service JobsService {
-  // @perm
-  rpc ListColleagues(ListColleaguesRequest) returns (ListColleaguesResponse);
-  // @perm: Name=ListColleagues
-  rpc GetSelf(GetSelfRequest) returns (GetSelfResponse);
+  rpc ListColleagues(ListColleaguesRequest) returns (ListColleaguesResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc GetSelf(GetSelfRequest) returns (GetSelfResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListColleagues"
+    };
+  }
 
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note", "Labels"}
-  rpc GetColleague(GetColleagueRequest) returns (GetColleagueResponse);
-  // @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME"}
-  rpc ListColleagueActivity(ListColleagueActivityRequest) returns (ListColleagueActivityResponse);
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate", "Note", "Labels", "Name"}
-  rpc SetColleagueProps(SetColleaguePropsRequest) returns (SetColleaguePropsResponse);
-  // @perm: Name=GetColleague
-  rpc GetColleagueLabels(GetColleagueLabelsRequest) returns (GetColleagueLabelsResponse);
-  // @perm
-  rpc ManageLabels(ManageLabelsRequest) returns (ManageLabelsResponse);
-  // @perm: Name=GetColleague
-  rpc GetColleagueLabelsStats(GetColleagueLabelsStatsRequest) returns (GetColleagueLabelsStatsResponse);
+  rpc GetColleague(GetColleagueRequest) returns (GetColleagueResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      attrs: [
+        {
+          key: "Access"
+          type: ATTRIBUTE_TYPE_STRING_LIST
+          valid_string_list: [
+            "Own",
+            "Lower_Rank",
+            "Same_Rank",
+            "Any"
+          ]
+        },
+        {
+          key: "Types"
+          type: ATTRIBUTE_TYPE_STRING_LIST
+          valid_string_list: [
+            "Note",
+            "Labels"
+          ]
+        }
+      ]
+    };
+  }
+  rpc ListColleagueActivity(ListColleagueActivityRequest) returns (ListColleagueActivityResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      attrs: [
+        {
+          key: "Types"
+          type: ATTRIBUTE_TYPE_STRING_LIST
+          valid_string_list: [
+            "HIRED",
+            "FIRED",
+            "PROMOTED",
+            "DEMOTED",
+            "ABSENCE_DATE",
+            "NOTE",
+            "LABELS",
+            "NAME"
+          ]
+        }
+      ]
+    };
+  }
+  rpc SetColleagueProps(SetColleaguePropsRequest) returns (SetColleaguePropsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      attrs: [
+        {
+          key: "Access"
+          type: ATTRIBUTE_TYPE_STRING_LIST
+          valid_string_list: [
+            "Own",
+            "Lower_Rank",
+            "Same_Rank",
+            "Any"
+          ]
+        },
+        {
+          key: "Types"
+          type: ATTRIBUTE_TYPE_STRING_LIST
+          valid_string_list: [
+            "AbsenceDate",
+            "Note",
+            "Labels",
+            "Name"
+          ]
+        }
+      ]
+    };
+  }
+  rpc GetColleagueLabels(GetColleagueLabelsRequest) returns (GetColleagueLabelsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "GetColleague"
+    };
+  }
+  rpc ManageLabels(ManageLabelsRequest) returns (ManageLabelsResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc GetColleagueLabelsStats(GetColleagueLabelsStatsRequest) returns (GetColleagueLabelsStatsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "GetColleague"
+    };
+  }
 
-  // @perm: Name=Any
-  rpc GetMOTD(GetMOTDRequest) returns (GetMOTDResponse);
-  // @perm
-  rpc SetMOTD(SetMOTDRequest) returns (SetMOTDResponse);
+  rpc GetMOTD(GetMOTDRequest) returns (GetMOTDResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
+  rpc SetMOTD(SetMOTDRequest) returns (SetMOTDResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
 }

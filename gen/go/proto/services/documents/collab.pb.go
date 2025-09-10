@@ -7,6 +7,7 @@
 package documents
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	collab "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/collab"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -25,9 +26,9 @@ var File_services_documents_collab_proto protoreflect.FileDescriptor
 
 const file_services_documents_collab_proto_rawDesc = "" +
 	"\n" +
-	"\x1fservices/documents/collab.proto\x12\x12services.documents\x1a\x1dresources/collab/collab.proto2_\n" +
-	"\rCollabService\x12N\n" +
-	"\bJoinRoom\x12\x1e.resources.collab.ClientPacket\x1a\x1e.resources.collab.ServerPacket(\x010\x01BPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
+	"\x1fservices/documents/collab.proto\x12\x12services.documents\x1a\x19codegen/perms/perms.proto\x1a\x1dresources/collab/collab.proto2\x94\x01\n" +
+	"\rCollabService\x12\x82\x01\n" +
+	"\bJoinRoom\x12\x1e.resources.collab.ClientPacket\x1a\x1e.resources.collab.ServerPacket\"2\xd2\xf3\x18.\b\x01\x12\x1adocuments.DocumentsService\x1a\x0eUpdateDocument(\x010\x01BPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
 
 var file_services_documents_collab_proto_goTypes = []any{
 	(*collab.ClientPacket)(nil), // 0: resources.collab.ClientPacket

@@ -7,6 +7,7 @@
 package completor
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	documents "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	laws "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/laws"
@@ -510,7 +511,7 @@ var File_services_completor_completor_proto protoreflect.FileDescriptor
 
 const file_services_completor_completor_proto_rawDesc = "" +
 	"\n" +
-	"\"services/completor/completor.proto\x12\x12services.completor\x1a\"resources/documents/category.proto\x1a\x19resources/jobs/jobs.proto\x1a\x19resources/laws/laws.proto\x1a\x1cresources/users/labels.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xfe\x01\n" +
+	"\"services/completor/completor.proto\x12\x12services.completor\x1a\x19codegen/perms/perms.proto\x1a\"resources/documents/category.proto\x1a\x19resources/jobs/jobs.proto\x1a\x19resources/laws/laws.proto\x1a\x1cresources/users/labels.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xfe\x01\n" +
 	"\x17CompleteCitizensRequest\x12\x1f\n" +
 	"\x06search\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18@R\x06search\x12$\n" +
 	"\vcurrent_job\x18\x02 \x01(\bH\x00R\n" +
@@ -547,13 +548,15 @@ const file_services_completor_completor_proto_rawDesc = "" +
 	"\x1cCompleteCitizenLabelsRequest\x12\x1f\n" +
 	"\x06search\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18@R\x06search\"O\n" +
 	"\x1dCompleteCitizenLabelsResponse\x12.\n" +
-	"\x06labels\x18\x01 \x03(\v2\x16.resources.users.LabelR\x06labels2\xd3\x04\n" +
-	"\x10CompletorService\x12m\n" +
-	"\x10CompleteCitizens\x12+.services.completor.CompleteCitizensRequest\x1a,.services.completor.CompleteCitizensResponse\x12a\n" +
-	"\fCompleteJobs\x12'.services.completor.CompleteJobsRequest\x1a(.services.completor.CompleteJobsResponse\x12\x8b\x01\n" +
-	"\x1aCompleteDocumentCategories\x125.services.completor.CompleteDocumentCategoriesRequest\x1a6.services.completor.CompleteDocumentCategoriesResponse\x12a\n" +
-	"\fListLawBooks\x12'.services.completor.ListLawBooksRequest\x1a(.services.completor.ListLawBooksResponse\x12|\n" +
-	"\x15CompleteCitizenLabels\x120.services.completor.CompleteCitizenLabelsRequest\x1a1.services.completor.CompleteCitizenLabelsResponseBPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/completor;completorb\x06proto3"
+	"\x06labels\x18\x01 \x03(\v2\x16.resources.users.LabelR\x06labels2\x9a\x05\n" +
+	"\x10CompletorService\x12u\n" +
+	"\x10CompleteCitizens\x12+.services.completor.CompleteCitizensRequest\x1a,.services.completor.CompleteCitizensResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12n\n" +
+	"\fCompleteJobs\x12'.services.completor.CompleteJobsRequest\x1a(.services.completor.CompleteJobsResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\x9d\x01\n" +
+	"\x1aCompleteDocumentCategories\x125.services.completor.CompleteDocumentCategoriesRequest\x1a6.services.completor.CompleteDocumentCategoriesResponse\"\x10\xd2\xf3\x18\f\b\x01*\b\n" +
+	"\x04Jobs\x18\x02\x12n\n" +
+	"\fListLawBooks\x12'.services.completor.ListLawBooksRequest\x1a(.services.completor.ListLawBooksResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\x8e\x01\n" +
+	"\x15CompleteCitizenLabels\x120.services.completor.CompleteCitizenLabelsRequest\x1a1.services.completor.CompleteCitizenLabelsResponse\"\x10\xd2\xf3\x18\f\b\x01*\b\n" +
+	"\x04Jobs\x18\x02BPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/completor;completorb\x06proto3"
 
 var (
 	file_services_completor_completor_proto_rawDescOnce sync.Once

@@ -1428,7 +1428,7 @@ export const AuthService = new ServiceType("services.auth.AuthService", [
     { name: "ChangePassword", options: {}, I: ChangePasswordRequest, O: ChangePasswordResponse },
     { name: "ForgotPassword", options: {}, I: ForgotPasswordRequest, O: ForgotPasswordResponse },
     { name: "GetCharacters", options: {}, I: GetCharactersRequest, O: GetCharactersResponse },
-    { name: "ChooseCharacter", options: {}, I: ChooseCharacterRequest, O: ChooseCharacterResponse },
+    { name: "ChooseCharacter", options: { "codegen.perms.perms": { enabled: true } }, I: ChooseCharacterRequest, O: ChooseCharacterResponse },
     { name: "GetAccountInfo", options: {}, I: GetAccountInfoRequest, O: GetAccountInfoResponse },
     { name: "DeleteOAuth2Connection", options: {}, I: DeleteOAuth2ConnectionRequest, O: DeleteOAuth2ConnectionResponse },
     { name: "SetSuperuserMode", options: {}, I: SetSuperuserModeRequest, O: SetSuperuserModeResponse }

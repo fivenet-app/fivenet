@@ -33,62 +33,42 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface IJobsServiceClient {
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ListColleagues
      */
     listColleagues(input: ListColleaguesRequest, options?: RpcOptions): UnaryCall<ListColleaguesRequest, ListColleaguesResponse>;
     /**
-     * @perm: Name=ListColleagues
-     *
      * @generated from protobuf rpc: GetSelf
      */
     getSelf(input: GetSelfRequest, options?: RpcOptions): UnaryCall<GetSelfRequest, GetSelfResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note", "Labels"}
-     *
      * @generated from protobuf rpc: GetColleague
      */
     getColleague(input: GetColleagueRequest, options?: RpcOptions): UnaryCall<GetColleagueRequest, GetColleagueResponse>;
     /**
-     * @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME"}
-     *
      * @generated from protobuf rpc: ListColleagueActivity
      */
     listColleagueActivity(input: ListColleagueActivityRequest, options?: RpcOptions): UnaryCall<ListColleagueActivityRequest, ListColleagueActivityResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate", "Note", "Labels", "Name"}
-     *
      * @generated from protobuf rpc: SetColleagueProps
      */
     setColleagueProps(input: SetColleaguePropsRequest, options?: RpcOptions): UnaryCall<SetColleaguePropsRequest, SetColleaguePropsResponse>;
     /**
-     * @perm: Name=GetColleague
-     *
      * @generated from protobuf rpc: GetColleagueLabels
      */
     getColleagueLabels(input: GetColleagueLabelsRequest, options?: RpcOptions): UnaryCall<GetColleagueLabelsRequest, GetColleagueLabelsResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ManageLabels
      */
     manageLabels(input: ManageLabelsRequest, options?: RpcOptions): UnaryCall<ManageLabelsRequest, ManageLabelsResponse>;
     /**
-     * @perm: Name=GetColleague
-     *
      * @generated from protobuf rpc: GetColleagueLabelsStats
      */
     getColleagueLabelsStats(input: GetColleagueLabelsStatsRequest, options?: RpcOptions): UnaryCall<GetColleagueLabelsStatsRequest, GetColleagueLabelsStatsResponse>;
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: GetMOTD
      */
     getMOTD(input: GetMOTDRequest, options?: RpcOptions): UnaryCall<GetMOTDRequest, GetMOTDResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: SetMOTD
      */
     setMOTD(input: SetMOTDRequest, options?: RpcOptions): UnaryCall<SetMOTDRequest, SetMOTDResponse>;
@@ -103,8 +83,6 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ListColleagues
      */
     listColleagues(input: ListColleaguesRequest, options?: RpcOptions): UnaryCall<ListColleaguesRequest, ListColleaguesResponse> {
@@ -112,8 +90,6 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
         return stackIntercept<ListColleaguesRequest, ListColleaguesResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListColleagues
-     *
      * @generated from protobuf rpc: GetSelf
      */
     getSelf(input: GetSelfRequest, options?: RpcOptions): UnaryCall<GetSelfRequest, GetSelfResponse> {
@@ -121,8 +97,6 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
         return stackIntercept<GetSelfRequest, GetSelfResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note", "Labels"}
-     *
      * @generated from protobuf rpc: GetColleague
      */
     getColleague(input: GetColleagueRequest, options?: RpcOptions): UnaryCall<GetColleagueRequest, GetColleagueResponse> {
@@ -130,8 +104,6 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
         return stackIntercept<GetColleagueRequest, GetColleagueResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME"}
-     *
      * @generated from protobuf rpc: ListColleagueActivity
      */
     listColleagueActivity(input: ListColleagueActivityRequest, options?: RpcOptions): UnaryCall<ListColleagueActivityRequest, ListColleagueActivityResponse> {
@@ -139,8 +111,6 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
         return stackIntercept<ListColleagueActivityRequest, ListColleagueActivityResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate", "Note", "Labels", "Name"}
-     *
      * @generated from protobuf rpc: SetColleagueProps
      */
     setColleagueProps(input: SetColleaguePropsRequest, options?: RpcOptions): UnaryCall<SetColleaguePropsRequest, SetColleaguePropsResponse> {
@@ -148,8 +118,6 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
         return stackIntercept<SetColleaguePropsRequest, SetColleaguePropsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=GetColleague
-     *
      * @generated from protobuf rpc: GetColleagueLabels
      */
     getColleagueLabels(input: GetColleagueLabelsRequest, options?: RpcOptions): UnaryCall<GetColleagueLabelsRequest, GetColleagueLabelsResponse> {
@@ -157,8 +125,6 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
         return stackIntercept<GetColleagueLabelsRequest, GetColleagueLabelsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ManageLabels
      */
     manageLabels(input: ManageLabelsRequest, options?: RpcOptions): UnaryCall<ManageLabelsRequest, ManageLabelsResponse> {
@@ -166,8 +132,6 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
         return stackIntercept<ManageLabelsRequest, ManageLabelsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=GetColleague
-     *
      * @generated from protobuf rpc: GetColleagueLabelsStats
      */
     getColleagueLabelsStats(input: GetColleagueLabelsStatsRequest, options?: RpcOptions): UnaryCall<GetColleagueLabelsStatsRequest, GetColleagueLabelsStatsResponse> {
@@ -175,8 +139,6 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
         return stackIntercept<GetColleagueLabelsStatsRequest, GetColleagueLabelsStatsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: GetMOTD
      */
     getMOTD(input: GetMOTDRequest, options?: RpcOptions): UnaryCall<GetMOTDRequest, GetMOTDResponse> {
@@ -184,8 +146,6 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
         return stackIntercept<GetMOTDRequest, GetMOTDResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: SetMOTD
      */
     setMOTD(input: SetMOTDRequest, options?: RpcOptions): UnaryCall<SetMOTDRequest, SetMOTDResponse> {

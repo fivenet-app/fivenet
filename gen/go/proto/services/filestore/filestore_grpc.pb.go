@@ -30,16 +30,12 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FilestoreServiceClient interface {
-	// @perm: Name=Superuser
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	Upload(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error)
-	// @perm: Name=Superuser
 	ListFiles(ctx context.Context, in *ListFilesRequest, opts ...grpc.CallOption) (*ListFilesResponse, error)
-	// @perm: Name=Superuser
 	DeleteFile(ctx context.Context, in *file.DeleteFileRequest, opts ...grpc.CallOption) (*file.DeleteFileResponse, error)
-	// @perm: Name=Superuser
 	DeleteFileByPath(ctx context.Context, in *DeleteFileByPathRequest, opts ...grpc.CallOption) (*DeleteFileByPathResponse, error)
 }
 
@@ -98,16 +94,12 @@ func (c *filestoreServiceClient) DeleteFileByPath(ctx context.Context, in *Delet
 // All implementations must embed UnimplementedFilestoreServiceServer
 // for forward compatibility.
 type FilestoreServiceServer interface {
-	// @perm: Name=Superuser
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	Upload(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error
-	// @perm: Name=Superuser
 	ListFiles(context.Context, *ListFilesRequest) (*ListFilesResponse, error)
-	// @perm: Name=Superuser
 	DeleteFile(context.Context, *file.DeleteFileRequest) (*file.DeleteFileResponse, error)
-	// @perm: Name=Superuser
 	DeleteFileByPath(context.Context, *DeleteFileByPathRequest) (*DeleteFileByPathResponse, error)
 	mustEmbedUnimplementedFilestoreServiceServer()
 }

@@ -4,6 +4,7 @@ package services.qualifications;
 
 import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
+import "codegen/perms/perms.proto";
 import "google/protobuf/duration.proto";
 import "resources/common/content/content.proto";
 import "resources/common/database/database.proto";
@@ -181,40 +182,128 @@ message GetUserExamResponse {
 }
 
 service QualificationsService {
-  // @perm
-  rpc ListQualifications(ListQualificationsRequest) returns (ListQualificationsResponse);
-  // @perm: Name=ListQualifications
-  rpc GetQualification(GetQualificationRequest) returns (GetQualificationResponse);
-  // @perm: Name=UpdateQualification
-  rpc CreateQualification(CreateQualificationRequest) returns (CreateQualificationResponse);
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Fields/StringList:[]string{"Public"}
-  rpc UpdateQualification(UpdateQualificationRequest) returns (UpdateQualificationResponse);
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
-  rpc DeleteQualification(DeleteQualificationRequest) returns (DeleteQualificationResponse);
+  rpc ListQualifications(ListQualificationsRequest) returns (ListQualificationsResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc GetQualification(GetQualificationRequest) returns (GetQualificationResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListQualifications"
+    };
+  }
+  rpc CreateQualification(CreateQualificationRequest) returns (CreateQualificationResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "UpdateQualification"
+    };
+  }
+  rpc UpdateQualification(UpdateQualificationRequest) returns (UpdateQualificationResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      attrs: [
+        {
+          key: "Access"
+          type: ATTRIBUTE_TYPE_STRING_LIST
+          valid_string_list: [
+            "Own",
+            "Lower_Rank",
+            "Same_Rank",
+            "Any"
+          ]
+        },
+        {
+          key: "Fields"
+          type: ATTRIBUTE_TYPE_STRING_LIST
+          valid_string_list: ["Public"]
+        }
+      ]
+    };
+  }
+  rpc DeleteQualification(DeleteQualificationRequest) returns (DeleteQualificationResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      attrs: [
+        {
+          key: "Access"
+          type: ATTRIBUTE_TYPE_STRING_LIST
+          valid_string_list: [
+            "Own",
+            "Lower_Rank",
+            "Same_Rank",
+            "Any"
+          ]
+        }
+      ]
+    };
+  }
 
-  // @perm: Name=ListQualifications
-  rpc ListQualificationRequests(ListQualificationRequestsRequest) returns (ListQualificationRequestsResponse);
-  // @perm: Name=ListQualifications
-  rpc CreateOrUpdateQualificationRequest(CreateOrUpdateQualificationRequestRequest) returns (CreateOrUpdateQualificationRequestResponse);
-  // @perm: Name=ListQualifications
-  rpc DeleteQualificationReq(DeleteQualificationReqRequest) returns (DeleteQualificationReqResponse);
+  rpc ListQualificationRequests(ListQualificationRequestsRequest) returns (ListQualificationRequestsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListQualifications"
+    };
+  }
+  rpc CreateOrUpdateQualificationRequest(CreateOrUpdateQualificationRequestRequest) returns (CreateOrUpdateQualificationRequestResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListQualifications"
+    };
+  }
+  rpc DeleteQualificationReq(DeleteQualificationReqRequest) returns (DeleteQualificationReqResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListQualifications"
+    };
+  }
 
-  // @perm: Name=ListQualifications
-  rpc ListQualificationsResults(ListQualificationsResultsRequest) returns (ListQualificationsResultsResponse);
-  // @perm: Name=ListQualifications
-  rpc CreateOrUpdateQualificationResult(CreateOrUpdateQualificationResultRequest) returns (CreateOrUpdateQualificationResultResponse);
-  // @perm: Name=ListQualifications
-  rpc DeleteQualificationResult(DeleteQualificationResultRequest) returns (DeleteQualificationResultResponse);
+  rpc ListQualificationsResults(ListQualificationsResultsRequest) returns (ListQualificationsResultsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListQualifications"
+    };
+  }
+  rpc CreateOrUpdateQualificationResult(CreateOrUpdateQualificationResultRequest) returns (CreateOrUpdateQualificationResultResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListQualifications"
+    };
+  }
+  rpc DeleteQualificationResult(DeleteQualificationResultRequest) returns (DeleteQualificationResultResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListQualifications"
+    };
+  }
 
-  // @perm: Name=ListQualifications
-  rpc GetExamInfo(GetExamInfoRequest) returns (GetExamInfoResponse);
-  // @perm: Name=ListQualifications
-  rpc TakeExam(TakeExamRequest) returns (TakeExamResponse);
-  // @perm: Name=ListQualifications
-  rpc SubmitExam(SubmitExamRequest) returns (SubmitExamResponse);
-  // @perm: Name=ListQualifications
-  rpc GetUserExam(GetUserExamRequest) returns (GetUserExamResponse);
+  rpc GetExamInfo(GetExamInfoRequest) returns (GetExamInfoResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListQualifications"
+    };
+  }
+  rpc TakeExam(TakeExamRequest) returns (TakeExamResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListQualifications"
+    };
+  }
+  rpc SubmitExam(SubmitExamRequest) returns (SubmitExamResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListQualifications"
+    };
+  }
+  rpc GetUserExam(GetUserExamRequest) returns (GetUserExamResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListQualifications"
+    };
+  }
 
-  // @perm: Name=UpdateQualification
-  rpc UploadFile(stream resources.file.UploadFileRequest) returns (resources.file.UploadFileResponse);
+  rpc UploadFile(stream resources.file.UploadFileRequest) returns (resources.file.UploadFileResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "UpdateQualification"
+    };
+  }
 }

@@ -66,8 +66,6 @@ export interface IAuthServiceClient {
      */
     getCharacters(input: GetCharactersRequest, options?: RpcOptions): UnaryCall<GetCharactersRequest, GetCharactersResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ChooseCharacter
      */
     chooseCharacter(input: ChooseCharacterRequest, options?: RpcOptions): UnaryCall<ChooseCharacterRequest, ChooseCharacterResponse>;
@@ -146,8 +144,6 @@ export class AuthServiceClient implements IAuthServiceClient, ServiceInfo {
         return stackIntercept<GetCharactersRequest, GetCharactersResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ChooseCharacter
      */
     chooseCharacter(input: ChooseCharacterRequest, options?: RpcOptions): UnaryCall<ChooseCharacterRequest, ChooseCharacterResponse> {

@@ -782,11 +782,11 @@ export const ListPageActivityResponse = new ListPageActivityResponse$Type();
  * @generated ServiceType for protobuf service services.wiki.WikiService
  */
 export const WikiService = new ServiceType("services.wiki.WikiService", [
-    { name: "ListPages", options: {}, I: ListPagesRequest, O: ListPagesResponse },
-    { name: "GetPage", options: {}, I: GetPageRequest, O: GetPageResponse },
-    { name: "CreatePage", options: {}, I: CreatePageRequest, O: CreatePageResponse },
-    { name: "UpdatePage", options: {}, I: UpdatePageRequest, O: UpdatePageResponse },
-    { name: "DeletePage", options: {}, I: DeletePageRequest, O: DeletePageResponse },
-    { name: "ListPageActivity", options: {}, I: ListPageActivityRequest, O: ListPageActivityResponse },
-    { name: "UploadFile", clientStreaming: true, options: {}, I: UploadFileRequest, O: UploadFileResponse }
+    { name: "ListPages", options: { "codegen.perms.perms": { enabled: true } }, I: ListPagesRequest, O: ListPagesResponse },
+    { name: "GetPage", options: { "codegen.perms.perms": { enabled: true, name: "ListPages" } }, I: GetPageRequest, O: GetPageResponse },
+    { name: "CreatePage", options: { "codegen.perms.perms": { enabled: true, name: "UpdatePage" } }, I: CreatePageRequest, O: CreatePageResponse },
+    { name: "UpdatePage", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Public"] }] } }, I: UpdatePageRequest, O: UpdatePageResponse },
+    { name: "DeletePage", options: { "codegen.perms.perms": { enabled: true } }, I: DeletePageRequest, O: DeletePageResponse },
+    { name: "ListPageActivity", options: { "codegen.perms.perms": { enabled: true } }, I: ListPageActivityRequest, O: ListPageActivityResponse },
+    { name: "UploadFile", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, name: "UpdatePage" } }, I: UploadFileRequest, O: UploadFileResponse }
 ]);

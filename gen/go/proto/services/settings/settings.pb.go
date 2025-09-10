@@ -8,6 +8,7 @@ package settings
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	audit "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	discord "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/discord"
@@ -1245,7 +1246,7 @@ var File_services_settings_settings_proto protoreflect.FileDescriptor
 
 const file_services_settings_settings_proto_rawDesc = "" +
 	"\n" +
-	" services/settings/settings.proto\x12\x11services.settings\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x1bresources/audit/audit.proto\x1a(resources/common/database/database.proto\x1a\x1fresources/discord/discord.proto\x1a\x1eresources/file/filestore.proto\x1a\x1eresources/jobs/job_props.proto\x1a&resources/permissions/attributes.proto\x1a'resources/permissions/permissions.proto\x1a\x1eresources/settings/perms.proto\x1a#resources/timestamp/timestamp.proto\"\x14\n" +
+	" services/settings/settings.proto\x12\x11services.settings\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a\x1bresources/audit/audit.proto\x1a(resources/common/database/database.proto\x1a\x1fresources/discord/discord.proto\x1a\x1eresources/file/filestore.proto\x1a\x1eresources/jobs/job_props.proto\x1a&resources/permissions/attributes.proto\x1a'resources/permissions/permissions.proto\x1a\x1eresources/settings/perms.proto\x1a#resources/timestamp/timestamp.proto\"\x14\n" +
 	"\x12GetJobPropsRequest\"L\n" +
 	"\x13GetJobPropsResponse\x125\n" +
 	"\tjob_props\x18\x01 \x01(\v2\x18.resources.jobs.JobPropsR\bjobProps\"K\n" +
@@ -1324,25 +1325,24 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\x16ListUserGuildsResponse\x120\n" +
 	"\x06guilds\x18\x01 \x03(\v2\x18.resources.discord.GuildR\x06guilds\"\x16\n" +
 	"\x14DeleteJobLogoRequest\"\x17\n" +
-	"\x15DeleteJobLogoResponse2\xfa\n" +
+	"\x15DeleteJobLogoResponse2\xbd\f\n" +
+	"\x0fSettingsService\x12d\n" +
+	"\vGetJobProps\x12%.services.settings.GetJobPropsRequest\x1a&.services.settings.GetJobPropsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12d\n" +
+	"\vSetJobProps\x12%.services.settings.SetJobPropsRequest\x1a&.services.settings.SetJobPropsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12[\n" +
+	"\bGetRoles\x12\".services.settings.GetRolesRequest\x1a#.services.settings.GetRolesResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12b\n" +
+	"\aGetRole\x12!.services.settings.GetRoleRequest\x1a\".services.settings.GetRoleResponse\"\x10\xd2\xf3\x18\f\b\x01\x1a\bGetRoles\x12a\n" +
 	"\n" +
-	"\x0fSettingsService\x12\\\n" +
-	"\vGetJobProps\x12%.services.settings.GetJobPropsRequest\x1a&.services.settings.GetJobPropsResponse\x12\\\n" +
-	"\vSetJobProps\x12%.services.settings.SetJobPropsRequest\x1a&.services.settings.SetJobPropsResponse\x12S\n" +
-	"\bGetRoles\x12\".services.settings.GetRolesRequest\x1a#.services.settings.GetRolesResponse\x12P\n" +
-	"\aGetRole\x12!.services.settings.GetRoleRequest\x1a\".services.settings.GetRoleResponse\x12Y\n" +
+	"CreateRole\x12$.services.settings.CreateRoleRequest\x1a%.services.settings.CreateRoleResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12a\n" +
 	"\n" +
-	"CreateRole\x12$.services.settings.CreateRoleRequest\x1a%.services.settings.CreateRoleResponse\x12Y\n" +
-	"\n" +
-	"DeleteRole\x12$.services.settings.DeleteRoleRequest\x1a%.services.settings.DeleteRoleResponse\x12h\n" +
-	"\x0fUpdateRolePerms\x12).services.settings.UpdateRolePermsRequest\x1a*.services.settings.UpdateRolePermsResponse\x12e\n" +
-	"\x0eGetPermissions\x12(.services.settings.GetPermissionsRequest\x1a).services.settings.GetPermissionsResponse\x12\x80\x01\n" +
-	"\x17GetEffectivePermissions\x121.services.settings.GetEffectivePermissionsRequest\x1a2.services.settings.GetEffectivePermissionsResponse\x12_\n" +
-	"\fViewAuditLog\x12&.services.settings.ViewAuditLogRequest\x1a'.services.settings.ViewAuditLogResponse\x12t\n" +
-	"\x13ListDiscordChannels\x12-.services.settings.ListDiscordChannelsRequest\x1a..services.settings.ListDiscordChannelsResponse\x12e\n" +
-	"\x0eListUserGuilds\x12(.services.settings.ListUserGuildsRequest\x1a).services.settings.ListUserGuildsResponse\x12X\n" +
-	"\rUploadJobLogo\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse(\x01\x12b\n" +
-	"\rDeleteJobLogo\x12'.services.settings.DeleteJobLogoRequest\x1a(.services.settings.DeleteJobLogoResponseBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settingsb\x06proto3"
+	"DeleteRole\x12$.services.settings.DeleteRoleRequest\x1a%.services.settings.DeleteRoleResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12p\n" +
+	"\x0fUpdateRolePerms\x12).services.settings.UpdateRolePermsRequest\x1a*.services.settings.UpdateRolePermsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12w\n" +
+	"\x0eGetPermissions\x12(.services.settings.GetPermissionsRequest\x1a).services.settings.GetPermissionsResponse\"\x10\xd2\xf3\x18\f\b\x01\x1a\bGetRoles\x12\x92\x01\n" +
+	"\x17GetEffectivePermissions\x121.services.settings.GetEffectivePermissionsRequest\x1a2.services.settings.GetEffectivePermissionsResponse\"\x10\xd2\xf3\x18\f\b\x01\x1a\bGetRoles\x12g\n" +
+	"\fViewAuditLog\x12&.services.settings.ViewAuditLogRequest\x1a'.services.settings.ViewAuditLogResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x89\x01\n" +
+	"\x13ListDiscordChannels\x12-.services.settings.ListDiscordChannelsRequest\x1a..services.settings.ListDiscordChannelsResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vSetJobProps\x12z\n" +
+	"\x0eListUserGuilds\x12(.services.settings.ListUserGuildsRequest\x1a).services.settings.ListUserGuildsResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vSetJobProps\x12m\n" +
+	"\rUploadJobLogo\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vSetJobProps(\x01\x12w\n" +
+	"\rDeleteJobLogo\x12'.services.settings.DeleteJobLogoRequest\x1a(.services.settings.DeleteJobLogoResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vSetJobPropsBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settingsb\x06proto3"
 
 var (
 	file_services_settings_settings_proto_rawDescOnce sync.Once

@@ -116,5 +116,5 @@ export const ListCronjobsResponse = new ListCronjobsResponse$Type();
  * @generated ServiceType for protobuf service services.settings.CronService
  */
 export const CronService = new ServiceType("services.settings.CronService", [
-    { name: "ListCronjobs", options: {}, I: ListCronjobsRequest, O: ListCronjobsResponse }
+    { name: "ListCronjobs", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: ListCronjobsRequest, O: ListCronjobsResponse }
 ]);

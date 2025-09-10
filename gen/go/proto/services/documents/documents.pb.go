@@ -8,6 +8,7 @@ package documents
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	documents "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
@@ -3575,7 +3576,7 @@ var File_services_documents_documents_proto protoreflect.FileDescriptor
 
 const file_services_documents_documents_proto_rawDesc = "" +
 	"\n" +
-	"\"services/documents/documents.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a resources/documents/access.proto\x1a\"resources/documents/activity.proto\x1a\"resources/documents/category.proto\x1a!resources/documents/comment.proto\x1a#resources/documents/documents.proto\x1a\x1eresources/documents/pins.proto\x1a\"resources/documents/requests.proto\x1a#resources/documents/templates.proto\x1a\x19resources/file/file.proto\x1a\x1eresources/file/filestore.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x16\n" +
+	"\"services/documents/documents.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a resources/documents/access.proto\x1a\"resources/documents/activity.proto\x1a\"resources/documents/category.proto\x1a!resources/documents/comment.proto\x1a#resources/documents/documents.proto\x1a\x1eresources/documents/pins.proto\x1a\"resources/documents/requests.proto\x1a#resources/documents/templates.proto\x1a\x19resources/file/file.proto\x1a\x1eresources/file/filestore.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x16\n" +
 	"\x14ListTemplatesRequest\"Y\n" +
 	"\x15ListTemplatesResponse\x12@\n" +
 	"\ttemplates\x18\x01 \x03(\v2\".resources.documents.TemplateShortR\ttemplates\"\xa2\x01\n" +
@@ -3852,46 +3853,58 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x0e_reminder_timeB\n" +
 	"\n" +
 	"\b_message\"\x1d\n" +
-	"\x1bSetDocumentReminderResponse2\x86 \n" +
-	"\x10DocumentsService\x12d\n" +
-	"\rListTemplates\x12(.services.documents.ListTemplatesRequest\x1a).services.documents.ListTemplatesResponse\x12^\n" +
-	"\vGetTemplate\x12&.services.documents.GetTemplateRequest\x1a'.services.documents.GetTemplateResponse\x12g\n" +
-	"\x0eCreateTemplate\x12).services.documents.CreateTemplateRequest\x1a*.services.documents.CreateTemplateResponse\x12g\n" +
-	"\x0eUpdateTemplate\x12).services.documents.UpdateTemplateRequest\x1a*.services.documents.UpdateTemplateResponse\x12g\n" +
-	"\x0eDeleteTemplate\x12).services.documents.DeleteTemplateRequest\x1a*.services.documents.DeleteTemplateResponse\x12d\n" +
-	"\rListDocuments\x12(.services.documents.ListDocumentsRequest\x1a).services.documents.ListDocumentsResponse\x12^\n" +
-	"\vGetDocument\x12&.services.documents.GetDocumentRequest\x1a'.services.documents.GetDocumentResponse\x12g\n" +
-	"\x0eCreateDocument\x12).services.documents.CreateDocumentRequest\x1a*.services.documents.CreateDocumentResponse\x12g\n" +
-	"\x0eUpdateDocument\x12).services.documents.UpdateDocumentRequest\x1a*.services.documents.UpdateDocumentResponse\x12g\n" +
-	"\x0eDeleteDocument\x12).services.documents.DeleteDocumentRequest\x1a*.services.documents.DeleteDocumentResponse\x12g\n" +
-	"\x0eToggleDocument\x12).services.documents.ToggleDocumentRequest\x1a*.services.documents.ToggleDocumentResponse\x12v\n" +
-	"\x13ChangeDocumentOwner\x12..services.documents.ChangeDocumentOwnerRequest\x1a/.services.documents.ChangeDocumentOwnerResponse\x12|\n" +
-	"\x15GetDocumentReferences\x120.services.documents.GetDocumentReferencesRequest\x1a1.services.documents.GetDocumentReferencesResponse\x12y\n" +
-	"\x14GetDocumentRelations\x12/.services.documents.GetDocumentRelationsRequest\x1a0.services.documents.GetDocumentRelationsResponse\x12y\n" +
-	"\x14AddDocumentReference\x12/.services.documents.AddDocumentReferenceRequest\x1a0.services.documents.AddDocumentReferenceResponse\x12\x82\x01\n" +
-	"\x17RemoveDocumentReference\x122.services.documents.RemoveDocumentReferenceRequest\x1a3.services.documents.RemoveDocumentReferenceResponse\x12v\n" +
-	"\x13AddDocumentRelation\x12..services.documents.AddDocumentRelationRequest\x1a/.services.documents.AddDocumentRelationResponse\x12\x7f\n" +
-	"\x16RemoveDocumentRelation\x121.services.documents.RemoveDocumentRelationRequest\x1a2.services.documents.RemoveDocumentRelationResponse\x12^\n" +
-	"\vGetComments\x12&.services.documents.GetCommentsRequest\x1a'.services.documents.GetCommentsResponse\x12^\n" +
-	"\vPostComment\x12&.services.documents.PostCommentRequest\x1a'.services.documents.PostCommentResponse\x12^\n" +
-	"\vEditComment\x12&.services.documents.EditCommentRequest\x1a'.services.documents.EditCommentResponse\x12d\n" +
-	"\rDeleteComment\x12(.services.documents.DeleteCommentRequest\x1a).services.documents.DeleteCommentResponse\x12p\n" +
-	"\x11GetDocumentAccess\x12,.services.documents.GetDocumentAccessRequest\x1a-.services.documents.GetDocumentAccessResponse\x12p\n" +
-	"\x11SetDocumentAccess\x12,.services.documents.SetDocumentAccessRequest\x1a-.services.documents.SetDocumentAccessResponse\x12y\n" +
-	"\x14ListDocumentActivity\x12/.services.documents.ListDocumentActivityRequest\x1a0.services.documents.ListDocumentActivityResponse\x12m\n" +
-	"\x10ListDocumentReqs\x12+.services.documents.ListDocumentReqsRequest\x1a,.services.documents.ListDocumentReqsResponse\x12p\n" +
-	"\x11CreateDocumentReq\x12,.services.documents.CreateDocumentReqRequest\x1a-.services.documents.CreateDocumentReqResponse\x12p\n" +
-	"\x11UpdateDocumentReq\x12,.services.documents.UpdateDocumentReqRequest\x1a-.services.documents.UpdateDocumentReqResponse\x12p\n" +
-	"\x11DeleteDocumentReq\x12,.services.documents.DeleteDocumentReqRequest\x1a-.services.documents.DeleteDocumentReqResponse\x12p\n" +
-	"\x11ListUserDocuments\x12,.services.documents.ListUserDocumentsRequest\x1a-.services.documents.ListUserDocumentsResponse\x12g\n" +
-	"\x0eListCategories\x12).services.documents.ListCategoriesRequest\x1a*.services.documents.ListCategoriesResponse\x12\x7f\n" +
-	"\x16CreateOrUpdateCategory\x121.services.documents.CreateOrUpdateCategoryRequest\x1a2.services.documents.CreateOrUpdateCategoryResponse\x12g\n" +
-	"\x0eDeleteCategory\x12).services.documents.DeleteCategoryRequest\x1a*.services.documents.DeleteCategoryResponse\x12m\n" +
-	"\x10ListDocumentPins\x12+.services.documents.ListDocumentPinsRequest\x1a,.services.documents.ListDocumentPinsResponse\x12p\n" +
-	"\x11ToggleDocumentPin\x12,.services.documents.ToggleDocumentPinRequest\x1a-.services.documents.ToggleDocumentPinResponse\x12v\n" +
-	"\x13SetDocumentReminder\x12..services.documents.SetDocumentReminderRequest\x1a/.services.documents.SetDocumentReminderResponse\x12U\n" +
+	"\x1bSetDocumentReminderResponse2\xf4&\n" +
+	"\x10DocumentsService\x12l\n" +
+	"\rListTemplates\x12(.services.documents.ListTemplatesRequest\x1a).services.documents.ListTemplatesResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12u\n" +
+	"\vGetTemplate\x12&.services.documents.GetTemplateRequest\x1a'.services.documents.GetTemplateResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rListTemplates\x12o\n" +
+	"\x0eCreateTemplate\x12).services.documents.CreateTemplateRequest\x1a*.services.documents.CreateTemplateResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x7f\n" +
+	"\x0eUpdateTemplate\x12).services.documents.UpdateTemplateRequest\x1a*.services.documents.UpdateTemplateResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eCreateTemplate\x12o\n" +
+	"\x0eDeleteTemplate\x12).services.documents.DeleteTemplateRequest\x1a*.services.documents.DeleteTemplateResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12l\n" +
+	"\rListDocuments\x12(.services.documents.ListDocumentsRequest\x1a).services.documents.ListDocumentsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12u\n" +
+	"\vGetDocument\x12&.services.documents.GetDocumentRequest\x1a'.services.documents.GetDocumentResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rListDocuments\x12\x7f\n" +
+	"\x0eCreateDocument\x12).services.documents.CreateDocumentRequest\x1a*.services.documents.CreateDocumentResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eUpdateDocument\x12\x9c\x01\n" +
+	"\x0eUpdateDocument\x12).services.documents.UpdateDocumentRequest\x1a*.services.documents.UpdateDocumentResponse\"3\xd2\xf3\x18/\b\x01*+\n" +
+	"\x06Access\x18\x01\"\x03Own\"\n" +
+	"Lower_Rank\"\tSame_Rank\"\x03Any\x12\x9c\x01\n" +
+	"\x0eDeleteDocument\x12).services.documents.DeleteDocumentRequest\x1a*.services.documents.DeleteDocumentResponse\"3\xd2\xf3\x18/\b\x01*+\n" +
+	"\x06Access\x18\x01\"\x03Own\"\n" +
+	"Lower_Rank\"\tSame_Rank\"\x03Any\x12\x9c\x01\n" +
+	"\x0eToggleDocument\x12).services.documents.ToggleDocumentRequest\x1a*.services.documents.ToggleDocumentResponse\"3\xd2\xf3\x18/\b\x01*+\n" +
+	"\x06Access\x18\x01\"\x03Own\"\n" +
+	"Lower_Rank\"\tSame_Rank\"\x03Any\x12\xab\x01\n" +
+	"\x13ChangeDocumentOwner\x12..services.documents.ChangeDocumentOwnerRequest\x1a/.services.documents.ChangeDocumentOwnerResponse\"3\xd2\xf3\x18/\b\x01*+\n" +
+	"\x06Access\x18\x01\"\x03Own\"\n" +
+	"Lower_Rank\"\tSame_Rank\"\x03Any\x12\x93\x01\n" +
+	"\x15GetDocumentReferences\x120.services.documents.GetDocumentReferencesRequest\x1a1.services.documents.GetDocumentReferencesResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rListDocuments\x12\x90\x01\n" +
+	"\x14GetDocumentRelations\x12/.services.documents.GetDocumentRelationsRequest\x1a0.services.documents.GetDocumentRelationsResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rListDocuments\x12\x81\x01\n" +
+	"\x14AddDocumentReference\x12/.services.documents.AddDocumentReferenceRequest\x1a0.services.documents.AddDocumentReferenceResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\xa0\x01\n" +
+	"\x17RemoveDocumentReference\x122.services.documents.RemoveDocumentReferenceRequest\x1a3.services.documents.RemoveDocumentReferenceResponse\"\x1c\xd2\xf3\x18\x18\b\x01\x1a\x14AddDocumentReference\x12~\n" +
+	"\x13AddDocumentRelation\x12..services.documents.AddDocumentRelationRequest\x1a/.services.documents.AddDocumentRelationResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x9c\x01\n" +
+	"\x16RemoveDocumentRelation\x121.services.documents.RemoveDocumentRelationRequest\x1a2.services.documents.RemoveDocumentRelationResponse\"\x1b\xd2\xf3\x18\x17\b\x01\x1a\x13AddDocumentRelation\x12u\n" +
+	"\vGetComments\x12&.services.documents.GetCommentsRequest\x1a'.services.documents.GetCommentsResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rListDocuments\x12u\n" +
+	"\vPostComment\x12&.services.documents.PostCommentRequest\x1a'.services.documents.PostCommentResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rListDocuments\x12u\n" +
+	"\vEditComment\x12&.services.documents.EditCommentRequest\x1a'.services.documents.EditCommentResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rListDocuments\x12\x99\x01\n" +
+	"\rDeleteComment\x12(.services.documents.DeleteCommentRequest\x1a).services.documents.DeleteCommentResponse\"3\xd2\xf3\x18/\b\x01*+\n" +
+	"\x06Access\x18\x01\"\x03Own\"\n" +
+	"Lower_Rank\"\tSame_Rank\"\x03Any\x12\x87\x01\n" +
+	"\x11GetDocumentAccess\x12,.services.documents.GetDocumentAccessRequest\x1a-.services.documents.GetDocumentAccessResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rListDocuments\x12\x88\x01\n" +
+	"\x11SetDocumentAccess\x12,.services.documents.SetDocumentAccessRequest\x1a-.services.documents.SetDocumentAccessResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eUpdateDocument\x12\x81\x01\n" +
+	"\x14ListDocumentActivity\x12/.services.documents.ListDocumentActivityRequest\x1a0.services.documents.ListDocumentActivityResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12u\n" +
+	"\x10ListDocumentReqs\x12+.services.documents.ListDocumentReqsRequest\x1a,.services.documents.ListDocumentReqsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\xb3\x01\n" +
+	"\x11CreateDocumentReq\x12,.services.documents.CreateDocumentReqRequest\x1a-.services.documents.CreateDocumentReqResponse\"A\xd2\xf3\x18=\b\x01*9\n" +
+	"\x05Types\x18\x01\"\x06Access\"\aClosure\"\x06Update\"\bDeletion\"\vOwnerChange\x12\x8b\x01\n" +
+	"\x11UpdateDocumentReq\x12,.services.documents.UpdateDocumentReqRequest\x1a-.services.documents.UpdateDocumentReqResponse\"\x19\xd2\xf3\x18\x15\b\x01\x1a\x11CreateDocumentReq\x12x\n" +
+	"\x11DeleteDocumentReq\x12,.services.documents.DeleteDocumentReqRequest\x1a-.services.documents.DeleteDocumentReqResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12x\n" +
+	"\x11ListUserDocuments\x12,.services.documents.ListUserDocumentsRequest\x1a-.services.documents.ListUserDocumentsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12o\n" +
+	"\x0eListCategories\x12).services.documents.ListCategoriesRequest\x1a*.services.documents.ListCategoriesResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x87\x01\n" +
+	"\x16CreateOrUpdateCategory\x121.services.documents.CreateOrUpdateCategoryRequest\x1a2.services.documents.CreateOrUpdateCategoryResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12o\n" +
+	"\x0eDeleteCategory\x12).services.documents.DeleteCategoryRequest\x1a*.services.documents.DeleteCategoryResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x84\x01\n" +
+	"\x10ListDocumentPins\x12+.services.documents.ListDocumentPinsRequest\x1a,.services.documents.ListDocumentPinsResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rListDocuments\x12\x8c\x01\n" +
+	"\x11ToggleDocumentPin\x12,.services.documents.ToggleDocumentPinRequest\x1a-.services.documents.ToggleDocumentPinResponse\"\x1a\xd2\xf3\x18\x16\b\x01*\x12\n" +
+	"\x05Types\x18\x01\"\aJobWide\x12~\n" +
+	"\x13SetDocumentReminder\x12..services.documents.SetDocumentReminderRequest\x1a/.services.documents.SetDocumentReminderResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12m\n" +
 	"\n" +
-	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse(\x01BPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
+	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eUpdateDocument(\x01BPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
 
 var (
 	file_services_documents_documents_proto_rawDescOnce sync.Once

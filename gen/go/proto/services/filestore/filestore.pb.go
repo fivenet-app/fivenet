@@ -8,6 +8,7 @@ package filestore
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -212,7 +213,7 @@ var File_services_filestore_filestore_proto protoreflect.FileDescriptor
 
 const file_services_filestore_filestore_proto_rawDesc = "" +
 	"\n" +
-	"\"services/filestore/filestore.proto\x12\x12services.filestore\x1a\x1fcodegen/itemslen/itemslen.proto\x1a(resources/common/database/database.proto\x1a\x19resources/file/file.proto\x1a\x1eresources/file/filestore.proto\"\x94\x01\n" +
+	"\"services/filestore/filestore.proto\x12\x12services.filestore\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x19resources/file/file.proto\x1a\x1eresources/file/filestore.proto\"\x94\x01\n" +
 	"\x10ListFilesRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
@@ -226,13 +227,13 @@ const file_services_filestore_filestore_proto_rawDesc = "" +
 	"\x05files\x18\x02 \x03(\v2\x14.resources.file.FileB\x04\xc8\xf3\x18\x01R\x05files\"7\n" +
 	"\x17DeleteFileByPathRequest\x12\x1c\n" +
 	"\x04path\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01R\x04path\"\x1a\n" +
-	"\x18DeleteFileByPathResponse2\x83\x03\n" +
-	"\x10FilestoreService\x12Q\n" +
-	"\x06Upload\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse(\x01\x12X\n" +
-	"\tListFiles\x12$.services.filestore.ListFilesRequest\x1a%.services.filestore.ListFilesResponse\x12S\n" +
+	"\x18DeleteFileByPathResponse2\xd0\x03\n" +
+	"\x10FilestoreService\x12d\n" +
+	"\x06Upload\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser(\x01\x12k\n" +
+	"\tListFiles\x12$.services.filestore.ListFilesRequest\x1a%.services.filestore.ListFilesResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12f\n" +
 	"\n" +
-	"DeleteFile\x12!.resources.file.DeleteFileRequest\x1a\".resources.file.DeleteFileResponse\x12m\n" +
-	"\x10DeleteFileByPath\x12+.services.filestore.DeleteFileByPathRequest\x1a,.services.filestore.DeleteFileByPathResponseBPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/filestore;filestoreb\x06proto3"
+	"DeleteFile\x12!.resources.file.DeleteFileRequest\x1a\".resources.file.DeleteFileResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12\x80\x01\n" +
+	"\x10DeleteFileByPath\x12+.services.filestore.DeleteFileByPathRequest\x1a,.services.filestore.DeleteFileByPathResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuserBPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/filestore;filestoreb\x06proto3"
 
 var (
 	file_services_filestore_filestore_proto_rawDescOnce sync.Once

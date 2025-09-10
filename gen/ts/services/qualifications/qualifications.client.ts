@@ -46,98 +46,66 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface IQualificationsServiceClient {
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ListQualifications
      */
     listQualifications(input: ListQualificationsRequest, options?: RpcOptions): UnaryCall<ListQualificationsRequest, ListQualificationsResponse>;
     /**
-     * @perm: Name=ListQualifications
-     *
      * @generated from protobuf rpc: GetQualification
      */
     getQualification(input: GetQualificationRequest, options?: RpcOptions): UnaryCall<GetQualificationRequest, GetQualificationResponse>;
     /**
-     * @perm: Name=UpdateQualification
-     *
      * @generated from protobuf rpc: CreateQualification
      */
     createQualification(input: CreateQualificationRequest, options?: RpcOptions): UnaryCall<CreateQualificationRequest, CreateQualificationResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Fields/StringList:[]string{"Public"}
-     *
      * @generated from protobuf rpc: UpdateQualification
      */
     updateQualification(input: UpdateQualificationRequest, options?: RpcOptions): UnaryCall<UpdateQualificationRequest, UpdateQualificationResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
-     *
      * @generated from protobuf rpc: DeleteQualification
      */
     deleteQualification(input: DeleteQualificationRequest, options?: RpcOptions): UnaryCall<DeleteQualificationRequest, DeleteQualificationResponse>;
     /**
-     * @perm: Name=ListQualifications
-     *
      * @generated from protobuf rpc: ListQualificationRequests
      */
     listQualificationRequests(input: ListQualificationRequestsRequest, options?: RpcOptions): UnaryCall<ListQualificationRequestsRequest, ListQualificationRequestsResponse>;
     /**
-     * @perm: Name=ListQualifications
-     *
      * @generated from protobuf rpc: CreateOrUpdateQualificationRequest
      */
     createOrUpdateQualificationRequest(input: CreateOrUpdateQualificationRequestRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateQualificationRequestRequest, CreateOrUpdateQualificationRequestResponse>;
     /**
-     * @perm: Name=ListQualifications
-     *
      * @generated from protobuf rpc: DeleteQualificationReq
      */
     deleteQualificationReq(input: DeleteQualificationReqRequest, options?: RpcOptions): UnaryCall<DeleteQualificationReqRequest, DeleteQualificationReqResponse>;
     /**
-     * @perm: Name=ListQualifications
-     *
      * @generated from protobuf rpc: ListQualificationsResults
      */
     listQualificationsResults(input: ListQualificationsResultsRequest, options?: RpcOptions): UnaryCall<ListQualificationsResultsRequest, ListQualificationsResultsResponse>;
     /**
-     * @perm: Name=ListQualifications
-     *
      * @generated from protobuf rpc: CreateOrUpdateQualificationResult
      */
     createOrUpdateQualificationResult(input: CreateOrUpdateQualificationResultRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateQualificationResultRequest, CreateOrUpdateQualificationResultResponse>;
     /**
-     * @perm: Name=ListQualifications
-     *
      * @generated from protobuf rpc: DeleteQualificationResult
      */
     deleteQualificationResult(input: DeleteQualificationResultRequest, options?: RpcOptions): UnaryCall<DeleteQualificationResultRequest, DeleteQualificationResultResponse>;
     /**
-     * @perm: Name=ListQualifications
-     *
      * @generated from protobuf rpc: GetExamInfo
      */
     getExamInfo(input: GetExamInfoRequest, options?: RpcOptions): UnaryCall<GetExamInfoRequest, GetExamInfoResponse>;
     /**
-     * @perm: Name=ListQualifications
-     *
      * @generated from protobuf rpc: TakeExam
      */
     takeExam(input: TakeExamRequest, options?: RpcOptions): UnaryCall<TakeExamRequest, TakeExamResponse>;
     /**
-     * @perm: Name=ListQualifications
-     *
      * @generated from protobuf rpc: SubmitExam
      */
     submitExam(input: SubmitExamRequest, options?: RpcOptions): UnaryCall<SubmitExamRequest, SubmitExamResponse>;
     /**
-     * @perm: Name=ListQualifications
-     *
      * @generated from protobuf rpc: GetUserExam
      */
     getUserExam(input: GetUserExamRequest, options?: RpcOptions): UnaryCall<GetUserExamRequest, GetUserExamResponse>;
     /**
-     * @perm: Name=UpdateQualification
-     *
      * @generated from protobuf rpc: UploadFile
      */
     uploadFile(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse>;
@@ -152,8 +120,6 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ListQualifications
      */
     listQualifications(input: ListQualificationsRequest, options?: RpcOptions): UnaryCall<ListQualificationsRequest, ListQualificationsResponse> {
@@ -161,8 +127,6 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<ListQualificationsRequest, ListQualificationsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListQualifications
-     *
      * @generated from protobuf rpc: GetQualification
      */
     getQualification(input: GetQualificationRequest, options?: RpcOptions): UnaryCall<GetQualificationRequest, GetQualificationResponse> {
@@ -170,8 +134,6 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<GetQualificationRequest, GetQualificationResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=UpdateQualification
-     *
      * @generated from protobuf rpc: CreateQualification
      */
     createQualification(input: CreateQualificationRequest, options?: RpcOptions): UnaryCall<CreateQualificationRequest, CreateQualificationResponse> {
@@ -179,8 +141,6 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<CreateQualificationRequest, CreateQualificationResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Fields/StringList:[]string{"Public"}
-     *
      * @generated from protobuf rpc: UpdateQualification
      */
     updateQualification(input: UpdateQualificationRequest, options?: RpcOptions): UnaryCall<UpdateQualificationRequest, UpdateQualificationResponse> {
@@ -188,8 +148,6 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<UpdateQualificationRequest, UpdateQualificationResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
-     *
      * @generated from protobuf rpc: DeleteQualification
      */
     deleteQualification(input: DeleteQualificationRequest, options?: RpcOptions): UnaryCall<DeleteQualificationRequest, DeleteQualificationResponse> {
@@ -197,8 +155,6 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<DeleteQualificationRequest, DeleteQualificationResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListQualifications
-     *
      * @generated from protobuf rpc: ListQualificationRequests
      */
     listQualificationRequests(input: ListQualificationRequestsRequest, options?: RpcOptions): UnaryCall<ListQualificationRequestsRequest, ListQualificationRequestsResponse> {
@@ -206,8 +162,6 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<ListQualificationRequestsRequest, ListQualificationRequestsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListQualifications
-     *
      * @generated from protobuf rpc: CreateOrUpdateQualificationRequest
      */
     createOrUpdateQualificationRequest(input: CreateOrUpdateQualificationRequestRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateQualificationRequestRequest, CreateOrUpdateQualificationRequestResponse> {
@@ -215,8 +169,6 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<CreateOrUpdateQualificationRequestRequest, CreateOrUpdateQualificationRequestResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListQualifications
-     *
      * @generated from protobuf rpc: DeleteQualificationReq
      */
     deleteQualificationReq(input: DeleteQualificationReqRequest, options?: RpcOptions): UnaryCall<DeleteQualificationReqRequest, DeleteQualificationReqResponse> {
@@ -224,8 +176,6 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<DeleteQualificationReqRequest, DeleteQualificationReqResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListQualifications
-     *
      * @generated from protobuf rpc: ListQualificationsResults
      */
     listQualificationsResults(input: ListQualificationsResultsRequest, options?: RpcOptions): UnaryCall<ListQualificationsResultsRequest, ListQualificationsResultsResponse> {
@@ -233,8 +183,6 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<ListQualificationsResultsRequest, ListQualificationsResultsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListQualifications
-     *
      * @generated from protobuf rpc: CreateOrUpdateQualificationResult
      */
     createOrUpdateQualificationResult(input: CreateOrUpdateQualificationResultRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateQualificationResultRequest, CreateOrUpdateQualificationResultResponse> {
@@ -242,8 +190,6 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<CreateOrUpdateQualificationResultRequest, CreateOrUpdateQualificationResultResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListQualifications
-     *
      * @generated from protobuf rpc: DeleteQualificationResult
      */
     deleteQualificationResult(input: DeleteQualificationResultRequest, options?: RpcOptions): UnaryCall<DeleteQualificationResultRequest, DeleteQualificationResultResponse> {
@@ -251,8 +197,6 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<DeleteQualificationResultRequest, DeleteQualificationResultResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListQualifications
-     *
      * @generated from protobuf rpc: GetExamInfo
      */
     getExamInfo(input: GetExamInfoRequest, options?: RpcOptions): UnaryCall<GetExamInfoRequest, GetExamInfoResponse> {
@@ -260,8 +204,6 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<GetExamInfoRequest, GetExamInfoResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListQualifications
-     *
      * @generated from protobuf rpc: TakeExam
      */
     takeExam(input: TakeExamRequest, options?: RpcOptions): UnaryCall<TakeExamRequest, TakeExamResponse> {
@@ -269,8 +211,6 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<TakeExamRequest, TakeExamResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListQualifications
-     *
      * @generated from protobuf rpc: SubmitExam
      */
     submitExam(input: SubmitExamRequest, options?: RpcOptions): UnaryCall<SubmitExamRequest, SubmitExamResponse> {
@@ -278,8 +218,6 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<SubmitExamRequest, SubmitExamResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListQualifications
-     *
      * @generated from protobuf rpc: GetUserExam
      */
     getUserExam(input: GetUserExamRequest, options?: RpcOptions): UnaryCall<GetUserExamRequest, GetUserExamResponse> {
@@ -287,8 +225,6 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<GetUserExamRequest, GetUserExamResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=UpdateQualification
-     *
      * @generated from protobuf rpc: UploadFile
      */
     uploadFile(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse> {

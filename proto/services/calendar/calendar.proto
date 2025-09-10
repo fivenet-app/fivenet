@@ -4,6 +4,7 @@ package services.calendar;
 
 import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
+import "codegen/perms/perms.proto";
 import "resources/calendar/access.proto";
 import "resources/calendar/calendar.proto";
 import "resources/common/database/database.proto";
@@ -153,37 +154,106 @@ message SubscribeToCalendarResponse {
 }
 
 service CalendarService {
-  // @perm: Name=Any
-  rpc ListCalendars(ListCalendarsRequest) returns (ListCalendarsResponse);
-  // @perm: Name=Any
-  rpc GetCalendar(GetCalendarRequest) returns (GetCalendarResponse);
-  // @perm: Attrs=Fields/StringList:[]string{"Job", "Public"}
-  rpc CreateCalendar(CreateCalendarRequest) returns (CreateCalendarResponse);
-  // @perm: Name=Any
-  rpc UpdateCalendar(UpdateCalendarRequest) returns (UpdateCalendarResponse);
-  // @perm: Name=Any
-  rpc DeleteCalendar(DeleteCalendarRequest) returns (DeleteCalendarResponse);
+  rpc ListCalendars(ListCalendarsRequest) returns (ListCalendarsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
+  rpc GetCalendar(GetCalendarRequest) returns (GetCalendarResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
+  rpc CreateCalendar(CreateCalendarRequest) returns (CreateCalendarResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      attrs: [
+        {
+          key: "Fields"
+          type: ATTRIBUTE_TYPE_STRING_LIST
+          valid_string_list: [
+            "Job",
+            "Public"
+          ]
+        }
+      ]
+    };
+  }
+  rpc UpdateCalendar(UpdateCalendarRequest) returns (UpdateCalendarResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
+  rpc DeleteCalendar(DeleteCalendarRequest) returns (DeleteCalendarResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
 
-  // @perm: Name=Any
-  rpc ListCalendarEntries(ListCalendarEntriesRequest) returns (ListCalendarEntriesResponse);
-  // @perm: Name=Any
-  rpc GetUpcomingEntries(GetUpcomingEntriesRequest) returns (GetUpcomingEntriesResponse);
-  // @perm: Name=Any
-  rpc GetCalendarEntry(GetCalendarEntryRequest) returns (GetCalendarEntryResponse);
-  // @perm: Name=Any
-  rpc CreateOrUpdateCalendarEntry(CreateOrUpdateCalendarEntryRequest) returns (CreateOrUpdateCalendarEntryResponse);
-  // @perm: Name=Any
-  rpc DeleteCalendarEntry(DeleteCalendarEntryRequest) returns (DeleteCalendarEntryResponse);
-  // @perm: Name=Any
-  rpc ShareCalendarEntry(ShareCalendarEntryRequest) returns (ShareCalendarEntryResponse);
+  rpc ListCalendarEntries(ListCalendarEntriesRequest) returns (ListCalendarEntriesResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
+  rpc GetUpcomingEntries(GetUpcomingEntriesRequest) returns (GetUpcomingEntriesResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
+  rpc GetCalendarEntry(GetCalendarEntryRequest) returns (GetCalendarEntryResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
+  rpc CreateOrUpdateCalendarEntry(CreateOrUpdateCalendarEntryRequest) returns (CreateOrUpdateCalendarEntryResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
+  rpc DeleteCalendarEntry(DeleteCalendarEntryRequest) returns (DeleteCalendarEntryResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
+  rpc ShareCalendarEntry(ShareCalendarEntryRequest) returns (ShareCalendarEntryResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
 
-  // @perm: Name=Any
-  rpc ListCalendarEntryRSVP(ListCalendarEntryRSVPRequest) returns (ListCalendarEntryRSVPResponse);
-  // @perm: Name=Any
-  rpc RSVPCalendarEntry(RSVPCalendarEntryRequest) returns (RSVPCalendarEntryResponse);
+  rpc ListCalendarEntryRSVP(ListCalendarEntryRSVPRequest) returns (ListCalendarEntryRSVPResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
+  rpc RSVPCalendarEntry(RSVPCalendarEntryRequest) returns (RSVPCalendarEntryResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
 
-  // @perm: Name=Any
-  rpc ListSubscriptions(ListSubscriptionsRequest) returns (ListSubscriptionsResponse);
-  // @perm: Name=Any
-  rpc SubscribeToCalendar(SubscribeToCalendarRequest) returns (SubscribeToCalendarResponse);
+  rpc ListSubscriptions(ListSubscriptionsRequest) returns (ListSubscriptionsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
+  rpc SubscribeToCalendar(SubscribeToCalendarRequest) returns (SubscribeToCalendarResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
 }

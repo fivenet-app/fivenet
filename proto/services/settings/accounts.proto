@@ -4,6 +4,7 @@ package services.settings;
 
 import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
+import "codegen/perms/perms.proto";
 import "resources/accounts/accounts.proto";
 import "resources/common/database/database.proto";
 
@@ -48,12 +49,28 @@ message DeleteAccountRequest {
 message DeleteAccountResponse {}
 
 service AccountsService {
-  // @perm: Name=Superuser
-  rpc ListAccounts(ListAccountsRequest) returns (ListAccountsResponse);
-  // @perm: Name=Superuser
-  rpc UpdateAccount(UpdateAccountRequest) returns (UpdateAccountResponse);
-  // @perm: Name=Superuser
-  rpc DisconnectOAuth2Connection(DisconnectOAuth2ConnectionRequest) returns (DisconnectOAuth2ConnectionResponse);
-  // @perm: Name=Superuser
-  rpc DeleteAccount(DeleteAccountRequest) returns (DeleteAccountResponse);
+  rpc ListAccounts(ListAccountsRequest) returns (ListAccountsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Superuser"
+    };
+  }
+  rpc UpdateAccount(UpdateAccountRequest) returns (UpdateAccountResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Superuser"
+    };
+  }
+  rpc DisconnectOAuth2Connection(DisconnectOAuth2ConnectionRequest) returns (DisconnectOAuth2ConnectionResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Superuser"
+    };
+  }
+  rpc DeleteAccount(DeleteAccountRequest) returns (DeleteAccountResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Superuser"
+    };
+  }
 }

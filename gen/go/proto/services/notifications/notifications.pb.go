@@ -8,6 +8,7 @@ package notifications
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	mailer "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
 	notifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
@@ -473,7 +474,7 @@ var File_services_notifications_notifications_proto protoreflect.FileDescriptor
 
 const file_services_notifications_notifications_proto_rawDesc = "" +
 	"\n" +
-	"*services/notifications/notifications.proto\x12\x16services.notifications\x1a\x1fcodegen/itemslen/itemslen.proto\x1a(resources/common/database/database.proto\x1a\x1dresources/mailer/events.proto\x1a)resources/notifications/client_view.proto\x1a$resources/notifications/events.proto\x1a+resources/notifications/notifications.proto\"\x88\x02\n" +
+	"*services/notifications/notifications.proto\x12\x16services.notifications\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1dresources/mailer/events.proto\x1a)resources/notifications/client_view.proto\x1a$resources/notifications/events.proto\x1a+resources/notifications/notifications.proto\"\x88\x02\n" +
 	"\x17GetNotificationsRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
@@ -512,11 +513,11 @@ const file_services_notifications_notifications_proto_rawDesc = "" +
 	"\fobject_event\x18\b \x01(\v2$.resources.notifications.ObjectEventH\x00R\vobjectEventB\r\n" +
 	"\x04data\x12\x05\xbaH\x02\b\x01B\n" +
 	"\n" +
-	"\b_restart2\xe4\x02\n" +
-	"\x14NotificationsService\x12u\n" +
-	"\x10GetNotifications\x12/.services.notifications.GetNotificationsRequest\x1a0.services.notifications.GetNotificationsResponse\x12x\n" +
-	"\x11MarkNotifications\x120.services.notifications.MarkNotificationsRequest\x1a1.services.notifications.MarkNotificationsResponse\x12[\n" +
-	"\x06Stream\x12%.services.notifications.StreamRequest\x1a&.services.notifications.StreamResponse(\x010\x01BXZVgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/notifications;notificationsb\x06proto3"
+	"\b_restart2\x8d\x03\n" +
+	"\x14NotificationsService\x12\x82\x01\n" +
+	"\x10GetNotifications\x12/.services.notifications.GetNotificationsRequest\x1a0.services.notifications.GetNotificationsResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\x85\x01\n" +
+	"\x11MarkNotifications\x120.services.notifications.MarkNotificationsRequest\x1a1.services.notifications.MarkNotificationsResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12h\n" +
+	"\x06Stream\x12%.services.notifications.StreamRequest\x1a&.services.notifications.StreamResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any(\x010\x01BXZVgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/notifications;notificationsb\x06proto3"
 
 var (
 	file_services_notifications_notifications_proto_rawDescOnce sync.Once

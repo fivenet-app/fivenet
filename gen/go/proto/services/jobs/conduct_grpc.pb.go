@@ -29,13 +29,9 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ConductServiceClient interface {
-	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}
 	ListConductEntries(ctx context.Context, in *ListConductEntriesRequest, opts ...grpc.CallOption) (*ListConductEntriesResponse, error)
-	// @perm
 	CreateConductEntry(ctx context.Context, in *CreateConductEntryRequest, opts ...grpc.CallOption) (*CreateConductEntryResponse, error)
-	// @perm
 	UpdateConductEntry(ctx context.Context, in *UpdateConductEntryRequest, opts ...grpc.CallOption) (*UpdateConductEntryResponse, error)
-	// @perm
 	DeleteConductEntry(ctx context.Context, in *DeleteConductEntryRequest, opts ...grpc.CallOption) (*DeleteConductEntryResponse, error)
 }
 
@@ -91,13 +87,9 @@ func (c *conductServiceClient) DeleteConductEntry(ctx context.Context, in *Delet
 // All implementations must embed UnimplementedConductServiceServer
 // for forward compatibility.
 type ConductServiceServer interface {
-	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}
 	ListConductEntries(context.Context, *ListConductEntriesRequest) (*ListConductEntriesResponse, error)
-	// @perm
 	CreateConductEntry(context.Context, *CreateConductEntryRequest) (*CreateConductEntryResponse, error)
-	// @perm
 	UpdateConductEntry(context.Context, *UpdateConductEntryRequest) (*UpdateConductEntryResponse, error)
-	// @perm
 	DeleteConductEntry(context.Context, *DeleteConductEntryRequest) (*DeleteConductEntryResponse, error)
 	mustEmbedUnimplementedConductServiceServer()
 }

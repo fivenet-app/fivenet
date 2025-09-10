@@ -4,6 +4,7 @@ package services.mailer;
 
 import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
+import "codegen/perms/perms.proto";
 import "resources/common/database/database.proto";
 import "resources/mailer/email.proto";
 import "resources/mailer/message.proto";
@@ -236,50 +237,134 @@ message DeleteMessageRequest {
 message DeleteMessageResponse {}
 
 service MailerService {
-  // @perm
-  rpc ListEmails(ListEmailsRequest) returns (ListEmailsResponse);
-  // @perm: Name=ListEmails
-  rpc GetEmail(GetEmailRequest) returns (GetEmailResponse);
-  // @perm: Attrs=Fields/StringList:[]string{"Job"}
-  rpc CreateOrUpdateEmail(CreateOrUpdateEmailRequest) returns (CreateOrUpdateEmailResponse);
-  // @perm
-  rpc DeleteEmail(DeleteEmailRequest) returns (DeleteEmailResponse);
-  // @perm: Name=ListEmails
-  rpc GetEmailProposals(GetEmailProposalsRequest) returns (GetEmailProposalsResponse);
+  rpc ListEmails(ListEmailsRequest) returns (ListEmailsResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc GetEmail(GetEmailRequest) returns (GetEmailResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+  rpc CreateOrUpdateEmail(CreateOrUpdateEmailRequest) returns (CreateOrUpdateEmailResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      attrs: [
+        {
+          key: "Fields"
+          type: ATTRIBUTE_TYPE_STRING_LIST
+          valid_string_list: ["Job"]
+        }
+      ]
+    };
+  }
+  rpc DeleteEmail(DeleteEmailRequest) returns (DeleteEmailResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc GetEmailProposals(GetEmailProposalsRequest) returns (GetEmailProposalsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
 
-  // @perm: Name=ListEmails
-  rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse);
-  // @perm: Name=ListEmails
-  rpc GetTemplate(GetTemplateRequest) returns (GetTemplateResponse);
-  // @perm: Name=ListEmails
-  rpc CreateOrUpdateTemplate(CreateOrUpdateTemplateRequest) returns (CreateOrUpdateTemplateResponse);
-  // @perm: Name=ListEmails
-  rpc DeleteTemplate(DeleteTemplateRequest) returns (DeleteTemplateResponse);
+  rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+  rpc GetTemplate(GetTemplateRequest) returns (GetTemplateResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+  rpc CreateOrUpdateTemplate(CreateOrUpdateTemplateRequest) returns (CreateOrUpdateTemplateResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+  rpc DeleteTemplate(DeleteTemplateRequest) returns (DeleteTemplateResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
 
-  // @perm: Name=ListEmails
-  rpc ListThreads(ListThreadsRequest) returns (ListThreadsResponse);
-  // @perm: Name=ListEmails
-  rpc GetThread(GetThreadRequest) returns (GetThreadResponse);
-  // @perm: Name=ListEmails
-  rpc CreateThread(CreateThreadRequest) returns (CreateThreadResponse);
-  // @perm: Name=Superuser
-  rpc DeleteThread(DeleteThreadRequest) returns (DeleteThreadResponse);
-  // @perm: Name=ListEmails
-  rpc GetThreadState(GetThreadStateRequest) returns (GetThreadStateResponse);
-  // @perm: Name=ListEmails
-  rpc SetThreadState(SetThreadStateRequest) returns (SetThreadStateResponse);
+  rpc ListThreads(ListThreadsRequest) returns (ListThreadsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+  rpc GetThread(GetThreadRequest) returns (GetThreadResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+  rpc CreateThread(CreateThreadRequest) returns (CreateThreadResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+  rpc DeleteThread(DeleteThreadRequest) returns (DeleteThreadResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Superuser"
+    };
+  }
+  rpc GetThreadState(GetThreadStateRequest) returns (GetThreadStateResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+  rpc SetThreadState(SetThreadStateRequest) returns (SetThreadStateResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
 
-  // @perm: Name=ListEmails
-  rpc SearchThreads(SearchThreadsRequest) returns (SearchThreadsResponse);
-  // @perm: Name=ListEmails
-  rpc ListThreadMessages(ListThreadMessagesRequest) returns (ListThreadMessagesResponse);
-  // @perm: Name=ListEmails
-  rpc PostMessage(PostMessageRequest) returns (PostMessageResponse);
-  // @perm: Name=Superuser
-  rpc DeleteMessage(DeleteMessageRequest) returns (DeleteMessageResponse);
+  rpc SearchThreads(SearchThreadsRequest) returns (SearchThreadsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+  rpc ListThreadMessages(ListThreadMessagesRequest) returns (ListThreadMessagesResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+  rpc PostMessage(PostMessageRequest) returns (PostMessageResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+  rpc DeleteMessage(DeleteMessageRequest) returns (DeleteMessageResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Superuser"
+    };
+  }
 
-  // @perm: Name=ListEmails
-  rpc GetEmailSettings(GetEmailSettingsRequest) returns (GetEmailSettingsResponse);
-  // @perm: Name=ListEmails
-  rpc SetEmailSettings(SetEmailSettingsRequest) returns (SetEmailSettingsResponse);
+  rpc GetEmailSettings(GetEmailSettingsRequest) returns (GetEmailSettingsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+  rpc SetEmailSettings(SetEmailSettingsRequest) returns (SetEmailSettingsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
 }

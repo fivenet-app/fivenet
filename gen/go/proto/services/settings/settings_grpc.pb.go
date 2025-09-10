@@ -40,36 +40,22 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SettingsServiceClient interface {
-	// @perm
 	GetJobProps(ctx context.Context, in *GetJobPropsRequest, opts ...grpc.CallOption) (*GetJobPropsResponse, error)
-	// @perm
 	SetJobProps(ctx context.Context, in *SetJobPropsRequest, opts ...grpc.CallOption) (*SetJobPropsResponse, error)
-	// @perm
 	GetRoles(ctx context.Context, in *GetRolesRequest, opts ...grpc.CallOption) (*GetRolesResponse, error)
-	// @perm: Name=GetRoles
 	GetRole(ctx context.Context, in *GetRoleRequest, opts ...grpc.CallOption) (*GetRoleResponse, error)
-	// @perm
 	CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*CreateRoleResponse, error)
-	// @perm
 	DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*DeleteRoleResponse, error)
-	// @perm
 	UpdateRolePerms(ctx context.Context, in *UpdateRolePermsRequest, opts ...grpc.CallOption) (*UpdateRolePermsResponse, error)
-	// @perm: Name=GetRoles
 	GetPermissions(ctx context.Context, in *GetPermissionsRequest, opts ...grpc.CallOption) (*GetPermissionsResponse, error)
-	// @perm: Name=GetRoles
 	GetEffectivePermissions(ctx context.Context, in *GetEffectivePermissionsRequest, opts ...grpc.CallOption) (*GetEffectivePermissionsResponse, error)
-	// @perm
 	ViewAuditLog(ctx context.Context, in *ViewAuditLogRequest, opts ...grpc.CallOption) (*ViewAuditLogResponse, error)
-	// @perm: Name=SetJobProps
 	ListDiscordChannels(ctx context.Context, in *ListDiscordChannelsRequest, opts ...grpc.CallOption) (*ListDiscordChannelsResponse, error)
-	// @perm: Name=SetJobProps
 	ListUserGuilds(ctx context.Context, in *ListUserGuildsRequest, opts ...grpc.CallOption) (*ListUserGuildsResponse, error)
-	// @perm: Name=SetJobProps
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	UploadJobLogo(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error)
-	// @perm: Name=SetJobProps
 	DeleteJobLogo(ctx context.Context, in *DeleteJobLogoRequest, opts ...grpc.CallOption) (*DeleteJobLogoResponse, error)
 }
 
@@ -228,36 +214,22 @@ func (c *settingsServiceClient) DeleteJobLogo(ctx context.Context, in *DeleteJob
 // All implementations must embed UnimplementedSettingsServiceServer
 // for forward compatibility.
 type SettingsServiceServer interface {
-	// @perm
 	GetJobProps(context.Context, *GetJobPropsRequest) (*GetJobPropsResponse, error)
-	// @perm
 	SetJobProps(context.Context, *SetJobPropsRequest) (*SetJobPropsResponse, error)
-	// @perm
 	GetRoles(context.Context, *GetRolesRequest) (*GetRolesResponse, error)
-	// @perm: Name=GetRoles
 	GetRole(context.Context, *GetRoleRequest) (*GetRoleResponse, error)
-	// @perm
 	CreateRole(context.Context, *CreateRoleRequest) (*CreateRoleResponse, error)
-	// @perm
 	DeleteRole(context.Context, *DeleteRoleRequest) (*DeleteRoleResponse, error)
-	// @perm
 	UpdateRolePerms(context.Context, *UpdateRolePermsRequest) (*UpdateRolePermsResponse, error)
-	// @perm: Name=GetRoles
 	GetPermissions(context.Context, *GetPermissionsRequest) (*GetPermissionsResponse, error)
-	// @perm: Name=GetRoles
 	GetEffectivePermissions(context.Context, *GetEffectivePermissionsRequest) (*GetEffectivePermissionsResponse, error)
-	// @perm
 	ViewAuditLog(context.Context, *ViewAuditLogRequest) (*ViewAuditLogResponse, error)
-	// @perm: Name=SetJobProps
 	ListDiscordChannels(context.Context, *ListDiscordChannelsRequest) (*ListDiscordChannelsResponse, error)
-	// @perm: Name=SetJobProps
 	ListUserGuilds(context.Context, *ListUserGuildsRequest) (*ListUserGuildsResponse, error)
-	// @perm: Name=SetJobProps
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	UploadJobLogo(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error
-	// @perm: Name=SetJobProps
 	DeleteJobLogo(context.Context, *DeleteJobLogoRequest) (*DeleteJobLogoResponse, error)
 	mustEmbedUnimplementedSettingsServiceServer()
 }

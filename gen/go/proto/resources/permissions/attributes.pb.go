@@ -22,6 +22,58 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type AttributeType int32
+
+const (
+	AttributeType_ATTRIBUTE_TYPE_UNSPECIFIED    AttributeType = 0
+	AttributeType_ATTRIBUTE_TYPE_STRING_LIST    AttributeType = 1
+	AttributeType_ATTRIBUTE_TYPE_JOB_LIST       AttributeType = 2
+	AttributeType_ATTRIBUTE_TYPE_JOB_GRADE_LIST AttributeType = 3
+)
+
+// Enum value maps for AttributeType.
+var (
+	AttributeType_name = map[int32]string{
+		0: "ATTRIBUTE_TYPE_UNSPECIFIED",
+		1: "ATTRIBUTE_TYPE_STRING_LIST",
+		2: "ATTRIBUTE_TYPE_JOB_LIST",
+		3: "ATTRIBUTE_TYPE_JOB_GRADE_LIST",
+	}
+	AttributeType_value = map[string]int32{
+		"ATTRIBUTE_TYPE_UNSPECIFIED":    0,
+		"ATTRIBUTE_TYPE_STRING_LIST":    1,
+		"ATTRIBUTE_TYPE_JOB_LIST":       2,
+		"ATTRIBUTE_TYPE_JOB_GRADE_LIST": 3,
+	}
+)
+
+func (x AttributeType) Enum() *AttributeType {
+	p := new(AttributeType)
+	*p = x
+	return p
+}
+
+func (x AttributeType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (AttributeType) Descriptor() protoreflect.EnumDescriptor {
+	return file_resources_permissions_attributes_proto_enumTypes[0].Descriptor()
+}
+
+func (AttributeType) Type() protoreflect.EnumType {
+	return &file_resources_permissions_attributes_proto_enumTypes[0]
+}
+
+func (x AttributeType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use AttributeType.Descriptor instead.
+func (AttributeType) EnumDescriptor() ([]byte, []int) {
+	return file_resources_permissions_attributes_proto_rawDescGZIP(), []int{0}
+}
+
 type RoleAttribute struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	RoleId        int64                  `protobuf:"varint,1,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
@@ -436,7 +488,12 @@ const file_resources_permissions_attributes_proto_rawDesc = "" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x126\n" +
 	"\x05value\x18\x02 \x01(\v2 .resources.permissions.JobGradesR\x05value:\x028\x01\"#\n" +
 	"\tJobGrades\x12\x16\n" +
-	"\x06grades\x18\x01 \x03(\x05R\x06gradesBUZSgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions;permissionsb\x06proto3"
+	"\x06grades\x18\x01 \x03(\x05R\x06grades*\x8f\x01\n" +
+	"\rAttributeType\x12\x1e\n" +
+	"\x1aATTRIBUTE_TYPE_UNSPECIFIED\x10\x00\x12\x1e\n" +
+	"\x1aATTRIBUTE_TYPE_STRING_LIST\x10\x01\x12\x1b\n" +
+	"\x17ATTRIBUTE_TYPE_JOB_LIST\x10\x02\x12!\n" +
+	"\x1dATTRIBUTE_TYPE_JOB_GRADE_LIST\x10\x03BUZSgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions;permissionsb\x06proto3"
 
 var (
 	file_resources_permissions_attributes_proto_rawDescOnce sync.Once
@@ -450,28 +507,30 @@ func file_resources_permissions_attributes_proto_rawDescGZIP() []byte {
 	return file_resources_permissions_attributes_proto_rawDescData
 }
 
+var file_resources_permissions_attributes_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_permissions_attributes_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_resources_permissions_attributes_proto_goTypes = []any{
-	(*RoleAttribute)(nil),       // 0: resources.permissions.RoleAttribute
-	(*AttributeValues)(nil),     // 1: resources.permissions.AttributeValues
-	(*StringList)(nil),          // 2: resources.permissions.StringList
-	(*JobGradeList)(nil),        // 3: resources.permissions.JobGradeList
-	(*JobGrades)(nil),           // 4: resources.permissions.JobGrades
-	nil,                         // 5: resources.permissions.JobGradeList.JobsEntry
-	nil,                         // 6: resources.permissions.JobGradeList.GradesEntry
-	(*timestamp.Timestamp)(nil), // 7: resources.timestamp.Timestamp
+	(AttributeType)(0),          // 0: resources.permissions.AttributeType
+	(*RoleAttribute)(nil),       // 1: resources.permissions.RoleAttribute
+	(*AttributeValues)(nil),     // 2: resources.permissions.AttributeValues
+	(*StringList)(nil),          // 3: resources.permissions.StringList
+	(*JobGradeList)(nil),        // 4: resources.permissions.JobGradeList
+	(*JobGrades)(nil),           // 5: resources.permissions.JobGrades
+	nil,                         // 6: resources.permissions.JobGradeList.JobsEntry
+	nil,                         // 7: resources.permissions.JobGradeList.GradesEntry
+	(*timestamp.Timestamp)(nil), // 8: resources.timestamp.Timestamp
 }
 var file_resources_permissions_attributes_proto_depIdxs = []int32{
-	7,  // 0: resources.permissions.RoleAttribute.created_at:type_name -> resources.timestamp.Timestamp
-	1,  // 1: resources.permissions.RoleAttribute.valid_values:type_name -> resources.permissions.AttributeValues
-	1,  // 2: resources.permissions.RoleAttribute.value:type_name -> resources.permissions.AttributeValues
-	1,  // 3: resources.permissions.RoleAttribute.max_values:type_name -> resources.permissions.AttributeValues
-	2,  // 4: resources.permissions.AttributeValues.string_list:type_name -> resources.permissions.StringList
-	2,  // 5: resources.permissions.AttributeValues.job_list:type_name -> resources.permissions.StringList
-	3,  // 6: resources.permissions.AttributeValues.job_grade_list:type_name -> resources.permissions.JobGradeList
-	5,  // 7: resources.permissions.JobGradeList.jobs:type_name -> resources.permissions.JobGradeList.JobsEntry
-	6,  // 8: resources.permissions.JobGradeList.grades:type_name -> resources.permissions.JobGradeList.GradesEntry
-	4,  // 9: resources.permissions.JobGradeList.GradesEntry.value:type_name -> resources.permissions.JobGrades
+	8,  // 0: resources.permissions.RoleAttribute.created_at:type_name -> resources.timestamp.Timestamp
+	2,  // 1: resources.permissions.RoleAttribute.valid_values:type_name -> resources.permissions.AttributeValues
+	2,  // 2: resources.permissions.RoleAttribute.value:type_name -> resources.permissions.AttributeValues
+	2,  // 3: resources.permissions.RoleAttribute.max_values:type_name -> resources.permissions.AttributeValues
+	3,  // 4: resources.permissions.AttributeValues.string_list:type_name -> resources.permissions.StringList
+	3,  // 5: resources.permissions.AttributeValues.job_list:type_name -> resources.permissions.StringList
+	4,  // 6: resources.permissions.AttributeValues.job_grade_list:type_name -> resources.permissions.JobGradeList
+	6,  // 7: resources.permissions.JobGradeList.jobs:type_name -> resources.permissions.JobGradeList.JobsEntry
+	7,  // 8: resources.permissions.JobGradeList.grades:type_name -> resources.permissions.JobGradeList.GradesEntry
+	5,  // 9: resources.permissions.JobGradeList.GradesEntry.value:type_name -> resources.permissions.JobGrades
 	10, // [10:10] is the sub-list for method output_type
 	10, // [10:10] is the sub-list for method input_type
 	10, // [10:10] is the sub-list for extension type_name
@@ -495,13 +554,14 @@ func file_resources_permissions_attributes_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_permissions_attributes_proto_rawDesc), len(file_resources_permissions_attributes_proto_rawDesc)),
-			NumEnums:      0,
+			NumEnums:      1,
 			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_resources_permissions_attributes_proto_goTypes,
 		DependencyIndexes: file_resources_permissions_attributes_proto_depIdxs,
+		EnumInfos:         file_resources_permissions_attributes_proto_enumTypes,
 		MessageInfos:      file_resources_permissions_attributes_proto_msgTypes,
 	}.Build()
 	File_resources_permissions_attributes_proto = out.File

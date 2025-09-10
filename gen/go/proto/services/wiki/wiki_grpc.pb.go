@@ -33,19 +33,12 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type WikiServiceClient interface {
-	// @perm
 	ListPages(ctx context.Context, in *ListPagesRequest, opts ...grpc.CallOption) (*ListPagesResponse, error)
-	// @perm: Name=ListPages
 	GetPage(ctx context.Context, in *GetPageRequest, opts ...grpc.CallOption) (*GetPageResponse, error)
-	// @perm: Name=UpdatePage
 	CreatePage(ctx context.Context, in *CreatePageRequest, opts ...grpc.CallOption) (*CreatePageResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"Public"}
 	UpdatePage(ctx context.Context, in *UpdatePageRequest, opts ...grpc.CallOption) (*UpdatePageResponse, error)
-	// @perm
 	DeletePage(ctx context.Context, in *DeletePageRequest, opts ...grpc.CallOption) (*DeletePageResponse, error)
-	// @perm
 	ListPageActivity(ctx context.Context, in *ListPageActivityRequest, opts ...grpc.CallOption) (*ListPageActivityResponse, error)
-	// @perm: Name=UpdatePage
 	UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error)
 }
 
@@ -134,19 +127,12 @@ type WikiService_UploadFileClient = grpc.ClientStreamingClient[file.UploadFileRe
 // All implementations must embed UnimplementedWikiServiceServer
 // for forward compatibility.
 type WikiServiceServer interface {
-	// @perm
 	ListPages(context.Context, *ListPagesRequest) (*ListPagesResponse, error)
-	// @perm: Name=ListPages
 	GetPage(context.Context, *GetPageRequest) (*GetPageResponse, error)
-	// @perm: Name=UpdatePage
 	CreatePage(context.Context, *CreatePageRequest) (*CreatePageResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"Public"}
 	UpdatePage(context.Context, *UpdatePageRequest) (*UpdatePageResponse, error)
-	// @perm
 	DeletePage(context.Context, *DeletePageRequest) (*DeletePageResponse, error)
-	// @perm
 	ListPageActivity(context.Context, *ListPageActivityRequest) (*ListPageActivityResponse, error)
-	// @perm: Name=UpdatePage
 	UploadFile(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error
 	mustEmbedUnimplementedWikiServiceServer()
 }

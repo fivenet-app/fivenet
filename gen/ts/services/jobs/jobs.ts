@@ -1335,14 +1335,14 @@ export const SetMOTDResponse = new SetMOTDResponse$Type();
  * @generated ServiceType for protobuf service services.jobs.JobsService
  */
 export const JobsService = new ServiceType("services.jobs.JobsService", [
-    { name: "ListColleagues", options: {}, I: ListColleaguesRequest, O: ListColleaguesResponse },
-    { name: "GetSelf", options: {}, I: GetSelfRequest, O: GetSelfResponse },
-    { name: "GetColleague", options: {}, I: GetColleagueRequest, O: GetColleagueResponse },
-    { name: "ListColleagueActivity", options: {}, I: ListColleagueActivityRequest, O: ListColleagueActivityResponse },
-    { name: "SetColleagueProps", options: {}, I: SetColleaguePropsRequest, O: SetColleaguePropsResponse },
-    { name: "GetColleagueLabels", options: {}, I: GetColleagueLabelsRequest, O: GetColleagueLabelsResponse },
-    { name: "ManageLabels", options: {}, I: ManageLabelsRequest, O: ManageLabelsResponse },
-    { name: "GetColleagueLabelsStats", options: {}, I: GetColleagueLabelsStatsRequest, O: GetColleagueLabelsStatsResponse },
-    { name: "GetMOTD", options: {}, I: GetMOTDRequest, O: GetMOTDResponse },
-    { name: "SetMOTD", options: {}, I: SetMOTDRequest, O: SetMOTDResponse }
+    { name: "ListColleagues", options: { "codegen.perms.perms": { enabled: true } }, I: ListColleaguesRequest, O: ListColleaguesResponse },
+    { name: "GetSelf", options: { "codegen.perms.perms": { enabled: true, name: "ListColleagues" } }, I: GetSelfRequest, O: GetSelfResponse },
+    { name: "GetColleague", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Access", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Own", "Lower_Rank", "Same_Rank", "Any"] }, { key: "Types", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Note", "Labels"] }] } }, I: GetColleagueRequest, O: GetColleagueResponse },
+    { name: "ListColleagueActivity", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Types", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME"] }] } }, I: ListColleagueActivityRequest, O: ListColleagueActivityResponse },
+    { name: "SetColleagueProps", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Access", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Own", "Lower_Rank", "Same_Rank", "Any"] }, { key: "Types", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["AbsenceDate", "Note", "Labels", "Name"] }] } }, I: SetColleaguePropsRequest, O: SetColleaguePropsResponse },
+    { name: "GetColleagueLabels", options: { "codegen.perms.perms": { enabled: true, name: "GetColleague" } }, I: GetColleagueLabelsRequest, O: GetColleagueLabelsResponse },
+    { name: "ManageLabels", options: { "codegen.perms.perms": { enabled: true } }, I: ManageLabelsRequest, O: ManageLabelsResponse },
+    { name: "GetColleagueLabelsStats", options: { "codegen.perms.perms": { enabled: true, name: "GetColleague" } }, I: GetColleagueLabelsStatsRequest, O: GetColleagueLabelsStatsResponse },
+    { name: "GetMOTD", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: GetMOTDRequest, O: GetMOTDResponse },
+    { name: "SetMOTD", options: { "codegen.perms.perms": { enabled: true } }, I: SetMOTDRequest, O: SetMOTDResponse }
 ]);

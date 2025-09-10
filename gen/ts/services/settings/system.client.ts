@@ -23,32 +23,22 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface ISystemServiceClient {
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: GetStatus
      */
     getStatus(input: GetStatusRequest, options?: RpcOptions): UnaryCall<GetStatusRequest, GetStatusResponse>;
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: GetAllPermissions
      */
     getAllPermissions(input: GetAllPermissionsRequest, options?: RpcOptions): UnaryCall<GetAllPermissionsRequest, GetAllPermissionsResponse>;
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: GetJobLimits
      */
     getJobLimits(input: GetJobLimitsRequest, options?: RpcOptions): UnaryCall<GetJobLimitsRequest, GetJobLimitsResponse>;
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: UpdateJobLimits
      */
     updateJobLimits(input: UpdateJobLimitsRequest, options?: RpcOptions): UnaryCall<UpdateJobLimitsRequest, UpdateJobLimitsResponse>;
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: DeleteFaction
      */
     deleteFaction(input: DeleteFactionRequest, options?: RpcOptions): UnaryCall<DeleteFactionRequest, DeleteFactionResponse>;
@@ -63,8 +53,6 @@ export class SystemServiceClient implements ISystemServiceClient, ServiceInfo {
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: GetStatus
      */
     getStatus(input: GetStatusRequest, options?: RpcOptions): UnaryCall<GetStatusRequest, GetStatusResponse> {
@@ -72,8 +60,6 @@ export class SystemServiceClient implements ISystemServiceClient, ServiceInfo {
         return stackIntercept<GetStatusRequest, GetStatusResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: GetAllPermissions
      */
     getAllPermissions(input: GetAllPermissionsRequest, options?: RpcOptions): UnaryCall<GetAllPermissionsRequest, GetAllPermissionsResponse> {
@@ -81,8 +67,6 @@ export class SystemServiceClient implements ISystemServiceClient, ServiceInfo {
         return stackIntercept<GetAllPermissionsRequest, GetAllPermissionsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: GetJobLimits
      */
     getJobLimits(input: GetJobLimitsRequest, options?: RpcOptions): UnaryCall<GetJobLimitsRequest, GetJobLimitsResponse> {
@@ -90,8 +74,6 @@ export class SystemServiceClient implements ISystemServiceClient, ServiceInfo {
         return stackIntercept<GetJobLimitsRequest, GetJobLimitsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: UpdateJobLimits
      */
     updateJobLimits(input: UpdateJobLimitsRequest, options?: RpcOptions): UnaryCall<UpdateJobLimitsRequest, UpdateJobLimitsResponse> {
@@ -99,8 +81,6 @@ export class SystemServiceClient implements ISystemServiceClient, ServiceInfo {
         return stackIntercept<UpdateJobLimitsRequest, UpdateJobLimitsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: DeleteFaction
      */
     deleteFaction(input: DeleteFactionRequest, options?: RpcOptions): UnaryCall<DeleteFactionRequest, DeleteFactionResponse> {

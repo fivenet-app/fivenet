@@ -35,25 +35,15 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type JobsServiceClient interface {
-	// @perm
 	ListColleagues(ctx context.Context, in *ListColleaguesRequest, opts ...grpc.CallOption) (*ListColleaguesResponse, error)
-	// @perm: Name=ListColleagues
 	GetSelf(ctx context.Context, in *GetSelfRequest, opts ...grpc.CallOption) (*GetSelfResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note", "Labels"}
 	GetColleague(ctx context.Context, in *GetColleagueRequest, opts ...grpc.CallOption) (*GetColleagueResponse, error)
-	// @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME"}
 	ListColleagueActivity(ctx context.Context, in *ListColleagueActivityRequest, opts ...grpc.CallOption) (*ListColleagueActivityResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate", "Note", "Labels", "Name"}
 	SetColleagueProps(ctx context.Context, in *SetColleaguePropsRequest, opts ...grpc.CallOption) (*SetColleaguePropsResponse, error)
-	// @perm: Name=GetColleague
 	GetColleagueLabels(ctx context.Context, in *GetColleagueLabelsRequest, opts ...grpc.CallOption) (*GetColleagueLabelsResponse, error)
-	// @perm
 	ManageLabels(ctx context.Context, in *ManageLabelsRequest, opts ...grpc.CallOption) (*ManageLabelsResponse, error)
-	// @perm: Name=GetColleague
 	GetColleagueLabelsStats(ctx context.Context, in *GetColleagueLabelsStatsRequest, opts ...grpc.CallOption) (*GetColleagueLabelsStatsResponse, error)
-	// @perm: Name=Any
 	GetMOTD(ctx context.Context, in *GetMOTDRequest, opts ...grpc.CallOption) (*GetMOTDResponse, error)
-	// @perm
 	SetMOTD(ctx context.Context, in *SetMOTDRequest, opts ...grpc.CallOption) (*SetMOTDResponse, error)
 }
 
@@ -169,25 +159,15 @@ func (c *jobsServiceClient) SetMOTD(ctx context.Context, in *SetMOTDRequest, opt
 // All implementations must embed UnimplementedJobsServiceServer
 // for forward compatibility.
 type JobsServiceServer interface {
-	// @perm
 	ListColleagues(context.Context, *ListColleaguesRequest) (*ListColleaguesResponse, error)
-	// @perm: Name=ListColleagues
 	GetSelf(context.Context, *GetSelfRequest) (*GetSelfResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note", "Labels"}
 	GetColleague(context.Context, *GetColleagueRequest) (*GetColleagueResponse, error)
-	// @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME"}
 	ListColleagueActivity(context.Context, *ListColleagueActivityRequest) (*ListColleagueActivityResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate", "Note", "Labels", "Name"}
 	SetColleagueProps(context.Context, *SetColleaguePropsRequest) (*SetColleaguePropsResponse, error)
-	// @perm: Name=GetColleague
 	GetColleagueLabels(context.Context, *GetColleagueLabelsRequest) (*GetColleagueLabelsResponse, error)
-	// @perm
 	ManageLabels(context.Context, *ManageLabelsRequest) (*ManageLabelsResponse, error)
-	// @perm: Name=GetColleague
 	GetColleagueLabelsStats(context.Context, *GetColleagueLabelsStatsRequest) (*GetColleagueLabelsStatsResponse, error)
-	// @perm: Name=Any
 	GetMOTD(context.Context, *GetMOTDRequest) (*GetMOTDResponse, error)
-	// @perm
 	SetMOTD(context.Context, *SetMOTDRequest) (*SetMOTDResponse, error)
 	mustEmbedUnimplementedJobsServiceServer()
 }

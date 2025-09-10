@@ -27,9 +27,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ConfigServiceClient interface {
-	// @perm: Name=Superuser
 	GetAppConfig(ctx context.Context, in *GetAppConfigRequest, opts ...grpc.CallOption) (*GetAppConfigResponse, error)
-	// @perm: Name=Superuser
 	UpdateAppConfig(ctx context.Context, in *UpdateAppConfigRequest, opts ...grpc.CallOption) (*UpdateAppConfigResponse, error)
 }
 
@@ -65,9 +63,7 @@ func (c *configServiceClient) UpdateAppConfig(ctx context.Context, in *UpdateApp
 // All implementations must embed UnimplementedConfigServiceServer
 // for forward compatibility.
 type ConfigServiceServer interface {
-	// @perm: Name=Superuser
 	GetAppConfig(context.Context, *GetAppConfigRequest) (*GetAppConfigResponse, error)
-	// @perm: Name=Superuser
 	UpdateAppConfig(context.Context, *UpdateAppConfigRequest) (*UpdateAppConfigResponse, error)
 	mustEmbedUnimplementedConfigServiceServer()
 }

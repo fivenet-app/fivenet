@@ -4,6 +4,7 @@ package services.filestore;
 
 import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
+import "codegen/perms/perms.proto";
 import "resources/common/database/database.proto";
 import "resources/file/file.proto";
 import "resources/file/filestore.proto";
@@ -27,16 +28,32 @@ message DeleteFileByPathRequest {
 message DeleteFileByPathResponse {}
 
 service FilestoreService {
-  // @perm: Name=Superuser
   // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
   // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
   // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
-  rpc Upload(stream resources.file.UploadFileRequest) returns (resources.file.UploadFileResponse);
+  rpc Upload(stream resources.file.UploadFileRequest) returns (resources.file.UploadFileResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Superuser"
+    };
+  }
 
-  // @perm: Name=Superuser
-  rpc ListFiles(ListFilesRequest) returns (ListFilesResponse);
-  // @perm: Name=Superuser
-  rpc DeleteFile(resources.file.DeleteFileRequest) returns (resources.file.DeleteFileResponse);
-  // @perm: Name=Superuser
-  rpc DeleteFileByPath(DeleteFileByPathRequest) returns (DeleteFileByPathResponse);
+  rpc ListFiles(ListFilesRequest) returns (ListFilesResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Superuser"
+    };
+  }
+  rpc DeleteFile(resources.file.DeleteFileRequest) returns (resources.file.DeleteFileResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Superuser"
+    };
+  }
+  rpc DeleteFileByPath(DeleteFileByPathRequest) returns (DeleteFileByPathResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Superuser"
+    };
+  }
 }

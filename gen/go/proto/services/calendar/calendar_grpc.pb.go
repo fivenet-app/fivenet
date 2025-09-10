@@ -40,35 +40,20 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CalendarServiceClient interface {
-	// @perm: Name=Any
 	ListCalendars(ctx context.Context, in *ListCalendarsRequest, opts ...grpc.CallOption) (*ListCalendarsResponse, error)
-	// @perm: Name=Any
 	GetCalendar(ctx context.Context, in *GetCalendarRequest, opts ...grpc.CallOption) (*GetCalendarResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"Job", "Public"}
 	CreateCalendar(ctx context.Context, in *CreateCalendarRequest, opts ...grpc.CallOption) (*CreateCalendarResponse, error)
-	// @perm: Name=Any
 	UpdateCalendar(ctx context.Context, in *UpdateCalendarRequest, opts ...grpc.CallOption) (*UpdateCalendarResponse, error)
-	// @perm: Name=Any
 	DeleteCalendar(ctx context.Context, in *DeleteCalendarRequest, opts ...grpc.CallOption) (*DeleteCalendarResponse, error)
-	// @perm: Name=Any
 	ListCalendarEntries(ctx context.Context, in *ListCalendarEntriesRequest, opts ...grpc.CallOption) (*ListCalendarEntriesResponse, error)
-	// @perm: Name=Any
 	GetUpcomingEntries(ctx context.Context, in *GetUpcomingEntriesRequest, opts ...grpc.CallOption) (*GetUpcomingEntriesResponse, error)
-	// @perm: Name=Any
 	GetCalendarEntry(ctx context.Context, in *GetCalendarEntryRequest, opts ...grpc.CallOption) (*GetCalendarEntryResponse, error)
-	// @perm: Name=Any
 	CreateOrUpdateCalendarEntry(ctx context.Context, in *CreateOrUpdateCalendarEntryRequest, opts ...grpc.CallOption) (*CreateOrUpdateCalendarEntryResponse, error)
-	// @perm: Name=Any
 	DeleteCalendarEntry(ctx context.Context, in *DeleteCalendarEntryRequest, opts ...grpc.CallOption) (*DeleteCalendarEntryResponse, error)
-	// @perm: Name=Any
 	ShareCalendarEntry(ctx context.Context, in *ShareCalendarEntryRequest, opts ...grpc.CallOption) (*ShareCalendarEntryResponse, error)
-	// @perm: Name=Any
 	ListCalendarEntryRSVP(ctx context.Context, in *ListCalendarEntryRSVPRequest, opts ...grpc.CallOption) (*ListCalendarEntryRSVPResponse, error)
-	// @perm: Name=Any
 	RSVPCalendarEntry(ctx context.Context, in *RSVPCalendarEntryRequest, opts ...grpc.CallOption) (*RSVPCalendarEntryResponse, error)
-	// @perm: Name=Any
 	ListSubscriptions(ctx context.Context, in *ListSubscriptionsRequest, opts ...grpc.CallOption) (*ListSubscriptionsResponse, error)
-	// @perm: Name=Any
 	SubscribeToCalendar(ctx context.Context, in *SubscribeToCalendarRequest, opts ...grpc.CallOption) (*SubscribeToCalendarResponse, error)
 }
 
@@ -234,35 +219,20 @@ func (c *calendarServiceClient) SubscribeToCalendar(ctx context.Context, in *Sub
 // All implementations must embed UnimplementedCalendarServiceServer
 // for forward compatibility.
 type CalendarServiceServer interface {
-	// @perm: Name=Any
 	ListCalendars(context.Context, *ListCalendarsRequest) (*ListCalendarsResponse, error)
-	// @perm: Name=Any
 	GetCalendar(context.Context, *GetCalendarRequest) (*GetCalendarResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"Job", "Public"}
 	CreateCalendar(context.Context, *CreateCalendarRequest) (*CreateCalendarResponse, error)
-	// @perm: Name=Any
 	UpdateCalendar(context.Context, *UpdateCalendarRequest) (*UpdateCalendarResponse, error)
-	// @perm: Name=Any
 	DeleteCalendar(context.Context, *DeleteCalendarRequest) (*DeleteCalendarResponse, error)
-	// @perm: Name=Any
 	ListCalendarEntries(context.Context, *ListCalendarEntriesRequest) (*ListCalendarEntriesResponse, error)
-	// @perm: Name=Any
 	GetUpcomingEntries(context.Context, *GetUpcomingEntriesRequest) (*GetUpcomingEntriesResponse, error)
-	// @perm: Name=Any
 	GetCalendarEntry(context.Context, *GetCalendarEntryRequest) (*GetCalendarEntryResponse, error)
-	// @perm: Name=Any
 	CreateOrUpdateCalendarEntry(context.Context, *CreateOrUpdateCalendarEntryRequest) (*CreateOrUpdateCalendarEntryResponse, error)
-	// @perm: Name=Any
 	DeleteCalendarEntry(context.Context, *DeleteCalendarEntryRequest) (*DeleteCalendarEntryResponse, error)
-	// @perm: Name=Any
 	ShareCalendarEntry(context.Context, *ShareCalendarEntryRequest) (*ShareCalendarEntryResponse, error)
-	// @perm: Name=Any
 	ListCalendarEntryRSVP(context.Context, *ListCalendarEntryRSVPRequest) (*ListCalendarEntryRSVPResponse, error)
-	// @perm: Name=Any
 	RSVPCalendarEntry(context.Context, *RSVPCalendarEntryRequest) (*RSVPCalendarEntryResponse, error)
-	// @perm: Name=Any
 	ListSubscriptions(context.Context, *ListSubscriptionsRequest) (*ListSubscriptionsResponse, error)
-	// @perm: Name=Any
 	SubscribeToCalendar(context.Context, *SubscribeToCalendarRequest) (*SubscribeToCalendarResponse, error)
 	mustEmbedUnimplementedCalendarServiceServer()
 }

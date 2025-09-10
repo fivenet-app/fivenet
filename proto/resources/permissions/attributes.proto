@@ -7,6 +7,13 @@ import "resources/timestamp/timestamp.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions;permissions";
 
+enum AttributeType {
+  ATTRIBUTE_TYPE_UNSPECIFIED = 0;
+  ATTRIBUTE_TYPE_STRING_LIST = 1;
+  ATTRIBUTE_TYPE_JOB_LIST = 2;
+  ATTRIBUTE_TYPE_JOB_GRADE_LIST = 3;
+}
+
 message RoleAttribute {
   int64 role_id = 1;
   optional resources.timestamp.Timestamp created_at = 2;

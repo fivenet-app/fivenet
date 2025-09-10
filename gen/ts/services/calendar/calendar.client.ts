@@ -43,92 +43,62 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface ICalendarServiceClient {
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: ListCalendars
      */
     listCalendars(input: ListCalendarsRequest, options?: RpcOptions): UnaryCall<ListCalendarsRequest, ListCalendarsResponse>;
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: GetCalendar
      */
     getCalendar(input: GetCalendarRequest, options?: RpcOptions): UnaryCall<GetCalendarRequest, GetCalendarResponse>;
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"Job", "Public"}
-     *
      * @generated from protobuf rpc: CreateCalendar
      */
     createCalendar(input: CreateCalendarRequest, options?: RpcOptions): UnaryCall<CreateCalendarRequest, CreateCalendarResponse>;
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: UpdateCalendar
      */
     updateCalendar(input: UpdateCalendarRequest, options?: RpcOptions): UnaryCall<UpdateCalendarRequest, UpdateCalendarResponse>;
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: DeleteCalendar
      */
     deleteCalendar(input: DeleteCalendarRequest, options?: RpcOptions): UnaryCall<DeleteCalendarRequest, DeleteCalendarResponse>;
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: ListCalendarEntries
      */
     listCalendarEntries(input: ListCalendarEntriesRequest, options?: RpcOptions): UnaryCall<ListCalendarEntriesRequest, ListCalendarEntriesResponse>;
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: GetUpcomingEntries
      */
     getUpcomingEntries(input: GetUpcomingEntriesRequest, options?: RpcOptions): UnaryCall<GetUpcomingEntriesRequest, GetUpcomingEntriesResponse>;
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: GetCalendarEntry
      */
     getCalendarEntry(input: GetCalendarEntryRequest, options?: RpcOptions): UnaryCall<GetCalendarEntryRequest, GetCalendarEntryResponse>;
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: CreateOrUpdateCalendarEntry
      */
     createOrUpdateCalendarEntry(input: CreateOrUpdateCalendarEntryRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateCalendarEntryRequest, CreateOrUpdateCalendarEntryResponse>;
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: DeleteCalendarEntry
      */
     deleteCalendarEntry(input: DeleteCalendarEntryRequest, options?: RpcOptions): UnaryCall<DeleteCalendarEntryRequest, DeleteCalendarEntryResponse>;
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: ShareCalendarEntry
      */
     shareCalendarEntry(input: ShareCalendarEntryRequest, options?: RpcOptions): UnaryCall<ShareCalendarEntryRequest, ShareCalendarEntryResponse>;
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: ListCalendarEntryRSVP
      */
     listCalendarEntryRSVP(input: ListCalendarEntryRSVPRequest, options?: RpcOptions): UnaryCall<ListCalendarEntryRSVPRequest, ListCalendarEntryRSVPResponse>;
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: RSVPCalendarEntry
      */
     rSVPCalendarEntry(input: RSVPCalendarEntryRequest, options?: RpcOptions): UnaryCall<RSVPCalendarEntryRequest, RSVPCalendarEntryResponse>;
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: ListSubscriptions
      */
     listSubscriptions(input: ListSubscriptionsRequest, options?: RpcOptions): UnaryCall<ListSubscriptionsRequest, ListSubscriptionsResponse>;
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: SubscribeToCalendar
      */
     subscribeToCalendar(input: SubscribeToCalendarRequest, options?: RpcOptions): UnaryCall<SubscribeToCalendarRequest, SubscribeToCalendarResponse>;
@@ -143,8 +113,6 @@ export class CalendarServiceClient implements ICalendarServiceClient, ServiceInf
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: ListCalendars
      */
     listCalendars(input: ListCalendarsRequest, options?: RpcOptions): UnaryCall<ListCalendarsRequest, ListCalendarsResponse> {
@@ -152,8 +120,6 @@ export class CalendarServiceClient implements ICalendarServiceClient, ServiceInf
         return stackIntercept<ListCalendarsRequest, ListCalendarsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: GetCalendar
      */
     getCalendar(input: GetCalendarRequest, options?: RpcOptions): UnaryCall<GetCalendarRequest, GetCalendarResponse> {
@@ -161,8 +127,6 @@ export class CalendarServiceClient implements ICalendarServiceClient, ServiceInf
         return stackIntercept<GetCalendarRequest, GetCalendarResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"Job", "Public"}
-     *
      * @generated from protobuf rpc: CreateCalendar
      */
     createCalendar(input: CreateCalendarRequest, options?: RpcOptions): UnaryCall<CreateCalendarRequest, CreateCalendarResponse> {
@@ -170,8 +134,6 @@ export class CalendarServiceClient implements ICalendarServiceClient, ServiceInf
         return stackIntercept<CreateCalendarRequest, CreateCalendarResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: UpdateCalendar
      */
     updateCalendar(input: UpdateCalendarRequest, options?: RpcOptions): UnaryCall<UpdateCalendarRequest, UpdateCalendarResponse> {
@@ -179,8 +141,6 @@ export class CalendarServiceClient implements ICalendarServiceClient, ServiceInf
         return stackIntercept<UpdateCalendarRequest, UpdateCalendarResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: DeleteCalendar
      */
     deleteCalendar(input: DeleteCalendarRequest, options?: RpcOptions): UnaryCall<DeleteCalendarRequest, DeleteCalendarResponse> {
@@ -188,8 +148,6 @@ export class CalendarServiceClient implements ICalendarServiceClient, ServiceInf
         return stackIntercept<DeleteCalendarRequest, DeleteCalendarResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: ListCalendarEntries
      */
     listCalendarEntries(input: ListCalendarEntriesRequest, options?: RpcOptions): UnaryCall<ListCalendarEntriesRequest, ListCalendarEntriesResponse> {
@@ -197,8 +155,6 @@ export class CalendarServiceClient implements ICalendarServiceClient, ServiceInf
         return stackIntercept<ListCalendarEntriesRequest, ListCalendarEntriesResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: GetUpcomingEntries
      */
     getUpcomingEntries(input: GetUpcomingEntriesRequest, options?: RpcOptions): UnaryCall<GetUpcomingEntriesRequest, GetUpcomingEntriesResponse> {
@@ -206,8 +162,6 @@ export class CalendarServiceClient implements ICalendarServiceClient, ServiceInf
         return stackIntercept<GetUpcomingEntriesRequest, GetUpcomingEntriesResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: GetCalendarEntry
      */
     getCalendarEntry(input: GetCalendarEntryRequest, options?: RpcOptions): UnaryCall<GetCalendarEntryRequest, GetCalendarEntryResponse> {
@@ -215,8 +169,6 @@ export class CalendarServiceClient implements ICalendarServiceClient, ServiceInf
         return stackIntercept<GetCalendarEntryRequest, GetCalendarEntryResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: CreateOrUpdateCalendarEntry
      */
     createOrUpdateCalendarEntry(input: CreateOrUpdateCalendarEntryRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateCalendarEntryRequest, CreateOrUpdateCalendarEntryResponse> {
@@ -224,8 +176,6 @@ export class CalendarServiceClient implements ICalendarServiceClient, ServiceInf
         return stackIntercept<CreateOrUpdateCalendarEntryRequest, CreateOrUpdateCalendarEntryResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: DeleteCalendarEntry
      */
     deleteCalendarEntry(input: DeleteCalendarEntryRequest, options?: RpcOptions): UnaryCall<DeleteCalendarEntryRequest, DeleteCalendarEntryResponse> {
@@ -233,8 +183,6 @@ export class CalendarServiceClient implements ICalendarServiceClient, ServiceInf
         return stackIntercept<DeleteCalendarEntryRequest, DeleteCalendarEntryResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: ShareCalendarEntry
      */
     shareCalendarEntry(input: ShareCalendarEntryRequest, options?: RpcOptions): UnaryCall<ShareCalendarEntryRequest, ShareCalendarEntryResponse> {
@@ -242,8 +190,6 @@ export class CalendarServiceClient implements ICalendarServiceClient, ServiceInf
         return stackIntercept<ShareCalendarEntryRequest, ShareCalendarEntryResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: ListCalendarEntryRSVP
      */
     listCalendarEntryRSVP(input: ListCalendarEntryRSVPRequest, options?: RpcOptions): UnaryCall<ListCalendarEntryRSVPRequest, ListCalendarEntryRSVPResponse> {
@@ -251,8 +197,6 @@ export class CalendarServiceClient implements ICalendarServiceClient, ServiceInf
         return stackIntercept<ListCalendarEntryRSVPRequest, ListCalendarEntryRSVPResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: RSVPCalendarEntry
      */
     rSVPCalendarEntry(input: RSVPCalendarEntryRequest, options?: RpcOptions): UnaryCall<RSVPCalendarEntryRequest, RSVPCalendarEntryResponse> {
@@ -260,8 +204,6 @@ export class CalendarServiceClient implements ICalendarServiceClient, ServiceInf
         return stackIntercept<RSVPCalendarEntryRequest, RSVPCalendarEntryResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: ListSubscriptions
      */
     listSubscriptions(input: ListSubscriptionsRequest, options?: RpcOptions): UnaryCall<ListSubscriptionsRequest, ListSubscriptionsResponse> {
@@ -269,8 +211,6 @@ export class CalendarServiceClient implements ICalendarServiceClient, ServiceInf
         return stackIntercept<ListSubscriptionsRequest, ListSubscriptionsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: SubscribeToCalendar
      */
     subscribeToCalendar(input: SubscribeToCalendarRequest, options?: RpcOptions): UnaryCall<SubscribeToCalendarRequest, SubscribeToCalendarResponse> {

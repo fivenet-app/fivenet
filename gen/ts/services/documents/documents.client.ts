@@ -88,224 +88,150 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface IDocumentsServiceClient {
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ListTemplates
      */
     listTemplates(input: ListTemplatesRequest, options?: RpcOptions): UnaryCall<ListTemplatesRequest, ListTemplatesResponse>;
     /**
-     * @perm: Name=ListTemplates
-     *
      * @generated from protobuf rpc: GetTemplate
      */
     getTemplate(input: GetTemplateRequest, options?: RpcOptions): UnaryCall<GetTemplateRequest, GetTemplateResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: CreateTemplate
      */
     createTemplate(input: CreateTemplateRequest, options?: RpcOptions): UnaryCall<CreateTemplateRequest, CreateTemplateResponse>;
     /**
-     * @perm: Name=CreateTemplate
-     *
      * @generated from protobuf rpc: UpdateTemplate
      */
     updateTemplate(input: UpdateTemplateRequest, options?: RpcOptions): UnaryCall<UpdateTemplateRequest, UpdateTemplateResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: DeleteTemplate
      */
     deleteTemplate(input: DeleteTemplateRequest, options?: RpcOptions): UnaryCall<DeleteTemplateRequest, DeleteTemplateResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ListDocuments
      */
     listDocuments(input: ListDocumentsRequest, options?: RpcOptions): UnaryCall<ListDocumentsRequest, ListDocumentsResponse>;
     /**
-     * @perm: Name=ListDocuments
-     *
      * @generated from protobuf rpc: GetDocument
      */
     getDocument(input: GetDocumentRequest, options?: RpcOptions): UnaryCall<GetDocumentRequest, GetDocumentResponse>;
     /**
-     * @perm: Name=UpdateDocument
-     *
      * @generated from protobuf rpc: CreateDocument
      */
     createDocument(input: CreateDocumentRequest, options?: RpcOptions): UnaryCall<CreateDocumentRequest, CreateDocumentResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
-     *
      * @generated from protobuf rpc: UpdateDocument
      */
     updateDocument(input: UpdateDocumentRequest, options?: RpcOptions): UnaryCall<UpdateDocumentRequest, UpdateDocumentResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
-     *
      * @generated from protobuf rpc: DeleteDocument
      */
     deleteDocument(input: DeleteDocumentRequest, options?: RpcOptions): UnaryCall<DeleteDocumentRequest, DeleteDocumentResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
-     *
      * @generated from protobuf rpc: ToggleDocument
      */
     toggleDocument(input: ToggleDocumentRequest, options?: RpcOptions): UnaryCall<ToggleDocumentRequest, ToggleDocumentResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
-     *
      * @generated from protobuf rpc: ChangeDocumentOwner
      */
     changeDocumentOwner(input: ChangeDocumentOwnerRequest, options?: RpcOptions): UnaryCall<ChangeDocumentOwnerRequest, ChangeDocumentOwnerResponse>;
     /**
-     * @perm: Name=ListDocuments
-     *
      * @generated from protobuf rpc: GetDocumentReferences
      */
     getDocumentReferences(input: GetDocumentReferencesRequest, options?: RpcOptions): UnaryCall<GetDocumentReferencesRequest, GetDocumentReferencesResponse>;
     /**
-     * @perm: Name=ListDocuments
-     *
      * @generated from protobuf rpc: GetDocumentRelations
      */
     getDocumentRelations(input: GetDocumentRelationsRequest, options?: RpcOptions): UnaryCall<GetDocumentRelationsRequest, GetDocumentRelationsResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: AddDocumentReference
      */
     addDocumentReference(input: AddDocumentReferenceRequest, options?: RpcOptions): UnaryCall<AddDocumentReferenceRequest, AddDocumentReferenceResponse>;
     /**
-     * @perm: Name=AddDocumentReference
-     *
      * @generated from protobuf rpc: RemoveDocumentReference
      */
     removeDocumentReference(input: RemoveDocumentReferenceRequest, options?: RpcOptions): UnaryCall<RemoveDocumentReferenceRequest, RemoveDocumentReferenceResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: AddDocumentRelation
      */
     addDocumentRelation(input: AddDocumentRelationRequest, options?: RpcOptions): UnaryCall<AddDocumentRelationRequest, AddDocumentRelationResponse>;
     /**
-     * @perm: Name=AddDocumentRelation
-     *
      * @generated from protobuf rpc: RemoveDocumentRelation
      */
     removeDocumentRelation(input: RemoveDocumentRelationRequest, options?: RpcOptions): UnaryCall<RemoveDocumentRelationRequest, RemoveDocumentRelationResponse>;
     /**
-     * @perm: Name=ListDocuments
-     *
      * @generated from protobuf rpc: GetComments
      */
     getComments(input: GetCommentsRequest, options?: RpcOptions): UnaryCall<GetCommentsRequest, GetCommentsResponse>;
     /**
-     * @perm: Name=ListDocuments
-     *
      * @generated from protobuf rpc: PostComment
      */
     postComment(input: PostCommentRequest, options?: RpcOptions): UnaryCall<PostCommentRequest, PostCommentResponse>;
     /**
-     * @perm: Name=ListDocuments
-     *
      * @generated from protobuf rpc: EditComment
      */
     editComment(input: EditCommentRequest, options?: RpcOptions): UnaryCall<EditCommentRequest, EditCommentResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
-     *
      * @generated from protobuf rpc: DeleteComment
      */
     deleteComment(input: DeleteCommentRequest, options?: RpcOptions): UnaryCall<DeleteCommentRequest, DeleteCommentResponse>;
     /**
-     * @perm: Name=ListDocuments
-     *
      * @generated from protobuf rpc: GetDocumentAccess
      */
     getDocumentAccess(input: GetDocumentAccessRequest, options?: RpcOptions): UnaryCall<GetDocumentAccessRequest, GetDocumentAccessResponse>;
     /**
-     * @perm: Name=UpdateDocument
-     *
      * @generated from protobuf rpc: SetDocumentAccess
      */
     setDocumentAccess(input: SetDocumentAccessRequest, options?: RpcOptions): UnaryCall<SetDocumentAccessRequest, SetDocumentAccessResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ListDocumentActivity
      */
     listDocumentActivity(input: ListDocumentActivityRequest, options?: RpcOptions): UnaryCall<ListDocumentActivityRequest, ListDocumentActivityResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ListDocumentReqs
      */
     listDocumentReqs(input: ListDocumentReqsRequest, options?: RpcOptions): UnaryCall<ListDocumentReqsRequest, ListDocumentReqsResponse>;
     /**
-     * @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion", "OwnerChange"}
-     *
      * @generated from protobuf rpc: CreateDocumentReq
      */
     createDocumentReq(input: CreateDocumentReqRequest, options?: RpcOptions): UnaryCall<CreateDocumentReqRequest, CreateDocumentReqResponse>;
     /**
-     * @perm: Name=CreateDocumentReq
-     *
      * @generated from protobuf rpc: UpdateDocumentReq
      */
     updateDocumentReq(input: UpdateDocumentReqRequest, options?: RpcOptions): UnaryCall<UpdateDocumentReqRequest, UpdateDocumentReqResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: DeleteDocumentReq
      */
     deleteDocumentReq(input: DeleteDocumentReqRequest, options?: RpcOptions): UnaryCall<DeleteDocumentReqRequest, DeleteDocumentReqResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ListUserDocuments
      */
     listUserDocuments(input: ListUserDocumentsRequest, options?: RpcOptions): UnaryCall<ListUserDocumentsRequest, ListUserDocumentsResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ListCategories
      */
     listCategories(input: ListCategoriesRequest, options?: RpcOptions): UnaryCall<ListCategoriesRequest, ListCategoriesResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: CreateOrUpdateCategory
      */
     createOrUpdateCategory(input: CreateOrUpdateCategoryRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateCategoryRequest, CreateOrUpdateCategoryResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: DeleteCategory
      */
     deleteCategory(input: DeleteCategoryRequest, options?: RpcOptions): UnaryCall<DeleteCategoryRequest, DeleteCategoryResponse>;
     /**
-     * @perm: Name=ListDocuments
-     *
      * @generated from protobuf rpc: ListDocumentPins
      */
     listDocumentPins(input: ListDocumentPinsRequest, options?: RpcOptions): UnaryCall<ListDocumentPinsRequest, ListDocumentPinsResponse>;
     /**
-     * @perm: Attrs=Types/StringList:[]string{"JobWide"}
-     *
      * @generated from protobuf rpc: ToggleDocumentPin
      */
     toggleDocumentPin(input: ToggleDocumentPinRequest, options?: RpcOptions): UnaryCall<ToggleDocumentPinRequest, ToggleDocumentPinResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: SetDocumentReminder
      */
     setDocumentReminder(input: SetDocumentReminderRequest, options?: RpcOptions): UnaryCall<SetDocumentReminderRequest, SetDocumentReminderResponse>;
     /**
-     * @perm: Name=UpdateDocument
-     *
      * @generated from protobuf rpc: UploadFile
      */
     uploadFile(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse>;
@@ -320,8 +246,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ListTemplates
      */
     listTemplates(input: ListTemplatesRequest, options?: RpcOptions): UnaryCall<ListTemplatesRequest, ListTemplatesResponse> {
@@ -329,8 +253,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<ListTemplatesRequest, ListTemplatesResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListTemplates
-     *
      * @generated from protobuf rpc: GetTemplate
      */
     getTemplate(input: GetTemplateRequest, options?: RpcOptions): UnaryCall<GetTemplateRequest, GetTemplateResponse> {
@@ -338,8 +260,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<GetTemplateRequest, GetTemplateResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: CreateTemplate
      */
     createTemplate(input: CreateTemplateRequest, options?: RpcOptions): UnaryCall<CreateTemplateRequest, CreateTemplateResponse> {
@@ -347,8 +267,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<CreateTemplateRequest, CreateTemplateResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=CreateTemplate
-     *
      * @generated from protobuf rpc: UpdateTemplate
      */
     updateTemplate(input: UpdateTemplateRequest, options?: RpcOptions): UnaryCall<UpdateTemplateRequest, UpdateTemplateResponse> {
@@ -356,8 +274,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<UpdateTemplateRequest, UpdateTemplateResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: DeleteTemplate
      */
     deleteTemplate(input: DeleteTemplateRequest, options?: RpcOptions): UnaryCall<DeleteTemplateRequest, DeleteTemplateResponse> {
@@ -365,8 +281,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<DeleteTemplateRequest, DeleteTemplateResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ListDocuments
      */
     listDocuments(input: ListDocumentsRequest, options?: RpcOptions): UnaryCall<ListDocumentsRequest, ListDocumentsResponse> {
@@ -374,8 +288,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<ListDocumentsRequest, ListDocumentsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListDocuments
-     *
      * @generated from protobuf rpc: GetDocument
      */
     getDocument(input: GetDocumentRequest, options?: RpcOptions): UnaryCall<GetDocumentRequest, GetDocumentResponse> {
@@ -383,8 +295,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<GetDocumentRequest, GetDocumentResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=UpdateDocument
-     *
      * @generated from protobuf rpc: CreateDocument
      */
     createDocument(input: CreateDocumentRequest, options?: RpcOptions): UnaryCall<CreateDocumentRequest, CreateDocumentResponse> {
@@ -392,8 +302,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<CreateDocumentRequest, CreateDocumentResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
-     *
      * @generated from protobuf rpc: UpdateDocument
      */
     updateDocument(input: UpdateDocumentRequest, options?: RpcOptions): UnaryCall<UpdateDocumentRequest, UpdateDocumentResponse> {
@@ -401,8 +309,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<UpdateDocumentRequest, UpdateDocumentResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
-     *
      * @generated from protobuf rpc: DeleteDocument
      */
     deleteDocument(input: DeleteDocumentRequest, options?: RpcOptions): UnaryCall<DeleteDocumentRequest, DeleteDocumentResponse> {
@@ -410,8 +316,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<DeleteDocumentRequest, DeleteDocumentResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
-     *
      * @generated from protobuf rpc: ToggleDocument
      */
     toggleDocument(input: ToggleDocumentRequest, options?: RpcOptions): UnaryCall<ToggleDocumentRequest, ToggleDocumentResponse> {
@@ -419,8 +323,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<ToggleDocumentRequest, ToggleDocumentResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
-     *
      * @generated from protobuf rpc: ChangeDocumentOwner
      */
     changeDocumentOwner(input: ChangeDocumentOwnerRequest, options?: RpcOptions): UnaryCall<ChangeDocumentOwnerRequest, ChangeDocumentOwnerResponse> {
@@ -428,8 +330,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<ChangeDocumentOwnerRequest, ChangeDocumentOwnerResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListDocuments
-     *
      * @generated from protobuf rpc: GetDocumentReferences
      */
     getDocumentReferences(input: GetDocumentReferencesRequest, options?: RpcOptions): UnaryCall<GetDocumentReferencesRequest, GetDocumentReferencesResponse> {
@@ -437,8 +337,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<GetDocumentReferencesRequest, GetDocumentReferencesResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListDocuments
-     *
      * @generated from protobuf rpc: GetDocumentRelations
      */
     getDocumentRelations(input: GetDocumentRelationsRequest, options?: RpcOptions): UnaryCall<GetDocumentRelationsRequest, GetDocumentRelationsResponse> {
@@ -446,8 +344,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<GetDocumentRelationsRequest, GetDocumentRelationsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: AddDocumentReference
      */
     addDocumentReference(input: AddDocumentReferenceRequest, options?: RpcOptions): UnaryCall<AddDocumentReferenceRequest, AddDocumentReferenceResponse> {
@@ -455,8 +351,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<AddDocumentReferenceRequest, AddDocumentReferenceResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=AddDocumentReference
-     *
      * @generated from protobuf rpc: RemoveDocumentReference
      */
     removeDocumentReference(input: RemoveDocumentReferenceRequest, options?: RpcOptions): UnaryCall<RemoveDocumentReferenceRequest, RemoveDocumentReferenceResponse> {
@@ -464,8 +358,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<RemoveDocumentReferenceRequest, RemoveDocumentReferenceResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: AddDocumentRelation
      */
     addDocumentRelation(input: AddDocumentRelationRequest, options?: RpcOptions): UnaryCall<AddDocumentRelationRequest, AddDocumentRelationResponse> {
@@ -473,8 +365,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<AddDocumentRelationRequest, AddDocumentRelationResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=AddDocumentRelation
-     *
      * @generated from protobuf rpc: RemoveDocumentRelation
      */
     removeDocumentRelation(input: RemoveDocumentRelationRequest, options?: RpcOptions): UnaryCall<RemoveDocumentRelationRequest, RemoveDocumentRelationResponse> {
@@ -482,8 +372,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<RemoveDocumentRelationRequest, RemoveDocumentRelationResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListDocuments
-     *
      * @generated from protobuf rpc: GetComments
      */
     getComments(input: GetCommentsRequest, options?: RpcOptions): UnaryCall<GetCommentsRequest, GetCommentsResponse> {
@@ -491,8 +379,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<GetCommentsRequest, GetCommentsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListDocuments
-     *
      * @generated from protobuf rpc: PostComment
      */
     postComment(input: PostCommentRequest, options?: RpcOptions): UnaryCall<PostCommentRequest, PostCommentResponse> {
@@ -500,8 +386,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<PostCommentRequest, PostCommentResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListDocuments
-     *
      * @generated from protobuf rpc: EditComment
      */
     editComment(input: EditCommentRequest, options?: RpcOptions): UnaryCall<EditCommentRequest, EditCommentResponse> {
@@ -509,8 +393,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<EditCommentRequest, EditCommentResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
-     *
      * @generated from protobuf rpc: DeleteComment
      */
     deleteComment(input: DeleteCommentRequest, options?: RpcOptions): UnaryCall<DeleteCommentRequest, DeleteCommentResponse> {
@@ -518,8 +400,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<DeleteCommentRequest, DeleteCommentResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListDocuments
-     *
      * @generated from protobuf rpc: GetDocumentAccess
      */
     getDocumentAccess(input: GetDocumentAccessRequest, options?: RpcOptions): UnaryCall<GetDocumentAccessRequest, GetDocumentAccessResponse> {
@@ -527,8 +407,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<GetDocumentAccessRequest, GetDocumentAccessResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=UpdateDocument
-     *
      * @generated from protobuf rpc: SetDocumentAccess
      */
     setDocumentAccess(input: SetDocumentAccessRequest, options?: RpcOptions): UnaryCall<SetDocumentAccessRequest, SetDocumentAccessResponse> {
@@ -536,8 +414,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<SetDocumentAccessRequest, SetDocumentAccessResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ListDocumentActivity
      */
     listDocumentActivity(input: ListDocumentActivityRequest, options?: RpcOptions): UnaryCall<ListDocumentActivityRequest, ListDocumentActivityResponse> {
@@ -545,8 +421,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<ListDocumentActivityRequest, ListDocumentActivityResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ListDocumentReqs
      */
     listDocumentReqs(input: ListDocumentReqsRequest, options?: RpcOptions): UnaryCall<ListDocumentReqsRequest, ListDocumentReqsResponse> {
@@ -554,8 +428,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<ListDocumentReqsRequest, ListDocumentReqsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion", "OwnerChange"}
-     *
      * @generated from protobuf rpc: CreateDocumentReq
      */
     createDocumentReq(input: CreateDocumentReqRequest, options?: RpcOptions): UnaryCall<CreateDocumentReqRequest, CreateDocumentReqResponse> {
@@ -563,8 +435,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<CreateDocumentReqRequest, CreateDocumentReqResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=CreateDocumentReq
-     *
      * @generated from protobuf rpc: UpdateDocumentReq
      */
     updateDocumentReq(input: UpdateDocumentReqRequest, options?: RpcOptions): UnaryCall<UpdateDocumentReqRequest, UpdateDocumentReqResponse> {
@@ -572,8 +442,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<UpdateDocumentReqRequest, UpdateDocumentReqResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: DeleteDocumentReq
      */
     deleteDocumentReq(input: DeleteDocumentReqRequest, options?: RpcOptions): UnaryCall<DeleteDocumentReqRequest, DeleteDocumentReqResponse> {
@@ -581,8 +449,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<DeleteDocumentReqRequest, DeleteDocumentReqResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ListUserDocuments
      */
     listUserDocuments(input: ListUserDocumentsRequest, options?: RpcOptions): UnaryCall<ListUserDocumentsRequest, ListUserDocumentsResponse> {
@@ -590,8 +456,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<ListUserDocumentsRequest, ListUserDocumentsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ListCategories
      */
     listCategories(input: ListCategoriesRequest, options?: RpcOptions): UnaryCall<ListCategoriesRequest, ListCategoriesResponse> {
@@ -599,8 +463,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<ListCategoriesRequest, ListCategoriesResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: CreateOrUpdateCategory
      */
     createOrUpdateCategory(input: CreateOrUpdateCategoryRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateCategoryRequest, CreateOrUpdateCategoryResponse> {
@@ -608,8 +470,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<CreateOrUpdateCategoryRequest, CreateOrUpdateCategoryResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: DeleteCategory
      */
     deleteCategory(input: DeleteCategoryRequest, options?: RpcOptions): UnaryCall<DeleteCategoryRequest, DeleteCategoryResponse> {
@@ -617,8 +477,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<DeleteCategoryRequest, DeleteCategoryResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListDocuments
-     *
      * @generated from protobuf rpc: ListDocumentPins
      */
     listDocumentPins(input: ListDocumentPinsRequest, options?: RpcOptions): UnaryCall<ListDocumentPinsRequest, ListDocumentPinsResponse> {
@@ -626,8 +484,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<ListDocumentPinsRequest, ListDocumentPinsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Types/StringList:[]string{"JobWide"}
-     *
      * @generated from protobuf rpc: ToggleDocumentPin
      */
     toggleDocumentPin(input: ToggleDocumentPinRequest, options?: RpcOptions): UnaryCall<ToggleDocumentPinRequest, ToggleDocumentPinResponse> {
@@ -635,8 +491,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<ToggleDocumentPinRequest, ToggleDocumentPinResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: SetDocumentReminder
      */
     setDocumentReminder(input: SetDocumentReminderRequest, options?: RpcOptions): UnaryCall<SetDocumentReminderRequest, SetDocumentReminderResponse> {
@@ -644,8 +498,6 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<SetDocumentReminderRequest, SetDocumentReminderResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=UpdateDocument
-     *
      * @generated from protobuf rpc: UploadFile
      */
     uploadFile(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse> {

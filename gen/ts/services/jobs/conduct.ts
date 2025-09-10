@@ -548,8 +548,8 @@ export const DeleteConductEntryResponse = new DeleteConductEntryResponse$Type();
  * @generated ServiceType for protobuf service services.jobs.ConductService
  */
 export const ConductService = new ServiceType("services.jobs.ConductService", [
-    { name: "ListConductEntries", options: {}, I: ListConductEntriesRequest, O: ListConductEntriesResponse },
-    { name: "CreateConductEntry", options: {}, I: CreateConductEntryRequest, O: CreateConductEntryResponse },
-    { name: "UpdateConductEntry", options: {}, I: UpdateConductEntryRequest, O: UpdateConductEntryResponse },
-    { name: "DeleteConductEntry", options: {}, I: DeleteConductEntryRequest, O: DeleteConductEntryResponse }
+    { name: "ListConductEntries", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Access", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Own", "All"] }] } }, I: ListConductEntriesRequest, O: ListConductEntriesResponse },
+    { name: "CreateConductEntry", options: { "codegen.perms.perms": { enabled: true } }, I: CreateConductEntryRequest, O: CreateConductEntryResponse },
+    { name: "UpdateConductEntry", options: { "codegen.perms.perms": { enabled: true } }, I: UpdateConductEntryRequest, O: UpdateConductEntryResponse },
+    { name: "DeleteConductEntry", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteConductEntryRequest, O: DeleteConductEntryResponse }
 ]);

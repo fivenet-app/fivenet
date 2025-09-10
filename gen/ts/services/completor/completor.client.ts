@@ -23,32 +23,22 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface ICompletorServiceClient {
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: CompleteCitizens
      */
     completeCitizens(input: CompleteCitizensRequest, options?: RpcOptions): UnaryCall<CompleteCitizensRequest, CompleteCitizensResponse>;
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: CompleteJobs
      */
     completeJobs(input: CompleteJobsRequest, options?: RpcOptions): UnaryCall<CompleteJobsRequest, CompleteJobsResponse>;
     /**
-     * @perm: Attrs=Jobs/JobList
-     *
      * @generated from protobuf rpc: CompleteDocumentCategories
      */
     completeDocumentCategories(input: CompleteDocumentCategoriesRequest, options?: RpcOptions): UnaryCall<CompleteDocumentCategoriesRequest, CompleteDocumentCategoriesResponse>;
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: ListLawBooks
      */
     listLawBooks(input: ListLawBooksRequest, options?: RpcOptions): UnaryCall<ListLawBooksRequest, ListLawBooksResponse>;
     /**
-     * @perm: Attrs=Jobs/JobList
-     *
      * @generated from protobuf rpc: CompleteCitizenLabels
      */
     completeCitizenLabels(input: CompleteCitizenLabelsRequest, options?: RpcOptions): UnaryCall<CompleteCitizenLabelsRequest, CompleteCitizenLabelsResponse>;
@@ -63,8 +53,6 @@ export class CompletorServiceClient implements ICompletorServiceClient, ServiceI
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: CompleteCitizens
      */
     completeCitizens(input: CompleteCitizensRequest, options?: RpcOptions): UnaryCall<CompleteCitizensRequest, CompleteCitizensResponse> {
@@ -72,8 +60,6 @@ export class CompletorServiceClient implements ICompletorServiceClient, ServiceI
         return stackIntercept<CompleteCitizensRequest, CompleteCitizensResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: CompleteJobs
      */
     completeJobs(input: CompleteJobsRequest, options?: RpcOptions): UnaryCall<CompleteJobsRequest, CompleteJobsResponse> {
@@ -81,8 +67,6 @@ export class CompletorServiceClient implements ICompletorServiceClient, ServiceI
         return stackIntercept<CompleteJobsRequest, CompleteJobsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Jobs/JobList
-     *
      * @generated from protobuf rpc: CompleteDocumentCategories
      */
     completeDocumentCategories(input: CompleteDocumentCategoriesRequest, options?: RpcOptions): UnaryCall<CompleteDocumentCategoriesRequest, CompleteDocumentCategoriesResponse> {
@@ -90,8 +74,6 @@ export class CompletorServiceClient implements ICompletorServiceClient, ServiceI
         return stackIntercept<CompleteDocumentCategoriesRequest, CompleteDocumentCategoriesResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: ListLawBooks
      */
     listLawBooks(input: ListLawBooksRequest, options?: RpcOptions): UnaryCall<ListLawBooksRequest, ListLawBooksResponse> {
@@ -99,8 +81,6 @@ export class CompletorServiceClient implements ICompletorServiceClient, ServiceI
         return stackIntercept<ListLawBooksRequest, ListLawBooksResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Jobs/JobList
-     *
      * @generated from protobuf rpc: CompleteCitizenLabels
      */
     completeCitizenLabels(input: CompleteCitizenLabelsRequest, options?: RpcOptions): UnaryCall<CompleteCitizenLabelsRequest, CompleteCitizenLabelsResponse> {

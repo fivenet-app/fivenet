@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package codegen.perms;
+
+import "google/protobuf/descriptor.proto";
+import "resources/permissions/attributes.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms;perms";
+
+extend google.protobuf.MethodOptions {
+  FieldOptions perms = 51002;
+}
+
+message FieldOptions {
+  bool enabled = 1;
+  optional string service = 2;
+  optional string name = 3;
+  int32 order = 4;
+  repeated Attr attrs = 5;
+}
+
+message Attr {
+  string key = 1;
+  string value = 2;
+  resources.permissions.AttributeType type = 3;
+
+  repeated string valid_string_list = 4;
+}

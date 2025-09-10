@@ -1866,19 +1866,19 @@ export const SubscribeToCalendarResponse = new SubscribeToCalendarResponse$Type(
  * @generated ServiceType for protobuf service services.calendar.CalendarService
  */
 export const CalendarService = new ServiceType("services.calendar.CalendarService", [
-    { name: "ListCalendars", options: {}, I: ListCalendarsRequest, O: ListCalendarsResponse },
-    { name: "GetCalendar", options: {}, I: GetCalendarRequest, O: GetCalendarResponse },
-    { name: "CreateCalendar", options: {}, I: CreateCalendarRequest, O: CreateCalendarResponse },
-    { name: "UpdateCalendar", options: {}, I: UpdateCalendarRequest, O: UpdateCalendarResponse },
-    { name: "DeleteCalendar", options: {}, I: DeleteCalendarRequest, O: DeleteCalendarResponse },
-    { name: "ListCalendarEntries", options: {}, I: ListCalendarEntriesRequest, O: ListCalendarEntriesResponse },
-    { name: "GetUpcomingEntries", options: {}, I: GetUpcomingEntriesRequest, O: GetUpcomingEntriesResponse },
-    { name: "GetCalendarEntry", options: {}, I: GetCalendarEntryRequest, O: GetCalendarEntryResponse },
-    { name: "CreateOrUpdateCalendarEntry", options: {}, I: CreateOrUpdateCalendarEntryRequest, O: CreateOrUpdateCalendarEntryResponse },
-    { name: "DeleteCalendarEntry", options: {}, I: DeleteCalendarEntryRequest, O: DeleteCalendarEntryResponse },
-    { name: "ShareCalendarEntry", options: {}, I: ShareCalendarEntryRequest, O: ShareCalendarEntryResponse },
-    { name: "ListCalendarEntryRSVP", options: {}, I: ListCalendarEntryRSVPRequest, O: ListCalendarEntryRSVPResponse },
-    { name: "RSVPCalendarEntry", options: {}, I: RSVPCalendarEntryRequest, O: RSVPCalendarEntryResponse },
-    { name: "ListSubscriptions", options: {}, I: ListSubscriptionsRequest, O: ListSubscriptionsResponse },
-    { name: "SubscribeToCalendar", options: {}, I: SubscribeToCalendarRequest, O: SubscribeToCalendarResponse }
+    { name: "ListCalendars", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: ListCalendarsRequest, O: ListCalendarsResponse },
+    { name: "GetCalendar", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: GetCalendarRequest, O: GetCalendarResponse },
+    { name: "CreateCalendar", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Job", "Public"] }] } }, I: CreateCalendarRequest, O: CreateCalendarResponse },
+    { name: "UpdateCalendar", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: UpdateCalendarRequest, O: UpdateCalendarResponse },
+    { name: "DeleteCalendar", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: DeleteCalendarRequest, O: DeleteCalendarResponse },
+    { name: "ListCalendarEntries", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: ListCalendarEntriesRequest, O: ListCalendarEntriesResponse },
+    { name: "GetUpcomingEntries", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: GetUpcomingEntriesRequest, O: GetUpcomingEntriesResponse },
+    { name: "GetCalendarEntry", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: GetCalendarEntryRequest, O: GetCalendarEntryResponse },
+    { name: "CreateOrUpdateCalendarEntry", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: CreateOrUpdateCalendarEntryRequest, O: CreateOrUpdateCalendarEntryResponse },
+    { name: "DeleteCalendarEntry", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: DeleteCalendarEntryRequest, O: DeleteCalendarEntryResponse },
+    { name: "ShareCalendarEntry", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: ShareCalendarEntryRequest, O: ShareCalendarEntryResponse },
+    { name: "ListCalendarEntryRSVP", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: ListCalendarEntryRSVPRequest, O: ListCalendarEntryRSVPResponse },
+    { name: "RSVPCalendarEntry", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: RSVPCalendarEntryRequest, O: RSVPCalendarEntryResponse },
+    { name: "ListSubscriptions", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: ListSubscriptionsRequest, O: ListSubscriptionsResponse },
+    { name: "SubscribeToCalendar", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: SubscribeToCalendarRequest, O: SubscribeToCalendarResponse }
 ]);

@@ -4,6 +4,7 @@ package services.jobs;
 
 import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
+import "codegen/perms/perms.proto";
 import "resources/common/database/database.proto";
 import "resources/jobs/conduct.proto";
 
@@ -49,12 +50,28 @@ message DeleteConductEntryRequest {
 message DeleteConductEntryResponse {}
 
 service ConductService {
-  // @perm: Attrs=Access/StringList:[]string{"Own", "All"}
-  rpc ListConductEntries(ListConductEntriesRequest) returns (ListConductEntriesResponse);
-  // @perm
-  rpc CreateConductEntry(CreateConductEntryRequest) returns (CreateConductEntryResponse);
-  // @perm
-  rpc UpdateConductEntry(UpdateConductEntryRequest) returns (UpdateConductEntryResponse);
-  // @perm
-  rpc DeleteConductEntry(DeleteConductEntryRequest) returns (DeleteConductEntryResponse);
+  rpc ListConductEntries(ListConductEntriesRequest) returns (ListConductEntriesResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      attrs: [
+        {
+          key: "Access"
+          type: ATTRIBUTE_TYPE_STRING_LIST
+          valid_string_list: [
+            "Own",
+            "All"
+          ]
+        }
+      ]
+    };
+  }
+  rpc CreateConductEntry(CreateConductEntryRequest) returns (CreateConductEntryResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc UpdateConductEntry(UpdateConductEntryRequest) returns (UpdateConductEntryResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc DeleteConductEntry(DeleteConductEntryRequest) returns (DeleteConductEntryResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
 }

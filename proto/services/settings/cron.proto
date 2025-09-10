@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package services.settings;
 
+import "codegen/perms/perms.proto";
 import "resources/common/cron/cron.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settings";
@@ -13,6 +14,10 @@ message ListCronjobsResponse {
 }
 
 service CronService {
-  // @perm: Name=Superuser
-  rpc ListCronjobs(ListCronjobsRequest) returns (ListCronjobsResponse);
+  rpc ListCronjobs(ListCronjobsRequest) returns (ListCronjobsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Superuser"
+    };
+  }
 }

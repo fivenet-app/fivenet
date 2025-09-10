@@ -1584,18 +1584,18 @@ export const DeleteJobLogoResponse = new DeleteJobLogoResponse$Type();
  * @generated ServiceType for protobuf service services.settings.SettingsService
  */
 export const SettingsService = new ServiceType("services.settings.SettingsService", [
-    { name: "GetJobProps", options: {}, I: GetJobPropsRequest, O: GetJobPropsResponse },
-    { name: "SetJobProps", options: {}, I: SetJobPropsRequest, O: SetJobPropsResponse },
-    { name: "GetRoles", options: {}, I: GetRolesRequest, O: GetRolesResponse },
-    { name: "GetRole", options: {}, I: GetRoleRequest, O: GetRoleResponse },
-    { name: "CreateRole", options: {}, I: CreateRoleRequest, O: CreateRoleResponse },
-    { name: "DeleteRole", options: {}, I: DeleteRoleRequest, O: DeleteRoleResponse },
-    { name: "UpdateRolePerms", options: {}, I: UpdateRolePermsRequest, O: UpdateRolePermsResponse },
-    { name: "GetPermissions", options: {}, I: GetPermissionsRequest, O: GetPermissionsResponse },
-    { name: "GetEffectivePermissions", options: {}, I: GetEffectivePermissionsRequest, O: GetEffectivePermissionsResponse },
-    { name: "ViewAuditLog", options: {}, I: ViewAuditLogRequest, O: ViewAuditLogResponse },
-    { name: "ListDiscordChannels", options: {}, I: ListDiscordChannelsRequest, O: ListDiscordChannelsResponse },
-    { name: "ListUserGuilds", options: {}, I: ListUserGuildsRequest, O: ListUserGuildsResponse },
-    { name: "UploadJobLogo", clientStreaming: true, options: {}, I: UploadFileRequest, O: UploadFileResponse },
-    { name: "DeleteJobLogo", options: {}, I: DeleteJobLogoRequest, O: DeleteJobLogoResponse }
+    { name: "GetJobProps", options: { "codegen.perms.perms": { enabled: true } }, I: GetJobPropsRequest, O: GetJobPropsResponse },
+    { name: "SetJobProps", options: { "codegen.perms.perms": { enabled: true } }, I: SetJobPropsRequest, O: SetJobPropsResponse },
+    { name: "GetRoles", options: { "codegen.perms.perms": { enabled: true } }, I: GetRolesRequest, O: GetRolesResponse },
+    { name: "GetRole", options: { "codegen.perms.perms": { enabled: true, name: "GetRoles" } }, I: GetRoleRequest, O: GetRoleResponse },
+    { name: "CreateRole", options: { "codegen.perms.perms": { enabled: true } }, I: CreateRoleRequest, O: CreateRoleResponse },
+    { name: "DeleteRole", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteRoleRequest, O: DeleteRoleResponse },
+    { name: "UpdateRolePerms", options: { "codegen.perms.perms": { enabled: true } }, I: UpdateRolePermsRequest, O: UpdateRolePermsResponse },
+    { name: "GetPermissions", options: { "codegen.perms.perms": { enabled: true, name: "GetRoles" } }, I: GetPermissionsRequest, O: GetPermissionsResponse },
+    { name: "GetEffectivePermissions", options: { "codegen.perms.perms": { enabled: true, name: "GetRoles" } }, I: GetEffectivePermissionsRequest, O: GetEffectivePermissionsResponse },
+    { name: "ViewAuditLog", options: { "codegen.perms.perms": { enabled: true } }, I: ViewAuditLogRequest, O: ViewAuditLogResponse },
+    { name: "ListDiscordChannels", options: { "codegen.perms.perms": { enabled: true, name: "SetJobProps" } }, I: ListDiscordChannelsRequest, O: ListDiscordChannelsResponse },
+    { name: "ListUserGuilds", options: { "codegen.perms.perms": { enabled: true, name: "SetJobProps" } }, I: ListUserGuildsRequest, O: ListUserGuildsResponse },
+    { name: "UploadJobLogo", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, name: "SetJobProps" } }, I: UploadFileRequest, O: UploadFileResponse },
+    { name: "DeleteJobLogo", options: { "codegen.perms.perms": { enabled: true, name: "SetJobProps" } }, I: DeleteJobLogoRequest, O: DeleteJobLogoResponse }
 ]);

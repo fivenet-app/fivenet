@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.settings;
 
 import "buf/validate/validate.proto";
+import "codegen/perms/perms.proto";
 import "resources/settings/config.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settings";
@@ -22,8 +23,16 @@ message UpdateAppConfigResponse {
 }
 
 service ConfigService {
-  // @perm: Name=Superuser
-  rpc GetAppConfig(GetAppConfigRequest) returns (GetAppConfigResponse);
-  // @perm: Name=Superuser
-  rpc UpdateAppConfig(UpdateAppConfigRequest) returns (UpdateAppConfigResponse);
+  rpc GetAppConfig(GetAppConfigRequest) returns (GetAppConfigResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Superuser"
+    };
+  }
+  rpc UpdateAppConfig(UpdateAppConfigRequest) returns (UpdateAppConfigResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Superuser"
+    };
+  }
 }

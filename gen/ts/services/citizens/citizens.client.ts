@@ -30,31 +30,22 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface ICitizensServiceClient {
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.Mugshot", "UserProps.Labels", "UserProps.Email"}
-     *
      * @generated from protobuf rpc: ListCitizens
      */
     listCitizens(input: ListCitizensRequest, options?: RpcOptions): UnaryCall<ListCitizensRequest, ListCitizensResponse>;
     /**
-     * @perm: Attrs=Jobs/JobGradeList
-     *
      * @generated from protobuf rpc: GetUser
      */
     getUser(input: GetUserRequest, options?: RpcOptions): UnaryCall<GetUserRequest, GetUserResponse>;
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"}
-     *
      * @generated from protobuf rpc: ListUserActivity
      */
     listUserActivity(input: ListUserActivityRequest, options?: RpcOptions): UnaryCall<ListUserActivityRequest, ListUserActivityResponse>;
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "Mugshot", "Labels"}
-     *
      * @generated from protobuf rpc: SetUserProps
      */
     setUserProps(input: SetUserPropsRequest, options?: RpcOptions): UnaryCall<SetUserPropsRequest, SetUserPropsResponse>;
     /**
-     * @perm: Name=Any
      * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
      * buf:lint:ignore RPC_REQUEST_STANDARD_NAME
      * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
@@ -63,13 +54,10 @@ export interface ICitizensServiceClient {
      */
     uploadAvatar(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse>;
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: DeleteAvatar
      */
     deleteAvatar(input: DeleteAvatarRequest, options?: RpcOptions): UnaryCall<DeleteAvatarRequest, DeleteAvatarResponse>;
     /**
-     * @perm: Name=SetUserProps
      * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
      * buf:lint:ignore RPC_REQUEST_STANDARD_NAME
      * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
@@ -78,14 +66,10 @@ export interface ICitizensServiceClient {
      */
     uploadMugshot(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse>;
     /**
-     * @perm: Name=SetUserProps
-     *
      * @generated from protobuf rpc: DeleteMugshot
      */
     deleteMugshot(input: DeleteMugshotRequest, options?: RpcOptions): UnaryCall<DeleteMugshotRequest, DeleteMugshotResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ManageLabels
      */
     manageLabels(input: ManageLabelsRequest, options?: RpcOptions): UnaryCall<ManageLabelsRequest, ManageLabelsResponse>;
@@ -100,8 +84,6 @@ export class CitizensServiceClient implements ICitizensServiceClient, ServiceInf
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.Mugshot", "UserProps.Labels", "UserProps.Email"}
-     *
      * @generated from protobuf rpc: ListCitizens
      */
     listCitizens(input: ListCitizensRequest, options?: RpcOptions): UnaryCall<ListCitizensRequest, ListCitizensResponse> {
@@ -109,8 +91,6 @@ export class CitizensServiceClient implements ICitizensServiceClient, ServiceInf
         return stackIntercept<ListCitizensRequest, ListCitizensResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Jobs/JobGradeList
-     *
      * @generated from protobuf rpc: GetUser
      */
     getUser(input: GetUserRequest, options?: RpcOptions): UnaryCall<GetUserRequest, GetUserResponse> {
@@ -118,8 +98,6 @@ export class CitizensServiceClient implements ICitizensServiceClient, ServiceInf
         return stackIntercept<GetUserRequest, GetUserResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"}
-     *
      * @generated from protobuf rpc: ListUserActivity
      */
     listUserActivity(input: ListUserActivityRequest, options?: RpcOptions): UnaryCall<ListUserActivityRequest, ListUserActivityResponse> {
@@ -127,8 +105,6 @@ export class CitizensServiceClient implements ICitizensServiceClient, ServiceInf
         return stackIntercept<ListUserActivityRequest, ListUserActivityResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "Mugshot", "Labels"}
-     *
      * @generated from protobuf rpc: SetUserProps
      */
     setUserProps(input: SetUserPropsRequest, options?: RpcOptions): UnaryCall<SetUserPropsRequest, SetUserPropsResponse> {
@@ -136,7 +112,6 @@ export class CitizensServiceClient implements ICitizensServiceClient, ServiceInf
         return stackIntercept<SetUserPropsRequest, SetUserPropsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Any
      * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
      * buf:lint:ignore RPC_REQUEST_STANDARD_NAME
      * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
@@ -148,8 +123,6 @@ export class CitizensServiceClient implements ICitizensServiceClient, ServiceInf
         return stackIntercept<UploadFileRequest, UploadFileResponse>("clientStreaming", this._transport, method, opt);
     }
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: DeleteAvatar
      */
     deleteAvatar(input: DeleteAvatarRequest, options?: RpcOptions): UnaryCall<DeleteAvatarRequest, DeleteAvatarResponse> {
@@ -157,7 +130,6 @@ export class CitizensServiceClient implements ICitizensServiceClient, ServiceInf
         return stackIntercept<DeleteAvatarRequest, DeleteAvatarResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=SetUserProps
      * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
      * buf:lint:ignore RPC_REQUEST_STANDARD_NAME
      * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
@@ -169,8 +141,6 @@ export class CitizensServiceClient implements ICitizensServiceClient, ServiceInf
         return stackIntercept<UploadFileRequest, UploadFileResponse>("clientStreaming", this._transport, method, opt);
     }
     /**
-     * @perm: Name=SetUserProps
-     *
      * @generated from protobuf rpc: DeleteMugshot
      */
     deleteMugshot(input: DeleteMugshotRequest, options?: RpcOptions): UnaryCall<DeleteMugshotRequest, DeleteMugshotResponse> {
@@ -178,8 +148,6 @@ export class CitizensServiceClient implements ICitizensServiceClient, ServiceInf
         return stackIntercept<DeleteMugshotRequest, DeleteMugshotResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ManageLabels
      */
     manageLabels(input: ManageLabelsRequest, options?: RpcOptions): UnaryCall<ManageLabelsRequest, ManageLabelsResponse> {

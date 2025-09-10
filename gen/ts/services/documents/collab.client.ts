@@ -15,7 +15,6 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface ICollabServiceClient {
     /**
-     * @perm: Name=documents.DocumentsService/UpdateDocument
      * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
      * buf:lint:ignore RPC_REQUEST_STANDARD_NAME
      * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
@@ -34,7 +33,6 @@ export class CollabServiceClient implements ICollabServiceClient, ServiceInfo {
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm: Name=documents.DocumentsService/UpdateDocument
      * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
      * buf:lint:ignore RPC_REQUEST_STANDARD_NAME
      * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME

@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.completor;
 
 import "buf/validate/validate.proto";
+import "codegen/perms/perms.proto";
 import "resources/documents/category.proto";
 import "resources/jobs/jobs.proto";
 import "resources/laws/laws.proto";
@@ -57,15 +58,42 @@ message CompleteCitizenLabelsResponse {
 }
 
 service CompletorService {
-  // @perm
-  rpc CompleteCitizens(CompleteCitizensRequest) returns (CompleteCitizensResponse);
-  // @perm: Name=Any
-  rpc CompleteJobs(CompleteJobsRequest) returns (CompleteJobsResponse);
-  // @perm: Attrs=Jobs/JobList
-  rpc CompleteDocumentCategories(CompleteDocumentCategoriesRequest) returns (CompleteDocumentCategoriesResponse);
-  // @perm: Name=Any
-  rpc ListLawBooks(ListLawBooksRequest) returns (ListLawBooksResponse);
+  rpc CompleteCitizens(CompleteCitizensRequest) returns (CompleteCitizensResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc CompleteJobs(CompleteJobsRequest) returns (CompleteJobsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
+  rpc CompleteDocumentCategories(CompleteDocumentCategoriesRequest) returns (CompleteDocumentCategoriesResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      attrs: [
+        {
+          key: "Jobs"
+          type: ATTRIBUTE_TYPE_JOB_LIST
+        }
+      ]
+    };
+  }
+  rpc ListLawBooks(ListLawBooksRequest) returns (ListLawBooksResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
 
-  // @perm: Attrs=Jobs/JobList
-  rpc CompleteCitizenLabels(CompleteCitizenLabelsRequest) returns (CompleteCitizenLabelsResponse);
+  rpc CompleteCitizenLabels(CompleteCitizenLabelsRequest) returns (CompleteCitizenLabelsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      attrs: [
+        {
+          key: "Jobs"
+          type: ATTRIBUTE_TYPE_JOB_LIST
+        }
+      ]
+    };
+  }
 }

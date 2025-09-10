@@ -20,20 +20,14 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface INotificationsServiceClient {
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: GetNotifications
      */
     getNotifications(input: GetNotificationsRequest, options?: RpcOptions): UnaryCall<GetNotificationsRequest, GetNotificationsResponse>;
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: MarkNotifications
      */
     markNotifications(input: MarkNotificationsRequest, options?: RpcOptions): UnaryCall<MarkNotificationsRequest, MarkNotificationsResponse>;
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: Stream
      */
     stream(options?: RpcOptions): DuplexStreamingCall<StreamRequest, StreamResponse>;
@@ -48,8 +42,6 @@ export class NotificationsServiceClient implements INotificationsServiceClient, 
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: GetNotifications
      */
     getNotifications(input: GetNotificationsRequest, options?: RpcOptions): UnaryCall<GetNotificationsRequest, GetNotificationsResponse> {
@@ -57,8 +49,6 @@ export class NotificationsServiceClient implements INotificationsServiceClient, 
         return stackIntercept<GetNotificationsRequest, GetNotificationsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: MarkNotifications
      */
     markNotifications(input: MarkNotificationsRequest, options?: RpcOptions): UnaryCall<MarkNotificationsRequest, MarkNotificationsResponse> {
@@ -66,8 +56,6 @@ export class NotificationsServiceClient implements INotificationsServiceClient, 
         return stackIntercept<MarkNotificationsRequest, MarkNotificationsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: Stream
      */
     stream(options?: RpcOptions): DuplexStreamingCall<StreamRequest, StreamResponse> {

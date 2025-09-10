@@ -803,7 +803,7 @@ export const ListInactiveEmployeesResponse = new ListInactiveEmployeesResponse$T
  * @generated ServiceType for protobuf service services.jobs.TimeclockService
  */
 export const TimeclockService = new ServiceType("services.jobs.TimeclockService", [
-    { name: "ListTimeclock", options: {}, I: ListTimeclockRequest, O: ListTimeclockResponse },
-    { name: "GetTimeclockStats", options: {}, I: GetTimeclockStatsRequest, O: GetTimeclockStatsResponse },
-    { name: "ListInactiveEmployees", options: {}, I: ListInactiveEmployeesRequest, O: ListInactiveEmployeesResponse }
+    { name: "ListTimeclock", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Access", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["All"] }] } }, I: ListTimeclockRequest, O: ListTimeclockResponse },
+    { name: "GetTimeclockStats", options: { "codegen.perms.perms": { enabled: true, name: "ListTimeclock" } }, I: GetTimeclockStatsRequest, O: GetTimeclockStatsResponse },
+    { name: "ListInactiveEmployees", options: { "codegen.perms.perms": { enabled: true } }, I: ListInactiveEmployeesRequest, O: ListInactiveEmployeesResponse }
 ]);

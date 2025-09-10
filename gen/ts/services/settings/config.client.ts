@@ -17,14 +17,10 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface IConfigServiceClient {
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: GetAppConfig
      */
     getAppConfig(input: GetAppConfigRequest, options?: RpcOptions): UnaryCall<GetAppConfigRequest, GetAppConfigResponse>;
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: UpdateAppConfig
      */
     updateAppConfig(input: UpdateAppConfigRequest, options?: RpcOptions): UnaryCall<UpdateAppConfigRequest, UpdateAppConfigResponse>;
@@ -39,8 +35,6 @@ export class ConfigServiceClient implements IConfigServiceClient, ServiceInfo {
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: GetAppConfig
      */
     getAppConfig(input: GetAppConfigRequest, options?: RpcOptions): UnaryCall<GetAppConfigRequest, GetAppConfigResponse> {
@@ -48,8 +42,6 @@ export class ConfigServiceClient implements IConfigServiceClient, ServiceInfo {
         return stackIntercept<GetAppConfigRequest, GetAppConfigResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: UpdateAppConfig
      */
     updateAppConfig(input: UpdateAppConfigRequest, options?: RpcOptions): UnaryCall<UpdateAppConfigRequest, UpdateAppConfigResponse> {

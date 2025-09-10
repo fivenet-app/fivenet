@@ -42,79 +42,54 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface ISettingsServiceClient {
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: GetJobProps
      */
     getJobProps(input: GetJobPropsRequest, options?: RpcOptions): UnaryCall<GetJobPropsRequest, GetJobPropsResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: SetJobProps
      */
     setJobProps(input: SetJobPropsRequest, options?: RpcOptions): UnaryCall<SetJobPropsRequest, SetJobPropsResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: GetRoles
      */
     getRoles(input: GetRolesRequest, options?: RpcOptions): UnaryCall<GetRolesRequest, GetRolesResponse>;
     /**
-     * @perm: Name=GetRoles
-     *
      * @generated from protobuf rpc: GetRole
      */
     getRole(input: GetRoleRequest, options?: RpcOptions): UnaryCall<GetRoleRequest, GetRoleResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: CreateRole
      */
     createRole(input: CreateRoleRequest, options?: RpcOptions): UnaryCall<CreateRoleRequest, CreateRoleResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: DeleteRole
      */
     deleteRole(input: DeleteRoleRequest, options?: RpcOptions): UnaryCall<DeleteRoleRequest, DeleteRoleResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: UpdateRolePerms
      */
     updateRolePerms(input: UpdateRolePermsRequest, options?: RpcOptions): UnaryCall<UpdateRolePermsRequest, UpdateRolePermsResponse>;
     /**
-     * @perm: Name=GetRoles
-     *
      * @generated from protobuf rpc: GetPermissions
      */
     getPermissions(input: GetPermissionsRequest, options?: RpcOptions): UnaryCall<GetPermissionsRequest, GetPermissionsResponse>;
     /**
-     * @perm: Name=GetRoles
-     *
      * @generated from protobuf rpc: GetEffectivePermissions
      */
     getEffectivePermissions(input: GetEffectivePermissionsRequest, options?: RpcOptions): UnaryCall<GetEffectivePermissionsRequest, GetEffectivePermissionsResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ViewAuditLog
      */
     viewAuditLog(input: ViewAuditLogRequest, options?: RpcOptions): UnaryCall<ViewAuditLogRequest, ViewAuditLogResponse>;
     /**
-     * @perm: Name=SetJobProps
-     *
      * @generated from protobuf rpc: ListDiscordChannels
      */
     listDiscordChannels(input: ListDiscordChannelsRequest, options?: RpcOptions): UnaryCall<ListDiscordChannelsRequest, ListDiscordChannelsResponse>;
     /**
-     * @perm: Name=SetJobProps
-     *
      * @generated from protobuf rpc: ListUserGuilds
      */
     listUserGuilds(input: ListUserGuildsRequest, options?: RpcOptions): UnaryCall<ListUserGuildsRequest, ListUserGuildsResponse>;
     /**
-     * @perm: Name=SetJobProps
      * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
      * buf:lint:ignore RPC_REQUEST_STANDARD_NAME
      * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
@@ -123,8 +98,6 @@ export interface ISettingsServiceClient {
      */
     uploadJobLogo(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse>;
     /**
-     * @perm: Name=SetJobProps
-     *
      * @generated from protobuf rpc: DeleteJobLogo
      */
     deleteJobLogo(input: DeleteJobLogoRequest, options?: RpcOptions): UnaryCall<DeleteJobLogoRequest, DeleteJobLogoResponse>;
@@ -139,8 +112,6 @@ export class SettingsServiceClient implements ISettingsServiceClient, ServiceInf
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: GetJobProps
      */
     getJobProps(input: GetJobPropsRequest, options?: RpcOptions): UnaryCall<GetJobPropsRequest, GetJobPropsResponse> {
@@ -148,8 +119,6 @@ export class SettingsServiceClient implements ISettingsServiceClient, ServiceInf
         return stackIntercept<GetJobPropsRequest, GetJobPropsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: SetJobProps
      */
     setJobProps(input: SetJobPropsRequest, options?: RpcOptions): UnaryCall<SetJobPropsRequest, SetJobPropsResponse> {
@@ -157,8 +126,6 @@ export class SettingsServiceClient implements ISettingsServiceClient, ServiceInf
         return stackIntercept<SetJobPropsRequest, SetJobPropsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: GetRoles
      */
     getRoles(input: GetRolesRequest, options?: RpcOptions): UnaryCall<GetRolesRequest, GetRolesResponse> {
@@ -166,8 +133,6 @@ export class SettingsServiceClient implements ISettingsServiceClient, ServiceInf
         return stackIntercept<GetRolesRequest, GetRolesResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=GetRoles
-     *
      * @generated from protobuf rpc: GetRole
      */
     getRole(input: GetRoleRequest, options?: RpcOptions): UnaryCall<GetRoleRequest, GetRoleResponse> {
@@ -175,8 +140,6 @@ export class SettingsServiceClient implements ISettingsServiceClient, ServiceInf
         return stackIntercept<GetRoleRequest, GetRoleResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: CreateRole
      */
     createRole(input: CreateRoleRequest, options?: RpcOptions): UnaryCall<CreateRoleRequest, CreateRoleResponse> {
@@ -184,8 +147,6 @@ export class SettingsServiceClient implements ISettingsServiceClient, ServiceInf
         return stackIntercept<CreateRoleRequest, CreateRoleResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: DeleteRole
      */
     deleteRole(input: DeleteRoleRequest, options?: RpcOptions): UnaryCall<DeleteRoleRequest, DeleteRoleResponse> {
@@ -193,8 +154,6 @@ export class SettingsServiceClient implements ISettingsServiceClient, ServiceInf
         return stackIntercept<DeleteRoleRequest, DeleteRoleResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: UpdateRolePerms
      */
     updateRolePerms(input: UpdateRolePermsRequest, options?: RpcOptions): UnaryCall<UpdateRolePermsRequest, UpdateRolePermsResponse> {
@@ -202,8 +161,6 @@ export class SettingsServiceClient implements ISettingsServiceClient, ServiceInf
         return stackIntercept<UpdateRolePermsRequest, UpdateRolePermsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=GetRoles
-     *
      * @generated from protobuf rpc: GetPermissions
      */
     getPermissions(input: GetPermissionsRequest, options?: RpcOptions): UnaryCall<GetPermissionsRequest, GetPermissionsResponse> {
@@ -211,8 +168,6 @@ export class SettingsServiceClient implements ISettingsServiceClient, ServiceInf
         return stackIntercept<GetPermissionsRequest, GetPermissionsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=GetRoles
-     *
      * @generated from protobuf rpc: GetEffectivePermissions
      */
     getEffectivePermissions(input: GetEffectivePermissionsRequest, options?: RpcOptions): UnaryCall<GetEffectivePermissionsRequest, GetEffectivePermissionsResponse> {
@@ -220,8 +175,6 @@ export class SettingsServiceClient implements ISettingsServiceClient, ServiceInf
         return stackIntercept<GetEffectivePermissionsRequest, GetEffectivePermissionsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ViewAuditLog
      */
     viewAuditLog(input: ViewAuditLogRequest, options?: RpcOptions): UnaryCall<ViewAuditLogRequest, ViewAuditLogResponse> {
@@ -229,8 +182,6 @@ export class SettingsServiceClient implements ISettingsServiceClient, ServiceInf
         return stackIntercept<ViewAuditLogRequest, ViewAuditLogResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=SetJobProps
-     *
      * @generated from protobuf rpc: ListDiscordChannels
      */
     listDiscordChannels(input: ListDiscordChannelsRequest, options?: RpcOptions): UnaryCall<ListDiscordChannelsRequest, ListDiscordChannelsResponse> {
@@ -238,8 +189,6 @@ export class SettingsServiceClient implements ISettingsServiceClient, ServiceInf
         return stackIntercept<ListDiscordChannelsRequest, ListDiscordChannelsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=SetJobProps
-     *
      * @generated from protobuf rpc: ListUserGuilds
      */
     listUserGuilds(input: ListUserGuildsRequest, options?: RpcOptions): UnaryCall<ListUserGuildsRequest, ListUserGuildsResponse> {
@@ -247,7 +196,6 @@ export class SettingsServiceClient implements ISettingsServiceClient, ServiceInf
         return stackIntercept<ListUserGuildsRequest, ListUserGuildsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=SetJobProps
      * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
      * buf:lint:ignore RPC_REQUEST_STANDARD_NAME
      * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
@@ -259,8 +207,6 @@ export class SettingsServiceClient implements ISettingsServiceClient, ServiceInf
         return stackIntercept<UploadFileRequest, UploadFileResponse>("clientStreaming", this._transport, method, opt);
     }
     /**
-     * @perm: Name=SetJobProps
-     *
      * @generated from protobuf rpc: DeleteJobLogo
      */
     deleteJobLogo(input: DeleteJobLogoRequest, options?: RpcOptions): UnaryCall<DeleteJobLogoRequest, DeleteJobLogoResponse> {

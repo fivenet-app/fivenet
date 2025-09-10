@@ -4,6 +4,7 @@ package services.notifications;
 
 import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
+import "codegen/perms/perms.proto";
 import "resources/common/database/database.proto";
 import "resources/mailer/events.proto";
 import "resources/notifications/client_view.proto";
@@ -69,11 +70,23 @@ message StreamResponse {
 }
 
 service NotificationsService {
-  // @perm: Name=Any
-  rpc GetNotifications(GetNotificationsRequest) returns (GetNotificationsResponse);
-  // @perm: Name=Any
-  rpc MarkNotifications(MarkNotificationsRequest) returns (MarkNotificationsResponse);
+  rpc GetNotifications(GetNotificationsRequest) returns (GetNotificationsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
+  rpc MarkNotifications(MarkNotificationsRequest) returns (MarkNotificationsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
 
-  // @perm: Name=Any
-  rpc Stream(stream StreamRequest) returns (stream StreamResponse);
+  rpc Stream(stream StreamRequest) returns (stream StreamResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
 }

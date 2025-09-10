@@ -63,79 +63,42 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DocumentsServiceClient interface {
-	// @perm
 	ListTemplates(ctx context.Context, in *ListTemplatesRequest, opts ...grpc.CallOption) (*ListTemplatesResponse, error)
-	// @perm: Name=ListTemplates
 	GetTemplate(ctx context.Context, in *GetTemplateRequest, opts ...grpc.CallOption) (*GetTemplateResponse, error)
-	// @perm
 	CreateTemplate(ctx context.Context, in *CreateTemplateRequest, opts ...grpc.CallOption) (*CreateTemplateResponse, error)
-	// @perm: Name=CreateTemplate
 	UpdateTemplate(ctx context.Context, in *UpdateTemplateRequest, opts ...grpc.CallOption) (*UpdateTemplateResponse, error)
-	// @perm
 	DeleteTemplate(ctx context.Context, in *DeleteTemplateRequest, opts ...grpc.CallOption) (*DeleteTemplateResponse, error)
-	// @perm
 	ListDocuments(ctx context.Context, in *ListDocumentsRequest, opts ...grpc.CallOption) (*ListDocumentsResponse, error)
-	// @perm: Name=ListDocuments
 	GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*GetDocumentResponse, error)
-	// @perm: Name=UpdateDocument
 	CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*CreateDocumentResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	UpdateDocument(ctx context.Context, in *UpdateDocumentRequest, opts ...grpc.CallOption) (*UpdateDocumentResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	DeleteDocument(ctx context.Context, in *DeleteDocumentRequest, opts ...grpc.CallOption) (*DeleteDocumentResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	ToggleDocument(ctx context.Context, in *ToggleDocumentRequest, opts ...grpc.CallOption) (*ToggleDocumentResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	ChangeDocumentOwner(ctx context.Context, in *ChangeDocumentOwnerRequest, opts ...grpc.CallOption) (*ChangeDocumentOwnerResponse, error)
-	// @perm: Name=ListDocuments
 	GetDocumentReferences(ctx context.Context, in *GetDocumentReferencesRequest, opts ...grpc.CallOption) (*GetDocumentReferencesResponse, error)
-	// @perm: Name=ListDocuments
 	GetDocumentRelations(ctx context.Context, in *GetDocumentRelationsRequest, opts ...grpc.CallOption) (*GetDocumentRelationsResponse, error)
-	// @perm
 	AddDocumentReference(ctx context.Context, in *AddDocumentReferenceRequest, opts ...grpc.CallOption) (*AddDocumentReferenceResponse, error)
-	// @perm: Name=AddDocumentReference
 	RemoveDocumentReference(ctx context.Context, in *RemoveDocumentReferenceRequest, opts ...grpc.CallOption) (*RemoveDocumentReferenceResponse, error)
-	// @perm
 	AddDocumentRelation(ctx context.Context, in *AddDocumentRelationRequest, opts ...grpc.CallOption) (*AddDocumentRelationResponse, error)
-	// @perm: Name=AddDocumentRelation
 	RemoveDocumentRelation(ctx context.Context, in *RemoveDocumentRelationRequest, opts ...grpc.CallOption) (*RemoveDocumentRelationResponse, error)
-	// @perm: Name=ListDocuments
 	GetComments(ctx context.Context, in *GetCommentsRequest, opts ...grpc.CallOption) (*GetCommentsResponse, error)
-	// @perm: Name=ListDocuments
 	PostComment(ctx context.Context, in *PostCommentRequest, opts ...grpc.CallOption) (*PostCommentResponse, error)
-	// @perm: Name=ListDocuments
 	EditComment(ctx context.Context, in *EditCommentRequest, opts ...grpc.CallOption) (*EditCommentResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*DeleteCommentResponse, error)
-	// @perm: Name=ListDocuments
 	GetDocumentAccess(ctx context.Context, in *GetDocumentAccessRequest, opts ...grpc.CallOption) (*GetDocumentAccessResponse, error)
-	// @perm: Name=UpdateDocument
 	SetDocumentAccess(ctx context.Context, in *SetDocumentAccessRequest, opts ...grpc.CallOption) (*SetDocumentAccessResponse, error)
-	// @perm
 	ListDocumentActivity(ctx context.Context, in *ListDocumentActivityRequest, opts ...grpc.CallOption) (*ListDocumentActivityResponse, error)
-	// @perm
 	ListDocumentReqs(ctx context.Context, in *ListDocumentReqsRequest, opts ...grpc.CallOption) (*ListDocumentReqsResponse, error)
-	// @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion", "OwnerChange"}
 	CreateDocumentReq(ctx context.Context, in *CreateDocumentReqRequest, opts ...grpc.CallOption) (*CreateDocumentReqResponse, error)
-	// @perm: Name=CreateDocumentReq
 	UpdateDocumentReq(ctx context.Context, in *UpdateDocumentReqRequest, opts ...grpc.CallOption) (*UpdateDocumentReqResponse, error)
-	// @perm
 	DeleteDocumentReq(ctx context.Context, in *DeleteDocumentReqRequest, opts ...grpc.CallOption) (*DeleteDocumentReqResponse, error)
-	// @perm
 	ListUserDocuments(ctx context.Context, in *ListUserDocumentsRequest, opts ...grpc.CallOption) (*ListUserDocumentsResponse, error)
-	// @perm
 	ListCategories(ctx context.Context, in *ListCategoriesRequest, opts ...grpc.CallOption) (*ListCategoriesResponse, error)
-	// @perm
 	CreateOrUpdateCategory(ctx context.Context, in *CreateOrUpdateCategoryRequest, opts ...grpc.CallOption) (*CreateOrUpdateCategoryResponse, error)
-	// @perm
 	DeleteCategory(ctx context.Context, in *DeleteCategoryRequest, opts ...grpc.CallOption) (*DeleteCategoryResponse, error)
-	// @perm: Name=ListDocuments
 	ListDocumentPins(ctx context.Context, in *ListDocumentPinsRequest, opts ...grpc.CallOption) (*ListDocumentPinsResponse, error)
-	// @perm: Attrs=Types/StringList:[]string{"JobWide"}
 	ToggleDocumentPin(ctx context.Context, in *ToggleDocumentPinRequest, opts ...grpc.CallOption) (*ToggleDocumentPinResponse, error)
-	// @perm
 	SetDocumentReminder(ctx context.Context, in *SetDocumentReminderRequest, opts ...grpc.CallOption) (*SetDocumentReminderResponse, error)
-	// @perm: Name=UpdateDocument
 	UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error)
 }
 
@@ -524,79 +487,42 @@ type DocumentsService_UploadFileClient = grpc.ClientStreamingClient[file.UploadF
 // All implementations must embed UnimplementedDocumentsServiceServer
 // for forward compatibility.
 type DocumentsServiceServer interface {
-	// @perm
 	ListTemplates(context.Context, *ListTemplatesRequest) (*ListTemplatesResponse, error)
-	// @perm: Name=ListTemplates
 	GetTemplate(context.Context, *GetTemplateRequest) (*GetTemplateResponse, error)
-	// @perm
 	CreateTemplate(context.Context, *CreateTemplateRequest) (*CreateTemplateResponse, error)
-	// @perm: Name=CreateTemplate
 	UpdateTemplate(context.Context, *UpdateTemplateRequest) (*UpdateTemplateResponse, error)
-	// @perm
 	DeleteTemplate(context.Context, *DeleteTemplateRequest) (*DeleteTemplateResponse, error)
-	// @perm
 	ListDocuments(context.Context, *ListDocumentsRequest) (*ListDocumentsResponse, error)
-	// @perm: Name=ListDocuments
 	GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error)
-	// @perm: Name=UpdateDocument
 	CreateDocument(context.Context, *CreateDocumentRequest) (*CreateDocumentResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	UpdateDocument(context.Context, *UpdateDocumentRequest) (*UpdateDocumentResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	DeleteDocument(context.Context, *DeleteDocumentRequest) (*DeleteDocumentResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	ToggleDocument(context.Context, *ToggleDocumentRequest) (*ToggleDocumentResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	ChangeDocumentOwner(context.Context, *ChangeDocumentOwnerRequest) (*ChangeDocumentOwnerResponse, error)
-	// @perm: Name=ListDocuments
 	GetDocumentReferences(context.Context, *GetDocumentReferencesRequest) (*GetDocumentReferencesResponse, error)
-	// @perm: Name=ListDocuments
 	GetDocumentRelations(context.Context, *GetDocumentRelationsRequest) (*GetDocumentRelationsResponse, error)
-	// @perm
 	AddDocumentReference(context.Context, *AddDocumentReferenceRequest) (*AddDocumentReferenceResponse, error)
-	// @perm: Name=AddDocumentReference
 	RemoveDocumentReference(context.Context, *RemoveDocumentReferenceRequest) (*RemoveDocumentReferenceResponse, error)
-	// @perm
 	AddDocumentRelation(context.Context, *AddDocumentRelationRequest) (*AddDocumentRelationResponse, error)
-	// @perm: Name=AddDocumentRelation
 	RemoveDocumentRelation(context.Context, *RemoveDocumentRelationRequest) (*RemoveDocumentRelationResponse, error)
-	// @perm: Name=ListDocuments
 	GetComments(context.Context, *GetCommentsRequest) (*GetCommentsResponse, error)
-	// @perm: Name=ListDocuments
 	PostComment(context.Context, *PostCommentRequest) (*PostCommentResponse, error)
-	// @perm: Name=ListDocuments
 	EditComment(context.Context, *EditCommentRequest) (*EditCommentResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	DeleteComment(context.Context, *DeleteCommentRequest) (*DeleteCommentResponse, error)
-	// @perm: Name=ListDocuments
 	GetDocumentAccess(context.Context, *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error)
-	// @perm: Name=UpdateDocument
 	SetDocumentAccess(context.Context, *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error)
-	// @perm
 	ListDocumentActivity(context.Context, *ListDocumentActivityRequest) (*ListDocumentActivityResponse, error)
-	// @perm
 	ListDocumentReqs(context.Context, *ListDocumentReqsRequest) (*ListDocumentReqsResponse, error)
-	// @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion", "OwnerChange"}
 	CreateDocumentReq(context.Context, *CreateDocumentReqRequest) (*CreateDocumentReqResponse, error)
-	// @perm: Name=CreateDocumentReq
 	UpdateDocumentReq(context.Context, *UpdateDocumentReqRequest) (*UpdateDocumentReqResponse, error)
-	// @perm
 	DeleteDocumentReq(context.Context, *DeleteDocumentReqRequest) (*DeleteDocumentReqResponse, error)
-	// @perm
 	ListUserDocuments(context.Context, *ListUserDocumentsRequest) (*ListUserDocumentsResponse, error)
-	// @perm
 	ListCategories(context.Context, *ListCategoriesRequest) (*ListCategoriesResponse, error)
-	// @perm
 	CreateOrUpdateCategory(context.Context, *CreateOrUpdateCategoryRequest) (*CreateOrUpdateCategoryResponse, error)
-	// @perm
 	DeleteCategory(context.Context, *DeleteCategoryRequest) (*DeleteCategoryResponse, error)
-	// @perm: Name=ListDocuments
 	ListDocumentPins(context.Context, *ListDocumentPinsRequest) (*ListDocumentPinsResponse, error)
-	// @perm: Attrs=Types/StringList:[]string{"JobWide"}
 	ToggleDocumentPin(context.Context, *ToggleDocumentPinRequest) (*ToggleDocumentPinResponse, error)
-	// @perm
 	SetDocumentReminder(context.Context, *SetDocumentReminderRequest) (*SetDocumentReminderResponse, error)
-	// @perm: Name=UpdateDocument
 	UploadFile(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error
 	mustEmbedUnimplementedDocumentsServiceServer()
 }

@@ -19,20 +19,14 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface ITimeclockServiceClient {
     /**
-     * @perm: Attrs=Access/StringList:[]string{"All"}
-     *
      * @generated from protobuf rpc: ListTimeclock
      */
     listTimeclock(input: ListTimeclockRequest, options?: RpcOptions): UnaryCall<ListTimeclockRequest, ListTimeclockResponse>;
     /**
-     * @perm: Name=ListTimeclock
-     *
      * @generated from protobuf rpc: GetTimeclockStats
      */
     getTimeclockStats(input: GetTimeclockStatsRequest, options?: RpcOptions): UnaryCall<GetTimeclockStatsRequest, GetTimeclockStatsResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ListInactiveEmployees
      */
     listInactiveEmployees(input: ListInactiveEmployeesRequest, options?: RpcOptions): UnaryCall<ListInactiveEmployeesRequest, ListInactiveEmployeesResponse>;
@@ -47,8 +41,6 @@ export class TimeclockServiceClient implements ITimeclockServiceClient, ServiceI
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"All"}
-     *
      * @generated from protobuf rpc: ListTimeclock
      */
     listTimeclock(input: ListTimeclockRequest, options?: RpcOptions): UnaryCall<ListTimeclockRequest, ListTimeclockResponse> {
@@ -56,8 +48,6 @@ export class TimeclockServiceClient implements ITimeclockServiceClient, ServiceI
         return stackIntercept<ListTimeclockRequest, ListTimeclockResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListTimeclock
-     *
      * @generated from protobuf rpc: GetTimeclockStats
      */
     getTimeclockStats(input: GetTimeclockStatsRequest, options?: RpcOptions): UnaryCall<GetTimeclockStatsRequest, GetTimeclockStatsResponse> {
@@ -65,8 +55,6 @@ export class TimeclockServiceClient implements ITimeclockServiceClient, ServiceI
         return stackIntercept<GetTimeclockStatsRequest, GetTimeclockStatsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ListInactiveEmployees
      */
     listInactiveEmployees(input: ListInactiveEmployeesRequest, options?: RpcOptions): UnaryCall<ListInactiveEmployeesRequest, ListInactiveEmployeesResponse> {

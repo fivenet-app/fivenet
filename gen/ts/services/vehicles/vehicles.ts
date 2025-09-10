@@ -344,6 +344,6 @@ export const SetVehiclePropsResponse = new SetVehiclePropsResponse$Type();
  * @generated ServiceType for protobuf service services.vehicles.VehiclesService
  */
 export const VehiclesService = new ServiceType("services.vehicles.VehiclesService", [
-    { name: "ListVehicles", options: {}, I: ListVehiclesRequest, O: ListVehiclesResponse },
-    { name: "SetVehicleProps", options: {}, I: SetVehiclePropsRequest, O: SetVehiclePropsResponse }
+    { name: "ListVehicles", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Wanted"] }] } }, I: ListVehiclesRequest, O: ListVehiclesResponse },
+    { name: "SetVehicleProps", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Wanted"] }] } }, I: SetVehiclePropsRequest, O: SetVehiclePropsResponse }
 ]);

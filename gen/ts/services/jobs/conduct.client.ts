@@ -21,26 +21,18 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface IConductServiceClient {
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "All"}
-     *
      * @generated from protobuf rpc: ListConductEntries
      */
     listConductEntries(input: ListConductEntriesRequest, options?: RpcOptions): UnaryCall<ListConductEntriesRequest, ListConductEntriesResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: CreateConductEntry
      */
     createConductEntry(input: CreateConductEntryRequest, options?: RpcOptions): UnaryCall<CreateConductEntryRequest, CreateConductEntryResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: UpdateConductEntry
      */
     updateConductEntry(input: UpdateConductEntryRequest, options?: RpcOptions): UnaryCall<UpdateConductEntryRequest, UpdateConductEntryResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: DeleteConductEntry
      */
     deleteConductEntry(input: DeleteConductEntryRequest, options?: RpcOptions): UnaryCall<DeleteConductEntryRequest, DeleteConductEntryResponse>;
@@ -55,8 +47,6 @@ export class ConductServiceClient implements IConductServiceClient, ServiceInfo 
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "All"}
-     *
      * @generated from protobuf rpc: ListConductEntries
      */
     listConductEntries(input: ListConductEntriesRequest, options?: RpcOptions): UnaryCall<ListConductEntriesRequest, ListConductEntriesResponse> {
@@ -64,8 +54,6 @@ export class ConductServiceClient implements IConductServiceClient, ServiceInfo 
         return stackIntercept<ListConductEntriesRequest, ListConductEntriesResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: CreateConductEntry
      */
     createConductEntry(input: CreateConductEntryRequest, options?: RpcOptions): UnaryCall<CreateConductEntryRequest, CreateConductEntryResponse> {
@@ -73,8 +61,6 @@ export class ConductServiceClient implements IConductServiceClient, ServiceInfo 
         return stackIntercept<CreateConductEntryRequest, CreateConductEntryResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: UpdateConductEntry
      */
     updateConductEntry(input: UpdateConductEntryRequest, options?: RpcOptions): UnaryCall<UpdateConductEntryRequest, UpdateConductEntryResponse> {
@@ -82,8 +68,6 @@ export class ConductServiceClient implements IConductServiceClient, ServiceInfo 
         return stackIntercept<UpdateConductEntryRequest, UpdateConductEntryResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: DeleteConductEntry
      */
     deleteConductEntry(input: DeleteConductEntryRequest, options?: RpcOptions): UnaryCall<DeleteConductEntryRequest, DeleteConductEntryResponse> {

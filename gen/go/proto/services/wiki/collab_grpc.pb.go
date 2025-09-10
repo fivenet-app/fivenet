@@ -27,7 +27,6 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CollabServiceClient interface {
-	// @perm: Name=wiki.WikiService/UpdatePage
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
@@ -59,7 +58,6 @@ type CollabService_JoinRoomClient = grpc.BidiStreamingClient[collab.ClientPacket
 // All implementations must embed UnimplementedCollabServiceServer
 // for forward compatibility.
 type CollabServiceServer interface {
-	// @perm: Name=wiki.WikiService/UpdatePage
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME

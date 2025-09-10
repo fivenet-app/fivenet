@@ -29,13 +29,9 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AccountsServiceClient interface {
-	// @perm: Name=Superuser
 	ListAccounts(ctx context.Context, in *ListAccountsRequest, opts ...grpc.CallOption) (*ListAccountsResponse, error)
-	// @perm: Name=Superuser
 	UpdateAccount(ctx context.Context, in *UpdateAccountRequest, opts ...grpc.CallOption) (*UpdateAccountResponse, error)
-	// @perm: Name=Superuser
 	DisconnectOAuth2Connection(ctx context.Context, in *DisconnectOAuth2ConnectionRequest, opts ...grpc.CallOption) (*DisconnectOAuth2ConnectionResponse, error)
-	// @perm: Name=Superuser
 	DeleteAccount(ctx context.Context, in *DeleteAccountRequest, opts ...grpc.CallOption) (*DeleteAccountResponse, error)
 }
 
@@ -91,13 +87,9 @@ func (c *accountsServiceClient) DeleteAccount(ctx context.Context, in *DeleteAcc
 // All implementations must embed UnimplementedAccountsServiceServer
 // for forward compatibility.
 type AccountsServiceServer interface {
-	// @perm: Name=Superuser
 	ListAccounts(context.Context, *ListAccountsRequest) (*ListAccountsResponse, error)
-	// @perm: Name=Superuser
 	UpdateAccount(context.Context, *UpdateAccountRequest) (*UpdateAccountResponse, error)
-	// @perm: Name=Superuser
 	DisconnectOAuth2Connection(context.Context, *DisconnectOAuth2ConnectionRequest) (*DisconnectOAuth2ConnectionResponse, error)
-	// @perm: Name=Superuser
 	DeleteAccount(context.Context, *DeleteAccountRequest) (*DeleteAccountResponse, error)
 	mustEmbedUnimplementedAccountsServiceServer()
 }

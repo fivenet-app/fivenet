@@ -7,6 +7,7 @@
 package settings
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	settings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -194,17 +195,17 @@ var File_services_settings_config_proto protoreflect.FileDescriptor
 
 const file_services_settings_config_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/settings/config.proto\x12\x11services.settings\x1a\x1fresources/settings/config.proto\"\x15\n" +
+	"\x1eservices/settings/config.proto\x12\x11services.settings\x1a\x19codegen/perms/perms.proto\x1a\x1fresources/settings/config.proto\"\x15\n" +
 	"\x13GetAppConfigRequest\"M\n" +
 	"\x14GetAppConfigResponse\x125\n" +
 	"\x06config\x18\x01 \x01(\v2\x1d.resources.settings.AppConfigR\x06config\"W\n" +
 	"\x16UpdateAppConfigRequest\x12=\n" +
 	"\x06config\x18\x01 \x01(\v2\x1d.resources.settings.AppConfigB\x06\xbaH\x03\xc8\x01\x01R\x06config\"P\n" +
 	"\x17UpdateAppConfigResponse\x125\n" +
-	"\x06config\x18\x01 \x01(\v2\x1d.resources.settings.AppConfigR\x06config2\xda\x01\n" +
-	"\rConfigService\x12_\n" +
-	"\fGetAppConfig\x12&.services.settings.GetAppConfigRequest\x1a'.services.settings.GetAppConfigResponse\x12h\n" +
-	"\x0fUpdateAppConfig\x12).services.settings.UpdateAppConfigRequest\x1a*.services.settings.UpdateAppConfigResponseBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settingsb\x06proto3"
+	"\x06config\x18\x01 \x01(\v2\x1d.resources.settings.AppConfigR\x06config2\x80\x02\n" +
+	"\rConfigService\x12r\n" +
+	"\fGetAppConfig\x12&.services.settings.GetAppConfigRequest\x1a'.services.settings.GetAppConfigResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12{\n" +
+	"\x0fUpdateAppConfig\x12).services.settings.UpdateAppConfigRequest\x1a*.services.settings.UpdateAppConfigResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuserBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settingsb\x06proto3"
 
 var (
 	file_services_settings_config_proto_rawDescOnce sync.Once

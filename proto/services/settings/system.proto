@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.settings;
 
 import "buf/validate/validate.proto";
+import "codegen/perms/perms.proto";
 import "resources/permissions/attributes.proto";
 import "resources/permissions/permissions.proto";
 import "resources/settings/perms.proto";
@@ -87,15 +88,35 @@ message NewVersionInfo {
 }
 
 service SystemService {
-  // @perm: Name=Superuser
-  rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
+  rpc GetStatus(GetStatusRequest) returns (GetStatusResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Superuser"
+    };
+  }
 
-  // @perm: Name=Superuser
-  rpc GetAllPermissions(GetAllPermissionsRequest) returns (GetAllPermissionsResponse);
-  // @perm: Name=Superuser
-  rpc GetJobLimits(GetJobLimitsRequest) returns (GetJobLimitsResponse);
-  // @perm: Name=Superuser
-  rpc UpdateJobLimits(UpdateJobLimitsRequest) returns (UpdateJobLimitsResponse);
-  // @perm: Name=Superuser
-  rpc DeleteFaction(DeleteFactionRequest) returns (DeleteFactionResponse);
+  rpc GetAllPermissions(GetAllPermissionsRequest) returns (GetAllPermissionsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Superuser"
+    };
+  }
+  rpc GetJobLimits(GetJobLimitsRequest) returns (GetJobLimitsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Superuser"
+    };
+  }
+  rpc UpdateJobLimits(UpdateJobLimitsRequest) returns (UpdateJobLimitsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Superuser"
+    };
+  }
+  rpc DeleteFaction(DeleteFactionRequest) returns (DeleteFactionResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Superuser"
+    };
+  }
 }

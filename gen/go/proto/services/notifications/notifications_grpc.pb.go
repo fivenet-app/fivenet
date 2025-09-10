@@ -28,11 +28,8 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type NotificationsServiceClient interface {
-	// @perm: Name=Any
 	GetNotifications(ctx context.Context, in *GetNotificationsRequest, opts ...grpc.CallOption) (*GetNotificationsResponse, error)
-	// @perm: Name=Any
 	MarkNotifications(ctx context.Context, in *MarkNotificationsRequest, opts ...grpc.CallOption) (*MarkNotificationsResponse, error)
-	// @perm: Name=Any
 	Stream(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[StreamRequest, StreamResponse], error)
 }
 
@@ -81,11 +78,8 @@ type NotificationsService_StreamClient = grpc.BidiStreamingClient[StreamRequest,
 // All implementations must embed UnimplementedNotificationsServiceServer
 // for forward compatibility.
 type NotificationsServiceServer interface {
-	// @perm: Name=Any
 	GetNotifications(context.Context, *GetNotificationsRequest) (*GetNotificationsResponse, error)
-	// @perm: Name=Any
 	MarkNotifications(context.Context, *MarkNotificationsRequest) (*MarkNotificationsResponse, error)
-	// @perm: Name=Any
 	Stream(grpc.BidiStreamingServer[StreamRequest, StreamResponse]) error
 	mustEmbedUnimplementedNotificationsServiceServer()
 }

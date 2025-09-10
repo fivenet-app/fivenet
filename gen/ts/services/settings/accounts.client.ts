@@ -21,26 +21,18 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface IAccountsServiceClient {
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: ListAccounts
      */
     listAccounts(input: ListAccountsRequest, options?: RpcOptions): UnaryCall<ListAccountsRequest, ListAccountsResponse>;
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: UpdateAccount
      */
     updateAccount(input: UpdateAccountRequest, options?: RpcOptions): UnaryCall<UpdateAccountRequest, UpdateAccountResponse>;
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: DisconnectOAuth2Connection
      */
     disconnectOAuth2Connection(input: DisconnectOAuth2ConnectionRequest, options?: RpcOptions): UnaryCall<DisconnectOAuth2ConnectionRequest, DisconnectOAuth2ConnectionResponse>;
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: DeleteAccount
      */
     deleteAccount(input: DeleteAccountRequest, options?: RpcOptions): UnaryCall<DeleteAccountRequest, DeleteAccountResponse>;
@@ -55,8 +47,6 @@ export class AccountsServiceClient implements IAccountsServiceClient, ServiceInf
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: ListAccounts
      */
     listAccounts(input: ListAccountsRequest, options?: RpcOptions): UnaryCall<ListAccountsRequest, ListAccountsResponse> {
@@ -64,8 +54,6 @@ export class AccountsServiceClient implements IAccountsServiceClient, ServiceInf
         return stackIntercept<ListAccountsRequest, ListAccountsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: UpdateAccount
      */
     updateAccount(input: UpdateAccountRequest, options?: RpcOptions): UnaryCall<UpdateAccountRequest, UpdateAccountResponse> {
@@ -73,8 +61,6 @@ export class AccountsServiceClient implements IAccountsServiceClient, ServiceInf
         return stackIntercept<UpdateAccountRequest, UpdateAccountResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: DisconnectOAuth2Connection
      */
     disconnectOAuth2Connection(input: DisconnectOAuth2ConnectionRequest, options?: RpcOptions): UnaryCall<DisconnectOAuth2ConnectionRequest, DisconnectOAuth2ConnectionResponse> {
@@ -82,8 +68,6 @@ export class AccountsServiceClient implements IAccountsServiceClient, ServiceInf
         return stackIntercept<DisconnectOAuth2ConnectionRequest, DisconnectOAuth2ConnectionResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: DeleteAccount
      */
     deleteAccount(input: DeleteAccountRequest, options?: RpcOptions): UnaryCall<DeleteAccountRequest, DeleteAccountResponse> {

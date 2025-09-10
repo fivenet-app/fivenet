@@ -8,6 +8,7 @@ package mailer
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	mailer "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
@@ -2050,7 +2051,7 @@ var File_services_mailer_mailer_proto protoreflect.FileDescriptor
 
 const file_services_mailer_mailer_proto_rawDesc = "" +
 	"\n" +
-	"\x1cservices/mailer/mailer.proto\x12\x0fservices.mailer\x1a\x1fcodegen/itemslen/itemslen.proto\x1a(resources/common/database/database.proto\x1a\x1cresources/mailer/email.proto\x1a\x1eresources/mailer/message.proto\x1a\x1fresources/mailer/settings.proto\x1a\x1fresources/mailer/template.proto\x1a\x1dresources/mailer/thread.proto\x1a#resources/timestamp/timestamp.proto\"\x88\x01\n" +
+	"\x1cservices/mailer/mailer.proto\x12\x0fservices.mailer\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1cresources/mailer/email.proto\x1a\x1eresources/mailer/message.proto\x1a\x1fresources/mailer/settings.proto\x1a\x1fresources/mailer/template.proto\x1a\x1dresources/mailer/thread.proto\x1a#resources/timestamp/timestamp.proto\"\x88\x01\n" +
 	"\x11ListEmailsRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
@@ -2188,30 +2189,47 @@ const file_services_mailer_mailer_proto_rawDesc = "" +
 	"\tthread_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\bthreadId\x12&\n" +
 	"\n" +
 	"message_id\x18\x03 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\tmessageId\"\x17\n" +
-	"\x15DeleteMessageResponse2\x90\x10\n" +
-	"\rMailerService\x12U\n" +
+	"\x15DeleteMessageResponse2\xa2\x13\n" +
+	"\rMailerService\x12]\n" +
 	"\n" +
-	"ListEmails\x12\".services.mailer.ListEmailsRequest\x1a#.services.mailer.ListEmailsResponse\x12O\n" +
-	"\bGetEmail\x12 .services.mailer.GetEmailRequest\x1a!.services.mailer.GetEmailResponse\x12p\n" +
-	"\x13CreateOrUpdateEmail\x12+.services.mailer.CreateOrUpdateEmailRequest\x1a,.services.mailer.CreateOrUpdateEmailResponse\x12X\n" +
-	"\vDeleteEmail\x12#.services.mailer.DeleteEmailRequest\x1a$.services.mailer.DeleteEmailResponse\x12j\n" +
-	"\x11GetEmailProposals\x12).services.mailer.GetEmailProposalsRequest\x1a*.services.mailer.GetEmailProposalsResponse\x12^\n" +
-	"\rListTemplates\x12%.services.mailer.ListTemplatesRequest\x1a&.services.mailer.ListTemplatesResponse\x12X\n" +
-	"\vGetTemplate\x12#.services.mailer.GetTemplateRequest\x1a$.services.mailer.GetTemplateResponse\x12y\n" +
-	"\x16CreateOrUpdateTemplate\x12..services.mailer.CreateOrUpdateTemplateRequest\x1a/.services.mailer.CreateOrUpdateTemplateResponse\x12a\n" +
-	"\x0eDeleteTemplate\x12&.services.mailer.DeleteTemplateRequest\x1a'.services.mailer.DeleteTemplateResponse\x12X\n" +
-	"\vListThreads\x12#.services.mailer.ListThreadsRequest\x1a$.services.mailer.ListThreadsResponse\x12R\n" +
-	"\tGetThread\x12!.services.mailer.GetThreadRequest\x1a\".services.mailer.GetThreadResponse\x12[\n" +
-	"\fCreateThread\x12$.services.mailer.CreateThreadRequest\x1a%.services.mailer.CreateThreadResponse\x12[\n" +
-	"\fDeleteThread\x12$.services.mailer.DeleteThreadRequest\x1a%.services.mailer.DeleteThreadResponse\x12a\n" +
-	"\x0eGetThreadState\x12&.services.mailer.GetThreadStateRequest\x1a'.services.mailer.GetThreadStateResponse\x12a\n" +
-	"\x0eSetThreadState\x12&.services.mailer.SetThreadStateRequest\x1a'.services.mailer.SetThreadStateResponse\x12^\n" +
-	"\rSearchThreads\x12%.services.mailer.SearchThreadsRequest\x1a&.services.mailer.SearchThreadsResponse\x12m\n" +
-	"\x12ListThreadMessages\x12*.services.mailer.ListThreadMessagesRequest\x1a+.services.mailer.ListThreadMessagesResponse\x12X\n" +
-	"\vPostMessage\x12#.services.mailer.PostMessageRequest\x1a$.services.mailer.PostMessageResponse\x12^\n" +
-	"\rDeleteMessage\x12%.services.mailer.DeleteMessageRequest\x1a&.services.mailer.DeleteMessageResponse\x12g\n" +
-	"\x10GetEmailSettings\x12(.services.mailer.GetEmailSettingsRequest\x1a).services.mailer.GetEmailSettingsResponse\x12g\n" +
-	"\x10SetEmailSettings\x12(.services.mailer.SetEmailSettingsRequest\x1a).services.mailer.SetEmailSettingsResponseBJZHgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer;mailerb\x06proto3"
+	"ListEmails\x12\".services.mailer.ListEmailsRequest\x1a#.services.mailer.ListEmailsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12c\n" +
+	"\bGetEmail\x12 .services.mailer.GetEmailRequest\x1a!.services.mailer.GetEmailResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"ListEmails\x12\x89\x01\n" +
+	"\x13CreateOrUpdateEmail\x12+.services.mailer.CreateOrUpdateEmailRequest\x1a,.services.mailer.CreateOrUpdateEmailResponse\"\x17\xd2\xf3\x18\x13\b\x01*\x0f\n" +
+	"\x06Fields\x18\x01\"\x03Job\x12`\n" +
+	"\vDeleteEmail\x12#.services.mailer.DeleteEmailRequest\x1a$.services.mailer.DeleteEmailResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12~\n" +
+	"\x11GetEmailProposals\x12).services.mailer.GetEmailProposalsRequest\x1a*.services.mailer.GetEmailProposalsResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"ListEmails\x12r\n" +
+	"\rListTemplates\x12%.services.mailer.ListTemplatesRequest\x1a&.services.mailer.ListTemplatesResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"ListEmails\x12l\n" +
+	"\vGetTemplate\x12#.services.mailer.GetTemplateRequest\x1a$.services.mailer.GetTemplateResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"ListEmails\x12\x8d\x01\n" +
+	"\x16CreateOrUpdateTemplate\x12..services.mailer.CreateOrUpdateTemplateRequest\x1a/.services.mailer.CreateOrUpdateTemplateResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"ListEmails\x12u\n" +
+	"\x0eDeleteTemplate\x12&.services.mailer.DeleteTemplateRequest\x1a'.services.mailer.DeleteTemplateResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"ListEmails\x12l\n" +
+	"\vListThreads\x12#.services.mailer.ListThreadsRequest\x1a$.services.mailer.ListThreadsResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"ListEmails\x12f\n" +
+	"\tGetThread\x12!.services.mailer.GetThreadRequest\x1a\".services.mailer.GetThreadResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"ListEmails\x12o\n" +
+	"\fCreateThread\x12$.services.mailer.CreateThreadRequest\x1a%.services.mailer.CreateThreadResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"ListEmails\x12n\n" +
+	"\fDeleteThread\x12$.services.mailer.DeleteThreadRequest\x1a%.services.mailer.DeleteThreadResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12u\n" +
+	"\x0eGetThreadState\x12&.services.mailer.GetThreadStateRequest\x1a'.services.mailer.GetThreadStateResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"ListEmails\x12u\n" +
+	"\x0eSetThreadState\x12&.services.mailer.SetThreadStateRequest\x1a'.services.mailer.SetThreadStateResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"ListEmails\x12r\n" +
+	"\rSearchThreads\x12%.services.mailer.SearchThreadsRequest\x1a&.services.mailer.SearchThreadsResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"ListEmails\x12\x81\x01\n" +
+	"\x12ListThreadMessages\x12*.services.mailer.ListThreadMessagesRequest\x1a+.services.mailer.ListThreadMessagesResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"ListEmails\x12l\n" +
+	"\vPostMessage\x12#.services.mailer.PostMessageRequest\x1a$.services.mailer.PostMessageResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"ListEmails\x12q\n" +
+	"\rDeleteMessage\x12%.services.mailer.DeleteMessageRequest\x1a&.services.mailer.DeleteMessageResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12{\n" +
+	"\x10GetEmailSettings\x12(.services.mailer.GetEmailSettingsRequest\x1a).services.mailer.GetEmailSettingsResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"ListEmails\x12{\n" +
+	"\x10SetEmailSettings\x12(.services.mailer.SetEmailSettingsRequest\x1a).services.mailer.SetEmailSettingsResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"ListEmailsBJZHgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer;mailerb\x06proto3"
 
 var (
 	file_services_mailer_mailer_proto_rawDescOnce sync.Once

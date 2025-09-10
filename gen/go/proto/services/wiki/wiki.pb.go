@@ -8,6 +8,7 @@ package wiki
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
@@ -623,7 +624,7 @@ var File_services_wiki_wiki_proto protoreflect.FileDescriptor
 
 const file_services_wiki_wiki_proto_rawDesc = "" +
 	"\n" +
-	"\x18services/wiki/wiki.proto\x12\rservices.wiki\x1a\x1fcodegen/itemslen/itemslen.proto\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a\x1dresources/wiki/activity.proto\x1a\x19resources/wiki/page.proto\"\xb4\x02\n" +
+	"\x18services/wiki/wiki.proto\x12\rservices.wiki\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a\x1dresources/wiki/activity.proto\x1a\x19resources/wiki/page.proto\"\xb4\x02\n" +
 	"\x10ListPagesRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
@@ -670,19 +671,22 @@ const file_services_wiki_wiki_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12>\n" +
-	"\bactivity\x18\x02 \x03(\v2\x1c.resources.wiki.PageActivityB\x04\xc8\xf3\x18\x01R\bactivity2\xdc\x04\n" +
-	"\vWikiService\x12N\n" +
-	"\tListPages\x12\x1f.services.wiki.ListPagesRequest\x1a .services.wiki.ListPagesResponse\x12H\n" +
-	"\aGetPage\x12\x1d.services.wiki.GetPageRequest\x1a\x1e.services.wiki.GetPageResponse\x12Q\n" +
+	"\bactivity\x18\x02 \x03(\v2\x1c.resources.wiki.PageActivityB\x04\xc8\xf3\x18\x01R\bactivity2\xcb\x05\n" +
+	"\vWikiService\x12V\n" +
+	"\tListPages\x12\x1f.services.wiki.ListPagesRequest\x1a .services.wiki.ListPagesResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12[\n" +
+	"\aGetPage\x12\x1d.services.wiki.GetPageRequest\x1a\x1e.services.wiki.GetPageResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tListPages\x12e\n" +
 	"\n" +
-	"CreatePage\x12 .services.wiki.CreatePageRequest\x1a!.services.wiki.CreatePageResponse\x12Q\n" +
+	"CreatePage\x12 .services.wiki.CreatePageRequest\x1a!.services.wiki.CreatePageResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"UpdatePage\x12m\n" +
 	"\n" +
-	"UpdatePage\x12 .services.wiki.UpdatePageRequest\x1a!.services.wiki.UpdatePageResponse\x12Q\n" +
+	"UpdatePage\x12 .services.wiki.UpdatePageRequest\x1a!.services.wiki.UpdatePageResponse\"\x1a\xd2\xf3\x18\x16\b\x01*\x12\n" +
+	"\x06Fields\x18\x01\"\x06Public\x12Y\n" +
 	"\n" +
-	"DeletePage\x12 .services.wiki.DeletePageRequest\x1a!.services.wiki.DeletePageResponse\x12c\n" +
-	"\x10ListPageActivity\x12&.services.wiki.ListPageActivityRequest\x1a'.services.wiki.ListPageActivityResponse\x12U\n" +
+	"DeletePage\x12 .services.wiki.DeletePageRequest\x1a!.services.wiki.DeletePageResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12k\n" +
+	"\x10ListPageActivity\x12&.services.wiki.ListPageActivityRequest\x1a'.services.wiki.ListPageActivityResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12i\n" +
 	"\n" +
-	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse(\x01BFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki;wikib\x06proto3"
+	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"UpdatePage(\x01BFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki;wikib\x06proto3"
 
 var (
 	file_services_wiki_wiki_proto_rawDescOnce sync.Once

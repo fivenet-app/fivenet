@@ -153,7 +153,7 @@
         "vue-tsc": "3.0.6"
     },
     "resolutions": {
-        "@intlify/shared": "11.1.11",
+        "@intlify/shared": "11.1.12",
         "@nuxt/kit": "4.1.1",
         "@tiptap/core": "3.4.2",
         "@tiptap/pm": "3.4.2",

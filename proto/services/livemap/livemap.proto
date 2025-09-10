@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.livemap;
 
 import "buf/validate/validate.proto";
+import "codegen/perms/perms.proto";
 import "resources/jobs/jobs.proto";
 import "resources/livemap/marker_marker.proto";
 import "resources/livemap/user_marker.proto";
@@ -79,11 +80,54 @@ message DeleteMarkerRequest {
 message DeleteMarkerResponse {}
 
 service LivemapService {
-  // @perm: Attrs=Markers/JobList|Players/JobGradeList
-  rpc Stream(StreamRequest) returns (stream StreamResponse);
+  rpc Stream(StreamRequest) returns (stream StreamResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      attrs: [
+        {
+          key: "Markers"
+          type: ATTRIBUTE_TYPE_JOB_LIST
+        },
+        {
+          key: "Players"
+          type: ATTRIBUTE_TYPE_JOB_GRADE_LIST
+        }
+      ]
+    };
+  }
 
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
-  rpc CreateOrUpdateMarker(CreateOrUpdateMarkerRequest) returns (CreateOrUpdateMarkerResponse);
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
-  rpc DeleteMarker(DeleteMarkerRequest) returns (DeleteMarkerResponse);
+  rpc CreateOrUpdateMarker(CreateOrUpdateMarkerRequest) returns (CreateOrUpdateMarkerResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      attrs: [
+        {
+          key: "Access"
+          type: ATTRIBUTE_TYPE_STRING_LIST
+          valid_string_list: [
+            "Own",
+            "Lower_Rank",
+            "Same_Rank",
+            "Any"
+          ]
+        }
+      ]
+    };
+  }
+  rpc DeleteMarker(DeleteMarkerRequest) returns (DeleteMarkerResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      attrs: [
+        {
+          key: "Access"
+          type: ATTRIBUTE_TYPE_STRING_LIST
+          valid_string_list: [
+            "Own",
+            "Lower_Rank",
+            "Same_Rank",
+            "Any"
+          ]
+        }
+      ]
+    };
+  }
 }

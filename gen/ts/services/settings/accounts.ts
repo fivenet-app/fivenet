@@ -542,8 +542,8 @@ export const DeleteAccountResponse = new DeleteAccountResponse$Type();
  * @generated ServiceType for protobuf service services.settings.AccountsService
  */
 export const AccountsService = new ServiceType("services.settings.AccountsService", [
-    { name: "ListAccounts", options: {}, I: ListAccountsRequest, O: ListAccountsResponse },
-    { name: "UpdateAccount", options: {}, I: UpdateAccountRequest, O: UpdateAccountResponse },
-    { name: "DisconnectOAuth2Connection", options: {}, I: DisconnectOAuth2ConnectionRequest, O: DisconnectOAuth2ConnectionResponse },
-    { name: "DeleteAccount", options: {}, I: DeleteAccountRequest, O: DeleteAccountResponse }
+    { name: "ListAccounts", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: ListAccountsRequest, O: ListAccountsResponse },
+    { name: "UpdateAccount", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: UpdateAccountRequest, O: UpdateAccountResponse },
+    { name: "DisconnectOAuth2Connection", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: DisconnectOAuth2ConnectionRequest, O: DisconnectOAuth2ConnectionResponse },
+    { name: "DeleteAccount", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: DeleteAccountRequest, O: DeleteAccountResponse }
 ]);

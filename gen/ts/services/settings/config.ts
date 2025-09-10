@@ -225,6 +225,6 @@ export const UpdateAppConfigResponse = new UpdateAppConfigResponse$Type();
  * @generated ServiceType for protobuf service services.settings.ConfigService
  */
 export const ConfigService = new ServiceType("services.settings.ConfigService", [
-    { name: "GetAppConfig", options: {}, I: GetAppConfigRequest, O: GetAppConfigResponse },
-    { name: "UpdateAppConfig", options: {}, I: UpdateAppConfigRequest, O: UpdateAppConfigResponse }
+    { name: "GetAppConfig", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: GetAppConfigRequest, O: GetAppConfigResponse },
+    { name: "UpdateAppConfig", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: UpdateAppConfigRequest, O: UpdateAppConfigResponse }
 ]);

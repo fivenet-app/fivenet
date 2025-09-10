@@ -4,6 +4,7 @@ package services.documents;
 
 import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
+import "codegen/perms/perms.proto";
 import "resources/common/content/content.proto";
 import "resources/common/database/database.proto";
 import "resources/documents/access.proto";
@@ -411,91 +412,271 @@ message SetDocumentReminderRequest {
 message SetDocumentReminderResponse {}
 
 service DocumentsService {
-  // @perm
-  rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse);
-  // @perm: Name=ListTemplates
-  rpc GetTemplate(GetTemplateRequest) returns (GetTemplateResponse);
-  // @perm
-  rpc CreateTemplate(CreateTemplateRequest) returns (CreateTemplateResponse);
-  // @perm: Name=CreateTemplate
-  rpc UpdateTemplate(UpdateTemplateRequest) returns (UpdateTemplateResponse);
-  // @perm
-  rpc DeleteTemplate(DeleteTemplateRequest) returns (DeleteTemplateResponse);
+  rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc GetTemplate(GetTemplateRequest) returns (GetTemplateResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListTemplates"
+    };
+  }
+  rpc CreateTemplate(CreateTemplateRequest) returns (CreateTemplateResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc UpdateTemplate(UpdateTemplateRequest) returns (UpdateTemplateResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "CreateTemplate"
+    };
+  }
+  rpc DeleteTemplate(DeleteTemplateRequest) returns (DeleteTemplateResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
 
-  // @perm
-  rpc ListDocuments(ListDocumentsRequest) returns (ListDocumentsResponse);
-  // @perm: Name=ListDocuments
-  rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
-  // @perm: Name=UpdateDocument
-  rpc CreateDocument(CreateDocumentRequest) returns (CreateDocumentResponse);
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
-  rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse);
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
-  rpc DeleteDocument(DeleteDocumentRequest) returns (DeleteDocumentResponse);
+  rpc ListDocuments(ListDocumentsRequest) returns (ListDocumentsResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListDocuments"
+    };
+  }
+  rpc CreateDocument(CreateDocumentRequest) returns (CreateDocumentResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "UpdateDocument"
+    };
+  }
+  rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      attrs: [
+        {
+          key: "Access"
+          type: ATTRIBUTE_TYPE_STRING_LIST
+          valid_string_list: [
+            "Own",
+            "Lower_Rank",
+            "Same_Rank",
+            "Any"
+          ]
+        }
+      ]
+    };
+  }
+  rpc DeleteDocument(DeleteDocumentRequest) returns (DeleteDocumentResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      attrs: [
+        {
+          key: "Access"
+          type: ATTRIBUTE_TYPE_STRING_LIST
+          valid_string_list: [
+            "Own",
+            "Lower_Rank",
+            "Same_Rank",
+            "Any"
+          ]
+        }
+      ]
+    };
+  }
 
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
-  rpc ToggleDocument(ToggleDocumentRequest) returns (ToggleDocumentResponse);
+  rpc ToggleDocument(ToggleDocumentRequest) returns (ToggleDocumentResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      attrs: [
+        {
+          key: "Access"
+          type: ATTRIBUTE_TYPE_STRING_LIST
+          valid_string_list: [
+            "Own",
+            "Lower_Rank",
+            "Same_Rank",
+            "Any"
+          ]
+        }
+      ]
+    };
+  }
 
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
-  rpc ChangeDocumentOwner(ChangeDocumentOwnerRequest) returns (ChangeDocumentOwnerResponse);
+  rpc ChangeDocumentOwner(ChangeDocumentOwnerRequest) returns (ChangeDocumentOwnerResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      attrs: [
+        {
+          key: "Access"
+          type: ATTRIBUTE_TYPE_STRING_LIST
+          valid_string_list: [
+            "Own",
+            "Lower_Rank",
+            "Same_Rank",
+            "Any"
+          ]
+        }
+      ]
+    };
+  }
 
-  // @perm: Name=ListDocuments
-  rpc GetDocumentReferences(GetDocumentReferencesRequest) returns (GetDocumentReferencesResponse);
-  // @perm: Name=ListDocuments
-  rpc GetDocumentRelations(GetDocumentRelationsRequest) returns (GetDocumentRelationsResponse);
-  // @perm
-  rpc AddDocumentReference(AddDocumentReferenceRequest) returns (AddDocumentReferenceResponse);
-  // @perm: Name=AddDocumentReference
-  rpc RemoveDocumentReference(RemoveDocumentReferenceRequest) returns (RemoveDocumentReferenceResponse);
-  // @perm
-  rpc AddDocumentRelation(AddDocumentRelationRequest) returns (AddDocumentRelationResponse);
-  // @perm: Name=AddDocumentRelation
-  rpc RemoveDocumentRelation(RemoveDocumentRelationRequest) returns (RemoveDocumentRelationResponse);
+  rpc GetDocumentReferences(GetDocumentReferencesRequest) returns (GetDocumentReferencesResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListDocuments"
+    };
+  }
+  rpc GetDocumentRelations(GetDocumentRelationsRequest) returns (GetDocumentRelationsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListDocuments"
+    };
+  }
+  rpc AddDocumentReference(AddDocumentReferenceRequest) returns (AddDocumentReferenceResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc RemoveDocumentReference(RemoveDocumentReferenceRequest) returns (RemoveDocumentReferenceResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "AddDocumentReference"
+    };
+  }
+  rpc AddDocumentRelation(AddDocumentRelationRequest) returns (AddDocumentRelationResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc RemoveDocumentRelation(RemoveDocumentRelationRequest) returns (RemoveDocumentRelationResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "AddDocumentRelation"
+    };
+  }
 
-  // @perm: Name=ListDocuments
-  rpc GetComments(GetCommentsRequest) returns (GetCommentsResponse);
-  // @perm: Name=ListDocuments
-  rpc PostComment(PostCommentRequest) returns (PostCommentResponse);
-  // @perm: Name=ListDocuments
-  rpc EditComment(EditCommentRequest) returns (EditCommentResponse);
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
-  rpc DeleteComment(DeleteCommentRequest) returns (DeleteCommentResponse);
+  rpc GetComments(GetCommentsRequest) returns (GetCommentsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListDocuments"
+    };
+  }
+  rpc PostComment(PostCommentRequest) returns (PostCommentResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListDocuments"
+    };
+  }
+  rpc EditComment(EditCommentRequest) returns (EditCommentResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListDocuments"
+    };
+  }
+  rpc DeleteComment(DeleteCommentRequest) returns (DeleteCommentResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      attrs: [
+        {
+          key: "Access"
+          type: ATTRIBUTE_TYPE_STRING_LIST
+          valid_string_list: [
+            "Own",
+            "Lower_Rank",
+            "Same_Rank",
+            "Any"
+          ]
+        }
+      ]
+    };
+  }
 
-  // @perm: Name=ListDocuments
-  rpc GetDocumentAccess(GetDocumentAccessRequest) returns (GetDocumentAccessResponse);
-  // @perm: Name=UpdateDocument
-  rpc SetDocumentAccess(SetDocumentAccessRequest) returns (SetDocumentAccessResponse);
+  rpc GetDocumentAccess(GetDocumentAccessRequest) returns (GetDocumentAccessResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListDocuments"
+    };
+  }
+  rpc SetDocumentAccess(SetDocumentAccessRequest) returns (SetDocumentAccessResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "UpdateDocument"
+    };
+  }
 
-  // @perm
-  rpc ListDocumentActivity(ListDocumentActivityRequest) returns (ListDocumentActivityResponse);
+  rpc ListDocumentActivity(ListDocumentActivityRequest) returns (ListDocumentActivityResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
 
-  // @perm
-  rpc ListDocumentReqs(ListDocumentReqsRequest) returns (ListDocumentReqsResponse);
-  // @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion", "OwnerChange"}
-  rpc CreateDocumentReq(CreateDocumentReqRequest) returns (CreateDocumentReqResponse);
-  // @perm: Name=CreateDocumentReq
-  rpc UpdateDocumentReq(UpdateDocumentReqRequest) returns (UpdateDocumentReqResponse);
-  // @perm
-  rpc DeleteDocumentReq(DeleteDocumentReqRequest) returns (DeleteDocumentReqResponse);
+  rpc ListDocumentReqs(ListDocumentReqsRequest) returns (ListDocumentReqsResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc CreateDocumentReq(CreateDocumentReqRequest) returns (CreateDocumentReqResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      attrs: [
+        {
+          key: "Types"
+          type: ATTRIBUTE_TYPE_STRING_LIST
+          valid_string_list: [
+            "Access",
+            "Closure",
+            "Update",
+            "Deletion",
+            "OwnerChange"
+          ]
+        }
+      ]
+    };
+  }
 
-  // @perm
-  rpc ListUserDocuments(ListUserDocumentsRequest) returns (ListUserDocumentsResponse);
+  rpc UpdateDocumentReq(UpdateDocumentReqRequest) returns (UpdateDocumentReqResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "CreateDocumentReq"
+    };
+  }
+  rpc DeleteDocumentReq(DeleteDocumentReqRequest) returns (DeleteDocumentReqResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
 
-  // @perm
-  rpc ListCategories(ListCategoriesRequest) returns (ListCategoriesResponse);
-  // @perm
-  rpc CreateOrUpdateCategory(CreateOrUpdateCategoryRequest) returns (CreateOrUpdateCategoryResponse);
-  // @perm
-  rpc DeleteCategory(DeleteCategoryRequest) returns (DeleteCategoryResponse);
+  rpc ListUserDocuments(ListUserDocumentsRequest) returns (ListUserDocumentsResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
 
-  // @perm: Name=ListDocuments
-  rpc ListDocumentPins(ListDocumentPinsRequest) returns (ListDocumentPinsResponse);
-  // @perm: Attrs=Types/StringList:[]string{"JobWide"}
-  rpc ToggleDocumentPin(ToggleDocumentPinRequest) returns (ToggleDocumentPinResponse);
+  rpc ListCategories(ListCategoriesRequest) returns (ListCategoriesResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc CreateOrUpdateCategory(CreateOrUpdateCategoryRequest) returns (CreateOrUpdateCategoryResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc DeleteCategory(DeleteCategoryRequest) returns (DeleteCategoryResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
 
-  // @perm
-  rpc SetDocumentReminder(SetDocumentReminderRequest) returns (SetDocumentReminderResponse);
+  rpc ListDocumentPins(ListDocumentPinsRequest) returns (ListDocumentPinsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListDocuments"
+    };
+  }
+  rpc ToggleDocumentPin(ToggleDocumentPinRequest) returns (ToggleDocumentPinResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      attrs: [
+        {
+          key: "Types"
+          type: ATTRIBUTE_TYPE_STRING_LIST
+          valid_string_list: ["JobWide"]
+        }
+      ]
+    };
+  }
 
-  // @perm: Name=UpdateDocument
-  rpc UploadFile(stream resources.file.UploadFileRequest) returns (resources.file.UploadFileResponse);
+  rpc SetDocumentReminder(SetDocumentReminderRequest) returns (SetDocumentReminderResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+
+  rpc UploadFile(stream resources.file.UploadFileRequest) returns (resources.file.UploadFileResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "UpdateDocument"
+    };
+  }
 }

@@ -49,6 +49,172 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
+## resources/permissions/attributes.proto
+
+
+### resources.permissions.AttributeValues
+@dbscanner: json
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `string_list` | [StringList](#resourcespermissionsStringList) |  |  |
+| `job_list` | [StringList](#resourcespermissionsStringList) |  |  |
+| `job_grade_list` | [JobGradeList](#resourcespermissionsJobGradeList) |  |  |
+
+
+
+
+
+### resources.permissions.JobGradeList
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `fine_grained` | [bool](#bool) |  |  |
+| `jobs` | [JobGradeList.JobsEntry](#resourcespermissionsJobGradeListJobsEntry) | repeated |  |
+| `grades` | [JobGradeList.GradesEntry](#resourcespermissionsJobGradeListGradesEntry) | repeated |  |
+
+
+
+
+
+### resources.permissions.JobGradeList.GradesEntry
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `key` | [string](#string) |  |  |
+| `value` | [JobGrades](#resourcespermissionsJobGrades) |  |  |
+
+
+
+
+
+### resources.permissions.JobGradeList.JobsEntry
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `key` | [string](#string) |  |  |
+| `value` | [int32](#int32) |  |  |
+
+
+
+
+
+### resources.permissions.JobGrades
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `grades` | [int32](#int32) | repeated |  |
+
+
+
+
+
+### resources.permissions.RoleAttribute
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `role_id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `attr_id` | [int64](#int64) |  |  |
+| `permission_id` | [int64](#int64) |  |  |
+| `category` | [string](#string) |  |  |
+| `name` | [string](#string) |  |  |
+| `key` | [string](#string) |  |  |
+| `type` | [string](#string) |  |  |
+| `valid_values` | [AttributeValues](#resourcespermissionsAttributeValues) |  |  |
+| `value` | [AttributeValues](#resourcespermissionsAttributeValues) |  |  |
+| `max_values` | [AttributeValues](#resourcespermissionsAttributeValues) | optional |  |
+
+
+
+
+
+### resources.permissions.StringList
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `strings` | [string](#string) | repeated | @sanitize: method=StripTags |
+
+
+
+
+ <!-- end messages -->
+
+
+### resources.permissions.AttributeType
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `ATTRIBUTE_TYPE_UNSPECIFIED` | 0 |  |
+| `ATTRIBUTE_TYPE_STRING_LIST` | 1 |  |
+| `ATTRIBUTE_TYPE_JOB_LIST` | 2 |  |
+| `ATTRIBUTE_TYPE_JOB_GRADE_LIST` | 3 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## codegen/perms/perms.proto
+
+
+### codegen.perms.Attr
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `key` | [string](#string) |  |  |
+| `value` | [string](#string) |  |  |
+| `type` | [resources.permissions.AttributeType](#resourcespermissionsAttributeType) |  |  |
+| `valid_string_list` | [string](#string) | repeated |  |
+
+
+
+
+
+### codegen.perms.FieldOptions
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `enabled` | [bool](#bool) |  |  |
+| `service` | [string](#string) | optional |  |
+| `name` | [string](#string) | optional |  |
+| `order` | [int32](#int32) |  |  |
+| `attrs` | [Attr](#codegenpermsAttr) | repeated |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+
+### File-level Extensions
+
+| Extension | Type | Base | Number | Description |
+| --------- | ---- | ---- | ------ | ----------- |
+| `perms` | FieldOptions | .google.protobuf.MethodOptions | 51002 |  |
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## resources/accounts/oauth2.proto
 
 
@@ -5151,113 +5317,6 @@ User related events
 
 
 
-## resources/permissions/attributes.proto
-
-
-### resources.permissions.AttributeValues
-@dbscanner: json
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `string_list` | [StringList](#resourcespermissionsStringList) |  |  |
-| `job_list` | [StringList](#resourcespermissionsStringList) |  |  |
-| `job_grade_list` | [JobGradeList](#resourcespermissionsJobGradeList) |  |  |
-
-
-
-
-
-### resources.permissions.JobGradeList
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `fine_grained` | [bool](#bool) |  |  |
-| `jobs` | [JobGradeList.JobsEntry](#resourcespermissionsJobGradeListJobsEntry) | repeated |  |
-| `grades` | [JobGradeList.GradesEntry](#resourcespermissionsJobGradeListGradesEntry) | repeated |  |
-
-
-
-
-
-### resources.permissions.JobGradeList.GradesEntry
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `key` | [string](#string) |  |  |
-| `value` | [JobGrades](#resourcespermissionsJobGrades) |  |  |
-
-
-
-
-
-### resources.permissions.JobGradeList.JobsEntry
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `key` | [string](#string) |  |  |
-| `value` | [int32](#int32) |  |  |
-
-
-
-
-
-### resources.permissions.JobGrades
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `grades` | [int32](#int32) | repeated |  |
-
-
-
-
-
-### resources.permissions.RoleAttribute
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `role_id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `attr_id` | [int64](#int64) |  |  |
-| `permission_id` | [int64](#int64) |  |  |
-| `category` | [string](#string) |  |  |
-| `name` | [string](#string) |  |  |
-| `key` | [string](#string) |  |  |
-| `type` | [string](#string) |  |  |
-| `valid_values` | [AttributeValues](#resourcespermissionsAttributeValues) |  |  |
-| `value` | [AttributeValues](#resourcespermissionsAttributeValues) |  |  |
-| `max_values` | [AttributeValues](#resourcespermissionsAttributeValues) | optional |  |
-
-
-
-
-
-### resources.permissions.StringList
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `strings` | [string](#string) | repeated | @sanitize: method=StripTags |
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 ## resources/permissions/events.proto
 
 
@@ -6615,7 +6674,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `ChangePassword` | [ChangePasswordRequest](#servicesauthChangePasswordRequest) | [ChangePasswordResponse](#servicesauthChangePasswordResponse) | |
 | `ForgotPassword` | [ForgotPasswordRequest](#servicesauthForgotPasswordRequest) | [ForgotPasswordResponse](#servicesauthForgotPasswordResponse) | |
 | `GetCharacters` | [GetCharactersRequest](#servicesauthGetCharactersRequest) | [GetCharactersResponse](#servicesauthGetCharactersResponse) | |
-| `ChooseCharacter` | [ChooseCharacterRequest](#servicesauthChooseCharacterRequest) | [ChooseCharacterResponse](#servicesauthChooseCharacterResponse) |@perm |
+| `ChooseCharacter` | [ChooseCharacterRequest](#servicesauthChooseCharacterRequest) | [ChooseCharacterResponse](#servicesauthChooseCharacterResponse) | |
 | `GetAccountInfo` | [GetAccountInfoRequest](#servicesauthGetAccountInfoRequest) | [GetAccountInfoResponse](#servicesauthGetAccountInfoResponse) | |
 | `DeleteOAuth2Connection` | [DeleteOAuth2ConnectionRequest](#servicesauthDeleteOAuth2ConnectionRequest) | [DeleteOAuth2ConnectionResponse](#servicesauthDeleteOAuth2ConnectionResponse) | |
 | `SetSuperuserMode` | [SetSuperuserModeRequest](#servicesauthSetSuperuserModeRequest) | [SetSuperuserModeResponse](#servicesauthSetSuperuserModeResponse) | |
@@ -6968,21 +7027,21 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `ListCalendars` | [ListCalendarsRequest](#servicescalendarListCalendarsRequest) | [ListCalendarsResponse](#servicescalendarListCalendarsResponse) |@perm: Name=Any |
-| `GetCalendar` | [GetCalendarRequest](#servicescalendarGetCalendarRequest) | [GetCalendarResponse](#servicescalendarGetCalendarResponse) |@perm: Name=Any |
-| `CreateCalendar` | [CreateCalendarRequest](#servicescalendarCreateCalendarRequest) | [CreateCalendarResponse](#servicescalendarCreateCalendarResponse) |@perm: Attrs=Fields/StringList:[]string{"Job", "Public"} |
-| `UpdateCalendar` | [UpdateCalendarRequest](#servicescalendarUpdateCalendarRequest) | [UpdateCalendarResponse](#servicescalendarUpdateCalendarResponse) |@perm: Name=Any |
-| `DeleteCalendar` | [DeleteCalendarRequest](#servicescalendarDeleteCalendarRequest) | [DeleteCalendarResponse](#servicescalendarDeleteCalendarResponse) |@perm: Name=Any |
-| `ListCalendarEntries` | [ListCalendarEntriesRequest](#servicescalendarListCalendarEntriesRequest) | [ListCalendarEntriesResponse](#servicescalendarListCalendarEntriesResponse) |@perm: Name=Any |
-| `GetUpcomingEntries` | [GetUpcomingEntriesRequest](#servicescalendarGetUpcomingEntriesRequest) | [GetUpcomingEntriesResponse](#servicescalendarGetUpcomingEntriesResponse) |@perm: Name=Any |
-| `GetCalendarEntry` | [GetCalendarEntryRequest](#servicescalendarGetCalendarEntryRequest) | [GetCalendarEntryResponse](#servicescalendarGetCalendarEntryResponse) |@perm: Name=Any |
-| `CreateOrUpdateCalendarEntry` | [CreateOrUpdateCalendarEntryRequest](#servicescalendarCreateOrUpdateCalendarEntryRequest) | [CreateOrUpdateCalendarEntryResponse](#servicescalendarCreateOrUpdateCalendarEntryResponse) |@perm: Name=Any |
-| `DeleteCalendarEntry` | [DeleteCalendarEntryRequest](#servicescalendarDeleteCalendarEntryRequest) | [DeleteCalendarEntryResponse](#servicescalendarDeleteCalendarEntryResponse) |@perm: Name=Any |
-| `ShareCalendarEntry` | [ShareCalendarEntryRequest](#servicescalendarShareCalendarEntryRequest) | [ShareCalendarEntryResponse](#servicescalendarShareCalendarEntryResponse) |@perm: Name=Any |
-| `ListCalendarEntryRSVP` | [ListCalendarEntryRSVPRequest](#servicescalendarListCalendarEntryRSVPRequest) | [ListCalendarEntryRSVPResponse](#servicescalendarListCalendarEntryRSVPResponse) |@perm: Name=Any |
-| `RSVPCalendarEntry` | [RSVPCalendarEntryRequest](#servicescalendarRSVPCalendarEntryRequest) | [RSVPCalendarEntryResponse](#servicescalendarRSVPCalendarEntryResponse) |@perm: Name=Any |
-| `ListSubscriptions` | [ListSubscriptionsRequest](#servicescalendarListSubscriptionsRequest) | [ListSubscriptionsResponse](#servicescalendarListSubscriptionsResponse) |@perm: Name=Any |
-| `SubscribeToCalendar` | [SubscribeToCalendarRequest](#servicescalendarSubscribeToCalendarRequest) | [SubscribeToCalendarResponse](#servicescalendarSubscribeToCalendarResponse) |@perm: Name=Any |
+| `ListCalendars` | [ListCalendarsRequest](#servicescalendarListCalendarsRequest) | [ListCalendarsResponse](#servicescalendarListCalendarsResponse) | |
+| `GetCalendar` | [GetCalendarRequest](#servicescalendarGetCalendarRequest) | [GetCalendarResponse](#servicescalendarGetCalendarResponse) | |
+| `CreateCalendar` | [CreateCalendarRequest](#servicescalendarCreateCalendarRequest) | [CreateCalendarResponse](#servicescalendarCreateCalendarResponse) | |
+| `UpdateCalendar` | [UpdateCalendarRequest](#servicescalendarUpdateCalendarRequest) | [UpdateCalendarResponse](#servicescalendarUpdateCalendarResponse) | |
+| `DeleteCalendar` | [DeleteCalendarRequest](#servicescalendarDeleteCalendarRequest) | [DeleteCalendarResponse](#servicescalendarDeleteCalendarResponse) | |
+| `ListCalendarEntries` | [ListCalendarEntriesRequest](#servicescalendarListCalendarEntriesRequest) | [ListCalendarEntriesResponse](#servicescalendarListCalendarEntriesResponse) | |
+| `GetUpcomingEntries` | [GetUpcomingEntriesRequest](#servicescalendarGetUpcomingEntriesRequest) | [GetUpcomingEntriesResponse](#servicescalendarGetUpcomingEntriesResponse) | |
+| `GetCalendarEntry` | [GetCalendarEntryRequest](#servicescalendarGetCalendarEntryRequest) | [GetCalendarEntryResponse](#servicescalendarGetCalendarEntryResponse) | |
+| `CreateOrUpdateCalendarEntry` | [CreateOrUpdateCalendarEntryRequest](#servicescalendarCreateOrUpdateCalendarEntryRequest) | [CreateOrUpdateCalendarEntryResponse](#servicescalendarCreateOrUpdateCalendarEntryResponse) | |
+| `DeleteCalendarEntry` | [DeleteCalendarEntryRequest](#servicescalendarDeleteCalendarEntryRequest) | [DeleteCalendarEntryResponse](#servicescalendarDeleteCalendarEntryResponse) | |
+| `ShareCalendarEntry` | [ShareCalendarEntryRequest](#servicescalendarShareCalendarEntryRequest) | [ShareCalendarEntryResponse](#servicescalendarShareCalendarEntryResponse) | |
+| `ListCalendarEntryRSVP` | [ListCalendarEntryRSVPRequest](#servicescalendarListCalendarEntryRSVPRequest) | [ListCalendarEntryRSVPResponse](#servicescalendarListCalendarEntryRSVPResponse) | |
+| `RSVPCalendarEntry` | [RSVPCalendarEntryRequest](#servicescalendarRSVPCalendarEntryRequest) | [RSVPCalendarEntryResponse](#servicescalendarRSVPCalendarEntryResponse) | |
+| `ListSubscriptions` | [ListSubscriptionsRequest](#servicescalendarListSubscriptionsRequest) | [ListSubscriptionsResponse](#servicescalendarListSubscriptionsResponse) | |
+| `SubscribeToCalendar` | [SubscribeToCalendarRequest](#servicescalendarSubscribeToCalendarRequest) | [SubscribeToCalendarResponse](#servicescalendarSubscribeToCalendarResponse) | |
 
  <!-- end services -->
 
@@ -7508,29 +7567,29 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `UpdateSettings` | [UpdateSettingsRequest](#servicescentrumUpdateSettingsRequest) | [UpdateSettingsResponse](#servicescentrumUpdateSettingsResponse) |@perm: Attrs=Access/StringList:[]string{"Shared", "Public"} |
-| `CreateDispatch` | [CreateDispatchRequest](#servicescentrumCreateDispatchRequest) | [CreateDispatchResponse](#servicescentrumCreateDispatchResponse) |@perm |
-| `UpdateDispatch` | [UpdateDispatchRequest](#servicescentrumUpdateDispatchRequest) | [UpdateDispatchResponse](#servicescentrumUpdateDispatchResponse) |@perm |
-| `DeleteDispatch` | [DeleteDispatchRequest](#servicescentrumDeleteDispatchRequest) | [DeleteDispatchResponse](#servicescentrumDeleteDispatchResponse) |@perm |
-| `ListDispatchTargetJobs` | [ListDispatchTargetJobsRequest](#servicescentrumListDispatchTargetJobsRequest) | [ListDispatchTargetJobsResponse](#servicescentrumListDispatchTargetJobsResponse) |@perm: Name=CreateDispatch |
-| `TakeControl` | [TakeControlRequest](#servicescentrumTakeControlRequest) | [TakeControlResponse](#servicescentrumTakeControlResponse) |@perm |
-| `AssignDispatch` | [AssignDispatchRequest](#servicescentrumAssignDispatchRequest) | [AssignDispatchResponse](#servicescentrumAssignDispatchResponse) |@perm: Name=TakeControl |
-| `AssignUnit` | [AssignUnitRequest](#servicescentrumAssignUnitRequest) | [AssignUnitResponse](#servicescentrumAssignUnitResponse) |@perm: Name=TakeControl |
-| `GetDispatchHeatmap` | [GetDispatchHeatmapRequest](#servicescentrumGetDispatchHeatmapRequest) | [GetDispatchHeatmapResponse](#servicescentrumGetDispatchHeatmapResponse) |@perm: Name=TakeControl |
-| `UpdateDispatchers` | [UpdateDispatchersRequest](#servicescentrumUpdateDispatchersRequest) | [UpdateDispatchersResponse](#servicescentrumUpdateDispatchersResponse) |@perm |
-| `Stream` | [StreamRequest](#servicescentrumStreamRequest) | [StreamResponse](#servicescentrumStreamResponse) stream |@perm |
-| `GetSettings` | [GetSettingsRequest](#servicescentrumGetSettingsRequest) | [GetSettingsResponse](#servicescentrumGetSettingsResponse) |@perm: Name=Stream |
-| `JoinUnit` | [JoinUnitRequest](#servicescentrumJoinUnitRequest) | [JoinUnitResponse](#servicescentrumJoinUnitResponse) |@perm: Name=Stream |
-| `ListUnits` | [ListUnitsRequest](#servicescentrumListUnitsRequest) | [ListUnitsResponse](#servicescentrumListUnitsResponse) |@perm: Name=Stream |
-| `ListUnitActivity` | [ListUnitActivityRequest](#servicescentrumListUnitActivityRequest) | [ListUnitActivityResponse](#servicescentrumListUnitActivityResponse) |@perm: Name=Stream |
-| `GetDispatch` | [GetDispatchRequest](#servicescentrumGetDispatchRequest) | [GetDispatchResponse](#servicescentrumGetDispatchResponse) |@perm: Name=Stream |
-| `ListDispatches` | [ListDispatchesRequest](#servicescentrumListDispatchesRequest) | [ListDispatchesResponse](#servicescentrumListDispatchesResponse) |@perm: Name=Stream |
-| `ListDispatchActivity` | [ListDispatchActivityRequest](#servicescentrumListDispatchActivityRequest) | [ListDispatchActivityResponse](#servicescentrumListDispatchActivityResponse) |@perm: Name=Stream |
-| `CreateOrUpdateUnit` | [CreateOrUpdateUnitRequest](#servicescentrumCreateOrUpdateUnitRequest) | [CreateOrUpdateUnitResponse](#servicescentrumCreateOrUpdateUnitResponse) |@perm |
-| `DeleteUnit` | [DeleteUnitRequest](#servicescentrumDeleteUnitRequest) | [DeleteUnitResponse](#servicescentrumDeleteUnitResponse) |@perm |
-| `TakeDispatch` | [TakeDispatchRequest](#servicescentrumTakeDispatchRequest) | [TakeDispatchResponse](#servicescentrumTakeDispatchResponse) |@perm |
-| `UpdateUnitStatus` | [UpdateUnitStatusRequest](#servicescentrumUpdateUnitStatusRequest) | [UpdateUnitStatusResponse](#servicescentrumUpdateUnitStatusResponse) |@perm: Name=TakeDispatch |
-| `UpdateDispatchStatus` | [UpdateDispatchStatusRequest](#servicescentrumUpdateDispatchStatusRequest) | [UpdateDispatchStatusResponse](#servicescentrumUpdateDispatchStatusResponse) |@perm: Name=TakeDispatch |
+| `UpdateSettings` | [UpdateSettingsRequest](#servicescentrumUpdateSettingsRequest) | [UpdateSettingsResponse](#servicescentrumUpdateSettingsResponse) | |
+| `CreateDispatch` | [CreateDispatchRequest](#servicescentrumCreateDispatchRequest) | [CreateDispatchResponse](#servicescentrumCreateDispatchResponse) | |
+| `UpdateDispatch` | [UpdateDispatchRequest](#servicescentrumUpdateDispatchRequest) | [UpdateDispatchResponse](#servicescentrumUpdateDispatchResponse) | |
+| `DeleteDispatch` | [DeleteDispatchRequest](#servicescentrumDeleteDispatchRequest) | [DeleteDispatchResponse](#servicescentrumDeleteDispatchResponse) | |
+| `ListDispatchTargetJobs` | [ListDispatchTargetJobsRequest](#servicescentrumListDispatchTargetJobsRequest) | [ListDispatchTargetJobsResponse](#servicescentrumListDispatchTargetJobsResponse) | |
+| `TakeControl` | [TakeControlRequest](#servicescentrumTakeControlRequest) | [TakeControlResponse](#servicescentrumTakeControlResponse) | |
+| `AssignDispatch` | [AssignDispatchRequest](#servicescentrumAssignDispatchRequest) | [AssignDispatchResponse](#servicescentrumAssignDispatchResponse) | |
+| `AssignUnit` | [AssignUnitRequest](#servicescentrumAssignUnitRequest) | [AssignUnitResponse](#servicescentrumAssignUnitResponse) | |
+| `GetDispatchHeatmap` | [GetDispatchHeatmapRequest](#servicescentrumGetDispatchHeatmapRequest) | [GetDispatchHeatmapResponse](#servicescentrumGetDispatchHeatmapResponse) | |
+| `UpdateDispatchers` | [UpdateDispatchersRequest](#servicescentrumUpdateDispatchersRequest) | [UpdateDispatchersResponse](#servicescentrumUpdateDispatchersResponse) | |
+| `Stream` | [StreamRequest](#servicescentrumStreamRequest) | [StreamResponse](#servicescentrumStreamResponse) stream | |
+| `GetSettings` | [GetSettingsRequest](#servicescentrumGetSettingsRequest) | [GetSettingsResponse](#servicescentrumGetSettingsResponse) | |
+| `JoinUnit` | [JoinUnitRequest](#servicescentrumJoinUnitRequest) | [JoinUnitResponse](#servicescentrumJoinUnitResponse) | |
+| `ListUnits` | [ListUnitsRequest](#servicescentrumListUnitsRequest) | [ListUnitsResponse](#servicescentrumListUnitsResponse) | |
+| `ListUnitActivity` | [ListUnitActivityRequest](#servicescentrumListUnitActivityRequest) | [ListUnitActivityResponse](#servicescentrumListUnitActivityResponse) | |
+| `GetDispatch` | [GetDispatchRequest](#servicescentrumGetDispatchRequest) | [GetDispatchResponse](#servicescentrumGetDispatchResponse) | |
+| `ListDispatches` | [ListDispatchesRequest](#servicescentrumListDispatchesRequest) | [ListDispatchesResponse](#servicescentrumListDispatchesResponse) | |
+| `ListDispatchActivity` | [ListDispatchActivityRequest](#servicescentrumListDispatchActivityRequest) | [ListDispatchActivityResponse](#servicescentrumListDispatchActivityResponse) | |
+| `CreateOrUpdateUnit` | [CreateOrUpdateUnitRequest](#servicescentrumCreateOrUpdateUnitRequest) | [CreateOrUpdateUnitResponse](#servicescentrumCreateOrUpdateUnitResponse) | |
+| `DeleteUnit` | [DeleteUnitRequest](#servicescentrumDeleteUnitRequest) | [DeleteUnitResponse](#servicescentrumDeleteUnitResponse) | |
+| `TakeDispatch` | [TakeDispatchRequest](#servicescentrumTakeDispatchRequest) | [TakeDispatchResponse](#servicescentrumTakeDispatchResponse) | |
+| `UpdateUnitStatus` | [UpdateUnitStatusRequest](#servicescentrumUpdateUnitStatusRequest) | [UpdateUnitStatusResponse](#servicescentrumUpdateUnitStatusResponse) | |
+| `UpdateDispatchStatus` | [UpdateDispatchStatusRequest](#servicescentrumUpdateDispatchStatusRequest) | [UpdateDispatchStatusResponse](#servicescentrumUpdateDispatchStatusResponse) | |
 
  <!-- end services -->
 
@@ -7703,15 +7762,15 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `ListCitizens` | [ListCitizensRequest](#servicescitizensListCitizensRequest) | [ListCitizensResponse](#servicescitizensListCitizensResponse) |@perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.Mugshot", "UserProps.Labels", "UserProps.Email"} |
-| `GetUser` | [GetUserRequest](#servicescitizensGetUserRequest) | [GetUserResponse](#servicescitizensGetUserResponse) |@perm: Attrs=Jobs/JobGradeList |
-| `ListUserActivity` | [ListUserActivityRequest](#servicescitizensListUserActivityRequest) | [ListUserActivityResponse](#servicescitizensListUserActivityResponse) |@perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"} |
-| `SetUserProps` | [SetUserPropsRequest](#servicescitizensSetUserPropsRequest) | [SetUserPropsResponse](#servicescitizensSetUserPropsResponse) |@perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "Mugshot", "Labels"} |
-| `UploadAvatar` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |@perm: Name=Any buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
-| `DeleteAvatar` | [DeleteAvatarRequest](#servicescitizensDeleteAvatarRequest) | [DeleteAvatarResponse](#servicescitizensDeleteAvatarResponse) |@perm: Name=Any |
-| `UploadMugshot` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |@perm: Name=SetUserProps buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
-| `DeleteMugshot` | [DeleteMugshotRequest](#servicescitizensDeleteMugshotRequest) | [DeleteMugshotResponse](#servicescitizensDeleteMugshotResponse) |@perm: Name=SetUserProps |
-| `ManageLabels` | [ManageLabelsRequest](#servicescitizensManageLabelsRequest) | [ManageLabelsResponse](#servicescitizensManageLabelsResponse) |@perm |
+| `ListCitizens` | [ListCitizensRequest](#servicescitizensListCitizensRequest) | [ListCitizensResponse](#servicescitizensListCitizensResponse) | |
+| `GetUser` | [GetUserRequest](#servicescitizensGetUserRequest) | [GetUserResponse](#servicescitizensGetUserResponse) | |
+| `ListUserActivity` | [ListUserActivityRequest](#servicescitizensListUserActivityRequest) | [ListUserActivityResponse](#servicescitizensListUserActivityResponse) | |
+| `SetUserProps` | [SetUserPropsRequest](#servicescitizensSetUserPropsRequest) | [SetUserPropsResponse](#servicescitizensSetUserPropsResponse) | |
+| `UploadAvatar` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
+| `DeleteAvatar` | [DeleteAvatarRequest](#servicescitizensDeleteAvatarRequest) | [DeleteAvatarResponse](#servicescitizensDeleteAvatarResponse) | |
+| `UploadMugshot` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
+| `DeleteMugshot` | [DeleteMugshotRequest](#servicescitizensDeleteMugshotRequest) | [DeleteMugshotResponse](#servicescitizensDeleteMugshotResponse) | |
+| `ManageLabels` | [ManageLabelsRequest](#servicescitizensManageLabelsRequest) | [ManageLabelsResponse](#servicescitizensManageLabelsResponse) | |
 
  <!-- end services -->
 
@@ -7841,11 +7900,11 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `CompleteCitizens` | [CompleteCitizensRequest](#servicescompletorCompleteCitizensRequest) | [CompleteCitizensResponse](#servicescompletorCompleteCitizensResponse) |@perm |
-| `CompleteJobs` | [CompleteJobsRequest](#servicescompletorCompleteJobsRequest) | [CompleteJobsResponse](#servicescompletorCompleteJobsResponse) |@perm: Name=Any |
-| `CompleteDocumentCategories` | [CompleteDocumentCategoriesRequest](#servicescompletorCompleteDocumentCategoriesRequest) | [CompleteDocumentCategoriesResponse](#servicescompletorCompleteDocumentCategoriesResponse) |@perm: Attrs=Jobs/JobList |
-| `ListLawBooks` | [ListLawBooksRequest](#servicescompletorListLawBooksRequest) | [ListLawBooksResponse](#servicescompletorListLawBooksResponse) |@perm: Name=Any |
-| `CompleteCitizenLabels` | [CompleteCitizenLabelsRequest](#servicescompletorCompleteCitizenLabelsRequest) | [CompleteCitizenLabelsResponse](#servicescompletorCompleteCitizenLabelsResponse) |@perm: Attrs=Jobs/JobList |
+| `CompleteCitizens` | [CompleteCitizensRequest](#servicescompletorCompleteCitizensRequest) | [CompleteCitizensResponse](#servicescompletorCompleteCitizensResponse) | |
+| `CompleteJobs` | [CompleteJobsRequest](#servicescompletorCompleteJobsRequest) | [CompleteJobsResponse](#servicescompletorCompleteJobsResponse) | |
+| `CompleteDocumentCategories` | [CompleteDocumentCategoriesRequest](#servicescompletorCompleteDocumentCategoriesRequest) | [CompleteDocumentCategoriesResponse](#servicescompletorCompleteDocumentCategoriesResponse) | |
+| `ListLawBooks` | [ListLawBooksRequest](#servicescompletorListLawBooksRequest) | [ListLawBooksResponse](#servicescompletorListLawBooksResponse) | |
+| `CompleteCitizenLabels` | [CompleteCitizenLabelsRequest](#servicescompletorCompleteCitizenLabelsRequest) | [CompleteCitizenLabelsResponse](#servicescompletorCompleteCitizenLabelsResponse) | |
 
  <!-- end services -->
 
@@ -7864,7 +7923,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `JoinRoom` | [.resources.collab.ClientPacket](#resourcescollabClientPacket) stream | [.resources.collab.ServerPacket](#resourcescollabServerPacket) stream |@perm: Name=documents.DocumentsService/UpdateDocument buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
+| `JoinRoom` | [.resources.collab.ClientPacket](#resourcescollabClientPacket) stream | [.resources.collab.ServerPacket](#resourcescollabServerPacket) stream |buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
 
  <!-- end services -->
 
@@ -8668,43 +8727,43 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `ListTemplates` | [ListTemplatesRequest](#servicesdocumentsListTemplatesRequest) | [ListTemplatesResponse](#servicesdocumentsListTemplatesResponse) |@perm |
-| `GetTemplate` | [GetTemplateRequest](#servicesdocumentsGetTemplateRequest) | [GetTemplateResponse](#servicesdocumentsGetTemplateResponse) |@perm: Name=ListTemplates |
-| `CreateTemplate` | [CreateTemplateRequest](#servicesdocumentsCreateTemplateRequest) | [CreateTemplateResponse](#servicesdocumentsCreateTemplateResponse) |@perm |
-| `UpdateTemplate` | [UpdateTemplateRequest](#servicesdocumentsUpdateTemplateRequest) | [UpdateTemplateResponse](#servicesdocumentsUpdateTemplateResponse) |@perm: Name=CreateTemplate |
-| `DeleteTemplate` | [DeleteTemplateRequest](#servicesdocumentsDeleteTemplateRequest) | [DeleteTemplateResponse](#servicesdocumentsDeleteTemplateResponse) |@perm |
-| `ListDocuments` | [ListDocumentsRequest](#servicesdocumentsListDocumentsRequest) | [ListDocumentsResponse](#servicesdocumentsListDocumentsResponse) |@perm |
-| `GetDocument` | [GetDocumentRequest](#servicesdocumentsGetDocumentRequest) | [GetDocumentResponse](#servicesdocumentsGetDocumentResponse) |@perm: Name=ListDocuments |
-| `CreateDocument` | [CreateDocumentRequest](#servicesdocumentsCreateDocumentRequest) | [CreateDocumentResponse](#servicesdocumentsCreateDocumentResponse) |@perm: Name=UpdateDocument |
-| `UpdateDocument` | [UpdateDocumentRequest](#servicesdocumentsUpdateDocumentRequest) | [UpdateDocumentResponse](#servicesdocumentsUpdateDocumentResponse) |@perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
-| `DeleteDocument` | [DeleteDocumentRequest](#servicesdocumentsDeleteDocumentRequest) | [DeleteDocumentResponse](#servicesdocumentsDeleteDocumentResponse) |@perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
-| `ToggleDocument` | [ToggleDocumentRequest](#servicesdocumentsToggleDocumentRequest) | [ToggleDocumentResponse](#servicesdocumentsToggleDocumentResponse) |@perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
-| `ChangeDocumentOwner` | [ChangeDocumentOwnerRequest](#servicesdocumentsChangeDocumentOwnerRequest) | [ChangeDocumentOwnerResponse](#servicesdocumentsChangeDocumentOwnerResponse) |@perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
-| `GetDocumentReferences` | [GetDocumentReferencesRequest](#servicesdocumentsGetDocumentReferencesRequest) | [GetDocumentReferencesResponse](#servicesdocumentsGetDocumentReferencesResponse) |@perm: Name=ListDocuments |
-| `GetDocumentRelations` | [GetDocumentRelationsRequest](#servicesdocumentsGetDocumentRelationsRequest) | [GetDocumentRelationsResponse](#servicesdocumentsGetDocumentRelationsResponse) |@perm: Name=ListDocuments |
-| `AddDocumentReference` | [AddDocumentReferenceRequest](#servicesdocumentsAddDocumentReferenceRequest) | [AddDocumentReferenceResponse](#servicesdocumentsAddDocumentReferenceResponse) |@perm |
-| `RemoveDocumentReference` | [RemoveDocumentReferenceRequest](#servicesdocumentsRemoveDocumentReferenceRequest) | [RemoveDocumentReferenceResponse](#servicesdocumentsRemoveDocumentReferenceResponse) |@perm: Name=AddDocumentReference |
-| `AddDocumentRelation` | [AddDocumentRelationRequest](#servicesdocumentsAddDocumentRelationRequest) | [AddDocumentRelationResponse](#servicesdocumentsAddDocumentRelationResponse) |@perm |
-| `RemoveDocumentRelation` | [RemoveDocumentRelationRequest](#servicesdocumentsRemoveDocumentRelationRequest) | [RemoveDocumentRelationResponse](#servicesdocumentsRemoveDocumentRelationResponse) |@perm: Name=AddDocumentRelation |
-| `GetComments` | [GetCommentsRequest](#servicesdocumentsGetCommentsRequest) | [GetCommentsResponse](#servicesdocumentsGetCommentsResponse) |@perm: Name=ListDocuments |
-| `PostComment` | [PostCommentRequest](#servicesdocumentsPostCommentRequest) | [PostCommentResponse](#servicesdocumentsPostCommentResponse) |@perm: Name=ListDocuments |
-| `EditComment` | [EditCommentRequest](#servicesdocumentsEditCommentRequest) | [EditCommentResponse](#servicesdocumentsEditCommentResponse) |@perm: Name=ListDocuments |
-| `DeleteComment` | [DeleteCommentRequest](#servicesdocumentsDeleteCommentRequest) | [DeleteCommentResponse](#servicesdocumentsDeleteCommentResponse) |@perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
-| `GetDocumentAccess` | [GetDocumentAccessRequest](#servicesdocumentsGetDocumentAccessRequest) | [GetDocumentAccessResponse](#servicesdocumentsGetDocumentAccessResponse) |@perm: Name=ListDocuments |
-| `SetDocumentAccess` | [SetDocumentAccessRequest](#servicesdocumentsSetDocumentAccessRequest) | [SetDocumentAccessResponse](#servicesdocumentsSetDocumentAccessResponse) |@perm: Name=UpdateDocument |
-| `ListDocumentActivity` | [ListDocumentActivityRequest](#servicesdocumentsListDocumentActivityRequest) | [ListDocumentActivityResponse](#servicesdocumentsListDocumentActivityResponse) |@perm |
-| `ListDocumentReqs` | [ListDocumentReqsRequest](#servicesdocumentsListDocumentReqsRequest) | [ListDocumentReqsResponse](#servicesdocumentsListDocumentReqsResponse) |@perm |
-| `CreateDocumentReq` | [CreateDocumentReqRequest](#servicesdocumentsCreateDocumentReqRequest) | [CreateDocumentReqResponse](#servicesdocumentsCreateDocumentReqResponse) |@perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion", "OwnerChange"} |
-| `UpdateDocumentReq` | [UpdateDocumentReqRequest](#servicesdocumentsUpdateDocumentReqRequest) | [UpdateDocumentReqResponse](#servicesdocumentsUpdateDocumentReqResponse) |@perm: Name=CreateDocumentReq |
-| `DeleteDocumentReq` | [DeleteDocumentReqRequest](#servicesdocumentsDeleteDocumentReqRequest) | [DeleteDocumentReqResponse](#servicesdocumentsDeleteDocumentReqResponse) |@perm |
-| `ListUserDocuments` | [ListUserDocumentsRequest](#servicesdocumentsListUserDocumentsRequest) | [ListUserDocumentsResponse](#servicesdocumentsListUserDocumentsResponse) |@perm |
-| `ListCategories` | [ListCategoriesRequest](#servicesdocumentsListCategoriesRequest) | [ListCategoriesResponse](#servicesdocumentsListCategoriesResponse) |@perm |
-| `CreateOrUpdateCategory` | [CreateOrUpdateCategoryRequest](#servicesdocumentsCreateOrUpdateCategoryRequest) | [CreateOrUpdateCategoryResponse](#servicesdocumentsCreateOrUpdateCategoryResponse) |@perm |
-| `DeleteCategory` | [DeleteCategoryRequest](#servicesdocumentsDeleteCategoryRequest) | [DeleteCategoryResponse](#servicesdocumentsDeleteCategoryResponse) |@perm |
-| `ListDocumentPins` | [ListDocumentPinsRequest](#servicesdocumentsListDocumentPinsRequest) | [ListDocumentPinsResponse](#servicesdocumentsListDocumentPinsResponse) |@perm: Name=ListDocuments |
-| `ToggleDocumentPin` | [ToggleDocumentPinRequest](#servicesdocumentsToggleDocumentPinRequest) | [ToggleDocumentPinResponse](#servicesdocumentsToggleDocumentPinResponse) |@perm: Attrs=Types/StringList:[]string{"JobWide"} |
-| `SetDocumentReminder` | [SetDocumentReminderRequest](#servicesdocumentsSetDocumentReminderRequest) | [SetDocumentReminderResponse](#servicesdocumentsSetDocumentReminderResponse) |@perm |
-| `UploadFile` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |@perm: Name=UpdateDocument |
+| `ListTemplates` | [ListTemplatesRequest](#servicesdocumentsListTemplatesRequest) | [ListTemplatesResponse](#servicesdocumentsListTemplatesResponse) | |
+| `GetTemplate` | [GetTemplateRequest](#servicesdocumentsGetTemplateRequest) | [GetTemplateResponse](#servicesdocumentsGetTemplateResponse) | |
+| `CreateTemplate` | [CreateTemplateRequest](#servicesdocumentsCreateTemplateRequest) | [CreateTemplateResponse](#servicesdocumentsCreateTemplateResponse) | |
+| `UpdateTemplate` | [UpdateTemplateRequest](#servicesdocumentsUpdateTemplateRequest) | [UpdateTemplateResponse](#servicesdocumentsUpdateTemplateResponse) | |
+| `DeleteTemplate` | [DeleteTemplateRequest](#servicesdocumentsDeleteTemplateRequest) | [DeleteTemplateResponse](#servicesdocumentsDeleteTemplateResponse) | |
+| `ListDocuments` | [ListDocumentsRequest](#servicesdocumentsListDocumentsRequest) | [ListDocumentsResponse](#servicesdocumentsListDocumentsResponse) | |
+| `GetDocument` | [GetDocumentRequest](#servicesdocumentsGetDocumentRequest) | [GetDocumentResponse](#servicesdocumentsGetDocumentResponse) | |
+| `CreateDocument` | [CreateDocumentRequest](#servicesdocumentsCreateDocumentRequest) | [CreateDocumentResponse](#servicesdocumentsCreateDocumentResponse) | |
+| `UpdateDocument` | [UpdateDocumentRequest](#servicesdocumentsUpdateDocumentRequest) | [UpdateDocumentResponse](#servicesdocumentsUpdateDocumentResponse) | |
+| `DeleteDocument` | [DeleteDocumentRequest](#servicesdocumentsDeleteDocumentRequest) | [DeleteDocumentResponse](#servicesdocumentsDeleteDocumentResponse) | |
+| `ToggleDocument` | [ToggleDocumentRequest](#servicesdocumentsToggleDocumentRequest) | [ToggleDocumentResponse](#servicesdocumentsToggleDocumentResponse) | |
+| `ChangeDocumentOwner` | [ChangeDocumentOwnerRequest](#servicesdocumentsChangeDocumentOwnerRequest) | [ChangeDocumentOwnerResponse](#servicesdocumentsChangeDocumentOwnerResponse) | |
+| `GetDocumentReferences` | [GetDocumentReferencesRequest](#servicesdocumentsGetDocumentReferencesRequest) | [GetDocumentReferencesResponse](#servicesdocumentsGetDocumentReferencesResponse) | |
+| `GetDocumentRelations` | [GetDocumentRelationsRequest](#servicesdocumentsGetDocumentRelationsRequest) | [GetDocumentRelationsResponse](#servicesdocumentsGetDocumentRelationsResponse) | |
+| `AddDocumentReference` | [AddDocumentReferenceRequest](#servicesdocumentsAddDocumentReferenceRequest) | [AddDocumentReferenceResponse](#servicesdocumentsAddDocumentReferenceResponse) | |
+| `RemoveDocumentReference` | [RemoveDocumentReferenceRequest](#servicesdocumentsRemoveDocumentReferenceRequest) | [RemoveDocumentReferenceResponse](#servicesdocumentsRemoveDocumentReferenceResponse) | |
+| `AddDocumentRelation` | [AddDocumentRelationRequest](#servicesdocumentsAddDocumentRelationRequest) | [AddDocumentRelationResponse](#servicesdocumentsAddDocumentRelationResponse) | |
+| `RemoveDocumentRelation` | [RemoveDocumentRelationRequest](#servicesdocumentsRemoveDocumentRelationRequest) | [RemoveDocumentRelationResponse](#servicesdocumentsRemoveDocumentRelationResponse) | |
+| `GetComments` | [GetCommentsRequest](#servicesdocumentsGetCommentsRequest) | [GetCommentsResponse](#servicesdocumentsGetCommentsResponse) | |
+| `PostComment` | [PostCommentRequest](#servicesdocumentsPostCommentRequest) | [PostCommentResponse](#servicesdocumentsPostCommentResponse) | |
+| `EditComment` | [EditCommentRequest](#servicesdocumentsEditCommentRequest) | [EditCommentResponse](#servicesdocumentsEditCommentResponse) | |
+| `DeleteComment` | [DeleteCommentRequest](#servicesdocumentsDeleteCommentRequest) | [DeleteCommentResponse](#servicesdocumentsDeleteCommentResponse) | |
+| `GetDocumentAccess` | [GetDocumentAccessRequest](#servicesdocumentsGetDocumentAccessRequest) | [GetDocumentAccessResponse](#servicesdocumentsGetDocumentAccessResponse) | |
+| `SetDocumentAccess` | [SetDocumentAccessRequest](#servicesdocumentsSetDocumentAccessRequest) | [SetDocumentAccessResponse](#servicesdocumentsSetDocumentAccessResponse) | |
+| `ListDocumentActivity` | [ListDocumentActivityRequest](#servicesdocumentsListDocumentActivityRequest) | [ListDocumentActivityResponse](#servicesdocumentsListDocumentActivityResponse) | |
+| `ListDocumentReqs` | [ListDocumentReqsRequest](#servicesdocumentsListDocumentReqsRequest) | [ListDocumentReqsResponse](#servicesdocumentsListDocumentReqsResponse) | |
+| `CreateDocumentReq` | [CreateDocumentReqRequest](#servicesdocumentsCreateDocumentReqRequest) | [CreateDocumentReqResponse](#servicesdocumentsCreateDocumentReqResponse) | |
+| `UpdateDocumentReq` | [UpdateDocumentReqRequest](#servicesdocumentsUpdateDocumentReqRequest) | [UpdateDocumentReqResponse](#servicesdocumentsUpdateDocumentReqResponse) | |
+| `DeleteDocumentReq` | [DeleteDocumentReqRequest](#servicesdocumentsDeleteDocumentReqRequest) | [DeleteDocumentReqResponse](#servicesdocumentsDeleteDocumentReqResponse) | |
+| `ListUserDocuments` | [ListUserDocumentsRequest](#servicesdocumentsListUserDocumentsRequest) | [ListUserDocumentsResponse](#servicesdocumentsListUserDocumentsResponse) | |
+| `ListCategories` | [ListCategoriesRequest](#servicesdocumentsListCategoriesRequest) | [ListCategoriesResponse](#servicesdocumentsListCategoriesResponse) | |
+| `CreateOrUpdateCategory` | [CreateOrUpdateCategoryRequest](#servicesdocumentsCreateOrUpdateCategoryRequest) | [CreateOrUpdateCategoryResponse](#servicesdocumentsCreateOrUpdateCategoryResponse) | |
+| `DeleteCategory` | [DeleteCategoryRequest](#servicesdocumentsDeleteCategoryRequest) | [DeleteCategoryResponse](#servicesdocumentsDeleteCategoryResponse) | |
+| `ListDocumentPins` | [ListDocumentPinsRequest](#servicesdocumentsListDocumentPinsRequest) | [ListDocumentPinsResponse](#servicesdocumentsListDocumentPinsResponse) | |
+| `ToggleDocumentPin` | [ToggleDocumentPinRequest](#servicesdocumentsToggleDocumentPinRequest) | [ToggleDocumentPinResponse](#servicesdocumentsToggleDocumentPinResponse) | |
+| `SetDocumentReminder` | [SetDocumentReminderRequest](#servicesdocumentsSetDocumentReminderRequest) | [SetDocumentReminderResponse](#servicesdocumentsSetDocumentReminderResponse) | |
+| `UploadFile` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) | |
 
  <!-- end services -->
 
@@ -8764,10 +8823,10 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `Upload` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |@perm: Name=Superuser buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
-| `ListFiles` | [ListFilesRequest](#servicesfilestoreListFilesRequest) | [ListFilesResponse](#servicesfilestoreListFilesResponse) |@perm: Name=Superuser |
-| `DeleteFile` | [.resources.file.DeleteFileRequest](#resourcesfileDeleteFileRequest) | [.resources.file.DeleteFileResponse](#resourcesfileDeleteFileResponse) |@perm: Name=Superuser |
-| `DeleteFileByPath` | [DeleteFileByPathRequest](#servicesfilestoreDeleteFileByPathRequest) | [DeleteFileByPathResponse](#servicesfilestoreDeleteFileByPathResponse) |@perm: Name=Superuser |
+| `Upload` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
+| `ListFiles` | [ListFilesRequest](#servicesfilestoreListFilesRequest) | [ListFilesResponse](#servicesfilestoreListFilesResponse) | |
+| `DeleteFile` | [.resources.file.DeleteFileRequest](#resourcesfileDeleteFileRequest) | [.resources.file.DeleteFileResponse](#resourcesfileDeleteFileResponse) | |
+| `DeleteFileByPath` | [DeleteFileByPathRequest](#servicesfilestoreDeleteFileByPathRequest) | [DeleteFileByPathResponse](#servicesfilestoreDeleteFileByPathResponse) | |
 
  <!-- end services -->
 
@@ -8875,10 +8934,10 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `ListConductEntries` | [ListConductEntriesRequest](#servicesjobsListConductEntriesRequest) | [ListConductEntriesResponse](#servicesjobsListConductEntriesResponse) |@perm: Attrs=Access/StringList:[]string{"Own", "All"} |
-| `CreateConductEntry` | [CreateConductEntryRequest](#servicesjobsCreateConductEntryRequest) | [CreateConductEntryResponse](#servicesjobsCreateConductEntryResponse) |@perm |
-| `UpdateConductEntry` | [UpdateConductEntryRequest](#servicesjobsUpdateConductEntryRequest) | [UpdateConductEntryResponse](#servicesjobsUpdateConductEntryResponse) |@perm |
-| `DeleteConductEntry` | [DeleteConductEntryRequest](#servicesjobsDeleteConductEntryRequest) | [DeleteConductEntryResponse](#servicesjobsDeleteConductEntryResponse) |@perm |
+| `ListConductEntries` | [ListConductEntriesRequest](#servicesjobsListConductEntriesRequest) | [ListConductEntriesResponse](#servicesjobsListConductEntriesResponse) | |
+| `CreateConductEntry` | [CreateConductEntryRequest](#servicesjobsCreateConductEntryRequest) | [CreateConductEntryResponse](#servicesjobsCreateConductEntryResponse) | |
+| `UpdateConductEntry` | [UpdateConductEntryRequest](#servicesjobsUpdateConductEntryRequest) | [UpdateConductEntryResponse](#servicesjobsUpdateConductEntryResponse) | |
+| `DeleteConductEntry` | [DeleteConductEntryRequest](#servicesjobsDeleteConductEntryRequest) | [DeleteConductEntryResponse](#servicesjobsDeleteConductEntryResponse) | |
 
  <!-- end services -->
 
@@ -9122,16 +9181,16 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `ListColleagues` | [ListColleaguesRequest](#servicesjobsListColleaguesRequest) | [ListColleaguesResponse](#servicesjobsListColleaguesResponse) |@perm |
-| `GetSelf` | [GetSelfRequest](#servicesjobsGetSelfRequest) | [GetSelfResponse](#servicesjobsGetSelfResponse) |@perm: Name=ListColleagues |
-| `GetColleague` | [GetColleagueRequest](#servicesjobsGetColleagueRequest) | [GetColleagueResponse](#servicesjobsGetColleagueResponse) |@perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note", "Labels"} |
-| `ListColleagueActivity` | [ListColleagueActivityRequest](#servicesjobsListColleagueActivityRequest) | [ListColleagueActivityResponse](#servicesjobsListColleagueActivityResponse) |@perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME"} |
-| `SetColleagueProps` | [SetColleaguePropsRequest](#servicesjobsSetColleaguePropsRequest) | [SetColleaguePropsResponse](#servicesjobsSetColleaguePropsResponse) |@perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate", "Note", "Labels", "Name"} |
-| `GetColleagueLabels` | [GetColleagueLabelsRequest](#servicesjobsGetColleagueLabelsRequest) | [GetColleagueLabelsResponse](#servicesjobsGetColleagueLabelsResponse) |@perm: Name=GetColleague |
-| `ManageLabels` | [ManageLabelsRequest](#servicesjobsManageLabelsRequest) | [ManageLabelsResponse](#servicesjobsManageLabelsResponse) |@perm |
-| `GetColleagueLabelsStats` | [GetColleagueLabelsStatsRequest](#servicesjobsGetColleagueLabelsStatsRequest) | [GetColleagueLabelsStatsResponse](#servicesjobsGetColleagueLabelsStatsResponse) |@perm: Name=GetColleague |
-| `GetMOTD` | [GetMOTDRequest](#servicesjobsGetMOTDRequest) | [GetMOTDResponse](#servicesjobsGetMOTDResponse) |@perm: Name=Any |
-| `SetMOTD` | [SetMOTDRequest](#servicesjobsSetMOTDRequest) | [SetMOTDResponse](#servicesjobsSetMOTDResponse) |@perm |
+| `ListColleagues` | [ListColleaguesRequest](#servicesjobsListColleaguesRequest) | [ListColleaguesResponse](#servicesjobsListColleaguesResponse) | |
+| `GetSelf` | [GetSelfRequest](#servicesjobsGetSelfRequest) | [GetSelfResponse](#servicesjobsGetSelfResponse) | |
+| `GetColleague` | [GetColleagueRequest](#servicesjobsGetColleagueRequest) | [GetColleagueResponse](#servicesjobsGetColleagueResponse) | |
+| `ListColleagueActivity` | [ListColleagueActivityRequest](#servicesjobsListColleagueActivityRequest) | [ListColleagueActivityResponse](#servicesjobsListColleagueActivityResponse) | |
+| `SetColleagueProps` | [SetColleaguePropsRequest](#servicesjobsSetColleaguePropsRequest) | [SetColleaguePropsResponse](#servicesjobsSetColleaguePropsResponse) | |
+| `GetColleagueLabels` | [GetColleagueLabelsRequest](#servicesjobsGetColleagueLabelsRequest) | [GetColleagueLabelsResponse](#servicesjobsGetColleagueLabelsResponse) | |
+| `ManageLabels` | [ManageLabelsRequest](#servicesjobsManageLabelsRequest) | [ManageLabelsResponse](#servicesjobsManageLabelsResponse) | |
+| `GetColleagueLabelsStats` | [GetColleagueLabelsStatsRequest](#servicesjobsGetColleagueLabelsStatsRequest) | [GetColleagueLabelsStatsResponse](#servicesjobsGetColleagueLabelsStatsResponse) | |
+| `GetMOTD` | [GetMOTDRequest](#servicesjobsGetMOTDRequest) | [GetMOTDResponse](#servicesjobsGetMOTDResponse) | |
+| `SetMOTD` | [SetMOTDRequest](#servicesjobsSetMOTDRequest) | [SetMOTDResponse](#servicesjobsSetMOTDResponse) | |
 
  <!-- end services -->
 
@@ -9270,9 +9329,9 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `ListTimeclock` | [ListTimeclockRequest](#servicesjobsListTimeclockRequest) | [ListTimeclockResponse](#servicesjobsListTimeclockResponse) |@perm: Attrs=Access/StringList:[]string{"All"} |
-| `GetTimeclockStats` | [GetTimeclockStatsRequest](#servicesjobsGetTimeclockStatsRequest) | [GetTimeclockStatsResponse](#servicesjobsGetTimeclockStatsResponse) |@perm: Name=ListTimeclock |
-| `ListInactiveEmployees` | [ListInactiveEmployeesRequest](#servicesjobsListInactiveEmployeesRequest) | [ListInactiveEmployeesResponse](#servicesjobsListInactiveEmployeesResponse) |@perm |
+| `ListTimeclock` | [ListTimeclockRequest](#servicesjobsListTimeclockRequest) | [ListTimeclockResponse](#servicesjobsListTimeclockResponse) | |
+| `GetTimeclockStats` | [GetTimeclockStatsRequest](#servicesjobsGetTimeclockStatsRequest) | [GetTimeclockStatsResponse](#servicesjobsGetTimeclockStatsResponse) | |
+| `ListInactiveEmployees` | [ListInactiveEmployeesRequest](#servicesjobsListInactiveEmployeesRequest) | [ListInactiveEmployeesResponse](#servicesjobsListInactiveEmployeesResponse) | |
 
  <!-- end services -->
 
@@ -9425,9 +9484,9 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `Stream` | [StreamRequest](#serviceslivemapStreamRequest) | [StreamResponse](#serviceslivemapStreamResponse) stream |@perm: Attrs=Markers/JobList|Players/JobGradeList |
-| `CreateOrUpdateMarker` | [CreateOrUpdateMarkerRequest](#serviceslivemapCreateOrUpdateMarkerRequest) | [CreateOrUpdateMarkerResponse](#serviceslivemapCreateOrUpdateMarkerResponse) |@perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
-| `DeleteMarker` | [DeleteMarkerRequest](#serviceslivemapDeleteMarkerRequest) | [DeleteMarkerResponse](#serviceslivemapDeleteMarkerResponse) |@perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
+| `Stream` | [StreamRequest](#serviceslivemapStreamRequest) | [StreamResponse](#serviceslivemapStreamResponse) stream | |
+| `CreateOrUpdateMarker` | [CreateOrUpdateMarkerRequest](#serviceslivemapCreateOrUpdateMarkerRequest) | [CreateOrUpdateMarkerResponse](#serviceslivemapCreateOrUpdateMarkerResponse) | |
+| `DeleteMarker` | [DeleteMarkerRequest](#serviceslivemapDeleteMarkerRequest) | [DeleteMarkerResponse](#serviceslivemapDeleteMarkerResponse) | |
 
  <!-- end services -->
 
@@ -9913,27 +9972,27 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `ListEmails` | [ListEmailsRequest](#servicesmailerListEmailsRequest) | [ListEmailsResponse](#servicesmailerListEmailsResponse) |@perm |
-| `GetEmail` | [GetEmailRequest](#servicesmailerGetEmailRequest) | [GetEmailResponse](#servicesmailerGetEmailResponse) |@perm: Name=ListEmails |
-| `CreateOrUpdateEmail` | [CreateOrUpdateEmailRequest](#servicesmailerCreateOrUpdateEmailRequest) | [CreateOrUpdateEmailResponse](#servicesmailerCreateOrUpdateEmailResponse) |@perm: Attrs=Fields/StringList:[]string{"Job"} |
-| `DeleteEmail` | [DeleteEmailRequest](#servicesmailerDeleteEmailRequest) | [DeleteEmailResponse](#servicesmailerDeleteEmailResponse) |@perm |
-| `GetEmailProposals` | [GetEmailProposalsRequest](#servicesmailerGetEmailProposalsRequest) | [GetEmailProposalsResponse](#servicesmailerGetEmailProposalsResponse) |@perm: Name=ListEmails |
-| `ListTemplates` | [ListTemplatesRequest](#servicesmailerListTemplatesRequest) | [ListTemplatesResponse](#servicesmailerListTemplatesResponse) |@perm: Name=ListEmails |
-| `GetTemplate` | [GetTemplateRequest](#servicesmailerGetTemplateRequest) | [GetTemplateResponse](#servicesmailerGetTemplateResponse) |@perm: Name=ListEmails |
-| `CreateOrUpdateTemplate` | [CreateOrUpdateTemplateRequest](#servicesmailerCreateOrUpdateTemplateRequest) | [CreateOrUpdateTemplateResponse](#servicesmailerCreateOrUpdateTemplateResponse) |@perm: Name=ListEmails |
-| `DeleteTemplate` | [DeleteTemplateRequest](#servicesmailerDeleteTemplateRequest) | [DeleteTemplateResponse](#servicesmailerDeleteTemplateResponse) |@perm: Name=ListEmails |
-| `ListThreads` | [ListThreadsRequest](#servicesmailerListThreadsRequest) | [ListThreadsResponse](#servicesmailerListThreadsResponse) |@perm: Name=ListEmails |
-| `GetThread` | [GetThreadRequest](#servicesmailerGetThreadRequest) | [GetThreadResponse](#servicesmailerGetThreadResponse) |@perm: Name=ListEmails |
-| `CreateThread` | [CreateThreadRequest](#servicesmailerCreateThreadRequest) | [CreateThreadResponse](#servicesmailerCreateThreadResponse) |@perm: Name=ListEmails |
-| `DeleteThread` | [DeleteThreadRequest](#servicesmailerDeleteThreadRequest) | [DeleteThreadResponse](#servicesmailerDeleteThreadResponse) |@perm: Name=Superuser |
-| `GetThreadState` | [GetThreadStateRequest](#servicesmailerGetThreadStateRequest) | [GetThreadStateResponse](#servicesmailerGetThreadStateResponse) |@perm: Name=ListEmails |
-| `SetThreadState` | [SetThreadStateRequest](#servicesmailerSetThreadStateRequest) | [SetThreadStateResponse](#servicesmailerSetThreadStateResponse) |@perm: Name=ListEmails |
-| `SearchThreads` | [SearchThreadsRequest](#servicesmailerSearchThreadsRequest) | [SearchThreadsResponse](#servicesmailerSearchThreadsResponse) |@perm: Name=ListEmails |
-| `ListThreadMessages` | [ListThreadMessagesRequest](#servicesmailerListThreadMessagesRequest) | [ListThreadMessagesResponse](#servicesmailerListThreadMessagesResponse) |@perm: Name=ListEmails |
-| `PostMessage` | [PostMessageRequest](#servicesmailerPostMessageRequest) | [PostMessageResponse](#servicesmailerPostMessageResponse) |@perm: Name=ListEmails |
-| `DeleteMessage` | [DeleteMessageRequest](#servicesmailerDeleteMessageRequest) | [DeleteMessageResponse](#servicesmailerDeleteMessageResponse) |@perm: Name=Superuser |
-| `GetEmailSettings` | [GetEmailSettingsRequest](#servicesmailerGetEmailSettingsRequest) | [GetEmailSettingsResponse](#servicesmailerGetEmailSettingsResponse) |@perm: Name=ListEmails |
-| `SetEmailSettings` | [SetEmailSettingsRequest](#servicesmailerSetEmailSettingsRequest) | [SetEmailSettingsResponse](#servicesmailerSetEmailSettingsResponse) |@perm: Name=ListEmails |
+| `ListEmails` | [ListEmailsRequest](#servicesmailerListEmailsRequest) | [ListEmailsResponse](#servicesmailerListEmailsResponse) | |
+| `GetEmail` | [GetEmailRequest](#servicesmailerGetEmailRequest) | [GetEmailResponse](#servicesmailerGetEmailResponse) | |
+| `CreateOrUpdateEmail` | [CreateOrUpdateEmailRequest](#servicesmailerCreateOrUpdateEmailRequest) | [CreateOrUpdateEmailResponse](#servicesmailerCreateOrUpdateEmailResponse) | |
+| `DeleteEmail` | [DeleteEmailRequest](#servicesmailerDeleteEmailRequest) | [DeleteEmailResponse](#servicesmailerDeleteEmailResponse) | |
+| `GetEmailProposals` | [GetEmailProposalsRequest](#servicesmailerGetEmailProposalsRequest) | [GetEmailProposalsResponse](#servicesmailerGetEmailProposalsResponse) | |
+| `ListTemplates` | [ListTemplatesRequest](#servicesmailerListTemplatesRequest) | [ListTemplatesResponse](#servicesmailerListTemplatesResponse) | |
+| `GetTemplate` | [GetTemplateRequest](#servicesmailerGetTemplateRequest) | [GetTemplateResponse](#servicesmailerGetTemplateResponse) | |
+| `CreateOrUpdateTemplate` | [CreateOrUpdateTemplateRequest](#servicesmailerCreateOrUpdateTemplateRequest) | [CreateOrUpdateTemplateResponse](#servicesmailerCreateOrUpdateTemplateResponse) | |
+| `DeleteTemplate` | [DeleteTemplateRequest](#servicesmailerDeleteTemplateRequest) | [DeleteTemplateResponse](#servicesmailerDeleteTemplateResponse) | |
+| `ListThreads` | [ListThreadsRequest](#servicesmailerListThreadsRequest) | [ListThreadsResponse](#servicesmailerListThreadsResponse) | |
+| `GetThread` | [GetThreadRequest](#servicesmailerGetThreadRequest) | [GetThreadResponse](#servicesmailerGetThreadResponse) | |
+| `CreateThread` | [CreateThreadRequest](#servicesmailerCreateThreadRequest) | [CreateThreadResponse](#servicesmailerCreateThreadResponse) | |
+| `DeleteThread` | [DeleteThreadRequest](#servicesmailerDeleteThreadRequest) | [DeleteThreadResponse](#servicesmailerDeleteThreadResponse) | |
+| `GetThreadState` | [GetThreadStateRequest](#servicesmailerGetThreadStateRequest) | [GetThreadStateResponse](#servicesmailerGetThreadStateResponse) | |
+| `SetThreadState` | [SetThreadStateRequest](#servicesmailerSetThreadStateRequest) | [SetThreadStateResponse](#servicesmailerSetThreadStateResponse) | |
+| `SearchThreads` | [SearchThreadsRequest](#servicesmailerSearchThreadsRequest) | [SearchThreadsResponse](#servicesmailerSearchThreadsResponse) | |
+| `ListThreadMessages` | [ListThreadMessagesRequest](#servicesmailerListThreadMessagesRequest) | [ListThreadMessagesResponse](#servicesmailerListThreadMessagesResponse) | |
+| `PostMessage` | [PostMessageRequest](#servicesmailerPostMessageRequest) | [PostMessageResponse](#servicesmailerPostMessageResponse) | |
+| `DeleteMessage` | [DeleteMessageRequest](#servicesmailerDeleteMessageRequest) | [DeleteMessageResponse](#servicesmailerDeleteMessageResponse) | |
+| `GetEmailSettings` | [GetEmailSettingsRequest](#servicesmailerGetEmailSettingsRequest) | [GetEmailSettingsResponse](#servicesmailerGetEmailSettingsResponse) | |
+| `SetEmailSettings` | [SetEmailSettingsRequest](#servicesmailerSetEmailSettingsRequest) | [SetEmailSettingsResponse](#servicesmailerSetEmailSettingsResponse) | |
 
  <!-- end services -->
 
@@ -10030,9 +10089,9 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `GetNotifications` | [GetNotificationsRequest](#servicesnotificationsGetNotificationsRequest) | [GetNotificationsResponse](#servicesnotificationsGetNotificationsResponse) |@perm: Name=Any |
-| `MarkNotifications` | [MarkNotificationsRequest](#servicesnotificationsMarkNotificationsRequest) | [MarkNotificationsResponse](#servicesnotificationsMarkNotificationsResponse) |@perm: Name=Any |
-| `Stream` | [StreamRequest](#servicesnotificationsStreamRequest) stream | [StreamResponse](#servicesnotificationsStreamResponse) stream |@perm: Name=Any |
+| `GetNotifications` | [GetNotificationsRequest](#servicesnotificationsGetNotificationsRequest) | [GetNotificationsResponse](#servicesnotificationsGetNotificationsResponse) | |
+| `MarkNotifications` | [MarkNotificationsRequest](#servicesnotificationsMarkNotificationsRequest) | [MarkNotificationsResponse](#servicesnotificationsMarkNotificationsResponse) | |
+| `Stream` | [StreamRequest](#servicesnotificationsStreamRequest) stream | [StreamResponse](#servicesnotificationsStreamResponse) stream | |
 
  <!-- end services -->
 
@@ -10432,22 +10491,22 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `ListQualifications` | [ListQualificationsRequest](#servicesqualificationsListQualificationsRequest) | [ListQualificationsResponse](#servicesqualificationsListQualificationsResponse) |@perm |
-| `GetQualification` | [GetQualificationRequest](#servicesqualificationsGetQualificationRequest) | [GetQualificationResponse](#servicesqualificationsGetQualificationResponse) |@perm: Name=ListQualifications |
-| `CreateQualification` | [CreateQualificationRequest](#servicesqualificationsCreateQualificationRequest) | [CreateQualificationResponse](#servicesqualificationsCreateQualificationResponse) |@perm: Name=UpdateQualification |
-| `UpdateQualification` | [UpdateQualificationRequest](#servicesqualificationsUpdateQualificationRequest) | [UpdateQualificationResponse](#servicesqualificationsUpdateQualificationResponse) |@perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Fields/StringList:[]string{"Public"} |
-| `DeleteQualification` | [DeleteQualificationRequest](#servicesqualificationsDeleteQualificationRequest) | [DeleteQualificationResponse](#servicesqualificationsDeleteQualificationResponse) |@perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
-| `ListQualificationRequests` | [ListQualificationRequestsRequest](#servicesqualificationsListQualificationRequestsRequest) | [ListQualificationRequestsResponse](#servicesqualificationsListQualificationRequestsResponse) |@perm: Name=ListQualifications |
-| `CreateOrUpdateQualificationRequest` | [CreateOrUpdateQualificationRequestRequest](#servicesqualificationsCreateOrUpdateQualificationRequestRequest) | [CreateOrUpdateQualificationRequestResponse](#servicesqualificationsCreateOrUpdateQualificationRequestResponse) |@perm: Name=ListQualifications |
-| `DeleteQualificationReq` | [DeleteQualificationReqRequest](#servicesqualificationsDeleteQualificationReqRequest) | [DeleteQualificationReqResponse](#servicesqualificationsDeleteQualificationReqResponse) |@perm: Name=ListQualifications |
-| `ListQualificationsResults` | [ListQualificationsResultsRequest](#servicesqualificationsListQualificationsResultsRequest) | [ListQualificationsResultsResponse](#servicesqualificationsListQualificationsResultsResponse) |@perm: Name=ListQualifications |
-| `CreateOrUpdateQualificationResult` | [CreateOrUpdateQualificationResultRequest](#servicesqualificationsCreateOrUpdateQualificationResultRequest) | [CreateOrUpdateQualificationResultResponse](#servicesqualificationsCreateOrUpdateQualificationResultResponse) |@perm: Name=ListQualifications |
-| `DeleteQualificationResult` | [DeleteQualificationResultRequest](#servicesqualificationsDeleteQualificationResultRequest) | [DeleteQualificationResultResponse](#servicesqualificationsDeleteQualificationResultResponse) |@perm: Name=ListQualifications |
-| `GetExamInfo` | [GetExamInfoRequest](#servicesqualificationsGetExamInfoRequest) | [GetExamInfoResponse](#servicesqualificationsGetExamInfoResponse) |@perm: Name=ListQualifications |
-| `TakeExam` | [TakeExamRequest](#servicesqualificationsTakeExamRequest) | [TakeExamResponse](#servicesqualificationsTakeExamResponse) |@perm: Name=ListQualifications |
-| `SubmitExam` | [SubmitExamRequest](#servicesqualificationsSubmitExamRequest) | [SubmitExamResponse](#servicesqualificationsSubmitExamResponse) |@perm: Name=ListQualifications |
-| `GetUserExam` | [GetUserExamRequest](#servicesqualificationsGetUserExamRequest) | [GetUserExamResponse](#servicesqualificationsGetUserExamResponse) |@perm: Name=ListQualifications |
-| `UploadFile` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |@perm: Name=UpdateQualification |
+| `ListQualifications` | [ListQualificationsRequest](#servicesqualificationsListQualificationsRequest) | [ListQualificationsResponse](#servicesqualificationsListQualificationsResponse) | |
+| `GetQualification` | [GetQualificationRequest](#servicesqualificationsGetQualificationRequest) | [GetQualificationResponse](#servicesqualificationsGetQualificationResponse) | |
+| `CreateQualification` | [CreateQualificationRequest](#servicesqualificationsCreateQualificationRequest) | [CreateQualificationResponse](#servicesqualificationsCreateQualificationResponse) | |
+| `UpdateQualification` | [UpdateQualificationRequest](#servicesqualificationsUpdateQualificationRequest) | [UpdateQualificationResponse](#servicesqualificationsUpdateQualificationResponse) | |
+| `DeleteQualification` | [DeleteQualificationRequest](#servicesqualificationsDeleteQualificationRequest) | [DeleteQualificationResponse](#servicesqualificationsDeleteQualificationResponse) | |
+| `ListQualificationRequests` | [ListQualificationRequestsRequest](#servicesqualificationsListQualificationRequestsRequest) | [ListQualificationRequestsResponse](#servicesqualificationsListQualificationRequestsResponse) | |
+| `CreateOrUpdateQualificationRequest` | [CreateOrUpdateQualificationRequestRequest](#servicesqualificationsCreateOrUpdateQualificationRequestRequest) | [CreateOrUpdateQualificationRequestResponse](#servicesqualificationsCreateOrUpdateQualificationRequestResponse) | |
+| `DeleteQualificationReq` | [DeleteQualificationReqRequest](#servicesqualificationsDeleteQualificationReqRequest) | [DeleteQualificationReqResponse](#servicesqualificationsDeleteQualificationReqResponse) | |
+| `ListQualificationsResults` | [ListQualificationsResultsRequest](#servicesqualificationsListQualificationsResultsRequest) | [ListQualificationsResultsResponse](#servicesqualificationsListQualificationsResultsResponse) | |
+| `CreateOrUpdateQualificationResult` | [CreateOrUpdateQualificationResultRequest](#servicesqualificationsCreateOrUpdateQualificationResultRequest) | [CreateOrUpdateQualificationResultResponse](#servicesqualificationsCreateOrUpdateQualificationResultResponse) | |
+| `DeleteQualificationResult` | [DeleteQualificationResultRequest](#servicesqualificationsDeleteQualificationResultRequest) | [DeleteQualificationResultResponse](#servicesqualificationsDeleteQualificationResultResponse) | |
+| `GetExamInfo` | [GetExamInfoRequest](#servicesqualificationsGetExamInfoRequest) | [GetExamInfoResponse](#servicesqualificationsGetExamInfoResponse) | |
+| `TakeExam` | [TakeExamRequest](#servicesqualificationsTakeExamRequest) | [TakeExamResponse](#servicesqualificationsTakeExamResponse) | |
+| `SubmitExam` | [SubmitExamRequest](#servicesqualificationsSubmitExamRequest) | [SubmitExamResponse](#servicesqualificationsSubmitExamResponse) | |
+| `GetUserExam` | [GetUserExamRequest](#servicesqualificationsGetUserExamRequest) | [GetUserExamResponse](#servicesqualificationsGetUserExamResponse) | |
+| `UploadFile` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) | |
 
  <!-- end services -->
 
@@ -10553,10 +10612,10 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `ListAccounts` | [ListAccountsRequest](#servicessettingsListAccountsRequest) | [ListAccountsResponse](#servicessettingsListAccountsResponse) |@perm: Name=Superuser |
-| `UpdateAccount` | [UpdateAccountRequest](#servicessettingsUpdateAccountRequest) | [UpdateAccountResponse](#servicessettingsUpdateAccountResponse) |@perm: Name=Superuser |
-| `DisconnectOAuth2Connection` | [DisconnectOAuth2ConnectionRequest](#servicessettingsDisconnectOAuth2ConnectionRequest) | [DisconnectOAuth2ConnectionResponse](#servicessettingsDisconnectOAuth2ConnectionResponse) |@perm: Name=Superuser |
-| `DeleteAccount` | [DeleteAccountRequest](#servicessettingsDeleteAccountRequest) | [DeleteAccountResponse](#servicessettingsDeleteAccountResponse) |@perm: Name=Superuser |
+| `ListAccounts` | [ListAccountsRequest](#servicessettingsListAccountsRequest) | [ListAccountsResponse](#servicessettingsListAccountsResponse) | |
+| `UpdateAccount` | [UpdateAccountRequest](#servicessettingsUpdateAccountRequest) | [UpdateAccountResponse](#servicessettingsUpdateAccountResponse) | |
+| `DisconnectOAuth2Connection` | [DisconnectOAuth2ConnectionRequest](#servicessettingsDisconnectOAuth2ConnectionRequest) | [DisconnectOAuth2ConnectionResponse](#servicessettingsDisconnectOAuth2ConnectionResponse) | |
+| `DeleteAccount` | [DeleteAccountRequest](#servicessettingsDeleteAccountRequest) | [DeleteAccountResponse](#servicessettingsDeleteAccountResponse) | |
 
  <!-- end services -->
 
@@ -10614,8 +10673,8 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `GetAppConfig` | [GetAppConfigRequest](#servicessettingsGetAppConfigRequest) | [GetAppConfigResponse](#servicessettingsGetAppConfigResponse) |@perm: Name=Superuser |
-| `UpdateAppConfig` | [UpdateAppConfigRequest](#servicessettingsUpdateAppConfigRequest) | [UpdateAppConfigResponse](#servicessettingsUpdateAppConfigResponse) |@perm: Name=Superuser |
+| `GetAppConfig` | [GetAppConfigRequest](#servicessettingsGetAppConfigRequest) | [GetAppConfigResponse](#servicessettingsGetAppConfigResponse) | |
+| `UpdateAppConfig` | [UpdateAppConfigRequest](#servicessettingsUpdateAppConfigRequest) | [UpdateAppConfigResponse](#servicessettingsUpdateAppConfigResponse) | |
 
  <!-- end services -->
 
@@ -10651,7 +10710,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `ListCronjobs` | [ListCronjobsRequest](#servicessettingsListCronjobsRequest) | [ListCronjobsResponse](#servicessettingsListCronjobsResponse) |@perm: Name=Superuser |
+| `ListCronjobs` | [ListCronjobsRequest](#servicessettingsListCronjobsRequest) | [ListCronjobsResponse](#servicessettingsListCronjobsResponse) | |
 
  <!-- end services -->
 
@@ -10748,10 +10807,10 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `CreateOrUpdateLawBook` | [CreateOrUpdateLawBookRequest](#servicessettingsCreateOrUpdateLawBookRequest) | [CreateOrUpdateLawBookResponse](#servicessettingsCreateOrUpdateLawBookResponse) |@perm |
-| `DeleteLawBook` | [DeleteLawBookRequest](#servicessettingsDeleteLawBookRequest) | [DeleteLawBookResponse](#servicessettingsDeleteLawBookResponse) |@perm |
-| `CreateOrUpdateLaw` | [CreateOrUpdateLawRequest](#servicessettingsCreateOrUpdateLawRequest) | [CreateOrUpdateLawResponse](#servicessettingsCreateOrUpdateLawResponse) |@perm: Name=CreateOrUpdateLawBook |
-| `DeleteLaw` | [DeleteLawRequest](#servicessettingsDeleteLawRequest) | [DeleteLawResponse](#servicessettingsDeleteLawResponse) |@perm: Name=DeleteLawBook |
+| `CreateOrUpdateLawBook` | [CreateOrUpdateLawBookRequest](#servicessettingsCreateOrUpdateLawBookRequest) | [CreateOrUpdateLawBookResponse](#servicessettingsCreateOrUpdateLawBookResponse) | |
+| `DeleteLawBook` | [DeleteLawBookRequest](#servicessettingsDeleteLawBookRequest) | [DeleteLawBookResponse](#servicessettingsDeleteLawBookResponse) | |
+| `CreateOrUpdateLaw` | [CreateOrUpdateLawRequest](#servicessettingsCreateOrUpdateLawRequest) | [CreateOrUpdateLawResponse](#servicessettingsCreateOrUpdateLawResponse) | |
+| `DeleteLaw` | [DeleteLawRequest](#servicessettingsDeleteLawRequest) | [DeleteLawResponse](#servicessettingsDeleteLawResponse) | |
 
  <!-- end services -->
 
@@ -11036,20 +11095,20 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `GetJobProps` | [GetJobPropsRequest](#servicessettingsGetJobPropsRequest) | [GetJobPropsResponse](#servicessettingsGetJobPropsResponse) |@perm |
-| `SetJobProps` | [SetJobPropsRequest](#servicessettingsSetJobPropsRequest) | [SetJobPropsResponse](#servicessettingsSetJobPropsResponse) |@perm |
-| `GetRoles` | [GetRolesRequest](#servicessettingsGetRolesRequest) | [GetRolesResponse](#servicessettingsGetRolesResponse) |@perm |
-| `GetRole` | [GetRoleRequest](#servicessettingsGetRoleRequest) | [GetRoleResponse](#servicessettingsGetRoleResponse) |@perm: Name=GetRoles |
-| `CreateRole` | [CreateRoleRequest](#servicessettingsCreateRoleRequest) | [CreateRoleResponse](#servicessettingsCreateRoleResponse) |@perm |
-| `DeleteRole` | [DeleteRoleRequest](#servicessettingsDeleteRoleRequest) | [DeleteRoleResponse](#servicessettingsDeleteRoleResponse) |@perm |
-| `UpdateRolePerms` | [UpdateRolePermsRequest](#servicessettingsUpdateRolePermsRequest) | [UpdateRolePermsResponse](#servicessettingsUpdateRolePermsResponse) |@perm |
-| `GetPermissions` | [GetPermissionsRequest](#servicessettingsGetPermissionsRequest) | [GetPermissionsResponse](#servicessettingsGetPermissionsResponse) |@perm: Name=GetRoles |
-| `GetEffectivePermissions` | [GetEffectivePermissionsRequest](#servicessettingsGetEffectivePermissionsRequest) | [GetEffectivePermissionsResponse](#servicessettingsGetEffectivePermissionsResponse) |@perm: Name=GetRoles |
-| `ViewAuditLog` | [ViewAuditLogRequest](#servicessettingsViewAuditLogRequest) | [ViewAuditLogResponse](#servicessettingsViewAuditLogResponse) |@perm |
-| `ListDiscordChannels` | [ListDiscordChannelsRequest](#servicessettingsListDiscordChannelsRequest) | [ListDiscordChannelsResponse](#servicessettingsListDiscordChannelsResponse) |@perm: Name=SetJobProps |
-| `ListUserGuilds` | [ListUserGuildsRequest](#servicessettingsListUserGuildsRequest) | [ListUserGuildsResponse](#servicessettingsListUserGuildsResponse) |@perm: Name=SetJobProps |
-| `UploadJobLogo` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |@perm: Name=SetJobProps buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
-| `DeleteJobLogo` | [DeleteJobLogoRequest](#servicessettingsDeleteJobLogoRequest) | [DeleteJobLogoResponse](#servicessettingsDeleteJobLogoResponse) |@perm: Name=SetJobProps |
+| `GetJobProps` | [GetJobPropsRequest](#servicessettingsGetJobPropsRequest) | [GetJobPropsResponse](#servicessettingsGetJobPropsResponse) | |
+| `SetJobProps` | [SetJobPropsRequest](#servicessettingsSetJobPropsRequest) | [SetJobPropsResponse](#servicessettingsSetJobPropsResponse) | |
+| `GetRoles` | [GetRolesRequest](#servicessettingsGetRolesRequest) | [GetRolesResponse](#servicessettingsGetRolesResponse) | |
+| `GetRole` | [GetRoleRequest](#servicessettingsGetRoleRequest) | [GetRoleResponse](#servicessettingsGetRoleResponse) | |
+| `CreateRole` | [CreateRoleRequest](#servicessettingsCreateRoleRequest) | [CreateRoleResponse](#servicessettingsCreateRoleResponse) | |
+| `DeleteRole` | [DeleteRoleRequest](#servicessettingsDeleteRoleRequest) | [DeleteRoleResponse](#servicessettingsDeleteRoleResponse) | |
+| `UpdateRolePerms` | [UpdateRolePermsRequest](#servicessettingsUpdateRolePermsRequest) | [UpdateRolePermsResponse](#servicessettingsUpdateRolePermsResponse) | |
+| `GetPermissions` | [GetPermissionsRequest](#servicessettingsGetPermissionsRequest) | [GetPermissionsResponse](#servicessettingsGetPermissionsResponse) | |
+| `GetEffectivePermissions` | [GetEffectivePermissionsRequest](#servicessettingsGetEffectivePermissionsRequest) | [GetEffectivePermissionsResponse](#servicessettingsGetEffectivePermissionsResponse) | |
+| `ViewAuditLog` | [ViewAuditLogRequest](#servicessettingsViewAuditLogRequest) | [ViewAuditLogResponse](#servicessettingsViewAuditLogResponse) | |
+| `ListDiscordChannels` | [ListDiscordChannelsRequest](#servicessettingsListDiscordChannelsRequest) | [ListDiscordChannelsResponse](#servicessettingsListDiscordChannelsResponse) | |
+| `ListUserGuilds` | [ListUserGuildsRequest](#servicessettingsListUserGuildsRequest) | [ListUserGuildsResponse](#servicessettingsListUserGuildsResponse) | |
+| `UploadJobLogo` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
+| `DeleteJobLogo` | [DeleteJobLogoRequest](#servicessettingsDeleteJobLogoRequest) | [DeleteJobLogoResponse](#servicessettingsDeleteJobLogoResponse) | |
 
  <!-- end services -->
 
@@ -11240,11 +11299,11 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `GetStatus` | [GetStatusRequest](#servicessettingsGetStatusRequest) | [GetStatusResponse](#servicessettingsGetStatusResponse) |@perm: Name=Superuser |
-| `GetAllPermissions` | [GetAllPermissionsRequest](#servicessettingsGetAllPermissionsRequest) | [GetAllPermissionsResponse](#servicessettingsGetAllPermissionsResponse) |@perm: Name=Superuser |
-| `GetJobLimits` | [GetJobLimitsRequest](#servicessettingsGetJobLimitsRequest) | [GetJobLimitsResponse](#servicessettingsGetJobLimitsResponse) |@perm: Name=Superuser |
-| `UpdateJobLimits` | [UpdateJobLimitsRequest](#servicessettingsUpdateJobLimitsRequest) | [UpdateJobLimitsResponse](#servicessettingsUpdateJobLimitsResponse) |@perm: Name=Superuser |
-| `DeleteFaction` | [DeleteFactionRequest](#servicessettingsDeleteFactionRequest) | [DeleteFactionResponse](#servicessettingsDeleteFactionResponse) |@perm: Name=Superuser |
+| `GetStatus` | [GetStatusRequest](#servicessettingsGetStatusRequest) | [GetStatusResponse](#servicessettingsGetStatusResponse) | |
+| `GetAllPermissions` | [GetAllPermissionsRequest](#servicessettingsGetAllPermissionsRequest) | [GetAllPermissionsResponse](#servicessettingsGetAllPermissionsResponse) | |
+| `GetJobLimits` | [GetJobLimitsRequest](#servicessettingsGetJobLimitsRequest) | [GetJobLimitsResponse](#servicessettingsGetJobLimitsResponse) | |
+| `UpdateJobLimits` | [UpdateJobLimitsRequest](#servicessettingsUpdateJobLimitsRequest) | [UpdateJobLimitsResponse](#servicessettingsUpdateJobLimitsResponse) | |
+| `DeleteFaction` | [DeleteFactionRequest](#servicessettingsDeleteFactionRequest) | [DeleteFactionResponse](#servicessettingsDeleteFactionResponse) | |
 
  <!-- end services -->
 
@@ -11550,8 +11609,8 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `ListVehicles` | [ListVehiclesRequest](#servicesvehiclesListVehiclesRequest) | [ListVehiclesResponse](#servicesvehiclesListVehiclesResponse) |@perm: Attrs=Fields/StringList:[]string{"Wanted"} |
-| `SetVehicleProps` | [SetVehiclePropsRequest](#servicesvehiclesSetVehiclePropsRequest) | [SetVehiclePropsResponse](#servicesvehiclesSetVehiclePropsResponse) |@perm: Attrs=Fields/StringList:[]string{"Wanted"} |
+| `ListVehicles` | [ListVehiclesRequest](#servicesvehiclesListVehiclesRequest) | [ListVehiclesResponse](#servicesvehiclesListVehiclesResponse) | |
+| `SetVehicleProps` | [SetVehiclePropsRequest](#servicesvehiclesSetVehiclePropsRequest) | [SetVehiclePropsResponse](#servicesvehiclesSetVehiclePropsResponse) | |
 
  <!-- end services -->
 
@@ -11570,7 +11629,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `JoinRoom` | [.resources.collab.ClientPacket](#resourcescollabClientPacket) stream | [.resources.collab.ServerPacket](#resourcescollabServerPacket) stream |@perm: Name=wiki.WikiService/UpdatePage buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
+| `JoinRoom` | [.resources.collab.ClientPacket](#resourcescollabClientPacket) stream | [.resources.collab.ServerPacket](#resourcescollabServerPacket) stream |buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
 
  <!-- end services -->
 
@@ -11725,13 +11784,13 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `ListPages` | [ListPagesRequest](#serviceswikiListPagesRequest) | [ListPagesResponse](#serviceswikiListPagesResponse) |@perm |
-| `GetPage` | [GetPageRequest](#serviceswikiGetPageRequest) | [GetPageResponse](#serviceswikiGetPageResponse) |@perm: Name=ListPages |
-| `CreatePage` | [CreatePageRequest](#serviceswikiCreatePageRequest) | [CreatePageResponse](#serviceswikiCreatePageResponse) |@perm: Name=UpdatePage |
-| `UpdatePage` | [UpdatePageRequest](#serviceswikiUpdatePageRequest) | [UpdatePageResponse](#serviceswikiUpdatePageResponse) |@perm: Attrs=Fields/StringList:[]string{"Public"} |
-| `DeletePage` | [DeletePageRequest](#serviceswikiDeletePageRequest) | [DeletePageResponse](#serviceswikiDeletePageResponse) |@perm |
-| `ListPageActivity` | [ListPageActivityRequest](#serviceswikiListPageActivityRequest) | [ListPageActivityResponse](#serviceswikiListPageActivityResponse) |@perm |
-| `UploadFile` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |@perm: Name=UpdatePage |
+| `ListPages` | [ListPagesRequest](#serviceswikiListPagesRequest) | [ListPagesResponse](#serviceswikiListPagesResponse) | |
+| `GetPage` | [GetPageRequest](#serviceswikiGetPageRequest) | [GetPageResponse](#serviceswikiGetPageResponse) | |
+| `CreatePage` | [CreatePageRequest](#serviceswikiCreatePageRequest) | [CreatePageResponse](#serviceswikiCreatePageResponse) | |
+| `UpdatePage` | [UpdatePageRequest](#serviceswikiUpdatePageRequest) | [UpdatePageResponse](#serviceswikiUpdatePageResponse) | |
+| `DeletePage` | [DeletePageRequest](#serviceswikiDeletePageRequest) | [DeletePageResponse](#serviceswikiDeletePageResponse) | |
+| `ListPageActivity` | [ListPageActivityRequest](#serviceswikiListPageActivityRequest) | [ListPageActivityResponse](#serviceswikiListPageActivityResponse) | |
+| `UploadFile` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) | |
 
  <!-- end services -->
 

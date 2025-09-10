@@ -28,44 +28,30 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface IWikiServiceClient {
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ListPages
      */
     listPages(input: ListPagesRequest, options?: RpcOptions): UnaryCall<ListPagesRequest, ListPagesResponse>;
     /**
-     * @perm: Name=ListPages
-     *
      * @generated from protobuf rpc: GetPage
      */
     getPage(input: GetPageRequest, options?: RpcOptions): UnaryCall<GetPageRequest, GetPageResponse>;
     /**
-     * @perm: Name=UpdatePage
-     *
      * @generated from protobuf rpc: CreatePage
      */
     createPage(input: CreatePageRequest, options?: RpcOptions): UnaryCall<CreatePageRequest, CreatePageResponse>;
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"Public"}
-     *
      * @generated from protobuf rpc: UpdatePage
      */
     updatePage(input: UpdatePageRequest, options?: RpcOptions): UnaryCall<UpdatePageRequest, UpdatePageResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: DeletePage
      */
     deletePage(input: DeletePageRequest, options?: RpcOptions): UnaryCall<DeletePageRequest, DeletePageResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ListPageActivity
      */
     listPageActivity(input: ListPageActivityRequest, options?: RpcOptions): UnaryCall<ListPageActivityRequest, ListPageActivityResponse>;
     /**
-     * @perm: Name=UpdatePage
-     *
      * @generated from protobuf rpc: UploadFile
      */
     uploadFile(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse>;
@@ -80,8 +66,6 @@ export class WikiServiceClient implements IWikiServiceClient, ServiceInfo {
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ListPages
      */
     listPages(input: ListPagesRequest, options?: RpcOptions): UnaryCall<ListPagesRequest, ListPagesResponse> {
@@ -89,8 +73,6 @@ export class WikiServiceClient implements IWikiServiceClient, ServiceInfo {
         return stackIntercept<ListPagesRequest, ListPagesResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListPages
-     *
      * @generated from protobuf rpc: GetPage
      */
     getPage(input: GetPageRequest, options?: RpcOptions): UnaryCall<GetPageRequest, GetPageResponse> {
@@ -98,8 +80,6 @@ export class WikiServiceClient implements IWikiServiceClient, ServiceInfo {
         return stackIntercept<GetPageRequest, GetPageResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=UpdatePage
-     *
      * @generated from protobuf rpc: CreatePage
      */
     createPage(input: CreatePageRequest, options?: RpcOptions): UnaryCall<CreatePageRequest, CreatePageResponse> {
@@ -107,8 +87,6 @@ export class WikiServiceClient implements IWikiServiceClient, ServiceInfo {
         return stackIntercept<CreatePageRequest, CreatePageResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"Public"}
-     *
      * @generated from protobuf rpc: UpdatePage
      */
     updatePage(input: UpdatePageRequest, options?: RpcOptions): UnaryCall<UpdatePageRequest, UpdatePageResponse> {
@@ -116,8 +94,6 @@ export class WikiServiceClient implements IWikiServiceClient, ServiceInfo {
         return stackIntercept<UpdatePageRequest, UpdatePageResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: DeletePage
      */
     deletePage(input: DeletePageRequest, options?: RpcOptions): UnaryCall<DeletePageRequest, DeletePageResponse> {
@@ -125,8 +101,6 @@ export class WikiServiceClient implements IWikiServiceClient, ServiceInfo {
         return stackIntercept<DeletePageRequest, DeletePageResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ListPageActivity
      */
     listPageActivity(input: ListPageActivityRequest, options?: RpcOptions): UnaryCall<ListPageActivityRequest, ListPageActivityResponse> {
@@ -134,8 +108,6 @@ export class WikiServiceClient implements IWikiServiceClient, ServiceInfo {
         return stackIntercept<ListPageActivityRequest, ListPageActivityResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=UpdatePage
-     *
      * @generated from protobuf rpc: UploadFile
      */
     uploadFile(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse> {

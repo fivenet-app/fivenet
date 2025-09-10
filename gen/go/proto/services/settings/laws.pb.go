@@ -7,6 +7,7 @@
 package settings
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	laws "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/laws"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -362,7 +363,7 @@ var File_services_settings_laws_proto protoreflect.FileDescriptor
 
 const file_services_settings_laws_proto_rawDesc = "" +
 	"\n" +
-	"\x1cservices/settings/laws.proto\x12\x11services.settings\x1a\x19resources/laws/laws.proto\"Z\n" +
+	"\x1cservices/settings/laws.proto\x12\x11services.settings\x1a\x19codegen/perms/perms.proto\x1a\x19resources/laws/laws.proto\"Z\n" +
 	"\x1cCreateOrUpdateLawBookRequest\x12:\n" +
 	"\blaw_book\x18\x01 \x01(\v2\x17.resources.laws.LawBookB\x06\xbaH\x03\xc8\x01\x01R\alawBook\"S\n" +
 	"\x1dCreateOrUpdateLawBookResponse\x122\n" +
@@ -376,12 +377,12 @@ const file_services_settings_laws_proto_rawDesc = "" +
 	"\x03law\x18\x01 \x01(\v2\x13.resources.laws.LawR\x03law\"\"\n" +
 	"\x10DeleteLawRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x13\n" +
-	"\x11DeleteLawResponse2\xb5\x03\n" +
-	"\vLawsService\x12z\n" +
-	"\x15CreateOrUpdateLawBook\x12/.services.settings.CreateOrUpdateLawBookRequest\x1a0.services.settings.CreateOrUpdateLawBookResponse\x12b\n" +
-	"\rDeleteLawBook\x12'.services.settings.DeleteLawBookRequest\x1a(.services.settings.DeleteLawBookResponse\x12n\n" +
-	"\x11CreateOrUpdateLaw\x12+.services.settings.CreateOrUpdateLawRequest\x1a,.services.settings.CreateOrUpdateLawResponse\x12V\n" +
-	"\tDeleteLaw\x12#.services.settings.DeleteLawRequest\x1a$.services.settings.DeleteLawResponseBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settingsb\x06proto3"
+	"\x11DeleteLawResponse2\xfd\x03\n" +
+	"\vLawsService\x12\x82\x01\n" +
+	"\x15CreateOrUpdateLawBook\x12/.services.settings.CreateOrUpdateLawBookRequest\x1a0.services.settings.CreateOrUpdateLawBookResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12j\n" +
+	"\rDeleteLawBook\x12'.services.settings.DeleteLawBookRequest\x1a(.services.settings.DeleteLawBookResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x8d\x01\n" +
+	"\x11CreateOrUpdateLaw\x12+.services.settings.CreateOrUpdateLawRequest\x1a,.services.settings.CreateOrUpdateLawResponse\"\x1d\xd2\xf3\x18\x19\b\x01\x1a\x15CreateOrUpdateLawBook\x12m\n" +
+	"\tDeleteLaw\x12#.services.settings.DeleteLawRequest\x1a$.services.settings.DeleteLawResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rDeleteLawBookBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settingsb\x06proto3"
 
 var (
 	file_services_settings_laws_proto_rawDescOnce sync.Once

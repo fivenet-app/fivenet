@@ -22,7 +22,6 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface IFilestoreServiceClient {
     /**
-     * @perm: Name=Superuser
      * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
      * buf:lint:ignore RPC_REQUEST_STANDARD_NAME
      * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
@@ -31,20 +30,14 @@ export interface IFilestoreServiceClient {
      */
     upload(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse>;
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: ListFiles
      */
     listFiles(input: ListFilesRequest, options?: RpcOptions): UnaryCall<ListFilesRequest, ListFilesResponse>;
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: DeleteFile
      */
     deleteFile(input: DeleteFileRequest, options?: RpcOptions): UnaryCall<DeleteFileRequest, DeleteFileResponse>;
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: DeleteFileByPath
      */
     deleteFileByPath(input: DeleteFileByPathRequest, options?: RpcOptions): UnaryCall<DeleteFileByPathRequest, DeleteFileByPathResponse>;
@@ -59,7 +52,6 @@ export class FilestoreServiceClient implements IFilestoreServiceClient, ServiceI
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm: Name=Superuser
      * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
      * buf:lint:ignore RPC_REQUEST_STANDARD_NAME
      * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
@@ -71,8 +63,6 @@ export class FilestoreServiceClient implements IFilestoreServiceClient, ServiceI
         return stackIntercept<UploadFileRequest, UploadFileResponse>("clientStreaming", this._transport, method, opt);
     }
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: ListFiles
      */
     listFiles(input: ListFilesRequest, options?: RpcOptions): UnaryCall<ListFilesRequest, ListFilesResponse> {
@@ -80,8 +70,6 @@ export class FilestoreServiceClient implements IFilestoreServiceClient, ServiceI
         return stackIntercept<ListFilesRequest, ListFilesResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: DeleteFile
      */
     deleteFile(input: DeleteFileRequest, options?: RpcOptions): UnaryCall<DeleteFileRequest, DeleteFileResponse> {
@@ -89,8 +77,6 @@ export class FilestoreServiceClient implements IFilestoreServiceClient, ServiceI
         return stackIntercept<DeleteFileRequest, DeleteFileResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: DeleteFileByPath
      */
     deleteFileByPath(input: DeleteFileByPathRequest, options?: RpcOptions): UnaryCall<DeleteFileByPathRequest, DeleteFileByPathResponse> {

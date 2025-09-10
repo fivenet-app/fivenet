@@ -55,128 +55,86 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface IMailerServiceClient {
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ListEmails
      */
     listEmails(input: ListEmailsRequest, options?: RpcOptions): UnaryCall<ListEmailsRequest, ListEmailsResponse>;
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: GetEmail
      */
     getEmail(input: GetEmailRequest, options?: RpcOptions): UnaryCall<GetEmailRequest, GetEmailResponse>;
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"Job"}
-     *
      * @generated from protobuf rpc: CreateOrUpdateEmail
      */
     createOrUpdateEmail(input: CreateOrUpdateEmailRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateEmailRequest, CreateOrUpdateEmailResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: DeleteEmail
      */
     deleteEmail(input: DeleteEmailRequest, options?: RpcOptions): UnaryCall<DeleteEmailRequest, DeleteEmailResponse>;
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: GetEmailProposals
      */
     getEmailProposals(input: GetEmailProposalsRequest, options?: RpcOptions): UnaryCall<GetEmailProposalsRequest, GetEmailProposalsResponse>;
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: ListTemplates
      */
     listTemplates(input: ListTemplatesRequest, options?: RpcOptions): UnaryCall<ListTemplatesRequest, ListTemplatesResponse>;
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: GetTemplate
      */
     getTemplate(input: GetTemplateRequest, options?: RpcOptions): UnaryCall<GetTemplateRequest, GetTemplateResponse>;
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: CreateOrUpdateTemplate
      */
     createOrUpdateTemplate(input: CreateOrUpdateTemplateRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateTemplateRequest, CreateOrUpdateTemplateResponse>;
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: DeleteTemplate
      */
     deleteTemplate(input: DeleteTemplateRequest, options?: RpcOptions): UnaryCall<DeleteTemplateRequest, DeleteTemplateResponse>;
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: ListThreads
      */
     listThreads(input: ListThreadsRequest, options?: RpcOptions): UnaryCall<ListThreadsRequest, ListThreadsResponse>;
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: GetThread
      */
     getThread(input: GetThreadRequest, options?: RpcOptions): UnaryCall<GetThreadRequest, GetThreadResponse>;
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: CreateThread
      */
     createThread(input: CreateThreadRequest, options?: RpcOptions): UnaryCall<CreateThreadRequest, CreateThreadResponse>;
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: DeleteThread
      */
     deleteThread(input: DeleteThreadRequest, options?: RpcOptions): UnaryCall<DeleteThreadRequest, DeleteThreadResponse>;
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: GetThreadState
      */
     getThreadState(input: GetThreadStateRequest, options?: RpcOptions): UnaryCall<GetThreadStateRequest, GetThreadStateResponse>;
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: SetThreadState
      */
     setThreadState(input: SetThreadStateRequest, options?: RpcOptions): UnaryCall<SetThreadStateRequest, SetThreadStateResponse>;
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: SearchThreads
      */
     searchThreads(input: SearchThreadsRequest, options?: RpcOptions): UnaryCall<SearchThreadsRequest, SearchThreadsResponse>;
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: ListThreadMessages
      */
     listThreadMessages(input: ListThreadMessagesRequest, options?: RpcOptions): UnaryCall<ListThreadMessagesRequest, ListThreadMessagesResponse>;
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: PostMessage
      */
     postMessage(input: PostMessageRequest, options?: RpcOptions): UnaryCall<PostMessageRequest, PostMessageResponse>;
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: DeleteMessage
      */
     deleteMessage(input: DeleteMessageRequest, options?: RpcOptions): UnaryCall<DeleteMessageRequest, DeleteMessageResponse>;
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: GetEmailSettings
      */
     getEmailSettings(input: GetEmailSettingsRequest, options?: RpcOptions): UnaryCall<GetEmailSettingsRequest, GetEmailSettingsResponse>;
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: SetEmailSettings
      */
     setEmailSettings(input: SetEmailSettingsRequest, options?: RpcOptions): UnaryCall<SetEmailSettingsRequest, SetEmailSettingsResponse>;
@@ -191,8 +149,6 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: ListEmails
      */
     listEmails(input: ListEmailsRequest, options?: RpcOptions): UnaryCall<ListEmailsRequest, ListEmailsResponse> {
@@ -200,8 +156,6 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
         return stackIntercept<ListEmailsRequest, ListEmailsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: GetEmail
      */
     getEmail(input: GetEmailRequest, options?: RpcOptions): UnaryCall<GetEmailRequest, GetEmailResponse> {
@@ -209,8 +163,6 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
         return stackIntercept<GetEmailRequest, GetEmailResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"Job"}
-     *
      * @generated from protobuf rpc: CreateOrUpdateEmail
      */
     createOrUpdateEmail(input: CreateOrUpdateEmailRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateEmailRequest, CreateOrUpdateEmailResponse> {
@@ -218,8 +170,6 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
         return stackIntercept<CreateOrUpdateEmailRequest, CreateOrUpdateEmailResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: DeleteEmail
      */
     deleteEmail(input: DeleteEmailRequest, options?: RpcOptions): UnaryCall<DeleteEmailRequest, DeleteEmailResponse> {
@@ -227,8 +177,6 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
         return stackIntercept<DeleteEmailRequest, DeleteEmailResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: GetEmailProposals
      */
     getEmailProposals(input: GetEmailProposalsRequest, options?: RpcOptions): UnaryCall<GetEmailProposalsRequest, GetEmailProposalsResponse> {
@@ -236,8 +184,6 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
         return stackIntercept<GetEmailProposalsRequest, GetEmailProposalsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: ListTemplates
      */
     listTemplates(input: ListTemplatesRequest, options?: RpcOptions): UnaryCall<ListTemplatesRequest, ListTemplatesResponse> {
@@ -245,8 +191,6 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
         return stackIntercept<ListTemplatesRequest, ListTemplatesResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: GetTemplate
      */
     getTemplate(input: GetTemplateRequest, options?: RpcOptions): UnaryCall<GetTemplateRequest, GetTemplateResponse> {
@@ -254,8 +198,6 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
         return stackIntercept<GetTemplateRequest, GetTemplateResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: CreateOrUpdateTemplate
      */
     createOrUpdateTemplate(input: CreateOrUpdateTemplateRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateTemplateRequest, CreateOrUpdateTemplateResponse> {
@@ -263,8 +205,6 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
         return stackIntercept<CreateOrUpdateTemplateRequest, CreateOrUpdateTemplateResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: DeleteTemplate
      */
     deleteTemplate(input: DeleteTemplateRequest, options?: RpcOptions): UnaryCall<DeleteTemplateRequest, DeleteTemplateResponse> {
@@ -272,8 +212,6 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
         return stackIntercept<DeleteTemplateRequest, DeleteTemplateResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: ListThreads
      */
     listThreads(input: ListThreadsRequest, options?: RpcOptions): UnaryCall<ListThreadsRequest, ListThreadsResponse> {
@@ -281,8 +219,6 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
         return stackIntercept<ListThreadsRequest, ListThreadsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: GetThread
      */
     getThread(input: GetThreadRequest, options?: RpcOptions): UnaryCall<GetThreadRequest, GetThreadResponse> {
@@ -290,8 +226,6 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
         return stackIntercept<GetThreadRequest, GetThreadResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: CreateThread
      */
     createThread(input: CreateThreadRequest, options?: RpcOptions): UnaryCall<CreateThreadRequest, CreateThreadResponse> {
@@ -299,8 +233,6 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
         return stackIntercept<CreateThreadRequest, CreateThreadResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: DeleteThread
      */
     deleteThread(input: DeleteThreadRequest, options?: RpcOptions): UnaryCall<DeleteThreadRequest, DeleteThreadResponse> {
@@ -308,8 +240,6 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
         return stackIntercept<DeleteThreadRequest, DeleteThreadResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: GetThreadState
      */
     getThreadState(input: GetThreadStateRequest, options?: RpcOptions): UnaryCall<GetThreadStateRequest, GetThreadStateResponse> {
@@ -317,8 +247,6 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
         return stackIntercept<GetThreadStateRequest, GetThreadStateResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: SetThreadState
      */
     setThreadState(input: SetThreadStateRequest, options?: RpcOptions): UnaryCall<SetThreadStateRequest, SetThreadStateResponse> {
@@ -326,8 +254,6 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
         return stackIntercept<SetThreadStateRequest, SetThreadStateResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: SearchThreads
      */
     searchThreads(input: SearchThreadsRequest, options?: RpcOptions): UnaryCall<SearchThreadsRequest, SearchThreadsResponse> {
@@ -335,8 +261,6 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
         return stackIntercept<SearchThreadsRequest, SearchThreadsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: ListThreadMessages
      */
     listThreadMessages(input: ListThreadMessagesRequest, options?: RpcOptions): UnaryCall<ListThreadMessagesRequest, ListThreadMessagesResponse> {
@@ -344,8 +268,6 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
         return stackIntercept<ListThreadMessagesRequest, ListThreadMessagesResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: PostMessage
      */
     postMessage(input: PostMessageRequest, options?: RpcOptions): UnaryCall<PostMessageRequest, PostMessageResponse> {
@@ -353,8 +275,6 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
         return stackIntercept<PostMessageRequest, PostMessageResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: DeleteMessage
      */
     deleteMessage(input: DeleteMessageRequest, options?: RpcOptions): UnaryCall<DeleteMessageRequest, DeleteMessageResponse> {
@@ -362,8 +282,6 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
         return stackIntercept<DeleteMessageRequest, DeleteMessageResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: GetEmailSettings
      */
     getEmailSettings(input: GetEmailSettingsRequest, options?: RpcOptions): UnaryCall<GetEmailSettingsRequest, GetEmailSettingsResponse> {
@@ -371,8 +289,6 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
         return stackIntercept<GetEmailSettingsRequest, GetEmailSettingsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: SetEmailSettings
      */
     setEmailSettings(input: SetEmailSettingsRequest, options?: RpcOptions): UnaryCall<SetEmailSettingsRequest, SetEmailSettingsResponse> {

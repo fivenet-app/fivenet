@@ -30,15 +30,10 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SystemServiceClient interface {
-	// @perm: Name=Superuser
 	GetStatus(ctx context.Context, in *GetStatusRequest, opts ...grpc.CallOption) (*GetStatusResponse, error)
-	// @perm: Name=Superuser
 	GetAllPermissions(ctx context.Context, in *GetAllPermissionsRequest, opts ...grpc.CallOption) (*GetAllPermissionsResponse, error)
-	// @perm: Name=Superuser
 	GetJobLimits(ctx context.Context, in *GetJobLimitsRequest, opts ...grpc.CallOption) (*GetJobLimitsResponse, error)
-	// @perm: Name=Superuser
 	UpdateJobLimits(ctx context.Context, in *UpdateJobLimitsRequest, opts ...grpc.CallOption) (*UpdateJobLimitsResponse, error)
-	// @perm: Name=Superuser
 	DeleteFaction(ctx context.Context, in *DeleteFactionRequest, opts ...grpc.CallOption) (*DeleteFactionResponse, error)
 }
 
@@ -104,15 +99,10 @@ func (c *systemServiceClient) DeleteFaction(ctx context.Context, in *DeleteFacti
 // All implementations must embed UnimplementedSystemServiceServer
 // for forward compatibility.
 type SystemServiceServer interface {
-	// @perm: Name=Superuser
 	GetStatus(context.Context, *GetStatusRequest) (*GetStatusResponse, error)
-	// @perm: Name=Superuser
 	GetAllPermissions(context.Context, *GetAllPermissionsRequest) (*GetAllPermissionsResponse, error)
-	// @perm: Name=Superuser
 	GetJobLimits(context.Context, *GetJobLimitsRequest) (*GetJobLimitsResponse, error)
-	// @perm: Name=Superuser
 	UpdateJobLimits(context.Context, *UpdateJobLimitsRequest) (*UpdateJobLimitsResponse, error)
-	// @perm: Name=Superuser
 	DeleteFaction(context.Context, *DeleteFactionRequest) (*DeleteFactionResponse, error)
 	mustEmbedUnimplementedSystemServiceServer()
 }

@@ -29,13 +29,9 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LawsServiceClient interface {
-	// @perm
 	CreateOrUpdateLawBook(ctx context.Context, in *CreateOrUpdateLawBookRequest, opts ...grpc.CallOption) (*CreateOrUpdateLawBookResponse, error)
-	// @perm
 	DeleteLawBook(ctx context.Context, in *DeleteLawBookRequest, opts ...grpc.CallOption) (*DeleteLawBookResponse, error)
-	// @perm: Name=CreateOrUpdateLawBook
 	CreateOrUpdateLaw(ctx context.Context, in *CreateOrUpdateLawRequest, opts ...grpc.CallOption) (*CreateOrUpdateLawResponse, error)
-	// @perm: Name=DeleteLawBook
 	DeleteLaw(ctx context.Context, in *DeleteLawRequest, opts ...grpc.CallOption) (*DeleteLawResponse, error)
 }
 
@@ -91,13 +87,9 @@ func (c *lawsServiceClient) DeleteLaw(ctx context.Context, in *DeleteLawRequest,
 // All implementations must embed UnimplementedLawsServiceServer
 // for forward compatibility.
 type LawsServiceServer interface {
-	// @perm
 	CreateOrUpdateLawBook(context.Context, *CreateOrUpdateLawBookRequest) (*CreateOrUpdateLawBookResponse, error)
-	// @perm
 	DeleteLawBook(context.Context, *DeleteLawBookRequest) (*DeleteLawBookResponse, error)
-	// @perm: Name=CreateOrUpdateLawBook
 	CreateOrUpdateLaw(context.Context, *CreateOrUpdateLawRequest) (*CreateOrUpdateLawResponse, error)
-	// @perm: Name=DeleteLawBook
 	DeleteLaw(context.Context, *DeleteLawRequest) (*DeleteLawResponse, error)
 	mustEmbedUnimplementedLawsServiceServer()
 }

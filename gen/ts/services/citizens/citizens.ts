@@ -952,13 +952,13 @@ export const ManageLabelsResponse = new ManageLabelsResponse$Type();
  * @generated ServiceType for protobuf service services.citizens.CitizensService
  */
 export const CitizensService = new ServiceType("services.citizens.CitizensService", [
-    { name: "ListCitizens", options: {}, I: ListCitizensRequest, O: ListCitizensResponse },
-    { name: "GetUser", options: {}, I: GetUserRequest, O: GetUserResponse },
-    { name: "ListUserActivity", options: {}, I: ListUserActivityRequest, O: ListUserActivityResponse },
-    { name: "SetUserProps", options: {}, I: SetUserPropsRequest, O: SetUserPropsResponse },
-    { name: "UploadAvatar", clientStreaming: true, options: {}, I: UploadFileRequest, O: UploadFileResponse },
-    { name: "DeleteAvatar", options: {}, I: DeleteAvatarRequest, O: DeleteAvatarResponse },
-    { name: "UploadMugshot", clientStreaming: true, options: {}, I: UploadFileRequest, O: UploadFileResponse },
-    { name: "DeleteMugshot", options: {}, I: DeleteMugshotRequest, O: DeleteMugshotResponse },
-    { name: "ManageLabels", options: {}, I: ManageLabelsRequest, O: ManageLabelsResponse }
+    { name: "ListCitizens", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.Mugshot", "UserProps.Labels", "UserProps.Email"] }] } }, I: ListCitizensRequest, O: ListCitizensResponse },
+    { name: "GetUser", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Jobs", type: "ATTRIBUTE_TYPE_JOB_GRADE_LIST" }] } }, I: GetUserRequest, O: GetUserResponse },
+    { name: "ListUserActivity", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["SourceUser", "Own"] }] } }, I: ListUserActivityRequest, O: ListUserActivityResponse },
+    { name: "SetUserProps", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Wanted", "Job", "TrafficInfractionPoints", "Mugshot", "Labels"] }] } }, I: SetUserPropsRequest, O: SetUserPropsResponse },
+    { name: "UploadAvatar", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: UploadFileRequest, O: UploadFileResponse },
+    { name: "DeleteAvatar", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: DeleteAvatarRequest, O: DeleteAvatarResponse },
+    { name: "UploadMugshot", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, name: "SetUserProps" } }, I: UploadFileRequest, O: UploadFileResponse },
+    { name: "DeleteMugshot", options: { "codegen.perms.perms": { enabled: true, name: "SetUserProps" } }, I: DeleteMugshotRequest, O: DeleteMugshotResponse },
+    { name: "ManageLabels", options: { "codegen.perms.perms": { enabled: true } }, I: ManageLabelsRequest, O: ManageLabelsResponse }
 ]);

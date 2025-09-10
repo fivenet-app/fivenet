@@ -8,6 +8,7 @@ package centrum
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	centrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
@@ -2467,7 +2468,7 @@ var File_services_centrum_centrum_proto protoreflect.FileDescriptor
 
 const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/centrum/centrum.proto\x12\x10services.centrum\x1a\x1fcodegen/itemslen/itemslen.proto\x1a#resources/centrum/dispatchers.proto\x1a\"resources/centrum/dispatches.proto\x1a resources/centrum/settings.proto\x1a\x1dresources/centrum/units.proto\x1a(resources/common/database/database.proto\x1a\x19resources/jobs/jobs.proto\x1a\x1fresources/livemap/heatmap.proto\x1a#resources/timestamp/timestamp.proto\"\x83\x01\n" +
+	"\x1eservices/centrum/centrum.proto\x12\x10services.centrum\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a#resources/centrum/dispatchers.proto\x1a\"resources/centrum/dispatches.proto\x1a resources/centrum/settings.proto\x1a\x1dresources/centrum/units.proto\x1a(resources/common/database/database.proto\x1a\x19resources/jobs/jobs.proto\x1a\x1fresources/livemap/heatmap.proto\x1a#resources/timestamp/timestamp.proto\"\x83\x01\n" +
 	"\x1bListDispatchActivityRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
@@ -2629,33 +2630,41 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\x10dispatch_updated\x18\n" +
 	" \x01(\v2\x1b.resources.centrum.DispatchH\x00R\x0fdispatchUpdated\x12L\n" +
 	"\x0fdispatch_status\x18\v \x01(\v2!.resources.centrum.DispatchStatusH\x00R\x0edispatchStatusB\x0f\n" +
-	"\x06change\x12\x05\xbaH\x02\b\x012\x9c\x12\n" +
-	"\x0eCentrumService\x12c\n" +
-	"\x0eUpdateSettings\x12'.services.centrum.UpdateSettingsRequest\x1a(.services.centrum.UpdateSettingsResponse\x12c\n" +
-	"\x0eCreateDispatch\x12'.services.centrum.CreateDispatchRequest\x1a(.services.centrum.CreateDispatchResponse\x12c\n" +
-	"\x0eUpdateDispatch\x12'.services.centrum.UpdateDispatchRequest\x1a(.services.centrum.UpdateDispatchResponse\x12c\n" +
-	"\x0eDeleteDispatch\x12'.services.centrum.DeleteDispatchRequest\x1a(.services.centrum.DeleteDispatchResponse\x12{\n" +
-	"\x16ListDispatchTargetJobs\x12/.services.centrum.ListDispatchTargetJobsRequest\x1a0.services.centrum.ListDispatchTargetJobsResponse\x12Z\n" +
-	"\vTakeControl\x12$.services.centrum.TakeControlRequest\x1a%.services.centrum.TakeControlResponse\x12c\n" +
-	"\x0eAssignDispatch\x12'.services.centrum.AssignDispatchRequest\x1a(.services.centrum.AssignDispatchResponse\x12W\n" +
+	"\x06change\x12\x05\xbaH\x02\b\x012\x80\x15\n" +
+	"\x0eCentrumService\x12\x87\x01\n" +
+	"\x0eUpdateSettings\x12'.services.centrum.UpdateSettingsRequest\x1a(.services.centrum.UpdateSettingsResponse\"\"\xd2\xf3\x18\x1e\b\x01*\x1a\n" +
+	"\x06Access\x18\x01\"\x06Shared\"\x06Public\x12k\n" +
+	"\x0eCreateDispatch\x12'.services.centrum.CreateDispatchRequest\x1a(.services.centrum.CreateDispatchResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12k\n" +
+	"\x0eUpdateDispatch\x12'.services.centrum.UpdateDispatchRequest\x1a(.services.centrum.UpdateDispatchResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12k\n" +
+	"\x0eDeleteDispatch\x12'.services.centrum.DeleteDispatchRequest\x1a(.services.centrum.DeleteDispatchResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x93\x01\n" +
+	"\x16ListDispatchTargetJobs\x12/.services.centrum.ListDispatchTargetJobsRequest\x1a0.services.centrum.ListDispatchTargetJobsResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eCreateDispatch\x12b\n" +
+	"\vTakeControl\x12$.services.centrum.TakeControlRequest\x1a%.services.centrum.TakeControlResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12x\n" +
+	"\x0eAssignDispatch\x12'.services.centrum.AssignDispatchRequest\x1a(.services.centrum.AssignDispatchResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vTakeControl\x12l\n" +
 	"\n" +
-	"AssignUnit\x12#.services.centrum.AssignUnitRequest\x1a$.services.centrum.AssignUnitResponse\x12o\n" +
-	"\x12GetDispatchHeatmap\x12+.services.centrum.GetDispatchHeatmapRequest\x1a,.services.centrum.GetDispatchHeatmapResponse\x12l\n" +
-	"\x11UpdateDispatchers\x12*.services.centrum.UpdateDispatchersRequest\x1a+.services.centrum.UpdateDispatchersResponse\x12M\n" +
-	"\x06Stream\x12\x1f.services.centrum.StreamRequest\x1a .services.centrum.StreamResponse0\x01\x12Z\n" +
-	"\vGetSettings\x12$.services.centrum.GetSettingsRequest\x1a%.services.centrum.GetSettingsResponse\x12Q\n" +
-	"\bJoinUnit\x12!.services.centrum.JoinUnitRequest\x1a\".services.centrum.JoinUnitResponse\x12T\n" +
-	"\tListUnits\x12\".services.centrum.ListUnitsRequest\x1a#.services.centrum.ListUnitsResponse\x12i\n" +
-	"\x10ListUnitActivity\x12).services.centrum.ListUnitActivityRequest\x1a*.services.centrum.ListUnitActivityResponse\x12Z\n" +
-	"\vGetDispatch\x12$.services.centrum.GetDispatchRequest\x1a%.services.centrum.GetDispatchResponse\x12c\n" +
-	"\x0eListDispatches\x12'.services.centrum.ListDispatchesRequest\x1a(.services.centrum.ListDispatchesResponse\x12u\n" +
-	"\x14ListDispatchActivity\x12-.services.centrum.ListDispatchActivityRequest\x1a..services.centrum.ListDispatchActivityResponse\x12o\n" +
-	"\x12CreateOrUpdateUnit\x12+.services.centrum.CreateOrUpdateUnitRequest\x1a,.services.centrum.CreateOrUpdateUnitResponse\x12W\n" +
+	"AssignUnit\x12#.services.centrum.AssignUnitRequest\x1a$.services.centrum.AssignUnitResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vTakeControl\x12\x84\x01\n" +
+	"\x12GetDispatchHeatmap\x12+.services.centrum.GetDispatchHeatmapRequest\x1a,.services.centrum.GetDispatchHeatmapResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vTakeControl\x12t\n" +
+	"\x11UpdateDispatchers\x12*.services.centrum.UpdateDispatchersRequest\x1a+.services.centrum.UpdateDispatchersResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12U\n" +
+	"\x06Stream\x12\x1f.services.centrum.StreamRequest\x1a .services.centrum.StreamResponse\"\x06\xd2\xf3\x18\x02\b\x010\x01\x12j\n" +
+	"\vGetSettings\x12$.services.centrum.GetSettingsRequest\x1a%.services.centrum.GetSettingsResponse\"\x0e\xd2\xf3\x18\n" +
+	"\b\x01\x1a\x06Stream\x12a\n" +
+	"\bJoinUnit\x12!.services.centrum.JoinUnitRequest\x1a\".services.centrum.JoinUnitResponse\"\x0e\xd2\xf3\x18\n" +
+	"\b\x01\x1a\x06Stream\x12d\n" +
+	"\tListUnits\x12\".services.centrum.ListUnitsRequest\x1a#.services.centrum.ListUnitsResponse\"\x0e\xd2\xf3\x18\n" +
+	"\b\x01\x1a\x06Stream\x12y\n" +
+	"\x10ListUnitActivity\x12).services.centrum.ListUnitActivityRequest\x1a*.services.centrum.ListUnitActivityResponse\"\x0e\xd2\xf3\x18\n" +
+	"\b\x01\x1a\x06Stream\x12j\n" +
+	"\vGetDispatch\x12$.services.centrum.GetDispatchRequest\x1a%.services.centrum.GetDispatchResponse\"\x0e\xd2\xf3\x18\n" +
+	"\b\x01\x1a\x06Stream\x12s\n" +
+	"\x0eListDispatches\x12'.services.centrum.ListDispatchesRequest\x1a(.services.centrum.ListDispatchesResponse\"\x0e\xd2\xf3\x18\n" +
+	"\b\x01\x1a\x06Stream\x12\x85\x01\n" +
+	"\x14ListDispatchActivity\x12-.services.centrum.ListDispatchActivityRequest\x1a..services.centrum.ListDispatchActivityResponse\"\x0e\xd2\xf3\x18\n" +
+	"\b\x01\x1a\x06Stream\x12w\n" +
+	"\x12CreateOrUpdateUnit\x12+.services.centrum.CreateOrUpdateUnitRequest\x1a,.services.centrum.CreateOrUpdateUnitResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12_\n" +
 	"\n" +
-	"DeleteUnit\x12#.services.centrum.DeleteUnitRequest\x1a$.services.centrum.DeleteUnitResponse\x12]\n" +
-	"\fTakeDispatch\x12%.services.centrum.TakeDispatchRequest\x1a&.services.centrum.TakeDispatchResponse\x12i\n" +
-	"\x10UpdateUnitStatus\x12).services.centrum.UpdateUnitStatusRequest\x1a*.services.centrum.UpdateUnitStatusResponse\x12u\n" +
-	"\x14UpdateDispatchStatus\x12-.services.centrum.UpdateDispatchStatusRequest\x1a..services.centrum.UpdateDispatchStatusResponseBLZJgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum;centrumb\x06proto3"
+	"DeleteUnit\x12#.services.centrum.DeleteUnitRequest\x1a$.services.centrum.DeleteUnitResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12e\n" +
+	"\fTakeDispatch\x12%.services.centrum.TakeDispatchRequest\x1a&.services.centrum.TakeDispatchResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x7f\n" +
+	"\x10UpdateUnitStatus\x12).services.centrum.UpdateUnitStatusRequest\x1a*.services.centrum.UpdateUnitStatusResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fTakeDispatch\x12\x8b\x01\n" +
+	"\x14UpdateDispatchStatus\x12-.services.centrum.UpdateDispatchStatusRequest\x1a..services.centrum.UpdateDispatchStatusResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fTakeDispatchBLZJgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum;centrumb\x06proto3"
 
 var (
 	file_services_centrum_centrum_proto_rawDescOnce sync.Once

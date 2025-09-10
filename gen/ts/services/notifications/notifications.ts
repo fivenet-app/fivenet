@@ -560,7 +560,7 @@ export const StreamResponse = new StreamResponse$Type();
  * @generated ServiceType for protobuf service services.notifications.NotificationsService
  */
 export const NotificationsService = new ServiceType("services.notifications.NotificationsService", [
-    { name: "GetNotifications", options: {}, I: GetNotificationsRequest, O: GetNotificationsResponse },
-    { name: "MarkNotifications", options: {}, I: MarkNotificationsRequest, O: MarkNotificationsResponse },
-    { name: "Stream", serverStreaming: true, clientStreaming: true, options: {}, I: StreamRequest, O: StreamResponse }
+    { name: "GetNotifications", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: GetNotificationsRequest, O: GetNotificationsResponse },
+    { name: "MarkNotifications", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: MarkNotificationsRequest, O: MarkNotificationsResponse },
+    { name: "Stream", serverStreaming: true, clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: StreamRequest, O: StreamResponse }
 ]);

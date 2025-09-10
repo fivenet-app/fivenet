@@ -8,6 +8,7 @@ package jobs
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
@@ -634,7 +635,7 @@ var File_services_jobs_timeclock_proto protoreflect.FileDescriptor
 
 const file_services_jobs_timeclock_proto_rawDesc = "" +
 	"\n" +
-	"\x1dservices/jobs/timeclock.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a(resources/common/database/database.proto\x1a\x1fresources/jobs/colleagues.proto\x1a\x1eresources/jobs/timeclock.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xa8\x03\n" +
+	"\x1dservices/jobs/timeclock.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1fresources/jobs/colleagues.proto\x1a\x1eresources/jobs/timeclock.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xa8\x03\n" +
 	"\x14ListTimeclockRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
@@ -689,11 +690,12 @@ const file_services_jobs_timeclock_proto_rawDesc = "" +
 	"pagination\x12?\n" +
 	"\n" +
 	"colleagues\x18\x02 \x03(\v2\x19.resources.jobs.ColleagueB\x04\xc8\xf3\x18\x01R\n" +
-	"colleagues2\xca\x02\n" +
-	"\x10TimeclockService\x12Z\n" +
-	"\rListTimeclock\x12#.services.jobs.ListTimeclockRequest\x1a$.services.jobs.ListTimeclockResponse\x12f\n" +
-	"\x11GetTimeclockStats\x12'.services.jobs.GetTimeclockStatsRequest\x1a(.services.jobs.GetTimeclockStatsResponse\x12r\n" +
-	"\x15ListInactiveEmployees\x12+.services.jobs.ListInactiveEmployeesRequest\x1a,.services.jobs.ListInactiveEmployeesResponseBFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs;jobsb\x06proto3"
+	"colleagues2\x82\x03\n" +
+	"\x10TimeclockService\x12s\n" +
+	"\rListTimeclock\x12#.services.jobs.ListTimeclockRequest\x1a$.services.jobs.ListTimeclockResponse\"\x17\xd2\xf3\x18\x13\b\x01*\x0f\n" +
+	"\x06Access\x18\x01\"\x03All\x12}\n" +
+	"\x11GetTimeclockStats\x12'.services.jobs.GetTimeclockStatsRequest\x1a(.services.jobs.GetTimeclockStatsResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rListTimeclock\x12z\n" +
+	"\x15ListInactiveEmployees\x12+.services.jobs.ListInactiveEmployeesRequest\x1a,.services.jobs.ListInactiveEmployeesResponse\"\x06\xd2\xf3\x18\x02\b\x01BFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs;jobsb\x06proto3"
 
 var (
 	file_services_jobs_timeclock_proto_rawDescOnce sync.Once

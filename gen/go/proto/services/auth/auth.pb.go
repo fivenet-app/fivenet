@@ -7,6 +7,7 @@
 package auth
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	accounts "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts"
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	permissions "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
@@ -1119,7 +1120,7 @@ var File_services_auth_auth_proto protoreflect.FileDescriptor
 
 const file_services_auth_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x18services/auth/auth.proto\x12\rservices.auth\x1a!resources/accounts/accounts.proto\x1a\x1fresources/accounts/oauth2.proto\x1a\x1eresources/jobs/job_props.proto\x1a&resources/permissions/attributes.proto\x1a'resources/permissions/permissions.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xb7\x01\n" +
+	"\x18services/auth/auth.proto\x12\rservices.auth\x1a\x19codegen/perms/perms.proto\x1a!resources/accounts/accounts.proto\x1a\x1fresources/accounts/oauth2.proto\x1a\x1eresources/jobs/job_props.proto\x1a&resources/permissions/attributes.proto\x1a'resources/permissions/permissions.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xb7\x01\n" +
 	"\x14CreateAccountRequest\x121\n" +
 	"\treg_token\x18\x01 \x01(\tB\x14\xbaH\x11r\x0f2\n" +
 	"^[0-9]{6}$\x98\x01\x06R\bregToken\x12E\n" +
@@ -1190,7 +1191,7 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"attributes\x18\x06 \x03(\v2$.resources.permissions.RoleAttributeR\n" +
 	"attributesB\f\n" +
 	"\n" +
-	"_job_props2\x8a\b\n" +
+	"_job_props2\x92\b\n" +
 	"\vAuthService\x12B\n" +
 	"\x05Login\x12\x1b.services.auth.LoginRequest\x1a\x1c.services.auth.LoginResponse\x12E\n" +
 	"\x06Logout\x12\x1c.services.auth.LogoutRequest\x1a\x1d.services.auth.LogoutResponse\x12Z\n" +
@@ -1198,8 +1199,8 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\x0eChangeUsername\x12$.services.auth.ChangeUsernameRequest\x1a%.services.auth.ChangeUsernameResponse\x12]\n" +
 	"\x0eChangePassword\x12$.services.auth.ChangePasswordRequest\x1a%.services.auth.ChangePasswordResponse\x12]\n" +
 	"\x0eForgotPassword\x12$.services.auth.ForgotPasswordRequest\x1a%.services.auth.ForgotPasswordResponse\x12Z\n" +
-	"\rGetCharacters\x12#.services.auth.GetCharactersRequest\x1a$.services.auth.GetCharactersResponse\x12`\n" +
-	"\x0fChooseCharacter\x12%.services.auth.ChooseCharacterRequest\x1a&.services.auth.ChooseCharacterResponse\x12]\n" +
+	"\rGetCharacters\x12#.services.auth.GetCharactersRequest\x1a$.services.auth.GetCharactersResponse\x12h\n" +
+	"\x0fChooseCharacter\x12%.services.auth.ChooseCharacterRequest\x1a&.services.auth.ChooseCharacterResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12]\n" +
 	"\x0eGetAccountInfo\x12$.services.auth.GetAccountInfoRequest\x1a%.services.auth.GetAccountInfoResponse\x12u\n" +
 	"\x16DeleteOAuth2Connection\x12,.services.auth.DeleteOAuth2ConnectionRequest\x1a-.services.auth.DeleteOAuth2ConnectionResponse\x12c\n" +
 	"\x10SetSuperuserMode\x12&.services.auth.SetSuperuserModeRequest\x1a'.services.auth.SetSuperuserModeResponseBFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth;authb\x06proto3"

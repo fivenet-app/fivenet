@@ -20,20 +20,14 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface ILivemapServiceClient {
     /**
-     * @perm: Attrs=Markers/JobList|Players/JobGradeList
-     *
      * @generated from protobuf rpc: Stream
      */
     stream(input: StreamRequest, options?: RpcOptions): ServerStreamingCall<StreamRequest, StreamResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
-     *
      * @generated from protobuf rpc: CreateOrUpdateMarker
      */
     createOrUpdateMarker(input: CreateOrUpdateMarkerRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateMarkerRequest, CreateOrUpdateMarkerResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
-     *
      * @generated from protobuf rpc: DeleteMarker
      */
     deleteMarker(input: DeleteMarkerRequest, options?: RpcOptions): UnaryCall<DeleteMarkerRequest, DeleteMarkerResponse>;
@@ -48,8 +42,6 @@ export class LivemapServiceClient implements ILivemapServiceClient, ServiceInfo 
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm: Attrs=Markers/JobList|Players/JobGradeList
-     *
      * @generated from protobuf rpc: Stream
      */
     stream(input: StreamRequest, options?: RpcOptions): ServerStreamingCall<StreamRequest, StreamResponse> {
@@ -57,8 +49,6 @@ export class LivemapServiceClient implements ILivemapServiceClient, ServiceInfo 
         return stackIntercept<StreamRequest, StreamResponse>("serverStreaming", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
-     *
      * @generated from protobuf rpc: CreateOrUpdateMarker
      */
     createOrUpdateMarker(input: CreateOrUpdateMarkerRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateMarkerRequest, CreateOrUpdateMarkerResponse> {
@@ -66,8 +56,6 @@ export class LivemapServiceClient implements ILivemapServiceClient, ServiceInfo 
         return stackIntercept<CreateOrUpdateMarkerRequest, CreateOrUpdateMarkerResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
-     *
      * @generated from protobuf rpc: DeleteMarker
      */
     deleteMarker(input: DeleteMarkerRequest, options?: RpcOptions): UnaryCall<DeleteMarkerRequest, DeleteMarkerResponse> {

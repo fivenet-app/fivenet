@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.auth;
 
 import "buf/validate/validate.proto";
+import "codegen/perms/perms.proto";
 import "resources/accounts/accounts.proto";
 import "resources/accounts/oauth2.proto";
 import "resources/jobs/job_props.proto";
@@ -161,8 +162,9 @@ service AuthService {
   rpc ForgotPassword(ForgotPasswordRequest) returns (ForgotPasswordResponse);
 
   rpc GetCharacters(GetCharactersRequest) returns (GetCharactersResponse);
-  // @perm
-  rpc ChooseCharacter(ChooseCharacterRequest) returns (ChooseCharacterResponse);
+  rpc ChooseCharacter(ChooseCharacterRequest) returns (ChooseCharacterResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
 
   rpc GetAccountInfo(GetAccountInfoRequest) returns (GetAccountInfoResponse);
 

@@ -830,7 +830,7 @@ export const DeleteMarkerResponse = new DeleteMarkerResponse$Type();
  * @generated ServiceType for protobuf service services.livemap.LivemapService
  */
 export const LivemapService = new ServiceType("services.livemap.LivemapService", [
-    { name: "Stream", serverStreaming: true, options: {}, I: StreamRequest, O: StreamResponse },
-    { name: "CreateOrUpdateMarker", options: {}, I: CreateOrUpdateMarkerRequest, O: CreateOrUpdateMarkerResponse },
-    { name: "DeleteMarker", options: {}, I: DeleteMarkerRequest, O: DeleteMarkerResponse }
+    { name: "Stream", serverStreaming: true, options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Markers", type: "ATTRIBUTE_TYPE_JOB_LIST" }, { key: "Players", type: "ATTRIBUTE_TYPE_JOB_GRADE_LIST" }] } }, I: StreamRequest, O: StreamResponse },
+    { name: "CreateOrUpdateMarker", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Access", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Own", "Lower_Rank", "Same_Rank", "Any"] }] } }, I: CreateOrUpdateMarkerRequest, O: CreateOrUpdateMarkerResponse },
+    { name: "DeleteMarker", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Access", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Own", "Lower_Rank", "Same_Rank", "Any"] }] } }, I: DeleteMarkerRequest, O: DeleteMarkerResponse }
 ]);

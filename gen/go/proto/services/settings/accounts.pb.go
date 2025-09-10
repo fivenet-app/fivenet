@@ -8,6 +8,7 @@ package settings
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	accounts "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -437,7 +438,7 @@ var File_services_settings_accounts_proto protoreflect.FileDescriptor
 
 const file_services_settings_accounts_proto_rawDesc = "" +
 	"\n" +
-	" services/settings/accounts.proto\x12\x11services.settings\x1a\x1fcodegen/itemslen/itemslen.proto\x1a!resources/accounts/accounts.proto\x1a(resources/common/database/database.proto\"\x84\x03\n" +
+	" services/settings/accounts.proto\x12\x11services.settings\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!resources/accounts/accounts.proto\x1a(resources/common/database/database.proto\"\x84\x03\n" +
 	"\x13ListAccountsRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
@@ -476,12 +477,12 @@ const file_services_settings_accounts_proto_rawDesc = "" +
 	"\"DisconnectOAuth2ConnectionResponse\"/\n" +
 	"\x14DeleteAccountRequest\x12\x17\n" +
 	"\x02id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\"\x17\n" +
-	"\x15DeleteAccountResponse2\xc6\x03\n" +
-	"\x0fAccountsService\x12_\n" +
-	"\fListAccounts\x12&.services.settings.ListAccountsRequest\x1a'.services.settings.ListAccountsResponse\x12b\n" +
-	"\rUpdateAccount\x12'.services.settings.UpdateAccountRequest\x1a(.services.settings.UpdateAccountResponse\x12\x89\x01\n" +
-	"\x1aDisconnectOAuth2Connection\x124.services.settings.DisconnectOAuth2ConnectionRequest\x1a5.services.settings.DisconnectOAuth2ConnectionResponse\x12b\n" +
-	"\rDeleteAccount\x12'.services.settings.DeleteAccountRequest\x1a(.services.settings.DeleteAccountResponseBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settingsb\x06proto3"
+	"\x15DeleteAccountResponse2\x92\x04\n" +
+	"\x0fAccountsService\x12r\n" +
+	"\fListAccounts\x12&.services.settings.ListAccountsRequest\x1a'.services.settings.ListAccountsResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12u\n" +
+	"\rUpdateAccount\x12'.services.settings.UpdateAccountRequest\x1a(.services.settings.UpdateAccountResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12\x9c\x01\n" +
+	"\x1aDisconnectOAuth2Connection\x124.services.settings.DisconnectOAuth2ConnectionRequest\x1a5.services.settings.DisconnectOAuth2ConnectionResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12u\n" +
+	"\rDeleteAccount\x12'.services.settings.DeleteAccountRequest\x1a(.services.settings.DeleteAccountResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuserBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settingsb\x06proto3"
 
 var (
 	file_services_settings_accounts_proto_rawDescOnce sync.Once

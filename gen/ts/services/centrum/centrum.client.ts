@@ -60,140 +60,94 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface ICentrumServiceClient {
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Shared", "Public"}
-     *
      * @generated from protobuf rpc: UpdateSettings
      */
     updateSettings(input: UpdateSettingsRequest, options?: RpcOptions): UnaryCall<UpdateSettingsRequest, UpdateSettingsResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: CreateDispatch
      */
     createDispatch(input: CreateDispatchRequest, options?: RpcOptions): UnaryCall<CreateDispatchRequest, CreateDispatchResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: UpdateDispatch
      */
     updateDispatch(input: UpdateDispatchRequest, options?: RpcOptions): UnaryCall<UpdateDispatchRequest, UpdateDispatchResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: DeleteDispatch
      */
     deleteDispatch(input: DeleteDispatchRequest, options?: RpcOptions): UnaryCall<DeleteDispatchRequest, DeleteDispatchResponse>;
     /**
-     * @perm: Name=CreateDispatch
-     *
      * @generated from protobuf rpc: ListDispatchTargetJobs
      */
     listDispatchTargetJobs(input: ListDispatchTargetJobsRequest, options?: RpcOptions): UnaryCall<ListDispatchTargetJobsRequest, ListDispatchTargetJobsResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: TakeControl
      */
     takeControl(input: TakeControlRequest, options?: RpcOptions): UnaryCall<TakeControlRequest, TakeControlResponse>;
     /**
-     * @perm: Name=TakeControl
-     *
      * @generated from protobuf rpc: AssignDispatch
      */
     assignDispatch(input: AssignDispatchRequest, options?: RpcOptions): UnaryCall<AssignDispatchRequest, AssignDispatchResponse>;
     /**
-     * @perm: Name=TakeControl
-     *
      * @generated from protobuf rpc: AssignUnit
      */
     assignUnit(input: AssignUnitRequest, options?: RpcOptions): UnaryCall<AssignUnitRequest, AssignUnitResponse>;
     /**
-     * @perm: Name=TakeControl
-     *
      * @generated from protobuf rpc: GetDispatchHeatmap
      */
     getDispatchHeatmap(input: GetDispatchHeatmapRequest, options?: RpcOptions): UnaryCall<GetDispatchHeatmapRequest, GetDispatchHeatmapResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: UpdateDispatchers
      */
     updateDispatchers(input: UpdateDispatchersRequest, options?: RpcOptions): UnaryCall<UpdateDispatchersRequest, UpdateDispatchersResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: Stream
      */
     stream(input: StreamRequest, options?: RpcOptions): ServerStreamingCall<StreamRequest, StreamResponse>;
     /**
-     * @perm: Name=Stream
-     *
      * @generated from protobuf rpc: GetSettings
      */
     getSettings(input: GetSettingsRequest, options?: RpcOptions): UnaryCall<GetSettingsRequest, GetSettingsResponse>;
     /**
-     * @perm: Name=Stream
-     *
      * @generated from protobuf rpc: JoinUnit
      */
     joinUnit(input: JoinUnitRequest, options?: RpcOptions): UnaryCall<JoinUnitRequest, JoinUnitResponse>;
     /**
-     * @perm: Name=Stream
-     *
      * @generated from protobuf rpc: ListUnits
      */
     listUnits(input: ListUnitsRequest, options?: RpcOptions): UnaryCall<ListUnitsRequest, ListUnitsResponse>;
     /**
-     * @perm: Name=Stream
-     *
      * @generated from protobuf rpc: ListUnitActivity
      */
     listUnitActivity(input: ListUnitActivityRequest, options?: RpcOptions): UnaryCall<ListUnitActivityRequest, ListUnitActivityResponse>;
     /**
-     * @perm: Name=Stream
-     *
      * @generated from protobuf rpc: GetDispatch
      */
     getDispatch(input: GetDispatchRequest, options?: RpcOptions): UnaryCall<GetDispatchRequest, GetDispatchResponse>;
     /**
-     * @perm: Name=Stream
-     *
      * @generated from protobuf rpc: ListDispatches
      */
     listDispatches(input: ListDispatchesRequest, options?: RpcOptions): UnaryCall<ListDispatchesRequest, ListDispatchesResponse>;
     /**
-     * @perm: Name=Stream
-     *
      * @generated from protobuf rpc: ListDispatchActivity
      */
     listDispatchActivity(input: ListDispatchActivityRequest, options?: RpcOptions): UnaryCall<ListDispatchActivityRequest, ListDispatchActivityResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: CreateOrUpdateUnit
      */
     createOrUpdateUnit(input: CreateOrUpdateUnitRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateUnitRequest, CreateOrUpdateUnitResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: DeleteUnit
      */
     deleteUnit(input: DeleteUnitRequest, options?: RpcOptions): UnaryCall<DeleteUnitRequest, DeleteUnitResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: TakeDispatch
      */
     takeDispatch(input: TakeDispatchRequest, options?: RpcOptions): UnaryCall<TakeDispatchRequest, TakeDispatchResponse>;
     /**
-     * @perm: Name=TakeDispatch
-     *
      * @generated from protobuf rpc: UpdateUnitStatus
      */
     updateUnitStatus(input: UpdateUnitStatusRequest, options?: RpcOptions): UnaryCall<UpdateUnitStatusRequest, UpdateUnitStatusResponse>;
     /**
-     * @perm: Name=TakeDispatch
-     *
      * @generated from protobuf rpc: UpdateDispatchStatus
      */
     updateDispatchStatus(input: UpdateDispatchStatusRequest, options?: RpcOptions): UnaryCall<UpdateDispatchStatusRequest, UpdateDispatchStatusResponse>;
@@ -208,8 +162,6 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Shared", "Public"}
-     *
      * @generated from protobuf rpc: UpdateSettings
      */
     updateSettings(input: UpdateSettingsRequest, options?: RpcOptions): UnaryCall<UpdateSettingsRequest, UpdateSettingsResponse> {
@@ -217,8 +169,6 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
         return stackIntercept<UpdateSettingsRequest, UpdateSettingsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: CreateDispatch
      */
     createDispatch(input: CreateDispatchRequest, options?: RpcOptions): UnaryCall<CreateDispatchRequest, CreateDispatchResponse> {
@@ -226,8 +176,6 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
         return stackIntercept<CreateDispatchRequest, CreateDispatchResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: UpdateDispatch
      */
     updateDispatch(input: UpdateDispatchRequest, options?: RpcOptions): UnaryCall<UpdateDispatchRequest, UpdateDispatchResponse> {
@@ -235,8 +183,6 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
         return stackIntercept<UpdateDispatchRequest, UpdateDispatchResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: DeleteDispatch
      */
     deleteDispatch(input: DeleteDispatchRequest, options?: RpcOptions): UnaryCall<DeleteDispatchRequest, DeleteDispatchResponse> {
@@ -244,8 +190,6 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
         return stackIntercept<DeleteDispatchRequest, DeleteDispatchResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=CreateDispatch
-     *
      * @generated from protobuf rpc: ListDispatchTargetJobs
      */
     listDispatchTargetJobs(input: ListDispatchTargetJobsRequest, options?: RpcOptions): UnaryCall<ListDispatchTargetJobsRequest, ListDispatchTargetJobsResponse> {
@@ -253,8 +197,6 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
         return stackIntercept<ListDispatchTargetJobsRequest, ListDispatchTargetJobsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: TakeControl
      */
     takeControl(input: TakeControlRequest, options?: RpcOptions): UnaryCall<TakeControlRequest, TakeControlResponse> {
@@ -262,8 +204,6 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
         return stackIntercept<TakeControlRequest, TakeControlResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=TakeControl
-     *
      * @generated from protobuf rpc: AssignDispatch
      */
     assignDispatch(input: AssignDispatchRequest, options?: RpcOptions): UnaryCall<AssignDispatchRequest, AssignDispatchResponse> {
@@ -271,8 +211,6 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
         return stackIntercept<AssignDispatchRequest, AssignDispatchResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=TakeControl
-     *
      * @generated from protobuf rpc: AssignUnit
      */
     assignUnit(input: AssignUnitRequest, options?: RpcOptions): UnaryCall<AssignUnitRequest, AssignUnitResponse> {
@@ -280,8 +218,6 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
         return stackIntercept<AssignUnitRequest, AssignUnitResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=TakeControl
-     *
      * @generated from protobuf rpc: GetDispatchHeatmap
      */
     getDispatchHeatmap(input: GetDispatchHeatmapRequest, options?: RpcOptions): UnaryCall<GetDispatchHeatmapRequest, GetDispatchHeatmapResponse> {
@@ -289,8 +225,6 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
         return stackIntercept<GetDispatchHeatmapRequest, GetDispatchHeatmapResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: UpdateDispatchers
      */
     updateDispatchers(input: UpdateDispatchersRequest, options?: RpcOptions): UnaryCall<UpdateDispatchersRequest, UpdateDispatchersResponse> {
@@ -298,8 +232,6 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
         return stackIntercept<UpdateDispatchersRequest, UpdateDispatchersResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: Stream
      */
     stream(input: StreamRequest, options?: RpcOptions): ServerStreamingCall<StreamRequest, StreamResponse> {
@@ -307,8 +239,6 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
         return stackIntercept<StreamRequest, StreamResponse>("serverStreaming", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Stream
-     *
      * @generated from protobuf rpc: GetSettings
      */
     getSettings(input: GetSettingsRequest, options?: RpcOptions): UnaryCall<GetSettingsRequest, GetSettingsResponse> {
@@ -316,8 +246,6 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
         return stackIntercept<GetSettingsRequest, GetSettingsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Stream
-     *
      * @generated from protobuf rpc: JoinUnit
      */
     joinUnit(input: JoinUnitRequest, options?: RpcOptions): UnaryCall<JoinUnitRequest, JoinUnitResponse> {
@@ -325,8 +253,6 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
         return stackIntercept<JoinUnitRequest, JoinUnitResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Stream
-     *
      * @generated from protobuf rpc: ListUnits
      */
     listUnits(input: ListUnitsRequest, options?: RpcOptions): UnaryCall<ListUnitsRequest, ListUnitsResponse> {
@@ -334,8 +260,6 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
         return stackIntercept<ListUnitsRequest, ListUnitsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Stream
-     *
      * @generated from protobuf rpc: ListUnitActivity
      */
     listUnitActivity(input: ListUnitActivityRequest, options?: RpcOptions): UnaryCall<ListUnitActivityRequest, ListUnitActivityResponse> {
@@ -343,8 +267,6 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
         return stackIntercept<ListUnitActivityRequest, ListUnitActivityResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Stream
-     *
      * @generated from protobuf rpc: GetDispatch
      */
     getDispatch(input: GetDispatchRequest, options?: RpcOptions): UnaryCall<GetDispatchRequest, GetDispatchResponse> {
@@ -352,8 +274,6 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
         return stackIntercept<GetDispatchRequest, GetDispatchResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Stream
-     *
      * @generated from protobuf rpc: ListDispatches
      */
     listDispatches(input: ListDispatchesRequest, options?: RpcOptions): UnaryCall<ListDispatchesRequest, ListDispatchesResponse> {
@@ -361,8 +281,6 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
         return stackIntercept<ListDispatchesRequest, ListDispatchesResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=Stream
-     *
      * @generated from protobuf rpc: ListDispatchActivity
      */
     listDispatchActivity(input: ListDispatchActivityRequest, options?: RpcOptions): UnaryCall<ListDispatchActivityRequest, ListDispatchActivityResponse> {
@@ -370,8 +288,6 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
         return stackIntercept<ListDispatchActivityRequest, ListDispatchActivityResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: CreateOrUpdateUnit
      */
     createOrUpdateUnit(input: CreateOrUpdateUnitRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateUnitRequest, CreateOrUpdateUnitResponse> {
@@ -379,8 +295,6 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
         return stackIntercept<CreateOrUpdateUnitRequest, CreateOrUpdateUnitResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: DeleteUnit
      */
     deleteUnit(input: DeleteUnitRequest, options?: RpcOptions): UnaryCall<DeleteUnitRequest, DeleteUnitResponse> {
@@ -388,8 +302,6 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
         return stackIntercept<DeleteUnitRequest, DeleteUnitResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: TakeDispatch
      */
     takeDispatch(input: TakeDispatchRequest, options?: RpcOptions): UnaryCall<TakeDispatchRequest, TakeDispatchResponse> {
@@ -397,8 +309,6 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
         return stackIntercept<TakeDispatchRequest, TakeDispatchResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=TakeDispatch
-     *
      * @generated from protobuf rpc: UpdateUnitStatus
      */
     updateUnitStatus(input: UpdateUnitStatusRequest, options?: RpcOptions): UnaryCall<UpdateUnitStatusRequest, UpdateUnitStatusResponse> {
@@ -406,8 +316,6 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
         return stackIntercept<UpdateUnitStatusRequest, UpdateUnitStatusResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=TakeDispatch
-     *
      * @generated from protobuf rpc: UpdateDispatchStatus
      */
     updateDispatchStatus(input: UpdateDispatchStatusRequest, options?: RpcOptions): UnaryCall<UpdateDispatchStatusRequest, UpdateDispatchStatusResponse> {

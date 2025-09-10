@@ -9,5 +9,5 @@ import { ServiceType } from "@protobuf-ts/runtime-rpc";
  * @generated ServiceType for protobuf service services.wiki.CollabService
  */
 export const CollabService = new ServiceType("services.wiki.CollabService", [
-    { name: "JoinRoom", serverStreaming: true, clientStreaming: true, options: {}, I: ClientPacket, O: ServerPacket }
+    { name: "JoinRoom", serverStreaming: true, clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, service: "wiki.WikiService", name: "UpdatePage" } }, I: ClientPacket, O: ServerPacket }
 ]);

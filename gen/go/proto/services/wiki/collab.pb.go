@@ -7,6 +7,7 @@
 package wiki
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	collab "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/collab"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -25,9 +26,10 @@ var File_services_wiki_collab_proto protoreflect.FileDescriptor
 
 const file_services_wiki_collab_proto_rawDesc = "" +
 	"\n" +
-	"\x1aservices/wiki/collab.proto\x12\rservices.wiki\x1a\x1dresources/collab/collab.proto2_\n" +
-	"\rCollabService\x12N\n" +
-	"\bJoinRoom\x12\x1e.resources.collab.ClientPacket\x1a\x1e.resources.collab.ServerPacket(\x010\x01BFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki;wikib\x06proto3"
+	"\x1aservices/wiki/collab.proto\x12\rservices.wiki\x1a\x19codegen/perms/perms.proto\x1a\x1dresources/collab/collab.proto2\x85\x01\n" +
+	"\rCollabService\x12t\n" +
+	"\bJoinRoom\x12\x1e.resources.collab.ClientPacket\x1a\x1e.resources.collab.ServerPacket\"$\xd2\xf3\x18 \b\x01\x12\x10wiki.WikiService\x1a\n" +
+	"UpdatePage(\x010\x01BFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki;wikib\x06proto3"
 
 var file_services_wiki_collab_proto_goTypes = []any{
 	(*collab.ClientPacket)(nil), // 0: resources.collab.ClientPacket

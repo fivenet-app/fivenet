@@ -133,6 +133,27 @@ export interface JobGrades {
      */
     grades: number[];
 }
+/**
+ * @generated from protobuf enum resources.permissions.AttributeType
+ */
+export enum AttributeType {
+    /**
+     * @generated from protobuf enum value: ATTRIBUTE_TYPE_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: ATTRIBUTE_TYPE_STRING_LIST = 1;
+     */
+    STRING_LIST = 1,
+    /**
+     * @generated from protobuf enum value: ATTRIBUTE_TYPE_JOB_LIST = 2;
+     */
+    JOB_LIST = 2,
+    /**
+     * @generated from protobuf enum value: ATTRIBUTE_TYPE_JOB_GRADE_LIST = 3;
+     */
+    JOB_GRADE_LIST = 3
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class RoleAttribute$Type extends MessageType<RoleAttribute> {
     constructor() {

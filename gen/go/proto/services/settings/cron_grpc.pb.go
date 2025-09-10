@@ -26,7 +26,6 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CronServiceClient interface {
-	// @perm: Name=Superuser
 	ListCronjobs(ctx context.Context, in *ListCronjobsRequest, opts ...grpc.CallOption) (*ListCronjobsResponse, error)
 }
 
@@ -52,7 +51,6 @@ func (c *cronServiceClient) ListCronjobs(ctx context.Context, in *ListCronjobsRe
 // All implementations must embed UnimplementedCronServiceServer
 // for forward compatibility.
 type CronServiceServer interface {
-	// @perm: Name=Superuser
 	ListCronjobs(context.Context, *ListCronjobsRequest) (*ListCronjobsResponse, error)
 	mustEmbedUnimplementedCronServiceServer()
 }

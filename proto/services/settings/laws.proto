@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.settings;
 
 import "buf/validate/validate.proto";
+import "codegen/perms/perms.proto";
 import "resources/laws/laws.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settings";
@@ -35,12 +36,22 @@ message DeleteLawRequest {
 message DeleteLawResponse {}
 
 service LawsService {
-  // @perm
-  rpc CreateOrUpdateLawBook(CreateOrUpdateLawBookRequest) returns (CreateOrUpdateLawBookResponse);
-  // @perm
-  rpc DeleteLawBook(DeleteLawBookRequest) returns (DeleteLawBookResponse);
-  // @perm: Name=CreateOrUpdateLawBook
-  rpc CreateOrUpdateLaw(CreateOrUpdateLawRequest) returns (CreateOrUpdateLawResponse);
-  // @perm: Name=DeleteLawBook
-  rpc DeleteLaw(DeleteLawRequest) returns (DeleteLawResponse);
+  rpc CreateOrUpdateLawBook(CreateOrUpdateLawBookRequest) returns (CreateOrUpdateLawBookResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc DeleteLawBook(DeleteLawBookRequest) returns (DeleteLawBookResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc CreateOrUpdateLaw(CreateOrUpdateLawRequest) returns (CreateOrUpdateLawResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "CreateOrUpdateLawBook"
+    };
+  }
+  rpc DeleteLaw(DeleteLawRequest) returns (DeleteLawResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "DeleteLawBook"
+    };
+  }
 }

@@ -642,9 +642,9 @@ export const CompleteCitizenLabelsResponse = new CompleteCitizenLabelsResponse$T
  * @generated ServiceType for protobuf service services.completor.CompletorService
  */
 export const CompletorService = new ServiceType("services.completor.CompletorService", [
-    { name: "CompleteCitizens", options: {}, I: CompleteCitizensRequest, O: CompleteCitizensResponse },
-    { name: "CompleteJobs", options: {}, I: CompleteJobsRequest, O: CompleteJobsResponse },
-    { name: "CompleteDocumentCategories", options: {}, I: CompleteDocumentCategoriesRequest, O: CompleteDocumentCategoriesResponse },
-    { name: "ListLawBooks", options: {}, I: ListLawBooksRequest, O: ListLawBooksResponse },
-    { name: "CompleteCitizenLabels", options: {}, I: CompleteCitizenLabelsRequest, O: CompleteCitizenLabelsResponse }
+    { name: "CompleteCitizens", options: { "codegen.perms.perms": { enabled: true } }, I: CompleteCitizensRequest, O: CompleteCitizensResponse },
+    { name: "CompleteJobs", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: CompleteJobsRequest, O: CompleteJobsResponse },
+    { name: "CompleteDocumentCategories", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Jobs", type: "ATTRIBUTE_TYPE_JOB_LIST" }] } }, I: CompleteDocumentCategoriesRequest, O: CompleteDocumentCategoriesResponse },
+    { name: "ListLawBooks", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: ListLawBooksRequest, O: ListLawBooksResponse },
+    { name: "CompleteCitizenLabels", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Jobs", type: "ATTRIBUTE_TYPE_JOB_LIST" }] } }, I: CompleteCitizenLabelsRequest, O: CompleteCitizenLabelsResponse }
 ]);

@@ -27,9 +27,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type VehiclesServiceClient interface {
-	// @perm: Attrs=Fields/StringList:[]string{"Wanted"}
 	ListVehicles(ctx context.Context, in *ListVehiclesRequest, opts ...grpc.CallOption) (*ListVehiclesResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"Wanted"}
 	SetVehicleProps(ctx context.Context, in *SetVehiclePropsRequest, opts ...grpc.CallOption) (*SetVehiclePropsResponse, error)
 }
 
@@ -65,9 +63,7 @@ func (c *vehiclesServiceClient) SetVehicleProps(ctx context.Context, in *SetVehi
 // All implementations must embed UnimplementedVehiclesServiceServer
 // for forward compatibility.
 type VehiclesServiceServer interface {
-	// @perm: Attrs=Fields/StringList:[]string{"Wanted"}
 	ListVehicles(context.Context, *ListVehiclesRequest) (*ListVehiclesResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"Wanted"}
 	SetVehicleProps(context.Context, *SetVehiclePropsRequest) (*SetVehiclePropsResponse, error)
 	mustEmbedUnimplementedVehiclesServiceServer()
 }

@@ -4,6 +4,7 @@ package services.settings;
 
 import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
+import "codegen/perms/perms.proto";
 import "resources/audit/audit.proto";
 import "resources/common/database/database.proto";
 import "resources/discord/discord.proto";
@@ -140,41 +141,76 @@ message DeleteJobLogoRequest {}
 message DeleteJobLogoResponse {}
 
 service SettingsService {
-  // @perm
-  rpc GetJobProps(GetJobPropsRequest) returns (GetJobPropsResponse);
-  // @perm
-  rpc SetJobProps(SetJobPropsRequest) returns (SetJobPropsResponse);
+  rpc GetJobProps(GetJobPropsRequest) returns (GetJobPropsResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc SetJobProps(SetJobPropsRequest) returns (SetJobPropsResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
 
-  // @perm
-  rpc GetRoles(GetRolesRequest) returns (GetRolesResponse);
-  // @perm: Name=GetRoles
-  rpc GetRole(GetRoleRequest) returns (GetRoleResponse);
-  // @perm
-  rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse);
-  // @perm
-  rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse);
+  rpc GetRoles(GetRolesRequest) returns (GetRolesResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc GetRole(GetRoleRequest) returns (GetRoleResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "GetRoles"
+    };
+  }
+  rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
 
-  // @perm
-  rpc UpdateRolePerms(UpdateRolePermsRequest) returns (UpdateRolePermsResponse);
+  rpc UpdateRolePerms(UpdateRolePermsRequest) returns (UpdateRolePermsResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
 
-  // @perm: Name=GetRoles
-  rpc GetPermissions(GetPermissionsRequest) returns (GetPermissionsResponse);
-  // @perm: Name=GetRoles
-  rpc GetEffectivePermissions(GetEffectivePermissionsRequest) returns (GetEffectivePermissionsResponse);
+  rpc GetPermissions(GetPermissionsRequest) returns (GetPermissionsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "GetRoles"
+    };
+  }
+  rpc GetEffectivePermissions(GetEffectivePermissionsRequest) returns (GetEffectivePermissionsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "GetRoles"
+    };
+  }
 
-  // @perm
-  rpc ViewAuditLog(ViewAuditLogRequest) returns (ViewAuditLogResponse);
+  rpc ViewAuditLog(ViewAuditLogRequest) returns (ViewAuditLogResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
 
-  // @perm: Name=SetJobProps
-  rpc ListDiscordChannels(ListDiscordChannelsRequest) returns (ListDiscordChannelsResponse);
-  // @perm: Name=SetJobProps
-  rpc ListUserGuilds(ListUserGuildsRequest) returns (ListUserGuildsResponse);
+  rpc ListDiscordChannels(ListDiscordChannelsRequest) returns (ListDiscordChannelsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "SetJobProps"
+    };
+  }
+  rpc ListUserGuilds(ListUserGuildsRequest) returns (ListUserGuildsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "SetJobProps"
+    };
+  }
 
-  // @perm: Name=SetJobProps
   // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
   // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
   // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
-  rpc UploadJobLogo(stream resources.file.UploadFileRequest) returns (resources.file.UploadFileResponse);
-  // @perm: Name=SetJobProps
-  rpc DeleteJobLogo(DeleteJobLogoRequest) returns (DeleteJobLogoResponse);
+  rpc UploadJobLogo(stream resources.file.UploadFileRequest) returns (resources.file.UploadFileResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "SetJobProps"
+    };
+  }
+  rpc DeleteJobLogo(DeleteJobLogoRequest) returns (DeleteJobLogoResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "SetJobProps"
+    };
+  }
 }

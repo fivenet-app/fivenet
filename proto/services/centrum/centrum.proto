@@ -4,6 +4,7 @@ package services.centrum;
 
 import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
+import "codegen/perms/perms.proto";
 import "resources/centrum/dispatchers.proto";
 import "resources/centrum/dispatches.proto";
 import "resources/centrum/settings.proto";
@@ -242,60 +243,134 @@ message StreamResponse {
 }
 
 service CentrumService {
-  // @perm: Attrs=Access/StringList:[]string{"Shared", "Public"}
-  rpc UpdateSettings(UpdateSettingsRequest) returns (UpdateSettingsResponse);
+  rpc UpdateSettings(UpdateSettingsRequest) returns (UpdateSettingsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      attrs: [
+        {
+          key: "Access"
+          type: ATTRIBUTE_TYPE_STRING_LIST
+          valid_string_list: [
+            "Shared",
+            "Public"
+          ]
+        }
+      ]
+    };
+  }
 
-  // @perm
-  rpc CreateDispatch(CreateDispatchRequest) returns (CreateDispatchResponse);
-  // @perm
-  rpc UpdateDispatch(UpdateDispatchRequest) returns (UpdateDispatchResponse);
-  // @perm
-  rpc DeleteDispatch(DeleteDispatchRequest) returns (DeleteDispatchResponse);
+  rpc CreateDispatch(CreateDispatchRequest) returns (CreateDispatchResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc UpdateDispatch(UpdateDispatchRequest) returns (UpdateDispatchResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc DeleteDispatch(DeleteDispatchRequest) returns (DeleteDispatchResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
 
-  // @perm: Name=CreateDispatch
-  rpc ListDispatchTargetJobs(ListDispatchTargetJobsRequest) returns (ListDispatchTargetJobsResponse);
+  rpc ListDispatchTargetJobs(ListDispatchTargetJobsRequest) returns (ListDispatchTargetJobsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "CreateDispatch"
+    };
+  }
 
-  // @perm
-  rpc TakeControl(TakeControlRequest) returns (TakeControlResponse);
-  // @perm: Name=TakeControl
-  rpc AssignDispatch(AssignDispatchRequest) returns (AssignDispatchResponse);
-  // @perm: Name=TakeControl
-  rpc AssignUnit(AssignUnitRequest) returns (AssignUnitResponse);
-  // @perm: Name=TakeControl
-  rpc GetDispatchHeatmap(GetDispatchHeatmapRequest) returns (GetDispatchHeatmapResponse);
+  rpc TakeControl(TakeControlRequest) returns (TakeControlResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc AssignDispatch(AssignDispatchRequest) returns (AssignDispatchResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "TakeControl"
+    };
+  }
+  rpc AssignUnit(AssignUnitRequest) returns (AssignUnitResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "TakeControl"
+    };
+  }
+  rpc GetDispatchHeatmap(GetDispatchHeatmapRequest) returns (GetDispatchHeatmapResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "TakeControl"
+    };
+  }
 
-  // @perm
-  rpc UpdateDispatchers(UpdateDispatchersRequest) returns (UpdateDispatchersResponse);
+  rpc UpdateDispatchers(UpdateDispatchersRequest) returns (UpdateDispatchersResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
 
-  // @perm
-  rpc Stream(StreamRequest) returns (stream StreamResponse);
+  rpc Stream(StreamRequest) returns (stream StreamResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
 
-  // @perm: Name=Stream
-  rpc GetSettings(GetSettingsRequest) returns (GetSettingsResponse);
+  rpc GetSettings(GetSettingsRequest) returns (GetSettingsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Stream"
+    };
+  }
 
-  // @perm: Name=Stream
-  rpc JoinUnit(JoinUnitRequest) returns (JoinUnitResponse);
-  // @perm: Name=Stream
-  rpc ListUnits(ListUnitsRequest) returns (ListUnitsResponse);
-  // @perm: Name=Stream
-  rpc ListUnitActivity(ListUnitActivityRequest) returns (ListUnitActivityResponse);
+  rpc JoinUnit(JoinUnitRequest) returns (JoinUnitResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Stream"
+    };
+  }
+  rpc ListUnits(ListUnitsRequest) returns (ListUnitsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Stream"
+    };
+  }
+  rpc ListUnitActivity(ListUnitActivityRequest) returns (ListUnitActivityResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Stream"
+    };
+  }
 
-  // @perm: Name=Stream
-  rpc GetDispatch(GetDispatchRequest) returns (GetDispatchResponse);
-  // @perm: Name=Stream
-  rpc ListDispatches(ListDispatchesRequest) returns (ListDispatchesResponse);
-  // @perm: Name=Stream
-  rpc ListDispatchActivity(ListDispatchActivityRequest) returns (ListDispatchActivityResponse);
+  rpc GetDispatch(GetDispatchRequest) returns (GetDispatchResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Stream"
+    };
+  }
+  rpc ListDispatches(ListDispatchesRequest) returns (ListDispatchesResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Stream"
+    };
+  }
+  rpc ListDispatchActivity(ListDispatchActivityRequest) returns (ListDispatchActivityResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Stream"
+    };
+  }
 
-  // @perm
-  rpc CreateOrUpdateUnit(CreateOrUpdateUnitRequest) returns (CreateOrUpdateUnitResponse);
-  // @perm
-  rpc DeleteUnit(DeleteUnitRequest) returns (DeleteUnitResponse);
+  rpc CreateOrUpdateUnit(CreateOrUpdateUnitRequest) returns (CreateOrUpdateUnitResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc DeleteUnit(DeleteUnitRequest) returns (DeleteUnitResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
 
-  // @perm
-  rpc TakeDispatch(TakeDispatchRequest) returns (TakeDispatchResponse);
-  // @perm: Name=TakeDispatch
-  rpc UpdateUnitStatus(UpdateUnitStatusRequest) returns (UpdateUnitStatusResponse);
-  // @perm: Name=TakeDispatch
-  rpc UpdateDispatchStatus(UpdateDispatchStatusRequest) returns (UpdateDispatchStatusResponse);
+  rpc TakeDispatch(TakeDispatchRequest) returns (TakeDispatchResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc UpdateUnitStatus(UpdateUnitStatusRequest) returns (UpdateUnitStatusResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "TakeDispatch"
+    };
+  }
+  rpc UpdateDispatchStatus(UpdateDispatchStatusRequest) returns (UpdateDispatchStatusResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "TakeDispatch"
+    };
+  }
 }

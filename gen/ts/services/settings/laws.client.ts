@@ -21,26 +21,18 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface ILawsServiceClient {
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: CreateOrUpdateLawBook
      */
     createOrUpdateLawBook(input: CreateOrUpdateLawBookRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateLawBookRequest, CreateOrUpdateLawBookResponse>;
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: DeleteLawBook
      */
     deleteLawBook(input: DeleteLawBookRequest, options?: RpcOptions): UnaryCall<DeleteLawBookRequest, DeleteLawBookResponse>;
     /**
-     * @perm: Name=CreateOrUpdateLawBook
-     *
      * @generated from protobuf rpc: CreateOrUpdateLaw
      */
     createOrUpdateLaw(input: CreateOrUpdateLawRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateLawRequest, CreateOrUpdateLawResponse>;
     /**
-     * @perm: Name=DeleteLawBook
-     *
      * @generated from protobuf rpc: DeleteLaw
      */
     deleteLaw(input: DeleteLawRequest, options?: RpcOptions): UnaryCall<DeleteLawRequest, DeleteLawResponse>;
@@ -55,8 +47,6 @@ export class LawsServiceClient implements ILawsServiceClient, ServiceInfo {
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: CreateOrUpdateLawBook
      */
     createOrUpdateLawBook(input: CreateOrUpdateLawBookRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateLawBookRequest, CreateOrUpdateLawBookResponse> {
@@ -64,8 +54,6 @@ export class LawsServiceClient implements ILawsServiceClient, ServiceInfo {
         return stackIntercept<CreateOrUpdateLawBookRequest, CreateOrUpdateLawBookResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
-     *
      * @generated from protobuf rpc: DeleteLawBook
      */
     deleteLawBook(input: DeleteLawBookRequest, options?: RpcOptions): UnaryCall<DeleteLawBookRequest, DeleteLawBookResponse> {
@@ -73,8 +61,6 @@ export class LawsServiceClient implements ILawsServiceClient, ServiceInfo {
         return stackIntercept<DeleteLawBookRequest, DeleteLawBookResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=CreateOrUpdateLawBook
-     *
      * @generated from protobuf rpc: CreateOrUpdateLaw
      */
     createOrUpdateLaw(input: CreateOrUpdateLawRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateLawRequest, CreateOrUpdateLawResponse> {
@@ -82,8 +68,6 @@ export class LawsServiceClient implements ILawsServiceClient, ServiceInfo {
         return stackIntercept<CreateOrUpdateLawRequest, CreateOrUpdateLawResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=DeleteLawBook
-     *
      * @generated from protobuf rpc: DeleteLaw
      */
     deleteLaw(input: DeleteLawRequest, options?: RpcOptions): UnaryCall<DeleteLawRequest, DeleteLawResponse> {

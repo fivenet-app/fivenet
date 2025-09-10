@@ -46,47 +46,26 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MailerServiceClient interface {
-	// @perm
 	ListEmails(ctx context.Context, in *ListEmailsRequest, opts ...grpc.CallOption) (*ListEmailsResponse, error)
-	// @perm: Name=ListEmails
 	GetEmail(ctx context.Context, in *GetEmailRequest, opts ...grpc.CallOption) (*GetEmailResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"Job"}
 	CreateOrUpdateEmail(ctx context.Context, in *CreateOrUpdateEmailRequest, opts ...grpc.CallOption) (*CreateOrUpdateEmailResponse, error)
-	// @perm
 	DeleteEmail(ctx context.Context, in *DeleteEmailRequest, opts ...grpc.CallOption) (*DeleteEmailResponse, error)
-	// @perm: Name=ListEmails
 	GetEmailProposals(ctx context.Context, in *GetEmailProposalsRequest, opts ...grpc.CallOption) (*GetEmailProposalsResponse, error)
-	// @perm: Name=ListEmails
 	ListTemplates(ctx context.Context, in *ListTemplatesRequest, opts ...grpc.CallOption) (*ListTemplatesResponse, error)
-	// @perm: Name=ListEmails
 	GetTemplate(ctx context.Context, in *GetTemplateRequest, opts ...grpc.CallOption) (*GetTemplateResponse, error)
-	// @perm: Name=ListEmails
 	CreateOrUpdateTemplate(ctx context.Context, in *CreateOrUpdateTemplateRequest, opts ...grpc.CallOption) (*CreateOrUpdateTemplateResponse, error)
-	// @perm: Name=ListEmails
 	DeleteTemplate(ctx context.Context, in *DeleteTemplateRequest, opts ...grpc.CallOption) (*DeleteTemplateResponse, error)
-	// @perm: Name=ListEmails
 	ListThreads(ctx context.Context, in *ListThreadsRequest, opts ...grpc.CallOption) (*ListThreadsResponse, error)
-	// @perm: Name=ListEmails
 	GetThread(ctx context.Context, in *GetThreadRequest, opts ...grpc.CallOption) (*GetThreadResponse, error)
-	// @perm: Name=ListEmails
 	CreateThread(ctx context.Context, in *CreateThreadRequest, opts ...grpc.CallOption) (*CreateThreadResponse, error)
-	// @perm: Name=Superuser
 	DeleteThread(ctx context.Context, in *DeleteThreadRequest, opts ...grpc.CallOption) (*DeleteThreadResponse, error)
-	// @perm: Name=ListEmails
 	GetThreadState(ctx context.Context, in *GetThreadStateRequest, opts ...grpc.CallOption) (*GetThreadStateResponse, error)
-	// @perm: Name=ListEmails
 	SetThreadState(ctx context.Context, in *SetThreadStateRequest, opts ...grpc.CallOption) (*SetThreadStateResponse, error)
-	// @perm: Name=ListEmails
 	SearchThreads(ctx context.Context, in *SearchThreadsRequest, opts ...grpc.CallOption) (*SearchThreadsResponse, error)
-	// @perm: Name=ListEmails
 	ListThreadMessages(ctx context.Context, in *ListThreadMessagesRequest, opts ...grpc.CallOption) (*ListThreadMessagesResponse, error)
-	// @perm: Name=ListEmails
 	PostMessage(ctx context.Context, in *PostMessageRequest, opts ...grpc.CallOption) (*PostMessageResponse, error)
-	// @perm: Name=Superuser
 	DeleteMessage(ctx context.Context, in *DeleteMessageRequest, opts ...grpc.CallOption) (*DeleteMessageResponse, error)
-	// @perm: Name=ListEmails
 	GetEmailSettings(ctx context.Context, in *GetEmailSettingsRequest, opts ...grpc.CallOption) (*GetEmailSettingsResponse, error)
-	// @perm: Name=ListEmails
 	SetEmailSettings(ctx context.Context, in *SetEmailSettingsRequest, opts ...grpc.CallOption) (*SetEmailSettingsResponse, error)
 }
 
@@ -312,47 +291,26 @@ func (c *mailerServiceClient) SetEmailSettings(ctx context.Context, in *SetEmail
 // All implementations must embed UnimplementedMailerServiceServer
 // for forward compatibility.
 type MailerServiceServer interface {
-	// @perm
 	ListEmails(context.Context, *ListEmailsRequest) (*ListEmailsResponse, error)
-	// @perm: Name=ListEmails
 	GetEmail(context.Context, *GetEmailRequest) (*GetEmailResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"Job"}
 	CreateOrUpdateEmail(context.Context, *CreateOrUpdateEmailRequest) (*CreateOrUpdateEmailResponse, error)
-	// @perm
 	DeleteEmail(context.Context, *DeleteEmailRequest) (*DeleteEmailResponse, error)
-	// @perm: Name=ListEmails
 	GetEmailProposals(context.Context, *GetEmailProposalsRequest) (*GetEmailProposalsResponse, error)
-	// @perm: Name=ListEmails
 	ListTemplates(context.Context, *ListTemplatesRequest) (*ListTemplatesResponse, error)
-	// @perm: Name=ListEmails
 	GetTemplate(context.Context, *GetTemplateRequest) (*GetTemplateResponse, error)
-	// @perm: Name=ListEmails
 	CreateOrUpdateTemplate(context.Context, *CreateOrUpdateTemplateRequest) (*CreateOrUpdateTemplateResponse, error)
-	// @perm: Name=ListEmails
 	DeleteTemplate(context.Context, *DeleteTemplateRequest) (*DeleteTemplateResponse, error)
-	// @perm: Name=ListEmails
 	ListThreads(context.Context, *ListThreadsRequest) (*ListThreadsResponse, error)
-	// @perm: Name=ListEmails
 	GetThread(context.Context, *GetThreadRequest) (*GetThreadResponse, error)
-	// @perm: Name=ListEmails
 	CreateThread(context.Context, *CreateThreadRequest) (*CreateThreadResponse, error)
-	// @perm: Name=Superuser
 	DeleteThread(context.Context, *DeleteThreadRequest) (*DeleteThreadResponse, error)
-	// @perm: Name=ListEmails
 	GetThreadState(context.Context, *GetThreadStateRequest) (*GetThreadStateResponse, error)
-	// @perm: Name=ListEmails
 	SetThreadState(context.Context, *SetThreadStateRequest) (*SetThreadStateResponse, error)
-	// @perm: Name=ListEmails
 	SearchThreads(context.Context, *SearchThreadsRequest) (*SearchThreadsResponse, error)
-	// @perm: Name=ListEmails
 	ListThreadMessages(context.Context, *ListThreadMessagesRequest) (*ListThreadMessagesResponse, error)
-	// @perm: Name=ListEmails
 	PostMessage(context.Context, *PostMessageRequest) (*PostMessageResponse, error)
-	// @perm: Name=Superuser
 	DeleteMessage(context.Context, *DeleteMessageRequest) (*DeleteMessageResponse, error)
-	// @perm: Name=ListEmails
 	GetEmailSettings(context.Context, *GetEmailSettingsRequest) (*GetEmailSettingsResponse, error)
-	// @perm: Name=ListEmails
 	SetEmailSettings(context.Context, *SetEmailSettingsRequest) (*SetEmailSettingsResponse, error)
 	mustEmbedUnimplementedMailerServiceServer()
 }

@@ -48,51 +48,28 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CentrumServiceClient interface {
-	// @perm: Attrs=Access/StringList:[]string{"Shared", "Public"}
 	UpdateSettings(ctx context.Context, in *UpdateSettingsRequest, opts ...grpc.CallOption) (*UpdateSettingsResponse, error)
-	// @perm
 	CreateDispatch(ctx context.Context, in *CreateDispatchRequest, opts ...grpc.CallOption) (*CreateDispatchResponse, error)
-	// @perm
 	UpdateDispatch(ctx context.Context, in *UpdateDispatchRequest, opts ...grpc.CallOption) (*UpdateDispatchResponse, error)
-	// @perm
 	DeleteDispatch(ctx context.Context, in *DeleteDispatchRequest, opts ...grpc.CallOption) (*DeleteDispatchResponse, error)
-	// @perm: Name=CreateDispatch
 	ListDispatchTargetJobs(ctx context.Context, in *ListDispatchTargetJobsRequest, opts ...grpc.CallOption) (*ListDispatchTargetJobsResponse, error)
-	// @perm
 	TakeControl(ctx context.Context, in *TakeControlRequest, opts ...grpc.CallOption) (*TakeControlResponse, error)
-	// @perm: Name=TakeControl
 	AssignDispatch(ctx context.Context, in *AssignDispatchRequest, opts ...grpc.CallOption) (*AssignDispatchResponse, error)
-	// @perm: Name=TakeControl
 	AssignUnit(ctx context.Context, in *AssignUnitRequest, opts ...grpc.CallOption) (*AssignUnitResponse, error)
-	// @perm: Name=TakeControl
 	GetDispatchHeatmap(ctx context.Context, in *GetDispatchHeatmapRequest, opts ...grpc.CallOption) (*GetDispatchHeatmapResponse, error)
-	// @perm
 	UpdateDispatchers(ctx context.Context, in *UpdateDispatchersRequest, opts ...grpc.CallOption) (*UpdateDispatchersResponse, error)
-	// @perm
 	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamResponse], error)
-	// @perm: Name=Stream
 	GetSettings(ctx context.Context, in *GetSettingsRequest, opts ...grpc.CallOption) (*GetSettingsResponse, error)
-	// @perm: Name=Stream
 	JoinUnit(ctx context.Context, in *JoinUnitRequest, opts ...grpc.CallOption) (*JoinUnitResponse, error)
-	// @perm: Name=Stream
 	ListUnits(ctx context.Context, in *ListUnitsRequest, opts ...grpc.CallOption) (*ListUnitsResponse, error)
-	// @perm: Name=Stream
 	ListUnitActivity(ctx context.Context, in *ListUnitActivityRequest, opts ...grpc.CallOption) (*ListUnitActivityResponse, error)
-	// @perm: Name=Stream
 	GetDispatch(ctx context.Context, in *GetDispatchRequest, opts ...grpc.CallOption) (*GetDispatchResponse, error)
-	// @perm: Name=Stream
 	ListDispatches(ctx context.Context, in *ListDispatchesRequest, opts ...grpc.CallOption) (*ListDispatchesResponse, error)
-	// @perm: Name=Stream
 	ListDispatchActivity(ctx context.Context, in *ListDispatchActivityRequest, opts ...grpc.CallOption) (*ListDispatchActivityResponse, error)
-	// @perm
 	CreateOrUpdateUnit(ctx context.Context, in *CreateOrUpdateUnitRequest, opts ...grpc.CallOption) (*CreateOrUpdateUnitResponse, error)
-	// @perm
 	DeleteUnit(ctx context.Context, in *DeleteUnitRequest, opts ...grpc.CallOption) (*DeleteUnitResponse, error)
-	// @perm
 	TakeDispatch(ctx context.Context, in *TakeDispatchRequest, opts ...grpc.CallOption) (*TakeDispatchResponse, error)
-	// @perm: Name=TakeDispatch
 	UpdateUnitStatus(ctx context.Context, in *UpdateUnitStatusRequest, opts ...grpc.CallOption) (*UpdateUnitStatusResponse, error)
-	// @perm: Name=TakeDispatch
 	UpdateDispatchStatus(ctx context.Context, in *UpdateDispatchStatusRequest, opts ...grpc.CallOption) (*UpdateDispatchStatusResponse, error)
 }
 
@@ -347,51 +324,28 @@ func (c *centrumServiceClient) UpdateDispatchStatus(ctx context.Context, in *Upd
 // All implementations must embed UnimplementedCentrumServiceServer
 // for forward compatibility.
 type CentrumServiceServer interface {
-	// @perm: Attrs=Access/StringList:[]string{"Shared", "Public"}
 	UpdateSettings(context.Context, *UpdateSettingsRequest) (*UpdateSettingsResponse, error)
-	// @perm
 	CreateDispatch(context.Context, *CreateDispatchRequest) (*CreateDispatchResponse, error)
-	// @perm
 	UpdateDispatch(context.Context, *UpdateDispatchRequest) (*UpdateDispatchResponse, error)
-	// @perm
 	DeleteDispatch(context.Context, *DeleteDispatchRequest) (*DeleteDispatchResponse, error)
-	// @perm: Name=CreateDispatch
 	ListDispatchTargetJobs(context.Context, *ListDispatchTargetJobsRequest) (*ListDispatchTargetJobsResponse, error)
-	// @perm
 	TakeControl(context.Context, *TakeControlRequest) (*TakeControlResponse, error)
-	// @perm: Name=TakeControl
 	AssignDispatch(context.Context, *AssignDispatchRequest) (*AssignDispatchResponse, error)
-	// @perm: Name=TakeControl
 	AssignUnit(context.Context, *AssignUnitRequest) (*AssignUnitResponse, error)
-	// @perm: Name=TakeControl
 	GetDispatchHeatmap(context.Context, *GetDispatchHeatmapRequest) (*GetDispatchHeatmapResponse, error)
-	// @perm
 	UpdateDispatchers(context.Context, *UpdateDispatchersRequest) (*UpdateDispatchersResponse, error)
-	// @perm
 	Stream(*StreamRequest, grpc.ServerStreamingServer[StreamResponse]) error
-	// @perm: Name=Stream
 	GetSettings(context.Context, *GetSettingsRequest) (*GetSettingsResponse, error)
-	// @perm: Name=Stream
 	JoinUnit(context.Context, *JoinUnitRequest) (*JoinUnitResponse, error)
-	// @perm: Name=Stream
 	ListUnits(context.Context, *ListUnitsRequest) (*ListUnitsResponse, error)
-	// @perm: Name=Stream
 	ListUnitActivity(context.Context, *ListUnitActivityRequest) (*ListUnitActivityResponse, error)
-	// @perm: Name=Stream
 	GetDispatch(context.Context, *GetDispatchRequest) (*GetDispatchResponse, error)
-	// @perm: Name=Stream
 	ListDispatches(context.Context, *ListDispatchesRequest) (*ListDispatchesResponse, error)
-	// @perm: Name=Stream
 	ListDispatchActivity(context.Context, *ListDispatchActivityRequest) (*ListDispatchActivityResponse, error)
-	// @perm
 	CreateOrUpdateUnit(context.Context, *CreateOrUpdateUnitRequest) (*CreateOrUpdateUnitResponse, error)
-	// @perm
 	DeleteUnit(context.Context, *DeleteUnitRequest) (*DeleteUnitResponse, error)
-	// @perm
 	TakeDispatch(context.Context, *TakeDispatchRequest) (*TakeDispatchResponse, error)
-	// @perm: Name=TakeDispatch
 	UpdateUnitStatus(context.Context, *UpdateUnitStatusRequest) (*UpdateUnitStatusResponse, error)
-	// @perm: Name=TakeDispatch
 	UpdateDispatchStatus(context.Context, *UpdateDispatchStatusRequest) (*UpdateDispatchStatusResponse, error)
 	mustEmbedUnimplementedCentrumServiceServer()
 }

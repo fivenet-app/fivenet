@@ -15,8 +15,6 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface ICronServiceClient {
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: ListCronjobs
      */
     listCronjobs(input: ListCronjobsRequest, options?: RpcOptions): UnaryCall<ListCronjobsRequest, ListCronjobsResponse>;
@@ -31,8 +29,6 @@ export class CronServiceClient implements ICronServiceClient, ServiceInfo {
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm: Name=Superuser
-     *
      * @generated from protobuf rpc: ListCronjobs
      */
     listCronjobs(input: ListCronjobsRequest, options?: RpcOptions): UnaryCall<ListCronjobsRequest, ListCronjobsResponse> {

@@ -28,11 +28,8 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LivemapServiceClient interface {
-	// @perm: Attrs=Markers/JobList|Players/JobGradeList
 	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamResponse], error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	CreateOrUpdateMarker(ctx context.Context, in *CreateOrUpdateMarkerRequest, opts ...grpc.CallOption) (*CreateOrUpdateMarkerResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	DeleteMarker(ctx context.Context, in *DeleteMarkerRequest, opts ...grpc.CallOption) (*DeleteMarkerResponse, error)
 }
 
@@ -87,11 +84,8 @@ func (c *livemapServiceClient) DeleteMarker(ctx context.Context, in *DeleteMarke
 // All implementations must embed UnimplementedLivemapServiceServer
 // for forward compatibility.
 type LivemapServiceServer interface {
-	// @perm: Attrs=Markers/JobList|Players/JobGradeList
 	Stream(*StreamRequest, grpc.ServerStreamingServer[StreamResponse]) error
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	CreateOrUpdateMarker(context.Context, *CreateOrUpdateMarkerRequest) (*CreateOrUpdateMarkerResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	DeleteMarker(context.Context, *DeleteMarkerRequest) (*DeleteMarkerResponse, error)
 	mustEmbedUnimplementedLivemapServiceServer()
 }

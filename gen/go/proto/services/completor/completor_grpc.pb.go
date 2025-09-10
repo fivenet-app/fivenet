@@ -30,15 +30,10 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CompletorServiceClient interface {
-	// @perm
 	CompleteCitizens(ctx context.Context, in *CompleteCitizensRequest, opts ...grpc.CallOption) (*CompleteCitizensResponse, error)
-	// @perm: Name=Any
 	CompleteJobs(ctx context.Context, in *CompleteJobsRequest, opts ...grpc.CallOption) (*CompleteJobsResponse, error)
-	// @perm: Attrs=Jobs/JobList
 	CompleteDocumentCategories(ctx context.Context, in *CompleteDocumentCategoriesRequest, opts ...grpc.CallOption) (*CompleteDocumentCategoriesResponse, error)
-	// @perm: Name=Any
 	ListLawBooks(ctx context.Context, in *ListLawBooksRequest, opts ...grpc.CallOption) (*ListLawBooksResponse, error)
-	// @perm: Attrs=Jobs/JobList
 	CompleteCitizenLabels(ctx context.Context, in *CompleteCitizenLabelsRequest, opts ...grpc.CallOption) (*CompleteCitizenLabelsResponse, error)
 }
 
@@ -104,15 +99,10 @@ func (c *completorServiceClient) CompleteCitizenLabels(ctx context.Context, in *
 // All implementations must embed UnimplementedCompletorServiceServer
 // for forward compatibility.
 type CompletorServiceServer interface {
-	// @perm
 	CompleteCitizens(context.Context, *CompleteCitizensRequest) (*CompleteCitizensResponse, error)
-	// @perm: Name=Any
 	CompleteJobs(context.Context, *CompleteJobsRequest) (*CompleteJobsResponse, error)
-	// @perm: Attrs=Jobs/JobList
 	CompleteDocumentCategories(context.Context, *CompleteDocumentCategoriesRequest) (*CompleteDocumentCategoriesResponse, error)
-	// @perm: Name=Any
 	ListLawBooks(context.Context, *ListLawBooksRequest) (*ListLawBooksResponse, error)
-	// @perm: Attrs=Jobs/JobList
 	CompleteCitizenLabels(context.Context, *CompleteCitizenLabelsRequest) (*CompleteCitizenLabelsResponse, error)
 	mustEmbedUnimplementedCompletorServiceServer()
 }

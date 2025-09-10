@@ -7,6 +7,7 @@
 package settings
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	permissions "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
 	settings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
@@ -840,7 +841,7 @@ var File_services_settings_system_proto protoreflect.FileDescriptor
 
 const file_services_settings_system_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/settings/system.proto\x12\x11services.settings\x1a&resources/permissions/attributes.proto\x1a'resources/permissions/permissions.proto\x1a\x1eresources/settings/perms.proto\x1a#resources/timestamp/timestamp.proto\"5\n" +
+	"\x1eservices/settings/system.proto\x12\x11services.settings\x1a\x19codegen/perms/perms.proto\x1a&resources/permissions/attributes.proto\x1a'resources/permissions/permissions.proto\x1a\x1eresources/settings/perms.proto\x1a#resources/timestamp/timestamp.proto\"5\n" +
 	"\x18GetAllPermissionsRequest\x12\x19\n" +
 	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\"\xa6\x01\n" +
 	"\x19GetAllPermissionsResponse\x12C\n" +
@@ -904,13 +905,13 @@ const file_services_settings_system_proto_rawDesc = "" +
 	"\aversion\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18 R\aversion\x12\x1a\n" +
 	"\x03url\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x02R\x03url\x12F\n" +
 	"\frelease_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\vreleaseDate\x88\x01\x01B\x0f\n" +
-	"\r_release_date2\x86\x04\n" +
-	"\rSystemService\x12V\n" +
-	"\tGetStatus\x12#.services.settings.GetStatusRequest\x1a$.services.settings.GetStatusResponse\x12n\n" +
-	"\x11GetAllPermissions\x12+.services.settings.GetAllPermissionsRequest\x1a,.services.settings.GetAllPermissionsResponse\x12_\n" +
-	"\fGetJobLimits\x12&.services.settings.GetJobLimitsRequest\x1a'.services.settings.GetJobLimitsResponse\x12h\n" +
-	"\x0fUpdateJobLimits\x12).services.settings.UpdateJobLimitsRequest\x1a*.services.settings.UpdateJobLimitsResponse\x12b\n" +
-	"\rDeleteFaction\x12'.services.settings.DeleteFactionRequest\x1a(.services.settings.DeleteFactionResponseBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settingsb\x06proto3"
+	"\r_release_date2\xe6\x04\n" +
+	"\rSystemService\x12i\n" +
+	"\tGetStatus\x12#.services.settings.GetStatusRequest\x1a$.services.settings.GetStatusResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12\x81\x01\n" +
+	"\x11GetAllPermissions\x12+.services.settings.GetAllPermissionsRequest\x1a,.services.settings.GetAllPermissionsResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12r\n" +
+	"\fGetJobLimits\x12&.services.settings.GetJobLimitsRequest\x1a'.services.settings.GetJobLimitsResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12{\n" +
+	"\x0fUpdateJobLimits\x12).services.settings.UpdateJobLimitsRequest\x1a*.services.settings.UpdateJobLimitsResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12u\n" +
+	"\rDeleteFaction\x12'.services.settings.DeleteFactionRequest\x1a(.services.settings.DeleteFactionResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuserBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settingsb\x06proto3"
 
 var (
 	file_services_settings_system_proto_rawDescOnce sync.Once

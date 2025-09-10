@@ -8,6 +8,7 @@ package jobs
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -1016,7 +1017,7 @@ var File_services_jobs_jobs_proto protoreflect.FileDescriptor
 
 const file_services_jobs_jobs_proto_rawDesc = "" +
 	"\n" +
-	"\x18services/jobs/jobs.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a(resources/common/database/database.proto\x1a\x1dresources/jobs/activity.proto\x1a\x1fresources/jobs/colleagues.proto\x1a\x1bresources/jobs/labels.proto\"\xed\x03\n" +
+	"\x18services/jobs/jobs.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1dresources/jobs/activity.proto\x1a\x1fresources/jobs/colleagues.proto\x1a\x1bresources/jobs/labels.proto\"\xed\x03\n" +
 	"\x15ListColleaguesRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
@@ -1093,18 +1094,26 @@ const file_services_jobs_jobs_proto_rawDesc = "" +
 	"\x0eSetMOTDRequest\x12\x1c\n" +
 	"\x04motd\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x18\x80\bR\x04motd\"%\n" +
 	"\x0fSetMOTDResponse\x12\x12\n" +
-	"\x04motd\x18\x01 \x01(\tR\x04motd2\xbd\a\n" +
-	"\vJobsService\x12]\n" +
-	"\x0eListColleagues\x12$.services.jobs.ListColleaguesRequest\x1a%.services.jobs.ListColleaguesResponse\x12H\n" +
-	"\aGetSelf\x12\x1d.services.jobs.GetSelfRequest\x1a\x1e.services.jobs.GetSelfResponse\x12W\n" +
-	"\fGetColleague\x12\".services.jobs.GetColleagueRequest\x1a#.services.jobs.GetColleagueResponse\x12r\n" +
-	"\x15ListColleagueActivity\x12+.services.jobs.ListColleagueActivityRequest\x1a,.services.jobs.ListColleagueActivityResponse\x12f\n" +
-	"\x11SetColleagueProps\x12'.services.jobs.SetColleaguePropsRequest\x1a(.services.jobs.SetColleaguePropsResponse\x12i\n" +
-	"\x12GetColleagueLabels\x12(.services.jobs.GetColleagueLabelsRequest\x1a).services.jobs.GetColleagueLabelsResponse\x12W\n" +
-	"\fManageLabels\x12\".services.jobs.ManageLabelsRequest\x1a#.services.jobs.ManageLabelsResponse\x12x\n" +
-	"\x17GetColleagueLabelsStats\x12-.services.jobs.GetColleagueLabelsStatsRequest\x1a..services.jobs.GetColleagueLabelsStatsResponse\x12H\n" +
-	"\aGetMOTD\x12\x1d.services.jobs.GetMOTDRequest\x1a\x1e.services.jobs.GetMOTDResponse\x12H\n" +
-	"\aSetMOTD\x12\x1d.services.jobs.SetMOTDRequest\x1a\x1e.services.jobs.SetMOTDResponseBFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs;jobsb\x06proto3"
+	"\x04motd\x18\x01 \x01(\tR\x04motd2\xaf\n" +
+	"\n" +
+	"\vJobsService\x12e\n" +
+	"\x0eListColleagues\x12$.services.jobs.ListColleaguesRequest\x1a%.services.jobs.ListColleaguesResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12`\n" +
+	"\aGetSelf\x12\x1d.services.jobs.GetSelfRequest\x1a\x1e.services.jobs.GetSelfResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eListColleagues\x12\xa5\x01\n" +
+	"\fGetColleague\x12\".services.jobs.GetColleagueRequest\x1a#.services.jobs.GetColleagueResponse\"L\xd2\xf3\x18H\b\x01*+\n" +
+	"\x06Access\x18\x01\"\x03Own\"\n" +
+	"Lower_Rank\"\tSame_Rank\"\x03Any*\x17\n" +
+	"\x05Types\x18\x01\"\x04Note\"\x06Labels\x12\xc8\x01\n" +
+	"\x15ListColleagueActivity\x12+.services.jobs.ListColleagueActivityRequest\x1a,.services.jobs.ListColleagueActivityResponse\"T\xd2\xf3\x18P\b\x01*L\n" +
+	"\x05Types\x18\x01\"\x05HIRED\"\x05FIRED\"\bPROMOTED\"\aDEMOTED\"\fABSENCE_DATE\"\x04NOTE\"\x06LABELS\"\x04NAME\x12\xc7\x01\n" +
+	"\x11SetColleagueProps\x12'.services.jobs.SetColleaguePropsRequest\x1a(.services.jobs.SetColleaguePropsResponse\"_\xd2\xf3\x18[\b\x01*+\n" +
+	"\x06Access\x18\x01\"\x03Own\"\n" +
+	"Lower_Rank\"\tSame_Rank\"\x03Any**\n" +
+	"\x05Types\x18\x01\"\vAbsenceDate\"\x04Note\"\x06Labels\"\x04Name\x12\x7f\n" +
+	"\x12GetColleagueLabels\x12(.services.jobs.GetColleagueLabelsRequest\x1a).services.jobs.GetColleagueLabelsResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fGetColleague\x12_\n" +
+	"\fManageLabels\x12\".services.jobs.ManageLabelsRequest\x1a#.services.jobs.ManageLabelsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x8e\x01\n" +
+	"\x17GetColleagueLabelsStats\x12-.services.jobs.GetColleagueLabelsStatsRequest\x1a..services.jobs.GetColleagueLabelsStatsResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fGetColleague\x12U\n" +
+	"\aGetMOTD\x12\x1d.services.jobs.GetMOTDRequest\x1a\x1e.services.jobs.GetMOTDResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12P\n" +
+	"\aSetMOTD\x12\x1d.services.jobs.SetMOTDRequest\x1a\x1e.services.jobs.SetMOTDResponse\"\x06\xd2\xf3\x18\x02\b\x01BFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs;jobsb\x06proto3"
 
 var (
 	file_services_jobs_jobs_proto_rawDescOnce sync.Once

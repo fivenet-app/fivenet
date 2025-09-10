@@ -8,6 +8,7 @@ package citizens
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
@@ -745,7 +746,7 @@ var File_services_citizens_citizens_proto protoreflect.FileDescriptor
 
 const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\n" +
-	" services/citizens/citizens.proto\x12\x11services.citizens\x1a\x1fcodegen/itemslen/itemslen.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a\x1eresources/users/activity.proto\x1a\x1cresources/users/labels.proto\x1a\x1bresources/users/props.proto\x1a\x1bresources/users/users.proto\"\x8b\x04\n" +
+	" services/citizens/citizens.proto\x12\x11services.citizens\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a\x1eresources/users/activity.proto\x1a\x1cresources/users/labels.proto\x1a\x1bresources/users/props.proto\x1a\x1bresources/users/users.proto\"\x8b\x04\n" +
 	"\x13ListCitizensRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
@@ -806,17 +807,23 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\x13ManageLabelsRequest\x12.\n" +
 	"\x06labels\x18\x01 \x03(\v2\x16.resources.users.LabelR\x06labels\"F\n" +
 	"\x14ManageLabelsResponse\x12.\n" +
-	"\x06labels\x18\x01 \x03(\v2\x16.resources.users.LabelR\x06labels2\xeb\x06\n" +
-	"\x0fCitizensService\x12_\n" +
-	"\fListCitizens\x12&.services.citizens.ListCitizensRequest\x1a'.services.citizens.ListCitizensResponse\x12P\n" +
-	"\aGetUser\x12!.services.citizens.GetUserRequest\x1a\".services.citizens.GetUserResponse\x12k\n" +
-	"\x10ListUserActivity\x12*.services.citizens.ListUserActivityRequest\x1a+.services.citizens.ListUserActivityResponse\x12_\n" +
-	"\fSetUserProps\x12&.services.citizens.SetUserPropsRequest\x1a'.services.citizens.SetUserPropsResponse\x12W\n" +
-	"\fUploadAvatar\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse(\x01\x12_\n" +
-	"\fDeleteAvatar\x12&.services.citizens.DeleteAvatarRequest\x1a'.services.citizens.DeleteAvatarResponse\x12X\n" +
-	"\rUploadMugshot\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse(\x01\x12b\n" +
-	"\rDeleteMugshot\x12'.services.citizens.DeleteMugshotRequest\x1a(.services.citizens.DeleteMugshotResponse\x12_\n" +
-	"\fManageLabels\x12&.services.citizens.ManageLabelsRequest\x1a'.services.citizens.ManageLabelsResponseBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens;citizensb\x06proto3"
+	"\x06labels\x18\x01 \x03(\v2\x16.resources.users.LabelR\x06labels2\x90\n" +
+	"\n" +
+	"\x0fCitizensService\x12\xb1\x02\n" +
+	"\fListCitizens\x12&.services.citizens.ListCitizensRequest\x1a'.services.citizens.ListCitizensResponse\"\xcf\x01\xd2\xf3\x18\xca\x01\b\x01*\xc5\x01\n" +
+	"\x06Fields\x18\x01\"\vPhoneNumber\"\bLicenses\"\x10UserProps.Wanted\"\rUserProps.Job\"!UserProps.TrafficInfractionPoints\"\x13UserProps.OpenFines\"\x13UserProps.BloodType\"\x11UserProps.Mugshot\"\x10UserProps.Labels\"\x0fUserProps.Email\x12b\n" +
+	"\aGetUser\x12!.services.citizens.GetUserRequest\x1a\".services.citizens.GetUserResponse\"\x10\xd2\xf3\x18\f\b\x01*\b\n" +
+	"\x04Jobs\x18\x03\x12\x90\x01\n" +
+	"\x10ListUserActivity\x12*.services.citizens.ListUserActivityRequest\x1a+.services.citizens.ListUserActivityResponse\"#\xd2\xf3\x18\x1f\b\x01*\x1b\n" +
+	"\x06Fields\x18\x01\"\n" +
+	"SourceUser\"\x03Own\x12\xaa\x01\n" +
+	"\fSetUserProps\x12&.services.citizens.SetUserPropsRequest\x1a'.services.citizens.SetUserPropsResponse\"I\xd2\xf3\x18E\b\x01*A\n" +
+	"\x06Fields\x18\x01\"\x06Wanted\"\x03Job\"\x17TrafficInfractionPoints\"\aMugshot\"\x06Labels\x12d\n" +
+	"\fUploadAvatar\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any(\x01\x12l\n" +
+	"\fDeleteAvatar\x12&.services.citizens.DeleteAvatarRequest\x1a'.services.citizens.DeleteAvatarResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12n\n" +
+	"\rUploadMugshot\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fSetUserProps(\x01\x12x\n" +
+	"\rDeleteMugshot\x12'.services.citizens.DeleteMugshotRequest\x1a(.services.citizens.DeleteMugshotResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fSetUserProps\x12g\n" +
+	"\fManageLabels\x12&.services.citizens.ManageLabelsRequest\x1a'.services.citizens.ManageLabelsResponse\"\x06\xd2\xf3\x18\x02\b\x01BNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens;citizensb\x06proto3"
 
 var (
 	file_services_citizens_citizens_proto_rawDescOnce sync.Once

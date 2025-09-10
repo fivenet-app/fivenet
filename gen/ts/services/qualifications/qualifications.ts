@@ -2204,20 +2204,20 @@ export const GetUserExamResponse = new GetUserExamResponse$Type();
  * @generated ServiceType for protobuf service services.qualifications.QualificationsService
  */
 export const QualificationsService = new ServiceType("services.qualifications.QualificationsService", [
-    { name: "ListQualifications", options: {}, I: ListQualificationsRequest, O: ListQualificationsResponse },
-    { name: "GetQualification", options: {}, I: GetQualificationRequest, O: GetQualificationResponse },
-    { name: "CreateQualification", options: {}, I: CreateQualificationRequest, O: CreateQualificationResponse },
-    { name: "UpdateQualification", options: {}, I: UpdateQualificationRequest, O: UpdateQualificationResponse },
-    { name: "DeleteQualification", options: {}, I: DeleteQualificationRequest, O: DeleteQualificationResponse },
-    { name: "ListQualificationRequests", options: {}, I: ListQualificationRequestsRequest, O: ListQualificationRequestsResponse },
-    { name: "CreateOrUpdateQualificationRequest", options: {}, I: CreateOrUpdateQualificationRequestRequest, O: CreateOrUpdateQualificationRequestResponse },
-    { name: "DeleteQualificationReq", options: {}, I: DeleteQualificationReqRequest, O: DeleteQualificationReqResponse },
-    { name: "ListQualificationsResults", options: {}, I: ListQualificationsResultsRequest, O: ListQualificationsResultsResponse },
-    { name: "CreateOrUpdateQualificationResult", options: {}, I: CreateOrUpdateQualificationResultRequest, O: CreateOrUpdateQualificationResultResponse },
-    { name: "DeleteQualificationResult", options: {}, I: DeleteQualificationResultRequest, O: DeleteQualificationResultResponse },
-    { name: "GetExamInfo", options: {}, I: GetExamInfoRequest, O: GetExamInfoResponse },
-    { name: "TakeExam", options: {}, I: TakeExamRequest, O: TakeExamResponse },
-    { name: "SubmitExam", options: {}, I: SubmitExamRequest, O: SubmitExamResponse },
-    { name: "GetUserExam", options: {}, I: GetUserExamRequest, O: GetUserExamResponse },
-    { name: "UploadFile", clientStreaming: true, options: {}, I: UploadFileRequest, O: UploadFileResponse }
+    { name: "ListQualifications", options: { "codegen.perms.perms": { enabled: true } }, I: ListQualificationsRequest, O: ListQualificationsResponse },
+    { name: "GetQualification", options: { "codegen.perms.perms": { enabled: true, name: "ListQualifications" } }, I: GetQualificationRequest, O: GetQualificationResponse },
+    { name: "CreateQualification", options: { "codegen.perms.perms": { enabled: true, name: "UpdateQualification" } }, I: CreateQualificationRequest, O: CreateQualificationResponse },
+    { name: "UpdateQualification", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Access", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Own", "Lower_Rank", "Same_Rank", "Any"] }, { key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Public"] }] } }, I: UpdateQualificationRequest, O: UpdateQualificationResponse },
+    { name: "DeleteQualification", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Access", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Own", "Lower_Rank", "Same_Rank", "Any"] }] } }, I: DeleteQualificationRequest, O: DeleteQualificationResponse },
+    { name: "ListQualificationRequests", options: { "codegen.perms.perms": { enabled: true, name: "ListQualifications" } }, I: ListQualificationRequestsRequest, O: ListQualificationRequestsResponse },
+    { name: "CreateOrUpdateQualificationRequest", options: { "codegen.perms.perms": { enabled: true, name: "ListQualifications" } }, I: CreateOrUpdateQualificationRequestRequest, O: CreateOrUpdateQualificationRequestResponse },
+    { name: "DeleteQualificationReq", options: { "codegen.perms.perms": { enabled: true, name: "ListQualifications" } }, I: DeleteQualificationReqRequest, O: DeleteQualificationReqResponse },
+    { name: "ListQualificationsResults", options: { "codegen.perms.perms": { enabled: true, name: "ListQualifications" } }, I: ListQualificationsResultsRequest, O: ListQualificationsResultsResponse },
+    { name: "CreateOrUpdateQualificationResult", options: { "codegen.perms.perms": { enabled: true, name: "ListQualifications" } }, I: CreateOrUpdateQualificationResultRequest, O: CreateOrUpdateQualificationResultResponse },
+    { name: "DeleteQualificationResult", options: { "codegen.perms.perms": { enabled: true, name: "ListQualifications" } }, I: DeleteQualificationResultRequest, O: DeleteQualificationResultResponse },
+    { name: "GetExamInfo", options: { "codegen.perms.perms": { enabled: true, name: "ListQualifications" } }, I: GetExamInfoRequest, O: GetExamInfoResponse },
+    { name: "TakeExam", options: { "codegen.perms.perms": { enabled: true, name: "ListQualifications" } }, I: TakeExamRequest, O: TakeExamResponse },
+    { name: "SubmitExam", options: { "codegen.perms.perms": { enabled: true, name: "ListQualifications" } }, I: SubmitExamRequest, O: SubmitExamResponse },
+    { name: "GetUserExam", options: { "codegen.perms.perms": { enabled: true, name: "ListQualifications" } }, I: GetUserExamRequest, O: GetUserExamResponse },
+    { name: "UploadFile", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, name: "UpdateQualification" } }, I: UploadFileRequest, O: UploadFileResponse }
 ]);

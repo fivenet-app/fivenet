@@ -255,8 +255,8 @@ export const DeleteFileByPathResponse = new DeleteFileByPathResponse$Type();
  * @generated ServiceType for protobuf service services.filestore.FilestoreService
  */
 export const FilestoreService = new ServiceType("services.filestore.FilestoreService", [
-    { name: "Upload", clientStreaming: true, options: {}, I: UploadFileRequest, O: UploadFileResponse },
-    { name: "ListFiles", options: {}, I: ListFilesRequest, O: ListFilesResponse },
-    { name: "DeleteFile", options: {}, I: DeleteFileRequest, O: DeleteFileResponse },
-    { name: "DeleteFileByPath", options: {}, I: DeleteFileByPathRequest, O: DeleteFileByPathResponse }
+    { name: "Upload", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: UploadFileRequest, O: UploadFileResponse },
+    { name: "ListFiles", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: ListFilesRequest, O: ListFilesResponse },
+    { name: "DeleteFile", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: DeleteFileRequest, O: DeleteFileResponse },
+    { name: "DeleteFileByPath", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: DeleteFileByPathRequest, O: DeleteFileByPathResponse }
 ]);

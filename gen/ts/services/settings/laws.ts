@@ -436,8 +436,8 @@ export const DeleteLawResponse = new DeleteLawResponse$Type();
  * @generated ServiceType for protobuf service services.settings.LawsService
  */
 export const LawsService = new ServiceType("services.settings.LawsService", [
-    { name: "CreateOrUpdateLawBook", options: {}, I: CreateOrUpdateLawBookRequest, O: CreateOrUpdateLawBookResponse },
-    { name: "DeleteLawBook", options: {}, I: DeleteLawBookRequest, O: DeleteLawBookResponse },
-    { name: "CreateOrUpdateLaw", options: {}, I: CreateOrUpdateLawRequest, O: CreateOrUpdateLawResponse },
-    { name: "DeleteLaw", options: {}, I: DeleteLawRequest, O: DeleteLawResponse }
+    { name: "CreateOrUpdateLawBook", options: { "codegen.perms.perms": { enabled: true } }, I: CreateOrUpdateLawBookRequest, O: CreateOrUpdateLawBookResponse },
+    { name: "DeleteLawBook", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteLawBookRequest, O: DeleteLawBookResponse },
+    { name: "CreateOrUpdateLaw", options: { "codegen.perms.perms": { enabled: true, name: "CreateOrUpdateLawBook" } }, I: CreateOrUpdateLawRequest, O: CreateOrUpdateLawResponse },
+    { name: "DeleteLaw", options: { "codegen.perms.perms": { enabled: true, name: "DeleteLawBook" } }, I: DeleteLawRequest, O: DeleteLawResponse }
 ]);

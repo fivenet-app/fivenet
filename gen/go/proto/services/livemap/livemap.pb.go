@@ -7,6 +7,7 @@
 package livemap
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	livemap "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -683,7 +684,7 @@ var File_services_livemap_livemap_proto protoreflect.FileDescriptor
 
 const file_services_livemap_livemap_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/livemap/livemap.proto\x12\x10services.livemap\x1a\x19resources/jobs/jobs.proto\x1a%resources/livemap/marker_marker.proto\x1a#resources/livemap/user_marker.proto\"\x0f\n" +
+	"\x1eservices/livemap/livemap.proto\x12\x10services.livemap\x1a\x19codegen/perms/perms.proto\x1a\x19resources/jobs/jobs.proto\x1a%resources/livemap/marker_marker.proto\x1a#resources/livemap/user_marker.proto\"\x0f\n" +
 	"\rStreamRequest\"\x8f\x03\n" +
 	"\x0eStreamResponse\x12%\n" +
 	"\fuser_on_duty\x18\x01 \x01(\bH\x01R\n" +
@@ -719,11 +720,17 @@ const file_services_livemap_livemap_proto_rawDesc = "" +
 	"\x06marker\x18\x01 \x01(\v2\x1f.resources.livemap.MarkerMarkerR\x06marker\"%\n" +
 	"\x13DeleteMarkerRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x16\n" +
-	"\x14DeleteMarkerResponse2\xb5\x02\n" +
-	"\x0eLivemapService\x12M\n" +
-	"\x06Stream\x12\x1f.services.livemap.StreamRequest\x1a .services.livemap.StreamResponse0\x01\x12u\n" +
-	"\x14CreateOrUpdateMarker\x12-.services.livemap.CreateOrUpdateMarkerRequest\x1a..services.livemap.CreateOrUpdateMarkerResponse\x12]\n" +
-	"\fDeleteMarker\x12%.services.livemap.DeleteMarkerRequest\x1a&.services.livemap.DeleteMarkerResponseBLZJgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/livemap;livemapb\x06proto3"
+	"\x14DeleteMarkerResponse2\xc3\x03\n" +
+	"\x0eLivemapService\x12o\n" +
+	"\x06Stream\x12\x1f.services.livemap.StreamRequest\x1a .services.livemap.StreamResponse\" \xd2\xf3\x18\x1c\b\x01*\v\n" +
+	"\aMarkers\x18\x02*\v\n" +
+	"\aPlayers\x18\x030\x01\x12\xaa\x01\n" +
+	"\x14CreateOrUpdateMarker\x12-.services.livemap.CreateOrUpdateMarkerRequest\x1a..services.livemap.CreateOrUpdateMarkerResponse\"3\xd2\xf3\x18/\b\x01*+\n" +
+	"\x06Access\x18\x01\"\x03Own\"\n" +
+	"Lower_Rank\"\tSame_Rank\"\x03Any\x12\x92\x01\n" +
+	"\fDeleteMarker\x12%.services.livemap.DeleteMarkerRequest\x1a&.services.livemap.DeleteMarkerResponse\"3\xd2\xf3\x18/\b\x01*+\n" +
+	"\x06Access\x18\x01\"\x03Own\"\n" +
+	"Lower_Rank\"\tSame_Rank\"\x03AnyBLZJgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/livemap;livemapb\x06proto3"
 
 var (
 	file_services_livemap_livemap_proto_rawDescOnce sync.Once

@@ -8,6 +8,7 @@ package qualifications
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
@@ -1714,7 +1715,7 @@ var File_services_qualifications_qualifications_proto protoreflect.FileDescripto
 
 const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"\n" +
-	",services/qualifications/qualifications.proto\x12\x17services.qualifications\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x1egoogle/protobuf/duration.proto\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a%resources/qualifications/access.proto\x1a#resources/qualifications/exam.proto\x1a-resources/qualifications/qualifications.proto\"\x8d\x02\n" +
+	",services/qualifications/qualifications.proto\x12\x17services.qualifications\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a\x1egoogle/protobuf/duration.proto\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a%resources/qualifications/access.proto\x1a#resources/qualifications/exam.proto\x1a-resources/qualifications/qualifications.proto\"\x8d\x02\n" +
 	"\x19ListQualificationsRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
@@ -1835,26 +1836,31 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"\x04exam\x18\x01 \x01(\v2'.resources.qualifications.ExamQuestionsR\x04exam\x12?\n" +
 	"\texam_user\x18\x02 \x01(\v2\".resources.qualifications.ExamUserR\bexamUser\x12E\n" +
 	"\tresponses\x18\x03 \x01(\v2'.resources.qualifications.ExamResponsesR\tresponses\x12?\n" +
-	"\agrading\x18\x04 \x01(\v2%.resources.qualifications.ExamGradingR\agrading2\xb3\x10\n" +
-	"\x15QualificationsService\x12}\n" +
-	"\x12ListQualifications\x122.services.qualifications.ListQualificationsRequest\x1a3.services.qualifications.ListQualificationsResponse\x12w\n" +
-	"\x10GetQualification\x120.services.qualifications.GetQualificationRequest\x1a1.services.qualifications.GetQualificationResponse\x12\x80\x01\n" +
-	"\x13CreateQualification\x123.services.qualifications.CreateQualificationRequest\x1a4.services.qualifications.CreateQualificationResponse\x12\x80\x01\n" +
-	"\x13UpdateQualification\x123.services.qualifications.UpdateQualificationRequest\x1a4.services.qualifications.UpdateQualificationResponse\x12\x80\x01\n" +
-	"\x13DeleteQualification\x123.services.qualifications.DeleteQualificationRequest\x1a4.services.qualifications.DeleteQualificationResponse\x12\x92\x01\n" +
-	"\x19ListQualificationRequests\x129.services.qualifications.ListQualificationRequestsRequest\x1a:.services.qualifications.ListQualificationRequestsResponse\x12\xad\x01\n" +
-	"\"CreateOrUpdateQualificationRequest\x12B.services.qualifications.CreateOrUpdateQualificationRequestRequest\x1aC.services.qualifications.CreateOrUpdateQualificationRequestResponse\x12\x89\x01\n" +
-	"\x16DeleteQualificationReq\x126.services.qualifications.DeleteQualificationReqRequest\x1a7.services.qualifications.DeleteQualificationReqResponse\x12\x92\x01\n" +
-	"\x19ListQualificationsResults\x129.services.qualifications.ListQualificationsResultsRequest\x1a:.services.qualifications.ListQualificationsResultsResponse\x12\xaa\x01\n" +
-	"!CreateOrUpdateQualificationResult\x12A.services.qualifications.CreateOrUpdateQualificationResultRequest\x1aB.services.qualifications.CreateOrUpdateQualificationResultResponse\x12\x92\x01\n" +
-	"\x19DeleteQualificationResult\x129.services.qualifications.DeleteQualificationResultRequest\x1a:.services.qualifications.DeleteQualificationResultResponse\x12h\n" +
-	"\vGetExamInfo\x12+.services.qualifications.GetExamInfoRequest\x1a,.services.qualifications.GetExamInfoResponse\x12_\n" +
-	"\bTakeExam\x12(.services.qualifications.TakeExamRequest\x1a).services.qualifications.TakeExamResponse\x12e\n" +
+	"\agrading\x18\x04 \x01(\v2%.resources.qualifications.ExamGradingR\agrading2\xac\x14\n" +
+	"\x15QualificationsService\x12\x85\x01\n" +
+	"\x12ListQualifications\x122.services.qualifications.ListQualificationsRequest\x1a3.services.qualifications.ListQualificationsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x93\x01\n" +
+	"\x10GetQualification\x120.services.qualifications.GetQualificationRequest\x1a1.services.qualifications.GetQualificationResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x12\x9d\x01\n" +
+	"\x13CreateQualification\x123.services.qualifications.CreateQualificationRequest\x1a4.services.qualifications.CreateQualificationResponse\"\x1b\xd2\xf3\x18\x17\b\x01\x1a\x13UpdateQualification\x12\xc9\x01\n" +
+	"\x13UpdateQualification\x123.services.qualifications.UpdateQualificationRequest\x1a4.services.qualifications.UpdateQualificationResponse\"G\xd2\xf3\x18C\b\x01*+\n" +
+	"\x06Access\x18\x01\"\x03Own\"\n" +
+	"Lower_Rank\"\tSame_Rank\"\x03Any*\x12\n" +
+	"\x06Fields\x18\x01\"\x06Public\x12\xb5\x01\n" +
+	"\x13DeleteQualification\x123.services.qualifications.DeleteQualificationRequest\x1a4.services.qualifications.DeleteQualificationResponse\"3\xd2\xf3\x18/\b\x01*+\n" +
+	"\x06Access\x18\x01\"\x03Own\"\n" +
+	"Lower_Rank\"\tSame_Rank\"\x03Any\x12\xae\x01\n" +
+	"\x19ListQualificationRequests\x129.services.qualifications.ListQualificationRequestsRequest\x1a:.services.qualifications.ListQualificationRequestsResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x12\xc9\x01\n" +
+	"\"CreateOrUpdateQualificationRequest\x12B.services.qualifications.CreateOrUpdateQualificationRequestRequest\x1aC.services.qualifications.CreateOrUpdateQualificationRequestResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x12\xa5\x01\n" +
+	"\x16DeleteQualificationReq\x126.services.qualifications.DeleteQualificationReqRequest\x1a7.services.qualifications.DeleteQualificationReqResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x12\xae\x01\n" +
+	"\x19ListQualificationsResults\x129.services.qualifications.ListQualificationsResultsRequest\x1a:.services.qualifications.ListQualificationsResultsResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x12\xc6\x01\n" +
+	"!CreateOrUpdateQualificationResult\x12A.services.qualifications.CreateOrUpdateQualificationResultRequest\x1aB.services.qualifications.CreateOrUpdateQualificationResultResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x12\xae\x01\n" +
+	"\x19DeleteQualificationResult\x129.services.qualifications.DeleteQualificationResultRequest\x1a:.services.qualifications.DeleteQualificationResultResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x12\x84\x01\n" +
+	"\vGetExamInfo\x12+.services.qualifications.GetExamInfoRequest\x1a,.services.qualifications.GetExamInfoResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x12{\n" +
+	"\bTakeExam\x12(.services.qualifications.TakeExamRequest\x1a).services.qualifications.TakeExamResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x12\x81\x01\n" +
 	"\n" +
-	"SubmitExam\x12*.services.qualifications.SubmitExamRequest\x1a+.services.qualifications.SubmitExamResponse\x12h\n" +
-	"\vGetUserExam\x12+.services.qualifications.GetUserExamRequest\x1a,.services.qualifications.GetUserExamResponse\x12U\n" +
+	"SubmitExam\x12*.services.qualifications.SubmitExamRequest\x1a+.services.qualifications.SubmitExamResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x12\x84\x01\n" +
+	"\vGetUserExam\x12+.services.qualifications.GetUserExamRequest\x1a,.services.qualifications.GetUserExamResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x12r\n" +
 	"\n" +
-	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse(\x01BZZXgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications;qualificationsb\x06proto3"
+	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x1b\xd2\xf3\x18\x17\b\x01\x1a\x13UpdateQualification(\x01BZZXgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications;qualificationsb\x06proto3"
 
 var (
 	file_services_qualifications_qualifications_proto_rawDescOnce sync.Once

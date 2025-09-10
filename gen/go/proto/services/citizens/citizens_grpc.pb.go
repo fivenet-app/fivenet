@@ -35,29 +35,20 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CitizensServiceClient interface {
-	// @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.Mugshot", "UserProps.Labels", "UserProps.Email"}
 	ListCitizens(ctx context.Context, in *ListCitizensRequest, opts ...grpc.CallOption) (*ListCitizensResponse, error)
-	// @perm: Attrs=Jobs/JobGradeList
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"}
 	ListUserActivity(ctx context.Context, in *ListUserActivityRequest, opts ...grpc.CallOption) (*ListUserActivityResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "Mugshot", "Labels"}
 	SetUserProps(ctx context.Context, in *SetUserPropsRequest, opts ...grpc.CallOption) (*SetUserPropsResponse, error)
-	// @perm: Name=Any
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	UploadAvatar(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error)
-	// @perm: Name=Any
 	DeleteAvatar(ctx context.Context, in *DeleteAvatarRequest, opts ...grpc.CallOption) (*DeleteAvatarResponse, error)
-	// @perm: Name=SetUserProps
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	UploadMugshot(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error)
-	// @perm: Name=SetUserProps
 	DeleteMugshot(ctx context.Context, in *DeleteMugshotRequest, opts ...grpc.CallOption) (*DeleteMugshotResponse, error)
-	// @perm
 	ManageLabels(ctx context.Context, in *ManageLabelsRequest, opts ...grpc.CallOption) (*ManageLabelsResponse, error)
 }
 
@@ -169,29 +160,20 @@ func (c *citizensServiceClient) ManageLabels(ctx context.Context, in *ManageLabe
 // All implementations must embed UnimplementedCitizensServiceServer
 // for forward compatibility.
 type CitizensServiceServer interface {
-	// @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.Mugshot", "UserProps.Labels", "UserProps.Email"}
 	ListCitizens(context.Context, *ListCitizensRequest) (*ListCitizensResponse, error)
-	// @perm: Attrs=Jobs/JobGradeList
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"}
 	ListUserActivity(context.Context, *ListUserActivityRequest) (*ListUserActivityResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "Mugshot", "Labels"}
 	SetUserProps(context.Context, *SetUserPropsRequest) (*SetUserPropsResponse, error)
-	// @perm: Name=Any
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	UploadAvatar(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error
-	// @perm: Name=Any
 	DeleteAvatar(context.Context, *DeleteAvatarRequest) (*DeleteAvatarResponse, error)
-	// @perm: Name=SetUserProps
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	UploadMugshot(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error
-	// @perm: Name=SetUserProps
 	DeleteMugshot(context.Context, *DeleteMugshotRequest) (*DeleteMugshotResponse, error)
-	// @perm
 	ManageLabels(context.Context, *ManageLabelsRequest) (*ManageLabelsResponse, error)
 	mustEmbedUnimplementedCitizensServiceServer()
 }
