@@ -13,7 +13,8 @@ import (
 	"golang.org/x/text/language"
 )
 
-// PermifyPlugin
+// PermifyPlugin is a protoc-gen-star module that generates a TypeScript file
+// defining permission types based on comments in the protobuf service methods.
 type PermifyModule struct {
 	*pgs.ModuleBase
 

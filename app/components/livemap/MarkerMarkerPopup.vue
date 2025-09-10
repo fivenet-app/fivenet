@@ -14,8 +14,7 @@ defineProps<{
 
 const { can } = useAuth();
 
-const modal = useModal();
-const slideover = useSlideover();
+const overlay = useOverlay();
 
 const livemapStore = useLivemapStore();
 const { deleteMarkerMarker, goto } = livemapStore;
@@ -35,13 +34,16 @@ async function deleteMarker(id: number): Promise<void> {
         throw e;
     }
 }
+
+const confirmModal = overlay.create(ConfirmModal);
+const markerCreateOrUpdateSlideover = overlay.create(MarkerCreateOrUpdateSlideover);
 </script>
 
 <template>
     <LPopup class="min-w-[175px]" :options="{ closeButton: false }">
         <UCard
-            class="-my-[13px] -ml-[20px] -mr-[24px] flex min-w-[200px] flex-col"
-            :ui="{ body: { padding: 'px-2 py-2 sm:px-4 sm:p-2' } }"
+            class="-my-[13px] -mr-[24px] -ml-[20px] flex min-w-[200px] flex-col"
+            :ui="{ header: 'p-1 sm:px-2', body: 'p-1 sm:p-2', footer: 'p-1 sm:px-2' }"
         >
             <template #header>
                 <div class="grid grid-cols-2 gap-2">
@@ -49,48 +51,36 @@ async function deleteMarker(id: number): Promise<void> {
                         <UButton
                             variant="link"
                             icon="i-mdi-map-marker"
-                            :padded="false"
+                            :label="$t('common.mark')"
                             @click="goto({ x: marker.x, y: marker.y })"
-                        >
-                            <span class="truncate">
-                                {{ $t('common.mark') }}
-                            </span>
-                        </UButton>
+                        />
                     </UTooltip>
 
                     <UTooltip v-if="can('livemap.LivemapService/CreateOrUpdateMarker').value" :text="$t('common.edit')">
                         <UButton
                             variant="link"
                             icon="i-mdi-pencil"
-                            :padded="false"
+                            :label="$t('common.edit')"
                             @click="
-                                slideover.open(MarkerCreateOrUpdateSlideover, {
+                                markerCreateOrUpdateSlideover.open({
                                     marker: marker,
                                 })
                             "
-                        >
-                            <span class="truncate">
-                                {{ $t('common.edit') }}
-                            </span>
-                        </UButton>
+                        />
                     </UTooltip>
 
                     <UTooltip v-if="can('livemap.LivemapService/DeleteMarker').value" :text="$t('common.delete')">
                         <UButton
                             variant="link"
                             icon="i-mdi-delete"
-                            :padded="false"
                             color="error"
+                            :label="$t('common.delete')"
                             @click="
-                                modal.open(ConfirmModal, {
+                                confirmModal.open({
                                     confirm: async () => deleteMarker(marker.id),
                                 })
                             "
-                        >
-                            <span class="truncate">
-                                {{ $t('common.delete') }}
-                            </span>
-                        </UButton>
+                        />
                     </UTooltip>
                 </div>
             </template>
@@ -118,15 +108,18 @@ async function deleteMarker(id: number): Promise<void> {
                     <span class="font-semibold">{{ $t('common.job') }}:</span>
                     {{ marker.jobLabel ?? $t('common.na') }}
                 </li>
+
                 <li>
                     <span class="font-semibold">{{ $t('common.description') }}:</span>
                     {{ marker.description ?? $t('common.na') }}
                 </li>
+
                 <li class="inline-flex gap-1">
                     <span class="font-semibold">{{ $t('common.expires_at') }}:</span>
                     <GenericTime v-if="marker.expiresAt" :value="marker.expiresAt" />
                     <span v-else>{{ $t('common.na') }}</span>
                 </li>
+
                 <li class="inline-flex gap-1">
                     <span class="flex-initial">
                         <span class="font-semibold">{{ $t('common.sent_by') }}:</span>

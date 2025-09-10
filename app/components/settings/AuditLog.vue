@@ -1,20 +1,26 @@
 <script lang="ts" setup>
+import { UBadge, UButton, UTooltip } from '#components';
+import { CalendarDate } from '@internationalized/date';
+import type { TableColumn } from '@nuxt/ui';
 import { addDays } from 'date-fns';
+import { h } from 'vue';
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
 import type { JSONDataType } from 'vue-json-pretty/types/utils';
 import { z } from 'zod';
-import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DateRangePickerPopoverClient from '~/components/partials/DateRangePickerPopover.client.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import InputDateRangePopover from '~/components/partials/InputDateRangePopover.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getSettingsSettingsClient } from '~~/gen/ts/clients';
 import { type AuditEntry, EventType } from '~~/gen/ts/resources/audit/audit';
+import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ViewAuditLogRequest, ViewAuditLogResponse } from '~~/gen/ts/services/settings/settings';
 import { grpcMethods, grpcServices } from '~~/gen/ts/svcs';
+import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
+import SelectMenu from '../partials/SelectMenu.vue';
 import { eventTypeToBadgeColor } from './helpers';
 
 const { d, t } = useI18n();
@@ -35,10 +41,20 @@ const schema = z.object({
     methods: z.string().max(64).array().max(10).default([]),
     states: z.nativeEnum(EventType).array().max(10).default([]),
     search: z.string().max(64).default(''),
-    sort: z.custom<TableSortable>().default({
-        column: 'createdAt',
-        direction: 'desc',
-    }),
+    sorting: z
+        .object({
+            columns: z
+                .custom<SortByColumn>()
+                .array()
+                .max(3)
+                .default([
+                    {
+                        id: 'createdAt',
+                        desc: true,
+                    },
+                ]),
+        })
+        .default({ columns: [{ id: 'createdAt', desc: true }] }),
     page: pageNumberSchema,
 });
 
@@ -56,10 +72,9 @@ const eventTypes = Object.keys(EventType)
     });
 const statesOptions = eventTypes.map((eventType) => ({ eventType: eventType }));
 
-const usersLoading = ref(false);
-
 const { data, status, refresh, error } = useLazyAsyncData(
-    `settings-audit-${query.sort.column}:${query.sort.direction}-${query.page}-${query.date?.start}-${query.date?.end}-${query.methods}-${query.services}-${query.search}-${query.users.join(',')}`,
+    () =>
+        `settings-audit-${JSON.stringify(query.sorting)}-${query.page}-${query.date?.start}-${query.date?.end}-${query.methods}-${query.services}-${query.search}-${query.users.join(',')}`,
     () => viewAuditLog(),
 );
 
@@ -68,7 +83,7 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
         pagination: {
             offset: calculateOffset(query.page, data.value?.pagination),
         },
-        sort: query.sort,
+        sort: query.sorting,
         userIds: query.users,
         services: query.services,
         // Make sure to remove the service from the beginning
@@ -135,113 +150,151 @@ ${JSON.stringify(JSON.parse(logEntry.data!), undefined, 2)}
     return copyToClipboardWrapper(text);
 }
 
-const columns = [
-    {
-        key: 'actions',
-        label: t('common.action', 2),
-        sortable: false,
-    },
-    {
-        key: 'id',
-        label: t('common.id'),
-    },
-    {
-        key: 'createdAt',
-        label: t('common.created_at'),
-        sortable: true,
-    },
-    {
-        key: 'user',
-        label: t('common.user', 1),
-    },
-    {
-        key: 'service',
-        label: `${t('common.service')}/${t('common.method')}`,
-        sortable: true,
-    },
-    {
-        key: 'state',
-        label: t('common.state'),
-        sortable: true,
-    },
-];
+const appConfig = useAppConfig();
 
-const expand = ref({
-    openedRows: [],
-    row: {},
-});
+const columns = computed(
+    () =>
+        [
+            {
+                id: 'expand',
+                cell: ({ row }) =>
+                    h(UButton, {
+                        color: 'neutral',
+                        variant: 'ghost',
+                        icon: 'i-mdi-chevron-down',
+                        square: true,
+                        'aria-label': 'Expand',
+                        ui: {
+                            leadingIcon: ['transition-transform', row.getIsExpanded() ? 'duration-200 rotate-180' : ''],
+                        },
+                        onClick: () => row.toggleExpanded(),
+                    }),
+            },
+            {
+                id: 'actions',
+                cell: ({ row }) =>
+                    h(UTooltip, { text: t('components.clipboard.clipboard_button.add') }, () =>
+                        h(UButton, {
+                            variant: 'link',
+                            icon: 'i-mdi-content-copy',
+                            onClick: () => addToClipboard(row.original),
+                        }),
+                    ),
+            },
+            {
+                accessorKey: 'id',
+                header: t('common.id'),
+                cell: ({ row }) => row.original.id,
+            },
+            {
+                accessorKey: 'createdAt',
+                header: ({ column }) => {
+                    const isSorted = column.getIsSorted();
 
-function statesToLabel(states: { eventType: EventType }[]): string {
-    return states.map((c) => t(`enums.settings.AuditLog.EventType.${EventType[c.eventType ?? 0]}`)).join(', ');
+                    return h(UButton, {
+                        color: 'neutral',
+                        variant: 'ghost',
+                        label: t('common.created_at'),
+                        icon: isSorted
+                            ? isSorted === 'asc'
+                                ? appConfig.custom.icons.sortAsc
+                                : appConfig.custom.icons.sortDesc
+                            : appConfig.custom.icons.sort,
+                        class: '-mx-2.5',
+                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+                    });
+                },
+                cell: ({ row }) => h(GenericTime, { value: row.original.createdAt, type: 'long' }),
+            },
+            {
+                accessorKey: 'user',
+                header: t('common.user'),
+                cell: ({ row }) => h(CitizenInfoPopover, { user: row.original.user }),
+            },
+            {
+                accessorKey: 'service',
+                header: ({ column }) => {
+                    const isSorted = column.getIsSorted();
+
+                    return h(UButton, {
+                        color: 'neutral',
+                        variant: 'ghost',
+                        label: t('common.service'),
+                        icon: isSorted
+                            ? isSorted === 'asc'
+                                ? appConfig.custom.icons.sortAsc
+                                : appConfig.custom.icons.sortDesc
+                            : appConfig.custom.icons.sort,
+                        class: '-mx-2.5',
+                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+                    });
+                },
+                cell: ({ row }) => row.original.service,
+            },
+            {
+                accessorKey: 'state',
+                header: t('common.state'),
+                cell: ({ row }) =>
+                    h(UBadge, {
+                        color: eventTypeToBadgeColor(row.original.state),
+                        label: t(`enums.settings.AuditLog.EventType.${EventType[row.original.state]}`),
+                    }),
+            },
+        ] as TableColumn<AuditEntry>[],
+);
+
+function statesToLabel(states: EventType[]): string {
+    return states.map((c) => t(`enums.settings.AuditLog.EventType.${EventType[c ?? 0]}`)).join(', ');
 }
+
+const today = new Date();
+const tomorrow = addDays(today, 1);
 </script>
 
 <template>
     <UDashboardToolbar>
         <template #default>
-            <UForm class="w-full" :schema="schema" :state="query" @submit="refresh()">
+            <UForm class="my-2 w-full" :schema="schema" :state="query" @submit="refresh()">
                 <div class="flex flex-row flex-wrap gap-2">
-                    <UFormGroup class="flex-1" name="date" :label="$t('common.time_range')">
-                        <DateRangePickerPopoverClient
+                    <UFormField class="flex-1" name="date" :label="$t('common.time_range')">
+                        <InputDateRangePopover
                             v-model="query.date"
-                            class="flex-1"
-                            mode="date"
-                            :popover="{ class: 'flex-1' }"
-                            :date-picker="{
-                                mode: 'dateTime',
-                                disabledDates: [{ start: addDays(new Date(), 1), end: null }],
-                                is24Hr: true,
-                                clearable: true,
-                            }"
+                            class="w-full"
+                            :max-value="new CalendarDate(tomorrow.getFullYear(), tomorrow.getMonth() + 1, tomorrow.getDate())"
+                            time
+                            clearable
                         />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup class="flex-1" name="user" :label="$t('common.user')">
-                        <ClientOnly>
-                            <USelectMenu
-                                v-model="query.users"
-                                multiple
-                                :searchable="
-                                    async (q: string) => {
-                                        usersLoading = true;
-                                        const users = await completorStore.completeCitizens({
-                                            search: q,
-                                            userIds: query.users,
-                                        });
-                                        usersLoading = false;
-                                        return users;
-                                    }
-                                "
-                                searchable-lazy
-                                :searchable-placeholder="$t('common.search_field')"
-                                :search-attributes="['firstname', 'lastname']"
-                                block
-                                :placeholder="$t('common.user', 2)"
-                                trailing
-                                value-attribute="userId"
-                            >
-                                <template #label="{ selected }">
-                                    <span v-if="selected.length > 0" class="truncate">
-                                        {{ usersToLabel(selected) }}
-                                    </span>
-                                </template>
+                    <UFormField class="flex-1" name="user" :label="$t('common.user')">
+                        <SelectMenu
+                            v-model="query.users"
+                            multiple
+                            :searchable="
+                                async (q: string) =>
+                                    await completorStore.completeCitizens({
+                                        search: q,
+                                        userIds: query.users,
+                                    })
+                            "
+                            searchable-key="completor-citizens"
+                            :search-input="{ placeholder: $t('common.search_field') }"
+                            :filter-fields="['firstname', 'lastname']"
+                            block
+                            :placeholder="$t('common.user', 2)"
+                            trailing
+                            value-key="userId"
+                            class="w-full"
+                        >
+                            <template #item="{ item }">
+                                {{ userToLabel(item) }}
+                            </template>
 
-                                <template #option="{ option: user }">
-                                    <span class="truncate">
-                                        {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                    </span>
-                                </template>
+                            <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
+                        </SelectMenu>
+                    </UFormField>
 
-                                <template #option-empty="{ query: search }">
-                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                </template>
-
-                                <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
-                            </USelectMenu>
-                        </ClientOnly>
-                    </UFormGroup>
-
-                    <UFormGroup class="flex-1" name="data" :label="$t('common.data')">
+                    <UFormField class="flex-1" name="data" :label="$t('common.data')">
                         <UInput
                             v-model="query.search"
                             type="text"
@@ -249,102 +302,87 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                             block
                             :placeholder="$t('common.search')"
                             leading-icon="i-mdi-search"
-                            :ui="{ icon: { trailing: { pointer: '' } } }"
+                            class="w-full"
+                            :ui="{ trailing: 'pe-1' }"
                         >
                             <template #trailing>
                                 <UButton
-                                    v-show="query.search !== ''"
-                                    color="gray"
+                                    v-if="query.search !== ''"
+                                    color="neutral"
                                     variant="link"
                                     icon="i-mdi-close"
-                                    :padded="false"
+                                    :aria-label="query.search ? 'Hide search' : 'Show search'"
+                                    :aria-pressed="query.search"
+                                    aria-controls="search"
                                     @click="query.search = ''"
                                 />
                             </template>
                         </UInput>
-                    </UFormGroup>
+                    </UFormField>
                 </div>
 
                 <UAccordion
                     class="mt-2"
-                    color="white"
+                    color="neutral"
                     variant="soft"
                     size="sm"
-                    :items="[{ label: $t('common.advanced_search'), slot: 'search' }]"
+                    :items="[{ label: $t('common.advanced_search'), slot: 'search' as const }]"
                 >
                     <template #search>
                         <div class="flex flex-row flex-wrap gap-1">
-                            <UFormGroup class="flex-1" name="service" :label="$t('common.service')">
+                            <UFormField class="flex-1" name="service" :label="$t('common.service')">
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="query.services"
                                         multiple
-                                        searchable
                                         name="service"
                                         :placeholder="$t('common.service')"
-                                        :options="grpcServices.map((s) => s.split('.').pop() ?? s)"
+                                        :items="grpcServices.map((s) => s.split('.').pop() ?? s)"
+                                        class="w-full"
                                     >
-                                        <template #option="{ option }">
-                                            {{ option }}
-                                        </template>
-
-                                        <template #option-empty="{ query: search }">
-                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                        </template>
-
                                         <template #empty>
                                             {{ $t('common.not_found', [$t('common.service')]) }}
                                         </template>
                                     </USelectMenu>
                                 </ClientOnly>
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup class="flex-1" name="method" :label="$t('common.method')">
+                            <UFormField class="flex-1" name="method" :label="$t('common.method')">
                                 <USelectMenu
                                     v-model="query.methods"
                                     multiple
-                                    searchable
                                     name="method"
                                     :placeholder="$t('common.method')"
-                                    :options="grpcMethods.filter((m) => query.services.some((s) => m.includes('.' + s + '/')))"
+                                    :items="grpcMethods.filter((m) => query.services.some((s) => m.includes('.' + s + '/')))"
+                                    class="w-full"
                                 >
-                                    <template #option="{ option }">
-                                        {{ option.split('/').pop() }}
-                                    </template>
-
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                    <template #item="{ item }">
+                                        {{ item.split('/').pop() }}
                                     </template>
 
                                     <template #empty>
                                         {{ $t('common.not_found', [$t('common.method')]) }}
                                     </template>
                                 </USelectMenu>
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup class="flex-1" name="states" :label="$t('common.state')">
+                            <UFormField class="flex-1" name="states" :label="$t('common.state')">
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="query.states"
                                         multiple
-                                        searchable
                                         name="states"
                                         :placeholder="$t('common.state')"
-                                        :options="statesOptions"
-                                        value-attribute="eventType"
+                                        :items="statesOptions"
+                                        value-key="eventType"
+                                        class="w-full"
                                     >
-                                        <template #label="{ selected }">
-                                            <span v-if="selected.length > 0">
-                                                {{ statesToLabel(selected) }}
-                                            </span>
+                                        <template #default>
+                                            {{ statesToLabel(query.states) }}
                                         </template>
 
-                                        <template #option="{ option }">
-                                            {{ $t(`enums.settings.AuditLog.EventType.${EventType[option.eventType]}`) }}
-                                        </template>
-
-                                        <template #option-empty="{ query: search }">
-                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        <template #item="{ item }">
+                                            {{ $t(`enums.settings.AuditLog.EventType.${EventType[item.eventType]}`) }}
                                         </template>
 
                                         <template #empty>
@@ -352,7 +390,7 @@ function statesToLabel(states: { eventType: EventType }[]): string {
                                         </template>
                                     </USelectMenu>
                                 </ClientOnly>
-                            </UFormGroup>
+                            </UFormField>
                         </div>
                     </template>
                 </UAccordion>
@@ -369,53 +407,29 @@ function statesToLabel(states: { eventType: EventType }[]): string {
 
     <UTable
         v-else
-        v-model:expand="expand"
+        v-model:sorting="query.sorting.columns"
         class="flex-1"
         :loading="isRequestPending(status)"
         :columns="columns"
-        :rows="data?.logs"
-        :empty-state="{
-            icon: 'i-mdi-math-log',
-            label: $t('common.not_found', [$t('common.entry', 2)]),
-        }"
-        sort-mode="manual"
+        :data="data?.logs"
+        :pagination-options="{ manualPagination: true }"
+        :sorting-options="{ manualSorting: true }"
+        :empty="$t('common.not_found', [$t('common.entry', 2)])"
+        :ui="{ tr: 'data-[expanded=true]:bg-elevated/50' }"
+        sticky
     >
-        <template #actions-data="{ row }">
-            <UTooltip :text="$t('components.clipboard.clipboard_button.add')">
-                <UButton variant="link" icon="i-mdi-content-copy" @click="addToClipboard(row)" />
-            </UTooltip>
-        </template>
-
-        <template #createdAt-data="{ row }">
-            <GenericTime :value="row.createdAt" type="long" />
-        </template>
-
-        <template #user-data="{ row }">
-            <CitizenInfoPopover :user="row.user" />
-        </template>
-
-        <template #service-data="{ row }">
-            <span class="dark:text-white"> {{ row.service }}/{{ row.method }} </span>
-        </template>
-
-        <template #state-data="{ row }">
-            <UBadge :color="eventTypeToBadgeColor(row.state)">
-                {{ $t(`enums.settings.AuditLog.EventType.${EventType[row.state]}`) }}
-            </UBadge>
-        </template>
-
-        <template #expand="{ row }">
+        <template #expanded="{ row }">
             <div class="px-2 py-1">
-                <span v-if="!row.data">{{ $t('common.na') }}</span>
-                <span v-else>
+                <span v-if="!row.original.data">{{ $t('common.na') }}</span>
+                <template v-else>
                     <VueJsonPretty
-                        :data="JSON.parse(row.data!) as JSONDataType"
+                        :data="JSON.parse(row.original.data!) as JSONDataType"
                         :show-icon="true"
                         :show-length="true"
                         :virtual="true"
                         :height="240"
                     />
-                </span>
+                </template>
             </div>
         </template>
     </UTable>

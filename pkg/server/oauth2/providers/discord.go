@@ -17,7 +17,7 @@ type discordUser struct {
 	ID            string `json:"id"`
 	Username      string `json:"username"`
 	Discriminator string `json:"discriminator"`
-	Avatar        string `json:"avatar"`
+	Avatar        string `json:"profile_picture"`
 }
 
 func (p *Discord) GetUserInfo(ctx context.Context, code string) (*UserInfo, error) {
@@ -51,7 +51,7 @@ func (p *Discord) GetUserInfo(ctx context.Context, code string) (*UserInfo, erro
 		ID:       dest.ID,
 		Username: username,
 		Avatar: fmt.Sprintf(
-			"https://cdn.discordapp.com/avatars/%s/%s.png",
+			"https://cdn.discordapp.com/profile_pictures/%s/%s.png",
 			dest.ID,
 			dest.Avatar,
 		),

@@ -423,7 +423,7 @@ class ListCalendarsResponse$Type extends MessageType<ListCalendarsResponse> {
     constructor() {
         super("services.calendar.ListCalendarsResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "calendars", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Calendar }
+            { no: 2, name: "calendars", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Calendar, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListCalendarsResponse>): ListCalendarsResponse {
@@ -1506,7 +1506,7 @@ class ListCalendarEntryRSVPResponse$Type extends MessageType<ListCalendarEntryRS
     constructor() {
         super("services.calendar.ListCalendarEntryRSVPResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "entries", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => CalendarEntryRSVP }
+            { no: 2, name: "entries", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => CalendarEntryRSVP, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListCalendarEntryRSVPResponse>): ListCalendarEntryRSVPResponse {
@@ -1713,7 +1713,7 @@ class ListSubscriptionsResponse$Type extends MessageType<ListSubscriptionsRespon
     constructor() {
         super("services.calendar.ListSubscriptionsResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "subs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => CalendarSub }
+            { no: 2, name: "subs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => CalendarSub, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListSubscriptionsResponse>): ListSubscriptionsResponse {

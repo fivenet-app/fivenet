@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.settings;
 
 import "buf/validate/validate.proto";
+import "codegen/itemslen/itemslen.proto";
 import "resources/accounts/accounts.proto";
 import "resources/common/database/database.proto";
 
@@ -19,8 +20,8 @@ message ListAccountsRequest {
 }
 
 message ListAccountsResponse {
-  resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.accounts.Account accounts = 2;
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.accounts.Account accounts = 2 [(codegen.itemslen.items_len) = true];
 }
 
 message UpdateAccountRequest {

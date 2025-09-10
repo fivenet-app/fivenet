@@ -1,32 +1,29 @@
 <script lang="ts" setup>
-import type { Group } from '#ui/types';
 import ClipboardModal from '~/components/clipboard/modal/ClipboardModal.vue';
-import HelpSlideover from '~/components/HelpSlideover.vue';
-import NotificationSlideover from '~/components/notifications/NotificationSlideover.vue';
-import WebSocketStatusOverlay from '~/components/partials/WebSocketStatusOverlay.vue';
-import MathCalculatorModal from '~/components/quickbuttons/mathcalculator/MathCalculatorModal.vue';
-import PenaltyCalculatorModal from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorModal.vue';
+import SuperuserJobToggle from '~/components/partials/SuperuserJobToggle.vue';
+import MathCalculatorDrawer from '~/components/quickbuttons/mathcalculator/MathCalculatorDrawer.vue';
+import PenaltyCalculatorDrawer from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorDrawer.vue';
 import TopLogoDropdown from '~/components/TopLogoDropdown.vue';
-import UserDropdown from '~/components/UserDropdown.vue';
+import UserMenu from '~/components/UserMenu.vue';
 import { useMailerStore } from '~/stores/mailer';
-import { getCitizensCitizensClient, getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { Perms } from '~~/gen/ts/perms';
 
 const { t } = useI18n();
 
 const { can, activeChar, jobProps, isSuperuser } = useAuth();
 
-const { isHelpSlideoverOpen } = useDashboard();
+const { isDashboardSidebarSlideoverOpen, isHelpSlideoverOpen } = useDashboard();
 
-const modal = useModal();
+const overlay = useOverlay();
 
 const { website } = useAppConfig();
 
 const mailerStore = useMailerStore();
 const { unreadCount } = storeToRefs(mailerStore);
 
-const citizensCitizensClient = await getCitizensCitizensClient();
-const documentsDocumentsClient = await getDocumentsDocumentsClient();
+const route = useRoute();
+
+const open = ref(false);
 
 const links = computed(() =>
     [
@@ -36,7 +33,7 @@ const links = computed(() =>
             to: '/overview',
             tooltip: {
                 text: t('common.overview'),
-                shortcuts: ['G', 'H'],
+                kbds: ['G', 'H'],
             },
         },
         {
@@ -46,9 +43,10 @@ const links = computed(() =>
             badge: unreadCount.value > 0 ? (unreadCount.value <= 9 ? unreadCount.value.toString() : '9+') : undefined,
             tooltip: {
                 text: t('common.mail'),
-                shortcuts: ['G', 'E'],
+                kbds: ['G', 'E'],
             },
             permission: 'mailer.MailerService/ListEmails' as Perms,
+            active: route.name.startsWith('mail'),
         },
         {
             label: t('common.citizen', 1),
@@ -56,9 +54,10 @@ const links = computed(() =>
             to: '/citizens',
             tooltip: {
                 text: t('common.citizen', 1),
-                shortcuts: ['G', 'C'],
+                kbds: ['G', 'C'],
             },
             permission: 'citizens.CitizensService/ListCitizens' as Perms,
+            active: route.name.startsWith('citizens'),
         },
         {
             label: t('common.vehicle', 2),
@@ -66,7 +65,7 @@ const links = computed(() =>
             to: '/vehicles',
             tooltip: {
                 text: t('common.vehicle', 2),
-                shortcuts: ['G', 'V'],
+                kbds: ['G', 'V'],
             },
             permission: 'vehicles.VehiclesService/ListVehicles' as Perms,
         },
@@ -76,9 +75,10 @@ const links = computed(() =>
             to: '/documents',
             tooltip: {
                 text: t('common.document', 2),
-                shortcuts: ['G', 'D'],
+                kbds: ['G', 'D'],
             },
             permission: 'documents.DocumentsService/ListDocuments' as Perms,
+            active: route.name.startsWith('documents'),
         },
         {
             label: t('common.job'),
@@ -86,36 +86,42 @@ const links = computed(() =>
             to: '/jobs/overview',
             tooltip: {
                 text: t('common.job'),
-                shortcuts: ['G', 'J'],
+                kbds: ['G', 'J'],
             },
             defaultOpen: false,
             children: [
                 {
                     label: t('common.overview'),
+                    icon: 'i-mdi-briefcase-outline',
                     to: '/jobs/overview',
                 },
                 {
                     label: t('common.colleague', 2),
+                    icon: 'i-mdi-account-group',
                     to: '/jobs/colleagues',
                     permission: 'jobs.JobsService/ListColleagues' as Perms,
                 },
                 {
                     label: t('common.activity'),
+                    icon: 'i-mdi-pulse',
                     to: '/jobs/activity',
                     permission: 'jobs.JobsService/ListColleagueActivity' as Perms,
                 },
                 {
                     label: t('common.timeclock'),
+                    icon: 'i-mdi-timeline-clock',
                     to: '/jobs/timeclock',
                     permission: 'jobs.TimeclockService/ListTimeclock' as Perms,
                 },
                 {
                     label: t('common.conduct_register', 2),
+                    icon: 'i-mdi-list-status',
                     to: '/jobs/conduct',
                     permission: 'jobs.ConductService/ListConductEntries' as Perms,
                 },
             ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
             permission: 'jobs.JobsService/ListColleagues' as Perms,
+            active: route.name.startsWith('jobs'),
         },
         {
             label: t('common.calendar'),
@@ -123,8 +129,9 @@ const links = computed(() =>
             to: '/calendar',
             tooltip: {
                 text: t('common.calendar'),
-                shortcuts: ['G', 'K'],
+                kbds: ['G', 'K'],
             },
+            active: route.name.startsWith('calendar'),
         },
         {
             label: t('common.qualification', 2),
@@ -132,9 +139,10 @@ const links = computed(() =>
             to: '/qualifications',
             tooltip: {
                 text: t('common.qualification', 2),
-                shortcuts: ['G', 'Q'],
+                kbds: ['G', 'Q'],
             },
             permission: 'qualifications.QualificationsService/ListQualifications' as Perms,
+            active: route.name.startsWith('qualifications'),
         },
         {
             label: t('common.livemap'),
@@ -142,7 +150,7 @@ const links = computed(() =>
             to: '/livemap',
             tooltip: {
                 text: t('common.livemap'),
-                shortcuts: ['G', 'M'],
+                kbds: ['G', 'M'],
             },
             permission: 'livemap.LivemapService/Stream' as Perms,
         },
@@ -152,9 +160,10 @@ const links = computed(() =>
             to: '/centrum',
             tooltip: {
                 text: t('common.dispatch_center'),
-                shortcuts: ['G', 'W'],
+                kbds: ['G', 'W'],
             },
             permission: 'centrum.CentrumService/TakeControl' as Perms,
+            active: route.name.startsWith('centrum'),
         },
         {
             label: t('common.wiki'),
@@ -162,9 +171,10 @@ const links = computed(() =>
             to: '/wiki',
             tooltip: {
                 text: t('common.wiki'),
-                shortcuts: ['G', 'L'],
+                kbds: ['G', 'L'],
             },
             permission: 'wiki.WikiService/ListPages' as Perms,
+            active: route.name.startsWith('wiki'),
         },
         {
             label: t('common.control_panel'),
@@ -172,9 +182,10 @@ const links = computed(() =>
             to: '/settings',
             tooltip: {
                 text: t('common.control_panel'),
-                shortcuts: ['G', 'P'],
+                kbds: ['G', 'P'],
             },
             permission: 'settings.SettingsService/GetJobProps' as Perms,
+            active: route.name.startsWith('settings'),
         },
     ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
 );
@@ -191,7 +202,10 @@ const footerLinks = computed(() =>
         {
             label: t('common.help'),
             icon: 'i-mdi-question-mark-circle-outline',
-            click: () => (isHelpSlideoverOpen.value = true),
+            tooltip: {
+                kbds: ['?'],
+            },
+            onClick: () => (isHelpSlideoverOpen.value = true),
         },
         {
             label: t('common.about'),
@@ -201,166 +215,7 @@ const footerLinks = computed(() =>
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
-const groups = computed(
-    () =>
-        [
-            {
-                key: 'links',
-                label: t('common.goto'),
-                commands: links.value.map((link) => ({ ...link, shortcuts: link.tooltip?.shortcuts })),
-            },
-            {
-                key: 'ids',
-                label: t('common.id', 2),
-                commands: [
-                    {
-                        id: 'cit',
-                        prefix: 'CIT-',
-                        icon: 'i-mdi-account-multiple-outline',
-                    },
-                    {
-                        id: 'doc',
-                        prefix: 'DOC-',
-                        icon: 'i-mdi-file-document-box-multiple-outline',
-                    },
-                ],
-                search: async (q?: string) => {
-                    const defaultCommands = [
-                        {
-                            id: 'id-doc',
-                            label: `DOC-...`,
-                        },
-                        {
-                            id: 'id-citizen',
-                            label: `CIT-...`,
-                        },
-                    ];
-
-                    if (!q || (!q.startsWith('CIT') && !q.startsWith('DOC'))) {
-                        if (q && (q.startsWith('@') || q.startsWith('#'))) {
-                            return [];
-                        }
-
-                        return defaultCommands.filter((c) => !q || c.label.includes(q));
-                    }
-
-                    const prefix = q.substring(0, q.indexOf('-')).toUpperCase();
-                    const id = q.substring(q.indexOf('-') + 1).trim();
-                    if (id.length > 0 && isNumber(id)) {
-                        if (prefix === 'CIT') {
-                            return [
-                                {
-                                    id: 'id-citizen',
-                                    label: `CIT-${id}`,
-                                    to: `/citizens/${id}`,
-                                },
-                            ];
-                        } else if (prefix === 'DOC') {
-                            return [
-                                {
-                                    id: 'id-doc',
-                                    label: `DOC-${id}`,
-                                    to: `/documents/${id}`,
-                                },
-                            ];
-                        }
-                    }
-
-                    return defaultCommands;
-                },
-            },
-            {
-                key: 'search',
-                label: t('common.search'),
-                commands: [
-                    {
-                        id: 'cit',
-                        label: t('common.citizen', 2),
-                        prefix: '@',
-                        icon: 'i-mdi-account-multiple-outline',
-                    },
-                    {
-                        id: 'doc',
-                        label: t('common.document', 2),
-                        prefix: '#',
-                        icon: 'i-mdi-file-document-box-multiple-outline',
-                    },
-                ],
-                search: async (q?: string) => {
-                    if (!q || (!q.startsWith('@') && !q.startsWith('#'))) {
-                        return [
-                            {
-                                id: 'cit',
-                                label: t('common.citizen', 2),
-                                prefix: '@',
-                                icon: 'i-mdi-account-multiple-outline',
-                            },
-                            {
-                                id: 'doc',
-                                label: t('common.document', 2),
-                                prefix: '#',
-                                icon: 'i-mdi-file-document-box-multiple-outline',
-                            },
-                        ].filter((c) => !q || c.label.includes(q));
-                    }
-
-                    const searchType = q[0];
-                    const query = q.substring(1).trim();
-                    switch (searchType) {
-                        case '#': {
-                            try {
-                                const call = documentsDocumentsClient.listDocuments({
-                                    pagination: {
-                                        offset: 0,
-                                        pageSize: 10,
-                                    },
-                                    search: query,
-                                    categoryIds: [],
-                                    creatorIds: [],
-                                    documentIds: [],
-                                });
-                                const { response } = await call;
-
-                                return response.documents.map((d) => ({
-                                    id: d.id,
-                                    label: d.title,
-                                    suffix: d.state,
-                                    to: `/documents/${d.id}`,
-                                }));
-                            } catch (e) {
-                                handleGRPCError(e as RpcError);
-                                throw e;
-                            }
-                        }
-
-                        case '@':
-                        default: {
-                            try {
-                                const call = citizensCitizensClient.listCitizens({
-                                    pagination: {
-                                        offset: 0,
-                                        pageSize: 10,
-                                    },
-                                    search: query,
-                                });
-                                const { response } = await call;
-
-                                return response.users.map((u) => ({
-                                    id: u.userId,
-                                    label: `${u.firstname} ${u.lastname}`,
-                                    suffix: u.dateofbirth,
-                                    to: `/citizens/${u.userId}`,
-                                }));
-                            } catch (e) {
-                                handleGRPCError(e as RpcError);
-                                throw e;
-                            }
-                        }
-                    }
-                },
-            },
-        ] as Group[],
-);
+const clipboardModal = overlay.create(ClipboardModal);
 
 const clipboardLink = computed(() =>
     [
@@ -373,13 +228,14 @@ const clipboardLink = computed(() =>
             ? {
                   label: t('common.clipboard'),
                   icon: 'i-mdi-clipboard-list-outline',
-                  click: () => modal.open(ClipboardModal, {}),
+                  onClick: () => clipboardModal.open(),
               }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
-const { isDashboardSidebarSlideoverOpen } = useUIState();
+const penaltyCalculatorDrawer = overlay.create(PenaltyCalculatorDrawer);
+const mathCalculatorDrawer = overlay.create(MathCalculatorDrawer);
 
 const quickAccessButtons = computed(() =>
     [
@@ -387,9 +243,9 @@ const quickAccessButtons = computed(() =>
             ? {
                   label: t('components.penaltycalculator.title'),
                   icon: 'i-mdi-gavel',
-                  click: () => {
+                  onClick: () => {
                       isDashboardSidebarSlideoverOpen.value = false;
-                      modal.open(PenaltyCalculatorModal);
+                      penaltyCalculatorDrawer.open();
                   },
               }
             : undefined,
@@ -397,79 +253,83 @@ const quickAccessButtons = computed(() =>
             ? {
                   label: t('components.mathcalculator.title'),
                   icon: 'i-mdi-calculator',
-                  click: () => {
+                  onClick: () => {
                       isDashboardSidebarSlideoverOpen.value = false;
-                      modal.open(MathCalculatorModal, {});
+                      mathCalculatorDrawer.open();
                   },
               }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
+
+defineShortcuts(extractShortcuts(links.value));
 </script>
 
 <template>
-    <UDashboardLayout>
-        <UDashboardPanel id="mainleftsidebar" :width="225" :resizable="{ min: 175, max: 275 }" collapsible>
-            <UDashboardNavbar class="!border-transparent" :ui="{ left: 'flex-1' }">
-                <template #left>
-                    <TopLogoDropdown />
-                </template>
-            </UDashboardNavbar>
+    <UDashboardGroup unit="rem">
+        <UDashboardSidebar
+            id="default"
+            v-model:open="open"
+            :default-size="15"
+            :min-size="10"
+            :max-size="25"
+            collapsible
+            resizable
+            class="bg-elevated/25"
+            :ui="{ footer: 'lg:border-t lg:border-default' }"
+        >
+            <template #header="{ collapsed }">
+                <TopLogoDropdown :collapsed="collapsed" />
+            </template>
 
-            <UDashboardSidebar>
-                <template #header>
-                    <UDashboardSearchButton :label="$t('common.search_field')" />
-                </template>
+            <template #default="{ collapsed }">
+                <UDashboardSearchButton :collapsed="collapsed" :label="$t('common.search_field')" />
 
-                <UDashboardSidebarLinks :links="links" />
+                <UNavigationMenu orientation="vertical" tooltip popover :items="links" :collapsed="collapsed" />
 
                 <template v-if="clipboardLink.length > 0">
-                    <UDivider />
+                    <USeparator />
 
-                    <UDashboardSidebarLinks :links="clipboardLink" />
+                    <UNavigationMenu orientation="vertical" tooltip popover :items="clipboardLink" :collapsed="collapsed" />
                 </template>
 
                 <template v-if="quickAccessButtons">
-                    <UDivider />
+                    <USeparator />
 
-                    <UDashboardSidebarLinks :links="quickAccessButtons" />
+                    <UNavigationMenu
+                        orientation="vertical"
+                        tooltip
+                        popover
+                        :items="quickAccessButtons"
+                        :collapsed="collapsed"
+                    />
                 </template>
 
                 <div class="flex-1" />
 
-                <UDashboardSidebarLinks :links="footerLinks" />
+                <template v-if="can(['Superuser/CanBeSuperuser', 'Superuser/Superuser']).value">
+                    <SuperuserJobToggle :collapsed="collapsed" />
 
-                <UDivider class="sticky bottom-0" />
-
-                <template #footer>
-                    <UserDropdown />
+                    <USeparator />
                 </template>
-            </UDashboardSidebar>
-        </UDashboardPanel>
+
+                <UNavigationMenu orientation="vertical" tooltip popover :items="footerLinks" :collapsed="collapsed" />
+            </template>
+
+            <template #footer="{ collapsed }">
+                <UserMenu :collapsed="collapsed" />
+            </template>
+        </UDashboardSidebar>
 
         <slot />
 
         <ClientOnly>
-            <WebSocketStatusOverlay hide-overlay />
+            <LazyPartialsCommandSearch v-if="activeChar" :links="links" />
+
+            <LazyPartialsWebSocketStatusOverlay />
 
             <!-- Events -->
             <LazyPartialsEventsLayer />
         </ClientOnly>
-
-        <HelpSlideover />
-        <NotificationSlideover />
-
-        <ClientOnly>
-            <LazyUDashboardSearch
-                v-if="activeChar"
-                :empty-state="{
-                    icon: 'i-mdi-globe-model',
-                    label: $t('commandpalette.empty.title'),
-                    queryLabel: $t('commandpalette.empty.title'),
-                }"
-                :placeholder="`${$t('common.search_field')} (${$t('commandpalette.footer', { key1: '@', key2: '#' })})`"
-                :groups="groups"
-            />
-        </ClientOnly>
-    </UDashboardLayout>
+    </UDashboardGroup>
 </template>

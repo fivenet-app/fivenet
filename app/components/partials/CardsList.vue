@@ -16,10 +16,6 @@ defineEmits<{
     (e: 'selected', idx: number): void;
 }>();
 
-defineOptions({
-    inheritAttrs: false,
-});
-
 const { can } = useAuth();
 </script>
 
@@ -30,23 +26,21 @@ const { can } = useAuth();
             :key="index"
             :to="module.to"
             :title="module.title"
-            :description="module.description"
             :icon="showIcon && module.icon?.startsWith('i-') ? module.icon : undefined"
-            v-bind="$attrs"
             @click="$emit('selected', index)"
         >
-            <template v-if="showIcon && module.icon" #icon>
+            <template v-if="showIcon && module.icon" #leading>
                 <template v-if="!module.icon.startsWith('i-')">
                     <component
                         :is="availableIcons.find((item) => item.name === module.icon)?.component ?? fallbackIcon.component"
                         v-if="module.icon"
-                        class="text-primary h-10 w-10 shrink-0"
+                        class="h-10 w-10 shrink-0 text-primary"
                         :class="module.color && `text-${module.color}-500 dark:text-${module.color}-400`"
                     />
                 </template>
                 <template v-else>
                     <UIcon
-                        class="text-primary h-10 w-10 shrink-0"
+                        class="h-10 w-10 shrink-0 text-primary"
                         :class="`text-${module.color}-500 dark:text-${module.color}-400`"
                         :name="module.icon"
                     />

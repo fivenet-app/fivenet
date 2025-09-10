@@ -22,6 +22,6 @@ const lines = computed<{ line: string; class?: string }[]>(() =>
 
 <template>
     <pre
-        class="whitespace-pre-line break-words"
+        class="break-words whitespace-pre-line"
     ><span v-for="(line, idx) in lines" :key="idx" :class="line.class">{{ line.line }}<br></span></pre>
 </template>

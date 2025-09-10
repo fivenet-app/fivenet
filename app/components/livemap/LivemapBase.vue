@@ -24,7 +24,7 @@ const { t } = useI18n();
 
 const { can } = useAuth();
 
-const slideover = useSlideover();
+const overlay = useOverlay();
 
 const settingsStore = useSettingsStore();
 const { nuiEnabled } = storeToRefs(settingsStore);
@@ -46,13 +46,15 @@ const mapOptions = {
 } as MapOptions;
 
 if (can('centrum.CentrumService/CreateDispatch').value) {
+    const dispatchCreateOrUpdateSlideover = overlay.create(DispatchCreateOrUpdateSlideover);
+
     mapOptions.contextmenuItems.push({
         text: t('components.centrum.create_dispatch.title'),
         callback: (e: ContextMenuItemClickEvent) => {
             location.value = { x: e.latlng.lng, y: e.latlng.lat };
             showLocationMarker.value = true;
 
-            slideover.open(DispatchCreateOrUpdateSlideover, {
+            dispatchCreateOrUpdateSlideover.open({
                 location: { x: e.latlng.lng, y: e.latlng.lat },
                 onClose: () => (showLocationMarker.value = false),
             });
@@ -60,13 +62,15 @@ if (can('centrum.CentrumService/CreateDispatch').value) {
     });
 }
 if (can('livemap.LivemapService/CreateOrUpdateMarker').value) {
+    const markerCreateOrUpdateSlideover = overlay.create(MarkerCreateOrUpdateSlideover);
+
     mapOptions.contextmenuItems.push({
         text: t('components.livemap.create_marker.title'),
         callback: (e: ContextMenuItemClickEvent) => {
             location.value = { x: e.latlng.lng, y: e.latlng.lat };
             showLocationMarker.value = true;
 
-            slideover.open(MarkerCreateOrUpdateSlideover, {
+            markerCreateOrUpdateSlideover.open({
                 location: { x: e.latlng.lng, y: e.latlng.lat },
                 onClose: () => (showLocationMarker.value = false),
             });
@@ -87,7 +91,7 @@ const stoppingCentrumDebounced = useDebounce(stoppingCentrum, 500);
 
 <template>
     <div class="relative size-full">
-        <div v-if="error" class="absolute inset-0 z-20 flex items-center justify-center bg-gray-600/70">
+        <div v-if="error" class="absolute inset-0 z-20 flex items-center justify-center bg-neutral-600/70">
             <DataErrorBlock :title="$t('components.livemap.failed_datastream')" :error="error" :retry="startStream" />
         </div>
 

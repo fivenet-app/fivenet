@@ -2,9 +2,8 @@
 import type { DefineComponent } from 'vue';
 import { availableIcons, fallbackIcon as defaultIcon, type IconEntry } from './icons';
 
-const props = withDefaults(
+withDefaults(
     defineProps<{
-        modelValue: string | undefined;
         color?: string;
         fallbackIcon?: DefineComponent | IconEntry;
     }>(),
@@ -14,15 +13,14 @@ const props = withDefaults(
     },
 );
 
-const emit = defineEmits<{
-    (e: 'update:modelValue', value: string | undefined): void;
-}>();
-
 defineOptions({
     inheritAttrs: false,
 });
 
-const icon = useVModel(props, 'modelValue', emit);
+const icon = defineModel<string | undefined>('modelValue');
+
+const searchTerm = ref('');
+const searchTermDebounced = debouncedRef(searchTerm, 200);
 
 async function iconSearch(query: string): Promise<IconEntry[]> {
     // Remove spaces from query as icon names don't have spaces
@@ -36,29 +34,34 @@ async function iconSearch(query: string): Promise<IconEntry[]> {
         return false;
     });
 }
+
+const foundIcons = computedAsync(() => iconSearch(searchTermDebounced.value));
 </script>
 
 <template>
     <ClientOnly>
         <USelectMenu
             v-model="icon"
-            :searchable="iconSearch"
-            searchable-lazy
-            :searchable-placeholder="$t('common.search_field')"
-            value-attribute="name"
+            v-model:search-term="searchTerm"
+            :items="foundIcons"
+            :search-input="{ placeholder: $t('common.search_field') }"
+            value-key="name"
             v-bind="$attrs"
         >
-            <template #label>
+            <template v-if="icon" #default>
                 <component
                     :is="availableIcons.find((item) => item.name === icon)?.component ?? fallbackIcon.component"
                     class="size-5"
-                    :style="{ fill: color }"
+                    :style="{ color: `var(--color-${color ?? 'primary'}-500)` }"
                 />
+
                 <span class="truncate">{{ camelCaseToTitleCase(icon ?? $t('common.unknown')) }}</span>
             </template>
-            <template #option="{ option }">
-                <component :is="option?.component" class="size-5" :style="{ color: color }" />
-                <span class="truncate">{{ camelCaseToTitleCase(option.name) }}</span>
+
+            <template #item="{ item }">
+                <component :is="item?.component" class="size-5" :style="{ color: `var(--color-${color ?? 'primary'}-500)` }" />
+
+                <span class="truncate">{{ camelCaseToTitleCase(item.name) }}</span>
             </template>
         </USelectMenu>
     </ClientOnly>

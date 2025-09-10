@@ -29,11 +29,11 @@ const year =
 </script>
 
 <template>
-    <div class="flex min-w-20 max-w-48 flex-col items-center justify-center rounded-lg border" :style="{ backgroundColor }">
+    <div class="flex max-w-48 min-w-20 flex-col items-center justify-center rounded-lg border" :style="{ backgroundColor }">
         <div class="grid w-full grid-cols-2 justify-items-center rounded-t-lg bg-error-600">
-            <div class="hidden select-none text-xs text-yellow-300 md:block">{{ state }}</div>
-            <div class="select-none text-xs text-yellow-300 md:hidden">{{ stateShort }}</div>
-            <div class="select-none text-xs text-white">{{ year }}</div>
+            <div class="hidden text-xs text-yellow-300 select-none md:block">{{ state }}</div>
+            <div class="text-xs text-yellow-300 select-none md:hidden">{{ stateShort }}</div>
+            <div class="text-xs text-white select-none">{{ year }}</div>
         </div>
         <div class="text-base" :class="isColorBright(inverseColor) ? 'text-black' : 'text-white'">
             {{ plate }}

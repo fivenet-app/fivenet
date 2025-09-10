@@ -40,9 +40,9 @@ const { pause, resume } = useIntervalFn(async () => {
 </script>
 
 <template>
-    <div class="flex h-full flex-1 grow flex-col px-1">
+    <div class="my-1 flex h-full flex-1 grow flex-col gap-2 px-1">
         <div class="flex justify-between">
-            <h2 class="inline-flex flex-1 items-center text-base font-semibold leading-6">{{ $t('common.feed') }}</h2>
+            <h2 class="inline-flex flex-1 items-center text-base leading-6 font-semibold">{{ $t('common.feed') }}</h2>
         </div>
 
         <div class="flex flex-1 flex-col overflow-x-auto overflow-y-auto">

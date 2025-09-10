@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { getJobsJobsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -108,22 +108,27 @@ const editing = ref(false);
         </div>
 
         <div class="flex flex-1 flex-col gap-2 sm:flex-row">
-            <UFormGroup class="flex-1" name="note" :label="$t('common.note')">
+            <UFormField class="flex-1" name="note" :label="$t('common.note')">
                 <UTextarea v-if="editing" v-model="state.note" block :rows="6" :maxrows="10" name="note" />
-                <p v-else class="prose dark:prose-invert whitespace-pre-wrap text-base-800 dark:text-base-300">
+                <p v-else class="text-base-800 dark:text-base-300 prose whitespace-pre-wrap dark:prose-invert">
                     {{ modelValue ?? $t('common.na') }}
                 </p>
-            </UFormGroup>
+            </UFormField>
         </div>
 
         <template v-if="editing">
-            <UFormGroup name="reason" :label="$t('common.reason')" required>
+            <UFormField name="reason" :label="$t('common.reason')" required>
                 <UInput v-model="state.reason" type="text" :disabled="!changed" />
-            </UFormGroup>
+            </UFormField>
 
-            <UButton type="submit" block icon="i-mdi-content-save" :disabled="!canSubmit || !changed" :loading="!canSubmit">
-                {{ $t('common.save') }}
-            </UButton>
+            <UButton
+                type="submit"
+                block
+                icon="i-mdi-content-save"
+                :disabled="!canSubmit || !changed"
+                :loading="!canSubmit"
+                :label="$t('common.save')"
+            />
         </template>
     </UForm>
 </template>

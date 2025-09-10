@@ -3,11 +3,11 @@ import type { TypedRouteFromName } from '@typed-router';
 import TimeclockList from '~/components/jobs/timeclock/TimeclockList.vue';
 
 useHead({
-    title: 'pages.jobs.colleagues.single.timeclock',
+    title: 'pages.jobs.colleagues.id.timeclock',
 });
 
 definePageMeta({
-    title: 'pages.jobs.colleagues.single.timeclock',
+    title: 'pages.jobs.colleagues.id.timeclock',
     requiresAuth: true,
     permission: 'jobs.TimeclockService/ListTimeclock',
     validate: async (route) => {
@@ -24,13 +24,11 @@ const route = useRoute('jobs-colleagues-id-timeclock');
 </script>
 
 <template>
-    <div class="flex flex-1 flex-col">
-        <TimeclockList
-            :user-id="parseInt(route.params.id as string)"
-            :show-stats="false"
-            force-historic-view
-            :historic-sub-days="14"
-            hide-daily
-        />
-    </div>
+    <TimeclockList
+        :user-id="parseInt(route.params.id as string)"
+        :show-stats="false"
+        force-historic-view
+        :historic-sub-days="14"
+        hide-daily
+    />
 </template>

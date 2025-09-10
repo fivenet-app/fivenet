@@ -9,30 +9,15 @@ defineProps<{
     files: File[];
 }>();
 
-const { isOpen } = useModal();
+defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UCard
-            :ui="{
-                ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-                base: 'flex flex-1 flex-col',
-                body: { base: 'flex flex-1 flex-col' },
-            }"
-        >
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
-                        {{ $t('components.partials.TiptapEditor.file_list') }}
-                    </h3>
-
-                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                </div>
-            </template>
-
-            <div class="mx-auto flex w-full max-w-screen-xl flex-1 flex-col">
+    <UModal :title="$t('components.partials.TiptapEditor.file_list')">
+        <template #body>
+            <div class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-1 flex-col">
                 <DataNoDataBlock v-if="files.length === 0" :message="$t('components.partials.TiptapEditor.file_list_empty')" />
 
                 <UPageGrid v-else class="flex-1">
@@ -41,7 +26,7 @@ const { isOpen } = useModal();
                         :key="file.id"
                         :title="file.filePath"
                         icon="i-mdi-file-document"
-                        :ui="{ title: '!line-clamp-3 !whitespace-normal' }"
+                        :ui="{ title: 'line-clamp-3! whitespace-normal!' }"
                     >
                         <template #icon>
                             <div class="flex-1">
@@ -76,7 +61,7 @@ const { isOpen } = useModal();
                                                     fileId: file.id,
                                                 })
                                                 .run();
-                                            isOpen = false;
+                                            $emit('close', false);
                                         "
                                     />
                                 </UTooltip>
@@ -98,14 +83,14 @@ const { isOpen } = useModal();
                     :description="$t('components.partials.TiptapEditor.file_list_hint')"
                 />
             </div>
+        </template>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" block color="black" @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
-                </UButtonGroup>
-            </template>
-        </UCard>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" block color="neutral" @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

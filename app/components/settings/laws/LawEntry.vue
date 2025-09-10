@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { getSettingsLawsClient } from '~~/gen/ts/clients';
 import type { Law } from '~~/gen/ts/resources/laws/laws';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     law: Law;
@@ -12,6 +13,8 @@ const emit = defineEmits<{
     (e: 'update:law', update: { id: number; law: Law }): void;
     (e: 'close'): void;
 }>();
+
+const notifications = useNotificationsStore();
 
 const settingsLawsClient = await getSettingsLawsClient();
 
@@ -52,6 +55,12 @@ async function saveLaw(lawBookId: number, id: number, values: Schema): Promise<v
         const { response } = await call;
 
         emit('update:law', { id: id, law: response.law! });
+
+        notifications.add({
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -70,7 +79,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UForm class="my-2 flex flex-1 flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
         <div class="flex flex-1 flex-row gap-2">
-            <UFormGroup class="text-sm font-medium">
+            <UFormField class="text-sm font-medium">
                 <UButtonGroup class="inline-flex w-full" orientation="vertical">
                     <UTooltip :text="$t('common.save')">
                         <UButton type="submit" variant="link" icon="i-mdi-content-save" />
@@ -80,52 +89,63 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <UButton variant="link" icon="i-mdi-cancel" @click="$emit('close')" />
                     </UTooltip>
                 </UButtonGroup>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup class="flex-1 text-sm font-medium" :label="$t('common.law')" name="name">
-                <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.law')" />
-            </UFormGroup>
+            <UFormField class="flex-1 text-sm font-medium" :label="$t('common.law')" name="name">
+                <UInput v-model="state.name" name="name" type="text" class="w-full" :placeholder="$t('common.law')" />
+            </UFormField>
         </div>
 
-        <div class="flex flex-1 gap-2">
-            <UFormGroup class="whitespace-nowrap text-left" :label="$t('common.fine')" name="fine">
-                <UInput
+        <div class="flex flex-1 justify-between gap-2">
+            <UFormField :label="$t('common.fine')" name="fine">
+                <UInputNumber
                     v-model="state.fine"
                     name="fine"
-                    type="number"
                     :min="0"
+                    :step="1000"
+                    :format-options="{
+                        style: 'currency',
+                        currency: 'USD',
+                        currencyDisplay: 'code',
+                        currencySign: 'accounting',
+                    }"
                     :placeholder="$t('common.fine')"
-                    leading-icon="i-mdi-dollar"
                 />
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup class="whitespace-nowrap text-left" :label="$t('common.detention_time')" name="detentionTime">
-                <UInput
+            <UFormField :label="$t('common.detention_time')" name="detentionTime">
+                <UInputNumber
                     v-model="state.detentionTime"
                     name="detentionTime"
-                    type="number"
                     :min="0"
+                    :step="1"
                     :placeholder="$t('common.detention_time')"
                 />
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup class="whitespace-nowrap text-left" :label="$t('common.traffic_infraction_points')" name="stvoPoints">
-                <UInput
+            <UFormField :label="$t('common.traffic_infraction_points')" name="stvoPoints">
+                <UInputNumber
                     v-model="state.stvoPoints"
                     name="stvoPoints"
-                    type="number"
                     :min="0"
+                    :step="1"
                     :placeholder="$t('common.traffic_infraction_points')"
                 />
-            </UFormGroup>
+            </UFormField>
         </div>
 
-        <UFormGroup class="text-left" :label="$t('common.description')" name="description">
-            <UInput v-model="state.description" name="description" type="text" :placeholder="$t('common.description')" />
-        </UFormGroup>
+        <UFormField :label="$t('common.description')" name="description">
+            <UTextarea
+                v-model="state.description"
+                name="description"
+                type="text"
+                class="w-full"
+                :placeholder="$t('common.description')"
+            />
+        </UFormField>
 
-        <UFormGroup class="text-left" :label="$t('common.hint')" name="hint">
-            <UInput v-model="state.hint" name="hint" type="text" :placeholder="$t('common.hint')" />
-        </UFormGroup>
+        <UFormField :label="$t('common.hint')" name="hint">
+            <UTextarea v-model="state.hint" name="hint" type="text" class="w-full" :placeholder="$t('common.hint')" />
+        </UFormField>
     </UForm>
 </template>

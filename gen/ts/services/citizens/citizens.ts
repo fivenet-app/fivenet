@@ -304,8 +304,8 @@ export const ListCitizensRequest = new ListCitizensRequest$Type();
 class ListCitizensResponse$Type extends MessageType<ListCitizensResponse> {
     constructor() {
         super("services.citizens.ListCitizensResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => User }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => User, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListCitizensResponse>): ListCitizensResponse {
@@ -535,8 +535,8 @@ export const ListUserActivityRequest = new ListUserActivityRequest$Type();
 class ListUserActivityResponse$Type extends MessageType<ListUserActivityResponse> {
     constructor() {
         super("services.citizens.ListUserActivityResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UserActivity }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UserActivity, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListUserActivityResponse>): ListUserActivityResponse {

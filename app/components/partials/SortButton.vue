@@ -1,40 +1,54 @@
 <script lang="ts" setup>
+import type { Sort } from '~~/gen/ts/resources/common/database/database';
+
 const props = withDefaults(
     defineProps<{
-        modelValue: TableSortable;
+        modelValue: Sort;
         fields: { label: string; value: string }[];
     }>(),
     {},
 );
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', v: TableSortable): void;
+    (e: 'update:modelValue', v: Sort): void;
 }>();
 
-const sort = useVModel(props, 'modelValue', emit, {
+const sorting = useVModel(props, 'modelValue', emit, {
     deep: true,
 });
 
-const { ui } = useAppConfig();
+const { custom } = useAppConfig();
 
 function toggleDirection(): void {
-    if (sort.value.direction === 'asc') {
-        sort.value = {
-            column: sort.value.column,
-            direction: 'desc',
+    if (sorting.value.columns.length === 0) {
+        sorting.value = {
+            columns: [
+                {
+                    id: sorting.value.columns.at(0)?.id || props.fields[0]?.value || '',
+                    desc: true,
+                },
+            ],
         };
     } else {
-        sort.value = {
-            column: sort.value.column,
-            direction: 'asc',
+        sorting.value = {
+            columns: [
+                {
+                    id: sorting.value.columns.at(0)?.id || props.fields[0]?.value || '',
+                    desc: false,
+                },
+            ],
         };
     }
 }
 
 function changeColumn(col: string): void {
-    sort.value = {
-        column: col,
-        direction: sort.value.direction,
+    sorting.value = {
+        columns: [
+            {
+                id: col,
+                desc: sorting.value.columns.at(0)?.desc || false,
+            },
+        ],
     };
 }
 </script>
@@ -44,20 +58,11 @@ function changeColumn(col: string): void {
         <ClientOnly v-if="fields.length > 1">
             <USelectMenu
                 class="w-full"
-                :model-value="sort.column"
                 :placeholder="$t('common.na')"
-                value-attribute="value"
-                :options="fields"
-                @update:model-value="changeColumn($event)"
+                value-key="value"
+                :items="fields"
+                @update:model-value="($event) => changeColumn($event)"
             >
-                <template #label>
-                    {{ fields.find((f) => f.value === sort.column)?.label ?? $t('common.na') }}
-                </template>
-
-                <template #option="{ option: field }">
-                    {{ field.label }}
-                </template>
-
                 <template #empty> {{ $t('common.not_found', [$t('common.field', 2)]) }} </template>
             </USelectMenu>
         </ClientOnly>
@@ -66,10 +71,10 @@ function changeColumn(col: string): void {
             <UButton
                 square
                 trailing
-                :icon="sort.direction === 'asc' ? ui.table.default.sortAscIcon : ui.table.default.sortDescIcon"
-                color="gray"
+                :icon="sorting.columns[0]?.desc ? custom.icons.sortDesc : custom.icons.sortAsc"
+                color="neutral"
                 variant="ghost"
-                @click="toggleDirection"
+                @click="() => toggleDirection()"
             />
         </UTooltip>
     </div>

@@ -1,12 +1,13 @@
 <script lang="ts" setup>
+import type { DropdownMenuItem } from '@nuxt/ui';
 import AddToButton from '~/components/clipboard/AddToButton.vue';
-import DocumentActivityList from '~/components/documents/activity/DocumentActivityList.vue';
+import ActivityList from '~/components/documents/activity/ActivityList.vue';
 import DocumentComments from '~/components/documents/comments/DocumentComments.vue';
 import DocumentReferences from '~/components/documents/DocumentReferences.vue';
 import DocumentRelations from '~/components/documents/DocumentRelations.vue';
 import { checkDocAccess } from '~/components/documents/helpers';
-import DocumentRequestAccess from '~/components/documents/requests/DocumentRequestAccess.vue';
-import DocumentRequestModal from '~/components/documents/requests/DocumentRequestModal.vue';
+import RequestAccess from '~/components/documents/requests/RequestAccess.vue';
+import RequestModal from '~/components/documents/requests/RequestModal.vue';
 import AccessBadges from '~/components/partials/access/AccessBadges.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
@@ -14,7 +15,7 @@ import HTMLContent from '~/components/partials/content/HTMLContent.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import DocumentCategoryBadge from '~/components/partials/documents/DocumentCategoryBadge.vue';
+import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
@@ -26,7 +27,7 @@ import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/documents/documents';
 import ConfirmModalWithReason from '../partials/ConfirmModalWithReason.vue';
 import ScrollToTop from '../partials/ScrollToTop.vue';
-import DocumentReminderModal from './DocumentReminderModal.vue';
+import ReminderModal from './ReminderModal.vue';
 
 const props = defineProps<{
     documentId: number;
@@ -40,7 +41,7 @@ const clipboardStore = useClipboardStore();
 
 const notifications = useNotificationsStore();
 
-const modal = useModal();
+const overlay = useOverlay();
 
 const documentsDocuments = await useDocumentsDocuments();
 
@@ -55,6 +56,13 @@ const {
     error,
 } = useLazyAsyncData(`document-${props.documentId}`, () => documentsDocuments.getDocument(props.documentId));
 
+useHead({
+    title: () =>
+        doc.value?.document?.title
+            ? `${doc.value.document.title} - ${t('pages.documents.id.title')}`
+            : t('pages.documents.id.title'),
+});
+
 function addToClipboard(): void {
     if (doc.value?.document) {
         clipboardStore.addDocument(doc.value.document);
@@ -63,7 +71,7 @@ function addToClipboard(): void {
     notifications.add({
         title: { key: 'notifications.clipboard.document_added.title', parameters: {} },
         description: { key: 'notifications.clipboard.document_added.content', parameters: {} },
-        timeout: 3250,
+        duration: 3250,
         type: NotificationType.INFO,
     });
 }
@@ -75,12 +83,13 @@ if (hash.value !== undefined && hash.value !== null) {
     }
 }
 
+const documentRequestModal = overlay.create(RequestModal);
 function openRequestsModal(): void {
     if (doc.value?.access === undefined || doc.value?.document === undefined) {
         return;
     }
 
-    modal.open(DocumentRequestModal, {
+    documentRequestModal.open({
         access: doc.value.access,
         doc: doc.value.document,
         onRefresh: () => refresh(),
@@ -134,12 +143,12 @@ async function toggleDocument(): Promise<void> {
 
 const accordionItems = computed(() =>
     [
-        { slot: 'relations', label: t('common.relation', 2), icon: 'i-mdi-account-multiple' },
-        { slot: 'references', label: t('common.reference', 2), icon: 'i-mdi-file-document' },
-        { slot: 'access', label: t('common.access'), icon: 'i-mdi-lock', defaultOpen: true },
-        { slot: 'comments', label: t('common.comment', 2), icon: 'i-mdi-comment', defaultOpen: true },
+        { value: 'relations', slot: 'relations' as const, label: t('common.relation', 2), icon: 'i-mdi-account-multiple' },
+        { value: 'references', slot: 'references' as const, label: t('common.reference', 2), icon: 'i-mdi-file-document' },
+        { value: 'access', slot: 'access' as const, label: t('common.access'), icon: 'i-mdi-lock' },
+        { value: 'comments', slot: 'comments' as const, label: t('common.comment', 2), icon: 'i-mdi-comment' },
         can('documents.DocumentsService/ListDocumentActivity').value
-            ? { slot: 'activity', label: t('common.activity'), icon: 'i-mdi-comment-quote' }
+            ? { value: 'activity', slot: 'activity' as const, label: t('common.activity'), icon: 'i-mdi-comment-quote' }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
@@ -158,9 +167,8 @@ defineShortcuts({
                     doc.value?.document?.creatorJob,
                 )
             )
-        ) {
+        )
             return;
-        }
 
         documentsDocuments.toggleDocument(props.documentId, !!doc.value?.document?.closed);
     },
@@ -177,9 +185,8 @@ defineShortcuts({
                     doc.value?.document?.creatorJob,
                 )
             )
-        ) {
+        )
             return;
-        }
 
         navigateTo({
             name: 'documents-id-edit',
@@ -187,55 +194,52 @@ defineShortcuts({
         });
     },
     'd-r': () => {
-        if (!doc.value || !can('documents.DocumentsService/ListDocumentReqs').value) {
-            return;
-        }
+        if (!doc.value || !can('documents.DocumentsService/ListDocumentReqs').value) return;
 
         openRequestsModal();
     },
 });
 
 const scrollRef = useTemplateRef('scrollRef');
+
+const confirmModal = overlay.create(ConfirmModal);
+const confirmModalWithReason = overlay.create(ConfirmModalWithReason);
+const reminderModal = overlay.create(ReminderModal, { props: { documentId: props.documentId } });
 </script>
 
 <template>
-    <UDashboardNavbar class="print:hidden" :title="$t('pages.documents.id.title')">
-        <template #right>
-            <PartialsBackButton to="/documents" />
+    <UDashboardPanel>
+        <template #header>
+            <UDashboardNavbar class="print:hidden" :title="$t('pages.documents.id.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
 
-            <UButton icon="i-mdi-refresh" :label="$t('common.refresh')" :loading="isRequestPending(status)" @click="refresh" />
+                <template #right>
+                    <PartialsBackButton to="/documents" />
 
-            <UButtonGroup class="inline-flex">
-                <IDCopyBadge
-                    :id="doc?.document?.id ?? documentId"
-                    prefix="DOC"
-                    :title="{ key: 'notifications.document_view.copy_document_id.title', parameters: {} }"
-                    :content="{ key: 'notifications.document_view.copy_document_id.content', parameters: {} }"
-                />
+                    <UButton
+                        icon="i-mdi-refresh"
+                        :label="$t('common.refresh')"
+                        :loading="isRequestPending(status)"
+                        :ui="{ label: 'hidden sm:inline-flex' }"
+                        @click="() => refresh()"
+                    />
 
-                <AddToButton :title="$t('components.clipboard.clipboard_button.add')" :callback="addToClipboard" />
-            </UButtonGroup>
-        </template>
-    </UDashboardNavbar>
+                    <UButtonGroup class="inline-flex">
+                        <IDCopyBadge
+                            :id="doc?.document?.id ?? documentId"
+                            prefix="DOC"
+                            :title="{ key: 'notifications.document_view.copy_document_id.title', parameters: {} }"
+                            :content="{ key: 'notifications.document_view.copy_document_id.content', parameters: {} }"
+                        />
 
-    <UDashboardPanelContent class="p-0 sm:pb-0">
-        <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.document', 1)])" />
-        <template v-else-if="error">
-            <DataErrorBlock :title="$t('common.unable_to_load', [$t('common.document', 1)])" :error="error" :retry="refresh" />
-            <DocumentRequestAccess
-                v-if="error.message.includes('ErrDocViewDenied')"
-                class="mt-2 w-full"
-                :document-id="documentId"
-            />
-        </template>
-        <DataNoDataBlock
-            v-else-if="!doc"
-            icon="i-mdi-file-search"
-            :message="$t('common.not_found', [$t('common.document', 1)])"
-        />
+                        <AddToButton :title="$t('components.clipboard.clipboard_button.add')" :callback="addToClipboard" />
+                    </UButtonGroup>
+                </template>
+            </UDashboardNavbar>
 
-        <template v-else>
-            <UDashboardToolbar class="print:hidden">
+            <UDashboardToolbar v-if="doc" class="p-1 print:hidden">
                 <template #default>
                     <div class="flex flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
                         <UTooltip
@@ -251,22 +255,16 @@ const scrollRef = useTemplateRef('scrollRef');
                             "
                             class="flex-1"
                             :text="`${$t('common.open', 1)}/ ${$t('common.close')}`"
-                            :shortcuts="['D', 'T']"
+                            :kbds="['D', 'T']"
                         >
                             <UButton
-                                class="flex-1 flex-col"
                                 block
+                                :label="doc.document?.closed ? $t('common.open', 1) : $t('common.close', 1)"
                                 :icon="doc.document?.closed ? 'i-mdi-lock-open-variant' : 'i-mdi-lock'"
-                                :ui="{ icon: { base: doc.document?.closed ? 'text-success-500' : 'text-success-500' } }"
+                                :color="doc.document?.closed ? 'success' : 'error'"
+                                variant="ghost"
                                 @click="toggleDocument()"
-                            >
-                                <template v-if="doc.document?.closed">
-                                    {{ $t('common.open', 1) }}
-                                </template>
-                                <template v-else>
-                                    {{ $t('common.close', 1) }}
-                                </template>
-                            </UButton>
+                            />
                         </UTooltip>
 
                         <UTooltip
@@ -282,19 +280,19 @@ const scrollRef = useTemplateRef('scrollRef');
                             "
                             class="flex-1"
                             :text="$t('common.edit')"
-                            :shortcuts="['D', 'E']"
+                            :kbds="['D', 'E']"
                         >
                             <UButton
-                                class="flex-1 flex-col"
                                 block
                                 :to="{
                                     name: 'documents-id-edit',
                                     params: { id: doc.document?.id },
                                 }"
+                                color="neutral"
+                                variant="ghost"
                                 icon="i-mdi-pencil"
-                            >
-                                {{ $t('common.edit') }}
-                            </UButton>
+                                :label="$t('common.edit')"
+                            />
                         </UTooltip>
 
                         <UTooltip
@@ -302,56 +300,64 @@ const scrollRef = useTemplateRef('scrollRef');
                             class="flex flex-1"
                             :text="`${$t('common.pin', 1)}/ ${$t('common.unpin')}`"
                         >
-                            <UButtonGroup class="flex flex-1">
-                                <UButton
-                                    class="flex-1 flex-col"
-                                    block
-                                    :color="doc.document?.pin?.state && doc.document?.pin?.userId ? 'error' : 'primary'"
-                                    @click="togglePin(documentId, !doc.document?.pin?.userId, true)"
-                                >
-                                    <UIcon
-                                        class="size-5"
-                                        :name="
-                                            doc.document?.pin?.state && doc.document?.pin?.userId
-                                                ? 'i-mdi-playlist-remove'
-                                                : 'i-mdi-playlist-plus'
-                                        "
-                                    />
-                                    {{ $t('common.personal') }}
-                                </UButton>
-
-                                <UButton
-                                    v-if="attr('documents.DocumentsService/ToggleDocumentPin', 'Types', 'JobWide').value"
-                                    class="flex-1 flex-col"
-                                    block
-                                    :color="doc.document?.pin?.state && doc.document?.pin?.job ? 'error' : 'primary'"
-                                    @click="togglePin(documentId, !doc.document?.pin?.job, false)"
-                                >
-                                    <UIcon
-                                        class="size-5"
-                                        :name="
-                                            doc.document?.pin?.state && doc.document?.pin?.job ? 'i-mdi-pin-off' : 'i-mdi-pin'
-                                        "
-                                    />
-                                    {{ $t('common.job') }}
-                                </UButton>
-                            </UButtonGroup>
+                            <UDropdownMenu
+                                :items="
+                                    (
+                                        [
+                                            {
+                                                label: $t('common.personal'),
+                                                color:
+                                                    doc.document?.pin?.state && doc.document?.pin?.userId
+                                                        ? 'primary'
+                                                        : undefined,
+                                                icon:
+                                                    doc.document?.pin?.state && doc.document?.pin?.userId
+                                                        ? 'i-mdi-playlist-remove'
+                                                        : 'i-mdi-playlist-plus',
+                                                onSelect: () => {
+                                                    togglePin(documentId, !doc?.document?.pin?.userId, true);
+                                                },
+                                            },
+                                            attr('documents.DocumentsService/ToggleDocumentPin', 'Types', 'JobWide').value
+                                                ? {
+                                                      label: $t('common.job'),
+                                                      color:
+                                                          doc.document?.pin?.state && doc.document?.pin?.job
+                                                              ? 'primary'
+                                                              : undefined,
+                                                      icon:
+                                                          doc.document?.pin?.state && doc.document?.pin?.job
+                                                              ? 'i-mdi-pin-off'
+                                                              : 'i-mdi-pin',
+                                                      onSelect: () => {
+                                                          togglePin(documentId, !doc?.document?.pin?.job, false);
+                                                      },
+                                                  }
+                                                : undefined,
+                                        ] as DropdownMenuItem[]
+                                    ).flatMap((item) => (item !== undefined ? [item] : []))
+                                "
+                                :content="{ align: 'center' }"
+                                :ui="{ content: 'w-48' }"
+                            >
+                                <UButton :label="$t('common.pin')" color="neutral" variant="ghost" block icon="i-mdi-pin" />
+                            </UDropdownMenu>
                         </UTooltip>
 
                         <UTooltip
                             v-if="can('documents.DocumentsService/ListDocumentReqs').value"
                             class="flex-1"
                             :text="$t('common.request', 2)"
-                            :shortcuts="['D', 'R']"
+                            :kbds="['D', 'R']"
                         >
                             <UButton
-                                class="flex-1 flex-col"
                                 block
+                                color="neutral"
+                                variant="ghost"
                                 icon="i-mdi-frequently-asked-questions"
+                                :label="$t('common.request', 2)"
                                 @click="openRequestsModal"
-                            >
-                                {{ $t('common.request', 2) }}
-                            </UButton>
+                            />
                         </UTooltip>
 
                         <UTooltip
@@ -360,19 +366,21 @@ const scrollRef = useTemplateRef('scrollRef');
                             :text="$t('common.reminder')"
                         >
                             <UButton
-                                class="flex-1 flex-col"
                                 block
+                                color="neutral"
+                                variant="ghost"
                                 icon="i-mdi-reminder"
+                                :label="$t('common.reminder')"
                                 @click="
-                                    modal.open(DocumentReminderModal, {
-                                        documentId: documentId,
-                                        reminderTime: doc.document?.workflowUser?.manualReminderTime ?? undefined,
-                                        'onUpdate:reminderTime': () => updateReminderTime($event),
-                                    })
+                                    () => {
+                                        reminderModal.open({
+                                            documentId: documentId,
+                                            reminderTime: doc?.document?.workflowUser?.manualReminderTime ?? undefined,
+                                            'onUpdate:reminderTime': ($event) => updateReminderTime($event),
+                                        });
+                                    }
                                 "
-                            >
-                                {{ $t('common.reminder') }}
-                            </UButton>
+                            />
                         </UTooltip>
 
                         <UTooltip
@@ -391,18 +399,18 @@ const scrollRef = useTemplateRef('scrollRef');
                             :text="$t('components.documents.document_view.take_ownership')"
                         >
                             <UButton
-                                class="flex-1 flex-col"
                                 block
                                 :disabled="doc?.document?.creatorId === activeChar?.userId"
                                 icon="i-mdi-creation"
+                                color="neutral"
+                                variant="ghost"
+                                :label="$t('components.documents.document_view.take_ownership')"
                                 @click="
-                                    modal.open(ConfirmModal, {
+                                    confirmModal.open({
                                         confirm: async () => documentsDocuments.changeDocumentOwner(documentId),
                                     })
                                 "
-                            >
-                                {{ $t('components.documents.document_view.take_ownership') }}
-                            </UButton>
+                            />
                         </UTooltip>
 
                         <UTooltip
@@ -420,13 +428,13 @@ const scrollRef = useTemplateRef('scrollRef');
                             :text="$t('common.delete')"
                         >
                             <UButton
-                                class="flex-1 flex-col"
                                 block
                                 :color="!doc.document?.deletedAt ? 'error' : 'success'"
                                 :icon="!doc.document?.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
                                 :label="!doc.document?.deletedAt ? $t('common.delete') : $t('common.restore')"
+                                variant="ghost"
                                 @click="
-                                    modal.open(doc.document?.deletedAt !== undefined ? ConfirmModal : ConfirmModalWithReason, {
+                                    (doc.document?.deletedAt !== undefined ? confirmModalWithReason : confirmModal).open({
                                         confirm: async (reason?: string) =>
                                             documentsDocuments.deleteDocument(
                                                 documentId,
@@ -441,10 +449,10 @@ const scrollRef = useTemplateRef('scrollRef');
                 </template>
             </UDashboardToolbar>
 
-            <UCard ref="scrollRef" class="relative overflow-x-auto" :ui="{ rounded: '' }">
-                <template #header>
-                    <div class="mb-4">
-                        <h1 class="break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
+            <UDashboardToolbar v-if="doc" class="print:hidden">
+                <div class="mb-2">
+                    <div class="mt-2 mb-4">
+                        <h1 class="px-0.5 py-1 text-4xl font-bold break-words sm:pl-1">
                             <span v-if="!doc.document?.title" class="italic">
                                 {{ $t('common.untitled') }}
                             </span>
@@ -455,180 +463,200 @@ const scrollRef = useTemplateRef('scrollRef');
                     </div>
 
                     <div class="mb-2 flex gap-2">
-                        <DocumentCategoryBadge :category="doc.document?.category" />
+                        <CategoryBadge :category="doc.document?.category" />
 
                         <OpenClosedBadge :closed="doc.document?.closed" size="md" />
 
-                        <UBadge v-if="doc.document?.state" class="inline-flex gap-1" size="md">
-                            <UIcon class="size-5" name="i-mdi-note-check" />
-                            <span>
-                                {{ doc.document?.state }}
-                            </span>
-                        </UBadge>
+                        <UBadge
+                            v-if="doc.document?.state"
+                            class="inline-flex gap-1"
+                            size="md"
+                            icon="i-mdi-note-check"
+                            :label="doc.document?.state"
+                        />
 
-                        <UBadge class="inline-flex gap-1" color="black" size="md">
-                            <UIcon class="size-5" name="i-mdi-comment-text-multiple" />
-                            <span>
-                                {{
-                                    commentCount !== undefined
-                                        ? $t('common.comments', commentCount)
-                                        : '? ' + $t('common.comment', 2)
-                                }}
-                            </span>
-                        </UBadge>
+                        <UBadge
+                            class="inline-flex gap-1"
+                            color="neutral"
+                            size="md"
+                            icon="i-mdi-comment-text-multiple"
+                            :label="
+                                commentCount !== undefined
+                                    ? $t('common.comments', commentCount)
+                                    : '? ' + $t('common.comment', 2)
+                            "
+                        />
                     </div>
 
                     <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
-                        <UBadge class="inline-flex gap-1" color="black" size="md">
-                            <UIcon class="size-5" name="i-mdi-account" />
+                        <UBadge class="inline-flex gap-1" color="neutral" size="md" icon="i-mdi-account">
                             <span class="inline-flex items-center gap-1">
-                                <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
-                                <CitizenInfoPopover :user="doc.document?.creator" />
+                                {{ $t('common.created_by') }}
+                                <CitizenInfoPopover :user="doc.document?.creator" size="xs" />
                             </span>
                         </UBadge>
 
-                        <UBadge class="inline-flex gap-1" color="black" size="md">
-                            <UIcon class="size-5" name="i-mdi-calendar" />
-                            <span>
-                                {{ $t('common.created') }}
-                                <GenericTime :value="doc.document?.createdAt" type="long" />
-                            </span>
+                        <UBadge class="inline-flex gap-1" color="neutral" size="md" icon="i-mdi-calendar">
+                            {{ $t('common.created') }}
+                            <GenericTime :value="doc.document?.createdAt" type="long" />
                         </UBadge>
 
-                        <UBadge v-if="doc.document?.updatedAt" class="inline-flex gap-1" color="black" size="md">
-                            <UIcon class="size-5" name="i-mdi-calendar-edit" />
-                            <span>
-                                {{ $t('common.updated') }}
-                                <GenericTime :value="doc.document?.updatedAt" type="long" />
-                            </span>
+                        <UBadge
+                            v-if="doc.document?.updatedAt"
+                            class="inline-flex gap-1"
+                            color="neutral"
+                            size="md"
+                            icon="i-mdi-calendar-edit"
+                        >
+                            {{ $t('common.updated') }}
+                            <GenericTime :value="doc.document?.updatedAt" type="long" />
                         </UBadge>
 
                         <UBadge
                             v-if="doc.document?.workflowState?.autoCloseTime"
                             class="inline-flex gap-1"
-                            color="black"
+                            color="neutral"
                             size="md"
+                            icon="i-mdi-lock-clock"
                         >
-                            <UIcon class="size-5" name="i-mdi-lock-clock" />
-                            <span>
-                                {{ $t('common.auto_close', 2) }}
-                                <GenericTime :value="doc.document?.workflowState?.autoCloseTime" ago />
-                            </span>
+                            {{ $t('common.auto_close', 2) }}
+                            <GenericTime :value="doc.document?.workflowState?.autoCloseTime" ago />
                         </UBadge>
                         <UBadge
                             v-else-if="doc.document?.workflowState?.nextReminderTime"
                             class="inline-flex gap-1"
-                            color="black"
+                            color="neutral"
                             size="md"
+                            icon="i-mdi-reminder"
                         >
-                            <UIcon class="size-5" name="i-mdi-reminder" />
-                            <span>
-                                {{ $t('common.reminder') }}
-                                <GenericTime :value="doc.document?.workflowState?.nextReminderTime" ago />
-                            </span>
+                            {{ $t('common.reminder') }}
+                            <GenericTime :value="doc.document?.workflowState?.nextReminderTime" ago />
                         </UBadge>
 
                         <UBadge
                             v-if="doc.document?.workflowUser?.manualReminderTime"
                             class="inline-flex gap-1"
-                            color="black"
+                            color="neutral"
                             size="md"
+                            icon="i-mdi-reminder"
                         >
-                            <UIcon class="size-5" name="i-mdi-reminder" />
-                            <span>
-                                {{ $t('common.reminder') }}
-                                <GenericTime :value="doc.document?.workflowUser?.manualReminderTime" type="short" />
-                            </span>
+                            {{ $t('common.reminder') }}
+                            <GenericTime :value="doc.document?.workflowUser?.manualReminderTime" type="short" />
                         </UBadge>
 
-                        <UBadge v-if="doc.document?.draft" class="inline-flex gap-1" color="info" size="md">
-                            <UIcon class="size-5" name="i-mdi-pencil" />
-                            <span>
-                                {{ $t('common.draft') }}
-                            </span>
-                        </UBadge>
+                        <UBadge
+                            v-if="doc.document?.draft"
+                            class="inline-flex gap-1"
+                            color="info"
+                            size="md"
+                            icon="i-mdi-pencil"
+                            :label="$t('common.draft')"
+                        />
 
-                        <UBadge v-if="doc.document?.deletedAt" class="inline-flex gap-1" color="amber" size="md">
-                            <UIcon class="size-5" name="i-mdi-calendar-remove" />
-                            <span>
-                                {{ $t('common.deleted') }}
-                                <GenericTime :value="doc.document?.deletedAt" type="long" />
-                            </span>
+                        <UBadge
+                            v-if="doc.document?.deletedAt"
+                            class="inline-flex gap-1"
+                            color="warning"
+                            size="md"
+                            icon="i-mdi-calendar-remove"
+                        >
+                            {{ $t('common.deleted') }}
+                            <GenericTime :value="doc.document?.deletedAt" type="long" />
                         </UBadge>
                     </div>
-                </template>
+                </div>
+            </UDashboardToolbar>
+        </template>
 
-                <div>
-                    <h2 class="sr-only">
-                        {{ $t('common.content') }}
-                    </h2>
+        <template #body>
+            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.document', 1)])" />
+            <template v-else-if="error">
+                <DataErrorBlock
+                    :title="$t('common.unable_to_load', [$t('common.document', 1)])"
+                    :error="error"
+                    :retry="refresh"
+                />
+                <RequestAccess
+                    v-if="error.message.includes('ErrDocViewDenied')"
+                    class="mt-2 w-full"
+                    :document-id="documentId"
+                />
+            </template>
+            <DataNoDataBlock
+                v-else-if="!doc"
+                icon="i-mdi-file-search"
+                :message="$t('common.not_found', [$t('common.document', 1)])"
+            />
 
-                    <div class="mx-auto w-full max-w-screen-xl break-words rounded-lg bg-neutral-100 dark:bg-base-900">
-                        <HTMLContent
-                            v-if="doc.document?.content?.content"
-                            class="px-4 py-2"
-                            :value="doc.document.content.content"
-                        />
+            <template v-else>
+                <div ref="scrollRef">
+                    <div
+                        class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-800"
+                    >
+                        <HTMLContent v-if="doc.document?.content?.content" :value="doc.document.content.content" />
                     </div>
                 </div>
 
-                <template #footer>
-                    <UAccordion class="print:hidden" multiple :items="accordionItems" :unmount="true">
-                        <template #relations>
-                            <UContainer>
-                                <DocumentRelations :document-id="documentId" :show-document="false" />
-                            </UContainer>
-                        </template>
+                <UAccordion
+                    :default-value="['access', 'comments']"
+                    class="print:hidden"
+                    type="multiple"
+                    :items="accordionItems"
+                >
+                    <template #relations>
+                        <UContainer class="mb-2">
+                            <DocumentRelations :document-id="documentId" :show-document="false" />
+                        </UContainer>
+                    </template>
 
-                        <template #references>
-                            <UContainer>
-                                <DocumentReferences :document-id="documentId" :show-source="false" />
-                            </UContainer>
-                        </template>
+                    <template #references>
+                        <UContainer class="mb-2">
+                            <DocumentReferences :document-id="documentId" :show-source="false" />
+                        </UContainer>
+                    </template>
 
-                        <template #access>
-                            <UContainer>
-                                <DataNoDataBlock
-                                    v-if="!doc.access || (doc.access?.jobs.length === 0 && doc.access?.users.length === 0)"
-                                    icon="i-mdi-file-search"
-                                    :message="$t('common.not_found', [$t('common.access', 2)])"
+                    <template #access>
+                        <UContainer class="mb-2">
+                            <DataNoDataBlock
+                                v-if="!doc.access || (doc.access?.jobs.length === 0 && doc.access?.users.length === 0)"
+                                icon="i-mdi-file-search"
+                                :message="$t('common.not_found', [$t('common.access', 2)])"
+                            />
+
+                            <AccessBadges
+                                v-else
+                                :access-level="AccessLevel"
+                                :jobs="doc.access.jobs"
+                                :users="doc.access.users"
+                                i18n-key="enums.documents"
+                            />
+                        </UContainer>
+                    </template>
+
+                    <template #comments>
+                        <UContainer class="mb-2">
+                            <div id="comments">
+                                <DocumentComments
+                                    :document-id="documentId"
+                                    :closed="doc.document?.closed"
+                                    :can-comment="checkDocAccess(doc.access, doc.document?.creator, AccessLevel.COMMENT)"
+                                    @counted="commentCount = $event"
+                                    @new-comment="commentCount && commentCount++"
+                                    @deleted-comment="commentCount && commentCount > 0 && commentCount--"
                                 />
+                            </div>
+                        </UContainer>
+                    </template>
 
-                                <AccessBadges
-                                    v-else
-                                    :access-level="AccessLevel"
-                                    :jobs="doc.access.jobs"
-                                    :users="doc.access.users"
-                                    i18n-key="enums.documents"
-                                />
-                            </UContainer>
-                        </template>
+                    <template v-if="can('documents.DocumentsService/ListDocumentActivity').value" #activity>
+                        <UContainer class="mb-2">
+                            <ActivityList :document-id="documentId" />
+                        </UContainer>
+                    </template>
+                </UAccordion>
 
-                        <template #comments>
-                            <UContainer>
-                                <div id="comments">
-                                    <DocumentComments
-                                        :document-id="documentId"
-                                        :closed="doc.document?.closed"
-                                        :can-comment="checkDocAccess(doc.access, doc.document?.creator, AccessLevel.COMMENT)"
-                                        @counted="commentCount = $event"
-                                        @new-comment="commentCount && commentCount++"
-                                        @deleted-comment="commentCount && commentCount > 0 && commentCount--"
-                                    />
-                                </div>
-                            </UContainer>
-                        </template>
-
-                        <template v-if="can('documents.DocumentsService/ListDocumentActivity').value" #activity>
-                            <UContainer>
-                                <DocumentActivityList :document-id="documentId" />
-                            </UContainer>
-                        </template>
-                    </UAccordion>
-                </template>
-            </UCard>
-
-            <ScrollToTop :element="scrollRef?.$el" />
+                <ScrollToTop :element="scrollRef" />
+            </template>
         </template>
-    </UDashboardPanelContent>
+    </UDashboardPanel>
 </template>

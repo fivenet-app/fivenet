@@ -135,36 +135,38 @@ export const useLivemapStore = defineStore(
                         });
 
                         initiated.value = true;
-                    } else if (resp.data.oneofKind === 'userDelete') {
+                    } else if (resp.data.oneofKind === 'userDeletes') {
                         // Handle user deletion
-                        const userDelete = resp.data.userDelete;
-                        const userId = userDelete.id;
+                        for (const userDelete of resp.data.userDeletes.deletes) {
+                            const userId = userDelete.id;
 
-                        const um = markersUsers.value.get(userId);
-                        if (!um || um.job !== userDelete.job) {
-                            continue; // Skip if the user marker does not match the job
-                        }
+                            const um = markersUsers.value.get(userId);
+                            if (!um || um.job !== userDelete.job) {
+                                continue; // Skip if the user marker does not match the job
+                            }
 
-                        markersUsers.value.delete(userId);
+                            markersUsers.value.delete(userId);
 
-                        // If the deleted user was selected, clear the selection
-                        if (selectedMarker.value?.userId === userId) {
-                            selectedMarker.value = undefined;
-                        }
-                        if (ownMarker.value?.userId === userId) {
-                            ownMarker.value = undefined;
-                        }
+                            // If the deleted user was selected, clear the selection
+                            if (selectedMarker.value?.userId === userId) {
+                                selectedMarker.value = undefined;
+                            }
+                            if (ownMarker.value?.userId === userId) {
+                                ownMarker.value = undefined;
+                            }
 
-                        logger.debug('User marker deleted:', userId);
-                    } else if (resp.data.oneofKind === 'userUpdate') {
-                        const marker = resp.data.userUpdate;
-                        addOrUpdateUserMarker(marker);
-                        // If a marker is selected, update it
-                        if (livemap.value.centerSelectedMarker && marker.userId === selectedMarker.value?.userId) {
-                            selectedMarker.value = marker;
+                            logger.debug('User marker deleted:', userId);
                         }
-                        if (activeChar.value?.userId === marker.userId) {
-                            ownMarker.value = marker;
+                    } else if (resp.data.oneofKind === 'userUpdates') {
+                        for (const userUpdate of resp.data.userUpdates.updates) {
+                            addOrUpdateUserMarker(userUpdate);
+                            // If a marker is selected, update it
+                            if (livemap.value.centerSelectedMarker && userUpdate.userId === selectedMarker.value?.userId) {
+                                selectedMarker.value = userUpdate;
+                            }
+                            if (activeChar.value?.userId === userUpdate.userId) {
+                                ownMarker.value = userUpdate;
+                            }
                         }
                     } else {
                         logger.warn('Unknown data received - oneofKind:' + resp.data.oneofKind);
@@ -363,8 +365,8 @@ export const useLivemapStore = defineStore(
             if (dest.phoneNumber !== src.phoneNumber) {
                 dest.phoneNumber = src.phoneNumber;
             }
-            if (dest.avatar !== src.avatar) {
-                dest.avatar = src.avatar;
+            if (dest.profilePicture !== src.profilePicture) {
+                dest.profilePicture = src.profilePicture;
             }
         };
 

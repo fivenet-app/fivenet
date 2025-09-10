@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { getJobsJobsClient } from '~~/gen/ts/clients';
 import type { GetMOTDResponse, SetMOTDResponse } from '~~/gen/ts/services/jobs/jobs';
@@ -75,7 +75,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UForm class="w-full flex-col" :schema="schema" :state="state" @submit="onSubmitThrottle">
         <div class="flex items-center">
-            <h4 v-if="data && (data.motd.length > 0 || canDo)" class="flex-1 text-base font-semibold leading-6">
+            <h4 v-if="data && (data.motd.length > 0 || canDo)" class="flex-1 text-base leading-6 font-semibold">
                 {{ $t('common.motd') }}
             </h4>
 
@@ -98,15 +98,15 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             <template v-if="!editing">
                 <USkeleton v-if="isRequestPending(status)" class="h-7 w-full" />
                 <div v-else class="w-full flex-1">
-                    <p class="prose dark:prose-invert line-clamp-5 max-w-full whitespace-pre-wrap">
+                    <p class="prose line-clamp-5 max-w-full whitespace-pre-wrap dark:prose-invert">
                         {{ state.motd }}
                     </p>
                 </div>
             </template>
             <template v-else>
-                <UFormGroup class="w-full" name="motd">
+                <UFormField class="w-full" name="motd">
                     <UTextarea v-model="state.motd" name="motd" :rows="4" :maxrows="8" resize />
-                </UFormGroup>
+                </UFormField>
             </template>
         </div>
     </UForm>

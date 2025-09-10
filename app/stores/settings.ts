@@ -74,7 +74,6 @@ export const useSettingsStore = defineStore(
         });
 
         const streamerMode = ref<boolean>(false);
-        const calculatorPosition = ref<'top' | 'middle' | 'bottom'>('middle');
         const jobsService = ref({
             cardView: true,
         });
@@ -92,7 +91,7 @@ export const useSettingsStore = defineStore(
             updateAvailable.value = newVersion;
         };
 
-        const setNuiSettings = (enabled: boolean, resourceName: string | undefined): void => {
+        const setNuiSettings = (enabled: boolean, resourceName?: string | undefined): void => {
             nuiEnabled.value = enabled;
             nuiResourceName.value = resourceName;
         };
@@ -167,7 +166,6 @@ export const useSettingsStore = defineStore(
             audio,
             calendar,
             streamerMode,
-            calculatorPosition,
             jobsService,
             editor,
 

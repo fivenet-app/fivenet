@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	grpc_auth "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/auth"
+	grpc_database "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/database"
 	grpc_permission "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/permission"
 	grpc_sanitizer "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/sanitizer"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/tracing"
@@ -152,6 +153,7 @@ func NewServer(p ServerParams) (ServerResult, error) {
 			recovery.UnaryServerInterceptor(
 				recovery.WithRecoveryHandler(grpcPanicRecoveryHandler(p.Logger)),
 			),
+			grpc_database.PaginationInterceptor(0),
 		),
 		grpc.ChainStreamInterceptor(
 			srvMetrics.StreamServerInterceptor(

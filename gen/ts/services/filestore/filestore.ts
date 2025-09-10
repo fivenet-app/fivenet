@@ -116,8 +116,8 @@ export const ListFilesRequest = new ListFilesRequest$Type();
 class ListFilesResponse$Type extends MessageType<ListFilesResponse> {
     constructor() {
         super("services.filestore.ListFilesResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => File }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => File, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListFilesResponse>): ListFilesResponse {

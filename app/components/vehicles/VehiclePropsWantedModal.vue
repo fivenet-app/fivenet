@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { getVehiclesVehiclesClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -9,9 +9,11 @@ const props = defineProps<{
     plate: string;
 }>();
 
-const vehicleProps = defineModel<VehicleProps>('vehicleProps');
+const emits = defineEmits<{
+    (e: 'close'): void;
+}>();
 
-const { isOpen } = useModal();
+const vehicleProps = defineModel<VehicleProps>('vehicleProps');
 
 const notifications = useNotificationsStore();
 
@@ -48,7 +50,7 @@ async function setWantedState(values: Schema): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        isOpen.value = false;
+        emits('close');
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -60,40 +62,33 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await setWantedState(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
-                            {{ vehicleProps?.wanted ? $t('common.revoke_wanted') : $t('common.set_wanted') }}
-                        </h3>
+    <UModal :title="vehicleProps?.wanted ? $t('common.revoke_wanted') : $t('common.set_wanted')">
+        <template #body>
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UFormField class="flex-1" name="reason" :label="$t('common.reason')" required>
+                    <UInput v-model="state.reason" type="text" class="w-full" :placeholder="$t('common.reason')" />
+                </UFormField>
+            </UForm>
+        </template>
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                    </div>
-                </template>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close')" />
 
-                <div>
-                    <UFormGroup class="flex-1" name="reason" :label="$t('common.reason')" required>
-                        <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
-                    </UFormGroup>
-                </div>
-
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="black" block @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
-
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.save') }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                <UButton
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :label="$t('common.save')"
+                    @click="formRef?.submit()"
+                />
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

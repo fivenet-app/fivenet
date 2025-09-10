@@ -15,12 +15,18 @@ const props = defineProps<{
     calendarId: number;
 }>();
 
+defineEmits<{
+    close: [boolean];
+}>();
+
 const { can } = useAuth();
 
-const modal = useModal();
-const { isOpen } = useSlideover();
-
 const calendarStore = useCalendarStore();
+
+const overlay = useOverlay();
+
+const confirmModal = overlay.create(ConfirmModal);
+const calendarCreateOrUpdateModal = overlay.create(CalendarCreateOrUpdateModal);
 
 const { data, status, refresh, error } = useLazyAsyncData(`calendar-${props.calendarId}`, () =>
     calendarStore.getCalendar({ calendarId: props.calendarId }),
@@ -30,133 +36,106 @@ const calendar = computed(() => data.value?.calendar);
 </script>
 
 <template>
-    <USlideover :ui="{ width: 'w-screen sm:max-w-2xl' }" :overlay="false">
-        <UCard
-            class="flex flex-1 flex-col"
-            :ui="{
-                body: {
-                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--header-height)))] max-h-[calc(100dvh-(2*var(--header-height)))] overflow-y-auto',
-                    padding: 'px-1 py-2 sm:p-2',
-                },
-                ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-            }"
-        >
-            <template #header>
-                <div class="flex flex-col gap-1">
-                    <div class="flex items-center justify-between">
-                        <h3 class="inline-flex gap-2 text-2xl font-semibold leading-6">
-                            {{ $t('common.calendar') }}: {{ calendar?.name ?? $t('common.calendar') }}
-                        </h3>
-
-                        <UTooltip
-                            v-if="
-                                calendar &&
-                                can('calendar.CalendarService/CreateCalendar').value &&
-                                checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.EDIT)
-                            "
-                            :text="$t('common.edit')"
-                        >
-                            <UButton
-                                variant="link"
-                                :padded="false"
-                                icon="i-mdi-pencil"
-                                @click="
-                                    modal.open(CalendarCreateOrUpdateModal, {
-                                        calendarId: calendar?.id,
-                                    })
-                                "
-                            />
-                        </UTooltip>
-
-                        <UTooltip
-                            v-if="calendar && checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.MANAGE)"
-                            :text="$t('common.delete')"
-                        >
-                            <UButton
-                                variant="link"
-                                :padded="false"
-                                icon="i-mdi-delete"
-                                color="error"
-                                @click="
-                                    modal.open(ConfirmModal, {
-                                        confirm: async () => calendarStore.deleteCalendar(calendar?.id!),
-                                    })
-                                "
-                            />
-                        </UTooltip>
-
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                    </div>
-                </div>
-            </template>
-
-            <div>
-                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.calendar')])" />
-                <DataErrorBlock
-                    v-else-if="error"
-                    :title="$t('common.unable_to_load', [$t('common.calendar')])"
-                    :error="error"
-                    :retry="refresh"
-                />
-                <DataNoDataBlock v-else-if="!calendar" :type="$t('common.calendar')" icon="i-mdi-comment-text-multiple" />
-
-                <template v-else>
-                    <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
-                        <OpenClosedBadge :closed="calendar.closed" />
-
-                        <UBadge class="inline-flex gap-1" color="black" size="md">
-                            <UIcon class="size-5" name="i-mdi-account" />
-                            <span class="inline-flex items-center gap-1">
-                                <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
-                                <CitizenInfoPopover :user="calendar.creator" show-avatar-in-name />
-                            </span>
-                        </UBadge>
-
-                        <UBadge class="inline-flex gap-1" color="black" size="md">
-                            <UIcon class="size-5" :name="calendar.public ? 'i-mdi-public' : 'i-mdi-calendar-lock'" />
-                            <span>
-                                {{
-                                    calendar.public
-                                        ? $t('components.calendar.CalendarCreateOrUpdateModal.public')
-                                        : $t('components.calendar.CalendarCreateOrUpdateModal.private')
-                                }}
-                            </span>
-                        </UBadge>
-                    </div>
-
-                    <p>
-                        <span class="font-semibold">{{ $t('common.description') }}:</span>
-                        {{ calendar.description ?? $t('common.na') }}
-                    </p>
-                </template>
-
-                <UAccordion
-                    v-if="calendar?.access && (calendar?.access?.jobs.length > 0 || calendar?.access?.users.length > 0)"
-                    multiple
-                    :items="[{ slot: 'access', label: $t('common.access'), icon: 'i-mdi-lock' }]"
-                    :unmount="true"
+    <USlideover :title="`${$t('common.calendar')}: ${calendar?.name ?? $t('common.calendar')}`" :overlay="false">
+        <template #actions>
+            <div class="flex items-center justify-between gap-2">
+                <UTooltip
+                    v-if="
+                        calendar &&
+                        can('calendar.CalendarService/CreateCalendar').value &&
+                        checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.EDIT)
+                    "
+                    :text="$t('common.edit')"
                 >
-                    <template #access>
-                        <UContainer :ui="{ padding: 'px-2 sm:px-4 lg:px-4' }">
-                            <AccessBadges
-                                :access-level="AccessLevel"
-                                :jobs="calendar?.access.jobs"
-                                :users="calendar?.access.users"
-                                i18n-key="enums.calendar"
-                            />
-                        </UContainer>
-                    </template>
-                </UAccordion>
-            </div>
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-pencil"
+                        @click="
+                            calendarCreateOrUpdateModal.open({
+                                calendarId: calendar?.id,
+                            })
+                        "
+                    />
+                </UTooltip>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" color="black" block @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
-                </UButtonGroup>
+                <UTooltip
+                    v-if="calendar && checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.MANAGE)"
+                    :text="$t('common.delete')"
+                >
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-delete"
+                        color="error"
+                        @click="
+                            confirmModal.open({
+                                confirm: async () => calendarStore.deleteCalendar(calendar?.id!),
+                            })
+                        "
+                    />
+                </UTooltip>
+            </div>
+        </template>
+
+        <template #body>
+            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.calendar')])" />
+            <DataErrorBlock
+                v-else-if="error"
+                :title="$t('common.unable_to_load', [$t('common.calendar')])"
+                :error="error"
+                :retry="refresh"
+            />
+            <DataNoDataBlock v-else-if="!calendar" :type="$t('common.calendar')" icon="i-mdi-comment-text-multiple" />
+
+            <template v-else>
+                <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
+                    <OpenClosedBadge :closed="calendar.closed" />
+
+                    <UBadge class="inline-flex gap-1" color="neutral" size="md" icon="i-mdi-account">
+                        <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
+                        <CitizenInfoPopover :user="calendar.creator" show-avatar-in-name />
+                    </UBadge>
+
+                    <UBadge
+                        class="inline-flex gap-1"
+                        color="neutral"
+                        size="md"
+                        :icon="calendar.public ? 'i-mdi-public' : 'i-mdi-calendar-lock'"
+                        :label="
+                            calendar.public
+                                ? $t('components.calendar.CalendarCreateOrUpdateModal.public')
+                                : $t('components.calendar.CalendarCreateOrUpdateModal.private')
+                        "
+                    />
+                </div>
+
+                <p>
+                    <span class="font-semibold">{{ $t('common.description') }}:</span>
+                    {{ calendar.description ?? $t('common.na') }}
+                </p>
             </template>
-        </UCard>
+
+            <UAccordion
+                v-if="calendar?.access && (calendar?.access?.jobs.length > 0 || calendar?.access?.users.length > 0)"
+                multiple
+                :items="[{ slot: 'access' as const, label: $t('common.access'), icon: 'i-mdi-lock' }]"
+            >
+                <template #access>
+                    <UContainer>
+                        <AccessBadges
+                            :access-level="AccessLevel"
+                            :jobs="calendar?.access.jobs"
+                            :users="calendar?.access.users"
+                            i18n-key="enums.calendar"
+                        />
+                    </UContainer>
+                </template>
+            </UAccordion>
+        </template>
+
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
+            </UButtonGroup>
+        </template>
     </USlideover>
 </template>

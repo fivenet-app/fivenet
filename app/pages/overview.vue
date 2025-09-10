@@ -18,7 +18,7 @@ const items = [
     {
         title: t('common.mail'),
         description: t('pages.overview.features.mailer'),
-        to: { name: 'mail' },
+        to: { name: 'mail-thread' },
         permission: 'mailer.MailerService/ListEmails',
         icon: 'i-mdi-inbox-full-outline',
     },
@@ -88,15 +88,19 @@ const items = [
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('common.overview')" />
+    <UDashboardPanel id="overview">
+        <template #header>
+            <UDashboardNavbar :title="$t('common.overview')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+            </UDashboardNavbar>
+        </template>
 
-            <UDashboardPanelContent>
-                <CardsList :items="items" />
+        <template #body>
+            <CardsList :items="items" />
 
-                <FiveNetHints class="mt-4" />
-            </UDashboardPanelContent>
-        </UDashboardPanel>
-    </UDashboardPage>
+            <FiveNetHints class="mt-4" />
+        </template>
+    </UDashboardPanel>
 </template>

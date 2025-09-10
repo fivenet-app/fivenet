@@ -14,11 +14,10 @@ withDefaults(
 
 <template>
     <UBadge
-        class="text-gray-900 dark:text-white"
+        class="text-highlighted"
         :class="dispatchStatusAnimate(status) ? 'animate-pulse' : ''"
         :color="dispatchStatusToBadgeColor(status)"
         size="xs"
-    >
-        {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[status ?? 0]}`) }}
-    </UBadge>
+        :label="$t(`enums.centrum.StatusDispatch.${StatusDispatch[status ?? 0]}`)"
+    />
 </template>

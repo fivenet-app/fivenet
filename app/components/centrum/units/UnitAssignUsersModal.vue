@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
@@ -10,13 +11,13 @@ const props = defineProps<{
     unit: Unit;
 }>();
 
-const { isOpen } = useModal();
+const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 
 const completorStore = useCompletorStore();
 
 const centrumCentrumClient = await getCentrumCentrumClient();
-
-const usersLoading = ref(false);
 
 const schema = z.object({
     users: z.custom<UserShort>().array().max(10).default([]),
@@ -49,7 +50,7 @@ async function assignUnit(unitId: number): Promise<void> {
         });
         await call;
 
-        isOpen.value = false;
+        emit('close', false);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -63,102 +64,72 @@ const onSubmitThrottle = useThrottleFn(async () => {
     canSubmit.value = false;
     await assignUnit(props.unit.id).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard
-                class="flex flex-1 flex-col"
-                :ui="{
-                    body: {
-                        padding: 'px-1 py-2 sm:p-2',
-                    },
-                    ring: '',
-                    divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-                }"
-            >
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
-                            {{ $t('components.centrum.assign_unit.title') }}: {{ unit.name }} ({{ unit.initials }})
-                        </h3>
+    <UModal :title="`${$t('components.centrum.assign_unit.title')}: ${unit.name} (${unit.initials})`">
+        <template #body>
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <div class="flex flex-1 flex-col justify-between gap-2">
+                    <div class="divide-y divide-gray-100 px-2 sm:px-6 dark:divide-gray-800">
+                        <UFormField class="flex-1" name="users" :label="$t('common.colleague', 2)">
+                            <SelectMenu
+                                v-model="state.users"
+                                multiple
+                                :searchable="
+                                    async (q: string) =>
+                                        await completorStore.completeCitizens({
+                                            search: q,
+                                            userIds: state.users.map((u) => u.userId),
+                                        })
+                                "
+                                searchable-key="completor-citizens"
+                                :search-input="{ placeholder: $t('common.search_field') }"
+                                :filter-fields="['firstname', 'lastname']"
+                                block
+                                :placeholder="$t('common.search')"
+                                trailing
+                                :disabled="!canSubmit"
+                                class="w-full"
+                            >
+                                <template #item="{ item }">
+                                    {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
+                                </template>
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                    </div>
-                </template>
+                                <template #empty> {{ $t('common.not_found', [$t('common.colleague', 2)]) }} </template>
+                            </SelectMenu>
+                        </UFormField>
 
-                <div>
-                    <div class="flex flex-1 flex-col justify-between gap-2">
-                        <div class="divide-y divide-gray-100 px-2 sm:px-6 dark:divide-gray-800">
-                            <UFormGroup class="flex-1" name="users" :label="$t('common.colleague', 2)">
-                                <ClientOnly>
-                                    <USelectMenu
-                                        v-model="state.users"
-                                        multiple
-                                        :searchable="
-                                            async (q: string) => {
-                                                usersLoading = true;
-                                                const colleagues = await completorStore.completeCitizens({
-                                                    search: q,
-                                                    userIds: state.users.map((u) => u.userId),
-                                                });
-                                                usersLoading = false;
-                                                return colleagues;
-                                            }
-                                        "
-                                        searchable-lazy
-                                        :searchable-placeholder="$t('common.search_field')"
-                                        :search-attributes="['firstname', 'lastname']"
-                                        block
-                                        :placeholder="$t('common.search')"
-                                        trailing
-                                        by="userId"
-                                        :disabled="!canSubmit"
-                                    >
-                                        <template #option="{ option: user }">
-                                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                        </template>
-
-                                        <template #option-empty="{ query: search }">
-                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                        </template>
-
-                                        <template #empty> {{ $t('common.not_found', [$t('common.colleague', 2)]) }} </template>
-                                    </USelectMenu>
-                                </ClientOnly>
-                            </UFormGroup>
-
-                            <div class="mt-2 overflow-hidden rounded-md bg-neutral-100 dark:bg-base-900">
-                                <ul
-                                    class="divide-y divide-gray-100 text-sm font-medium text-gray-100 dark:divide-gray-800"
-                                    role="list"
-                                >
-                                    <li
-                                        v-for="user in state.users"
-                                        :key="user.userId"
-                                        class="inline-flex items-center px-4 py-2"
-                                    >
-                                        <CitizenInfoPopover :user="user" show-avatar show-avatar-in-name />
-                                    </li>
-                                </ul>
-                            </div>
+                        <div class="mt-2 overflow-hidden rounded-md bg-neutral-100 dark:bg-neutral-900">
+                            <ul
+                                class="divide-y divide-gray-100 text-sm font-medium text-toned dark:divide-gray-800"
+                                role="list"
+                            >
+                                <li v-for="user in state.users" :key="user.userId" class="inline-flex items-center px-4 py-2">
+                                    <CitizenInfoPopover :user="user" show-avatar show-avatar-in-name />
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
+            </UForm>
+        </template>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="black" block @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.update') }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                <UButton
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :label="$t('common.update')"
+                    @click="formRef?.submit()"
+                />
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

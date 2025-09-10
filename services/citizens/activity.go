@@ -13,7 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscitizens "github.com/fivenet-app/fivenet/v2025/services/citizens/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -50,12 +50,12 @@ func (s *Server) ListUserActivity(
 
 	tUserActivity := table.FivenetUserActivity.AS("user_activity")
 
-	condition := tUserActivity.TargetUserID.EQ(jet.Int32(req.GetUserId()))
+	condition := tUserActivity.TargetUserID.EQ(mysql.Int32(req.GetUserId()))
 
 	if len(req.GetTypes()) > 0 {
-		types := []jet.Expression{}
+		types := []mysql.Expression{}
 		for _, t := range req.GetTypes() {
-			types = append(types, jet.Int32(int32(*t.Enum())))
+			types = append(types, mysql.Int32(int32(*t.Enum())))
 		}
 
 		condition = condition.AND(tUserActivity.Type.IN(types...))
@@ -64,7 +64,7 @@ func (s *Server) ListUserActivity(
 	// Get total count of values
 	countStmt := tUserActivity.
 		SELECT(
-			jet.COUNT(tUserActivity.ID).AS("data_count.total"),
+			mysql.COUNT(tUserActivity.ID).AS("data_count.total"),
 		).
 		FROM(tUserActivity).
 		WHERE(condition)
@@ -86,9 +86,9 @@ func (s *Server) ListUserActivity(
 	tUSource := tUTarget.AS("source_user")
 
 	// Convert proto sort to db sorting
-	orderBys := []jet.OrderByClause{}
+	orderBys := []mysql.OrderByClause{}
 	if req.GetSort() != nil {
-		var column jet.Column
+		var column mysql.Column
 		switch req.GetSort().GetColumn() {
 		case "createdAt":
 			fallthrough

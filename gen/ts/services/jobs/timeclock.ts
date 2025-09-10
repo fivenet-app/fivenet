@@ -310,7 +310,7 @@ export const ListTimeclockRequest = new ListTimeclockRequest$Type();
 class ListTimeclockResponse$Type extends MessageType<ListTimeclockResponse> {
     constructor() {
         super("services.jobs.ListTimeclockResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "stats", kind: "message", T: () => TimeclockStats },
             { no: 3, name: "stats_weekly", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => TimeclockWeeklyStats },
             { no: 4, name: "daily", kind: "message", oneof: "entries", T: () => TimeclockDay },
@@ -749,8 +749,8 @@ export const ListInactiveEmployeesRequest = new ListInactiveEmployeesRequest$Typ
 class ListInactiveEmployeesResponse$Type extends MessageType<ListInactiveEmployeesResponse> {
     constructor() {
         super("services.jobs.ListInactiveEmployeesResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "colleagues", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Colleague }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "colleagues", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Colleague, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListInactiveEmployeesResponse>): ListInactiveEmployeesResponse {

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { AsyncDataRequestStatus } from '#app';
+import type { ContentSurroundLink } from '@nuxt/ui-pro/runtime/components/content/ContentSurround.vue.js';
 import { emojiBlast } from 'emoji-blast';
 import AccessBadges from '~/components/partials/access/AccessBadges.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
@@ -14,8 +15,8 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import { AccessLevel } from '~~/gen/ts/resources/wiki/access';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 import ScrollToTop from '../partials/ScrollToTop.vue';
+import ActivityList from './ActivityList.vue';
 import { checkPageAccess } from './helpers';
-import PageActivityList from './PageActivityList.vue';
 import PageSearch from './PageSearch.vue';
 
 const props = defineProps<{
@@ -30,11 +31,13 @@ const { t } = useI18n();
 
 const { can } = useAuth();
 
-const modal = useModal();
+const overlay = useOverlay();
 
 const notifications = useNotificationsStore();
 
 const wikiWikiClient = await getWikiWikiClient();
+
+const confirmModal = overlay.create(ConfirmModal);
 
 const breadcrumbs = computed(() => [
     {
@@ -93,10 +96,10 @@ const tocLinks = computedAsync(async () => props.page?.content?.content && jsonN
 
 const accordionItems = computed(() =>
     [
-        { slot: 'access', label: t('common.access'), icon: 'i-mdi-lock' },
+        { slot: 'access' as const, label: t('common.access'), icon: 'i-mdi-lock' },
         can('wiki.WikiService/ListPageActivity').value &&
         checkPageAccess(props.page?.access, props.page?.meta?.creator, AccessLevel.VIEW)
-            ? { slot: 'activity', label: t('common.activity'), icon: 'i-mdi-comment-quote' }
+            ? { slot: 'activity' as const, label: t('common.activity'), icon: 'i-mdi-comment-quote' }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
@@ -138,243 +141,269 @@ async function findSurroundingPages(
 
 const surround = computedAsync(async () => {
     const { prev, next } = await findSurroundingPages(props.pages, props.page);
+
     return [
         prev
             ? {
-                  _id: prev.id,
+                  id: prev.id,
                   title: prev.title || '',
                   description: prev.description ?? '',
-                  _path: `/wiki/${prev.job}/${prev.id}/${prev.slug}`,
+                  path: `/wiki/${prev.job}/${prev.id}/${prev.slug}`,
               }
             : undefined,
         next
             ? {
-                  _id: next.id,
+                  id: next.id,
                   title: next.title || '',
                   description: next.description ?? '',
-                  _path: `/wiki/${next.job}/${next.id}/${next.slug}`,
+                  path: `/wiki/${next.job}/${next.id}/${next.slug}`,
               }
             : undefined,
     ];
 }, []);
 
-const prev = computed(() => surround.value[0]);
-const next = computed(() => surround.value[1]);
-
 const scrollRef = useTemplateRef('scrollRef');
 </script>
 
 <template>
-    <UDashboardNavbar :title="`${page?.jobLabel ? page?.jobLabel + ': ' : ''}${$t('common.wiki')}`">
-        <template #center>
-            <PageSearch />
+    <UDashboardPanel :ui="{ body: 'gap-0 sm:gap-0' }">
+        <template #header>
+            <UDashboardNavbar :title="`${page?.jobLabel ? page?.jobLabel + ': ' : ''}${$t('common.wiki')}`">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
+                <template #default>
+                    <PageSearch />
+                </template>
+
+                <template #right>
+                    <PartialsBackButton fallback-to="/wiki" />
+
+                    <UButton
+                        v-if="can('wiki.WikiService/UpdatePage').value"
+                        color="neutral"
+                        trailing-icon="i-mdi-plus"
+                        @click="wikiService.createPage(page?.parentId ?? page?.id)"
+                    >
+                        <span class="hidden truncate sm:block">
+                            {{ $t('common.page') }}
+                        </span>
+                    </UButton>
+                </template>
+            </UDashboardNavbar>
+
+            <UDashboardToolbar class="flex lg:hidden">
+                <template #default>
+                    <PageSearch />
+                </template>
+            </UDashboardToolbar>
         </template>
 
-        <template #right>
-            <PartialsBackButton fallback-to="/wiki" />
+        <template #body>
+            <UPage ref="scrollRef">
+                <template #left>
+                    <slot name="left" />
+                </template>
 
-            <UButton
-                v-if="can('wiki.WikiService/UpdatePage').value"
-                color="gray"
-                trailing-icon="i-mdi-plus"
-                @click="wikiService.createPage(page?.parentId ?? page?.id)"
-            >
-                <span class="hidden truncate sm:block">
-                    {{ $t('common.page') }}
-                </span>
-            </UButton>
-        </template>
-    </UDashboardNavbar>
+                <UBreadcrumb class="pb-1" :items="breadcrumbs" />
 
-    <UDashboardPanelContent ref="scrollRef" class="p-0 sm:pb-0">
-        <UPage class="px-8 py-2 pt-4">
-            <template #left>
-                <slot name="left" />
-            </template>
-
-            <UBreadcrumb class="pb-2 pt-4" :links="breadcrumbs" />
-
-            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.page')])" />
-            <DataErrorBlock
-                v-else-if="error"
-                :title="$t('common.unable_to_load', [$t('common.page')])"
-                :error="error"
-                :retry="refresh"
-            />
-            <template v-else-if="!page">
-                <ULandingHero
-                    :title="$t('pages.notfound.page_not_found')"
-                    :description="$t('pages.notfound.fun_error')"
-                    :links="[
-                        {
-                            label: $t('common.back'),
-                            icon: 'i-mdi-arrow-back',
-                            size: 'md',
-                            color: 'gray',
-                            click: () => useRouter().back(),
-                        },
-                        { label: $t('common.wiki'), icon: 'i-mdi-home', size: 'md', to: '/wiki' },
-                    ]"
-                    :ui="{ title: 'text-3xl sm:text-4xl' }"
-                >
-                    <template #headline>
-                        <UBadge
-                            color="gray"
-                            variant="solid"
-                            size="lg"
-                            @click="
-                                emojiBlast({
-                                    emojis: ['😵‍💫', '🔍', '🔎', '👀'],
-                                })
-                            "
-                            >{{ $t('pages.notfound.error') }}</UBadge
-                        >
-                    </template>
-                </ULandingHero>
-            </template>
-
-            <template v-else>
-                <UPageHeader
-                    v-if="page?.meta"
-                    :title="!page.meta.title ? $t('common.untitled') : page.meta.title"
-                    :ui="{ wrapper: 'py-4', title: !page.meta.title ? 'italic' : '' }"
-                >
-                    <template #links>
-                        <UTooltip :text="$t('common.refresh')">
-                            <UButton variant="link" icon="i-mdi-refresh" @click="refresh()" />
-                        </UTooltip>
-
-                        <UTooltip
-                            v-if="
-                                can('wiki.WikiService/UpdatePage').value &&
-                                checkPageAccess(page.access, page.meta.creator, AccessLevel.EDIT)
-                            "
-                            :text="$t('common.edit')"
-                        >
-                            <UButton
-                                color="white"
-                                icon="i-mdi-pencil"
-                                :to="`/wiki/${page.job}/${page.id}/${page.meta.slug ?? ''}/edit`"
-                            />
-                        </UTooltip>
-
-                        <UTooltip
-                            v-if="
-                                can('wiki.WikiService/DeletePage').value &&
-                                checkPageAccess(page.access, page.meta.creator, AccessLevel.EDIT)
-                            "
-                            :text="!page.meta.deletedAt ? $t('common.delete') : $t('common.restore')"
-                        >
-                            <UButton
-                                :color="!page.meta.deletedAt ? 'error' : 'success'"
-                                :icon="!page.meta.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
+                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.page')])" />
+                <DataErrorBlock
+                    v-else-if="error"
+                    :title="$t('common.unable_to_load', [$t('common.page')])"
+                    :error="error"
+                    :retry="refresh"
+                />
+                <template v-else-if="!page">
+                    <UPageHero
+                        :title="$t('pages.notfound.page_not_found')"
+                        :description="$t('pages.notfound.fun_error')"
+                        :links="[
+                            {
+                                label: $t('common.back'),
+                                icon: 'i-mdi-arrow-back',
+                                size: 'md',
+                                color: 'neutral',
+                                onClick: () => useRouter().back(),
+                            },
+                            { label: $t('common.wiki'), icon: 'i-mdi-home', size: 'md', to: '/wiki' },
+                        ]"
+                        :ui="{ title: 'text-3xl sm:text-4xl' }"
+                    >
+                        <template #headline>
+                            <UBadge
+                                color="neutral"
+                                variant="solid"
+                                size="lg"
                                 @click="
-                                    modal.open(ConfirmModal, {
-                                        confirm: async () => page && deletePage(page.id),
+                                    emojiBlast({
+                                        emojis: ['😵‍💫', '🔍', '🔎', '👀'],
                                     })
                                 "
-                            />
-                        </UTooltip>
-                    </template>
+                                >{{ $t('pages.notfound.error') }}</UBadge
+                            >
+                        </template>
+                    </UPageHero>
+                </template>
 
-                    <template v-if="page.meta.updatedAt || page.meta.deletedAt" #description>
-                        <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
-                            <UBadge v-if="page.meta.createdAt" class="inline-flex gap-1" color="black" size="md">
-                                <UIcon class="size-5" name="i-mdi-calendar" />
-                                <span>
+                <template v-else>
+                    <UPageHeader
+                        v-if="page?.meta"
+                        :title="!page.meta.title ? $t('common.untitled') : page.meta.title"
+                        :ui="{ wrapper: 'py-4', title: !page.meta.title ? 'italic' : '' }"
+                    >
+                        <template #links>
+                            <UTooltip :text="$t('common.refresh')">
+                                <UButton variant="link" icon="i-mdi-refresh" @click="refresh()" />
+                            </UTooltip>
+
+                            <UTooltip
+                                v-if="
+                                    can('wiki.WikiService/UpdatePage').value &&
+                                    checkPageAccess(page.access, page.meta.creator, AccessLevel.EDIT)
+                                "
+                                :text="$t('common.edit')"
+                            >
+                                <UButton
+                                    color="neutral"
+                                    icon="i-mdi-pencil"
+                                    :to="`/wiki/${page.job}/${page.id}/${page.meta.slug ?? ''}/edit`"
+                                />
+                            </UTooltip>
+
+                            <UTooltip
+                                v-if="
+                                    can('wiki.WikiService/DeletePage').value &&
+                                    checkPageAccess(page.access, page.meta.creator, AccessLevel.EDIT)
+                                "
+                                :text="!page.meta.deletedAt ? $t('common.delete') : $t('common.restore')"
+                            >
+                                <UButton
+                                    :color="!page.meta.deletedAt ? 'error' : 'success'"
+                                    :icon="!page.meta.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
+                                    @click="
+                                        confirmModal.open({
+                                            confirm: async () => page && deletePage(page.id),
+                                        })
+                                    "
+                                />
+                            </UTooltip>
+                        </template>
+
+                        <template v-if="page.meta.updatedAt || page.meta.deletedAt" #description>
+                            <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
+                                <UBadge
+                                    v-if="page.meta.createdAt"
+                                    class="inline-flex gap-1"
+                                    color="neutral"
+                                    icon="i-mdi-calendar"
+                                    size="md"
+                                >
                                     {{ $t('common.created') }}
                                     <GenericTime :value="page.meta.createdAt" type="long" />
-                                </span>
-                            </UBadge>
+                                </UBadge>
 
-                            <UBadge v-if="page.meta.updatedAt" class="inline-flex gap-1" color="black" size="md">
-                                <UIcon class="size-5" name="i-mdi-calendar-edit" />
-                                <span>
+                                <UBadge
+                                    v-if="page.meta.updatedAt"
+                                    class="inline-flex gap-1"
+                                    color="neutral"
+                                    icon="i-mdi-calendar-edit"
+                                    size="md"
+                                >
                                     {{ $t('common.updated') }}
                                     <GenericTime :value="page.meta.updatedAt" type="long" />
-                                </span>
-                            </UBadge>
+                                </UBadge>
 
-                            <UBadge v-if="page.meta.deletedAt" class="inline-flex gap-1" color="amber" size="md">
-                                <UIcon class="size-5" name="i-mdi-calendar-remove" />
-                                <span>
+                                <UBadge
+                                    v-if="page.meta.deletedAt"
+                                    class="inline-flex gap-1"
+                                    color="warning"
+                                    icon="i-mdi-calendar-remove"
+                                    size="md"
+                                >
                                     {{ $t('common.deleted') }}
                                     <GenericTime :value="page.meta.deletedAt" type="long" />
-                                </span>
-                            </UBadge>
+                                </UBadge>
 
-                            <UBadge v-if="page.meta.draft" class="inline-flex gap-1" color="info" size="md">
-                                <UIcon class="size-5" name="i-mdi-pencil" />
-                                <span>
-                                    {{ $t('common.draft') }}
-                                </span>
-                            </UBadge>
-
-                            <UBadge v-if="page.meta.public" class="inline-flex gap-1" color="black" size="md">
-                                <UIcon class="size-5" name="i-mdi-earth" />
-                                <span>
-                                    {{ $t('common.public') }}
-                                </span>
-                            </UBadge>
-                        </div>
-
-                        <p v-if="page.meta.description" class="mt-4">{{ page.meta.description }}</p>
-                    </template>
-                </UPageHeader>
-
-                <UPageBody v-if="page.content?.content">
-                    <div class="rounded-lg bg-neutral-100 dark:bg-base-900">
-                        <HTMLContent class="px-4 py-2" :value="page.content.content" />
-                    </div>
-
-                    <template v-if="surround.length > 0">
-                        <UDivider class="mb-4 mt-4" />
-
-                        <!-- UContentSurround doesn't seem to like our surround pages array -->
-                        <div class="grid gap-8 sm:grid-cols-2">
-                            <UContentSurroundLink v-if="prev" :link="prev" icon="i-mdi-arrow-left" />
-                            <span v-else class="hidden sm:block">&nbsp;</span>
-                            <UContentSurroundLink v-if="next" class="text-right" :link="next" icon="i-mdi-arrow-right" />
-                        </div>
-                    </template>
-
-                    <UDivider class="mb-4 mt-4" />
-
-                    <UAccordion class="print:hidden" multiple :items="accordionItems" :unmount="true">
-                        <template #access>
-                            <UContainer>
-                                <DataNoDataBlock
-                                    v-if="!page.access || (page.access?.jobs.length === 0 && page.access?.users.length === 0)"
-                                    icon="i-mdi-file-search"
-                                    :message="$t('common.not_found', [$t('common.access', 2)])"
+                                <UBadge
+                                    v-if="page.meta.draft"
+                                    class="inline-flex gap-1"
+                                    color="info"
+                                    icon="i-mdi-pencil"
+                                    size="md"
+                                    :label="$t('common.draft')"
                                 />
 
-                                <AccessBadges
-                                    v-else
-                                    :access-level="AccessLevel"
-                                    :jobs="page?.access.jobs"
-                                    :users="page?.access.users"
-                                    i18n-key="enums.wiki"
+                                <UBadge
+                                    v-if="page.meta.public"
+                                    class="inline-flex gap-1"
+                                    color="neutral"
+                                    icon="i-mdi-earth"
+                                    :label="$t('common.public')"
+                                    size="md"
                                 />
-                            </UContainer>
+                            </div>
+
+                            <p v-if="page.meta.description" class="mt-4">{{ page.meta.description }}</p>
+                        </template>
+                    </UPageHeader>
+
+                    <UPageBody v-if="page.content?.content">
+                        <div
+                            class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-800"
+                        >
+                            <HTMLContent :value="page.content.content" />
+                        </div>
+
+                        <template v-if="surround.filter((s) => s !== undefined).length > 0">
+                            <USeparator class="my-2" />
+
+                            <UContentSurround
+                                :surround="surround as ContentSurroundLink[]"
+                                prev-icon="i-mdi-arrow-left"
+                                next-icon="i-mdi-arrow-right"
+                            />
                         </template>
 
-                        <template v-if="can('wiki.WikiService/ListPageActivity').value" #activity>
-                            <UContainer>
-                                <PageActivityList :page-id="page.id" />
-                            </UContainer>
-                        </template>
-                    </UAccordion>
-                </UPageBody>
-            </template>
+                        <USeparator class="my-2" />
 
-            <template v-if="page?.meta?.toc === undefined || page?.meta?.toc === true" #right>
-                <PageSearch class="mb-2 !flex lg:!hidden" />
+                        <UAccordion class="print:hidden" :items="accordionItems" multiple :unmount-on-hide="false">
+                            <template #access>
+                                <UContainer class="mb-2">
+                                    <DataNoDataBlock
+                                        v-if="
+                                            !page.access || (page.access?.jobs.length === 0 && page.access?.users.length === 0)
+                                        "
+                                        icon="i-mdi-file-search"
+                                        :message="$t('common.not_found', [$t('common.access', 2)])"
+                                    />
 
-                <UContentToc :title="$t('common.toc')" :links="tocLinks" />
-            </template>
-        </UPage>
+                                    <AccessBadges
+                                        v-else
+                                        :access-level="AccessLevel"
+                                        :jobs="page?.access.jobs"
+                                        :users="page?.access.users"
+                                        i18n-key="enums.wiki"
+                                    />
+                                </UContainer>
+                            </template>
 
-        <ScrollToTop :element="scrollRef?.$el" />
-    </UDashboardPanelContent>
+                            <template v-if="can('wiki.WikiService/ListPageActivity').value" #activity>
+                                <UContainer class="mb-2">
+                                    <ActivityList :page-id="page.id" />
+                                </UContainer>
+                            </template>
+                        </UAccordion>
+                    </UPageBody>
+                </template>
+
+                <template v-if="page?.meta?.toc === undefined || page?.meta?.toc === true" #right>
+                    <UContentToc class="lg:col-span-2" :title="$t('common.toc')" :links="tocLinks" />
+                </template>
+            </UPage>
+
+            <ScrollToTop :element="scrollRef?.$el" />
+        </template>
+    </UDashboardPanel>
 </template>

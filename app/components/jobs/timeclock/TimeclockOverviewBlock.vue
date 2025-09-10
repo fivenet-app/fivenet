@@ -1,10 +1,22 @@
 <script lang="ts" setup>
-import TimeclockStatsBlock from '~/components/jobs/timeclock/TimeclockStatsBlock.vue';
 import { getJobsTimeclockClient } from '~~/gen/ts/clients';
 import type { GetTimeclockStatsResponse } from '~~/gen/ts/services/jobs/timeclock';
 
-const props = defineProps<{
-    userId?: number;
+const props = withDefaults(
+    defineProps<{
+        userId?: number;
+        hideHeader?: boolean;
+        loading?: boolean;
+    }>(),
+    {
+        userId: undefined,
+        hideHeader: false,
+        loading: false,
+    },
+);
+
+defineEmits<{
+    (e: 'refresh'): void;
 }>();
 
 const jobsTimeclockClient = await getJobsTimeclockClient();
@@ -30,14 +42,56 @@ const refreshThrottle = useThrottleFn(async () => {
     canRefresh.value = false;
     await refresh().finally(() => useTimeoutFn(() => (canRefresh.value = true), 400));
 }, 2500);
+
+const loadingState = ref(false);
+watch(
+    () => props.loading,
+    () => {
+        if (props.loading) {
+            loadingState.value = true;
+        }
+    },
+);
+watchDebounced(
+    () => props.loading,
+    () => {
+        if (!props.loading) {
+            loadingState.value = false;
+        }
+    },
+    {
+        debounce: 750,
+        maxWait: 1250,
+    },
+);
 </script>
 
 <template>
-    <TimeclockStatsBlock
-        :stats="data?.stats"
-        :weekly="data?.weekly"
-        :failed="!!error"
-        :loading="isRequestPending(status)"
-        @refresh="refreshThrottle"
-    />
+    <UCard>
+        <template v-if="!hideHeader" #header>
+            <h2 class="inline-flex w-full items-center justify-between text-lg font-semibold">
+                {{ $t('common.timeclock') }}
+
+                <UTooltip :text="$t('common.refresh')">
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-refresh"
+                        :disabled="loading || loadingState"
+                        :label="$t('common.refresh')"
+                        :loading="loading || loadingState"
+                        :ui="{ label: 'hidden sm:inline-flex' }"
+                        @click="$emit('refresh')"
+                    />
+                </UTooltip>
+            </h2>
+        </template>
+
+        <LazyJobsTimeclockStatsBlock
+            :stats="data?.stats"
+            :weekly="data?.weekly"
+            :failed="!!error"
+            :loading="isRequestPending(status)"
+            @refresh="refreshThrottle"
+        />
+    </UCard>
 </template>

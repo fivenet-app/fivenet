@@ -1,54 +1,42 @@
 //nolint:forcetypeassert // This is a generic cache implementation, so there should "never" be a wrong type assertion.
 package cache
 
-// An LRU (least-recently-used) cache that stores up to N key/value pairs.
+// A size-bounded concurrent cache that stores up to N key/value pairs.
 // It uses github.com/puzpuzpuz/xsync to provide a lock-free concurrent map for
-// data storage and a classic doubly-linked list (container/list) to track
-// recency of use. All list manipulations are protected by a small mutex, while
-// the xsync.MapOf shard-based structure allows high read/write throughput on
-// the key/value store itself.
-//
-// The implementation is generic - it works with any comparable key type and
+// data storage. The implementation is generic - it works with any comparable key type and
 // any value type. Example:
 //   cache := lrucache.New[string, int](100) // capacity 100
 //   cache.Put("foo", 42)
 //   v, ok := cache.Get("foo")
 //   cache.Delete("foo")
 //
-// The zero allocation behavior of xsync.MapOf keeps the fast path hot, and
-// locking is only taken when we have to update the recency list.
-//
 // NOTE: This implementation focuses purely on size-bounded eviction. If you
 // need additional features such as per-item TTL, metrics, or callbacks on
-// eviction, they can be layered on top.
+// eviction, they can be layered on top. Eviction is random, not true LRU.
 
 import (
-	"container/list"
 	"context"
-	"sync"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/puzpuzpuz/xsync/v4"
 )
 
-// pair stores the user value together with TTL metadata inside the recency
-// list element.
-type pair[K comparable, V any] struct {
-	key       K
+// pair stores the user value together with TTL metadata.
+type pair[V any] struct {
 	value     V
 	expiresAt time.Time // zero means no TTL / immortal until size eviction
 }
 
+// LRUCache is a concurrency-safe, size-bounded cache with optional TTL per entry.
+// Eviction is random when over capacity; no recency is tracked.
 type LRUCache[K comparable, V any] struct {
-	_        utils.NoCopy                 // disallow copying of LRUCache
-	capacity int                          // max items retained by LRU policy
-	store    *xsync.Map[K, *list.Element] // key → *list.Element(pair)
-	list     *list.List                   // recency list; front == MRU
-	mu       sync.Mutex                   // protects list manipulations
+	_        utils.NoCopy            // disallow copying of LRUCache
+	capacity int                     // max items retained by cache
+	store    *xsync.Map[K, *pair[V]] // key → *pair[V]
 }
 
-// NewLRUCache constructs an LRU cache with a fixed positive capacity. A panic is
+// NewLRUCache constructs a cache with a fixed positive capacity. A panic is
 // raised if capacity ≤ 0.
 func NewLRUCache[K comparable, V any](capacity int) *LRUCache[K, V] {
 	if capacity <= 0 {
@@ -56,80 +44,61 @@ func NewLRUCache[K comparable, V any](capacity int) *LRUCache[K, V] {
 	}
 	return &LRUCache[K, V]{
 		capacity: capacity,
-		store:    xsync.NewMap[K, *list.Element](),
-		list:     list.New(),
+		store:    xsync.NewMap[K, *pair[V]](),
 	}
 }
 
 // Put inserts or updates a key/value pair with an optional TTL. A ttl of 0
-// means the item never expires (except by LRU eviction). If inserting causes
-// the cache to exceed its capacity the least-recently-used element is evicted.
+// means the item never expires (except by random eviction if over capacity).
+// If inserting causes the cache to exceed its capacity, a random element is evicted.
 func (c *LRUCache[K, V]) Put(key K, value V, ttl time.Duration) {
 	var exp time.Time
 	if ttl > 0 {
 		exp = time.Now().Add(ttl)
 	}
 
-	c.mu.Lock()
-	defer c.mu.Unlock()
-
 	if elem, ok := c.store.Load(key); ok {
 		// Update existing entry
-		//nolint:errcheck // We know elem is non-nil and of the correct type.
-		p := elem.Value.(*pair[K, V])
-		p.value = value
-		p.expiresAt = exp
-		c.list.MoveToFront(elem)
+		elem.value = value
+		elem.expiresAt = exp
 		return
 	}
 
-	elem := c.list.PushFront(&pair[K, V]{key: key, value: value, expiresAt: exp})
-	c.store.Store(key, elem)
+	c.store.Store(key, &pair[V]{value: value, expiresAt: exp})
 
-	if c.list.Len() > c.capacity {
+	if c.store.Size() > c.capacity {
 		c.evictLRU()
 	}
 }
 
 // Get retrieves a value if present and not expired. The boolean result tells
-// whether the key was found and valid. A successful Get promotes the item to
-// most-recently-used.
+// whether the key was found and valid. No recency is tracked.
 func (c *LRUCache[K, V]) Get(key K) (V, bool) {
 	var zero V
 	elem, ok := c.store.Load(key)
 	if !ok {
 		return zero, false
 	}
-	//nolint:errcheck // We know elem is non-nil and of the correct type.
-	p := elem.Value.(*pair[K, V])
 
-	if c.isExpired(p) {
-		c.deleteElement(elem) // Drop stale entry
+	if c.isExpired(elem) {
+		c.Delete(key) // Drop stale entry
 		return zero, false
 	}
 
-	c.mu.Lock()
-	c.list.MoveToFront(elem)
-	c.mu.Unlock()
-
-	return p.value, true
+	return elem.value, true
 }
 
 // Delete removes a key/value pair regardless of TTL.
 func (c *LRUCache[K, V]) Delete(key K) {
-	elem, ok := c.store.Load(key)
-	if !ok {
-		return
-	}
-	c.deleteElement(elem)
+	c.store.Delete(key)
 }
 
 // Len reports the current number of items, including any yet-uncollected
 // expired ones (Cheap O(1)).
-func (c *LRUCache[K, V]) Len() int { return c.list.Len() }
+func (c *LRUCache[K, V]) Len() int { return c.store.Size() }
 
 // StartJanitor launches a background goroutine that periodically sweeps the
-// cache for expired items. It stops when ctx is cancelled. If sweepInterval ≤ 0
+// cache for expired items. It stops when ctx is cancelled. If sweepInterval ≤ 0
 // the janitor exits immediately.
 func (c *LRUCache[K, V]) StartJanitor(ctx context.Context, sweepInterval time.Duration) {
 	if sweepInterval <= 0 {
@@ -149,54 +118,33 @@ func (c *LRUCache[K, V]) StartJanitor(ctx context.Context, sweepInterval time.Du
 	}()
 }
 
-// cleanupExpired scans the list and removes all expired entries. Safe to call
+// cleanupExpired scans the map and removes all expired entries. Safe to call
 // concurrently with other API methods.
 func (c *LRUCache[K, V]) cleanupExpired() {
 	now := time.Now()
-	var stale []K
-
-	c.mu.Lock()
-	for elem := c.list.Back(); elem != nil; {
-		prev := elem.Prev()
-		//nolint:errcheck // We know elem is non-nil and of the correct type.
-		p := elem.Value.(*pair[K, V])
-		if !p.expiresAt.IsZero() && p.expiresAt.Before(now) {
-			c.list.Remove(elem)
-			stale = append(stale, p.key)
+	c.store.Range(func(key K, elem *pair[V]) bool {
+		if !elem.expiresAt.IsZero() && elem.expiresAt.Before(now) {
+			c.store.Delete(key)
 		}
-		elem = prev
-	}
-	c.mu.Unlock()
-
-	// Do the map deletes outside the list lock.
-	for _, k := range stale {
-		c.store.Delete(k)
-	}
+		return true
+	})
 }
 
-// deleteElement removes elem from both list and map. Callers need *not* hold
-// c.mu as we lock internally to guard the list.
-func (c *LRUCache[K, V]) deleteElement(elem *list.Element) {
-	//nolint:errcheck // We know elem is non-nil and of the correct type.
-	p := elem.Value.(*pair[K, V])
-	c.mu.Lock()
-	c.list.Remove(elem)
-	c.mu.Unlock()
-	c.store.Delete(p.key)
-}
-
-// evictLRU drops the least-recently-used list element. Callers must hold c.mu.
+// evictLRU drops a random element (since xsync.Map has no order).
+// This is not true LRU eviction.
 func (c *LRUCache[K, V]) evictLRU() {
-	tail := c.list.Back()
-	if tail == nil {
-		return
-	}
-	//nolint:errcheck // We know tail.Value is non-nil and of the correct type.
-	p := tail.Value.(*pair[K, V])
-	c.list.Remove(tail)
-	c.store.Delete(p.key)
+	// xsync.Map does not track recency, so we evict a random element.
+	// For true LRU, a different data structure is needed.
+	var evicted bool
+	c.store.Range(func(key K, _ *pair[V]) bool {
+		c.store.Delete(key)
+		evicted = true
+		return false // stop after one
+	})
+	_ = evicted // for clarity
 }
 
-func (c *LRUCache[K, V]) isExpired(p *pair[K, V]) bool {
+// isExpired returns true if the pair has a nonzero expiration and is expired.
+func (c *LRUCache[K, V]) isExpired(p *pair[V]) bool {
 	return !p.expiresAt.IsZero() && time.Now().After(p.expiresAt)
 }

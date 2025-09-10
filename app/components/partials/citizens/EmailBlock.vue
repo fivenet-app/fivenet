@@ -5,7 +5,6 @@ withDefaults(
         hideIcon?: boolean;
         hideEmail?: boolean;
         hideNaText?: boolean;
-        padded?: boolean;
     }>(),
     {
         email: undefined,
@@ -21,7 +20,6 @@ withDefaults(
         v-if="email"
         class="break-all"
         :icon="!hideIcon ? 'i-mdi-email' : undefined"
-        :padded="padded"
         variant="link"
         :label="!hideEmail ? email : $t('common.mail', 1)"
         :to="email ? `/mail?to=${email}` : undefined"

@@ -1,7 +1,7 @@
 import type { RpcError, ServerStreamingCall } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import { statusOrder } from '~/components/centrum/helpers';
-import type { NotificationActionI18n } from '~/utils/notifications';
+import type { NotificationActionI18n } from '~/types/notifications';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import type { Dispatchers } from '~~/gen/ts/resources/centrum/dispatchers';
 import { type Dispatch, type DispatchStatus, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
@@ -406,6 +406,16 @@ export const useCentrumStore = defineStore(
 
                         if (resp.change.handshake.settings) {
                             setOrUpdateSettings(resp.change.handshake.settings);
+
+                            if (!resp.change.handshake.settings.enabled) {
+                                notifications.add({
+                                    title: { key: 'notifications.centrum.disabled.title', parameters: {} },
+                                    description: { key: 'notifications.centrum.disabled.content', parameters: {} },
+                                    type: NotificationType.INFO,
+                                    actions: getNotificationActions(),
+                                });
+                                logger.info('Centrum is disabled for job.');
+                            }
                         }
                     } else if (resp.change.oneofKind === 'latestState') {
                         logger.info(
@@ -604,7 +614,7 @@ export const useCentrumStore = defineStore(
                     return;
                 }
 
-                // Handle specific disabled error
+                // Handle specific centrum disabled error
                 if (rpcError.code === 'INVALID_ARGUMENT' && rpcError.message.includes('CentrumService.ErrDisabled')) {
                     settings.value = {
                         enabled: false,

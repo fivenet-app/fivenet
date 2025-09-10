@@ -29,8 +29,8 @@ message Colleague {
   }];
   string dateofbirth = 9 [(buf.validate.field).string.max_len = 10];
   optional string phone_number = 12 [(buf.validate.field).string.max_len = 20];
-  optional int64 avatar_file_id = 17;
-  optional string avatar = 18 [(tagger.tags) = "alias:\"avatar\""];
+  optional int64 profile_picture_file_id = 17;
+  optional string profile_picture = 18 [(tagger.tags) = "alias:\"profile_picture\""];
   ColleagueProps props = 19 [(tagger.tags) = "alias:\"colleague_props\""];
   // @sanitize: method=StripTags
   optional string email = 20 [(buf.validate.field).string = {

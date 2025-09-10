@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { UForm } from '#components';
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { type AccessType, enumToAccessLevelEnums } from '~/components/partials/access/helpers';
@@ -10,24 +10,24 @@ import type { Content } from '~/types/history';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { type QualificationJobAccess, AccessLevel } from '~~/gen/ts/resources/qualifications/access';
-import type { ExamQuestions } from '~~/gen/ts/resources/qualifications/exam';
+import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
+import type { ExamQuestion } from '~~/gen/ts/resources/qualifications/exam';
 import {
     type Qualification,
-    type QualificationExamSettings,
     type QualificationRequirement,
     type QualificationShort,
     AutoGradeMode,
     QualificationExamMode,
 } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { UpdateQualificationRequest, UpdateQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
+import { jobAccessEntry } from '~~/shared/types/validation';
 import BackButton from '../partials/BackButton.vue';
 import ConfirmModal from '../partials/ConfirmModal.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
 import FormatBuilder from '../partials/FormatBuilder.vue';
-import ExamEditor from './exam/ExamEditor.vue';
+import ExamEditor, { examSettings } from './exam/ExamEditor.vue';
 
 const props = defineProps<{
     qualificationId: number;
@@ -35,7 +35,7 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-const modal = useModal();
+const overlay = useOverlay();
 
 const { attr, can, activeChar } = useAuth();
 
@@ -46,12 +46,6 @@ const historyStore = useHistoryStore();
 const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
 const { maxAccessEntries } = useAppConfig();
-
-const examModes = ref<{ mode: QualificationExamMode; selected?: boolean }[]>([
-    { mode: QualificationExamMode.DISABLED },
-    { mode: QualificationExamMode.REQUEST_NEEDED },
-    { mode: QualificationExamMode.ENABLED },
-]);
 
 const schema = z.object({
     weight: z.coerce.number(),
@@ -68,10 +62,12 @@ const schema = z.object({
         roleFormat: z.string().max(64).optional(),
     }),
     examMode: z.nativeEnum(QualificationExamMode),
-    examSettings: z.custom<QualificationExamSettings>(),
-    exam: z.custom<ExamQuestions>(),
+    examSettings: examSettings,
+    exam: z.object({
+        questions: z.custom<ExamQuestion>().array().max(100).default([]),
+    }),
     access: z.object({
-        jobs: z.custom<QualificationJobAccess>().array().max(maxAccessEntries).default([]),
+        jobs: jobAccessEntry.array().max(maxAccessEntries).default([]),
     }),
     labelSyncEnabled: z.coerce.boolean(),
     labelSyncFormat: z.string().max(128).optional(),
@@ -97,10 +93,7 @@ const state = reactive<Schema>({
     },
     examMode: QualificationExamMode.DISABLED,
     examSettings: {
-        time: {
-            seconds: 360,
-            nanos: 0,
-        },
+        time: 360,
         autoGrade: false,
         autoGradeMode: AutoGradeMode.STRICT,
         minimumPoints: 0,
@@ -205,6 +198,13 @@ async function getQualification(qualificationId: number): Promise<Qualification>
     }
 }
 
+useHead({
+    title: () =>
+        qualification.value?.title
+            ? `${qualification.value.abbreviation}: ${qualification.value.title} - ${t('pages.qualifications.edit.title')}`
+            : t('pages.qualifications.edit.title'),
+});
+
 function setFromProps(): void {
     if (!qualification.value) return;
 
@@ -222,7 +222,12 @@ function setFromProps(): void {
     };
     state.examMode = qualification.value.examMode;
     if (qualification.value.examSettings) {
-        state.examSettings = qualification.value.examSettings;
+        state.examSettings = {
+            time: qualification.value.examSettings.time?.seconds ?? 360,
+            autoGrade: qualification.value.examSettings.autoGrade,
+            autoGradeMode: qualification.value.examSettings.autoGradeMode,
+            minimumPoints: qualification.value.examSettings.minimumPoints,
+        };
     }
     if (qualification.value.exam) {
         qualification.value.exam.questions.forEach((q) => {
@@ -269,7 +274,12 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
             discordSyncEnabled: values.discordSyncEnabled,
             discordSettings: values.discordSettings,
             examMode: values.examMode,
-            examSettings: values.examSettings,
+            examSettings: {
+                time: { seconds: values.examSettings.time ?? 360, nanos: 0 },
+                autoGrade: values.examSettings.autoGrade,
+                autoGradeMode: values.examSettings.autoGradeMode,
+                minimumPoints: values.examSettings.minimumPoints,
+            },
             exam: {
                 questions: values.exam.questions.slice().map((q, idx) => {
                     if (q.answer?.answer.oneofKind === 'singleChoice') {
@@ -315,7 +325,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     await updateQualification(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
-const accessTypes: AccessType[] = [{ type: 'job', name: t('common.job', 2) }];
+const accessTypes: AccessType[] = [{ label: t('common.job', 2), value: 'job' }];
 
 function updateQualificationRequirement(idx: number, qualification?: QualificationShort): void {
     if (!qualification || !state.requirements[idx]) {
@@ -334,24 +344,28 @@ const canDo = computed(() => ({
 
 const items = [
     {
-        slot: 'content',
+        slot: 'content' as const,
         label: t('common.edit'),
         icon: 'i-mdi-pencil',
+        value: 'content',
     },
     {
-        slot: 'details',
+        slot: 'details' as const,
         label: t('common.detail', 2),
         icon: 'i-mdi-details',
+        value: 'details',
     },
     {
-        slot: 'access',
+        slot: 'access' as const,
         label: t('common.access'),
         icon: 'i-mdi-key',
+        value: 'access',
     },
     {
-        slot: 'exam',
+        slot: 'exam' as const,
         label: t('common.exam', 1),
         icon: 'i-mdi-school',
+        value: 'exam',
     },
 ];
 
@@ -360,178 +374,178 @@ const router = useRouter();
 
 const selectedTab = computed({
     get() {
-        const index = items.findIndex((item) => item.slot === route.query.tab);
-        if (index === -1) {
-            return 0;
-        }
-
-        return index;
+        return (route.query.tab as string) || 'content';
     },
-    set(value) {
+    set(tab) {
         // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
+        router.push({ query: { tab: tab }, hash: '#control-active-item' });
     },
 });
 
-const formRef = useTemplateRef<typeof UForm>('formRef');
+const confirmModal = overlay.create(ConfirmModal);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UForm
-        ref="formRef"
-        class="min-h-dscreen flex w-full max-w-full flex-1 flex-col overflow-y-auto"
-        :schema="schema"
-        :state="state"
-        @submit="onSubmitThrottle"
-    >
-        <UDashboardNavbar :title="$t('pages.qualifications.edit.title')">
-            <template #right>
-                <BackButton :disabled="!canSubmit" />
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0 overflow-y-hidden' }">
+        <template #header>
+            <UDashboardNavbar :title="$t('pages.qualifications.edit.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
 
-                <UButton
-                    type="submit"
-                    trailing-icon="i-mdi-content-save"
-                    :disabled="!canDo.edit || !canSubmit"
-                    :loading="!canSubmit"
-                >
-                    <span class="hidden truncate sm:block">
-                        {{ $t('common.save') }}
-                    </span>
-                </UButton>
+                <template #right>
+                    <BackButton :disabled="!canSubmit" />
 
-                <UButton
-                    v-if="qualification?.draft"
-                    type="submit"
-                    color="info"
-                    trailing-icon="i-mdi-publish"
-                    :disabled="!canSubmit"
-                    :loading="!canSubmit"
-                    @click.prevent="
-                        modal.open(ConfirmModal, {
-                            title: $t('common.publish_confirm.title', { type: $t('common.qualification', 1) }),
-                            description: $t('common.publish_confirm.description'),
-                            color: 'info',
-                            iconClass: 'text-info-500 dark:text-info-400',
-                            icon: 'i-mdi-publish',
-                            confirm: () => {
-                                state.draft = false;
-                                formRef?.submit();
-                            },
-                        })
-                    "
-                >
-                    <span class="hidden truncate sm:block">
-                        {{ $t('common.publish') }}
-                    </span>
-                </UButton>
-            </template>
-        </UDashboardNavbar>
+                    <UButton
+                        trailing-icon="i-mdi-content-save"
+                        :disabled="!canDo.edit || !canSubmit"
+                        :loading="!canSubmit"
+                        @click="() => formRef?.submit()"
+                    >
+                        <span class="hidden truncate sm:block">
+                            {{ $t('common.save') }}
+                        </span>
+                    </UButton>
 
-        <UDashboardPanelContent class="p-0 sm:pb-0">
-            <DataPendingBlock
-                v-if="isRequestPending(status)"
-                :message="$t('common.loading', [$t('common.qualification', 1)])"
-            />
-            <DataErrorBlock
-                v-else-if="error"
-                :title="$t('common.unable_to_load', [$t('common.qualification', 1)])"
-                :error="error"
-                :retry="refresh"
-            />
-            <DataNoDataBlock
-                v-else-if="!qualification"
-                icon="i-mdi-file-search"
-                :message="$t('common.not_found', [$t('common.qualification', 1)])"
-                :retry="refresh"
-            />
+                    <UButton
+                        v-if="qualification?.draft"
+                        color="info"
+                        trailing-icon="i-mdi-publish"
+                        :disabled="!canSubmit"
+                        :loading="!canSubmit"
+                        @click="
+                            confirmModal.open({
+                                title: $t('common.publish_confirm.title', { type: $t('common.qualification', 1) }),
+                                description: $t('common.publish_confirm.description'),
+                                color: 'info',
+                                iconClass: 'text-info-500 dark:text-info-400',
+                                icon: 'i-mdi-publish',
+                                confirm: () => {
+                                    state.draft = false;
+                                    formRef?.submit();
+                                },
+                            })
+                        "
+                    >
+                        <span class="hidden truncate sm:block">
+                            {{ $t('common.publish') }}
+                        </span>
+                    </UButton>
+                </template>
+            </UDashboardNavbar>
+        </template>
 
-            <UTabs
-                v-else
-                v-model="selectedTab"
-                class="flex flex-1 flex-col"
-                :items="items"
-                :ui="{
-                    wrapper: 'space-y-0 overflow-y-hidden',
-                    container: 'flex flex-1 flex-col overflow-y-hidden',
-                    base: 'flex flex-1 flex-col overflow-y-hidden',
-                    list: { rounded: '' },
-                }"
+        <template #body>
+            <UForm
+                ref="formRef"
+                :schema="schema"
+                :state="state"
+                class="flex min-h-0 w-full flex-1 flex-col overflow-y-hidden"
+                @submit="onSubmitThrottle"
             >
-                <template #content>
-                    <div v-if="isRequestPending(status)" class="flex flex-col gap-2">
-                        <USkeleton v-for="idx in 6" :key="idx" class="size-24 w-full" />
-                    </div>
+                <DataPendingBlock
+                    v-if="isRequestPending(status)"
+                    :message="$t('common.loading', [$t('common.qualification', 1)])"
+                />
+                <DataErrorBlock
+                    v-else-if="error"
+                    :title="$t('common.unable_to_load', [$t('common.qualification', 1)])"
+                    :error="error"
+                    :retry="refresh"
+                />
+                <DataNoDataBlock
+                    v-else-if="!qualification"
+                    icon="i-mdi-file-search"
+                    :message="$t('common.not_found', [$t('common.qualification', 1)])"
+                    :retry="refresh"
+                />
 
-                    <template v-else>
-                        <UDashboardToolbar>
-                            <template #default>
-                                <div class="flex w-full flex-col gap-2">
-                                    <div class="flex w-full flex-row gap-2">
-                                        <UFormGroup
-                                            class="max-w-48 shrink"
-                                            name="abbreviation"
-                                            :label="$t('common.abbreviation')"
-                                            required
-                                        >
-                                            <UInput
-                                                v-model="state.abbreviation"
+                <UTabs
+                    v-else
+                    v-model="selectedTab"
+                    class="flex-1 flex-col overflow-y-hidden"
+                    :items="items"
+                    variant="link"
+                    :unmount-on-hide="false"
+                    :ui="{ content: 'flex flex-col flex-1 min-h-0 max-h-full overflow-y-hidden' }"
+                >
+                    <template #content>
+                        <div v-if="isRequestPending(status)" class="flex flex-col gap-2">
+                            <USkeleton v-for="idx in 6" :key="idx" class="size-24 w-full" />
+                        </div>
+
+                        <template v-else>
+                            <UDashboardToolbar>
+                                <template #default>
+                                    <div class="my-2 flex w-full flex-col gap-2">
+                                        <div class="flex w-full flex-row gap-2">
+                                            <UFormField
+                                                class="max-w-48 shrink"
                                                 name="abbreviation"
-                                                type="text"
-                                                size="xl"
-                                                :placeholder="$t('common.abbreviation')"
-                                                :disabled="!canDo.edit"
-                                            />
-                                        </UFormGroup>
+                                                :label="$t('common.abbreviation')"
+                                                required
+                                            >
+                                                <UInput
+                                                    v-model="state.abbreviation"
+                                                    name="abbreviation"
+                                                    type="text"
+                                                    size="xl"
+                                                    :placeholder="$t('common.abbreviation')"
+                                                    :disabled="!canDo.edit"
+                                                    class="w-full"
+                                                />
+                                            </UFormField>
 
-                                        <UFormGroup class="flex-1" name="title" :label="$t('common.title')" required>
-                                            <UInput
-                                                v-model="state.title"
-                                                name="title"
-                                                type="text"
-                                                size="xl"
-                                                :placeholder="$t('common.title')"
-                                                :disabled="!canDo.edit"
-                                            />
-                                        </UFormGroup>
-                                    </div>
+                                            <UFormField class="flex-1" name="title" :label="$t('common.title')" required>
+                                                <UInput
+                                                    v-model="state.title"
+                                                    name="title"
+                                                    type="text"
+                                                    size="xl"
+                                                    :placeholder="$t('common.title')"
+                                                    :disabled="!canDo.edit"
+                                                    class="w-full"
+                                                />
+                                            </UFormField>
+                                        </div>
 
-                                    <div class="flex w-full flex-row gap-2">
-                                        <UFormGroup class="flex-1" name="description" :label="$t('common.description')">
-                                            <UTextarea
-                                                v-model="state.description"
-                                                name="description"
-                                                block
-                                                :placeholder="$t('common.description')"
-                                                :disabled="!canDo.edit"
-                                            />
-                                        </UFormGroup>
+                                        <div class="flex w-full flex-row gap-2">
+                                            <UFormField class="flex-1" name="description" :label="$t('common.description')">
+                                                <UTextarea
+                                                    v-model="state.description"
+                                                    name="description"
+                                                    block
+                                                    :placeholder="$t('common.description')"
+                                                    :disabled="!canDo.edit"
+                                                    class="w-full"
+                                                />
+                                            </UFormField>
 
-                                        <div class="flex flex-initial flex-col">
-                                            <UFormGroup class="flex-initial" name="closed" :label="`${$t('common.close', 2)}?`">
-                                                <UToggle v-model="state.closed" :disabled="!canDo.edit" />
-                                            </UFormGroup>
+                                            <div class="flex flex-initial flex-col">
+                                                <UFormField
+                                                    class="flex-initial"
+                                                    name="closed"
+                                                    :label="`${$t('common.close', 2)}?`"
+                                                >
+                                                    <USwitch v-model="state.closed" :disabled="!canDo.edit" />
+                                                </UFormField>
 
-                                            <UFormGroup class="flex-initial" name="public" :label="$t('common.public')">
-                                                <UToggle v-model="state.public" :disabled="!canDo.public" />
-                                            </UFormGroup>
+                                                <UFormField class="flex-initial" name="public" :label="$t('common.public')">
+                                                    <USwitch v-model="state.public" :disabled="!canDo.public" />
+                                                </UFormField>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </template>
-                        </UDashboardToolbar>
+                                </template>
+                            </UDashboardToolbar>
 
-                        <UFormGroup
-                            v-if="canDo.edit"
-                            class="flex flex-1 overflow-y-hidden"
-                            name="content"
-                            :ui="{ container: 'flex flex-1 flex-col mt-0 overflow-y-hidden', label: { wrapper: 'hidden' } }"
-                            label="&nbsp;"
-                        >
-                            <ClientOnly>
+                            <ClientOnly v-if="canDo.edit">
                                 <TiptapEditor
                                     v-model="state.content"
                                     v-model:files="state.files"
-                                    class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
+                                    class="m-2 mx-auto w-full max-w-(--breakpoint-xl) flex-1"
                                     :disabled="!canDo.edit"
                                     :saving="saving"
                                     history-type="qualification"
@@ -540,203 +554,149 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                     :filestore-service="(opts) => qualificationsQualificationsClient.uploadFile(opts)"
                                 />
                             </ClientOnly>
-                        </UFormGroup>
+                        </template>
                     </template>
-                </template>
 
-                <template #access>
-                    <div class="flex flex-col gap-2 overflow-y-auto px-2">
-                        <div>
-                            <h2 class="text-gray-900 dark:text-white">
-                                {{ $t('common.access') }}
-                            </h2>
+                    <template #access>
+                        <UDashboardPanel :ui="{ root: 'min-h-0' }">
+                            <template #body>
+                                <UPageCard :title="$t('common.access')">
+                                    <AccessManager
+                                        v-model:jobs="state.access.jobs"
+                                        :target-id="qualificationId ?? 0"
+                                        :disabled="!canDo.access"
+                                        :access-types="accessTypes"
+                                        :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.qualifications.AccessLevel')"
+                                        name="access"
+                                    />
+                                </UPageCard>
+                            </template>
+                        </UDashboardPanel>
+                    </template>
 
-                            <AccessManager
-                                v-model:jobs="state.access.jobs"
-                                :target-id="qualificationId ?? 0"
-                                :disabled="!canDo.access"
-                                :access-types="accessTypes"
-                                :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.qualifications.AccessLevel')"
-                            />
-                        </div>
-                    </div>
-                </template>
+                    <template #details>
+                        <UDashboardPanel :ui="{ root: 'min-h-0' }">
+                            <template #body>
+                                <UPageCard :title="$t('common.requirements', 2)">
+                                    <QualificationRequirementEntry
+                                        v-for="(requirement, idx) in state.requirements"
+                                        :key="requirement.id"
+                                        :requirement="requirement"
+                                        @update-qualification="updateQualificationRequirement(idx, $event)"
+                                        @remove="state.requirements.splice(idx, 1)"
+                                    />
 
-                <template #details>
-                    <div class="flex flex-col gap-2 overflow-y-auto px-2">
-                        <div>
-                            <h2 class="text-gray-900 dark:text-white">
-                                {{ $t('common.requirements', 2) }}
-                            </h2>
-
-                            <QualificationRequirementEntry
-                                v-for="(requirement, idx) in state.requirements"
-                                :key="requirement.id"
-                                :requirement="requirement"
-                                @update-qualification="updateQualificationRequirement(idx, $event)"
-                                @remove="state.requirements.splice(idx, 1)"
-                            />
-
-                            <UTooltip :text="$t('components.qualifications.add_requirement')">
-                                <UButton
-                                    :ui="{ rounded: 'rounded-full' }"
-                                    :disabled="!canSubmit"
-                                    icon="i-mdi-plus"
-                                    @click="state.requirements.push({ id: 0, qualificationId: 0, targetQualificationId: 0 })"
-                                />
-                            </UTooltip>
-                        </div>
-
-                        <div>
-                            <UAccordion
-                                :items="[
-                                    { slot: 'discord', label: $t('common.discord'), icon: 'i-simple-icons-discord' },
-                                    { slot: 'label', label: $t('common.label', 1), icon: 'i-mdi-tag' },
-                                ]"
-                            >
-                                <template #discord>
-                                    <UContainer>
-                                        <UFormGroup
-                                            class="grid grid-cols-2 items-center gap-2"
-                                            name="discordSettings.enabled"
-                                            :label="$t('common.enabled')"
-                                            :ui="{ container: '' }"
-                                        >
-                                            <UToggle v-model="state.discordSyncEnabled" :disabled="!canDo.edit" />
-                                        </UFormGroup>
-
-                                        <UFormGroup name="discordSettings.roleName" :label="$t('common.role')">
-                                            <UInput
-                                                v-model="state.discordSettings.roleName"
-                                                name="discordSettings.roleName"
-                                                type="text"
-                                                :placeholder="$t('common.role')"
-                                                :disabled="!canDo.edit"
+                                    <div>
+                                        <UTooltip :text="$t('components.qualifications.add_requirement')">
+                                            <UButton
+                                                :disabled="!canSubmit"
+                                                icon="i-mdi-plus"
+                                                @click="
+                                                    state.requirements.push({
+                                                        id: 0,
+                                                        qualificationId: 0,
+                                                        targetQualificationId: 0,
+                                                    })
+                                                "
                                             />
-                                        </UFormGroup>
+                                        </UTooltip>
+                                    </div>
+                                </UPageCard>
 
-                                        <UFormGroup
-                                            name="discordSettings.roleFormat"
-                                            :label="
-                                                $t(
-                                                    'components.settings.job_props.discord_sync_settings.qualifications_role_format.title',
-                                                )
-                                            "
-                                            :description="
-                                                $t(
-                                                    'components.settings.job_props.discord_sync_settings.qualifications_role_format.description',
-                                                )
-                                            "
-                                        >
-                                            <FormatBuilder
-                                                v-model="state.discordSettings.roleFormat!"
-                                                :extensions="[
-                                                    { label: $t('common.abbreviation'), value: 'abbr' },
-                                                    { label: $t('common.name'), value: 'name' },
-                                                ]"
-                                                :disabled="!canDo.edit"
-                                            />
-                                        </UFormGroup>
-                                    </UContainer>
-                                </template>
+                                <UPageCard :title="$t('common.discord')">
+                                    <UFormField
+                                        class="grid grid-cols-2 items-center gap-2"
+                                        name="discordSettings.enabled"
+                                        :label="$t('common.enabled')"
+                                        :ui="{ container: '' }"
+                                    >
+                                        <USwitch v-model="state.discordSyncEnabled" :disabled="!canDo.edit" />
+                                    </UFormField>
 
-                                <template #label>
-                                    <UContainer>
-                                        <UFormGroup
-                                            class="grid grid-cols-2 items-center gap-2"
-                                            name="labelSyncEnabled"
-                                            :label="$t('common.enabled')"
-                                            :ui="{ container: '' }"
-                                        >
-                                            <UToggle v-model="state.labelSyncEnabled" :disabled="!canDo.edit" />
-                                        </UFormGroup>
+                                    <UFormField name="discordSettings.roleName" :label="$t('common.role')">
+                                        <UInput
+                                            v-model="state.discordSettings.roleName"
+                                            name="discordSettings.roleName"
+                                            type="text"
+                                            :placeholder="$t('common.role')"
+                                            :disabled="!canDo.edit"
+                                            class="w-full"
+                                        />
+                                    </UFormField>
 
-                                        <UFormGroup
-                                            name="labelSyncFormat"
-                                            :label="
-                                                $t('components.qualifications.qualification_editor.label_sync_format.label')
-                                            "
-                                            :description="
-                                                $t(
-                                                    'components.qualifications.qualification_editor.label_sync_format.description',
-                                                )
-                                            "
-                                        >
-                                            <FormatBuilder
-                                                v-model="state.labelSyncFormat!"
-                                                :extensions="[
-                                                    { label: $t('common.abbreviation'), value: 'abbr' },
-                                                    { label: $t('common.name'), value: 'name' },
-                                                ]"
-                                                :disabled="!canDo.edit"
-                                            />
-                                        </UFormGroup>
-                                    </UContainer>
-                                </template>
-                            </UAccordion>
+                                    <UFormField
+                                        name="discordSettings.roleFormat"
+                                        :label="
+                                            $t(
+                                                'components.settings.job_props.discord_sync_settings.qualifications_role_format.title',
+                                            )
+                                        "
+                                        :description="
+                                            $t(
+                                                'components.settings.job_props.discord_sync_settings.qualifications_role_format.description',
+                                            )
+                                        "
+                                    >
+                                        <FormatBuilder
+                                            v-model="state.discordSettings.roleFormat!"
+                                            :extensions="[
+                                                { label: $t('common.abbreviation'), value: 'abbr' },
+                                                { label: $t('common.name'), value: 'name' },
+                                            ]"
+                                            :disabled="!canDo.edit"
+                                        />
+                                    </UFormField>
+                                </UPageCard>
+
+                                <UPageCard :title="$t('common.label', 1)">
+                                    <UFormField
+                                        class="grid grid-cols-2 items-center gap-2"
+                                        name="labelSyncEnabled"
+                                        :label="$t('common.enabled')"
+                                        :ui="{ container: '' }"
+                                    >
+                                        <USwitch v-model="state.labelSyncEnabled" :disabled="!canDo.edit" />
+                                    </UFormField>
+
+                                    <UFormField
+                                        name="labelSyncFormat"
+                                        :label="$t('components.qualifications.qualification_editor.label_sync_format.label')"
+                                        :description="
+                                            $t('components.qualifications.qualification_editor.label_sync_format.description')
+                                        "
+                                    >
+                                        <FormatBuilder
+                                            v-model="state.labelSyncFormat!"
+                                            :extensions="[
+                                                { label: $t('common.abbreviation'), value: 'abbr' },
+                                                { label: $t('common.name'), value: 'name' },
+                                            ]"
+                                            :disabled="!canDo.edit"
+                                        />
+                                    </UFormField>
+                                </UPageCard>
+                            </template>
+                        </UDashboardPanel>
+                    </template>
+
+                    <template #exam>
+                        <div v-if="isRequestPending(status)" class="flex flex-col gap-2">
+                            <USkeleton v-for="idx in 6" :key="idx" class="size-24 w-full" />
                         </div>
 
-                        <div>
-                            <h2 class="text-gray-900 dark:text-white">
-                                {{ $t('common.exam', 1) }}
-                            </h2>
-
-                            <UFormGroup
-                                class="grid grid-cols-2 items-center gap-2"
-                                name="examMode"
-                                :label="$t('components.qualifications.exam_mode')"
-                                :ui="{ container: '' }"
-                            >
-                                <ClientOnly>
-                                    <USelectMenu v-model="state.examMode" :options="examModes" value-attribute="mode">
-                                        <template #label>
-                                            <span class="truncate">
-                                                {{
-                                                    $t(
-                                                        `enums.qualifications.QualificationExamMode.${QualificationExamMode[state.examMode]}`,
-                                                    )
-                                                }}
-                                            </span>
-                                        </template>
-
-                                        <template #option="{ option }">
-                                            <span class="truncate">
-                                                {{
-                                                    $t(
-                                                        `enums.qualifications.QualificationExamMode.${QualificationExamMode[option.mode]}`,
-                                                    )
-                                                }}
-                                            </span>
-                                        </template>
-
-                                        <template #option-empty="{ query: search }">
-                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                        </template>
-
-                                        <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
-                                    </USelectMenu>
-                                </ClientOnly>
-                            </UFormGroup>
-                        </div>
-                    </div>
-                </template>
-
-                <template #exam>
-                    <div v-if="isRequestPending(status)" class="flex flex-col gap-2">
-                        <USkeleton v-for="idx in 6" :key="idx" class="size-24 w-full" />
-                    </div>
-
-                    <ExamEditor
-                        v-else
-                        v-model:settings="state.examSettings"
-                        v-model:questions="state.exam"
-                        :disabled="!canDo.edit"
-                        class="overflow-y-auto"
-                        :qualification-id="props.qualificationId"
-                        @file-uploaded="(file) => state.files.push(file)"
-                    />
-                </template>
-            </UTabs>
-        </UDashboardPanelContent>
-    </UForm>
+                        <ExamEditor
+                            v-else
+                            v-model:exam-mode="state.examMode"
+                            v-model:settings="state.examSettings"
+                            v-model:exam="state.exam"
+                            :disabled="!canDo.edit"
+                            class="overflow-y-auto"
+                            :qualification-id="props.qualificationId"
+                            @file-uploaded="(file) => state.files.push(file)"
+                        />
+                    </template>
+                </UTabs>
+            </UForm>
+        </template>
+    </UDashboardPanel>
 </template>

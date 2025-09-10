@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import CitizenLabelModal from '~/components/citizens/CitizenLabelModal.vue';
 import CitizenList from '~/components/citizens/CitizenList.vue';
 
 useHead({
@@ -11,27 +10,8 @@ definePageMeta({
     requiresAuth: true,
     permission: 'citizens.CitizensService/ListCitizens',
 });
-
-const { can } = useAuth();
-
-const modal = useModal();
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('pages.citizens.title')">
-                <template #right>
-                    <UButton
-                        v-if="can('citizens.CitizensService/ManageLabels').value"
-                        :label="$t('common.label', 2)"
-                        icon="i-mdi-tag"
-                        @click="modal.open(CitizenLabelModal, {})"
-                    />
-                </template>
-            </UDashboardNavbar>
-
-            <CitizenList />
-        </UDashboardPanel>
-    </UDashboardPage>
+    <CitizenList />
 </template>

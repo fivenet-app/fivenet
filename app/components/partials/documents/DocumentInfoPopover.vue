@@ -6,7 +6,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { ClassProp } from '~/utils/types';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
-import DocumentCategoryBadge from './DocumentCategoryBadge.vue';
+import CategoryBadge from './CategoryBadge.vue';
 
 defineOptions({
     inheritAttrs: false,
@@ -90,12 +90,12 @@ watchOnce(opened, async () => {
             </span>
         </slot>
     </template>
-    <UPopover v-else :ui="{ container: 'max-w-[50%]' }">
+
+    <UPopover v-else :ui="{ content: 'max-w-xl' }">
         <UButton
-            class="line-clamp-2 inline-flex w-full gap-1 whitespace-normal break-words p-px"
+            class="line-clamp-2 inline-flex gap-1 p-1 break-words whitespace-normal"
             :class="buttonClass"
             variant="link"
-            :padded="false"
             :trailing-icon="!hideTrailing ? 'i-mdi-chevron-down' : undefined"
             v-bind="$attrs"
             @click="opened = true"
@@ -108,14 +108,14 @@ watchOnce(opened, async () => {
 
                 <template v-else>
                     <IDCopyBadge v-if="showId" :id="documentId" prefix="DOC" hide-icon :disable-tooltip="disableTooltip" />
-                    <DocumentCategoryBadge v-if="document?.category && !hideCategory" :category="document?.category" />
+                    <CategoryBadge v-if="document?.category && !hideCategory" :category="document?.category" />
 
-                    <span v-bind="$attrs">{{ document?.title }} </span>
+                    <span class="text-left" v-bind="$attrs">{{ document?.title }} </span>
                 </template>
             </slot>
         </UButton>
 
-        <template #panel>
+        <template #content>
             <div class="flex flex-col gap-2 p-4">
                 <div class="inline-flex w-full gap-1">
                     <IDCopyBadge
@@ -146,10 +146,7 @@ watchOnce(opened, async () => {
                     />
                 </div>
 
-                <div
-                    v-else-if="isRequestPending(status) && !document"
-                    class="flex flex-col gap-2 text-gray-900 dark:text-white"
-                >
+                <div v-else-if="isRequestPending(status) && !document" class="flex flex-col gap-2 text-highlighted">
                     <USkeleton class="h-8 w-[250px]" />
 
                     <div class="flex flex-row items-center gap-2">
@@ -158,20 +155,25 @@ watchOnce(opened, async () => {
                     </div>
                 </div>
 
-                <div v-else-if="document" class="flex flex-col gap-2 text-gray-900 dark:text-white">
-                    <UButton variant="link" :padded="false" :to="{ name: 'documents-id', params: { id: document.id ?? 0 } }">
-                        <DocumentCategoryBadge v-if="document?.category" :category="document?.category" size="xs" />
+                <div v-else-if="document" class="flex flex-col gap-2 text-highlighted">
+                    <UButton
+                        variant="link"
+                        :to="{ name: 'documents-id', params: { id: document.id ?? 0 } }"
+                        :ui="{ base: 'p-0' }"
+                    >
+                        <CategoryBadge v-if="document?.category" :category="document?.category" />
 
-                        <span class="line-clamp-1 text-lg hover:line-clamp-2">{{ document.title }}</span>
+                        <span class="line-clamp-1 text-lg hover:line-clamp-3">{{ document.title }}</span>
                     </UButton>
 
                     <div>
-                        <UBadge v-if="document.state" class="inline-flex gap-1" size="xs">
-                            <UIcon class="size-5" name="i-mdi-note-check" />
-                            <span>
-                                {{ document.state }}
-                            </span>
-                        </UBadge>
+                        <UBadge
+                            v-if="document.state"
+                            class="inline-flex gap-1"
+                            icon="i-mdi-note-check"
+                            :label="document.state"
+                            size="xs"
+                        />
                     </div>
 
                     <div class="flex flex-row flex-wrap gap-2">

@@ -204,7 +204,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 				subjectsMu.Unlock()
 
 				// Update consumer
-				if _, err := s.js.UpdateConsumer(ctx, notifi.StreamName, cfg); err != nil {
+				if _, err := s.js.UpdateConsumer(gctx, notifi.StreamName, cfg); err != nil {
 					return fmt.Errorf("failed to update consumer. %w", err)
 				}
 			}
@@ -232,8 +232,15 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 
 	g.Go(func() error {
 		for {
+			select {
+			case <-gctx.Done():
+				return gctx.Err()
+
+			default:
+			}
+
 			batch, err := consumer.Fetch(feedFetch,
-				jetstream.FetchMaxWait(2*time.Second))
+				jetstream.FetchMaxWait(3*time.Second))
 			if err != nil {
 				if errors.Is(err, context.DeadlineExceeded) ||
 					errors.Is(err, jetstream.ErrNoMessages) {
@@ -279,7 +286,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						currentUserInfo.Job = d.UserInfoChanged.GetNewJob()
 						currentUserInfo.JobGrade = d.UserInfoChanged.GetNewJobGrade()
 
-						baseSubjects, additionalSubjects, err = s.buildSubjects(ctx, currentUserInfo)
+						baseSubjects, additionalSubjects, err = s.buildSubjects(gctx, currentUserInfo)
 						if err != nil {
 							return errswrap.NewError(err, ErrFailedStream)
 						}
@@ -299,7 +306,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						subjectsMu.Unlock()
 
 						// Update consumer subjects
-						if _, err := s.js.UpdateConsumer(ctx, notifi.StreamName, cfg); err != nil {
+						if _, err := s.js.UpdateConsumer(gctx, notifi.StreamName, cfg); err != nil {
 							return fmt.Errorf("failed to update consumer. %w", err)
 						}
 					}

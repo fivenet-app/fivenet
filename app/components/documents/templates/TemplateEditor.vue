@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { FileOutlineIcon } from 'mdi-vue3';
 import { z } from 'zod';
 import SingleHint from '~/components/SingleHint.vue';
@@ -7,19 +7,22 @@ import TemplateSchemaEditor, { type SchemaEditorValue } from '~/components/docum
 import { zWorkflow, type ObjectSpecsValue } from '~/components/documents/templates/types';
 import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
+import SelectMenu from '~/components/partials/SelectMenu.vue';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums, type AccessType } from '~/components/partials/access/helpers';
+import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { TemplateBlock } from '~/composables/tiptap/extensions/TemplateBlock';
 import { TemplateVar } from '~/composables/tiptap/extensions/TemplateVar';
 import { useAuthStore } from '~/stores/auth';
 import { useCompletorStore } from '~/stores/completor';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
-import { AccessLevel, type DocumentJobAccess, type DocumentUserAccess } from '~~/gen/ts/resources/documents/access';
+import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Category } from '~~/gen/ts/resources/documents/category';
-import type { ObjectSpecs, Template, TemplateJobAccess, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
+import type { ObjectSpecs, Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/documents/documents';
+import { jobAccessEntry, userAccessEntry } from '~~/shared/types/validation';
 import TemplateEditorButtons from './TemplateEditorButtons.vue';
 import TemplateWorkflowEditor from './TemplateWorkflowEditor.vue';
 
@@ -52,10 +55,10 @@ const schema = z.object({
     content: z.string().min(3).max(1500000),
     contentState: z.union([z.string().min(1).max(512), z.string().length(0)]),
     category: z.custom<Category>().optional(),
-    jobAccess: z.custom<TemplateJobAccess>().array().max(maxAccessEntries).default([]),
+    jobAccess: jobAccessEntry.array().max(maxAccessEntries).default([]),
     contentAccess: z.object({
-        jobs: z.custom<DocumentJobAccess>().array().max(maxAccessEntries).default([]),
-        users: z.custom<DocumentUserAccess>().array().max(maxAccessEntries).default([]),
+        jobs: jobAccessEntry.array().max(maxAccessEntries).default([]),
+        users: userAccessEntry.array().max(maxAccessEntries).default([]),
     }),
     workflow: zWorkflow,
 });
@@ -125,10 +128,10 @@ const schemaEditor = ref<SchemaEditorValue>({
     },
 });
 
-const accessTypes: AccessType[] = [{ type: 'job', name: t('common.job', 2) }];
+const accessTypes: AccessType[] = [{ label: t('common.job', 2), value: 'job' }];
 const contentAccessTypes: AccessType[] = [
-    { type: 'user', name: t('common.citizen', 2) },
-    { type: 'job', name: t('common.job', 2) },
+    { label: t('common.citizen', 2), value: 'user' },
+    { label: t('common.job', 2), value: 'job' },
 ];
 
 function createObjectSpec(v: ObjectSpecsValue): ObjectSpecs {
@@ -316,6 +319,13 @@ onBeforeMount(async () => {
             }
 
             setValuesFromTemplate(tpl);
+
+            useHead({
+                title: () =>
+                    tpl?.title
+                        ? `${tpl.title} - ${t('pages.documents.templates.edit.title')}`
+                        : t('pages.documents.templates.edit.title'),
+            });
         } catch (e) {
             handleGRPCError(e as RpcError);
         }
@@ -336,14 +346,16 @@ onBeforeMount(async () => {
 
 const items = [
     {
-        slot: 'details',
+        slot: 'details' as const,
         label: t('common.detail', 2),
         icon: 'i-mdi-details',
+        value: 'details',
     },
     {
-        slot: 'content',
+        slot: 'content' as const,
         label: t('common.content'),
         icon: 'i-mdi-file-edit',
+        value: 'content',
     },
 ];
 
@@ -352,236 +364,259 @@ const router = useRouter();
 
 const selectedTab = computed({
     get() {
-        const index = items.findIndex((item) => item.slot === route.query.tab);
-        if (index === -1) {
-            return 0;
-        }
-
-        return index;
+        return (route.query.tab as string) || 'details';
     },
-    set(value) {
+    set(tab) {
         // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
+        router.push({ query: { tab: tab }, hash: '#control-active-item' });
     },
 });
 
-const categoriesLoading = ref(false);
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UForm
-        class="min-h-dscreen flex w-full max-w-full flex-1 flex-col overflow-y-auto"
-        :schema="schema"
-        :state="state"
-        @submit="onSubmitThrottle"
-    >
-        <UDashboardNavbar :title="$t('pages.documents.templates.edit.title')">
-            <template #right>
-                <UButton
-                    color="black"
-                    icon="i-mdi-arrow-left"
-                    :to="templateId ? { name: 'documents-templates-id', params: { id: templateId } } : `/documents/templates`"
-                >
-                    {{ $t('common.back') }}
-                </UButton>
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+        <template #header>
+            <UDashboardNavbar :title="$t('pages.documents.templates.edit.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
 
-                <UButton type="submit" trailing-icon="i-mdi-content-save" :disabled="!canSubmit" :loading="!canSubmit">
-                    <span class="hidden truncate sm:block">
-                        {{ templateId ? $t('common.save') : $t('common.create') }}
-                    </span>
-                </UButton>
-            </template>
-        </UDashboardNavbar>
+                <template #right>
+                    <UButton
+                        color="neutral"
+                        icon="i-mdi-arrow-left"
+                        :to="
+                            templateId ? { name: 'documents-templates-id', params: { id: templateId } } : `/documents/templates`
+                        "
+                        :label="$t('common.back')"
+                    />
 
-        <UDashboardPanelContent class="p-0 sm:pb-0">
-            <UTabs
-                v-model="selectedTab"
-                class="flex flex-1 flex-col"
-                :items="items"
-                :ui="{
-                    wrapper: 'space-y-0 overflow-y-hidden',
-                    container: 'flex flex-1 flex-col overflow-y-hidden',
-                    base: 'flex flex-1 flex-col overflow-y-hidden',
-                    list: { rounded: '' },
-                }"
+                    <UButton
+                        trailing-icon="i-mdi-content-save"
+                        :disabled="!canSubmit"
+                        :loading="!canSubmit"
+                        @click="formRef?.submit()"
+                    >
+                        <span class="hidden truncate sm:block">
+                            {{ templateId ? $t('common.save') : $t('common.create') }}
+                        </span>
+                    </UButton>
+                </template>
+            </UDashboardNavbar>
+        </template>
+
+        <template #body>
+            <UForm
+                ref="formRef"
+                class="mb-4 flex w-full max-w-full flex-1 flex-col overflow-y-auto"
+                :schema="schema"
+                :state="state"
+                @submit="onSubmitThrottle"
             >
-                <template #details>
-                    <UContainer class="mt-2 w-full overflow-y-scroll">
-                        <div>
-                            <UFormGroup name="weight" :label="`${$t('common.template', 1)} ${$t('common.weight')}`">
-                                <UInput
-                                    v-model="state.weight"
-                                    type="number"
+                <UTabs
+                    v-model="selectedTab"
+                    class="flex flex-1 flex-col"
+                    :items="items"
+                    variant="link"
+                    :unmount-on-hide="false"
+                >
+                    <template #details>
+                        <UContainer class="mt-2 flex w-full flex-col gap-4 overflow-y-scroll">
+                            <UPageCard>
+                                <UFormField
                                     name="weight"
-                                    :min="0"
-                                    :max="999999"
-                                    :placeholder="$t('common.weight')"
-                                />
-                            </UFormGroup>
-
-                            <UFormGroup name="title" :label="`${$t('common.template')} ${$t('common.title')}`" required>
-                                <UTextarea v-model="state.title" name="title" :rows="1" :placeholder="$t('common.title')" />
-                            </UFormGroup>
-
-                            <UFormGroup
-                                name="description"
-                                :label="`${$t('common.template')} ${$t('common.description')}`"
-                                required
-                            >
-                                <UTextarea
-                                    v-model="state.description"
-                                    name="description"
-                                    :rows="4"
-                                    :label="$t('common.description')"
-                                />
-                            </UFormGroup>
-
-                            <UFormGroup class="flex-1 flex-row" name="color" :label="$t('common.color')" required>
-                                <div class="flex flex-1 gap-1">
-                                    <ColorPickerTW v-model="state.color" class="flex-1" />
-                                </div>
-                            </UFormGroup>
-
-                            <UFormGroup class="flex-1" name="icon" :label="$t('common.icon')">
-                                <div class="flex flex-1 gap-1">
-                                    <IconSelectMenu
-                                        v-model="state.icon"
-                                        class="flex-1"
-                                        :color="state.color"
-                                        :fallback-icon="FileOutlineIcon"
+                                    :label="`${$t('common.template', 1)} ${$t('common.weight')}`"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                >
+                                    <UInputNumber
+                                        v-model="state.weight"
+                                        name="weight"
+                                        :min="0"
+                                        :max="999999"
+                                        :step="1"
+                                        :placeholder="$t('common.weight')"
                                     />
+                                </UFormField>
 
-                                    <UButton icon="i-mdi-backspace" @click="state.icon = undefined" />
-                                </div>
-                            </UFormGroup>
-                        </div>
+                                <UFormField
+                                    name="title"
+                                    :label="`${$t('common.template')} ${$t('common.title')}`"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    required
+                                >
+                                    <UInput
+                                        v-model="state.title"
+                                        name="title"
+                                        :placeholder="$t('common.title')"
+                                        size="lg"
+                                        class="w-full"
+                                    />
+                                </UFormField>
 
-                        <div class="my-2">
-                            <h2 class="text-sm">{{ $t('common.template') }} {{ $t('common.access') }}</h2>
+                                <UFormField
+                                    name="description"
+                                    :label="`${$t('common.template')} ${$t('common.description')}`"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    required
+                                >
+                                    <UTextarea
+                                        v-model="state.description"
+                                        name="description"
+                                        :rows="4"
+                                        :label="$t('common.description')"
+                                        class="w-full"
+                                    />
+                                </UFormField>
 
-                            <AccessManager
-                                v-model:jobs="state.jobAccess"
-                                :target-id="templateId ?? 0"
-                                :access-types="accessTypes"
-                                :access-roles="
-                                    enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel').filter(
-                                        (e) => e.value === AccessLevel.VIEW || e.value === AccessLevel.EDIT,
-                                    )
-                                "
-                            />
-                        </div>
+                                <UFormField
+                                    name="color"
+                                    :label="$t('common.color')"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    required
+                                >
+                                    <div class="flex flex-1 gap-1">
+                                        <ColorPickerTW v-model="state.color" class="flex-1" />
+                                    </div>
+                                </UFormField>
 
-                        <div class="my-2">
-                            <UAccordion
-                                :items="[
-                                    { slot: 'schema', label: $t('common.requirements', 2), icon: 'i-mdi-asterisk' },
-                                    {
-                                        slot: 'workflow',
-                                        label: $t('common.workflow'),
-                                        icon: 'i-mdi-reminder',
-                                    },
-                                ]"
-                            >
-                                <template #schema>
-                                    <TemplateSchemaEditor v-model="schemaEditor" />
-                                </template>
+                                <UFormField name="icon" :label="$t('common.icon')" class="grid grid-cols-2 items-center gap-2">
+                                    <div class="flex flex-1 gap-1">
+                                        <IconSelectMenu
+                                            v-model="state.icon"
+                                            class="flex-1"
+                                            :color="state.color"
+                                            :fallback-icon="FileOutlineIcon"
+                                        />
 
-                                <template #workflow>
-                                    <TemplateWorkflowEditor v-model="state.workflow" />
-                                </template>
-                            </UAccordion>
-                        </div>
+                                        <UButton icon="i-mdi-backspace" @click="state.icon = undefined" />
+                                    </div>
+                                </UFormField>
+                            </UPageCard>
 
-                        <div class="my-2">
-                            <h2 class="text-sm">{{ $t('common.content') }} {{ $t('common.access') }}</h2>
+                            <UPageCard :title="`${$t('common.template')} ${$t('common.access')}`">
+                                <h2 class="text-sm">{{ $t('common.template') }} {{ $t('common.access') }}</h2>
 
-                            <AccessManager
-                                v-model:jobs="state.contentAccess.jobs"
-                                v-model:users="state.contentAccess.users"
-                                :target-id="templateId ?? 0"
-                                :access-types="contentAccessTypes"
-                                :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
-                                :show-required="true"
-                            />
-                        </div>
-                    </UContainer>
-                </template>
-
-                <template #content>
-                    <UContainer class="flex w-full flex-1 flex-col overflow-y-hidden">
-                        <SingleHint
-                            class="my-2"
-                            hint-id="template_editor_templating"
-                            to="https://fivenet.app/user-guides/documents/templates"
-                            external
-                            link-target="_blank"
-                        />
-
-                        <UFormGroup name="contentTitle" :label="`${$t('common.content')} ${$t('common.title')}`" required>
-                            <UTextarea v-model="state.contentTitle" name="contentTitle" :rows="2" />
-                        </UFormGroup>
-
-                        <UFormGroup name="category" :label="$t('common.category', 1)">
-                            <ClientOnly>
-                                <UInputMenu
-                                    v-model="state.category"
-                                    option-attribute="name"
-                                    :search-attributes="['name']"
-                                    block
-                                    nullable
-                                    :search="
-                                        async (search: string) => {
-                                            try {
-                                                categoriesLoading = true;
-                                                const categories = await completorStore.completeDocumentCategories(search);
-                                                categoriesLoading = false;
-                                                return categories;
-                                            } catch (e) {
-                                                handleGRPCError(e as RpcError);
-                                                throw e;
-                                            } finally {
-                                                categoriesLoading = false;
-                                            }
-                                        }
+                                <AccessManager
+                                    v-model:jobs="state.jobAccess"
+                                    :target-id="templateId ?? 0"
+                                    :access-types="accessTypes"
+                                    :access-roles="
+                                        enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel').filter(
+                                            (e) => e.value === AccessLevel.VIEW || e.value === AccessLevel.EDIT,
+                                        )
                                     "
-                                    search-lazy
-                                    :search-placeholder="$t('common.search_field')"
-                                >
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                    </template>
+                                    name="jobAccess"
+                                    full-name
+                                />
+                            </UPageCard>
 
-                                    <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
-                                </UInputMenu>
-                            </ClientOnly>
-                        </UFormGroup>
+                            <UPageCard :title="`${$t('common.content')} ${$t('common.access')}`">
+                                <AccessManager
+                                    v-model:jobs="state.contentAccess.jobs"
+                                    v-model:users="state.contentAccess.users"
+                                    :target-id="templateId ?? 0"
+                                    :access-types="contentAccessTypes"
+                                    :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
+                                    show-required
+                                    name="contentAccess"
+                                />
+                            </UPageCard>
 
-                        <UFormGroup name="contentState" :label="`${$t('common.content')} ${$t('common.state')}`">
-                            <UTextarea v-model="state.contentState" name="contentState" :rows="2" />
-                        </UFormGroup>
+                            <UPageCard :title="$t('common.requirements', 2)">
+                                <TemplateSchemaEditor v-model="schemaEditor" />
+                            </UPageCard>
 
-                        <UFormGroup
-                            class="flex flex-1 flex-col overflow-y-hidden"
-                            name="content"
-                            :label="`${$t('common.content')} ${$t('common.template')}`"
-                            required
-                            :ui="{ container: 'flex flex-1 overflow-y-hidden flex-col' }"
-                        >
-                            <ClientOnly>
-                                <TiptapEditor
-                                    v-model="state.content"
-                                    class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
-                                    :extensions="extensions"
-                                >
-                                    <template #toolbar="{ editor }">
-                                        <TemplateEditorButtons :editor="editor" />
-                                    </template>
-                                </TiptapEditor>
-                            </ClientOnly>
-                        </UFormGroup>
-                    </UContainer>
-                </template>
-            </UTabs>
-        </UDashboardPanelContent>
-    </UForm>
+                            <UPageCard :title="$t('common.workflow')">
+                                <TemplateWorkflowEditor v-model="state.workflow" />
+                            </UPageCard>
+                        </UContainer>
+                    </template>
+
+                    <template #content>
+                        <UDashboardPanel :ui="{ root: 'h-full min-h-0' }">
+                            <template #body>
+                                <UPageCard>
+                                    <UFormField
+                                        name="contentTitle"
+                                        :label="`${$t('common.content')} ${$t('common.title')}`"
+                                        required
+                                    >
+                                        <UTextarea v-model="state.contentTitle" name="contentTitle" :rows="2" class="w-full" />
+                                    </UFormField>
+
+                                    <UFormField name="category" :label="$t('common.category', 1)">
+                                        <SelectMenu
+                                            v-model="state.category"
+                                            :filter-fields="['name']"
+                                            block
+                                            nullable
+                                            class="w-full"
+                                            :searchable="
+                                                async (q: string) => {
+                                                    try {
+                                                        const categories = await completorStore.completeDocumentCategories(q);
+                                                        return categories;
+                                                    } catch (e) {
+                                                        handleGRPCError(e as RpcError);
+                                                        throw e;
+                                                    }
+                                                }
+                                            "
+                                            searchable-key="completor-document-categories"
+                                            :search-input="{ placeholder: $t('common.search_field') }"
+                                        >
+                                            <template v-if="state.category" #default>
+                                                <CategoryBadge :category="state.category" />
+                                            </template>
+
+                                            <template #item="{ item }">
+                                                <CategoryBadge :category="item" />
+                                            </template>
+
+                                            <template #empty>
+                                                {{ $t('common.not_found', [$t('common.category', 2)]) }}
+                                            </template>
+                                        </SelectMenu>
+                                    </UFormField>
+
+                                    <UFormField name="contentState" :label="`${$t('common.content')} ${$t('common.state')}`">
+                                        <UTextarea v-model="state.contentState" name="contentState" :rows="2" class="w-full" />
+                                    </UFormField>
+
+                                    <SingleHint
+                                        class="my-2"
+                                        hint-id="template_editor_templating"
+                                        to="https://fivenet.app/user-guides/documents/templates"
+                                        external
+                                        link-target="_blank"
+                                    />
+                                    <UFormField
+                                        class="flex flex-1 flex-col overflow-y-hidden"
+                                        name="content"
+                                        :label="`${$t('common.content')} ${$t('common.template')}`"
+                                        required
+                                        :ui="{ container: 'flex flex-1 overflow-y-hidden flex-col' }"
+                                    >
+                                        <ClientOnly>
+                                            <TiptapEditor
+                                                v-model="state.content"
+                                                class="mx-auto min-h-120 w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
+                                                :extensions="extensions"
+                                            >
+                                                <template #toolbar="{ editor }">
+                                                    <TemplateEditorButtons :editor="editor" />
+                                                </template>
+                                            </TiptapEditor>
+                                        </ClientOnly>
+                                    </UFormField>
+                                </UPageCard>
+                            </template>
+                        </UDashboardPanel>
+                    </template>
+                </UTabs>
+            </UForm>
+        </template>
+    </UDashboardPanel>
 </template>

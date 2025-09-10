@@ -30,6 +30,8 @@ const props = withDefaults(
         totalLimit?: number;
         hideGrade?: boolean;
         hideJobs?: string[];
+        name?: string;
+        fullName?: boolean;
     }>(),
     {
         jobs: () => [],
@@ -43,6 +45,8 @@ const props = withDefaults(
         totalLimit: undefined,
         hideGrade: false,
         hideJobs: () => [],
+        name: undefined,
+        fullName: false,
     },
 );
 
@@ -57,8 +61,8 @@ const usersAccess = defineModel<UsersT[]>('users', { default: () => [] });
 const qualificationsAccess = defineModel<QualiT[]>('qualifications', { default: () => [] });
 
 const defaultAccessTypes = [
-    { type: 'user', name: t('common.citizen', 2) },
-    { type: 'job', name: t('common.job', 2) },
+    { label: t('common.citizen', 2), value: 'user' },
+    { label: t('common.job', 2), value: 'job' },
 ] as AccessType[];
 
 const aTypes = ref<AccessType[]>([]);
@@ -205,12 +209,12 @@ watch(access, syncPropsFromAccess, { deep: true });
 let lastId = 0;
 
 function addNewEntry(): void {
-    let idx = aTypes.value.findIndex((at) => at.type === props.defaultAccessType);
+    let idx = aTypes.value.findIndex((at) => at.value === props.defaultAccessType);
     if (idx === -1) idx = aTypes.value.length - 1;
 
     access.value.push({
         id: lastId--,
-        type: aTypes.value[idx]?.type ?? 'job',
+        type: aTypes.value[idx]?.value ?? 'job',
         access: props.defaultAccess,
     });
 }
@@ -220,7 +224,7 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
 </script>
 
 <template>
-    <div>
+    <div class="flex flex-col gap-1 divide-y divide-neutral-100 md:divide-y-0 dark:divide-neutral-800">
         <AccessEntry
             v-for="(entry, idx) in access"
             :key="entry.id"
@@ -233,16 +237,21 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
             v-bind="$attrs"
             :hide-grade="hideGrade"
             :hide-jobs="hideJobs"
+            :name="`${name}${fullName ? '' : `.${entry.type}s`}.${idx}`"
             @delete="access?.splice(idx, 1)"
         />
 
-        <UTooltip v-if="!disabled" :text="$t('components.access.add_entry')">
-            <UButton
-                :disabled="access.length >= maxEntries"
-                :ui="{ rounded: 'rounded-full' }"
-                icon="i-mdi-plus"
-                @click="addNewEntry"
-            />
-        </UTooltip>
+        <div>
+            <UTooltip v-if="!disabled" :text="$t('components.access.add_entry')">
+                <UButton
+                    class="w-full justify-center md:w-auto"
+                    :disabled="access.length >= maxEntries"
+                    icon="i-mdi-plus"
+                    :label="$t('components.access.add_entry')"
+                    :ui="{ label: 'md:hidden' }"
+                    @click="addNewEntry"
+                />
+            </UTooltip>
+        </div>
     </div>
 </template>

@@ -1518,7 +1518,7 @@ class ListDocumentsResponse$Type extends MessageType<ListDocumentsResponse> {
     constructor() {
         super("services.documents.ListDocumentsResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "documents", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocumentShort }
+            { no: 2, name: "documents", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocumentShort, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListDocumentsResponse>): ListDocumentsResponse {
@@ -2276,8 +2276,8 @@ export const GetCommentsRequest = new GetCommentsRequest$Type();
 class GetCommentsResponse$Type extends MessageType<GetCommentsResponse> {
     constructor() {
         super("services.documents.GetCommentsResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "comments", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Comment }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "comments", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Comment, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<GetCommentsResponse>): GetCommentsResponse {
@@ -3231,8 +3231,8 @@ export const ListDocumentActivityRequest = new ListDocumentActivityRequest$Type(
 class ListDocumentActivityResponse$Type extends MessageType<ListDocumentActivityResponse> {
     constructor() {
         super("services.documents.ListDocumentActivityResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocActivity }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocActivity, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListDocumentActivityResponse>): ListDocumentActivityResponse {
@@ -3339,8 +3339,8 @@ export const ListDocumentReqsRequest = new ListDocumentReqsRequest$Type();
 class ListDocumentReqsResponse$Type extends MessageType<ListDocumentReqsResponse> {
     constructor() {
         super("services.documents.ListDocumentReqsResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "requests", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocRequest }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "requests", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocRequest, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListDocumentReqsResponse>): ListDocumentReqsResponse {
@@ -3985,8 +3985,8 @@ export const ListUserDocumentsRequest = new ListUserDocumentsRequest$Type();
 class ListUserDocumentsResponse$Type extends MessageType<ListUserDocumentsResponse> {
     constructor() {
         super("services.documents.ListUserDocumentsResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "relations", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocumentRelation }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "relations", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocumentRelation, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListUserDocumentsResponse>): ListUserDocumentsResponse {
@@ -4354,8 +4354,8 @@ export const ListDocumentPinsRequest = new ListDocumentPinsRequest$Type();
 class ListDocumentPinsResponse$Type extends MessageType<ListDocumentPinsResponse> {
     constructor() {
         super("services.documents.ListDocumentPinsResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "documents", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocumentShort }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "documents", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocumentShort, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListDocumentPinsResponse>): ListDocumentPinsResponse {

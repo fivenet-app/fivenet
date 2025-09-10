@@ -7,6 +7,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
+	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
@@ -81,10 +82,9 @@ func (s *Server) ViewAuditLog(
 		condition = condition.AND(tAuditLog.State.IN(states...))
 	}
 	if req.Search != nil && req.GetSearch() != "" {
-		condition = condition.AND(jet.BoolExp(
-			jet.Raw("MATCH(`data`) AGAINST ($search IN BOOLEAN MODE)",
-				jet.RawArgs{"$search": req.GetSearch()}),
-		))
+		condition = condition.AND(
+			dbutils.MATCH(tAuditLog.Data, jet.String(req.GetSearch())),
+		)
 	}
 
 	countStmt := tAuditLog.

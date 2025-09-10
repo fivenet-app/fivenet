@@ -25,6 +25,8 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+const feedFetch = 16
+
 func (s *Server) sendHandshakre(
 	ctx context.Context,
 	srv pbcentrum.CentrumService_StreamServer,
@@ -275,8 +277,15 @@ func (s *Server) stream(
 
 		// Pull loop
 		for {
-			batch, err := consumer.Fetch(32,
-				jetstream.FetchMaxWait(2*time.Second))
+			select {
+			case <-gctx.Done():
+				return gctx.Err()
+
+			default:
+			}
+
+			batch, err := consumer.Fetch(feedFetch,
+				jetstream.FetchMaxWait(3*time.Second))
 			if err != nil {
 				if errors.Is(err, context.DeadlineExceeded) ||
 					errors.Is(err, jetstream.ErrNoMessages) {
@@ -367,8 +376,15 @@ func (s *Server) stream(
 
 			// Pull loop
 			for {
-				batch, err := consumer.Fetch(32,
-					jetstream.FetchMaxWait(2*time.Second))
+				select {
+				case <-gctx.Done():
+					return gctx.Err()
+
+				default:
+				}
+
+				batch, err := consumer.Fetch(feedFetch,
+					jetstream.FetchMaxWait(3*time.Second))
 				if err != nil {
 					if errors.Is(err, context.DeadlineExceeded) ||
 						errors.Is(err, jetstream.ErrNoMessages) {

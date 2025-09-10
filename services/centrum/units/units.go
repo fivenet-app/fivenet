@@ -917,7 +917,7 @@ func (s *UnitDB) GetStatusByID(
 	tColleagueProps := table.FivenetJobColleagueProps.AS("colleague_props")
 	tUsers := tables.User().AS("colleague")
 	tUserProps := table.FivenetUserProps.AS("user_props")
-	tAvatar := table.FivenetFiles.AS("avatar")
+	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tUnitStatus.
 		SELECT(
@@ -945,8 +945,8 @@ func (s *UnitDB) GetStatusByID(
 			tColleagueProps.Job,
 			tColleagueProps.NamePrefix,
 			tColleagueProps.NameSuffix,
-			tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
-			tAvatar.FilePath.AS("colleague.avatar"),
+			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
+			tAvatar.FilePath.AS("colleague.profile_picture"),
 		).
 		FROM(
 			tUnitStatus.
@@ -991,7 +991,7 @@ func (s *UnitDB) GetLastStatus(
 	tColleagueProps := table.FivenetJobColleagueProps.AS("colleague_props")
 	tUsers := tables.User().AS("colleague")
 	tUserProps := table.FivenetUserProps.AS("user_props")
-	tAvatar := table.FivenetFiles.AS("avatar")
+	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tUnitStatus.
 		SELECT(
@@ -1019,8 +1019,8 @@ func (s *UnitDB) GetLastStatus(
 			tColleagueProps.Job,
 			tColleagueProps.NamePrefix,
 			tColleagueProps.NameSuffix,
-			tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
-			tAvatar.FilePath.AS("colleague.avatar"),
+			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
+			tAvatar.FilePath.AS("colleague.profile_picture"),
 		).
 		FROM(
 			tUnitStatus.

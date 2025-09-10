@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { dispatchStatusToBGColor, dispatchStatuses } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
@@ -13,7 +13,9 @@ const props = defineProps<{
     status?: StatusDispatch;
 }>();
 
-const { isOpen } = useModal();
+const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 
 const centrumStore = useCentrumStore();
 const { settings } = storeToRefs(centrumStore);
@@ -50,7 +52,7 @@ async function updateDispatchStatus(dispatchId: number, values: Schema): Promise
             type: NotificationType.SUCCESS,
         });
 
-        isOpen.value = false;
+        emit('close', false);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -68,145 +70,128 @@ watch(props, () => {
 });
 
 function updateReasonField(value: string): void {
-    if (value.length === 0) {
-        return;
-    }
+    if (value.length === 0) return;
 
     state.reason = value;
 }
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }" :overlay="false">
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard
-                class="flex flex-1 flex-col"
-                :ui="{
-                    body: {
-                        padding: 'px-1 py-2 sm:p-2',
-                    },
-                    ring: '',
-                    divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-                }"
-            >
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="inline-flex items-center text-2xl font-semibold leading-6">
-                            {{ $t('components.centrum.update_dispatch_status.title') }}:
-                            <IDCopyBadge :id="dispatchId" class="ml-2" prefix="DSP" />
-                        </h3>
+    <UModal :title="$t('components.centrum.update_dispatch_status.title')" :overlay="false">
+        <template #actions>
+            <IDCopyBadge :id="dispatchId" class="ml-2" prefix="DSP" />
+        </template>
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                    </div>
-                </template>
-
-                <div>
-                    <dl class="divide-neutral/10 divide-y">
-                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
-                                <label class="block text-sm font-medium leading-6" for="status">
-                                    {{ $t('common.status') }}
-                                </label>
-                            </dt>
-                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="status">
-                                    <div class="grid w-full grid-cols-2 gap-0.5">
-                                        <UButton
-                                            v-for="(item, idx) in dispatchStatuses"
-                                            :key="item.name"
-                                            class="hover:bg-primary-100/10 group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:transition-all"
-                                            :class="[
-                                                idx >= dispatchStatuses.length - 1 ? 'col-span-2' : '',
-                                                state.status == item.status
-                                                    ? 'bg-base-500 hover:bg-base-400'
-                                                    : item.status
-                                                      ? dispatchStatusToBGColor(item.status)
-                                                      : '',
-                                                ,
-                                            ]"
-                                            :disabled="state.status == item.status"
-                                            @click="state.status = item.status ?? StatusDispatch.NEW"
-                                        >
-                                            <UIcon class="size-5 shrink-0" :name="item.icon" />
-                                            <span class="mt-1">
-                                                {{
-                                                    item.status
-                                                        ? $t(`enums.centrum.StatusDispatch.${StatusDispatch[item.status ?? 0]}`)
-                                                        : $t(item.name)
-                                                }}
-                                            </span>
-                                        </UButton>
-                                    </div>
-                                </UFormGroup>
-                            </dd>
-                        </div>
-                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
-                                <label class="block text-sm font-medium leading-6" for="code">
-                                    {{ $t('common.code') }}
-                                </label>
-                            </dt>
-                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup class="flex-1" name="code">
-                                    <UInput v-model="state.code" type="text" name="code" :placeholder="$t('common.code')" />
-                                </UFormGroup>
-                            </dd>
-                        </div>
-                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
-                                <label class="block text-sm font-medium leading-6" for="reason">
-                                    {{ $t('common.reason') }}
-                                </label>
-                            </dt>
-                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup class="flex-1" name="reason" required>
-                                    <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
-                                </UFormGroup>
-                            </dd>
-                        </div>
-
-                        <div
-                            v-if="settings?.predefinedStatus && settings?.predefinedStatus.dispatchStatus.length > 0"
-                            class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
-                        >
-                            <dt class="text-sm font-medium leading-6">
-                                <label class="block text-sm font-medium leading-6" for="dispatchStatus">
-                                    {{ $t('common.predefined', 2) }}
-                                    {{ $t('common.reason', 2) }}
-                                </label>
-                            </dt>
-                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <ClientOnly>
-                                    <USelectMenu
-                                        name="dispatchStatus"
-                                        :options="['&nbsp;', ...settings?.predefinedStatus.dispatchStatus]"
-                                        :searchable-placeholder="$t('common.search_field')"
-                                        @change="updateReasonField($event)"
+        <template #body>
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <dl class="divide-y divide-default">
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="status">
+                                {{ $t('common.status') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="status">
+                                <div class="grid w-full grid-cols-2 gap-0.5">
+                                    <UButton
+                                        v-for="(item, idx) in dispatchStatuses"
+                                        :key="item.name"
+                                        class="group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:bg-primary-100/10 hover:transition-all"
+                                        :class="[
+                                            idx >= dispatchStatuses.length - 1 ? 'col-span-2' : '',
+                                            state.status == item.status
+                                                ? 'bg-neutral-500 hover:bg-neutral-400'
+                                                : item.status
+                                                  ? dispatchStatusToBGColor(item.status)
+                                                  : '',
+                                            ,
+                                        ]"
+                                        :disabled="state.status == item.status"
+                                        @click="state.status = item.status ?? StatusDispatch.NEW"
                                     >
-                                        <template #option="{ option }">
-                                            <span class="truncate">
-                                                {{ option !== '' ? option : '&nbsp;' }}
-                                            </span>
-                                        </template>
-                                    </USelectMenu>
-                                </ClientOnly>
-                            </dd>
-                        </div>
-                    </dl>
-                </div>
+                                        <UIcon class="size-5 shrink-0" :name="item.icon" />
+                                        <span class="mt-1">
+                                            {{
+                                                item.status
+                                                    ? $t(`enums.centrum.StatusDispatch.${StatusDispatch[item.status ?? 0]}`)
+                                                    : $t(item.name)
+                                            }}
+                                        </span>
+                                    </UButton>
+                                </div>
+                            </UFormField>
+                        </dd>
+                    </div>
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="code">
+                                {{ $t('common.code') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField class="flex-1" name="code">
+                                <UInput v-model="state.code" type="text" name="code" :placeholder="$t('common.code')" />
+                            </UFormField>
+                        </dd>
+                    </div>
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="reason">
+                                {{ $t('common.reason') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField class="flex-1" name="reason" required>
+                                <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
+                            </UFormField>
+                        </dd>
+                    </div>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="black" block @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
+                    <div
+                        v-if="settings?.predefinedStatus && settings?.predefinedStatus.dispatchStatus.length > 0"
+                        class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
+                    >
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="dispatchStatus">
+                                {{ $t('common.predefined', 2) }}
+                                {{ $t('common.reason', 2) }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <ClientOnly>
+                                <USelectMenu
+                                    name="dispatchStatus"
+                                    :items="['&nbsp;', ...settings?.predefinedStatus.dispatchStatus]"
+                                    :search-input="{ placeholder: $t('common.search_field') }"
+                                    @update:model-value="($event) => updateReasonField($event)"
+                                >
+                                    <template #item="{ item }">
+                                        {{ item !== '' ? item : '&nbsp;' }}
+                                    </template>
+                                </USelectMenu>
+                            </ClientOnly>
+                        </dd>
+                    </div>
+                </dl>
+            </UForm>
+        </template>
 
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.update') }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
+
+                <UButton
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :label="$t('common.update')"
+                    @click="() => formRef?.submit()"
+                />
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

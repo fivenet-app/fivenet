@@ -2,9 +2,7 @@
 import { Calendar as VCalendar } from 'v-calendar';
 import 'v-calendar/dist/style.css';
 import type { CalendarView } from 'v-calendar/dist/types/src/use/calendar.js';
-import type { CalendarDay } from 'v-calendar/dist/types/src/utils/page.js';
 import type { CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
-import EntryCreateOrUpdateModal from '../calendar/entry/EntryCreateOrUpdateModal.vue';
 import MonthCalendarDay from './MonthCalendarDay.vue';
 
 defineOptions({
@@ -24,13 +22,6 @@ defineEmits<{
     (e: 'selected', entry: CalendarEntry): void;
 }>();
 
-const { t } = useI18n();
-
-const modal = useModal();
-
-const calendarStore = useCalendarStore();
-const { hasEditAccessToCalendar } = storeToRefs(calendarStore);
-
 const calRef = ref<InstanceType<typeof VCalendar> | null>(null);
 
 const attrs = {
@@ -47,46 +38,6 @@ const masks = {
     weekdays: 'WWW',
 };
 
-const { x, y } = useMouse();
-const { y: windowY } = useWindowScroll();
-
-const isOpen = ref(false);
-const virtualElement = ref({ getBoundingClientRect: () => ({}) });
-
-const selectedCalendarDay = ref<CalendarDay | undefined>(undefined);
-
-function onContextMenu(doc: CalendarDay) {
-    if (!hasEditAccessToCalendar.value) return;
-
-    selectedCalendarDay.value = doc;
-    const top = unref(y) - unref(windowY);
-    const left = unref(x);
-
-    virtualElement.value.getBoundingClientRect = () => ({
-        width: 0,
-        height: 0,
-        top,
-        left,
-    });
-
-    isOpen.value = true;
-}
-
-const links = computed(() =>
-    [
-        [
-            {
-                label: t('common.entry', 1),
-                icon: 'i-mdi-plus',
-                click: () =>
-                    modal.open(EntryCreateOrUpdateModal, {
-                        day: selectedCalendarDay.value!,
-                    }),
-            },
-        ].filter((l) => l != undefined),
-    ].filter((L) => L.length > 0),
-);
-
 defineExpose({
     calRef,
 });
@@ -96,46 +47,37 @@ defineExpose({
     <div class="custom-calendar" :class="$attrs.class">
         <VCalendar ref="calRef" :view="view" :columns="1" :rows="1" :masks="masks" v-bind="{ ...attrs, ...$attrs }">
             <template #day-content="{ day, attributes }">
-                <MonthCalendarDay
-                    :day="day"
-                    :attributes="attributes"
-                    @selected="$emit('selected', $event)"
-                    @contextmenu.prevent="onContextMenu(day)"
-                />
+                <MonthCalendarDay :day="day" :attributes="attributes" @selected="$emit('selected', $event)" />
             </template>
         </VCalendar>
-
-        <UContextMenu v-model="isOpen" :virtual-element="virtualElement">
-            <UVerticalNavigation :links="links" />
-        </UContextMenu>
     </div>
 </template>
 
 <style>
 :root {
-    --vc-gray-50: rgb(var(--color-gray-50));
-    --vc-gray-100: rgb(var(--color-gray-100));
-    --vc-gray-200: rgb(var(--color-gray-200));
-    --vc-gray-300: rgb(var(--color-gray-300));
-    --vc-gray-400: rgb(var(--color-gray-400));
-    --vc-gray-500: rgb(var(--color-gray-500));
-    --vc-gray-600: rgb(var(--color-gray-600));
-    --vc-gray-700: rgb(var(--color-gray-700));
-    --vc-gray-800: rgb(var(--color-gray-800));
-    --vc-gray-900: rgb(var(--color-gray-900));
+    --vc-gray-50: var(--color-neutral-50);
+    --vc-gray-100: var(--color-neutral-100);
+    --vc-gray-200: var(--color-neutral-200);
+    --vc-gray-300: var(--color-neutral-300);
+    --vc-gray-400: var(--color-neutral-400);
+    --vc-gray-500: var(--color-neutral-500);
+    --vc-gray-600: var(--color-neutral-600);
+    --vc-gray-700: var(--color-neutral-700);
+    --vc-gray-800: var(--color-neutral-800);
+    --vc-gray-900: var(--color-neutral-900);
 }
 
 .vc-primary {
-    --vc-accent-50: rgb(var(--color-primary-50));
-    --vc-accent-100: rgb(var(--color-primary-100));
-    --vc-accent-200: rgb(var(--color-primary-200));
-    --vc-accent-300: rgb(var(--color-primary-300));
-    --vc-accent-400: rgb(var(--color-primary-400));
-    --vc-accent-500: rgb(var(--color-primary-500));
-    --vc-accent-600: rgb(var(--color-primary-600));
-    --vc-accent-700: rgb(var(--color-primary-700));
-    --vc-accent-800: rgb(var(--color-primary-800));
-    --vc-accent-900: rgb(var(--color-primary-900));
+    --vc-accent-50: var(--color-primary-50);
+    --vc-accent-100: var(--color-primary-100);
+    --vc-accent-200: var(--color-primary-200);
+    --vc-accent-300: var(--color-primary-300);
+    --vc-accent-400: var(--color-primary-400);
+    --vc-accent-500: var(--color-primary-500);
+    --vc-accent-600: var(--color-primary-600);
+    --vc-accent-700: var(--color-primary-700);
+    --vc-accent-800: var(--color-primary-800);
+    --vc-accent-900: var(--color-primary-900);
 }
 </style>
 
@@ -149,11 +91,11 @@ defineExpose({
 }
 
 .custom-calendar:deep(.vc-container) {
-    --day-border: 1px solid rgb(var(--color-gray-700));
-    --day-border-highlight: 1px solid rgb(var(--color-gray-600));
+    --day-border: 1px solid var(--color-neutral-700);
+    --day-border-highlight: 1px solid var(--color-neutral-600);
     --day-width: 110px;
     --day-height: 115px;
-    --weekday-border: 1px solid rgb(var(--color-primary-900));
+    --weekday-border: 1px solid var(--color-primary-900);
 
     border-radius: 0;
     width: 100%;
@@ -187,22 +129,22 @@ defineExpose({
     }
 
     & .vc-weekday {
-        background-color: rgb(var(--color-primary-400));
+        background-color: var(--color-primary-400);
         border-bottom: var(--weekday-border);
         border-top: var(--weekday-border);
         padding: 5px 0;
     }
     & .vc-weekday.vc-weekday-1,
     & .vc-weekday.vc-weekday-7 {
-        background-color: rgb(var(--color-primary-600));
+        background-color: var(--color-primary-600);
     }
 
     .vc-day:hover {
-        background-color: rgb(var(--color-gray-800));
+        background-color: var(--color-neutral-800);
 
         &.weekday-1:hover,
         &.weekday-7:hover {
-            background-color: rgb(var(--color-gray-700));
+            background-color: var(--color-neutral-700);
         }
     }
 
@@ -211,13 +153,12 @@ defineExpose({
         text-align: left;
         min-height: var(--day-height);
         min-width: var(--day-width);
-        background-color: rgb(var(--color-gray-900));
 
         height: 100%;
 
         &.weekday-1,
         &.weekday-7 {
-            background-color: rgb(var(--color-gray-800));
+            background-color: var(--color-neutral-800);
         }
 
         &:not(.on-bottom) {

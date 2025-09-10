@@ -40,7 +40,7 @@ var (
 	tColleagueProps    = table.FivenetJobColleagueProps.AS("colleague_props")
 	tColleagueActivity = table.FivenetJobColleagueActivity
 
-	tAvatar = table.FivenetFiles.AS("avatar")
+	tAvatar = table.FivenetFiles.AS("profile_picture")
 )
 
 func (s *Server) ListColleagues(
@@ -228,8 +228,8 @@ func (s *Server) ListColleagues(
 			tColleague.Lastname,
 			tColleague.Dateofbirth,
 			tColleague.PhoneNumber,
-			tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
-			tAvatar.FilePath.AS("colleague.avatar"),
+			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
+			tAvatar.FilePath.AS("colleague.profile_picture"),
 			tUserProps.Email.AS("colleague.email"),
 			tColleagueProps.UserID,
 			tColleagueProps.Job,
@@ -376,8 +376,8 @@ func (s *Server) getColleague(
 		tColleague.JobGrade,
 		tColleague.Dateofbirth,
 		tColleague.PhoneNumber,
-		tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
-		tAvatar.FilePath.AS("colleague.avatar"),
+		tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
+		tAvatar.FilePath.AS("colleague.profile_picture"),
 		tUserProps.Email.AS("colleague.email"),
 		tColleagueProps.UserID,
 		tColleagueProps.Job,
@@ -990,10 +990,10 @@ func (s *Server) ListColleagueActivity(
 	}
 
 	tTargetUserProps := tUserProps.AS("target_user_props")
-	tTargetUserAvatar := tAvatar.AS("target_user_avatar")
+	tTargetUserAvatar := tAvatar.AS("target_user_profile_picture")
 	tTargetColleagueProps := tColleagueProps.AS("fivenet_colleague_props")
 	tSourceUserProps := tUserProps.AS("source_user_props")
-	tSourceUserAvatar := tAvatar.AS("source_user_avatar")
+	tSourceUserAvatar := tAvatar.AS("source_user_profile_picture")
 
 	stmt := tColleagueActivity.
 		SELECT(
@@ -1012,8 +1012,8 @@ func (s *Server) ListColleagueActivity(
 			tTargetColleague.Lastname,
 			tTargetColleague.Dateofbirth,
 			tTargetColleague.PhoneNumber,
-			tTargetUserProps.AvatarFileID.AS("target_user.avatar_file_id"),
-			tTargetUserAvatar.FilePath.AS("target_user.avatar"),
+			tTargetUserProps.AvatarFileID.AS("target_user.profile_picture_file_id"),
+			tTargetUserAvatar.FilePath.AS("target_user.profile_picture"),
 			tTargetColleagueProps.UserID,
 			tTargetColleagueProps.Job,
 			tTargetColleagueProps.AbsenceBegin,
@@ -1027,8 +1027,8 @@ func (s *Server) ListColleagueActivity(
 			tSourceUser.Lastname,
 			tSourceUser.Dateofbirth,
 			tSourceUser.PhoneNumber,
-			tSourceUserProps.AvatarFileID.AS("source_user.avatar_file_id"),
-			tSourceUserAvatar.FilePath.AS("source_user.avatar"),
+			tSourceUserProps.AvatarFileID.AS("source_user.profile_picture_file_id"),
+			tSourceUserAvatar.FilePath.AS("source_user.profile_picture"),
 		).
 		FROM(
 			tColleagueActivity.

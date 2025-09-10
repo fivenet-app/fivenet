@@ -1,14 +1,16 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
-import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
+import ColorPicker from '~/components/partials/ColorPicker.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import type { ManageLabelsResponse } from '~~/gen/ts/services/citizens/citizens';
 
-const { can } = useAuth();
+const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 
-const { isOpen } = useModal();
+const { can } = useAuth();
 
 const completorStore = useCompletorStore();
 
@@ -42,7 +44,7 @@ async function manageLabels(values: Schema): Promise<ManageLabelsResponse> {
 
         state.labels = response.labels;
 
-        isOpen.value = false;
+        emit('close', false);
 
         return response;
     } catch (e) {
@@ -58,23 +60,15 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 }, 1000);
 
 watch(labels, () => (state.labels = labels.value ?? []));
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
-                            {{ $t('components.citizens.citizen_labels.title') }}
-                        </h3>
-
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                    </div>
-                </template>
-
-                <UFormGroup
+    <UModal :title="$t('components.citizens.citizen_labels.title')">
+        <template #body>
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UFormField
                     v-if="state && can('citizens.CitizensService/ManageLabels').value"
                     class="grid items-center gap-2"
                     name="citizenAttributes.list"
@@ -82,7 +76,7 @@ watch(labels, () => (state.labels = labels.value ?? []));
                 >
                     <div class="flex flex-col gap-1">
                         <div v-for="(_, idx) in state.labels" :key="idx" class="flex items-center gap-1">
-                            <UFormGroup class="flex-1" :name="`labels.${idx}.name`">
+                            <UFormField class="flex-1" :name="`labels.${idx}.name`">
                                 <UInput
                                     v-model="state.labels[idx]!.name"
                                     class="w-full flex-1"
@@ -90,46 +84,43 @@ watch(labels, () => (state.labels = labels.value ?? []));
                                     type="text"
                                     :placeholder="$t('common.label', 1)"
                                 />
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup :name="`labels.${idx}.color`">
-                                <ColorPickerClient
+                            <UFormField :name="`labels.${idx}.color`">
+                                <ColorPicker
                                     v-model="state.labels[idx]!.color"
                                     class="min-w-16"
                                     :name="`labels.${idx}.color`"
                                 />
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UButton
-                                :ui="{ rounded: 'rounded-full' }"
-                                :disabled="!canSubmit"
-                                icon="i-mdi-close"
-                                @click="state.labels.splice(idx, 1)"
-                            />
+                            <UButton :disabled="!canSubmit" icon="i-mdi-close" @click="state.labels.splice(idx, 1)" />
                         </div>
                     </div>
 
                     <UButton
                         :class="state.labels.length ? 'mt-2' : ''"
-                        :ui="{ rounded: 'rounded-full' }"
                         :disabled="!canSubmit"
                         icon="i-mdi-plus"
                         @click="state.labels.push({ id: 0, name: '', color: '#ffffff' })"
                     />
-                </UFormGroup>
+                </UFormField>
+            </UForm>
+        </template>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="black" block @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.save') }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                <UButton
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :label="$t('common.save')"
+                    @click="() => formRef?.submit()"
+                />
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

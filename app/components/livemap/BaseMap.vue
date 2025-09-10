@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { breakpointsTailwind } from '@vueuse/core';
 import L, { CRS, extend, LatLng, latLngBounds, type PointExpression, Projection, Transformation } from 'leaflet';
 import 'leaflet-contextmenu';
 import 'leaflet.heat';
@@ -21,8 +22,6 @@ const emit = defineEmits<{
     (e: 'overlayadd', event: L.LayersControlEvent): void;
     (e: 'overlayremove', event: L.LayersControlEvent): void;
 }>();
-
-const slideover = useSlideover();
 
 const { can } = useAuth();
 
@@ -80,8 +79,6 @@ const mouseLong = ref<number>(0);
 const currentLocationQuery = useRouteQuery<string>('loc', '');
 
 function getZoomOffset(zoom: number): number {
-    if (!slideover.isOpen.value) return 0;
-
     switch (zoom) {
         case 1:
             return 2150;
@@ -234,6 +231,9 @@ async function onMapReady(m: L.Map): Promise<void> {
     }
 }
 
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller('lg');
+
 provide('heat', heat);
 
 watch(
@@ -290,7 +290,7 @@ onBeforeUnmount(() => {
             <LayerControls>
                 <div v-if="can('centrum.CentrumService/TakeControl').value">
                     <div class="mt-1 inline-flex gap-1 overflow-y-hidden px-1">
-                        <UToggle v-model="livemapSettings.showHeatmap" />
+                        <USwitch v-model="livemapSettings.showHeatmap" />
                         <span class="truncate hover:line-clamp-2">{{ $t('common.heatmap') }}</span>
                     </div>
                 </div>
@@ -299,9 +299,11 @@ onBeforeUnmount(() => {
             </LayerControls>
 
             <!-- eslint-disable-next-line tailwindcss/no-custom-classname -->
-            <LControl class="leaflet-control-attribution" position="bottomleft">
-                <span class="font-semibold">{{ $t('common.longitude') }}:</span> {{ mouseLat.toFixed(3) }} |
-                <span class="font-semibold">{{ $t('common.latitude') }}:</span> {{ mouseLong.toFixed(3) }}
+            <LControl class="leaflet-control-attribution !rounded-tl-none rounded-tr-sm" position="bottomleft">
+                <span class="font-semibold">{{ isMobile ? $t('common.longitude_short') : $t('common.longitude') }}:</span>
+                {{ mouseLat.toFixed(3) }} |
+                <span class="font-semibold">{{ isMobile ? $t('common.latitude_short') : $t('common.latitude') }}:</span>
+                {{ mouseLong.toFixed(3) }}
             </LControl>
 
             <slot />
@@ -318,10 +320,10 @@ onBeforeUnmount(() => {
     font-family: var(--font-sans);
 
     .leaflet-container a {
-        color: rgb(var(--color-primary-500));
+        color: var(--color-primary-500);
     }
     .leaflet-container a:hover {
-        color: rgb(var(--color-primary-400));
+        color: var(--color-primary-400);
     }
 
     .leaflet-map-pane {
@@ -355,34 +357,35 @@ onBeforeUnmount(() => {
     }
 
     .leaflet-popup-content-wrapper {
-        background-color: rgb(var(--ui-background)) !important;
+        background-color: var(--ui-bg) !important;
         color: #ffffff;
     }
     .leaflet-popup-content p {
         margin: 0.25em 0;
     }
     .leaflet-popup-tip {
-        background-color: rgb(var(--ui-background)) !important;
+        background-color: var(--ui-bg) !important;
     }
 
     .leaflet-control-layers-toggle {
-        background-color: rgb(var(--color-primary-500)) !important;
+        background-color: var(--color-primary-500) !important;
     }
     .leaflet-control-layers {
-        color: rgb(var(--color-primary-500));
-        background-color: rgb(var(--ui-background)) !important;
+        color: var(--color-primary-500);
+        background-color: var(--ui-bg) !important;
     }
 
     .leaflet-control-attribution {
-        color: rgb(var(--color-primary-500));
-        background-color: rgb(var(--ui-background)) !important;
+        color: var(--color-primary-500);
+        background-color: var(--ui-bg) !important;
+        border-top-left-radius: var(--radius-sm);
     }
 
     .leaflet-control-attribution a {
-        color: rgb(var(--color-primary-500));
+        color: var(--color-primary-500);
     }
     .leaflet-control-attribution a:hover {
-        color: rgb(var(--color-primary-400));
+        color: var(--color-primary-400);
     }
 
     /* Leaflet Contextmenu */
@@ -392,7 +395,7 @@ onBeforeUnmount(() => {
         -webkit-border-radius: 2px;
         border-radius: 2px;
         padding: 4px 0;
-        background-color: rgb(var(--ui-background));
+        background-color: var(--ui-bg);
         cursor: default;
         -webkit-user-select: none;
         -moz-user-select: none;
@@ -401,7 +404,7 @@ onBeforeUnmount(() => {
 
     .leaflet-contextmenu a.leaflet-contextmenu-item {
         display: block;
-        color: rgb(var(--color-primary-500));
+        color: var(--color-primary-500);
         font-size: 12px;
         line-height: 20px;
         text-decoration: none;
@@ -415,7 +418,7 @@ onBeforeUnmount(() => {
     }
 
     .leaflet-contextmenu a.leaflet-contextmenu-item.over {
-        background-color: rgb(var(--color-primary-100));
+        background-color: var(--color-primary-100);
     }
 
     .leaflet-contextmenu a.leaflet-contextmenu-item-disabled.over {

@@ -52,8 +52,11 @@ type TracingResults struct {
 // information about the application.
 func NewTracerProvider(p TracingParams) (TracingResults, error) {
 	if !p.Config.OTLP.Enabled {
+		tp := tracesdk.NewTracerProvider()
+		otel.SetTracerProvider(tp)
+
 		return TracingResults{
-			TP: tracesdk.NewTracerProvider(),
+			TP: tp,
 		}, nil
 	}
 

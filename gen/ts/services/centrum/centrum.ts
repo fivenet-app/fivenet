@@ -964,7 +964,7 @@ export const ListUnitsRequest = new ListUnitsRequest$Type();
 class ListUnitsResponse$Type extends MessageType<ListUnitsResponse> {
     constructor() {
         super("services.centrum.ListUnitsResponse", [
-            { no: 1, name: "units", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Unit }
+            { no: 1, name: "units", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Unit, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListUnitsResponse>): ListUnitsResponse {
@@ -1606,8 +1606,8 @@ export const UpdateDispatchersResponse = new UpdateDispatchersResponse$Type();
 class ListUnitActivityResponse$Type extends MessageType<ListUnitActivityResponse> {
     constructor() {
         super("services.centrum.ListUnitActivityResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UnitStatus }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UnitStatus, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListUnitActivityResponse>): ListUnitActivityResponse {
@@ -1846,8 +1846,8 @@ export const ListDispatchesRequest = new ListDispatchesRequest$Type();
 class ListDispatchesResponse$Type extends MessageType<ListDispatchesResponse> {
     constructor() {
         super("services.centrum.ListDispatchesResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "dispatches", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Dispatch }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "dispatches", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Dispatch, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListDispatchesResponse>): ListDispatchesResponse {
@@ -2300,7 +2300,7 @@ export const ListDispatchTargetJobsRequest = new ListDispatchTargetJobsRequest$T
 class ListDispatchTargetJobsResponse$Type extends MessageType<ListDispatchTargetJobsResponse> {
     constructor() {
         super("services.centrum.ListDispatchTargetJobsResponse", [
-            { no: 1, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Job }
+            { no: 1, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Job, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListDispatchTargetJobsResponse>): ListDispatchTargetJobsResponse {
@@ -2578,8 +2578,8 @@ export const AssignDispatchResponse = new AssignDispatchResponse$Type();
 class ListDispatchActivityResponse$Type extends MessageType<ListDispatchActivityResponse> {
     constructor() {
         super("services.centrum.ListDispatchActivityResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DispatchStatus }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DispatchStatus, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListDispatchActivityResponse>): ListDispatchActivityResponse {

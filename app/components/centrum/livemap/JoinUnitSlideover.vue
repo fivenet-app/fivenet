@@ -6,11 +6,10 @@ import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/units_access';
 import { checkUnitAccess } from '../helpers';
 
 const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
     (e: 'joined', unit: Unit): void;
     (e: 'left'): void;
 }>();
-
-const { isOpen } = useSlideover();
 
 const centrumStore = useCentrumStore();
 const { ownUnitId, getSortedUnits } = storeToRefs(centrumStore);
@@ -30,7 +29,7 @@ async function joinOrLeaveUnit(unitId?: number): Promise<void> {
             emit('left');
         }
 
-        isOpen.value = false;
+        emit('close', false);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -66,47 +65,56 @@ const filteredUnits = computed(() => ({
 </script>
 
 <template>
-    <USlideover :ui="{ width: 'w-screen max-w-xl' }">
-        <UCard
-            :ui="{
-                body: {
-                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--header-height)))] max-h-[calc(100dvh-(2*var(--header-height)))] overflow-y-auto',
-                    padding: 'px-1 py-2 sm:p-2',
-                },
-                ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-            }"
-        >
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="inline-flex items-center gap-2 text-2xl font-semibold leading-6">
-                        {{ $t('common.leave_unit') }}
+    <USlideover :title="$t('common.leave_unit')" :overlay="false">
+        <template #actions>
+            <UIcon v-if="!canSubmit" class="size-6 animate-spin" name="i-mdi-loading" />
+        </template>
 
-                        <UIcon v-if="!canSubmit" class="size-6 animate-spin" name="i-mdi-loading" />
-                    </h3>
+        <template #body>
+            <div class="flex flex-col gap-y-2">
+                <UFormField name="search" :label="$t('common.search')">
+                    <UInput
+                        v-model="queryUnit"
+                        type="text"
+                        name="search"
+                        :placeholder="$t('common.search')"
+                        leading-icon="i-mdi-search"
+                        class="w-full"
+                    />
+                </UFormField>
 
-                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
+                <div class="grid grid-cols-2 gap-2">
+                    <UButton
+                        v-for="unit in filteredUnits.available"
+                        :key="unit.name"
+                        class="flex flex-col"
+                        :color="ownUnitId !== undefined && ownUnitId === unit.id ? 'warning' : 'primary'"
+                        :disabled="!canSubmit || !checkUnitAccess(unit.access, UnitAccessLevel.JOIN)"
+                        @click="onSubmitThrottle(unit.id)"
+                    >
+                        <span class="text-base">
+                            <span class="font-semibold">{{ unit.initials }}:</span>
+                            {{ unit.name }}
+                        </span>
+                        <span class="mt-0.5 text-xs">
+                            {{ $t('common.member', unit.users.length) }}
+                        </span>
+                        <span v-if="unit.description && unit.description.length > 0" class="text-xs">
+                            <span class="font-semibold">{{ $t('common.description') }}:</span>
+                            <span class="line-clamp-1">{{ unit.description }}</span>
+                        </span>
+                    </UButton>
                 </div>
-            </template>
 
-            <div>
-                <div class="flex flex-col gap-1">
-                    <UFormGroup name="search" :label="$t('common.search')">
-                        <UInput
-                            v-model="queryUnit"
-                            type="text"
-                            name="search"
-                            :placeholder="$t('common.search')"
-                            leading-icon="i-mdi-search"
-                        />
-                    </UFormGroup>
+                <div v-if="filteredUnits.unavailable.length > 0">
+                    <h3>{{ $t('common.unavailable') }}</h3>
 
                     <div class="grid grid-cols-2 gap-2">
                         <UButton
-                            v-for="unit in filteredUnits.available"
+                            v-for="unit in filteredUnits.unavailable"
                             :key="unit.name"
                             class="flex flex-col"
-                            :color="ownUnitId !== undefined && ownUnitId === unit.id ? 'amber' : 'primary'"
+                            :color="ownUnitId !== undefined && ownUnitId === unit.id ? 'warning' : 'primary'"
                             :disabled="!canSubmit || !checkUnitAccess(unit.access, UnitAccessLevel.JOIN)"
                             @click="onSubmitThrottle(unit.id)"
                         >
@@ -123,54 +131,25 @@ const filteredUnits = computed(() => ({
                             </span>
                         </UButton>
                     </div>
-
-                    <div v-if="filteredUnits.unavailable.length > 0">
-                        <h3>{{ $t('common.unavailable') }}</h3>
-
-                        <div class="grid grid-cols-2 gap-2">
-                            <UButton
-                                v-for="unit in filteredUnits.unavailable"
-                                :key="unit.name"
-                                class="flex flex-col"
-                                :color="ownUnitId !== undefined && ownUnitId === unit.id ? 'amber' : 'primary'"
-                                :disabled="!canSubmit || !checkUnitAccess(unit.access, UnitAccessLevel.JOIN)"
-                                @click="onSubmitThrottle(unit.id)"
-                            >
-                                <span class="text-base">
-                                    <span class="font-semibold">{{ unit.initials }}:</span>
-                                    {{ unit.name }}
-                                </span>
-                                <span class="mt-0.5 text-xs">
-                                    {{ $t('common.member', unit.users.length) }}
-                                </span>
-                                <span v-if="unit.description && unit.description.length > 0" class="text-xs">
-                                    <span class="font-semibold">{{ $t('common.description') }}:</span>
-                                    <span class="line-clamp-1">{{ unit.description }}</span>
-                                </span>
-                            </UButton>
-                        </div>
-                    </div>
                 </div>
             </div>
+        </template>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton
-                        v-if="ownUnitId !== undefined"
-                        class="flex-1"
-                        block
-                        color="error"
-                        :disabled="!canSubmit"
-                        :loading="!canSubmit"
-                        @click="onSubmitThrottle()"
-                    >
-                        {{ $t('common.leave') }}
-                    </UButton>
-                    <UButton class="flex-1" color="black" block @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
-                </UButtonGroup>
-            </template>
-        </UCard>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton
+                    v-if="ownUnitId !== undefined"
+                    class="flex-1"
+                    block
+                    color="error"
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :label="$t('common.leave')"
+                    @click="onSubmitThrottle()"
+                />
+
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
+            </UButtonGroup>
+        </template>
     </USlideover>
 </template>

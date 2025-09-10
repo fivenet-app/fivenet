@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { NuxtImg, UButton, UIcon, UTooltip } from '#components';
+import type { TableColumn } from '@nuxt/ui';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -76,133 +78,141 @@ function addUploadedFile(file: File): void {
     }
 }
 
-const modal = useModal();
+const overlay = useOverlay();
 
-const columns = [
-    {
-        key: 'actions',
-        label: t('common.action', 2),
-        sortable: false,
+const fileUploadModal = overlay.create(FileUploadModal, {
+    props: {
+        onUploaded: addUploadedFile,
     },
-    {
-        key: 'preview',
-        label: t('common.preview'),
-    },
-    {
-        key: 'name',
-        label: t('common.name'),
-    },
-    {
-        key: 'fileSize',
-        label: t('common.file_size'),
-    },
-    {
-        key: 'updatedAt',
-        label: t('common.updated_at'),
-    },
-    {
-        key: 'contentType',
-        label: t('common.type'),
-    },
-];
+});
+const confirmModal = overlay.create(ConfirmModal);
 
 const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
+
+const columns = computed(
+    () =>
+        [
+            {
+                id: 'actions',
+                cell: ({ row }) =>
+                    h('div', { class: 'flex items-center gap-2' }, [
+                        h(
+                            UTooltip,
+                            { text: t('common.show') },
+                            {
+                                default: () =>
+                                    h(
+                                        UButton,
+                                        {
+                                            variant: 'link',
+                                            icon: 'i-mdi-link-variant',
+                                            external: true,
+                                            target: '_blank',
+                                            to: `/api/filestore/${row.original.filePath}`,
+                                        },
+                                        {},
+                                    ),
+                            },
+                        ),
+                        h(
+                            UTooltip,
+                            { text: t('common.delete') },
+                            {
+                                default: () =>
+                                    h(
+                                        UButton,
+                                        {
+                                            variant: 'link',
+                                            icon: 'i-mdi-delete',
+                                            color: 'error',
+                                            onClick: () => {
+                                                confirmModal.open({
+                                                    confirm: async () => deleteFile(row.original.filePath),
+                                                });
+                                            },
+                                        },
+                                        {},
+                                    ),
+                            },
+                        ),
+                    ]),
+            },
+            {
+                accessorKey: 'name',
+                header: t('common.name'),
+                cell: ({ row }) => h('span', { class: 'text-highlighted' }, row.original.filePath),
+            },
+            {
+                accessorKey: 'preview',
+                header: t('common.preview'),
+                cell: ({ row }) =>
+                    !previewTypes.some((ext) => row.original.filePath.endsWith(ext))
+                        ? h(UIcon, { class: 'size-8', name: 'i-mdi-file-outline' })
+                        : h(NuxtImg, {
+                              class: 'max-h-24 max-w-32',
+                              src: `/api/filestore/${row.original.filePath.replace(/^\//, '')}`,
+                              loading: 'lazy',
+                          }),
+            },
+            {
+                accessorKey: 'fileSize',
+                header: t('common.file_size'),
+                cell: ({ row }) => formatBytes(row.original.byteSize),
+            },
+            {
+                accessorKey: 'createdAt',
+                header: t('common.created_at'),
+                cell: ({ row }) => h(GenericTime, { value: row.original.createdAt }),
+            },
+        ] as TableColumn<File>[],
+);
 </script>
 
 <template>
-    <template v-if="streamerMode">
-        <UDashboardNavbar :title="$t('pages.settings.settings.title')">
-            <template #right>
-                <PartialsBackButton fallback-to="/settings" />
-            </template>
-        </UDashboardNavbar>
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+        <template #header>
+            <UDashboardNavbar :title="$t('pages.settings.settings.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
 
-        <UDashboardPanelContent>
-            <StreamerModeAlert />
-        </UDashboardPanelContent>
-    </template>
-    <template v-else>
-        <UDashboardNavbar :title="$t('pages.settings.filestore.title')">
-            <template #right>
-                <PartialsBackButton fallback-to="/settings" />
+                <template #right>
+                    <PartialsBackButton fallback-to="/settings" />
 
-                <UButton
-                    trailing-icon="i-mdi-upload"
-                    @click="
-                        modal.open(FileUploadModal, {
-                            onUploaded: addUploadedFile,
-                        })
-                    "
-                >
-                    {{ $t('common.upload') }}
-                </UButton>
-            </template>
-        </UDashboardNavbar>
-
-        <DataErrorBlock
-            v-if="error"
-            :title="$t('common.unable_to_load', [$t('common.file', 2)])"
-            :error="error"
-            :retry="refresh"
-        />
-
-        <UTable
-            v-else
-            class="flex-1"
-            :loading="isRequestPending(status)"
-            :columns="columns"
-            :rows="files?.files"
-            :empty-state="{ icon: 'i-mdi-file-multiple', label: $t('common.not_found', [$t('common.file', 2)]) }"
-        >
-            <template #actions-data="{ row: file }">
-                <UTooltip :text="$t('common.show')">
                     <UButton
-                        variant="link"
-                        icon="i-mdi-link-variant"
-                        external
-                        target="_blank"
-                        :to="`/api/filestore/${file.filePath}`"
+                        v-if="!streamerMode"
+                        :label="$t('common.upload')"
+                        trailing-icon="i-mdi-upload"
+                        @click="fileUploadModal.open()"
                     />
-                </UTooltip>
+                </template>
+            </UDashboardNavbar>
+        </template>
 
-                <UTooltip :text="$t('common.delete')">
-                    <UButton
-                        variant="link"
-                        icon="i-mdi-delete"
-                        color="error"
-                        @click="
-                            modal.open(ConfirmModal, {
-                                confirm: async () => deleteFile(file.filePath),
-                            })
-                        "
-                    />
-                </UTooltip>
-            </template>
+        <template #body>
+            <StreamerModeAlert v-if="streamerMode" />
+            <DataErrorBlock
+                v-else-if="error"
+                :title="$t('common.unable_to_load', [$t('common.file', 2)])"
+                :error="error"
+                :retry="refresh"
+            />
 
-            <template #name-data="{ row: file }">
-                <span class="text-gray-900 dark:text-white">
-                    {{ file.filePath }}
-                </span>
-            </template>
+            <UTable
+                v-else
+                class="flex-1"
+                :loading="isRequestPending(status)"
+                :columns="columns"
+                :data="files?.files"
+                :empty="$t('common.not_found', [$t('common.file', 2)])"
+                :pagination-options="{ manualPagination: true }"
+                :sorting-options="{ manualSorting: true }"
+                sticky
+            />
+        </template>
 
-            <template #preview-data="{ row: file }">
-                <UIcon
-                    v-if="!previewTypes.some((ext) => file.filePath.endsWith(ext))"
-                    class="size-8"
-                    name="i-mdi-file-outline"
-                />
-                <NuxtImg v-else class="max-h-24 max-w-32" :src="`/api/filestore/${file.filePath}`" loading="lazy" />
-            </template>
-
-            <template #fileSize-data="{ row: file }">
-                {{ formatBytes(file.size) }}
-            </template>
-
-            <template #updatedAt-data="{ row: file }">
-                <GenericTime :value="toDate(file.lastModified)" />
-            </template>
-        </UTable>
-
-        <Pagination v-model="page" :pagination="files?.pagination" :status="status" :refresh="refresh" />
-    </template>
+        <template #footer>
+            <Pagination v-model="page" :pagination="files?.pagination" :status="status" :refresh="refresh" />
+        </template>
+    </UDashboardPanel>
 </template>

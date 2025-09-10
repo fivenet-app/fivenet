@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { z } from 'zod';
 import ColleagueName from '~/components/jobs/colleagues/ColleagueName.vue';
+import InputMenu from '~/components/partials/InputMenu.vue';
 import QualificationRequestList from '~/components/qualifications/tutor/QualificationRequestList.vue';
 import QualificationResultList from '~/components/qualifications/tutor/QualificationResultList.vue';
 import QualificationResultTutorModal from '~/components/qualifications/tutor/QualificationResultTutorModal.vue';
@@ -8,13 +9,19 @@ import { useCompletorStore } from '~/stores/completor';
 import type { Qualification } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 
-defineProps<{
+const props = defineProps<{
     qualification: Qualification;
 }>();
 
-const modal = useModal();
-
 const completorStore = useCompletorStore();
+
+const overlay = useOverlay();
+const qualificationResultTutorModal = overlay.create(QualificationResultTutorModal, {
+    props: {
+        qualificationId: props.qualification.id,
+        onRefresh: undefined,
+    },
+});
 
 const schema = z.object({
     user: z.number().optional(),
@@ -22,64 +29,44 @@ const schema = z.object({
 
 const query = useSearchForm('qualifications_tutor', schema);
 
-const usersLoading = ref(false);
-
 const requests = ref<InstanceType<typeof QualificationRequestList> | null>(null);
 const results = ref<InstanceType<typeof QualificationResultList> | null>(null);
 </script>
 
 <template>
     <div class="flex flex-1 flex-col gap-2">
-        <UForm :schema="schema" :state="query">
-            <UFormGroup class="flex-1" name="user" :label="$t('common.search')">
-                <ClientOnly>
-                    <UInputMenu
+        <UDashboardToolbar>
+            <UForm :schema="schema" :state="query" class="mb-2 flex-1">
+                <UFormField class="flex-1" name="user" :label="$t('common.search')">
+                    <InputMenu
                         v-model="query.user"
-                        nullable
-                        :search-attributes="['firstname', 'lastname']"
+                        :filter-fields="['firstname', 'lastname']"
                         :placeholder="$t('common.citizen', 1)"
-                        block
                         trailing
-                        :search="
-                            async (q: string): Promise<UserShort[]> => {
-                                usersLoading = true;
-                                const users = await completorStore.completeCitizens({
+                        :searchable="
+                            async (q: string): Promise<UserShort[]> =>
+                                await completorStore.completeCitizens({
                                     search: q,
                                     userIds: query.user ? [query.user] : [],
-                                });
-                                usersLoading = false;
-                                return users;
-                            }
+                                })
                         "
-                        search-lazy
-                        :search-placeholder="$t('common.search_field')"
+                        searchable-key="completor-citizens"
                         leading-icon="i-mdi-search"
-                        value-attribute="userId"
+                        value-key="userId"
+                        class="w-full"
                     >
-                        <template #label="{ selected }">
-                            <span v-if="selected" class="truncate">
-                                {{ userToLabel(selected) }}
-                            </span>
-                        </template>
-
-                        <template #option="{ option: user }">
-                            <span class="truncate">
-                                <ColleagueName :colleague="user" />
-                            </span>
-                        </template>
-
-                        <template #option-empty="{ query: search }">
-                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                        <template #item="{ item }">
+                            <ColleagueName :colleague="item" />
                         </template>
 
                         <template #empty> {{ $t('common.not_found', [$t('common.user', 2)]) }} </template>
-                    </UInputMenu>
-                </ClientOnly>
-            </UFormGroup>
-        </UForm>
+                    </InputMenu>
+                </UFormField>
+            </UForm>
+        </UDashboardToolbar>
 
         <div>
-            <h2 class="text-sm text-gray-900 dark:text-white">{{ $t('common.request', 2) }}</h2>
+            <h2 class="text-sm text-highlighted">{{ $t('common.request', 2) }}</h2>
 
             <QualificationRequestList
                 ref="requests"
@@ -91,13 +78,13 @@ const results = ref<InstanceType<typeof QualificationResultList> | null>(null);
 
         <div>
             <div class="flex flex-row justify-between gap-2">
-                <h2 class="text-sm text-gray-900 dark:text-white">{{ $t('common.result', 2) }}</h2>
+                <h2 class="text-sm text-highlighted">{{ $t('common.result', 2) }}</h2>
 
                 <UButton
                     icon="i-mdi-plus"
                     :label="$t('common.add')"
                     @click="
-                        modal.open(QualificationResultTutorModal, {
+                        qualificationResultTutorModal.open({
                             qualificationId: qualification.id,
                             onRefresh: () => results?.refresh(),
                         })

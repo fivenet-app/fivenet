@@ -1,15 +1,15 @@
-import type { BadgeColor } from '#ui/types';
+import type { BadgeProps } from '@nuxt/ui';
 
-export function sexToColor(sex: string): BadgeColor {
+export function sexToColor(sex: string): BadgeProps['color'] {
     if (sex === 'f') {
         return 'pink';
     } else if (sex === 'm') {
         return 'blue';
     } else if (sex === 'd') {
-        return 'gray';
+        return 'neutral';
     }
 
-    return 'white';
+    return 'neutral';
 }
 
 export function sexToTextColor(sex: string): string {

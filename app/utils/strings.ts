@@ -31,7 +31,7 @@ export function getInitials(input: string): string {
     const names = input.split(' ');
     // Indicates a "broken" name if there are not at least "two parts"
     if (!names[0] || names.length < 2) {
-        return input;
+        return input[0]?.toUpperCase() ?? '';
     }
 
     let initials = names[0].substring(0, 1).toUpperCase();

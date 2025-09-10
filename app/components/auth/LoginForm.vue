@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { useAuthStore } from '~/stores/auth';
@@ -54,41 +54,43 @@ const socialLoginEnabled = ref(hasCookiesAccepted.value && !nuiEnabled.value);
 watch(hasCookiesAccepted, () => (socialLoginEnabled.value = hasCookiesAccepted.value && !nuiEnabled.value));
 
 const passwordVisibility = ref(false);
-
-function togglePasswordVisibility() {
-    passwordVisibility.value = !passwordVisibility.value;
-}
 </script>
 
 <template>
     <UForm class="space-y-4" :schema="schema" :state="state" @submit="onSubmitThrottle">
-        <UFormGroup name="username" :label="$t('common.username')">
-            <UInput v-model="state.username" type="text" autocomplete="username" :placeholder="$t('common.username')" />
-        </UFormGroup>
+        <UFormField name="username" :label="$t('common.username')">
+            <UInput
+                v-model="state.username"
+                type="text"
+                autocomplete="username"
+                :placeholder="$t('common.username')"
+                :ui="{ root: 'w-full' }"
+            />
+        </UFormField>
 
-        <UFormGroup name="password" :label="$t('common.password')">
+        <UFormField name="password" :label="$t('common.password')">
             <UInput
                 v-model="state.password"
                 :type="passwordVisibility ? 'text' : 'password'"
                 autocomplete="current-password"
                 :placeholder="$t('common.password')"
-                :ui="{ icon: { trailing: { pointer: '' } } }"
+                :ui="{ trailing: 'pe-1', root: 'w-full' }"
             >
                 <template #trailing>
                     <UButton
-                        color="gray"
+                        color="neutral"
                         variant="link"
                         :icon="passwordVisibility ? 'i-mdi-eye' : 'i-mdi-eye-closed'"
-                        :padded="false"
-                        @click="togglePasswordVisibility"
+                        :aria-label="passwordVisibility ? 'Hide password' : 'Show password'"
+                        :aria-pressed="passwordVisibility"
+                        aria-controls="password"
+                        @click="passwordVisibility = !passwordVisibility"
                     />
                 </template>
             </UInput>
-        </UFormGroup>
+        </UFormField>
 
-        <UButton type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-            {{ $t('common.login') }}
-        </UButton>
+        <UButton type="submit" block :disabled="!canSubmit" :loading="!canSubmit" :label="$t('common.login')" />
 
         <div v-if="!nuiEnabled && login.providers.length > 0" class="space-y-2">
             <UAlert
@@ -102,22 +104,24 @@ function togglePasswordVisibility() {
                         icon: 'i-mdi-cookie',
                         color: 'info',
                         variant: 'outline',
-                        click: () => (isConsentModalOpen = true),
+                        onClick: () => {
+                            isConsentModalOpen = true;
+                        },
                     },
                 ]"
             />
 
             <template v-else>
-                <UDivider class="mt-2" :label="$t('common.or')" orientation="horizontal" />
+                <USeparator class="mt-2" :label="$t('common.or')" orientation="horizontal" />
 
                 <div v-for="provider in login.providers" :key="provider.name">
                     <UButton
                         block
-                        color="white"
+                        color="neutral"
                         external
+                        :icon="provider.icon?.startsWith('i-') ? provider.icon : undefined"
                         :to="`/api/oauth2/login/${provider.name}`"
                         :disabled="!canSubmit"
-                        :icon="provider.icon?.startsWith('i-') ? provider.icon : undefined"
                     >
                         <NuxtImg
                             v-if="!provider.icon?.startsWith('i-')"

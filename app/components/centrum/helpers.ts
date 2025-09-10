@@ -1,4 +1,4 @@
-import type { BadgeColor, BadgeVariant, ButtonColor } from '#ui/types';
+import type { BadgeProps, ButtonProps } from '@nuxt/ui';
 import type { CentrumAccessLevel } from '~~/gen/ts/resources/centrum/access';
 import { type JobList, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { type Unit, StatusUnit } from '~~/gen/ts/resources/centrum/units';
@@ -19,7 +19,7 @@ export function dispatchStatusToFillColor(status: StatusDispatch | undefined): s
         case StatusDispatch.ON_SCENE:
             return '!text-info-700';
         case StatusDispatch.NEED_ASSISTANCE:
-            return '!text-warn-600';
+            return '!text-warning-600';
         case StatusDispatch.COMPLETED:
             return '!text-success-600';
         case StatusDispatch.CANCELLED:
@@ -39,27 +39,27 @@ export function dispatchStatusToBGColor(status: StatusDispatch | undefined): str
         case StatusDispatch.NEW:
         case StatusDispatch.UNASSIGNED:
         case StatusDispatch.UNIT_DECLINED:
-            return '!bg-error-600 !text-white';
+            return '!bg-error-600 text-white!';
         case StatusDispatch.EN_ROUTE:
-            return '!bg-info-600 !text-white';
+            return '!bg-info-600 text-white!';
         case StatusDispatch.ON_SCENE:
-            return '!bg-info-700 !text-white';
+            return '!bg-info-700 text-white!';
         case StatusDispatch.NEED_ASSISTANCE:
-            return '!bg-warn-600 !text-white';
+            return '!bg-warning-600 text-white!';
         case StatusDispatch.COMPLETED:
-            return '!bg-success-600 !text-white';
+            return '!bg-success-600 text-white!';
         case StatusDispatch.CANCELLED:
-            return '!bg-success-800 !text-white';
+            return '!bg-success-800 text-white!';
         case StatusDispatch.ARCHIVED:
-            return '!bg-background !text-white';
+            return '!bg-default text-white!';
         case StatusDispatch.UNIT_ACCEPTED:
-            return '!bg-info-600 !text-white';
+            return '!bg-info-600 text-white!';
         default:
-            return '!bg-info-600 !text-white';
+            return '!bg-info-600 text-white!';
     }
 }
 
-export function dispatchStatusToBadgeColor(status: StatusDispatch | undefined): BadgeColor {
+export function dispatchStatusToBadgeColor(status: StatusDispatch | undefined): BadgeProps['color'] {
     switch (status) {
         case StatusDispatch.UNSPECIFIED:
         case StatusDispatch.NEW:
@@ -71,7 +71,7 @@ export function dispatchStatusToBadgeColor(status: StatusDispatch | undefined): 
         case StatusDispatch.ON_SCENE:
             return 'info';
         case StatusDispatch.NEED_ASSISTANCE:
-            return 'warn';
+            return 'warning';
         case StatusDispatch.COMPLETED:
             return 'success';
         case StatusDispatch.CANCELLED:
@@ -85,7 +85,7 @@ export function dispatchStatusToBadgeColor(status: StatusDispatch | undefined): 
     }
 }
 
-export function dispatchStatusToButtonColor(status: StatusDispatch | undefined): ButtonColor {
+export function dispatchStatusToButtonColor(status: StatusDispatch | undefined): ButtonProps['color'] {
     switch (status) {
         case StatusDispatch.UNSPECIFIED:
         case StatusDispatch.NEW:
@@ -97,7 +97,7 @@ export function dispatchStatusToButtonColor(status: StatusDispatch | undefined):
         case StatusDispatch.ON_SCENE:
             return 'info';
         case StatusDispatch.NEED_ASSISTANCE:
-            return 'warn';
+            return 'warning';
         case StatusDispatch.COMPLETED:
             return 'success';
         case StatusDispatch.CANCELLED:
@@ -139,12 +139,30 @@ export function unitStatusToBGColor(status: StatusUnit | undefined): string {
         case StatusUnit.AVAILABLE:
             return '!bg-success-600';
         case StatusUnit.BUSY:
-            return '!bg-warn-600';
+            return '!bg-warning-600';
         case StatusUnit.UNSPECIFIED:
         case StatusUnit.UNKNOWN:
         case StatusUnit.UNAVAILABLE:
         default:
             return '!bg-error-600';
+    }
+}
+
+export function unitStatusToBadgeColor(status: StatusUnit | undefined): BadgeProps['color'] {
+    switch (status) {
+        case StatusUnit.ON_BREAK:
+        case StatusUnit.USER_ADDED:
+        case StatusUnit.USER_REMOVED:
+            return 'info';
+        case StatusUnit.AVAILABLE:
+            return 'success';
+        case StatusUnit.BUSY:
+            return 'warning';
+        case StatusUnit.UNSPECIFIED:
+        case StatusUnit.UNKNOWN:
+        case StatusUnit.UNAVAILABLE:
+        default:
+            return 'error';
     }
 }
 
@@ -196,18 +214,24 @@ export function isStatusDispatchCompleted(status: StatusDispatch): boolean {
 }
 
 // "Color stops" with optional ping
-const steps: { variant: BadgeVariant; color?: BadgeColor; class: string; animation?: string; ping: boolean }[] = [
+const steps: {
+    variant: BadgeProps['variant'];
+    color?: BadgeProps['color'];
+    class: string;
+    animation?: string;
+    ping: boolean;
+}[] = [
     { variant: 'solid', class: '', ping: false }, // 0-10%
-    { variant: 'solid', color: 'green', class: '!bg-green-200', ping: false }, // 10-20%
-    { variant: 'solid', color: 'yellow', class: '!bg-yellow-200', ping: false }, // 20-30%
-    { variant: 'solid', color: 'yellow', class: '!bg-yellow-400', ping: false }, // 30-40%
-    { variant: 'solid', color: 'orange', class: '!bg-orange-300', ping: false }, // 40-50%
-    { variant: 'solid', color: 'orange', class: '!bg-orange-500', ping: false }, // 50-60%
-    { variant: 'solid', color: 'red', class: '!bg-red-400', ping: true }, // 60-70%
-    { variant: 'solid', color: 'red', class: '!bg-red-600', ping: true }, // 70-80%
-    { variant: 'solid', color: 'red', class: '!bg-red-700', ping: true }, // 80-90%
-    { variant: 'solid', color: 'red', class: '!bg-red-800', ping: true }, // 90-100%
-    { variant: 'solid', color: 'red', class: '!bg-red-700', animation: 'animate-bounce', ping: true }, // caps at 100%
+    { variant: 'solid', color: 'green', class: 'bg-green-200!', ping: false }, // 10-20%
+    { variant: 'solid', color: 'warning', class: 'bg-yellow-200!', ping: false }, // 20-30%
+    { variant: 'solid', color: 'warning', class: 'bg-yellow-400!', ping: false }, // 30-40%
+    { variant: 'solid', color: 'orange', class: 'bg-orange-300!', ping: false }, // 40-50%
+    { variant: 'solid', color: 'orange', class: 'bg-orange-500!', ping: false }, // 50-60%
+    { variant: 'solid', color: 'red', class: 'bg-red-400!', ping: true }, // 60-70%
+    { variant: 'solid', color: 'red', class: 'bg-red-600!', ping: true }, // 70-80%
+    { variant: 'solid', color: 'red', class: 'bg-red-700!', ping: true }, // 80-90%
+    { variant: 'solid', color: 'red', class: 'bg-red-800!', ping: true }, // 90-100%
+    { variant: 'solid', color: 'red', class: 'bg-red-700!', animation: 'animate-bounce', ping: true }, // caps at 100%
 ];
 
 export function dispatchTimeToBadge(
@@ -215,12 +239,12 @@ export function dispatchTimeToBadge(
     status: StatusDispatch = StatusDispatch.UNSPECIFIED,
     maxTime: number = 600,
 ): {
-    color?: BadgeColor;
-    variant?: BadgeVariant;
+    color?: BadgeProps['color'];
+    variant?: BadgeProps['variant'];
     class?: string;
 } {
     if (isStatusDispatchCompleted(status)) {
-        return { variant: 'solid', color: 'white' };
+        return { variant: 'solid', color: 'neutral' };
     }
 
     // Elapsed time in seconds since dispatch

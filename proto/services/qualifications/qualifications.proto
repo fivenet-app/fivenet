@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.qualifications;
 
 import "buf/validate/validate.proto";
+import "codegen/itemslen/itemslen.proto";
 import "google/protobuf/duration.proto";
 import "resources/common/content/content.proto";
 import "resources/common/database/database.proto";
@@ -22,8 +23,8 @@ message ListQualificationsRequest {
 }
 
 message ListQualificationsResponse {
-  resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.qualifications.Qualification qualifications = 2;
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.qualifications.Qualification qualifications = 2 [(codegen.itemslen.items_len) = true];
 }
 
 message GetQualificationRequest {
@@ -86,8 +87,8 @@ message ListQualificationRequestsRequest {
 }
 
 message ListQualificationRequestsResponse {
-  resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.qualifications.QualificationRequest requests = 2;
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.qualifications.QualificationRequest requests = 2 [(codegen.itemslen.items_len) = true];
 }
 
 message CreateOrUpdateQualificationRequestRequest {
@@ -117,8 +118,8 @@ message ListQualificationsResultsRequest {
 }
 
 message ListQualificationsResultsResponse {
-  resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.qualifications.QualificationResult results = 2;
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.qualifications.QualificationResult results = 2 [(codegen.itemslen.items_len) = true];
 }
 
 message CreateOrUpdateQualificationResultRequest {

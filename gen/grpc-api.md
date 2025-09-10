@@ -5,6 +5,25 @@ description: Documentation for GRPC Protobuf files.
 
 
 
+## codegen/itemslen/itemslen.proto
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+
+### File-level Extensions
+
+| Extension | Type | Base | Number | Description |
+| --------- | ---- | ---- | ------ | ----------- |
+| `items_len` | bool | .google.protobuf.FieldOptions | 51001 |  |
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## resources/timestamp/timestamp.proto
 
 
@@ -44,7 +63,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `provider` | [OAuth2Provider](#resourcesaccountsOAuth2Provider) |  |  |
 | `external_id` | [string](#string) |  |  |
 | `username` | [string](#string) |  |  |
-| `avatar` | [string](#string) |  |  |
+| `profile_picture` | [string](#string) |  |  |
 
 
 
@@ -313,8 +332,8 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `playtime` | [int32](#int32) | optional |  |
 | `props` | [UserProps](#resourcesusersUserProps) |  |  |
 | `licenses` | [License](#resourcesusersLicense) | repeated |  |
-| `avatar_file_id` | [int64](#int64) | optional |  |
-| `avatar` | [string](#string) | optional |  |
+| `profile_picture_file_id` | [int64](#int64) | optional |  |
+| `profile_picture` | [string](#string) | optional |  |
 | `group` | [string](#string) | optional |  |
 
 
@@ -336,8 +355,8 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `lastname` | [string](#string) |  |  |
 | `dateofbirth` | [string](#string) |  |  |
 | `phone_number` | [string](#string) | optional |  |
-| `avatar_file_id` | [int64](#int64) | optional |  |
-| `avatar` | [string](#string) | optional |  |
+| `profile_picture_file_id` | [int64](#int64) | optional |  |
+| `profile_picture` | [string](#string) | optional |  |
 
 
 
@@ -695,6 +714,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | ----- | ---- | ----- | ----------- |
 | `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `job` | [string](#string) | optional |  |
 | `name` | [string](#string) |  | @sanitize: method=StripTags |
 | `description` | [string](#string) | optional | @sanitize: method=StripTags |
 | `public` | [bool](#bool) |  |  |
@@ -946,8 +966,8 @@ Dummy - DO NOT USE!
 | `lastname` | [string](#string) |  |  |
 | `dateofbirth` | [string](#string) |  |  |
 | `phone_number` | [string](#string) | optional |  |
-| `avatar_file_id` | [int64](#int64) | optional |  |
-| `avatar` | [string](#string) | optional |  |
+| `profile_picture_file_id` | [int64](#int64) | optional |  |
+| `profile_picture` | [string](#string) | optional |  |
 | `props` | [ColleagueProps](#resourcesjobsColleagueProps) |  |  |
 | `email` | [string](#string) | optional | @sanitize: method=StripTags |
 
@@ -2515,7 +2535,7 @@ States of Cronjbo
 
 
 ### resources.common.database.DateRange
-Datetime range (uses Timestamp underneath) It depends on the API method if it will use date or date + time.
+DateRange represents a datetime range (uses Timestamp underneath) It depends on the API method if it will use date or date + time.
 
 
 
@@ -2559,14 +2579,25 @@ Server Pagination Response
 
 
 ### resources.common.database.Sort
-Sort by column
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `columns` | [SortByColumn](#resourcescommondatabaseSortByColumn) | repeated |  |
+
+
+
+
+
+### resources.common.database.SortByColumn
+SortByColumn sort by column and direction
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `column` | [string](#string) |  | Column name |
-| `direction` | [string](#string) |  | Sort direction, must be `asc` (ascending) or `desc` (descending) |
+| `id` | [string](#string) |  | ID is the column name. |
+| `desc` | [bool](#bool) |  | Desc if true sorts descending, ascending otherwise. |
 
 
 
@@ -3505,6 +3536,29 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 
 ## resources/documents/signoff.proto
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/documents/state.proto
+
+
+### resources.documents.DocumentState
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [int64](#int64) |  |  |
+
+
+
 
  <!-- end messages -->
 
@@ -5013,6 +5067,7 @@ UserInfoChanged used to signal Job or JobGrade changes.
 | `old_job_grade` | [int32](#int32) |  | Previous job grade |
 | `new_job_grade` | [int32](#int32) | optional | New job grade |
 | `new_job_grade_label` | [string](#string) | optional | New job grade label |
+| `can_be_superuser` | [bool](#bool) | optional | Can the user be superuser (by group or license) |
 | `superuser` | [bool](#bool) | optional | Superuser state |
 | `changed_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  | Timestamp of when the change was detected |
 
@@ -9319,8 +9374,8 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `jobs` | [JobsList](#serviceslivemapJobsList) |  |  |
 | `markers` | [MarkerMarkersUpdates](#serviceslivemapMarkerMarkersUpdates) |  |  |
 | `snapshot` | [Snapshot](#serviceslivemapSnapshot) |  |  |
-| `user_update` | [resources.livemap.UserMarker](#resourceslivemapUserMarker) |  |  |
-| `user_delete` | [UserDelete](#serviceslivemapUserDelete) |  |  |
+| `user_updates` | [UserUpdates](#serviceslivemapUserUpdates) |  |  |
+| `user_deletes` | [UserDeletes](#serviceslivemapUserDeletes) |  |  |
 
 
 
@@ -9331,8 +9386,30 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [int32](#int32) |  | The user ID of the user that was deleted. |
+| `id` | [int32](#int32) |  | The user ID of an user marker that was deleted. |
 | `job` | [string](#string) |  | The job of the user that was deleted. |
+
+
+
+
+
+### services.livemap.UserDeletes
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `deletes` | [UserDelete](#serviceslivemapUserDelete) | repeated |  |
+
+
+
+
+
+### services.livemap.UserUpdates
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `updates` | [resources.livemap.UserMarker](#resourceslivemapUserMarker) | repeated |  |
 
 
 

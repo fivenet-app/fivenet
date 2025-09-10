@@ -2,8 +2,7 @@ import type { DuplexStreamingCall } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
 import { notificationsEvents } from '~/composables/useClientUpdate';
-import { useAuthStore } from '~/stores/auth';
-import type { Notification } from '~/utils/notifications';
+import type { Notification } from '~/types/notifications';
 import { getNotificationsNotificationsClient } from '~~/gen/ts/clients';
 import type { ObjectEvent, ObjectType } from '~~/gen/ts/resources/notifications/client_view';
 import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -38,8 +37,8 @@ export const useNotificationsStore = defineStore(
         };
 
         const add = (notification: Notification): void => {
-            if (notification.timeout === undefined) {
-                notification.timeout = useAppConfig().timeouts.notification;
+            if (notification.duration === undefined) {
+                notification.duration = useAppConfig().timeouts.notification;
             }
             notifications.value.push(notification);
         };

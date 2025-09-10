@@ -1,0 +1,62 @@
+<script lang="ts" setup>
+import ActivityListEntry from '~/components/documents/activity/ActivityListEntry.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import Pagination from '~/components/partials/Pagination.vue';
+import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
+import type { ListDocumentActivityResponse } from '~~/gen/ts/services/documents/documents';
+
+const props = defineProps<{
+    documentId: number;
+}>();
+
+const documentsDocumentsClient = await getDocumentsDocumentsClient();
+
+const page = useRouteQuery('page', '1', { transform: Number });
+
+const { data, status, refresh, error } = useLazyAsyncData(`document-${props.documentId}-${page.value}`, () =>
+    listDocumentActivity(),
+);
+
+async function listDocumentActivity(): Promise<ListDocumentActivityResponse> {
+    try {
+        const call = documentsDocumentsClient.listDocumentActivity({
+            pagination: {
+                offset: calculateOffset(page.value, data.value?.pagination),
+            },
+            documentId: props.documentId,
+            activityTypes: [],
+        });
+        const { response } = await call;
+
+        return response;
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        throw e;
+    }
+}
+</script>
+
+<template>
+    <div>
+        <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.document', 2)])" />
+        <DataErrorBlock
+            v-else-if="error"
+            :title="$t('common.unable_to_load', [$t('common.document', 2)])"
+            :error="error"
+            :retry="refresh"
+        />
+        <DataNoDataBlock
+            v-else-if="!data || data.activity.length === 0"
+            icon="i-mdi-ticket"
+            :message="$t('common.not_found', [$t('common.activity')])"
+        />
+
+        <ul v-else class="mb-1 divide-y divide-default" role="list">
+            <ActivityListEntry v-for="item in data.activity" :key="item.id" :entry="item" />
+        </ul>
+
+        <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+    </div>
+</template>

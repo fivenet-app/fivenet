@@ -28,3 +28,13 @@ func JSON_CONTAINS(column jet.Column, value jet.Expression) jet.Expression {
 		jet.Token(")"),
 	)
 }
+
+func MATCH(column jet.Column, search jet.Expression) jet.BoolExpression {
+	return jet.BoolExp(jet.CustomExpression(
+		jet.Token("MATCH("),
+		column,
+		jet.Token(") AGAINST ("),
+		search,
+		jet.Token(" IN BOOLEAN MODE)"),
+	))
+}

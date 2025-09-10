@@ -12,11 +12,11 @@ const { website } = useAppConfig();
     <div>
         <UCard
             v-if="open"
-            class="fixed inset-x-0 bottom-8 z-20 mx-auto w-full max-w-lg bg-white/75 backdrop-blur dark:bg-white/5"
+            class="fixed inset-x-0 bottom-8 z-20 mx-auto w-full max-w-lg bg-white/75 backdrop-blur-sm dark:bg-white/5"
         >
             <template #header>
                 <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
+                    <h3 class="text-2xl leading-6 font-semibold">
                         {{ $t('components.CookieControl.title') }}
                         <span
                             class="select-none"
@@ -29,7 +29,7 @@ const { website } = useAppConfig();
                         >
                     </h3>
 
-                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="open = false" />
+                    <UButton color="neutral" variant="ghost" icon="i-mdi-window-close" @click="open = false" />
                 </div>
             </template>
 
@@ -69,7 +69,7 @@ const { website } = useAppConfig();
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" color="black" block @click="open = false">
+                    <UButton class="flex-1" color="neutral" block @click="open = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
 
@@ -102,7 +102,7 @@ const { website } = useAppConfig();
             </template>
         </UCard>
 
-        <UTooltip class="fixed bottom-32 right-6" :text="$t('components.CookieControl.name')" :popper="{ placement: 'left' }">
+        <UTooltip class="fixed right-6 bottom-32" :text="$t('components.CookieControl.name')">
             <UButton icon="i-mdi-cookie-cog" size="xl" @click="open = true" />
         </UTooltip>
     </div>

@@ -20,7 +20,13 @@ const { settings } = storeToRefs(centrumStore);
 
 const { goto } = useLivemapStore();
 
-const slideover = useSlideover();
+const overlay = useOverlay();
+
+const dispatchDetailsSlideover = overlay.create(DispatchDetailsSlideover, {
+    props: {
+        dispatchId: props.dispatch.id,
+    },
+});
 
 const dispatchTimeStyle = ref<{ ping: boolean; class: string }>({ ping: false, class: '' });
 
@@ -38,14 +44,14 @@ useIntervalFn(
 <template>
     <li class="flex flex-row items-center gap-1">
         <div class="flex flex-col items-center gap-2">
-            <URadio
+            <URadioGroup
                 :value="dispatch.id"
                 name="active"
                 :checked="selectedDispatch === dispatch.id"
-                @change="$emit('update:selectedDispatch', dispatch.id)"
+                @update:model-value="$emit('update:selectedDispatch', dispatch.id)"
             />
 
-            <UButton variant="link" :padded="false" icon="i-mdi-map-marker" @click="goto({ x: dispatch.x, y: dispatch.y })" />
+            <UButton variant="link" icon="i-mdi-map-marker" @click="goto({ x: dispatch.x, y: dispatch.y })" />
         </div>
 
         <UChip
@@ -53,15 +59,14 @@ useIntervalFn(
             :show="dispatchTimeStyle.ping"
             position="top-left"
             size="md"
-            :ui="{ base: dispatchTimeStyle.ping ? 'animate-pulse' : '', background: dispatchTimeStyle.class }"
+            :ui="{ base: dispatchTimeStyle.ping ? 'animate-pulse' : '', root: dispatchTimeStyle.class }"
         >
             <UButton
                 class="my-0.5 inline-flex w-full max-w-full shrink flex-col items-center p-2 text-xs"
                 block
                 color="error"
-                :padded="false"
                 @click="
-                    slideover.open(DispatchDetailsSlideover, {
+                    dispatchDetailsSlideover.open({
                         dispatchId: dispatch.id,
                     })
                 "
@@ -83,7 +88,7 @@ useIntervalFn(
                     <div class="inline-flex flex-col items-center">
                         <span class="font-medium">{{ $t('common.status') }}:</span>
                         <UBadge
-                            class="line-clamp-2 break-words px-px py-0.5"
+                            class="line-clamp-2 px-px py-0.5 break-words"
                             variant="subtle"
                             :color="dispatchStatusToBadgeColor(dispatch.status?.status)"
                         >

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
@@ -8,15 +8,18 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCalendarStore } from '~/stores/calendar';
-import { AccessLevel, type CalendarJobAccess, type CalendarUserAccess } from '~~/gen/ts/resources/calendar/access';
+import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateCalendarResponse, UpdateCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
+import { jobAccessEntry, userAccessEntry } from '~~/shared/types/validation';
 
 const props = defineProps<{
     calendarId?: number;
 }>();
 
-const { isOpen } = useModal();
+const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 
 const { attr, activeChar } = useAuth();
 
@@ -40,8 +43,8 @@ const schema = z.object({
     closed: z.coerce.boolean(),
     color: z.string().max(12),
     access: z.object({
-        jobs: z.custom<CalendarJobAccess>().array().max(maxAccessEntries).default([]),
-        users: z.custom<CalendarUserAccess>().array().max(maxAccessEntries).default([]),
+        jobs: jobAccessEntry.array().max(maxAccessEntries).default([]),
+        users: userAccessEntry.array().max(maxAccessEntries).default([]),
     }),
 });
 
@@ -98,7 +101,7 @@ async function createOrUpdateCalendar(values: Schema): Promise<CreateCalendarRes
             type: NotificationType.SUCCESS,
         });
 
-        isOpen.value = false;
+        emit('close', false);
 
         return response;
     } catch (e) {
@@ -132,102 +135,100 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await createOrUpdateCalendar(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
-                            {{
-                                calendarId
-                                    ? $t('components.calendar.CalendarCreateOrUpdateModal.update.title')
-                                    : $t('components.calendar.CalendarCreateOrUpdateModal.create.title')
-                            }}
-                        </h3>
+    <UModal
+        :title="
+            calendarId
+                ? $t('components.calendar.CalendarCreateOrUpdateModal.update.title')
+                : $t('components.calendar.CalendarCreateOrUpdateModal.create.title')
+        "
+    >
+        <template #body>
+            <UForm ref="formRef" :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
+                <DataPendingBlock
+                    v-if="props.calendarId && isRequestPending(status)"
+                    :message="$t('common.loading', [$t('common.calendar')])"
+                />
+                <DataErrorBlock
+                    v-else-if="props.calendarId && error"
+                    :title="$t('common.unable_to_load', [$t('common.calendar')])"
+                    :error="error"
+                    :retry="refresh"
+                />
+                <DataNoDataBlock
+                    v-if="props.calendarId && (!data || !data.calendar)"
+                    :type="$t('common.calendar')"
+                    icon="i-mdi-calendar"
+                />
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                    </div>
+                <template v-else>
+                    <UFormField class="flex-1" name="title" :label="$t('common.name')" required>
+                        <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.name')" class="w-full" />
+                    </UFormField>
+
+                    <UFormField class="flex-1" name="color" :label="$t('common.color')">
+                        <ColorPickerTW v-model="state.color" class="w-full" />
+                    </UFormField>
+
+                    <UFormField class="flex-1" name="description" :label="$t('common.description')">
+                        <UTextarea
+                            v-model="state.description"
+                            name="description"
+                            :placeholder="$t('common.description')"
+                            class="w-full"
+                        />
+                    </UFormField>
+
+                    <UFormField
+                        class="flex-1"
+                        name="private"
+                        :label="$t('components.calendar.CalendarCreateOrUpdateModal.private')"
+                    >
+                        <USwitch
+                            v-model="state.private"
+                            :disabled="
+                                !canDo.privateCalendar || calendarId !== undefined || (!props.calendarId && hasPrivateCalendar)
+                            "
+                        />
+                    </UFormField>
+
+                    <UFormField v-if="canDo.publicCalendar" class="flex-1" name="public" :label="$t('common.public')">
+                        <USwitch v-model="state.public" />
+                    </UFormField>
+
+                    <UFormField class="flex-1" name="closed" :label="`${$t('common.close', 2)}?`">
+                        <USwitch v-model="state.closed" />
+                    </UFormField>
+
+                    <UFormField class="flex-1" name="access" :label="$t('common.access')">
+                        <AccessManager
+                            v-model:jobs="state.access.jobs"
+                            v-model:users="state.access.users"
+                            :target-id="calendarId ?? 0"
+                            :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.calendar.AccessLevel')"
+                        />
+                    </UFormField>
                 </template>
+            </UForm>
+        </template>
 
-                <div>
-                    <DataPendingBlock
-                        v-if="props.calendarId && isRequestPending(status)"
-                        :message="$t('common.loading', [$t('common.calendar')])"
-                    />
-                    <DataErrorBlock
-                        v-else-if="props.calendarId && error"
-                        :title="$t('common.unable_to_load', [$t('common.calendar')])"
-                        :error="error"
-                        :retry="refresh"
-                    />
-                    <DataNoDataBlock
-                        v-if="props.calendarId && (!data || !data.calendar)"
-                        :type="$t('common.calendar')"
-                        icon="i-mdi-calendar"
-                    />
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
-                    <template v-else>
-                        <UFormGroup class="flex-1" name="title" :label="$t('common.name')" required>
-                            <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.name')" />
-                        </UFormGroup>
-
-                        <UFormGroup class="flex-1" name="color" :label="$t('common.color')">
-                            <ColorPickerTW v-model="state.color" />
-                        </UFormGroup>
-
-                        <UFormGroup class="flex-1" name="description" :label="$t('common.description')">
-                            <UTextarea v-model="state.description" name="description" :placeholder="$t('common.description')" />
-                        </UFormGroup>
-
-                        <UFormGroup
-                            class="flex-1"
-                            name="private"
-                            :label="$t('components.calendar.CalendarCreateOrUpdateModal.private')"
-                        >
-                            <UToggle
-                                v-model="state.private"
-                                :disabled="
-                                    !canDo.privateCalendar ||
-                                    calendarId !== undefined ||
-                                    (!props.calendarId && hasPrivateCalendar)
-                                "
-                            />
-                        </UFormGroup>
-
-                        <UFormGroup v-if="canDo.publicCalendar" class="flex-1" name="public" :label="$t('common.public')">
-                            <UToggle v-model="state.public" />
-                        </UFormGroup>
-
-                        <UFormGroup class="flex-1" name="closed" :label="`${$t('common.close', 2)}?`">
-                            <UToggle v-model="state.closed" />
-                        </UFormGroup>
-
-                        <UFormGroup class="flex-1" name="access" :label="$t('common.access')">
-                            <AccessManager
-                                v-model:jobs="state.access.jobs"
-                                v-model:users="state.access.users"
-                                :target-id="calendarId ?? 0"
-                                :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.calendar.AccessLevel')"
-                            />
-                        </UFormGroup>
-                    </template>
-                </div>
-
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="black" block @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
-
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ data ? $t('common.save') : $t('common.create') }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                <UButton
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :label="data ? $t('common.save') : $t('common.create')"
+                    @click="formRef?.submit()"
+                />
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

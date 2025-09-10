@@ -19,11 +19,15 @@ const emit = defineEmits<{
 
 const threadRefs = ref(new Map<number, Element>());
 
+const routeParams = useRouteParams('thread');
+
 const selectedThread = computed({
     get() {
         return props.modelValue;
     },
     set(value: Thread | undefined) {
+        routeParams.value = value ? String(value.id) : '';
+
         emit('update:modelValue', value);
     },
 });
@@ -62,64 +66,68 @@ defineShortcuts({
 </script>
 
 <template>
-    <UDashboardPanelContent class="p-0 sm:pb-0">
+    <div class="flex flex-1 flex-col">
         <div v-if="!loaded" class="space-y-2">
-            <USkeleton class="h-[73px] w-full" :ui="{ rounded: '' }" />
-            <USkeleton class="h-[73px] w-full" :ui="{ rounded: '' }" />
-            <USkeleton class="h-[73px] w-full" :ui="{ rounded: '' }" />
-            <USkeleton class="h-[73px] w-full" :ui="{ rounded: '' }" />
+            <USkeleton class="h-[73px] w-full" />
+            <USkeleton class="h-[73px] w-full" />
+            <USkeleton class="h-[73px] w-full" />
+            <USkeleton class="h-[73px] w-full" />
         </div>
 
         <template v-else>
-            <div v-for="(thread, index) in threads" :key="index" :ref="(el) => threadRefs.set(thread.id, el as Element)">
-                <div
-                    class="cursor-pointer border-l-2 p-4 text-sm"
-                    :class="[
-                        !!thread.state?.unread ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300',
-                        selectedThread && selectedThread.id === thread.id
-                            ? 'border-primary-500 dark:border-primary-400 bg-primary-100 dark:bg-primary-900/25'
-                            : 'hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white dark:border-gray-900',
-                    ]"
-                    @click="selectedThread = thread"
-                >
-                    <div class="flex items-center justify-between gap-1" :class="[thread.state?.unread && 'font-semibold']">
-                        <div class="flex items-center gap-3 truncate font-semibold">
-                            <span class="truncate">
-                                {{ thread.title }}
-                            </span>
+            <div class="divide-y divide-default overflow-y-auto">
+                <div v-for="(thread, index) in threads" :key="index" :ref="(el) => threadRefs.set(thread.id, el as Element)">
+                    <div
+                        class="cursor-pointer border-l-2 p-4 text-sm transition-colors sm:px-6"
+                        :class="[
+                            !!thread.state?.unread ? 'text-highlighted' : 'text-toned',
+                            selectedThread && selectedThread.id === thread.id
+                                ? 'border-primary bg-primary/10'
+                                : 'border-(--ui-bg) hover:border-primary hover:bg-primary/5',
+                        ]"
+                        @click="selectedThread = thread"
+                    >
+                        <div class="flex items-center justify-between gap-1" :class="[thread.state?.unread && 'font-semibold']">
+                            <div class="flex items-center gap-3 truncate font-semibold">
+                                <span class="truncate">
+                                    {{ thread.title }}
+                                </span>
 
-                            <UChip v-if="!!thread.state?.unread" class="mr-1" />
+                                <UChip v-if="!!thread.state?.unread" class="mr-1" />
+                            </div>
+
+                            <div
+                                v-if="thread.deletedAt"
+                                class="flex shrink-0 flex-row items-center justify-center gap-1.5 font-bold"
+                            >
+                                <UIcon class="size-4 shrink-0" name="i-mdi-delete" />
+                                {{ $t('common.deleted') }}
+                            </div>
+                            <UTooltip v-else class="shrink-0" :text="$d(toDate(thread.updatedAt ?? thread.createdAt), 'long')">
+                                {{
+                                    isToday(toDate(thread.updatedAt ?? thread.createdAt))
+                                        ? $d(toDate(thread.updatedAt ?? thread.createdAt), 'time')
+                                        : $d(toDate(thread.updatedAt ?? thread.createdAt), 'date')
+                                }}
+                            </UTooltip>
                         </div>
+                        <div class="flex items-center justify-between">
+                            <p>{{ thread.creatorEmail?.email }}</p>
 
-                        <div
-                            v-if="thread.deletedAt"
-                            class="flex shrink-0 flex-row items-center justify-center gap-1.5 font-bold"
-                        >
-                            <UIcon class="size-4 shrink-0" name="i-mdi-delete" />
-                            {{ $t('common.deleted') }}
-                        </div>
-                        <UTooltip v-else class="shrink-0" :text="$d(toDate(thread.updatedAt ?? thread.createdAt), 'long')">
-                            {{
-                                isToday(toDate(thread.updatedAt ?? thread.createdAt))
-                                    ? $d(toDate(thread.updatedAt ?? thread.createdAt), 'time')
-                                    : $d(toDate(thread.updatedAt ?? thread.createdAt), 'date')
-                            }}
-                        </UTooltip>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <p>{{ thread.creatorEmail?.email }}</p>
-
-                        <div class="inline-flex gap-1">
-                            <UIcon v-if="thread.state?.important" class="size-5 text-red-500" name="i-mdi-exclamation-thick" />
-                            <UIcon v-if="thread.state?.favorite" class="size-5 text-yellow-500" name="i-mdi-star" />
+                            <div class="inline-flex gap-1">
+                                <UIcon
+                                    v-if="thread.state?.important"
+                                    class="size-5 text-red-500"
+                                    name="i-mdi-exclamation-thick"
+                                />
+                                <UIcon v-if="thread.state?.favorite" class="size-5 text-yellow-500" name="i-mdi-star" />
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <UDivider v-if="index < threads.length" />
             </div>
 
             <slot name="after" />
         </template>
-    </UDashboardPanelContent>
+    </div>
 </template>

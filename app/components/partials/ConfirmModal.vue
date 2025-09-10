@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { ButtonColor } from '#ui/types';
+import type { ButtonProps } from '@nuxt/ui';
 
 withDefaults(
     defineProps<{
@@ -8,7 +8,7 @@ withDefaults(
         cancel?: () => Promise<unknown> | unknown;
         confirm: () => Promise<unknown> | unknown;
         icon?: string;
-        color?: ButtonColor;
+        color?: ButtonProps['color'];
         iconClass?: string;
     }>(),
     {
@@ -21,18 +21,15 @@ withDefaults(
     },
 );
 
-const { isOpen } = useModal();
+defineEmits<{
+    (e: 'close'): void;
+}>();
 </script>
 
 <template>
-    <UDashboardModal
+    <UModal
         :title="title ?? $t('components.partials.confirm_dialog.title')"
         :description="description ?? $t('components.partials.confirm_dialog.description')"
-        :icon="icon"
-        :ui="{
-            icon: { base: iconClass },
-            footer: { base: 'ml-16' },
-        }"
         @update:model-value="cancel && cancel()"
     >
         <template #footer>
@@ -41,19 +38,19 @@ const { isOpen } = useModal();
                 :label="$t('common.confirm')"
                 @click="
                     confirm();
-                    isOpen = false;
+                    $emit('close');
                 "
             />
             <UButton
-                color="white"
+                color="neutral"
                 :label="$t('common.cancel')"
                 @click="
                     if (cancel) {
                         cancel();
                     }
-                    isOpen = false;
+                    $emit('close');
                 "
             />
         </template>
-    </UDashboardModal>
+    </UModal>
 </template>

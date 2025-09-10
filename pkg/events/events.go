@@ -17,9 +17,6 @@ import (
 	"go.uber.org/zap"
 )
 
-// DefaultDefaultAsyncPubAckInflight override value for the default `defaultAsyncPubAckInflight` is `4000` (`nats.go`).
-const DefaultDefaultAsyncPubAckInflight = 512
-
 var Module = fx.Module("events",
 	fx.Provide(
 		New,
@@ -107,7 +104,7 @@ func New(p Params) (Result, error) {
 	// Create JetStream context
 	js, err := jetstream.New(
 		nc,
-		jetstream.WithPublishAsyncMaxPending(DefaultDefaultAsyncPubAckInflight),
+		jetstream.WithPublishAsyncMaxPending(p.Config.NATS.PublishAsyncMaxPending),
 	)
 	if err != nil {
 		return Result{}, err

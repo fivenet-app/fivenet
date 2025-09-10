@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/stores/mailer';
@@ -9,7 +9,9 @@ import { defaultEmptyContent } from './helpers';
 import TemplateSelector from './TemplateSelector.vue';
 import ThreadAttachmentsForm from './ThreadAttachmentsForm.vue';
 
-const { isOpen } = useModal();
+const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 
 const { can, activeChar, isSuperuser } = useAuth();
 
@@ -82,7 +84,15 @@ async function createThread(values: Schema): Promise<void> {
     state.value.recipients = [];
     state.value.attachments = [];
 
-    isOpen.value = false;
+    emit('close', false);
+}
+
+function onCreate(item: string): void {
+    if (state.value.recipients.findIndex((r) => r.label.toLowerCase() === item.toLowerCase()) !== -1) {
+        return;
+    }
+
+    state.value.recipients.push({ label: item });
 }
 
 onBeforeMount(() => {
@@ -107,37 +117,22 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await createThread(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 1000));
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal fullscreen>
-        <UForm class="flex flex-1 flex-col" :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard
-                :ui="{
-                    ring: '',
-                    divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-                    base: 'flex flex-1 flex-col',
-                    body: { base: 'flex flex-1 flex-col' },
-                }"
-            >
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
-                            {{ $t('components.mailer.create_thread') }}
-                        </h3>
-
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                    </div>
-                </template>
-
+    <UModal :title="$t('components.mailer.create_thread')" fullscreen>
+        <template #body>
+            <UForm ref="formRef" class="flex flex-1 flex-col" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <div class="mx-auto">
-                    <div class="flex w-full max-w-screen-xl flex-1 flex-col">
+                    <div class="flex w-full max-w-(--breakpoint-xl) flex-1 flex-col">
                         <div class="flex w-full flex-col items-center justify-between gap-1">
-                            <UFormGroup class="w-full flex-1" name="sender" :label="$t('common.sender')">
+                            <UFormField class="w-full flex-1" name="sender" :label="$t('common.sender')">
                                 <ClientOnly>
                                     <UInput
                                         v-if="emails.length === 1"
-                                        class="pt-1"
+                                        class="w-full pt-1"
                                         type="text"
                                         disabled
                                         :model-value="
@@ -145,23 +140,21 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 ? selectedEmail?.label + ' (' + selectedEmail.email + ')'
                                                 : undefined) ??
                                             selectedEmail?.email ??
-                                            $t('common.none')
+                                            $t('common.none', [$t('common.mail', 1)])
                                         "
                                     />
                                     <USelectMenu
                                         v-else
                                         v-model="selectedEmail"
-                                        class="pt-1"
-                                        :options="emails"
+                                        class="w-full pt-1"
+                                        :items="emails"
                                         :placeholder="$t('common.mail')"
-                                        searchable
-                                        :searchable-placeholder="$t('common.search_field')"
-                                        :search-attributes="['label', 'email']"
+                                        :search-input="{ placeholder: $t('common.search_field') }"
+                                        :filter-fields="['label', 'email']"
                                         trailing
-                                        by="id"
                                     >
-                                        <template #label>
-                                            <span class="overflow-hidden truncate">
+                                        <template #default>
+                                            <span class="truncate overflow-hidden">
                                                 {{
                                                     (selectedEmail?.label && selectedEmail?.label !== ''
                                                         ? selectedEmail?.label + ' (' + selectedEmail.email + ')'
@@ -179,17 +172,17 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             </span>
                                         </template>
 
-                                        <template #option="{ option }">
-                                            <span class="truncate">
+                                        <template #item="{ item }">
+                                            <span>
                                                 {{
-                                                    (option?.label && option?.label !== ''
-                                                        ? option?.label + ' (' + option.email + ')'
+                                                    (item?.label && item?.label !== ''
+                                                        ? item?.label + ' (' + item.email + ')'
                                                         : undefined) ??
-                                                    (option?.userId
+                                                    (item?.userId
                                                         ? $t('common.personal_email') +
-                                                          (isSuperuser ? ' (' + option.email + ')' : '')
+                                                          (isSuperuser ? ' (' + item.email + ')' : '')
                                                         : undefined) ??
-                                                    option?.email ??
+                                                    item?.email ??
                                                     $t('common.none')
                                                 }}
                                             </span>
@@ -202,39 +195,35 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             />
                                         </template>
 
-                                        <template #option-empty="{ query: search }">
-                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                        </template>
-
                                         <template #empty> {{ $t('common.not_found', [$t('common.mail', 2)]) }} </template>
                                     </USelectMenu>
                                 </ClientOnly>
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup class="w-full flex-1" name="title" :label="$t('common.title')">
+                            <UFormField class="w-full flex-1" name="title" :label="$t('common.title')">
                                 <UInput
                                     v-model="state.title"
-                                    class="font-semibold"
+                                    class="w-full font-semibold"
                                     type="text"
                                     size="lg"
                                     :placeholder="$t('common.title')"
                                     :disabled="!canSubmit"
-                                    :ui="{ icon: { trailing: { pointer: '' } } }"
+                                    :ui="{ trailing: 'pe-1' }"
                                 >
                                     <template #trailing>
                                         <UButton
-                                            v-show="state.title !== ''"
-                                            color="gray"
+                                            v-if="state.title !== ''"
+                                            color="neutral"
                                             variant="link"
                                             icon="i-mdi-close"
-                                            :padded="false"
+                                            aria-controls="search"
                                             @click="state.title = ''"
                                         />
                                     </template>
                                 </UInput>
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup class="w-full flex-1" name="recipients" :label="$t('common.recipient', 2)">
+                            <UFormField class="w-full flex-1" name="recipients" :label="$t('common.recipient', 2)">
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="state.recipients"
@@ -242,25 +231,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         block
                                         multiple
                                         trailing
-                                        searchable
-                                        :options="[
+                                        :items="[
                                             ...state.recipients,
                                             ...addressBook.filter((r) => !state.recipients.includes(r)),
                                         ]"
-                                        :searchable-placeholder="$t('common.mail', 1)"
-                                        creatable
+                                        :search-input="{ placeholder: $t('common.mail', 1) }"
                                         :disabled="!canSubmit"
+                                        class="w-full"
+                                        create-item
+                                        @create="(item) => onCreate(item)"
                                     >
-                                        <template #label>&nbsp;</template>
-
-                                        <template #option-create="{ option }">
-                                            <span class="shrink-0">{{ $t('common.recipient') }}: {{ option.label }}</span>
-                                        </template>
-
-                                        <template #option-empty="{ query: search }">
-                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                        </template>
-
                                         <template #empty>
                                             {{ $t('common.not_found', [$t('common.recipient', 2)]) }}
                                         </template>
@@ -274,7 +254,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         size="sm"
                                         orientation="horizontal"
                                     >
-                                        <UButton variant="solid" color="gray" :label="recipient.label" />
+                                        <UButton variant="solid" color="neutral" :label="recipient.label" />
 
                                         <UButton
                                             variant="outline"
@@ -284,25 +264,22 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         />
                                     </UButtonGroup>
                                 </div>
-                            </UFormGroup>
+                            </UFormField>
                         </div>
 
-                        <UFormGroup
+                        <UFormField
                             class="flex flex-1 flex-col"
                             name="content"
                             :label="$t('common.message')"
                             :ui="{
                                 container: 'flex flex-1 flex-col',
-                                label: { base: 'flex flex-1' },
                             }"
                         >
-                            <template #label>
-                                <div class="flex flex-1 flex-col items-center sm:flex-row">
-                                    <span class="flex-1">{{ $t('common.message', 1) }}</span>
+                            <div class="flex flex-1 flex-col items-center sm:flex-row">
+                                <span class="flex-1">{{ $t('common.template', 1) }}</span>
 
-                                    <TemplateSelector v-model="state.content" class="ml-auto" />
-                                </div>
-                            </template>
+                                <TemplateSelector v-model="state.content" class="ml-auto" />
+                            </div>
 
                             <ClientOnly>
                                 <TiptapEditor
@@ -312,7 +289,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     wrapper-class="min-h-96"
                                 />
                             </ClientOnly>
-                        </UFormGroup>
+                        </UFormField>
 
                         <ThreadAttachmentsForm
                             v-if="can('documents.DocumentsService/ListDocuments').value"
@@ -321,24 +298,22 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         />
                     </div>
                 </div>
+            </UForm>
+        </template>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" block color="black" @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" block color="neutral" :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
-                        <UButton
-                            class="flex-1"
-                            type="submit"
-                            :disabled="!canSubmit"
-                            block
-                            :label="$t('components.mailer.send')"
-                            trailing-icon="i-mdi-paper-airplane"
-                        />
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                <UButton
+                    class="flex-1"
+                    :disabled="!canSubmit"
+                    block
+                    :label="$t('components.mailer.send')"
+                    icon="i-mdi-paper-airplane"
+                    @click="() => formRef?.submit()"
+                />
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

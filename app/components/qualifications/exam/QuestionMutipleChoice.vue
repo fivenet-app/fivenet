@@ -20,17 +20,16 @@ const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
         v-if="question.data!.data.oneofKind === 'multipleChoice' && question.answer!.answer.oneofKind === 'multipleChoice'"
         class="flex flex-col gap-2"
     >
-        <UFormGroup name="data.data.multipleChoice.limit" :label="$t('common.max')">
-            <UInput
+        <UFormField name="data.data.multipleChoice.limit" :label="$t('common.max')">
+            <UInputNumber
                 v-model="question.data!.data.multipleChoice.limit"
-                type="number"
                 :min="1"
                 :max="question.data!.data.multipleChoice.choices.length"
                 :disabled="disabled"
             />
-        </UFormGroup>
+        </UFormField>
 
-        <UFormGroup class="flex-1" :label="$t('common.option', 2)" required>
+        <UFormField class="flex-1" :label="$t('common.option', 2)" required>
             <VueDraggable
                 v-model="question.data!.data.multipleChoice.choices"
                 class="flex flex-col gap-2"
@@ -48,12 +47,12 @@ const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
                         </UTooltip>
 
                         <UButtonGroup>
-                            <UButton size="xs" variant="link" :padded="false" icon="i-mdi-arrow-up" @click="moveUp(idx)" />
-                            <UButton size="xs" variant="link" :padded="false" icon="i-mdi-arrow-down" @click="moveDown(idx)" />
+                            <UButton size="xs" variant="link" icon="i-mdi-arrow-up" @click="moveUp(idx)" />
+                            <UButton size="xs" variant="link" icon="i-mdi-arrow-down" @click="moveDown(idx)" />
                         </UButtonGroup>
                     </div>
 
-                    <UCheckbox
+                    <UCheckboxGroup
                         v-model="question.answer!.answer.multipleChoice.choices"
                         :value="question.data!.data.multipleChoice.choices[idx]"
                         :disabled="disabled"
@@ -70,7 +69,6 @@ const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
                         <UButton
                             class="flex-initial"
                             icon="i-mdi-close"
-                            :ui="{ rounded: 'rounded-full' }"
                             :disabled="disabled"
                             @click="question.data!.data.multipleChoice.choices.splice(idx, 1)"
                         />
@@ -82,11 +80,19 @@ const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
                 <UButton
                     :class="question.data!.data.multipleChoice.choices.length ? 'mt-2' : ''"
                     icon="i-mdi-plus"
-                    :ui="{ rounded: 'rounded-full' }"
                     :disabled="disabled"
                     @click="question.data!.data.multipleChoice.choices.push('')"
                 />
             </UTooltip>
-        </UFormGroup>
+
+            <UFormField :label="$t('common.answer')" class="mt-2">
+                <USelect
+                    v-model="question.answer!.answer.multipleChoice.choices"
+                    multiple
+                    :items="question.data!.data.multipleChoice?.choices"
+                    class="w-full"
+                />
+            </UFormField>
+        </UFormField>
     </div>
 </template>

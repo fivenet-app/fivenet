@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { TableColumn } from '@nuxt/ui';
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -6,11 +7,13 @@ import LicensePlate from '~/components/partials/LicensePlate.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useClipboardStore } from '~/stores/clipboard';
 import { getCompletorCompletorClient, getVehiclesVehiclesClient } from '~~/gen/ts/clients';
+import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 import type { ListVehiclesResponse } from '~~/gen/ts/services/vehicles/vehicles';
 import ColleagueName from '../jobs/colleagues/ColleagueName.vue';
+import SelectMenu from '../partials/SelectMenu.vue';
 import VehicleInfoPopover from './VehicleInfoPopover.vue';
 
 const { t } = useI18n();
@@ -45,10 +48,18 @@ const schema = z.object({
     userIds: z.coerce.number().array().max(5).default([]),
     wanted: z.boolean().default(false),
 
-    sort: z.custom<TableSortable>().default({
-        column: 'plate',
-        direction: 'asc',
-    }),
+    sorting: z
+        .object({
+            columns: z.custom<SortByColumn>().array().max(3).default([]),
+        })
+        .default({
+            columns: [
+                {
+                    id: 'plate',
+                    desc: false,
+                },
+            ],
+        }),
     page: pageNumberSchema,
 });
 
@@ -57,7 +68,7 @@ const query = useSearchForm('vehicles', schema);
 const hideVehicleModell = ref(false);
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `vehicles-${query.sort.column}:${query.sort.direction}-${query.page}`,
+    () => `vehicles-${JSON.stringify(query.sorting)}-${query.page}`,
     () => listVehicles(),
 );
 
@@ -67,7 +78,7 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
             pagination: {
                 offset: calculateOffset(query.page, data.value?.pagination),
             },
-            sort: query.sort,
+            sort: query.sorting,
             licensePlate: query.licensePlate,
             model: query.model,
             userIds: query.userIds,
@@ -90,8 +101,6 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
     }
 }
 
-const usersLoading = ref(false);
-
 watchDebounced(query, async () => refresh(), {
     debounce: 200,
     maxWait: 1250,
@@ -103,7 +112,7 @@ function addToClipboard(vehicle: Vehicle): void {
     notifications.add({
         title: { key: 'notifications.clipboard.vehicle_added.title', parameters: {} },
         description: { key: 'notifications.clipboard.vehicle_added.content', parameters: {} },
-        timeout: 3250,
+        duration: 3250,
         type: NotificationType.INFO,
     });
 }
@@ -115,55 +124,95 @@ function updateVehicle(plate: string, vehicle: Vehicle): void {
     }
 }
 
+const UBadge = resolveComponent('UBadge');
+const UButton = resolveComponent('UButton');
+const appConfig = useAppConfig();
+
 const columns = computed(() =>
-    [
-        {
-            key: 'plate',
-            label: t('common.plate'),
-            sortable: true,
-        },
-        attr('vehicles.VehiclesService/ListVehicles', 'Fields', 'Wanted').value
-            ? {
-                  key: 'wanted',
-                  label: t('common.wanted'),
-                  sortable: false,
-              }
-            : undefined,
-        {
-            key: 'model',
-            label: t('common.model'),
-            sortable: true,
-        },
-        {
-            key: 'type',
-            label: t('common.type'),
-        },
-        !props.hideOwner
-            ? {
-                  key: 'owner',
-                  label: t('common.owner'),
-              }
-            : undefined,
-        {
-            key: 'actions',
-            label: t('common.action', 2),
-            sortable: false,
-        },
-    ].flatMap((item) => (item !== undefined ? [item] : [])),
+    (
+        [
+            {
+                accessorKey: 'plate',
+                header: ({ column }) => {
+                    const isSorted = column.getIsSorted();
+
+                    return h(UButton, {
+                        color: 'neutral',
+                        variant: 'ghost',
+                        label: t('common.plate'),
+                        icon: isSorted
+                            ? isSorted === 'asc'
+                                ? appConfig.custom.icons.sortAsc
+                                : appConfig.custom.icons.sortDesc
+                            : appConfig.custom.icons.sort,
+                        class: '-mx-2.5',
+                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+                    });
+                },
+                cell: ({ row }) =>
+                    h('div', { class: 'inline-flex items-center gap-1' }, [
+                        h(LicensePlate, { plate: row.original.plate, class: 'sm:min-w-40 md:min-w-48' }),
+                    ]),
+            },
+            attr('vehicles.VehiclesService/ListVehicles', 'Fields', 'Wanted').value
+                ? {
+                      accessorKey: 'wanted',
+                      header: t('common.wanted'),
+                      cell: ({ row }) =>
+                          row.original.props?.wanted
+                              ? h(UBadge, { color: 'error' }, () => $t('common.wanted').toUpperCase())
+                              : undefined,
+                  }
+                : undefined,
+            {
+                accessorKey: 'model',
+                header: ({ column }) => {
+                    const isSorted = column.getIsSorted();
+
+                    return h(UButton, {
+                        color: 'neutral',
+                        variant: 'ghost',
+                        label: t('common.model'),
+                        icon: isSorted
+                            ? isSorted === 'asc'
+                                ? appConfig.custom.icons.sortAsc
+                                : appConfig.custom.icons.sortDesc
+                            : appConfig.custom.icons.sort,
+                        class: '-mx-2.5',
+                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+                    });
+                },
+            },
+            {
+                accessorKey: 'type',
+                header: t('common.type'),
+                cell: ({ row }) => toTitleCase(row.original.type),
+            },
+            !props.hideOwner
+                ? {
+                      accessorKey: 'owner',
+                      header: t('common.owner'),
+                  }
+                : undefined,
+            {
+                id: 'actions',
+            },
+        ] as TableColumn<Vehicle>[]
+    ).flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
 const input = useTemplateRef('input');
 
 defineShortcuts({
-    '/': () => input.value?.input?.focus(),
+    '/': () => input.value?.inputRef?.focus(),
 });
 </script>
 
 <template>
     <UDashboardToolbar>
         <template #default>
-            <UForm class="flex w-full flex-row gap-2" :schema="schema" :state="query" @submit="refresh()">
-                <UFormGroup class="flex-1" name="licensePlate" :label="$t('common.license_plate')">
+            <UForm class="my-2 flex w-full flex-row gap-2" :schema="schema" :state="query" @submit="refresh()">
+                <UFormField class="flex-1" name="licensePlate" :label="$t('common.license_plate')">
                     <UInput
                         ref="input"
                         v-model="query.licensePlate"
@@ -172,62 +221,48 @@ defineShortcuts({
                         :placeholder="$t('common.license_plate')"
                         block
                         leading-icon="i-mdi-search"
+                        class="w-full"
                     >
                         <template #trailing>
                             <UKbd value="/" />
                         </template>
                     </UInput>
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup v-if="!hideVehicleModell" class="flex-1" name="model" :label="$t('common.model')">
-                    <UInput v-model="query.model" type="text" name="model" :placeholder="$t('common.model')" block />
-                </UFormGroup>
+                <UFormField v-if="!hideVehicleModell" class="flex-1" name="model" :label="$t('common.model')">
+                    <UInput v-model="query.model" type="text" name="model" :placeholder="$t('common.model')" class="w-full" />
+                </UFormField>
 
-                <UFormGroup v-if="userId === undefined" class="flex-1" name="userIds" :label="$t('common.owner')">
-                    <ClientOnly>
-                        <USelectMenu
-                            v-model="query.userIds"
-                            name="userIds"
-                            multiple
-                            :searchable="
-                                async (q: string): Promise<UserShort[]> => {
-                                    usersLoading = true;
-                                    const { response } = await completorCompletorClient.completeCitizens({
-                                        search: q,
-                                        userIds: query.userIds,
-                                    });
-                                    usersLoading = false;
-                                    return response.users;
-                                }
-                            "
-                            searchable-lazy
-                            :search-placeholder="$t('common.search_field')"
-                            :search-attributes="['firstname', 'lastname']"
-                            block
-                            :placeholder="$t('common.owner')"
-                            trailing
-                            value-attribute="userId"
-                        >
-                            <template #label="{ selected }">
-                                <span v-if="selected.length > 0" class="truncate">
-                                    {{ usersToLabel(selected) }}
-                                </span>
-                            </template>
+                <UFormField v-if="userId === undefined" class="flex-1" name="userIds" :label="$t('common.owner')">
+                    <SelectMenu
+                        v-model="query.userIds"
+                        name="userIds"
+                        multiple
+                        :searchable="
+                            async (q: string): Promise<UserShort[]> => {
+                                const { response } = await completorCompletorClient.completeCitizens({
+                                    search: q,
+                                    userIds: query.userIds,
+                                });
+                                return response.users;
+                            }
+                        "
+                        searchable-key="completor-citizens"
+                        :filter-fields="['firstname', 'lastname']"
+                        class="w-full"
+                        :placeholder="$t('common.owner')"
+                        trailing
+                        value-key="userId"
+                    >
+                        <template #item="{ item }">
+                            <ColleagueName class="truncate" :colleague="item" birthday />
+                        </template>
 
-                            <template #option="{ option: user }">
-                                <ColleagueName class="truncate" :colleague="user" birthday />
-                            </template>
+                        <template #empty> {{ $t('common.not_found', [$t('common.owner', 2)]) }} </template>
+                    </SelectMenu>
+                </UFormField>
 
-                            <template #option-empty="{ query: search }">
-                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                            </template>
-
-                            <template #empty> {{ $t('common.not_found', [$t('common.owner', 2)]) }} </template>
-                        </USelectMenu>
-                    </ClientOnly>
-                </UFormGroup>
-
-                <UFormGroup
+                <UFormField
                     v-if="attr('vehicles.VehiclesService/ListVehicles', 'Fields', 'Wanted').value"
                     class="flex flex-initial flex-col"
                     name="wanted"
@@ -235,9 +270,9 @@ defineShortcuts({
                     :ui="{ container: 'flex-1 flex' }"
                 >
                     <div class="flex flex-1 items-center">
-                        <UToggle v-model="query.wanted" />
+                        <USwitch v-model="query.wanted" />
                     </div>
-                </UFormGroup>
+                </UFormField>
             </UForm>
         </template>
     </UDashboardToolbar>
@@ -251,50 +286,41 @@ defineShortcuts({
 
     <UTable
         v-else
-        v-model:sort="query.sort"
+        v-model:sorting="query.sorting.columns"
         class="flex-1"
         :loading="isRequestPending(status)"
         :columns="columns"
-        :rows="data?.vehicles"
-        :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.vehicle', 2)]) }"
-        sort-mode="manual"
+        :data="data?.vehicles"
+        :pagination-options="{ manualPagination: true }"
+        :sorting-options="{ manualSorting: true }"
+        :empty="$t('common.not_found', [$t('common.vehicle', 2)])"
+        sticky
     >
-        <template #plate-data="{ row: vehicle }">
-            <div class="inline-flex items-center gap-1">
-                <LicensePlate :plate="vehicle.plate" class="sm:min-w-40 md:min-w-48" />
-            </div>
+        <template v-if="!hideOwner" #owner-cell="{ row: vehicle }">
+            <p v-if="vehicle.original.jobLabel" class="text-highlighted">{{ vehicle.original.jobLabel }}</p>
+            <CitizenInfoPopover v-if="vehicle.original.owner" :user="vehicle.original.owner" />
         </template>
 
-        <template #wanted-data="{ row: vehicle }">
-            <UBadge v-if="vehicle.props?.wanted" color="error">
-                {{ $t('common.wanted').toUpperCase() }}
-            </UBadge>
-        </template>
-
-        <template #type-data="{ row: vehicle }">
-            {{ toTitleCase(vehicle.type) }}
-        </template>
-
-        <template v-if="!hideOwner" #owner-data="{ row: vehicle }">
-            <p v-if="vehicle.jobLabel" class="text-gray-900 dark:text-white">{{ vehicle.jobLabel }}</p>
-            <CitizenInfoPopover v-if="vehicle.owner" :user="vehicle.owner" />
-        </template>
-
-        <template #actions-data="{ row: vehicle }">
-            <div :key="vehicle.plate" class="flex flex-col justify-end md:flex-row">
+        <template #actions-cell="{ row: vehicle }">
+            <div class="flex flex-col justify-end md:flex-row">
                 <UTooltip
                     v-if="attrStringList('vehicles.VehiclesService/ListVehicles', 'Fields').value.length > 0 || isSuperuser"
                     :text="$t('common.propertie', 2)"
                 >
-                    <VehicleInfoPopover :model-value="vehicle" @update:model-value="updateVehicle(vehicle.plate, $event)" />
+                    <VehicleInfoPopover
+                        :model-value="vehicle.original"
+                        @update:model-value="updateVehicle(vehicle.original.plate, $event)"
+                    />
                 </UTooltip>
 
                 <UTooltip v-if="!hideCopy" :text="$t('components.clipboard.clipboard_button.add')">
-                    <UButton variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(vehicle)" />
+                    <UButton variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(vehicle.original)" />
                 </UTooltip>
 
                 <UTooltip
-                    v-if="!hideCitizenLink && vehicle.owner?.userId && can('citizens.CitizensService/ListCitizens').value"
+                    v-if="
+                        !hideCitizenLink && vehicle.original.owner?.userId && can('citizens.CitizensService/ListCitizens').value
+                    "
                     :text="$t('common.show')"
                 >
                     <UButton
@@ -302,7 +328,7 @@ defineShortcuts({
                         icon="i-mdi-account-eye"
                         :to="{
                             name: 'citizens-id',
-                            params: { id: vehicle.owner.userId },
+                            params: { id: vehicle.original.owner.userId },
                         }"
                     />
                 </UTooltip>

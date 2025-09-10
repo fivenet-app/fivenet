@@ -9,6 +9,7 @@ import (
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
 	pbmailer "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer"
+	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
@@ -427,14 +428,8 @@ func (s *Server) SearchThreads(
 				),
 		)).
 		AND(jet.OR(
-			jet.BoolExp(
-				jet.Raw("MATCH(`title`) AGAINST ($search IN BOOLEAN MODE)",
-					jet.RawArgs{"$search": req.GetSearch()}),
-			),
-			jet.BoolExp(
-				jet.Raw("MATCH(`content`) AGAINST ($search IN BOOLEAN MODE)",
-					jet.RawArgs{"$search": req.GetSearch()}),
-			),
+			dbutils.MATCH(tMessages.Title, jet.String(req.GetSearch())),
+			dbutils.MATCH(tMessages.Content, jet.String(req.GetSearch())),
 		))
 
 	countStmt := tMessages.

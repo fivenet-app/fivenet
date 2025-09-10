@@ -141,7 +141,7 @@ watch(
                     <div
                         v-for="(pos, i) in dotPositions"
                         :key="i"
-                        class="resize-dot absolute z-10 h-4 w-4 rounded-full border border-gray-500 bg-white"
+                        class="resize-dot absolute z-10 h-4 w-4 rounded-full border border-neutral-500 bg-white"
                         :style="{
                             ...pos,
                             borderWidth: '1.5px', // closest to Tailwind border-2

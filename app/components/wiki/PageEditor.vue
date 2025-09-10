@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { UForm } from '#components';
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
@@ -13,6 +13,7 @@ import { ObjectType } from '~~/gen/ts/resources/notifications/client_view';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { type PageJobAccess, type PageUserAccess, AccessLevel } from '~~/gen/ts/resources/wiki/access';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
+import { jobAccessEntry, userAccessEntry } from '~~/shared/types/validation';
 import BackButton from '../partials/BackButton.vue';
 import ConfirmModal from '../partials/ConfirmModal.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
@@ -26,7 +27,7 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-const modal = useModal();
+const overlay = useOverlay();
 
 const { attr, activeChar } = useAuth();
 
@@ -62,9 +63,16 @@ async function getPage(id: number): Promise<Page | undefined> {
     }
 }
 
+useHead({
+    title: () =>
+        page.value?.meta?.title ? `${page.value.meta.title} - ${t('pages.wiki.edit.title')}` : t('pages.wiki.edit.title'),
+});
+
 const notifications = useNotificationsStore();
 
 const { maxAccessEntries } = useAppConfig();
+
+const confirmModal = overlay.create(ConfirmModal);
 
 const { ydoc, provider } = await useCollabDoc('wiki', props.pageId);
 
@@ -85,8 +93,8 @@ const schema = z.object({
     }),
     content: z.string().min(3).max(1750000),
     access: z.object({
-        jobs: z.custom<PageJobAccess>().array().max(maxAccessEntries).default([]),
-        users: z.custom<PageUserAccess>().array().max(maxAccessEntries).default([]),
+        jobs: jobAccessEntry.array().max(maxAccessEntries).default([]),
+        users: userAccessEntry.array().max(maxAccessEntries).default([]),
     }),
     files: z.custom<File>().array().max(5).default([]),
 });
@@ -111,7 +119,7 @@ const state = reactive<Schema>({
 });
 
 const { data: pages, refresh: pagesRefresh } = useLazyAsyncData(`wiki-pages-${props.pageId}-editor`, () => listPages(), {
-    default: () => [],
+    default: () => [] as PageShort[],
 });
 
 async function listPages(): Promise<PageShort[]> {
@@ -321,14 +329,16 @@ const parentPages = computedAsync(() => {
 
 const items = [
     {
-        slot: 'content',
+        slot: 'content' as const,
         label: t('common.content'),
         icon: 'i-mdi-pencil',
+        value: 'content',
     },
     {
-        slot: 'access',
+        slot: 'access' as const,
         label: t('common.access'),
         icon: 'i-mdi-key',
+        value: 'access',
     },
 ];
 
@@ -336,16 +346,11 @@ const router = useRouter();
 
 const selectedTab = computed({
     get() {
-        const index = items.findIndex((item) => item.slot === route.query.tab);
-        if (index === -1) {
-            return 0;
-        }
-
-        return index;
+        return (route.query.tab as string) || 'content';
     },
-    set(value) {
+    set(tab) {
         // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
+        router.push({ query: { tab: tab }, hash: '#control-active-item' });
     },
 });
 
@@ -354,13 +359,13 @@ const { sendClientView } = useClientUpdate(ObjectType.WIKI_PAGE, () =>
     notifications.add({
         title: { key: 'notifications.wiki.client_view_update.title', parameters: {} },
         description: { key: 'notifications.wiki.client_view_update.content', parameters: {} },
-        timeout: 7500,
+        duration: 7500,
         type: NotificationType.INFO,
         actions: [
             {
                 label: { key: 'common.refresh', parameters: {} },
                 icon: 'i-mdi-refresh',
-                click: () => refresh(),
+                onClick: () => refresh(),
             },
         ],
     }),
@@ -410,220 +415,234 @@ useYArrayFiltered<File>(
 provide('yjsDoc', ydoc);
 provide('yjsProvider', provider);
 
-const formRef = useTemplateRef<typeof UForm>('formRef');
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UForm
-        ref="formRef"
-        class="min-h-dscreen flex w-full max-w-full flex-1 flex-col overflow-y-auto"
-        :schema="schema"
-        :state="state"
-        @submit="onSubmitThrottle"
-    >
-        <UDashboardNavbar :title="$t('common.wiki')">
-            <template #right>
-                <BackButton :disabled="!canSubmit" />
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+        <template #header>
+            <UDashboardNavbar :title="$t('common.wiki')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
 
-                <UButton v-if="page" type="submit" trailing-icon="i-mdi-content-save" :disabled="!canSubmit">
-                    <span class="hidden truncate sm:block">
-                        {{ $t('common.save') }}
-                    </span>
-                </UButton>
+                <template #right>
+                    <BackButton :disabled="!canSubmit" />
 
-                <UButton
-                    v-if="page?.meta?.draft"
-                    type="submit"
-                    color="info"
-                    trailing-icon="i-mdi-publish"
-                    :disabled="!canSubmit"
-                    :loading="!canSubmit"
-                    @click.prevent="
-                        modal.open(ConfirmModal, {
-                            title: $t('common.publish_confirm.title', { type: $t('common.document', 1) }),
-                            description: $t('common.publish_confirm.description'),
-                            color: 'info',
-                            iconClass: 'text-info-500 dark:text-info-400',
-                            icon: 'i-mdi-publish',
-                            confirm: () => {
-                                state.meta.draft = false;
-                                formRef?.submit();
-                            },
-                        })
-                    "
-                >
-                    <span class="hidden truncate sm:block">
-                        {{ $t('common.publish') }}
-                    </span>
-                </UButton>
-            </template>
-        </UDashboardNavbar>
+                    <UButton
+                        v-if="page"
+                        trailing-icon="i-mdi-content-save"
+                        :disabled="!canSubmit"
+                        :label="$t('common.save')"
+                        :ui="{ label: 'hidden truncate sm:block' }"
+                        @click="formRef?.submit()"
+                    />
 
-        <UDashboardPanelContent class="p-0 sm:pb-0">
-            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.page', 1)])" />
-            <DataErrorBlock
-                v-else-if="error"
-                :title="$t('common.unable_to_load', [$t('common.page', 1)])"
-                :error="error"
-                :retry="refresh"
-            />
-            <DataNoDataBlock
-                v-else-if="!page"
-                icon="i-mdi-file-search"
-                :message="$t('common.not_found', [$t('common.page', 1)])"
-            />
-            <UTabs
-                v-else
-                v-model="selectedTab"
-                class="flex flex-1 flex-col"
-                :items="items"
-                :ui="{
-                    wrapper: 'space-y-0 overflow-y-hidden',
-                    container: 'flex flex-1 flex-col overflow-y-hidden',
-                    base: 'flex flex-1 flex-col overflow-y-hidden',
-                    list: { rounded: '' },
-                }"
+                    <UButton
+                        v-if="page?.meta?.draft"
+                        color="info"
+                        trailing-icon="i-mdi-publish"
+                        :disabled="!canSubmit"
+                        :loading="!canSubmit"
+                        :label="$t('common.publish')"
+                        :ui="{ label: 'hidden truncate sm:block' }"
+                        @click="
+                            confirmModal.open({
+                                title: $t('common.publish_confirm.title', { type: $t('common.document', 1) }),
+                                description: $t('common.publish_confirm.description'),
+                                color: 'info',
+                                iconClass: 'text-info-500 dark:text-info-400',
+                                icon: 'i-mdi-publish',
+                                confirm: () => {
+                                    state.meta.draft = false;
+                                    formRef?.submit();
+                                },
+                            })
+                        "
+                    />
+                </template>
+            </UDashboardNavbar>
+        </template>
+
+        <template #body>
+            <UForm
+                ref="formRef"
+                :schema="schema"
+                :state="state"
+                class="flex min-h-full w-full max-w-full flex-1 flex-col overflow-y-auto"
+                @submit="onSubmitThrottle"
             >
-                <template #content>
-                    <UDashboardToolbar>
-                        <template #default>
-                            <div class="flex w-full flex-col gap-2">
-                                <UFormGroup
-                                    v-if="!(page?.meta?.createdAt && page?.parentId === undefined)"
-                                    class="w-full"
-                                    name="meta.parentId"
-                                    :label="$t('common.parent_page')"
-                                >
-                                    <div class="flex items-center gap-1">
-                                        <ClientOnly>
-                                            <USelectMenu
-                                                v-model="state.parentId"
+                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.page', 1)])" />
+                <DataErrorBlock
+                    v-else-if="error"
+                    :title="$t('common.unable_to_load', [$t('common.page', 1)])"
+                    :error="error"
+                    :retry="refresh"
+                />
+                <DataNoDataBlock
+                    v-else-if="!page"
+                    icon="i-mdi-file-search"
+                    :message="$t('common.not_found', [$t('common.page', 1)])"
+                />
+
+                <UTabs
+                    v-else
+                    v-model="selectedTab"
+                    class="flex flex-1 flex-col"
+                    :items="items"
+                    variant="link"
+                    :unmount-on-hide="false"
+                    :ui="{ content: 'h-full' }"
+                >
+                    <template #content>
+                        <UDashboardPanel :ui="{ root: 'h-full min-h-0', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+                            <template #header>
+                                <UDashboardToolbar>
+                                    <template #default>
+                                        <div class="my-2 flex w-full flex-col gap-2">
+                                            <UFormField
+                                                v-if="!(page?.meta?.createdAt && page?.parentId === undefined)"
                                                 class="flex-1"
-                                                value-attribute="id"
-                                                searchable-lazy
-                                                :disabled="!canDo.edit"
-                                                :options="parentPages"
+                                                name="meta.parentId"
+                                                :label="$t('common.parent_page')"
                                             >
-                                                <template #label>
-                                                    <span class="truncate">
-                                                        {{
-                                                            state.parentId
-                                                                ? (parentPages?.find((p) => p.id === state.parentId)?.title ??
-                                                                  $t('common.na'))
-                                                                : $t('common.none_selected', [$t('common.parent_page')])
-                                                        }}
-                                                    </span>
-                                                </template>
+                                                <div class="flex items-center gap-1">
+                                                    <ClientOnly>
+                                                        <USelectMenu
+                                                            v-model="state.parentId"
+                                                            class="flex-1"
+                                                            value-key="id"
+                                                            label-key="title"
+                                                            :disabled="!canDo.edit"
+                                                            :items="parentPages"
+                                                        >
+                                                            <template #default>
+                                                                {{
+                                                                    state.parentId
+                                                                        ? (parentPages?.find((p) => p.id === state.parentId)
+                                                                              ?.title ?? $t('common.na'))
+                                                                        : $t('common.none_selected', [$t('common.parent_page')])
+                                                                }}
+                                                            </template>
 
-                                                <template #option="{ option: opt }">
-                                                    {{ opt.title }}
-                                                </template>
+                                                            <template #empty>
+                                                                {{ $t('common.not_found', [$t('common.page', 2)]) }}
+                                                            </template>
+                                                        </USelectMenu>
+                                                    </ClientOnly>
 
-                                                <template #option-empty="{ query: search }">
-                                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                                </template>
+                                                    <UTooltip :text="$t('common.refresh')">
+                                                        <UButton variant="link" icon="i-mdi-refresh" @click="pagesRefresh()" />
+                                                    </UTooltip>
+                                                </div>
+                                            </UFormField>
 
-                                                <template #empty>
-                                                    {{ $t('common.not_found', [$t('common.page', 2)]) }}
-                                                </template>
-                                            </USelectMenu>
-                                        </ClientOnly>
+                                            <UFormField name="meta.title" :label="$t('common.title')">
+                                                <UInput
+                                                    v-model="state.meta.title"
+                                                    size="xl"
+                                                    class="w-full"
+                                                    :disabled="!canDo.edit"
+                                                />
+                                            </UFormField>
 
-                                        <UTooltip :text="$t('common.refresh')">
-                                            <UButton variant="link" icon="i-mdi-refresh" @click="pagesRefresh()" />
-                                        </UTooltip>
-                                    </div>
-                                </UFormGroup>
+                                            <UFormField name="meta.description" :label="$t('common.description')">
+                                                <UTextarea
+                                                    v-model="state.meta.description"
+                                                    class="w-full"
+                                                    :rows="2"
+                                                    :disabled="!canDo.edit"
+                                                />
+                                            </UFormField>
 
-                                <UFormGroup name="meta.title" :label="$t('common.title')">
-                                    <UInput v-model="state.meta.title" size="xl" :disabled="!canDo.edit" />
-                                </UFormGroup>
+                                            <div class="flex flex-1 gap-2">
+                                                <UFormField
+                                                    class="flex-1 md:grid md:grid-cols-2 md:items-center"
+                                                    name="public"
+                                                    :label="$t('common.public')"
+                                                >
+                                                    <USwitch
+                                                        v-model="state.meta.public"
+                                                        :disabled="!canDo.edit || !canDo.public"
+                                                    />
+                                                </UFormField>
 
-                                <UFormGroup name="meta.description" :label="$t('common.description')">
-                                    <UTextarea v-model="state.meta.description" :rows="2" :disabled="!canDo.edit" />
-                                </UFormGroup>
-                            </div>
-                        </template>
-                    </UDashboardToolbar>
+                                                <UFormField
+                                                    class="flex-1 md:grid md:grid-cols-2 md:items-center"
+                                                    name="closed"
+                                                    :label="`${$t('common.toc', 2)}?`"
+                                                >
+                                                    <USwitch v-model="state.meta.toc" :disabled="!canDo.edit" />
+                                                </UFormField>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </UDashboardToolbar>
+                            </template>
 
-                    <UFormGroup
-                        class="flex flex-1 overflow-y-hidden"
-                        name="content"
-                        :ui="{ container: 'flex flex-1 flex-col mt-0 overflow-y-hidden', label: { wrapper: 'hidden' } }"
-                        label="&nbsp;"
-                    >
-                        <ClientOnly>
-                            <TiptapEditor
-                                v-model="state.content"
-                                v-model:files="state.files"
-                                class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
-                                :disabled="!canDo.edit"
-                                history-type="wiki"
-                                :saving="saving"
-                                enable-collab
-                                :target-id="page?.id"
-                                filestore-namespace="wiki"
-                                :filestore-service="(opts) => wikiClient.uploadFile(opts)"
-                            >
-                                <template #linkModal="{ state: linkState }">
-                                    <UDivider class="mt-1" :label="$t('common.or')" orientation="horizontal" />
+                            <template #body>
+                                <ClientOnly>
+                                    <TiptapEditor
+                                        v-model="state.content"
+                                        v-model:files="state.files"
+                                        class="mx-auto h-full w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
+                                        :disabled="!canDo.edit"
+                                        history-type="wiki"
+                                        :saving="saving"
+                                        enable-collab
+                                        :target-id="page?.id"
+                                        filestore-namespace="wiki"
+                                        :filestore-service="(opts) => wikiClient.uploadFile(opts)"
+                                    >
+                                        <template #linkModal="{ state: linkState }">
+                                            <USeparator class="mt-1" :label="$t('common.or')" orientation="horizontal" />
 
-                                    <UFormGroup class="w-full" name="url" :label="`${$t('common.wiki')} ${$t('common.page')}`">
-                                        <ClientOnly>
-                                            <USelectMenu
-                                                label-attribute="title"
-                                                searchable-lazy
-                                                :options="pages"
-                                                @update:model-value="($event) => (linkState.url = pageToURL($event, true))"
+                                            <UFormField
+                                                class="w-full"
+                                                name="url"
+                                                :label="`${$t('common.wiki')} ${$t('common.page')}`"
                                             >
-                                                <template #option="{ option: opt }">
-                                                    {{ opt.title }}
-                                                </template>
+                                                <ClientOnly>
+                                                    <USelectMenu
+                                                        label-key="title"
+                                                        :items="pages"
+                                                        @update:model-value="
+                                                            ($event) => (linkState.url = pageToURL($event, true))
+                                                        "
+                                                    >
+                                                        <template #empty>
+                                                            {{ $t('common.not_found', [$t('common.page', 2)]) }}
+                                                        </template>
+                                                    </USelectMenu>
+                                                </ClientOnly>
+                                            </UFormField>
+                                        </template>
+                                    </TiptapEditor>
+                                </ClientOnly>
+                            </template>
+                        </UDashboardPanel>
+                    </template>
 
-                                                <template #option-empty="{ query: search }">
-                                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                                </template>
-
-                                                <template #empty>
-                                                    {{ $t('common.not_found', [$t('common.page', 2)]) }}
-                                                </template>
-                                            </USelectMenu>
-                                        </ClientOnly>
-                                    </UFormGroup>
-                                </template>
-                            </TiptapEditor>
-                        </ClientOnly>
-                    </UFormGroup>
-
-                    <UDashboardToolbar
-                        class="flex shrink-0 justify-between border-b-0 border-t border-gray-200 px-3 py-3.5 dark:border-gray-700"
-                    >
-                        <div class="flex flex-1 gap-2">
-                            <UFormGroup class="flex-1" name="public" :label="$t('common.public')">
-                                <UToggle v-model="state.meta.public" :disabled="!canDo.edit || !canDo.public" />
-                            </UFormGroup>
-
-                            <UFormGroup class="flex-1" name="closed" :label="`${$t('common.toc', 2)}?`">
-                                <UToggle v-model="state.meta.toc" :disabled="!canDo.edit" />
-                            </UFormGroup>
-                        </div>
-                    </UDashboardToolbar>
-                </template>
-
-                <template #access>
-                    <div class="flex flex-1 flex-col gap-2 overflow-y-scroll px-2">
-                        <UFormGroup name="access" :label="$t('common.access')">
-                            <AccessManager
-                                v-model:jobs="state.access.jobs"
-                                v-model:users="state.access.users"
-                                :disabled="!canDo.access"
-                                :target-id="page.id ?? 0"
-                                :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.wiki.AccessLevel')"
-                            />
-                        </UFormGroup>
-                    </div>
-                </template>
-            </UTabs>
-        </UDashboardPanelContent>
-    </UForm>
+                    <template #access>
+                        <UDashboardPanel :ui="{ root: 'min-h-0' }">
+                            <template #body>
+                                <UPageCard :title="$t('common.access')">
+                                    <UFormField name="access">
+                                        <AccessManager
+                                            v-model:jobs="state.access.jobs"
+                                            v-model:users="state.access.users"
+                                            :disabled="!canDo.access"
+                                            :target-id="page.id ?? 0"
+                                            :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.wiki.AccessLevel')"
+                                            name="access"
+                                        />
+                                    </UFormField>
+                                </UPageCard>
+                            </template>
+                        </UDashboardPanel>
+                    </template>
+                </UTabs>
+            </UForm>
+        </template>
+    </UDashboardPanel>
 </template>

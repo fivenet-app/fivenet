@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -25,7 +25,7 @@ const { t } = useI18n();
 
 const { isSuperuser } = useAuth();
 
-const modal = useModal();
+const overlay = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -235,7 +235,7 @@ async function copyRole(): Promise<void> {
     notifications.add({
         title: { key: 'notifications.clipboard.copied.title', parameters: {} },
         description: { key: 'notifications.clipboard.copied.content', parameters: {} },
-        timeout: 3250,
+        duration: 3250,
         type: NotificationType.INFO,
     });
 }
@@ -368,6 +368,8 @@ const onSubmitThrottle = useThrottleFn(async () => {
     canSubmit.value = false;
     await updateJobLimits().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
@@ -398,7 +400,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             icon="i-mdi-delete"
                             color="error"
                             @click="
-                                modal.open(ConfirmModal, {
+                                confirmModal.open({
                                     confirm: async () => deleteFaction(jobLimits!.job),
                                 })
                             "
@@ -406,7 +408,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     </UTooltip>
                 </div>
 
-                <UDivider class="mb-1" :label="$t('common.attributes', 2)" />
+                <USeparator class="mb-1" :label="$t('common.attributes', 2)" />
 
                 <div class="flex flex-col gap-2">
                     <div class="flex flex-row gap-1">
@@ -421,48 +423,42 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         </UButton>
 
                         <UPopover>
-                            <UButton :disabled="changed" color="gray" icon="i-mdi-form-textarea">
+                            <UButton :disabled="changed" color="neutral" icon="i-mdi-form-textarea">
                                 {{ $t('common.paste') }}
                             </UButton>
 
-                            <template #panel>
+                            <template #content>
                                 <div class="p-4">
                                     <UForm class="flex flex-col gap-1" :state="state" :schema="schema" @submit="pasteRole">
-                                        <UFormGroup name="input">
+                                        <UFormField name="input">
                                             <UInput v-model="state.input" type="text" name="input" />
-                                        </UFormGroup>
+                                        </UFormField>
 
-                                        <UButton type="submit">
-                                            {{ $t('common.save') }}
-                                        </UButton>
+                                        <UButton type="submit" :label="$t('common.save')" />
                                     </UForm>
                                 </div>
                             </template>
                         </UPopover>
 
-                        <UButton icon="i-mdi-content-copy" :disabled="changed" color="white" @click="copyRole">
+                        <UButton icon="i-mdi-content-copy" :disabled="changed" color="neutral" @click="copyRole">
                             {{ $t('common.copy') }}
                         </UButton>
                     </div>
 
-                    <UAccordion :items="accordionCategories" multiple :unmount="true">
-                        <template #item="{ item: category }">
-                            <div class="flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
+                    <UAccordion :items="accordionCategories" multiple>
+                        <template #content="{ item: category }">
+                            <div class="flex flex-col divide-y divide-default">
                                 <div
                                     v-for="perm in permList.filter((p) => p.category === category.category)"
                                     :key="perm.id"
                                     class="flex flex-col gap-1"
                                 >
-                                    <div class="flex flex-row items-center gap-2">
-                                        <div class="flex-1">
-                                            <p class="text-gray-900 dark:text-white" :title="`${$t('common.id')}: ${perm.id}`">
-                                                {{ $t(`perms.${perm.category}.${perm.name}.key`) }}
-                                            </p>
-                                            <p class="text-base-500">
-                                                {{ $t(`perms.${perm.category}.${perm.name}.description`) }}
-                                            </p>
-                                        </div>
-
+                                    <UFormField
+                                        class="flex flex-1 flex-row items-center gap-2"
+                                        :label="$t(`perms.${perm.category}.${perm.name}.key`)"
+                                        :description="$t(`perms.${perm.category}.${perm.name}.description`)"
+                                        :ui="{ wrapper: 'flex-1' }"
+                                    >
                                         <UButtonGroup class="inline-flex flex-initial">
                                             <UButton
                                                 color="green"
@@ -481,7 +477,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                 @click="updatePermissionState(perm.id, false)"
                                             />
                                         </UButtonGroup>
-                                    </div>
+                                    </UFormField>
 
                                     <template v-for="(attr, idx) in attrList" :key="attr.attrId">
                                         <AttrViewAttr

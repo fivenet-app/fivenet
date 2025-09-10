@@ -3,7 +3,6 @@ import { defineStore } from 'pinia';
 import { parseQuery } from 'vue-router';
 import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
 import { webSocket } from '~/composables/grpc/grpcws/bridge';
-import { useSettingsStore } from '~/stores/settings';
 import { getAuthAuthClient } from '~~/gen/ts/clients';
 import type { JobProps } from '~~/gen/ts/resources/jobs/job_props';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
@@ -17,6 +16,7 @@ const logger = useLogger('🔑 Auth');
 export const useAuthStore = defineStore(
     'auth',
     () => {
+        const settingsStore = useSettingsStore();
         const notifications = useNotificationsStore();
 
         // State
@@ -107,9 +107,9 @@ export const useAuthStore = defineStore(
             setActiveChar(null);
             setPermissions([], []);
 
-            const authAuthClient = await getAuthAuthClient();
-
             try {
+                const authAuthClient = await getAuthAuthClient();
+
                 const call = authAuthClient.login({ username: user, password: pass });
                 const { response } = await call;
 
@@ -134,8 +134,13 @@ export const useAuthStore = defineStore(
                     setPermissions(response.char.permissions, response.char.attributes);
                     setJobProps(response.char.jobProps);
 
-                    const startpage = useSettingsStore().startpage ?? '/overview';
-                    await navigateTo(startpage);
+                    const startpage = settingsStore.startpage ?? '/overview';
+                    try {
+                        await navigateTo(startpage);
+                    } catch (_) {
+                        logger.error('Failed to navigate to startpage, falling back to /overview');
+                        await navigateTo('/overview');
+                    }
                 }
             } catch (e) {
                 const err = e as RpcError;
@@ -206,7 +211,7 @@ export const useAuthStore = defineStore(
                     const redirectQuery = useRoute().query.redirect;
                     const redirectPath =
                         (typeof redirectQuery === 'string' ? redirectQuery : redirectQuery?.join('/')) ??
-                        useSettingsStore().startpage ??
+                        settingsStore.startpage ??
                         '/overview';
                     const path = redirectPath || '/overview';
                     const url = new URL('https://example.com' + path);

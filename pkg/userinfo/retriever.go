@@ -209,10 +209,14 @@ func (r *Retriever) GetUserInfo(
 ) (*pbuserinfo.UserInfo, error) {
 	key := userAccountKey{UserID: userId, AccountID: accountId}
 	if dest, ok := r.userCache.Get(key); ok {
+		if !dest.GetEnabled() {
+			return nil, ErrAccountError
+		}
+
 		return dest, nil
 	}
 
-	dest, err := r.getUserInfo(ctx, userId, accountId)
+	dest, err := r.getUserInfoFromDB(ctx, userId, accountId)
 	if err != nil {
 		return nil, err
 	}
@@ -230,7 +234,7 @@ func (r *Retriever) GetUserInfo(
 	return dest, nil
 }
 
-func (r *Retriever) getUserInfo(
+func (r *Retriever) getUserInfoFromDB(
 	ctx context.Context,
 	userId int32,
 	accountId int64,
@@ -295,7 +299,7 @@ func (r *Retriever) GetUserInfoWithoutAccountId(
 		return nil, errswrap.NewError(err, ErrAccountError)
 	}
 
-	// Set superuser status
+	// Set superuser status if applicable
 	r.checkAndSetSuperuser(dest)
 
 	return dest, nil
@@ -303,9 +307,10 @@ func (r *Retriever) GetUserInfoWithoutAccountId(
 
 // checkAndSetSuperuser check if user is superuser by group or license.
 func (r *Retriever) checkAndSetSuperuser(dest *pbuserinfo.UserInfo) {
-	isSuperGroup := slices.Contains(r.superuserGroups, dest.GetGroup())
-	if isSuperGroup || slices.Contains(r.superuserUsers, dest.GetLicense()) {
+	if slices.Contains(r.superuserGroups, dest.GetGroup()) ||
+		slices.Contains(r.superuserUsers, dest.GetLicense()) {
 		dest.CanBeSuperuser = true
+
 		// Only override if both are non-nil and OverrideJob is not empty
 		if dest.OverrideJob != nil && dest.GetOverrideJob() != "" && dest.OverrideJobGrade != nil {
 			dest.Job = dest.GetOverrideJob()
@@ -357,6 +362,9 @@ func (r *Retriever) SetUserInfo(
 
 	ui := dest.Clone()
 	ui.Superuser = superuser
+	if ui.Superuser {
+		ui.CanBeSuperuser = true
+	}
 	if overrideJob != nil {
 		ui.Job = *overrideJob
 	}
@@ -367,14 +375,15 @@ func (r *Retriever) SetUserInfo(
 	r.userCache.Put(key, ui, r.userCacheTTL)
 
 	evt := &pb.UserInfoChanged{
-		AccountId:   ui.AccountId,
-		UserId:      ui.UserId,
-		OldJob:      dest.Job,
-		NewJob:      overrideJob,
-		OldJobGrade: dest.JobGrade,
-		NewJobGrade: overrideJobGrade,
-		Superuser:   &superuser,
-		ChangedAt:   timestamp.Now(),
+		AccountId:      ui.AccountId,
+		UserId:         ui.UserId,
+		OldJob:         dest.Job,
+		NewJob:         overrideJob,
+		OldJobGrade:    dest.JobGrade,
+		NewJobGrade:    overrideJobGrade,
+		CanBeSuperuser: &superuser,
+		Superuser:      &superuser,
+		ChangedAt:      timestamp.Now(),
 	}
 	r.enricher.EnrichJobInfo(evt)
 
@@ -393,7 +402,7 @@ func (r *Retriever) SetUserInfo(
 }
 
 func (r *Retriever) RefreshUserInfo(ctx context.Context, userId int32, accountId int64) error {
-	dest, err := r.getUserInfo(ctx, userId, accountId)
+	dest, err := r.getUserInfoFromDB(ctx, userId, accountId)
 	if err != nil {
 		return err
 	}

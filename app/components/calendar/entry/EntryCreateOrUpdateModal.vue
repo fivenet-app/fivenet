@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { addHours, addMinutes, isSameDay, isSameHour, isSameMinute } from 'date-fns';
 import type { CalendarDay } from 'v-calendar/dist/types/src/utils/page.js';
 import { z } from 'zod';
@@ -7,8 +7,9 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
+import InputDatePicker from '~/components/partials/InputDatePicker.vue';
+import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCalendarStore } from '~/stores/calendar';
 import { useCompletorStore } from '~/stores/completor';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
@@ -23,13 +24,13 @@ const props = defineProps<{
     day?: CalendarDay;
 }>();
 
-const { isOpen } = useModal();
+const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 
 const calendarStore = useCalendarStore();
 
 const completorStore = useCompletorStore();
-
-const usersLoading = ref(false);
 
 const schema = z.object({
     calendar: z.custom<CalendarShort>().optional(),
@@ -86,7 +87,7 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
             state.users.map((u) => u.userId),
         );
 
-        isOpen.value = false;
+        emit('close', false);
 
         return response;
     } catch (e) {
@@ -150,203 +151,177 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await createOrUpdateCalendarEntry(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
-                            {{
-                                entryId
-                                    ? $t('components.calendar.EntryCreateOrUpdateModal.update.title')
-                                    : $t('components.calendar.EntryCreateOrUpdateModal.create.title')
-                            }}
-                        </h3>
+    <UModal
+        :title="
+            entryId
+                ? $t('components.calendar.EntryCreateOrUpdateModal.update.title')
+                : $t('components.calendar.EntryCreateOrUpdateModal.create.title')
+        "
+    >
+        <template #body>
+            <UForm ref="formRef" :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
+                <DataPendingBlock
+                    v-if="props.entryId && isRequestPending(status)"
+                    :message="$t('common.loading', [$t('common.entry', 1)])"
+                />
+                <DataErrorBlock
+                    v-else-if="props.entryId && error"
+                    :title="$t('common.unable_to_load', [$t('common.entry', 1)])"
+                    :error="error"
+                    :retry="refresh"
+                />
+                <DataNoDataBlock
+                    v-if="props.entryId && (!data || !data.entry)"
+                    :type="$t('common.entry', 1)"
+                    icon="i-mdi-calendar"
+                />
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                    </div>
-                </template>
-
-                <div>
-                    <DataPendingBlock
-                        v-if="props.entryId && isRequestPending(status)"
-                        :message="$t('common.loading', [$t('common.entry', 1)])"
-                    />
-                    <DataErrorBlock
-                        v-else-if="props.entryId && error"
-                        :title="$t('common.unable_to_load', [$t('common.entry', 1)])"
-                        :error="error"
-                        :retry="refresh"
-                    />
-                    <DataNoDataBlock
-                        v-if="props.entryId && (!data || !data.entry)"
-                        :type="$t('common.entry', 1)"
-                        icon="i-mdi-calendar"
-                    />
-
-                    <template v-else>
-                        <UFormGroup class="flex-1" name="calendar" :label="$t('common.calendar')" required>
-                            <ClientOnly>
-                                <USelectMenu
-                                    v-model="state.calendar"
-                                    :disabled="!!entryId"
-                                    :searchable="
-                                        async () =>
-                                            (
-                                                await calendarStore.listCalendars({
-                                                    pagination: {
-                                                        offset: 0,
-                                                    },
-                                                    onlyPublic: false,
-                                                    minAccessLevel: AccessLevel.EDIT,
-                                                })
-                                            ).calendars?.filter((c) => !c.closed)
-                                    "
-                                    searchable-lazy
-                                    :searchable-placeholder="$t('common.search_field')"
-                                    :search-attributes="['name']"
-                                    option-attribute="name"
-                                    by="id"
-                                    :placeholder="$t('common.calendar')"
-                                >
-                                    <template #label>
-                                        <template v-if="state.calendar">
-                                            <span
-                                                class="size-2 rounded-full"
-                                                :class="`bg-${state.calendar?.color ?? 'primary'}-500 dark:bg-${state.calendar?.color ?? 'primary'}-400`"
-                                            />
-                                            <span class="truncate">{{ state.calendar?.name }}</span>
-                                        </template>
-                                    </template>
-
-                                    <template #option="{ option }">
-                                        <span
-                                            class="size-2 rounded-full"
-                                            :class="`bg-${option.color ?? 'primary'}-500 dark:bg-${option.color ?? 'primary'}-400`"
-                                        />
-                                        <span class="truncate">{{ option.name }}</span>
-                                    </template>
-
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                    </template>
-
-                                    <template #empty>
-                                        {{ $t('common.not_found', [$t('common.calendar')]) }}
-                                    </template>
-                                </USelectMenu>
-                            </ClientOnly>
-                        </UFormGroup>
-
-                        <UFormGroup class="flex-1" name="title" :label="$t('common.title')" required>
-                            <UInput v-model="state.title" name="title" type="text" :placeholder="$t('common.title')" />
-                        </UFormGroup>
-
-                        <UFormGroup class="flex-1" name="startTime" :label="$t('common.begins_at')" required>
-                            <DatePickerPopoverClient
-                                v-model="state.startTime"
-                                date-format="dd.MM.yyyy HH:mm"
-                                :popover="{ popper: { placement: 'bottom-start' } }"
-                                :date-picker="{ mode: 'dateTime', is24hr: true, clearable: true }"
-                            />
-                        </UFormGroup>
-
-                        <UFormGroup class="flex-1" name="endTime" :label="$t('common.ends_at')" required>
-                            <DatePickerPopoverClient
-                                v-model="state.endTime"
-                                date-format="dd.MM.yyyy HH:mm"
-                                :popover="{ popper: { placement: 'bottom-start' } }"
-                                :date-picker="{ mode: 'dateTime', is24hr: true, clearable: true }"
-                            />
-                        </UFormGroup>
-
-                        <UFormGroup class="flex-1" name="content" :label="$t('common.content')" required>
-                            <ClientOnly>
-                                <TiptapEditor v-model="state.content" wrapper-class="min-h-80" />
-                            </ClientOnly>
-                        </UFormGroup>
-
-                        <UFormGroup class="flex-1" name="closed" :label="`${$t('common.close', 2)}?`">
-                            <UToggle v-model="state.closed" />
-                        </UFormGroup>
-
-                        <UFormGroup class="flex-1" name="rsvpOpen" :label="$t('common.rsvp')">
-                            <UToggle v-model="state.rsvpOpen" />
-                        </UFormGroup>
-
-                        <UFormGroup class="flex-1" name="users" :label="$t('common.guest', 2)">
-                            <ClientOnly>
-                                <USelectMenu
-                                    v-model="state.users"
-                                    multiple
-                                    :searchable="
-                                        async (q: string) => {
-                                            usersLoading = true;
-                                            const users = await completorStore.completeCitizens({
-                                                search: q,
-                                                userIds: state.users.map((u) => u.userId),
-                                            });
-                                            usersLoading = false;
-                                            return users;
-                                        }
-                                    "
-                                    searchable-lazy
-                                    :searchable-placeholder="$t('common.search_field')"
-                                    :search-attributes="['firstname', 'lastname']"
-                                    block
-                                    :placeholder="$t('common.citizen', 2)"
-                                    trailing
-                                    by="userId"
-                                >
-                                    <template #label>
-                                        {{ $t('common.selected', state.users.length) }}
-                                    </template>
-
-                                    <template #option="{ option: user }">
-                                        {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                    </template>
-
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                    </template>
-
-                                    <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
-                                </USelectMenu>
-                            </ClientOnly>
-                        </UFormGroup>
-
-                        <div
-                            v-if="state.users.length > 0"
-                            class="mt-2 overflow-hidden rounded-md bg-neutral-100 dark:bg-base-900"
+                <template v-else>
+                    <UFormField class="flex-1" name="calendar" :label="$t('common.calendar')" required>
+                        <SelectMenu
+                            v-model="state.calendar"
+                            label-key="name"
+                            :disabled="!!entryId"
+                            :searchable="
+                                async () =>
+                                    (
+                                        (
+                                            await calendarStore.listCalendars({
+                                                pagination: {
+                                                    offset: 0,
+                                                },
+                                                onlyPublic: false,
+                                                minAccessLevel: AccessLevel.EDIT,
+                                            })
+                                        ).calendars as CalendarShort[]
+                                    )?.filter((c) => !c.closed)
+                            "
+                            searchable-key="calendar-list"
+                            :search-input="{ placeholder: $t('common.search_field') }"
+                            :filter-fields="['name']"
+                            :placeholder="$t('common.calendar')"
+                            class="w-full"
                         >
-                            <ul class="grid grid-cols-2 text-sm font-medium text-gray-100 lg:grid-cols-3" role="list">
-                                <li
-                                    v-for="user in state.users"
-                                    :key="user.userId"
-                                    class="flex items-center border-b border-gray-100 px-4 py-2 dark:border-gray-800"
-                                >
-                                    <CitizenInfoPopover :user="user" show-avatar show-avatar-in-name />
-                                </li>
-                            </ul>
-                        </div>
-                    </template>
-                </div>
+                            <template v-if="state.calendar" #default>
+                                <span
+                                    class="size-2 rounded-full"
+                                    :class="`bg-${state.calendar?.color ?? 'primary'}-500 dark:bg-${state.calendar?.color ?? 'primary'}-400`"
+                                />
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="black" block @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
+                                <span class="truncate">{{ state.calendar?.name }}</span>
+                            </template>
 
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ data ? $t('common.save') : $t('common.create') }}
-                        </UButton>
-                    </UButtonGroup>
+                            <template #item="{ item }">
+                                <span
+                                    class="size-2 rounded-full"
+                                    :class="`bg-${item.color ?? 'primary'}-500 dark:bg-${item.color ?? 'primary'}-400`"
+                                />
+
+                                <span class="truncate">{{ item.name }}</span>
+                            </template>
+
+                            <template #empty>
+                                {{ $t('common.not_found', [$t('common.calendar')]) }}
+                            </template>
+                        </SelectMenu>
+                    </UFormField>
+
+                    <UFormField class="flex-1" name="title" :label="$t('common.title')" required>
+                        <UInput
+                            v-model="state.title"
+                            name="title"
+                            type="text"
+                            :placeholder="$t('common.title')"
+                            class="w-full"
+                        />
+                    </UFormField>
+
+                    <UFormField class="flex-1" name="startTime" :label="$t('common.begins_at')" required>
+                        <InputDatePicker v-model="state.startTime" clearable time class="w-full" />
+                    </UFormField>
+
+                    <UFormField class="flex-1" name="endTime" :label="$t('common.ends_at')" required>
+                        <InputDatePicker v-model="state.endTime" clearable time class="w-full" />
+                    </UFormField>
+
+                    <UFormField class="flex-1" name="content" :label="$t('common.content')" required>
+                        <ClientOnly>
+                            <TiptapEditor v-model="state.content" wrapper-class="min-h-80" class="w-full" />
+                        </ClientOnly>
+                    </UFormField>
+
+                    <UFormField class="flex-1" name="closed" :label="`${$t('common.close', 2)}?`">
+                        <USwitch v-model="state.closed" />
+                    </UFormField>
+
+                    <UFormField class="flex-1" name="rsvpOpen" :label="$t('common.rsvp')">
+                        <USwitch v-model="state.rsvpOpen" />
+                    </UFormField>
+
+                    <UFormField class="flex-1" name="users" :label="$t('common.guest', 2)">
+                        <SelectMenu
+                            v-model="state.users"
+                            multiple
+                            class="w-full"
+                            :searchable="
+                                async (q: string) =>
+                                    await completorStore.completeCitizens({
+                                        search: q,
+                                        userIds: state.users.map((u) => u.userId),
+                                    })
+                            "
+                            searchable-key="completor-citizens"
+                            :search-input="{ placeholder: $t('common.search_field') }"
+                            :filter-fields="['firstname', 'lastname']"
+                            block
+                            :placeholder="$t('common.citizen', 2)"
+                            trailing
+                        >
+                            <template #default>
+                                {{ $t('common.selected', state.users.length) }}
+                            </template>
+
+                            <template #item="{ item: user }">
+                                {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                            </template>
+
+                            <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
+                        </SelectMenu>
+                    </UFormField>
                 </template>
-            </UCard>
-        </UForm>
+            </UForm>
+
+            <div v-if="state.users.length > 0" class="mt-2 overflow-hidden rounded-md bg-neutral-100 dark:bg-neutral-900">
+                <ul class="grid grid-cols-2 text-sm font-medium text-toned lg:grid-cols-3" role="list">
+                    <li
+                        v-for="user in state.users"
+                        :key="user.userId"
+                        class="flex items-center border-b border-neutral-100 px-4 py-2 dark:border-neutral-800"
+                    >
+                        <CitizenInfoPopover :user="user" show-avatar show-avatar-in-name />
+                    </li>
+                </ul>
+            </div>
+        </template>
+
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
+
+                <UButton
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :label="data ? $t('common.save') : $t('common.create')"
+                    @click="formRef?.submit()"
+                />
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

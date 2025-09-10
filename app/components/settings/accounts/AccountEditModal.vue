@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { getSettingsAccountsClient } from '~~/gen/ts/clients';
@@ -13,12 +13,11 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
     (e: 'update:account', account: Account | undefined): void;
 }>();
 
 const account = useVModel(props, 'account', emit);
-
-const { isOpen } = useModal();
 
 const notifications = useNotificationsStore();
 
@@ -54,7 +53,7 @@ async function updateAccount(values: Schema): Promise<UpdateAccountResponse | un
             });
         }
 
-        isOpen.value = false;
+        emit('close', false);
 
         return response;
     } catch (e) {
@@ -75,67 +74,60 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await updateAccount(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal>
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
-                            {{ $t('components.settings.accounts.edit_account') }}: {{ account.username }} ({{ account.id }})
-                        </h3>
-
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                    </div>
-                </template>
-
+    <UModal :title="`${$t('components.settings.accounts.edit_account')}: ${account.username} (${account.id})`">
+        <template #body>
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <div>
-                    <div>
-                        <UFormGroup class="flex-1" name="enabled" :label="$t('common.enabled')" required>
-                            <UToggle v-model="state.enabled" name="enabled" />
-                        </UFormGroup>
-                    </div>
-
-                    <div>
-                        <UFormGroup class="flex-1" name="oauth2Accounts" :label="$t('components.auth.OAuth2Connections.title')">
-                            <div class="flex flex-col gap-2">
-                                <DataNoDataBlock
-                                    v-if="account.oauth2Accounts.length === 0"
-                                    :type="$t('components.auth.OAuth2Connections.title')"
-                                />
-
-                                <template v-else>
-                                    <AccountOAuth2Connection
-                                        v-for="connection in account.oauth2Accounts"
-                                        :key="connection.providerName"
-                                        :account-id="account.id"
-                                        :connection="connection"
-                                        @deleted="
-                                            account.oauth2Accounts = account.oauth2Accounts.filter(
-                                                (c) => c.providerName !== connection.providerName,
-                                            )
-                                        "
-                                    />
-                                </template>
-                            </div>
-                        </UFormGroup>
-                    </div>
+                    <UFormField class="flex-1" name="enabled" :label="$t('common.enabled')" required>
+                        <USwitch v-model="state.enabled" name="enabled" />
+                    </UFormField>
                 </div>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" block color="black" @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
+                <div>
+                    <UFormField class="flex-1" name="oauth2Accounts" :label="$t('components.auth.OAuth2Connections.title')">
+                        <div class="flex flex-col gap-2">
+                            <DataNoDataBlock
+                                v-if="account.oauth2Accounts.length === 0"
+                                :type="$t('components.auth.OAuth2Connections.title')"
+                            />
 
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.save') }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                            <template v-else>
+                                <AccountOAuth2Connection
+                                    v-for="connection in account.oauth2Accounts"
+                                    :key="connection.providerName"
+                                    :account-id="account.id"
+                                    :connection="connection"
+                                    @deleted="
+                                        account.oauth2Accounts = account.oauth2Accounts.filter(
+                                            (c) => c.providerName !== connection.providerName,
+                                        )
+                                    "
+                                />
+                            </template>
+                        </div>
+                    </UFormField>
+                </div>
+            </UForm>
+        </template>
+
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" block color="neutral" :label="$t('common.close', 1)" @click="$emit('close', false)" />
+
+                <UButton
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :label="$t('common.save')"
+                    @click="() => formRef?.submit()"
+                />
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

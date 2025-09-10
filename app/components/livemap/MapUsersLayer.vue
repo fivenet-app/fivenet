@@ -101,7 +101,7 @@ const playerMarkersFiltered = computedAsync(async () =>
     </LLayerGroup>
 
     <LControl position="topleft">
-        <UTooltip v-if="ownMarker" :text="$t('common.my_location')" :popper="{ placement: 'right' }">
+        <UTooltip v-if="ownMarker" :text="$t('common.my_location')">
             <UButton
                 class="inset-0 border border-black/20 bg-clip-padding p-1.5 hover:bg-[#f4f4f4]"
                 icon="i-mdi-my-location"
@@ -121,16 +121,16 @@ const playerMarkersFiltered = computedAsync(async () =>
                 size="xs"
                 :placeholder="`${$t('common.employee', 1)} ${$t('common.filter')}`"
                 autocomplete="off"
-                :ui="{ icon: { trailing: { pointer: '' } } }"
                 leading-icon="i-mdi-user-multiple"
+                :ui="{ trailing: 'pe-1' }"
             >
                 <template #trailing>
                     <UButton
-                        v-show="playerQueryRaw !== ''"
-                        color="gray"
+                        v-if="playerQueryRaw !== ''"
+                        color="neutral"
                         variant="link"
                         icon="i-mdi-close"
-                        :padded="false"
+                        aria-controls="search"
                         @click="playerQueryRaw = ''"
                     />
                 </template>

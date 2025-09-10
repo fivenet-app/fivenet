@@ -79,15 +79,19 @@ watchOnce(opened, async () => {
         <UButton
             class="inline-flex items-center gap-1 p-px"
             variant="link"
-            :padded="false"
             :trailing-icon="trailing ? 'i-mdi-chevron-down' : undefined"
             v-bind="$attrs"
             @click="opened = true"
         >
             <slot name="before" />
             <template v-if="showAvatar" #leading>
-                <USkeleton v-if="!user && isRequestPending(status)" class="h-6 w-6" :ui="{ rounded: 'rounded-full' }" />
-                <ProfilePictureImg v-else :src="user?.avatar" :name="`${user?.firstname} ${user?.lastname}`" size="3xs" />
+                <USkeleton v-if="!user && isRequestPending(status)" class="h-6 w-6" />
+                <ProfilePictureImg
+                    v-else
+                    :src="user?.profilePicture"
+                    :name="`${user?.firstname} ${user?.lastname}`"
+                    size="3xs"
+                />
             </template>
 
             <USkeleton v-if="!user && isRequestPending(status)" class="h-8 w-[125px]" />
@@ -95,7 +99,7 @@ watchOnce(opened, async () => {
             <slot name="after" />
         </UButton>
 
-        <template #panel>
+        <template #content>
             <div class="flex flex-col gap-2 p-4">
                 <UButtonGroup class="inline-flex w-full">
                     <UButton
@@ -137,7 +141,7 @@ watchOnce(opened, async () => {
                     />
                 </div>
 
-                <div v-else-if="isRequestPending(status) && !user" class="flex flex-col gap-2 text-gray-900 dark:text-white">
+                <div v-else-if="isRequestPending(status) && !user" class="flex flex-col gap-2 text-highlighted">
                     <USkeleton class="h-8 w-[250px]" />
 
                     <div class="flex flex-row items-center gap-2">
@@ -146,15 +150,14 @@ watchOnce(opened, async () => {
                     </div>
                 </div>
 
-                <div v-else-if="user" class="inline-flex flex-row gap-2 text-gray-900 dark:text-white">
+                <div v-else-if="user" class="inline-flex flex-row gap-2 text-highlighted">
                     <div v-if="showAvatar === undefined || showAvatar">
-                        <ProfilePictureImg :src="user.avatar" :name="`${user.firstname} ${user.lastname}`" />
+                        <ProfilePictureImg :src="user.profilePicture" :name="`${user.firstname} ${user.lastname}`" />
                     </div>
                     <div>
                         <UButton
                             v-if="activeChar?.job === user.job && can('jobs.JobsService/GetColleague').value"
                             variant="link"
-                            :padded="false"
                             :to="{
                                 name: 'jobs-colleagues-id',
                                 params: { id: user.userId ?? 0 },
@@ -165,7 +168,6 @@ watchOnce(opened, async () => {
                         <UButton
                             v-else-if="can('citizens.CitizensService/ListCitizens').value"
                             variant="link"
-                            :padded="false"
                             :to="{
                                 name: 'citizens-id',
                                 params: { id: user.userId ?? 0 },
@@ -173,7 +175,7 @@ watchOnce(opened, async () => {
                         >
                             <ColleagueName :colleague="user" />
                         </UButton>
-                        <UButton v-else variant="link" :padded="false"> <ColleagueName :colleague="user" /> </UButton>
+                        <UButton v-else variant="link"> <ColleagueName :colleague="user" /> </UButton>
 
                         <p v-if="user.jobLabel" class="text-sm font-normal">
                             <span class="font-semibold">{{ $t('common.job') }}:</span>

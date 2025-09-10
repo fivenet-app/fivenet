@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import LayoutEditor from '~/components/documents/templates/layouteditor/LayoutEditor.vue';
+import LayoutEditor from '~/components/documents/layouteditor/LayoutEditor.vue';
 
 useHead({
     title: 'Layout Editor',

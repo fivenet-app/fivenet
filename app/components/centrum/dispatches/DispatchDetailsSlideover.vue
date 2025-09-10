@@ -21,11 +21,13 @@ const props = defineProps<{
     dispatch?: Dispatch;
 }>();
 
+const emit = defineEmits<{
+    close: [boolean];
+}>();
+
 const { can } = useAuth();
 
-const modal = useModal();
-
-const { isOpen } = useSlideover();
+const overlay = useOverlay();
 
 const { goto } = useLivemapStore();
 
@@ -35,7 +37,7 @@ const { canDo, selfAssign } = centrumStore;
 
 const centrumCentrumClient = await getCentrumCentrumClient();
 
-const dispatch = computed(() => (props.dispatch ? props.dispatch : dispatches.value.get(props.dispatchId)));
+const dispatch = computed(() => (props.dispatch ? props.dispatch : dispatches.value.get(props.dispatchId)!));
 
 async function deleteDispatch(id: number): Promise<void> {
     try {
@@ -51,7 +53,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(dispatch.val
 
 watch(dispatch, () => {
     if (dispatch.value === undefined) {
-        isOpen.value = false;
+        emit('close', false);
     }
 });
 
@@ -59,40 +61,30 @@ const canAccessDispatch = computed(() => ({
     participate: checkDispatchAccess(dispatch.value?.jobs, CentrumAccessLevel.PARTICIPATE),
     dispatch: checkDispatchAccess(dispatch.value?.jobs, CentrumAccessLevel.DISPATCH),
 }));
+
+const confirmModal = overlay.create(ConfirmModal);
+const dispatchAssignModal = overlay.create(DispatchAssignModal);
+const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
 </script>
 
 <template>
-    <USlideover :ui="{ width: 'w-screen max-w-xl' }" :overlay="false">
-        <UCard
-            v-if="dispatch"
-            :ui="{
-                body: {
-                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--header-height)))] max-h-[calc(100dvh-(2*var(--header-height)))] overflow-y-auto',
-                    padding: 'px-1 py-2 sm:p-2',
-                },
-                ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-            }"
-        >
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <div class="inline-flex items-center">
-                        <IDCopyBadge :id="dispatch.id" class="mx-2" prefix="DSP" />
+    <USlideover :overlay="false">
+        <template #title>
+            <div class="inline-flex items-center">
+                <IDCopyBadge :id="dispatch.id" class="mx-2" prefix="DSP" />
 
-                        <p class="max-w-80 flex-1 truncate">
-                            {{ dispatch.message }}
-                        </p>
-                    </div>
+                <p class="max-w-80 flex-1 truncate">
+                    {{ dispatch.message }}
+                </p>
+            </div>
+        </template>
 
-                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                </div>
-            </template>
-
-            <div class="divide-y divide-gray-100 dark:divide-gray-800">
+        <template #body>
+            <div class="divide-y divide-default">
                 <div>
-                    <dl class="divide-neutral/10 divide-y">
+                    <dl class="divide-y divide-default">
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
+                            <dt class="text-sm leading-6 font-medium">
                                 {{ $t('common.job') }}
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
@@ -103,7 +95,7 @@ const canAccessDispatch = computed(() => ({
                         </div>
 
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
+                            <dt class="text-sm leading-6 font-medium">
                                 {{ $t('common.sent_at') }}
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
@@ -112,7 +104,7 @@ const canAccessDispatch = computed(() => ({
                         </div>
 
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
+                            <dt class="text-sm leading-6 font-medium">
                                 {{ $t('common.sent_by') }}
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
@@ -127,7 +119,7 @@ const canAccessDispatch = computed(() => ({
                         </div>
 
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
+                            <dt class="text-sm leading-6 font-medium">
                                 {{ $t('common.location') }}
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
@@ -140,7 +132,6 @@ const canAccessDispatch = computed(() => ({
                                         size="xs"
                                         variant="link"
                                         icon="i-mdi-map-marker"
-                                        :padded="false"
                                         @click="goto({ x: dispatch.x, y: dispatch.y })"
                                     >
                                         {{ $t('common.go_to_location') }}
@@ -150,7 +141,7 @@ const canAccessDispatch = computed(() => ({
                         </div>
 
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
+                            <dt class="text-sm leading-6 font-medium">
                                 {{ $t('common.description') }}
                             </dt>
                             <dd class="mt-2 text-sm sm:col-span-2 sm:mt-0">
@@ -161,7 +152,7 @@ const canAccessDispatch = computed(() => ({
                         </div>
 
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
+                            <dt class="text-sm leading-6 font-medium">
                                 {{ $t('common.attributes', 2) }}
                             </dt>
                             <dd class="mt-2 text-sm sm:col-span-2 sm:mt-0">
@@ -170,7 +161,7 @@ const canAccessDispatch = computed(() => ({
                         </div>
 
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
+                            <dt class="text-sm leading-6 font-medium">
                                 {{ $t('common.reference', 2) }}
                             </dt>
                             <dd class="mt-2 text-sm sm:col-span-2 sm:mt-0">
@@ -179,19 +170,19 @@ const canAccessDispatch = computed(() => ({
                         </div>
 
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
+                            <dt class="text-sm leading-6 font-medium">
                                 {{ $t('common.unit', 2) }}
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <span v-if="dispatch.units.length === 0" class="block">
                                     {{ $t('common.units', dispatch.units.length) }}
                                 </span>
-                                <div v-else class="mb-1 rounded-md bg-neutral-100 dark:bg-base-900">
+                                <div v-else class="mb-1 rounded-md bg-neutral-100 dark:bg-neutral-900">
                                     <ul class="divide-y divide-gray-100 text-sm font-medium dark:divide-gray-800" role="list">
                                         <li
                                             v-for="unit in dispatch.units"
                                             :key="unit.unitId"
-                                            class="flex items-center justify-between py-3 pl-3 pr-4"
+                                            class="flex items-center justify-between py-3 pr-4 pl-3"
                                         >
                                             <div class="flex flex-1 items-center">
                                                 <UnitInfoPopover
@@ -225,7 +216,7 @@ const canAccessDispatch = computed(() => ({
                                         v-if="canDo('TakeControl') && canAccessDispatch.dispatch"
                                         icon="i-mdi-account-multiple-plus"
                                         truncate
-                                        @click="modal.open(DispatchAssignModal, { dispatchId: dispatchId })"
+                                        @click="dispatchAssignModal.open({ dispatchId: dispatchId })"
                                     >
                                         {{ $t('common.assign') }}
                                     </UButton>
@@ -244,9 +235,9 @@ const canAccessDispatch = computed(() => ({
                 </div>
 
                 <div>
-                    <dl class="divide-neutral/10 divide-y">
+                    <dl class="divide-y divide-default">
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
+                            <dt class="text-sm leading-6 font-medium">
                                 {{ $t('common.last_update') }}
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
@@ -255,7 +246,7 @@ const canAccessDispatch = computed(() => ({
                         </div>
 
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
+                            <dt class="text-sm leading-6 font-medium">
                                 {{ $t('common.location') }}
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
@@ -269,7 +260,6 @@ const canAccessDispatch = computed(() => ({
                                         size="xs"
                                         variant="link"
                                         icon="i-mdi-map-marker"
-                                        :padded="false"
                                         @click="
                                             goto({
                                                 x: dispatch.status?.x,
@@ -285,16 +275,16 @@ const canAccessDispatch = computed(() => ({
                         </div>
 
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
+                            <dt class="text-sm leading-6 font-medium">
                                 {{ $t('common.status') }}
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <UButton
-                                    class="rounded px-2 py-1 text-sm font-semibold"
+                                    class="rounded-sm px-2 py-1 text-sm font-semibold"
                                     :class="dispatchStatusColors"
                                     :icon="dispatchStatusToIcon(dispatch.status?.status)"
                                     :disabled="!canAccessDispatch.participate"
-                                    @click="modal.open(DispatchStatusUpdateModal, { dispatchId: dispatch.id })"
+                                    @click="dispatchStatusUpdateModal.open({ dispatchId: dispatch.id })"
                                 >
                                     {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`) }}
                                     <span v-if="dispatch.status?.code">
@@ -305,7 +295,7 @@ const canAccessDispatch = computed(() => ({
                         </div>
 
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
+                            <dt class="text-sm leading-6 font-medium">
                                 {{ $t('common.code') }}
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
@@ -314,7 +304,7 @@ const canAccessDispatch = computed(() => ({
                         </div>
 
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
+                            <dt class="text-sm leading-6 font-medium">
                                 {{ $t('common.reason') }}
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
@@ -324,33 +314,33 @@ const canAccessDispatch = computed(() => ({
                     </dl>
                 </div>
 
-                <div v-if="isOpen">
+                <div>
                     <DispatchFeed :dispatch-id="dispatch.id" />
                 </div>
             </div>
+        </template>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" class="flex-1" block @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton color="neutral" class="flex-1" block @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
 
-                    <UTooltip
-                        v-if="can('centrum.CentrumService/DeleteDispatch').value && canAccessDispatch.dispatch"
-                        :text="$t('common.delete')"
-                    >
-                        <UButton
-                            icon="i-mdi-delete"
-                            color="error"
-                            @click="
-                                modal.open(ConfirmModal, {
-                                    confirm: async () => dispatch && deleteDispatch(dispatch.id),
-                                })
-                            "
-                        />
-                    </UTooltip>
-                </UButtonGroup>
-            </template>
-        </UCard>
+                <UTooltip
+                    v-if="can('centrum.CentrumService/DeleteDispatch').value && canAccessDispatch.dispatch"
+                    :text="$t('common.delete')"
+                >
+                    <UButton
+                        icon="i-mdi-delete"
+                        color="error"
+                        @click="
+                            confirmModal.open({
+                                confirm: async () => dispatch && deleteDispatch(dispatch.id),
+                            })
+                        "
+                    />
+                </UTooltip>
+            </UButtonGroup>
+        </template>
     </USlideover>
 </template>

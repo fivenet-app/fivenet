@@ -14,8 +14,6 @@ defineEmits<{
     (e: 'clicked'): void;
 }>();
 
-const { t } = useI18n();
-
 const notifications = useNotificationsStore();
 
 const notificationsNotificationsClient = await getNotificationsNotificationsClient();
@@ -88,10 +86,6 @@ async function markUnread(unread: boolean, ...ids: number[]): Promise<void> {
     });
 }
 
-function notificationCategoriesToLabel(categories: NotificationCategory[]): string {
-    return categories.map((c) => t(`enums.notifications.NotificationCategory.${NotificationCategory[c ?? 0]}`)).join(', ');
-}
-
 watchDebounced(query, async () => refresh(), { debounce: 500, maxWait: 1500 });
 
 const { start: timeoutFn } = useTimeoutFn(() => (canSubmit.value = true), 400, { immediate: false });
@@ -101,62 +95,62 @@ const canSubmit = ref(true);
 <template>
     <UDashboardToolbar>
         <template #default>
-            <UForm class="flex-1" :schema="schema" :state="query" @submit="refresh()">
+            <UForm class="my-2 flex-1" :schema="schema" :state="query" @submit="refresh()">
                 <div class="flex flex-row gap-2">
-                    <UFormGroup
+                    <UFormField
                         class="flex flex-initial flex-col"
                         name="includeRead"
                         :label="$t('components.notifications.include_read')"
                         :ui="{ container: 'flex-1 flex' }"
                     >
                         <div class="flex flex-1 items-center">
-                            <UToggle v-model="query.includeRead">
-                                <span class="sr-only">{{ $t('components.notifications.include_read') }}</span>
-                            </UToggle>
+                            <USwitch v-model="query.includeRead" />
                         </div>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup class="flex-1" name="categories" :label="$t('common.category', 2)">
+                    <UFormField class="flex-1" name="categories" :label="$t('common.category', 2)">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="query.categories"
                                 multiple
                                 name="categories"
-                                :options="categories"
-                                option-attribute="label"
-                                value-attribute="chip"
-                                :searchable-placeholder="$t('common.search_field')"
+                                :items="categories"
+                                value-key="mode"
+                                :search-input="{ placeholder: $t('common.search_field') }"
+                                class="w-full"
                             >
-                                <template #label>
-                                    <template v-if="query.categories">
-                                        <span class="truncate">{{ notificationCategoriesToLabel(query.categories) }}</span>
-                                    </template>
+                                <template #default>
+                                    {{
+                                        query.categories.length === 0 || query.categories.length === categories.length
+                                            ? $t('components.notifications.all_categories')
+                                            : query.categories
+                                                  .map((c) =>
+                                                      $t(`enums.notifications.NotificationCategory.${NotificationCategory[c]}`),
+                                                  )
+                                                  .join(', ')
+                                    }}
                                 </template>
-
-                                <template #option="{ option }">
-                                    <span class="truncate">{{
-                                        $t(`enums.notifications.NotificationCategory.${NotificationCategory[option.mode ?? 0]}`)
-                                    }}</span>
+                                <template #item-label="{ item }">
+                                    {{ $t(`enums.notifications.NotificationCategory.${NotificationCategory[item.mode ?? 0]}`) }}
                                 </template>
                             </USelectMenu>
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup class="flex-initial" label="&nbsp;">
+                    <UFormField class="flex-initial" label="&nbsp;">
                         <UButton
                             icon="i-mdi-notification-clear-all"
                             :disabled="!canSubmit || data?.notifications === undefined || data?.notifications.length === 0"
-                            @click="markAll().finally(timeoutFn)"
-                        >
-                            {{ $t('components.notifications.mark_all_read') }}
-                        </UButton>
-                    </UFormGroup>
+                            :label="$t('components.notifications.mark_all_read')"
+                            @click="() => markAll().finally(timeoutFn)"
+                        />
+                    </UFormField>
                 </div>
             </UForm>
         </template>
     </UDashboardToolbar>
 
-    <UDashboardPanelContent class="p-0 sm:pb-0">
+    <div class="flex flex-1 flex-col">
         <div class="flex-1">
             <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.notification', 2)])" />
             <DataErrorBlock
@@ -171,22 +165,21 @@ const canSubmit = ref(true);
                 icon="i-mdi-bell"
             />
 
-            <ul v-else class="flex flex-1 flex-col divide-y divide-gray-100 dark:divide-gray-800" role="list">
+            <ul v-else class="flex flex-1 flex-col divide-y divide-default" role="list">
                 <li
                     v-for="not in data?.notifications"
                     :key="not.id"
-                    class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 relative flex flex-row items-center justify-between gap-2 border-white px-2 py-3 sm:px-4 dark:border-gray-900"
+                    class="relative flex flex-row items-center justify-between gap-2 border-white px-2 py-3 hover:border-primary-500/25 hover:bg-primary-100/50 sm:px-4 dark:border-neutral-900 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
                 >
                     <UIcon class="size-6" :name="notificationCategoryToIcon(not.category)" />
 
                     <div class="flex flex-1 gap-x-2">
                         <div class="min-w-0 flex-auto gap-y-1">
-                            <h3 class="text-base font-semibold leading-6">
+                            <h3 class="text-base leading-6 font-semibold">
                                 <UButton
                                     v-if="not.data && not.data.link"
                                     variant="link"
-                                    :padded="false"
-                                    :color="!not.readAt ? 'primary' : 'gray'"
+                                    :color="!not.readAt ? 'primary' : 'neutral'"
                                     :to="not.data.link.to"
                                     trailing-icon="i-mdi-link-variant"
                                     @click="
@@ -234,30 +227,28 @@ const canSubmit = ref(true);
                     </div>
 
                     <div class="flex">
-                        <UButton
-                            v-if="!not.readAt"
-                            class="flex shrink items-center rounded-r-md p-1 text-sm font-semibold"
-                            :disabled="!canSubmit"
-                            icon="i-mdi-check"
-                            @click="markUnread(false, not.id).finally(timeoutFn)"
-                        >
-                            <span class="sr-only">{{ $t('components.notifications.mark_read') }}</span>
-                        </UButton>
-                        <UButton
-                            v-else
-                            class="flex shrink items-center rounded-r-md p-1 text-sm font-semibold"
-                            variant="soft"
-                            :disabled="!canSubmit"
-                            icon="i-mdi-read"
-                            @click="markUnread(true, not.id).finally(timeoutFn)"
-                        >
-                            <span class="sr-only">{{ $t('components.notifications.mark_unread') }}</span>
-                        </UButton>
+                        <UTooltip v-if="!not.readAt" :text="$t('components.notifications.mark_read')">
+                            <UButton
+                                class="flex shrink items-center rounded-r-md p-1 text-sm font-semibold"
+                                :disabled="!canSubmit"
+                                icon="i-mdi-check"
+                                @click="markUnread(false, not.id).finally(timeoutFn)"
+                            />
+                        </UTooltip>
+                        <UTooltip v-else :text="$t('components.notifications.mark_unread')">
+                            <UButton
+                                class="flex shrink items-center rounded-r-md p-1 text-sm font-semibold"
+                                variant="soft"
+                                :disabled="!canSubmit"
+                                icon="i-mdi-read"
+                                @click="markUnread(true, not.id).finally(timeoutFn)"
+                            />
+                        </UTooltip>
                     </div>
                 </li>
             </ul>
         </div>
 
         <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
-    </UDashboardPanelContent>
+    </div>
 </template>

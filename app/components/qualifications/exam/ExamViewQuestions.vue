@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Form, FormSubmitEvent } from '#ui/types';
+import type { Form, FormSubmitEvent } from '@nuxt/ui';
 import { differenceInMinutes, isPast } from 'date-fns';
 import { z } from 'zod';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
@@ -210,81 +210,85 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UDashboardToolbar v-if="!responses">
-        <template v-if="qualification" #default>
-            <div class="mb-2 flex flex-1 flex-col justify-between gap-1">
-                <div class="flex flex-1 flex-row justify-between gap-2">
-                    <div>
-                        <h1 class="break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
-                            <template v-if="qualification.abbreviation">{{ qualification.abbreviation }}: </template>
-                            {{ !qualification.title ? $t('common.untitled') : qualification.title }}
-                        </h1>
+    <UDashboardPanel>
+        <template #header>
+            <UDashboardToolbar v-if="!responses">
+                <template v-if="qualification" #default>
+                    <div class="mb-2 flex flex-1 flex-col justify-between gap-1">
+                        <div class="flex flex-1 flex-row justify-between gap-2">
+                            <div>
+                                <h1 class="px-0.5 py-1 text-4xl font-bold break-words sm:pl-1">
+                                    <template v-if="qualification.abbreviation">{{ qualification.abbreviation }}: </template>
+                                    {{ !qualification.title ? $t('common.untitled') : qualification.title }}
+                                </h1>
 
-                        <p v-if="qualification.description" class="break-words px-0.5 py-1 text-base font-bold sm:pl-1">
-                            {{ qualification.description }}
-                        </p>
+                                <p v-if="qualification.description" class="px-0.5 py-1 text-base font-bold break-words sm:pl-1">
+                                    {{ qualification.description }}
+                                </p>
+                            </div>
+
+                            <div class="inline-flex flex-col items-end gap-2">
+                                <UIcon class="size-8" name="i-mdi-clock" />
+
+                                <span class="font-semibold">
+                                    {{
+                                        useLocaleTimeAgo(toDate(props.examUser.endsAt), {
+                                            showSecond: true,
+                                            updateInterval: 1_000,
+                                        }).value
+                                    }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-1">
+                            <UBadge v-if="props.examUser.startedAt" class="inline-flex gap-1">
+                                <span class="font-semibold">{{ $t('common.begins_at') }}:</span>
+                                <span>{{ $d(toDate(props.examUser.startedAt), 'long') }}</span>
+                            </UBadge>
+
+                            <UBadge v-if="props.examUser.endsAt" class="inline-flex gap-1">
+                                <span class="font-semibold">{{ $t('common.ends_at') }}:</span>
+                                <span>{{ $d(toDate(props.examUser.endsAt), 'long') }}</span>
+                            </UBadge>
+                        </div>
                     </div>
-
-                    <div class="inline-flex flex-col items-end gap-2">
-                        <UIcon class="size-8" name="i-mdi-clock" />
-
-                        <span class="font-semibold">
-                            {{
-                                useLocaleTimeAgo(toDate(props.examUser.endsAt), {
-                                    showSecond: true,
-                                    updateInterval: 1_000,
-                                }).value
-                            }}
-                        </span>
-                    </div>
-                </div>
-
-                <div class="flex gap-1">
-                    <UBadge v-if="props.examUser.startedAt" class="inline-flex gap-1">
-                        <span class="font-semibold">{{ $t('common.begins_at') }}:</span>
-                        <span>{{ $d(toDate(props.examUser.startedAt), 'long') }}</span>
-                    </UBadge>
-
-                    <UBadge v-if="props.examUser.endsAt" class="inline-flex gap-1">
-                        <span class="font-semibold">{{ $t('common.ends_at') }}:</span>
-                        <span>{{ $d(toDate(props.examUser.endsAt), 'long') }}</span>
-                    </UBadge>
-                </div>
-            </div>
-        </template>
-    </UDashboardToolbar>
-
-    <UDashboardPanelContent class="p-0 sm:pb-0">
-        <UForm ref="form" :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ rounded: '' }">
-                <UContainer>
-                    <div class="flex flex-col gap-4">
-                        <ExamViewQuestion
-                            v-for="(question, idx) in exam.questions"
-                            :key="question.id"
-                            v-model="state.responses[idx]"
-                            :disabled="disabled"
-                        >
-                            <template #question-after>
-                                <slot name="question-after" :question="{ question }" />
-                            </template>
-                        </ExamViewQuestion>
-                    </div>
-                </UContainer>
-
-                <template v-if="!disabled" #footer>
-                    <UButton
-                        class="w-full"
-                        type="submit"
-                        icon="i-mdi-save-content"
-                        block
-                        :disabled="!canSubmit"
-                        :loading="!canSubmit"
-                    >
-                        {{ $t('common.submit') }}
-                    </UButton>
                 </template>
-            </UCard>
-        </UForm>
-    </UDashboardPanelContent>
+            </UDashboardToolbar>
+        </template>
+
+        <template #body>
+            <UForm ref="form" :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UCard>
+                    <UContainer>
+                        <div class="flex flex-col gap-4">
+                            <ExamViewQuestion
+                                v-for="(question, idx) in exam.questions"
+                                :key="question.id"
+                                v-model="state.responses[idx]"
+                                :disabled="disabled"
+                            >
+                                <template #question-after>
+                                    <slot name="question-after" :question="{ question }" />
+                                </template>
+                            </ExamViewQuestion>
+                        </div>
+                    </UContainer>
+
+                    <template v-if="!disabled" #footer>
+                        <UButton
+                            class="w-full"
+                            type="submit"
+                            icon="i-mdi-save-content"
+                            block
+                            :disabled="!canSubmit"
+                            :loading="!canSubmit"
+                        >
+                            {{ $t('common.submit') }}
+                        </UButton>
+                    </template>
+                </UCard>
+            </UForm>
+        </template>
+    </UDashboardPanel>
 </template>

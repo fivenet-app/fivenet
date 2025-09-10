@@ -80,103 +80,101 @@ onBeforeUnmount(() => {
 const input = useTemplateRef('input');
 
 defineShortcuts({
-    '/': () => input.value?.input?.focus(),
+    '/': () => input.value?.inputRef?.focus(),
 });
 
 const mount = ref(false);
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('common.dispatches')">
-                <template #right>
-                    <PartialsBackButton fallback-to="/centrum" />
-                </template>
-            </UDashboardNavbar>
+    <UDashboardPanel>
+        <UDashboardNavbar :title="$t('common.dispatches')">
+            <template #right>
+                <PartialsBackButton fallback-to="/centrum" />
+            </template>
+        </UDashboardNavbar>
 
-            <div class="max-h-[calc(100dvh-var(--header-height))] min-h-[calc(100dvh-var(--header-height))] overflow-hidden">
-                <Splitpanes v-if="mount" class="relative">
-                    <Pane :min-size="25">
-                        <ClientOnly>
-                            <BaseMap :map-options="{ zoomControl: false }">
-                                <template #default>
-                                    <LazyLivemapMapTempMarker />
+        <div class="max-h-[calc(100dvh-var(--ui-header-height))] min-h-[calc(100dvh-var(--ui-header-height))] overflow-hidden">
+            <Splitpanes v-if="mount" class="relative">
+                <Pane :min-size="25">
+                    <ClientOnly>
+                        <BaseMap :map-options="{ zoomControl: false }">
+                            <template #default>
+                                <LazyLivemapMapTempMarker />
 
-                                    <DispatchLayer show-all-dispatches :dispatch-list="data?.dispatches ?? []" />
-                                </template>
-                            </BaseMap>
-                        </ClientOnly>
-                    </Pane>
+                                <DispatchLayer show-all-dispatches :dispatch-list="data?.dispatches ?? []" />
+                            </template>
+                        </BaseMap>
+                    </ClientOnly>
+                </Pane>
 
-                    <Pane :size="65">
-                        <div class="max-h-full overflow-y-auto">
-                            <div class="mb-2 px-2">
-                                <UForm class="flex flex-row gap-2" :schema="schema" :state="query" @submit="refresh()">
-                                    <UFormGroup class="flex-1" name="postal" :label="$t('common.postal')">
-                                        <UInput
-                                            ref="input"
-                                            v-model="query.postal"
-                                            type="text"
-                                            name="postal"
-                                            :placeholder="$t('common.postal')"
-                                        >
-                                            <template #trailing>
-                                                <UKbd value="/" />
-                                            </template>
-                                        </UInput>
-                                    </UFormGroup>
-                                    <UFormGroup class="flex-1" name="id" :label="$t('common.id')">
-                                        <UInput
-                                            v-model="query.id"
-                                            type="text"
-                                            name="id"
-                                            :min="1"
-                                            :max="99999999999"
-                                            :placeholder="$t('common.id')"
-                                        />
-                                    </UFormGroup>
-                                </UForm>
-                            </div>
-
-                            <DataPendingBlock
-                                v-if="isRequestPending(status)"
-                                :message="$t('common.loading', [$t('common.dispatches')])"
-                            />
-                            <DataErrorBlock
-                                v-else-if="error"
-                                :title="$t('common.unable_to_load', [$t('common.dispatches')])"
-                                :error="error"
-                                :retry="refresh"
-                            />
-                            <DataNoDataBlock v-else-if="data?.dispatches.length === 0" :type="$t('common.dispatches')" />
-
-                            <div v-else class="relative overflow-x-auto">
-                                <DispatchList
-                                    :show-button="false"
-                                    :hide-actions="true"
-                                    :always-show-day="true"
-                                    :dispatches="data?.dispatches"
-                                />
-                            </div>
-
-                            <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+                <Pane :size="65">
+                    <div class="max-h-full overflow-y-auto">
+                        <div class="mb-2 px-2">
+                            <UForm class="flex flex-row gap-2" :schema="schema" :state="query" @submit="refresh()">
+                                <UFormField class="flex-1" name="postal" :label="$t('common.postal')">
+                                    <UInput
+                                        ref="input"
+                                        v-model="query.postal"
+                                        type="text"
+                                        name="postal"
+                                        :placeholder="$t('common.postal')"
+                                    >
+                                        <template #trailing>
+                                            <UKbd value="/" />
+                                        </template>
+                                    </UInput>
+                                </UFormField>
+                                <UFormField class="flex-1" name="id" :label="$t('common.id')">
+                                    <UInput
+                                        v-model="query.id"
+                                        type="text"
+                                        name="id"
+                                        :min="1"
+                                        :max="99999999999"
+                                        :placeholder="$t('common.id')"
+                                    />
+                                </UFormField>
+                            </UForm>
                         </div>
-                    </Pane>
-                </Splitpanes>
-            </div>
-        </UDashboardPanel>
-    </UDashboardPage>
+
+                        <DataPendingBlock
+                            v-if="isRequestPending(status)"
+                            :message="$t('common.loading', [$t('common.dispatches')])"
+                        />
+                        <DataErrorBlock
+                            v-else-if="error"
+                            :title="$t('common.unable_to_load', [$t('common.dispatches')])"
+                            :error="error"
+                            :retry="refresh"
+                        />
+                        <DataNoDataBlock v-else-if="data?.dispatches.length === 0" :type="$t('common.dispatches')" />
+
+                        <div v-else class="relative overflow-x-auto">
+                            <DispatchList
+                                :show-button="false"
+                                :hide-actions="true"
+                                :always-show-day="true"
+                                :dispatches="data?.dispatches"
+                            />
+                        </div>
+
+                        <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+                    </div>
+                </Pane>
+            </Splitpanes>
+        </div>
+    </UDashboardPanel>
 </template>
 
 <style scoped>
 .splitpanes--vertical > .splitpanes__splitter {
     min-width: 2px;
-    background-color: rgb(var(--color-gray-800));
+    background-color: var(--color-gray-800);
 }
 
 .splitpanes--horizontal > .splitpanes__splitter {
     min-height: 2px;
-    background-color: rgb(var(--color-gray-800));
+    background-color: var(--color-gray-800);
 }
 </style>

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
@@ -29,7 +29,7 @@ const emit = defineEmits<{
 
 const comment = useVModel(props, 'modelValue', emit);
 
-const modal = useModal();
+const overlay = useOverlay();
 
 const { can, activeChar, isSuperuser } = useAuth();
 
@@ -180,12 +180,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         useTimeoutFn(() => (canSubmit.value = true), 400),
     );
 }, 1000);
+
+const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
     <li v-if="comment" class="py-2">
         <div v-if="!editing" class="flex space-x-3">
-            <div :class="[comment.deletedAt ? 'bg-warn-800' : '', 'flex-1 space-y-1']">
+            <div :class="[comment.deletedAt ? 'bg-warning-800' : '', 'flex-1 space-y-1']">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
                         <CitizenInfoPopover :user="comment.creator" show-avatar-in-name />
@@ -211,7 +213,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 icon="i-mdi-delete"
                                 color="error"
                                 @click="
-                                    modal.open(ConfirmModal, {
+                                    confirmModal.open({
                                         confirm: async () => deleteComment(comment!.id),
                                     })
                                 "
@@ -220,8 +222,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </div>
                 </div>
 
-                <div class="rounded-lg bg-neutral-100 dark:bg-base-900">
-                    <HTMLContent v-if="comment.content?.content" class="px-4 py-2" :value="comment.content.content" />
+                <div class="rounded-lg bg-neutral-100 p-4 dark:bg-neutral-900">
+                    <HTMLContent v-if="comment.content?.content" :value="comment.content.content" />
                 </div>
             </div>
         </div>
@@ -229,7 +231,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <div v-else-if="canComment" class="flex items-start space-x-4">
             <div class="min-w-0 flex-1">
                 <UForm class="relative" :schema="schema" :state="state" @submit="onSubmitThrottle">
-                    <UFormGroup name="comment">
+                    <UFormField name="comment">
                         <ClientOnly>
                             <TiptapEditor
                                 v-model="state.content"
@@ -240,12 +242,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 history-type="document_comments"
                             />
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
                     <div class="mt-2 shrink-0">
-                        <UButton type="submit" :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.edit') }}
-                        </UButton>
+                        <UButton type="submit" :disabled="!canSubmit" :loading="!canSubmit" :label="$t('common.edit')" />
                     </div>
                 </UForm>
             </div>

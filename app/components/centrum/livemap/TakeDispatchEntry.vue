@@ -31,7 +31,13 @@ const { ownUnitId, timeCorrection } = storeToRefs(centrumStore);
 const expiresAt = props.dispatch.units.find((u) => u.unitId === ownUnitId.value)?.expiresAt;
 const dispatchBackground = computed(() => dispatchStatusToBGColor(props.dispatch.status?.status));
 
-const slideover = useSlideover();
+const overlay = useOverlay();
+
+const dispatchDetailsSlideover = overlay.create(DispatchDetailsSlideover, {
+    props: {
+        dispatchId: props.dispatch.id,
+    },
+});
 
 const checked = ref(false);
 
@@ -45,9 +51,9 @@ onBeforeMount(() => {
 
 <template>
     <div class="flex px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-2 sm:px-0">
-        <dt class="flex flex-initial flex-col gap-1 text-sm font-medium leading-6">
+        <dt class="flex flex-initial flex-col gap-1 text-sm leading-6 font-medium">
             <div class="flex items-center">
-                <UCheckbox v-model="checked" name="selected" @change="$emit('selected', checked)" />
+                <UCheckbox v-model="checked" name="selected" @update:model-value="$emit('selected', checked)" />
 
                 <IDCopyBadge
                     :id="dispatch.id"
@@ -55,7 +61,7 @@ onBeforeMount(() => {
                     prefix="DSP"
                     :action="
                         () =>
-                            slideover.open(DispatchDetailsSlideover, {
+                            dispatchDetailsSlideover.open({
                                 dispatchId: dispatch.id,
                             })
                     "
@@ -76,8 +82,8 @@ onBeforeMount(() => {
             </div>
         </dt>
         <dd class="mt-1 flex-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-            <ul class="divide-y divide-base-200 rounded-md border border-base-200" role="list">
-                <li class="flex items-center gap-1 py-3 pl-3 pr-4 text-sm">
+            <ul class="divide-base-200 border-base-200 divide-y rounded-md border" role="list">
+                <li class="flex items-center gap-1 py-3 pr-4 pl-3 text-sm">
                     <span class="font-medium">{{ $t('common.sent_by') }}:</span>
                     <span>
                         <template v-if="dispatch.anon">
@@ -89,11 +95,11 @@ onBeforeMount(() => {
                         </template>
                     </span>
                 </li>
-                <li class="flex items-center py-3 pl-3 pr-4 text-sm">
+                <li class="flex items-center py-3 pr-4 pl-3 text-sm">
                     <span class="font-medium">{{ $t('common.message') }}:</span>
                     <span class="ml-1 truncate">{{ dispatch.message }}</span>
                 </li>
-                <li class="py-3 pl-3 pr-4 text-sm">
+                <li class="py-3 pr-4 pl-3 text-sm">
                     <div class="sm:inline-flex sm:flex-row sm:gap-2">
                         <span>
                             <span class="font-medium">{{ $t('common.postal') }}:</span>
@@ -103,26 +109,25 @@ onBeforeMount(() => {
                             size="xs"
                             variant="link"
                             icon="i-mdi-map-marker"
-                            :padded="false"
                             @click="goto({ x: dispatch.x, y: dispatch.y })"
                         >
                             {{ $t('common.go_to_location') }}
                         </UButton>
                     </div>
                 </li>
-                <li class="flex items-center gap-1 py-3 pl-3 pr-4 text-sm">
+                <li class="flex items-center gap-1 py-3 pr-4 pl-3 text-sm">
                     <span class="font-medium">{{ $t('common.status') }}:</span>
                     <span :class="dispatchBackground">{{
                         $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`)
                     }}</span>
                 </li>
-                <li v-if="dispatch.attributes" class="flex items-center gap-1 py-3 pl-3 pr-4 text-sm">
+                <li v-if="dispatch.attributes" class="flex items-center gap-1 py-3 pr-4 pl-3 text-sm">
                     <span class="font-medium">{{ $t('common.attributes', 2) }}:</span>
                     <span>
                         <DispatchAttributes :attributes="dispatch.attributes" />
                     </span>
                 </li>
-                <li class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
+                <li class="flex items-center justify-between py-3 pr-4 pl-3 text-sm">
                     <div class="flex flex-1 items-center gap-1">
                         <span class="font-medium">{{ $t('common.unit', 2) }}:</span>
                         <span v-if="dispatch.units.length === 0">{{ $t('common.member', 0) }}</span>

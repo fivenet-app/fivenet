@@ -99,6 +99,10 @@ export interface CalendarShort {
      */
     createdAt?: Timestamp;
     /**
+     * @generated from protobuf field: optional string job = 5
+     */
+    job?: string;
+    /**
      * @sanitize: method=StripTags
      *
      * @generated from protobuf field: string name = 6
@@ -468,6 +472,7 @@ class CalendarShort$Type extends MessageType<CalendarShort> {
         super("resources.calendar.CalendarShort", [
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 5, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } } } },
             { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } } } },
             { no: 8, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
@@ -497,6 +502,9 @@ class CalendarShort$Type extends MessageType<CalendarShort> {
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
+                    break;
+                case /* optional string job */ 5:
+                    message.job = reader.string();
                     break;
                 case /* string name */ 6:
                     message.name = reader.string();
@@ -534,6 +542,9 @@ class CalendarShort$Type extends MessageType<CalendarShort> {
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional string job = 5; */
+        if (message.job !== undefined)
+            writer.tag(5, WireType.LengthDelimited).string(message.job);
         /* string name = 6; */
         if (message.name !== "")
             writer.tag(6, WireType.LengthDelimited).string(message.name);

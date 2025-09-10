@@ -50,5 +50,25 @@ func (m *Sort) Sanitize() error {
 		return nil
 	}
 
+	// Field: Columns
+	for idx, item := range m.Columns {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *SortByColumn) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
 	return nil
 }

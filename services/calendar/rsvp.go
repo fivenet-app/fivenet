@@ -48,7 +48,7 @@ func (s *Server) ListCalendarEntryRSVP(
 	}
 
 	tUser := tables.User().AS("user_short")
-	tAvatar := table.FivenetFiles.AS("avatar")
+	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	condition := tCalendarRSVP.EntryID.EQ(jet.Int64(entry.GetId())).
 		AND(tCalendarRSVP.Response.GT(jet.Int32(int32(calendar.RsvpResponses_RSVP_RESPONSES_HIDDEN))))
@@ -93,8 +93,8 @@ func (s *Server) ListCalendarEntryRSVP(
 			tUser.Lastname,
 			tUser.Dateofbirth,
 			tUser.PhoneNumber,
-			tUserProps.AvatarFileID.AS("user_short.avatar_file_id"),
-			tAvatar.FilePath.AS("user_short.avatar"),
+			tUserProps.AvatarFileID.AS("user_short.profile_picture_file_id"),
+			tAvatar.FilePath.AS("user_short.profile_picture"),
 		).
 		FROM(tCalendarRSVP.
 			LEFT_JOIN(tUser,
@@ -224,7 +224,7 @@ func (s *Server) getRSVPCalendarEntry(
 	userId int32,
 ) (*calendar.CalendarEntryRSVP, error) {
 	tUser := tables.User().AS("user_short")
-	tAvatar := table.FivenetFiles.AS("avatar")
+	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tCalendarRSVP.
 		SELECT(
@@ -239,8 +239,8 @@ func (s *Server) getRSVPCalendarEntry(
 			tUser.Lastname,
 			tUser.Dateofbirth,
 			tUser.PhoneNumber,
-			tUserProps.AvatarFileID.AS("user_short.avatar_file_id"),
-			tAvatar.FilePath.AS("user_short.avatar"),
+			tUserProps.AvatarFileID.AS("user_short.profile_picture_file_id"),
+			tAvatar.FilePath.AS("user_short.profile_picture"),
 		).
 		FROM(tCalendarRSVP.
 			LEFT_JOIN(tUser,

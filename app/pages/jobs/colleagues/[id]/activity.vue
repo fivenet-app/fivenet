@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import type { TypedRouteFromName } from '@typed-router';
-import ColleagueActivityFeed from '~/components/jobs/colleagues/info/ColleagueActivityFeed.vue';
+import ActivityFeed from '~/components/jobs/colleagues/info/ActivityFeed.vue';
 
 useHead({
-    title: 'pages.jobs.colleagues.single.activity',
+    title: 'pages.jobs.colleagues.id.activity',
 });
 
 definePageMeta({
-    title: 'pages.jobs.colleagues.single.activity',
+    title: 'pages.jobs.colleagues.id.activity',
     requiresAuth: true,
     permission: 'jobs.JobsService/GetColleague',
     validate: async (route) => {
@@ -24,7 +24,5 @@ const route = useRoute('jobs-colleagues-id-activity');
 </script>
 
 <template>
-    <div>
-        <ColleagueActivityFeed :user-id="parseInt(route.params.id as string)" />
-    </div>
+    <ActivityFeed :user-id="parseInt(route.params.id as string)" />
 </template>

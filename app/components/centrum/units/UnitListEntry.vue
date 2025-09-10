@@ -8,21 +8,20 @@ const props = defineProps<{
     unit: Unit;
 }>();
 
-const slideover = useSlideover();
+const overlay = useOverlay();
+
+const unitDetailsSlideover = overlay.create(UnitDetailsSlideover, {
+    props: {
+        unit: props.unit,
+    },
+});
 
 const unitColorHex = computed(() => hexToRgb(props.unit.color, RGBBlack)!);
 const isBright = computed(() => isColorBright(unitColorHex.value));
 </script>
 
 <template>
-    <li
-        class="col-span-1 flex rounded-md shadow-sm"
-        @click="
-            slideover.open(UnitDetailsSlideover, {
-                unit: unit,
-            })
-        "
-    >
+    <li class="col-span-1 flex rounded-md shadow-xs" @click="unitDetailsSlideover.open()">
         <div
             class="flex w-12 shrink-0 items-center justify-center rounded-l-md border-y border-l text-sm font-medium"
             :class="isBright ? 'text-black' : 'text-neutral'"
@@ -30,7 +29,7 @@ const isBright = computed(() => isColorBright(unitColorHex.value));
         >
             {{ unit.initials }}
         </div>
-        <div class="flex flex-1 items-center justify-between truncate border border-gray-200">
+        <div class="flex flex-1 items-center justify-between truncate border border-neutral-200">
             <div class="flex-1 px-1 py-2 text-sm">
                 <span class="font-medium">{{ unit.name }}</span>
                 <p :class="unit.users.length === 0 ? 'text-gray-400' : 'text-gray-300'">

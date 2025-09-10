@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { UButton, UTooltip } from '#components';
+import type { TableColumn } from '@nuxt/ui';
 import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -86,17 +88,49 @@ onBeforeMount(async () => await listJobs());
 
 const sortedRoles = computed(() => [...(roles.value ?? [])].sort((a, b) => (a.jobLabel ?? '').localeCompare(b.jobLabel ?? '')));
 
-const columns = [
-    {
-        key: 'job',
-        label: t('common.job'),
-    },
-    {
-        key: 'actions',
-        label: t('common.action', 2),
-        sortable: false,
-    },
-];
+const appConfig = useAppConfig();
+
+const columns = computed(
+    () =>
+        [
+            {
+                accessorKey: 'job',
+                header: ({ column }) => {
+                    const isSorted = column.getIsSorted();
+
+                    return h(UButton, {
+                        color: 'neutral',
+                        variant: 'ghost',
+                        label: t('common.job'),
+                        icon: isSorted
+                            ? isSorted === 'asc'
+                                ? appConfig.custom.icons.sortAsc
+                                : appConfig.custom.icons.sortDesc
+                            : appConfig.custom.icons.sort,
+                        class: '-mx-2.5',
+                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+                    });
+                },
+                meta: {
+                    class: {
+                        td: 'text-highlighted',
+                    },
+                },
+                cell: ({ row }) => `${row.original.jobLabel} (${row.original.job})`,
+            },
+            {
+                id: 'actions',
+                cell: ({ row }) =>
+                    h(UTooltip, { text: t('common.show') }, () =>
+                        h(UButton, {
+                            to: { name: 'settings-limiter-job', params: { job: row.original.job } },
+                            variant: 'link',
+                            icon: 'i-mdi-eye',
+                        }),
+                    ),
+            },
+        ] as TableColumn<Role>[],
+);
 
 const route = useRoute('settings-limiter-job');
 
@@ -108,90 +142,90 @@ const onSubmitThrottle = useThrottleFn(async () => {
 </script>
 
 <template>
-    <UDashboardPanelContent class="grid grid-cols-1 gap-2 lg:grid-cols-3">
-        <div class="mb-2">
-            <UForm v-if="can('settings.SettingsService/CreateRole').value" :schema="schema" :state="state" @submit="refresh()">
-                <div class="flex flex-row gap-2">
-                    <UFormGroup class="flex-1" name="grade" :label="$t('common.job')">
-                        <ClientOnly>
-                            <USelectMenu
-                                v-model="state.job"
-                                :options="availableJobs"
-                                searchable
-                                by="label"
-                                :searchable-placeholder="$t('common.search_field')"
-                                :search-attributes="['label', 'name']"
-                            >
-                                <template #label>
-                                    <template v-if="state.job">
-                                        <span class="truncate">{{ state.job?.label }} ({{ state.job.name }})</span>
+    <UDashboardPanel>
+        <template #header>
+            <UDashboardNavbar :title="$t('pages.settings.limiter.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
+                <template #right>
+                    <PartialsBackButton fallback-to="/settings" />
+                </template>
+            </UDashboardNavbar>
+        </template>
+
+        <template #body>
+            <div class="grid grid-cols-1 gap-2 lg:grid-cols-3">
+                <div class="mb-2">
+                    <UForm
+                        v-if="can('settings.SettingsService/CreateRole').value"
+                        class="flex flex-row gap-2"
+                        :schema="schema"
+                        :state="state"
+                        @submit="refresh()"
+                    >
+                        <UFormField class="flex-1" name="grade" :label="$t('common.job')">
+                            <ClientOnly>
+                                <USelectMenu
+                                    v-model="state.job"
+                                    class="w-full"
+                                    :items="availableJobs"
+                                    :search-input="{ placeholder: $t('common.search_field') }"
+                                    :filter-fields="['label', 'name']"
+                                >
+                                    <template v-if="state.job" #default>
+                                        {{ state.job?.label }} ({{ state.job.name }})
                                     </template>
-                                </template>
 
-                                <template #option="{ option: job }">
-                                    <span class="truncate">{{ job.label }} ({{ job.name }})</span>
-                                </template>
-                            </USelectMenu>
-                        </ClientOnly>
-                    </UFormGroup>
+                                    <template #item="{ item }"> {{ item.label }} ({{ item.name }}) </template>
+                                </USelectMenu>
+                            </ClientOnly>
+                        </UFormField>
 
-                    <UFormGroup name="submit" label="&nbsp;">
-                        <UButton
-                            :disabled="state.job === undefined || !canSubmit"
-                            :loading="!canSubmit"
-                            icon="i-mdi-plus"
-                            @click="onSubmitThrottle"
-                        >
-                            {{ $t('common.create') }}
-                        </UButton>
-                    </UFormGroup>
-                </div>
-            </UForm>
-
-            <div>
-                <DataErrorBlock
-                    v-if="error"
-                    :title="$t('common.unable_to_load', [$t('common.job', 2)])"
-                    :error="error"
-                    :retry="refresh"
-                />
-                <UTable
-                    v-else
-                    :columns="columns"
-                    :rows="sortedRoles"
-                    :loading="isRequestPending(status)"
-                    :empty-state="{
-                        icon: 'i-mdi-account-group',
-                        label: $t('common.not_found', [$t('common.role', 2)]),
-                    }"
-                >
-                    <template #job-data="{ row: role }">
-                        <div class="text-gray-900 dark:text-white">{{ role.jobLabel }} ({{ role.job }})</div>
-                    </template>
-
-                    <template #actions-data="{ row: role }">
-                        <UTooltip :text="$t('common.show')">
+                        <UFormField name="submit" label="&nbsp;">
                             <UButton
-                                class="place-self-end"
-                                :to="{ name: 'settings-limiter-job', params: { job: role.job } }"
-                                variant="link"
-                                icon="i-mdi-eye"
-                            />
-                        </UTooltip>
-                    </template>
-                </UTable>
+                                :disabled="state.job === undefined || !canSubmit"
+                                :loading="!canSubmit"
+                                icon="i-mdi-plus"
+                                @click="onSubmitThrottle"
+                            >
+                                {{ $t('common.create') }}
+                            </UButton>
+                        </UFormField>
+                    </UForm>
 
-                <Pagination :status="status" :refresh="refresh" hide-buttons hide-text />
+                    <div>
+                        <DataErrorBlock
+                            v-if="error"
+                            :title="$t('common.unable_to_load', [$t('common.job', 2)])"
+                            :error="error"
+                            :retry="refresh"
+                        />
+                        <UTable
+                            v-else
+                            :columns="columns"
+                            :data="sortedRoles"
+                            :loading="isRequestPending(status)"
+                            :pagination-options="{ manualPagination: true }"
+                            :sorting-options="{ manualSorting: true }"
+                            :empty="$t('common.not_found', [$t('common.role', 2)])"
+                            sticky
+                        />
+
+                        <Pagination :status="status" :refresh="refresh" hide-buttons hide-text />
+                    </div>
+                </div>
+
+                <div class="col-span-2 mb-2 w-full">
+                    <DataNoDataBlock
+                        v-if="!route.params.job"
+                        icon="i-mdi-select"
+                        :message="$t('common.none_selected', [$t('common.job')], 2)"
+                    />
+                    <NuxtPage v-else @deleted="refresh()" />
+                </div>
             </div>
-        </div>
-
-        <div class="col-span-2 mb-2 w-full">
-            <DataNoDataBlock
-                v-if="!route.params.job"
-                icon="i-mdi-select"
-                :message="$t('common.none_selected', [$t('common.job')], 2)"
-            />
-            <NuxtPage v-else @deleted="refresh()" />
-        </div>
-    </UDashboardPanelContent>
+        </template>
+    </UDashboardPanel>
 </template>

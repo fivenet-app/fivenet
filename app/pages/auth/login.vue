@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { TabsItem } from '@nuxt/ui';
 import ForgotPasswordForm from '~/components/auth/ForgotPasswordForm.vue';
 import LoginForm from '~/components/auth/LoginForm.vue';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
@@ -28,16 +29,18 @@ const notifications = useNotificationsStore();
 
 const logger = useLogger('🔑 Auth');
 
-const items = [
+const items: TabsItem[] = [
     {
-        slot: 'login',
+        slot: 'login' as const,
         label: t('components.auth.LoginForm.title'),
         icon: 'i-mdi-login',
+        value: 'login',
     },
     {
-        slot: 'forgotPassword',
+        slot: 'forgotPassword' as const,
         label: t('components.auth.LoginForm.forgot_password'),
         icon: 'i-mdi-forgot-password',
+        value: 'forgotPassword',
     },
 ];
 
@@ -46,16 +49,11 @@ const router = useRouter();
 
 const selectedTab = computed({
     get() {
-        const index = items.findIndex((item) => item.slot === route.query.tab);
-        if (index === -1) {
-            return 0;
-        }
-
-        return index;
+        return (route.query.tab as string) || 'login';
     },
-    set(value) {
+    set(tab) {
         // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
+        router.push({ query: { tab: tab }, hash: '#control-active-item' });
     },
 });
 
@@ -90,25 +88,30 @@ const canSubmit = ref(true);
 </script>
 
 <template>
-    <UCard class="w-full max-w-md bg-white/75 backdrop-blur dark:bg-white/5">
+    <UPageCard class="w-full max-w-md shrink-0 bg-white/75 backdrop-blur-sm dark:bg-white/5">
         <div class="space-y-4">
             <FiveNetLogo class="mx-auto mb-2 h-auto w-20" />
+
+            <h2 class="text-center text-3xl">
+                {{ $t('common.login') }}
+            </h2>
 
             <UTabs v-model="selectedTab" class="w-full" :items="items">
                 <template #login>
                     <LoginForm v-model="canSubmit" />
                 </template>
+
                 <template #forgotPassword>
-                    <ForgotPasswordForm v-model="canSubmit" @toggle="selectedTab = 0" />
+                    <ForgotPasswordForm v-model="canSubmit" @toggle="selectedTab = 'login'" />
                 </template>
             </UTabs>
 
             <div v-if="login.signupEnabled" class="space-y-4">
-                <UDivider orientation="horizontal" />
+                <USeparator orientation="horizontal" color="gray" />
 
                 <UButton
                     block
-                    color="gray"
+                    color="neutral"
                     trailing-icon="i-mdi-account-plus"
                     :to="{ name: 'auth-registration' }"
                     :disabled="!canSubmit"
@@ -117,5 +120,5 @@ const canSubmit = ref(true);
                 </UButton>
             </div>
         </div>
-    </UCard>
+    </UPageCard>
 </template>

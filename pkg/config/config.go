@@ -178,6 +178,8 @@ type NATS struct {
 	Replicas int     `default:"1"                     yaml:"replicas"`
 	NKey     *string `                                yaml:"nKey"`
 	Creds    *string `                                yaml:"creds"`
+	// PublishAsyncMaxPending NATS Jetstream publish async max pending limit. NATS' default is `4000`.
+	PublishAsyncMaxPending int `default:"2000"                  yaml:"publishAsyncMaxPending"`
 }
 
 type JWT struct {
@@ -272,7 +274,7 @@ type OAuth2Endpoints struct {
 type OAuth2Mapping struct {
 	ID       string `yaml:"id"`
 	Username string `yaml:"username"`
-	Avatar   string `yaml:"avatar"`
+	Avatar   string `yaml:"profile_picture"`
 }
 
 type Auth struct {

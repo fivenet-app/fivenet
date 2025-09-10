@@ -45,17 +45,15 @@ async function disconnectOAuth2Connection(provider: OAuth2Provider): Promise<voi
     }
 }
 
-const modal = useModal();
+const overlay = useOverlay();
+const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
     <UCard
         :ui="{
-            base: 'flex flex-col',
-            body: {
-                base: 'flex-1 flex flex-col',
-                padding: 'px-2 py-2 sm:p-2',
-            },
+            header: 'flex flex-col',
+            body: 'flex-1 flex flex-col',
         }"
     >
         <template #header>
@@ -63,7 +61,7 @@ const modal = useModal();
                 <div class="inline-flex flex-1 gap-2">
                     <NuxtImg
                         v-if="!provider.icon?.startsWith('i-')"
-                        class="size-12"
+                        class="size-10"
                         :src="provider.icon"
                         :alt="provider.name"
                         placeholder-class="size-10"
@@ -71,12 +69,12 @@ const modal = useModal();
                     />
                     <UIcon
                         v-else
-                        class="size-12"
+                        class="size-10"
                         :name="provider.icon"
                         :style="provider.name === 'discord' && { color: '#7289da' }"
                     />
 
-                    <div class="flex items-center gap-1.5 truncate text-base font-semibold text-gray-900 dark:text-white">
+                    <div class="flex items-center gap-1.5 truncate text-base font-semibold text-highlighted">
                         {{ provider.label }}
                     </div>
                 </div>
@@ -86,7 +84,7 @@ const modal = useModal();
                         icon="i-mdi-close-circle"
                         color="error"
                         @click="
-                            modal.open(ConfirmModal, {
+                            confirmModal.open({
                                 confirm: async () => disconnectOAuth2Connection(provider),
                             })
                         "
@@ -102,7 +100,7 @@ const modal = useModal();
         <div v-if="account || nuiEnabled" class="flex flex-1 flex-col items-center justify-center gap-4">
             <template v-if="account">
                 <div v-if="account" class="inline-flex items-center gap-2">
-                    <UAvatar :as="NuxtImg" size="md" :src="account.avatar" :alt="$t('common.image')" loading="lazy" />
+                    <UAvatar size="xl" :src="account.profilePicture" :alt="$t('common.image')" loading="lazy" />
 
                     <UTooltip :text="`${$t('components.auth.OAuth2Connections.external_id')}: ${account.externalId}`">
                         <span class="text-left">
@@ -117,9 +115,9 @@ const modal = useModal();
 
         <template #footer>
             <UButton
-                size="2xs"
+                size="xs"
                 variant="link"
-                color="white"
+                color="neutral"
                 :label="$t('components.auth.OAuth2Connections.connection_website')"
                 external
                 :to="provider.homepage"

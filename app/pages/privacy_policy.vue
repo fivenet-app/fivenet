@@ -22,10 +22,10 @@ if (website.links?.privacyPolicy === undefined) {
 
 <template>
     <div class="flex flex-col">
-        <div class="hero absolute inset-0 z-[-1] [mask-image:radial-gradient(100%_100%_at_top,white,transparent)]" />
+        <div class="hero absolute inset-0 z-[-1] mask-[radial-gradient(100%_100%_at_top,white,transparent)]" />
 
         <div class="w-full flex-1">
-            <ULandingHero
+            <UPageHero
                 :title="$t('common.redirecting_to', [$t('common.privacy_policy')])"
                 :links="[
                     {

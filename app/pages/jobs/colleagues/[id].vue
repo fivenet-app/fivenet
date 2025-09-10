@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { TypedRouteFromName } from '@typed-router';
 import ColleagueInfo from '~/components/jobs/colleagues/info/ColleagueInfo.vue';
-import PagesJobsLayout from '~/components/jobs/PagesJobsLayout.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -13,11 +12,11 @@ import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { GetColleagueResponse } from '~~/gen/ts/services/jobs/jobs';
 
 useHead({
-    title: 'pages.jobs.colleagues.single.title',
+    title: 'pages.jobs.colleagues.id.title',
 });
 
 definePageMeta({
-    title: 'pages.jobs.colleagues.single.title',
+    title: 'pages.jobs.colleagues.id.title',
     requiresAuth: true,
     permission: 'jobs.JobsService/GetColleague',
     redirect: { name: 'jobs-colleagues-id-info' },
@@ -62,6 +61,13 @@ async function getColleague(userId: number): Promise<GetColleagueResponse> {
     }
 }
 
+useHead({
+    title: () =>
+        colleague.value?.colleague
+            ? `${colleague.value.colleague.firstname} ${colleague.value.colleague.lastname} (${colleague.value.colleague.dateofbirth} - ${t('pages.jobs.colleagues.id.title')}`
+            : t('pages.jobs.colleagues.id.title'),
+});
+
 function updateColleageAbsence(value: { userId: number; absenceBegin?: Timestamp; absenceEnd?: Timestamp }): void {
     if (colleague.value?.colleague === undefined) {
         return;
@@ -83,13 +89,13 @@ const { sendClientView } = useClientUpdate(ObjectType.JOBS_COLLEAGUE, () =>
     notifications.add({
         title: { key: 'notifications.jobs.colleague.client_view_update.title', parameters: {} },
         description: { key: 'notifications.jobs.colleague.client_view_update.content', parameters: {} },
-        timeout: 7500,
+        duration: 7500,
         type: NotificationType.INFO,
         actions: [
             {
                 label: { key: 'common.refresh', parameters: {} },
                 icon: 'i-mdi-refresh',
-                click: () => refresh(),
+                onClick: () => refresh(),
             },
         ],
     }),
@@ -134,31 +140,35 @@ const links = computed(() =>
 </script>
 
 <template>
-    <PagesJobsLayout>
-        <template #default>
-            <UDashboardPanelContent>
-                <DataPendingBlock
-                    v-if="!colleague && isRequestPending(status)"
-                    :message="$t('common.loading', [$t('common.colleague', 1)])"
+    <UDashboardPanel :ui="{ root: 'min-h-0', body: 'p-0 sm:p-0 gap-0 sm:gap-0 overflow-y-hidden' }">
+        <template #header>
+            <UDashboardToolbar>
+                <ColleagueInfo
+                    v-if="colleague?.colleague"
+                    :colleague="colleague.colleague"
+                    @update:absence-dates="updateColleageAbsence($event)"
                 />
-                <DataErrorBlock
-                    v-else-if="error"
-                    :title="$t('common.unable_to_load', [$t('common.colleague', 1)])"
-                    :error="error"
-                    :retry="refresh"
-                />
-                <DataNoDataBlock v-else-if="!colleague || !colleague.colleague" />
+            </UDashboardToolbar>
 
-                <template v-else>
-                    <ColleagueInfo :colleague="colleague.colleague" @update:absence-dates="updateColleageAbsence($event)" />
-
-                    <UDashboardToolbar class="overflow-x-auto px-1.5 py-0">
-                        <UHorizontalNavigation :links="links" />
-                    </UDashboardToolbar>
-
-                    <NuxtPage :colleague="colleague.colleague" @refresh="refresh()" />
-                </template>
-            </UDashboardPanelContent>
+            <UDashboardToolbar>
+                <UNavigationMenu orientation="horizontal" :items="links" />
+            </UDashboardToolbar>
         </template>
-    </PagesJobsLayout>
+
+        <template #body>
+            <DataPendingBlock
+                v-if="!colleague && isRequestPending(status)"
+                :message="$t('common.loading', [$t('common.colleague', 1)])"
+            />
+            <DataErrorBlock
+                v-else-if="error"
+                :title="$t('common.unable_to_load', [$t('common.colleague', 1)])"
+                :error="error"
+                :retry="refresh"
+            />
+            <DataNoDataBlock v-else-if="!colleague || !colleague.colleague" />
+
+            <NuxtPage v-else :colleague="colleague.colleague" @refresh="() => refresh()" />
+        </template>
+    </UDashboardPanel>
 </template>

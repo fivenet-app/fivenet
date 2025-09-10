@@ -52,32 +52,32 @@ const groupedLayers = computed(() => {
 
 <template>
     <LControl position="topright">
-        <UTooltip :text="$t('common.layer', 2)" :popper="{ placement: 'left' }">
-            <UPopover :popper="{ arrow: true }" :ui="{ arrow: { base: 'mt-2' } }">
+        <UTooltip :text="$t('common.layer', 2)">
+            <UPopover :ui="{ content: 'w-full' }">
                 <UButton
                     class="border border-black/20 bg-clip-padding p-1.5 hover:bg-[#f4f4f4]"
                     size="xl"
                     icon="i-mdi-layers-triple"
-                    :ui="{ icon: { base: '!size-8' } }"
+                    :ui="{ leadingIcon: 'size-8!' }"
                 />
 
-                <template #panel>
-                    <div class="w-full max-w-sm divide-y divide-gray-100 py-1 dark:divide-gray-800">
+                <template #content>
+                    <div class="w-full max-w-xl divide-y divide-gray-100 py-1 dark:divide-gray-800">
                         <div class="px-1">
-                            <p class="truncate text-sm font-bold text-gray-900 dark:text-white">
+                            <p class="truncate text-sm font-bold text-highlighted">
                                 {{ $t('common.layer', 2) }}
                             </p>
 
                             <URadioGroup
                                 v-model="livemapTileLayer"
                                 class="overflow-y-hidden"
-                                :options="tileLayers"
-                                value-attribute="key"
+                                :items="tileLayers"
+                                value-key="key"
                                 :ui-radio="{ inner: 'ms-1' }"
                                 :ui="{ fieldset: 'grid auto-cols-auto grid-flow-col gap-1' }"
                             >
-                                <template #label="{ option }">
-                                    <span class="truncate">{{ $t(option.label) }}</span>
+                                <template #label="{ item }">
+                                    {{ $t(item.label) }}
                                 </template>
                             </URadioGroup>
                         </div>
@@ -85,13 +85,13 @@ const groupedLayers = computed(() => {
                         <p v-if="Object.keys(groupedLayers).length === 0" class="truncate">
                             {{ $t('common.layers', 0) }}
                         </p>
-                        <div v-else class="grid auto-cols-auto grid-flow-col divide-x divide-gray-100 dark:divide-gray-800">
+                        <div v-else class="grid auto-cols-auto grid-flow-col divide-x divide-default">
                             <div
                                 v-for="(category, key) in groupedLayers"
                                 :key="key"
                                 class="grid min-w-0 grid-flow-row auto-rows-min gap-1 px-1"
                             >
-                                <p class="truncate text-sm font-bold text-gray-900 dark:text-white">
+                                <p class="truncate text-sm font-bold text-highlighted">
                                     {{ category.category?.label ?? $t('common.na') }}
                                 </p>
 
@@ -100,7 +100,8 @@ const groupedLayers = computed(() => {
                                     :key="layer.key"
                                     class="inline-flex gap-1 overflow-y-hidden"
                                 >
-                                    <UToggle v-model="layer.visible" :disabled="!!layer.disabled" />
+                                    <USwitch v-model="layer.visible" :disabled="!!layer.disabled" />
+
                                     <span class="truncate hover:line-clamp-2">{{ layer.label }}</span>
                                 </div>
                             </div>

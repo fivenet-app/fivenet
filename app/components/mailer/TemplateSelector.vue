@@ -48,17 +48,10 @@ const selectedTemplate = ref<Template | undefined>(undefined);
             v-if="!selectedTemplate"
             v-model="selectedTemplate"
             class="min-w-48"
-            :options="templates?.templates"
-            option-attribute="title"
-            by="id"
-            searchable
+            :items="templates?.templates"
             :placeholder="$t('common.template')"
             v-bind="$attrs"
         >
-            <template #option-empty="{ query: search }">
-                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-            </template>
-
             <template #empty>
                 {{ $t('common.not_found', [$t('common.template', 2)]) }}
             </template>

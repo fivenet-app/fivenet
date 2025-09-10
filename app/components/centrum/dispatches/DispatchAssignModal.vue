@@ -10,12 +10,14 @@ const props = defineProps<{
     dispatchId: number;
 }>();
 
+const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
+
 const centrumStore = useCentrumStore();
 const { dispatches, getSortedUnits } = storeToRefs(centrumStore);
 
 const dispatch = computed(() => dispatches.value.get(props.dispatchId));
-
-const { isOpen } = useModal();
 
 const centrumCentrumClient = await getCentrumCentrumClient();
 
@@ -56,7 +58,7 @@ async function assignDispatch(): Promise<void> {
 
         state.units.length = 0;
 
-        isOpen.value = false;
+        emit('close', false);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -118,33 +120,18 @@ const onSubmitThrottle = useThrottleFn(async () => {
     canSubmit.value = false;
     await assignDispatch().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl', margin: 'sm:my-2' }">
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard
-                class="flex flex-1 flex-col"
-                :ui="{
-                    body: {
-                        base: 'flex-1 h-full max-h-[calc(100dvh-(3*var(--header-height)))] overflow-y-auto',
-                        padding: 'px-1 py-2 sm:p-2',
-                    },
-                    ring: '',
-                    divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-                }"
-            >
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="inline-flex items-center text-2xl font-semibold leading-6">
-                            {{ $t('components.centrum.assign_dispatch.title') }}:
-                            <IDCopyBadge :id="dispatch?.id ?? dispatchId" class="ml-2" prefix="DSP" />
-                        </h3>
+    <UModal :title="$t('components.centrum.assign_dispatch.title')">
+        <template #actions>
+            <IDCopyBadge :id="dispatch?.id ?? dispatchId" class="ml-2" prefix="DSP" />
+        </template>
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                    </div>
-                </template>
-
+        <template #body>
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <div class="flex flex-1 flex-col justify-between gap-1 px-2">
                     <template v-for="group in grouped" :key="group.key">
                         <h3 class="text-sm">
@@ -155,7 +142,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             <UButton
                                 v-for="unit in group.units"
                                 :key="unit.name"
-                                class="hover:bg-primary-100/10 inline-flex flex-row items-center gap-x-1 rounded-md p-1.5 text-sm font-medium hover:transition-all"
+                                class="inline-flex flex-row items-center gap-x-1 rounded-md p-1.5 text-sm font-medium hover:bg-primary-100/10 hover:transition-all"
                                 :class="[
                                     unitStatusToBGColor(unit.status?.status),
                                     unit.users.length === 0 ? '!bg-error-600' : '',
@@ -184,19 +171,22 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         </div>
                     </template>
                 </div>
+            </UForm>
+        </template>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="black" block @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.update') }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                <UButton
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :label="$t('common.update')"
+                    @click="formRef?.submit()"
+                />
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

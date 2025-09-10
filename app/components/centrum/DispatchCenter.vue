@@ -39,64 +39,77 @@ onBeforeRouteLeave(async (to) => {
 </script>
 
 <template>
-    <UDashboardPanel grow>
-        <UDashboardNavbar :title="$t('common.dispatch_center')">
-            <template #right>
-                <ClientOnly>
-                    <DispatcherInfo />
-                </ClientOnly>
-            </template>
-        </UDashboardNavbar>
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+        <template #header>
+            <UDashboardNavbar :title="$t('common.dispatch_center')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
 
-        <div class="max-h-[calc(100dvh-var(--header-height))] min-h-[calc(100dvh-var(--header-height))] w-full overflow-hidden">
-            <Splitpanes>
-                <Pane :min-size="25">
-                    <div class="relative size-full">
-                        <div v-if="error" class="absolute inset-0 z-30 flex items-center justify-center bg-gray-600/70">
-                            <DataErrorBlock
-                                :title="$t('components.centrum.dispatch_center.failed_datastream')"
-                                :error="error"
-                                :retry="startStream"
-                            />
+                <template #right>
+                    <ClientOnly>
+                        <DispatcherInfo />
+                    </ClientOnly>
+                </template>
+            </UDashboardNavbar>
+        </template>
+
+        <template #body>
+            <div
+                class="max-h-[calc(100dvh-var(--ui-header-height))] min-h-[calc(100dvh-var(--ui-header-height))] w-full overflow-hidden"
+            >
+                <Splitpanes>
+                    <Pane :min-size="25">
+                        <div class="relative size-full">
+                            <div v-if="error" class="absolute inset-0 z-30 flex items-center justify-center bg-neutral-600/70">
+                                <DataErrorBlock
+                                    :title="$t('components.centrum.dispatch_center.failed_datastream')"
+                                    :error="error"
+                                    :retry="startStream"
+                                />
+                            </div>
+
+                            <LivemapBase :show-unit-names="true" :show-unit-status="true">
+                                <template #default>
+                                    <DispatchLayer
+                                        v-if="can('centrum.CentrumService/Stream').value"
+                                        :show-all-dispatches="true"
+                                    />
+                                </template>
+                            </LivemapBase>
                         </div>
+                    </Pane>
 
-                        <LivemapBase :show-unit-names="true" :show-unit-status="true">
-                            <template #default>
-                                <DispatchLayer v-if="can('centrum.CentrumService/Stream').value" :show-all-dispatches="true" />
-                            </template>
-                        </LivemapBase>
-                    </div>
-                </Pane>
-
-                <Pane :min-size="40" :size="70">
-                    <Splitpanes horizontal>
-                        <Pane :size="58" :min-size="2">
-                            <DispatchList :show-button="true" />
-                        </Pane>
-                        <Pane :size="26" :min-size="2">
-                            <UnitList />
-                        </Pane>
-                        <Pane :size="8" :min-size="2">
-                            <MarkerList />
-                        </Pane>
-                        <Pane :size="8" :min-size="2">
-                            <Feed :items="feed" />
-                        </Pane>
-                    </Splitpanes>
-                </Pane>
-            </Splitpanes>
-        </div>
+                    <Pane :min-size="40" :size="70">
+                        <Splitpanes horizontal>
+                            <Pane :size="58" :min-size="2">
+                                <DispatchList :show-button="true" />
+                            </Pane>
+                            <Pane :size="26" :min-size="2">
+                                <UnitList />
+                            </Pane>
+                            <Pane :size="8" :min-size="2">
+                                <MarkerList />
+                            </Pane>
+                            <Pane :size="8" :min-size="2">
+                                <Feed :items="feed" />
+                            </Pane>
+                        </Splitpanes>
+                    </Pane>
+                </Splitpanes>
+            </div>
+        </template>
     </UDashboardPanel>
 </template>
 
 <style>
 .splitpanes--vertical > .splitpanes__splitter {
     min-width: 2px;
-    background-color: rgb(var(--color-gray-800));
+    background-color: var(--color-gray-800);
 }
 
 .splitpanes--horizontal > .splitpanes__splitter {
     min-height: 2px;
-    background-color: rgb(var(--color-gray-800));
+    background-color: var(--color-gray-800);
 }
 </style>

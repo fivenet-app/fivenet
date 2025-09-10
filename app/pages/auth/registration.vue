@@ -17,15 +17,15 @@ const { login } = useAppConfig();
 
 onBeforeMount(() => {
     if (!login.signupEnabled) {
-        navigateTo({ name: 'auth-login' });
+        navigateTo('/auth/login');
     }
 });
 </script>
 
 <template>
-    <UCard class="w-full max-w-sm bg-white/75 backdrop-blur dark:bg-white/5">
+    <UPageCard class="w-full max-w-sm bg-white/75 backdrop-blur-sm dark:bg-white/5">
         <FiveNetLogo class="mx-auto mb-2 h-auto w-20" />
 
         <RegistrationForm />
-    </UCard>
+    </UPageCard>
 </template>

@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import ColleagueList from '~/components/jobs/colleagues/ColleagueList.vue';
-import PagesJobsLayout from '~/components/jobs/PagesJobsLayout.vue';
+import List from '~/components/jobs/colleagues/List.vue';
 
 useHead({
     title: 'pages.jobs.colleagues.title',
@@ -14,9 +13,5 @@ definePageMeta({
 </script>
 
 <template>
-    <PagesJobsLayout>
-        <template #default>
-            <ColleagueList />
-        </template>
-    </PagesJobsLayout>
+    <List />
 </template>

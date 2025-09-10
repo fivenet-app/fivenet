@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import type { TableColumn } from '@nuxt/ui';
 import { type ClipboardDocument, useClipboardStore } from '~/stores/clipboard';
 import type { ObjectSpecs } from '~~/gen/ts/resources/documents/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -24,25 +24,16 @@ const emit = defineEmits<{
     (e: 'close'): void;
 }>();
 
+const { t } = useI18n();
+
 const clipboardStore = useClipboardStore();
 const notifications = useNotificationsStore();
 
 const { documents } = storeToRefs(clipboardStore);
 
-const selected = ref<ClipboardDocument[]>([]);
+const selected = ref<number[]>([]);
 
-async function select(item: ClipboardDocument): Promise<void> {
-    const idx = selected.value.indexOf(item);
-    if (idx !== undefined && idx > -1) {
-        selected.value.splice(idx, 1);
-    } else {
-        // If specs are defined and max is set, clear the selection if we are over the limit
-        if (props.specs && props.specs.max !== undefined && props.specs.max > 0 && selected.value.length >= props.specs.max) {
-            selected.value.splice(0, props.specs.max);
-        }
-        selected.value.push(item);
-    }
-
+async function select(): Promise<void> {
     const selectedLength = selected.value.length;
     if (props.specs) {
         if (props.specs.min !== undefined && selectedLength >= props.specs.min) {
@@ -57,18 +48,20 @@ async function select(item: ClipboardDocument): Promise<void> {
     }
 }
 
-async function remove(item: ClipboardDocument, notify: boolean): Promise<void> {
+watch(selected, () => select());
+
+async function remove(item: number, notify: boolean): Promise<void> {
     const idx = selected.value.indexOf(item);
     if (idx !== undefined && idx > -1) {
         selected.value.splice(idx, 1);
     }
 
-    clipboardStore.removeDocument(item.id);
+    clipboardStore.removeDocument(item);
     if (notify) {
         notifications.add({
             title: { key: 'notifications.clipboard.document_removed.title', parameters: {} },
             description: { key: 'notifications.clipboard.document_removed.content', parameters: {} },
-            timeout: 3250,
+            duration: 3250,
             type: NotificationType.INFO,
         });
     }
@@ -91,18 +84,45 @@ async function removeAll(): Promise<void> {
     notifications.add({
         title: { key: 'notifications.clipboard.documents_removed.title', parameters: {} },
         description: { key: 'notifications.clipboard.documents_removed.content', parameters: {} },
-        timeout: 3250,
+        duration: 3250,
         type: NotificationType.INFO,
     });
 }
+
+const columns = computed(() =>
+    (
+        [
+            props.showSelect
+                ? {
+                      id: 'actions',
+                  }
+                : undefined,
+            {
+                accesssorKey: 'title',
+                header: t('common.title'),
+                cell: ({ row }) => h('span', { class: 'text-highlighted' }, row.original.title),
+            },
+            {
+                accesssorKey: 'creator',
+                header: t('common.creator'),
+                cell: ({ row }) => h('span', {}, `${row.original.creator?.firstname} ${row.original.creator?.lastname}`),
+            },
+            {
+                id: 'delete',
+            },
+        ] as TableColumn<ClipboardDocument>[]
+    ).filter((c) => c !== undefined),
+);
 
 watch(props, async (newVal) => {
     if (newVal.submit) {
         if (clipboardStore.activeStack) {
             clipboardStore.activeStack.documents.length = 0;
-            selected.value.forEach((v) => clipboardStore.activeStack.documents.push(v));
+            selected.value.forEach((v) =>
+                clipboardStore.activeStack.documents.push(clipboardStore.documents.find((d) => d.id === v)!),
+            );
         } else if (documents.value && documents.value[0]) {
-            selected.value.unshift(documents.value[0]);
+            selected.value.unshift(documents.value[0].id);
         }
     }
 });
@@ -115,75 +135,39 @@ watch(props, async (newVal) => {
             <slot name="header" />
         </h3>
 
-        <DataNoDataBlock
-            v-if="documents?.length === 0"
-            icon="i-mdi-file-document-multiple"
-            :message="$t('components.clipboard.clipboard_modal.no_data', [$t('common.document', 2)])"
-            :focus="
-                async () => {
-                    navigateTo({ name: 'documents' });
-                    $emit('close');
-                }
-            "
-        />
-        <table v-else class="min-w-full divide-y divide-gray-700">
-            <thead>
-                <tr>
-                    <th v-if="showSelect" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1" scope="col">
-                        {{ $t('common.select', 1) }}
-                    </th>
-                    <th class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1" scope="col">
-                        {{ $t('common.title') }}
-                    </th>
-                    <th class="px-3 py-3.5 text-left text-sm font-semibold" scope="col">
-                        {{ $t('common.creator') }}
-                    </th>
-                    <th class="relative py-3.5 pl-3 pr-4 sm:pr-0" scope="col">
-                        <span class="sr-only">{{ $t('common.action', 2) }}</span>
-                        <UTooltip v-if="selected.length > 0" :text="$t('common.delete')">
-                            <UButton variant="link" icon="i-mdi-delete" color="error" @click="removeAll()" />
-                        </UTooltip>
-                    </th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-800">
-                <tr v-for="item in documents" :key="item.id">
-                    <td v-if="showSelect" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-1">
-                        <UButton
-                            v-if="specs && specs.max === 1"
-                            block
-                            :color="selected.includes(item) ? 'gray' : 'primary'"
-                            @click="select(item)"
-                        >
-                            {{
-                                !selected.includes(item)
-                                    ? $t('common.select', 1).toUpperCase()
-                                    : $t('common.select', 2).toUpperCase()
-                            }}
-                        </UButton>
-                        <UCheckbox
-                            v-else
-                            :key="item.id"
-                            v-model="selected"
-                            name="selected"
-                            :checked="selected.includes(item)"
-                            :value="item"
-                            @click="select(item)"
-                        />
-                    </td>
-                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-1">
-                        {{ item.title }}
-                    </td>
-                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
-                        {{ item.creator.firstname }} {{ item.creator.lastname }}
-                    </td>
-                    <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                        <UTooltip :text="$t('common.delete')">
-                            <UButton variant="link" icon="i-mdi-delete" color="error" @click="remove(item, true)" />
-                        </UTooltip>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <UTable :columns="columns" :data="documents" :empty="$t('common.not_found', [$t('common.citizen', 2)])">
+            <template #actions-cell="{ row }">
+                <URadioGroup
+                    v-if="specs && specs.max && specs.max === 1"
+                    :model-value="selected[0]"
+                    name="selected"
+                    :items="[row.original.id]"
+                    value-key="id"
+                    :ui="{ label: 'hidden' }"
+                    @update:model-value="(v) => (selected = [parseInt(v)])"
+                />
+                <UCheckboxGroup
+                    v-else
+                    :key="row.original.id"
+                    v-model="selected"
+                    name="selected"
+                    :items="[row.original.id!]"
+                    value-key="id"
+                    :ui="{ label: 'hidden' }"
+                />
+            </template>
+
+            <template v-if="selected.length > 0" #actions-header>
+                <UTooltip :text="$t('common.delete')">
+                    <UButton variant="link" icon="i-mdi-delete" color="error" size="xs" @click="removeAll()" />
+                </UTooltip>
+            </template>
+
+            <template #delete-cell="{ row }">
+                <UTooltip :text="$t('common.delete')">
+                    <UButton variant="link" icon="i-mdi-delete" color="error" @click="remove(row.original.id!, true)" />
+                </UTooltip>
+            </template>
+        </UTable>
     </div>
 </template>

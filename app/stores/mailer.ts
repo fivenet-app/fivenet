@@ -1,3 +1,4 @@
+import type { NotificationActionI18n } from '~/types/notifications';
 import { getMailerMailerClient } from '~~/gen/ts/clients';
 import type { Email } from '~~/gen/ts/resources/mailer/email';
 import type { MailerEvent } from '~~/gen/ts/resources/mailer/events';
@@ -763,7 +764,7 @@ export const useMailerStore = defineStore(
             return [
                 {
                     label: { key: 'common.click_here' },
-                    to: threadId ? { name: 'mail', query: { thread: threadId }, hash: '#' } : { name: 'mail' },
+                    to: threadId ? { name: 'mail-thread', query: { thread: threadId }, hash: '#' } : { name: 'mail-thread' },
                 },
             ];
         };

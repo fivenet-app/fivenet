@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { BadgeColor } from '#ui/types';
+import type { BadgeProps } from '@nuxt/ui';
 import { isSameDay } from 'date-fns';
 import EntryCreateOrUpdateModal from '~/components/calendar/entry/EntryCreateOrUpdateModal.vue';
 import { checkCalendarAccess } from '~/components/calendar/helpers';
@@ -20,8 +20,11 @@ const props = defineProps<{
     entryId: number;
 }>();
 
-const modal = useModal();
-const { isOpen } = useSlideover();
+defineEmits<{
+    close: [boolean];
+}>();
+
+const overlay = useOverlay();
 
 const { can } = useAuth();
 
@@ -38,7 +41,7 @@ const { data, status, refresh, error } = useLazyAsyncData(`calendar-entry:${prop
 
 const entry = computed(() => data.value?.entry);
 
-const color = computed(() => (entry.value?.calendar?.color ?? 'primary') as BadgeColor);
+const color = computed(() => (entry.value?.calendar?.color ?? 'primary') as BadgeProps['color']);
 
 function copyLinkToClipboard(): void {
     copyToClipboardWrapper(`${w.location.href}?entry_id=${props.entryId}`);
@@ -46,7 +49,7 @@ function copyLinkToClipboard(): void {
     notifications.add({
         title: { key: 'notifications.clipboard.link_copied.title', parameters: {} },
         description: { key: 'notifications.clipboard.link_copied.content', parameters: {} },
-        timeout: 3250,
+        duration: 3250,
         type: NotificationType.INFO,
     });
 }
@@ -56,74 +59,51 @@ const canDo = computed(() => ({
     edit: checkCalendarAccess(data.value?.entry?.calendar?.access, entry.value?.creator, AccessLevel.EDIT),
     manage: checkCalendarAccess(data.value?.entry?.calendar?.access, entry.value?.creator, AccessLevel.MANAGE),
 }));
+
+const confirmModal = overlay.create(ConfirmModal);
+const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
 </script>
 
 <template>
-    <USlideover :ui="{ width: 'w-screen sm:max-w-2xl' }" :overlay="false">
-        <UCard
-            class="flex flex-1 flex-col"
-            :ui="{
-                body: {
-                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--header-height)))] max-h-[calc(100dvh-(2*var(--header-height)))] overflow-y-auto',
-                    padding: 'px-1 py-2 sm:p-2',
-                },
-                ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-            }"
-        >
-            <template #header>
-                <div class="flex flex-col gap-1">
-                    <div class="flex items-center justify-between">
-                        <h3 class="inline-flex gap-2 text-2xl font-semibold leading-6">
-                            <span>{{ entry?.title ?? $t('common.appointment', 1) }}</span>
+    <USlideover :title="entry?.title ?? $t('common.appointment', 1)" :overlay="false">
+        <template #actions>
+            <div class="flex items-center justify-between gap-2">
+                <UTooltip
+                    v-if="entry && can('calendar.CalendarService/CreateCalendar').value && canDo.edit"
+                    :text="$t('common.edit')"
+                >
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-pencil"
+                        @click="
+                            entryCreateOrUpdateModal.open({
+                                calendarId: entry?.calendarId,
+                                entryId: entry?.id,
+                            })
+                        "
+                    />
+                </UTooltip>
 
-                            <UTooltip
-                                v-if="entry && can('calendar.CalendarService/CreateCalendar').value && canDo.edit"
-                                :text="$t('common.edit')"
-                            >
-                                <UButton
-                                    variant="link"
-                                    :padded="false"
-                                    icon="i-mdi-pencil"
-                                    @click="
-                                        modal.open(EntryCreateOrUpdateModal, {
-                                            calendarId: entry?.calendarId,
-                                            entryId: entry?.id,
-                                        })
-                                    "
-                                />
-                            </UTooltip>
+                <UTooltip v-if="entry && canDo.manage" :text="$t('common.delete')">
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-delete"
+                        color="error"
+                        @click="
+                            confirmModal.open({
+                                confirm: async () => calendarStore.deleteCalendarEntry(entry?.id!),
+                            })
+                        "
+                    />
+                </UTooltip>
 
-                            <UTooltip v-if="entry && canDo.manage" :text="$t('common.delete')">
-                                <UButton
-                                    variant="link"
-                                    :padded="false"
-                                    icon="i-mdi-delete"
-                                    color="error"
-                                    @click="
-                                        modal.open(ConfirmModal, {
-                                            confirm: async () => calendarStore.deleteCalendarEntry(entry?.id!),
-                                        })
-                                    "
-                                />
-                            </UTooltip>
-                        </h3>
-
-                        <div class="inline-flex gap-2">
-                            <UButton class="-my-1" icon="i-mdi-share" @click="copyLinkToClipboard()" />
-
-                            <UButton
-                                class="-my-1"
-                                color="gray"
-                                variant="ghost"
-                                icon="i-mdi-window-close"
-                                @click="isOpen = false"
-                            />
-                        </div>
-                    </div>
+                <div class="inline-flex gap-2">
+                    <UButton icon="i-mdi-share" @click="copyLinkToClipboard()" />
                 </div>
-            </template>
+            </div>
+        </template>
 
+        <template #body>
             <div class="flex h-full flex-1 flex-col">
                 <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.entry', 1)])" />
                 <DataErrorBlock
@@ -136,61 +116,52 @@ const canDo = computed(() => ({
 
                 <template v-else>
                     <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
-                        <UBadge class="inline-flex items-center gap-1" color="black" size="lg">
-                            <UIcon class="size-5" name="i-mdi-access-time" />
-                            <span>
-                                {{ $t('common.date') }}
-                                <GenericTime :value="entry?.startTime" type="long" />
-                                <template v-if="entry.endTime">
-                                    -
-                                    <GenericTime
-                                        :value="entry?.endTime"
-                                        :type="isSameDay(toDate(entry?.startTime), toDate(entry?.endTime)) ? 'time' : 'long'"
-                                    />
-                                </template>
-                            </span>
+                        <UBadge class="inline-flex items-center gap-1" color="neutral" size="lg" icon="i-mdi-access-time">
+                            {{ $t('common.date') }}
+                            <GenericTime :value="entry?.startTime" type="long" />
+                            <template v-if="entry.endTime">
+                                -
+                                <GenericTime
+                                    :value="entry?.endTime"
+                                    :type="isSameDay(toDate(entry?.startTime), toDate(entry?.endTime)) ? 'time' : 'long'"
+                                />
+                            </template>
                         </UBadge>
 
-                        <UBadge class="inline-flex items-center gap-1" color="black" size="md">
-                            <UIcon class="size-5" name="i-mdi-calendar" />
-                            <span>
-                                {{ $t('common.calendar') }}
-                                <UBadge :color="color" :ui="{ rounded: 'rounded-full' }" size="lg" />
+                        <UBadge class="inline-flex items-center gap-1" color="neutral" size="md" icon="i-mdi-calendar">
+                            {{ $t('common.calendar') }}
+                            <UBadge :color="color" size="lg" />
 
-                                {{ entry.calendar?.name ?? $t('common.na') }}
-                            </span>
+                            {{ entry.calendar?.name ?? $t('common.na') }}
                         </UBadge>
                     </div>
 
                     <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
                         <OpenClosedBadge :closed="entry.closed" />
 
-                        <UBadge class="inline-flex gap-1" color="black" size="md">
-                            <UIcon class="size-5" name="i-mdi-account" />
-                            <span class="inline-flex items-center gap-1">
-                                <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
-                                <CitizenInfoPopover :user="entry.creator" show-avatar-in-name />
-                            </span>
+                        <UBadge class="inline-flex gap-1" color="neutral" size="md" icon="i-mdi-account">
+                            <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
+                            <CitizenInfoPopover :user="entry.creator" show-avatar-in-name />
                         </UBadge>
 
-                        <UBadge class="inline-flex gap-1" color="black" size="md">
-                            <UIcon class="size-5" name="i-mdi-calendar" />
-                            <span>
-                                {{ $t('common.created_at') }}
-                                <GenericTime :value="entry.createdAt" type="long" />
-                            </span>
+                        <UBadge class="inline-flex gap-1" color="neutral" size="md" icon="i-mdi-calendar">
+                            {{ $t('common.created_at') }}
+                            <GenericTime :value="entry.createdAt" type="long" />
                         </UBadge>
 
-                        <UBadge v-if="entry.updatedAt" class="inline-flex gap-1" color="black" size="md">
-                            <UIcon class="size-5" name="i-mdi-calendar-edit" />
-                            <span>
-                                {{ $t('common.updated_at') }}
-                                <GenericTime :value="entry.updatedAt" type="long" />
-                            </span>
+                        <UBadge
+                            v-if="entry.updatedAt"
+                            class="inline-flex gap-1"
+                            color="neutral"
+                            size="md"
+                            icon="i-mdi-calendar-edit"
+                        >
+                            {{ $t('common.updated_at') }}
+                            <GenericTime :value="entry.updatedAt" type="long" />
                         </UBadge>
                     </div>
 
-                    <UDivider />
+                    <USeparator />
 
                     <template v-if="entry.rsvpOpen">
                         <EntryRSVPList
@@ -202,23 +173,23 @@ const canDo = computed(() => ({
                             :can-share="canDo.share"
                         />
 
-                        <UDivider />
+                        <USeparator />
                     </template>
 
-                    <div class="mx-auto w-full max-w-screen-xl break-words rounded-lg bg-neutral-100 dark:bg-base-900">
-                        <HTMLContent v-if="entry.content?.content" class="px-4 py-2" :value="entry.content.content" />
+                    <div
+                        class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-900"
+                    >
+                        <HTMLContent v-if="entry.content?.content" :value="entry.content.content" />
                     </div>
                 </template>
             </div>
+        </template>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" color="black" block @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
-                </UButtonGroup>
-            </template>
-        </UCard>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
+            </UButtonGroup>
+        </template>
     </USlideover>
 </template>
 

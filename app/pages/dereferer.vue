@@ -41,17 +41,15 @@ const target = route.query.target as string;
 </script>
 
 <template>
-    <div class="flex h-dscreen flex-col">
-        <div class="hero absolute inset-0 z-[-1] [mask-image:radial-gradient(100%_100%_at_top,white,transparent)]" />
+    <div class="flex h-dvh flex-col">
+        <div class="hero absolute inset-0 z-[-1] mask-[radial-gradient(100%_100%_at_top,white,transparent)]" />
 
         <div class="flex w-full flex-1 items-center justify-center">
-            <UCard class="w-full max-w-lg bg-white/75 backdrop-blur dark:bg-white/5">
+            <UCard class="w-full max-w-lg bg-white/75 backdrop-blur-sm dark:bg-white/5">
                 <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
-                            {{ $t('pages.dereferer.title') }} - {{ $t('pages.dereferer.subtitle') }}
-                        </h3>
-                    </div>
+                    <h3 class="text-2xl leading-6 font-semibold">
+                        {{ $t('pages.dereferer.title') }} - {{ $t('pages.dereferer.subtitle') }}
+                    </h3>
                 </template>
 
                 <p>{{ $t('pages.dereferer.description') }}</p>

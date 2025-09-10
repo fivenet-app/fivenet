@@ -11,11 +11,11 @@ defineProps<{
 
 <template>
     <li
-        class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 relative flex justify-between border-white px-2 py-2 sm:px-4 dark:border-gray-900"
+        class="relative flex justify-between border-white p-2 hover:border-primary-500/25 hover:bg-primary-100/50 sm:px-4 dark:border-neutral-900 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
     >
         <div class="flex min-w-0 gap-x-2">
             <div class="min-w-0 flex-auto">
-                <p class="text-sm font-semibold leading-6 text-gray-100">
+                <p class="text-sm leading-6 font-semibold text-toned">
                     <ULink
                         class="inline-flex items-center gap-2"
                         :to="{ name: 'qualifications-id', params: { id: qualification.id } }"
@@ -26,26 +26,33 @@ defineProps<{
                             {{ !qualification.title ? $t('common.untitled') : qualification.title }}</span
                         >
 
-                        <UBadge v-if="qualification.draft" class="inline-flex gap-1" color="info" size="xs">
-                            <UIcon class="size-5" name="i-mdi-pencil" />
-                            <span>
-                                {{ $t('common.draft') }}
-                            </span>
-                        </UBadge>
+                        <UBadge
+                            v-if="qualification.draft"
+                            class="inline-flex gap-1"
+                            color="info"
+                            size="xs"
+                            icon="i-mdi-pencil"
+                            :label="$t('common.draft')"
+                        />
 
-                        <UBadge v-if="qualification.public" class="inline-flex gap-1" color="black" size="xs">
-                            <UIcon class="size-5" name="i-mdi-earth" />
-                            <span>
-                                {{ $t('common.public') }}
-                            </span>
-                        </UBadge>
+                        <UBadge
+                            v-if="qualification.public"
+                            class="inline-flex gap-1"
+                            color="neutral"
+                            size="xs"
+                            icon="i-mdi-earth"
+                            :label="$t('common.public')"
+                        />
 
-                        <UBadge v-if="qualification?.deletedAt" class="inline-flex gap-1" color="amber" size="xs">
-                            <UIcon class="size-5" name="i-mdi-calendar-remove" />
-                            <span>
-                                {{ $t('common.deleted') }}
-                                <GenericTime :value="qualification?.deletedAt" type="long" />
-                            </span>
+                        <UBadge
+                            v-if="qualification?.deletedAt"
+                            class="inline-flex gap-1"
+                            color="warning"
+                            size="xs"
+                            icon="i-mdi-calendar-remove"
+                        >
+                            {{ $t('common.deleted') }}
+                            <GenericTime :value="qualification?.deletedAt" type="long" />
                         </UBadge>
                     </ULink>
                 </p>
@@ -63,12 +70,10 @@ defineProps<{
                         class="inline-flex gap-1"
                         :color="resultStatusToBadgeColor(qualification.result?.status ?? 0)"
                         size="sm"
+                        icon="i-mdi-list-status"
                     >
-                        <UIcon class="size-5" name="i-mdi-list-status" />
-                        <span>
-                            {{ $t('common.result') }}:
-                            {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`) }}
-                        </span>
+                        {{ $t('common.result') }}:
+                        {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`) }}
                     </UBadge>
 
                     <OpenClosedBadge :closed="qualification.closed" />

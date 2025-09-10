@@ -3,11 +3,11 @@ import type { TypedRouteFromName } from '@typed-router';
 import ExamView from '~/components/qualifications/exam/ExamView.vue';
 
 useHead({
-    title: 'pages.qualifications.single.exam.title',
+    title: 'pages.qualifications.id.exam.title',
 });
 
 definePageMeta({
-    title: 'pages.qualifications.single.exam.title',
+    title: 'pages.qualifications.id.exam.title',
     requiresAuth: true,
     permission: 'qualifications.QualificationsService/ListQualifications',
     validate: async (route) => {
@@ -24,9 +24,5 @@ const route = useRoute('qualifications-id');
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel grow>
-            <ExamView :qualification-id="parseInt(route.params.id)" />
-        </UDashboardPanel>
-    </UDashboardPage>
+    <ExamView :qualification-id="parseInt(route.params.id)" />
 </template>

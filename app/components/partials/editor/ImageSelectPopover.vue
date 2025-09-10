@@ -1,10 +1,9 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import type { Editor } from '@tiptap/vue-3';
 import { z } from 'zod';
+import { safeImagePaths } from '~/types/editor';
 import { remoteImageURLToBase64Data } from './helpers';
-
-const { isOpen } = useModal();
 
 const props = withDefaults(
     defineProps<{
@@ -22,7 +21,8 @@ const props = withDefaults(
     },
 );
 
-defineEmits<{
+const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
     (e: 'openFileList'): void;
 }>();
 
@@ -46,10 +46,16 @@ async function setViaURL(urlOrBlob: string | File): Promise<void> {
         let dataUrl: string | undefined = undefined;
         // If Image Proxy is enabled use it to load the image
         if (featureGates.imageProxy && urlOrBlob.startsWith('http')) {
-            if (props.uploadHandler) {
+            const url = new URL(urlOrBlob);
+            // Check if image is already served by our host and one of the paths
+            const isSameHost = url.host === window.location.host;
+            const isServedPath = safeImagePaths.some((path) => url.pathname.startsWith(path));
+            if (isSameHost && isServedPath) {
+                url.pathname = url.pathname.replace(/(?<!:)\/\//, '/');
+                dataUrl = urlOrBlob;
+            } else if (props.uploadHandler) {
                 dataUrl = `/api/image_proxy/${urlOrBlob}`;
             } else {
-                const url = new URL(urlOrBlob);
                 dataUrl = await remoteImageURLToBase64Data(`/api/image_proxy/${url.toString()}`);
             }
         } else {
@@ -77,30 +83,20 @@ function setImage(url: string | undefined): void {
         })
         .run();
 
-    isOpen.value = false;
+    emit('close', false);
 }
 
-async function onFilesHandler(files: FileList | File[] | null): Promise<void> {
-    if (!files || !files[0]) {
+async function onFileHandler(file: File | null | undefined): Promise<void> {
+    if (!file) {
         canSubmit.value = true;
         return;
     }
 
-    await setViaURL(files[0]);
+    await setViaURL(file);
 
     canSubmit.value = true;
-    isOpen.value = false;
+    emit('close', false);
 }
-
-const dropZoneRef = useTemplateRef('dropZoneRef');
-
-const { chooseFiles } = useFileSelection({
-    dropzone: dropZoneRef,
-    onFiles: onFilesHandler,
-    // Specify the types of data to be received.
-    allowedDataTypes: fileUpload.types.images,
-    multiple: false,
-});
 
 const open = ref(false);
 
@@ -109,21 +105,26 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
 
     await setViaURL(event.data.url).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+
+    open.value = false;
+    imageState.url = '';
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
     <UPopover v-model:open="open">
-        <UTooltip :text="$t('components.partials.TiptapEditor.image')" :popper="{ placement: 'top' }">
-            <UButton icon="i-mdi-image" color="gray" variant="ghost" :disabled="disabled" />
+        <UTooltip :text="$t('components.partials.TiptapEditor.image')">
+            <UButton icon="i-mdi-image" color="neutral" variant="ghost" :disabled="disabled" />
         </UTooltip>
 
-        <template #panel>
+        <template #content>
             <div class="p-4">
                 <UButtonGroup class="w-full">
                     <UButton
                         class="flex-1"
-                        color="black"
+                        color="neutral"
                         block
                         icon="i-mdi-images"
                         :label="$t('components.partials.TiptapEditor.file_list')"
@@ -133,49 +134,39 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     />
                 </UButtonGroup>
 
-                <UDivider class="my-2" :label="$t('common.or')" orientation="horizontal" />
+                <USeparator class="my-2" :label="$t('common.or')" orientation="horizontal" />
 
-                <UForm :schema="schema" :state="imageState" @submit="onSubmitThrottle">
-                    <UFormGroup :label="$t('common.url')">
-                        <UInput v-model="imageState.url" type="text" />
-                    </UFormGroup>
+                <UForm ref="formRef" :schema="schema" :state="imageState" @submit="onSubmitThrottle">
+                    <UFormField name="url" :label="$t('common.url')">
+                        <UInput v-model="imageState.url" type="text" name="url" class="w-full" :disabled="disabled" />
+                    </UFormField>
 
-                    <UButtonGroup class="mt-2 w-full">
+                    <UFormField class="mt-2 w-full">
                         <UButton
                             class="flex-1"
                             type="submit"
                             icon="i-mdi-image"
-                            :label="$t('common.insert')"
                             :disabled="disabled || !canSubmit || !imageState.url"
                             :loading="disabled || !canSubmit"
+                            :label="$t('common.insert')"
+                            block
+                            @click="formRef?.submit()"
                         />
-                    </UButtonGroup>
+                    </UFormField>
                 </UForm>
 
-                <UDivider class="my-2" :label="$t('common.or')" orientation="horizontal" />
+                <USeparator class="my-2" :label="$t('common.or')" orientation="horizontal" />
 
-                <ULink class="w-full" @click="chooseFiles">
-                    <div ref="dropZoneRef" class="flex w-full items-center justify-center">
-                        <label
-                            class="flex h-48 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-100 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:hover:border-gray-600 dark:hover:bg-gray-700"
-                            for="dropzone-file"
-                        >
-                            <div class="flex flex-col items-center justify-center pb-4 pt-3">
-                                <UIcon
-                                    class="size-14"
-                                    :class="(disabled || !canSubmit) && 'animate-spin'"
-                                    :name="canSubmit ? 'i-mdi-file-upload-outline' : 'i-mdi-loading'"
-                                />
-
-                                <p class="mb-2 px-2 text-base text-gray-500 dark:text-gray-400">
-                                    <span class="font-semibold">{{ $t('common.file_click_to_upload') }}</span>
-                                    {{ $t('common.file_drag_n_drop') }}
-                                </p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $t('common.allowed_file_types') }}</p>
-                            </div>
-                        </label>
-                    </div>
-                </ULink>
+                <UFileUpload
+                    name="file"
+                    :accept="fileUpload.types.images.join(',')"
+                    block
+                    :disabled="disabled || !canSubmit"
+                    :placeholder="$t('common.image')"
+                    :label="$t('common.file_upload_label')"
+                    :description="$t('common.allowed_file_types')"
+                    @update:model-value="($event) => onFileHandler($event)"
+                />
             </div>
         </template>
     </UPopover>

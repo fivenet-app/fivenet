@@ -225,8 +225,8 @@ export const ListConductEntriesRequest = new ListConductEntriesRequest$Type();
 class ListConductEntriesResponse$Type extends MessageType<ListConductEntriesResponse> {
     constructor() {
         super("services.jobs.ListConductEntriesResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "entries", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ConductEntry }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "entries", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ConductEntry, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListConductEntriesResponse>): ListConductEntriesResponse {

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
 import { useSettingsStore } from '~/stores/settings';
@@ -9,12 +9,11 @@ import type { UploadFileResponse } from '~~/gen/ts/resources/file/filestore';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
     (e: 'uploaded', file: File): void;
 }>();
 
 const { fileUpload } = useAppConfig();
-
-const { isOpen } = useModal();
 
 const notifications = useNotificationsStore();
 
@@ -61,7 +60,7 @@ async function upload(values: Schema): Promise<UploadFileResponse | undefined> {
             });
         }
 
-        isOpen.value = false;
+        emit('close', false);
 
         return response;
     } catch (e) {
@@ -75,63 +74,58 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await upload(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
-                            {{ $t('common.upload') }}
-                        </h3>
+    <UModal :title="$t('common.upload')">
+        <template #body>
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UFormField class="flex-1" name="category" :label="$t('common.category')" required>
+                    <ClientOnly>
+                        <USelectMenu
+                            v-model="state.category"
+                            :items="categories"
+                            class="w-full"
+                            :search-input="{ placeholder: $t('common.search_field') }"
+                        />
+                    </ClientOnly>
+                </UFormField>
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                    </div>
-                </template>
+                <UFormField class="flex-1" name="name" :label="$t('common.name')" required>
+                    <UInput v-model="state.name" type="text" name="name" class="w-full" :placeholder="$t('common.name')" />
+                </UFormField>
 
-                <div>
-                    <UFormGroup class="flex-1" name="category" :label="$t('common.category')" required>
-                        <ClientOnly>
-                            <USelectMenu
-                                v-model="state.category"
-                                :options="categories"
-                                :searchable-placeholder="$t('common.search_field')"
-                            />
-                        </ClientOnly>
-                    </UFormGroup>
+                <UFormField class="flex-1" name="file" :label="$t('common.file')">
+                    <NotSupportedTabletBlock v-if="nuiEnabled" />
+                    <UFileUpload
+                        v-else
+                        v-model="state.file"
+                        name="file"
+                        class="w-full"
+                        :accept="fileUpload.types.images.join(',')"
+                        :placeholder="$t('common.image')"
+                        :label="$t('common.file_upload_label')"
+                        :description="$t('common.allowed_file_types')"
+                    />
+                </UFormField>
+            </UForm>
+        </template>
 
-                    <UFormGroup class="flex-1" name="name" :label="$t('common.name')" required>
-                        <UInput v-model="state.name" type="text" name="name" :placeholder="$t('common.name')" />
-                    </UFormGroup>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" block color="neutral" :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
-                    <UFormGroup class="flex-1" name="file" :label="$t('common.file')">
-                        <NotSupportedTabletBlock v-if="nuiEnabled" />
-                        <template v-else>
-                            <UInput
-                                type="file"
-                                name="file"
-                                :accept="fileUpload.types.images.join(',')"
-                                :placeholder="$t('common.image')"
-                                @change="state.file = $event"
-                            />
-                        </template>
-                    </UFormGroup>
-                </div>
-
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" block color="black" @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
-
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.save') }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                <UButton
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :label="$t('common.save')"
+                    @click="() => formRef?.submit()"
+                />
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

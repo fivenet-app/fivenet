@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { ButtonColor, FormSubmitEvent } from '#ui/types';
+import type { ButtonProps, FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 
 const props = withDefaults(
@@ -9,7 +9,7 @@ const props = withDefaults(
         cancel?: () => Promise<unknown> | unknown;
         confirm: (reason: string) => Promise<unknown>;
         icon?: string;
-        color?: ButtonColor;
+        color?: ButtonProps['color'];
         iconClass?: string;
     }>(),
     {
@@ -21,6 +21,10 @@ const props = withDefaults(
         iconClass: 'text-red-500 dark:text-red-400',
     },
 );
+
+const emit = defineEmits<{
+    (e: 'close'): void;
+}>();
 
 const schema = z.object({
     reason: z.string().min(3).max(255),
@@ -37,41 +41,38 @@ const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await props.confirm(event.data.reason).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-    isOpen.value = false;
+    emit('close');
 }, 1000);
 
-const { isOpen } = useModal();
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UDashboardModal
+    <UModal
         :title="title ?? $t('components.partials.confirm_dialog.title')"
         :description="description ?? $t('components.partials.confirm_dialog.description')"
-        :icon="icon"
-        :ui="{
-            icon: { base: iconClass },
-            body: { base: 'sm:p-0 sm:px-6' },
-        }"
         @update:model-value="cancel && cancel()"
     >
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UFormGroup class="sm:px-4" name="reason" :label="$t('common.reason')">
-                <UInput v-model="state.reason" :placeholder="$t('common.reason')" :ui="{ base: 'w-full' }" />
-            </UFormGroup>
+        <template #body>
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UFormField name="reason" :label="$t('common.reason')">
+                    <UInput v-model="state.reason" :placeholder="$t('common.reason')" class="w-full" />
+                </UFormField>
+            </UForm>
+        </template>
 
-            <div class="flex flex-shrink-0 items-center gap-x-1.5 px-4 py-4 sm:px-4">
-                <UButton type="submit" :color="color" :label="$t('common.confirm')" />
-                <UButton
-                    color="white"
-                    :label="$t('common.cancel')"
-                    @click="
-                        if (cancel) {
-                            cancel();
-                        }
-                        isOpen = false;
-                    "
-                />
-            </div>
-        </UForm>
-    </UDashboardModal>
+        <template #footer>
+            <UButton :color="color" :label="$t('common.confirm')" @click="formRef?.submit()" />
+
+            <UButton
+                color="neutral"
+                :label="$t('common.cancel')"
+                @click="
+                    if (cancel) cancel();
+
+                    $emit('close');
+                "
+            />
+        </template>
+    </UModal>
 </template>

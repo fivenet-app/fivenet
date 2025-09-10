@@ -1,15 +1,17 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { VueDraggable } from 'vue-draggable-plus';
 import { z } from 'zod';
-import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
+import ColorPicker from '~/components/partials/ColorPicker.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { getJobsJobsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetColleagueLabelsResponse, ManageLabelsResponse } from '~~/gen/ts/services/jobs/jobs';
 
-const { isOpen } = useModal();
+const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 
 const notifications = useNotificationsStore();
 
@@ -61,7 +63,7 @@ async function manageLabels(values: Schema): Promise<ManageLabelsResponse> {
             type: NotificationType.SUCCESS,
         });
 
-        isOpen.value = false;
+        emit('close', false);
 
         return response;
     } catch (e) {
@@ -79,26 +81,18 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 watch(labels, () => (state.labels = labels.value?.labels ?? []));
 
 const { moveUp, moveDown } = useListReorder(toRef(state, 'labels'));
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
-                            {{ $t('common.label', 2) }}
-                        </h3>
-
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                    </div>
-                </template>
-
+    <UModal :title="$t('common.label', 2)">
+        <template #body>
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.label', 2)])" />
                 <DataErrorBlock v-else-if="error" :error="error" :retry="refresh" />
 
-                <UFormGroup v-else class="grid items-center gap-2" name="list" :ui="{ container: '' }">
+                <UFormField v-else class="grid items-center gap-2" name="list" :ui="{ container: '' }">
                     <div class="flex flex-col gap-1">
                         <VueDraggable
                             v-model="state.labels"
@@ -113,24 +107,12 @@ const { moveUp, moveDown } = useListReorder(toRef(state, 'labels'));
                                     </UTooltip>
 
                                     <UButtonGroup>
-                                        <UButton
-                                            size="xs"
-                                            variant="link"
-                                            :padded="false"
-                                            icon="i-mdi-arrow-up"
-                                            @click="moveUp(idx)"
-                                        />
-                                        <UButton
-                                            size="xs"
-                                            variant="link"
-                                            :padded="false"
-                                            icon="i-mdi-arrow-down"
-                                            @click="moveDown(idx)"
-                                        />
+                                        <UButton size="xs" variant="link" icon="i-mdi-arrow-up" @click="moveUp(idx)" />
+                                        <UButton size="xs" variant="link" icon="i-mdi-arrow-down" @click="moveDown(idx)" />
                                     </UButtonGroup>
                                 </div>
 
-                                <UFormGroup class="flex-1" :name="`labels.${idx}.name`">
+                                <UFormField class="flex-1" :name="`labels.${idx}.name`">
                                     <UInput
                                         v-model="state.labels[idx]!.name"
                                         class="w-full flex-1"
@@ -138,53 +120,40 @@ const { moveUp, moveDown } = useListReorder(toRef(state, 'labels'));
                                         type="text"
                                         :placeholder="$t('common.label', 1)"
                                     />
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UFormGroup :name="`${idx}.color`">
-                                    <ColorPickerClient
-                                        v-model="state.labels[idx]!.color"
-                                        class="min-w-16"
-                                        :name="`${idx}.color`"
-                                    />
-                                </UFormGroup>
+                                <UFormField :name="`${idx}.color`">
+                                    <ColorPicker v-model="state.labels[idx]!.color" class="min-w-16" :name="`${idx}.color`" />
+                                </UFormField>
 
-                                <UButton
-                                    :ui="{ rounded: 'rounded-full' }"
-                                    :disabled="!canSubmit"
-                                    icon="i-mdi-close"
-                                    @click="state.labels.splice(idx, 1)"
-                                />
+                                <UButton :disabled="!canSubmit" icon="i-mdi-close" @click="state.labels.splice(idx, 1)" />
                             </div>
                         </VueDraggable>
                     </div>
 
                     <UButton
                         :class="state.labels.length ? 'mt-2' : ''"
-                        :ui="{ rounded: 'rounded-full' }"
                         :disabled="!canSubmit"
                         icon="i-mdi-plus"
                         @click="state.labels.push({ id: 0, name: '', color: '#ffffff', order: 0 })"
                     />
-                </UFormGroup>
+                </UFormField>
+            </UForm>
+        </template>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="black" block @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
-                        <UButton
-                            class="flex-1"
-                            type="submit"
-                            block
-                            :loading="isRequestPending(status) || !canSubmit"
-                            :disabled="!canSubmit || !!error"
-                        >
-                            {{ $t('common.save') }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                <UButton
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit || !!error"
+                    :loading="isRequestPending(status) || !canSubmit"
+                    :label="$t('common.save')"
+                    @click="formRef?.submit()"
+                />
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

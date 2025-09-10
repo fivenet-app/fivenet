@@ -14,7 +14,7 @@ func (s *Server) listCalendarEntriesQuery(
 	access calendar.AccessLevel,
 ) jet.SelectStatement {
 	tCreator := tables.User().AS("creator")
-	tAvatar := table.FivenetFiles.AS("avatar")
+	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tCalendarEntry.
 		SELECT(
@@ -44,8 +44,8 @@ func (s *Server) listCalendarEntriesQuery(
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
 			tCreator.PhoneNumber,
-			tUserProps.AvatarFileID.AS("creator.avatar_file_id"),
-			tAvatar.FilePath.AS("creator.avatar"),
+			tUserProps.AvatarFileID.AS("creator.profile_picture_file_id"),
+			tAvatar.FilePath.AS("creator.profile_picture"),
 			tCalendarEntry.Recurring,
 			tCalendarRSVP.EntryID,
 			tCalendarRSVP.CreatedAt,

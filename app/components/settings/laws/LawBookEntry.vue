@@ -1,11 +1,13 @@
 <script lang="ts" setup>
-import type Table from '#ui/components/data/Table.vue';
-import type { FormSubmitEvent } from '#ui/types';
+import { UButton } from '#components';
+import type { FormSubmitEvent, TableColumn } from '@nuxt/ui';
+import type { ExpandedState } from '@tanstack/vue-table';
 import { z } from 'zod';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import LawEntry from '~/components/settings/laws/LawEntry.vue';
 import { getSettingsLawsClient } from '~~/gen/ts/clients';
 import type { Law, LawBook } from '~~/gen/ts/resources/laws/laws';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     modelValue: LawBook | undefined;
@@ -24,11 +26,13 @@ const { t } = useI18n();
 
 const { can } = useAuth();
 
+const notifications = useNotificationsStore();
+
 const lawBook = useVModel(props, 'modelValue', emit);
 
 const laws = useVModel(props, 'laws', emit);
 
-const modal = useModal();
+const overlay = useOverlay();
 
 const settingsLawsClient = await getSettingsLawsClient();
 
@@ -79,14 +83,18 @@ async function saveLawBook(id: number, values: Schema): Promise<LawBook> {
 
         lawBook.value = response.lawBook;
 
+        notifications.add({
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
+
         return response.lawBook!;
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
     }
 }
-
-const tableRef = useTemplateRef<typeof Table>('tableRef');
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -107,9 +115,7 @@ const lastNewId = ref(-1);
 const lawEntriesRefs = ref(new Map<number, Element>());
 
 function addLaw(): void {
-    if (!lawBook.value) {
-        return;
-    }
+    if (!lawBook.value) return;
 
     const law = {
         lawbookId: lawBook.value.id,
@@ -121,13 +127,17 @@ function addLaw(): void {
     };
     laws.value.push(law);
 
+    if (typeof expanded.value === 'object') {
+        expanded.value = { ...expanded.value, [laws.value.length - 1]: true };
+    } else {
+        expanded.value = { [laws.value.length - 1]: true };
+    }
+
     useTimeoutFn(() => {
         const ref = lawEntriesRefs.value.get(law.id);
         if (ref) {
             ref.scrollIntoView({ block: 'nearest' });
         }
-
-        tableRef.value?.toggleOpened(law);
     }, 100);
 
     lastNewId.value--;
@@ -154,46 +164,78 @@ async function deleteLaw(id: number): Promise<void> {
         await call;
 
         deletedLaw(id);
+
+        notifications.add({
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
     }
 }
 
-const columns = [
-    {
-        key: 'actions',
-        label: '',
-        sortable: false,
-    },
-    {
-        key: 'crime',
-        label: t('common.crime'),
-    },
-    {
-        key: 'fine',
-        label: t('common.fine'),
-    },
-    {
-        key: 'detentionTime',
-        label: t('common.detention_time'),
-    },
-    {
-        key: 'service',
-        label: t('common.traffic_infraction_points', 2),
-    },
-    {
-        key: 'description',
-        label: t('common.description'),
-    },
-];
-
-const expand = ref({
-    openedRows: [],
-    row: {},
-});
-
 const editing = ref(props.startInEdit);
+
+const expanded = ref<ExpandedState>({});
+
+const columns = computed(
+    () =>
+        [
+            {
+                id: 'expand',
+                cell: ({ row }) =>
+                    h(UButton, {
+                        color: row.getIsExpanded() ? 'neutral' : 'primary',
+                        variant: 'ghost',
+                        icon: row.getIsExpanded() ? 'i-mdi-chevron-up' : 'i-mdi-pencil',
+                        square: true,
+                        'aria-label': 'Expand',
+                        ui: {
+                            leadingIcon: ['transition-transform', row.getIsExpanded() ? 'duration-200 rotate-180' : ''],
+                        },
+                        onClick: () => row.toggleExpanded(),
+                    }),
+            },
+            {
+                id: 'actions',
+            },
+            {
+                accessorKey: 'crime',
+                header: t('common.crime'),
+                cell: ({ row }) => row.original.name,
+            },
+            {
+                accessorKey: 'fine',
+                header: t('common.fine'),
+                cell: ({ row }) => $n(row.original.fine!, 'currency'),
+            },
+            {
+                accessorKey: 'detentionTime',
+                header: t('common.detention_time'),
+                cell: ({ row }) => row.original.detentionTime,
+            },
+            {
+                accessorKey: 'stvoPoints',
+                header: t('common.traffic_infraction_points'),
+                cell: ({ row }) => row.original.stvoPoints,
+            },
+            {
+                accessorKey: 'description',
+                header: t('common.description'),
+                cell: ({ row }) =>
+                    h('span', { class: 'line-clamp-2 truncate hover:line-clamp-4' }, [
+                        row.original.description,
+                        row.original.hint !== undefined && row.original.hint !== ''
+                            ? h('span', { class: 'font-semibold' }, `${t('common.hint')}: ${row.original.hint}`)
+                            : null,
+                    ]),
+            },
+        ] as TableColumn<Law>[],
+);
+
+const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
@@ -211,7 +253,7 @@ const editing = ref(props.startInEdit);
                             icon="i-mdi-delete"
                             color="error"
                             @click="
-                                modal.open(ConfirmModal, {
+                                confirmModal.open({
                                     confirm: async () => deleteLawBook(lawBook!.id),
                                 })
                             "
@@ -226,7 +268,7 @@ const editing = ref(props.startInEdit);
                 </div>
 
                 <UTooltip class="shrink-0" :text="$t('pages.settings.laws.add_new_law')">
-                    <UButton color="gray" trailing-icon="i-mdi-plus" @click="addLaw">
+                    <UButton color="neutral" trailing-icon="i-mdi-plus" @click="addLaw">
                         {{ $t('pages.settings.laws.add_new_law') }}
                     </UButton>
                 </UTooltip>
@@ -253,88 +295,52 @@ const editing = ref(props.startInEdit);
                     />
                 </UTooltip>
 
-                <UFormGroup class="flex-initial" name="name" :label="$t('common.law_book')">
-                    <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.law_book')" />
-                </UFormGroup>
+                <UFormField class="flex-initial" name="name" :label="$t('common.law_book')">
+                    <UInput v-model="state.name" name="name" type="text" class="w-full" :placeholder="$t('common.law_book')" />
+                </UFormField>
 
-                <UFormGroup class="flex-auto" name="description" :label="$t('common.description')">
+                <UFormField class="flex-auto" name="description" :label="$t('common.description')">
                     <UInput
                         v-model="state.description"
                         name="description"
                         type="text"
+                        class="w-full"
                         :placeholder="$t('common.description')"
                     />
-                </UFormGroup>
+                </UFormField>
             </UForm>
         </template>
 
         <UTable
-            ref="tableRef"
-            v-model:expand="expand"
+            v-model:expanded="expanded"
             :columns="columns"
-            :rows="laws"
+            :data="laws"
             :expand-button="{ icon: 'i-mdi-pencil', color: 'primary' }"
-            :ui="{ wrapper: '' }"
-            :empty-state="{
-                icon: 'i-mdi-gavel',
-                label: $t('common.not_found', [$t('common.law', 2)]),
-            }"
+            :pagination-options="{ manualPagination: true }"
+            :sorting-options="{ manualSorting: true }"
+            :empty="$t('common.not_found', [$t('common.law', 2)])"
+            :ui="{ tr: 'data-[expanded=true]:bg-elevated/50' }"
+            sticky
         >
-            <template #expand="{ row: law }">
-                <LawEntry
-                    :law="law"
-                    @update:law="
-                        $emit('update:law', $event);
-                        tableRef?.toggleOpened(law);
-                    "
-                    @close="
-                        tableRef?.toggleOpened(law);
-                        if (law.id < 0) {
-                            deleteLaw(law.id);
-                        }
-                    "
-                />
+            <template #expanded="{ row }">
+                <LawEntry :law="row.original" @update:law="$emit('update:law', $event)" @close="row.toggleExpanded()" />
             </template>
 
-            <template #actions-data="{ row: law }">
+            <template #actions-cell="{ row: law }">
                 <UTooltip v-if="can('settings.LawsService/DeleteLawBook').value" :text="$t('common.delete')">
                     <UButton
                         variant="link"
                         icon="i-mdi-delete"
                         color="error"
                         @click="
-                            modal.open(ConfirmModal, {
-                                confirm: async () => deleteLaw(law.id),
-                            })
+                            () => {
+                                confirmModal.open({
+                                    confirm: async () => deleteLaw(law.original.id),
+                                });
+                            }
                         "
                     />
                 </UTooltip>
-            </template>
-
-            <template #crime-data="{ row: law }">
-                <span :ref="(ref) => lawEntriesRefs.set(law.id, ref as Element)" class="truncate text-gray-900 dark:text-white">
-                    {{ law.name }}
-                </span>
-            </template>
-
-            <template #fine-data="{ row: law }">{{ $n(law.fine, 'currency') }}</template>
-
-            <template #detentionTime-data="{ row: law }">
-                {{ law.detentionTime }}
-            </template>
-
-            <template #stvoPoints-data="{ row: law }">
-                {{ law.stvoPoints }}
-            </template>
-
-            <template #description-data="{ row: law }">
-                <span class="line-clamp-2 truncate hover:line-clamp-4">
-                    {{ law.description }}
-                </span>
-
-                <span v-if="law.hint !== undefined && law.hint !== ''" class="line-clamp-2 truncate hover:line-clamp-4">
-                    <span class="font-semibold">{{ $t('common.hint') }}:</span> {{ law.hint }}
-                </span>
             </template>
         </UTable>
     </UCard>

@@ -33,7 +33,7 @@ var (
 	)
 	// fontFamilyRegex matches valid font family names for style attributes.
 	fontFamilyRegex = regexp.MustCompile(
-		`(?mi)^(arial,\shelvetica,\ssans-serif|times new roman,\stimes,\sserif|Comic Sans MS,\sComic Sans|serif|monospace|DM Sans)$`,
+		`(?mi)^(arial,\shelvetica,\ssans-serif|times new roman,\stimes,\sserif|Comic Sans MS,\sComic Sans|serif|monospace|DM Sans|Public Sans)$`,
 	)
 
 	// prosemirrorClassRegex matches ProseMirror class names for editor compatibility.
@@ -138,7 +138,7 @@ func New(cfg *config.Config) (*bluemonday.Policy, error) {
 	}
 
 	// Use Image Proxy if enabled using the rewrite src function
-	proxyUrl, err := url.Parse(imageproxy.Path)
+	proxyUrl, err := url.Parse(strings.TrimRight(imageproxy.Path, "/"))
 	if err != nil {
 		return nil, err
 	}

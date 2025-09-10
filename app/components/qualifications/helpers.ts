@@ -1,4 +1,4 @@
-import type { BadgeColor } from '#ui/types';
+import type { BadgeProps } from '@nuxt/ui';
 import type { Perms } from '~~/gen/ts/perms';
 import type { AccessLevel, QualificationAccess } from '~~/gen/ts/resources/qualifications/access';
 import { type QualificationRequirement, RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
@@ -71,7 +71,7 @@ function checkIfCanAccessOwnJobQualification(activeChar: User, creator: UserShor
     return false;
 }
 
-export function requestStatusToBadgeColor(status: RequestStatus): BadgeColor {
+export function requestStatusToBadgeColor(status: RequestStatus): BadgeProps['color'] {
     switch (status) {
         case RequestStatus.ACCEPTED:
         case RequestStatus.COMPLETED:
@@ -83,7 +83,7 @@ export function requestStatusToBadgeColor(status: RequestStatus): BadgeColor {
     }
 }
 
-export function requestStatusToTextColor(status: RequestStatus): string {
+export function requestStatusToTextColor(status: RequestStatus | undefined): string {
     switch (status) {
         case RequestStatus.ACCEPTED:
         case RequestStatus.COMPLETED:
@@ -107,12 +107,14 @@ export function requestStatusToBgColor(status: RequestStatus): string {
     }
 }
 
-export function resultStatusToBadgeColor(status: ResultStatus): BadgeColor {
+export function resultStatusToBadgeColor(status: ResultStatus): BadgeProps['color'] {
     switch (status) {
         case ResultStatus.FAILED:
             return 'error';
+
         case ResultStatus.SUCCESSFUL:
             return 'success';
+
         default:
             return 'primary';
     }

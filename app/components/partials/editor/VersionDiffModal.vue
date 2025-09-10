@@ -4,20 +4,15 @@ import { computed } from 'vue';
 import type { Content, Version } from '~/types/history';
 
 const props = defineProps<{
-    modelValue: boolean;
     currentContent: string; // String for diffing
     selectedVersion: Version<Content> | null;
 }>();
 
 const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
     (e: 'apply', version: Version<Content>): void;
     (e: 'update:modelValue', value: boolean): void;
 }>();
-
-const open = computed({
-    get: () => props.modelValue,
-    set: (v) => emit('update:modelValue', v),
-});
 
 function prettyPrintHtml(html: string): string {
     // Insert newlines between tags, but not for pairs like <p>...</p>
@@ -73,37 +68,14 @@ const prettySelected = computed(() => prettyPrintHtml(selectedContent.value));
 function applySelected() {
     if (props.selectedVersion) {
         emit('apply', props.selectedVersion);
-        open.value = false;
+        emit('close', false);
     }
-}
-function close() {
-    open.value = false;
 }
 </script>
 
 <template>
-    <UCard
-        class="flex flex-1 flex-col"
-        :ui="{
-            body: {
-                base: 'flex-1 min-h-[calc(100dvh-(2*var(--header-height)))] max-h-[calc(100dvh-(2*var(--header-height)))] overflow-y-auto',
-                padding: 'px-1 py-2 sm:p-2',
-            },
-            ring: '',
-            divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-        }"
-    >
-        <template #header>
-            <div class="flex items-center justify-between">
-                <h3 class="text-2xl font-semibold leading-6">
-                    {{ $t('common.version_history') }}
-                </h3>
-
-                <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="close" />
-            </div>
-        </template>
-
-        <div>
+    <UModal :title="$t('common.version')" fullscreen>
+        <template #body>
             <div class="space-y-4">
                 <div>
                     <div class="mb-1 font-semibold">{{ $t('common.content') }}</div>
@@ -116,6 +88,7 @@ function close() {
                         language="text"
                         :theme="colorMode.value === 'dark' ? 'dark' : 'light'"
                     >
+                        <!-- @vue-expect-error v-code-diff doesn't type the slot vars not even the slots currently -->
                         <template #stat="{ stat }">
                             <span class="diff-stat-added">+{{ stat.additionsNum }} additions</span>
                             <span class="diff-stat-deleted">-{{ stat.deletionsNum }} deletions</span>
@@ -123,13 +96,13 @@ function close() {
                     </CodeDiff>
                 </div>
             </div>
-        </div>
+        </template>
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
                 <UButton class="flex-1" color="primary" @click="applySelected">{{ $t('common.apply') }}</UButton>
-                <UButton class="flex-1" color="gray" @click="close">{{ $t('common.cancel') }}</UButton>
+                <UButton class="flex-1" color="neutral" @click="emit('close', false)">{{ $t('common.cancel') }}</UButton>
             </UButtonGroup>
         </template>
-    </UCard>
+    </UModal>
 </template>

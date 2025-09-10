@@ -9,7 +9,6 @@ const props = withDefaults(
         showIcon?: boolean;
         hideNumber?: boolean;
         showLabel?: boolean;
-        padded?: boolean;
         hideNaText?: boolean;
         disableTruncate?: boolean;
     }>(),
@@ -57,19 +56,24 @@ async function doCall(): Promise<void> {
 </script>
 
 <template>
-    <div class="inline-flex flex-1 items-center" :class="!padded && 'gap-1'">
+    <div class="inline-flex items-center gap-1">
         <template v-if="number">
-            <UTooltip v-if="showIcon" class="w-full" :text="$t('common.call')">
-                <UButton class="shrink-0" variant="link" icon="i-mdi-phone" :padded="padded" v-bind="$attrs" @click="doCall">
-                    <span class="sr-only">{{ $t('common.call') }}</span>
-                    <span v-if="showLabel" :class="!disableTruncate && 'truncate'">{{ $t('common.call') }}</span>
-                </UButton>
+            <UTooltip v-if="showIcon" :text="$t('common.call')">
+                <UButton
+                    class="shrink-0"
+                    variant="link"
+                    icon="i-mdi-phone"
+                    :label="showLabel ? $t('common.call') : undefined"
+                    :ui="{ base: 'py-0 sm:py-0 px-0 sm:px-0' }"
+                    @click="doCall"
+                />
             </UTooltip>
 
             <span v-if="!hideNumber" class="inline-flex gap-1" :class="[streamerMode ? 'blur' : '']">
                 <span v-for="(part, idx) in (number ?? '').match(/.{1,3}/g)" :key="idx">{{ part }}</span>
             </span>
         </template>
+
         <template v-else-if="!hideNaText">
             {{ $t('common.na') }}
         </template>

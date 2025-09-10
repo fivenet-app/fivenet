@@ -8,7 +8,6 @@ const props = defineProps<{
     modelValue: RoleAttribute;
     disabled?: boolean;
     permission: Permission;
-    defaultOpen?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -208,20 +207,20 @@ const { game } = useAppConfig();
 
 <template>
     <div v-if="attribute">
-        <UAccordion
-            variant="outline"
-            :items="[
-                {
-                    label: $t(`perms.${attribute.category}.${attribute.name}.attrs_types.${attribute.key}`),
-                    disabled: defaultOpen,
-                },
-            ]"
-            :unmount="true"
-            :default-open="defaultOpen"
-            :ui="{ default: { class: 'mb-0.5' } }"
-        >
-            <template #item>
-                <div class="flex flex-col gap-2">
+        <UCollapsible>
+            <UButton
+                :label="$t(`perms.${attribute.category}.${attribute.name}.attrs_types.${attribute.key}`)"
+                color="neutral"
+                variant="subtle"
+                trailing-icon="i-mdi-chevron-down"
+                :ui="{
+                    trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
+                }"
+                block
+            />
+
+            <template #content>
+                <div class="flex flex-col gap-2 p-1 text-sm">
                     <div
                         v-if="
                             attrValues.validValues.oneofKind === 'stringList' &&
@@ -232,6 +231,7 @@ const { game } = useAppConfig();
                         <span v-if="validValues.validValues.stringList.strings.length === 0">
                             {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
                         </span>
+
                         <template v-else>
                             <div class="flex flex-row flex-wrap gap-2">
                                 <div
@@ -239,7 +239,7 @@ const { game } = useAppConfig();
                                     :key="value"
                                     class="flex flex-initial flex-row flex-nowrap gap-1"
                                 >
-                                    <UToggle
+                                    <USwitch
                                         :name="value"
                                         :model-value="!!attrValues.validValues.stringList.strings.find((v) => v === value)"
                                         :disabled="disabled"
@@ -257,7 +257,7 @@ const { game } = useAppConfig();
                                 v-if="!disabled"
                                 class="self-end"
                                 size="xs"
-                                color="white"
+                                color="neutral"
                                 :icon="
                                     attrValues.validValues.stringList.strings.length !==
                                     validValues.validValues.stringList.strings.length
@@ -274,6 +274,7 @@ const { game } = useAppConfig();
                             />
                         </template>
                     </div>
+
                     <div
                         v-else-if="
                             attrValues.validValues.oneofKind === 'jobList' && validValues?.validValues.oneofKind === 'jobList'
@@ -282,7 +283,7 @@ const { game } = useAppConfig();
                     >
                         <div v-for="job in jobs" :key="job.name" class="flex flex-initial flex-row flex-nowrap gap-1">
                             <div class="flex flex-row flex-wrap gap-2">
-                                <UToggle
+                                <USwitch
                                     :name="job.name"
                                     :model-value="!!attrValues.validValues.jobList?.strings.find((v) => v === job.name)"
                                     :disabled="disabled"
@@ -296,7 +297,7 @@ const { game } = useAppConfig();
                             v-if="!disabled"
                             class="self-end"
                             size="xs"
-                            color="white"
+                            color="neutral"
                             :icon="
                                 attrValues.validValues.jobList.strings.length !== validValues.validValues.jobList.strings.length
                                     ? 'i-mdi-check-all'
@@ -323,7 +324,7 @@ const { game } = useAppConfig();
                             :key="job.name"
                             class="flex flex-initial flex-row flex-nowrap items-center gap-1"
                         >
-                            <UToggle
+                            <USwitch
                                 :name="job.name"
                                 :model-value="attrValues.validValues?.jobGradeList.jobs[job.name] !== undefined"
                                 :disabled="disabled"
@@ -338,41 +339,33 @@ const { game } = useAppConfig();
                                     v-model="attrValues.validValues.jobGradeList.jobs[job.name]"
                                     class="flex-1"
                                     :disabled="disabled || attrValues.validValues?.jobGradeList.jobs[job.name] === undefined"
-                                    :options="job.grades"
-                                    searchable
-                                    :search-attributes="['label']"
-                                    :searchable-placeholder="$t('common.search_field')"
+                                    :items="job.grades"
+                                    :filter-fields="['label']"
+                                    :search-input="{ placeholder: $t('common.search_field') }"
                                     :placeholder="$t('common.rank')"
-                                    value-attribute="grade"
+                                    value-key="grade"
                                 >
-                                    <template #label>
-                                        <template
-                                            v-if="
-                                                job.grades && attrValues.validValues.jobGradeList.jobs[job.name] !== undefined
-                                            "
+                                    <template
+                                        v-if="job.grades && attrValues.validValues.jobGradeList.jobs[job.name] !== undefined"
+                                        #default
+                                    >
+                                        <span class="truncate"
+                                            >{{
+                                                job.grades.find(
+                                                    (g) =>
+                                                        attrValues.validValues.oneofKind === 'jobGradeList' &&
+                                                        g.grade ===
+                                                            (attrValues.validValues.jobGradeList.jobs[job.name] ??
+                                                                game.startJobGrade),
+                                                )?.label ?? $t('common.na')
+                                            }}
+                                            ({{ attrValues.validValues.jobGradeList.jobs[job.name] }})</span
                                         >
-                                            <span class="truncate text-gray-900 dark:text-white"
-                                                >{{
-                                                    job.grades.find(
-                                                        (g) =>
-                                                            attrValues.validValues.oneofKind === 'jobGradeList' &&
-                                                            g.grade ===
-                                                                (attrValues.validValues.jobGradeList.jobs[job.name] ??
-                                                                    game.startJobGrade),
-                                                    )?.label ?? $t('common.na')
-                                                }}
-                                                ({{ attrValues.validValues.jobGradeList.jobs[job.name] }})</span
-                                            >
-                                        </template>
                                     </template>
 
-                                    <template #option="{ option: grade }">
-                                        {{ grade?.label
-                                        }}<span v-if="grade.grade >= game.startJobGrade"> ({{ grade?.grade }})</span>
-                                    </template>
-
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                    <template #item="{ item }">
+                                        {{ item?.label
+                                        }}<span v-if="item.grade >= game.startJobGrade"> ({{ item?.grade }})</span>
                                     </template>
 
                                     <template #empty> {{ $t('common.not_found', [$t('common.rank')]) }} </template>
@@ -384,6 +377,6 @@ const { game } = useAppConfig();
                     <div v-else>{{ attrValues.validValues.oneofKind }} {{ validValues }}</div>
                 </div>
             </template>
-        </UAccordion>
+        </UCollapsible>
     </div>
 </template>

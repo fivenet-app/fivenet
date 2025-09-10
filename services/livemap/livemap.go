@@ -27,7 +27,7 @@ import (
 const (
 	markerMarkerChunkSize = 75
 
-	feedFetch = 32
+	feedFetch = 16
 )
 
 func (s *Server) getAndSendACL(
@@ -43,6 +43,7 @@ func (s *Server) getAndSendACL(
 	if err != nil {
 		return nil, nil, false, errswrap.NewError(err, errorslivemap.ErrStreamFailed)
 	}
+
 	usersJobs, err := s.ps.AttrJobGradeList(
 		userInfo,
 		permslivemap.LivemapServicePerm,
@@ -274,8 +275,15 @@ func (s *Server) Stream(
 		}
 
 		for {
+			select {
+			case <-gctx.Done():
+				return gctx.Err()
+
+			default:
+			}
+
 			batch, err := consumer.Fetch(feedFetch,
-				jetstream.FetchMaxWait(2*time.Second))
+				jetstream.FetchMaxWait(3*time.Second))
 			if err != nil {
 				if errors.Is(err, context.DeadlineExceeded) ||
 					errors.Is(err, jetstream.ErrNoMessages) {
@@ -314,10 +322,14 @@ func (s *Server) Stream(
 
 					case outCh <- &pblivemap.StreamResponse{
 						UserOnDuty: &userOnDuty,
-						Data: &pblivemap.StreamResponse_UserDelete{
-							UserDelete: &pblivemap.UserDelete{
-								Id:  userId,
-								Job: job,
+						Data: &pblivemap.StreamResponse_UserDeletes{
+							UserDeletes: &pblivemap.UserDeletes{
+								Deletes: []*pblivemap.UserDelete{
+									{
+										Id:  userId,
+										Job: job,
+									},
+								},
 							},
 						},
 					}:
@@ -344,10 +356,14 @@ func (s *Server) Stream(
 
 					case outCh <- &pblivemap.StreamResponse{
 						UserOnDuty: &userOnDuty,
-						Data: &pblivemap.StreamResponse_UserDelete{
-							UserDelete: &pblivemap.UserDelete{
-								Id:  um.GetUserId(),
-								Job: um.GetJob(),
+						Data: &pblivemap.StreamResponse_UserDeletes{
+							UserDeletes: &pblivemap.UserDeletes{
+								Deletes: []*pblivemap.UserDelete{
+									{
+										Id:  um.GetUserId(),
+										Job: um.GetJob(),
+									},
+								},
 							},
 						},
 					}:
@@ -387,8 +403,10 @@ func (s *Server) Stream(
 
 				case outCh <- &pblivemap.StreamResponse{
 					UserOnDuty: &userOnDuty,
-					Data: &pblivemap.StreamResponse_UserUpdate{
-						UserUpdate: um,
+					Data: &pblivemap.StreamResponse_UserUpdates{
+						UserUpdates: &pblivemap.UserUpdates{
+							Updates: []*livemap.UserMarker{um},
+						},
 					},
 				}:
 				}

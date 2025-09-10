@@ -7,14 +7,25 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import QualificationListEntry from '~/components/qualifications/QualificationListEntry.vue';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
+import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import type { ListQualificationsResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
 const schema = z.object({
     search: z.string().max(64).optional(),
-    sort: z.custom<TableSortable>().default({
-        column: 'abbreviation',
-        direction: 'asc',
-    }),
+    sorting: z
+        .object({
+            columns: z
+                .custom<SortByColumn>()
+                .array()
+                .max(3)
+                .default([
+                    {
+                        id: 'abbreviation',
+                        desc: false,
+                    },
+                ]),
+        })
+        .default({ columns: [{ id: 'abbreviation', desc: false }] }),
     page: pageNumberSchema,
 });
 
@@ -23,7 +34,7 @@ const qualificationsQualificationsClient = await getQualificationsQualifications
 const query = useSearchForm('qualifications_list', schema);
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `qualifications-${query.sort.column}:${query.sort.direction}-${query.page}`,
+    () => `qualifications-${JSON.stringify(query.sorting)}-${query.page}`,
     () => listQualifications(),
 );
 
@@ -33,7 +44,7 @@ async function listQualifications(): Promise<ListQualificationsResponse> {
             pagination: {
                 offset: calculateOffset(query.page, data.value?.pagination),
             },
-            sort: query.sort,
+            sort: query.sorting,
             search: query.search,
         });
         const { response } = await call;
@@ -49,19 +60,15 @@ watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
 </script>
 
 <template>
-    <UCard
-        :ui="{
-            body: { padding: '' },
-        }"
-    >
+    <UCard>
         <template #header>
             <div class="flex items-center justify-between gap-1">
-                <h3 class="flex-1 text-2xl font-semibold leading-6">
+                <h3 class="flex-1 text-2xl leading-6 font-semibold">
                     {{ $t('components.qualifications.all_qualifications') }}
                 </h3>
 
                 <UForm :schema="schema" :state="query" @submit="refresh">
-                    <UFormGroup name="search">
+                    <UFormField name="search">
                         <UInput
                             v-model="query.search"
                             type="text"
@@ -69,10 +76,10 @@ watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
                             :placeholder="$t('common.search')"
                             leading-icon="i-mdi-search"
                         />
-                    </UFormGroup>
+                    </UFormField>
                 </UForm>
 
-                <SortButton v-model="query.sort" :fields="[{ label: $t('common.id'), value: 'id' }]" />
+                <SortButton v-model="query.sorting" :fields="[{ label: $t('common.id'), value: 'id' }]" />
             </div>
         </template>
 
@@ -93,7 +100,7 @@ watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
                 icon="i-mdi-school"
             />
 
-            <ul v-else class="divide-y divide-gray-100 dark:divide-gray-800" role="list">
+            <ul v-else class="divide-y divide-default" role="list">
                 <QualificationListEntry
                     v-for="qualification in data?.qualifications"
                     :key="qualification.id"

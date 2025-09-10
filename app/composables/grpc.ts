@@ -1,5 +1,5 @@
 import { useAuthStore } from '~/stores/auth';
-import type { Notification } from '~/utils/notifications';
+import type { Notification } from '~/types/notifications';
 import type { Error as CommonError } from '~~/gen/ts/resources/common/error';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -15,7 +15,7 @@ const lastError: { receivedAt: undefined | Date; code: undefined | string } = {
 function addCopyActionToNotification(notification: Notification, err: RpcError, traceId: number): void {
     notification.actions?.push({
         label: { key: 'pages.error.copy_error' },
-        click: async () => {
+        onClick: async () => {
             copyToClipboardWrapper(
                 `## Error occured at ${new Date().toISOString()}:
 **Service/Method**: \`${err.serviceName}/${err.methodName}\` => \`${err.code}\`
@@ -27,7 +27,7 @@ function addCopyActionToNotification(notification: Notification, err: RpcError, 
             notifications.add({
                 title: { key: 'notifications.clipboard.copied.title', parameters: {} },
                 description: { key: 'notifications.clipboard.copied.content', parameters: {} },
-                timeout: 3250,
+                duration: 3250,
                 type: NotificationType.INFO,
             });
         },
@@ -40,7 +40,7 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
         return true;
     }
 
-    const notification = {
+    const notification: Notification = {
         id: 0,
         type: NotificationType.ERROR,
         title: { key: 'notifications.grpc_errors.internal.title', parameters: {} },
@@ -49,7 +49,7 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
             parameters: { msg: err?.message ?? 'Unknown error' },
         },
         actions: [],
-    } as Notification;
+    };
 
     const traceId =
         (err?.meta &&

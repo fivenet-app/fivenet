@@ -25,3 +25,9 @@ export const tileLayers = [
         },
     },
 ];
+
+export type Postal = {
+    x: number;
+    y: number;
+    code: string;
+};

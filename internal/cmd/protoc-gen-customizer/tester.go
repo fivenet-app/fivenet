@@ -7,7 +7,7 @@ import (
 	pgsgo "github.com/lyft/protoc-gen-star/v2/lang/go"
 )
 
-// TesterPlugin
+// TesterPlugin holds all state for this plugin.
 type TesterModule struct {
 	*pgs.ModuleBase
 

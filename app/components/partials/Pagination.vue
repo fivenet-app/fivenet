@@ -12,6 +12,7 @@ const props = withDefaults(
         status?: AsyncDataRequestStatus;
         hideText?: boolean;
         hideButtons?: boolean;
+        compact?: boolean;
     }>(),
     {
         modelValue: 0,
@@ -21,6 +22,7 @@ const props = withDefaults(
         status: 'pending',
         hideText: false,
         hideButtons: false,
+        compact: false,
     },
 );
 
@@ -68,17 +70,13 @@ const canGoLastOrNext = computed(
 );
 
 function onClickPrev() {
-    if (!canGoFirstOrPrev.value) {
-        return;
-    }
+    if (!canGoFirstOrPrev.value) return;
 
     currentPage.value--;
 }
 
 function onClickNext() {
-    if (!canGoLastOrNext.value) {
-        return;
-    }
+    if (!canGoLastOrNext.value) return;
 
     currentPage.value++;
 }
@@ -87,13 +85,16 @@ function onClickNext() {
 <template>
     <div class="@container/pagination">
         <div
-            class="@md/pagination:flex-row flex justify-between gap-1 px-3 py-3 md:items-center"
-            :class="!disableBorder ? 'border-t border-gray-200 dark:border-gray-700' : ''"
+            class="flex justify-between gap-1 md:items-center @md/pagination:flex-row"
+            :class="[
+                !disableBorder ? 'border-t border-neutral-200 dark:border-neutral-700' : '',
+                compact ? 'px-1 py-1' : 'px-3 py-3',
+            ]"
         >
             <div v-if="!hideText" class="flex flex-col items-center gap-2">
                 <I18nT
                     v-if="!isInfinite"
-                    class="@md/pagination:block hidden truncate text-sm"
+                    class="hidden truncate text-sm @md/pagination:block"
                     keypath="components.partials.table_pagination.page_count_with_total"
                     tag="p"
                 >
@@ -121,9 +122,10 @@ function onClickNext() {
                         </span>
                     </template>
                 </I18nT>
+
                 <I18nT
                     v-else
-                    class="@md/pagination:block hidden truncate text-sm"
+                    class="hidden truncate text-sm @md/pagination:block"
                     keypath="components.partials.table_pagination.page_count"
                     tag="p"
                 >
@@ -151,7 +153,7 @@ function onClickNext() {
                     :loading="loadingState || isRequestPending(status)"
                     @click="refresh()"
                 >
-                    <span class="@md/pagination:block hidden">
+                    <span class="hidden @md/pagination:block">
                         {{ $t('common.refresh') }}
                     </span>
                 </UButton>
@@ -160,25 +162,26 @@ function onClickNext() {
             <template v-if="!hideButtons">
                 <UPagination
                     v-if="!isInfinite"
-                    v-model="currentPage"
+                    v-model:page="currentPage"
                     :page-count="pagination?.pageSize ?? 0"
                     :total="pagination?.totalCount ?? 0"
+                    :show-edges="false"
+                    :ui="{ first: 'hidden', last: 'hidden' }"
                 />
                 <UButtonGroup v-else>
                     <UButton
-                        :label="$t('common.previous')"
-                        color="gray"
+                        color="neutral"
+                        variant="outline"
                         icon="i-mdi-chevron-left"
                         :disabled="!canGoFirstOrPrev || isRequestPending(status)"
                         @click="onClickPrev"
                     />
-                    <UButton :label="currentPage.toString()" color="white" disabled />
+                    <UButton :label="currentPage.toString()" color="primary" variant="solid" />
                     <UButton
-                        :label="$t('common.next')"
-                        color="gray"
+                        color="neutral"
+                        variant="outline"
                         :disabled="!canGoLastOrNext || isRequestPending(status)"
-                        trailing
-                        trailing-icon="i-mdi-chevron-right"
+                        icon="i-mdi-chevron-right"
                         @click="onClickNext"
                     />
                 </UButtonGroup>

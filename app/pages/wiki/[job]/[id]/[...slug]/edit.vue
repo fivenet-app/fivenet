@@ -3,11 +3,11 @@ import type { TypedRouteFromName } from '@typed-router';
 import PageEditor from '~/components/wiki/PageEditor.vue';
 
 useHead({
-    title: 'common.wiki',
+    title: 'pages.wiki.edit.title',
 });
 
 definePageMeta({
-    title: 'common.wiki',
+    title: 'pages.wiki.edit.title',
     requiresAuth: true,
     permission: 'wiki.WikiService/ListPages',
     validate: async (route) => {
@@ -24,9 +24,5 @@ const route = useRoute('wiki-job-id-slug-edit');
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel class="shrink-0 border-b border-gray-200 lg:border-b-0 lg:border-r dark:border-gray-800" grow>
-            <PageEditor :page-id="parseInt(route.params.id)" />
-        </UDashboardPanel>
-    </UDashboardPage>
+    <PageEditor :page-id="parseInt(route.params.id)" />
 </template>

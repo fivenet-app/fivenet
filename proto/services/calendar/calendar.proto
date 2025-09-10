@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.calendar;
 
 import "buf/validate/validate.proto";
+import "codegen/itemslen/itemslen.proto";
 import "resources/calendar/access.proto";
 import "resources/calendar/calendar.proto";
 import "resources/common/database/database.proto";
@@ -21,7 +22,7 @@ message ListCalendarsRequest {
 
 message ListCalendarsResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.calendar.Calendar calendars = 2;
+  repeated resources.calendar.Calendar calendars = 2 [(codegen.itemslen.items_len) = true];
 }
 
 message GetCalendarRequest {
@@ -118,7 +119,7 @@ message ListCalendarEntryRSVPRequest {
 
 message ListCalendarEntryRSVPResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.calendar.CalendarEntryRSVP entries = 2;
+  repeated resources.calendar.CalendarEntryRSVP entries = 2 [(codegen.itemslen.items_len) = true];
 }
 
 message RSVPCalendarEntryRequest {
@@ -139,7 +140,7 @@ message ListSubscriptionsRequest {
 
 message ListSubscriptionsResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.calendar.CalendarSub subs = 2;
+  repeated resources.calendar.CalendarSub subs = 2 [(codegen.itemslen.items_len) = true];
 }
 
 message SubscribeToCalendarRequest {

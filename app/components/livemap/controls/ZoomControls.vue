@@ -8,7 +8,7 @@ const { zoom } = storeToRefs(livemapStore);
 <template>
     <LControl position="topleft">
         <UButtonGroup class="inline-flex w-full flex-col" orientation="vertical">
-            <UTooltip :text="$t('common.zoom_in')" :popper="{ placement: 'right' }">
+            <UTooltip :text="$t('common.zoom_in')">
                 <UButton
                     class="inset-0 border border-black/20 bg-clip-padding p-1.5 hover:bg-[#f4f4f4]"
                     icon="i-mdi-plus-thick"
@@ -17,11 +17,11 @@ const { zoom } = storeToRefs(livemapStore);
                 />
             </UTooltip>
 
-            <UTooltip :text="$t('common.zoom')" :popper="{ placement: 'right' }">
-                <UButton class="inset-0 select-none border border-black/20 bg-clip-padding" :label="zoom.toString()" block />
+            <UTooltip :text="$t('common.zoom')">
+                <UButton class="inset-0 border border-black/20 bg-clip-padding select-none" :label="zoom.toString()" block />
             </UTooltip>
 
-            <UTooltip :text="$t('common.zoom_out')" :popper="{ placement: 'right' }">
+            <UTooltip :text="$t('common.zoom_out')">
                 <UButton
                     class="inset-0 border border-black/20 bg-clip-padding p-1.5 hover:bg-[#f4f4f4]"
                     icon="i-mdi-minus-thick"

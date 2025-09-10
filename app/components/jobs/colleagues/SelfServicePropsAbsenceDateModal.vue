@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
-import { addDays, isFuture, subDays } from 'date-fns';
+import { CalendarDate, type DateValue } from '@internationalized/date';
+import type { FormSubmitEvent } from '@nuxt/ui';
+import { addDays, isBefore, isFuture, subDays } from 'date-fns';
 import { z } from 'zod';
-import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
+import InputDateRangePopover from '~/components/partials/InputDateRangePopover.vue';
 import { useAuthStore } from '~/stores/auth';
 import { getJobsJobsClient } from '~~/gen/ts/clients';
 import type { ColleagueProps } from '~~/gen/ts/resources/jobs/colleagues';
@@ -15,10 +16,9 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+    (e: 'close', v: boolean): void;
     (e: 'update:absenceDates', value: { userId: number; absenceBegin?: Timestamp; absenceEnd?: Timestamp }): void;
 }>();
-
-const { isOpen } = useModal();
 
 const notifications = useNotificationsStore();
 
@@ -34,14 +34,20 @@ const maxEnd = addDays(today, jobProps.value?.settings?.absenceFutureDays ?? 93)
 const schema = z.union([
     z.object({
         reason: z.string().min(3).max(255),
-        absenceBegin: z.date().min(minStart),
-        absenceEnd: z.date().min(today).max(maxEnd),
+        absence: z.object({
+            start: z.date().min(minStart).max(maxEnd),
+            end: z.date().min(minStart).max(maxEnd),
+        }),
         reset: z.literal(false),
     }),
     z.object({
         reason: z.string().min(3).max(255),
-        absenceBegin: z.date().optional(),
-        absenceEnd: z.date().optional(),
+        absence: z
+            .object({
+                start: z.date(),
+                end: z.date(),
+            })
+            .optional(),
         reset: z.literal(true),
     }),
 ]);
@@ -50,8 +56,10 @@ type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
     reason: '',
-    absenceBegin: today,
-    absenceEnd: addDays(today, 1),
+    absence: {
+        start: today,
+        end: addDays(today, 1),
+    },
     reset: false,
 });
 
@@ -59,8 +67,8 @@ async function setAbsenceDate(values: Schema): Promise<void> {
     const userProps: ColleagueProps = {
         userId: props.userId,
         job: '',
-        absenceBegin: values.absenceBegin ? toTimestamp(values.absenceBegin) : {},
-        absenceEnd: values.absenceEnd ? toTimestamp(values.absenceEnd) : {},
+        absenceBegin: values.absence?.start ? toTimestamp(values.absence.start) : {},
+        absenceEnd: values.absence?.end ? toTimestamp(values.absence.end) : {},
     };
 
     if (values.reset) {
@@ -87,7 +95,7 @@ async function setAbsenceDate(values: Schema): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        isOpen.value = false;
+        emit('close', false);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -95,14 +103,25 @@ async function setAbsenceDate(values: Schema): Promise<void> {
 }
 
 function updateAbsenceDateField(): void {
-    if (props.userProps?.absenceBegin && isFuture(toDate(props.userProps.absenceBegin))) {
-        state.absenceBegin = toDate(props.userProps.absenceBegin);
-    }
-
-    if (props.userProps?.absenceEnd && isFuture(toDate(props.userProps.absenceEnd))) {
-        state.absenceEnd = toDate(props.userProps.absenceEnd);
+    if (
+        props.userProps?.absenceBegin &&
+        isFuture(toDate(props.userProps.absenceBegin)) &&
+        props.userProps?.absenceEnd &&
+        isFuture(toDate(props.userProps.absenceEnd))
+    ) {
+        if (!state.absence)
+            state.absence = {
+                start: toDate(props.userProps.absenceBegin),
+                end: toDate(props.userProps.absenceEnd),
+            };
+    } else {
+        state.absence = undefined;
     }
 }
+
+const isDateDisabled = (date: DateValue) => {
+    return isBefore(date.toDate('UTC'), subDays(today, 1));
+};
 
 watch(props, () => updateAbsenceDateField());
 
@@ -113,80 +132,56 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await setAbsenceDate(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
-                            {{ $t('components.jobs.self_service.set_absence_date') }}
-                        </h3>
+    <UModal :title="$t('components.jobs.self_service.set_absence_date')">
+        <template #body>
+            <UForm ref="formRef" :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
+                <UFormField name="reason" :label="$t('common.reason')" required>
+                    <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" class="w-full" />
+                </UFormField>
 
-                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                    </div>
-                </template>
+                <UFormField name="absenceBegin" :label="$t('common.time_range')">
+                    <InputDateRangePopover
+                        v-model="state.absence"
+                        range
+                        :is-date-disabled="isDateDisabled"
+                        :min-value="new CalendarDate(today.getFullYear(), today.getMonth() + 1, today.getDate())"
+                        :max-value="new CalendarDate(maxEnd.getFullYear(), maxEnd.getMonth() + 1, maxEnd.getDate())"
+                    />
+                </UFormField>
+            </UForm>
+        </template>
 
-                <div>
-                    <UFormGroup name="reason" :label="$t('common.reason')" required>
-                        <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
-                    </UFormGroup>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
-                    <div class="flex flex-col gap-1 sm:flex-row">
-                        <UFormGroup class="flex-1" name="absenceBegin" :label="$t('common.from')">
-                            <PartialsDatePickerPopover
-                                v-model="state.absenceBegin"
-                                :popover="{ popper: { placement: 'bottom-start' } }"
-                                :date-picker="{
-                                    disabledDates: [
-                                        { start: null, end: minStart },
-                                        { start: maxEnd, end: null },
-                                    ],
-                                }"
-                            />
-                        </UFormGroup>
+                <UButton
+                    color="error"
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit || (!userProps?.absenceBegin && !userProps?.absenceEnd)"
+                    :loading="!canSubmit"
+                    :label="$t('common.annul')"
+                    @click="
+                        state.reset = true;
+                        formRef?.submit();
+                    "
+                />
 
-                        <UFormGroup class="flex-1" name="absenceEnd" :label="$t('common.to')">
-                            <DatePickerPopoverClient
-                                v-model="state.absenceEnd"
-                                :popover="{ popper: { placement: 'bottom-start' } }"
-                                :date-picker="{
-                                    disabledDates: [
-                                        { start: null, end: subDays(today, 1) },
-                                        { start: maxEnd, end: null },
-                                    ],
-                                }"
-                            />
-                        </UFormGroup>
-                    </div>
-                </div>
-
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" color="black" block @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
-
-                        <UButton
-                            class="flex-1"
-                            type="submit"
-                            block
-                            color="error"
-                            :disabled="!canSubmit || (!userProps?.absenceBegin && !userProps?.absenceEnd)"
-                            :loading="!canSubmit"
-                            @click="state.reset = true"
-                        >
-                            {{ $t('common.annul') }}
-                        </UButton>
-
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.save') }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                <UButton
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :label="$t('common.save')"
+                    @click="formRef?.submit()"
+                />
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

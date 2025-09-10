@@ -32,13 +32,13 @@ async function getStatus() {
         />
         <div v-if="data" class="flex flex-wrap gap-4">
             <UPopover class="flex-1">
-                <UButton variant="link" size="xl" :padded="false" :color="data.database?.connected ? 'success' : 'error'">
+                <UButton variant="link" size="xl" :color="data.database?.connected ? 'success' : 'error'">
                     <UIcon name="i-simple-icons-mysql" class="size-10" />
 
                     {{ $t('components.settings.system_status.database.title') }}
                 </UButton>
 
-                <template #panel>
+                <template #content>
                     <div class="p-4">
                         <ul class="flex flex-col gap-1">
                             <li class="inline-flex items-center gap-1">
@@ -70,13 +70,13 @@ async function getStatus() {
             </UPopover>
 
             <UPopover class="flex-1">
-                <UButton variant="link" size="xl" :padded="false" :color="data.nats?.connected ? 'success' : 'error'">
+                <UButton variant="link" size="xl" :color="data.nats?.connected ? 'success' : 'error'">
                     <UIcon name="i-simple-icons-natsdotio" class="size-10" />
 
                     {{ $t('components.settings.system_status.nats.title') }}
                 </UButton>
 
-                <template #panel>
+                <template #content>
                     <div class="p-4">
                         <ul class="flex flex-col gap-1">
                             <li class="inline-flex items-center gap-1">
@@ -88,13 +88,13 @@ async function getStatus() {
             </UPopover>
 
             <UPopover v-if="data.dbsync?.enabled" class="flex-1">
-                <UButton variant="link" size="xl" :padded="false">
+                <UButton variant="link" size="xl">
                     <UIcon name="i-mdi-database-sync" class="size-10" />
 
                     {{ $t('components.settings.system_status.db_sync.title') }}
                 </UButton>
 
-                <template #panel>
+                <template #content>
                     <div class="p-4">
                         <ul class="flex flex-col gap-1">
                             <li class="inline-flex items-center gap-1">

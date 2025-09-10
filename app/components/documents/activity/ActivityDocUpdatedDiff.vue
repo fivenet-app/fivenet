@@ -13,7 +13,7 @@ defineProps<{
             <p class="text-base font-semibold">
                 {{ $t('common.title') }} {{ $t('components.documents.activity_list.difference') }}:
             </p>
-            <div class="my-2 break-words rounded-lg">
+            <div class="my-2 rounded-lg break-words">
                 <span v-if="update.titleDiff?.length === 0">
                     {{ $t('common.na') }}
                 </span>
@@ -26,7 +26,7 @@ defineProps<{
             <p class="text-base font-semibold">
                 {{ $t('common.state') }} {{ $t('components.documents.activity_list.difference') }}:
             </p>
-            <div class="my-2 break-words rounded-lg">
+            <div class="my-2 rounded-lg break-words">
                 <span v-if="update.stateDiff?.length === 0">
                     {{ $t('common.na') }}
                 </span>
@@ -39,7 +39,7 @@ defineProps<{
             <p class="text-base font-semibold">
                 {{ $t('common.content') }} {{ $t('components.documents.activity_list.difference') }}:
             </p>
-            <div class="my-2 break-words rounded-lg">
+            <div class="my-2 rounded-lg break-words">
                 <span v-if="update.contentDiff?.length === 0">
                     {{ $t('common.na') }}
                 </span>

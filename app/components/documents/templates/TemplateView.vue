@@ -7,7 +7,7 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import DocumentCategoryBadge from '~/components/partials/documents/DocumentCategoryBadge.vue';
+import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
@@ -21,7 +21,7 @@ const { t } = useI18n();
 
 const { can } = useAuth();
 
-const modal = useModal();
+const overlay = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -55,6 +55,13 @@ async function getTemplate(): Promise<Template | undefined> {
     }
 }
 
+useHead({
+    title: () =>
+        template.value?.title
+            ? `${template.value?.title} - ${t('pages.documents.templates.view.title')}`
+            : t('pages.documents.templates.view.title'),
+});
+
 async function deleteTemplate(id: number): Promise<void> {
     try {
         await documentsDocumentsClient.deleteTemplate({ id });
@@ -72,280 +79,293 @@ async function deleteTemplate(id: number): Promise<void> {
     }
 }
 
-const templateAccessTypes: AccessType[] = [{ type: 'job', name: t('common.job', 2) }];
+const templateAccessTypes: AccessType[] = [{ label: t('common.job', 2), value: 'job' }];
 const contentAccessTypes: AccessType[] = [
-    { type: 'user', name: t('common.citizen', 2) },
-    { type: 'job', name: t('common.job', 2) },
+    { label: t('common.citizen', 2), value: 'user' },
+    { label: t('common.job', 2), value: 'job' },
 ];
+
+const confirmModal = overlay.create(ConfirmModal);
+const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { templateId: props.templateId } });
 </script>
 
 <template>
-    <UDashboardNavbar :title="$t('pages.documents.templates.view.title')">
-        <template #right>
-            <PartialsBackButton to="/documents/templates" />
+    <UDashboardPanel>
+        <template #header>
+            <UDashboardNavbar :title="$t('pages.documents.templates.view.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
 
-            <UButtonGroup v-if="template" class="inline-flex">
-                <UButton
-                    v-if="can('documents.DocumentsService/CreateTemplate').value"
-                    class="flex-1"
-                    block
-                    color="white"
-                    trailing-icon="i-mdi-print-preview"
-                    @click="
-                        modal.open(TemplatePreviewModal, {
-                            templateId: templateId,
-                        })
-                    "
-                >
-                    {{ $t('common.preview') }}
-                </UButton>
+                <template #right>
+                    <PartialsBackButton to="/documents/templates" />
 
-                <UButton
-                    v-if="can('documents.DocumentsService/CreateTemplate').value"
-                    class="flex-1"
-                    block
-                    trailing-icon="i-mdi-pencil"
-                    :to="{ name: 'documents-templates-edit-id', params: { id: templateId } }"
-                >
-                    {{ $t('common.edit') }}
-                </UButton>
+                    <UButtonGroup v-if="template" class="inline-flex">
+                        <UButton
+                            v-if="can('documents.DocumentsService/CreateTemplate').value"
+                            class="flex-1"
+                            block
+                            color="neutral"
+                            trailing-icon="i-mdi-print-preview"
+                            @click="
+                                templatePreviewModal.open({
+                                    templateId: templateId,
+                                })
+                            "
+                        >
+                            {{ $t('common.preview') }}
+                        </UButton>
 
-                <UButton
-                    v-if="can('documents.DocumentsService/DeleteTemplate').value"
-                    class="flex-1"
-                    block
-                    trailing-icon="i-mdi-delete"
-                    color="error"
-                    @click="
-                        modal.open(ConfirmModal, {
-                            confirm: async () => deleteTemplate(templateId),
-                        })
-                    "
-                >
-                    {{ $t('common.delete') }}
-                </UButton>
-            </UButtonGroup>
+                        <UButton
+                            v-if="can('documents.DocumentsService/CreateTemplate').value"
+                            class="flex-1"
+                            block
+                            trailing-icon="i-mdi-pencil"
+                            :to="{ name: 'documents-templates-edit-id', params: { id: templateId } }"
+                        >
+                            {{ $t('common.edit') }}
+                        </UButton>
+
+                        <UButton
+                            v-if="can('documents.DocumentsService/DeleteTemplate').value"
+                            class="flex-1"
+                            block
+                            trailing-icon="i-mdi-delete"
+                            color="error"
+                            @click="
+                                confirmModal.open({
+                                    confirm: async () => deleteTemplate(templateId),
+                                })
+                            "
+                        >
+                            {{ $t('common.delete') }}
+                        </UButton>
+                    </UButtonGroup>
+                </template>
+            </UDashboardNavbar>
         </template>
-    </UDashboardNavbar>
 
-    <UDashboardPanelContent class="p-0 sm:pb-0">
-        <UContainer class="w-full">
-            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.template', 2)])" />
-            <DataErrorBlock
-                v-else-if="error"
-                :title="$t('common.unable_to_load', [$t('common.template', 2)])"
-                :error="error"
-                :retry="refresh"
-            />
-            <DataNoDataBlock v-else-if="!template" :type="$t('common.template', 2)" />
+        <template #body>
+            <UContainer class="w-full">
+                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.template', 2)])" />
+                <DataErrorBlock
+                    v-else-if="error"
+                    :title="$t('common.unable_to_load', [$t('common.template', 2)])"
+                    :error="error"
+                    :retry="refresh"
+                />
+                <DataNoDataBlock v-else-if="!template" :type="$t('common.template', 2)" />
 
-            <template v-else>
-                <div class="mt-2 sm:flex sm:items-center">
-                    <div>
-                        <h2 class="inline-flex items-center gap-2 text-2xl">
-                            <UIcon
-                                class="shrink-0"
-                                :class="`text-${template.color}-500 dark:text-${template.color}-400`"
-                                :name="template.icon ? convertComponentIconNameToDynamic(template.icon) : 'i-mdi-file-outline'"
-                            />
-
-                            <span>
-                                {{ template.title }}
-                            </span>
-                        </h2>
-
-                        <p class="text-base">
-                            <span class="font-semibold">{{ $t('common.description') }}:</span> {{ template.description }}
-                        </p>
-                    </div>
-                </div>
-
-                <div class="mb-6 mt-4 flow-root">
-                    <div class="-my-2 mx-0 overflow-x-auto">
-                        <div class="my-2">
-                            <h3 class="block text-base font-medium leading-6 text-gray-100">
-                                {{ $t('common.template', 2) }} {{ $t('common.weight') }}
-                            </h3>
-                            <div class="my-2">
-                                <UInput type="text" name="weight" disabled :value="template.weight" />
-                            </div>
-                        </div>
-
-                        <div v-if="template.jobAccess" class="my-2">
-                            <h3 class="block text-base font-medium leading-6 text-gray-100">
-                                {{ $t('common.template', 2) }} {{ $t('common.access') }}
-                            </h3>
-                            <div class="my-2">
-                                <AccessManager
-                                    v-model:jobs="template.jobAccess"
-                                    :target-id="templateId ?? 0"
-                                    :access-roles="
-                                        enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel').filter(
-                                            (e) => e.value === AccessLevel.VIEW || e.value === AccessLevel.EDIT,
-                                        )
+                <template v-else>
+                    <div class="mt-2 sm:flex sm:items-center">
+                        <div>
+                            <h2 class="inline-flex items-center gap-2 text-2xl">
+                                <UIcon
+                                    class="shrink-0"
+                                    :class="`text-${template.color}-500 dark:text-${template.color}-400`"
+                                    :name="
+                                        template.icon ? convertComponentIconNameToDynamic(template.icon) : 'i-mdi-file-outline'
                                     "
-                                    :access-types="templateAccessTypes"
-                                    :disabled="true"
                                 />
-                            </div>
-                        </div>
 
-                        <div class="my-2">
-                            <h3 class="block text-base font-medium leading-6 text-gray-100">
-                                {{ $t('common.content') }} {{ $t('common.title') }}
-                            </h3>
+                                <span>
+                                    {{ template.title }}
+                                </span>
+                            </h2>
+
+                            <p class="text-base">
+                                <span class="font-semibold">{{ $t('common.description') }}:</span> {{ template.description }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 mb-6 flow-root">
+                        <div class="mx-0 -my-2 overflow-x-auto">
                             <div class="my-2">
-                                <UTextarea
-                                    class="w-full whitespace-pre-wrap"
-                                    name="contentTitle"
-                                    disabled
-                                    resize
-                                    :rows="3"
-                                    :value="template.contentTitle"
-                                />
+                                <h3 class="block text-base leading-6 font-medium text-toned">
+                                    {{ $t('common.template', 2) }} {{ $t('common.weight') }}
+                                </h3>
+                                <div class="my-2">
+                                    <UInputNumber type="text" name="weight" disabled :value="template.weight" />
+                                </div>
                             </div>
-                        </div>
 
-                        <div v-if="template.state">
-                            <h3 class="block text-base font-medium leading-6 text-gray-100">
-                                {{ $t('common.content') }} {{ $t('common.state') }}
-                            </h3>
-                            <div class="my-2">
-                                <UInput
-                                    class="block w-full whitespace-pre-wrap rounded-md border-0 bg-base-900 py-1.5 focus:ring-1 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                    type="text"
-                                    name="state"
-                                    disabled
-                                    :value="template.state"
-                                />
+                            <div v-if="template.jobAccess" class="my-2">
+                                <h3 class="block text-base leading-6 font-medium text-toned">
+                                    {{ $t('common.template', 2) }} {{ $t('common.access') }}
+                                </h3>
+                                <div class="my-2">
+                                    <AccessManager
+                                        v-model:jobs="template.jobAccess"
+                                        :target-id="templateId ?? 0"
+                                        :access-roles="
+                                            enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel').filter(
+                                                (e) => e.value === AccessLevel.VIEW || e.value === AccessLevel.EDIT,
+                                            )
+                                        "
+                                        :access-types="templateAccessTypes"
+                                        disabled
+                                        name="jobAccess"
+                                        full-name
+                                    />
+                                </div>
                             </div>
-                        </div>
-
-                        <div v-if="template.category">
-                            <h3 class="block text-base font-medium leading-6 text-gray-100">
-                                {{ $t('common.category') }}
-                            </h3>
-                            <div class="my-2">
-                                <DocumentCategoryBadge :category="template.category" />
-                            </div>
-                        </div>
-
-                        <div class="my-2">
-                            <h3 class="block text-base font-medium leading-6 text-gray-100">
-                                {{ $t('common.content') }}
-                            </h3>
-                            <div class="my-2">
-                                <UTextarea
-                                    class="w-full whitespace-pre-wrap"
-                                    name="content"
-                                    disabled
-                                    resize
-                                    :rows="4"
-                                    :value="template.content"
-                                />
-                            </div>
-                        </div>
-
-                        <div v-if="reqs">
-                            <h3 class="block text-base font-medium leading-6 text-gray-100">
-                                {{ $t('common.schema') }}
-                            </h3>
-                            <div class="my-2">
-                                <ul
-                                    class="mb-2 max-w-md list-inside space-y-1 text-sm font-medium text-gray-100 dark:text-gray-300"
-                                >
-                                    <li v-if="reqs.users">
-                                        <TemplateRequirementsList name="User" :specs="reqs.users!" />
-                                    </li>
-                                    <li v-if="reqs.vehicles">
-                                        <TemplateRequirementsList name="Vehicle" :specs="reqs.vehicles!" />
-                                    </li>
-                                    <li v-if="reqs.documents">
-                                        <TemplateRequirementsList name="Document" :specs="reqs.documents!" />
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div v-if="template.contentAccess" class="my-2">
-                            <h3 class="block text-base font-medium leading-6 text-gray-100">
-                                {{ $t('common.access') }}
-                            </h3>
-                            <div class="my-2">
-                                <AccessManager
-                                    v-model:jobs="template.contentAccess.jobs"
-                                    :target-id="templateId ?? 0"
-                                    :access-types="contentAccessTypes"
-                                    :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
-                                    :disabled="true"
-                                    :show-required="true"
-                                />
-                            </div>
-                        </div>
-
-                        <div v-if="!template.workflow">
-                            {{ $t('common.none', [$t('common.workflow')]) }}
-                        </div>
-                        <div v-else>
-                            <h3 class="block text-base font-medium leading-6 text-gray-100">
-                                {{ $t('common.auto_close') }}
-                            </h3>
 
                             <div class="my-2">
-                                <div class="flex gap-2">
-                                    <span
-                                        ><span class="font-semibold">{{ $t('common.enabled') }}:</span>
-                                        {{ $t(template.workflow?.autoClose ? 'common.yes' : 'common.no') }}</span
-                                    >
+                                <h3 class="block text-base leading-6 font-medium text-toned">
+                                    {{ $t('common.content') }} {{ $t('common.title') }}
+                                </h3>
+                                <div class="my-2">
+                                    <UTextarea
+                                        class="w-full whitespace-pre-wrap"
+                                        name="contentTitle"
+                                        disabled
+                                        resize
+                                        :rows="3"
+                                        :value="template.contentTitle"
+                                    />
+                                </div>
+                            </div>
 
-                                    <span v-if="template.workflow?.autoCloseSettings?.duration">
-                                        <span class="font-semibold">{{ $t('common.time_ago.day', 2) }}:</span>
-                                        {{
-                                            (template.workflow.autoCloseSettings.duration.seconds / 24 / 60 / 60).toFixed(0)
-                                        }}</span
+                            <div v-if="template.state">
+                                <h3 class="block text-base leading-6 font-medium text-toned">
+                                    {{ $t('common.content') }} {{ $t('common.state') }}
+                                </h3>
+                                <div class="my-2">
+                                    <UInput
+                                        class="focus:ring-base-300 block w-full rounded-md border-0 bg-neutral-900 py-1.5 whitespace-pre-wrap focus:ring-1 focus:ring-inset sm:text-sm sm:leading-6"
+                                        type="text"
+                                        name="state"
+                                        disabled
+                                        :value="template.state"
+                                    />
+                                </div>
+                            </div>
+
+                            <div v-if="template.category">
+                                <h3 class="block text-base leading-6 font-medium text-toned">
+                                    {{ $t('common.category') }}
+                                </h3>
+                                <div class="my-2">
+                                    <CategoryBadge :category="template.category" />
+                                </div>
+                            </div>
+
+                            <div class="my-2">
+                                <h3 class="block text-base leading-6 font-medium text-toned">
+                                    {{ $t('common.content') }}
+                                </h3>
+                                <div class="my-2">
+                                    <UTextarea
+                                        class="w-full whitespace-pre-wrap"
+                                        name="content"
+                                        disabled
+                                        resize
+                                        :rows="4"
+                                        :value="template.content"
+                                    />
+                                </div>
+                            </div>
+
+                            <div v-if="reqs">
+                                <h3 class="block text-base leading-6 font-medium text-toned">
+                                    {{ $t('common.schema') }}
+                                </h3>
+                                <div class="my-2">
+                                    <ul class="mb-2 max-w-md list-inside space-y-1 text-sm font-medium text-toned">
+                                        <li v-if="reqs.users">
+                                            <TemplateRequirementsList name="User" :specs="reqs.users!" />
+                                        </li>
+                                        <li v-if="reqs.vehicles">
+                                            <TemplateRequirementsList name="Vehicle" :specs="reqs.vehicles!" />
+                                        </li>
+                                        <li v-if="reqs.documents">
+                                            <TemplateRequirementsList name="Document" :specs="reqs.documents!" />
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div v-if="template.contentAccess" class="my-2">
+                                <h3 class="block text-base leading-6 font-medium text-toned">
+                                    {{ $t('common.access') }}
+                                </h3>
+                                <div class="my-2">
+                                    <AccessManager
+                                        v-model:jobs="template.contentAccess.jobs"
+                                        :target-id="templateId ?? 0"
+                                        :access-types="contentAccessTypes"
+                                        :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
+                                        disabled
+                                        show-required
+                                    />
+                                </div>
+                            </div>
+
+                            <div v-if="!template.workflow">
+                                {{ $t('common.none', [$t('common.workflow')]) }}
+                            </div>
+                            <div v-else>
+                                <h3 class="block text-base leading-6 font-medium text-toned">
+                                    {{ $t('common.auto_close') }}
+                                </h3>
+
+                                <div class="my-2">
+                                    <div class="flex gap-2">
+                                        <span
+                                            ><span class="font-semibold">{{ $t('common.enabled') }}:</span>
+                                            {{ $t(template.workflow?.autoClose ? 'common.yes' : 'common.no') }}</span
+                                        >
+
+                                        <span v-if="template.workflow?.autoCloseSettings?.duration">
+                                            <span class="font-semibold">{{ $t('common.time_ago.day', 2) }}:</span>
+                                            {{
+                                                (template.workflow.autoCloseSettings.duration.seconds / 24 / 60 / 60).toFixed(0)
+                                            }}</span
+                                        >
+                                    </div>
+
+                                    <span v-if="template.workflow?.autoCloseSettings?.message">
+                                        <span class="font-semibold">{{ $t('common.message') }}:</span>
+                                        "{{ template.workflow.autoCloseSettings.message }}"</span
                                     >
                                 </div>
 
-                                <span v-if="template.workflow?.autoCloseSettings?.message">
-                                    <span class="font-semibold">{{ $t('common.message') }}:</span>
-                                    "{{ template.workflow.autoCloseSettings.message }}"</span
-                                >
-                            </div>
+                                <h3 class="block text-base leading-6 font-medium text-toned">
+                                    {{ $t('common.reminder', 2) }}
+                                </h3>
 
-                            <h3 class="block text-base font-medium leading-6 text-gray-100">
-                                {{ $t('common.reminder', 2) }}
-                            </h3>
-
-                            <div class="my-2">
-                                <span
-                                    >{{ $t('common.enabled') }}:
-                                    {{ $t(template.workflow?.reminder ? 'common.yes' : 'common.no') }}</span
-                                >
-
-                                <ol class="list-inside list-decimal">
-                                    <li
-                                        v-for="(reminder, idx) in template.workflow?.reminderSettings?.reminders"
-                                        :key="idx"
-                                        class="gap-2"
+                                <div class="my-2">
+                                    <span
+                                        >{{ $t('common.enabled') }}:
+                                        {{ $t(template.workflow?.reminder ? 'common.yes' : 'common.no') }}</span
                                     >
-                                        <div class="inline-flex gap-2">
-                                            <span>
-                                                <span class="font-semibold">{{ $t('common.time_ago.day', 2) }}:</span>
-                                                {{ ((reminder?.duration?.seconds ?? 0) / 24 / 60 / 60).toFixed(0) }}
-                                            </span>
 
-                                            <span>
-                                                <span class="font-semibold">{{ $t('common.message') }}:</span>
-                                                "{{ reminder.message }}"</span
-                                            >
-                                        </div>
-                                    </li>
-                                </ol>
+                                    <ol class="list-inside list-decimal">
+                                        <li
+                                            v-for="(reminder, idx) in template.workflow?.reminderSettings?.reminders"
+                                            :key="idx"
+                                            class="gap-2"
+                                        >
+                                            <div class="inline-flex gap-2">
+                                                <span>
+                                                    <span class="font-semibold">{{ $t('common.time_ago.day', 2) }}:</span>
+                                                    {{ ((reminder?.duration?.seconds ?? 0) / 24 / 60 / 60).toFixed(0) }}
+                                                </span>
+
+                                                <span>
+                                                    <span class="font-semibold">{{ $t('common.message') }}:</span>
+                                                    "{{ reminder.message }}"</span
+                                                >
+                                            </div>
+                                        </li>
+                                    </ol>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </template>
-        </UContainer>
-    </UDashboardPanelContent>
+                </template>
+            </UContainer>
+        </template>
+    </UDashboardPanel>
 </template>

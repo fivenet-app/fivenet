@@ -1,42 +1,34 @@
 <script lang="ts" setup>
-import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { ListDocumentPinsResponse, ToggleDocumentPinResponse } from '~~/gen/ts/services/documents/documents';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
-import DocumentCategoryBadge from '../partials/documents/DocumentCategoryBadge.vue';
+import CategoryBadge from '../partials/documents/CategoryBadge.vue';
 import DocumentInfoPopover from '../partials/documents/DocumentInfoPopover.vue';
 import IDCopyBadge from '../partials/IDCopyBadge.vue';
 import Pagination from '../partials/Pagination.vue';
 
+defineEmits<{
+    (e: 'close'): void;
+}>();
+
 const { attr, can } = useAuth();
 
-const documentsDocumentsClient = await getDocumentsDocumentsClient();
+const documentsDocuments = await useDocumentsDocuments();
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
-const { data, status, error, refresh } = useLazyAsyncData(`calendars-${page.value}`, () => listDocumentPins(), {
+const { data, status, error, refresh } = useLazyAsyncData(`documents-pins-${page.value}`, () => listDocumentPins(), {
     immediate: can('documents.DocumentsService/ToggleDocumentPin').value,
 });
 
 async function listDocumentPins(): Promise<ListDocumentPinsResponse> {
-    const call = documentsDocumentsClient.listDocumentPins({
-        pagination: {
-            offset: calculateOffset(page.value, data.value?.pagination),
-        },
-    });
-    const { response } = await call;
-
-    return response;
+    const call = documentsDocuments.listDocumentPins(page.value);
+    return await call;
 }
 
 async function togglePin(documentId: number, state: boolean, personal: boolean): Promise<ToggleDocumentPinResponse> {
     try {
-        const call = documentsDocumentsClient.toggleDocumentPin({
-            documentId: documentId,
-            state: state,
-            personal: personal,
-        });
-        const { response } = await call;
+        const response = await documentsDocuments.togglePin(documentId, state, personal);
 
         const idx = data.value?.documents.findIndex((d) => d.id === documentId);
         if (idx && idx > -1 && data.value?.documents[idx]) {
@@ -58,28 +50,43 @@ const editing = ref(false);
 </script>
 
 <template>
-    <div class="flex flex-1 flex-col">
-        <UDashboardNavbar :title="$t('common.pinned_document', 2)">
-            <template #toggle>
-                <UDashboardNavbarToggle class="lg:block 2xl:hidden" />
-            </template>
-
-            <template #right>
-                <UTooltip
-                    v-if="can('documents.DocumentsService/ToggleDocumentPin').value"
-                    :text="editing ? $t('common.save') : $t('common.edit')"
-                >
+    <UDashboardPanel
+        id="documents-pinnedlist"
+        class="overflow-x-hidden"
+        breakpoint="2xl"
+        :width="30"
+        :min-size="25"
+        :max-size="50"
+        :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }"
+    >
+        <template #header>
+            <UDashboardNavbar :title="$t('common.pinned_document', 2)">
+                <template #toggle>
                     <UButton
-                        variant="link"
-                        :padded="false"
-                        :icon="editing ? 'i-mdi-content-save' : 'i-mdi-pencil'"
-                        @click="editing = !editing"
+                        class="lg:block 2xl:hidden"
+                        icon="i-mdi-menu"
+                        variant="ghost"
+                        color="neutral"
+                        @click="$emit('close')"
                     />
-                </UTooltip>
-            </template>
-        </UDashboardNavbar>
+                </template>
 
-        <UDashboardPanelContent class="p-1">
+                <template #right>
+                    <UTooltip
+                        v-if="can('documents.DocumentsService/ToggleDocumentPin').value"
+                        :text="editing ? $t('common.save') : $t('common.edit')"
+                    >
+                        <UButton
+                            variant="link"
+                            :icon="editing ? 'i-mdi-content-save' : 'i-mdi-pencil'"
+                            @click="editing = !editing"
+                        />
+                    </UTooltip>
+                </template>
+            </UDashboardNavbar>
+        </template>
+
+        <template #body>
             <div class="flex flex-col gap-2">
                 <DataErrorBlock
                     v-if="error"
@@ -97,11 +104,7 @@ const editing = ref(false);
                     <USkeleton v-for="idx in 10" :key="idx" class="h-16 w-full" />
                 </template>
                 <div v-else class="flex flex-col gap-2">
-                    <div
-                        v-for="doc in data?.documents"
-                        :key="doc.id"
-                        class="flex flex-row gap-1 divide-x divide-gray-100 dark:divide-gray-800"
-                    >
+                    <div v-for="doc in data?.documents" :key="doc.id" class="flex flex-row gap-1 divide-x divide-default">
                         <UButtonGroup
                             v-if="editing && can('documents.DocumentsService/ToggleDocumentPin').value"
                             class="inline-flex items-center gap-1"
@@ -112,7 +115,6 @@ const editing = ref(false);
                                     class="shrink-0 flex-col text-center"
                                     variant="link"
                                     size="xs"
-                                    :padded="false"
                                     :color="doc.pin?.state && doc.pin?.userId ? 'error' : 'primary'"
                                     @click="togglePin(doc.id, !doc.pin?.userId, true)"
                                 >
@@ -132,7 +134,6 @@ const editing = ref(false);
                                         class="shrink-0 flex-col text-center"
                                         variant="link"
                                         size="xs"
-                                        :padded="false"
                                         :color="doc.pin?.state && doc.pin?.job ? 'error' : 'primary'"
                                         @click="togglePin(doc.id, !doc.pin?.job, false)"
                                     >
@@ -158,10 +159,10 @@ const editing = ref(false);
                                 <template #title="{ document }">
                                     <div class="inline-flex items-center gap-1 overflow-hidden">
                                         <IDCopyBadge :id="document?.id" prefix="DOC" size="xs" disable-tooltip />
-                                        <DocumentCategoryBadge v-if="document?.category" :category="document?.category" />
+                                        <CategoryBadge v-if="document?.category" :category="document?.category" />
                                     </div>
 
-                                    <span class="line-clamp-2 break-words text-left hover:line-clamp-4">{{
+                                    <span class="line-clamp-2 text-left break-words hover:line-clamp-4">{{
                                         document?.title
                                     }}</span>
                                 </template>
@@ -179,15 +180,15 @@ const editing = ref(false);
                                 <template #title>
                                     <IDCopyBadge :id="doc?.id" prefix="DOC" size="xs" disable-tooltip />
 
-                                    <UBadge :label="$t('common.no_access_to_document')" color="red" size="md" />
+                                    <UBadge :label="$t('common.no_access_to_document')" color="error" size="md" />
                                 </template>
                             </DocumentInfoPopover>
                         </div>
                     </div>
                 </div>
             </div>
-        </UDashboardPanelContent>
 
-        <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
-    </div>
+            <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+        </template>
+    </UDashboardPanel>
 </template>

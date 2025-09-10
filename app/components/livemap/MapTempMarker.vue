@@ -33,12 +33,12 @@ watch(showLocationMarker, () => {
         <LIcon
             :icon-size="[livemap.markerSize, livemap.markerSize]"
             :icon-anchor="iconAnchor"
-            class-name="!pointer-events-none"
+            class-name="pointer-events-none!"
             :options="{
                 pmIgnore: true,
             }"
         >
-            <MapMarkerDownIcon class="text-primary-500 size-full animate-pulse" />
+            <MapMarkerDownIcon class="size-full animate-pulse text-primary-500" />
         </LIcon>
     </LMarker>
 </template>

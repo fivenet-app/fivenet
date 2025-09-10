@@ -1,7 +1,5 @@
 export default defineNuxtPlugin(() => {
-    if (!import.meta.client) {
-        return;
-    }
+    if (!import.meta.client) return;
 
     /* FiveM NUI uses Chromium Embedded Framework version 103.x - As of now requires following polyfills:
      *

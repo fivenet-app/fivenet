@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.mailer;
 
 import "buf/validate/validate.proto";
+import "codegen/itemslen/itemslen.proto";
 import "resources/common/database/database.proto";
 import "resources/mailer/email.proto";
 import "resources/mailer/message.proto";
@@ -23,7 +24,7 @@ message ListEmailsRequest {
 
 message ListEmailsResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.mailer.Email emails = 2;
+  repeated resources.mailer.Email emails = 2 [(codegen.itemslen.items_len) = true];
 }
 
 message GetEmailRequest {
@@ -111,7 +112,7 @@ message ListThreadsRequest {
 
 message ListThreadsResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.mailer.Thread threads = 2;
+  repeated resources.mailer.Thread threads = 2 [(codegen.itemslen.items_len) = true];
 }
 
 message GetThreadRequest {
@@ -193,7 +194,7 @@ message SearchThreadsRequest {
 
 message SearchThreadsResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.mailer.Message messages = 2;
+  repeated resources.mailer.Message messages = 2 [(codegen.itemslen.items_len) = true];
 }
 
 message ListThreadMessagesRequest {
@@ -205,7 +206,7 @@ message ListThreadMessagesRequest {
 
 message ListThreadMessagesResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.mailer.Message messages = 2;
+  repeated resources.mailer.Message messages = 2 [(codegen.itemslen.items_len) = true];
 }
 
 message PostMessageRequest {

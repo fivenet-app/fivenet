@@ -4,7 +4,7 @@ import { notificationTypeToColor, notificationTypeToIcon } from '~/components/no
 import { useCalendarStore } from '~/stores/calendar';
 import { useMailerStore } from '~/stores/mailer';
 import { useSettingsStore } from '~/stores/settings';
-import type { Notification } from '~/utils/notifications';
+import type { Notification } from '~/types/notifications';
 
 const { t } = useI18n();
 
@@ -100,12 +100,12 @@ function createNotifications(notifications: Notification[]): void {
             description: t(notification.description.key, notification.description.parameters ?? {}),
             icon: notificationTypeToIcon(notification.type),
             color: notificationTypeToColor(notification.type),
-            timeout: notification.timeout ?? timeouts.notification,
+            duration: notification.duration ?? timeouts.notification,
             actions: notification.actions?.map((action) => ({
                 ...action,
                 label: t(action.label.key, action.label.parameters ?? {}),
             })),
-            callback: () => {
+            'onUpdate:open': () => {
                 if (notification.id) {
                     notificationsStore.remove(notification.id);
                 }

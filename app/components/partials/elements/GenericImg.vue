@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { NuxtImg } from '#components';
-import type { AvatarSize } from '#ui/types';
+import type { AvatarProps } from '@nuxt/ui';
 import { useSettingsStore } from '~/stores/settings';
 
 const props = withDefaults(
@@ -8,7 +8,7 @@ const props = withDefaults(
         src?: string;
         alt?: string;
         text?: string;
-        size?: AvatarSize;
+        size?: AvatarProps['size'];
         noBlur?: boolean;
         enablePopup?: boolean;
         disableBlurToggle?: boolean;
@@ -44,12 +44,10 @@ function toggleBlur(): void {
 }
 
 const src = computed(() => {
-    if (!props.src) {
-        return props.src;
-    }
+    if (!props.src) return props.src;
 
     if (!props.src.startsWith('http') && !props.src.startsWith('/images') && !props.src.startsWith('/api/filestore')) {
-        return `/api/filestore/${props.src}`;
+        return `/api/filestore/${props.src.replace(/^\//, '')}`;
     }
 
     return props.src;
@@ -57,35 +55,24 @@ const src = computed(() => {
 </script>
 
 <template>
-    <UAvatar
-        v-if="!src || !enablePopup"
-        :class="[visible ? '' : 'blur', imgClass]"
-        :as="NuxtImg"
-        :size="size"
-        :src="src"
-        :alt="alt"
-        :text="text"
-        :ui="{ rounded: rounded ? 'rounded-full' : 'rounded' }"
-        :img-class="imgClass"
-        loading="lazy"
-        @click="toggleBlur()"
-    />
-    <UPopover v-else>
-        <UButton variant="link" :padded="false">
+    <UPopover>
+        <UButton
+            variant="link"
+            :disabled="!src || !enablePopup"
+            :ui="{ base: !src || !enablePopup ? 'disabled:cursor-default' : 'cursor-pointer' }"
+        >
             <UAvatar
                 :class="[visible ? '' : 'blur', imgClass]"
-                :as="NuxtImg"
                 :size="size"
                 :src="src"
                 :alt="alt"
                 :text="text"
-                :ui="{ rounded: rounded ? 'rounded-full' : 'rounded' }"
-                :img-class="imgClass"
-                loading="lazy"
+                :ui="{ root: rounded ? 'rounded-full' : 'rounded-sm' }"
+                v-bind="$attrs"
             />
         </UButton>
 
-        <template #panel>
+        <template #content>
             <div class="p-4">
                 <NuxtImg
                     class="h-96 max-w-full"

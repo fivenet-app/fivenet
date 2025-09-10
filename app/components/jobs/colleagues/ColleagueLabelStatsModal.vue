@@ -6,7 +6,9 @@ import { getJobsJobsClient } from '~~/gen/ts/clients';
 import type { LabelCount } from '~~/gen/ts/resources/jobs/labels';
 import type { GetColleagueLabelsStatsResponse } from '~~/gen/ts/services/jobs/jobs';
 
-const { isOpen } = useModal();
+defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 
 const jobsJobsClient = await getJobsJobsClient();
 
@@ -41,41 +43,14 @@ const totalCount = computed(() => stats.value?.count.reduce((stat, sum) => sum.c
 
 const x = (_: LabelCount, i: number) => i;
 const y = [(d: LabelCount) => d.count];
-const color = (d: LabelCount) => d.label?.color ?? 'gray';
+const color = (d: LabelCount) => d.label?.color ?? 'neutral';
 
 const tooltipTemplate = (d: LabelCount): string => (d.label?.name ? `${d.label?.name}: ${d.count}` : '');
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }" fullscreen>
-        <UCard
-            :ui="{
-                ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-                header: {
-                    base: 'h-[var(--header-height)]',
-                    padding: 'p-4',
-                },
-                body: {
-                    base: 'flex-1 flex min-h-[calc(100dvh-(2*var(--header-height)))] max-h-[calc(100dvh-(2*var(--header-height)))] overflow-y-auto',
-                    padding: '',
-                },
-                footer: {
-                    base: 'min-h-[var(--header-height)] max-h-[var(--header-height)]',
-                    padding: 'p-4',
-                },
-            }"
-        >
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
-                        {{ $t('common.label', 2) }} - {{ $t('common.total_count') }}: {{ totalCount }}
-                    </h3>
-
-                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                </div>
-            </template>
-
+    <UModal :title="`${$t('common.label', 2)} - ${$t('common.total_count')}: ${totalCount}`" fullscreen>
+        <template #body>
             <div ref="bodyRef" class="flex-1">
                 <DataErrorBlock v-if="error" :error="error" :retry="refresh" />
 
@@ -99,47 +74,45 @@ const tooltipTemplate = (d: LabelCount): string => (d.label?.name ? `${d.label?.
                     </VisXYContainer>
                 </ClientOnly>
             </div>
+        </template>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" color="black" block @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
-                    <UTooltip :text="$t('common.refresh')">
-                        <UButton icon="i-mdi-refresh" :loading="!canSubmit" :disabled="!canSubmit" @click="refresh" />
-                    </UTooltip>
-                </UButtonGroup>
-            </template>
-        </UCard>
+                <UTooltip :text="$t('common.refresh')">
+                    <UButton icon="i-mdi-refresh" :loading="!canSubmit" :disabled="!canSubmit" @click="() => refresh()" />
+                </UTooltip>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>
 
 <style scoped>
 .unovis-xy-container {
-    --vis-crosshair-line-stroke-color: rgb(var(--color-primary-500));
+    --vis-crosshair-line-stroke-color: var(--color-primary-500);
     --vis-crosshair-circle-stroke-color: #fff;
 
-    --vis-axis-grid-color: rgb(var(--color-gray-200));
-    --vis-axis-tick-color: rgb(var(--color-gray-200));
-    --vis-axis-tick-label-color: rgb(var(--color-gray-400));
+    --vis-axis-grid-color: var(--color-gray-200);
+    --vis-axis-tick-color: var(--color-gray-200);
+    --vis-axis-tick-label-color: var(--color-gray-400);
 
     --vis-tooltip-background-color: #fff;
-    --vis-tooltip-border-color: rgb(var(--color-gray-200));
-    --vis-tooltip-text-color: rgb(var(--color-gray-900));
+    --vis-tooltip-border-color: var(--color-gray-200);
+    --vis-tooltip-text-color: var(--color-gray-900);
 }
 
 .dark {
     .unovis-xy-container {
-        --vis-crosshair-line-stroke-color: rgb(var(--color-primary-400));
-        --vis-crosshair-circle-stroke-color: rgb(var(--color-gray-900));
+        --vis-crosshair-line-stroke-color: var(--color-primary-400);
+        --vis-crosshair-circle-stroke-color: var(--color-gray-900);
 
-        --vis-axis-grid-color: rgb(var(--color-gray-800));
-        --vis-axis-tick-color: rgb(var(--color-gray-800));
-        --vis-axis-tick-label-color: rgb(var(--color-gray-400));
+        --vis-axis-grid-color: var(--color-gray-800);
+        --vis-axis-tick-color: var(--color-gray-800);
+        --vis-axis-tick-label-color: var(--color-gray-400);
 
-        --vis-tooltip-background-color: rgb(var(--color-gray-900));
-        --vis-tooltip-border-color: rgb(var(--color-gray-800));
+        --vis-tooltip-background-color: var(--color-gray-900);
+        --vis-tooltip-border-color: var(--color-gray-800);
         --vis-tooltip-text-color: #fff;
     }
 }

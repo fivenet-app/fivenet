@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { useLivemapStore } from '~/stores/livemap';
 import type { Coordinate } from '~/types/livemap';
@@ -16,8 +16,6 @@ const emit = defineEmits<{
 }>();
 
 const { activeChar } = useAuth();
-
-const { isOpen } = useSlideover();
 
 const livemapStore = useLivemapStore();
 const { location: storeLocation } = storeToRefs(livemapStore);
@@ -79,7 +77,6 @@ async function createDispatch(values: Schema): Promise<void> {
         await call;
 
         emit('close');
-        isOpen.value = false;
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -100,157 +97,109 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await createDispatch(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <USlideover :ui="{ width: 'w-screen max-w-xl' }" :overlay="false">
-        <UForm class="flex flex-1" :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard
-                class="flex flex-1 flex-col"
-                :ui="{
-                    body: {
-                        base: 'flex-1 h-full max-h-[calc(100dvh-(2*var(--header-height)))] overflow-y-auto',
-                        padding: 'px-1 py-2 sm:p-2',
-                    },
-                    ring: '',
-                    divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-                }"
-            >
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
-                            {{ $t('components.centrum.create_dispatch.title') }}
-                        </h3>
-
-                        <UButton
-                            class="-my-1"
-                            color="gray"
-                            variant="ghost"
-                            icon="i-mdi-window-close"
-                            @click="
-                                $emit('close');
-                                isOpen = false;
-                            "
-                        />
+    <USlideover :title="$t('components.centrum.create_dispatch.title')" :overlay="false">
+        <template #body>
+            <UForm ref="formRef" class="flex flex-1" :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <dl class="divide-y divide-default">
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="message">
+                                {{ $t('common.message') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="message">
+                                <UInput
+                                    v-model="state.message"
+                                    type="text"
+                                    name="message"
+                                    :placeholder="$t('common.message')"
+                                />
+                            </UFormField>
+                        </dd>
                     </div>
-                </template>
 
-                <div>
-                    <dl class="divide-neutral/10 divide-y">
-                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
-                                <label class="block text-sm font-medium leading-6" for="message">
-                                    {{ $t('common.message') }}
-                                </label>
-                            </dt>
-                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="message">
-                                    <UInput
-                                        v-model="state.message"
-                                        type="text"
-                                        name="message"
-                                        :placeholder="$t('common.message')"
-                                    />
-                                </UFormGroup>
-                            </dd>
-                        </div>
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="description">
+                                {{ $t('common.description') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="description">
+                                <UInput
+                                    v-model="state.description"
+                                    type="text"
+                                    name="description"
+                                    :placeholder="$t('common.description')"
+                                />
+                            </UFormField>
+                        </dd>
+                    </div>
 
-                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
-                                <label class="block text-sm font-medium leading-6" for="description">
-                                    {{ $t('common.description') }}
-                                </label>
-                            </dt>
-                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="description">
-                                    <UInput
-                                        v-model="state.description"
-                                        type="text"
-                                        name="description"
-                                        :placeholder="$t('common.description')"
-                                    />
-                                </UFormGroup>
-                            </dd>
-                        </div>
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="anon">
+                                {{ $t('common.anon') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="anon">
+                                <UCheckbox v-model="state.anon" name="anon" :placeholder="$t('common.anon')" />
+                            </UFormField>
+                        </dd>
+                    </div>
 
-                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm font-medium leading-6">
-                                <label class="block text-sm font-medium leading-6" for="anon">
-                                    {{ $t('common.anon') }}
-                                </label>
-                            </dt>
-                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="anon">
-                                    <UCheckbox v-model="state.anon" name="anon" :placeholder="$t('common.anon')" />
-                                </UFormGroup>
-                            </dd>
-                        </div>
+                    <div
+                        v-if="dispatchTargetJobs && dispatchTargetJobs.length > 0"
+                        class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
+                    >
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="jobs.jobs">
+                                {{ $t('common.job') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="jobs.jobs">
+                                <USelectMenu
+                                    v-model="state.jobs.jobs"
+                                    name="jobs.jobs"
+                                    multiple
+                                    :placeholder="$t('common.job')"
+                                    :filter-fields="['name', 'label']"
+                                    value-key="name"
+                                    label-key="label"
+                                    :items="dispatchTargetJobs"
+                                    :search-input="{ placeholder: $t('common.search_field') }"
+                                    :disabled="dispatchTargetJobs.length <= 1"
+                                >
+                                    <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
+                                </USelectMenu>
+                            </UFormField>
+                        </dd>
+                    </div>
+                </dl>
+            </UForm>
+        </template>
 
-                        <div
-                            v-if="dispatchTargetJobs && dispatchTargetJobs.length > 0"
-                            class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
-                        >
-                            <dt class="text-sm font-medium leading-6">
-                                <label class="block text-sm font-medium leading-6" for="jobs.jobs">
-                                    {{ $t('common.job') }}
-                                </label>
-                            </dt>
-                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="jobs.jobs">
-                                    <USelectMenu
-                                        v-model="state.jobs.jobs"
-                                        name="jobs.jobs"
-                                        multiple
-                                        :placeholder="$t('common.job')"
-                                        option-attribute="label"
-                                        :search-attributes="['name', 'label']"
-                                        value-attribute="name"
-                                        :options="dispatchTargetJobs"
-                                        searchable
-                                        searchable-lazy
-                                        :searchable-placeholder="$t('common.search_field')"
-                                        :disabled="dispatchTargetJobs.length <= 1"
-                                    >
-                                        <template #label="{ selected }">
-                                            <span class="truncate">{{
-                                                selected.length > 0
-                                                    ? selected.map((j: { label: string }) => j.label).join(', ')
-                                                    : '&nbsp;'
-                                            }}</span>
-                                        </template>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :label="$t('common.create')"
+                    @click="() => formRef?.submit()"
+                />
 
-                                        <template #option-empty="{ query: search }">
-                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                        </template>
-
-                                        <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
-                                    </USelectMenu>
-                                </UFormGroup>
-                            </dd>
-                        </div>
-                    </dl>
-                </div>
-
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.create') }}
-                        </UButton>
-
-                        <UButton
-                            class="flex-1"
-                            block
-                            color="black"
-                            @click="
-                                $emit('close');
-                                isOpen = false;
-                            "
-                        >
-                            {{ $t('common.close', 1) }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UCard>
-        </UForm>
+                <UButton class="flex-1" block color="neutral" :label="$t('common.close', 1)" @click="$emit('close')" />
+            </UButtonGroup>
+        </template>
     </USlideover>
 </template>

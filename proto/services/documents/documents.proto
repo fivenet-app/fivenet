@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.documents;
 
 import "buf/validate/validate.proto";
+import "codegen/itemslen/itemslen.proto";
 import "resources/common/content/content.proto";
 import "resources/common/database/database.proto";
 import "resources/documents/access.proto";
@@ -83,7 +84,7 @@ message ListDocumentsRequest {
 
 message ListDocumentsResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.documents.DocumentShort documents = 2;
+  repeated resources.documents.DocumentShort documents = 2 [(codegen.itemslen.items_len) = true];
 }
 
 message GetDocumentRequest {
@@ -148,8 +149,8 @@ message GetCommentsRequest {
 }
 
 message GetCommentsResponse {
-  resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.documents.Comment comments = 2;
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.documents.Comment comments = 2 [(codegen.itemslen.items_len) = true];
 }
 
 message PostCommentRequest {
@@ -263,8 +264,8 @@ message ListDocumentActivityRequest {
 }
 
 message ListDocumentActivityResponse {
-  resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.documents.DocActivity activity = 2;
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.documents.DocActivity activity = 2 [(codegen.itemslen.items_len) = true];
 }
 
 message ListDocumentReqsRequest {
@@ -273,8 +274,8 @@ message ListDocumentReqsRequest {
 }
 
 message ListDocumentReqsResponse {
-  resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.documents.DocRequest requests = 2;
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.documents.DocRequest requests = 2 [(codegen.itemslen.items_len) = true];
 }
 
 message CreateDocumentReqRequest {
@@ -343,8 +344,8 @@ message ListUserDocumentsRequest {
 }
 
 message ListUserDocumentsResponse {
-  resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.documents.DocumentRelation relations = 2;
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.documents.DocumentRelation relations = 2 [(codegen.itemslen.items_len) = true];
 }
 
 // Categories =================================================================
@@ -379,8 +380,8 @@ message ListDocumentPinsRequest {
 }
 
 message ListDocumentPinsResponse {
-  resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.documents.DocumentShort documents = 2;
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.documents.DocumentShort documents = 2 [(codegen.itemslen.items_len) = true];
 }
 
 message ToggleDocumentPinRequest {

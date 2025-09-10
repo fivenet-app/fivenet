@@ -5,7 +5,9 @@ import VehiclePropsWantedModal from './VehiclePropsWantedModal.vue';
 
 const vehicle = defineModel<Vehicle>({ required: true });
 
-const modal = useModal();
+const overlay = useOverlay();
+
+const vehiclePropsWantedModal = overlay.create(VehiclePropsWantedModal);
 
 const { can } = useAuth();
 </script>
@@ -14,7 +16,7 @@ const { can } = useAuth();
     <UPopover>
         <UButton variant="link" icon="i-mdi-car-settings" color="primary" />
 
-        <template #panel>
+        <template #content>
             <div class="p-4">
                 <div class="grid grid-cols-1 gap-2">
                     <UTooltip
@@ -27,7 +29,7 @@ const { can } = useAuth();
                             :icon="vehicle?.props?.wanted ? 'i-mdi-account-alert' : 'i-mdi-account-cancel'"
                             :label="vehicle?.props?.wanted ? $t('common.revoke_wanted') : $t('common.set_wanted')"
                             @click="
-                                modal.open(VehiclePropsWantedModal, {
+                                vehiclePropsWantedModal.open({
                                     vehicleProps: vehicle.props,
                                     plate: vehicle.plate,
                                     'onUpdate:vehicleProps': ($event) => {

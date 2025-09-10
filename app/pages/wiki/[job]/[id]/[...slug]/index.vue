@@ -6,10 +6,6 @@ import PageView from '~/components/wiki/PageView.vue';
 import { getWikiWikiClient } from '~~/gen/ts/clients';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 
-useHead({
-    title: 'common.wiki',
-});
-
 definePageMeta({
     title: 'common.wiki',
     requiresAuth: true,
@@ -24,6 +20,8 @@ definePageMeta({
     },
 });
 
+const { t } = useI18n();
+
 const { activeChar } = useAuth();
 
 const route = useRoute('wiki-job-id-slug');
@@ -33,6 +31,7 @@ const wikiWikiClient = await getWikiWikiClient();
 const {
     data: pages,
     error: pagesError,
+    status: pagesStatus,
     refresh: pagesRefresh,
 } = useLazyAsyncData(`wiki-pages:${route.path}`, () => listPages());
 
@@ -77,23 +76,32 @@ async function getPage(id: number): Promise<Page | undefined> {
         throw e;
     }
 }
+
+useHead({
+    title: () =>
+        page.value?.meta?.title ? `${page.value.meta.title} - ${t('pages.wiki.id.title')}` : t('pages.wiki.id.title'),
+});
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel class="shrink-0 border-b border-gray-200 lg:border-b-0 lg:border-r dark:border-gray-800" grow>
-            <PageView :status="status" :error="error" :refresh="refresh" :page="page" :pages="pages ?? []">
-                <template #left>
-                    <DataErrorBlock v-if="pagesError" :error="pagesError" :retry="pagesRefresh" />
-                    <ClientOnly v-else>
-                        <PageList :pages="pages ?? []" />
+    <PageView :status="status" :error="error" :refresh="refresh" :page="page" :pages="pages ?? []">
+        <template #left>
+            <DataErrorBlock v-if="pagesError" :error="pagesError" :retry="pagesRefresh" />
+            <UPageAside v-else :ui="{ root: 'px-0 lg:pe-3' }">
+                <ClientOnly>
+                    <PageList :pages="pages ?? []" />
 
-                        <UTooltip :text="$t('common.refresh')">
-                            <UButton class="-ml-2 mt-1" variant="link" icon="i-mdi-refresh" @click="pagesRefresh" />
-                        </UTooltip>
-                    </ClientOnly>
-                </template>
-            </PageView>
-        </UDashboardPanel>
-    </UDashboardPage>
+                    <UTooltip :text="$t('common.refresh')">
+                        <UButton
+                            class="mt-1 -ml-2"
+                            variant="link"
+                            icon="i-mdi-refresh"
+                            :loading="isRequestPending(pagesStatus)"
+                            @click="() => pagesRefresh()"
+                        />
+                    </UTooltip>
+                </ClientOnly>
+            </UPageAside>
+        </template>
+    </PageView>
 </template>

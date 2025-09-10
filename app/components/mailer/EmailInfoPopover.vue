@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { ButtonColor, ButtonVariant } from '#ui/types';
+import type { ButtonProps } from '@nuxt/ui';
 import EmailBlock from '~/components/partials/citizens/EmailBlock.vue';
 import type { ClassProp } from '~/utils/types';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -9,15 +9,15 @@ const props = withDefaults(
         email: string | undefined;
         textClass?: ClassProp;
         trailing?: boolean;
-        variant?: ButtonVariant;
-        color?: ButtonColor;
+        variant?: ButtonProps['variant'];
+        color?: ButtonProps['color'];
         hideNaText?: boolean;
     }>(),
     {
         textClass: '',
         trailing: true,
-        variant: 'solid',
-        color: 'gray',
+        variant: 'link',
+        color: 'neutral',
         hideNaText: false,
     },
 );
@@ -34,7 +34,7 @@ function copyEmail(): void {
     notifications.add({
         title: { key: 'notifications.clipboard.email_address_copied.title', parameters: {} },
         description: { key: 'notifications.clipboard.email_address_copied.content', parameters: {} },
-        timeout: 3250,
+        duration: 3250,
         type: NotificationType.INFO,
     });
 }
@@ -48,12 +48,19 @@ function copyEmail(): void {
             </template>
         </span>
     </template>
-    <UPopover v-else :ui="{ trigger: 'inline-flex w-auto', wrapper: 'inline-block' }">
-        <UButton :variant="variant" :color="color" :trailing-icon="trailing ? 'i-mdi-chevron-down' : undefined" v-bind="$attrs">
+    <UPopover v-else>
+        <UButton
+            class="inline-flex w-auto"
+            :variant="variant"
+            :color="color"
+            :trailing-icon="trailing ? 'i-mdi-chevron-down' : undefined"
+            :ui="{ base: 'py-0 sm:py-0 px-0 sm:px-0' }"
+            v-bind="$attrs"
+        >
             <span class="truncate" :class="textClass"> {{ email ?? $t('common.na') }} </span>
         </UButton>
 
-        <template #panel>
+        <template #content>
             <div class="flex flex-col gap-2 p-4">
                 <div class="grid w-full grid-cols-2 gap-2">
                     <EmailBlock :email="email" hide-email />
@@ -61,7 +68,7 @@ function copyEmail(): void {
                     <UButton icon="i-mdi-content-copy" :label="$t('common.copy')" variant="link" @click="copyEmail" />
                 </div>
 
-                <div class="flex flex-col gap-2 text-gray-900 dark:text-white">
+                <div class="flex flex-col gap-2 text-highlighted">
                     <div class="flex flex-col gap-1 text-sm font-normal">
                         <p>
                             <span class="font-semibold">{{ $t('common.mail') }}:</span>

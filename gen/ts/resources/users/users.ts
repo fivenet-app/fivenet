@@ -58,13 +58,13 @@ export interface UserShort {
      */
     phoneNumber?: string;
     /**
-     * @generated from protobuf field: optional int64 avatar_file_id = 17
+     * @generated from protobuf field: optional int64 profile_picture_file_id = 17
      */
-    avatarFileId?: number;
+    profilePictureFileId?: number;
     /**
-     * @generated from protobuf field: optional string avatar = 18
+     * @generated from protobuf field: optional string profile_picture = 18
      */
-    avatar?: string;
+    profilePicture?: string;
 }
 /**
  * @generated from protobuf message resources.users.User
@@ -135,13 +135,13 @@ export interface User {
      */
     licenses: License[];
     /**
-     * @generated from protobuf field: optional int64 avatar_file_id = 17
+     * @generated from protobuf field: optional int64 profile_picture_file_id = 17
      */
-    avatarFileId?: number;
+    profilePictureFileId?: number;
     /**
-     * @generated from protobuf field: optional string avatar = 18
+     * @generated from protobuf field: optional string profile_picture = 18
      */
-    avatar?: string;
+    profilePicture?: string;
     /**
      * @generated from protobuf field: optional string group = 20
      */
@@ -161,8 +161,8 @@ class UserShort$Type extends MessageType<UserShort> {
             { no: 8, name: "lastname", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "1", maxLen: "50" } } } },
             { no: 9, name: "dateofbirth", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { maxLen: "10" } } } },
             { no: 12, name: "phone_number", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 17, name: "avatar_file_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 18, name: "avatar", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 17, name: "profile_picture_file_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 18, name: "profile_picture", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<UserShort>): UserShort {
@@ -212,11 +212,11 @@ class UserShort$Type extends MessageType<UserShort> {
                 case /* optional string phone_number */ 12:
                     message.phoneNumber = reader.string();
                     break;
-                case /* optional int64 avatar_file_id */ 17:
-                    message.avatarFileId = reader.int64().toNumber();
+                case /* optional int64 profile_picture_file_id */ 17:
+                    message.profilePictureFileId = reader.int64().toNumber();
                     break;
-                case /* optional string avatar */ 18:
-                    message.avatar = reader.string();
+                case /* optional string profile_picture */ 18:
+                    message.profilePicture = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -260,12 +260,12 @@ class UserShort$Type extends MessageType<UserShort> {
         /* optional string phone_number = 12; */
         if (message.phoneNumber !== undefined)
             writer.tag(12, WireType.LengthDelimited).string(message.phoneNumber);
-        /* optional int64 avatar_file_id = 17; */
-        if (message.avatarFileId !== undefined)
-            writer.tag(17, WireType.Varint).int64(message.avatarFileId);
-        /* optional string avatar = 18; */
-        if (message.avatar !== undefined)
-            writer.tag(18, WireType.LengthDelimited).string(message.avatar);
+        /* optional int64 profile_picture_file_id = 17; */
+        if (message.profilePictureFileId !== undefined)
+            writer.tag(17, WireType.Varint).int64(message.profilePictureFileId);
+        /* optional string profile_picture = 18; */
+        if (message.profilePicture !== undefined)
+            writer.tag(18, WireType.LengthDelimited).string(message.profilePicture);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -296,8 +296,8 @@ class User$Type extends MessageType<User> {
             { no: 14, name: "playtime", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
             { no: 15, name: "props", kind: "message", T: () => UserProps, options: { "tagger.tags": "alias:\"fivenet_user_props\"" } },
             { no: 16, name: "licenses", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => License, options: { "tagger.tags": "alias:\"user_licenses\"" } },
-            { no: 17, name: "avatar_file_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 18, name: "avatar", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 17, name: "profile_picture_file_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 18, name: "profile_picture", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 20, name: "group", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } }
         ]);
     }
@@ -367,11 +367,11 @@ class User$Type extends MessageType<User> {
                 case /* repeated resources.users.License licenses */ 16:
                     message.licenses.push(License.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* optional int64 avatar_file_id */ 17:
-                    message.avatarFileId = reader.int64().toNumber();
+                case /* optional int64 profile_picture_file_id */ 17:
+                    message.profilePictureFileId = reader.int64().toNumber();
                     break;
-                case /* optional string avatar */ 18:
-                    message.avatar = reader.string();
+                case /* optional string profile_picture */ 18:
+                    message.profilePicture = reader.string();
                     break;
                 case /* optional string group */ 20:
                     message.group = reader.string();
@@ -436,12 +436,12 @@ class User$Type extends MessageType<User> {
         /* repeated resources.users.License licenses = 16; */
         for (let i = 0; i < message.licenses.length; i++)
             License.internalBinaryWrite(message.licenses[i], writer.tag(16, WireType.LengthDelimited).fork(), options).join();
-        /* optional int64 avatar_file_id = 17; */
-        if (message.avatarFileId !== undefined)
-            writer.tag(17, WireType.Varint).int64(message.avatarFileId);
-        /* optional string avatar = 18; */
-        if (message.avatar !== undefined)
-            writer.tag(18, WireType.LengthDelimited).string(message.avatar);
+        /* optional int64 profile_picture_file_id = 17; */
+        if (message.profilePictureFileId !== undefined)
+            writer.tag(17, WireType.Varint).int64(message.profilePictureFileId);
+        /* optional string profile_picture = 18; */
+        if (message.profilePicture !== undefined)
+            writer.tag(18, WireType.LengthDelimited).string(message.profilePicture);
         /* optional string group = 20; */
         if (message.group !== undefined)
             writer.tag(20, WireType.LengthDelimited).string(message.group);

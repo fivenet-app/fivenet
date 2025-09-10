@@ -220,18 +220,17 @@ onKeyStroke([...digitKeys, ...operatorKeys, ...resultKeys, ...clearKeys, ...eras
 </script>
 
 <template>
-    <div class="flex flex-1 flex-col gap-4 overflow-hidden">
+    <div class="flex grow-0 flex-col gap-4 overflow-hidden">
         <div
             :class="[
                 'relative flex h-48 max-h-48 flex-col items-end justify-end rounded-md text-right text-white transition-colors duration-300',
-                { 'bg-red-800': lastStatus === 'ERROR', 'bg-gray-800': lastStatus !== 'ERROR' },
+                { 'bg-red-800': lastStatus === 'ERROR', 'bg-neutral-800': lastStatus !== 'ERROR' },
             ]"
         >
             <template v-if="powerOn">
                 <UTooltip :text="$t('common.delete')">
                     <UButton
-                        class="absolute left-0 top-0 m-2 p-0.5"
-                        :padded="false"
+                        class="absolute top-0 left-0 m-2 p-0.5"
                         size="xs"
                         icon="i-mdi-delete"
                         color="error"
@@ -261,38 +260,38 @@ onKeyStroke([...digitKeys, ...operatorKeys, ...resultKeys, ...clearKeys, ...eras
         <div class="grid grid-cols-1 gap-2">
             <div class="grid grid-cols-4 gap-2">
                 <UButton block :color="powerOn ? 'success' : 'error'" icon="i-mdi-power-standby" @click="powerOn = !powerOn" />
-                <UButton block color="white" @click="allClear()">
+                <UButton block color="neutral" @click="allClear()">
                     <span class="font-semibold">AC</span>
                 </UButton>
-                <UButton block color="white" icon="i-mdi-percent" @click="getPercent()" />
-                <UButton block color="white" icon="i-mdi-division" @click="inputValue('/')" />
+                <UButton block color="neutral" icon="i-mdi-percent" @click="getPercent()" />
+                <UButton block color="neutral" icon="i-mdi-division" @click="inputValue('/')" />
             </div>
 
             <div class="grid grid-cols-4 gap-2">
-                <UButton block color="black" icon="i-mdi-numeric-7" @click="inputValue('7')" />
-                <UButton block color="black" icon="i-mdi-numeric-8" @click="inputValue('8')" />
-                <UButton block color="black" icon="i-mdi-numeric-9" @click="inputValue('9')" />
-                <UButton block color="white" icon="i-mdi-multiplication" @click="inputValue('*')" />
+                <UButton block color="neutral" icon="i-mdi-numeric-7" @click="inputValue('7')" />
+                <UButton block color="neutral" icon="i-mdi-numeric-8" @click="inputValue('8')" />
+                <UButton block color="neutral" icon="i-mdi-numeric-9" @click="inputValue('9')" />
+                <UButton block color="neutral" icon="i-mdi-multiplication" @click="inputValue('*')" />
             </div>
 
             <div class="grid grid-cols-4 gap-2">
-                <UButton block color="black" icon="i-mdi-numeric-4" @click="inputValue('4')" />
-                <UButton block color="black" icon="i-mdi-numeric-5" @click="inputValue('5')" />
-                <UButton block color="black" icon="i-mdi-numeric-6" @click="inputValue('6')" />
-                <UButton block color="white" icon="i-mdi-minus" @click="inputValue('-')" />
+                <UButton block color="neutral" icon="i-mdi-numeric-4" @click="inputValue('4')" />
+                <UButton block color="neutral" icon="i-mdi-numeric-5" @click="inputValue('5')" />
+                <UButton block color="neutral" icon="i-mdi-numeric-6" @click="inputValue('6')" />
+                <UButton block color="neutral" icon="i-mdi-minus" @click="inputValue('-')" />
             </div>
 
             <div class="grid grid-cols-4 gap-2">
-                <UButton block color="black" icon="i-mdi-numeric-1" @click="inputValue('1')" />
-                <UButton block color="black" icon="i-mdi-numeric-2" @click="inputValue('2')" />
-                <UButton block color="black" icon="i-mdi-numeric-3" @click="inputValue('3')" />
-                <UButton block color="white" icon="i-mdi-plus" @click="inputValue('+')" />
+                <UButton block color="neutral" icon="i-mdi-numeric-1" @click="inputValue('1')" />
+                <UButton block color="neutral" icon="i-mdi-numeric-2" @click="inputValue('2')" />
+                <UButton block color="neutral" icon="i-mdi-numeric-3" @click="inputValue('3')" />
+                <UButton block color="neutral" icon="i-mdi-plus" @click="inputValue('+')" />
             </div>
 
             <div class="grid grid-cols-4 gap-2">
-                <UButton block color="black" icon="i-mdi-numeric-0" @click="inputValue('0')" />
-                <UButton block color="black" icon="i-mdi-comma" @click="inputValue(',')" />
-                <UButton block color="white" @click="doDelete()">
+                <UButton block color="neutral" icon="i-mdi-numeric-0" @click="inputValue('0')" />
+                <UButton block color="neutral" icon="i-mdi-comma" @click="inputValue(',')" />
+                <UButton block color="neutral" @click="doDelete()">
                     <span class="font-semibold">DEL</span>
                 </UButton>
                 <UButton block color="primary" icon="i-mdi-equal" @click="calculate()" />

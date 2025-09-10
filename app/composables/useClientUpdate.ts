@@ -18,7 +18,7 @@ export function useClientUpdate(objType: ObjectType, callback: (event: ObjectEve
     const { ready } = storeToRefs(notifications);
 
     let clientViewSent = false;
-    const sendClientView = (objId: number) => {
+    const sendClientView = async (objId: number) => {
         if (ready.value) {
             notifications.sendClientView(objType, objId);
         } else {

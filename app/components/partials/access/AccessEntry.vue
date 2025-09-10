@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import { useCompletorStore } from '~/stores/completor';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import { QualificationExamMode, type QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
+import SelectMenu from '../SelectMenu.vue';
 import type { AccessLevelEnum, AccessType, MixedAccessEntry } from './helpers';
 
 const props = withDefaults(
@@ -16,6 +16,7 @@ const props = withDefaults(
         jobs?: Job[] | undefined;
         hideGrade?: boolean;
         hideJobs?: string[];
+        name?: string;
     }>(),
     {
         disabled: false,
@@ -24,6 +25,7 @@ const props = withDefaults(
         jobs: () => [],
         hideGrade: false,
         hideJobs: () => [],
+        name: undefined,
     },
 );
 
@@ -39,18 +41,6 @@ const { game } = useAppConfig();
 
 const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
-const schema = z.object({
-    id: z.coerce.number(),
-    type: z.coerce.number(),
-    userId: z.coerce.number().optional(),
-    user: z.custom<UserShort>().optional(),
-    job: z.string().optional(),
-    minimumGrade: z.coerce.number().optional(),
-    qualificationId: z.coerce.number().optional(),
-    access: z.coerce.number(),
-    required: z.coerce.boolean().optional(),
-});
-
 const selectedUser = ref<UserShort | undefined>();
 watch(selectedUser, () => {
     entry.value.user = selectedUser.value;
@@ -63,7 +53,6 @@ watch(selectedQualification, () => {
     entry.value.qualificationId = selectedQualification.value?.id;
 });
 
-const usersLoading = ref(false);
 async function findUser(userId?: number): Promise<UserShort[]> {
     if (userId === undefined) return [];
 
@@ -138,209 +127,202 @@ if (props.hideGrade) {
 </script>
 
 <template>
-    <UForm class="my-2 flex flex-row items-center gap-1" :schema="schema" :state="entry">
-        <UTooltip v-if="showRequired" class="flex-initial" :text="$t('common.require')">
-            <UCheckbox v-model="entry.required" :disabled="disabled" name="required" />
-        </UTooltip>
+    <div class="flex flex-1 flex-col gap-1 pb-2 md:flex-row md:pb-0">
+        <div class="grid grid-cols-2 gap-2 md:flex md:flex-1">
+            <div class="flex flex-initial flex-row items-center gap-2">
+                <UFormField v-if="showRequired">
+                    <UTooltip class="flex-initial" :text="$t('common.require')">
+                        <UCheckbox v-model="entry.required" :disabled="disabled" name="required" />
+                    </UTooltip>
+                </UFormField>
 
-        <UFormGroup class="w-40 flex-initial">
-            <UInput v-if="accessTypes.length === 1" type="text" disabled :model-value="accessTypes[0]?.name" />
-            <ClientOnly v-else>
-                <USelectMenu
-                    v-model="entry.type"
-                    :disabled="disabled"
-                    :placeholder="$t('common.type')"
-                    searchable
-                    :search-attributes="['name']"
-                    :searchable-placeholder="$t('common.search_field')"
-                    value-attribute="type"
-                    option-attribute="label"
-                    :options="accessTypes"
+                <UFormField
+                    :name="`${name}.type`"
+                    class="min-w-40 flex-initial"
+                    :label="$t('common.type')"
+                    :ui="{ label: 'md:hidden' }"
                 >
-                    <template #label>
-                        <span class="truncate">{{ accessTypes.find((t) => t.type === entry.type)?.name }}</span>
-                    </template>
-
-                    <template #option="{ option }">
-                        <span class="truncate">{{ option.name }}</span>
-                    </template>
-
-                    <template #option-empty="{ query: search }">
-                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                    </template>
-
-                    <template #empty>
-                        {{ $t('common.not_found', [$t('common.type')]) }}
-                    </template>
-                </USelectMenu>
-            </ClientOnly>
-        </UFormGroup>
-
-        <template v-if="entry.type === 'user'">
-            <UFormGroup class="flex-1" name="userId">
-                <ClientOnly>
-                    <USelectMenu
-                        v-model="selectedUser"
-                        class="flex-1"
-                        :searchable="
-                            async (q: string) => {
-                                usersLoading = true;
-                                const users = await completorStore.completeCitizens({
-                                    search: q,
-                                    userIds: entry.userId ? [entry.userId] : [],
-                                });
-                                usersLoading = false;
-                                return users;
-                            }
-                        "
-                        searchable-lazy
-                        :search-attributes="['firstname', 'lastname']"
-                        :searchable-placeholder="$t('common.search_field')"
-                        :placeholder="$t('common.citizen', 1)"
-                    >
-                        <template #label>
-                            <template v-if="selectedUser">
-                                {{ usersToLabel([selectedUser]) }}
+                    <UInput v-if="accessTypes.length === 1" type="text" disabled :model-value="accessTypes[0]?.label" />
+                    <ClientOnly v-else>
+                        <USelectMenu
+                            v-model="entry.type"
+                            class="w-full"
+                            :disabled="disabled"
+                            :placeholder="$t('common.type')"
+                            :search-input="{ placeholder: $t('common.search_field') }"
+                            value-key="value"
+                            :items="accessTypes"
+                        >
+                            <template #default>
+                                {{ accessTypes.find((t) => t.value === entry.type)?.label }}
                             </template>
-                        </template>
 
-                        <template #option="{ option: user }">
-                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                        </template>
-
-                        <template #option-empty="{ query: search }">
-                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                        </template>
-
-                        <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
-                    </USelectMenu>
-                </ClientOnly>
-            </UFormGroup>
-        </template>
-
-        <template v-else-if="entry.type === 'qualification'">
-            <UFormGroup class="flex-1" name="qualificationId">
-                <ClientOnly>
-                    <USelectMenu
-                        v-model="selectedQualification"
-                        class="flex-1"
-                        :searchable="
-                            async (q: string) => {
-                                const { response } = await qualificationsQualificationsClient.listQualifications({
-                                    pagination: {
-                                        offset: 0,
-                                    },
-                                    search: q,
-                                });
-                                return response?.qualifications ?? [];
-                            }
-                        "
-                        searchable-lazy
-                        :search-attributes="['abbreviation', 'title']"
-                        :searchable-placeholder="$t('common.search_field')"
-                        :placeholder="$t('common.qualification', 1)"
-                    >
-                        <template #label>
-                            <template v-if="selectedQualification">
-                                <span class="truncate">
-                                    {{ selectedQualification.abbreviation }}: {{ selectedQualification.title }}
-                                </span>
+                            <template #item="{ item }">
+                                {{ item.label }}
                             </template>
-                        </template>
 
-                        <template #option="{ option: qualification }">
-                            {{ `${qualification?.abbreviation}: ${qualification?.title}` }}
-                        </template>
+                            <template #empty>
+                                {{ $t('common.not_found', [$t('common.type')]) }}
+                            </template>
+                        </USelectMenu>
+                    </ClientOnly>
+                </UFormField>
+            </div>
 
-                        <template #option-empty="{ query: search }">
-                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                        </template>
+            <UFormField
+                v-if="entry.type === 'user'"
+                class="flex-1"
+                :name="`${name}.userId`"
+                :label="$t('common.user')"
+                :ui="{ label: 'md:hidden' }"
+            >
+                <SelectMenu
+                    v-model="selectedUser"
+                    class="w-full"
+                    :searchable="
+                        async (q: string) =>
+                            await completorStore.completeCitizens({
+                                search: q,
+                                userIds: entry.userId ? [entry.userId] : [],
+                            })
+                    "
+                    searchable-key="completor-citizens"
+                    :filter-fields="['firstname', 'lastname']"
+                    :search-input="{ placeholder: $t('common.search_field') }"
+                    :placeholder="$t('common.citizen', 1)"
+                >
+                    <template v-if="selectedUser" #default>
+                        {{ usersToLabel([selectedUser]) }}
+                    </template>
 
-                        <template #empty> {{ $t('common.not_found', [$t('common.qualification', 2)]) }} </template>
-                    </USelectMenu>
-                </ClientOnly>
-            </UFormGroup>
-        </template>
+                    <template #item="{ item }">
+                        {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
+                    </template>
 
-        <template v-else>
-            <UFormGroup class="flex-1" name="job">
-                <ClientOnly>
-                    <USelectMenu
-                        v-model="entry.job"
-                        class="flex-1"
-                        :disabled="disabled"
-                        option-attribute="label"
-                        searchable
-                        :search-attributes="['name', 'label']"
-                        value-attribute="name"
-                        :options="jobs?.filter((j) => hideJobs.length === 0 || !hideJobs.includes(j.name)) ?? []"
-                        :placeholder="$t('common.job')"
-                        :searchable-placeholder="$t('common.search_field')"
-                    >
-                        <template #option-empty="{ query: search }">
-                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                        </template>
+                    <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
+                </SelectMenu>
+            </UFormField>
 
-                        <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
-                    </USelectMenu>
-                </ClientOnly>
-            </UFormGroup>
+            <UFormField
+                v-else-if="entry.type === 'qualification'"
+                class="flex-1"
+                :name="`${name}.qualificationId`"
+                :label="$t('common.qualification')"
+                :ui="{ label: 'md:hidden' }"
+            >
+                <SelectMenu
+                    v-model="selectedQualification"
+                    class="w-full"
+                    :searchable="
+                        async (q: string) => {
+                            const { response } = await qualificationsQualificationsClient.listQualifications({
+                                pagination: {
+                                    offset: 0,
+                                },
+                                search: q,
+                            });
+                            return (response?.qualifications ?? []) as QualificationShort[];
+                        }
+                    "
+                    searchable-key="complete-qualifications"
+                    :filter-fields="['abbreviation', 'title']"
+                    :search-input="{ placeholder: $t('common.search_field') }"
+                    :placeholder="$t('common.qualification', 1)"
+                >
+                    <template v-if="selectedQualification" #default>
+                        {{ selectedQualification.abbreviation }}: {{ selectedQualification.title }}
+                    </template>
 
-            <UFormGroup v-if="!hideGrade" class="flex-1" name="minimumGrade">
-                <ClientOnly>
-                    <USelectMenu
-                        class="flex-1"
-                        :model-value="
-                            jobs.find((j) => j.name === entry.job)?.grades.find((g) => g.grade === entry.minimumGrade)
-                        "
-                        :disabled="disabled || !entry.job"
-                        option-attribute="label"
-                        searchable
-                        :search-attributes="['name', 'label']"
-                        :options="jobs.find((j) => j.name === entry.job)?.grades ?? []"
-                        :placeholder="$t('common.rank')"
-                        :searchable-placeholder="$t('common.search_field')"
-                        @update:model-value="entry.minimumGrade = $event?.grade ?? undefined"
-                    >
-                        <template #option-empty="{ query: search }">
-                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                        </template>
+                    <template #item="{ item }">
+                        {{ `${item?.abbreviation}: ${item?.title}` }}
+                    </template>
 
-                        <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
-                    </USelectMenu>
-                </ClientOnly>
-            </UFormGroup>
-        </template>
+                    <template #empty> {{ $t('common.not_found', [$t('common.qualification', 2)]) }} </template>
+                </SelectMenu>
+            </UFormField>
 
-        <UFormGroup class="w-60 flex-initial" name="access">
-            <ClientOnly>
-                <USelectMenu
-                    v-model="entry.access"
+            <template v-else>
+                <UFormField class="flex-1" :name="`${name}.job`" :label="$t('common.job')" :ui="{ label: 'md:hidden' }">
+                    <ClientOnly>
+                        <USelectMenu
+                            v-model="entry.job"
+                            class="w-full"
+                            :disabled="disabled"
+                            :filter-fields="['name', 'label']"
+                            value-key="name"
+                            :items="jobs?.filter((j) => hideJobs.length === 0 || !hideJobs.includes(j.name)) ?? []"
+                            :placeholder="$t('common.job')"
+                            :search-input="{ placeholder: $t('common.search_field') }"
+                        >
+                            <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
+                        </USelectMenu>
+                    </ClientOnly>
+                </UFormField>
+
+                <UFormField
+                    v-if="!hideGrade"
                     class="flex-1"
-                    :disabled="disabled"
-                    option-attribute="label"
-                    value-attribute="value"
-                    :options="accessRoles"
-                    searchable
-                    :search-attributes="['label']"
-                    :placeholder="$t('common.na')"
-                    :searchable-placeholder="$t('common.search_field')"
+                    :name="`${name}.minimumGrade`"
+                    :label="$t('common.rank')"
+                    :ui="{ label: 'md:hidden' }"
                 >
-                    <template #label>
-                        {{ accessRoles.find((a) => a.value === entry.access)?.label ?? $t('common.na') }}
-                    </template>
+                    <ClientOnly>
+                        <USelectMenu
+                            class="w-full"
+                            :model-value="
+                                jobs.find((j) => j.name === entry.job)?.grades.find((g) => g.grade === entry.minimumGrade)
+                            "
+                            :disabled="disabled || !entry.job"
+                            :filter-fields="['name', 'label']"
+                            :items="jobs.find((j) => j.name === entry.job)?.grades ?? []"
+                            :placeholder="$t('common.rank')"
+                            :search-input="{ placeholder: $t('common.search_field') }"
+                            @update:model-value="entry.minimumGrade = $event?.grade ?? undefined"
+                        >
+                            <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
+                        </USelectMenu>
+                    </ClientOnly>
+                </UFormField>
+            </template>
 
-                    <template #option-empty="{ query: search }">
-                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                    </template>
+            <UFormField
+                class="min-w-60 flex-initial"
+                :name="`${name}.access`"
+                :label="$t('common.access')"
+                :ui="{ label: 'md:hidden' }"
+            >
+                <ClientOnly>
+                    <USelectMenu
+                        v-model="entry.access"
+                        class="w-full"
+                        :disabled="disabled"
+                        value-key="value"
+                        :items="accessRoles"
+                        :filter-fields="['label']"
+                        :placeholder="$t('common.na')"
+                        :search-input="{ placeholder: $t('common.search_field') }"
+                    >
+                        <template #default>
+                            {{ accessRoles.find((a) => a.value === entry.access)?.label ?? $t('common.na') }}
+                        </template>
 
-                    <template #empty> {{ $t('common.not_found', [$t('common.access', 2)]) }} </template>
-                </USelectMenu>
-            </ClientOnly>
-        </UFormGroup>
+                        <template #empty> {{ $t('common.not_found', [$t('common.access', 2)]) }} </template>
+                    </USelectMenu>
+                </ClientOnly>
+            </UFormField>
+        </div>
 
-        <UTooltip v-if="!disabled" :text="$t('components.access.remove_entry')">
-            <UButton class="flex-initial" :ui="{ rounded: 'rounded-full' }" icon="i-mdi-close" @click="$emit('delete')" />
-        </UTooltip>
-    </UForm>
+        <UFormField class="md:mt-1" :ui="{ container: 'flex justify-end-safe md:inline' }">
+            <UTooltip v-if="!disabled" :text="$t('components.access.remove_entry')">
+                <UButton
+                    color="red"
+                    class="flex-initial"
+                    icon="i-mdi-close"
+                    :label="$t('components.access.remove_entry')"
+                    :ui="{ label: 'md:hidden' }"
+                    @click="$emit('delete')"
+                />
+            </UTooltip>
+        </UFormField>
+    </div>
 </template>

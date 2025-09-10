@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import type { AvatarSize } from '#ui/types';
+import type { AvatarProps } from '@nuxt/ui';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
 
 withDefaults(
     defineProps<{
         src?: string;
         name: string;
-        size?: AvatarSize;
+        size?: AvatarProps['size'];
         enablePopup?: boolean;
         noBlur?: boolean;
         alt?: string;
@@ -30,7 +30,7 @@ withDefaults(
         :src="src"
         :size="size"
         :text="getInitials(name)"
-        :alt="alt ?? $t('common.avatar')"
+        :alt="alt ?? $t('common.profile_picture')"
         :enable-popup="enablePopup"
         :no-blur="noBlur || src === undefined"
         :disable-blur-toggle="disableBlurToggle"

@@ -10,6 +10,7 @@ import (
 	pgsgo "github.com/lyft/protoc-gen-star/v2/lang/go"
 )
 
+// DBScannerModule holds all state for this plugin.
 type DBScannerModule struct {
 	*pgs.ModuleBase
 

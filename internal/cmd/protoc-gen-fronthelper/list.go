@@ -10,7 +10,8 @@ import (
 	pgsgo "github.com/lyft/protoc-gen-star/v2/lang/go"
 )
 
-// ListSvcMethodsModule
+// ListSvcMethodsModule is a protoc-gen-star module that generates a TypeScript file
+// listing all gRPC services and their methods defined in the protobuf files.
 type ListSvcMethodsModule struct {
 	*pgs.ModuleBase
 
@@ -62,9 +63,11 @@ func (p *ListSvcMethodsModule) Execute(
 			return strings.Compare(a.File().InputPath().String(), b.File().InputPath().String())
 		})
 
-		data.FS = append(data.FS, fs...)
-
 		for _, f := range fs {
+			if len(f.Services()) == 0 {
+				continue
+			}
+
 			for _, s := range f.Services() {
 				sName := strings.TrimPrefix(string(s.FullyQualifiedName()), ".services.")
 
@@ -78,6 +81,8 @@ func (p *ListSvcMethodsModule) Execute(
 					data.Svcs[sName] = append(data.Svcs[sName], string(m.Name()))
 				}
 			}
+
+			data.FS = append(data.FS, fs...)
 		}
 	}
 

@@ -9,7 +9,7 @@ import (
 	pgsgo "github.com/lyft/protoc-gen-star/v2/lang/go"
 )
 
-// SanitizerPlugin
+// SanitizerPlugin holds all state for this plugin.
 type SanitizerModule struct {
 	*pgs.ModuleBase
 

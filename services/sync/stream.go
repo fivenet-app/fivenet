@@ -1,6 +1,8 @@
 package sync
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -9,6 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
+	"golang.org/x/sync/errgroup"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -36,24 +39,58 @@ func (s *Server) Stream(req *pbsync.StreamRequest, srv pbsync.SyncService_Stream
 		return fmt.Errorf("failed to create consumer. %w", err)
 	}
 
-	batch, err := consumer.Messages()
+	iter, err := consumer.Messages()
 	if err != nil {
 		return fmt.Errorf("failed to fetch messages consumer. %w", err)
 	}
-	defer batch.Stop()
+	defer iter.Stop()
+
+	g, gctx := errgroup.WithContext(ctx)
 
 	msgCh := make(chan jetstream.Msg, 8)
-	go func() {
+
+	g.Go(func() error {
+		// Create the iterator with short expiry so Next() wakes periodically.
+		iter, err := consumer.Messages(
+			jetstream.PullMaxMessages(1),
+			jetstream.PullExpiry(1*time.Second),
+		)
+		if err != nil {
+			close(msgCh)
+			return err
+		}
+		defer iter.Stop()
+		defer close(msgCh)
+
+		stopIter := context.AfterFunc(gctx, iter.Stop)
+		defer stopIter()
+
 		for {
-			msg, err := batch.Next()
-			if err != nil {
-				close(msgCh)
-				return
+			// Fast exit before starting another blocking call
+			if err := gctx.Err(); err != nil {
+				return err
 			}
 
-			msgCh <- msg
+			msg, err := iter.Next() // Blocks until message/expiry/Stop()
+			if err != nil {
+				if gctx.Err() != nil {
+					return gctx.Err()
+				}
+				if errors.Is(err, context.DeadlineExceeded) {
+					continue
+				}
+
+				return err
+			}
+
+			select {
+			case <-gctx.Done():
+				return gctx.Err()
+
+			case msgCh <- msg:
+			}
 		}
-	}()
+	})
 
 	for {
 		select {

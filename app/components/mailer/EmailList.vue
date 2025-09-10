@@ -61,12 +61,12 @@ defineShortcuts({
 </script>
 
 <template>
-    <UDashboardPanelContent class="p-0 sm:pb-0">
+    <UDashboardPanel :ui="{ body: 'p-0 sm:pb-0' }">
         <div v-if="!loaded" class="space-y-2">
-            <USkeleton class="h-[73px] w-full" :ui="{ rounded: '' }" />
-            <USkeleton class="h-[73px] w-full" :ui="{ rounded: '' }" />
-            <USkeleton class="h-[73px] w-full" :ui="{ rounded: '' }" />
-            <USkeleton class="h-[73px] w-full" :ui="{ rounded: '' }" />
+            <USkeleton class="h-[73px] w-full" />
+            <USkeleton class="h-[73px] w-full" />
+            <USkeleton class="h-[73px] w-full" />
+            <USkeleton class="h-[73px] w-full" />
         </div>
 
         <template v-else>
@@ -75,8 +75,8 @@ defineShortcuts({
                     class="cursor-pointer border-l-2 p-4 text-sm"
                     :class="[
                         selectedEmail && selectedEmail.id === email.id
-                            ? 'border-primary-500 dark:border-primary-400 bg-primary-100 dark:bg-primary-900/25'
-                            : 'hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white dark:border-gray-900',
+                            ? 'border-primary-500 bg-primary-100 dark:border-primary-400 dark:bg-primary-900/25'
+                            : 'border-white hover:border-primary-500/25 hover:bg-primary-100/50 dark:border-neutral-900 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10',
                         email.deactivated ? 'border-red-500 bg-red-100 dark:border-red-400 dark:bg-red-900/25' : '',
                     ]"
                     @click="selectedEmail = email"
@@ -96,10 +96,10 @@ defineShortcuts({
                     </div>
                 </div>
 
-                <UDivider />
+                <USeparator />
             </div>
 
             <slot />
         </template>
-    </UDashboardPanelContent>
+    </UDashboardPanel>
 </template>

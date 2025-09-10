@@ -10,7 +10,9 @@ import type { ListTemplatesResponse } from '~~/gen/ts/services/mailer/mailer';
 import { canAccess } from './helpers';
 import TemplateEditForm from './TemplateEditForm.vue';
 
-const { isOpen } = useModal();
+defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
 
 const mailerStore = useMailerStore();
 const { selectedEmail } = storeToRefs(mailerStore);
@@ -40,6 +42,7 @@ async function listTemplates(): Promise<ListTemplatesResponse> {
 
 const accordionItems = computed(() =>
     templates.value?.templates.map((t) => ({
+        ...t,
         label: t.title,
     })),
 );
@@ -51,26 +54,9 @@ const editing = ref(false);
 </script>
 
 <template>
-    <UModal fullscreen>
-        <UCard
-            :ui="{
-                ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-                base: 'flex flex-1 flex-col',
-                body: { base: 'flex flex-1 flex-col' },
-            }"
-        >
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
-                        {{ $t('common.template', 2) }}
-                    </h3>
-
-                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                </div>
-            </template>
-
-            <div class="mx-auto flex w-full max-w-screen-xl flex-col gap-2">
+    <UModal :title="$t('common.template', 2)" fullscreen>
+        <template #body>
+            <div class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-col gap-2">
                 <UButton
                     v-if="!creating && !editing && canManage"
                     :label="$t('common.create')"
@@ -91,13 +77,13 @@ const editing = ref(false);
                         :retry="refresh"
                     />
                     <DataNoDataBlock
-                        v-if="!templates?.templates || templates?.templates.length === 0"
+                        v-else-if="!templates?.templates || templates?.templates.length === 0"
                         :type="$t('common.template', 2)"
                         icon="i-mdi-file-outline"
                     />
 
                     <UAccordion v-else :items="accordionItems">
-                        <template #item="{ index }">
+                        <template #content="{ index }">
                             <template v-if="templates?.templates[index]">
                                 <template v-if="!editing">
                                     <UButtonGroup v-if="canManage" class="mx-4 mb-2 flex">
@@ -135,14 +121,14 @@ const editing = ref(false);
                     </UAccordion>
                 </template>
             </div>
+        </template>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" block color="black" @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
-                </UButtonGroup>
-            </template>
-        </UCard>
+        <template #footer>
+            <UButtonGroup class="inline-flex w-full">
+                <UButton class="flex-1" block color="neutral" @click="$emit('close', false)">
+                    {{ $t('common.close', 1) }}
+                </UButton>
+            </UButtonGroup>
+        </template>
     </UModal>
 </template>

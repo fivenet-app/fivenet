@@ -390,8 +390,8 @@ export const ListColleaguesRequest = new ListColleaguesRequest$Type();
 class ListColleaguesResponse$Type extends MessageType<ListColleaguesResponse> {
     constructor() {
         super("services.jobs.ListColleaguesResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "colleagues", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Colleague }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "colleagues", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Colleague, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListColleaguesResponse>): ListColleaguesResponse {
@@ -713,8 +713,8 @@ export const ListColleagueActivityRequest = new ListColleagueActivityRequest$Typ
 class ListColleagueActivityResponse$Type extends MessageType<ListColleagueActivityResponse> {
     constructor() {
         super("services.jobs.ListColleagueActivityResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ColleagueActivity }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ColleagueActivity, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListColleagueActivityResponse>): ListColleagueActivityResponse {

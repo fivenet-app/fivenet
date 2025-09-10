@@ -137,9 +137,15 @@ export interface UserInfoChanged {
      */
     newJobGradeLabel?: string;
     /**
+     * Can the user be superuser (by group or license)
+     *
+     * @generated from protobuf field: optional bool can_be_superuser = 10
+     */
+    canBeSuperuser?: boolean;
+    /**
      * Superuser state
      *
-     * @generated from protobuf field: optional bool superuser = 10
+     * @generated from protobuf field: optional bool superuser = 11
      */
     superuser?: boolean;
     /**
@@ -348,7 +354,8 @@ class UserInfoChanged$Type extends MessageType<UserInfoChanged> {
             { no: 6, name: "old_job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 7, name: "new_job_grade", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 8, name: "new_job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 10, name: "superuser", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 10, name: "can_be_superuser", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 11, name: "superuser", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 9, name: "changed_at", kind: "message", T: () => Timestamp }
         ]);
     }
@@ -391,7 +398,10 @@ class UserInfoChanged$Type extends MessageType<UserInfoChanged> {
                 case /* optional string new_job_grade_label */ 8:
                     message.newJobGradeLabel = reader.string();
                     break;
-                case /* optional bool superuser */ 10:
+                case /* optional bool can_be_superuser */ 10:
+                    message.canBeSuperuser = reader.bool();
+                    break;
+                case /* optional bool superuser */ 11:
                     message.superuser = reader.bool();
                     break;
                 case /* resources.timestamp.Timestamp changed_at */ 9:
@@ -436,9 +446,12 @@ class UserInfoChanged$Type extends MessageType<UserInfoChanged> {
         /* resources.timestamp.Timestamp changed_at = 9; */
         if (message.changedAt)
             Timestamp.internalBinaryWrite(message.changedAt, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        /* optional bool superuser = 10; */
+        /* optional bool can_be_superuser = 10; */
+        if (message.canBeSuperuser !== undefined)
+            writer.tag(10, WireType.Varint).bool(message.canBeSuperuser);
+        /* optional bool superuser = 11; */
         if (message.superuser !== undefined)
-            writer.tag(10, WireType.Varint).bool(message.superuser);
+            writer.tag(11, WireType.Varint).bool(message.superuser);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

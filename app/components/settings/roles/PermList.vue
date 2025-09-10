@@ -63,9 +63,9 @@ watch(props, setFromProps);
     <div class="w-full">
         <div class="px-1 sm:px-2">
             <div class="flex flex-col gap-2">
-                <UAccordion :items="accordionCategories" multiple default-open :unmount="true">
-                    <template #item="{ item: category }">
-                        <div class="flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
+                <UAccordion :items="accordionCategories" multiple default-open>
+                    <template #content="{ item: category }">
+                        <div class="flex flex-col divide-y divide-default">
                             <div
                                 v-for="perm in permissions.filter((p) => p.category === category.category)"
                                 :key="perm.id"
@@ -73,7 +73,7 @@ watch(props, setFromProps);
                             >
                                 <div class="flex flex-row items-center gap-2">
                                     <div class="flex-1">
-                                        <p class="text-gray-900 dark:text-white" :title="`${$t('common.id')}: ${perm.id}`">
+                                        <p class="text-highlighted" :title="`${$t('common.id')}: ${perm.id}`">
                                             {{ $t(`perms.${perm.category}.${perm.name}.key`) }}
                                         </p>
                                         <p class="text-base-500">

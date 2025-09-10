@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
+defineProps<{
+    collapsed?: boolean;
+}>();
 
 const { isNotificationSlideoverOpen } = useDashboard();
 
@@ -24,15 +26,20 @@ watch(notificationsCount, () => {
 </script>
 
 <template>
-    <UDropdown v-slot="{ open }" class="w-full" :ui="{ width: 'w-full' }" :popper="{ strategy: 'absolute' }">
-        <UButton class="w-full" :class="[open && 'bg-gray-50 dark:bg-gray-800']" color="gray" variant="ghost">
-            <FiveNetLogo class="size-4" />
+    <UButton
+        class="w-full"
+        color="neutral"
+        variant="ghost"
+        :avatar="{
+            src: '/images/logo.png',
+            alt: 'FiveNet',
+        }"
+        :ui="{ base: collapsed ? 'w-40' : 'w-(--reka-dropdown-menu-trigger-width)', leadingAvatar: 'rounded-none' }"
+    >
+        <span v-if="!collapsed" class="truncate font-semibold text-highlighted">FiveNet</span>
+    </UButton>
 
-            <span class="truncate font-semibold text-gray-900 dark:text-white">FiveNet</span>
-        </UButton>
-    </UDropdown>
-
-    <UTooltip :text="$t('components.partials.sidebar_notifications')" :shortcuts="['B']">
+    <UTooltip v-if="!collapsed" :text="$t('components.partials.sidebar_notifications')" :kbds="['B']">
         <UChip
             :show="notificationsCount > 0"
             color="error"
@@ -40,18 +47,19 @@ watch(notificationsCount, () => {
             :text="notificationsCount <= 9 ? notificationsCount : '9+'"
             size="xl"
         >
-            <UButton color="gray" variant="ghost" square @click="isNotificationSlideoverOpen = true">
-                <UIcon
-                    class="size-5"
-                    :name="
-                        doNotDisturb
-                            ? 'i-mdi-bell-off-outline'
-                            : notificationsCount === 0
-                              ? 'i-mdi-notifications-none'
-                              : 'i-mdi-notifications'
-                    "
-                />
-            </UButton>
+            <UButton
+                color="neutral"
+                variant="ghost"
+                square
+                :icon="
+                    doNotDisturb
+                        ? 'i-mdi-bell-off-outline'
+                        : notificationsCount === 0
+                          ? 'i-mdi-notifications-none'
+                          : 'i-mdi-notifications'
+                "
+                @click="isNotificationSlideoverOpen = true"
+            />
         </UChip>
     </UTooltip>
 </template>

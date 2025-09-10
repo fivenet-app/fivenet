@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import type { ButtonColor } from '#ui/types';
+import type { ButtonProps } from '@nuxt/ui';
 import { isFuture, isPast, isSameDay, isToday } from 'date-fns';
 import type { DateRangeSource } from 'v-calendar/dist/types/src/utils/date/range.js';
 import CalendarCreateOrUpdateModal from '~/components/calendar/CalendarCreateOrUpdateModal.vue';
 import CalendarViewSlideover from '~/components/calendar/CalendarViewSlideover.vue';
-import FindCalendarModal from '~/components/calendar/FindCalendarModal.vue';
+import FindCalendarDrawer from '~/components/calendar/FindCalendarDrawer.vue';
 import EntryCreateOrUpdateModal from '~/components/calendar/entry/EntryCreateOrUpdateModal.vue';
 import EntryViewSlideover from '~/components/calendar/entry/EntryViewSlideover.vue';
 import MonthCalendarClient from '~/components/partials/MonthCalendar.client.vue';
@@ -27,8 +27,7 @@ const { t, d } = useI18n();
 
 const { can } = useAuth();
 
-const modal = useModal();
-const slideover = useSlideover();
+const overlay = useOverlay();
 
 const calendarStore = useCalendarStore();
 const { activeCalendarIds, currentDate, view, calendars, entries, hasEditAccessToCalendar } = storeToRefs(calendarStore);
@@ -207,9 +206,7 @@ const groupedCalendarEntries = computedAsync(async () => {
 
 function calendarIdChange(calendarId: number, state: boolean): void {
     if (state) {
-        if (!activeCalendarIds.value.includes(calendarId)) {
-            activeCalendarIds.value.push(calendarId);
-        }
+        if (!activeCalendarIds.value.includes(calendarId)) activeCalendarIds.value.push(calendarId);
     } else {
         activeCalendarIds.value = activeCalendarIds.value.filter((cId) => cId !== calendarId);
     }
@@ -217,18 +214,24 @@ function calendarIdChange(calendarId: number, state: boolean): void {
 
 const entryIdQuery = useRouteQuery('entry_id', undefined, { transform: Number });
 
+const calendarViewSlideover = overlay.create(CalendarViewSlideover);
+const calendarCreateOrUpdateModal = overlay.create(CalendarCreateOrUpdateModal);
+const entryViewSlideover = overlay.create(EntryViewSlideover);
+const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
+const findCalendarsDrawer = overlay.create(FindCalendarDrawer);
+
 watch(entryIdQuery, () => {
     if (!entryIdQuery.value) {
         return;
     }
 
-    slideover.open(EntryViewSlideover, {
+    entryViewSlideover.open({
         entryId: entryIdQuery.value,
     });
 });
 
 if (entryIdQuery.value) {
-    slideover.open(EntryViewSlideover, {
+    entryViewSlideover.open({
         entryId: entryIdQuery.value,
     });
 }
@@ -261,14 +264,17 @@ const viewOptions = [
     { label: t('common.monthly_view'), icon: 'i-mdi-view-headline', value: 'month' },
     { label: t('common.summary'), icon: 'i-mdi-view-agenda-outline', value: 'summary' },
 ];
-
-const isOpen = ref(false);
 </script>
 
+<!-- eslint-disable vue/no-multiple-template-root -->
 <template>
-    <UDashboardPage>
-        <UDashboardPanel class="shrink-0 border-b border-gray-200 lg:border-b-0 lg:border-r dark:border-gray-800" grow>
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+        <template #header>
             <UDashboardNavbar :title="$t('common.calendar')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #right>
                     <UButtonGroup
                         v-if="can('calendar.CalendarService/CreateCalendar').value || hasEditAccessToCalendar"
@@ -278,23 +284,21 @@ const isOpen = ref(false);
                             v-if="can('calendar.CalendarService/CreateCalendar').value"
                             class="flex-1"
                             block
-                            color="gray"
+                            color="neutral"
                             trailing-icon="i-mdi-plus"
-                            @click="modal.open(CalendarCreateOrUpdateModal, {})"
-                        >
-                            {{ $t('common.calendar') }}
-                        </UButton>
+                            :label="$t('common.calendar')"
+                            @click="calendarCreateOrUpdateModal.open({})"
+                        />
 
                         <UButton
                             v-if="hasEditAccessToCalendar"
                             class="flex-1"
                             block
-                            color="gray"
+                            color="neutral"
                             trailing-icon="i-mdi-plus"
-                            @click="modal.open(EntryCreateOrUpdateModal, {})"
-                        >
-                            {{ $t('common.entry', 1) }}
-                        </UButton>
+                            :label="$t('common.entry', 1)"
+                            @click="entryCreateOrUpdateModal.open({})"
+                        />
                     </UButtonGroup>
                 </template>
             </UDashboardNavbar>
@@ -302,21 +306,21 @@ const isOpen = ref(false);
             <UDashboardToolbar>
                 <template #default>
                     <div class="flex flex-1 items-center justify-between">
-                        <UPopover :popper="{ placement: 'bottom-end', offsetDistance: 10 }">
+                        <UPopover :content="{ side: 'bottom', align: 'start' }">
                             <UButton
-                                color="white"
+                                color="neutral"
                                 icon="i-mdi-calendar"
                                 trailing-icon="i-mdi-chevron-down"
                                 :loading="isRequestPending(calendarsStatus)"
-                            >
-                                {{ $t('common.calendar') }}
-                            </UButton>
+                                :label="$t('common.calendar')"
+                            />
 
-                            <template #panel>
+                            <template #content>
                                 <div class="p-4">
                                     <DataPendingBlock
                                         v-if="isRequestPending(calendarsStatus)"
                                         :message="$t('common.loading', [$t('common.calendar')])"
+                                        class="max-w-60"
                                     />
                                     <DataErrorBlock
                                         v-else-if="calendarsError"
@@ -325,35 +329,27 @@ const isOpen = ref(false);
                                         :retry="calendarsRefresh"
                                     />
 
-                                    <div v-else class="flex flex-col gap-4">
-                                        <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                                            <div
-                                                v-for="calendar in calendars"
-                                                :key="calendar.id"
-                                                class="inline-flex items-center gap-2"
-                                            >
-                                                <UCheckbox
-                                                    class="truncate"
-                                                    :model-value="activeCalendarIds.includes(calendar.id)"
-                                                    @change="calendarIdChange(calendar.id, $event)"
-                                                />
+                                    <div v-else class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                                        <div
+                                            v-for="calendar in calendars"
+                                            :key="calendar.id"
+                                            class="inline-flex items-center gap-2"
+                                        >
+                                            <USwitch
+                                                class="truncate"
+                                                :model-value="activeCalendarIds.includes(calendar.id)"
+                                                @update:model-value="
+                                                    ($event) => calendarIdChange(calendar.id, $event as boolean)
+                                                "
+                                            />
 
-                                                <UBadge
-                                                    :color="calendar.color as ButtonColor"
-                                                    :ui="{ rounded: 'rounded-full' }"
-                                                    size="lg"
-                                                />
-
-                                                <UButton
-                                                    :color="calendar.color as ButtonColor"
-                                                    size="sm"
-                                                    variant="link"
-                                                    :padded="false"
-                                                    truncate
-                                                    :label="calendar.name"
-                                                    @click="slideover.open(CalendarViewSlideover, { calendarId: calendar.id })"
-                                                />
-                                            </div>
+                                            <UButton
+                                                :color="calendar.color as ButtonProps['color']"
+                                                size="sm"
+                                                truncate
+                                                :label="calendar.name"
+                                                @click="calendarViewSlideover.open({ calendarId: calendar.id })"
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -370,7 +366,9 @@ const isOpen = ref(false);
                     </div>
                 </template>
             </UDashboardToolbar>
+        </template>
 
+        <template #body>
             <DataErrorBlock v-if="error" :error="error" :retry="refresh" />
 
             <div v-else class="relative flex flex-1 overflow-x-auto">
@@ -381,7 +379,7 @@ const isOpen = ref(false);
                     :view="view === 'week' ? 'weekly' : 'monthly'"
                     :attributes="transformedCalendarEntries"
                     @selected="
-                        slideover.open(EntryViewSlideover, {
+                        entryViewSlideover.open({
                             entryId: $event.id,
                         })
                     "
@@ -401,7 +399,7 @@ const isOpen = ref(false);
 
                     <template v-else>
                         <template v-for="calendarEntries in groupedCalendarEntries" :key="calendarEntries.key">
-                            <UDivider>
+                            <USeparator>
                                 <div class="inline-flex items-center gap-1">
                                     <span class="text-lg font-semibold">
                                         {{ $d(calendarEntries.date, 'date') }}
@@ -410,28 +408,24 @@ const isOpen = ref(false);
                                         v-if="calendarEntries.isToday"
                                         id="today"
                                         size="xs"
-                                        color="amber"
+                                        color="warning"
                                         :label="$t('common.today')"
                                     />
                                 </div>
-                            </UDivider>
+                            </USeparator>
 
                             <ul role="list">
                                 <li v-for="attr in calendarEntries.entries.past" :key="attr.key">
                                     <ULink
                                         class="inline-flex w-full items-center justify-between gap-1"
                                         @click="
-                                            slideover.open(EntryViewSlideover, {
+                                            entryViewSlideover.open({
                                                 entryId: attr.customData.id,
                                             })
                                         "
                                     >
                                         <span class="inline-flex items-center gap-1">
-                                            <UBadge
-                                                :color="attr.customData.color as ButtonColor"
-                                                :ui="{ rounded: 'rounded-full' }"
-                                                size="lg"
-                                            />
+                                            <UBadge :color="attr.customData.color as ButtonProps['color']" size="lg" />
 
                                             <template v-if="attr.customData.time">
                                                 {{ attr.customData.time }}
@@ -441,12 +435,12 @@ const isOpen = ref(false);
                                             {{ attr.customData.title }}
                                         </span>
 
-                                        <UButton :padded="false" variant="link" icon="i-mdi-eye" />
+                                        <UButton variant="link" icon="i-mdi-eye" />
                                     </ULink>
                                 </li>
 
                                 <li>
-                                    <UDivider
+                                    <USeparator
                                         v-if="
                                             calendarEntries.isToday &&
                                             (calendarEntries.entries.past.length > 0 ||
@@ -454,7 +448,7 @@ const isOpen = ref(false);
                                         "
                                         class="my-1"
                                         size="sm"
-                                        :ui="{ border: { base: 'border-red-300 dark:border-red-600' } }"
+                                        :ui="{ border: 'border-red-300 dark:border-red-600' }"
                                     />
                                 </li>
 
@@ -462,17 +456,13 @@ const isOpen = ref(false);
                                     <ULink
                                         class="inline-flex w-full items-center justify-between gap-1"
                                         @click="
-                                            slideover.open(EntryViewSlideover, {
+                                            entryViewSlideover.open({
                                                 entryId: attr.customData.id,
                                             })
                                         "
                                     >
                                         <span class="inline-flex items-center gap-1">
-                                            <UBadge
-                                                :color="attr.customData.color as ButtonColor"
-                                                :ui="{ rounded: 'rounded-full' }"
-                                                size="lg"
-                                            />
+                                            <UBadge :color="attr.customData.color as ButtonProps['color']" size="lg" />
 
                                             <template v-if="attr.customData.time">
                                                 {{ attr.customData.time }}
@@ -488,7 +478,7 @@ const isOpen = ref(false);
                                             {{ attr.customData.title }}
                                         </span>
 
-                                        <UButton :padded="false" variant="link" icon="i-mdi-eye" />
+                                        <UButton variant="link" icon="i-mdi-eye" />
                                     </ULink>
                                 </li>
                             </ul>
@@ -496,16 +486,20 @@ const isOpen = ref(false);
                     </template>
                 </UContainer>
             </div>
+        </template>
 
-            <div class="flex justify-between border-b-0 border-t border-gray-200 px-3 py-3.5 xl:hidden dark:border-gray-700">
-                <UFormGroup
+        <template #footer>
+            <div
+                class="flex justify-between border-t border-b-0 border-neutral-200 px-3 py-3.5 xl:hidden dark:border-neutral-700"
+            >
+                <UFormField
                     class="flex flex-row items-center gap-2"
                     :label="$t('common.view')"
-                    :ui="{ container: '', label: { base: 'hidden md:inline-flex' } }"
+                    :ui="{ container: '', label: 'hidden md:inline-flex' }"
                 >
                     <ClientOnly>
-                        <USelectMenu v-model="view" :options="viewOptions" value-attribute="value">
-                            <template #label>
+                        <USelectMenu v-model="view" :items="viewOptions" value-key="value">
+                            <template #default>
                                 <UIcon
                                     class="size-5"
                                     :name="viewOptions.find((o) => o.value === view)?.icon ?? 'i-mdi-view-'"
@@ -514,34 +508,42 @@ const isOpen = ref(false);
                                 {{ viewOptions.find((o) => o.value === view)?.label ?? $t('common.na') }}
                             </template>
 
-                            <template #option="{ option }">
-                                <UIcon class="size-5" :name="option.icon" />
-                                <span class="truncate">{{ option.label }}</span>
+                            <template #item="{ item }">
+                                <UIcon class="size-5" :name="item.icon" />
+
+                                <span class="truncate">{{ item.label }}</span>
                             </template>
                         </USelectMenu>
                     </ClientOnly>
-                </UFormGroup>
+                </UFormField>
 
-                <UTooltip :text="$t('common.refresh')">
+                <div>
+                    <UTooltip :text="$t('common.refresh')">
+                        <UButton
+                            icon="i-mdi-refresh"
+                            variant="outline"
+                            :disabled="isRequestPending(status) || loadingState"
+                            :loading="isRequestPending(status) || loadingState"
+                            :label="$t('common.refresh')"
+                            @click="refresh()"
+                        />
+                    </UTooltip>
+                </div>
+
+                <div>
                     <UButton
-                        icon="i-mdi-refresh"
-                        variant="outline"
-                        :title="$t('common.refresh')"
-                        :disabled="isRequestPending(status) || loadingState"
-                        :loading="isRequestPending(status) || loadingState"
-                        @click="refresh()"
-                    >
-                        {{ $t('common.refresh') }}
-                    </UButton>
-                </UTooltip>
-
-                <UButton class="font-semibold" icon="i-mdi-calendar-search" @click="modal.open(FindCalendarModal, {})">
-                    {{ $t('components.calendar.FindCalendarModal.title') }}
-                </UButton>
+                        class="font-semibold"
+                        icon="i-mdi-calendar-search"
+                        :label="$t('components.calendar.FindCalendarDrawer.title')"
+                        @click="findCalendarsDrawer.open({})"
+                    />
+                </div>
             </div>
-        </UDashboardPanel>
+        </template>
+    </UDashboardPanel>
 
-        <UDashboardPanel v-model="isOpen" class="!hidden max-w-64 flex-1 xl:!flex" collapsible side="right">
+    <UDashboardPanel :ui="{ root: 'hidden xl:flex max-w-90', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+        <template #header>
             <UDashboardNavbar>
                 <template #right>
                     <UButtonGroup
@@ -552,27 +554,27 @@ const isOpen = ref(false);
                             v-if="can('calendar.CalendarService/CreateCalendar').value"
                             class="flex-1"
                             block
-                            color="gray"
+                            color="neutral"
                             trailing-icon="i-mdi-plus"
-                            @click="modal.open(CalendarCreateOrUpdateModal, {})"
-                        >
-                            {{ $t('common.calendar') }}
-                        </UButton>
+                            :label="$t('common.calendar')"
+                            @click="calendarCreateOrUpdateModal.open({})"
+                        />
 
                         <UButton
                             v-if="hasEditAccessToCalendar"
                             class="flex-1"
                             block
-                            color="gray"
+                            color="neutral"
                             trailing-icon="i-mdi-plus"
-                            @click="modal.open(EntryCreateOrUpdateModal, {})"
-                        >
-                            {{ $t('common.entry', 1) }}
-                        </UButton>
+                            :label="$t('common.entry', 1)"
+                            @click="entryCreateOrUpdateModal.open({})"
+                        />
                     </UButtonGroup>
                 </template>
             </UDashboardNavbar>
+        </template>
 
+        <template #body>
             <div class="mx-2 mb-2 flex h-full flex-col gap-2">
                 <div>
                     <p class="font-semibold">{{ $t('common.calendar') }}</p>
@@ -590,34 +592,39 @@ const isOpen = ref(false);
 
                     <div v-else class="grid grid-cols-1 gap-2">
                         <div v-for="calendar in calendars" :key="calendar.id" class="inline-flex items-center gap-2 truncate">
-                            <UCheckbox
+                            <USwitch
                                 :model-value="activeCalendarIds.includes(calendar.id)"
-                                @change="calendarIdChange(calendar.id, $event)"
+                                @update:model-value="($event) => calendarIdChange(calendar.id, $event as boolean)"
                             />
 
-                            <UBadge :color="calendar.color as ButtonColor" :ui="{ rounded: 'rounded-full' }" />
-
                             <UButton
-                                :color="calendar.color as ButtonColor"
-                                :padded="false"
-                                variant="link"
+                                :color="calendar.color as ButtonProps['color']"
+                                variant="solid"
                                 size="sm"
                                 truncate
                                 :label="calendar.name"
-                                @click="slideover.open(CalendarViewSlideover, { calendarId: calendar.id })"
+                                @click="calendarViewSlideover.open({ calendarId: calendar.id })"
                             />
                         </div>
                     </div>
                 </div>
 
                 <div class="flex-1" />
+            </div>
+        </template>
 
-                <UDivider class="sticky bottom-0" />
+        <template #footer>
+            <USeparator class="sticky bottom-0" />
 
-                <UFormGroup class="flex flex-row items-center gap-2" :label="$t('common.view')">
+            <div class="flex flex-col gap-2 p-2">
+                <UFormField
+                    class="flex flex-1 flex-row items-center gap-2"
+                    :label="$t('common.view')"
+                    :ui="{ container: 'flex-1' }"
+                >
                     <ClientOnly>
-                        <USelectMenu v-model="view" class="min-w-44" :options="viewOptions" value-attribute="value">
-                            <template #label>
+                        <USelectMenu v-model="view" class="w-full min-w-44" :items="viewOptions" value-key="value">
+                            <template #default>
                                 <UIcon
                                     class="size-5"
                                     :name="viewOptions.find((o) => o.value === view)?.icon ?? 'i-mdi-view-'"
@@ -626,13 +633,13 @@ const isOpen = ref(false);
                                 {{ viewOptions.find((o) => o.value === view)?.label ?? $t('common.na') }}
                             </template>
 
-                            <template #option="{ option }">
-                                <UIcon class="size-5" :name="option.icon" />
-                                <span class="truncate">{{ option.label }}</span>
+                            <template #item="{ item }">
+                                <UIcon class="size-5" :name="item.icon" />
+                                <span class="truncate">{{ item.label }}</span>
                             </template>
                         </USelectMenu>
                     </ClientOnly>
-                </UFormGroup>
+                </UFormField>
 
                 <UTooltip class="inline-flex w-full" :text="$t('common.refresh')">
                     <UButton
@@ -647,10 +654,13 @@ const isOpen = ref(false);
                     </UButton>
                 </UTooltip>
 
-                <UButton class="font-semibold" icon="i-mdi-calendar-search" @click="modal.open(FindCalendarModal, {})">
-                    {{ $t('components.calendar.FindCalendarModal.title') }}
-                </UButton>
+                <UButton
+                    class="font-semibold"
+                    icon="i-mdi-calendar-search"
+                    :label="$t('components.calendar.FindCalendarDrawer.title')"
+                    @click="findCalendarsDrawer.open({})"
+                />
             </div>
-        </UDashboardPanel>
-    </UDashboardPage>
+        </template>
+    </UDashboardPanel>
 </template>

@@ -14,20 +14,18 @@ const qualificationsQualificationsClient = await getQualificationsQualifications
 
 const props = defineProps<{
     qualificationId: number;
-    modelValue?: ExamQuestion;
     index: number;
     disabled?: boolean;
 }>();
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', value: ExamQuestion): void;
     (e: 'delete'): void;
     (e: 'fileUploaded', file: File): void;
     (e: 'move-down'): void;
     (e: 'move-up'): void;
 }>();
 
-const question = useVModel(props, 'modelValue', emit);
+const question = defineModel<ExamQuestion>();
 
 const appConfig = useAppConfig();
 const settingsStore = useSettingsStore();
@@ -41,6 +39,9 @@ const schema = z.object({
     data: z.object({
         data: z.union([
             z.object({
+                oneofKind: z.literal(undefined),
+            }),
+            z.object({
                 oneofKind: z.literal('separator'),
                 separator: z.object({}),
             }),
@@ -48,9 +49,7 @@ const schema = z.object({
                 oneofKind: z.literal('image'),
                 image: z.object({
                     alt: z.string().max(128).optional(),
-                    image: z.object({
-                        url: z.string().optional(),
-                    }),
+                    image: z.custom<File>().optional(),
                 }),
             }),
             z.object({
@@ -65,11 +64,16 @@ const schema = z.object({
                 }),
             }),
             z.object({
+                oneofKind: z.literal('singleChoice'),
+                singleChoice: z.object({
+                    choices: z.string().max(255).array().max(1).default(['']),
+                }),
+            }),
+            z.object({
                 oneofKind: z.literal('multipleChoice'),
                 multipleChoice: z.object({
-                    multi: z.coerce.boolean(),
-                    limit: z.coerce.number().positive().optional(),
                     choices: z.string().max(255).array().max(10).default([]),
+                    limit: z.coerce.number().positive().min(0).max(10).default(10).optional(),
                 }),
             }),
         ]),
@@ -134,7 +138,7 @@ function handleQuestionChange(): void {
                     answer: {
                         oneofKind: 'singleChoice',
                         singleChoice: {
-                            choice: '__UNDEFINED__', // Placeholder for an undefined choice
+                            choice: '',
                         },
                     },
                 };
@@ -184,16 +188,10 @@ const { resizeAndUpload } = useFileUploader(
     props.qualificationId,
 );
 
-async function handleImage(files: FileList): Promise<void> {
-    if (question.value!.data!.data.oneofKind !== 'image') {
-        return;
-    }
+async function handleImage(file: globalThis.File | null | undefined): Promise<void> {
+    if (!file || question.value!.data!.data.oneofKind !== 'image') return;
 
-    if (!files || files.length === 0 || !files[0]) {
-        return;
-    }
-
-    const resp = await resizeAndUpload(files[0]);
+    const resp = await resizeAndUpload(file);
     if (question.value?.data?.data.oneofKind === 'image') {
         question.value.data.data.image.image = resp.file;
     }
@@ -275,7 +273,6 @@ function changeQuestionType(qt: string): void {
             } else {
                 choices.push(''); // Start with an empty choice
             }
-            console.log('singleChoice', choices);
 
             question.value.data = {
                 data: {
@@ -290,7 +287,7 @@ function changeQuestionType(qt: string): void {
                 answer: {
                     oneofKind: 'singleChoice',
                     singleChoice: {
-                        choice: '__UNDEFINED__', // Placeholder for an undefined choice
+                        choice: '', // Placeholder for an undefined choice
                     },
                 },
             };
@@ -307,7 +304,6 @@ function changeQuestionType(qt: string): void {
             } else {
                 choices.push(''); // Start with an empty choice
             }
-            console.log('multipleChoice', choices);
 
             question.value.data = {
                 data: {
@@ -396,7 +392,7 @@ watch(
                     ) {
                         // Reset singleChoice answer if it becomes invalid
                         if (!newChoices?.includes(question.value.answer.answer.singleChoice.choice)) {
-                            question.value.answer.answer.singleChoice.choice = '__UNDEFINED__'; // Reset to a placeholder
+                            question.value.answer.answer.singleChoice.choice = ''; // Reset to a placeholder
                         }
                     }
                 },
@@ -424,50 +420,41 @@ watch(
             </UTooltip>
 
             <UButtonGroup>
-                <UButton size="xs" variant="link" :padded="false" icon="i-mdi-arrow-up" @click="$emit('move-up')" />
-                <UButton size="xs" variant="link" :padded="false" icon="i-mdi-arrow-down" @click="$emit('move-down')" />
+                <UButton size="xs" variant="link" icon="i-mdi-arrow-up" @click="$emit('move-up')" />
+                <UButton size="xs" variant="link" icon="i-mdi-arrow-down" @click="$emit('move-down')" />
             </UButtonGroup>
         </div>
 
-        <UFormGroup name="data.data.oneofKind">
+        <UFormField name="data.data.oneofKind">
             <ClientOnly>
                 <USelectMenu
                     :model-value="question.data!.data.oneofKind"
                     class="w-40 max-w-40"
-                    :options="questionTypes"
-                    searchable
-                    :searchable-placeholder="$t('common.search_field')"
+                    :items="questionTypes"
+                    :search-input="{ placeholder: $t('common.search_field') }"
                     :disabled="disabled"
                     @update:model-value="changeQuestionType($event)"
                 >
-                    <template #label>
-                        <span class="truncate">
-                            {{ $t(`components.qualifications.exam_editor.question_types.${question.data!.data.oneofKind}`) }}
-                        </span>
+                    <template #default>
+                        {{ $t(`components.qualifications.exam_editor.question_types.${question.data!.data.oneofKind}`) }}
                     </template>
 
-                    <template #option="{ option }">
-                        <span class="truncate">
-                            {{ $t(`components.qualifications.exam_editor.question_types.${option}`) }}
-                        </span>
-                    </template>
-
-                    <template #option-empty="{ query: search }">
-                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                    <template #item="{ item }">
+                        {{ $t(`components.qualifications.exam_editor.question_types.${item}`) }}
                     </template>
 
                     <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
                 </USelectMenu>
             </ClientOnly>
-        </UFormGroup>
+        </UFormField>
 
         <div class="flex flex-1 flex-col gap-2 p-4">
             <div class="flex flex-1 flex-col gap-2">
-                <UFormGroup name="title" :label="$t('common.title')" required>
-                    <UInput v-model="question.title" type="text" :placeholder="$t('common.title')" size="xl" />
-                </UFormGroup>
+                <UFormField name="title" :label="$t('common.title')" required>
+                    <UInput v-model="question.title" type="text" :placeholder="$t('common.title')" size="xl" class="w-full" />
+                </UFormField>
 
-                <UFormGroup class="flex-1" name="description" :label="$t('common.description')">
+                <UFormField class="flex-1" name="description" :label="$t('common.description')">
                     <UTextarea
                         v-model="question.description"
                         type="text"
@@ -475,16 +462,17 @@ watch(
                         resize
                         :placeholder="$t('common.description')"
                         :disabled="disabled"
+                        class="w-full"
                     />
-                </UFormGroup>
+                </UFormField>
             </div>
             <div class="flex-1">
                 <template v-if="question.data!.data.oneofKind === 'separator'">
-                    <UDivider class="mb-2 mt-2 text-xl">
+                    <USeparator class="mt-2 mb-2 text-xl">
                         <template v-if="question.title !== ''" #default>
                             <h4 class="text-xl">{{ question.title }}</h4>
                         </template>
-                    </UDivider>
+                    </USeparator>
 
                     <p class="mb-2">{{ question.description }}</p>
                 </template>
@@ -493,19 +481,20 @@ watch(
                     <div class="flex flex-col gap-2">
                         <NotSupportedTabletBlock v-if="nuiEnabled" />
                         <template v-else>
-                            <UInput
-                                type="file"
+                            <UFileUpload
                                 :accept="appConfig.fileUpload.types.images.join(',')"
-                                :placeholder="$t('common.image')"
                                 :disabled="disabled"
-                                @change="handleImage($event)"
+                                class="w-full"
+                                :placeholder="$t('common.image')"
+                                :label="$t('common.file_upload_label')"
+                                :description="$t('common.allowed_file_types')"
+                                @update:model-value="($event) => handleImage($event)"
                             />
                         </template>
 
                         <div v-if="question.data?.data.image.image" class="flex flex-1 items-center justify-center">
                             <GenericImg
                                 class="min-h-12 min-w-12"
-                                img-class="h-96 w-full object-cover"
                                 :enable-popup="true"
                                 :rounded="false"
                                 :src="question.data?.data.image.image.filePath"
@@ -545,28 +534,34 @@ watch(
                 >
                     <div class="flex flex-col gap-2">
                         <div class="flex gap-2">
-                            <UFormGroup class="flex-1" name="data.data.freeText.minLength" :label="$t('common.min')">
-                                <UInput
+                            <UFormField class="flex-1" name="data.data.freeText.minLength" :label="$t('common.min')">
+                                <UInputNumber
                                     v-model="question.data!.data.freeText.minLength"
-                                    type="number"
+                                    :step="10"
                                     :min="0"
                                     :max="Number.MAX_SAFE_INTEGER"
                                     :disabled="disabled"
                                 />
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup class="flex-1" name="data.data.freeText.maxLength" :label="$t('common.max')">
-                                <UInput
+                            <UFormField class="flex-1" name="data.data.freeText.maxLength" :label="$t('common.max')">
+                                <UInputNumber
                                     v-model="question.data!.data.freeText.maxLength"
-                                    type="number"
+                                    :step="10"
                                     :min="0"
                                     :max="Number.MAX_SAFE_INTEGER"
                                     :disabled="disabled"
                                 />
-                            </UFormGroup>
+                            </UFormField>
                         </div>
 
-                        <UTextarea v-model="question.answer!.answer.freeText.text" :rows="5" resize :disabled="disabled" />
+                        <UTextarea
+                            v-model="question.answer!.answer.freeText.text"
+                            :rows="5"
+                            resize
+                            :disabled="disabled"
+                            class="w-full"
+                        />
                     </div>
                 </template>
 
@@ -591,37 +586,32 @@ watch(
                     v-if="question.data!.data.oneofKind !== 'separator' && question.data!.data.oneofKind !== 'image'"
                     class="mt-2 flex flex-row gap-2"
                 >
-                    <UFormGroup class="flex-1" name="answer.answerKey" :label="$t('common.answer_key')">
+                    <UFormField class="flex-1" name="answer.answerKey" :label="$t('common.answer_key')">
                         <UTextarea
                             v-model="question.answer!.answerKey"
                             :placeholder="$t('common.answer_key')"
                             :rows="2"
                             resize
                             :disabled="disabled"
+                            class="w-full"
                         />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup class="max-w-24" name="points" :label="$t('common.points', 2)">
-                        <UInput
+                    <UFormField class="max-w-24" name="points" :label="$t('common.points', 2)">
+                        <UInputNumber
                             v-model="question.points"
-                            type="number"
                             name="points"
                             :min="0"
                             :placeholder="$t('common.points', 2)"
                             :disabled="disabled"
                         />
-                    </UFormGroup>
+                    </UFormField>
                 </div>
             </div>
         </div>
 
         <UTooltip :text="$t('components.qualifications.remove_question')">
-            <UButton
-                class="mt-1 flex-initial self-start"
-                icon="i-mdi-close"
-                :ui="{ rounded: 'rounded-full' }"
-                @click="$emit('delete')"
-            />
+            <UButton class="mt-1 flex-initial self-start" icon="i-mdi-close" color="error" @click="$emit('delete')" />
         </UTooltip>
     </UForm>
 </template>

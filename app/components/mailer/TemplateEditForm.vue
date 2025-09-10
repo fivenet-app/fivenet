@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/stores/mailer';
@@ -80,37 +80,35 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <div>
-        <UForm
-            class="mx-auto flex max-w-screen-xl flex-1 flex-col gap-y-2"
-            :state="state"
-            :schema="schema"
-            @submit="onSubmitThrottle"
+    <UForm
+        class="mx-auto flex max-w-(--breakpoint-xl) flex-1 flex-col gap-y-2"
+        :state="state"
+        :schema="schema"
+        @submit="onSubmitThrottle"
+    >
+        <UButtonGroup class="mb-2 flex">
+            <UButton class="flex-1" type="submit" icon="i-mdi-pencil" :label="$t('common.save')" />
+
+            <UButton icon="i-mdi-cancel" color="error" :label="$t('common.cancel')" @click="$emit('close')" />
+        </UButtonGroup>
+
+        <UFormField name="title" :label="$t('common.name')">
+            <UInput v-model="state.title" type="text" />
+        </UFormField>
+
+        <UFormField
+            class="flex flex-1 overflow-y-hidden"
+            name="content"
+            :ui="{ container: 'flex flex-1 flex-col mt-0 overflow-y-hidden', label: 'hidden' }"
+            label="&nbsp;"
         >
-            <UButtonGroup class="mb-2 flex">
-                <UButton class="flex-1" type="submit" icon="i-mdi-pencil" :label="$t('common.save')" />
-
-                <UButton icon="i-mdi-cancel" color="error" :label="$t('common.cancel')" @click="$emit('close')" />
-            </UButtonGroup>
-
-            <UFormGroup name="title" :label="$t('common.name')">
-                <UInput v-model="state.title" type="text" />
-            </UFormGroup>
-
-            <UFormGroup
-                class="flex flex-1 overflow-y-hidden"
-                name="content"
-                :ui="{ container: 'flex flex-1 flex-col mt-0 overflow-y-hidden', label: { wrapper: 'hidden' } }"
-                label="&nbsp;"
-            >
-                <ClientOnly>
-                    <TiptapEditor
-                        v-model="state.content"
-                        class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
-                        wrapper-class="min-h-80"
-                    />
-                </ClientOnly>
-            </UFormGroup>
-        </UForm>
-    </div>
+            <ClientOnly>
+                <TiptapEditor
+                    v-model="state.content"
+                    class="mx-auto w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
+                    wrapper-class="min-h-80"
+                />
+            </ClientOnly>
+        </UFormField>
+    </UForm>
 </template>

@@ -51,27 +51,36 @@ export interface PaginationResponse {
     pageSize: number;
 }
 /**
- * Sort by column
- *
  * @generated from protobuf message resources.common.database.Sort
  */
 export interface Sort {
     /**
-     * Column name
-     *
-     * @generated from protobuf field: string column = 1
+     * @generated from protobuf field: repeated resources.common.database.SortByColumn columns = 1
      */
-    column: string;
+    columns: SortByColumn[];
+}
+/**
+ * SortByColumn sort by column and direction
+ *
+ * @generated from protobuf message resources.common.database.SortByColumn
+ */
+export interface SortByColumn {
     /**
-     * Sort direction, must be `asc` (ascending) or `desc` (descending)
+     * ID is the column name.
      *
-     * @generated from protobuf field: string direction = 2
+     * @generated from protobuf field: string id = 1
      */
-    direction: string;
+    id: string;
+    /**
+     * Desc if true sorts descending, ascending otherwise.
+     *
+     * @generated from protobuf field: bool desc = 2
+     */
+    desc: boolean;
 }
 /**
  *
- * Datetime range (uses Timestamp underneath)
+ * DateRange represents a datetime range (uses Timestamp underneath)
  * It depends on the API method if it will use date or date + time.
  *
  * @generated from protobuf message resources.common.database.DateRange
@@ -219,14 +228,12 @@ export const PaginationResponse = new PaginationResponse$Type();
 class Sort$Type extends MessageType<Sort> {
     constructor() {
         super("resources.common.database.Sort", [
-            { no: 1, name: "column", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "64" } } } },
-            { no: 2, name: "direction", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { in: ["asc", "desc"] } } } }
+            { no: 1, name: "columns", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => SortByColumn }
         ]);
     }
     create(value?: PartialMessage<Sort>): Sort {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.column = "";
-        message.direction = "";
+        message.columns = [];
         if (value !== undefined)
             reflectionMergePartial<Sort>(this, message, value);
         return message;
@@ -236,11 +243,8 @@ class Sort$Type extends MessageType<Sort> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string column */ 1:
-                    message.column = reader.string();
-                    break;
-                case /* string direction */ 2:
-                    message.direction = reader.string();
+                case /* repeated resources.common.database.SortByColumn columns */ 1:
+                    message.columns.push(SortByColumn.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -254,12 +258,9 @@ class Sort$Type extends MessageType<Sort> {
         return message;
     }
     internalBinaryWrite(message: Sort, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string column = 1; */
-        if (message.column !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.column);
-        /* string direction = 2; */
-        if (message.direction !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.direction);
+        /* repeated resources.common.database.SortByColumn columns = 1; */
+        for (let i = 0; i < message.columns.length; i++)
+            SortByColumn.internalBinaryWrite(message.columns[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -270,6 +271,61 @@ class Sort$Type extends MessageType<Sort> {
  * @generated MessageType for protobuf message resources.common.database.Sort
  */
 export const Sort = new Sort$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SortByColumn$Type extends MessageType<SortByColumn> {
+    constructor() {
+        super("resources.common.database.SortByColumn", [
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "64" } } } },
+            { no: 2, name: "desc", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<SortByColumn>): SortByColumn {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = "";
+        message.desc = false;
+        if (value !== undefined)
+            reflectionMergePartial<SortByColumn>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SortByColumn): SortByColumn {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string id */ 1:
+                    message.id = reader.string();
+                    break;
+                case /* bool desc */ 2:
+                    message.desc = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SortByColumn, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string id = 1; */
+        if (message.id !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* bool desc = 2; */
+        if (message.desc !== false)
+            writer.tag(2, WireType.Varint).bool(message.desc);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.common.database.SortByColumn
+ */
+export const SortByColumn = new SortByColumn$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DateRange$Type extends MessageType<DateRange> {
     constructor() {

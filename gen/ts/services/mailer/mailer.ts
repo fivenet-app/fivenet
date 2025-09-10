@@ -559,7 +559,7 @@ class ListEmailsResponse$Type extends MessageType<ListEmailsResponse> {
     constructor() {
         super("services.mailer.ListEmailsResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "emails", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Email }
+            { no: 2, name: "emails", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Email, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListEmailsResponse>): ListEmailsResponse {
@@ -1455,7 +1455,7 @@ class ListThreadsResponse$Type extends MessageType<ListThreadsResponse> {
     constructor() {
         super("services.mailer.ListThreadsResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "threads", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Thread }
+            { no: 2, name: "threads", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Thread, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListThreadsResponse>): ListThreadsResponse {
@@ -2242,7 +2242,7 @@ class SearchThreadsResponse$Type extends MessageType<SearchThreadsResponse> {
     constructor() {
         super("services.mailer.SearchThreadsResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "messages", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Message }
+            { no: 2, name: "messages", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Message, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<SearchThreadsResponse>): SearchThreadsResponse {
@@ -2365,7 +2365,7 @@ class ListThreadMessagesResponse$Type extends MessageType<ListThreadMessagesResp
     constructor() {
         super("services.mailer.ListThreadMessagesResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "messages", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Message }
+            { no: 2, name: "messages", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Message, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListThreadMessagesResponse>): ListThreadMessagesResponse {

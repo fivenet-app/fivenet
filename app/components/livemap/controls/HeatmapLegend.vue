@@ -33,13 +33,13 @@ const barStyle = computed(() => {
 
 <template>
     <LControl position="bottomright">
-        <div v-if="show" class="bg-background space-y-1 rounded-md p-1 text-xs font-medium shadow-md">
+        <div v-if="show" class="space-y-1 rounded-md bg-default p-1 text-xs font-medium shadow-md">
             <!-- Gradient bar -->
-            <div class="h-2 w-32 rounded" :style="barStyle" />
+            <div class="h-2 w-32 rounded-sm" :style="barStyle" />
             <!-- Captions -->
-            <div class="flex justify-between text-gray-900 dark:text-gray-400">
+            <div class="flex justify-between text-toned">
                 <span>{{ $t('common.min') }}</span>
-                <span v-if="max > 0" class="text-gray-700 dark:text-gray-200">{{ max }}</span>
+                <span v-if="max > 0" class="text-default">{{ max }}</span>
                 <span>{{ $t('common.max') }}</span>
             </div>
         </div>

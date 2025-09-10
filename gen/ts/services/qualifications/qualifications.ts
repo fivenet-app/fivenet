@@ -513,8 +513,8 @@ export const ListQualificationsRequest = new ListQualificationsRequest$Type();
 class ListQualificationsResponse$Type extends MessageType<ListQualificationsResponse> {
     constructor() {
         super("services.qualifications.ListQualificationsResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "qualifications", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Qualification }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "qualifications", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Qualification, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListQualificationsResponse>): ListQualificationsResponse {
@@ -1207,8 +1207,8 @@ export const ListQualificationRequestsRequest = new ListQualificationRequestsReq
 class ListQualificationRequestsResponse$Type extends MessageType<ListQualificationRequestsResponse> {
     constructor() {
         super("services.qualifications.ListQualificationRequestsResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "requests", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => QualificationRequest }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "requests", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => QualificationRequest, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListQualificationRequestsResponse>): ListQualificationRequestsResponse {
@@ -1529,8 +1529,8 @@ export const ListQualificationsResultsRequest = new ListQualificationsResultsReq
 class ListQualificationsResultsResponse$Type extends MessageType<ListQualificationsResultsResponse> {
     constructor() {
         super("services.qualifications.ListQualificationsResultsResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "results", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => QualificationResult }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "results", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => QualificationResult, options: { "codegen.itemslen.items_len": true } }
         ]);
     }
     create(value?: PartialMessage<ListQualificationsResultsResponse>): ListQualificationsResultsResponse {

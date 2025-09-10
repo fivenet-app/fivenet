@@ -24,9 +24,5 @@ const route = useRoute('documents-templates-id');
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel grow>
-            <TemplateView :template-id="parseInt(route.params.id)" />
-        </UDashboardPanel>
-    </UDashboardPage>
+    <TemplateView :template-id="parseInt(route.params.id)" />
 </template>

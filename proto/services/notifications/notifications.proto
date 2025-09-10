@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.notifications;
 
 import "buf/validate/validate.proto";
+import "codegen/itemslen/itemslen.proto";
 import "resources/common/database/database.proto";
 import "resources/mailer/events.proto";
 import "resources/notifications/client_view.proto";
@@ -23,8 +24,8 @@ message GetNotificationsRequest {
 }
 
 message GetNotificationsResponse {
-  resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.notifications.Notification notifications = 2;
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.notifications.Notification notifications = 2 [(codegen.itemslen.items_len) = true];
 }
 
 message MarkNotificationsRequest {

@@ -20,7 +20,7 @@ function fmtDate(d: Date) {
  * key:    unique identifier for this form (only for store lookup)
  * schema: your ZodObject describing the form state (with any .default()s you want)
  */
-export function useSearchForm<T extends ZodRawShape, S extends ZodObject<T>>(key: string, schema: S) {
+export function useSearchForm<T extends ZodRawShape, S extends ZodObject<T>>(key: string, schema: S): z.TypeOf<S> {
     type State = z.infer<S>;
     const route = useRoute();
     const router = useRouter();
@@ -40,7 +40,7 @@ export function useSearchForm<T extends ZodRawShape, S extends ZodObject<T>>(key
         const type = core._def.typeName as ZodFirstPartyTypeKind;
         const param = route.query[field as string];
 
-        // skip empty string
+        // Skip empty string
         if (param === '') continue;
 
         // booleans
@@ -56,26 +56,26 @@ export function useSearchForm<T extends ZodRawShape, S extends ZodObject<T>>(key
             continue;
         }
 
-        // everything else (arrays, objects, nested, primitives): try JSON.parse
+        // Everything else (arrays, objects, nested, primitives): try JSON.parse
         if (typeof param === 'string') {
             try {
                 const parsed = JSON.parse(param);
-                // skip empty arrays/objects?
+                // Skip empty arrays/objects?
                 if (typeof parsed === 'number' && isNaN(parsed)) {
                     continue;
                 }
                 raw[field] = parsed as any;
             } catch {
-                // fallback to string
+                // Fallback to string
                 raw[field] = param as any;
             }
         }
     }
 
-    // Step 4: merge defaults ← store ← raw, then validate
+    // Step 4: Merge defaults ← store ← raw, then validate
     const merged: State = schema.parse({ ...defaults, ...base, ...raw });
 
-    // Step 5: put or patch the reactive in the central store
+    // Step 5: Put or patch the reactive in the central store
     let state = store.getSearch<State>(key);
     if (state) {
         Object.assign(state, merged);
@@ -84,18 +84,22 @@ export function useSearchForm<T extends ZodRawShape, S extends ZodObject<T>>(key
         store.setSearch(key, state);
     }
 
-    // Step 6: watch it → sync back to URL & store
+    // Step 6: Watch it → sync back to URL & store
     watch(
         state,
         (s) => {
             const q: Record<string, string> = {};
+            if (route.query.tab) {
+                // TODO this is a temporary fix
+                q.tab = String(route.query.tab);
+            }
 
             for (const [k, v] of Object.entries(s) as [keyof State, any][]) {
-                // skip null/undefined
-                if (v == null) continue;
-                // skip empty string
+                // Skip null/undefined
+                if (v === undefined || v === null) continue;
+                // Skip empty string
                 if (typeof v === 'string' && v === '') continue;
-                // skip NaN
+                // Skip NaN
                 if (typeof v === 'number' && isNaN(v)) continue;
 
                 const core = getCoreSchema(schema.shape[k] as ZodTypeAny);
@@ -108,7 +112,7 @@ export function useSearchForm<T extends ZodRawShape, S extends ZodObject<T>>(key
                 } else if (typeof v === 'string' || typeof v === 'number') {
                     q[k as string] = String(v);
                 } else {
-                    // everything else (arrays & objects)
+                    // Everything else (arrays & objects)
                     q[k as string] = JSON.stringify(v);
                 }
             }

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import PagesJobsLayout from '~/components/jobs/PagesJobsLayout.vue';
 import TimeclockInactiveList from '~/components/jobs/timeclock/TimeclockInactiveList.vue';
 
 useHead({
@@ -14,9 +13,5 @@ definePageMeta({
 </script>
 
 <template>
-    <PagesJobsLayout>
-        <template #default>
-            <TimeclockInactiveList />
-        </template>
-    </PagesJobsLayout>
+    <TimeclockInactiveList />
 </template>

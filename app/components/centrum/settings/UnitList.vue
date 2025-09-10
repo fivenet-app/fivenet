@@ -1,11 +1,15 @@
 <script lang="ts" setup>
+import { UButton, UTooltip } from '#components';
+import type { TableColumn } from '@nuxt/ui';
+import { h } from 'vue';
 import UnitAttributes from '~/components/centrum/partials/UnitAttributes.vue';
-import UnitCreateOrUpdateModal from '~/components/centrum/settings/UnitCreateOrUpdateModal.vue';
-import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
+import UnitCreateOrUpdateSlideover from '~/components/centrum/settings/UnitCreateOrUpdateSlideover.vue';
+import ColorPicker from '~/components/partials/ColorPicker.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { availableIcons, fallbackIcon } from '~/components/partials/icons';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
+import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ListUnitsResponse } from '~~/gen/ts/services/centrum/centrum';
 
@@ -13,7 +17,7 @@ const { t } = useI18n();
 
 const { can } = useAuth();
 
-const modal = useModal();
+const overlay = useOverlay();
 
 const notifications = useNotificationsStore();
 
@@ -53,43 +57,132 @@ async function deleteUnit(id: number): Promise<void> {
     }
 }
 
+const appConfig = useAppConfig();
+
 const columns = [
     {
-        key: 'actions',
-        label: t('common.action', 2),
-        sortable: false,
+        id: 'actions',
+        cell: ({ row }) =>
+            h('div', [
+                h(
+                    UTooltip,
+                    {
+                        text: t('common.update'),
+                        vIf: can('centrum.CentrumService/CreateOrUpdateUnit').value,
+                    },
+                    [
+                        h(UButton, {
+                            variant: 'link',
+                            icon: 'i-mdi-pencil',
+                            onClick: () => {
+                                unitCreateOrUpdateSlideover.open({
+                                    unit: row.original,
+                                    onUpdated: async () => refresh(),
+                                });
+                            },
+                        }),
+                    ],
+                ),
+                h(
+                    UTooltip,
+                    {
+                        text: t('common.delete'),
+                        vIf: can('centrum.CentrumService/DeleteUnit').value,
+                    },
+                    [
+                        h(UButton, {
+                            variant: 'link',
+                            icon: 'i-mdi-delete',
+                            color: 'error',
+                            onClick: () => {
+                                confirmModal.open({
+                                    confirm: async () => deleteUnit(row.original.id),
+                                });
+                            },
+                        }),
+                    ],
+                ),
+            ]),
     },
     {
-        key: 'name',
-        label: t('common.name'),
-        sortable: true,
+        accessorKey: 'name',
+        header: ({ column }) => {
+            const isSorted = column.getIsSorted();
+
+            return h(UButton, {
+                color: 'neutral',
+                variant: 'ghost',
+                label: t('common.name'),
+                icon: isSorted
+                    ? isSorted === 'asc'
+                        ? appConfig.custom.icons.sortAsc
+                        : appConfig.custom.icons.sortDesc
+                    : appConfig.custom.icons.sort,
+                class: '-mx-2.5',
+                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+            });
+        },
+        cell: ({ row }) => h('span', { class: 'text-highlighted' }, row.original.name),
     },
     {
-        key: 'initials',
-        label: t('common.initials'),
-        sortable: true,
+        accessorKey: 'initials',
+        header: ({ column }) => {
+            const isSorted = column.getIsSorted();
+
+            return h(UButton, {
+                color: 'neutral',
+                variant: 'ghost',
+                label: t('common.initials'),
+                icon: isSorted
+                    ? isSorted === 'asc'
+                        ? appConfig.custom.icons.sortAsc
+                        : appConfig.custom.icons.sortDesc
+                    : appConfig.custom.icons.sort,
+                class: '-mx-2.5',
+                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+            });
+        },
+        cell: ({ row }) => h('span', {}, row.original.initials),
     },
     {
-        key: 'description',
-        label: t('common.description'),
+        accessorKey: 'description',
+        header: t('common.description'),
+        cell: ({ row }) => h('span', {}, row.original.description),
     },
     {
-        key: 'color',
-        label: t('common.color'),
+        accessorKey: 'color',
+        header: t('common.color'),
+        cell: ({ row }) =>
+            h(ColorPicker, {
+                modelValue: row.original.color,
+                disabled: true,
+                hideLabel: true,
+            }),
     },
     {
-        key: 'icon',
-        label: t('common.icon'),
+        accessorKey: 'icon',
+        header: t('common.icon'),
+        cell: ({ row }) =>
+            h('component', {
+                is: availableIcons.find((item) => item.name === row.original.icon)?.component ?? fallbackIcon.component,
+                class: 'size-5',
+                fill: row.original.color ?? 'currentColor',
+            }),
     },
     {
-        key: 'attributes',
-        label: t('common.attributes'),
+        accessorKey: 'attributes',
+        header: t('common.attributes'),
+        cell: ({ row }) => h(UnitAttributes, { attributes: row.original.attributes }),
     },
     {
-        key: 'homePostal',
-        label: t('common.department_postal'),
+        accessorKey: 'homePostal',
+        header: t('common.department_postal'),
+        cell: ({ row }) => h('span', {}, row.original.homePostal ?? t('common.na')),
     },
-];
+] as TableColumn<Unit>[];
+
+const unitCreateOrUpdateSlideover = overlay.create(UnitCreateOrUpdateSlideover);
+const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
@@ -108,9 +201,9 @@ const columns = [
             <UButton
                 v-if="can('centrum.CentrumService/CreateOrUpdateUnit').value"
                 trailing-icon="i-mdi-plus"
-                color="gray"
+                color="neutral"
                 @click="
-                    modal.open(UnitCreateOrUpdateModal, {
+                    unitCreateOrUpdateSlideover.open({
                         onCreated: async () => refresh(),
                         onUpdated: async () => refresh(),
                     })
@@ -124,67 +217,14 @@ const columns = [
     </UDashboardNavbar>
 
     <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.unit', 2)])" :error="error" :retry="refresh" />
+
     <UTable
-        v-else
+        class="flex-1"
         :loading="isRequestPending(status)"
         :columns="columns"
-        :rows="units?.units"
-        :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.unit', 2)]) }"
-    >
-        <template #name-data="{ row: unit }">
-            <div class="text-gray-900 dark:text-white">
-                {{ unit.name }}
-            </div>
-        </template>
-
-        <template #attributes-data="{ row: unit }">
-            <UnitAttributes :attributes="unit.attributes" />
-        </template>
-
-        <template #color-data="{ row: unit }">
-            <ColorPickerClient v-model="unit.color" disabled hide-icon />
-        </template>
-
-        <template #icon-data="{ row: unit }">
-            <component
-                :is="availableIcons.find((item) => item.name === unit.icon)?.component ?? fallbackIcon.component"
-                class="size-5"
-                :fill="unit.color ?? 'currentColor'"
-            />
-        </template>
-
-        <template #homePostal-data="{ row: unit }">
-            {{ unit.homePostal ?? $t('common.na') }}
-        </template>
-
-        <template #actions-data="{ row: unit }">
-            <div :key="unit.id" class="flex items-center">
-                <UTooltip v-if="can('centrum.CentrumService/CreateOrUpdateUnit').value" :text="$t('common.update')">
-                    <UButton
-                        variant="link"
-                        icon="i-mdi-pencil"
-                        @click="
-                            modal.open(UnitCreateOrUpdateModal, {
-                                unit: unit,
-                                onUpdated: async () => refresh(),
-                            })
-                        "
-                    />
-                </UTooltip>
-
-                <UTooltip v-if="can('centrum.CentrumService/DeleteUnit').value" :text="$t('common.delete')">
-                    <UButton
-                        variant="link"
-                        icon="i-mdi-delete"
-                        color="error"
-                        @click="
-                            modal.open(ConfirmModal, {
-                                confirm: async () => deleteUnit(unit.id),
-                            })
-                        "
-                    />
-                </UTooltip>
-            </div>
-        </template>
-    </UTable>
+        :data="units?.units"
+        :empty="$t('common.not_found', [$t('common.unit', 2)])"
+        :sorting-options="{ manualSorting: true }"
+        :pagination-options="{ manualPagination: true }"
+    />
 </template>
