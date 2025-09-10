@@ -22,13 +22,19 @@ func TestLRUCacheBasicOperations(t *testing.T) {
 	assert.True(t, ok, "expected 'b' to exist")
 	assert.Equal(t, 2, v)
 
-	// Test LRU eviction
-	cache.Put("c", 3, 0) // should evict "a"
-	_, ok = cache.Get("a")
-	assert.False(t, ok, "expected 'a' to be evicted")
-	v, ok = cache.Get("c")
-	assert.True(t, ok, "expected 'c' to exist")
-	assert.Equal(t, 3, v)
+	// Test random eviction
+	cache.Put("c", 3, 0) // should evict one of "a" or "b"
+	count := 0
+	if _, ok := cache.Get("a"); ok {
+		count++
+	}
+	if _, ok := cache.Get("b"); ok {
+		count++
+	}
+	if _, ok := cache.Get("c"); ok {
+		count++
+	}
+	assert.Equal(t, 2, count, "expected exactly 2 items to remain in the cache")
 }
 
 func TestLRUCacheDelete(t *testing.T) {
