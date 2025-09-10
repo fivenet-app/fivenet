@@ -1,7 +1,15 @@
 <script lang="ts" setup>
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { breakpointsTailwind } from '@vueuse/core';
-import L, { CRS, extend, LatLng, latLngBounds, type PointExpression, Projection, Transformation } from 'leaflet';
+import {
+    CRS,
+    extend,
+    type default as L,
+    LatLng,
+    latLngBounds,
+    type PointExpression,
+    Projection,
+    Transformation,
+} from 'leaflet';
 import 'leaflet-contextmenu';
 import 'leaflet.heat';
 import ZoomControls from '~/components/livemap/controls/ZoomControls.vue';
