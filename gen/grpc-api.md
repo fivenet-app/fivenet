@@ -3547,6 +3547,29 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 
 
+## resources/documents/state.proto
+
+
+### resources.documents.DocumentState
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [int64](#int64) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## resources/vehicles/props.proto
 
 

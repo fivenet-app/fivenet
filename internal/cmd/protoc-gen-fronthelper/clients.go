@@ -11,7 +11,8 @@ import (
 	pgsgo "github.com/lyft/protoc-gen-star/v2/lang/go"
 )
 
-// ClientsModule
+// ClientsModule is a protoc-gen-star module that generates a TypeScript file
+// providing factory functions to create gRPC clients for the services defined in the protobuf files.
 type ClientsModule struct {
 	*pgs.ModuleBase
 

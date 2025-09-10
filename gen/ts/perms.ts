@@ -32,6 +32,7 @@
 // source: resources/documents/pins.proto
 // source: resources/documents/requests.proto
 // source: resources/documents/signoff.proto
+// source: resources/documents/state.proto
 // source: resources/documents/templates.proto
 // source: resources/documents/workflow.proto
 // source: resources/file/file.proto
