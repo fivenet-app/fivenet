@@ -86,7 +86,9 @@ export default defineNuxtConfig({
 
     postcss: {
         plugins: {
-            './internal/postcss/postcss-oklch-fallback': {},
+            '@csstools/postcss-oklab-function': {
+                preserve: true,
+            },
         },
     },
 
