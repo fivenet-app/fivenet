@@ -24,6 +24,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	dateparser "github.com/markusmobius/go-dateparser"
 )
 
 var (
@@ -33,7 +34,9 @@ var (
 	tColleagueActivity = table.FivenetJobColleagueActivity
 )
 
-const absentDateFormat = "2006-01-02"
+const (
+	defaultDateFormat = "02.01.2006"
+)
 
 type AbsentCommand struct {
 	l     *lang.I18n
@@ -207,7 +210,7 @@ func (c *AbsentCommand) HandleCommand(
 
 	startDateValue := strings.ToLower(startDateOption.String())
 	if startDateValue != "today" {
-		parsed, err := time.Parse(absentDateFormat, startDateValue)
+		dt, err := dateparser.Parse(nil, startDateValue)
 		if err != nil {
 			(*resp.Embeds)[0].Title = localizer(
 				"discord.commands.absent.results.invalid_date.title",
@@ -219,7 +222,7 @@ func (c *AbsentCommand) HandleCommand(
 			)
 			return resp
 		}
-		startDate = parsed
+		startDate = dt.Time
 
 		if !now.Equal(startDate) && !startDate.After(now) {
 			(*resp.Embeds)[0].Title = localizer(
@@ -261,8 +264,8 @@ func (c *AbsentCommand) HandleCommand(
 		(*resp.Embeds)[0].Title = localizer("discord.commands.absent.results.success.title", nil)
 		(*resp.Embeds)[0].Description = localizer("discord.commands.absent.results.success.desc",
 			map[string]any{
-				"absenceBegin": startDate.Format(absentDateFormat),
-				"absenceEnd":   endDate.Format(absentDateFormat),
+				"absenceBegin": startDate.Format(defaultDateFormat),
+				"absenceEnd":   endDate.Format(defaultDateFormat),
 			},
 		)
 		(*resp.Embeds)[0].Color = embeds.ColorSuccess
@@ -270,8 +273,8 @@ func (c *AbsentCommand) HandleCommand(
 		(*resp.Embeds)[0].Title = localizer("discord.commands.absent.results.already_absent.title", nil)
 		(*resp.Embeds)[0].Description = localizer("discord.commands.absent.results.already_absent.desc",
 			map[string]any{
-				"absenceBegin": startDate.Format(absentDateFormat),
-				"absenceEnd":   endDate.Format(absentDateFormat),
+				"absenceBegin": startDate.Format(defaultDateFormat),
+				"absenceEnd":   endDate.Format(defaultDateFormat),
 			},
 		)
 		(*resp.Embeds)[0].Color = embeds.ColorInfo
