@@ -92,6 +92,10 @@
         },
         "qualifications": {
             "title": "Qualifizierungen",
+            "edit": {
+                "title": "Qualifizierung bearbeiten"
+            },
+            "create": "Qualifizierung erstellen",
             "id": {
                 "title": "Qualifizierung",
                 "exam": {
@@ -100,11 +104,7 @@
                         "title": "Aktualisiere Qualifizierungsprüfung"
                     }
                 }
-            },
-            "edit": {
-                "title": "Qualifizierung bearbeiten"
-            },
-            "create": "Qualifizierung erstellen"
+            }
         },
         "auth": {
             "logout": {
@@ -228,6 +228,9 @@
             }
         },
         "wiki": {
+            "id": {
+                "title": "Lexikon Seite"
+            },
             "edit": {
                 "title": "Seite bearbeiten"
             }
@@ -478,7 +481,6 @@
         "motd": "MOTD",
         "fallback_mode": "Fallback-Modus",
         "volume": "Lautstärke",
-        "profile_picture": "Profilbild",
         "image": "Bild",
         "logo": "Logo",
         "absence_date": "Abwesenheit",
@@ -686,13 +688,16 @@
         "revoke_wanted": "Gesuchten-Status entfernen",
         "only_wanted": "Nur Gesuchte",
         "no_actions_available": "Keine Aktionen verfügbar.",
+        "profile_picture": "Profilbild",
         "dispatch_center_settings": "Leitstellen-Einstellungen",
         "accepted_at": "Akzeptiert am",
         "choose_color": "Farbe wählen",
         "pick_date": "Datum auswählen",
         "open_command": "Ausführen",
         "last_char": "Letzte Charakter ID",
-        "file_upload_label": "Datei hier ablegen oder zum Hochladen klicken"
+        "file_upload_label": "Datei hier ablegen oder zum Hochladen klicken",
+        "latitude_short": "Lat",
+        "longitude_short": "Long"
     },
     "components": {
         "partials": {
@@ -1251,10 +1256,6 @@
             }
         },
         "citizens": {
-            "CitizenList": {
-                "no_citizens": "Benutze das obige Suchfeld, um erneut zu suchen oder die Anfrage zu aktualisieren.",
-                "open_fine": "Offene Geldstrafen"
-            },
             "CitizenInfoProfile": {
                 "create_new_document": "Neues Dokument erstellen",
                 "copy_profile_link": "Profil-Link kopieren",
@@ -1302,6 +1303,10 @@
             },
             "citizen_labels": {
                 "title": "Bürger-Labels"
+            },
+            "CitizenList": {
+                "no_citizens": "Benutze das obige Suchfeld, um erneut zu suchen oder die Anfrage zu aktualisieren.",
+                "open_fine": "Offene Geldstrafen"
             }
         },
         "CookieControl": {
@@ -1333,11 +1338,11 @@
                     "title": "Kalendereintrag aktualisieren"
                 }
             },
-            "FindCalendarDrawer": {
-                "title": "Kalender finden"
-            },
             "EntryShareModal": {
                 "title": "Kalender Eintrag teilen"
+            },
+            "FindCalendarDrawer": {
+                "title": "Kalender finden"
             }
         },
         "mathcalculator": {
@@ -1345,7 +1350,6 @@
         },
         "mailer": {
             "mark_unread": "Als ungelesen markieren",
-            "mark_read": "Als gelesen markieren",
             "mark_important": "Als wichtig markieren",
             "star_thread": "Favorisieren",
             "mute_thread": "Stummschalten",
@@ -1374,7 +1378,8 @@
             },
             "ThreadAttachmentsForm": {
                 "document_title_warning": "Durch das Anhängen von Dokumenten an eine E-Mail können die Titel der Dokumente für den Empfänger sichtbar sein, auch wenn dieser keinen Zugriff auf das Dokument hat."
-            }
+            },
+            "mark_read": "Als gelesen markieren"
         },
         "access": {
             "add_entry": "Zugriff hinzufügen",
@@ -1523,7 +1528,6 @@
                 "edit_account": "Konto bearbeiten"
             },
             "system_status": {
-                "title": "System-Status",
                 "database": {
                     "title": "Datenbank",
                     "migration_version": "Datenbank-Migrationsversion",
@@ -1540,7 +1544,8 @@
                     "last_data_received": "Zuletzt empfangene Daten",
                     "last_activity_received": "Letzte empfangene Aktivität",
                     "last_dbsync_version": "Letzte gesehene DB Sync Version"
-                }
+                },
+                "title": "System-Status"
             },
             "system_settings": "System-Einstellungen"
         }
@@ -2141,18 +2146,6 @@
                 "content": "Bitte kontaktieren Sie die FiveNet Administration für weitere Informationen."
             }
         },
-        "InternetService": {
-            "ErrFailedQuery": "Fehler beim Laden der Internet Daten!",
-            "ErrFailedSearch": "Fehler beim Durchsuchen des Internet!",
-            "ErrDomainNotTransferable": {
-                "title": "NIC-Service - Domain-Registrierung",
-                "content": "Domain nicht übertragbar, bitte wählen Sie eine andere Domain."
-            },
-            "ErrDomainWrongTransferCode": {
-                "title": "NIC-Service - Domain-Registrierung",
-                "content": "Domainübertragungscode falsch oder Übertragung nicht aktiviert."
-            }
-        },
         "CitizensService": {
             "ErrFailedQuery": "Fehler beim Laden von Bürger Daten!",
             "ErrJobGradeNoPermission": "Keine Berechtigung um auf diesen Bürger zuzugreifen (basierend auf dem Job des Bürgers)",
@@ -2481,7 +2474,6 @@
                 "ACCESS_UPDATED": "Dokument Zugriff aktualisiert",
                 "OWNER_CHANGED": "Dokument Besitzer geändert",
                 "DELETED": "Dokument gelöscht",
-                "DRAFT_TOGGLED": "Entwurfstatus aktualisiert",
                 "REQUESTED_ACCESS": "Zugriff auf Dokument beantragt | Zugriff auf Dokument",
                 "REQUESTED_CLOSURE": "Schließung des Dokument beantragt | Schließung des Dokument",
                 "REQUESTED_UPDATE": "Aktualisierung des Dokument beantragt | Aktualisierung des Dokument",
@@ -2491,7 +2483,8 @@
                 "COMMENT_DELETED": "Kommentar gelöscht",
                 "UNSPECIFIED": "Unbekannte Aktivität",
                 "REQUESTED_OWNER_CHANGE": "Dokument-Besitzer Wechsel beantragt | Dokument-Besitzer Wechsel",
-                "REQUESTED_OPENING": "Öffnung des Dokumentes angefordert | Öffnung des Dokument"
+                "REQUESTED_OPENING": "Öffnung des Dokumentes angefordert | Öffnung des Dokument",
+                "DRAFT_TOGGLED": "Entwurfstatus aktualisiert"
             }
         },
         "settings": {
@@ -2697,7 +2690,7 @@
                 "options": {
                     "start-date": {
                         "name": "start-datum",
-                        "desc": "Beginn der Abwesehnheit in Form von `heute` oder `YYYY-MM-DD` Format (e.g., 2024-10-12)."
+                        "desc": "Beginn der Ab­we­sen­heit in Form von `heute` oder `YYYY-MM-DD` Format (e.g., 2024-10-12)."
                     },
                     "days": {
                         "name": "tage",
