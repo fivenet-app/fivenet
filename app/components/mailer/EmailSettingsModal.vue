@@ -61,7 +61,7 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :title="`${$t('common.settings')} - ${selectedEmail?.email}`" :overlay="false">
+    <UModal :title="`${$t('common.settings')}: ${selectedEmail?.email}`" :overlay="false">
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <div class="flex flex-col gap-2">

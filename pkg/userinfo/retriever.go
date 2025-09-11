@@ -407,6 +407,8 @@ func (r *Retriever) RefreshUserInfo(ctx context.Context, userId int32, accountId
 		return err
 	}
 
+	r.checkAndSetSuperuser(dest)
+
 	key := userAccountKey{UserID: userId, AccountID: accountId}
 	r.userCache.Put(key, dest, r.userCacheTTL)
 

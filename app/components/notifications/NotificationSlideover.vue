@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import DNBToggle from '~/components/notifications/DNBToggle.vue';
-import NotificationList from '~/components/notifications/NotificationList.vue';
+import List from '~/components/notifications/List.vue';
 
 const { isNotificationSlideoverOpen } = useDashboard();
 </script>
@@ -16,7 +16,7 @@ const { isNotificationSlideoverOpen } = useDashboard();
         </template>
 
         <template #body>
-            <NotificationList @clicked="isNotificationSlideoverOpen = false" />
+            <List @clicked="isNotificationSlideoverOpen = false" />
         </template>
 
         <template #footer>

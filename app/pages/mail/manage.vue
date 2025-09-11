@@ -127,10 +127,17 @@ const confirmModal = overlay.create(ConfirmModal);
         </template>
     </UDashboardPanel>
 
-    <UDashboardPanel v-else id="maileremailslist" :width="450" :min-size="25" :max-size="65">
+    <UDashboardPanel
+        v-else
+        id="maileremailslist"
+        :width="28"
+        :min-size="15"
+        :max-size="40"
+        :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }"
+    >
         <template #header>
-            <UDashboardNavbar :title="$t('pages.mailer.manage.title')"
-                ><template #leading>
+            <UDashboardNavbar :title="$t('pages.mailer.manage.title')">
+                <template #leading>
                     <UDashboardSidebarCollapse />
                 </template>
 
@@ -149,16 +156,18 @@ const confirmModal = overlay.create(ConfirmModal);
             </UDashboardNavbar>
         </template>
 
-        <div class="relative flex-1 overflow-x-auto">
-            <EmailList v-model="selectedEmail" :emails="emails" :loaded="loaded">
-                <Pagination
-                    v-if="emails.length > (pagination?.pageSize ?? 20)"
-                    v-model="page"
-                    :pagination="pagination"
-                    :refresh="async () => await listEmails()"
-                />
-            </EmailList>
-        </div>
+        <template #body>
+            <div class="relative flex-1 overflow-x-auto">
+                <EmailList v-model="selectedEmail" :emails="emails" :loaded="loaded">
+                    <Pagination
+                        v-if="emails.length > (pagination?.pageSize ?? 20)"
+                        v-model="page"
+                        :pagination="pagination"
+                        :refresh="async () => await listEmails()"
+                    />
+                </EmailList>
+            </div>
+        </template>
     </UDashboardPanel>
 
     <UDashboardPanel id="maileremailsview" v-model="isMailerPanelOpen">

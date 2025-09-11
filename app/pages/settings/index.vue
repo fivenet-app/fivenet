@@ -140,11 +140,9 @@ const superuserItems = [
                             <h3 class="text-md font-semibold">{{ $t('components.settings.system_settings') }}</h3>
                         </div>
                     </template>
-
-                    <template #default>
-                        <CardsList :items="superuserItems" />
-                    </template>
                 </UCard>
+
+                <CardsList :items="superuserItems" />
             </div>
         </template>
     </UDashboardPanel>

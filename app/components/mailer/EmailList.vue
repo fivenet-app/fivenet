@@ -61,7 +61,7 @@ defineShortcuts({
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ body: 'p-0 sm:pb-0' }">
+    <UDashboardPanel :ui="{ root: 'min-h-0', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <div v-if="!loaded" class="space-y-2">
             <USkeleton class="h-[73px] w-full" />
             <USkeleton class="h-[73px] w-full" />

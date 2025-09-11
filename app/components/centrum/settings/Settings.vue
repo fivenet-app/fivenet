@@ -281,8 +281,8 @@ const formRef = useTemplateRef('formRef');
                     class="flex flex-1 flex-col"
                     :items="items"
                     variant="link"
-                    :ui="{ content: 'flex flex-col p-4 gap-4 sm:gap-4' }"
                     :unmount-on-hide="false"
+                    :ui="{ content: 'flex flex-col p-4 gap-4 sm:gap-4 mx-auto max-w-(--breakpoint-xl)' }"
                 >
                     <template #settings>
                         <UPageCard

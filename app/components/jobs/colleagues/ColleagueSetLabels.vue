@@ -140,18 +140,19 @@ const editing = ref(false);
             <p v-if="!state.labels.length" class="text-sm leading-6">
                 {{ $t('common.none', [$t('common.label', 2)]) }}
             </p>
+
             <template v-else>
-                <UBadge
-                    v-for="(attribute, idx) in state.labels"
-                    :key="attribute.name"
-                    class="justify-between gap-2"
-                    :class="isColorBright(hexToRgb(attribute.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
-                    :style="{ backgroundColor: attribute.color }"
-                    size="lg"
-                >
-                    <span class="truncate">
-                        {{ attribute.name }}
-                    </span>
+                <UButtonGroup v-for="(attribute, idx) in state.labels" :key="attribute.name">
+                    <UBadge
+                        class="justify-between gap-2"
+                        :class="isColorBright(hexToRgb(attribute.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
+                        :style="{ backgroundColor: attribute.color }"
+                        size="md"
+                    >
+                        <span class="truncate">
+                            {{ attribute.name }}
+                        </span>
+                    </UBadge>
 
                     <UTooltip v-if="editing" :text="$t('common.remove')">
                         <UButton
@@ -160,6 +161,7 @@ const editing = ref(false);
                                     ? 'bg-white/20! text-black!'
                                     : 'bg-black/20! text-white!'
                             "
+                            size="md"
                             variant="link"
                             icon="i-mdi-close"
                             @click="
@@ -168,7 +170,7 @@ const editing = ref(false);
                             "
                         />
                     </UTooltip>
-                </UBadge>
+                </UButtonGroup>
             </template>
         </div>
 

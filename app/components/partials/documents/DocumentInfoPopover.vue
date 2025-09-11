@@ -91,9 +91,9 @@ watchOnce(opened, async () => {
         </slot>
     </template>
 
-    <UPopover v-else :ui="{ content: 'max-w-xl' }">
+    <UPopover v-else class="p-0" :ui="{ content: 'max-w-xl' }">
         <UButton
-            class="line-clamp-2 inline-flex gap-1 p-1 break-words whitespace-normal"
+            class="line-clamp-2 inline-flex gap-1 p-0 break-words whitespace-normal"
             :class="buttonClass"
             variant="link"
             :trailing-icon="!hideTrailing ? 'i-mdi-chevron-down' : undefined"

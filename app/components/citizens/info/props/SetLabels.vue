@@ -114,15 +114,14 @@ const formRef = useTemplateRef('formRef');
         </p>
         <template v-else>
             <div class="flex max-w-72 flex-row flex-wrap gap-1">
-                <UBadge
-                    v-for="(attribute, idx) in state.labels"
-                    :key="attribute.name"
-                    class="justify-between gap-2"
-                    :class="isColorBright(hexToRgb(attribute.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
-                    :style="{ backgroundColor: attribute.color }"
-                    size="lg"
-                >
-                    <span>{{ attribute.name }}</span>
+                <UButtonGroup v-for="(attribute, idx) in state.labels" :key="attribute.name">
+                    <UBadge
+                        :class="isColorBright(hexToRgb(attribute.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
+                        :style="{ backgroundColor: attribute.color }"
+                        size="md"
+                    >
+                        <span>{{ attribute.name }}</span>
+                    </UBadge>
 
                     <UButton
                         v-if="canDo.set"
@@ -131,14 +130,16 @@ const formRef = useTemplateRef('formRef');
                                 ? 'bg-white/20! text-black!'
                                 : 'bg-black/20! text-white!'
                         "
-                        variant="link"
+                        variant="subtle"
+                        color="neutral"
+                        size="md"
                         icon="i-mdi-close"
                         @click="
                             changed = true;
                             state.labels.splice(idx, 1);
                         "
                     />
-                </UBadge>
+                </UButtonGroup>
             </div>
         </template>
 

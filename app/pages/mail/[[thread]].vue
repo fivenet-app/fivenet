@@ -189,9 +189,9 @@ const isMobile = breakpoints.smaller('lg');
     <UDashboardPanel
         id="mail-threads"
         resizable
-        :width="30"
-        :min-size="20"
-        :max-size="60"
+        :width="28"
+        :min-size="15"
+        :max-size="40"
         :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }"
     >
         <template #header>

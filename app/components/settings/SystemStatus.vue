@@ -32,11 +32,15 @@ async function getStatus() {
         />
         <div v-if="data" class="flex flex-wrap gap-4">
             <UPopover class="flex-1">
-                <UButton variant="link" size="xl" :color="data.database?.connected ? 'success' : 'error'">
-                    <UIcon name="i-simple-icons-mysql" class="size-10" />
-
-                    {{ $t('components.settings.system_status.database.title') }}
-                </UButton>
+                <UButton
+                    variant="link"
+                    size="xl"
+                    :color="data.database?.connected ? 'success' : 'error'"
+                    icon="i-simple-icons-mysql"
+                    :label="$t('components.settings.system_status.database.title')"
+                    block
+                    :ui="{ leadingIcon: 'size-10' }"
+                />
 
                 <template #content>
                     <div class="p-4">
@@ -70,11 +74,15 @@ async function getStatus() {
             </UPopover>
 
             <UPopover class="flex-1">
-                <UButton variant="link" size="xl" :color="data.nats?.connected ? 'success' : 'error'">
-                    <UIcon name="i-simple-icons-natsdotio" class="size-10" />
-
-                    {{ $t('components.settings.system_status.nats.title') }}
-                </UButton>
+                <UButton
+                    variant="link"
+                    size="xl"
+                    :color="data.nats?.connected ? 'success' : 'error'"
+                    icon="i-simple-icons-natsdotio"
+                    :label="$t('components.settings.system_status.nats.title')"
+                    block
+                    :ui="{ leadingIcon: 'size-10' }"
+                />
 
                 <template #content>
                     <div class="p-4">
@@ -88,11 +96,14 @@ async function getStatus() {
             </UPopover>
 
             <UPopover v-if="data.dbsync?.enabled" class="flex-1">
-                <UButton variant="link" size="xl">
-                    <UIcon name="i-mdi-database-sync" class="size-10" />
-
-                    {{ $t('components.settings.system_status.db_sync.title') }}
-                </UButton>
+                <UButton
+                    variant="link"
+                    size="xl"
+                    icon="i-mdi-database-sync"
+                    :label="$t('components.settings.system_status.db_sync.title')"
+                    block
+                    :ui="{ leadingIcon: 'size-10' }"
+                />
 
                 <template #content>
                     <div class="p-4">

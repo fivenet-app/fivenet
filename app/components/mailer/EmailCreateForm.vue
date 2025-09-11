@@ -198,7 +198,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <USelectMenu
                         v-if="proposals?.emails && proposals.emails.length > 0"
                         v-model="state.email"
-                        class="flex-1"
+                        class="w-full"
                         :items="proposals?.emails"
                         :disabled="disabled"
                     >
@@ -209,7 +209,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <UInput
                         v-else
                         v-model="state.email"
-                        class="flex-1"
+                        class="w-full"
                         type="text"
                         :placeholder="$t('common.mail')"
                         :disabled="disabled"
@@ -222,7 +222,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <USelectMenu
                         v-if="proposals?.domains && proposals.domains.length > 1"
                         v-model="state.domain"
-                        class="flex-1"
+                        class="w-full"
                         :items="proposals?.domains"
                         :disabled="disabled"
                     >
@@ -233,7 +233,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <UInput
                         v-else
                         v-model="state.domain"
-                        class="flex-1"
+                        class="w-full"
                         type="text"
                         :placeholder="$t('common.mail')"
                         disabled
@@ -243,7 +243,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </UFormField>
 
         <UFormField v-if="!hideLabel" name="label" :label="$t('common.label')">
-            <UInput v-model="state.label" type="text" :disabled="disabled" />
+            <UInput v-model="state.label" type="text" :disabled="disabled" class="w-full" />
         </UFormField>
 
         <UFormField

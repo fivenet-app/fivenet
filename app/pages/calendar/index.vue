@@ -490,7 +490,7 @@ const viewOptions = [
 
         <template #footer>
             <div
-                class="flex justify-between border-t border-b-0 border-neutral-200 px-3 py-3.5 xl:hidden dark:border-neutral-700"
+                class="flex justify-between border-t border-b-0 border-neutral-200 px-3 py-1.5 xl:hidden dark:border-neutral-700"
             >
                 <UFormField
                     class="flex flex-row items-center gap-2"
@@ -517,7 +517,7 @@ const viewOptions = [
                     </ClientOnly>
                 </UFormField>
 
-                <div>
+                <div class="inline-flex items-center">
                     <UTooltip :text="$t('common.refresh')">
                         <UButton
                             icon="i-mdi-refresh"
@@ -530,7 +530,7 @@ const viewOptions = [
                     </UTooltip>
                 </div>
 
-                <div>
+                <div class="inline-flex items-center">
                     <UButton
                         class="font-semibold"
                         icon="i-mdi-calendar-search"

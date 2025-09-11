@@ -67,6 +67,21 @@ const columns = computed(
     () =>
         [
             {
+                id: 'expand',
+                cell: ({ row }) =>
+                    h(UButton, {
+                        color: 'neutral',
+                        variant: 'ghost',
+                        icon: 'i-mdi-chevron-down',
+                        square: true,
+                        'aria-label': 'Expand',
+                        ui: {
+                            leadingIcon: ['transition-transform', row.getIsExpanded() ? 'duration-200 rotate-180' : ''],
+                        },
+                        onClick: () => row.toggleExpanded(),
+                    }),
+            },
+            {
                 accessorKey: 'name',
                 header: t('common.name'),
                 cell: ({ row }) => h('span', { class: 'text-highlighted' }, row.original.name),
@@ -150,7 +165,7 @@ const columns = computed(
                                 />
                                 <UBadge v-else icon="i-mdi-exclamation-thick" color="error" />
 
-                                <div class="font-semibold">
+                                <div class="font-semibold text-highlighted">
                                     {{ $t('common.end_date') }}:
                                     <GenericTime :value="row.original.lastCompletedEvent.endDate" /> ({{
                                         $t('common.duration')

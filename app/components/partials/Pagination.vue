@@ -88,7 +88,7 @@ function onClickNext() {
             class="flex justify-between gap-1 md:items-center @md/pagination:flex-row"
             :class="[
                 !disableBorder ? 'border-t border-neutral-200 dark:border-neutral-700' : '',
-                compact ? 'px-1 py-1' : 'px-3 py-3',
+                compact ? 'px-1 py-1.5' : 'px-3 py-1.5',
             ]"
         >
             <div v-if="!hideText" class="flex flex-col items-center gap-2">
