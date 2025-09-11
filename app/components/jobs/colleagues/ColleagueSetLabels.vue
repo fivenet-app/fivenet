@@ -184,7 +184,7 @@ const editing = ref(false);
                 :filter-fields="['name']"
                 class="w-full"
             >
-                <template #item="{ item }">
+                <template #item-label="{ item }">
                     <UBadge
                         class="truncate"
                         :class="isColorBright(item.color) ? 'text-black!' : 'text-white!'"

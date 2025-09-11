@@ -157,7 +157,7 @@ const formRef = useTemplateRef('formRef');
                     {{ $t('common.selected', state.labels.length) }}
                 </template>
 
-                <template #item="{ item }">
+                <template #item-label="{ item }">
                     <span
                         class="truncate"
                         :class="isColorBright(hexToRgb(item.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"

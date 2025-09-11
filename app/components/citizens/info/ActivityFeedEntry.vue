@@ -39,7 +39,7 @@ const props = defineProps<{
                             </I18nT>
                         </h3>
 
-                        <p class="text-sm">
+                        <p class="text-sm text-dimmed">
                             <GenericTime :value="activity.createdAt" type="long" />
                         </p>
                     </div>
@@ -98,7 +98,7 @@ const props = defineProps<{
                             </DocumentInfoPopover>
                         </h3>
 
-                        <p class="text-sm">
+                        <p class="text-sm text-dimmed">
                             <GenericTime :value="activity.createdAt" type="long" />
                         </p>
                     </div>
@@ -148,7 +148,7 @@ const props = defineProps<{
                             </span>
                         </h3>
 
-                        <p class="text-sm">
+                        <p class="text-sm text-dimmed">
                             <GenericTime :value="activity.createdAt" type="long" />
                         </p>
                     </div>
@@ -188,7 +188,7 @@ const props = defineProps<{
                             </span>
                         </h3>
 
-                        <p class="text-sm">
+                        <p class="text-sm text-dimmed">
                             <GenericTime :value="activity.createdAt" type="long" />
                         </p>
                     </div>
@@ -250,7 +250,7 @@ const props = defineProps<{
                             </I18nT>
                         </h3>
 
-                        <p class="text-sm">
+                        <p class="text-sm text-dimmed">
                             <GenericTime :value="activity.createdAt" type="long" />
                         </p>
                     </div>
@@ -293,7 +293,7 @@ const props = defineProps<{
                             </template>
                         </h3>
 
-                        <p class="text-sm">
+                        <p class="text-sm text-dimmed">
                             <GenericTime :value="activity.createdAt" type="long" />
                         </p>
                     </div>
@@ -353,7 +353,7 @@ const props = defineProps<{
                             </div>
                         </h3>
 
-                        <p class="text-sm">
+                        <p class="text-sm text-dimmed">
                             <GenericTime :value="activity.createdAt" type="long" />
                         </p>
                     </div>
@@ -395,7 +395,7 @@ const props = defineProps<{
                             }}: {{ activity.data.data.licensesChange.licenses.map((l) => l.label).join(', ') }}
                         </h3>
 
-                        <p class="text-sm">
+                        <p class="text-sm text-dimmed">
                             <GenericTime :value="activity.createdAt" type="long" />
                         </p>
                     </div>
@@ -440,7 +440,7 @@ const props = defineProps<{
                             </template>
                         </h3>
 
-                        <p class="text-sm">
+                        <p class="text-sm text-dimmed">
                             <GenericTime :value="activity.createdAt" type="long" />
                         </p>
                     </div>
@@ -498,7 +498,7 @@ const props = defineProps<{
                             </span>
                         </h3>
 
-                        <p class="text-sm">
+                        <p class="text-sm text-dimmed">
                             <GenericTime :value="activity.createdAt" type="long" />
                         </p>
                     </div>
@@ -532,7 +532,7 @@ const props = defineProps<{
                             {{ UserActivityType[props.activity.type] }}
                         </h3>
 
-                        <p class="text-sm">
+                        <p class="text-sm text-dimmed">
                             <GenericTime :value="activity.createdAt" type="long" />
                         </p>
                     </div>
