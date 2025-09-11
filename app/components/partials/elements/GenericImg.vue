@@ -55,7 +55,7 @@ const src = computed(() => {
 </script>
 
 <template>
-    <UPopover>
+    <UPopover class="p-0">
         <UButton
             variant="link"
             :disabled="!src || !enablePopup"

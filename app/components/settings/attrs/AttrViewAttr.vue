@@ -210,6 +210,7 @@ const { game } = useAppConfig();
         <UCollapsible>
             <UButton
                 :label="$t(`perms.${attribute.category}.${attribute.name}.attrs_types.${attribute.key}`)"
+                class="group"
                 color="neutral"
                 variant="subtle"
                 trailing-icon="i-mdi-chevron-down"

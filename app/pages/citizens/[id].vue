@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { NavigationMenuItem } from '@nuxt/ui';
 import type { TypedRouteFromName } from '@typed-router';
-import CitizenActions from '~/components/citizens/info/CitizenActions.vue';
+import Actions from '~/components/citizens/info/Actions.vue';
 import SetLabels from '~/components/citizens/info/props/SetLabels.vue';
 import AddToButton from '~/components/clipboard/AddToButton.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
@@ -253,7 +253,7 @@ const isOpen = ref(false);
         </template>
 
         <!-- Register kbds for the citizens actions here as it will always be available not like the profile tab content -->
-        <CitizenActions
+        <Actions
             v-if="user"
             :user="user"
             register-kbds

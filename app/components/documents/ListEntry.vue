@@ -60,7 +60,7 @@ const links = computed(() =>
 <template>
     <UContextMenu :items="links">
         <li
-            class="flex-initial border-white p-1 hover:border-primary-500/25 hover:bg-primary-100/50 dark:border-neutral-900 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
+            class="flex-initial p-1 hover:border-primary-500/25 hover:bg-primary-100/50 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
             :class="[
                 document.deletedAt ? 'bg-warning-100 hover:bg-warning-200 dark:bg-warning-800 dark:hover:bg-warning-700' : '',
             ]"

@@ -89,7 +89,7 @@ watchOnce(opened, async () => {
     </template>
     <UPopover v-else>
         <UButton
-            class="inline-flex items-center gap-1 p-px"
+            class="p-0"
             variant="link"
             truncate
             :trailing-icon="trailing ? 'i-mdi-chevron-down' : undefined"
@@ -103,6 +103,7 @@ watchOnce(opened, async () => {
                     :src="user?.profilePicture"
                     :name="`${user?.firstname} ${user?.lastname}`"
                     size="3xs"
+                    class="p-0"
                 />
             </template>
 

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { TypedRouteFromName } from '@typed-router';
-import QualificationEditor from '~/components/qualifications/QualificationEditor.vue';
+import Editor from '~/components/qualifications/Editor.vue';
 
 useHead({
     title: 'pages.qualifications.edit.title',
@@ -24,5 +24,5 @@ const route = useRoute('qualifications-id-edit');
 </script>
 
 <template>
-    <QualificationEditor :qualification-id="parseInt(route.params.id)" />
+    <Editor :qualification-id="parseInt(route.params.id)" />
 </template>

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { TypedRouteFromName } from '@typed-router';
-import DocumentView from '~/components/documents/DocumentView.vue';
+import View from '~/components/documents/View.vue';
 
 useHead({
     title: 'pages.documents.id.title',
@@ -24,5 +24,5 @@ const route = useRoute('documents-id');
 </script>
 
 <template>
-    <DocumentView :document-id="parseInt(route.params.id)" />
+    <View :document-id="parseInt(route.params.id)" />
 </template>

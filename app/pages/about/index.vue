@@ -135,7 +135,7 @@ const faqs = [
                                     {{ $t('pages.about.faq.title') }}
                                 </h2>
                                 <dl class="mt-4">
-                                    <UAccordion :items="faqs" multiple>
+                                    <UAccordion :items="faqs" type="multiple">
                                         <template #content="{ item: faq }">
                                             <UContainer>
                                                 <!-- eslint-disable vue/no-v-html -->

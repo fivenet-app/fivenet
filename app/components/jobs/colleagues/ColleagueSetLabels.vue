@@ -180,7 +180,7 @@ const editing = ref(false);
                 searchable-key="completor-jobs-colleague-labels"
                 :search-input="{ placeholder: $t('common.search_field') }"
                 :filter-fields="['name']"
-                clear-search-on-close
+                class="w-full"
             >
                 <template #item="{ item }">
                     <UBadge

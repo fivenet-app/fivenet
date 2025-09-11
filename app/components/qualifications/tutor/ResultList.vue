@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { UButton, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
+import { z } from 'zod';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -9,7 +10,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { checkQualificationAccess, resultStatusToTextColor } from '~/components/qualifications/helpers';
 import ExamViewResultModal from '~/components/qualifications/tutor/ExamViewResultModal.vue';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
-import type { Sort } from '~~/gen/ts/resources/common/database/database';
+import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
 import {
     type Qualification,
@@ -43,22 +44,43 @@ const { t } = useI18n();
 
 const overlay = useOverlay();
 
-const page = useRouteQuery('page', '1', { transform: Number });
+const _schema = z.object({
+    sorting: z
+        .object({
+            columns: z
+                .custom<SortByColumn>()
+                .array()
+                .max(3)
+                .default([
+                    {
+                        id: 'abbreviation',
+                        desc: true,
+                    },
+                ]),
+        })
+        .default({ columns: [{ id: 'abbreviation', desc: true }] }),
+    page: pageNumberSchema,
+});
 
-const sorting = useRouteQueryObject<Sort>('sort', {
-    columns: [
-        {
-            id: 'createdAt',
-            desc: true,
-        },
-    ],
+type Schema = z.output<typeof _schema>;
+
+const query = reactive<Schema>({
+    sorting: {
+        columns: [
+            {
+                id: 'createdAt',
+                desc: true,
+            },
+        ],
+    },
+    page: 1,
 });
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `qualifications-results-${JSON.stringify(sorting.value)}-${page.value}-${props.qualification.id}`,
+    `qualifications-results-${JSON.stringify(query)}-${query.page}-${props.qualification.id}`,
     () => listQualificationResults(props.qualification.id, props.status),
     {
-        watch: [sorting],
+        watch: [query],
     },
 );
 
@@ -75,9 +97,9 @@ async function listQualificationResults(
     try {
         const call = qualificationsQualificationsClient.listQualificationsResults({
             pagination: {
-                offset: calculateOffset(page.value, data.value?.pagination),
+                offset: calculateOffset(query.page, data.value?.pagination),
             },
-            sort: sorting.value,
+            sort: query.sorting,
             qualificationId: qualificationId,
             status: status ?? [],
         });
@@ -267,7 +289,7 @@ const confirmModal = overlay.create(ConfirmModal);
 
             <template v-else>
                 <UTable
-                    v-model:sorting="sorting.columns"
+                    v-model:sorting="query.sorting.columns"
                     :columns="columns"
                     :data="data?.results"
                     :loading="isRequestPending(status)"
@@ -276,7 +298,7 @@ const confirmModal = overlay.create(ConfirmModal);
                     :sorting-options="{ manualSorting: true }"
                 />
 
-                <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+                <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
             </template>
         </div>
     </div>

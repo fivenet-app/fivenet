@@ -1256,7 +1256,7 @@
             }
         },
         "citizens": {
-            "CitizenList": {
+            "List": {
                 "no_citizens": "Use the search field above to search or update your query.",
                 "open_fine": "Open fines"
             },

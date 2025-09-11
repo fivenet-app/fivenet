@@ -15,7 +15,7 @@ import type { SortByColumn } from '~~/gen/ts/resources/common/database/database'
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { User } from '~~/gen/ts/resources/users/users';
 import type { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/services/citizens/citizens';
-import CitizenLabelModal from './CitizenLabelModal.vue';
+import LabelModal from './LabelModal.vue';
 
 const { t } = useI18n();
 
@@ -266,7 +266,7 @@ const columns = computed(() =>
     ).filter((c) => c !== undefined),
 );
 
-const citizenLabelModal = overlay.create(CitizenLabelModal);
+const citizenLabelModal = overlay.create(LabelModal);
 
 const input = useTemplateRef('input');
 
@@ -294,8 +294,8 @@ defineShortcuts({
             </UDashboardNavbar>
 
             <UDashboardToolbar>
-                <UForm class="w-full" :schema="schema" :state="query" @submit="refresh()">
-                    <div class="flex w-full flex-row gap-2">
+                <UForm class="my-2 flex w-full flex-1 flex-col gap-2" :schema="schema" :state="query" @submit="refresh()">
+                    <div class="flex flex-1 flex-row gap-2">
                         <UFormField class="flex-1" :label="$t('common.search')" name="name">
                             <UInput
                                 ref="input"
@@ -337,14 +337,20 @@ defineShortcuts({
                         </UFormField>
                     </div>
 
-                    <UAccordion
-                        class="my-2"
-                        color="neutral"
-                        variant="soft"
-                        size="sm"
-                        :items="[{ label: $t('common.advanced_search'), slot: 'search' as const }]"
-                    >
-                        <template #search>
+                    <UCollapsible>
+                        <UButton
+                            class="group"
+                            color="neutral"
+                            variant="ghost"
+                            trailing-icon="i-mdi-chevron-down"
+                            :label="$t('common.advanced_search')"
+                            :ui="{
+                                trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
+                            }"
+                            block
+                        />
+
+                        <template #content>
                             <div class="flex flex-row gap-2">
                                 <UFormField
                                     v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'PhoneNumber').value"
@@ -382,7 +388,7 @@ defineShortcuts({
                                     v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.OpenFines').value"
                                     class="flex-1"
                                     name="openFines"
-                                    :label="$t('components.citizens.CitizenList.open_fine')"
+                                    :label="$t('components.citizens.List.open_fine')"
                                 >
                                     <UInputNumber
                                         v-model="query.openFines"
@@ -401,7 +407,7 @@ defineShortcuts({
                                 </UFormField>
                             </div>
                         </template>
-                    </UAccordion>
+                    </UCollapsible>
                 </UForm>
             </UDashboardToolbar>
         </template>

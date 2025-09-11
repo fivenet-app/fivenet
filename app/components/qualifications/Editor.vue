@@ -5,7 +5,7 @@ import { z } from 'zod';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { type AccessType, enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
-import QualificationRequirementEntry from '~/components/qualifications/QualificationRequirementEntry.vue';
+import RequirementEntry from '~/components/qualifications/RequirementEntry.vue';
 import type { Content } from '~/types/history';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { File } from '~~/gen/ts/resources/file/file';
@@ -479,7 +479,7 @@ const formRef = useTemplateRef('formRef');
                         <template v-else>
                             <UDashboardToolbar>
                                 <template #default>
-                                    <div class="my-2 flex w-full flex-col gap-2">
+                                    <div class="mx-auto my-2 flex w-full max-w-(--breakpoint-xl) flex-col gap-2">
                                         <div class="flex w-full flex-row gap-2">
                                             <UFormField
                                                 class="max-w-48 shrink"
@@ -560,16 +560,20 @@ const formRef = useTemplateRef('formRef');
                     <template #access>
                         <UDashboardPanel :ui="{ root: 'min-h-0' }">
                             <template #body>
-                                <UPageCard :title="$t('common.access')">
-                                    <AccessManager
-                                        v-model:jobs="state.access.jobs"
-                                        :target-id="qualificationId ?? 0"
-                                        :disabled="!canDo.access"
-                                        :access-types="accessTypes"
-                                        :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.qualifications.AccessLevel')"
-                                        name="access"
-                                    />
-                                </UPageCard>
+                                <UContainer>
+                                    <UPageCard :title="$t('common.access')">
+                                        <AccessManager
+                                            v-model:jobs="state.access.jobs"
+                                            :target-id="qualificationId ?? 0"
+                                            :disabled="!canDo.access"
+                                            :access-types="accessTypes"
+                                            :access-roles="
+                                                enumToAccessLevelEnums(AccessLevel, 'enums.qualifications.AccessLevel')
+                                            "
+                                            name="access"
+                                        />
+                                    </UPageCard>
+                                </UContainer>
                             </template>
                         </UDashboardPanel>
                     </template>
@@ -577,123 +581,131 @@ const formRef = useTemplateRef('formRef');
                     <template #details>
                         <UDashboardPanel :ui="{ root: 'min-h-0' }">
                             <template #body>
-                                <UPageCard :title="$t('common.requirements', 2)">
-                                    <QualificationRequirementEntry
-                                        v-for="(requirement, idx) in state.requirements"
-                                        :key="requirement.id"
-                                        :requirement="requirement"
-                                        @update-qualification="updateQualificationRequirement(idx, $event)"
-                                        @remove="state.requirements.splice(idx, 1)"
-                                    />
+                                <UContainer class="mb-4 flex flex-col gap-4">
+                                    <UPageCard :title="$t('common.requirements', 2)">
+                                        <RequirementEntry
+                                            v-for="(requirement, idx) in state.requirements"
+                                            :key="requirement.id"
+                                            :requirement="requirement"
+                                            @update-qualification="updateQualificationRequirement(idx, $event)"
+                                            @remove="state.requirements.splice(idx, 1)"
+                                        />
 
-                                    <div>
-                                        <UTooltip :text="$t('components.qualifications.add_requirement')">
-                                            <UButton
-                                                :disabled="!canSubmit"
-                                                icon="i-mdi-plus"
-                                                @click="
-                                                    state.requirements.push({
-                                                        id: 0,
-                                                        qualificationId: 0,
-                                                        targetQualificationId: 0,
-                                                    })
-                                                "
+                                        <div>
+                                            <UTooltip :text="$t('components.qualifications.add_requirement')">
+                                                <UButton
+                                                    :disabled="!canSubmit"
+                                                    icon="i-mdi-plus"
+                                                    @click="
+                                                        state.requirements.push({
+                                                            id: 0,
+                                                            qualificationId: 0,
+                                                            targetQualificationId: 0,
+                                                        })
+                                                    "
+                                                />
+                                            </UTooltip>
+                                        </div>
+                                    </UPageCard>
+
+                                    <UPageCard :title="$t('common.discord')">
+                                        <UFormField
+                                            class="grid grid-cols-2 items-center gap-2"
+                                            name="discordSettings.enabled"
+                                            :label="$t('common.enabled')"
+                                            :ui="{ container: '' }"
+                                        >
+                                            <USwitch v-model="state.discordSyncEnabled" :disabled="!canDo.edit" />
+                                        </UFormField>
+
+                                        <UFormField name="discordSettings.roleName" :label="$t('common.role')">
+                                            <UInput
+                                                v-model="state.discordSettings.roleName"
+                                                name="discordSettings.roleName"
+                                                type="text"
+                                                :placeholder="$t('common.role')"
+                                                :disabled="!canDo.edit"
+                                                class="w-full"
                                             />
-                                        </UTooltip>
-                                    </div>
-                                </UPageCard>
+                                        </UFormField>
 
-                                <UPageCard :title="$t('common.discord')">
-                                    <UFormField
-                                        class="grid grid-cols-2 items-center gap-2"
-                                        name="discordSettings.enabled"
-                                        :label="$t('common.enabled')"
-                                        :ui="{ container: '' }"
-                                    >
-                                        <USwitch v-model="state.discordSyncEnabled" :disabled="!canDo.edit" />
-                                    </UFormField>
+                                        <UFormField
+                                            name="discordSettings.roleFormat"
+                                            :label="
+                                                $t(
+                                                    'components.settings.job_props.discord_sync_settings.qualifications_role_format.title',
+                                                )
+                                            "
+                                            :description="
+                                                $t(
+                                                    'components.settings.job_props.discord_sync_settings.qualifications_role_format.description',
+                                                )
+                                            "
+                                        >
+                                            <FormatBuilder
+                                                v-model="state.discordSettings.roleFormat!"
+                                                :extensions="[
+                                                    { label: $t('common.abbreviation'), value: 'abbr' },
+                                                    { label: $t('common.name'), value: 'name' },
+                                                ]"
+                                                :disabled="!canDo.edit"
+                                            />
+                                        </UFormField>
+                                    </UPageCard>
 
-                                    <UFormField name="discordSettings.roleName" :label="$t('common.role')">
-                                        <UInput
-                                            v-model="state.discordSettings.roleName"
-                                            name="discordSettings.roleName"
-                                            type="text"
-                                            :placeholder="$t('common.role')"
-                                            :disabled="!canDo.edit"
-                                            class="w-full"
-                                        />
-                                    </UFormField>
+                                    <UPageCard :title="$t('common.label', 1)">
+                                        <UFormField
+                                            class="grid grid-cols-2 items-center gap-2"
+                                            name="labelSyncEnabled"
+                                            :label="$t('common.enabled')"
+                                            :ui="{ container: '' }"
+                                        >
+                                            <USwitch v-model="state.labelSyncEnabled" :disabled="!canDo.edit" />
+                                        </UFormField>
 
-                                    <UFormField
-                                        name="discordSettings.roleFormat"
-                                        :label="
-                                            $t(
-                                                'components.settings.job_props.discord_sync_settings.qualifications_role_format.title',
-                                            )
-                                        "
-                                        :description="
-                                            $t(
-                                                'components.settings.job_props.discord_sync_settings.qualifications_role_format.description',
-                                            )
-                                        "
-                                    >
-                                        <FormatBuilder
-                                            v-model="state.discordSettings.roleFormat!"
-                                            :extensions="[
-                                                { label: $t('common.abbreviation'), value: 'abbr' },
-                                                { label: $t('common.name'), value: 'name' },
-                                            ]"
-                                            :disabled="!canDo.edit"
-                                        />
-                                    </UFormField>
-                                </UPageCard>
-
-                                <UPageCard :title="$t('common.label', 1)">
-                                    <UFormField
-                                        class="grid grid-cols-2 items-center gap-2"
-                                        name="labelSyncEnabled"
-                                        :label="$t('common.enabled')"
-                                        :ui="{ container: '' }"
-                                    >
-                                        <USwitch v-model="state.labelSyncEnabled" :disabled="!canDo.edit" />
-                                    </UFormField>
-
-                                    <UFormField
-                                        name="labelSyncFormat"
-                                        :label="$t('components.qualifications.qualification_editor.label_sync_format.label')"
-                                        :description="
-                                            $t('components.qualifications.qualification_editor.label_sync_format.description')
-                                        "
-                                    >
-                                        <FormatBuilder
-                                            v-model="state.labelSyncFormat!"
-                                            :extensions="[
-                                                { label: $t('common.abbreviation'), value: 'abbr' },
-                                                { label: $t('common.name'), value: 'name' },
-                                            ]"
-                                            :disabled="!canDo.edit"
-                                        />
-                                    </UFormField>
-                                </UPageCard>
+                                        <UFormField
+                                            name="labelSyncFormat"
+                                            :label="
+                                                $t('components.qualifications.qualification_editor.label_sync_format.label')
+                                            "
+                                            :description="
+                                                $t(
+                                                    'components.qualifications.qualification_editor.label_sync_format.description',
+                                                )
+                                            "
+                                        >
+                                            <FormatBuilder
+                                                v-model="state.labelSyncFormat!"
+                                                :extensions="[
+                                                    { label: $t('common.abbreviation'), value: 'abbr' },
+                                                    { label: $t('common.name'), value: 'name' },
+                                                ]"
+                                                :disabled="!canDo.edit"
+                                            />
+                                        </UFormField>
+                                    </UPageCard>
+                                </UContainer>
                             </template>
                         </UDashboardPanel>
                     </template>
 
                     <template #exam>
-                        <div v-if="isRequestPending(status)" class="flex flex-col gap-2">
-                            <USkeleton v-for="idx in 6" :key="idx" class="size-24 w-full" />
-                        </div>
+                        <UContainer>
+                            <div v-if="isRequestPending(status)" class="flex flex-col gap-2">
+                                <USkeleton v-for="idx in 6" :key="idx" class="size-24 w-full" />
+                            </div>
 
-                        <ExamEditor
-                            v-else
-                            v-model:exam-mode="state.examMode"
-                            v-model:settings="state.examSettings"
-                            v-model:exam="state.exam"
-                            :disabled="!canDo.edit"
-                            class="overflow-y-auto"
-                            :qualification-id="props.qualificationId"
-                            @file-uploaded="(file) => state.files.push(file)"
-                        />
+                            <ExamEditor
+                                v-else
+                                v-model:exam-mode="state.examMode"
+                                v-model:settings="state.examSettings"
+                                v-model:exam="state.exam"
+                                :disabled="!canDo.edit"
+                                class="overflow-y-auto"
+                                :qualification-id="props.qualificationId"
+                                @file-uploaded="(file) => state.files.push(file)"
+                            />
+                        </UContainer>
                     </template>
                 </UTabs>
             </UForm>

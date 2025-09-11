@@ -264,7 +264,7 @@ const columns = computed(
                     </UFormField>
 
                     <dl class="mt-4">
-                        <UAccordion multiple :items="filteredLawBooks">
+                        <UAccordion type="multiple" :items="filteredLawBooks">
                             <template #content="{ item: lawBook }">
                                 <UTable
                                     :columns="columns"

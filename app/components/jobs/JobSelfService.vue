@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { isToday, parse } from 'date-fns';
 import { emojiBlasts } from 'emoji-blast';
-import SelfServicePropsAbsenceDateModal from '~/components/jobs/colleagues/SelfServicePropsAbsenceDateModal.vue';
-import SelfServicePropsAvatarModal from '~/components/jobs/colleagues/SelfServicePropsAvatarModal.vue';
+import SelfServiceAbsenceDateModal from '~/components/jobs/colleagues/SelfServiceAbsenceDateModal.vue';
+import SelfServiceAvatarModal from '~/components/jobs/colleagues/SelfServiceAvatarModal.vue';
 import { getJobsJobsClient } from '~~/gen/ts/clients';
 
 defineProps<{
@@ -43,8 +43,8 @@ onBeforeMount(() => {
     }
 });
 
-const selfServicePropsAbsenceDateModal = overlay.create(SelfServicePropsAbsenceDateModal);
-const selfServicePropsAvatarModal = overlay.create(SelfServicePropsAvatarModal);
+const selfServicePropsAbsenceDateModal = overlay.create(SelfServiceAbsenceDateModal);
+const selfServicePropsAvatarModal = overlay.create(SelfServiceAvatarModal);
 </script>
 
 <template>

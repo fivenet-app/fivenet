@@ -263,6 +263,7 @@ const isOpen = ref(props.defaultOpen ?? false);
     <div v-if="attribute">
         <UCollapsible :open="isOpen" :disabled="defaultOpen">
             <UButton
+                class="group"
                 :label="$t(`perms.${attribute.category}.${attribute.name}.attrs_types.${attribute.key}`)"
                 color="neutral"
                 variant="subtle"

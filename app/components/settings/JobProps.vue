@@ -360,7 +360,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         class="w-full"
                         :items="items"
                         variant="link"
-                        :ui="{ content: 'p-4 flex flex-col gap-4' }"
+                        :ui="{ content: 'p-4 flex flex-col gap-4 max-w-(--ui-container) mx-auto' }"
                         :unmount-on-hide="false"
                     >
                         <template #jobprops>

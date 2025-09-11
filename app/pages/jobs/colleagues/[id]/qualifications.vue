@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { TypedRouteFromName } from '@typed-router';
-import QualificationResultList from '~/components/qualifications/QualificationResultList.vue';
+import ResultList from '~/components/qualifications/result/ResultList.vue';
 
 useHead({
     title: 'pages.jobs.colleagues.id.qualifications',
@@ -24,5 +24,5 @@ const route = useRoute('jobs-colleagues-id-qualifications');
 </script>
 
 <template>
-    <QualificationResultList class="p-4" :user-id="parseInt(route.params.id as string)" />
+    <ResultList class="m-4" :user-id="parseInt(route.params.id as string)" />
 </template>

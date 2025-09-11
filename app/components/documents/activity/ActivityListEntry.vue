@@ -26,7 +26,7 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
 
 <template>
     <li
-        class="border-white p-2 hover:border-primary-500/25 hover:bg-primary-100/50 dark:border-neutral-900 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
+        class="border-default p-2 hover:border-primary-500/25 hover:bg-primary-100/50 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
     >
         <div v-if="!spoilerNeeded(entry.activityType)" class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
@@ -75,8 +75,8 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
         </div>
 
         <UCollapsible v-else>
-            <template #default="{ open }">
-                <div class="flex w-full flex-1 space-x-3">
+            <template #default>
+                <div class="group flex w-full flex-1 space-x-3">
                     <div class="my-auto flex size-10 items-center justify-center rounded-full">
                         <UIcon class="size-7" :name="getDocAtivityIcon(entry.activityType)" />
                     </div>
@@ -87,13 +87,15 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
                                 <span class="font-bold text-highlighted">
                                     {{ $t(`enums.documents.DocActivityType.${DocActivityType[entry.activityType]}`) }}
                                 </span>
-                                <span class="ml-6 flex h-7 items-center">
+
+                                <span class="flex items-center">
                                     <UIcon
-                                        :class="[open ? 'rotate-180!' : '', 'size-5 transition-transform']"
                                         name="i-mdi-chevron-down"
+                                        class="size-5 transition-transform duration-200 group-data-[state=open]:rotate-180"
                                     />
                                 </span>
                             </h3>
+
                             <p class="text-sm text-dimmed">
                                 <GenericTime :value="entry.createdAt" type="long" />
                             </p>

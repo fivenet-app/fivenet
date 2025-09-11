@@ -109,7 +109,7 @@ const editing = ref(false);
 
         <div class="flex flex-1 flex-col gap-2 sm:flex-row">
             <UFormField class="flex-1" name="note" :label="$t('common.note')">
-                <UTextarea v-if="editing" v-model="state.note" block :rows="6" :maxrows="10" name="note" />
+                <UTextarea v-if="editing" v-model="state.note" block :rows="6" :maxrows="10" name="note" class="w-full" />
                 <p v-else class="text-base-800 dark:text-base-300 prose whitespace-pre-wrap dark:prose-invert">
                     {{ modelValue ?? $t('common.na') }}
                 </p>
@@ -118,7 +118,7 @@ const editing = ref(false);
 
         <template v-if="editing">
             <UFormField name="reason" :label="$t('common.reason')" required>
-                <UInput v-model="state.reason" type="text" :disabled="!changed" />
+                <UInput v-model="state.reason" type="text" :disabled="!changed" class="w-full" />
             </UFormField>
 
             <UButton

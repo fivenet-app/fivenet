@@ -254,8 +254,8 @@ const tomorrow = addDays(today, 1);
 <template>
     <UDashboardToolbar>
         <template #default>
-            <UForm class="my-2 w-full" :schema="schema" :state="query" @submit="refresh()">
-                <div class="flex flex-row flex-wrap gap-2">
+            <UForm class="my-2 flex w-full flex-1 flex-col gap-2" :schema="schema" :state="query" @submit="refresh()">
+                <div class="flex flex-1 flex-row gap-2">
                     <UFormField class="flex-1" name="date" :label="$t('common.time_range')">
                         <InputDateRangePopover
                             v-model="query.date"
@@ -321,14 +321,20 @@ const tomorrow = addDays(today, 1);
                     </UFormField>
                 </div>
 
-                <UAccordion
-                    class="mt-2"
-                    color="neutral"
-                    variant="soft"
-                    size="sm"
-                    :items="[{ label: $t('common.advanced_search'), slot: 'search' as const }]"
-                >
-                    <template #search>
+                <UCollapsible>
+                    <UButton
+                        class="group"
+                        color="neutral"
+                        variant="ghost"
+                        trailing-icon="i-mdi-chevron-down"
+                        :label="$t('common.advanced_search')"
+                        :ui="{
+                            trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
+                        }"
+                        block
+                    />
+
+                    <template #content>
                         <div class="flex flex-row flex-wrap gap-1">
                             <UFormField class="flex-1" name="service" :label="$t('common.service')">
                                 <ClientOnly>
@@ -393,7 +399,7 @@ const tomorrow = addDays(today, 1);
                             </UFormField>
                         </div>
                     </template>
-                </UAccordion>
+                </UCollapsible>
             </UForm>
         </template>
     </UDashboardToolbar>

@@ -134,6 +134,7 @@
         "nuxt-tiptap-editor": "2.3.1",
         "nuxt-typed-router": "4.0.2",
         "pinia-plugin-persistedstate": "4.5.0",
+        "pkg-types": "^2.3.0",
         "postcss": "8.5.6",
         "prettier": "3.6.2",
         "prettier-plugin-organize-attributes": "1.0.0",

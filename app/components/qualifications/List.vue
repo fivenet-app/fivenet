@@ -5,7 +5,7 @@ import SortButton from '~/components/partials/SortButton.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import QualificationListEntry from '~/components/qualifications/QualificationListEntry.vue';
+import ListEntry from '~/components/qualifications/ListEntry.vue';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import type { ListQualificationsResponse } from '~~/gen/ts/services/qualifications/qualifications';
@@ -60,7 +60,7 @@ watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
 </script>
 
 <template>
-    <UCard>
+    <UCard :ui="{ body: 'p-0 sm:p-0' }">
         <template #header>
             <div class="flex items-center justify-between gap-1">
                 <h3 class="flex-1 text-2xl leading-6 font-semibold">
@@ -101,7 +101,7 @@ watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
             />
 
             <ul v-else class="divide-y divide-default" role="list">
-                <QualificationListEntry
+                <ListEntry
                     v-for="qualification in data?.qualifications"
                     :key="qualification.id"
                     :qualification="qualification"

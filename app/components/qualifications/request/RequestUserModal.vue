@@ -75,7 +75,12 @@ const formRef = useTemplateRef('formRef');
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField class="flex-1" name="userComment" :label="$t('common.message')">
-                    <UTextarea v-model="state.userComment" name="userComment" :placeholder="$t('common.message')" />
+                    <UTextarea
+                        v-model="state.userComment"
+                        name="userComment"
+                        :placeholder="$t('common.message')"
+                        class="w-full"
+                    />
                 </UFormField>
             </UForm>
         </template>

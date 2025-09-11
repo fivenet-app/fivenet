@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import DocumentList from '~/components/documents/DocumentList.vue';
+import List from '~/components/documents/List.vue';
 
 useHead({
     title: 'pages.documents.title',
@@ -13,5 +13,5 @@ definePageMeta({
 </script>
 
 <template>
-    <DocumentList />
+    <List />
 </template>

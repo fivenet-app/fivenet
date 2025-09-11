@@ -391,7 +391,7 @@ const formRef = useTemplateRef('formRef');
                     :items="items"
                     variant="link"
                     :unmount-on-hide="false"
-                    :ui="{ content: 'p-4 flex flex-col gap-4' }"
+                    :ui="{ content: 'p-4 flex flex-col gap-4 max-w-(--ui-container) mx-auto' }"
                 >
                     <template #auth>
                         <UPageCard
@@ -625,7 +625,6 @@ const formRef = useTemplateRef('formRef');
                                                 $t('common.none_selected', [$t('common.job')])
                                             }}</span>
                                         </template>
-
                                         <template #item="{ item }">
                                             <span class="truncate">{{ item.label }} ({{ item.name }})</span>
                                         </template>
@@ -657,7 +656,6 @@ const formRef = useTemplateRef('formRef');
                                                 $t('common.none_selected', [$t('common.job')])
                                             }}</span>
                                         </template>
-
                                         <template #item="{ item }"> {{ item.label }} ({{ item.name }}) </template>
                                     </USelectMenu>
                                 </ClientOnly>

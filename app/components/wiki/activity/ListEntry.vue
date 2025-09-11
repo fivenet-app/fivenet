@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import ActivityPageUpdatedDiff from '~/components/wiki/activity/ActivityPageUpdatedDiff.vue';
+import PageUpdatedDiff from '~/components/wiki/activity/PageUpdatedDiff.vue';
 import { type PageActivity, PageActivityType } from '~~/gen/ts/resources/wiki/activity';
-import { getPageAtivityIcon } from './helpers';
+import { getPageAtivityIcon } from '../helpers';
 
 defineProps<{
     entry: PageActivity;
@@ -22,7 +22,7 @@ function spoilerNeeded(activityType: PageActivityType): boolean {
 
 <template>
     <li
-        class="border-white p-2 hover:border-primary-500/25 hover:bg-primary-100/50 dark:border-neutral-900 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
+        class="border-default p-1 hover:border-primary-500/25 hover:bg-primary-100/50 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
     >
         <div v-if="!spoilerNeeded(entry.activityType)" class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
@@ -46,8 +46,8 @@ function spoilerNeeded(activityType: PageActivityType): boolean {
             </div>
         </div>
 
-        <UAccordion v-else :items="[{}]">
-            <template #default="{ open }">
+        <UCollapsible v-else>
+            <template #default>
                 <div class="flex space-x-3">
                     <div class="my-auto flex size-10 items-center justify-center rounded-full">
                         <UIcon class="size-7" :name="getPageAtivityIcon(entry.activityType)" />
@@ -58,10 +58,11 @@ function spoilerNeeded(activityType: PageActivityType): boolean {
                                 <span class="font-bold">
                                     {{ $t(`enums.wiki.PageActivityType.${PageActivityType[entry.activityType]}`) }}
                                 </span>
-                                <span class="ml-6 flex h-7 items-center">
+
+                                <span class="flex items-center">
                                     <UIcon
-                                        :class="[open ? 'rotate-180!' : '', 'size-5 transition-transform']"
                                         name="i-mdi-chevron-down"
+                                        class="size-5 transition-transform duration-200 group-data-[state=open]:rotate-180"
                                     />
                                 </span>
                             </h3>
@@ -79,12 +80,9 @@ function spoilerNeeded(activityType: PageActivityType): boolean {
 
             <template v-if="entry.activityType === PageActivityType.UPDATED" #content>
                 <div class="rounded-md bg-default p-2">
-                    <ActivityPageUpdatedDiff
-                        v-if="entry.data?.data.oneofKind === 'updated'"
-                        :update="entry.data?.data.updated"
-                    />
+                    <PageUpdatedDiff v-if="entry.data?.data.oneofKind === 'updated'" :update="entry.data?.data.updated" />
                 </div>
             </template>
-        </UAccordion>
+        </UCollapsible>
     </li>
 </template>

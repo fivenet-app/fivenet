@@ -499,7 +499,7 @@ const formRef = useTemplateRef('formRef');
                             <template #header>
                                 <UDashboardToolbar>
                                     <template #default>
-                                        <div class="my-2 flex w-full flex-col gap-2">
+                                        <div class="mx-auto my-2 flex w-full max-w-(--breakpoint-xl) flex-col gap-2">
                                             <UFormField
                                                 v-if="!(page?.meta?.createdAt && page?.parentId === undefined)"
                                                 class="flex-1"
@@ -585,7 +585,7 @@ const formRef = useTemplateRef('formRef');
                                     <TiptapEditor
                                         v-model="state.content"
                                         v-model:files="state.files"
-                                        class="mx-auto h-full w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
+                                        class="mx-auto my-2 h-full w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
                                         :disabled="!canDo.edit"
                                         history-type="wiki"
                                         :saving="saving"
@@ -626,18 +626,20 @@ const formRef = useTemplateRef('formRef');
                     <template #access>
                         <UDashboardPanel :ui="{ root: 'min-h-0' }">
                             <template #body>
-                                <UPageCard :title="$t('common.access')">
-                                    <UFormField name="access">
-                                        <AccessManager
-                                            v-model:jobs="state.access.jobs"
-                                            v-model:users="state.access.users"
-                                            :disabled="!canDo.access"
-                                            :target-id="page.id ?? 0"
-                                            :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.wiki.AccessLevel')"
-                                            name="access"
-                                        />
-                                    </UFormField>
-                                </UPageCard>
+                                <div class="mx-auto w-full max-w-(--breakpoint-xl)">
+                                    <UPageCard :title="$t('common.access')">
+                                        <UFormField name="access">
+                                            <AccessManager
+                                                v-model:jobs="state.access.jobs"
+                                                v-model:users="state.access.users"
+                                                :disabled="!canDo.access"
+                                                :target-id="page.id ?? 0"
+                                                :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.wiki.AccessLevel')"
+                                                name="access"
+                                            />
+                                        </UFormField>
+                                    </UPageCard>
+                                </div>
                             </template>
                         </UDashboardPanel>
                     </template>

@@ -175,43 +175,47 @@ const confirmModal = overlay.create(ConfirmModal);
 
         <EntryShareForm v-if="canShare && openShare" :entry-id="entryId" @close="openShare = false" @refresh="refresh()" />
 
-        <UAccordion
-            class="mt-2 flex flex-col"
-            variant="ghost"
-            :items="[{ slot: 'rsvp' as const, label: $t('common.rsvp'), icon: 'i-mdi-calendar-question' }]"
-        >
-            <template #rsvp>
-                <UContainer>
-                    <DataPendingBlock
-                        v-if="isRequestPending(status)"
-                        :message="$t('common.loading', [$t('common.entry', 1)])"
-                    />
-                    <DataErrorBlock
-                        v-else-if="error"
-                        :title="$t('common.unable_to_load', [$t('common.entry', 1)])"
-                        :error="error"
-                        :retry="refresh"
-                    />
-                    <DataNoDataBlock v-else-if="!data" :type="$t('common.entry', 1)" icon="i-mdi-calendar" />
+        <UCollapsible class="my-2">
+            <UButton
+                class="group flex flex-col gap-2"
+                color="neutral"
+                variant="ghost"
+                icon="i-mdi-calendar-question"
+                trailing-icon="i-mdi-chevron-down"
+                :label="$t('common.rsvp')"
+                :ui="{
+                    trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
+                }"
+                block
+            />
 
-                    <div v-else class="flex flex-col gap-2">
-                        <template v-if="data.entries.length === 0">
-                            <p>{{ $t('common.none', [$t('common.response', 2)]) }}</p>
-                        </template>
+            <template #content>
+                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.entry', 1)])" />
+                <DataErrorBlock
+                    v-else-if="error"
+                    :title="$t('common.unable_to_load', [$t('common.entry', 1)])"
+                    :error="error"
+                    :retry="refresh"
+                />
+                <DataNoDataBlock v-else-if="!data" :type="$t('common.entry', 1)" icon="i-mdi-calendar" />
 
-                        <template v-else>
-                            <template v-for="(rsvp, key) in groupedEntries" :key="key">
-                                <div v-if="!rsvp || rsvp?.length > 0">
-                                    <h3 class="font-bold text-black dark:text-white">{{ $t(`common.${key}`) }}</h3>
-                                    <div class="grid grid-cols-2 gap-2 lg:grid-cols-4">
-                                        <CitizenInfoPopover v-for="entry in rsvp" :key="entry.userId" :user="entry.user" />
-                                    </div>
+                <div v-else class="flex flex-col gap-2">
+                    <template v-if="data.entries.length === 0">
+                        <p>{{ $t('common.none', [$t('common.response', 2)]) }}</p>
+                    </template>
+
+                    <template v-else>
+                        <template v-for="(rsvp, key) in groupedEntries" :key="key">
+                            <div v-if="!rsvp || rsvp?.length > 0">
+                                <h3 class="font-bold text-black dark:text-white">{{ $t(`common.${key}`) }}</h3>
+                                <div class="grid grid-cols-2 gap-2 lg:grid-cols-4">
+                                    <CitizenInfoPopover v-for="entry in rsvp" :key="entry.userId" :user="entry.user" />
                                 </div>
-                            </template>
+                            </div>
                         </template>
-                    </div>
-                </UContainer>
+                    </template>
+                </div>
             </template>
-        </UAccordion>
+        </UCollapsible>
     </div>
 </template>

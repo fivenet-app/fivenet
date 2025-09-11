@@ -2,10 +2,10 @@
 import type { DropdownMenuItem } from '@nuxt/ui';
 import AddToButton from '~/components/clipboard/AddToButton.vue';
 import ActivityList from '~/components/documents/activity/ActivityList.vue';
-import DocumentComments from '~/components/documents/comments/DocumentComments.vue';
-import DocumentReferences from '~/components/documents/DocumentReferences.vue';
-import DocumentRelations from '~/components/documents/DocumentRelations.vue';
+import Comments from '~/components/documents/comments/Comments.vue';
 import { checkDocAccess } from '~/components/documents/helpers';
+import References from '~/components/documents/References.vue';
+import Relations from '~/components/documents/Relations.vue';
 import RequestAccess from '~/components/documents/requests/RequestAccess.vue';
 import RequestModal from '~/components/documents/requests/RequestModal.vue';
 import AccessBadges from '~/components/partials/access/AccessBadges.vue';
@@ -241,7 +241,9 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
 
             <UDashboardToolbar v-if="doc" class="p-1 print:hidden">
                 <template #default>
-                    <div class="flex flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
+                    <div
+                        class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto"
+                    >
                         <UTooltip
                             v-if="
                                 can('documents.DocumentsService/ToggleDocument').value &&
@@ -450,8 +452,8 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
             </UDashboardToolbar>
 
             <UDashboardToolbar v-if="doc" class="print:hidden">
-                <div class="mb-2">
-                    <div class="mt-2 mb-4">
+                <div class="mx-auto my-2 w-full max-w-(--breakpoint-xl)">
+                    <div class="mb-4">
                         <h1 class="px-0.5 py-1 text-4xl font-bold break-words sm:pl-1">
                             <span v-if="!doc.document?.title" class="italic">
                                 {{ $t('common.untitled') }}
@@ -605,13 +607,13 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                 >
                     <template #relations>
                         <UContainer class="mb-2">
-                            <DocumentRelations :document-id="documentId" :show-document="false" />
+                            <Relations :document-id="documentId" :show-document="false" />
                         </UContainer>
                     </template>
 
                     <template #references>
                         <UContainer class="mb-2">
-                            <DocumentReferences :document-id="documentId" :show-source="false" />
+                            <References :document-id="documentId" :show-source="false" />
                         </UContainer>
                     </template>
 
@@ -636,7 +638,7 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                     <template #comments>
                         <UContainer class="mb-2">
                             <div id="comments">
-                                <DocumentComments
+                                <Comments
                                     :document-id="documentId"
                                     :closed="doc.document?.closed"
                                     :can-comment="checkDocAccess(doc.access, doc.document?.creator, AccessLevel.COMMENT)"

@@ -23,7 +23,7 @@ import type { GetColleagueLabelsResponse, ListColleaguesResponse } from '~~/gen/
 import ColleagueLabelStatsModal from './ColleagueLabelStatsModal.vue';
 import ColleagueName from './ColleagueName.vue';
 import JobLabelsModal from './JobLabelsModal.vue';
-import SelfServicePropsAbsenceDateModal from './SelfServicePropsAbsenceDateModal.vue';
+import SelfServiceAbsenceDateModal from './SelfServiceAbsenceDateModal.vue';
 
 const { t } = useI18n();
 
@@ -47,12 +47,12 @@ const schema = z.object({
                 .max(3)
                 .default([
                     {
-                        id: 'createdAt',
-                        desc: true,
+                        id: 'rank',
+                        desc: false,
                     },
                 ]),
         })
-        .default({ columns: [{ id: 'createdAt', desc: true }] }),
+        .default({ columns: [{ id: 'rank', desc: false }] }),
     page: pageNumberSchema,
 });
 
@@ -265,7 +265,7 @@ const canDo = computed(() => ({
 
 const { game } = useAppConfig();
 
-const selfServicePropsAbsenceDateModal = overlay.create(SelfServicePropsAbsenceDateModal);
+const selfServicePropsAbsenceDateModal = overlay.create(SelfServiceAbsenceDateModal);
 const jobLabelsModal = overlay.create(JobLabelsModal);
 const colleagueLabelStatsModal = overlay.create(ColleagueLabelStatsModal);
 
@@ -280,8 +280,8 @@ defineShortcuts({
     <UDashboardPanel :ui="{ root: 'min-h-0', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardToolbar>
-                <UForm class="my-2 w-full" :schema="schema" :state="query" @submit="refresh()">
-                    <div class="flex gap-2">
+                <UForm class="my-2 flex w-full flex-1 flex-col gap-2" :schema="schema" :state="query" @submit="refresh()">
+                    <div class="flex flex-1 flex-row gap-2">
                         <UFormField class="flex-1" name="name" :label="$t('common.search')">
                             <UInput
                                 ref="input"
@@ -344,14 +344,20 @@ defineShortcuts({
                         </UFormField>
                     </div>
 
-                    <UAccordion
-                        class="mt-2"
-                        color="neutral"
-                        variant="soft"
-                        size="sm"
-                        :items="[{ label: $t('common.advanced_search'), slot: 'search' as const }]"
-                    >
-                        <template #search>
+                    <UCollapsible>
+                        <UButton
+                            class="group"
+                            color="neutral"
+                            variant="ghost"
+                            trailing-icon="i-mdi-chevron-down"
+                            :label="$t('common.advanced_search')"
+                            :ui="{
+                                trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
+                            }"
+                            block
+                        />
+
+                        <template #content>
                             <div class="flex flex-row flex-wrap gap-2">
                                 <UFormField
                                     v-if="attr('jobs.JobsService/GetColleague', 'Types', 'Labels').value"
@@ -368,7 +374,6 @@ defineShortcuts({
                                         searchable-key="completor-jobs-colleague-labels"
                                         :search-input="{ placeholder: $t('common.search_field') }"
                                         :filter-fields="['name']"
-                                        clear-search-on-close
                                         value-key="id"
                                     >
                                         <template #item="{ item }">
@@ -416,7 +421,7 @@ defineShortcuts({
                                 </UFormField>
                             </div>
                         </template>
-                    </UAccordion>
+                    </UCollapsible>
                 </UForm>
             </UDashboardToolbar>
         </template>
@@ -471,14 +476,18 @@ defineShortcuts({
                     </template>
                 </UTable>
 
-                <div v-else class="relative flex-1 overflow-x-auto">
+                <div v-else class="relative flex-1 overflow-x-hidden">
                     <UPageGrid
-                        class="grid-cols-1 p-4 sm:grid-cols-2 sm:p-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
+                        class="grid-cols-1 p-4 sm:grid-cols-2 sm:p-4 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
                     >
                         <UPageCard
                             v-for="colleague in data?.colleagues"
                             :key="colleague.userId"
-                            :ui="{ header: 'w-full', footer: 'w-full' }"
+                            :highlight="colleague.userId === activeChar!.userId"
+                            :ui="{
+                                header: 'w-full',
+                                footer: 'w-full',
+                            }"
                         >
                             <template #title>
                                 <ColleagueName :colleague="colleague" />
@@ -490,7 +499,7 @@ defineShortcuts({
                                         :src="colleague?.profilePicture"
                                         :name="`${colleague.firstname} ${colleague.lastname}`"
                                         size="3xl"
-                                        :enable-popup="true"
+                                        enable-popup
                                         :alt="$t('common.profile_picture')"
                                         :rounded="false"
                                         img-class="size-42"
@@ -500,33 +509,31 @@ defineShortcuts({
 
                             <template #description>
                                 <div class="flex flex-col gap-1 truncate">
-                                    <span>
+                                    <div>
                                         {{ colleague.jobGradeLabel }}
                                         <template v-if="colleague.job !== game.unemployedJobName">
                                             ({{ colleague.jobGrade }})
                                         </template>
-                                    </span>
-
-                                    <div>
-                                        <PhoneNumberBlock :number="colleague.phoneNumber" />
                                     </div>
 
-                                    <span class="inline-flex items-center gap-1">
+                                    <PhoneNumberBlock :number="colleague.phoneNumber" />
+
+                                    <div class="inline-flex items-center gap-1">
                                         <UIcon class="h-5 w-5 shrink-0" name="i-mdi-birthday-cake" />
 
                                         <span>{{ colleague.dateofbirth }}</span>
-                                    </span>
+                                    </div>
 
-                                    <span class="flex items-center gap-1">
+                                    <div class="flex items-center gap-1">
                                         <UIcon class="h-5 w-5 shrink-0" name="i-mdi-email" />
 
                                         <EmailInfoPopover
                                             :email="colleague.email"
                                             variant="link"
                                             :trailing="false"
-                                            :ui="{ base: 'px-1 sm:px-1' }"
+                                            :ui="{ base: 'px-1 sm:px-1 py-0 sm:py-0' }"
                                         />
-                                    </span>
+                                    </div>
 
                                     <div
                                         v-if="attr('jobs.JobsService/GetColleague', 'Types', 'Labels').value"
@@ -555,7 +562,7 @@ defineShortcuts({
                                         </div>
                                     </div>
 
-                                    <span
+                                    <div
                                         v-if="colleague.props?.absenceEnd && isFuture(toDate(colleague.props?.absenceEnd))"
                                         class="inline-flex items-center gap-1"
                                     >
@@ -563,7 +570,7 @@ defineShortcuts({
                                         <GenericTime :value="colleague.props?.absenceBegin" type="shortDate" />
                                         <span>{{ $t('common.to') }}</span>
                                         <GenericTime :value="colleague.props?.absenceEnd" type="date" />
-                                    </span>
+                                    </div>
                                 </div>
                             </template>
 
@@ -578,7 +585,7 @@ defineShortcuts({
                                 "
                                 #footer
                             >
-                                <UButtonGroup class="inline-flex w-full flex-1">
+                                <UButtonGroup class="w-full min-w-0">
                                     <UTooltip
                                         v-if="
                                             canDo.setJobsUserProps &&
@@ -586,14 +593,14 @@ defineShortcuts({
                                                 attr('jobs.JobsService/SetColleagueProps', 'Types', 'AbsenceDate').value) &&
                                             checkIfCanAccessColleague(colleague, 'jobs.JobsService/SetColleagueProps')
                                         "
-                                        class="flex-1"
+                                        class="min-w-0"
                                         :text="$t('components.jobs.self_service.set_absence_date')"
                                     >
                                         <UButton
                                             :label="$t('components.jobs.self_service.set_absence_date')"
                                             icon="i-mdi-island"
                                             block
-                                            truncate
+                                            class="min-w-0"
                                             @click="
                                                 selfServicePropsAbsenceDateModal.open({
                                                     userId: colleague.userId,
@@ -608,14 +615,14 @@ defineShortcuts({
                                             canDo.getColleague &&
                                             checkIfCanAccessColleague(colleague, 'jobs.JobsService/GetColleague')
                                         "
-                                        class="flex-1"
+                                        class="min-w-0"
                                         :text="$t('common.show')"
                                     >
                                         <UButton
                                             :label="$t('common.show')"
                                             icon="i-mdi-eye"
                                             block
-                                            truncate
+                                            class="min-w-0"
                                             :to="{
                                                 name: 'jobs-colleagues-id-info',
                                                 params: { id: colleague.userId ?? 0 },

@@ -3,7 +3,7 @@ import { fromDate, getLocalTimeZone } from '@internationalized/date';
 import { watchDebounced } from '@vueuse/shared';
 import { addDays } from 'date-fns';
 import { z } from 'zod';
-import DocumentListEntry from '~/components/documents/DocumentListEntry.vue';
+import ListEntry from '~/components/documents/ListEntry.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import InputDateRangePopover from '~/components/partials/InputDateRangePopover.vue';
@@ -18,7 +18,7 @@ import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/documents/documents';
 import CategoryBadge from '../partials/documents/CategoryBadge.vue';
 import SelectMenu from '../partials/SelectMenu.vue';
-import PinnedDocumentList from './PinnedDocumentList.vue';
+import PinnedList from './PinnedList.vue';
 import TemplateModal from './templates/TemplateModal.vue';
 
 const { t } = useI18n();
@@ -186,7 +186,7 @@ defineShortcuts({
             </UDashboardNavbar>
 
             <UDashboardToolbar>
-                <UForm class="mt-2 w-full" :schema="schema" :state="query" @submit="refresh()">
+                <UForm class="my-2 flex w-full flex-1 flex-col gap-2" :schema="schema" :state="query" @submit="refresh()">
                     <div class="flex flex-1 flex-row gap-2">
                         <UFormField class="flex-1" name="title" :label="$t('common.search')">
                             <UInput
@@ -230,14 +230,20 @@ defineShortcuts({
                         </UFormField>
                     </div>
 
-                    <UAccordion
-                        class="mb-2"
-                        color="neutral"
-                        variant="soft"
-                        size="sm"
-                        :items="[{ label: $t('common.advanced_search'), slot: 'search' as const }]"
-                    >
-                        <template #search>
+                    <UCollapsible>
+                        <UButton
+                            class="group"
+                            color="neutral"
+                            variant="ghost"
+                            trailing-icon="i-mdi-chevron-down"
+                            :label="$t('common.advanced_search')"
+                            :ui="{
+                                trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
+                            }"
+                            block
+                        />
+
+                        <template #content>
                             <div class="flex flex-row flex-wrap gap-1">
                                 <UFormField
                                     class="flex-1"
@@ -394,7 +400,7 @@ defineShortcuts({
                                 </UFormField>
                             </div>
                         </template>
-                    </UAccordion>
+                    </UCollapsible>
                 </UForm>
             </UDashboardToolbar>
         </template>
@@ -415,8 +421,8 @@ defineShortcuts({
                 role="list"
             >
                 <template v-if="isRequestPending(status)">
-                    <li v-for="idx in 8" :key="idx" class="flex-initial">
-                        <div class="m-2">
+                    <li v-for="idx in 8" :key="idx" class="flex-initial p-1">
+                        <div class="m-2 flex flex-col gap-1">
                             <div class="flex flex-row gap-2 truncate">
                                 <div class="flex flex-1 flex-row items-center justify-start">
                                     <USkeleton class="h-7 w-full max-w-[125px]" />
@@ -459,7 +465,7 @@ defineShortcuts({
                 </template>
 
                 <template v-else>
-                    <DocumentListEntry v-for="doc in data?.documents" :key="doc.id" :document="doc" />
+                    <ListEntry v-for="doc in data?.documents" :key="doc.id" :document="doc" />
                 </template>
             </ul>
         </template>
@@ -478,6 +484,6 @@ defineShortcuts({
         :min-size="15"
         :max-size="40"
     >
-        <PinnedDocumentList @close="isPinnedDocumentsVisible = false" />
+        <PinnedList @close="isPinnedDocumentsVisible = false" />
     </UDashboardPanel>
 </template>

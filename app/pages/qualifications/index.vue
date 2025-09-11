@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import type { TabsItem } from '@nuxt/ui';
-import QualificationList from '~/components/qualifications/QualificationList.vue';
-import QualificationRequestList from '~/components/qualifications/QualificationRequestList.vue';
-import QualificationResultList from '~/components/qualifications/QualificationResultList.vue';
+import List from '~/components/qualifications/List.vue';
+import RequestList from '~/components/qualifications/request/RequestList.vue';
+import ResultList from '~/components/qualifications/result/ResultList.vue';
 
 useHead({
     title: 'pages.qualifications.title',
@@ -79,15 +79,15 @@ const qualifications = await useQualifications();
                 <template #yours>
                     <UContainer>
                         <div class="flex flex-col gap-2">
-                            <QualificationResultList />
+                            <ResultList />
 
-                            <QualificationRequestList />
+                            <RequestList />
                         </div>
                     </UContainer>
                 </template>
                 <template #all>
                     <UContainer>
-                        <QualificationList />
+                        <List />
                     </UContainer>
                 </template>
             </UTabs>

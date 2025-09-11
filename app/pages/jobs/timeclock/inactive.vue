@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import TimeclockInactiveList from '~/components/jobs/timeclock/TimeclockInactiveList.vue';
+import InactiveList from '~/components/jobs/timeclock/InactiveList.vue';
 
 useHead({
     title: 'common.inactive_colleagues',
@@ -13,5 +13,5 @@ definePageMeta({
 </script>
 
 <template>
-    <TimeclockInactiveList />
+    <InactiveList />
 </template>

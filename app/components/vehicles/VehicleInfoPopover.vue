@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 import GenericTime from '../partials/elements/GenericTime.vue';
-import VehiclePropsWantedModal from './VehiclePropsWantedModal.vue';
+import SetWantedModal from './SetWantedModal.vue';
 
 const vehicle = defineModel<Vehicle>({ required: true });
 
 const overlay = useOverlay();
 
-const vehiclePropsWantedModal = overlay.create(VehiclePropsWantedModal);
+const setWantedModal = overlay.create(SetWantedModal);
 
 const { can } = useAuth();
 </script>
@@ -29,7 +29,7 @@ const { can } = useAuth();
                             :icon="vehicle?.props?.wanted ? 'i-mdi-account-alert' : 'i-mdi-account-cancel'"
                             :label="vehicle?.props?.wanted ? $t('common.revoke_wanted') : $t('common.set_wanted')"
                             @click="
-                                vehiclePropsWantedModal.open({
+                                setWantedModal.open({
                                     vehicleProps: vehicle.props,
                                     plate: vehicle.plate,
                                     'onUpdate:vehicleProps': ($event) => {

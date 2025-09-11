@@ -3,7 +3,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
-import ActivityListEntry from '~/components/wiki/ActivityListEntry.vue';
+import ListEntry from '~/components/wiki/activity/ListEntry.vue';
 import { getWikiWikiClient } from '~~/gen/ts/clients';
 import type { ListPageActivityResponse } from '~~/gen/ts/services/wiki/wiki';
 
@@ -53,7 +53,7 @@ async function listPageActivity(): Promise<ListPageActivityResponse> {
         />
 
         <ul v-else class="mb-1 divide-y divide-default" role="list">
-            <ActivityListEntry v-for="item in data.activity" :key="item.id" :entry="item" />
+            <ListEntry v-for="item in data.activity" :key="item.id" :entry="item" />
         </ul>
 
         <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />

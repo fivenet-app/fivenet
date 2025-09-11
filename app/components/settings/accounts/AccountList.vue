@@ -236,8 +236,14 @@ const columns = computed(
             </UDashboardNavbar>
 
             <UDashboardToolbar>
-                <UForm v-if="!streamerMode" class="w-full" :schema="schema" :state="query" @submit="refresh()">
-                    <div class="flex w-full flex-row gap-2">
+                <UForm
+                    v-if="!streamerMode"
+                    class="my-2 flex w-full flex-1 flex-col gap-2"
+                    :schema="schema"
+                    :state="query"
+                    @submit="refresh()"
+                >
+                    <div class="flex flex-1 flex-row gap-2">
                         <UFormField class="flex-1" :label="$t('common.search')" name="license">
                             <UInput
                                 ref="input"
@@ -266,14 +272,20 @@ const columns = computed(
                         </UFormField>
                     </div>
 
-                    <UAccordion
-                        class="mt-2"
-                        color="neutral"
-                        variant="soft"
-                        size="sm"
-                        :items="[{ label: $t('common.advanced_search'), slot: 'search' as const }]"
-                    >
-                        <template #search>
+                    <UCollapsible>
+                        <UButton
+                            class="group"
+                            color="neutral"
+                            variant="ghost"
+                            trailing-icon="i-mdi-chevron-down"
+                            :label="$t('common.advanced_search')"
+                            :ui="{
+                                trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
+                            }"
+                            block
+                        />
+
+                        <template #content>
                             <div class="flex flex-row flex-wrap gap-1">
                                 <UFormField class="flex-1" name="username" :label="$t('common.username')">
                                     <UInput
@@ -300,7 +312,7 @@ const columns = computed(
                                 </UFormField>
                             </div>
                         </template>
-                    </UAccordion>
+                    </UCollapsible>
                 </UForm>
             </UDashboardToolbar>
         </template>

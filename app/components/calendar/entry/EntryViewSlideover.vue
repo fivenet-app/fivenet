@@ -128,7 +128,7 @@ const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
                             </template>
                         </UBadge>
 
-                        <UBadge class="inline-flex items-center gap-1" color="neutral" size="md" icon="i-mdi-calendar">
+                        <UBadge class="inline-flex items-center gap-1" color="neutral" icon="i-mdi-calendar">
                             {{ $t('common.calendar') }}
                             <UBadge :color="color" size="lg" />
 
@@ -139,23 +139,17 @@ const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
                     <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
                         <OpenClosedBadge :closed="entry.closed" />
 
-                        <UBadge class="inline-flex gap-1" color="neutral" size="md" icon="i-mdi-account">
-                            <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
-                            <CitizenInfoPopover :user="entry.creator" show-avatar-in-name />
+                        <UBadge class="inline-flex gap-1" color="neutral" icon="i-mdi-account">
+                            <span>{{ $t('common.created_by') }}</span>
+                            <CitizenInfoPopover :user="entry.creator" :show-avatar-in-name="false" text-class="text-xs" />
                         </UBadge>
 
-                        <UBadge class="inline-flex gap-1" color="neutral" size="md" icon="i-mdi-calendar">
+                        <UBadge class="inline-flex gap-1" color="neutral" icon="i-mdi-calendar">
                             {{ $t('common.created_at') }}
                             <GenericTime :value="entry.createdAt" type="long" />
                         </UBadge>
 
-                        <UBadge
-                            v-if="entry.updatedAt"
-                            class="inline-flex gap-1"
-                            color="neutral"
-                            size="md"
-                            icon="i-mdi-calendar-edit"
-                        >
+                        <UBadge v-if="entry.updatedAt" class="inline-flex gap-1" color="neutral" icon="i-mdi-calendar-edit">
                             {{ $t('common.updated_at') }}
                             <GenericTime :value="entry.updatedAt" type="long" />
                         </UBadge>

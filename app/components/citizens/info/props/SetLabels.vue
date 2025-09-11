@@ -150,7 +150,6 @@ const formRef = useTemplateRef('formRef');
                 searchable-key="completor-citizens-labels"
                 :search-input="{ placeholder: $t('common.search_field') }"
                 :search-labels="['name']"
-                clear-search-on-close
                 class="w-full"
             >
                 <template #default>

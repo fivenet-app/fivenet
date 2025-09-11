@@ -22,7 +22,6 @@ const accordionCategories = computed(() =>
         return {
             category: category[0],
             label: t(`perms.${category[1]}.category`),
-            disabled: props.disabled,
         };
     }),
 );
@@ -63,7 +62,7 @@ watch(props, setFromProps);
     <div class="w-full">
         <div class="px-1 sm:px-2">
             <div class="flex flex-col gap-2">
-                <UAccordion :items="accordionCategories" multiple default-open>
+                <UAccordion :items="accordionCategories" type="multiple" default-open>
                     <template #content="{ item: category }">
                         <div class="flex flex-col divide-y divide-default">
                             <div

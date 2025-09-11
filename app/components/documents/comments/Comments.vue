@@ -11,7 +11,7 @@ import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { Comment } from '~~/gen/ts/resources/documents/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetCommentsResponse } from '~~/gen/ts/services/documents/documents';
-import DocumentCommentEntry from './DocumentCommentEntry.vue';
+import CommentEntry from './CommentEntry.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -248,7 +248,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             />
 
             <ul v-else class="divide-y divide-default" role="list">
-                <DocumentCommentEntry
+                <CommentEntry
                     v-for="(comment, idx) in data.comments"
                     :key="comment.id"
                     v-model="data.comments[idx]"

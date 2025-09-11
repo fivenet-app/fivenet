@@ -3703,6 +3703,12 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 ## resources/documents/signoff.proto
 
+
+### resources.documents.SignoffState
+
+
+
+
  <!-- end messages -->
 
  <!-- end enums -->

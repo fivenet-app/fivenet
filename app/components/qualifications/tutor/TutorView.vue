@@ -2,9 +2,9 @@
 import { z } from 'zod';
 import ColleagueName from '~/components/jobs/colleagues/ColleagueName.vue';
 import InputMenu from '~/components/partials/InputMenu.vue';
-import QualificationRequestList from '~/components/qualifications/tutor/QualificationRequestList.vue';
-import QualificationResultList from '~/components/qualifications/tutor/QualificationResultList.vue';
-import QualificationResultTutorModal from '~/components/qualifications/tutor/QualificationResultTutorModal.vue';
+import RequestList from '~/components/qualifications/tutor/RequestList.vue';
+import ResultList from '~/components/qualifications/tutor/ResultList.vue';
+import ResultTutorModal from '~/components/qualifications/tutor/ResultTutorModal.vue';
 import { useCompletorStore } from '~/stores/completor';
 import type { Qualification } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
@@ -16,7 +16,7 @@ const props = defineProps<{
 const completorStore = useCompletorStore();
 
 const overlay = useOverlay();
-const qualificationResultTutorModal = overlay.create(QualificationResultTutorModal, {
+const resultTutorModal = overlay.create(ResultTutorModal, {
     props: {
         qualificationId: props.qualification.id,
         onRefresh: undefined,
@@ -29,12 +29,12 @@ const schema = z.object({
 
 const query = useSearchForm('qualifications_tutor', schema);
 
-const requests = ref<InstanceType<typeof QualificationRequestList> | null>(null);
-const results = ref<InstanceType<typeof QualificationResultList> | null>(null);
+const requests = ref<InstanceType<typeof RequestList> | null>(null);
+const results = ref<InstanceType<typeof ResultList> | null>(null);
 </script>
 
 <template>
-    <div class="flex flex-1 flex-col gap-2">
+    <div class="flex flex-1 flex-col gap-4">
         <UDashboardToolbar>
             <UForm :schema="schema" :state="query" class="mb-2 flex-1">
                 <UFormField class="flex-1" name="user" :label="$t('common.search')">
@@ -65,39 +65,39 @@ const results = ref<InstanceType<typeof QualificationResultList> | null>(null);
             </UForm>
         </UDashboardToolbar>
 
-        <div>
-            <h2 class="text-sm text-highlighted">{{ $t('common.request', 2) }}</h2>
-
-            <QualificationRequestList
+        <UPageCard :title="$t('common.request', 2)">
+            <RequestList
                 ref="requests"
                 :qualification="qualification"
                 :exam-mode="qualification.examMode"
                 @refresh="async () => results?.refresh()"
             />
-        </div>
+        </UPageCard>
 
-        <div>
-            <div class="flex flex-row justify-between gap-2">
-                <h2 class="text-sm text-highlighted">{{ $t('common.result', 2) }}</h2>
+        <UPageCard :ui="{ body: 'flex flex-col w-full', title: 'flex flex-row flex-1 items-center w-full' }">
+            <template #title>
+                <div class="flex-1">{{ $t('common.result', 2) }}</div>
 
-                <UButton
-                    icon="i-mdi-plus"
-                    :label="$t('common.add')"
-                    @click="
-                        qualificationResultTutorModal.open({
-                            qualificationId: qualification.id,
-                            onRefresh: () => results?.refresh(),
-                        })
-                    "
-                />
-            </div>
+                <UTooltip :text="$t('common.add')">
+                    <UButton
+                        icon="i-mdi-plus"
+                        :label="$t('common.add')"
+                        @click="
+                            resultTutorModal.open({
+                                qualificationId: qualification.id,
+                                onRefresh: () => results?.refresh(),
+                            })
+                        "
+                    />
+                </UTooltip>
+            </template>
 
-            <QualificationResultList
+            <ResultList
                 ref="results"
                 :qualification="qualification"
                 :exam-mode="qualification.examMode"
                 @refresh="async () => requests?.refresh()"
             />
-        </div>
+        </UPageCard>
     </div>
 </template>

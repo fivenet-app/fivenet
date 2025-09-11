@@ -116,18 +116,18 @@ const editing = ref(false);
 
         <div class="flex flex-col gap-2 sm:flex-row">
             <UFormField name="prefix" :label="$t('common.prefix')">
-                <UInput v-if="editing" v-model="state.prefix" type="text" />
+                <UInput v-if="editing" v-model="state.prefix" type="text" class="w-full" />
                 <span v-else>{{ namePrefix ?? $t('common.na') }}</span>
             </UFormField>
             <UFormField name="suffix" :label="$t('common.suffix')">
-                <UInput v-if="editing" v-model="state.suffix" type="text" />
+                <UInput v-if="editing" v-model="state.suffix" type="text" class="w-full" />
                 <span v-else>{{ nameSuffix ?? $t('common.na') }}</span>
             </UFormField>
         </div>
 
         <template v-if="editing">
             <UFormField name="reason" :label="$t('common.reason')" required>
-                <UInput v-model="state.reason" type="text" :disabled="!changed" />
+                <UInput v-model="state.reason" type="text" :disabled="!changed" class="w-full" />
             </UFormField>
 
             <UButton

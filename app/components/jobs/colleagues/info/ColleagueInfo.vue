@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { isFuture } from 'date-fns';
-import SelfServicePropsAbsenceDateModal from '~/components/jobs/colleagues/SelfServicePropsAbsenceDateModal.vue';
+import SelfServiceAbsenceDateModal from '~/components/jobs/colleagues/SelfServiceAbsenceDateModal.vue';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -22,7 +22,7 @@ const { attr, can, activeChar } = useAuth();
 
 const { game } = useAppConfig();
 
-const selfServicePropsAbsenceDateModal = overlay.create(SelfServicePropsAbsenceDateModal);
+const selfServicePropsAbsenceDateModal = overlay.create(SelfServiceAbsenceDateModal);
 </script>
 
 <template>

@@ -61,6 +61,7 @@ function changeColumn(col: string): void {
                 :placeholder="$t('common.na')"
                 value-key="value"
                 :items="fields"
+                :model-value="sorting.columns[0]?.id || ''"
                 @update:model-value="($event) => changeColumn($event)"
             >
                 <template #empty> {{ $t('common.not_found', [$t('common.field', 2)]) }} </template>

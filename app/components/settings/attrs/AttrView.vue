@@ -445,7 +445,7 @@ const confirmModal = overlay.create(ConfirmModal);
                         </UButton>
                     </div>
 
-                    <UAccordion :items="accordionCategories" multiple>
+                    <UAccordion :items="accordionCategories" type="multiple">
                         <template #content="{ item: category }">
                             <div class="flex flex-col divide-y divide-default">
                                 <div

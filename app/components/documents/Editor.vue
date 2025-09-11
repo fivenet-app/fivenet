@@ -25,8 +25,8 @@ import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
 import CategoryBadge from '../partials/documents/CategoryBadge.vue';
 import SelectMenu from '../partials/SelectMenu.vue';
-import DocumentReferenceManager from './DocumentReferenceManager.vue';
-import DocumentRelationManager from './DocumentRelationManager.vue';
+import ReferenceManager from './ReferenceManager.vue';
+import RelationManager from './RelationManager.vue';
 
 const props = defineProps<{
     documentId: number;
@@ -669,7 +669,7 @@ provide('yjsProvider', provider);
                     <template #references>
                         <UContainer class="p-4 sm:p-4">
                             <UPageCard :title="`${$t('common.document', 1)} ${$t('common.reference', 2)}`">
-                                <DocumentReferenceManager v-model="state.references" :document-id="documentId" />
+                                <ReferenceManager v-model="state.references" :document-id="documentId" />
                             </UPageCard>
                         </UContainer>
                     </template>
@@ -677,7 +677,7 @@ provide('yjsProvider', provider);
                     <template #relations>
                         <UContainer class="p-4 sm:p-4">
                             <UPageCard :title="`${$t('common.document', 1)} ${$t('common.relation', 2)}`">
-                                <DocumentRelationManager v-model="state.relations" :document-id="documentId" />
+                                <RelationManager v-model="state.relations" :document-id="documentId" />
                             </UPageCard>
                         </UContainer>
                     </template>

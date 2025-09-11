@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { TypedRouteFromName } from '@typed-router';
-import QualificationView from '~/components/qualifications/QualificationView.vue';
+import View from '~/components/qualifications/View.vue';
 
 useHead({
     title: 'pages.qualifications.id.title',
@@ -24,5 +24,5 @@ const route = useRoute('qualifications-id');
 </script>
 
 <template>
-    <QualificationView :qualification-id="parseInt(route.params.id)" />
+    <View :qualification-id="parseInt(route.params.id)" />
 </template>

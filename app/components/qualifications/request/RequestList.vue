@@ -5,7 +5,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
-import QualificationRequestListEntry from '~/components/qualifications/QualificationRequestListEntry.vue';
+import RequestListEntry from '~/components/qualifications/request/RequestListEntry.vue';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import type { RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
@@ -85,7 +85,7 @@ async function listQualificationRequests(
 </script>
 
 <template>
-    <UCard>
+    <UCard :ui="{ body: 'p-0 sm:p-0' }">
         <template #header>
             <div class="flex items-center justify-between">
                 <h3 class="text-2xl leading-6 font-semibold">
@@ -96,28 +96,26 @@ async function listQualificationRequests(
             </div>
         </template>
 
-        <div>
-            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.request', 2)])" />
-            <DataErrorBlock
-                v-else-if="error"
-                :title="$t('common.unable_to_load', [$t('common.request', 2)])"
-                :error="error"
-                :retry="refresh"
-            />
-            <DataNoDataBlock
-                v-else-if="data?.requests.length === 0"
-                :message="$t('common.not_found', [$t('common.request', 2)])"
-                icon="i-mdi-account-school"
-            />
+        <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.request', 2)])" />
+        <DataErrorBlock
+            v-else-if="error"
+            :title="$t('common.unable_to_load', [$t('common.request', 2)])"
+            :error="error"
+            :retry="refresh"
+        />
+        <DataNoDataBlock
+            v-else-if="data?.requests.length === 0"
+            :message="$t('common.not_found', [$t('common.request', 2)])"
+            icon="i-mdi-account-school"
+        />
 
-            <ul v-else class="divide-y divide-default" role="list">
-                <QualificationRequestListEntry
-                    v-for="request in data?.requests"
-                    :key="`${request.qualificationId}-${request.userId}`"
-                    :request="request"
-                />
-            </ul>
-        </div>
+        <ul v-else class="divide-y divide-default" role="list">
+            <RequestListEntry
+                v-for="request in data?.requests"
+                :key="`${request.qualificationId}-${request.userId}`"
+                :request="request"
+            />
+        </ul>
 
         <template #footer>
             <Pagination

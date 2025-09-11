@@ -2,7 +2,7 @@
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import QualificationResultTutorForm from '~/components/qualifications/tutor/QualificationResultTutorForm.vue';
+import ResultTutorForm from '~/components/qualifications/tutor/ResultTutorForm.vue';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import { QualificationExamMode } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { GetUserExamResponse } from '~~/gen/ts/services/qualifications/qualifications';
@@ -85,7 +85,7 @@ const correctCount = ref(0);
 
 <template>
     <UModal>
-        <QualificationResultTutorForm
+        <ResultTutorForm
             :qualification-id="qualificationId"
             :user-id="userId"
             :result-id="resultId"
@@ -164,6 +164,6 @@ const correctCount = ref(0);
 
                 <USeparator v-if="!viewOnly" class="mt-2 mb-4" />
             </template>
-        </QualificationResultTutorForm>
+        </ResultTutorForm>
     </UModal>
 </template>

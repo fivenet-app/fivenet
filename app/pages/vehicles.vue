@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import VehicleList from '~/components/vehicles/VehicleList.vue';
+import List from '~/components/vehicles/List.vue';
 
 useHead({
     title: 'pages.vehicles.title',
@@ -23,7 +23,7 @@ definePageMeta({
         </template>
 
         <template #body>
-            <VehicleList />
+            <List />
         </template>
     </UDashboardPanel>
 </template>

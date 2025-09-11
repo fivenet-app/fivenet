@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { TypedRouteFromName } from '@typed-router';
-import ConductList from '~/components/jobs/conduct/ConductList.vue';
+import List from '~/components/jobs/conduct/List.vue';
 
 useHead({
     title: 'pages.jobs.colleagues.id.conduct',
@@ -24,5 +24,5 @@ const route = useRoute('jobs-colleagues-id-conduct');
 </script>
 
 <template>
-    <ConductList :user-id="parseInt(route.params.id as string)" :hide-user-search="true" />
+    <List :user-id="parseInt(route.params.id as string)" :hide-user-search="true" />
 </template>

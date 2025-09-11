@@ -196,15 +196,23 @@ const version = APP_VERSION;
             <p v-if="!activeChar">
                 {{ $t('components.debug_info.no_char_selected') }}
             </p>
-            <UAccordion
-                v-else
-                variant="soft"
-                :items="[{ label: $t('components.debug_info.perms'), slot: 'perms' as const, icon: 'i-mdi-key' }]"
-            >
-                <template #perms>
-                    <PermList :permissions="permissions" :attributes="attributes" disabled />
+            <UCollapsible v-else>
+                <UButton
+                    class="group"
+                    variant="soft"
+                    :label="$t('components.debug_info.perms')"
+                    icon="i-mdi-key"
+                    trailing-icon="i-mdi-chevron-down"
+                    block
+                    :ui="{
+                        trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
+                    }"
+                />
+
+                <template #content>
+                    <PermList :permissions="permissions" :attributes="attributes" disabled class="w-full" />
                 </template>
-            </UAccordion>
+            </UCollapsible>
         </UFormField>
     </UPageCard>
 </template>

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import CitizenList from '~/components/citizens/CitizenList.vue';
+import List from '~/components/citizens/List.vue';
 
 useHead({
     title: 'pages.citizens.title',
@@ -13,5 +13,5 @@ definePageMeta({
 </script>
 
 <template>
-    <CitizenList />
+    <List />
 </template>

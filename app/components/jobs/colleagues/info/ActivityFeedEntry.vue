@@ -17,7 +17,7 @@ withDefaults(
 
 <template>
     <li
-        class="border-white px-2 py-4 hover:border-primary-500/25 hover:bg-primary-100/50 dark:border-neutral-900 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
+        class="border-default px-2 py-4 hover:border-primary-500/25 hover:bg-primary-100/50 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
     >
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
@@ -33,23 +33,20 @@ withDefaults(
                     <h3 class="text-sm font-medium">
                         {{ $t(`enums.jobs.ColleagueActivityType.${ColleagueActivityType[activity.activityType]}`) }}
                         <template v-if="activity.data?.data.oneofKind !== undefined">
-                            {{ ' - ' }}
+                            {{ '&nbsp;-&nbsp;' }}
                             <template v-if="activity.data?.data.oneofKind === 'absenceDate'">
-                                <template
+                                <span
                                     v-if="
                                         activity.data?.data.absenceDate.absenceBegin &&
                                         activity.data?.data.absenceDate.absenceEnd
                                     "
+                                    class="inline-flex gap-1"
                                 >
-                                    <span class="inline-flex gap-1">
-                                        <GenericTime :value="activity.data?.data.absenceDate.absenceBegin" type="date" />
-                                        <span>{{ $t('common.to') }}</span>
-                                        <GenericTime :value="activity.data?.data.absenceDate.absenceEnd" type="date" />
-                                    </span>
-                                </template>
-                                <template v-else>
-                                    <span>{{ $t('common.annul', 2) }}</span>
-                                </template>
+                                    <GenericTime :value="activity.data?.data.absenceDate.absenceBegin" type="date" />
+                                    <span>{{ $t('common.to') }}</span>
+                                    <GenericTime :value="activity.data?.data.absenceDate.absenceEnd" type="date" />
+                                </span>
+                                <span v-else>{{ $t('common.annul', 2) }}</span>
                             </template>
 
                             <template v-else-if="activity.data?.data.oneofKind === 'gradeChange'">
@@ -64,7 +61,7 @@ withDefaults(
                                         class="justify-between gap-2 line-through"
                                         :class="isColorBright(hexToRgb(label.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
                                         :style="{ backgroundColor: label.color }"
-                                        size="xs"
+                                        size="md"
                                     >
                                         {{ label.name }}
                                     </UBadge>
@@ -75,7 +72,7 @@ withDefaults(
                                         class="justify-between gap-2"
                                         :class="isColorBright(hexToRgb(label.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
                                         :style="{ backgroundColor: label.color }"
-                                        size="xs"
+                                        size="md"
                                     >
                                         {{ label.name }}
                                     </UBadge>

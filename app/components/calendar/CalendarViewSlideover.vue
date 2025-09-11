@@ -90,7 +90,7 @@ const calendar = computed(() => data.value?.calendar);
                 <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
                     <OpenClosedBadge :closed="calendar.closed" />
 
-                    <UBadge class="inline-flex gap-1" color="neutral" size="md" icon="i-mdi-account">
+                    <UBadge class="inline-flex gap-1" color="neutral" icon="i-mdi-account">
                         <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
                         <CitizenInfoPopover :user="calendar.creator" show-avatar-in-name />
                     </UBadge>
@@ -98,7 +98,6 @@ const calendar = computed(() => data.value?.calendar);
                     <UBadge
                         class="inline-flex gap-1"
                         color="neutral"
-                        size="md"
                         :icon="calendar.public ? 'i-mdi-public' : 'i-mdi-calendar-lock'"
                         :label="
                             calendar.public
@@ -110,26 +109,40 @@ const calendar = computed(() => data.value?.calendar);
 
                 <p>
                     <span class="font-semibold">{{ $t('common.description') }}:</span>
-                    {{ calendar.description ?? $t('common.na') }}
+                    {{
+                        calendar.description === undefined || calendar.description === ''
+                            ? $t('common.na')
+                            : calendar.description
+                    }}
                 </p>
             </template>
 
-            <UAccordion
+            <UCollapsible
                 v-if="calendar?.access && (calendar?.access?.jobs.length > 0 || calendar?.access?.users.length > 0)"
-                multiple
-                :items="[{ slot: 'access' as const, label: $t('common.access'), icon: 'i-mdi-lock' }]"
+                class="group flex flex-col gap-2"
             >
-                <template #access>
-                    <UContainer>
-                        <AccessBadges
-                            :access-level="AccessLevel"
-                            :jobs="calendar?.access.jobs"
-                            :users="calendar?.access.users"
-                            i18n-key="enums.calendar"
-                        />
-                    </UContainer>
+                <UButton
+                    color="neutral"
+                    variant="subtle"
+                    :label="$t('common.access')"
+                    icon="i-mdi-lock"
+                    class="w-full"
+                    trailing-icon="i-mdi-chevron-down"
+                    block
+                    :ui="{
+                        trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
+                    }"
+                />
+
+                <template #content>
+                    <AccessBadges
+                        :access-level="AccessLevel"
+                        :jobs="calendar?.access.jobs"
+                        :users="calendar?.access.users"
+                        i18n-key="enums.calendar"
+                    />
                 </template>
-            </UAccordion>
+            </UCollapsible>
         </template>
 
         <template #footer>

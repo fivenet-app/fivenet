@@ -1,16 +1,17 @@
 <script lang="ts" setup>
 import { UButton, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
+import { z } from 'zod';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { checkQualificationAccess, requestStatusToTextColor } from '~/components/qualifications/helpers';
-import QualificationRequestTutorModal from '~/components/qualifications/tutor/QualificationRequestTutorModal.vue';
-import QualificationResultTutorModal from '~/components/qualifications/tutor/QualificationResultTutorModal.vue';
+import RequestTutorModal from '~/components/qualifications/tutor/RequestTutorModal.vue';
+import ResultTutorModal from '~/components/qualifications/tutor/ResultTutorModal.vue';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
-import type { Sort } from '~~/gen/ts/resources/common/database/database';
+import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
 import {
     type Qualification,
@@ -45,22 +46,43 @@ const { t } = useI18n();
 
 const overlay = useOverlay();
 
-const page = useRouteQuery('page', '1', { transform: Number });
+const _schema = z.object({
+    sorting: z
+        .object({
+            columns: z
+                .custom<SortByColumn>()
+                .array()
+                .max(3)
+                .default([
+                    {
+                        id: 'abbreviation',
+                        desc: true,
+                    },
+                ]),
+        })
+        .default({ columns: [{ id: 'abbreviation', desc: true }] }),
+    page: pageNumberSchema,
+});
 
-const sorting = useRouteQueryObject<Sort>('sort', {
-    columns: [
-        {
-            id: 'createdAt',
-            desc: true,
-        },
-    ],
+type Schema = z.output<typeof _schema>;
+
+const query = reactive<Schema>({
+    sorting: {
+        columns: [
+            {
+                id: 'createdAt',
+                desc: true,
+            },
+        ],
+    },
+    page: 1,
 });
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `qualifications-requests-${JSON.stringify(sorting.value)}-${page.value}-${props.qualification.id}`,
+    `qualifications-requests-${JSON.stringify(query.sorting)}-${query.page}-${props.qualification.id}`,
     () => listQualificationRequests(props.qualification.id),
     {
-        watch: [sorting],
+        watch: [query],
     },
 );
 
@@ -77,9 +99,9 @@ async function listQualificationRequests(
     try {
         const call = qualificationsQualificationsClient.listQualificationRequests({
             pagination: {
-                offset: calculateOffset(page.value, data.value?.pagination),
+                offset: calculateOffset(query.page, data.value?.pagination),
             },
-            sort: sorting.value,
+            sort: query.sorting,
             qualificationId: qualificationId,
             status: status ?? [],
         });
@@ -125,7 +147,7 @@ const columns = computed(
                                     icon: 'i-mdi-close-thick',
                                     color: 'orange',
                                     onClick: () => {
-                                        qualificationRequestTutorModal.open({
+                                        requestTutorModal.open({
                                             request: row.original,
                                             status: RequestStatus.DENIED,
                                             onRefresh: onRefresh,
@@ -142,7 +164,7 @@ const columns = computed(
                                     icon: 'i-mdi-check-bold',
                                     color: 'green',
                                     onClick: () => {
-                                        qualificationRequestTutorModal.open({
+                                        requestTutorModal.open({
                                             request: row.original,
                                             status: RequestStatus.ACCEPTED,
                                             onRefresh: onRefresh,
@@ -160,7 +182,7 @@ const columns = computed(
                                     onClick: () => {
                                         (row.original.status === RequestStatus.EXAM_GRADING
                                             ? examViewResultModal
-                                            : qualificationResultTutorModal
+                                            : resultTutorModal
                                         ).open({
                                             qualificationId: row.original.qualificationId,
                                             examMode: props.examMode,
@@ -285,8 +307,8 @@ async function onRefresh(): Promise<void> {
 }
 
 const confirmModal = overlay.create(ConfirmModal);
-const qualificationRequestTutorModal = overlay.create(QualificationRequestTutorModal);
-const qualificationResultTutorModal = overlay.create(QualificationResultTutorModal);
+const requestTutorModal = overlay.create(RequestTutorModal);
+const resultTutorModal = overlay.create(ResultTutorModal);
 const examViewResultModal = overlay.create(ExamViewResultModal);
 </script>
 
@@ -302,7 +324,7 @@ const examViewResultModal = overlay.create(ExamViewResultModal);
 
             <template v-else>
                 <UTable
-                    v-model:sorting="sorting.columns"
+                    v-model:sorting="query.sorting.columns"
                     :columns="columns"
                     :data="data?.requests"
                     :loading="isRequestPending(status)"
@@ -336,7 +358,7 @@ const examViewResultModal = overlay.create(ExamViewResultModal);
                                 icon="i-mdi-close-thick"
                                 color="orange"
                                 @click="
-                                    qualificationRequestTutorModal.open({
+                                    requestTutorModal.open({
                                         request: row.original,
                                         status: RequestStatus.DENIED,
                                         onRefresh: onRefresh,
@@ -358,7 +380,7 @@ const examViewResultModal = overlay.create(ExamViewResultModal);
                                 icon="i-mdi-check-bold"
                                 color="green"
                                 @click="
-                                    qualificationRequestTutorModal.open({
+                                    requestTutorModal.open({
                                         request: row.original,
                                         status: RequestStatus.ACCEPTED,
                                         onRefresh: onRefresh,
@@ -381,7 +403,7 @@ const examViewResultModal = overlay.create(ExamViewResultModal);
                                 @click="
                                     (row.original.status === RequestStatus.EXAM_GRADING
                                         ? examViewResultModal
-                                        : qualificationResultTutorModal
+                                        : resultTutorModal
                                     ).open({
                                         qualificationId: row.original.qualificationId,
                                         examMode: examMode,
@@ -419,7 +441,7 @@ const examViewResultModal = overlay.create(ExamViewResultModal);
                     </template>
                 </UTable>
 
-                <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+                <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
             </template>
         </div>
     </div>

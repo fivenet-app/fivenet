@@ -101,6 +101,7 @@ const formRef = useTemplateRef('formRef');
                             value-key="status"
                             :placeholder="$t('common.status')"
                             :search-input="{ placeholder: $t('common.search_field') }"
+                            class="w-full"
                         >
                             <template #default>
                                 <UBadge class="truncate" :color="requestStatusToBadgeColor(state.status)">
@@ -127,6 +128,7 @@ const formRef = useTemplateRef('formRef');
                         name="approverComment"
                         :rows="3"
                         :placeholder="$t('common.message')"
+                        class="w-full"
                     />
                 </UFormField>
             </UForm>

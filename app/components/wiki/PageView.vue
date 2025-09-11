@@ -15,7 +15,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import { AccessLevel } from '~~/gen/ts/resources/wiki/access';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 import ScrollToTop from '../partials/ScrollToTop.vue';
-import ActivityList from './ActivityList.vue';
+import List from './activity/List.vue';
 import { checkPageAccess } from './helpers';
 import PageSearch from './PageSearch.vue';
 
@@ -368,7 +368,7 @@ const scrollRef = useTemplateRef('scrollRef');
 
                         <USeparator class="my-2" />
 
-                        <UAccordion class="print:hidden" :items="accordionItems" multiple :unmount-on-hide="false">
+                        <UAccordion class="print:hidden" :items="accordionItems" type="multiple" :unmount-on-hide="false">
                             <template #access>
                                 <UContainer class="mb-2">
                                     <DataNoDataBlock
@@ -391,7 +391,7 @@ const scrollRef = useTemplateRef('scrollRef');
 
                             <template v-if="can('wiki.WikiService/ListPageActivity').value" #activity>
                                 <UContainer class="mb-2">
-                                    <ActivityList :page-id="page.id" />
+                                    <List :page-id="page.id" />
                                 </UContainer>
                             </template>
                         </UAccordion>

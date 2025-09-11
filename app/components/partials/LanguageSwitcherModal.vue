@@ -62,6 +62,7 @@ async function switchLanguage(lang: LocaleObject): Promise<void> {
                     :key="item.name"
                     :title="item.name"
                     :icon="item.icon"
+                    :ui="{ leadingIcon: 'size-12' }"
                     @click="switchLanguage(item)"
                 />
             </UPageGrid>

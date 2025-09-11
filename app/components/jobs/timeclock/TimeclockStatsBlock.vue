@@ -66,7 +66,7 @@ onBeforeMount(async () => updateStats());
             </h3>
             <div class="grid grid-cols-1 gap-2">
                 <UCard v-for="stat in statsData" :key="stat.name">
-                    <p class="text-sm leading-6 font-medium text-muted">{{ $t(stat.name) }}</p>
+                    <p class="text-xs text-muted uppercase">{{ $t(stat.name) }}</p>
                     <p class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-highlighted">
                         <UIcon v-if="error" class="size-5" name="i-mdi-alert-circle" />
                         <USkeleton v-else-if="stat.value === undefined" class="h-8 w-[175px]" />

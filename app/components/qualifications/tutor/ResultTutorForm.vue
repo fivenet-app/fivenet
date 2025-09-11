@@ -135,7 +135,7 @@ const formRef = useTemplateRef('formRef');
                 <UFormField v-if="userId === undefined" class="flex-1" name="selectedUser" :label="$t('common.citizen')">
                     <SelectMenu
                         v-model="selectedUser"
-                        class="flex-1"
+                        class="w-full"
                         :searchable="
                             async (q: string) =>
                                 await completorStore.completeCitizens({
@@ -168,6 +168,7 @@ const formRef = useTemplateRef('formRef');
                             v-model="state.status"
                             :items="availableStatus"
                             value-key="status"
+                            class="w-full"
                             :placeholder="$t('common.status')"
                             :search-input="{ placeholder: $t('common.search_field') }"
                         >
@@ -193,6 +194,7 @@ const formRef = useTemplateRef('formRef');
                 <UFormField class="flex-1" name="score" :label="$t('common.score')">
                     <UInputNumber
                         v-model="state.score"
+                        class="w-full"
                         name="score"
                         :min="0"
                         :max="100"
@@ -204,7 +206,13 @@ const formRef = useTemplateRef('formRef');
                 </UFormField>
 
                 <UFormField class="flex-1" name="summary" :label="$t('common.summary')">
-                    <UTextarea v-model="state.summary" name="summary" :rows="3" :placeholder="$t('common.summary')" />
+                    <UTextarea
+                        v-model="state.summary"
+                        name="summary"
+                        :rows="3"
+                        :placeholder="$t('common.summary')"
+                        class="w-full"
+                    />
                 </UFormField>
             </template>
         </UForm>

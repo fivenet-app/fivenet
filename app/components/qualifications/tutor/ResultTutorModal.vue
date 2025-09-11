@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import QualificationResultTutorForm from './QualificationResultTutorForm.vue';
+import ResultTutorForm from './ResultTutorForm.vue';
 
 defineProps<{
     qualificationId: number;
@@ -16,7 +16,7 @@ defineEmits<{
 <template>
     <UModal>
         <template #content>
-            <QualificationResultTutorForm
+            <ResultTutorForm
                 :qualification-id="qualificationId"
                 :user-id="userId"
                 :result-id="resultId"

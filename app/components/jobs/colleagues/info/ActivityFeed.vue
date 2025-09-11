@@ -164,7 +164,7 @@ watch(props, async () => refresh());
                                     {{ $t('common.selected', query.types.length) }}
                                 </template>
 
-                                <template #item="{ item }">
+                                <template #item-label="{ item }">
                                     {{ $t(`enums.jobs.ColleagueActivityType.${ColleagueActivityType[item.aType]}`) }}
                                 </template>
 
