@@ -697,7 +697,8 @@
         "last_char": "Letzte Charakter ID",
         "file_upload_label": "Datei hier ablegen oder zum Hochladen klicken",
         "latitude_short": "Lat",
-        "longitude_short": "Long"
+        "longitude_short": "Long",
+        "inactive": "Inaktiv"
     },
     "components": {
         "partials": {

@@ -43,7 +43,7 @@ const items = computed(
     () =>
         [
             {
-                label: t('common.superuser'),
+                label: t('common.superuser') + ' (' + (isSuperuser.value ? t('common.active') : t('common.inactive')) + ')',
                 icon: 'i-mdi-square-root',
                 type: 'link' as const,
                 active: isSuperuser.value,

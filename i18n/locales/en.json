@@ -697,7 +697,8 @@
         "last_char": "Last Char ID",
         "file_upload_label": "Choose a file or drag it here.",
         "latitude_short": "Lat",
-        "longitude_short": "Long"
+        "longitude_short": "Long",
+        "inactive": "Inactive"
     },
     "components": {
         "partials": {

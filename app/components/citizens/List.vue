@@ -451,7 +451,7 @@ defineShortcuts({
                 </template>
             </UTable>
 
-            <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" />
+            <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
         </template>
     </UDashboardPanel>
 </template>
