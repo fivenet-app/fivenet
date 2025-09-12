@@ -17,9 +17,9 @@ const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders
 </script>
 
 <template>
-    <div class="flex flex-col gap-1">
+    <UPageCard :title="`${$t('common.workflow')}: ${$t('common.auto_close')}`">
         <!-- Auto Close -->
-        <UFormField name="workflow.autoClose" :label="$t('common.auto_close')">
+        <UFormField name="workflow.autoClose.autoClose" :label="$t('common.enabled')">
             <USwitch v-model="workflow.autoClose.autoClose" />
         </UFormField>
 
@@ -29,18 +29,13 @@ const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders
         >
             <div class="flex items-center gap-1">
                 <UFormField name="workflow.autoClose.autoCloseSettings.duration" :label="$t('common.time_ago.day', 2)">
-                    <UInput
+                    <UInputNumber
                         v-model="workflow.autoClose.autoCloseSettings.duration"
-                        type="number"
                         :min="1"
                         :max="60"
                         :step="1"
                         :placeholder="$t('common.duration')"
-                    >
-                        <template #trailing>
-                            <span class="text-xs text-muted">{{ $t('common.time_ago.day', 2) }}</span>
-                        </template>
-                    </UInput>
+                    />
                 </UFormField>
 
                 <UFormField
@@ -58,9 +53,11 @@ const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders
                 </UFormField>
             </div>
         </UFormField>
+    </UPageCard>
 
+    <UPageCard :title="`${$t('common.workflow')}: ${$t('common.reminder', 2)}`">
         <!-- Reminders -->
-        <UFormField name="workflow.reminders.reminder" :label="$t('common.reminder')">
+        <UFormField name="workflow.reminders.reminder" :label="$t('common.enabled')">
             <USwitch v-model="workflow.reminders.reminder" />
         </UFormField>
 
@@ -98,18 +95,13 @@ const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders
                             :label="$t('common.time_ago.day', 2)"
                             :ui="{ container: '' }"
                         >
-                            <UInput
+                            <UInputNumber
                                 v-model="workflow.reminders.reminderSettings.reminders[idx]!.duration"
-                                type="number"
                                 :min="1"
                                 :max="60"
                                 :step="1"
                                 :placeholder="$t('common.duration')"
-                            >
-                                <template #trailing>
-                                    <span class="text-xs text-muted">{{ $t('common.time_ago.day', 2) }}</span>
-                                </template>
-                            </UInput>
+                            />
                         </UFormField>
 
                         <UFormField
@@ -153,5 +145,5 @@ const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders
         >
             <UInputNumber v-model="workflow.reminders.reminderSettings.maxReminderCount" :min="1" :max="10" :step="1" />
         </UFormField>
-    </div>
+    </UPageCard>
 </template>

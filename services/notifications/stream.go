@@ -383,11 +383,8 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					if dest.GetType() != notifications.ObjectType_OBJECT_TYPE_UNSPECIFIED &&
 						dest.GetType() != notifications.ObjectType_OBJECT_TYPE_DOCUMENT &&
 						dest.GetType() != notifications.ObjectType_OBJECT_TYPE_WIKI_PAGE {
-						if dest.Job == nil {
-							continue
-						}
-						// Job doesn't match the user's job
-						if userInfo.GetJob() != dest.GetJob() {
+						// No job specified or job doesn't match the user's job
+						if dest.Job == nil || userInfo.GetJob() != dest.GetJob() {
 							continue
 						}
 					}

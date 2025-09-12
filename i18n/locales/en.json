@@ -869,10 +869,10 @@
             },
             "TemplateWorkflowEditor": {
                 "reminder": {
-                    "description": "Automatic closing of the document after the number of days. The number of days is counted plus the document creation or modification time."
+                    "description": "Document reminders are only sent to the owner/creator of the document. The reminders are sent in sequence, each based on the previous reminder. E.g., reminder 1 (3 days) will be sent 3 days after document creation/last update, reminder 2 (2 days) will be sent in 5 days.\nThe reminders start again with the first reminder if the document has been updated in the meantime."
                 },
                 "auto_close": {
-                    "description": "Document reminders are only sent to the owner/creator of the document. The reminders are sent in sequence, each based on the previous reminder. E.g., reminder 1 (3 days) will be sent 3 days after document creation/last update, reminder 2 (2 days) will be sent in 5 days.\nThe reminders start again with the first reminder if the document has been updated in the meantime."
+                    "description": "Automatic closing of the document after the number of days. The number of days is counted plus the document creation or modification time."
                 },
                 "max_reminder_count": {
                     "title": "Maximum number of sent reminders",

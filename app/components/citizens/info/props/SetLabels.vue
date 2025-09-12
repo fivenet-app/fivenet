@@ -174,7 +174,7 @@ const formRef = useTemplateRef('formRef');
 
         <template v-if="changed">
             <UFormField name="reason" :label="$t('common.reason')" required>
-                <UInput v-model="state.reason" type="text" />
+                <UInput v-model="state.reason" type="text" class="w-full" />
             </UFormField>
 
             <UButton

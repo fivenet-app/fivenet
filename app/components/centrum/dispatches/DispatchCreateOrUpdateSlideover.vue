@@ -104,7 +104,7 @@ const formRef = useTemplateRef('formRef');
 <template>
     <USlideover :title="$t('components.centrum.create_dispatch.title')" :overlay="false">
         <template #body>
-            <UForm ref="formRef" class="flex flex-1" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <dl class="divide-y divide-default">
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm leading-6 font-medium">
@@ -113,12 +113,13 @@ const formRef = useTemplateRef('formRef');
                             </label>
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="message">
+                            <UFormField class="flex-1" name="message" required>
                                 <UInput
                                     v-model="state.message"
                                     type="text"
                                     name="message"
                                     :placeholder="$t('common.message')"
+                                    class="w-full"
                                 />
                             </UFormField>
                         </dd>
@@ -131,12 +132,14 @@ const formRef = useTemplateRef('formRef');
                             </label>
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="description">
-                                <UInput
+                            <UFormField name="description" class="flex-1">
+                                <UTextarea
                                     v-model="state.description"
                                     type="text"
                                     name="description"
                                     :placeholder="$t('common.description')"
+                                    class="w-full"
+                                    :rows="3"
                                 />
                             </UFormField>
                         </dd>
@@ -165,7 +168,7 @@ const formRef = useTemplateRef('formRef');
                             </label>
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="jobs.jobs">
+                            <UFormField name="jobs.jobs" required>
                                 <USelectMenu
                                     v-model="state.jobs.jobs"
                                     name="jobs.jobs"
@@ -177,6 +180,7 @@ const formRef = useTemplateRef('formRef');
                                     :items="dispatchTargetJobs"
                                     :search-input="{ placeholder: $t('common.search_field') }"
                                     :disabled="dispatchTargetJobs.length <= 1"
+                                    class="w-full"
                                 >
                                     <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
                                 </USelectMenu>

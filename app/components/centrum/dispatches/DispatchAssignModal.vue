@@ -142,7 +142,7 @@ const formRef = useTemplateRef('formRef');
                             <UButton
                                 v-for="unit in group.units"
                                 :key="unit.name"
-                                class="inline-flex flex-row items-center gap-x-1 rounded-md p-1.5 text-sm font-medium hover:bg-primary-100/10 hover:transition-all"
+                                class="inline-flex flex-row items-center gap-x-1 rounded-md p-1.5 text-sm font-medium hover:transition-all"
                                 :class="[
                                     unitStatusToBGColor(unit.status?.status),
                                     unit.users.length === 0 ? '!bg-error-600' : '',

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
-import { dispatchStatusToBGColor, dispatchStatuses } from '~/components/centrum/helpers';
+import { dispatchStatusToBadgeColor, dispatchStatuses } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
@@ -97,34 +97,25 @@ const formRef = useTemplateRef('formRef');
                             <UFormField name="status">
                                 <div class="grid w-full grid-cols-2 gap-0.5">
                                     <UButton
-                                        v-for="(item, idx) in dispatchStatuses"
+                                        v-for="item in dispatchStatuses"
                                         :key="item.name"
-                                        class="group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:bg-primary-100/10 hover:transition-all"
-                                        :class="[
-                                            idx >= dispatchStatuses.length - 1 ? 'col-span-2' : '',
-                                            state.status == item.status
-                                                ? 'bg-neutral-500 hover:bg-neutral-400'
-                                                : item.status
-                                                  ? dispatchStatusToBGColor(item.status)
-                                                  : '',
-                                            ,
-                                        ]"
+                                        class="group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:transition-all"
+                                        :class="state.status == item.status ? 'bg-neutral-500 hover:bg-neutral-400' : ''"
+                                        :color="dispatchStatusToBadgeColor(item.status)"
                                         :disabled="state.status == item.status"
+                                        :icon="item.icon"
+                                        :label="
+                                            item.status
+                                                ? $t(`enums.centrum.StatusDispatch.${StatusDispatch[item.status ?? 0]}`)
+                                                : $t(item.name)
+                                        "
                                         @click="state.status = item.status ?? StatusDispatch.NEW"
-                                    >
-                                        <UIcon class="size-5 shrink-0" :name="item.icon" />
-                                        <span class="mt-1">
-                                            {{
-                                                item.status
-                                                    ? $t(`enums.centrum.StatusDispatch.${StatusDispatch[item.status ?? 0]}`)
-                                                    : $t(item.name)
-                                            }}
-                                        </span>
-                                    </UButton>
+                                    />
                                 </div>
                             </UFormField>
                         </dd>
                     </div>
+
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm leading-6 font-medium">
                             <label class="block text-sm leading-6 font-medium" for="code">
@@ -133,10 +124,17 @@ const formRef = useTemplateRef('formRef');
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                             <UFormField class="flex-1" name="code">
-                                <UInput v-model="state.code" type="text" name="code" :placeholder="$t('common.code')" />
+                                <UInput
+                                    v-model="state.code"
+                                    type="text"
+                                    name="code"
+                                    :placeholder="$t('common.code')"
+                                    class="w-full"
+                                />
                             </UFormField>
                         </dd>
                     </div>
+
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm leading-6 font-medium">
                             <label class="block text-sm leading-6 font-medium" for="reason">
@@ -145,7 +143,7 @@ const formRef = useTemplateRef('formRef');
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                             <UFormField class="flex-1" name="reason" required>
-                                <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
+                                <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" class="w-full" />
                             </UFormField>
                         </dd>
                     </div>

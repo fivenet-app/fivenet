@@ -579,7 +579,7 @@ const formRef = useTemplateRef('formRef');
                     </template>
 
                     <template #details>
-                        <UDashboardPanel :ui="{ root: 'min-h-0' }">
+                        <UDashboardPanel :ui="{ root: 'min-h-0 overflow-y-auto' }">
                             <template #body>
                                 <UContainer class="mb-4 flex flex-col gap-4">
                                     <UPageCard :title="$t('common.requirements', 2)">
@@ -690,7 +690,7 @@ const formRef = useTemplateRef('formRef');
                     </template>
 
                     <template #exam>
-                        <UContainer>
+                        <div class="overflow-y-auto">
                             <div v-if="isRequestPending(status)" class="flex flex-col gap-2">
                                 <USkeleton v-for="idx in 6" :key="idx" class="size-24 w-full" />
                             </div>
@@ -701,11 +701,11 @@ const formRef = useTemplateRef('formRef');
                                 v-model:settings="state.examSettings"
                                 v-model:exam="state.exam"
                                 :disabled="!canDo.edit"
-                                class="overflow-y-auto"
+                                class="mx-auto max-w-(--breakpoint-xl)"
                                 :qualification-id="props.qualificationId"
                                 @file-uploaded="(file) => state.files.push(file)"
                             />
-                        </UContainer>
+                        </div>
                     </template>
                 </UTabs>
             </UForm>

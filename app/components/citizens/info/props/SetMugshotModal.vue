@@ -130,7 +130,7 @@ const formRef = useTemplateRef('formRef');
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField name="reason" :label="$t('common.reason')" required>
-                    <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
+                    <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" class="w-full" />
                 </UFormField>
 
                 <UFormField name="mugshot" :label="$t('common.mugshot')">

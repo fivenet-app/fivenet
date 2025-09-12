@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
-import { unitStatusToBGColor, unitStatuses } from '~/components/centrum/helpers';
+import { unitStatusToBadgeColor, unitStatuses } from '~/components/centrum/helpers';
 import { useCentrumStore } from '~/stores/centrum';
 import type { Coordinate } from '~/types/livemap';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
@@ -93,27 +93,18 @@ const formRef = useTemplateRef('formRef');
                                 <UButton
                                     v-for="item in unitStatuses"
                                     :key="item.name"
-                                    class="group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:bg-primary-100/10 hover:transition-all"
-                                    :class="[
-                                        state.status == item.status
-                                            ? 'bg-neutral-500 hover:bg-neutral-400'
-                                            : item.status
-                                              ? unitStatusToBGColor(item.status)
-                                              : '',
-                                        ,
-                                    ]"
+                                    class="group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:transition-all"
+                                    :class="state.status == item.status ? 'bg-neutral-500 hover:bg-neutral-400' : ''"
+                                    :color="unitStatusToBadgeColor(item.status)"
                                     :disabled="state.status == item.status"
+                                    :icon="item.icon"
+                                    :label="
+                                        item.status
+                                            ? $t(`enums.centrum.StatusUnit.${StatusUnit[item.status ?? 0]}`)
+                                            : $t(item.name)
+                                    "
                                     @click="state.status = item.status ?? StatusUnit.UNAVAILABLE"
-                                >
-                                    <UIcon class="size-5 shrink-0" :name="item.icon" />
-                                    <span class="mt-1">
-                                        {{
-                                            item.status
-                                                ? $t(`enums.centrum.StatusUnit.${StatusUnit[item.status ?? 0]}`)
-                                                : $t(item.name)
-                                        }}
-                                    </span>
-                                </UButton>
+                                />
                             </div>
                         </UFormField>
 
@@ -134,7 +125,7 @@ const formRef = useTemplateRef('formRef');
                             :label="$t('common.reason')"
                             required
                         >
-                            <UInput v-model="state.reason" class="w-full" type="text" :placeholder="$t('common.reason')" />
+                            <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" class="w-full" />
                         </UFormField>
 
                         <UFormField

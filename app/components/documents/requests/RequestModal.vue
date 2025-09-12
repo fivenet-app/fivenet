@@ -179,7 +179,7 @@ const formRef = useTemplateRef('formRef');
                     </UFormField>
 
                     <UFormField name="reason" :label="$t('common.reason')" required>
-                        <UTextarea v-model="state.reason" class="w-full" :placeholder="$t('common.reason')" :rows="4" />
+                        <UTextarea v-model="state.reason" :placeholder="$t('common.reason')" :rows="4" class="w-full" />
                     </UFormField>
                 </div>
 

@@ -451,6 +451,7 @@ const stopWatch = watch(modelValue, (value) => {
     if (props.enableCollab && ydoc && yjsProvider) {
         seedDocument && seedDocument(yjsSchema!, value);
     } else {
+        console.log('SET EDITOR CONTENT');
         unref(editor)?.commands.setContent(value, { emitUpdate: true });
     }
 
@@ -632,11 +633,11 @@ watch(
     { deep: true },
 );
 
-onBeforeMount(() => {
-    if (!props.enableCollab) {
-        logger.info('Setting initial content for Tiptap editor (collab is disabled)');
-        unref(editor)?.commands.setContent(modelValue.value, { emitUpdate: false });
-    }
+onMounted(() => {
+    if (props.enableCollab) return;
+
+    logger.info('Setting initial content for Tiptap editor (collab is disabled)');
+    unref(editor)?.commands.setContent(modelValue.value, { emitUpdate: false });
 });
 
 onBeforeUnmount(() => unref(editor)?.destroy());

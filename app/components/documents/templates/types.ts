@@ -1,11 +1,5 @@
 import { z } from 'zod';
 
-export interface ObjectSpecsValue {
-    req: boolean;
-    min: number;
-    max: number;
-}
-
 export const zWorkflow = z.object({
     reminders: z.union([
         z.object({

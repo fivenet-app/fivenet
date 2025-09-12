@@ -5,7 +5,6 @@ import {
     dispatchStatusToBadgeColor,
     dispatchStatuses,
     isStatusDispatchCompleted,
-    unitStatusToBGColor,
     unitStatusToBadgeColor,
     unitStatuses,
 } from '~/components/centrum/helpers';
@@ -200,7 +199,7 @@ const onSubmitDispatchStatusThrottle = useThrottleFn(async (dispatchId?: number,
     await updateDspStatus(dispatchId, status).finally(() => useTimeoutFn(() => (canSubmitDispatchStatus.value = true), 300));
 }, 1000);
 
-const ownUnitStatus = computed(() => unitStatusToBGColor(getOwnUnit.value?.status?.status));
+const ownUnitStatus = computed(() => unitStatusToBadgeColor(getOwnUnit.value?.status?.status));
 
 function ensureOwnDispatchSelected(): void {
     if (getSortedOwnDispatches.value.length === 0) {
@@ -472,7 +471,7 @@ defineShortcuts({
                         <UButton
                             v-if="getOwnUnit !== undefined"
                             class="inline-flex flex-col rounded-b-none"
-                            :class="ownUnitStatus"
+                            :color="ownUnitStatus"
                             icon="i-mdi-information-outline"
                             block
                             @click="
@@ -541,16 +540,14 @@ defineShortcuts({
                                         :disabled="!canSubmitUnitStatus"
                                         :icon="item.icon"
                                         truncate
+                                        :label="
+                                            item.status
+                                                ? $t(`enums.centrum.StatusUnit.${StatusUnit[item.status ?? 0]}`)
+                                                : $t(item.name)
+                                        "
+                                        :ui="{ label: 'line-clamp-2' }"
                                         @click="onSubmitUnitStatusThrottle(getOwnUnit.id!, item.status)"
-                                    >
-                                        <span class="line-clamp-2">
-                                            {{
-                                                item.status
-                                                    ? $t(`enums.centrum.StatusUnit.${StatusUnit[item.status ?? 0]}`)
-                                                    : $t(item.name)
-                                            }}
-                                        </span>
-                                    </UButton>
+                                    />
 
                                     <UTooltip
                                         class="col-span-2"
@@ -587,9 +584,10 @@ defineShortcuts({
                                         size="xs"
                                         :disabled="!canSubmitDispatchStatus"
                                         :icon="item.icon"
+                                        :ui="{ label: 'line-clamp-2' }"
                                         @click="onSubmitDispatchStatusThrottle(selectedDispatch, item.status)"
                                     >
-                                        <span class="mt-0.5 line-clamp-2">
+                                        <span class="line-clamp-2">
                                             {{
                                                 item.status
                                                     ? $t(`enums.centrum.StatusDispatch.${StatusDispatch[item.status ?? 0]}`)

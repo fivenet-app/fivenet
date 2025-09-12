@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import TemplatePreviewModal from '~/components/documents/templates/TemplatePreviewModal.vue';
-import TemplateRequirementsList from '~/components/documents/templates/TemplateRequirementsList.vue';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums, type AccessType } from '~/components/partials/access/helpers';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
@@ -12,6 +11,7 @@ import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import TemplateSchemaEditor from './TemplateSchemaEditor.vue';
 
 const props = defineProps<{
     templateId: number;
@@ -99,50 +99,72 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
 
                 <template #right>
                     <PartialsBackButton to="/documents/templates" />
-
-                    <UButtonGroup v-if="template" class="inline-flex">
-                        <UButton
-                            v-if="can('documents.DocumentsService/CreateTemplate').value"
-                            class="flex-1"
-                            block
-                            color="neutral"
-                            trailing-icon="i-mdi-print-preview"
-                            @click="
-                                templatePreviewModal.open({
-                                    templateId: templateId,
-                                })
-                            "
-                        >
-                            {{ $t('common.preview') }}
-                        </UButton>
-
-                        <UButton
-                            v-if="can('documents.DocumentsService/CreateTemplate').value"
-                            class="flex-1"
-                            block
-                            trailing-icon="i-mdi-pencil"
-                            :to="{ name: 'documents-templates-edit-id', params: { id: templateId } }"
-                        >
-                            {{ $t('common.edit') }}
-                        </UButton>
-
-                        <UButton
-                            v-if="can('documents.DocumentsService/DeleteTemplate').value"
-                            class="flex-1"
-                            block
-                            trailing-icon="i-mdi-delete"
-                            color="error"
-                            @click="
-                                confirmModal.open({
-                                    confirm: async () => deleteTemplate(templateId),
-                                })
-                            "
-                        >
-                            {{ $t('common.delete') }}
-                        </UButton>
-                    </UButtonGroup>
                 </template>
             </UDashboardNavbar>
+
+            <UDashboardToolbar>
+                <template #default>
+                    <div
+                        class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto"
+                    >
+                        <UTooltip
+                            v-if="can('documents.DocumentsService/CreateTemplate').value"
+                            class="flex-1"
+                            :text="$t('common.preview')"
+                        >
+                            <UButton
+                                class="flex-1"
+                                block
+                                color="neutral"
+                                variant="ghost"
+                                icon="i-mdi-print-preview"
+                                :label="$t('common.preview')"
+                                @click="
+                                    templatePreviewModal.open({
+                                        templateId: templateId,
+                                    })
+                                "
+                            />
+                        </UTooltip>
+
+                        <UTooltip
+                            v-if="can('documents.DocumentsService/CreateTemplate').value"
+                            class="flex-1"
+                            :text="$t('common.edit')"
+                        >
+                            <UButton
+                                class="flex-1"
+                                block
+                                color="neutral"
+                                variant="ghost"
+                                icon="i-mdi-pencil"
+                                :to="{ name: 'documents-templates-edit-id', params: { id: templateId } }"
+                                :label="$t('common.edit')"
+                            />
+                        </UTooltip>
+
+                        <UTooltip
+                            v-if="can('documents.DocumentsService/DeleteTemplate').value"
+                            class="flex-1"
+                            :text="$t('common.delete')"
+                        >
+                            <UButton
+                                class="flex-1"
+                                block
+                                color="error"
+                                variant="ghost"
+                                icon="i-mdi-delete"
+                                :label="$t('common.delete')"
+                                @click="
+                                    confirmModal.open({
+                                        confirm: async () => deleteTemplate(templateId),
+                                    })
+                                "
+                            />
+                        </UTooltip>
+                    </div>
+                </template>
+            </UDashboardToolbar>
 
             <UDashboardToolbar>
                 <template #default>
@@ -160,7 +182,7 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                                 <span>{{ template.title }}</span>
                             </h1>
 
-                            <p class="text-base">
+                            <p class="line-clamp-3 text-base">
                                 <span class="font-semibold">{{ $t('common.description') }}:</span> {{ template.description }}
                             </p>
                         </div>
@@ -170,7 +192,7 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
         </template>
 
         <template #body>
-            <UContainer class="w-full">
+            <UContainer class="mx-auto max-w-(--ui-container)">
                 <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.template', 2)])" />
                 <DataErrorBlock
                     v-else-if="error"
@@ -181,22 +203,13 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                 <DataNoDataBlock v-else-if="!template" :type="$t('common.template', 2)" />
 
                 <template v-else>
-                    <div class="mx-0 -my-2 flex flex-col gap-y-2 overflow-x-auto">
-                        <div>
-                            <h3 class="block text-base leading-6 font-medium text-toned">
-                                {{ $t('common.template', 2) }} {{ $t('common.weight') }}
-                            </h3>
-                            <div class="my-2">
-                                <UInputNumber type="text" name="weight" disabled :value="template.weight" />
-                            </div>
-                        </div>
+                    <div class="flex flex-col gap-4">
+                        <UPageCard :title="$t('common.detail', 2)">
+                            <UFormField :label="`${$t('common.template', 2)} ${$t('common.weight')}`">
+                                <UInputNumber type="text" name="weight" disabled :value="template.weight" class="w-full" />
+                            </UFormField>
 
-                        <div v-if="template.jobAccess">
-                            <h3 class="block text-base leading-6 font-medium text-toned">
-                                {{ $t('common.template', 2) }} {{ $t('common.access') }}
-                            </h3>
-
-                            <div class="my-2">
+                            <UFormField v-if="template.jobAccess" :label="`${$t('common.template', 2)} ${$t('common.access')}`">
                                 <AccessManager
                                     v-model:jobs="template.jobAccess"
                                     :target-id="templateId ?? 0"
@@ -210,14 +223,11 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                                     name="jobAccess"
                                     full-name
                                 />
-                            </div>
-                        </div>
+                            </UFormField>
+                        </UPageCard>
 
-                        <div>
-                            <h3 class="block text-base leading-6 font-medium text-toned">
-                                {{ $t('common.content') }} {{ $t('common.title') }}
-                            </h3>
-                            <div class="my-2">
+                        <UPageCard :title="$t('common.content')">
+                            <UFormField :label="$t('common.title')">
                                 <UTextarea
                                     class="w-full whitespace-pre-wrap"
                                     name="contentTitle"
@@ -226,38 +236,17 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                                     :rows="3"
                                     :value="template.contentTitle"
                                 />
-                            </div>
-                        </div>
+                            </UFormField>
 
-                        <div v-if="template.state">
-                            <h3 class="block text-base leading-6 font-medium text-toned">
-                                {{ $t('common.content') }} {{ $t('common.state') }}
-                            </h3>
-                            <div class="my-2">
-                                <UInput
-                                    class="focus:ring-base-300 block w-full rounded-md border-0 bg-neutral-900 py-1.5 whitespace-pre-wrap focus:ring-1 focus:ring-inset sm:text-sm sm:leading-6"
-                                    type="text"
-                                    name="state"
-                                    disabled
-                                    :value="template.state"
-                                />
-                            </div>
-                        </div>
+                            <UFormField v-if="template.state" :label="$t('common.state')">
+                                <UInput type="text" name="state" disabled :value="template.state" class="w-full" />
+                            </UFormField>
 
-                        <div v-if="template.category">
-                            <h3 class="block text-base leading-6 font-medium text-toned">
-                                {{ $t('common.category') }}
-                            </h3>
-                            <div class="my-2">
+                            <UFormField v-if="template.category" :label="$t('common.category')">
                                 <CategoryBadge :category="template.category" />
-                            </div>
-                        </div>
+                            </UFormField>
 
-                        <div>
-                            <h3 class="block text-base leading-6 font-medium text-toned">
-                                {{ $t('common.content') }}
-                            </h3>
-                            <div class="my-2">
+                            <UFormField :label="$t('common.content')">
                                 <UTextarea
                                     class="w-full whitespace-pre-wrap"
                                     name="content"
@@ -266,35 +255,9 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                                     :rows="4"
                                     :value="template.content"
                                 />
-                            </div>
-                        </div>
+                            </UFormField>
 
-                        <div v-if="reqs">
-                            <h3 class="block text-base leading-6 font-medium text-toned">
-                                {{ $t('common.schema') }}
-                            </h3>
-
-                            <div class="my-2">
-                                <ul class="mb-2 max-w-md list-inside space-y-1 text-sm font-medium text-toned">
-                                    <li v-if="reqs.users">
-                                        <TemplateRequirementsList name="User" :specs="reqs.users!" />
-                                    </li>
-                                    <li v-if="reqs.vehicles">
-                                        <TemplateRequirementsList name="Vehicle" :specs="reqs.vehicles!" />
-                                    </li>
-                                    <li v-if="reqs.documents">
-                                        <TemplateRequirementsList name="Document" :specs="reqs.documents!" />
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div v-if="template.contentAccess">
-                            <h3 class="block text-base leading-6 font-medium text-toned">
-                                {{ $t('common.access') }}
-                            </h3>
-
-                            <div class="my-2">
+                            <UFormField v-if="template.contentAccess" :label="$t('common.access')">
                                 <AccessManager
                                     v-model:jobs="template.contentAccess.jobs"
                                     :target-id="templateId ?? 0"
@@ -303,47 +266,67 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                                     disabled
                                     show-required
                                 />
-                            </div>
-                        </div>
+                            </UFormField>
+                        </UPageCard>
 
-                        <div v-if="!template.workflow">
-                            {{ $t('common.none', [$t('common.workflow')]) }}
-                        </div>
-                        <div v-else>
-                            <h3 class="block text-base leading-6 font-medium text-toned">
-                                {{ $t('common.auto_close') }}
-                            </h3>
+                        <UPageCard v-if="reqs" :title="$t('common.requirements')">
+                            <TemplateSchemaEditor :model-value="reqs" disabled />
+                        </UPageCard>
 
-                            <div class="my-2">
-                                <div class="flex gap-2">
-                                    <span
-                                        ><span class="font-semibold">{{ $t('common.enabled') }}:</span>
-                                        {{ $t(template.workflow?.autoClose ? 'common.yes' : 'common.no') }}</span
-                                    >
+                        <UPageCard :title="`${$t('common.workflow')}: ${$t('common.auto_close')}`">
+                            <span v-if="!template.workflow">
+                                {{ $t('common.none', [$t('common.workflow')]) }}
+                            </span>
+                            <template v-else>
+                                <UFormField :label="$t('common.enabled')">
+                                    <USwitch
+                                        :model-value="template.workflow?.autoClose"
+                                        disabled
+                                        :label="$t(template.workflow?.autoClose ? 'common.yes' : 'common.no')"
+                                    />
+                                </UFormField>
 
-                                    <span v-if="template.workflow?.autoCloseSettings?.duration">
-                                        <span class="font-semibold">{{ $t('common.time_ago.day', 2) }}:</span>
-                                        {{
-                                            (template.workflow.autoCloseSettings.duration.seconds / 24 / 60 / 60).toFixed(0)
-                                        }}</span
-                                    >
-                                </div>
+                                <UFormField :label="$t('common.duration')">
+                                    <div class="inline-flex items-center gap-2">
+                                        <UInputNumber
+                                            :model-value="
+                                                parseInt(
+                                                    (
+                                                        (template.workflow.autoCloseSettings?.duration?.seconds ?? 0) /
+                                                        24 /
+                                                        60 /
+                                                        60
+                                                    ).toFixed(0),
+                                                )
+                                            "
+                                            disabled
+                                        />
+                                        <span>{{ $t('common.time_ago.day', 2) }}</span>
+                                    </div>
+                                </UFormField>
 
-                                <span v-if="template.workflow?.autoCloseSettings?.message">
-                                    <span class="font-semibold">{{ $t('common.message') }}:</span>
-                                    "{{ template.workflow.autoCloseSettings.message }}"</span
-                                >
-                            </div>
+                                <UFormField :label="$t('common.message')" class="flex-1">
+                                    <UInput
+                                        :model-value="template.workflow?.autoCloseSettings?.message ?? $t('common.na')"
+                                        disabled
+                                        class="w-full"
+                                    />
+                                </UFormField>
+                            </template>
+                        </UPageCard>
 
-                            <h3 class="block text-base leading-6 font-medium text-toned">
-                                {{ $t('common.reminder', 2) }}
-                            </h3>
-
-                            <div class="my-2">
-                                <span
-                                    >{{ $t('common.enabled') }}:
-                                    {{ $t(template.workflow?.reminder ? 'common.yes' : 'common.no') }}</span
-                                >
+                        <UPageCard :title="`${$t('common.workflow')}: ${$t('common.reminder', 2)}`">
+                            <span v-if="!template.workflow">
+                                {{ $t('common.none', [$t('common.workflow')]) }}
+                            </span>
+                            <template v-else>
+                                <UFormField :label="$t('common.enabled')">
+                                    <USwitch
+                                        :model-value="template.workflow?.reminder"
+                                        disabled
+                                        :label="$t(template.workflow?.reminder ? 'common.yes' : 'common.no')"
+                                    />
+                                </UFormField>
 
                                 <ol class="list-inside list-decimal">
                                     <li
@@ -364,8 +347,8 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                                         </div>
                                     </li>
                                 </ol>
-                            </div>
-                        </div>
+                            </template>
+                        </UPageCard>
                     </div>
                 </template>
             </UContainer>

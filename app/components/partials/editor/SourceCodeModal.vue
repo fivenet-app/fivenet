@@ -13,11 +13,11 @@ const content = useVModel(props, 'content', emit);
 </script>
 
 <template>
-    <UModal :title="$t('common.source_code')" fullscreen :ui="{ body: 'flex flex-col flex-1' }">
+    <UModal :title="$t('common.source_code')" fullscreen :ui="{ body: 'flex flex-col flex-1 overflow-y-scroll' }">
         <template #body>
             <UTextarea
                 v-model="content"
-                class="mx-auto size-full max-w-(--breakpoint-xl) flex-1"
+                class="mx-auto w-full max-w-(--breakpoint-xl) flex-1"
                 :disabled="disabled"
                 autoresize
                 :row="0"

@@ -3,8 +3,8 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import { FileOutlineIcon } from 'mdi-vue3';
 import { z } from 'zod';
 import SingleHint from '~/components/SingleHint.vue';
-import TemplateSchemaEditor, { type SchemaEditorValue } from '~/components/documents/templates/TemplateSchemaEditor.vue';
-import { zWorkflow, type ObjectSpecsValue } from '~/components/documents/templates/types';
+import TemplateSchemaEditor from '~/components/documents/templates/TemplateSchemaEditor.vue';
+import { zWorkflow } from '~/components/documents/templates/types';
 import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
@@ -19,7 +19,7 @@ import { useCompletorStore } from '~/stores/completor';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Category } from '~~/gen/ts/resources/documents/category';
-import type { ObjectSpecs, Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
+import type { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/documents/documents';
 import { jobAccessEntry, userAccessEntry } from '~~/shared/types/validation';
@@ -108,21 +108,21 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     await createOrUpdateTemplate(event.data, props.templateId).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
-const schemaEditor = ref<SchemaEditorValue>({
+const schemaEditor = ref<TemplateRequirements>({
     users: {
-        req: false,
+        required: false,
         min: 0,
         max: 0,
     },
 
     documents: {
-        req: false,
+        required: false,
         min: 0,
         max: 0,
     },
 
     vehicles: {
-        req: false,
+        required: false,
         min: 0,
         max: 0,
     },
@@ -134,15 +134,6 @@ const contentAccessTypes: AccessType[] = [
     { label: t('common.job', 2), value: 'job' },
 ];
 
-function createObjectSpec(v: ObjectSpecsValue): ObjectSpecs {
-    const o: ObjectSpecs = {
-        required: v.req,
-        min: v.min,
-        max: v.max,
-    };
-    return o;
-}
-
 async function createOrUpdateTemplate(values: Schema, templateId?: number): Promise<void> {
     values.contentAccess.users.forEach((user) => user.id < 0 && (user.id = 0));
     values.contentAccess.jobs.forEach((job) => job.id < 0 && (job.id = 0));
@@ -150,9 +141,9 @@ async function createOrUpdateTemplate(values: Schema, templateId?: number): Prom
     values.jobAccess.forEach((job) => job.id < 0 && (job.id = 0));
 
     const tRequirements: TemplateRequirements = {
-        users: createObjectSpec(schemaEditor.value.users),
-        documents: createObjectSpec(schemaEditor.value.documents),
-        vehicles: createObjectSpec(schemaEditor.value.vehicles),
+        users: schemaEditor.value.users,
+        documents: schemaEditor.value.documents,
+        vehicles: schemaEditor.value.vehicles,
     };
 
     const req: CreateTemplateRequest | UpdateTemplateRequest = {
@@ -276,7 +267,10 @@ function setValuesFromTemplate(tpl: Template): void {
                             message: r.message ?? '',
                         };
                     }) ?? [],
-                maxReminderCount: tpl.workflow?.reminderSettings?.maxReminderCount ?? 10,
+                maxReminderCount:
+                    (tpl.workflow?.reminderSettings?.maxReminderCount ?? 10) <= 0
+                        ? 10
+                        : (tpl.workflow?.reminderSettings?.maxReminderCount ?? 10),
             },
         },
 
@@ -289,17 +283,11 @@ function setValuesFromTemplate(tpl: Template): void {
         },
     };
 
-    schemaEditor.value.users.req = tpl.schema?.requirements?.users?.required ?? false;
-    schemaEditor.value.users.min = tpl.schema?.requirements?.users?.min ?? 0;
-    schemaEditor.value.users.max = tpl.schema?.requirements?.users?.max ?? 0;
+    schemaEditor.value.users = tpl.schema?.requirements?.users;
 
-    schemaEditor.value.documents.req = tpl.schema?.requirements?.documents?.required ?? false;
-    schemaEditor.value.documents.min = tpl.schema?.requirements?.documents?.min ?? 0;
-    schemaEditor.value.documents.max = tpl.schema?.requirements?.documents?.max ?? 0;
+    schemaEditor.value.documents = tpl.schema?.requirements?.documents;
 
-    schemaEditor.value.vehicles.req = tpl.schema?.requirements?.vehicles?.required ?? false;
-    schemaEditor.value.vehicles.min = tpl.schema?.requirements?.vehicles?.min ?? 0;
-    schemaEditor.value.vehicles.max = tpl.schema?.requirements?.vehicles?.max ?? 0;
+    schemaEditor.value.vehicles = tpl.schema?.requirements?.vehicles;
 }
 
 const extensions = [TemplateVar.configure(), TemplateBlock.configure()];
@@ -376,7 +364,7 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+    <UDashboardPanel :ui="{ root: 'min-h-0', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.documents.templates.edit.title')">
                 <template #leading>
@@ -410,21 +398,24 @@ const formRef = useTemplateRef('formRef');
         <template #body>
             <UForm
                 ref="formRef"
-                class="mb-4 flex w-full max-w-full flex-1 flex-col overflow-y-auto"
+                class="mb-4 flex w-full max-w-full flex-1 flex-col overflow-y-hidden"
                 :schema="schema"
                 :state="state"
                 @submit="onSubmitThrottle"
             >
                 <UTabs
                     v-model="selectedTab"
-                    class="flex flex-1 flex-col"
+                    class="flex-1 flex-col overflow-y-hidden"
                     :items="items"
                     variant="link"
                     :unmount-on-hide="false"
-                    :ui="{ content: 'p-4 flex flex-col gap-4 max-w-(--ui-container) mx-auto' }"
+                    :ui="{
+                        content:
+                            'p-4 flex flex-1 min-h-0 max-h-full overflow-y-auto flex-col gap-4 max-w-(--ui-container) mx-auto',
+                    }"
                 >
                     <template #details>
-                        <UPageCard>
+                        <UPageCard :title="$t('common.detail', 2)">
                             <UFormField
                                 name="weight"
                                 :label="`${$t('common.template', 1)} ${$t('common.weight')}`"
@@ -512,25 +503,11 @@ const formRef = useTemplateRef('formRef');
                             />
                         </UPageCard>
 
-                        <UPageCard :title="`${$t('common.content')} ${$t('common.access')}`">
-                            <AccessManager
-                                v-model:jobs="state.contentAccess.jobs"
-                                v-model:users="state.contentAccess.users"
-                                :target-id="templateId ?? 0"
-                                :access-types="contentAccessTypes"
-                                :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
-                                show-required
-                                name="contentAccess"
-                            />
-                        </UPageCard>
-
                         <UPageCard :title="$t('common.requirements', 2)">
                             <TemplateSchemaEditor v-model="schemaEditor" />
                         </UPageCard>
 
-                        <UPageCard :title="$t('common.workflow')">
-                            <TemplateWorkflowEditor v-model="state.workflow" />
-                        </UPageCard>
+                        <TemplateWorkflowEditor v-model="state.workflow" />
                     </template>
 
                     <template #content>
@@ -585,6 +562,7 @@ const formRef = useTemplateRef('formRef');
                                 external
                                 link-target="_blank"
                             />
+
                             <UFormField
                                 class="flex flex-1 flex-col overflow-y-hidden"
                                 name="content"
@@ -604,6 +582,18 @@ const formRef = useTemplateRef('formRef');
                                     </TiptapEditor>
                                 </ClientOnly>
                             </UFormField>
+                        </UPageCard>
+
+                        <UPageCard :title="$t('common.access')">
+                            <AccessManager
+                                v-model:jobs="state.contentAccess.jobs"
+                                v-model:users="state.contentAccess.users"
+                                :target-id="templateId ?? 0"
+                                :access-types="contentAccessTypes"
+                                :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
+                                show-required
+                                name="contentAccess"
+                            />
                         </UPageCard>
                     </template>
                 </UTabs>
