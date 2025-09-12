@@ -41,7 +41,7 @@ func (s *licensesSync) Sync(ctx context.Context) error {
 		}
 	}
 
-	s.logger.Debug("licensesSync", zap.Any("licenses", licenses))
+	s.logger.Debug("licensesSync", zap.Int("len", len(licenses)))
 
 	if len(licenses) == 0 {
 		return nil

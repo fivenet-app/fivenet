@@ -38,8 +38,9 @@ func (s *usersSync) Sync(ctx context.Context) error {
 	limit := int64(500)
 	var offset int64
 	if s.state != nil && s.state.Offset > 0 {
-		offset = s.state.Offset
+		offset = s.state.Offset - 1
 	}
+	s.logger.Debug("usersSync", zap.Int64("offset", offset))
 
 	// Ensure to zero the last check time if the data hasn't fully synced yet
 	if !s.state.SyncedUp {
@@ -56,7 +57,7 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		}
 	}
 
-	s.logger.Debug("usersSync", zap.Any("users", us))
+	s.logger.Debug("usersSync", zap.Int("len", len(us)))
 
 	if len(us) == 0 {
 		s.logger.Debug("no users found to sync, resetting state offset")

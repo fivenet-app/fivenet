@@ -164,6 +164,8 @@ func (s *Sync) createGRPCClient() error {
 }
 
 func (s *Sync) start() error {
+	s.logger.Info("starting dbsync process")
+
 	if err := s.createGRPCClient(); err != nil {
 		return err
 	}

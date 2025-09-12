@@ -42,7 +42,7 @@ func (s *jobsSync) Sync(ctx context.Context) error {
 		}
 	}
 
-	s.logger.Debug("jobsSync", zap.Any("jobs", jobs))
+	s.logger.Debug("jobsSync", zap.Int("len", len(jobs)))
 
 	if len(jobs) == 0 {
 		return nil

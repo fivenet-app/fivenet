@@ -35,6 +35,7 @@ func (s *vehiclesSync) Sync(ctx context.Context) error {
 	if s.state != nil && s.state.Offset > 0 {
 		offset = s.state.Offset
 	}
+	s.logger.Debug("vehiclesSync", zap.Int64("offset", offset))
 
 	// Ensure to zero the last check time if the data hasn't fully synced yet
 	if !s.state.SyncedUp {
@@ -51,7 +52,7 @@ func (s *vehiclesSync) Sync(ctx context.Context) error {
 		}
 	}
 
-	s.logger.Debug("vehiclesSync", zap.Any("vehicles", vehicles))
+	s.logger.Debug("vehiclesSync", zap.Int("len", len(vehicles)))
 
 	if len(vehicles) == 0 {
 		s.state.Set(0, nil)
