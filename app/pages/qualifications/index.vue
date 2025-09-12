@@ -77,7 +77,7 @@ const qualifications = await useQualifications();
         <template #body>
             <UTabs v-model="selectedTab" :items="items" variant="link">
                 <template #yours>
-                    <UContainer>
+                    <UContainer class="p-4 sm:p-4">
                         <div class="flex flex-col gap-2">
                             <ResultList />
 
@@ -85,8 +85,9 @@ const qualifications = await useQualifications();
                         </div>
                     </UContainer>
                 </template>
+
                 <template #all>
-                    <UContainer>
+                    <UContainer class="p-4 sm:p-4">
                         <List />
                     </UContainer>
                 </template>

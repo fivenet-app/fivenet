@@ -690,21 +690,22 @@ const formRef = useTemplateRef('formRef');
                     </template>
 
                     <template #exam>
-                        <div class="overflow-y-auto">
-                            <div v-if="isRequestPending(status)" class="flex flex-col gap-2">
-                                <USkeleton v-for="idx in 6" :key="idx" class="size-24 w-full" />
-                            </div>
+                        <div v-if="isRequestPending(status)" class="flex flex-col gap-2">
+                            <USkeleton v-for="idx in 6" :key="idx" class="size-24 w-full" />
+                        </div>
 
-                            <ExamEditor
-                                v-else
-                                v-model:exam-mode="state.examMode"
-                                v-model:settings="state.examSettings"
-                                v-model:exam="state.exam"
-                                :disabled="!canDo.edit"
-                                class="mx-auto max-w-(--breakpoint-xl)"
-                                :qualification-id="props.qualificationId"
-                                @file-uploaded="(file) => state.files.push(file)"
-                            />
+                        <div v-else class="overflow-y-auto">
+                            <UContainer class="mb-4 flex flex-col gap-4">
+                                <ExamEditor
+                                    v-model:exam-mode="state.examMode"
+                                    v-model:settings="state.examSettings"
+                                    v-model:exam="state.exam"
+                                    :disabled="!canDo.edit"
+                                    class="mx-auto max-w-(--breakpoint-xl)"
+                                    :qualification-id="props.qualificationId"
+                                    @file-uploaded="(file) => state.files.push(file)"
+                                />
+                            </UContainer>
                         </div>
                     </template>
                 </UTabs>

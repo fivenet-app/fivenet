@@ -335,7 +335,6 @@ const props = defineProps<{
                                     class="justify-between gap-2 line-through"
                                     :class="isColorBright(hexToRgb(attribute.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
                                     :style="{ backgroundColor: attribute.color }"
-                                    size="xs"
                                 >
                                     {{ attribute.name }}
                                 </UBadge>
@@ -346,7 +345,6 @@ const props = defineProps<{
                                     class="justify-between gap-2"
                                     :class="isColorBright(hexToRgb(attribute.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
                                     :style="{ backgroundColor: attribute.color }"
-                                    size="xs"
                                 >
                                     {{ attribute.name }}
                                 </UBadge>
