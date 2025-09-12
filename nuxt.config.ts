@@ -86,8 +86,25 @@ export default defineNuxtConfig({
 
     postcss: {
         plugins: {
-            '@csstools/postcss-oklab-function': {
+            'postcss-preset-env': {
+                stage: 2,
+                features: {
+                    'oklab-function': {
+                        preserve: true,
+                        enableProgressiveCustomProperties: true,
+                        subFeatures: {
+                            displayP3: false,
+                        },
+                    },
+                    // Not in use by Nuxt UI (yet)
+                    'random-function': false,
+                    'sign-functions': false,
+                    'stepped-value-functions': false,
+                    'trigonometric-functions': false,
+                },
+                enableClientSidePolyfills: false,
                 preserve: true,
+                browsers: 'chrome >= 103',
             },
         },
     },

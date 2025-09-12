@@ -9,13 +9,13 @@ defineProps<{
 <template>
     <template v-if="attributes !== undefined && attributes?.list.length > 0">
         <div class="inline-flex gap-1">
-            <span
+            <UBadge
                 v-for="attribute in attributes?.list"
                 :key="attribute"
-                class="inline-flex items-center rounded-md bg-warning-400/10 px-2 py-1 text-xs font-medium text-warning-400 ring-1 ring-warning-400/20 ring-inset"
-            >
-                {{ $t(`enums.centrum.UnitAttribute.${UnitAttribute[attribute]}`) }}
-            </span>
+                color="warning"
+                variant="subtle"
+                :label="$t(`enums.centrum.UnitAttribute.${UnitAttribute[attribute]}`)"
+            />
         </div>
     </template>
     <span v-else>

@@ -1,15 +1,16 @@
 @import 'tailwindcss';
+@import "./palette-rgb.css";
 @import "@nuxt/ui-pro";
 @plugin '@tailwindcss/typography';
 
 :root {
   --ui-radius: 0.25rem;
 
-  --ui-white: black;
+  --ui-white: rgba(0, 0, 0, 1.0);
 }
 
 .dark {
-    --ui-white: white;
+    --ui-white: rgba(255, 255, 255, 1.0);
 }
 
 @theme {

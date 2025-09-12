@@ -82,14 +82,14 @@ const onSubmitThrottle = useThrottleFn(async (charId: number) => {
             </UCarousel>
         </div>
 
-        <UContainer v-if="charLockActive" class="mt-4" :ui="{ constrained: 'max-w-xl' }">
+        <UContainer v-if="charLockActive" class="mt-4" :ui="{ base: 'max-w-xl' }">
             <UAlert
-                :ui="{ wrapper: 'relative overflow-hidden' }"
                 icon="i-mdi-information-outline"
                 color="primary"
                 variant="subtle"
                 :title="$t('components.auth.CharacterSelectorCard.char_lock_alert.title')"
                 :description="$t('components.auth.CharacterSelectorCard.char_lock_alert.description')"
+                :ui="{ wrapper: 'relative overflow-hidden' }"
             />
         </UContainer>
     </div>
