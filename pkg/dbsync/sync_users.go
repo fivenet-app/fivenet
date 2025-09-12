@@ -38,7 +38,7 @@ func (s *usersSync) Sync(ctx context.Context) error {
 	limit := int64(500)
 	var offset int64
 	if s.state != nil && s.state.Offset > 0 {
-		offset = s.state.Offset - 1
+		offset = s.state.Offset
 	}
 	s.logger.Debug("usersSync", zap.Int64("offset", offset))
 
@@ -63,6 +63,14 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		s.logger.Debug("no users found to sync, resetting state offset")
 		s.state.Set(0, nil)
 		return nil
+	}
+
+	// If less users than limit are returned, we probably have reached the "end" of the table
+	// and need to reset the offset to 0. That means we are "synced up" and can start the normal
+	// sync loop of checking the "updatedAt" date.
+	if int64(len(us)) < limit {
+		offset = 0
+		s.state.SyncedUp = true
 	}
 
 	if s.cfg.Tables.CitizensLicenses.Enabled {
@@ -147,16 +155,10 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		}
 	}
 
-	// If less users than limit are returned, we probably have reached the "end" of the table
-	// and need to reset the offset to 0. That means we are "synced up" and can start the normal
-	// sync loop of checking the "updatedAt" date.
-	if int64(len(us)) < limit {
-		offset = 0
-		s.state.SyncedUp = true
-	}
+	s.logger.Debug("usersSync", zap.Bool("syncedUp", s.state.SyncedUp))
 
 	lastUserId := strconv.FormatInt(int64(us[len(us)-1].GetUserId()), 10)
-	s.state.Set(limit+offset, &lastUserId)
+	s.state.Set(offset+limit, &lastUserId)
 
 	return nil
 }

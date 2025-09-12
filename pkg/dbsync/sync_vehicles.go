@@ -30,7 +30,7 @@ func (s *vehiclesSync) Sync(ctx context.Context) error {
 		return nil
 	}
 
-	limit := int64(1000)
+	limit := int64(500)
 	var offset int64
 	if s.state != nil && s.state.Offset > 0 {
 		offset = s.state.Offset
