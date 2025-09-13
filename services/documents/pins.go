@@ -91,13 +91,20 @@ func (s *Server) ListDocumentPins(
 	condition := tDocumentShort.ID.IN(docIdsExpr...)
 
 	// Select the documents with the list of pin doc ids
-	stmt := s.listDocumentsQuery(condition, nil, nil, userInfo).
-		ORDER_BY(
-			tDocumentShort.CreatedAt.DESC(),
-			tDocumentShort.UpdatedAt.DESC(),
-		).
-		OFFSET(req.GetPagination().GetOffset()).
-		LIMIT(limit)
+	stmt := s.listDocumentsQuery(
+		condition,
+		nil,
+		nil,
+		userInfo,
+		func(stmt jet.SelectStatement) jet.SelectStatement {
+			return stmt.ORDER_BY(
+				tDocumentShort.CreatedAt.DESC(),
+				tDocumentShort.UpdatedAt.DESC(),
+			).
+				OFFSET(req.GetPagination().GetOffset()).
+				LIMIT(limit)
+		},
+	)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Documents); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

@@ -31,7 +31,8 @@ func (s *Server) ListUserDocuments(
 	userCondition := jet.Bool(true)
 	if !userInfo.GetSuperuser() {
 		userCondition = jet.EXISTS(
-			jet.SELECT(jet.Int(1)).
+			jet.
+SELECT(jet.Int(1)).
 				FROM(tDAccess).
 				WHERE(
 					jet.AND(

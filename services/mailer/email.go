@@ -149,7 +149,8 @@ func ListUserEmails(
 		access := int32(mailer.AccessLevel_ACCESS_LEVEL_READ)
 		// Access predicates via EXISTS (no joins)
 		userAccessExists := jet.EXISTS(
-			jet.SELECT(jet.Int(1)).
+			jet.
+SELECT(jet.Int(1)).
 				FROM(tEmailsAccess).
 				WHERE(
 					tEmailsAccess.TargetID.EQ(tEmails.ID).
@@ -159,7 +160,8 @@ func ListUserEmails(
 		)
 
 		jobAccessExists := jet.EXISTS(
-			jet.SELECT(jet.Int(1)).
+			jet.
+SELECT(jet.Int(1)).
 				FROM(tEmailsAccess).
 				WHERE(
 					tEmailsAccess.TargetID.EQ(tEmails.ID).
@@ -175,7 +177,8 @@ func ListUserEmails(
 		qr := tQualificationsResults.AS("qr")
 
 		qualAccessExists := jet.EXISTS(
-			jet.SELECT(jet.Int(1)).
+			jet.
+SELECT(jet.Int(1)).
 				FROM(tEmailsAccess.AS("ea")).
 				WHERE(
 					jet.AND(
@@ -183,7 +186,8 @@ func ListUserEmails(
 						ea.Access.GT_EQ(jet.Int32(access)),
 						ea.QualificationID.IS_NOT_NULL(),
 						jet.EXISTS(
-							jet.SELECT(jet.Int(1)).
+							jet.
+SELECT(jet.Int(1)).
 								FROM(tQualificationsResults.AS("qr")).
 								WHERE(
 									jet.AND(

@@ -19,60 +19,78 @@ func (s *Server) listDocumentsQuery(
 	onlyColumns jet.ProjectionList,
 	additionalColumns jet.ProjectionList,
 	userInfo *userinfo.UserInfo,
-) jet.SelectStatement {
+	customizeFn func(stmt jet.SelectStatement) jet.SelectStatement,
+) jet.Statement {
 	tCreator := tables.User().AS("creator")
 
 	wheres := []jet.BoolExpression{}
-	if !userInfo.GetSuperuser() {
-		accessExists := jet.EXISTS(
-			jet.SELECT(jet.Int(1)).
-				FROM(tDAccess).
-				WHERE(
-					jet.AND(
-						tDAccess.TargetID.EQ(tDocument.ID),
-						jet.OR(
-							// Direct user access
-							tDAccess.UserID.EQ(jet.Int32(userInfo.GetUserId())),
-							// or job + grade access
-							jet.AND(
-								tDAccess.Job.EQ(jet.String(userInfo.GetJob())),
-								tDAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
-							),
-						),
-						tDAccess.Access.GT_EQ(
-							jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)),
-						),
-					),
-				),
-		)
-
-		wheres = []jet.BoolExpression{
-			jet.AND(
-				tDocumentShort.DeletedAt.IS_NULL(),
-				jet.OR(
-					tDocumentShort.Public.IS_TRUE(),
-					jet.AND(
-						tDocumentShort.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
-						tDocumentShort.CreatorJob.EQ(jet.String(userInfo.GetJob())),
-					),
-					accessExists,
-				),
-			),
-		}
-	}
-
 	if where != nil {
 		wheres = append(wheres, where)
 	}
 
-	var q jet.SelectStatement
+	if !userInfo.GetSuperuser() {
+	}
+
+	pubSel := tDocumentShort.
+		SELECT(
+			tDocumentShort.ID.AS("id"),
+			tDocumentShort.CreatedAt.AS("created_at"),
+		).
+		FROM(tDocumentShort).
+		WHERE(jet.AND(
+			tDocumentShort.DeletedAt.IS_NULL(),
+			tDocumentShort.Public.EQ(jet.Bool(true)),
+		))
+
+	// branch 2: created by this user + job
+	creatorSel := tDocumentShort.
+		SELECT(
+			tDocumentShort.ID.AS("id"),
+			tDocumentShort.CreatedAt.AS("created_at"),
+		).
+		FROM(tDocumentShort).
+		WHERE(tDocumentShort.DeletedAt.IS_NULL().
+			AND(tDocumentShort.CreatorID.EQ(jet.Int32(userInfo.GetUserId()))).
+			AND(tDocumentShort.CreatorJob.EQ(jet.String(userInfo.GetJob()))))
+
+	existsAccess := jet.EXISTS(
+		jet.
+			SELECT(jet.Int(1)).
+			FROM(tDAccess).
+			WHERE(
+				jet.AND(
+					tDAccess.TargetID.EQ(tDocumentShort.ID),
+					jet.OR(
+						// Direct user access
+						tDAccess.UserID.EQ(jet.Int32(userInfo.GetUserId())),
+						// or job + grade access
+						jet.AND(
+							tDAccess.Job.EQ(jet.String(userInfo.GetJob())),
+							tDAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
+						),
+					),
+					tDAccess.Access.GT_EQ(
+						jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)),
+					),
+				),
+			),
+	)
+
+	accessSel := tDocumentShort.SELECT(
+		tDocumentShort.ID.AS("id"),
+		tDocumentShort.CreatedAt.AS("created_at"),
+	).
+		FROM(tDocumentShort).
+		WHERE(jet.AND(
+			tDocumentShort.DeletedAt.IS_NULL(),
+			existsAccess,
+		))
+
+	var columns jet.ProjectionList
 	if onlyColumns != nil {
-		q = tDocumentShort.
-			SELECT(
-				onlyColumns,
-			)
+		columns = onlyColumns
 	} else {
-		columns := jet.ProjectionList{
+		columns = jet.ProjectionList{
 			tDocumentShort.ID,
 			tDocumentShort.CreatedAt,
 			tDocumentShort.UpdatedAt,
@@ -86,7 +104,7 @@ func (s *Server) listDocumentsQuery(
 			tDCategory.Icon,
 			tDocumentShort.Title,
 			tDocumentShort.ContentType,
-			tDocumentShort.Summary.AS("document_short.content"),
+			// tDocumentShort.Summary.AS("document_short.content"), // Summary is unused at the moment
 			tDocumentShort.CreatorID,
 			tDocumentShort.TemplateID,
 			tCreator.ID,
@@ -101,9 +119,9 @@ func (s *Server) listDocumentsQuery(
 			tDocumentShort.Draft,
 			tDocumentShort.Public,
 			tDocumentShort.TemplateID,
-			tWorkflow.DocumentID,
-			tWorkflow.AutoCloseTime,
-			tWorkflow.NextReminderTime,
+			tDWorkflow.DocumentID,
+			tDWorkflow.AutoCloseTime,
+			tDWorkflow.NextReminderTime,
 		}
 
 		if userInfo.GetSuperuser() {
@@ -119,26 +137,45 @@ func (s *Server) listDocumentsQuery(
 		if additionalColumns != nil {
 			columns = append(columns, additionalColumns...)
 		}
-
-		q = tDocumentShort.SELECT(columns[0], columns[1:])
 	}
 
-	return q.
-		FROM(tDocumentShort.
-			LEFT_JOIN(tDCategory,
-				tDocumentShort.CategoryID.EQ(tDCategory.ID).
-					AND(tDCategory.DeletedAt.IS_NULL()),
-			).
-			LEFT_JOIN(tCreator,
-				tDocumentShort.CreatorID.EQ(tCreator.ID),
-			).
-			LEFT_JOIN(tWorkflow,
-				tWorkflow.DocumentID.EQ(tDocumentShort.ID),
-			),
+	// Union
+	docIDs := jet.CTE("doc_ids")
+
+	cteIDColumn := jet.IntegerColumn("id").From(docIDs)
+
+	innerStmt := jet.
+		SELECT(
+			columns[0],
+			columns[1:],
+		).
+		FROM(
+			docIDs.
+				INNER_JOIN(tDocumentShort, tDocumentShort.ID.EQ(cteIDColumn)).
+				LEFT_JOIN(tDCategory,
+					tDocumentShort.CategoryID.EQ(tDCategory.ID).
+						AND(tDCategory.DeletedAt.IS_NULL()),
+				).
+				LEFT_JOIN(tCreator,
+					tDocumentShort.CreatorID.EQ(tCreator.ID),
+				).
+				LEFT_JOIN(tDWorkflow,
+					tDWorkflow.DocumentID.EQ(tDocumentShort.ID),
+				),
 		).
 		WHERE(jet.AND(
 			wheres...,
 		))
+
+	if customizeFn != nil {
+		innerStmt = customizeFn(innerStmt)
+	}
+
+	return jet.WITH(
+		docIDs.AS(
+			pubSel.UNION(creatorSel).UNION(accessSel), // UNION (distinct) to dedupe
+		),
+	)(innerStmt)
 }
 
 func (s *Server) getDocumentQuery(
@@ -152,7 +189,8 @@ func (s *Server) getDocumentQuery(
 	var wheres []jet.BoolExpression
 	if !userInfo.GetSuperuser() {
 		accessExists := jet.EXISTS(
-			jet.SELECT(jet.Int(1)).
+			jet.
+				SELECT(jet.Int(1)).
 				FROM(tDAccess).
 				WHERE(
 					jet.AND(
@@ -189,14 +227,11 @@ func (s *Server) getDocumentQuery(
 		wheres = append(wheres, where)
 	}
 
-	var q jet.SelectStatement
+	var columns []jet.Projection
 	if onlyColumns != nil {
-		q = tDocument.
-			SELECT(
-				onlyColumns,
-			)
+		columns = onlyColumns
 	} else {
-		columns := jet.ProjectionList{
+		columns = jet.ProjectionList{
 			tDocument.ID,
 			tDocument.CreatedAt,
 			tDocument.UpdatedAt,
@@ -226,9 +261,9 @@ func (s *Server) getDocumentQuery(
 			tDPins.State,
 			tDPins.Job,
 			tDPins.UserID,
-			tWorkflow.DocumentID,
-			tWorkflow.AutoCloseTime,
-			tWorkflow.NextReminderTime,
+			tDWorkflow.DocumentID,
+			tDWorkflow.AutoCloseTime,
+			tDWorkflow.NextReminderTime,
 			tUserWorkflow.DocumentID,
 			tUserWorkflow.UserID,
 			tUserWorkflow.ManualReminderTime,
@@ -251,11 +286,13 @@ func (s *Server) getDocumentQuery(
 		if fields.Contains("PhoneNumber") {
 			columns = append(columns, tCreator.PhoneNumber)
 		}
-
-		q = tDocument.SELECT(columns[0], columns[1:])
 	}
 
-	return q.
+	return tDocument.
+		SELECT(
+			columns[0],
+			columns[1:]...,
+		).
 		FROM(tDocument.
 			LEFT_JOIN(tDCategory,
 				tDocument.CategoryID.EQ(tDCategory.ID).
@@ -267,8 +304,8 @@ func (s *Server) getDocumentQuery(
 			LEFT_JOIN(tDPins,
 				tDPins.DocumentID.EQ(tDocument.ID),
 			).
-			LEFT_JOIN(tWorkflow,
-				tWorkflow.DocumentID.EQ(tDocument.ID),
+			LEFT_JOIN(tDWorkflow,
+				tDWorkflow.DocumentID.EQ(tDocument.ID),
 			).
 			LEFT_JOIN(tUserWorkflow,
 				tUserWorkflow.DocumentID.EQ(tDocument.ID).

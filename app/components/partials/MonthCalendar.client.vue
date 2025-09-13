@@ -133,6 +133,7 @@ defineExpose({
         border-bottom: var(--weekday-border);
         border-top: var(--weekday-border);
         padding: 5px 0;
+        color: var(--ui-text-highlighted);
     }
     & .vc-weekday.vc-weekday-1,
     & .vc-weekday.vc-weekday-7 {

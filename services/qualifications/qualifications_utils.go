@@ -32,15 +32,23 @@ func (s *Server) listQualificationsQuery(
 
 	if !userInfo.GetSuperuser() {
 		accessExists := jet.EXISTS(
-			jet.SELECT(jet.Int(1)).
+			jet.
+				SELECT(jet.Int(1)).
 				FROM(tQAccess).
 				WHERE(jet.AND(
 					tQAccess.Access.IS_NOT_NULL(),
 					tQAccess.Access.GT_EQ(
 						jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED)),
 					),
+					jet.OR(
+						jet.AND(
+							tQAccess.Job.EQ(jet.String(userInfo.GetJob())),
+							tQAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
+						),
+					),
 				),
-				))
+				),
+		)
 
 		wheres = append(wheres,
 			jet.AND(
@@ -73,14 +81,11 @@ func (s *Server) listQualificationsQuery(
 		wheres = append(wheres, where)
 	}
 
-	var q jet.SelectStatement
+	columns := []jet.Projection{}
 	if onlyColumns != nil {
-		q = tQuali.
-			SELECT(
-				onlyColumns,
-			)
+		columns = onlyColumns
 	} else {
-		columns := jet.ProjectionList{
+		columns = []jet.Projection{
 			tQuali.ID,
 			tQuali.CreatedAt,
 			tQuali.UpdatedAt,
@@ -121,40 +126,21 @@ func (s *Server) listQualificationsQuery(
 		if fields.Contains("PhoneNumber") {
 			columns = append(columns, tCreator.PhoneNumber)
 		}
-
-		q = tQuali.SELECT(columns[0], columns[1:])
 	}
 
-	var tables jet.ReadableTable
-	if !userInfo.GetSuperuser() {
-		tables = tQuali.
-			LEFT_JOIN(tQAccess,
-				tQAccess.TargetID.EQ(tQuali.ID).
-					AND(tQAccess.Job.EQ(jet.String(userInfo.GetJob()))).
-					AND(tQAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade()))),
-			).
-			LEFT_JOIN(tCreator,
-				tQuali.CreatorID.EQ(tCreator.ID),
-			).
-			LEFT_JOIN(tQualiResults,
-				tQualiResults.QualificationID.EQ(tQuali.ID).
-					AND(tQualiResults.DeletedAt.IS_NULL()).
-					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.GetUserId()))),
-			)
-	} else {
-		tables = tQuali.
-			LEFT_JOIN(tCreator,
-				tQuali.CreatorID.EQ(tCreator.ID),
-			).
-			LEFT_JOIN(tQualiResults,
-				tQualiResults.QualificationID.EQ(tQuali.ID).
-					AND(tQualiResults.DeletedAt.IS_NULL()).
-					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.GetUserId()))),
-			)
-	}
-
-	return q.
-		FROM(tables).
+	return tQuali.
+		SELECT(columns[0], columns[1:]...).
+		FROM(
+			tQuali.
+				LEFT_JOIN(tCreator,
+					tQuali.CreatorID.EQ(tCreator.ID),
+				).
+				LEFT_JOIN(tQualiResults,
+					tQualiResults.QualificationID.EQ(tQuali.ID).
+						AND(tQualiResults.DeletedAt.IS_NULL()).
+						AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.GetUserId()))),
+				),
+		).
 		WHERE(jet.AND(
 			wheres...,
 		)).
@@ -214,14 +200,11 @@ func (s *Server) getQualificationQuery(
 		wheres = append(wheres, where)
 	}
 
-	var q jet.SelectStatement
+	var columns []jet.Projection
 	if onlyColumns != nil {
-		q = tQuali.
-			SELECT(
-				onlyColumns,
-			)
+		columns = append(columns, onlyColumns...)
 	} else {
-		columns := jet.ProjectionList{
+		columns = append(columns,
 			tQuali.ID,
 			tQuali.CreatedAt,
 			tQuali.UpdatedAt,
@@ -255,7 +238,7 @@ func (s *Server) getQualificationQuery(
 			tQualiResults.CreatorID,
 			tQualiRequests.ApprovedAt,
 			tQualiRequests.Status,
-		}
+		)
 
 		if selectContent {
 			columns = append(columns, tQuali.Content)
@@ -271,52 +254,30 @@ func (s *Server) getQualificationQuery(
 		if fields.Contains("PhoneNumber") {
 			columns = append(columns, tCreator.PhoneNumber)
 		}
-
-		q = tQuali.SELECT(columns[0], columns[1:])
 	}
 
-	var tables jet.ReadableTable
-	if !userInfo.GetSuperuser() {
-		tables = tQuali.
-			LEFT_JOIN(tQAccess,
-				tQAccess.TargetID.EQ(tQuali.ID).
-					AND(tQAccess.Job.EQ(jet.String(userInfo.GetJob()))).
-					AND(tQAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade()))),
-			).
-			LEFT_JOIN(tCreator,
-				tQuali.CreatorID.EQ(tCreator.ID),
-			).
-			LEFT_JOIN(tQualiResults,
-				tQualiResults.QualificationID.EQ(tQuali.ID).
-					AND(tQualiResults.DeletedAt.IS_NULL()).
-					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.GetUserId()))),
-			).
-			LEFT_JOIN(tQualiRequests,
-				tQualiRequests.QualificationID.EQ(tQuali.ID).
-					AND(tQualiRequests.DeletedAt.IS_NULL()).
-					AND(tQualiRequests.UserID.EQ(jet.Int32(userInfo.GetUserId()))).
-					AND(tQualiRequests.Status.NOT_EQ(jet.Int32(int32(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED)))),
-			)
-	} else {
-		tables = tQuali.
-			LEFT_JOIN(tCreator,
-				tQuali.CreatorID.EQ(tCreator.ID),
-			).
-			LEFT_JOIN(tQualiResults,
-				tQualiResults.QualificationID.EQ(tQuali.ID).
-					AND(tQualiResults.DeletedAt.IS_NULL()).
-					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.GetUserId()))),
-			).
-			LEFT_JOIN(tQualiRequests,
-				tQualiRequests.QualificationID.EQ(tQuali.ID).
-					AND(tQualiRequests.DeletedAt.IS_NULL()).
-					AND(tQualiRequests.UserID.EQ(jet.Int32(userInfo.GetUserId()))).
-					AND(tQualiRequests.Status.NOT_EQ(jet.Int32(int32(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED)))),
-			)
-	}
-
-	return q.
-		FROM(tables).
+	return tQuali.
+		SELECT(
+			columns[0],
+			columns[1:]...,
+		).
+		FROM(
+			tQuali.
+				LEFT_JOIN(tCreator,
+					tQuali.CreatorID.EQ(tCreator.ID),
+				).
+				LEFT_JOIN(tQualiResults,
+					tQualiResults.QualificationID.EQ(tQuali.ID).
+						AND(tQualiResults.DeletedAt.IS_NULL()).
+						AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.GetUserId()))),
+				).
+				LEFT_JOIN(tQualiRequests,
+					tQualiRequests.QualificationID.EQ(tQuali.ID).
+						AND(tQualiRequests.DeletedAt.IS_NULL()).
+						AND(tQualiRequests.UserID.EQ(jet.Int32(userInfo.GetUserId()))).
+						AND(tQualiRequests.Status.NOT_EQ(jet.Int32(int32(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED)))),
+				),
+		).
 		WHERE(jet.AND(
 			wheres...,
 		)).

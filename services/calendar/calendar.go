@@ -48,7 +48,8 @@ func (s *Server) ListCalendars(
 	var accessExists jet.BoolExpression
 	if !userInfo.GetSuperuser() {
 		accessExists = jet.EXISTS(
-			jet.SELECT(jet.Int(1)).
+			jet.
+SELECT(jet.Int(1)).
 				FROM(tCAccess).
 				WHERE(jet.AND(
 					tCAccess.TargetID.EQ(tCalendar.ID),
@@ -171,8 +172,6 @@ func (s *Server) ListCalendars(
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
 	}
-
-	// TODO should we retrieve access for the calendars?
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := range resp.GetCalendars() {

@@ -61,6 +61,7 @@ func (s *Server) ListDocuments(
 			tDocumentShort.CategoryID.IN(ids...),
 		)
 	}
+
 	if len(req.GetCreatorIds()) > 0 {
 		logRequest = true
 		ids := make([]jet.Expression, len(req.GetCreatorIds()))
@@ -72,21 +73,25 @@ func (s *Server) ListDocuments(
 			tDocumentShort.CreatorID.IN(ids...),
 		)
 	}
+
 	if req.GetFrom() != nil {
 		condition = condition.AND(tDocumentShort.CreatedAt.GT_EQ(
 			jet.TimestampT(req.GetFrom().AsTime()),
 		))
 	}
+
 	if req.GetTo() != nil {
 		condition = condition.AND(tDocumentShort.CreatedAt.LT_EQ(
 			jet.TimestampT(req.GetTo().AsTime()),
 		))
 	}
+
 	if req.Closed != nil {
 		condition = condition.AND(tDocumentShort.Closed.EQ(
 			jet.Bool(req.GetClosed()),
 		))
 	}
+
 	if len(req.GetDocumentIds()) > 0 {
 		ids := make([]jet.Expression, len(req.GetDocumentIds()))
 		for i := range req.GetDocumentIds() {
@@ -97,6 +102,7 @@ func (s *Server) ListDocuments(
 			tDocumentShort.ID.IN(ids...),
 		)
 	}
+
 	if req.OnlyDrafts != nil {
 		condition = condition.AND(tDocumentShort.Draft.EQ(jet.Bool(req.GetOnlyDrafts())))
 	}
@@ -146,10 +152,18 @@ func (s *Server) ListDocuments(
 		Pagination: pag,
 	}
 
-	stmt := s.listDocumentsQuery(condition, nil, nil, userInfo).
-		ORDER_BY(orderBys...).
-		OFFSET(req.GetPagination().GetOffset()).
-		LIMIT(limit)
+	stmt := s.listDocumentsQuery(
+		condition,
+		nil,
+		nil,
+		userInfo,
+		func(stmt jet.SelectStatement) jet.SelectStatement {
+			return stmt.
+				ORDER_BY(orderBys...).
+				OFFSET(req.GetPagination().GetOffset()).
+				LIMIT(limit)
+		},
+	)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Documents); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

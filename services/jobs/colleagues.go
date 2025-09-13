@@ -129,7 +129,8 @@ func (s *Server) ListColleagues(
 		}
 
 		labelsExists := jet.EXISTS(
-			jet.SELECT(jet.Int(1)).
+			jet.
+SELECT(jet.Int(1)).
 				FROM(tColleagueLabels).
 				WHERE(
 					tColleagueLabels.UserID.EQ(tColleague.ID).

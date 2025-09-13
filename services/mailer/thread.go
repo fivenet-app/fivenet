@@ -79,7 +79,8 @@ func (s *Server) ListThreads(
 
 	// EXISTS filter: thread has at least one of the user’s email IDs as recipient
 	recipExists := jet.EXISTS(
-		jet.SELECT(jet.Int(1)).
+		jet.
+SELECT(jet.Int(1)).
 			FROM(tThreadsRecipients).
 			WHERE(
 				tThreadsRecipients.ThreadID.EQ(tThreads.ID).

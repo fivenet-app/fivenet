@@ -18,7 +18,8 @@ func (s *Server) listCalendarEntriesQuery(
 	rsvp2 := tCalendarRSVP.AS("r2")
 
 	accessExists := jet.EXISTS(
-		jet.SELECT(jet.Int(1)).
+		jet.
+SELECT(jet.Int(1)).
 			FROM(tCAccess).
 			WHERE(jet.AND(
 				tCAccess.TargetID.EQ(tCalendarEntry.CalendarID),
@@ -27,7 +28,8 @@ func (s *Server) listCalendarEntriesQuery(
 	)
 
 	rsvpExists := jet.EXISTS(
-		jet.SELECT(jet.Int(1)).
+		jet.
+SELECT(jet.Int(1)).
 			FROM(tCalendarRSVP.AS("r2")).
 			WHERE(
 				rsvp2.UserID.EQ(jet.Int32(userInfo.GetUserId())).

@@ -27,7 +27,7 @@ import (
 	"go.uber.org/zap"
 )
 
-var tWorkflow = table.FivenetDocumentsWorkflowState.AS("workflow_state")
+var tDWorkflow = table.FivenetDocumentsWorkflowState.AS("workflow_state")
 
 type Workflow struct {
 	logger *zap.Logger
@@ -151,22 +151,22 @@ func (w *Workflow) handleDocuments(ctx context.Context, data *documents.Workflow
 
 	var dest []*documents.WorkflowState
 	for {
-		stmt := tWorkflow.
+		stmt := tDWorkflow.
 			SELECT(
-				tWorkflow.DocumentID,
-				tWorkflow.NextReminderTime,
-				tWorkflow.NextReminderCount,
-				tWorkflow.AutoCloseTime,
-				tWorkflow.ReminderCount,
+				tDWorkflow.DocumentID,
+				tDWorkflow.NextReminderTime,
+				tDWorkflow.NextReminderCount,
+				tDWorkflow.AutoCloseTime,
+				tDWorkflow.ReminderCount,
 				tDTemplates.Workflow.AS("workflow_state.workflow"),
 				tDocumentShort.Title,
 				tDocumentShort.CreatorID,
 				tDocumentShort.CreatorJob,
 			).
 			FROM(
-				tWorkflow.
+				tDWorkflow.
 					INNER_JOIN(tDocumentShort,
-						tDocumentShort.ID.EQ(tWorkflow.DocumentID).
+						tDocumentShort.ID.EQ(tDWorkflow.DocumentID).
 							AND(tDocumentShort.DeletedAt.IS_NULL()),
 					).
 					LEFT_JOIN(tDTemplates,
@@ -175,12 +175,12 @@ func (w *Workflow) handleDocuments(ctx context.Context, data *documents.Workflow
 					),
 			).
 			WHERE(jet.AND(
-				tWorkflow.DocumentID.GT(jet.Int64(data.GetLastDocId())),
+				tDWorkflow.DocumentID.GT(jet.Int64(data.GetLastDocId())),
 				jet.AND( // Only auto close and auto remind docs that aren't closed and have an owner
 					tDocumentShort.Closed.IS_FALSE(),
 					jet.OR(
-						tWorkflow.NextReminderTime.LT_EQ(nowTs),
-						tWorkflow.AutoCloseTime.LT_EQ(nowTs),
+						tDWorkflow.NextReminderTime.LT_EQ(nowTs),
+						tDWorkflow.AutoCloseTime.LT_EQ(nowTs),
 					),
 				),
 			)).

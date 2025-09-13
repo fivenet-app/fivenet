@@ -64,7 +64,8 @@ func (s *Server) checkIfUserHasAccessToCalendarIDs(
 	var accessExists jet.BoolExpression
 	if !userInfo.GetSuperuser() {
 		accessExists = jet.EXISTS(
-			jet.SELECT(jet.Int(1)).
+			jet.
+SELECT(jet.Int(1)).
 				FROM(tCAccess).
 				WHERE(
 					jet.AND(

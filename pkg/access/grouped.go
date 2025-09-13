@@ -243,7 +243,8 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) getAccessQuer
 	// Direct user access via EXISTS (if Users access table is configured)
 	if g.Users != nil {
 		userAccessExists := jet.EXISTS(
-			jet.SELECT(jet.Int(1)).
+			jet.
+				SELECT(jet.Int(1)).
 				FROM(g.Users.table).
 				WHERE(
 					g.Users.columns.TargetID.EQ(g.targetTableColumns.ID).
@@ -257,7 +258,8 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) getAccessQuer
 	// Job + grade access via EXISTS (if Jobs access table is configured)
 	if g.Jobs != nil {
 		jobAccessExists := jet.EXISTS(
-			jet.SELECT(jet.Int(1)).
+			jet.
+				SELECT(jet.Int(1)).
 				FROM(g.Jobs.table).
 				WHERE(
 					g.Jobs.columns.TargetID.EQ(g.targetTableColumns.ID).
@@ -278,7 +280,8 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) getAccessQuer
 	// Qualification-based access via EXISTS (if Qualifications are configured)
 	if g.Qualifications != nil {
 		qualExists := jet.EXISTS(
-			jet.SELECT(jet.Int(1)).
+			jet.
+				SELECT(jet.Int(1)).
 				FROM(g.Qualifications.table.
 					INNER_JOIN(tQualiResults,
 						tQualiResults.QualificationID.EQ(g.Qualifications.columns.QualificationId),

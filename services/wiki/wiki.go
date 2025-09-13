@@ -3,7 +3,6 @@ package wiki
 import (
 	"context"
 	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
@@ -61,7 +60,8 @@ func (s *Server) ListPages(
 
 	if !userInfo.GetSuperuser() {
 		accessExists := jet.EXISTS(
-			jet.SELECT(jet.Int(1)).
+			jet.
+SELECT(jet.Int(1)).
 				FROM(tPAccess).
 				WHERE(jet.AND(
 					tPAccess.Access.IS_NOT_NULL(),
@@ -127,6 +127,7 @@ func (s *Server) ListPages(
 		tPageShort.Title,
 		tPageShort.Description,
 		tPageShort.Draft,
+		tPageShort.Public,
 	}
 	if req.RootOnly != nil && req.GetRootOnly() {
 		columns = append(columns,
@@ -158,8 +159,6 @@ func (s *Server) ListPages(
 		// .NULLS_FIRST()
 		ORDER_BY(tPageShort.ParentID.ASC(), tPageShort.Draft.ASC(), tPageShort.SortKey.ASC()).
 		LIMIT(limit)
-
-	fmt.Println(stmt.DebugSql())
 
 	pages := []*wiki.PageShort{}
 	if err := stmt.QueryContext(ctx, s.db, &pages); err != nil {
