@@ -492,33 +492,10 @@ const formRef = useTemplateRef('formRef');
                                     v-model="state.defaultLocale"
                                     :placeholder="$t('common.language', 1)"
                                     :items="locales"
+                                    label-key="name"
+                                    :icon="state.defaultLocale?.icon"
                                     class="w-full"
-                                >
-                                    <template v-if="state.defaultLocale" #default>
-                                        <template v-if="state.defaultLocale">
-                                            <UIcon
-                                                class="size-4"
-                                                :name="
-                                                    locales.find((l) => l.code === state.defaultLocale.code)?.icon ??
-                                                    'i-mdi-question-mark'
-                                                "
-                                            />
-
-                                            <span class="truncate">{{
-                                                state.defaultLocale.name ?? state.defaultLocale.code
-                                            }}</span>
-                                        </template>
-                                        <span v-else class="truncate">{{
-                                            $t('common.none_selected', [$t('common.language')])
-                                        }}</span>
-                                    </template>
-
-                                    <template #item="{ item }">
-                                        <UIcon class="size-4" :name="item.icon" />
-
-                                        <span class="truncate">{{ item.name }}</span>
-                                    </template>
-                                </USelectMenu>
+                                />
                             </UFormField>
 
                             <UFormField
@@ -625,9 +602,8 @@ const formRef = useTemplateRef('formRef');
                                                 $t('common.none_selected', [$t('common.job')])
                                             }}</span>
                                         </template>
-                                        <template #item="{ item }">
-                                            <span class="truncate">{{ item.label }} ({{ item.name }})</span>
-                                        </template>
+
+                                        <template #item-label="{ item }"> {{ item.label }} ({{ item.name }}) </template>
                                     </USelectMenu>
                                 </ClientOnly>
                             </UFormField>
@@ -652,11 +628,13 @@ const formRef = useTemplateRef('formRef');
                                             <span v-if="state.jobInfo.hiddenJobs.length" class="truncate">{{
                                                 state.jobInfo.hiddenJobs.join(', ')
                                             }}</span>
+
                                             <span v-else class="truncate">{{
                                                 $t('common.none_selected', [$t('common.job')])
                                             }}</span>
                                         </template>
-                                        <template #item="{ item }"> {{ item.label }} ({{ item.name }}) </template>
+
+                                        <template #item-label="{ item }"> {{ item.label }} ({{ item.name }}) </template>
                                     </USelectMenu>
                                 </ClientOnly>
                             </UFormField>
@@ -797,7 +775,7 @@ const formRef = useTemplateRef('formRef');
                                             }}</span>
                                         </template>
 
-                                        <template #item="{ item }"> {{ item.label }} ({{ item.name }}) </template>
+                                        <template #item-label="{ item }"> {{ item.label }} ({{ item.name }}) </template>
                                     </USelectMenu>
                                 </ClientOnly>
                             </UFormField>
@@ -829,7 +807,7 @@ const formRef = useTemplateRef('formRef');
                                         }}
                                     </template>
 
-                                    <template #item="{ item }">
+                                    <template #item-label="{ item }">
                                         {{
                                             $t(
                                                 `enums.settings.AppConfig.DiscordBotPresenceType.${DiscordBotPresenceType[item.mode ?? 0]}`,

@@ -498,22 +498,12 @@ const viewOptions = [
                     :ui="{ container: '', label: 'hidden md:inline-flex' }"
                 >
                     <ClientOnly>
-                        <USelectMenu v-model="view" :items="viewOptions" value-key="value">
-                            <template #default>
-                                <UIcon
-                                    class="size-5"
-                                    :name="viewOptions.find((o) => o.value === view)?.icon ?? 'i-mdi-view-'"
-                                />
-
-                                {{ viewOptions.find((o) => o.value === view)?.label ?? $t('common.na') }}
-                            </template>
-
-                            <template #item="{ item }">
-                                <UIcon class="size-5" :name="item.icon" />
-
-                                <span class="truncate">{{ item.label }}</span>
-                            </template>
-                        </USelectMenu>
+                        <USelectMenu
+                            v-model="view"
+                            :items="viewOptions"
+                            :icon="viewOptions.find((o) => o.value === view)?.icon"
+                            value-key="value"
+                        />
                     </ClientOnly>
                 </UFormField>
 
@@ -623,21 +613,13 @@ const viewOptions = [
                     :ui="{ container: 'flex-1' }"
                 >
                     <ClientOnly>
-                        <USelectMenu v-model="view" class="w-full min-w-44" :items="viewOptions" value-key="value">
-                            <template #default>
-                                <UIcon
-                                    class="size-5"
-                                    :name="viewOptions.find((o) => o.value === view)?.icon ?? 'i-mdi-view-'"
-                                />
-
-                                {{ viewOptions.find((o) => o.value === view)?.label ?? $t('common.na') }}
-                            </template>
-
-                            <template #item="{ item }">
-                                <UIcon class="size-5" :name="item.icon" />
-                                <span class="truncate">{{ item.label }}</span>
-                            </template>
-                        </USelectMenu>
+                        <USelectMenu
+                            v-model="view"
+                            :items="viewOptions"
+                            :icon="viewOptions.find((o) => o.value === view)?.icon"
+                            value-key="value"
+                            class="w-full min-w-44"
+                        />
                     </ClientOnly>
                 </UFormField>
 

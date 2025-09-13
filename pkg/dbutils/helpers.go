@@ -16,6 +16,30 @@ func (c Columns) Get() jet.ProjectionList {
 	return out
 }
 
+func YEAR(column jet.Column) jet.Expression {
+	return jet.CustomExpression(
+		jet.Token("YEAR("),
+		column,
+		jet.Token(")"),
+	)
+}
+
+func WEEK(column jet.Column) jet.Expression {
+	return jet.CustomExpression(
+		jet.Token("WEEK("),
+		column,
+		jet.Token(")"),
+	)
+}
+
+func ANY_VALUE(column jet.Column) jet.Expression {
+	return jet.CustomExpression(
+		jet.Token("ANY_VALUE("),
+		column,
+		jet.Token(")"),
+	)
+}
+
 // JSON_CONTAINS is a helper function to create a JSON_CONTAINS expression in go-jet.
 //
 //nolint:revive // Function name is all uppercase to be consistent with go-jet package.

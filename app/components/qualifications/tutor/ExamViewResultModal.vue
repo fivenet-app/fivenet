@@ -80,78 +80,79 @@ const totalPoints = ref(0);
 const pointCount = computed(() => data.value?.grading?.responses.map((a) => a.points).reduce((sum, a) => sum + a, 0));
 
 const totalQuestions = ref(0);
-const correctCount = ref(0);
+const correctCount = computed(() => data.value?.grading?.responses.filter((a) => a.checked).length ?? 0);
 </script>
 
 <template>
-    <UModal>
-        <ResultTutorForm
-            :qualification-id="qualificationId"
-            :user-id="userId"
-            :result-id="resultId"
-            :score="pointCount"
-            :view-only="viewOnly"
-            :grading="data?.grading"
-            @refresh="$emit('refresh')"
-            @close="$emit('close', false)"
-        >
-            <template v-if="examMode >= QualificationExamMode.REQUEST_NEEDED" #default>
-                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.exam')])" />
-                <DataErrorBlock
-                    v-else-if="error"
-                    :title="$t('common.unable_to_load', [$t('common.exam')])"
-                    :error="error"
-                    :retry="refresh"
-                />
-                <DataNoDataBlock v-else-if="!data" :type="$t('common.exam')" icon="i-mdi-sigma" />
+    <ResultTutorForm
+        :qualification-id="qualificationId"
+        :user-id="userId"
+        :result-id="resultId"
+        :score="pointCount"
+        :view-only="viewOnly"
+        :grading="data?.grading"
+        @refresh="$emit('refresh')"
+        @close="$emit('close', false)"
+    >
+        <template v-if="examMode >= QualificationExamMode.REQUEST_NEEDED" #default>
+            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.exam')])" />
+            <DataErrorBlock
+                v-else-if="error"
+                :title="$t('common.unable_to_load', [$t('common.exam')])"
+                :error="error"
+                :retry="refresh"
+            />
+            <DataNoDataBlock v-else-if="!data" :type="$t('common.exam')" icon="i-mdi-sigma" />
 
-                <ExamViewResult v-else-if="data.responses" :qualification-id="qualificationId" :responses="data.responses">
-                    <template #question-after="{ question }">
-                        <div
-                            v-if="
-                                question.question.question?.data?.data.oneofKind !== 'separator' &&
-                                getGradingIndex(question.question.questionId) > -1
-                            "
-                            class="flex flex-row gap-2"
-                        >
-                            <div class="flex flex-col gap-2 md:flex-row">
-                                <UFormField :label="$t('common.corrected')">
-                                    <div class="flex flex-col md:items-center">
-                                        <UCheckbox
-                                            v-model="
-                                                data.grading!.responses[getGradingIndex(question.question.questionId)]!.checked
-                                            "
-                                        />
-                                    </div>
-                                </UFormField>
-
-                                <UFormField :label="$t('common.points', 2)">
-                                    <UInputNumber
-                                        v-model="data.grading!.responses[getGradingIndex(question.question.questionId)]!.points"
-                                        class="max-w-24"
-                                        :step="0.5"
-                                        :min="0"
-                                        :max="question.question.question?.points"
+            <ExamViewResult v-else-if="data.responses" :qualification-id="qualificationId" :responses="data.responses">
+                <template #question-after="{ question, disabled }">
+                    <div
+                        v-if="
+                            question.question.question?.data?.data.oneofKind !== 'separator' &&
+                            getGradingIndex(question.question.questionId) > -1
+                        "
+                        class="flex flex-row gap-2"
+                    >
+                        <div class="flex flex-col gap-2 md:flex-row">
+                            <UFormField :label="$t('common.corrected')">
+                                <div class="flex flex-col md:items-center">
+                                    <UCheckbox
+                                        v-model="
+                                            data.grading!.responses[getGradingIndex(question.question.questionId)]!.checked
+                                        "
+                                        :disabled="disabled"
                                     />
-                                </UFormField>
-                            </div>
-                        </div>
-                    </template>
+                                </div>
+                            </UFormField>
 
-                    <template #question-below="{ question }">
-                        <div
-                            v-if="data.exam?.questions.find((q) => q.id === question.question.questionId)?.answer?.answerKey"
-                            class="flex flex-col gap-2"
-                        >
-                            <p class="text-sm font-semibold">{{ $t('common.answer_key') }}:</p>
-                            <p class="text-sm">
-                                {{ data.exam?.questions.find((q) => q.id === question.question.questionId)?.answer?.answerKey }}
-                            </p>
+                            <UFormField :label="$t('common.points', 2)">
+                                <UInputNumber
+                                    v-model="data.grading!.responses[getGradingIndex(question.question.questionId)]!.points"
+                                    class="max-w-24"
+                                    :step="0.5"
+                                    :min="0"
+                                    :max="question.question.question?.points"
+                                />
+                            </UFormField>
                         </div>
-                    </template>
-                </ExamViewResult>
+                    </div>
+                </template>
 
-                <div class="flex flex-1 justify-end gap-2 p-2">
+                <template #question-below="{ question }">
+                    <div
+                        v-if="data.exam?.questions.find((q) => q.id === question.question.questionId)?.answer?.answerKey"
+                        class="flex flex-col gap-2"
+                    >
+                        <p class="text-sm font-semibold">{{ $t('common.answer_key') }}:</p>
+                        <p class="text-sm">
+                            {{ data.exam?.questions.find((q) => q.id === question.question.questionId)?.answer?.answerKey }}
+                        </p>
+                    </div>
+                </template>
+            </ExamViewResult>
+
+            <div class="sticky bottom-0 flex flex-1 justify-end p-0.5">
+                <UCard :ui="{ body: 'p-2 sm:p-2' }">
                     <p class="text-sm">
                         <span class="font-semibold">{{ $t('common.corrected') }}</span
                         >: {{ correctCount }} / {{ totalQuestions }} {{ $t('common.question', 2) }}
@@ -160,10 +161,10 @@ const correctCount = ref(0);
                         <span class="font-semibold">{{ $t('common.points', 2) }}</span
                         >: {{ pointCount }} / {{ totalPoints }} {{ $t('common.points', 2) }}
                     </p>
-                </div>
+                </UCard>
+            </div>
 
-                <USeparator v-if="!viewOnly" class="mt-2 mb-4" />
-            </template>
-        </ResultTutorForm>
-    </UModal>
+            <USeparator v-if="!viewOnly" class="mt-2 mb-4" />
+        </template>
+    </ResultTutorForm>
 </template>

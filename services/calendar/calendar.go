@@ -41,23 +41,37 @@ func (s *Server) ListCalendars(
 	minAccessLevel := calendar.AccessLevel_ACCESS_LEVEL_VIEW
 	if req.MinAccessLevel != nil {
 		minAccessLevel = req.GetMinAccessLevel()
+
 		subsCondition = jet.Bool(false)
+	}
+
+	var accessExists jet.BoolExpression
+	if !userInfo.GetSuperuser() {
+		accessExists = jet.EXISTS(
+			jet.SELECT(jet.Int(1)).
+				FROM(tCAccess).
+				WHERE(jet.AND(
+					tCAccess.TargetID.EQ(tCalendar.ID),
+					tCAccess.Access.GT_EQ(jet.Int32(int32(minAccessLevel))),
+					jet.OR(
+						tCAccess.UserID.EQ(jet.Int32(userInfo.GetUserId())),
+						jet.AND(
+							tCAccess.Job.EQ(jet.String(userInfo.GetJob())),
+							tCAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
+						),
+					),
+				)),
+		)
+	} else {
+		accessExists = jet.Bool(true)
 	}
 
 	condition := jet.AND(
 		tCalendar.DeletedAt.IS_NULL(),
 		jet.OR(
-			jet.OR(
-				subsCondition,
-				tCalendar.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
-			),
-			jet.OR(
-				tCAccess.UserID.EQ(jet.Int32(userInfo.GetUserId())),
-				jet.AND(
-					tCAccess.Job.EQ(jet.String(userInfo.GetJob())),
-					tCAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
-				),
-			),
+			subsCondition,
+			tCalendar.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
+			accessExists,
 		),
 	)
 
@@ -79,15 +93,10 @@ func (s *Server) ListCalendars(
 			jet.COUNT(jet.DISTINCT(tCalendar.ID)).AS("data_count.total"),
 		).
 		FROM(tCalendar.
-			LEFT_JOIN(tCAccess,
-				tCAccess.TargetID.EQ(tCalendar.ID).
-					AND(tCAccess.Access.GT_EQ(jet.Int32(int32(minAccessLevel)))),
-			).
 			LEFT_JOIN(tCreator,
 				tCalendar.CreatorID.EQ(tCreator.ID),
 			),
 		).
-		GROUP_BY(tCalendar.ID).
 		WHERE(condition)
 
 	var count database.DataCount
@@ -133,26 +142,13 @@ func (s *Server) ListCalendars(
 			tCalendarSubs.CreatedAt,
 			tCalendarSubs.Confirmed,
 			tCalendarSubs.Muted,
-			tCAccess.ID.AS("user_access.id"),
-			tCAccess.TargetID.AS("user_access.target_id"),
-			tCAccess.UserID.AS("user_access.user_id"),
-			tCAccess.Access.AS("user_access.access"),
-			tCAccess.ID.AS("job_access.id"),
-			tCAccess.TargetID.AS("job_access.target_id"),
-			tCAccess.Job.AS("job_access.job"),
-			tCAccess.MinimumGrade.AS("job_access.minimum_grade"),
-			tCAccess.Access.AS("job_access.access"),
 		).
 		FROM(tCalendar.
-			LEFT_JOIN(tCAccess,
-				tCAccess.TargetID.EQ(tCalendar.ID).
-					AND(tCAccess.Access.GT_EQ(jet.Int32(int32(minAccessLevel)))),
-			).
 			LEFT_JOIN(tCreator,
 				tCalendar.CreatorID.EQ(tCreator.ID),
 			).
 			LEFT_JOIN(tUserProps,
-				tUserProps.UserID.EQ(tCreator.ID),
+				tUserProps.UserID.EQ(tCalendar.CreatorID),
 			).
 			LEFT_JOIN(tCalendarSubs,
 				tCalendarSubs.CalendarID.EQ(tCalendar.ID).
@@ -162,7 +158,6 @@ func (s *Server) ListCalendars(
 				tAvatar.ID.EQ(tUserProps.AvatarFileID),
 			),
 		).
-		GROUP_BY(tCalendar.ID).
 		WHERE(condition).
 		OFFSET(req.GetPagination().GetOffset()).
 		LIMIT(limit)
@@ -176,6 +171,8 @@ func (s *Server) ListCalendars(
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
 	}
+
+	// TODO should we retrieve access for the calendars?
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := range resp.GetCalendars() {
@@ -631,7 +628,6 @@ func (s *Server) getCalendar(
 				tAvatar.ID.EQ(tUserProps.AvatarFileID),
 			),
 		).
-		GROUP_BY(tCalendar.ID).
 		WHERE(condition).
 		LIMIT(1)
 

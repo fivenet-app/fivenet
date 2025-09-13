@@ -55,13 +55,6 @@ func (s *Server) ListCalendarEntries(
 					)),
 			),
 			tCalendarEntry.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
-			jet.OR(
-				tCAccess.UserID.EQ(jet.Int32(userInfo.GetUserId())),
-				jet.AND(
-					tCAccess.Job.EQ(jet.String(userInfo.GetJob())),
-					tCAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
-				),
-			),
 		),
 	)
 
@@ -77,7 +70,8 @@ func (s *Server) ListCalendarEntries(
 	startDate := baseDate.BeginningOfMonth()
 	endDate := baseDate.EndOfMonth()
 
-	condition = condition.AND(tCalendarEntry.StartTime.GT_EQ(jet.DateTimeT(startDate))).
+	condition = condition.
+		AND(tCalendarEntry.StartTime.GT_EQ(jet.DateTimeT(startDate))).
 		AND(tCalendarEntry.StartTime.LT(jet.DateTimeT(endDate)))
 
 	resp := &pbcalendar.ListCalendarEntriesResponse{}
@@ -503,7 +497,6 @@ func (s *Server) getEntry(
 				tAvatar.ID.EQ(tUserProps.AvatarFileID),
 			),
 		).
-		GROUP_BY(tCalendarEntry.ID).
 		WHERE(condition).
 		LIMIT(1)
 

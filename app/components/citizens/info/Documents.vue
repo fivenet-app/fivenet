@@ -180,7 +180,7 @@ const columns = computed(
                                 </div>
                             </template>
 
-                            <template #item="{ item }">
+                            <template #item-label="{ item }">
                                 <div class="inline-flex items-center gap-1 truncate">
                                     <template v-if="typeof item.value === 'boolean'">
                                         <UIcon v-if="!item.value" class="size-4" name="i-mdi-lock-open-variant" color="green" />
@@ -208,7 +208,7 @@ const columns = computed(
                                 {{ $t('common.selected', query.relations.length) }}
                             </template>
 
-                            <template #item="{ item }">
+                            <template #item-label="{ item }">
                                 <UBadge
                                     class="truncate"
                                     :color="docRelationToBadge(item.value)"

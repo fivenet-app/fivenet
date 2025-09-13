@@ -374,9 +374,24 @@ defineShortcuts({
                                         searchable-key="completor-jobs-colleague-labels"
                                         :search-input="{ placeholder: $t('common.search_field') }"
                                         :filter-fields="['name']"
+                                        label-key="name"
                                         value-key="id"
                                     >
-                                        <template #item="{ item }">
+                                        <template #default="{ items }">
+                                            <div
+                                                v-for="item in items.filter((i) => query.labels.includes(i.id))"
+                                                :key="item.id"
+                                            >
+                                                <UBadge
+                                                    class="truncate"
+                                                    :class="isColorBright(item.color) ? 'text-black!' : 'text-white!'"
+                                                    :style="{ backgroundColor: item.color }"
+                                                    :label="item.name"
+                                                />
+                                            </div>
+                                        </template>
+
+                                        <template #item-label="{ item }">
                                             <UBadge
                                                 class="truncate"
                                                 :class="isColorBright(item.color) ? 'text-black!' : 'text-white!'"

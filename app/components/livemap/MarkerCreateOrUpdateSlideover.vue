@@ -208,7 +208,7 @@ const formRef = useTemplateRef('formRef');
                                             {{ $t(`enums.livemap.MarkerType.${MarkerType[state.markerType ?? 0]}`) }}
                                         </template>
 
-                                        <template #item="{ item }">
+                                        <template #item-label="{ item }">
                                             {{ $t(`enums.livemap.MarkerType.${MarkerType[item.value ?? 0]}`) }}
                                         </template>
                                     </USelectMenu>

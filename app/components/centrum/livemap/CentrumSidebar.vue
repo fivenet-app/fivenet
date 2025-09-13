@@ -282,7 +282,7 @@ onBeforeMount(async () => {
         } catch (e) {
             logger.error('exception during start of centrum stream', e);
         }
-    }, 400);
+    }, 500);
 });
 
 onBeforeRouteLeave(async (to) => {

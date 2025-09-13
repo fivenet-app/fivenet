@@ -76,7 +76,6 @@ func (s *Server) checkIfUserHasAccessToCalendarEntryIDs(
 					AND(tCalendar.DeletedAt.IS_NULL()),
 			),
 		).
-		GROUP_BY(tCalendarEntry.ID).
 		WHERE(jet.AND(
 			tCalendarEntry.DeletedAt.IS_NULL(),
 			tCalendarRSVP.EntryID.IN(ids...),

@@ -221,76 +221,96 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) getAccessQuer
 		ids[i] = jet.Int64(targetIds[i])
 	}
 
-	from := g.targetTable.
-		LEFT_JOIN(g.Jobs.table,
-			g.Jobs.columns.TargetID.EQ(g.targetTableColumns.ID).
-				AND(g.Jobs.columns.Access.GT_EQ(jet.Int32(int32(access.Number())))),
-		)
+	accessCheckConditions := make([]jet.BoolExpression, 0, 4)
+	orderBys := []jet.OrderByClause{g.targetTableColumns.ID.DESC()}
 
-	accessCheckConditions := []jet.BoolExpression{}
-	accessCheckCondition := jet.Bool(false)
+	// Creator-based access (keeps your nil-logic intact)
+	creatorCond := jet.Bool(false)
 	if g.targetTableColumns.CreatorJob != nil {
-		accessCheckCondition = g.targetTableColumns.CreatorJob.EQ(jet.String(userInfo.GetJob()))
+		creatorCond = g.targetTableColumns.CreatorJob.EQ(jet.String(userInfo.GetJob()))
 	}
 	if g.targetTableColumns.CreatorID != nil {
 		if g.targetTableColumns.CreatorJob == nil {
-			accessCheckCondition = g.targetTableColumns.CreatorID.EQ(
-				jet.Int32(userInfo.GetUserId()),
-			)
+			creatorCond = g.targetTableColumns.CreatorID.EQ(jet.Int32(userInfo.GetUserId()))
 		} else {
-			accessCheckCondition = accessCheckCondition.AND(g.targetTableColumns.CreatorID.EQ(jet.Int32(userInfo.GetUserId())))
+			creatorCond = creatorCond.AND(
+				g.targetTableColumns.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
+			)
 		}
 	}
-	accessCheckConditions = append(accessCheckConditions, accessCheckCondition)
+	accessCheckConditions = append(accessCheckConditions, creatorCond)
 
-	orderBys := []jet.OrderByClause{g.targetTableColumns.ID.DESC()}
-
+	// Direct user access via EXISTS (if Users access table is configured)
 	if g.Users != nil {
-		accessCheckConditions = append(
-			accessCheckConditions,
-			g.Users.columns.UserId.EQ(jet.Int32(userInfo.GetUserId())),
+		userAccessExists := jet.EXISTS(
+			jet.SELECT(jet.Int(1)).
+				FROM(g.Users.table).
+				WHERE(
+					g.Users.columns.TargetID.EQ(g.targetTableColumns.ID).
+						AND(g.Users.columns.Access.GT_EQ(jet.Int32(int32(access.Number())))).
+						AND(g.Users.columns.UserId.EQ(jet.Int32(userInfo.GetUserId()))),
+				),
 		)
+		accessCheckConditions = append(accessCheckConditions, userAccessExists)
 	}
 
+	// Job + grade access via EXISTS (if Jobs access table is configured)
 	if g.Jobs != nil {
-		accessCheckConditions = append(accessCheckConditions,
-			jet.AND(
-				g.Jobs.columns.Job.EQ(jet.String(userInfo.GetJob())),
-				g.Jobs.columns.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
-			),
+		jobAccessExists := jet.EXISTS(
+			jet.SELECT(jet.Int(1)).
+				FROM(g.Jobs.table).
+				WHERE(
+					g.Jobs.columns.TargetID.EQ(g.targetTableColumns.ID).
+						AND(g.Jobs.columns.Access.GT_EQ(jet.Int32(int32(access.Number())))).
+						AND(
+							jet.AND(
+								g.Jobs.columns.Job.EQ(jet.String(userInfo.GetJob())),
+								g.Jobs.columns.MinimumGrade.LT_EQ(
+									jet.Int32(userInfo.GetJobGrade()),
+								),
+							),
+						),
+				),
 		)
-
-		orderBys = append(orderBys, g.Jobs.columns.MinimumGrade)
+		accessCheckConditions = append(accessCheckConditions, jobAccessExists)
 	}
 
+	// Qualification-based access via EXISTS (if Qualifications are configured)
 	if g.Qualifications != nil {
-		from = from.
-			LEFT_JOIN(tQualiResults,
-				tQualiResults.QualificationID.EQ(g.Qualifications.columns.QualificationId).
-					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.GetUserId()))),
-			)
-
-		accessCheckConditions = append(accessCheckConditions, jet.AND(
-			g.Qualifications.columns.QualificationId.IS_NOT_NULL(),
-			tQualiResults.DeletedAt.IS_NULL(),
-			tQualiResults.QualificationID.EQ(g.Qualifications.columns.QualificationId),
-			tQualiResults.Status.EQ(
-				jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)),
-			),
-		))
+		qualExists := jet.EXISTS(
+			jet.SELECT(jet.Int(1)).
+				FROM(g.Qualifications.table.
+					INNER_JOIN(tQualiResults,
+						tQualiResults.QualificationID.EQ(g.Qualifications.columns.QualificationId),
+					),
+				).
+				WHERE(
+					jet.AND(
+						g.Qualifications.columns.QualificationId.IS_NOT_NULL(),
+						tQualiResults.DeletedAt.IS_NULL(),
+						tQualiResults.QualificationID.EQ(g.Qualifications.columns.QualificationId),
+						tQualiResults.UserID.EQ(jet.Int32(userInfo.GetUserId())),
+						tQualiResults.Status.EQ(
+							jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)),
+						),
+					),
+				),
+		)
+		accessCheckConditions = append(accessCheckConditions, qualExists)
 	}
 
 	stmt := g.targetTable.
 		SELECT(
 			g.targetTableColumns.ID.AS("id"),
 		).
-		FROM(from).
-		WHERE(jet.AND(
-			g.targetTableColumns.ID.IN(ids...),
-			g.targetTableColumns.DeletedAt.IS_NULL(),
-			jet.OR(accessCheckConditions...),
-		)).
-		GROUP_BY(g.targetTableColumns.ID).
+		FROM(g.targetTable).
+		WHERE(
+			jet.AND(
+				g.targetTableColumns.ID.IN(ids...),
+				g.targetTableColumns.DeletedAt.IS_NULL(),
+				jet.OR(accessCheckConditions...),
+			),
+		).
 		ORDER_BY(orderBys...)
 
 	return stmt

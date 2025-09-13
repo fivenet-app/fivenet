@@ -205,7 +205,7 @@ defineShortcuts({
                         </UFormField>
 
                         <UFormField
-                            class="flex min-w-32 shrink-0 flex-col"
+                            class="flex min-w-40 shrink-0 flex-col"
                             name="onlyDrafts"
                             :label="$t('common.show')"
                             :ui="{ container: 'flex-1 flex' }"
@@ -215,6 +215,7 @@ defineShortcuts({
                                     v-model="query.onlyDrafts"
                                     :items="onlyDrafts"
                                     class="w-full"
+                                    label-key="label"
                                     value-key="value"
                                     :search-input="{ placeholder: $t('common.search_field') }"
                                 >
@@ -287,7 +288,7 @@ defineShortcuts({
                                             />
                                         </template>
 
-                                        <template #item="{ item }">
+                                        <template #item-label="{ item }">
                                             <CategoryBadge :category="item" />
                                         </template>
 
@@ -317,7 +318,7 @@ defineShortcuts({
                                         trailing
                                         value-key="userId"
                                     >
-                                        <template #item="{ item }">
+                                        <template #item-label="{ item }">
                                             {{ userToLabel(item) }}
                                         </template>
 
@@ -359,7 +360,7 @@ defineShortcuts({
                                                 </div>
                                             </template>
 
-                                            <template #item="{ item }">
+                                            <template #item-label="{ item }">
                                                 <div class="inline-flex items-center gap-1 truncate">
                                                     <template v-if="typeof item.value === 'boolean'">
                                                         <UIcon

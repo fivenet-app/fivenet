@@ -62,7 +62,7 @@ export type ExamSettingsSchema = z.output<typeof examSettings>;
                                 {{ $t(`enums.qualifications.QualificationExamMode.${QualificationExamMode[examMode]}`) }}
                             </template>
 
-                            <template #item="{ item }">
+                            <template #item-label="{ item }">
                                 {{ $t(`enums.qualifications.QualificationExamMode.${QualificationExamMode[item.mode]}`) }}
                             </template>
 
@@ -124,7 +124,7 @@ export type ExamSettingsSchema = z.output<typeof examSettings>;
                                 {{ $t(`enums.qualifications.AutoGradeMode.${AutoGradeMode[settings.autoGradeMode ?? 0]}`) }}
                             </template>
 
-                            <template #item="{ item }">
+                            <template #item-label="{ item }">
                                 {{ $t(`enums.qualifications.AutoGradeMode.${AutoGradeMode[item.mode ?? 0]}`) }}
                             </template>
                         </USelectMenu>

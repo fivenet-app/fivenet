@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
+	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -18,7 +19,7 @@ func (s *Server) getTimeclockStats(
 ) (*jobs.TimeclockStats, error) {
 	stmt := tTimeClock.
 		SELECT(
-			tTimeClock.Job.AS("timeclock_stats.job"),
+			dbutils.ANY_VALUE(tTimeClock.Job).AS("timeclock_stats.job"),
 			jet.SUM(tTimeClock.SpentTime).AS("timeclock_stats.spent_time_sum"),
 			jet.AVG(tTimeClock.SpentTime).AS("timeclock_stats.spent_time_avg"),
 			jet.MAX(tTimeClock.SpentTime).AS("timeclock_stats.spent_time_max"),
@@ -46,26 +47,26 @@ func (s *Server) getTimeclockWeeklyStats(
 	ctx context.Context,
 	condition jet.BoolExpression,
 ) ([]*jobs.TimeclockWeeklyStats, error) {
+	yearExpr := dbutils.YEAR(tTimeClock.Date)
+	weekExpr := dbutils.WEEK(tTimeClock.Date)
+
 	stmt := tTimeClock.
 		SELECT(
-			jet.RawString("YEAR(timeclock_entry.`date`)").AS("timeclock_weekly_stats.year"),
-			jet.RawString("WEEK(timeclock_entry.`date`)").
-				AS("timeclock_weekly_stats.calendar_week"),
+			yearExpr.AS("timeclock_weekly_stats.year"),
+			weekExpr.AS("timeclock_weekly_stats.calendar_week"),
 			jet.SUM(tTimeClock.SpentTime).AS("timeclock_weekly_stats.sum"),
 			jet.AVG(tTimeClock.SpentTime).AS("timeclock_weekly_stats.avg"),
 			jet.MAX(tTimeClock.SpentTime).AS("timeclock_weekly_stats.max"),
 		).
 		FROM(tTimeClock).
-		WHERE(jet.AND(
-			condition,
-		)).
+		WHERE(condition).
 		GROUP_BY(
-			jet.RawString("YEAR(timeclock_entry.`date`)"),
-			jet.RawString("WEEK(timeclock_entry.`date`)"),
+			yearExpr,
+			weekExpr,
 		).
 		ORDER_BY(
-			jet.RawString("`timeclock_weekly_stats.year` DESC"),
-			jet.RawString("`timeclock_weekly_stats.calendar_week` DESC"),
+			yearExpr.DESC(),
+			weekExpr.DESC(),
 		).
 		LIMIT(10)
 
@@ -101,9 +102,6 @@ func (s *Server) getTimeclockWeeklyStats(
 					{
 						Year:         last.GetYear(),
 						CalendarWeek: lastCalendarWeek,
-						Sum:          0,
-						Avg:          0,
-						Max:          0,
 					},
 				}, dest...)
 			}
@@ -118,9 +116,6 @@ func (s *Server) getTimeclockWeeklyStats(
 				{
 					Year:         last.GetYear(),
 					CalendarWeek: dest[0].GetCalendarWeek() - 1,
-					Sum:          0,
-					Avg:          0,
-					Max:          0,
 				},
 			}, dest...)
 		}
@@ -131,16 +126,10 @@ func (s *Server) getTimeclockWeeklyStats(
 			&jobs.TimeclockWeeklyStats{
 				Year:         int32(year),
 				CalendarWeek: int32(week),
-				Sum:          0,
-				Avg:          0,
-				Max:          0,
 			},
 			&jobs.TimeclockWeeklyStats{
 				Year:         int32(year),
 				CalendarWeek: int32(week + 1),
-				Sum:          0,
-				Avg:          0,
-				Max:          0,
 			})
 	}
 

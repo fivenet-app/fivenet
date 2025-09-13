@@ -15,6 +15,26 @@ func (s *Server) listCalendarEntriesQuery(
 ) jet.SelectStatement {
 	tCreator := tables.User().AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
+	rsvp2 := tCalendarRSVP.AS("r2")
+
+	accessExists := jet.EXISTS(
+		jet.SELECT(jet.Int(1)).
+			FROM(tCAccess).
+			WHERE(jet.AND(
+				tCAccess.TargetID.EQ(tCalendarEntry.CalendarID),
+				tCAccess.Access.GT_EQ(jet.Int32(int32(access))),
+			)),
+	)
+
+	rsvpExists := jet.EXISTS(
+		jet.SELECT(jet.Int(1)).
+			FROM(tCalendarRSVP.AS("r2")).
+			WHERE(
+				rsvp2.UserID.EQ(jet.Int32(userInfo.GetUserId())).
+					AND(rsvp2.Response.GT(jet.Int32(3))). // response > 3
+					AND(rsvp2.EntryID.EQ(tCalendarEntry.ID)),
+			),
+	)
 
 	stmt := tCalendarEntry.
 		SELECT(
@@ -57,10 +77,6 @@ func (s *Server) listCalendarEntriesQuery(
 				tCalendar.ID.EQ(tCalendarEntry.CalendarID).
 					AND(tCalendar.DeletedAt.IS_NULL()),
 			).
-			LEFT_JOIN(tCAccess,
-				tCAccess.TargetID.EQ(tCalendarEntry.CalendarID).
-					AND(tCAccess.Access.GT_EQ(jet.Int32(int32(access)))),
-			).
 			LEFT_JOIN(tCreator,
 				tCalendarEntry.CreatorID.EQ(tCreator.ID),
 			).
@@ -75,8 +91,14 @@ func (s *Server) listCalendarEntriesQuery(
 				tAvatar.ID.EQ(tUserProps.AvatarFileID),
 			),
 		).
-		GROUP_BY(tCalendarEntry.ID).
-		WHERE(condition).
+		WHERE(jet.AND(
+			jet.OR(
+				accessExists,
+				rsvpExists,
+				tCalendarEntry.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
+			),
+			condition,
+		)).
 		LIMIT(100)
 
 	return stmt

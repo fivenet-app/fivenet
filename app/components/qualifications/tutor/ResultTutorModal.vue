@@ -14,15 +14,11 @@ defineEmits<{
 </script>
 
 <template>
-    <UModal>
-        <template #content>
-            <ResultTutorForm
-                :qualification-id="qualificationId"
-                :user-id="userId"
-                :result-id="resultId"
-                @refresh="$emit('refresh')"
-                @close="$emit('close', false)"
-            />
-        </template>
-    </UModal>
+    <ResultTutorForm
+        :qualification-id="qualificationId"
+        :user-id="userId"
+        :result-id="resultId"
+        @refresh="$emit('refresh')"
+        @close="$emit('close', false)"
+    />
 </template>

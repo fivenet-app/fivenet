@@ -172,7 +172,7 @@ const formRef = useTemplateRef('formRef');
                                             </span>
                                         </template>
 
-                                        <template #item="{ item }">
+                                        <template #item-label="{ item }">
                                             <span>
                                                 {{
                                                     (item?.label && item?.label !== ''

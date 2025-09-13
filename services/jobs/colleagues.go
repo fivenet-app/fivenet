@@ -94,17 +94,6 @@ func (s *Server) ListColleagues(
 			))
 	}
 
-	if len(req.GetLabelIds()) > 0 && (types.Contains("Labels") || userInfo.GetSuperuser()) {
-		labelIds := []jet.Expression{}
-		for _, labelId := range req.GetLabelIds() {
-			labelIds = append(labelIds, jet.Int64(labelId))
-		}
-
-		condition = condition.AND(
-			tColleagueLabels.LabelID.IN(labelIds...),
-		)
-	}
-
 	if req.GetNamePrefix() != "" {
 		namePrefix := strings.TrimSpace(req.GetNamePrefix())
 		namePrefix = strings.ReplaceAll(namePrefix, "%", "")
@@ -133,41 +122,38 @@ func (s *Server) ListColleagues(
 		}
 	}
 
+	if len(req.GetLabelIds()) > 0 && (types.Contains("Labels") || userInfo.GetSuperuser()) {
+		labelIDExprs := []jet.Expression{}
+		for _, labelId := range req.GetLabelIds() {
+			labelIDExprs = append(labelIDExprs, jet.Int64(labelId))
+		}
+
+		labelsExists := jet.EXISTS(
+			jet.SELECT(jet.Int(1)).
+				FROM(tColleagueLabels).
+				WHERE(
+					tColleagueLabels.UserID.EQ(tColleague.ID).
+						AND(tColleagueLabels.Job.EQ(jet.String(userInfo.GetJob()))).
+						AND(tColleagueLabels.LabelID.IN(labelIDExprs...)),
+				),
+		)
+
+		condition = condition.AND(labelsExists)
+	}
+
 	// Get total count of values
 	countStmt := tColleague.
 		SELECT(
 			jet.COUNT(jet.DISTINCT(tColleague.ID)).AS("data_count.total"),
 		).
-		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext"))
-
-	if len(req.GetLabelIds()) > 0 && (types.Contains("Labels") || userInfo.GetSuperuser()) {
-		countStmt = countStmt.
-			FROM(
-				tColleague.
-					LEFT_JOIN(tColleagueProps,
-						tColleagueProps.UserID.EQ(tColleague.ID).
-							AND(tColleagueProps.Job.EQ(jet.String(userInfo.GetJob()))),
-					).
-					INNER_JOIN(tColleagueLabels,
-						tColleagueLabels.UserID.EQ(tColleague.ID).
-							AND(tColleagueLabels.Job.EQ(jet.String(userInfo.GetJob()))),
-					).
-					LEFT_JOIN(tJobLabels,
-						tJobLabels.ID.EQ(tColleagueLabels.LabelID),
-					),
-			)
-	} else {
-		countStmt = countStmt.
-			FROM(
-				tColleague.
-					LEFT_JOIN(tColleagueProps,
-						tColleagueProps.UserID.EQ(tColleague.ID).
-							AND(tColleagueProps.Job.EQ(jet.String(userInfo.GetJob()))),
-					),
-			)
-	}
-
-	countStmt = countStmt.
+		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
+		FROM(
+			tColleague.
+				LEFT_JOIN(tColleagueProps,
+					tColleagueProps.UserID.EQ(tColleague.ID).
+						AND(tColleagueProps.Job.EQ(jet.String(userInfo.GetJob()))),
+				),
+		).
 		WHERE(condition)
 
 	var count database.DataCount
@@ -238,51 +224,22 @@ func (s *Server) ListColleagues(
 			tColleagueProps.NamePrefix,
 			tColleagueProps.NameSuffix,
 		).
-		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext"))
-
-	if len(req.GetLabelIds()) > 0 && (types.Contains("Labels") || userInfo.GetSuperuser()) {
-		stmt = stmt.
-			FROM(
-				tColleague.
-					LEFT_JOIN(tUserProps,
-						tUserProps.UserID.EQ(tColleague.ID),
-					).
-					LEFT_JOIN(tColleagueProps,
-						tColleagueProps.UserID.EQ(tColleague.ID).
-							AND(tColleagueProps.Job.EQ(jet.String(userInfo.GetJob()))),
-					).
-					INNER_JOIN(tColleagueLabels,
-						tColleagueLabels.UserID.EQ(tColleague.ID).
-							AND(tColleagueLabels.Job.EQ(jet.String(userInfo.GetJob()))),
-					).
-					LEFT_JOIN(tJobLabels,
-						tJobLabels.ID.EQ(tColleagueLabels.LabelID),
-					).
-					LEFT_JOIN(tAvatar,
-						tAvatar.ID.EQ(tUserProps.AvatarFileID),
-					),
-			)
-	} else {
-		stmt = stmt.
-			FROM(
-				tColleague.
-					LEFT_JOIN(tUserProps,
-						tUserProps.UserID.EQ(tColleague.ID),
-					).
-					LEFT_JOIN(tColleagueProps,
-						tColleagueProps.UserID.EQ(tColleague.ID).
-							AND(tColleagueProps.Job.EQ(jet.String(userInfo.GetJob()))),
-					).
-					LEFT_JOIN(tAvatar,
-						tAvatar.ID.EQ(tUserProps.AvatarFileID),
-					),
-			)
-	}
-
-	stmt = stmt.
+		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
+		FROM(
+			tColleague.
+				LEFT_JOIN(tUserProps,
+					tUserProps.UserID.EQ(tColleague.ID),
+				).
+				LEFT_JOIN(tColleagueProps,
+					tColleagueProps.UserID.EQ(tColleague.ID).
+						AND(tColleagueProps.Job.EQ(jet.String(userInfo.GetJob()))),
+				).
+				LEFT_JOIN(tAvatar,
+					tAvatar.ID.EQ(tUserProps.AvatarFileID),
+				),
+		).
 		WHERE(condition).
 		OFFSET(req.GetPagination().GetOffset()).
-		GROUP_BY(tColleague.ID).
 		ORDER_BY(orderBys...).
 		LIMIT(limit)
 

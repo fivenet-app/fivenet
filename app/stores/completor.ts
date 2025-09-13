@@ -61,7 +61,14 @@ export const useCompletorStore = defineStore(
             try {
                 const call = completorCompletorClient.completeCitizens(req);
                 const { response } = await call;
-                return response.users;
+
+                return response.users.map((u) => ({
+                    ...u,
+                    avatar: {
+                        src: u.profilePicture ? `/api/filestore/${u.profilePicture}` : undefined,
+                        alt: userToLabel(u),
+                    },
+                }));
             } catch (e) {
                 handleGRPCError(e as RpcError);
                 throw e;
@@ -95,15 +102,21 @@ export const useCompletorStore = defineStore(
             }
         };
 
-        const completeColleagues = async (search: string): Promise<Colleague[]> => {
+        const completeColleagues = async (search: string, userIds: number[] = []): Promise<Colleague[]> => {
             try {
                 const colleagues = await listColleagues({
                     search: search,
                     labelIds: [],
-                    userIds: [],
+                    userIds: userIds,
                 });
 
-                return colleagues.map((c) => ({ ...c, avatar: { src: c.profilePicture } }));
+                return colleagues.map((c) => ({
+                    ...c,
+                    avatar: {
+                        src: c.profilePicture ? `/api/filestore/${c.profilePicture}` : undefined,
+                        alt: userToLabel(c),
+                    },
+                }));
             } catch (e) {
                 handleGRPCError(e as RpcError);
                 throw e;

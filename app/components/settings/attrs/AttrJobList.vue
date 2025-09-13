@@ -178,7 +178,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                         {{ state.job?.label }} ({{ state.job.name }})
                                     </template>
 
-                                    <template #item="{ item }"> {{ item.label }} ({{ item.name }}) </template>
+                                    <template #item-label="{ item }"> {{ item.label }} ({{ item.name }}) </template>
                                 </USelectMenu>
                             </ClientOnly>
                         </UFormField>

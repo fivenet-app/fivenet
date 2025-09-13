@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '@nuxt/ui';
+import type { ChipProps, FormSubmitEvent } from '@nuxt/ui';
 import { addHours, addMinutes, isSameDay, isSameHour, isSameMinute } from 'date-fns';
 import type { CalendarDay } from 'v-calendar/dist/types/src/utils/page.js';
 import { z } from 'zod';
@@ -190,16 +190,19 @@ const formRef = useTemplateRef('formRef');
                             :searchable="
                                 async () =>
                                     (
-                                        (
-                                            await calendarStore.listCalendars({
-                                                pagination: {
-                                                    offset: 0,
-                                                },
-                                                onlyPublic: false,
-                                                minAccessLevel: AccessLevel.EDIT,
-                                            })
-                                        ).calendars as CalendarShort[]
-                                    )?.filter((c) => !c.closed)
+                                        await calendarStore.listCalendars({
+                                            pagination: {
+                                                offset: 0,
+                                            },
+                                            onlyPublic: false,
+                                            minAccessLevel: AccessLevel.EDIT,
+                                        })
+                                    ).calendars
+                                        .map((c) => ({
+                                            ...c,
+                                            chip: { color: c.color ?? 'primary' },
+                                        }))
+                                        .filter((c) => !c.closed) as CalendarShort[]
                             "
                             searchable-key="calendar-list"
                             :search-input="{ placeholder: $t('common.search_field') }"
@@ -207,22 +210,15 @@ const formRef = useTemplateRef('formRef');
                             :placeholder="$t('common.calendar')"
                             class="w-full"
                         >
-                            <template v-if="state.calendar" #default>
-                                <span
-                                    class="size-2 rounded-full"
-                                    :class="`bg-${state.calendar?.color ?? 'primary'}-500 dark:bg-${state.calendar?.color ?? 'primary'}-400`"
+                            <template #leading="{ modelValue, ui }">
+                                <UChip
+                                    v-if="modelValue"
+                                    :color="(modelValue.color ?? 'primary') as ChipProps['color']"
+                                    inset
+                                    standalone
+                                    :size="ui.itemLeadingChipSize() as ChipProps['size']"
+                                    :class="ui.itemLeadingChip()"
                                 />
-
-                                <span class="truncate">{{ state.calendar?.name }}</span>
-                            </template>
-
-                            <template #item="{ item }">
-                                <span
-                                    class="size-2 rounded-full"
-                                    :class="`bg-${item.color ?? 'primary'}-500 dark:bg-${item.color ?? 'primary'}-400`"
-                                />
-
-                                <span class="truncate">{{ item.name }}</span>
                             </template>
 
                             <template #empty>
@@ -286,7 +282,7 @@ const formRef = useTemplateRef('formRef');
                                 {{ $t('common.selected', state.users.length) }}
                             </template>
 
-                            <template #item="{ item: user }">
+                            <template #item-label="{ item: user }">
                                 {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
                             </template>
 

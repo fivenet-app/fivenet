@@ -61,35 +61,47 @@ func (s *Server) checkIfUserHasAccessToCalendarIDs(
 		condition = tCalendar.Public.IS_TRUE()
 	}
 
+	var accessExists jet.BoolExpression
+	if !userInfo.GetSuperuser() {
+		accessExists = jet.EXISTS(
+			jet.SELECT(jet.Int(1)).
+				FROM(tCAccess).
+				WHERE(
+					jet.AND(
+						tCAccess.TargetID.EQ(tCalendar.ID),
+						tCAccess.Access.GT_EQ(jet.Int32(int32(access))),
+						jet.OR(
+							tCAccess.UserID.EQ(jet.Int32(userInfo.GetUserId())),
+							jet.AND(
+								tCAccess.Job.EQ(jet.String(userInfo.GetJob())),
+								tCAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
+							),
+						),
+					),
+				),
+		)
+	} else {
+		accessExists = jet.Bool(true)
+	}
+
 	stmt := tCalendar.
 		SELECT(
 			tCalendar.ID,
 		).
 		FROM(tCalendar.
-			LEFT_JOIN(tCAccess,
-				tCAccess.TargetID.EQ(tCalendar.ID).
-					AND(tCAccess.Access.GT_EQ(jet.Int32(int32(access)))),
-			).
 			LEFT_JOIN(tCreator,
 				tCalendar.CreatorID.EQ(tCreator.ID),
 			),
 		).
-		GROUP_BY(tCalendar.ID).
 		WHERE(jet.AND(
 			tCalendar.ID.IN(ids...),
 			tCalendar.DeletedAt.IS_NULL(),
 			jet.OR(
-				tCalendar.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
-				tCalendar.CreatorJob.EQ(jet.String(userInfo.GetJob())),
-				tCAccess.UserID.EQ(jet.Int32(userInfo.GetUserId())),
-				jet.AND(
-					tCAccess.Job.EQ(jet.String(userInfo.GetJob())),
-					tCAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
-				),
+				accessExists,
 				condition,
 			),
 		)).
-		ORDER_BY(tCalendar.ID.DESC(), tCAccess.MinimumGrade)
+		ORDER_BY(tCalendar.ID.DESC())
 
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

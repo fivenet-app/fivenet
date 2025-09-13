@@ -6,7 +6,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import LicensePlate from '~/components/partials/LicensePlate.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useClipboardStore } from '~/stores/clipboard';
-import { getCompletorCompletorClient, getVehiclesVehiclesClient } from '~~/gen/ts/clients';
+import { getVehiclesVehiclesClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
@@ -18,7 +18,8 @@ import VehicleInfoPopover from './VehicleInfoPopover.vue';
 
 const { t } = useI18n();
 
-const completorCompletorClient = await getCompletorCompletorClient();
+const completorStore = useCompletorStore();
+
 const vehiclesVehiclesClient = await getVehiclesVehiclesClient();
 
 const props = withDefaults(
@@ -239,13 +240,11 @@ defineShortcuts({
                         name="userIds"
                         multiple
                         :searchable="
-                            async (q: string): Promise<UserShort[]> => {
-                                const { response } = await completorCompletorClient.completeCitizens({
+                            async (q: string): Promise<UserShort[]> =>
+                                await completorStore.completeCitizens({
                                     search: q,
                                     userIds: query.userIds,
-                                });
-                                return response.users;
-                            }
+                                })
                         "
                         searchable-key="completor-citizens"
                         :filter-fields="['firstname', 'lastname']"
@@ -254,7 +253,7 @@ defineShortcuts({
                         trailing
                         value-key="userId"
                     >
-                        <template #item="{ item }">
+                        <template #item-label="{ item }">
                             <ColleagueName class="truncate" :colleague="item" birthday />
                         </template>
 

@@ -226,7 +226,7 @@ func (s *Server) ListQualificationsResults(
 						AND(tQAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade()))),
 				),
 		).
-		GROUP_BY(tQualiResults.Status, tQualiResults.CreatedAt).
+		GROUP_BY(tQualiResults.Status, tQualiResults.CreatedAt, tQualiResults.ID).
 		ORDER_BY(orderBys...).
 		WHERE(condition).
 		OFFSET(req.GetPagination().GetOffset()).
@@ -567,6 +567,7 @@ func (s *Server) getQualificationResult(
 		WHERE(condition).
 		LIMIT(1)
 
+	fmt.Println(stmt.DebugSql())
 	var result qualifications.QualificationResult
 	if err := stmt.QueryContext(ctx, s.db, &result); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

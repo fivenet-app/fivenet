@@ -183,26 +183,30 @@ const formRef = useTemplateRef('formRef');
                         />
                     </UFormField>
 
-                    <UFormField
-                        class="flex-1"
-                        name="private"
-                        :label="$t('components.calendar.CalendarCreateOrUpdateModal.private')"
-                    >
-                        <USwitch
-                            v-model="state.private"
-                            :disabled="
-                                !canDo.privateCalendar || calendarId !== undefined || (!props.calendarId && hasPrivateCalendar)
-                            "
-                        />
-                    </UFormField>
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                        <UFormField
+                            class="flex-1"
+                            name="private"
+                            :label="$t('components.calendar.CalendarCreateOrUpdateModal.private')"
+                        >
+                            <USwitch
+                                v-model="state.private"
+                                :disabled="
+                                    !canDo.privateCalendar ||
+                                    calendarId !== undefined ||
+                                    (!props.calendarId && hasPrivateCalendar)
+                                "
+                            />
+                        </UFormField>
 
-                    <UFormField v-if="canDo.publicCalendar" class="flex-1" name="public" :label="$t('common.public')">
-                        <USwitch v-model="state.public" />
-                    </UFormField>
+                        <UFormField v-if="canDo.publicCalendar" class="flex-1" name="public" :label="$t('common.public')">
+                            <USwitch v-model="state.public" />
+                        </UFormField>
 
-                    <UFormField class="flex-1" name="closed" :label="`${$t('common.close', 2)}?`">
-                        <USwitch v-model="state.closed" />
-                    </UFormField>
+                        <UFormField class="flex-1" name="closed" :label="`${$t('common.close', 2)}?`">
+                            <USwitch v-model="state.closed" />
+                        </UFormField>
+                    </div>
 
                     <UFormField class="flex-1" name="access" :label="$t('common.access')">
                         <AccessManager

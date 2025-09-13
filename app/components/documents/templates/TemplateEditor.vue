@@ -541,7 +541,7 @@ const formRef = useTemplateRef('formRef');
                                         <CategoryBadge :category="state.category" />
                                     </template>
 
-                                    <template #item="{ item }">
+                                    <template #item-label="{ item }">
                                         <CategoryBadge :category="item" />
                                     </template>
 

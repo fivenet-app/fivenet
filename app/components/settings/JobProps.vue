@@ -11,6 +11,7 @@ import StreamerModeAlert from '~/components/partials/StreamerModeAlert.vue';
 import { useAuthStore } from '~/stores/auth';
 import { useSettingsStore } from '~/stores/settings';
 import { getSettingsSettingsClient } from '~~/gen/ts/clients';
+import type { Guild } from '~~/gen/ts/resources/discord/discord';
 import type { JobProps } from '~~/gen/ts/resources/jobs/job_props';
 import { type DiscordSyncChange, UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/jobs/job_settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -235,6 +236,15 @@ const canEdit = can('settings.SettingsService/SetJobProps');
 const dcConnectRequired = ref(false);
 const { data: userGuilds } = useLazyAsyncData(`settings-userguilds`, () => listGuilds(), {
     immediate: appConfig.discord.botEnabled,
+    transform: (guilds) =>
+        guilds.map((guild) => ({
+            ...guild,
+            avatar: {
+                src: guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png` : undefined,
+                alt: guild.name,
+            },
+        })) ?? [],
+    default: () => [] as Guild[],
 });
 
 async function listGuilds() {
@@ -392,7 +402,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :label="$t('components.settings.job_props.livemap_marker_color')"
                                     :ui="{ container: '' }"
                                 >
-                                    <ColorPicker v-model="state.livemapMarkerColor" :disabled="!canSubmit || !canEdit" />
+                                    <ColorPicker
+                                        v-model="state.livemapMarkerColor"
+                                        :disabled="!canSubmit || !canEdit"
+                                        class="w-full"
+                                    />
                                 </UFormField>
 
                                 <UFormField
@@ -410,6 +424,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :label="$t('common.radio_frequency')"
                                         data-maska="0.9"
                                         data-maska-tokens="0:\d:multiple|9:\d:multiple"
+                                        class="w-full"
                                     />
                                 </UFormField>
 
@@ -560,7 +575,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             </div>
                                         </template>
 
-                                        <template #item="{ item }">
+                                        <template #item-label="{ item }">
                                             <div class="inline-flex items-center gap-2">
                                                 <UAvatar :src="item.icon" :alt="item.name" />
 
@@ -628,6 +643,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :filter-fields="['name']"
                                         :search-input="{ placeholder: $t('common.search_field') }"
                                         value-key="id"
+                                        class="w-full"
                                         nullable
                                         :placeholder="
                                             $t(
@@ -793,6 +809,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     },
                                                 ]"
                                                 :search-input="{ placeholder: $t('common.search_field') }"
+                                                class="w-full"
                                             >
                                                 <template #default>
                                                     {{
@@ -807,7 +824,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     }}
                                                 </template>
 
-                                                <template #item="{ item }">
+                                                <template #item-label="{ item }">
                                                     {{
                                                         $t(
                                                             `enums.settings.UserInfoSyncUnemployedMode.${UserInfoSyncUnemployedMode[item.value]}`,
@@ -843,6 +860,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     'components.settings.job_props.discord_sync_settings.user_info_sync_settings.unemployed_role_name',
                                                 )
                                             "
+                                            class="w-full"
                                         />
                                     </UFormField>
 
@@ -1056,6 +1074,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                         'components.settings.job_props.discord_sync_settings.jobs_absence_settings.jobs_absence_role_name',
                                                     )
                                                 "
+                                                class="w-full"
                                             />
                                         </UFormField>
                                     </template>
@@ -1104,7 +1123,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     {{ $d(toDate(selectedChange?.time), 'short') }}
                                                 </template>
 
-                                                <template #item="{ item }">
+                                                <template #item-label="{ item }">
                                                     {{ $d(toDate(item.time), 'short') }}
                                                 </template>
                                             </USelectMenu>

@@ -30,12 +30,26 @@ func (s *Server) ListUserDocuments(
 
 	userCondition := jet.Bool(true)
 	if !userInfo.GetSuperuser() {
-		userCondition = jet.OR(
-			tDAccess.UserID.EQ(jet.Int32(userInfo.GetUserId())),
-			jet.AND(
-				tDAccess.Job.EQ(jet.String(userInfo.GetJob())),
-				tDAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
-			),
+		userCondition = jet.EXISTS(
+			jet.SELECT(jet.Int(1)).
+				FROM(tDAccess).
+				WHERE(
+					jet.AND(
+						tDAccess.TargetID.EQ(tDocument.ID),
+						jet.OR(
+							// Direct user access
+							tDAccess.UserID.EQ(jet.Int32(userInfo.GetUserId())),
+							// or job + grade access
+							jet.AND(
+								tDAccess.Job.EQ(jet.String(userInfo.GetJob())),
+								tDAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
+							),
+						),
+						tDAccess.Access.GT_EQ(
+							jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)),
+						),
+					),
+				),
 		)
 	}
 
@@ -83,10 +97,6 @@ func (s *Server) ListUserDocuments(
 			tDocRel.
 				INNER_JOIN(tDocument,
 					tDocument.ID.EQ(tDocRel.DocumentID),
-				).
-				LEFT_JOIN(tDAccess,
-					tDAccess.TargetID.EQ(tDocRel.DocumentID).
-						AND(tDAccess.Access.GT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)))),
 				),
 		).
 		WHERE(condition)
@@ -104,39 +114,6 @@ func (s *Server) ListUserDocuments(
 		Relations:  []*documents.DocumentRelation{},
 	}
 	if count.Total <= 0 {
-		return resp, nil
-	}
-
-	idStmt := tDocRel.
-		SELECT(
-			tDocRel.ID,
-		).
-		FROM(
-			tDocRel.
-				INNER_JOIN(tDocument,
-					tDocument.ID.EQ(tDocRel.DocumentID),
-				).
-				LEFT_JOIN(tDAccess,
-					tDAccess.TargetID.EQ(tDocRel.DocumentID).
-						AND(tDAccess.Access.GT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)))),
-				),
-		).
-		WHERE(condition).
-		OFFSET(req.GetPagination().GetOffset()).
-		ORDER_BY(
-			tDocRel.CreatedAt.DESC(),
-		).
-		GROUP_BY(tDocRel.ID).
-		LIMIT(limit)
-
-	var dbRelIds []int64
-	if err := idStmt.QueryContext(ctx, s.db, &dbRelIds); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
-	}
-
-	if len(dbRelIds) == 0 {
 		return resp, nil
 	}
 
@@ -164,15 +141,26 @@ func (s *Server) ListUserDocuments(
 		orderBys = append(orderBys, tDocument.CreatedAt.DESC())
 	}
 
-	rIds := make([]jet.Expression, len(dbRelIds))
-	for i := range dbRelIds {
-		rIds[i] = jet.Int64(dbRelIds[i])
-	}
-
 	tCreator := tables.User().AS("creator")
 	tASource := tCreator.AS("source_user")
 
-	stmt := tDocRel.
+	docRel := tDocRel.
+		SELECT(
+			tDocRel.ID.AS("id"),
+			tDocRel.DocumentID.AS("document_id"),
+		).
+		FROM(
+			tDocRel.
+				INNER_JOIN(tDocument,
+					tDocument.ID.EQ(tDocRel.DocumentID),
+				),
+		).
+		WHERE(condition).
+		OFFSET(req.GetPagination().GetOffset()).
+		ORDER_BY(tDocRel.CreatedAt.DESC()).
+		LIMIT(limit).AsTable("doc_rel")
+
+	stmt := docRel.
 		SELECT(
 			tDocRel.ID,
 			tDocRel.CreatedAt,
@@ -211,9 +199,12 @@ func (s *Server) ListUserDocuments(
 			tDocRel.TargetUserID,
 		).
 		FROM(
-			tDocRel.
-				LEFT_JOIN(tDocument,
-					tDocRel.DocumentID.EQ(tDocument.ID),
+			docRel.
+				INNER_JOIN(tDocRel,
+					tDocRel.ID.EQ(jet.RawInt("doc_rel.id")),
+				).
+				INNER_JOIN(tDocument,
+					tDocument.ID.EQ(jet.RawInt("doc_rel.document_id")),
 				).
 				LEFT_JOIN(tDCategory,
 					tDocument.CategoryID.EQ(tDCategory.ID).
@@ -228,10 +219,8 @@ func (s *Server) ListUserDocuments(
 		).
 		WHERE(jet.AND(
 			tDocument.DeletedAt.IS_NULL(),
-			tDocRel.ID.IN(rIds...),
 		)).
 		ORDER_BY(orderBys...).
-		GROUP_BY(tDocument.ID).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Relations); err != nil {

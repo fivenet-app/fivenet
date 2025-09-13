@@ -95,7 +95,6 @@ func (s *Server) ListQualifications(
 
 	stmt := s.listQualificationsQuery(condition, nil, userInfo).
 		OFFSET(req.GetPagination().GetOffset()).
-		GROUP_BY(tQuali.ID).
 		ORDER_BY(orderBys...).
 		LIMIT(limit)
 

@@ -72,7 +72,7 @@ func (s *Server) ListQualificationRequests(
 				jet.AND(
 					tQAccess.Access.IS_NOT_NULL(),
 					jet.OR(
-						tQAccess.Access.GT(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_GRADE))),
+						tQAccess.Access.GT_EQ(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_GRADE))),
 						jet.AND(
 							tQAccess.Access.GT(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED))),
 							tQualiRequests.UserID.EQ(jet.Int32(userInfo.GetUserId())),

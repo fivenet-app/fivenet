@@ -640,7 +640,10 @@ onMounted(() => {
     unref(editor)?.commands.setContent(modelValue.value, { emitUpdate: false });
 });
 
-onBeforeUnmount(() => unref(editor)?.destroy());
+onBeforeRouteLeave(() => {
+    unref(editor)?.destroy();
+    yjsProvider?.destroy();
+});
 </script>
 
 <template>
@@ -817,7 +820,7 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                         :disabled="disabled"
                         :style="{ fontFamily: selectedFont.value }"
                     >
-                        <template #item="{ item }">
+                        <template #item-label="{ item }">
                             <span class="truncate" :style="{ fontFamily: item.value }">{{ item.label }}</span>
                         </template>
 

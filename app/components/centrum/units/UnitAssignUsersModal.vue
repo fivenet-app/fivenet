@@ -94,7 +94,7 @@ const formRef = useTemplateRef('formRef');
                                 :disabled="!canSubmit"
                                 class="w-full"
                             >
-                                <template #item="{ item }">
+                                <template #item-label="{ item }">
                                     {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
                                 </template>
 

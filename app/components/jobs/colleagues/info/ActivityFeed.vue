@@ -122,14 +122,7 @@ watch(props, async () => refresh());
                             v-model="query.colleagues"
                             multiple
                             class="w-full"
-                            :searchable="
-                                async (q: string) =>
-                                    await completorStore.listColleagues({
-                                        search: q,
-                                        labelIds: [],
-                                        userIds: query.colleagues,
-                                    })
-                            "
+                            :searchable="async (q: string) => await completorStore.completeColleagues(q, query.colleagues)"
                             searchable-key="completor-colleagues"
                             :search-input="{ placeholder: $t('common.search_field') }"
                             :filter-fields="['firstname', 'lastname']"
@@ -137,7 +130,16 @@ watch(props, async () => refresh());
                             leading-icon="i-mdi-search"
                             value-key="userId"
                         >
-                            <template #item="{ item }">
+                            <template #default="{ items }">
+                                <div
+                                    v-for="item in items.filter((i) => query.colleagues.includes(i.userId))"
+                                    :key="item.userId"
+                                >
+                                    <ColleagueName :colleague="item" birthday />
+                                </div>
+                            </template>
+
+                            <template #item-label="{ item }">
                                 <ColleagueName v-if="item" :colleague="item" birthday />
                             </template>
 

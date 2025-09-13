@@ -364,7 +364,7 @@ const { game } = useAppConfig();
                                         >
                                     </template>
 
-                                    <template #item="{ item }">
+                                    <template #item-label="{ item }">
                                         {{ item?.label
                                         }}<span v-if="item.grade >= game.startJobGrade"> ({{ item?.grade }})</span>
                                     </template>

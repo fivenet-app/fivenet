@@ -175,9 +175,9 @@ const confirmModal = overlay.create(ConfirmModal);
 
         <EntryShareForm v-if="canShare && openShare" :entry-id="entryId" @close="openShare = false" @refresh="refresh()" />
 
-        <UCollapsible class="my-2">
+        <UCollapsible class="my-2" :ui="{ content: 'p-1' }">
             <UButton
-                class="group flex flex-col gap-2"
+                class="group"
                 color="neutral"
                 variant="ghost"
                 icon="i-mdi-calendar-question"

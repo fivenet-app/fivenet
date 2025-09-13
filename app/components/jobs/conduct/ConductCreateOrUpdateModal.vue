@@ -151,7 +151,7 @@ const formRef = useTemplateRef('formRef');
                                             </UBadge>
                                         </template>
 
-                                        <template #item="{ item }">
+                                        <template #item-label="{ item }">
                                             <UBadge :color="conductTypesToBadgeColor(item.status)" truncate>
                                                 {{ $t(`enums.jobs.ConductType.${ConductType[item.status ?? 0]}`) }}
                                             </UBadge>
@@ -176,14 +176,7 @@ const formRef = useTemplateRef('formRef');
                             <UFormField name="targetUserId">
                                 <SelectMenu
                                     v-model="state.targetUser"
-                                    :searchable="
-                                        async (q: string) =>
-                                            await completorStore.listColleagues({
-                                                search: q,
-                                                labelIds: [],
-                                                userIds: [],
-                                            })
-                                    "
+                                    :searchable="async (q: string) => await completorStore.completeColleagues(q)"
                                     searchable-key="completor-colleagues"
                                     :search-input="{ placeholder: $t('common.search_field') }"
                                     :filter-fields="['firstname', 'lastname']"
@@ -202,6 +195,7 @@ const formRef = useTemplateRef('formRef');
                                         />
                                         <span v-else>&nbsp;</span>
                                     </template>
+
                                     <template #item-label="{ item }">
                                         <ColleagueName class="truncate" :colleague="item" birthday />
                                     </template>

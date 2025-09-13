@@ -83,7 +83,7 @@ function onClickNext() {
 </script>
 
 <template>
-    <div class="@container/pagination">
+    <div class="@container/pagination min-h-[45px]">
         <div
             class="flex justify-between gap-1 md:items-center @md/pagination:flex-row"
             :class="[

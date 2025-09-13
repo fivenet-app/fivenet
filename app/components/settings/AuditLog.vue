@@ -286,7 +286,7 @@ const tomorrow = addDays(today, 1);
                             value-key="userId"
                             class="w-full"
                         >
-                            <template #item="{ item }">
+                            <template #item-label="{ item }">
                                 {{ userToLabel(item) }}
                             </template>
 
@@ -362,7 +362,7 @@ const tomorrow = addDays(today, 1);
                                     :items="grpcMethods.filter((m) => query.services.some((s) => m.includes('.' + s + '/')))"
                                     class="w-full"
                                 >
-                                    <template #item="{ item }">
+                                    <template #item-label="{ item }">
                                         {{ item.split('/').pop() }}
                                     </template>
 
@@ -387,7 +387,7 @@ const tomorrow = addDays(today, 1);
                                             {{ statesToLabel(query.states) }}
                                         </template>
 
-                                        <template #item="{ item }">
+                                        <template #item-label="{ item }">
                                             {{ $t(`enums.settings.AuditLog.EventType.${EventType[item.eventType]}`) }}
                                         </template>
 

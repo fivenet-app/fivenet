@@ -97,9 +97,7 @@ const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
                     />
                 </UTooltip>
 
-                <div class="inline-flex gap-2">
-                    <UButton icon="i-mdi-share" @click="copyLinkToClipboard()" />
-                </div>
+                <UButton variant="link" icon="i-mdi-share" @click="copyLinkToClipboard()" />
             </div>
         </template>
 

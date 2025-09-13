@@ -166,7 +166,7 @@ const formRef = useTemplateRef('formRef');
                                     :search-input="{ placeholder: $t('common.search_field') }"
                                     @update:model-value="($event) => updateReasonField($event)"
                                 >
-                                    <template #item="{ item }">
+                                    <template #item-label="{ item }">
                                         {{ item !== '' ? item : '&nbsp;' }}
                                     </template>
                                 </USelectMenu>

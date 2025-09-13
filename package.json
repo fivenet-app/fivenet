@@ -114,7 +114,7 @@
         "@types/leaflet": "1.9.20",
         "@types/leaflet-contextmenu": "1.4.4",
         "@types/leaflet.heat": "0.2.5",
-        "@types/node": "24.3.1",
+        "@types/node": "24.3.3",
         "@types/pica": "9.0.5",
         "@types/splitpanes": "2.2.6",
         "@types/uuid": "10.0.0",
@@ -129,7 +129,7 @@
         "eslint-config-prettier": "10.1.8",
         "eslint-plugin-prettier": "5.5.4",
         "nuxi": "3.28.0",
-        "nuxt": "4.1.1",
+        "nuxt": "4.1.2",
         "nuxt-tiptap-editor": "2.3.1",
         "nuxt-typed-router": "4.0.2",
         "pinia-plugin-persistedstate": "4.5.0",
@@ -152,7 +152,7 @@
     },
     "resolutions": {
         "@intlify/shared": "11.1.12",
-        "@nuxt/kit": "4.1.1",
+        "@nuxt/kit": "4.1.2",
         "@tiptap/core": "3.4.2",
         "@tiptap/pm": "3.4.2",
         "@tiptap/vue-3": "3.4.2"

@@ -99,7 +99,7 @@ const formRef = useTemplateRef('formRef');
                         {{ $t('common.selected', state.users.length) }}
                     </template>
 
-                    <template #item="{ item }">
+                    <template #item-label="{ item }">
                         {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
                     </template>
 

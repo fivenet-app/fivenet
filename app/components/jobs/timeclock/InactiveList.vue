@@ -199,51 +199,62 @@ const { game } = useAppConfig();
 </script>
 
 <template>
-    <UDashboardToolbar>
-        <template #default>
-            <div class="flex w-full flex-col">
-                <UButton
-                    v-if="can('jobs.TimeclockService/ListTimeclock').value"
-                    class="mb-2 place-self-end"
-                    :to="{ name: 'jobs-timeclock' }"
-                    icon="i-mdi-arrow-left"
-                >
-                    {{ $t('common.timeclock') }}
-                </UButton>
+    <UDashboardPanel :ui="{ root: 'min-h-0', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+        <template #header>
+            <UDashboardToolbar>
+                <template #default>
+                    <UForm
+                        ref="formRef"
+                        class="my-2 flex w-full flex-row justify-between gap-2"
+                        :schema="schema"
+                        :state="state"
+                        @submit="refresh()"
+                    >
+                        <UFormField class="flex-1" name="days" :label="$t('common.time_ago.day', 2)">
+                            <UInputNumber
+                                v-model="state.days"
+                                name="days"
+                                :step="1"
+                                :min="1"
+                                :max="31"
+                                :placeholder="$t('common.time_ago.day', 2)"
+                            />
+                        </UFormField>
 
-                <UForm ref="formRef" class="flex w-full flex-row gap-2" :schema="schema" :state="state" @submit="refresh()">
-                    <UFormField class="flex-1" name="days" :label="$t('common.time_ago.day', 2)">
-                        <UInputNumber
-                            v-model="state.days"
-                            name="days"
-                            :step="1"
-                            :min="1"
-                            :max="31"
-                            :placeholder="$t('common.time_ago.day', 2)"
-                        />
-                    </UFormField>
-                </UForm>
-            </div>
+                        <UFormField v-if="can('jobs.TimeclockService/ListTimeclock').value" label="&nbsp;">
+                            <UButton :to="{ name: 'jobs-timeclock' }" icon="i-mdi-arrow-left">
+                                {{ $t('common.timeclock') }}
+                            </UButton>
+                        </UFormField>
+                    </UForm>
+                </template>
+            </UDashboardToolbar>
         </template>
-    </UDashboardToolbar>
 
-    <DataErrorBlock
-        v-if="error"
-        :title="$t('common.unable_to_load', [$t('common.colleague', 2)])"
-        :error="error"
-        :retry="refresh"
-    />
+        <template #body>
+            <div v-if="error">
+                <DataErrorBlock
+                    :title="$t('common.unable_to_load', [$t('common.colleague', 2)])"
+                    :error="error"
+                    :retry="refresh"
+                />
+            </div>
 
-    <UTable
-        v-model:sorting="state.sorting.columns"
-        :columns="columns"
-        :data="data?.colleagues"
-        :loading="isRequestPending(status)"
-        :empty="$t('common.not_found', [$t('common.colleague', 2)])"
-        :pagination-options="{ manualPagination: true }"
-        :sorting-options="{ manualSorting: true }"
-        sticky
-    />
+            <UTable
+                v-else
+                v-model:sorting="state.sorting.columns"
+                :columns="columns"
+                :data="data?.colleagues"
+                :loading="isRequestPending(status)"
+                :empty="$t('common.not_found', [$t('common.colleague', 2)])"
+                :pagination-options="{ manualPagination: true }"
+                :sorting-options="{ manualSorting: true }"
+                sticky
+            />
+        </template>
 
-    <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+        <template #footer>
+            <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+        </template>
+    </UDashboardPanel>
 </template>

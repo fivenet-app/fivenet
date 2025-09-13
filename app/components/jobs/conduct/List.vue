@@ -272,14 +272,8 @@ const columns = computed(
                                     ref="input"
                                     v-model="query.user"
                                     :searchable="
-                                        async (q: string) => {
-                                            const colleagues = await completorStore.listColleagues({
-                                                search: q,
-                                                labelIds: [],
-                                                userIds: query.user ? [query.user] : [],
-                                            });
-                                            return colleagues;
-                                        }
+                                        async (q: string) =>
+                                            await completorStore.completeColleagues(q, query.user ? [query.user] : [])
                                     "
                                     searchable-key="completor-colleagues"
                                     :search-input="{ placeholder: $t('common.search_field') }"
@@ -291,7 +285,13 @@ const columns = computed(
                                     class="w-full"
                                     value-key="userId"
                                 >
-                                    <template #item="{ item }">
+                                    <template #default="{ items }">
+                                        <div v-for="item in items.filter((i) => query.user === i.userId)" :key="item.userId">
+                                            <ColleagueName :colleague="item" birthday />
+                                        </div>
+                                    </template>
+
+                                    <template #item-label="{ item }">
                                         <ColleagueName class="truncate" :colleague="item" birthday />
                                     </template>
 
@@ -317,7 +317,7 @@ const columns = computed(
                                             {{ $t('common.selected', query.types.length) }}
                                         </template>
 
-                                        <template #item="{ item }">
+                                        <template #item-label="{ item }">
                                             <UBadge class="truncate" :color="conductTypesToBadgeColor(item.status)">
                                                 {{ $t(`enums.jobs.ConductType.${ConductType[item.status]}`) }}
                                             </UBadge>

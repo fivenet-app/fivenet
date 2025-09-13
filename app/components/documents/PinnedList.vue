@@ -55,9 +55,9 @@ const editing = ref(false);
         class="overflow-x-hidden"
         breakpoint="2xl"
         :width="30"
-        :min-size="25"
+        :min-size="22"
         :max-size="50"
-        :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }"
+        :ui="{ body: 'p-1 sm:p-1 gap-0 sm:gap-0' }"
     >
         <template #header>
             <UDashboardNavbar :title="$t('common.pinned_document', 2)">
@@ -87,108 +87,97 @@ const editing = ref(false);
         </template>
 
         <template #body>
-            <div class="flex flex-col gap-2">
-                <DataErrorBlock
-                    v-if="error"
-                    :title="$t('common.unable_to_load', [$t('common.pinned_document', 2)])"
-                    :error="error"
-                    :retry="refresh"
-                />
-                <DataNoDataBlock
-                    v-else-if="!data || data.documents.length === 0"
-                    icon="i-mdi-pin-outline"
-                    :type="$t('common.pinned_document', 0)"
-                />
+            <DataErrorBlock
+                v-if="error"
+                :title="$t('common.unable_to_load', [$t('common.pinned_document', 2)])"
+                :error="error"
+                :retry="refresh"
+            />
+            <DataNoDataBlock
+                v-else-if="!data || data.documents.length === 0"
+                icon="i-mdi-pin-outline"
+                :type="$t('common.pinned_document', 0)"
+            />
 
-                <template v-else-if="isRequestPending(status)">
-                    <USkeleton v-for="idx in 10" :key="idx" class="h-16 w-full" />
-                </template>
-                <div v-else class="flex flex-col gap-2">
-                    <div v-for="doc in data?.documents" :key="doc.id" class="flex flex-row gap-1 divide-x divide-default">
-                        <UButtonGroup
-                            v-if="editing && can('documents.DocumentsService/ToggleDocumentPin').value"
-                            class="inline-flex items-center gap-1"
-                            orientation="vertical"
-                        >
-                            <UTooltip :text="doc.pin?.state && doc.pin?.userId ? $t('common.pin', 1) : $t('common.unpin')">
+            <template v-else-if="isRequestPending(status)">
+                <USkeleton v-for="idx in 10" :key="idx" class="h-16 w-full" />
+            </template>
+            <div v-else class="flex flex-col gap-2">
+                <div v-for="doc in data?.documents" :key="doc.id" class="flex flex-row gap-1 divide-x divide-default">
+                    <UButtonGroup
+                        v-if="editing && can('documents.DocumentsService/ToggleDocumentPin').value"
+                        class="inline-flex items-center gap-1"
+                        orientation="vertical"
+                    >
+                        <UTooltip :text="doc.pin?.state && doc.pin?.userId ? $t('common.pin', 1) : $t('common.unpin')">
+                            <UButton
+                                class="shrink-0 flex-col text-center"
+                                variant="link"
+                                size="xs"
+                                :color="doc.pin?.state && doc.pin?.userId ? 'error' : 'primary'"
+                                :icon="doc.pin?.state && doc.pin?.userId ? 'i-mdi-playlist-remove' : 'i-mdi-playlist-plus'"
+                                :label="$t('common.personal')"
+                                @click="togglePin(doc.id, !doc.pin?.userId, true)"
+                            />
+
+                            <UTooltip
+                                v-if="attr('documents.DocumentsService/ToggleDocumentPin', 'Types', 'JobWide').value"
+                                :text="doc.pin?.state && doc.pin?.job ? $t('common.pin', 1) : $t('common.unpin')"
+                            >
                                 <UButton
                                     class="shrink-0 flex-col text-center"
                                     variant="link"
                                     size="xs"
-                                    :color="doc.pin?.state && doc.pin?.userId ? 'error' : 'primary'"
-                                    @click="togglePin(doc.id, !doc.pin?.userId, true)"
-                                >
-                                    <UIcon
-                                        class="size-5"
-                                        :name="
-                                            doc.pin?.state && doc.pin?.userId ? 'i-mdi-playlist-remove' : 'i-mdi-playlist-plus'
-                                        "
-                                    />
-                                    {{ $t('common.personal') }}
-                                </UButton>
-                                <UTooltip
-                                    v-if="attr('documents.DocumentsService/ToggleDocumentPin', 'Types', 'JobWide').value"
-                                    :text="doc.pin?.state && doc.pin?.job ? $t('common.pin', 1) : $t('common.unpin')"
-                                >
-                                    <UButton
-                                        class="shrink-0 flex-col text-center"
-                                        variant="link"
-                                        size="xs"
-                                        :color="doc.pin?.state && doc.pin?.job ? 'error' : 'primary'"
-                                        @click="togglePin(doc.id, !doc.pin?.job, false)"
-                                    >
-                                        <UIcon
-                                            class="size-5"
-                                            :name="doc.pin?.state && doc.pin?.job ? 'i-mdi-pin-off' : 'i-mdi-pin'"
-                                        />
-                                        {{ $t('common.job') }}
-                                    </UButton>
-                                </UTooltip>
+                                    :color="doc.pin?.state && doc.pin?.job ? 'error' : 'primary'"
+                                    :icon="doc.pin?.state && doc.pin?.job ? 'i-mdi-pin-off' : 'i-mdi-pin'"
+                                    :label="$t('common.job')"
+                                    @click="togglePin(doc.id, !doc.pin?.job, false)"
+                                />
                             </UTooltip>
-                        </UButtonGroup>
+                        </UTooltip>
+                    </UButtonGroup>
 
-                        <div class="flex-1 pr-1">
-                            <DocumentInfoPopover
-                                v-if="doc.createdAt !== undefined"
-                                class="flex-1"
-                                :document="doc"
-                                button-class="hyphens-auto  flex-col items-start"
-                                load-on-open
-                                hide-trailing
-                            >
-                                <template #title="{ document }">
-                                    <div class="inline-flex items-center gap-1 overflow-hidden">
-                                        <IDCopyBadge :id="document?.id" prefix="DOC" size="xs" disable-tooltip />
-                                        <CategoryBadge v-if="document?.category" :category="document?.category" />
-                                    </div>
+                    <div class="flex-1 pr-1">
+                        <DocumentInfoPopover
+                            v-if="doc.createdAt !== undefined"
+                            class="flex-1"
+                            :document="doc"
+                            button-class="hyphens-auto  flex-col items-start"
+                            load-on-open
+                            hide-trailing
+                        >
+                            <template #title="{ document }">
+                                <div class="inline-flex items-center gap-1 overflow-hidden">
+                                    <IDCopyBadge :id="document?.id" prefix="DOC" size="xs" disable-tooltip />
+                                    <CategoryBadge v-if="document?.category" :category="document?.category" />
+                                </div>
 
-                                    <span class="line-clamp-2 text-left break-words hover:line-clamp-4">{{
-                                        document?.title
-                                    }}</span>
-                                </template>
-                            </DocumentInfoPopover>
+                                <span class="line-clamp-2 text-left break-words hover:line-clamp-4">{{ document?.title }}</span>
+                            </template>
+                        </DocumentInfoPopover>
 
-                            <DocumentInfoPopover
-                                v-else
-                                class="flex-1"
-                                :document-id="doc.id"
-                                disable-tooltip
-                                load-on-open
-                                hide-trailing
-                                button-class="flex-col items-start"
-                            >
-                                <template #title>
-                                    <IDCopyBadge :id="doc?.id" prefix="DOC" size="xs" disable-tooltip />
+                        <DocumentInfoPopover
+                            v-else
+                            class="flex-1"
+                            :document-id="doc.id"
+                            disable-tooltip
+                            load-on-open
+                            hide-trailing
+                            button-class="flex-col items-start"
+                        >
+                            <template #title>
+                                <IDCopyBadge :id="doc?.id" prefix="DOC" size="xs" disable-tooltip />
 
-                                    <UBadge :label="$t('common.no_access_to_document')" color="error" size="md" />
-                                </template>
-                            </DocumentInfoPopover>
-                        </div>
+                                <UBadge :label="$t('common.no_access_to_document')" color="error" size="md" />
+                            </template>
+                        </DocumentInfoPopover>
                     </div>
                 </div>
             </div>
+        </template>
 
-            <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+        <template #footer>
+            <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" hide-buttons />
         </template>
     </UDashboardPanel>
 </template>

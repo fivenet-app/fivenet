@@ -439,7 +439,7 @@ watch(
                         {{ $t(`components.qualifications.exam_editor.question_types.${question.data!.data.oneofKind}`) }}
                     </template>
 
-                    <template #item="{ item }">
+                    <template #item-label="{ item }">
                         {{ $t(`components.qualifications.exam_editor.question_types.${item}`) }}
                     </template>
 

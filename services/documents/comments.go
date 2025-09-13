@@ -193,6 +193,14 @@ func (s *Server) PostComment(
 		return nil, errorsdocuments.ErrCommentPostDenied
 	}
 
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
 	stmt := tDComments.
 		INSERT(
 			tDComments.DocumentID,
@@ -207,7 +215,7 @@ func (s *Server) PostComment(
 			userInfo.GetJob(),
 		)
 
-	result, err := stmt.ExecContext(ctx, s.db)
+	result, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -217,7 +225,7 @@ func (s *Server) PostComment(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if _, err := addDocumentActivity(ctx, s.db, &documents.DocActivity{
+	if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
 		DocumentId:   req.GetComment().GetDocumentId(),
 		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_ADDED,
 		CreatorId:    &userInfo.UserId,
@@ -226,11 +234,16 @@ func (s *Server) PostComment(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if err := s.notifyUsersNewComment(ctx, req.GetComment().GetDocumentId(), userInfo.GetUserId()); err != nil {
+	if err := s.notifyUsersNewComment(ctx, tx, req.GetComment().GetDocumentId(), userInfo.GetUserId()); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
 
 	comment, err := s.getComment(ctx, lastId, userInfo)
 	if err != nil {
@@ -471,6 +484,7 @@ func (s *Server) DeleteComment(
 
 func (s *Server) notifyUsersNewComment(
 	ctx context.Context,
+	tx qrm.DB,
 	documentId int64,
 	sourceUserId int32,
 ) error {
@@ -487,31 +501,32 @@ func (s *Server) notifyUsersNewComment(
 		return nil
 	}
 
-	tCreator := tables.User().AS("creator")
+	lastPerCreator := tDComments.
+		SELECT(
+			tDComments.CreatorID.AS("creator_id"),
+			jet.MAX(tDComments.CreatedAt).AS("last_at"),
+		).
+		FROM(tDComments).
+		WHERE(
+			tDComments.DocumentID.EQ(jet.Int64(documentId)).
+				AND(tDComments.CreatorID.NOT_EQ(jet.Int32(sourceUserId))),
+		).
+		GROUP_BY(tDComments.CreatorID).
+		AsTable("dc")
 
 	// Get the last 3 commentors to send them a notification
-	stmt := tDComments.
+	stmt := lastPerCreator.
 		SELECT(
-			jet.DISTINCT(tDComments.CreatorID),
+			jet.RawInt("creator_id"),
 		).
-		FROM(
-			tDComments.
-				LEFT_JOIN(tCreator,
-					tDComments.CreatorID.EQ(tCreator.ID),
-				),
-		).
-		WHERE(jet.AND(
-			tDComments.DocumentID.EQ(jet.Int64(doc.GetId())),
-			tDComments.CreatorID.NOT_EQ(jet.Int32(sourceUserId)),
-		)).
-		GROUP_BY(tDComments.CreatorID).
+		FROM(lastPerCreator).
 		ORDER_BY(
-			tDComments.CreatedAt.DESC(),
+			jet.RawTimestamp("last_at").DESC(),
 		).
 		LIMIT(3)
 
 	var targetUserIds []int32
-	if err := stmt.QueryContext(ctx, s.db, &targetUserIds); err != nil {
+	if err := stmt.QueryContext(ctx, tx, &targetUserIds); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
 		}

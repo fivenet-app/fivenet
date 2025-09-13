@@ -109,7 +109,7 @@ const formRef = useTemplateRef('formRef');
                                 </UBadge>
                             </template>
 
-                            <template #item="{ item }">
+                            <template #item-label="{ item }">
                                 <UBadge class="truncate" :color="requestStatusToBadgeColor(item.status)">
                                     {{ $t(`enums.qualifications.RequestStatus.${RequestStatus[item.status]}`) }}
                                 </UBadge>

@@ -260,7 +260,7 @@ const isMobile = breakpoints.smaller('lg');
                             <UBadge v-if="selectedEmail?.deactivated" color="error" size="xs" :label="$t('common.disabled')" />
                         </template>
 
-                        <template #item="{ item }">
+                        <template #item-label="{ item }">
                             <span class="truncate">
                                 {{
                                     (item?.label && item?.label !== '' ? item?.label + ' (' + item.email + ')' : undefined) ??

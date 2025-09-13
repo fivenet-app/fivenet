@@ -148,7 +148,6 @@ func (s *Server) ListDocuments(
 
 	stmt := s.listDocumentsQuery(condition, nil, nil, userInfo).
 		ORDER_BY(orderBys...).
-		GROUP_BY(tDocumentShort.ID).
 		OFFSET(req.GetPagination().GetOffset()).
 		LIMIT(limit)
 

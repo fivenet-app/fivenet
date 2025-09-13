@@ -3,6 +3,7 @@ package wiki
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
@@ -45,6 +46,10 @@ func (s *Server) ListPages(
 	tJobProps := table.FivenetJobProps
 
 	condition := jet.Bool(true)
+
+	if req.GetRootOnly() {
+		condition = condition.AND(tPageShort.ParentID.IS_NULL())
+	}
 	if req.Search != nil && req.GetSearch() != "" {
 		*req.Search = strings.TrimRight(req.GetSearch(), "*") + "*"
 
@@ -54,24 +59,31 @@ func (s *Server) ListPages(
 		)
 	}
 
-	groupBys := []jet.GroupByClause{tPageShort.ID}
-	if req.RootOnly != nil && req.GetRootOnly() {
-		groupBys = []jet.GroupByClause{tPageShort.Job}
-	}
-
 	if !userInfo.GetSuperuser() {
+		accessExists := jet.EXISTS(
+			jet.SELECT(jet.Int(1)).
+				FROM(tPAccess).
+				WHERE(jet.AND(
+					tPAccess.Access.IS_NOT_NULL(),
+					tPAccess.Access.GT_EQ(
+						jet.Int32(int32(wiki.AccessLevel_ACCESS_LEVEL_VIEW)),
+					),
+					jet.OR(
+						tPAccess.UserID.EQ(jet.Int32(userInfo.GetUserId())),
+						jet.AND(
+							tPAccess.Job.EQ(jet.String(userInfo.GetJob())),
+							tPAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
+						),
+					),
+				),
+				))
+
 		condition = condition.AND(jet.AND(
 			tPageShort.DeletedAt.IS_NULL(),
 			jet.OR(
 				tPageShort.Public.IS_TRUE(),
 				tPageShort.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
-				jet.OR(
-					tPAccess.UserID.EQ(jet.Int32(userInfo.GetUserId())),
-					jet.AND(
-						tPAccess.Job.EQ(jet.String(userInfo.GetJob())),
-						tPAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
-					),
-				),
+				accessExists,
 			),
 		))
 	}
@@ -87,13 +99,7 @@ func (s *Server) ListPages(
 		SELECT(
 			jet.COUNT(jet.DISTINCT(tPageShort.ID)).AS("data_count.total"),
 		).
-		FROM(
-			tPageShort.
-				LEFT_JOIN(tPAccess,
-					tPAccess.TargetID.EQ(tPageShort.ID).
-						AND(tPAccess.Access.GT_EQ(jet.Int32(int32(wiki.AccessLevel_ACCESS_LEVEL_VIEW)))),
-				),
-		).
+		FROM(tPageShort).
 		WHERE(condition)
 
 	var count database.DataCount
@@ -140,10 +146,6 @@ func (s *Server) ListPages(
 		).
 		FROM(
 			tPageShort.
-				LEFT_JOIN(tPAccess,
-					tPAccess.TargetID.EQ(tPageShort.ID).
-						AND(tPAccess.Access.GT_EQ(jet.Int32(int32(wiki.AccessLevel_ACCESS_LEVEL_VIEW)))),
-				).
 				LEFT_JOIN(tJobProps,
 					tJobProps.Job.EQ(tPageShort.Job),
 				).
@@ -155,13 +157,14 @@ func (s *Server) ListPages(
 		OFFSET(req.GetPagination().GetOffset()).
 		// .NULLS_FIRST()
 		ORDER_BY(tPageShort.ParentID.ASC(), tPageShort.Draft.ASC(), tPageShort.SortKey.ASC()).
-		GROUP_BY(groupBys...).
 		LIMIT(limit)
+
+	fmt.Println(stmt.DebugSql())
 
 	pages := []*wiki.PageShort{}
 	if err := stmt.QueryContext(ctx, s.db, &pages); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errorswiki.ErrFailedQuery
+			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 		}
 	}
 

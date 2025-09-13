@@ -161,15 +161,11 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 				jet.Int32(int32(centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
 				jet.Int32(int32(centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED)),
 				jet.Int32(int32(centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED)),
-				jet.Int32(int32(centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
 			),
 			tDispatch.CreatedAt.LT_EQ(
 				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(60, jet.MINUTE)),
 			),
 		)).
-		GROUP_BY(
-			tDispatchStatus.DispatchID,
-		).
 		ORDER_BY(
 			tDispatchStatus.DispatchID.ASC(),
 		).

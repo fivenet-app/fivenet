@@ -56,7 +56,7 @@ const results = ref<InstanceType<typeof ResultList> | null>(null);
                             value-key="userId"
                             class="w-full"
                         >
-                            <template #item="{ item }">
+                            <template #item-label="{ item }">
                                 <ColleagueName :colleague="item" />
                             </template>
 

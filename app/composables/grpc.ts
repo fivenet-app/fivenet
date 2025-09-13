@@ -5,7 +5,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 
 const logger = useLogger('📡 GRPC');
 
-const throttledErrorCodes = ['internal', 'deadline_exceeded', 'cancelled', 'permission_denied', 'unauthenticated'];
+const throttledErrorCodes = ['UNKNOWN', 'INTERNAL', 'DEADLINE_EXCEEDED', 'CANCELLED', 'PERMISSION_DENIED', 'UNAUTHENTICATED'];
 
 const lastError: { receivedAt: undefined | Date; code: undefined | string } = {
     receivedAt: undefined,
@@ -63,6 +63,7 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
     if (code !== undefined) {
         // If the error code has already been "handled", skip "handling" them for now
         // Only do this for internal, deadline_exceeded, cancelled, permission_denied, unauthenticated codes
+        console.log(`GRPC Error: ${code} - ${err.message}`, throttledErrorCodes.includes(code));
         if (throttledErrorCodes.includes(code)) {
             if (lastError.code === code) {
                 if (lastError.receivedAt !== undefined && lastError.receivedAt.getTime() - new Date().getTime() < 15_000) {

@@ -15,10 +15,6 @@ const props = withDefaults(
     },
 );
 
-defineEmits<{
-    (e: 'refresh'): void;
-}>();
-
 const jobsTimeclockClient = await getJobsTimeclockClient();
 
 const { data, error, status, refresh } = useLazyAsyncData(`jobs-timeclock-stats`, () => getTimeclockStats());
@@ -80,7 +76,7 @@ watchDebounced(
                         :label="$t('common.refresh')"
                         :loading="loading || loadingState"
                         :ui="{ label: 'hidden sm:inline-flex' }"
-                        @click="$emit('refresh')"
+                        @click="() => refresh()"
                     />
                 </UTooltip>
             </h2>

@@ -20,11 +20,12 @@ defineProps<{
                     v-model="responses!.responses[idx]"
                     disabled
                 >
-                    <template #question-after>
-                        <slot name="question-after" :question="{ question }" />
+                    <template #question-after="{ disabled }">
+                        <slot name="question-after" :question="{ question }" :disabled="disabled" />
                     </template>
-                    <template #question-below>
-                        <slot name="question-below" :question="{ question }" />
+
+                    <template #question-below="{ disabled }">
+                        <slot name="question-below" :question="{ question }" :disabled="disabled" />
                     </template>
                 </ExamViewQuestion>
             </div>

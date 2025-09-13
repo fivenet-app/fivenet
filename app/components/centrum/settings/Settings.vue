@@ -331,7 +331,7 @@ const formRef = useTemplateRef('formRef');
                                             {{ $t(`enums.centrum.CentrumMode.${CentrumMode[state.mode ?? 0]}`) }}
                                         </template>
 
-                                        <template #item="{ item }">
+                                        <template #item-label="{ item }">
                                             {{ $t(`enums.centrum.CentrumMode.${CentrumMode[item.mode ?? 0]}`) }}
                                         </template>
                                     </USelectMenu>
@@ -356,7 +356,7 @@ const formRef = useTemplateRef('formRef');
                                             {{ $t(`enums.centrum.CentrumMode.${CentrumMode[state.fallbackMode ?? 0]}`) }}
                                         </template>
 
-                                        <template #item="{ item }">
+                                        <template #item-label="{ item }">
                                             {{ $t(`enums.centrum.CentrumMode.${CentrumMode[item.mode ?? 0]}`) }}
                                         </template>
                                     </USelectMenu>

@@ -9,6 +9,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import InputDatePicker from '~/components/partials/InputDatePicker.vue';
 import InputDateRangePopover from '~/components/partials/InputDateRangePopover.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getJobsTimeclockClient } from '~~/gen/ts/clients';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
@@ -109,18 +110,6 @@ function setFromProps(): void {
 
 setFromProps();
 watch(props, setFromProps);
-
-const colleaguesSearchTerm = ref('');
-const colleaguesSearchTermDebounced = refDebounced(colleaguesSearchTerm, 200);
-
-const { data: colleagues, status: colleaguesStatus } = useLazyAsyncData(
-    () => `jobs-timeclock-colleagues-${colleaguesSearchTerm.value}-${JSON.stringify(query.users)}`,
-    () => completorStore.completeColleagues(colleaguesSearchTermDebounced.value),
-    {
-        watch: [colleaguesSearchTermDebounced, () => query.users],
-        immediate: true,
-    },
-);
 
 const { data, status, refresh, error } = useLazyAsyncData(
     () =>
@@ -253,7 +242,7 @@ const columns = computed(() => [
     },
 ]);
 
-const items = computed<TabsItem[]>(() =>
+const tabItems = computed<TabsItem[]>(() =>
     [
         {
             slot: 'self' as const,
@@ -292,9 +281,9 @@ const { game } = useAppConfig();
                     <UForm :schema="schema" :state="query" class="flex flex-1 flex-col gap-1" @submit="refresh">
                         <div class="flex min-w-0 flex-col justify-between lg:flex-row">
                             <UTabs
-                                v-if="props.userId === undefined && items.length > 1"
+                                v-if="props.userId === undefined && tabItems.length > 1"
                                 v-model="query.viewMode"
-                                :items="items"
+                                :items="tabItems"
                                 variant="link"
                             />
 
@@ -350,12 +339,10 @@ const { game } = useAppConfig();
                                     name="users"
                                     :label="$t('common.search')"
                                 >
-                                    <USelectMenu
+                                    <SelectMenu
                                         v-model="query.users"
-                                        v-model:search-term="colleaguesSearchTerm"
-                                        :items="colleagues"
+                                        :searchable="async (q: string) => (await completorStore.completeColleagues(q)) ?? []"
                                         multiple
-                                        :loading="isRequestPending(colleaguesStatus)"
                                         :search-input="{
                                             placeholder: $t('common.search_field'),
                                         }"
@@ -366,14 +353,23 @@ const { game } = useAppConfig();
                                         value-key="userId"
                                         class="w-full"
                                     >
-                                        <template #item="{ item }">
+                                        <template #default="{ items }">
+                                            <div
+                                                v-for="item in items.filter((i) => query.users.includes(i.userId))"
+                                                :key="item.userId"
+                                            >
+                                                <ColleagueName :colleague="item" birthday />
+                                            </div>
+                                        </template>
+
+                                        <template #item-label="{ item }">
                                             <ColleagueName class="truncate" :colleague="item" birthday />
                                         </template>
 
                                         <template #empty>
                                             {{ $t('common.not_found', [$t('common.creator', 2)]) }}
                                         </template>
-                                    </USelectMenu>
+                                    </SelectMenu>
                                 </UFormField>
 
                                 <div class="flex flex-1 flex-row gap-1">

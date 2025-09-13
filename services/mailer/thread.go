@@ -49,19 +49,14 @@ func (s *Server) ListThreads(
 		}, nil
 	}
 
-	ids := []jet.Expression{}
+	emailIDExprs := []jet.Expression{}
 	for _, emailId := range emailIds {
-		ids = append(ids, jet.Int64(emailId))
+		emailIDExprs = append(emailIDExprs, jet.Int64(emailId))
 	}
 
 	wheres := []jet.BoolExpression{jet.Bool(true)}
 	if !userInfo.GetSuperuser() {
-		wheres = []jet.BoolExpression{
-			jet.AND(
-				tThreads.DeletedAt.IS_NULL(),
-				tThreadsRecipients.EmailID.IN(ids...),
-			),
-		}
+		wheres = []jet.BoolExpression{tThreads.DeletedAt.IS_NULL()}
 	}
 
 	if req.Unread != nil {
@@ -82,23 +77,33 @@ func (s *Server) ListThreads(
 		wheres = append(wheres, tThreadsState.Archived.IS_NULL().OR(tThreadsState.Archived.EQ(jet.Bool(false))))
 	}
 
+	// EXISTS filter: thread has at least one of the user’s email IDs as recipient
+	recipExists := jet.EXISTS(
+		jet.SELECT(jet.Int(1)).
+			FROM(tThreadsRecipients).
+			WHERE(
+				tThreadsRecipients.ThreadID.EQ(tThreads.ID).
+					AND(tThreadsRecipients.EmailID.IN(emailIDExprs...)),
+			),
+	)
+
 	countStmt := tThreads.
 		SELECT(
 			jet.COUNT(jet.DISTINCT(tThreads.ID)).AS("data_count.total"),
 		).
 		FROM(
 			tThreads.
-				INNER_JOIN(tThreadsRecipients,
-					tThreadsRecipients.ThreadID.EQ(tThreads.ID),
-				).
 				LEFT_JOIN(tThreadsState,
 					tThreadsState.ThreadID.EQ(tThreads.ID).
 						AND(tThreadsState.EmailID.EQ(jet.Int64(req.GetEmailIds()[0]))),
 				),
 		).
-		WHERE(jet.AND(
-			wheres...,
-		))
+		WHERE(
+			jet.AND(
+				jet.AND(wheres...),
+				recipExists,
+			),
+		)
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -115,7 +120,30 @@ func (s *Server) ListThreads(
 		return resp, nil
 	}
 
-	stmt := tThreads.
+	page := tThreads.
+		SELECT(tThreads.ID.AS("id")).
+		FROM(
+			tThreads.
+				LEFT_JOIN(tThreadsState,
+					tThreadsState.ThreadID.EQ(tThreads.ID).
+						AND(tThreadsState.EmailID.EQ(jet.Int64(req.GetEmailIds()[0]))),
+				),
+		).
+		WHERE(
+			jet.AND(
+				jet.AND(wheres...),
+				recipExists,
+			),
+		).
+		ORDER_BY(
+			jet.COALESCE(tThreads.UpdatedAt, tThreads.CreatedAt).DESC(),
+			tThreads.ID.DESC(),
+		).
+		OFFSET(req.GetPagination().GetOffset()).
+		LIMIT(limit).
+		AsTable("page")
+
+	stmt := page.
 		SELECT(
 			tThreads.ID,
 			tThreads.CreatedAt,
@@ -137,22 +165,19 @@ func (s *Server) ListThreads(
 			tThreadsState.Archived,
 		).
 		FROM(
-			tThreads.
-				INNER_JOIN(tThreadsRecipients,
-					tThreadsRecipients.ThreadID.EQ(tThreads.ID),
+			page.
+				INNER_JOIN(tThreads,
+					tThreads.ID.EQ(jet.RawInt("page.id")),
 				).
 				LEFT_JOIN(tThreadsState,
 					tThreadsState.ThreadID.EQ(tThreads.ID).
 						AND(tThreadsState.EmailID.EQ(jet.Int64(req.GetEmailIds()[0]))),
 				),
 		).
-		WHERE(jet.AND(
-			wheres...,
-		)).
-		OFFSET(req.GetPagination().GetOffset()).
-		GROUP_BY(tThreads.ID).
-		ORDER_BY(jet.COALESCE(tThreads.UpdatedAt, tThreads.CreatedAt).DESC(), tThreads.ID.DESC()).
-		LIMIT(limit)
+		ORDER_BY(
+			jet.COALESCE(tThreads.UpdatedAt, tThreads.CreatedAt).DESC(),
+			tThreads.ID.DESC(),
+		)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Threads); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -208,7 +233,6 @@ func (s *Server) getThread(
 		WHERE(jet.AND(
 			tThreads.ID.EQ(jet.Int64(threadId)),
 		)).
-		GROUP_BY(tThreads.ID).
 		LIMIT(1)
 
 	var thread mailer.Thread

@@ -184,7 +184,7 @@ const requestUserModal = overlay.create(RequestUserModal);
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0 overflow-y-hidden' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.qualifications.id.title')">
                 <template #leading>
@@ -487,7 +487,7 @@ const requestUserModal = overlay.create(RequestUserModal);
                 :message="$t('common.not_found', [$t('common.qualification', 1)])"
             />
 
-            <div v-else class="flex min-h-full w-full max-w-full flex-1 flex-col overflow-y-auto">
+            <div v-else class="flex min-h-full w-full max-w-full flex-1 flex-col overflow-y-hidden">
                 <div v-if="!canDo.grade && qualification.content?.content === undefined" class="p-4 sm:p-6">
                     <UAlert
                         icon="i-mdi-information"
@@ -500,18 +500,21 @@ const requestUserModal = overlay.create(RequestUserModal);
                 <UTabs
                     v-else
                     v-model="selectedTab"
-                    class="flex flex-1 flex-col"
+                    class="flex-1 flex-col overflow-y-hidden"
                     :items="items"
                     variant="link"
-                    :ui="{ content: 'h-full', list: 'mx-auto max-w-(--breakpoint-xl)' }"
+                    :ui="{
+                        content: 'flex flex-col flex-1 min-h-0 max-h-full overflow-y-hidden',
+                        list: 'mx-auto max-w-(--breakpoint-xl)',
+                    }"
                 >
                     <template #info>
-                        <UDashboardPanel :ui="{ root: 'h-full min-h-0' }">
+                        <UDashboardPanel :ui="{ root: 'h-full min-h-0 overflow-y-auto' }">
                             <template #body>
                                 <div class="mx-auto w-full max-w-(--breakpoint-xl)">
                                     <div
                                         v-if="qualification.content?.content"
-                                        class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-800"
+                                        class="w-full rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-800"
                                     >
                                         <HTMLContent :value="qualification.content.content" />
                                     </div>
@@ -629,7 +632,11 @@ const requestUserModal = overlay.create(RequestUserModal);
                     </template>
 
                     <template v-if="canDo.grade" #tutor>
-                        <TutorView :qualification="qualification" class="mx-auto max-w-(--breakpoint-xl) px-2" />
+                        <div class="w-full overflow-y-auto">
+                            <div class="mx-auto w-full max-w-(--breakpoint-xl)">
+                                <TutorView :qualification="qualification" />
+                            </div>
+                        </div>
                     </template>
                 </UTabs>
             </div>

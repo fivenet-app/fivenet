@@ -29,7 +29,19 @@ func (s *Server) listQualificationsQuery(
 	tCreator := tables.User().AS("creator")
 
 	wheres := []jet.BoolExpression{}
+
 	if !userInfo.GetSuperuser() {
+		accessExists := jet.EXISTS(
+			jet.SELECT(jet.Int(1)).
+				FROM(tQAccess).
+				WHERE(jet.AND(
+					tQAccess.Access.IS_NOT_NULL(),
+					tQAccess.Access.GT_EQ(
+						jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED)),
+					),
+				),
+				))
+
 		wheres = append(wheres,
 			jet.AND(
 				tQuali.DeletedAt.IS_NULL(),
@@ -39,12 +51,7 @@ func (s *Server) listQualificationsQuery(
 						tQuali.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
 						tQuali.CreatorJob.EQ(jet.String(userInfo.GetJob())),
 					),
-					jet.AND(
-						tQAccess.Access.IS_NOT_NULL(),
-						tQAccess.Access.GT(
-							jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED)),
-						),
-					),
+					accessExists,
 				),
 			),
 		)
@@ -181,7 +188,7 @@ func (s *Server) getQualificationQuery(
 					),
 					jet.AND(
 						tQAccess.Access.IS_NOT_NULL(),
-						tQAccess.Access.GT(
+						tQAccess.Access.GT_EQ(
 							jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED)),
 						),
 					),
@@ -327,28 +334,19 @@ func (s *Server) getQualificationRequirements(
 
 	stmt := tQReqs.
 		SELECT(
-			tQReqs.ID,
+			tQReqs.ID.AS("qualification_requirement.qualification_id"),
+			tQReqs.CreatedAt,
+			tQReqs.TargetQualificationID,
 			tQuali.ID,
 			tQuali.Abbreviation,
 			tQuali.Title,
-			tQReqs.TargetQualificationID,
-			tQualiResults.ID,
-			tQualiResults.QualificationID,
-			tQualiResults.Status,
-			tQualiResults.Score,
-			tQualiResults.Summary,
-			tQualiResults.CreatorID,
 		).
 		FROM(tQReqs.
 			INNER_JOIN(tQuali,
 				tQuali.ID.EQ(tQReqs.TargetQualificationID),
-			).
-			LEFT_JOIN(tQualiResults,
-				tQualiResults.QualificationID.EQ(tQReqs.TargetQualificationID),
 			),
 		).
-		WHERE(tQReqs.QualificationID.EQ(jet.Int64(qualificationId))).
-		GROUP_BY(tQuali.ID)
+		WHERE(tQReqs.QualificationID.EQ(jet.Int64(qualificationId)))
 
 	var dest []*qualifications.QualificationRequirement
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {

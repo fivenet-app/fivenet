@@ -558,7 +558,7 @@ const formRef = useTemplateRef('formRef');
                     </template>
 
                     <template #access>
-                        <UDashboardPanel :ui="{ root: 'min-h-0' }">
+                        <UDashboardPanel :ui="{ root: 'min-h-0 overflow-y-auto' }">
                             <template #body>
                                 <UContainer>
                                     <UPageCard :title="$t('common.access')">

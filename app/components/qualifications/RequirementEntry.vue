@@ -54,7 +54,7 @@ watch(selectedQualification, () => emit('update-qualification', selectedQualific
             <SelectMenu
                 v-model="selectedQualification"
                 block
-                :searchable="(q: string) => listQualifications(q)"
+                :searchable="async (q: string) => await listQualifications(q)"
                 :searchable-key="`qualification-${qualificationId}-requirement-entry`"
                 :search-input="{ placeholder: $t('common.search_field') }"
                 class="w-full"
@@ -63,7 +63,7 @@ watch(selectedQualification, () => emit('update-qualification', selectedQualific
                     {{ selectedQualification.abbreviation }}: {{ selectedQualification.title }}
                 </template>
 
-                <template #item="{ item }">
+                <template #item-label="{ item }">
                     <template v-if="item?.abbreviation">{{ item.abbreviation }}: </template
                     >{{ !item.title ? $t('common.untitled') : item.title }}
                 </template>

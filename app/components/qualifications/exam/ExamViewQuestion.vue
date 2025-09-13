@@ -203,9 +203,9 @@ const response = useVModel(props, 'modelValue', emit);
                 </UFormField>
             </div>
 
-            <slot name="question-after" :question="modelValue?.question" />
+            <slot name="question-after" :question="modelValue?.question" :disabled="disabled" />
         </div>
 
-        <slot name="question-below" :question="modelValue?.question" />
+        <slot name="question-below" :question="modelValue?.question" :disabled="disabled" />
     </div>
 </template>

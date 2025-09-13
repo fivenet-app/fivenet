@@ -97,7 +97,6 @@ func (s *Server) ListDocumentPins(
 			tDocumentShort.UpdatedAt.DESC(),
 		).
 		OFFSET(req.GetPagination().GetOffset()).
-		GROUP_BY(tDocumentShort.ID).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Documents); err != nil {

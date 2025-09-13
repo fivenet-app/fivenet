@@ -60,7 +60,7 @@ onBeforeMount(async () => {
         } catch (e) {
             logger.error('exception during map users stream', e);
         }
-    }, 50);
+    }, 100);
 });
 
 onBeforeRouteLeave(async (to) => {

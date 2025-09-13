@@ -153,14 +153,6 @@ if (props.hideGrade) {
                             value-key="value"
                             :items="accessTypes"
                         >
-                            <template #default>
-                                {{ accessTypes.find((t) => t.value === entry.type)?.label }}
-                            </template>
-
-                            <template #item="{ item }">
-                                {{ item.label }}
-                            </template>
-
                             <template #empty>
                                 {{ $t('common.not_found', [$t('common.type')]) }}
                             </template>
@@ -195,7 +187,7 @@ if (props.hideGrade) {
                         {{ usersToLabel([selectedUser]) }}
                     </template>
 
-                    <template #item="{ item }">
+                    <template #item-label="{ item }">
                         {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
                     </template>
 
@@ -233,7 +225,7 @@ if (props.hideGrade) {
                         {{ selectedQualification.abbreviation }}: {{ selectedQualification.title }}
                     </template>
 
-                    <template #item="{ item }">
+                    <template #item-label="{ item }">
                         {{ `${item?.abbreviation}: ${item?.title}` }}
                     </template>
 

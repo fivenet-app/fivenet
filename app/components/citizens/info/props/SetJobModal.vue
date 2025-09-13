@@ -114,10 +114,6 @@ onBeforeMount(async () => listJobs());
                                 {{ state.job?.label }}
                             </template>
 
-                            <template #item="{ item }">
-                                {{ item.label }}
-                            </template>
-
                             <template #empty>
                                 {{ $t('common.not_found', [$t('common.job')]) }}
                             </template>
@@ -136,7 +132,7 @@ onBeforeMount(async () => listJobs());
                                 {{ state.grade?.label }} ({{ state.grade?.grade }})
                             </template>
 
-                            <template #item="{ item }"> {{ item.label }} ({{ item.grade }}) </template>
+                            <template #item-label="{ item }"> {{ item.label }} ({{ item.grade }}) </template>
 
                             <template #empty>
                                 {{ $t('common.not_found', [$t('common.job_grade')]) }}

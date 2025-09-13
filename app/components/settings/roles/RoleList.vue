@@ -167,7 +167,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                         {{ state.jobGrade?.label }} ({{ state.jobGrade?.grade }})
                                     </template>
 
-                                    <template #item="{ item }"> {{ item.label }} ({{ item.grade }}) </template>
+                                    <template #item-label="{ item }"> {{ item.label }} ({{ item.grade }}) </template>
                                 </USelectMenu>
                             </ClientOnly>
                         </UFormField>

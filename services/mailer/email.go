@@ -146,27 +146,76 @@ func ListUserEmails(
 	}
 
 	if !userInfo.GetSuperuser() {
-		condition = condition.AND(jet.AND(
-			baseCondition,
-			jet.OR(
-				tEmails.UserID.EQ(jet.Int32(userInfo.GetUserId())),
-				jet.OR(
-					tEmailsAccess.UserID.EQ(jet.Int32(userInfo.GetUserId())),
+		access := int32(mailer.AccessLevel_ACCESS_LEVEL_READ)
+		// Access predicates via EXISTS (no joins)
+		userAccessExists := jet.EXISTS(
+			jet.SELECT(jet.Int(1)).
+				FROM(tEmailsAccess).
+				WHERE(
+					tEmailsAccess.TargetID.EQ(tEmails.ID).
+						AND(tEmailsAccess.Access.GT_EQ(jet.Int32(access))).
+						AND(tEmailsAccess.UserID.EQ(jet.Int32(userInfo.GetUserId()))),
+				),
+		)
+
+		jobAccessExists := jet.EXISTS(
+			jet.SELECT(jet.Int(1)).
+				FROM(tEmailsAccess).
+				WHERE(
+					tEmailsAccess.TargetID.EQ(tEmails.ID).
+						AND(tEmailsAccess.Access.GT_EQ(jet.Int32(access))).
+						AND(tEmailsAccess.Job.EQ(jet.String(userInfo.GetJob()))).
+						AND(tEmailsAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade()))),
+				),
+		)
+
+		// Qualification-based access: there exists an access row with a QualificationID
+		// for this email AND the user has a successful (non-deleted) result for it.
+		ea := tEmailsAccess.AS("ea")
+		qr := tQualificationsResults.AS("qr")
+
+		qualAccessExists := jet.EXISTS(
+			jet.SELECT(jet.Int(1)).
+				FROM(tEmailsAccess.AS("ea")).
+				WHERE(
 					jet.AND(
-						tEmailsAccess.Job.EQ(jet.String(userInfo.GetJob())),
-						tEmailsAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
-					),
-					jet.AND(
-						tEmailsAccess.QualificationID.IS_NOT_NULL(),
-						tQualificationsResults.DeletedAt.IS_NULL(),
-						tQualificationsResults.QualificationID.EQ(tEmailsAccess.QualificationID),
-						tQualificationsResults.Status.EQ(
-							jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)),
+						ea.TargetID.EQ(tEmails.ID),
+						ea.Access.GT_EQ(jet.Int32(access)),
+						ea.QualificationID.IS_NOT_NULL(),
+						jet.EXISTS(
+							jet.SELECT(jet.Int(1)).
+								FROM(tQualificationsResults.AS("qr")).
+								WHERE(
+									jet.AND(
+										qr.QualificationID.EQ(ea.QualificationID),
+										qr.UserID.EQ(jet.Int32(userInfo.GetUserId())),
+										qr.DeletedAt.IS_NULL(),
+										qr.Status.EQ(
+											jet.Int32(
+												int32(
+													qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL,
+												),
+											),
+										),
+									),
+								),
 						),
 					),
 				),
+		)
+
+		condition = condition.AND(
+			baseCondition.AND(
+				jet.OR(
+					// owner may always see their email
+					tEmails.UserID.EQ(jet.Int32(userInfo.GetUserId())),
+					// access by explicit user, by job+grade, or by qualification
+					userAccessExists,
+					jobAccessExists,
+					qualAccessExists,
+				),
 			),
-		))
+		)
 	}
 
 	stmt := tEmails.
@@ -182,28 +231,18 @@ func ListUserEmails(
 			tEmails.EmailChanged,
 			tEmails.Label,
 		).
-		FROM(
-			tEmails.
-				LEFT_JOIN(tEmailsAccess,
-					tEmailsAccess.TargetID.EQ(tEmails.ID).
-						AND(tEmailsAccess.Access.GT_EQ(jet.Int32(int32(mailer.AccessLevel_ACCESS_LEVEL_READ)))),
-				).
-				LEFT_JOIN(tQualificationsResults,
-					tQualificationsResults.QualificationID.EQ(tEmailsAccess.QualificationID).
-						AND(tQualificationsResults.UserID.EQ(jet.Int32(userInfo.GetUserId()))),
-				),
+		FROM(tEmails).
+		WHERE(condition).
+		ORDER_BY(
+			tEmails.Job.ASC(),
+			tEmails.Label.ASC(),
 		).
-		WHERE(condition)
+		LIMIT(listEmailsPageSize)
 
 	if pag != nil {
 		stmt = stmt.
 			OFFSET(pag.GetOffset())
 	}
-
-	stmt = stmt.
-		GROUP_BY(tEmails.ID).
-		ORDER_BY(tEmails.Job.ASC(), tEmails.Label.ASC()).
-		LIMIT(listEmailsPageSize)
 
 	resp := &pbmailer.ListEmailsResponse{}
 	if err := stmt.QueryContext(ctx, tx, &resp.Emails); err != nil {

@@ -167,7 +167,7 @@ const formRef = useTemplateRef('formRef');
                                     {{ $t(`enums.documents.DocActivityType.${DocActivityType[state.requestType]}`, 2) }}
                                 </template>
 
-                                <template #item="{ item }">
+                                <template #item-label="{ item }">
                                     {{ $t(`enums.documents.DocActivityType.${DocActivityType[item.key]}`, 2) }}
                                 </template>
 
