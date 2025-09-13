@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
@@ -71,7 +72,9 @@ const filteredUnits = computed(() => ({
         </template>
 
         <template #body>
-            <div class="flex flex-col gap-y-2">
+            <DataNoDataBlock v-if="getSortedUnits.length === 0" :type="$t('common.unit', 2)" icon="i-mdi-car" />
+
+            <div v-else class="flex flex-col gap-y-2">
                 <UFormField name="search" :label="$t('common.search')">
                     <UInput
                         v-model="queryUnit"
