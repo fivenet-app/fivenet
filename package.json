@@ -98,7 +98,7 @@
         "vue-timeline-chart": "4.0.1",
         "y-protocols": "1.0.6",
         "yjs": "13.6.27",
-        "zod": "3.25.76"
+        "zod": "4.1.8"
     },
     "devDependencies": {
         "@csmith/release-it-calver-plugin": "2023.12.0",
