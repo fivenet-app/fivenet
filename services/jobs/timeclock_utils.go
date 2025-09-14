@@ -19,7 +19,7 @@ func (s *Server) getTimeclockStats(
 ) (*jobs.TimeclockStats, error) {
 	stmt := tTimeClock.
 		SELECT(
-			dbutils.ANY_VALUE(tTimeClock.Job).AS("timeclock_stats.job"),
+			tTimeClock.Job.AS("timeclock_stats.job"),
 			jet.SUM(tTimeClock.SpentTime).AS("timeclock_stats.spent_time_sum"),
 			jet.AVG(tTimeClock.SpentTime).AS("timeclock_stats.spent_time_avg"),
 			jet.MAX(tTimeClock.SpentTime).AS("timeclock_stats.spent_time_max"),
@@ -31,7 +31,8 @@ func (s *Server) getTimeclockStats(
 				jet.DateExp(jet.CURRENT_DATE().SUB(jet.INTERVAL(7, jet.DAY))),
 				jet.CURRENT_DATE(),
 			),
-		))
+		)).
+		GROUP_BY(tTimeClock.Job)
 
 	var dest jobs.TimeclockStats
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {

@@ -32,14 +32,6 @@ func WEEK(column jet.Column) jet.Expression {
 	)
 }
 
-func ANY_VALUE(column jet.Column) jet.Expression {
-	return jet.CustomExpression(
-		jet.Token("ANY_VALUE("),
-		column,
-		jet.Token(")"),
-	)
-}
-
 // JSON_CONTAINS is a helper function to create a JSON_CONTAINS expression in go-jet.
 //
 //nolint:revive // Function name is all uppercase to be consistent with go-jet package.
