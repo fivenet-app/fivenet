@@ -698,7 +698,9 @@
         "file_upload_label": "Choose a file or drag it here.",
         "latitude_short": "Lat",
         "longitude_short": "Long",
-        "inactive": "Inactive"
+        "inactive": "Inactive",
+        "path": "Path",
+        "directory": "Directory | Directories"
     },
     "components": {
         "partials": {
@@ -2533,126 +2535,92 @@
         "footer": "Type {key1} for citizens, {key2} for documents search."
     },
     "zod": {
-        "errors": {
-            "custom_types": {
-                "duration": {
-                    "invalid": "Invalid duration format, must be in format of \"1.23s\" and be at least \"0.01s\""
-                },
-                "filelist": {
-                    "required": "File must be provided",
-                    "wrong_file_type": "File must be one of the valid file types: {types}",
-                    "size_too_big": "File must be less than {size}MB"
-                }
+        "value": "value",
+        "required": "Required",
+        "invalid_input": "Invalid input",
+        "invalid_type": "Invalid input: expected {expected}, received {received}",
+        "invalid_value": "Invalid value",
+        "invalid_value_single": "Invalid input: expected {expected}",
+        "invalid_value_one_of": "Invalid option: expected one of {expected}",
+        "too_big": {
+            "have_full": "Too big: expected {origin} {verb} {comparator} {maximum} {unit}",
+            "be_full":   "Too big: expected {origin} to be {comparator} {maximum}"
+        },
+        "too_small": {
+            "have_full": "Too small: expected {origin} {verb} {comparator} {minimum} {unit}",
+            "be_full":   "Too small: expected {origin} to be {comparator} {minimum}"
+        },
+        "starts_with": "Invalid string: must start with \"{prefix}\"",
+        "ends_with": "Invalid string: must end with \"{suffix}\"",
+        "includes": "Invalid string: must include \"{includes}\"",
+        "regex": "Invalid string: must match pattern {pattern}",
+        "invalid_format_noun": "Invalid {noun}",
+        "not_multiple_of": "Invalid number: must be a multiple of {divisor}",
+        "unrecognized_key": "Unrecognized key: {keys}",
+        "unrecognized_keys": "Unrecognized keys: {keys}",
+        "invalid_key": "Invalid key in {origin}",
+        "invalid_union": "Invalid input",
+        "invalid_element": "Invalid value in {origin}",
+        "custom": "{message}",
+        "origins": {
+            "string": "string",
+            "file": "file",
+            "array": "array",
+            "set": "set"
+        },
+        "comparators": {
+            "lte": "at most",
+            "lt": "less than",
+            "gte": "at least",
+            "gt": "greater than"
+        },
+        "sizable": {
+            "string":{
+                "unit": "characters",
+                "verb": "to have"
             },
-            "invalid_type": "Expected {expected}, received {received}",
-            "invalid_type_received_undefined": "Required",
-            "invalid_type_received_null": "Required",
-            "invalid_literal": "Invalid literal value. Expected {expected}",
-            "unrecognized_keys": "Unrecognized key(s) in the object: {keys}",
-            "invalid_union": "Invalid input for union type",
-            "invalid_union_discriminator": "Invalid union discriminator value. Expected {options}",
-            "invalid_enum_value": "Invalid enum value. Expected one of {options}, but received '{received}'",
-            "invalid_arguments": "Invalid function arguments",
-            "invalid_return_type": "Invalid function return type",
-            "invalid_date": "Invalid date",
-            "custom": "Invalid input",
-            "invalid_intersection_types": "Intersection types could not be merged",
-            "not_multiple_of": "The number must be a multiple of {multipleOf}",
-            "not_finite": "The number must be finite",
-            "invalid_string": {
-                "email": "Invalid {validation}",
-                "url": "Invalid {validation}",
-                "uuid": "Invalid {validation}",
-                "cuid": "Invalid {validation}",
-                "regex": "Invalid string format",
-                "datetime": "Invalid {validation}",
-                "startsWith": "Invalid input: must start with \"{startsWith}\"",
-                "endsWith": "Invalid input: must end with \"{endsWith}\""
+            "file":  {
+                "unit": "bytes",
+                "verb": "to have"
             },
-            "too_small": {
-                "array": {
-                    "exact": "The list must contain exactly {minimum} element(s)",
-                    "inclusive": "List must contain at least {minimum} element(s)",
-                    "not_inclusive": "List must contain more than {minimum} element(s)"
-                },
-                "string": {
-                    "exact": "The field must contain exactly {minimum} character(s)",
-                    "inclusive": "Field must contain at least {minimum} character(s)",
-                    "not_inclusive": "Field must contain over {minimum} character(s)"
-                },
-                "number": {
-                    "exact": "The number must be exactly {minimum}",
-                    "inclusive": "Number must be greater than or equal to {minimum}",
-                    "not_inclusive": "Number must be greater than {minimum}"
-                },
-                "set": {
-                    "exact": "Invalid input",
-                    "inclusive": "Invalid input",
-                    "not_inclusive": "Invalid input"
-                },
-                "date": {
-                    "exact": "Date must be exactly {minimum}",
-                    "inclusive": "Date must be greater than or equal to {minimum}",
-                    "not_inclusive": "Date must be greater than {minimum}"
-                }
+            "array": {
+                "unit": "items",
+                "verb": "to have"
             },
-            "too_big": {
-                "array": {
-                    "exact": "The list must contain exactly {maximum} element(s)",
-                    "inclusive": "List must contain at most {maximum} element(s)",
-                    "not_inclusive": "List must contain less than {maximum} element(s)"
-                },
-                "string": {
-                    "exact": "The field must contain exactly {maximum} character(s)",
-                    "inclusive": "Field must contain at most {maximum} character(s)",
-                    "not_inclusive": "Field must contain under {maximum} character(s)"
-                },
-                "number": {
-                    "exact": "The number must be exactly {maximum}",
-                    "inclusive": "Number must be less than or equal to {maximum}",
-                    "not_inclusive": "Number must be less than {maximum}"
-                },
-                "set": {
-                    "exact": "Invalid input",
-                    "inclusive": "Invalid input",
-                    "not_inclusive": "Invalid input"
-                },
-                "date": {
-                    "exact": "Date must be exactly {maximum}",
-                    "inclusive": "Date must be smaller than or equal to {maximum}",
-                    "not_inclusive": "Date must be smaller than {maximum}"
-                }
+            "set": {
+                "unit": "items",
+                "verb": "to have"
             }
         },
-        "validations": {
-            "email": "email",
-            "url": "url",
-            "uuid": "uuid",
+        "nouns": {
+            "regex": "input",
+            "email": "email address",
+            "url": "URL",
+            "emoji": "emoji",
+            "uuid": "UUID",
+            "uuidv4": "UUIDv4",
+            "uuidv6": "UUIDv6",
+            "nanoid": "nanoid",
+            "guid": "GUID",
             "cuid": "cuid",
-            "regex": "regex",
-            "datetime": "datetime"
-        },
-        "types": {
-            "function": "function",
-            "number": "number",
-            "string": "field",
-            "nan": "nan",
-            "integer": "integer",
-            "float": "float",
-            "boolean": "boolean",
-            "date": "date",
-            "bigint": "bigint",
-            "undefined": "undefined",
-            "symbol": "symbol",
-            "null": "null",
-            "array": "list",
-            "object": "object",
-            "unknown": "unknown",
-            "promise": "promise",
-            "void": "void",
-            "never": "never",
-            "map": "map",
-            "set": "set"
+            "cuid2": "cuid2",
+            "ulid": "ULID",
+            "xid": "XID",
+            "ksuid": "KSUID",
+            "datetime": "ISO datetime",
+            "date": "ISO date",
+            "time": "ISO time",
+            "duration": "ISO duration",
+            "ipv4": "IPv4 address",
+            "ipv6": "IPv6 address",
+            "cidrv4": "IPv4 range",
+            "cidrv6": "IPv6 range",
+            "base64": "base64-encoded string",
+            "base64url": "base64url-encoded string",
+            "json_string": "JSON string",
+            "e164": "E.164 number",
+            "jwt": "JWT",
+            "template_literal": "input"
         }
     },
     "discord": {

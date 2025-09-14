@@ -91,7 +91,7 @@ const name = computed(() =>
                 <template #leading>
                     <UAvatar
                         :src="activeChar?.profilePicture ? `/api/filestore/${activeChar.profilePicture}` : undefined"
-                        :alt="name"
+                        :alt="getInitials(name)"
                         size="xs"
                     />
                 </template>

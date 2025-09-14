@@ -12,8 +12,8 @@ export const zWorkflow = z.object({
                     })
                     .array()
                     .max(3)
-                    .default([]),
-                maxReminderCount: z.coerce.number().min(1).max(10).default(10),
+                    .prefault([]),
+                maxReminderCount: z.coerce.number().min(1).max(10).prefault(10),
             }),
         }),
 
@@ -27,8 +27,8 @@ export const zWorkflow = z.object({
                     })
                     .array()
                     .max(3)
-                    .default([]),
-                maxReminderCount: z.coerce.number().min(1).max(10).default(10),
+                    .prefault([]),
+                maxReminderCount: z.coerce.number().min(1).max(10).prefault(10),
             }),
         }),
     ]),
@@ -38,7 +38,7 @@ export const zWorkflow = z.object({
             autoClose: z.literal(false),
             autoCloseSettings: z.object({
                 duration: z.coerce.number().max(60).positive(),
-                message: z.coerce.string().max(1024).default(''),
+                message: z.coerce.string().max(1024).prefault(''),
             }),
         }),
 
@@ -46,7 +46,7 @@ export const zWorkflow = z.object({
             autoClose: z.literal(true),
             autoCloseSettings: z.object({
                 duration: z.coerce.number().max(60).positive(),
-                message: z.coerce.string().min(3).max(1024).default(''),
+                message: z.coerce.string().min(3).max(1024).prefault(''),
             }),
         }),
     ]),

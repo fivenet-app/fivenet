@@ -196,6 +196,7 @@ async function handleImage(file: globalThis.File | null | undefined): Promise<vo
         question.value.data.data.image.image = resp.file;
     }
 
+    question.value!.data!.data.image.image = resp.file!;
     emit('fileUploaded', resp.file!);
 }
 

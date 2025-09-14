@@ -433,7 +433,13 @@ const showPreview = ref(false);
                                     <ColorPicker v-model="page.bgColor" class="ml-2" />
                                 </div>
 
-                                <UFileUpload :accept="fileUpload.types.images.join(',')" @update:model-value="onBgChange" />
+                                <UFileUpload
+                                    :accept="fileUpload.types.images.join(',')"
+                                    :placeholder="$t('common.image')"
+                                    :label="$t('common.file_upload_label')"
+                                    :description="$t('common.allowed_file_types')"
+                                    @update:model-value="onBgChange"
+                                />
                             </UFormField>
                             <UFormField label="Opacity"
                                 ><USlider v-model="page.bgOpacity" :min="0" :max="1" :step="0.05" />

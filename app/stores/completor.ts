@@ -66,7 +66,7 @@ export const useCompletorStore = defineStore(
                     ...u,
                     avatar: {
                         src: u.profilePicture ? `/api/filestore/${u.profilePicture}` : undefined,
-                        alt: userToLabel(u),
+                        alt: getInitials(`${u.firstname} ${u.lastname}`),
                     },
                 }));
             } catch (e) {
@@ -114,7 +114,7 @@ export const useCompletorStore = defineStore(
                     ...c,
                     avatar: {
                         src: c.profilePicture ? `/api/filestore/${c.profilePicture}` : undefined,
-                        alt: userToLabel(c),
+                        alt: getInitials(`${c.firstname} ${c.lastname}`),
                     },
                 }));
             } catch (e) {

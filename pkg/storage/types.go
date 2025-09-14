@@ -128,6 +128,8 @@ type FileInfo struct {
 	Size int64
 	// The file's MIME content type
 	ContentType string
+	// IsDir indicates if the file is a directory
+	IsDir bool
 }
 
 // GetFilename generates a deterministic storage filename based on user ID, file name, and extension.

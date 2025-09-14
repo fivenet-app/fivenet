@@ -8,8 +8,8 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
 	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
@@ -134,8 +134,8 @@ func (s *Server) PermissionStreamFuncOverride(
 	return ctx, nil
 }
 
-func (s *Server) GetSyncTimes() *pbsettings.DBSyncStatus {
-	st := &pbsettings.DBSyncStatus{
+func (s *Server) GetSyncTimes() *settings.DBSyncStatus {
+	st := &settings.DBSyncStatus{
 		Enabled: s.cfg.Sync.Enabled,
 	}
 

@@ -136,21 +136,18 @@ const formRef = useTemplateRef('formRef');
                 <UFormField name="mugshot" :label="$t('common.mugshot')">
                     <div class="flex flex-col gap-2">
                         <NotSupportedTabletBlock v-if="nuiEnabled" />
-                        <div v-else class="flex flex-col gap-1">
-                            <div class="flex flex-1 flex-row gap-1">
-                                <UFileUpload
-                                    v-model="state.mugshot"
-                                    class="flex-1"
-                                    name="mugshot"
-                                    :accept="appConfig.fileUpload.types.images.join(',')"
-                                    block
-                                    :disabled="formRef?.loading"
-                                    :placeholder="$t('common.image')"
-                                    :label="$t('common.file_upload_label')"
-                                    :description="$t('common.allowed_file_types')"
-                                />
-                            </div>
-                        </div>
+                        <UFileUpload
+                            v-else
+                            v-model="state.mugshot"
+                            class="mx-auto max-w-md flex-1"
+                            name="mugshot"
+                            :accept="appConfig.fileUpload.types.images.join(',')"
+                            block
+                            :disabled="formRef?.loading"
+                            :placeholder="$t('common.image')"
+                            :label="$t('common.file_upload_label')"
+                            :description="$t('common.allowed_file_types')"
+                        />
 
                         <div class="flex w-full flex-col items-center justify-center gap-2">
                             <GenericImg

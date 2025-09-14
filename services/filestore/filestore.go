@@ -2,6 +2,7 @@ package filestore
 
 import (
 	"context"
+	"errors"
 	"path/filepath"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
@@ -11,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"google.golang.org/grpc"
 )
@@ -50,7 +52,9 @@ func (s *Server) ListFiles(
 
 	files, err := s.st.List(ctx, filePath, int(req.GetPagination().GetOffset()), listFilesPageSize)
 	if err != nil {
-		return nil, err
+		if !errors.Is(err, storage.ErrNotFound) {
+			return nil, err
+		}
 	}
 
 	fs := make([]*file.File, len(files))
@@ -59,6 +63,7 @@ func (s *Server) ListFiles(
 			FilePath:    files[i].Name,
 			ByteSize:    files[i].Size,
 			ContentType: files[i].ContentType,
+			IsDir:       files[i].IsDir,
 		}
 	}
 	resp.Files = fs

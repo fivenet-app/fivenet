@@ -3,40 +3,6 @@
 
 package settings
 
-func (m *DBSyncStatus) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: LastSyncedActivity
-	if m.LastSyncedActivity != nil {
-		if v, ok := any(m.GetLastSyncedActivity()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: LastSyncedData
-	if m.LastSyncedData != nil {
-		if v, ok := any(m.GetLastSyncedData()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-func (m *Database) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
 func (m *DeleteFactionRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -146,61 +112,9 @@ func (m *GetStatusResponse) Sanitize() error {
 		return nil
 	}
 
-	// Field: Database
-	if m.Database != nil {
-		if v, ok := any(m.GetDatabase()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Dbsync
-	if m.Dbsync != nil {
-		if v, ok := any(m.GetDbsync()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Nats
-	if m.Nats != nil {
-		if v, ok := any(m.GetNats()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Version
-	if m.Version != nil {
-		if v, ok := any(m.GetVersion()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-func (m *Nats) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-func (m *NewVersionInfo) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: ReleaseDate
-	if m.ReleaseDate != nil {
-		if v, ok := any(m.GetReleaseDate()).(interface{ Sanitize() error }); ok {
+	// Field: Status
+	if m.Status != nil {
+		if v, ok := any(m.GetStatus()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -239,23 +153,6 @@ func (m *UpdateJobLimitsRequest) Sanitize() error {
 func (m *UpdateJobLimitsResponse) Sanitize() error {
 	if m == nil {
 		return nil
-	}
-
-	return nil
-}
-
-func (m *VersionStatus) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: NewVersion
-	if m.NewVersion != nil {
-		if v, ok := any(m.GetNewVersion()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
 	}
 
 	return nil

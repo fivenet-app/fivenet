@@ -94,6 +94,7 @@ func (s *Server) CreateOrUpdateLawBook(
 	}, nil
 }
 
+//nolint:dupl // Similar code, but different logic
 func (s *Server) DeleteLawBook(
 	ctx context.Context,
 	req *pbsettings.DeleteLawBookRequest,
@@ -255,6 +256,7 @@ func (s *Server) CreateOrUpdateLaw(
 	}, nil
 }
 
+//nolint:dupl // Similar code, but different logic
 func (s *Server) DeleteLaw(
 	ctx context.Context,
 	req *pbsettings.DeleteLawRequest,

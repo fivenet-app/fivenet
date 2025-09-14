@@ -1,8 +1,10 @@
 <script lang="ts" setup>
-import { NuxtImg, UButton, UIcon, UTooltip } from '#components';
+import { UButton, UIcon, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
+import { z } from 'zod';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import StreamerModeAlert from '~/components/partials/StreamerModeAlert.vue';
@@ -20,22 +22,30 @@ const { streamerMode } = storeToRefs(settingsStore);
 
 const filestoreFilestoreClient = await getFilestoreFilestoreClient();
 
-const prefix = ref('');
+const schema = z.object({
+    prefix: z.coerce
+        .string()
+        .max(64)
+        .optional()
+        .default('')
+        .transform((val) => val.slice(0, 255)),
+    page: pageNumberSchema,
+});
 
-const page = useRouteQuery('page', '1', { transform: Number });
+const query = useSearchForm('settings-filelist', schema);
 
 const {
     data: files,
     status,
     refresh,
     error,
-} = useLazyAsyncData(`files-${page.value}-${prefix.value}`, () => listFiles(prefix.value));
+} = useLazyAsyncData(`files-${query.page}-${query.prefix}`, () => listFiles(query.page, query.prefix));
 
-async function listFiles(prefix: string): Promise<ListFilesResponse> {
+async function listFiles(page: number, prefix: string): Promise<ListFilesResponse> {
     try {
         const { response } = filestoreFilestoreClient.listFiles({
             pagination: {
-                offset: calculateOffset(page.value, files.value?.pagination),
+                offset: calculateOffset(page, files.value?.pagination),
             },
             path: prefix,
         });
@@ -95,7 +105,23 @@ const columns = computed(
             {
                 id: 'actions',
                 cell: ({ row }) =>
-                    h('div', { class: 'flex items-center gap-2' }, [
+                    h('div', { class: 'flex items-center gap-1' }, [
+                        row.original.isDir
+                            ? h(
+                                  UTooltip,
+                                  { text: t('common.directory') },
+                                  {
+                                      default: () =>
+                                          h(UButton, {
+                                              variant: 'link',
+                                              icon: 'i-mdi-subdirectory-arrow-right',
+                                              onClick: () => {
+                                                  query.prefix += row.original.filePath.replace(query.prefix, '') + '/';
+                                              },
+                                          }),
+                                  },
+                              )
+                            : null,
                         h(
                             UTooltip,
                             { text: t('common.show') },
@@ -146,13 +172,22 @@ const columns = computed(
                 accessorKey: 'preview',
                 header: t('common.preview'),
                 cell: ({ row }) =>
-                    !previewTypes.some((ext) => row.original.filePath.endsWith(ext))
-                        ? h(UIcon, { class: 'size-8', name: 'i-mdi-file-outline' })
-                        : h(NuxtImg, {
-                              class: 'max-h-24 max-w-32',
-                              src: `/api/filestore/${row.original.filePath.replace(/^\//, '')}`,
-                              loading: 'lazy',
-                          }),
+                    row.original.isDir
+                        ? h(UIcon, { class: 'size-8', name: 'i-mdi-folder' })
+                        : !previewTypes.some((ext) => row.original.filePath.endsWith(ext))
+                          ? h(UIcon, { class: 'size-8', name: 'i-mdi-file-outline' })
+                          : h(
+                                'div',
+                                { class: 'flex justify-center items-center' },
+                                h(GenericImg, {
+                                    src: `/api/filestore/${row.original.filePath.replace(/^\//, '')}`,
+                                    alt: row.original.filePath,
+                                    loading: 'lazy',
+                                    rounded: false,
+                                    enablePopup: true,
+                                    imgClass: 'max-h-24 max-w-32',
+                                }),
+                            ),
             },
             {
                 accessorKey: 'fileSize',
@@ -166,6 +201,24 @@ const columns = computed(
             },
         ] as TableColumn<File>[],
 );
+
+function goBackDirectory(): void {
+    if (!query.prefix) return;
+
+    const parts = query.prefix.split('/').filter((p) => p.length > 0);
+    parts.pop();
+    query.prefix = parts.length > 0 ? parts.join('/') + '/' : '';
+}
+
+watchDebounced(query, async () => (await formRef.value?.validate()) && refresh(), { debounce: 200, maxWait: 1250 });
+
+const formRef = useTemplateRef('formRef');
+
+const inputRef = useTemplateRef('inputRef');
+
+defineShortcuts({
+    '/': () => inputRef.value?.inputRef?.focus(),
+});
 </script>
 
 <template>
@@ -187,6 +240,37 @@ const columns = computed(
                     />
                 </template>
             </UDashboardNavbar>
+
+            <UDashboardToolbar>
+                <UForm
+                    ref="formRef"
+                    class="my-2 flex w-full flex-1 flex-col gap-2"
+                    :schema="schema"
+                    :state="query"
+                    @submit="refresh()"
+                >
+                    <div class="flex flex-1 flex-row gap-2">
+                        <UFormField class="flex-1" name="prefix" :label="$t('common.search')">
+                            <UButtonGroup class="w-full">
+                                <UInput
+                                    ref="inputRef"
+                                    v-model="query.prefix"
+                                    type="text"
+                                    name="prefix"
+                                    :placeholder="$t('common.path')"
+                                    class="w-full"
+                                    leading-icon="i-mdi-search"
+                                >
+                                    <template #trailing>
+                                        <UKbd value="/" />
+                                    </template>
+                                </UInput>
+                                <UButton icon="i-mdi-subdirectory-arrow-left" variant="subtle" @click="goBackDirectory" />
+                            </UButtonGroup>
+                        </UFormField>
+                    </div>
+                </UForm>
+            </UDashboardToolbar>
         </template>
 
         <template #body>
@@ -212,7 +296,7 @@ const columns = computed(
         </template>
 
         <template #footer>
-            <Pagination v-model="page" :pagination="files?.pagination" :status="status" :refresh="refresh" />
+            <Pagination v-model="query.page" :pagination="files?.pagination" :status="status" :refresh="refresh" />
         </template>
     </UDashboardPanel>
 </template>

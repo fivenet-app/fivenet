@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRoute, useRouter } from 'vue-router';
-import { type z, type ZodDefault, ZodFirstPartyTypeKind, type ZodObject, type ZodRawShape, type ZodTypeAny } from 'zod';
+import type { z, ZodDefault, ZodObject, ZodRawShape } from 'zod';
 import { useSearchesStore } from '~/stores/searches';
 
 // helper to unwrap a default‐wrapped schema
-function getCoreSchema(s: ZodTypeAny): ZodTypeAny {
-    if (s._def.typeName === ZodFirstPartyTypeKind.ZodDefault) {
-        return (s as ZodDefault<any>)._def.innerType;
+function getCoreSchema(s: z.ZodType): z.ZodType {
+    if (s.def.type === 'default') {
+        return (s as ZodDefault<any>).def.innerType;
     }
     return s;
 }
@@ -36,22 +36,22 @@ export function useSearchForm<T extends ZodRawShape, S extends ZodObject<T>>(key
     // Step 3: build a "raw" override object from URL params
     const raw = {} as Partial<State>;
     for (const field of Object.keys(schema.shape) as Array<keyof State>) {
-        const core = getCoreSchema(schema.shape[field] as ZodTypeAny);
-        const type = core._def.typeName as ZodFirstPartyTypeKind;
+        const core = getCoreSchema(schema.shape[field] as z.ZodType);
+        const type = core.def.type;
         const param = route.query[field as string];
 
         // Skip empty string
         if (param === '') continue;
 
         // booleans
-        if (type === ZodFirstPartyTypeKind.ZodBoolean) {
+        if (type === 'boolean') {
             if (param === 'true') raw[field] = true as any;
             if (param === 'false') raw[field] = false as any;
             continue;
         }
 
         // Dates
-        if (type === ZodFirstPartyTypeKind.ZodDate && typeof param === 'string') {
+        if (type === 'date' && typeof param === 'string') {
             raw[field] = new Date(param) as any;
             continue;
         }
@@ -98,7 +98,7 @@ export function useSearchForm<T extends ZodRawShape, S extends ZodObject<T>>(key
         (s) => {
             const q: Record<string, string> = {};
             if (route.query.tab) {
-                // TODO this is a temporary fix
+                // TODO this is a temporary fix for tab query param being lost
                 q.tab = String(route.query.tab);
             }
 
@@ -110,12 +110,12 @@ export function useSearchForm<T extends ZodRawShape, S extends ZodObject<T>>(key
                 // Skip NaN
                 if (typeof v === 'number' && isNaN(v)) continue;
 
-                const core = getCoreSchema(schema.shape[k] as ZodTypeAny);
-                const type = core._def.typeName as ZodFirstPartyTypeKind;
+                const core = getCoreSchema(schema.shape[k] as z.ZodType);
+                const type = core.def.type;
 
-                if (type === ZodFirstPartyTypeKind.ZodDate) {
+                if (type === 'date') {
                     q[k as string] = fmtDate(v as Date);
-                } else if (type === ZodFirstPartyTypeKind.ZodBoolean) {
+                } else if (type === 'boolean') {
                     q[k as string] = String(v);
                 } else if (typeof v === 'string' || typeof v === 'number') {
                     q[k as string] = String(v);

@@ -346,6 +346,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `byte_size` | [int64](#int64) |  | Bytes stored |
 | `content_type` | [string](#string) |  |  |
 | `meta` | [FileMeta](#resourcesfileFileMeta) | optional |  |
+| `is_dir` | [bool](#bool) |  |  |
 
 
 
@@ -5623,6 +5624,100 @@ User related events
 | ----- | ---- | ----- | ----------- |
 | `to_update` | [resources.permissions.PermItem](#resourcespermissionsPermItem) | repeated |  |
 | `to_remove` | [resources.permissions.PermItem](#resourcespermissionsPermItem) | repeated |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/settings/status.proto
+
+
+### resources.settings.DBSyncStatus
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `enabled` | [bool](#bool) |  |  |
+| `last_synced_data` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `last_synced_activity` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `last_dbsync_version` | [string](#string) | optional |  |
+
+
+
+
+
+### resources.settings.Database
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `version` | [string](#string) |  |  |
+| `connected` | [bool](#bool) |  |  |
+| `migration_version` | [uint64](#uint64) |  |  |
+| `migration_dirty` | [bool](#bool) |  |  |
+| `db_charset` | [string](#string) |  |  |
+| `db_collation` | [string](#string) |  |  |
+| `tables_ok` | [bool](#bool) |  |  |
+
+
+
+
+
+### resources.settings.Nats
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `version` | [string](#string) |  |  |
+| `connected` | [bool](#bool) |  |  |
+
+
+
+
+
+### resources.settings.NewVersionInfo
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `version` | [string](#string) |  |  |
+| `url` | [string](#string) |  |  |
+| `release_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+
+
+
+
+
+### resources.settings.SystemStatus
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `database` | [Database](#resourcessettingsDatabase) |  |  |
+| `nats` | [Nats](#resourcessettingsNats) |  |  |
+| `dbsync` | [DBSyncStatus](#resourcessettingsDBSyncStatus) |  |  |
+| `version` | [VersionStatus](#resourcessettingsVersionStatus) |  |  |
+
+
+
+
+
+### resources.settings.VersionStatus
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `current` | [string](#string) |  |  |
+| `new_version` | [NewVersionInfo](#resourcessettingsNewVersionInfo) | optional |  |
 
 
 
@@ -11123,37 +11218,6 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 ## services/settings/system.proto
 
 
-### services.settings.DBSyncStatus
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `enabled` | [bool](#bool) |  |  |
-| `last_synced_data` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `last_synced_activity` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `last_dbsync_version` | [string](#string) | optional |  |
-
-
-
-
-
-### services.settings.Database
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `version` | [string](#string) |  |  |
-| `connected` | [bool](#bool) |  |  |
-| `migration_version` | [uint64](#uint64) |  |  |
-| `migration_dirty` | [bool](#bool) |  |  |
-| `db_charset` | [string](#string) |  |  |
-| `db_collation` | [string](#string) |  |  |
-| `tables_ok` | [bool](#bool) |  |  |
-
-
-
-
-
 ### services.settings.DeleteFactionRequest
 
 
@@ -11230,35 +11294,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `database` | [Database](#servicessettingsDatabase) |  |  |
-| `nats` | [Nats](#servicessettingsNats) |  |  |
-| `dbsync` | [DBSyncStatus](#servicessettingsDBSyncStatus) |  |  |
-| `version` | [VersionStatus](#servicessettingsVersionStatus) |  |  |
-
-
-
-
-
-### services.settings.Nats
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `version` | [string](#string) |  |  |
-| `connected` | [bool](#bool) |  |  |
-
-
-
-
-
-### services.settings.NewVersionInfo
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `version` | [string](#string) |  |  |
-| `url` | [string](#string) |  |  |
-| `release_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `status` | [resources.settings.SystemStatus](#resourcessettingsSystemStatus) |  |  |
 
 
 
@@ -11278,18 +11314,6 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 
 ### services.settings.UpdateJobLimitsResponse
-
-
-
-
-
-### services.settings.VersionStatus
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `current` | [string](#string) |  |  |
-| `new_version` | [NewVersionInfo](#servicessettingsNewVersionInfo) | optional |  |
 
 
 

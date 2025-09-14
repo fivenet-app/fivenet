@@ -6,7 +6,7 @@ import { UploadFileRequest, UploadMeta, type UploadFileResponse } from '~~/gen/t
 
 const MAX_READ_SIZE = 128 * 1024; // 128 KB
 
-export type UploadNamespaces = 'documents' | 'qualifications' | 'qualifications-exam-questions' | 'wiki';
+export type UploadNamespaces = 'documents' | 'jobprops' | 'qualifications' | 'qualifications-exam-questions' | 'wiki';
 
 /**
  * Factory that returns resize + upload helpers bound to a parent record.

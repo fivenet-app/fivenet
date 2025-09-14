@@ -45,6 +45,10 @@ export interface File {
      * @generated from protobuf field: optional resources.file.FileMeta meta = 7
      */
     meta?: FileMeta;
+    /**
+     * @generated from protobuf field: bool is_dir = 8
+     */
+    isDir: boolean;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class File$Type extends MessageType<File> {
@@ -56,7 +60,8 @@ class File$Type extends MessageType<File> {
             { no: 4, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "byte_size", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 6, name: "content_type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 7, name: "meta", kind: "message", T: () => FileMeta }
+            { no: 7, name: "meta", kind: "message", T: () => FileMeta },
+            { no: 8, name: "is_dir", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<File>): File {
@@ -65,6 +70,7 @@ class File$Type extends MessageType<File> {
         message.filePath = "";
         message.byteSize = 0;
         message.contentType = "";
+        message.isDir = false;
         if (value !== undefined)
             reflectionMergePartial<File>(this, message, value);
         return message;
@@ -94,6 +100,9 @@ class File$Type extends MessageType<File> {
                     break;
                 case /* optional resources.file.FileMeta meta */ 7:
                     message.meta = FileMeta.internalBinaryRead(reader, reader.uint32(), options, message.meta);
+                    break;
+                case /* bool is_dir */ 8:
+                    message.isDir = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -128,6 +137,9 @@ class File$Type extends MessageType<File> {
         /* optional resources.file.FileMeta meta = 7; */
         if (message.meta)
             FileMeta.internalBinaryWrite(message.meta, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* bool is_dir = 8; */
+        if (message.isDir !== false)
+            writer.tag(8, WireType.Varint).bool(message.isDir);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

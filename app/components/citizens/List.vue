@@ -91,7 +91,7 @@ async function listCitizens(): Promise<ListCitizensResponse> {
     }
 }
 
-watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
+watchDebounced(query, async () => (await formRef.value?.validate()) && refresh(), { debounce: 200, maxWait: 1250 });
 
 const clipboardStore = useClipboardStore();
 const notifications = useNotificationsStore();
@@ -266,6 +266,8 @@ const columns = computed(() =>
     ).filter((c) => c !== undefined),
 );
 
+const formRef = useTemplateRef('formRef');
+
 const citizenLabelModal = overlay.create(LabelModal);
 
 const input = useTemplateRef('input');
@@ -294,7 +296,13 @@ defineShortcuts({
             </UDashboardNavbar>
 
             <UDashboardToolbar>
-                <UForm class="my-2 flex w-full flex-1 flex-col gap-2" :schema="schema" :state="query" @submit="refresh()">
+                <UForm
+                    ref="formRef"
+                    class="my-2 flex w-full flex-1 flex-col gap-2"
+                    :schema="schema"
+                    :state="query"
+                    @submit="refresh()"
+                >
                     <div class="flex flex-1 flex-row gap-2">
                         <UFormField class="flex-1" :label="$t('common.search')" name="name">
                             <UInput

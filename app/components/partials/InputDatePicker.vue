@@ -98,7 +98,7 @@ const smallerThanSm = breakpoints.smaller('sm');
         </UButton>
 
         <template #content>
-            <div class="pb-2">
+            <div class="flex flex-col items-center pb-2">
                 <UCalendar
                     v-model="internalModelValue"
                     class="p-1"
@@ -111,7 +111,7 @@ const smallerThanSm = breakpoints.smaller('sm');
                     v-if="time"
                     :schema="{}"
                     :state="timeState"
-                    class="pb-02 flex w-full flex-col items-center justify-center gap-2 md:flex-row"
+                    class="flex w-full flex-col items-center justify-center gap-2 pb-2 md:flex-row"
                 >
                     <div class="flex flex-1 items-center justify-center">
                         <UFormField :label="$t('common.time')">
@@ -138,16 +138,16 @@ const smallerThanSm = breakpoints.smaller('sm');
                     </div>
                 </UForm>
 
-                <UButton
-                    v-if="clearable"
-                    variant="outline"
-                    color="neutral"
-                    block
-                    class="mx-2 mt-2"
-                    :label="$t('common.clear')"
-                    trailing-icon="i-mdi-clear"
-                    @click="internalModelValue = undefined"
-                />
+                <div v-if="clearable" class="w-full px-2">
+                    <UButton
+                        variant="outline"
+                        color="error"
+                        block
+                        :label="$t('common.clear')"
+                        trailing-icon="i-mdi-clear"
+                        @click="internalModelValue = undefined"
+                    />
+                </div>
             </div>
         </template>
     </UPopover>

@@ -25,7 +25,7 @@ const filestoreFilestoreClient = await getFilestoreFilestoreClient();
 const schema = z.object({
     category: z.coerce.string().min(3).max(255),
     name: z.coerce.string().min(3).max(255),
-    file: zodFileSingleSchema(fileUpload.fileSizes.fileStore, fileUpload.types.images),
+    file: z.file().mime(fileUpload.types.images).max(fileUpload.fileSizes.fileStore),
 });
 
 type Schema = z.output<typeof schema>;
@@ -39,7 +39,7 @@ const state = reactive({
 const categories = ['jobassets'];
 
 async function upload(values: Schema): Promise<UploadFileResponse | undefined> {
-    if (!values.file[0]) {
+    if (!values.file) {
         return;
     }
 
@@ -103,7 +103,7 @@ const formRef = useTemplateRef('formRef');
                         v-else
                         v-model="state.file"
                         name="file"
-                        class="w-full"
+                        class="mx-auto max-w-md flex-1"
                         :accept="fileUpload.types.images.join(',')"
                         :placeholder="$t('common.image')"
                         :label="$t('common.file_upload_label')"

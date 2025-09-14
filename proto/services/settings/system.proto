@@ -7,7 +7,7 @@ import "codegen/perms/perms.proto";
 import "resources/permissions/attributes.proto";
 import "resources/permissions/permissions.proto";
 import "resources/settings/perms.proto";
-import "resources/timestamp/timestamp.proto";
+import "resources/settings/status.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settings";
 
@@ -48,43 +48,7 @@ message DeleteFactionResponse {}
 message GetStatusRequest {}
 
 message GetStatusResponse {
-  Database database = 1;
-  Nats nats = 2;
-  DBSyncStatus dbsync = 3;
-  VersionStatus version = 4;
-}
-
-message Nats {
-  string version = 1 [(buf.validate.field).string.max_len = 32];
-  bool connected = 2;
-}
-
-message Database {
-  string version = 1 [(buf.validate.field).string.max_len = 32];
-  bool connected = 2;
-  uint64 migration_version = 3;
-  bool migration_dirty = 4;
-  string db_charset = 5 [(buf.validate.field).string.max_len = 32];
-  string db_collation = 6 [(buf.validate.field).string.max_len = 32];
-  bool tables_ok = 7;
-}
-
-message DBSyncStatus {
-  bool enabled = 1;
-  optional resources.timestamp.Timestamp last_synced_data = 2;
-  optional resources.timestamp.Timestamp last_synced_activity = 3;
-  optional string last_dbsync_version = 4 [(buf.validate.field).string.max_len = 32];
-}
-
-message VersionStatus {
-  string current = 1 [(buf.validate.field).string.max_len = 32];
-  optional NewVersionInfo new_version = 2;
-}
-
-message NewVersionInfo {
-  string version = 1 [(buf.validate.field).string.max_len = 32];
-  string url = 2 [(buf.validate.field).string.max_len = 256];
-  optional resources.timestamp.Timestamp release_date = 3;
+  resources.settings.SystemStatus status = 1;
 }
 
 service SystemService {

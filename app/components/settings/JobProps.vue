@@ -15,12 +15,15 @@ import type { Guild } from '~~/gen/ts/resources/discord/discord';
 import type { JobProps } from '~~/gen/ts/resources/jobs/job_props';
 import { type DiscordSyncChange, UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/jobs/job_settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import FileUpload from '../partials/elements/FileUpload.vue';
+import ConfirmModal from '../partials/ConfirmModal.vue';
+import GenericImg from '../partials/elements/GenericImg.vue';
 import FormatBuilder from '../partials/FormatBuilder.vue';
 import NotSupportedTabletBlock from '../partials/NotSupportedTabletBlock.vue';
 import SelectMenu from '../partials/SelectMenu.vue';
 
 const { t } = useI18n();
+
+const overlay = useOverlay();
 
 const { can } = useAuth();
 
@@ -310,6 +313,8 @@ const selectedTab = computed({
     },
 });
 
+const { resizeAndUpload } = useFileUploader((opts) => settingsSettingsClient.uploadJobLogo(opts), 'jobprops', 0);
+
 const selectedChange = ref<DiscordSyncChange | undefined>();
 
 const formRef = useTemplateRef('formRef');
@@ -323,6 +328,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await setJobProps(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
@@ -388,12 +395,42 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :label="$t('common.logo')"
                                     :ui="{ container: '' }"
                                 >
-                                    <FileUpload
-                                        v-model="jobProps.logoFile"
-                                        :disabled="!canSubmit || !canEdit"
-                                        :upload-fn="(opts) => settingsSettingsClient.uploadJobLogo(opts)"
-                                        :delete-fn="() => settingsSettingsClient.deleteJobLogo({})"
-                                    />
+                                    <div v-if="jobProps.logoFileId" class="flex w-full flex-1 items-center justify-center">
+                                        <GenericImg
+                                            :src="`/api/filestore/jobprops/${jobProps.job}`"
+                                            :alt="`${jobProps.job} ${$t('common.logo')}`"
+                                            class="mb-2 size-full max-h-40 min-h-40 max-w-40"
+                                        />
+                                    </div>
+
+                                    <NotSupportedTabletBlock v-if="nuiEnabled" />
+                                    <div v-else class="flex flex-col gap-2 md:flex-row">
+                                        <UFileUpload
+                                            class="w-full flex-1 grow"
+                                            :accept="appConfig.fileUpload.types.images.join(',')"
+                                            :disabled="!canSubmit || !canEdit"
+                                            :placeholder="$t('common.image')"
+                                            :label="$t('common.file_upload_label')"
+                                            :description="$t('common.allowed_file_types')"
+                                            @update:model-value="($event) => $event && resizeAndUpload($event)"
+                                        />
+
+                                        <UButton
+                                            v-if="jobProps.logoFileId"
+                                            variant="outline"
+                                            color="red"
+                                            trailing-icon="i-mdi-clear"
+                                            :label="$t('common.clear')"
+                                            class="grow-0"
+                                            @click="
+                                                () => {
+                                                    confirmModal.open({
+                                                        confirm: () => settingsSettingsClient.deleteJobLogo({}),
+                                                    });
+                                                }
+                                            "
+                                        />
+                                    </div>
                                 </UFormField>
 
                                 <UFormField

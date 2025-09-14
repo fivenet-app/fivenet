@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
@@ -20,8 +21,8 @@ func (s *Server) GetStatus(
 	dbCharset, dbCollation := s.dbReq.GetDBCharsetAndCollation()
 	migrationVersion, migrationDirty := s.dbReq.GetMigrationState()
 
-	resp := &pbsettings.GetStatusResponse{
-		Database: &pbsettings.Database{
+	status := &settings.SystemStatus{
+		Database: &settings.Database{
 			Version:          s.dbReq.GetVersion(),
 			Connected:        true,
 			DbCharset:        dbCharset,
@@ -30,12 +31,12 @@ func (s *Server) GetStatus(
 			MigrationDirty:   migrationDirty,
 			TablesOk:         len(s.dbReq.GetTables()) == 0,
 		},
-		Nats: &pbsettings.Nats{
+		Nats: &settings.Nats{
 			Version:   s.natsReq.GetVersion(),
 			Connected: !s.js.Conn().IsClosed(),
 		},
 		Dbsync: s.syncServer.GetSyncTimes(),
-		Version: &pbsettings.VersionStatus{
+		Version: &settings.VersionStatus{
 			Current:    version.Version,
 			NewVersion: nil,
 		},
@@ -45,17 +46,19 @@ func (s *Server) GetStatus(
 	if s.updateChecker != nil {
 		current, latestVersion, url, releaseDate := s.updateChecker.GetNewVersionInfo()
 		if latestVersion != current {
-			resp.Version.NewVersion = &pbsettings.NewVersionInfo{
+			status.Version.NewVersion = &settings.NewVersionInfo{
 				Version: latestVersion,
 				Url:     url,
 			}
 			if !releaseDate.IsZero() {
-				resp.Version.NewVersion.ReleaseDate = timestamp.New(releaseDate)
+				status.Version.NewVersion.ReleaseDate = timestamp.New(releaseDate)
 			}
 		}
 	}
 
-	return resp, nil
+	return &pbsettings.GetStatusResponse{
+		Status: status,
+	}, nil
 }
 
 func (s *Server) GetAllPermissions(

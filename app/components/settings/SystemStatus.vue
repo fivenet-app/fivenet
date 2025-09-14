@@ -13,7 +13,7 @@ async function getStatus() {
         const call = settingsSystemClient.getStatus({});
         const { response } = await call;
 
-        return response;
+        return response.status;
     } catch (err) {
         console.error('Failed to fetch system status:', err);
         throw err;

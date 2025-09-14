@@ -17,4 +17,5 @@ message File {
   string content_type = 6;
 
   optional FileMeta meta = 7;
+  bool is_dir = 8;
 }

@@ -10,7 +10,6 @@ import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	permissions "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
 	settings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings"
-	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -447,10 +446,7 @@ func (*GetStatusRequest) Descriptor() ([]byte, []int) {
 
 type GetStatusResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Database      *Database              `protobuf:"bytes,1,opt,name=database,proto3" json:"database,omitempty"`
-	Nats          *Nats                  `protobuf:"bytes,2,opt,name=nats,proto3" json:"nats,omitempty"`
-	Dbsync        *DBSyncStatus          `protobuf:"bytes,3,opt,name=dbsync,proto3" json:"dbsync,omitempty"`
-	Version       *VersionStatus         `protobuf:"bytes,4,opt,name=version,proto3" json:"version,omitempty"`
+	Status        *settings.SystemStatus `protobuf:"bytes,1,opt,name=status,proto3" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -485,354 +481,9 @@ func (*GetStatusResponse) Descriptor() ([]byte, []int) {
 	return file_services_settings_system_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *GetStatusResponse) GetDatabase() *Database {
+func (x *GetStatusResponse) GetStatus() *settings.SystemStatus {
 	if x != nil {
-		return x.Database
-	}
-	return nil
-}
-
-func (x *GetStatusResponse) GetNats() *Nats {
-	if x != nil {
-		return x.Nats
-	}
-	return nil
-}
-
-func (x *GetStatusResponse) GetDbsync() *DBSyncStatus {
-	if x != nil {
-		return x.Dbsync
-	}
-	return nil
-}
-
-func (x *GetStatusResponse) GetVersion() *VersionStatus {
-	if x != nil {
-		return x.Version
-	}
-	return nil
-}
-
-type Nats struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Version       string                 `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
-	Connected     bool                   `protobuf:"varint,2,opt,name=connected,proto3" json:"connected,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Nats) Reset() {
-	*x = Nats{}
-	mi := &file_services_settings_system_proto_msgTypes[10]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Nats) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Nats) ProtoMessage() {}
-
-func (x *Nats) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_system_proto_msgTypes[10]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Nats.ProtoReflect.Descriptor instead.
-func (*Nats) Descriptor() ([]byte, []int) {
-	return file_services_settings_system_proto_rawDescGZIP(), []int{10}
-}
-
-func (x *Nats) GetVersion() string {
-	if x != nil {
-		return x.Version
-	}
-	return ""
-}
-
-func (x *Nats) GetConnected() bool {
-	if x != nil {
-		return x.Connected
-	}
-	return false
-}
-
-type Database struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Version          string                 `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
-	Connected        bool                   `protobuf:"varint,2,opt,name=connected,proto3" json:"connected,omitempty"`
-	MigrationVersion uint64                 `protobuf:"varint,3,opt,name=migration_version,json=migrationVersion,proto3" json:"migration_version,omitempty"`
-	MigrationDirty   bool                   `protobuf:"varint,4,opt,name=migration_dirty,json=migrationDirty,proto3" json:"migration_dirty,omitempty"`
-	DbCharset        string                 `protobuf:"bytes,5,opt,name=db_charset,json=dbCharset,proto3" json:"db_charset,omitempty"`
-	DbCollation      string                 `protobuf:"bytes,6,opt,name=db_collation,json=dbCollation,proto3" json:"db_collation,omitempty"`
-	TablesOk         bool                   `protobuf:"varint,7,opt,name=tables_ok,json=tablesOk,proto3" json:"tables_ok,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
-}
-
-func (x *Database) Reset() {
-	*x = Database{}
-	mi := &file_services_settings_system_proto_msgTypes[11]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Database) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Database) ProtoMessage() {}
-
-func (x *Database) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_system_proto_msgTypes[11]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Database.ProtoReflect.Descriptor instead.
-func (*Database) Descriptor() ([]byte, []int) {
-	return file_services_settings_system_proto_rawDescGZIP(), []int{11}
-}
-
-func (x *Database) GetVersion() string {
-	if x != nil {
-		return x.Version
-	}
-	return ""
-}
-
-func (x *Database) GetConnected() bool {
-	if x != nil {
-		return x.Connected
-	}
-	return false
-}
-
-func (x *Database) GetMigrationVersion() uint64 {
-	if x != nil {
-		return x.MigrationVersion
-	}
-	return 0
-}
-
-func (x *Database) GetMigrationDirty() bool {
-	if x != nil {
-		return x.MigrationDirty
-	}
-	return false
-}
-
-func (x *Database) GetDbCharset() string {
-	if x != nil {
-		return x.DbCharset
-	}
-	return ""
-}
-
-func (x *Database) GetDbCollation() string {
-	if x != nil {
-		return x.DbCollation
-	}
-	return ""
-}
-
-func (x *Database) GetTablesOk() bool {
-	if x != nil {
-		return x.TablesOk
-	}
-	return false
-}
-
-type DBSyncStatus struct {
-	state              protoimpl.MessageState `protogen:"open.v1"`
-	Enabled            bool                   `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	LastSyncedData     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=last_synced_data,json=lastSyncedData,proto3,oneof" json:"last_synced_data,omitempty"`
-	LastSyncedActivity *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=last_synced_activity,json=lastSyncedActivity,proto3,oneof" json:"last_synced_activity,omitempty"`
-	LastDbsyncVersion  *string                `protobuf:"bytes,4,opt,name=last_dbsync_version,json=lastDbsyncVersion,proto3,oneof" json:"last_dbsync_version,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
-}
-
-func (x *DBSyncStatus) Reset() {
-	*x = DBSyncStatus{}
-	mi := &file_services_settings_system_proto_msgTypes[12]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DBSyncStatus) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DBSyncStatus) ProtoMessage() {}
-
-func (x *DBSyncStatus) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_system_proto_msgTypes[12]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DBSyncStatus.ProtoReflect.Descriptor instead.
-func (*DBSyncStatus) Descriptor() ([]byte, []int) {
-	return file_services_settings_system_proto_rawDescGZIP(), []int{12}
-}
-
-func (x *DBSyncStatus) GetEnabled() bool {
-	if x != nil {
-		return x.Enabled
-	}
-	return false
-}
-
-func (x *DBSyncStatus) GetLastSyncedData() *timestamp.Timestamp {
-	if x != nil {
-		return x.LastSyncedData
-	}
-	return nil
-}
-
-func (x *DBSyncStatus) GetLastSyncedActivity() *timestamp.Timestamp {
-	if x != nil {
-		return x.LastSyncedActivity
-	}
-	return nil
-}
-
-func (x *DBSyncStatus) GetLastDbsyncVersion() string {
-	if x != nil && x.LastDbsyncVersion != nil {
-		return *x.LastDbsyncVersion
-	}
-	return ""
-}
-
-type VersionStatus struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Current       string                 `protobuf:"bytes,1,opt,name=current,proto3" json:"current,omitempty"`
-	NewVersion    *NewVersionInfo        `protobuf:"bytes,2,opt,name=new_version,json=newVersion,proto3,oneof" json:"new_version,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *VersionStatus) Reset() {
-	*x = VersionStatus{}
-	mi := &file_services_settings_system_proto_msgTypes[13]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *VersionStatus) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*VersionStatus) ProtoMessage() {}
-
-func (x *VersionStatus) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_system_proto_msgTypes[13]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use VersionStatus.ProtoReflect.Descriptor instead.
-func (*VersionStatus) Descriptor() ([]byte, []int) {
-	return file_services_settings_system_proto_rawDescGZIP(), []int{13}
-}
-
-func (x *VersionStatus) GetCurrent() string {
-	if x != nil {
-		return x.Current
-	}
-	return ""
-}
-
-func (x *VersionStatus) GetNewVersion() *NewVersionInfo {
-	if x != nil {
-		return x.NewVersion
-	}
-	return nil
-}
-
-type NewVersionInfo struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Version       string                 `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
-	Url           string                 `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
-	ReleaseDate   *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=release_date,json=releaseDate,proto3,oneof" json:"release_date,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *NewVersionInfo) Reset() {
-	*x = NewVersionInfo{}
-	mi := &file_services_settings_system_proto_msgTypes[14]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *NewVersionInfo) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*NewVersionInfo) ProtoMessage() {}
-
-func (x *NewVersionInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_system_proto_msgTypes[14]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use NewVersionInfo.ProtoReflect.Descriptor instead.
-func (*NewVersionInfo) Descriptor() ([]byte, []int) {
-	return file_services_settings_system_proto_rawDescGZIP(), []int{14}
-}
-
-func (x *NewVersionInfo) GetVersion() string {
-	if x != nil {
-		return x.Version
-	}
-	return ""
-}
-
-func (x *NewVersionInfo) GetUrl() string {
-	if x != nil {
-		return x.Url
-	}
-	return ""
-}
-
-func (x *NewVersionInfo) GetReleaseDate() *timestamp.Timestamp {
-	if x != nil {
-		return x.ReleaseDate
+		return x.Status
 	}
 	return nil
 }
@@ -841,7 +492,7 @@ var File_services_settings_system_proto protoreflect.FileDescriptor
 
 const file_services_settings_system_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/settings/system.proto\x12\x11services.settings\x1a\x19codegen/perms/perms.proto\x1a&resources/permissions/attributes.proto\x1a'resources/permissions/permissions.proto\x1a\x1eresources/settings/perms.proto\x1a#resources/timestamp/timestamp.proto\"5\n" +
+	"\x1eservices/settings/system.proto\x12\x11services.settings\x1a\x19codegen/perms/perms.proto\x1a&resources/permissions/attributes.proto\x1a'resources/permissions/permissions.proto\x1a\x1eresources/settings/perms.proto\x1a\x1fresources/settings/status.proto\"5\n" +
 	"\x18GetAllPermissionsRequest\x12\x19\n" +
 	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\"\xa6\x01\n" +
 	"\x19GetAllPermissionsResponse\x12C\n" +
@@ -870,42 +521,9 @@ const file_services_settings_system_proto_rawDesc = "" +
 	"\x14DeleteFactionRequest\x12\x19\n" +
 	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\"\x17\n" +
 	"\x15DeleteFactionResponse\"\x12\n" +
-	"\x10GetStatusRequest\"\xee\x01\n" +
-	"\x11GetStatusResponse\x127\n" +
-	"\bdatabase\x18\x01 \x01(\v2\x1b.services.settings.DatabaseR\bdatabase\x12+\n" +
-	"\x04nats\x18\x02 \x01(\v2\x17.services.settings.NatsR\x04nats\x127\n" +
-	"\x06dbsync\x18\x03 \x01(\v2\x1f.services.settings.DBSyncStatusR\x06dbsync\x12:\n" +
-	"\aversion\x18\x04 \x01(\v2 .services.settings.VersionStatusR\aversion\"G\n" +
-	"\x04Nats\x12!\n" +
-	"\aversion\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18 R\aversion\x12\x1c\n" +
-	"\tconnected\x18\x02 \x01(\bR\tconnected\"\x92\x02\n" +
-	"\bDatabase\x12!\n" +
-	"\aversion\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18 R\aversion\x12\x1c\n" +
-	"\tconnected\x18\x02 \x01(\bR\tconnected\x12+\n" +
-	"\x11migration_version\x18\x03 \x01(\x04R\x10migrationVersion\x12'\n" +
-	"\x0fmigration_dirty\x18\x04 \x01(\bR\x0emigrationDirty\x12&\n" +
-	"\n" +
-	"db_charset\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x18 R\tdbCharset\x12*\n" +
-	"\fdb_collation\x18\x06 \x01(\tB\a\xbaH\x04r\x02\x18 R\vdbCollation\x12\x1b\n" +
-	"\ttables_ok\x18\a \x01(\bR\btablesOk\"\xd2\x02\n" +
-	"\fDBSyncStatus\x12\x18\n" +
-	"\aenabled\x18\x01 \x01(\bR\aenabled\x12M\n" +
-	"\x10last_synced_data\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x0elastSyncedData\x88\x01\x01\x12U\n" +
-	"\x14last_synced_activity\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x12lastSyncedActivity\x88\x01\x01\x12<\n" +
-	"\x13last_dbsync_version\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18 H\x02R\x11lastDbsyncVersion\x88\x01\x01B\x13\n" +
-	"\x11_last_synced_dataB\x17\n" +
-	"\x15_last_synced_activityB\x16\n" +
-	"\x14_last_dbsync_version\"\x8b\x01\n" +
-	"\rVersionStatus\x12!\n" +
-	"\acurrent\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18 R\acurrent\x12G\n" +
-	"\vnew_version\x18\x02 \x01(\v2!.services.settings.NewVersionInfoH\x00R\n" +
-	"newVersion\x88\x01\x01B\x0e\n" +
-	"\f_new_version\"\xa8\x01\n" +
-	"\x0eNewVersionInfo\x12!\n" +
-	"\aversion\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18 R\aversion\x12\x1a\n" +
-	"\x03url\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x02R\x03url\x12F\n" +
-	"\frelease_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\vreleaseDate\x88\x01\x01B\x0f\n" +
-	"\r_release_date2\xe6\x04\n" +
+	"\x10GetStatusRequest\"M\n" +
+	"\x11GetStatusResponse\x128\n" +
+	"\x06status\x18\x01 \x01(\v2 .resources.settings.SystemStatusR\x06status2\xe6\x04\n" +
 	"\rSystemService\x12i\n" +
 	"\tGetStatus\x12#.services.settings.GetStatusRequest\x1a$.services.settings.GetStatusResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12\x81\x01\n" +
 	"\x11GetAllPermissions\x12+.services.settings.GetAllPermissionsRequest\x1a,.services.settings.GetAllPermissionsResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12r\n" +
@@ -925,7 +543,7 @@ func file_services_settings_system_proto_rawDescGZIP() []byte {
 	return file_services_settings_system_proto_rawDescData
 }
 
-var file_services_settings_system_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_services_settings_system_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_services_settings_system_proto_goTypes = []any{
 	(*GetAllPermissionsRequest)(nil),  // 0: services.settings.GetAllPermissionsRequest
 	(*GetAllPermissionsResponse)(nil), // 1: services.settings.GetAllPermissionsResponse
@@ -937,47 +555,35 @@ var file_services_settings_system_proto_goTypes = []any{
 	(*DeleteFactionResponse)(nil),     // 7: services.settings.DeleteFactionResponse
 	(*GetStatusRequest)(nil),          // 8: services.settings.GetStatusRequest
 	(*GetStatusResponse)(nil),         // 9: services.settings.GetStatusResponse
-	(*Nats)(nil),                      // 10: services.settings.Nats
-	(*Database)(nil),                  // 11: services.settings.Database
-	(*DBSyncStatus)(nil),              // 12: services.settings.DBSyncStatus
-	(*VersionStatus)(nil),             // 13: services.settings.VersionStatus
-	(*NewVersionInfo)(nil),            // 14: services.settings.NewVersionInfo
-	(*permissions.Permission)(nil),    // 15: resources.permissions.Permission
-	(*permissions.RoleAttribute)(nil), // 16: resources.permissions.RoleAttribute
-	(*settings.PermsUpdate)(nil),      // 17: resources.settings.PermsUpdate
-	(*settings.AttrsUpdate)(nil),      // 18: resources.settings.AttrsUpdate
-	(*timestamp.Timestamp)(nil),       // 19: resources.timestamp.Timestamp
+	(*permissions.Permission)(nil),    // 10: resources.permissions.Permission
+	(*permissions.RoleAttribute)(nil), // 11: resources.permissions.RoleAttribute
+	(*settings.PermsUpdate)(nil),      // 12: resources.settings.PermsUpdate
+	(*settings.AttrsUpdate)(nil),      // 13: resources.settings.AttrsUpdate
+	(*settings.SystemStatus)(nil),     // 14: resources.settings.SystemStatus
 }
 var file_services_settings_system_proto_depIdxs = []int32{
-	15, // 0: services.settings.GetAllPermissionsResponse.permissions:type_name -> resources.permissions.Permission
-	16, // 1: services.settings.GetAllPermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
-	15, // 2: services.settings.GetJobLimitsResponse.permissions:type_name -> resources.permissions.Permission
-	16, // 3: services.settings.GetJobLimitsResponse.attributes:type_name -> resources.permissions.RoleAttribute
-	17, // 4: services.settings.UpdateJobLimitsRequest.perms:type_name -> resources.settings.PermsUpdate
-	18, // 5: services.settings.UpdateJobLimitsRequest.attrs:type_name -> resources.settings.AttrsUpdate
-	11, // 6: services.settings.GetStatusResponse.database:type_name -> services.settings.Database
-	10, // 7: services.settings.GetStatusResponse.nats:type_name -> services.settings.Nats
-	12, // 8: services.settings.GetStatusResponse.dbsync:type_name -> services.settings.DBSyncStatus
-	13, // 9: services.settings.GetStatusResponse.version:type_name -> services.settings.VersionStatus
-	19, // 10: services.settings.DBSyncStatus.last_synced_data:type_name -> resources.timestamp.Timestamp
-	19, // 11: services.settings.DBSyncStatus.last_synced_activity:type_name -> resources.timestamp.Timestamp
-	14, // 12: services.settings.VersionStatus.new_version:type_name -> services.settings.NewVersionInfo
-	19, // 13: services.settings.NewVersionInfo.release_date:type_name -> resources.timestamp.Timestamp
-	8,  // 14: services.settings.SystemService.GetStatus:input_type -> services.settings.GetStatusRequest
-	0,  // 15: services.settings.SystemService.GetAllPermissions:input_type -> services.settings.GetAllPermissionsRequest
-	2,  // 16: services.settings.SystemService.GetJobLimits:input_type -> services.settings.GetJobLimitsRequest
-	4,  // 17: services.settings.SystemService.UpdateJobLimits:input_type -> services.settings.UpdateJobLimitsRequest
-	6,  // 18: services.settings.SystemService.DeleteFaction:input_type -> services.settings.DeleteFactionRequest
-	9,  // 19: services.settings.SystemService.GetStatus:output_type -> services.settings.GetStatusResponse
-	1,  // 20: services.settings.SystemService.GetAllPermissions:output_type -> services.settings.GetAllPermissionsResponse
-	3,  // 21: services.settings.SystemService.GetJobLimits:output_type -> services.settings.GetJobLimitsResponse
-	5,  // 22: services.settings.SystemService.UpdateJobLimits:output_type -> services.settings.UpdateJobLimitsResponse
-	7,  // 23: services.settings.SystemService.DeleteFaction:output_type -> services.settings.DeleteFactionResponse
-	19, // [19:24] is the sub-list for method output_type
-	14, // [14:19] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	10, // 0: services.settings.GetAllPermissionsResponse.permissions:type_name -> resources.permissions.Permission
+	11, // 1: services.settings.GetAllPermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
+	10, // 2: services.settings.GetJobLimitsResponse.permissions:type_name -> resources.permissions.Permission
+	11, // 3: services.settings.GetJobLimitsResponse.attributes:type_name -> resources.permissions.RoleAttribute
+	12, // 4: services.settings.UpdateJobLimitsRequest.perms:type_name -> resources.settings.PermsUpdate
+	13, // 5: services.settings.UpdateJobLimitsRequest.attrs:type_name -> resources.settings.AttrsUpdate
+	14, // 6: services.settings.GetStatusResponse.status:type_name -> resources.settings.SystemStatus
+	8,  // 7: services.settings.SystemService.GetStatus:input_type -> services.settings.GetStatusRequest
+	0,  // 8: services.settings.SystemService.GetAllPermissions:input_type -> services.settings.GetAllPermissionsRequest
+	2,  // 9: services.settings.SystemService.GetJobLimits:input_type -> services.settings.GetJobLimitsRequest
+	4,  // 10: services.settings.SystemService.UpdateJobLimits:input_type -> services.settings.UpdateJobLimitsRequest
+	6,  // 11: services.settings.SystemService.DeleteFaction:input_type -> services.settings.DeleteFactionRequest
+	9,  // 12: services.settings.SystemService.GetStatus:output_type -> services.settings.GetStatusResponse
+	1,  // 13: services.settings.SystemService.GetAllPermissions:output_type -> services.settings.GetAllPermissionsResponse
+	3,  // 14: services.settings.SystemService.GetJobLimits:output_type -> services.settings.GetJobLimitsResponse
+	5,  // 15: services.settings.SystemService.UpdateJobLimits:output_type -> services.settings.UpdateJobLimitsResponse
+	7,  // 16: services.settings.SystemService.DeleteFaction:output_type -> services.settings.DeleteFactionResponse
+	12, // [12:17] is the sub-list for method output_type
+	7,  // [7:12] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_services_settings_system_proto_init() }
@@ -987,16 +593,13 @@ func file_services_settings_system_proto_init() {
 	}
 	file_services_settings_system_proto_msgTypes[3].OneofWrappers = []any{}
 	file_services_settings_system_proto_msgTypes[4].OneofWrappers = []any{}
-	file_services_settings_system_proto_msgTypes[12].OneofWrappers = []any{}
-	file_services_settings_system_proto_msgTypes[13].OneofWrappers = []any{}
-	file_services_settings_system_proto_msgTypes[14].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_settings_system_proto_rawDesc), len(file_services_settings_system_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   15,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

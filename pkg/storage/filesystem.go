@@ -166,14 +166,17 @@ func (s *Filesystem) List(
 	offset int,
 	pageSize int,
 ) ([]*FileInfo, error) {
-	key, ok := utils.CleanFilePath(keyIn)
+	cKey, ok := utils.CleanFilePath(keyIn)
 	if !ok {
 		return nil, ErrInvalidPath
 	}
-	key = filepath.Join(s.basePath, s.prefix, key)
+	key := filepath.Join(s.basePath, s.prefix, cKey)
 
 	entries, err := os.ReadDir(key)
 	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, ErrNotFound
+		}
 		return nil, err
 	}
 
@@ -184,7 +187,7 @@ func (s *Filesystem) List(
 			return nil, err
 		}
 
-		name := e.Name()
+		name := filepath.Join(cKey, e.Name())
 		contentType := filetype.GetType(strings.TrimPrefix(filepath.Ext(name), "."))
 
 		files = append(files, &FileInfo{
@@ -192,6 +195,7 @@ func (s *Filesystem) List(
 			LastModified: info.ModTime(),
 			Size:         info.Size(),
 			ContentType:  contentType.MIME.Value,
+			IsDir:        e.IsDir(),
 		})
 	}
 

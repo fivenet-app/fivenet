@@ -31,6 +31,7 @@ type File struct {
 	ByteSize      int64                  `protobuf:"varint,5,opt,name=byte_size,json=byteSize,proto3" json:"byte_size,omitempty"` // Bytes stored
 	ContentType   string                 `protobuf:"bytes,6,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"`
 	Meta          *FileMeta              `protobuf:"bytes,7,opt,name=meta,proto3,oneof" json:"meta,omitempty"`
+	IsDir         bool                   `protobuf:"varint,8,opt,name=is_dir,json=isDir,proto3" json:"is_dir,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -114,11 +115,18 @@ func (x *File) GetMeta() *FileMeta {
 	return nil
 }
 
+func (x *File) GetIsDir() bool {
+	if x != nil {
+		return x.IsDir
+	}
+	return false
+}
+
 var File_resources_file_file_proto protoreflect.FileDescriptor
 
 const file_resources_file_file_proto_rawDesc = "" +
 	"\n" +
-	"\x19resources/file/file.proto\x12\x0eresources.file\x1a\x19resources/file/meta.proto\x1a#resources/timestamp/timestamp.proto\"\xc4\x02\n" +
+	"\x19resources/file/file.proto\x12\x0eresources.file\x1a\x19resources/file/meta.proto\x1a#resources/timestamp/timestamp.proto\"\xdb\x02\n" +
 	"\x04File\x12)\n" +
 	"\tparent_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x00R\bparentId\x88\x01\x01\x12\x17\n" +
 	"\x02id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\x12\x1b\n" +
@@ -127,7 +135,8 @@ const file_resources_file_file_proto_rawDesc = "" +
 	"created_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tcreatedAt\x88\x01\x01\x12\x1b\n" +
 	"\tbyte_size\x18\x05 \x01(\x03R\bbyteSize\x12!\n" +
 	"\fcontent_type\x18\x06 \x01(\tR\vcontentType\x121\n" +
-	"\x04meta\x18\a \x01(\v2\x18.resources.file.FileMetaH\x02R\x04meta\x88\x01\x01B\f\n" +
+	"\x04meta\x18\a \x01(\v2\x18.resources.file.FileMetaH\x02R\x04meta\x88\x01\x01\x12\x15\n" +
+	"\x06is_dir\x18\b \x01(\bR\x05isDirB\f\n" +
 	"\n" +
 	"_parent_idB\r\n" +
 	"\v_created_atB\a\n" +
