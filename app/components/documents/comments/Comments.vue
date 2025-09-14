@@ -69,7 +69,7 @@ async function getComments(): Promise<GetCommentsResponse> {
 }
 
 const schema = z.object({
-    content: z.string().min(3).max(1536),
+    content: z.coerce.string().min(3).max(1536),
 });
 
 type Schema = z.output<typeof schema>;

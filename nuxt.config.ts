@@ -13,7 +13,6 @@ export default defineNuxtConfig({
         '@nuxtjs/robots',
         '@nuxt/fonts',
         '@nuxt/image',
-        'nuxt-zod-i18n',
         '@nuxtjs/i18n',
         '@galexrt/nuxt-update',
         '@nuxt/eslint',
@@ -266,10 +265,6 @@ export default defineNuxtConfig({
         compilation: {
             strictMessage: false,
         },
-    },
-
-    zodI18n: {
-        useModuleLocale: false,
     },
 
     piniaPluginPersistedstate: {

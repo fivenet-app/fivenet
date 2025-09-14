@@ -47,17 +47,22 @@ const onlyDrafts: ToggleItem[] = [
 ];
 
 const schema = z.object({
-    documentIds: z.string().max(16).optional(),
-    title: z.string().max(64).optional().default(''),
+    documentIds: z.coerce.string().max(16).optional(),
+    title: z.coerce
+        .string()
+        .max(64)
+        .optional()
+        .default('')
+        .transform((val) => val.slice(0, 64)),
     creators: z.coerce.number().array().max(5).default([]),
     date: z
         .object({
             start: z.coerce.date(),
-            end: z.coerce.date(),
+            end: z.coerce.date().max(addDays(new Date(), 2)),
         })
         .optional(),
     closed: z.coerce.boolean().optional(),
-    categories: z.number().array().max(3).default([]),
+    categories: z.coerce.number().array().max(3).default([]),
     onlyDrafts: z.coerce.boolean().optional(),
     sorting: z
         .object({
@@ -117,7 +122,17 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
     return documentsDocuments.listDocuments(req);
 }
 
-watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
+const formRef = useTemplateRef('formRef');
+
+watchDebounced(
+    query,
+    async () => {
+        if (await formRef.value?.validate()) {
+            refresh();
+        }
+    },
+    { debounce: 200, maxWait: 1250 },
+);
 
 const isPinnedDocumentsVisible = ref(false);
 
@@ -186,7 +201,13 @@ defineShortcuts({
             </UDashboardNavbar>
 
             <UDashboardToolbar>
-                <UForm class="my-2 flex w-full flex-1 flex-col gap-2" :schema="schema" :state="query" @submit="refresh()">
+                <UForm
+                    ref="formRef"
+                    class="my-2 flex w-full flex-1 flex-col gap-2"
+                    :schema="schema"
+                    :state="query"
+                    @submit="refresh()"
+                >
                     <div class="flex flex-1 flex-row gap-2">
                         <UFormField class="flex-1" name="title" :label="$t('common.search')">
                             <UInput
@@ -383,7 +404,7 @@ defineShortcuts({
                                     <InputDateRangePopover
                                         v-model="query.date"
                                         class="flex-1"
-                                        :min-value="fromDate(addDays(new Date(), 1), getLocalTimeZone())"
+                                        :max-value="fromDate(addDays(new Date(), 1), getLocalTimeZone())"
                                         clearable
                                         time
                                         :range="false"

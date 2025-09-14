@@ -26,12 +26,12 @@ const overlay = useOverlay();
 const citizensCitizensClient = await getCitizensCitizensClient();
 
 const schema = z.object({
-    name: z.string().max(64).optional(),
-    phoneNumber: z.string().max(20).optional(),
+    name: z.coerce.string().max(64).optional(),
+    phoneNumber: z.coerce.string().max(20).optional(),
     wanted: z.coerce.boolean().optional(),
     trafficInfractionPoints: z.coerce.number().nonnegative().optional(),
     openFines: z.coerce.number().nonnegative().optional(),
-    dateofbirth: z.string().max(10).optional(),
+    dateofbirth: z.coerce.string().max(10).optional(),
     sorting: z
         .object({
             columns: z

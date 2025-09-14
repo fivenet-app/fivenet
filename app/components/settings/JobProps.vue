@@ -36,27 +36,27 @@ const notifications = useNotificationsStore();
 const settingsSettingsClient = await getSettingsSettingsClient();
 
 const schema = z.object({
-    livemapMarkerColor: z.string().length(7),
+    livemapMarkerColor: z.coerce.string().length(7),
     quickButtons: z.object({
         penaltyCalculator: z.coerce.boolean(),
         mathCalculator: z.coerce.boolean(),
     }),
-    radioFrequency: z.string().max(24),
-    discordGuildId: z.string().max(48),
+    radioFrequency: z.coerce.string().max(24),
+    discordGuildId: z.coerce.string().max(48),
     discordSyncSettings: z.object({
         dryRun: z.coerce.boolean(),
         userInfoSync: z.coerce.boolean(),
         userInfoSyncSettings: z.object({
             employeeRoleEnabled: z.coerce.boolean(),
-            employeeRoleFormat: z.string().max(64),
-            gradeRoleFormat: z.string().max(64),
+            employeeRoleFormat: z.coerce.string().max(64),
+            gradeRoleFormat: z.coerce.string().max(64),
             unemployedEnabled: z.coerce.boolean(),
             unemployedMode: z.nativeEnum(UserInfoSyncUnemployedMode),
-            unemployedRoleName: z.string().max(64),
+            unemployedRoleName: z.coerce.string().max(64),
             syncNicknames: z.coerce.boolean(),
             groupMapping: z
                 .object({
-                    name: z.string().max(64),
+                    name: z.coerce.string().max(64),
                     fromGrade: z.coerce.number().min(0).max(99999),
                     toGrade: z.coerce.number().min(0).max(99999),
                 })
@@ -66,16 +66,16 @@ const schema = z.object({
         }),
         statusLog: z.coerce.boolean(),
         statusLogSettings: z.object({
-            channelId: z.string().max(64),
+            channelId: z.coerce.string().max(64),
         }),
         jobsAbsence: z.coerce.boolean(),
         jobsAbsenceSettings: z.object({
-            absenceRole: z.string().max(64),
+            absenceRole: z.coerce.string().max(64),
         }),
         groupSyncSettings: z.object({
-            ignoredRoleIds: z.string().max(64).array().max(20).default([]),
+            ignoredRoleIds: z.coerce.string().max(64).array().max(20).default([]),
         }),
-        qualificationsRoleFormat: z.string().max(64),
+        qualificationsRoleFormat: z.coerce.string().max(64),
     }),
     settings: z.object({
         absencePastDays: z.coerce.number().int().nonnegative().min(0).max(31),

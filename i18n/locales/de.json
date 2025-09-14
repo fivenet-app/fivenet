@@ -2532,7 +2532,7 @@
         },
         "footer": "Tippe {key1} für Bürger,- {key2} für Dokumenten-Suche."
     },
-    "zodI18n": {
+    "zod": {
         "errors": {
             "custom_types": {
                 "duration": {

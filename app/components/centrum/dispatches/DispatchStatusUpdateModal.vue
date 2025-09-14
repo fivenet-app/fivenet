@@ -26,8 +26,8 @@ const centrumCentrumClient = await getCentrumCentrumClient();
 
 const schema = z.object({
     status: z.nativeEnum(StatusDispatch),
-    code: z.union([z.string().min(1).max(20), z.string().length(0).optional()]),
-    reason: z.union([z.string().min(3).max(255), z.string().length(0).optional()]),
+    code: z.union([z.coerce.string().min(1).max(20), z.coerce.string().length(0).optional()]),
+    reason: z.union([z.coerce.string().min(3).max(255), z.coerce.string().length(0).optional()]),
 });
 
 type Schema = z.output<typeof schema>;

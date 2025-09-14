@@ -34,7 +34,7 @@ const schema = z.object({
         .min(3)
         .max(24)
         .regex(/^[0-9A-Za-zÄÖÜß_-]{3,24}$/),
-    password: z.string().min(6).max(70),
+    password: z.coerce.string().min(6).max(70),
 });
 
 type Schema = z.output<typeof schema>;

@@ -73,7 +73,15 @@ export function useSearchForm<T extends ZodRawShape, S extends ZodObject<T>>(key
     }
 
     // Step 4: Merge defaults ← store ← raw, then validate
-    const merged: State = schema.parse({ ...defaults, ...base, ...raw });
+    const merged: State = (() => {
+        const result = schema.safeParse({ ...defaults, ...base, ...raw });
+        if (result.success) {
+            return result.data;
+        } else {
+            // Fallback to defaults if validation fails
+            return { ...defaults, ...base };
+        }
+    })();
 
     // Step 5: Put or patch the reactive in the central store
     let state = store.getSearch<State>(key);

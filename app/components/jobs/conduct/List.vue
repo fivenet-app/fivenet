@@ -44,7 +44,7 @@ const availableTypes = ref<{ status: ConductType }[]>([
 ]);
 
 const schema = z.object({
-    id: z.union([z.string().optional(), z.coerce.number().min(1).optional()]),
+    id: z.union([z.coerce.string().optional(), z.coerce.number().min(1).optional()]),
     types: z.nativeEnum(ConductType).array().max(10).default([]),
     showExpired: z.coerce.boolean().default(false),
     user: z.coerce.number().min(1).optional(),

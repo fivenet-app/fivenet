@@ -39,13 +39,13 @@ const schema = z.object({
     labels: z
         .object({
             id: z.coerce.number(),
-            name: z.string().min(1),
-            color: z.string().length(7),
+            name: z.coerce.string().min(1),
+            color: z.coerce.string().length(7),
         })
         .array()
         .max(10)
         .default([]),
-    reason: z.string().min(3).max(255),
+    reason: z.coerce.string().min(3).max(255),
 });
 
 type Schema = z.output<typeof schema>;

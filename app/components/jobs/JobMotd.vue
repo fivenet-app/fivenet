@@ -23,7 +23,7 @@ async function getMOTD(): Promise<GetMOTDResponse> {
 }
 
 const schema = z.object({
-    motd: z.string().min(0).max(1024),
+    motd: z.coerce.string().min(0).max(1024),
 });
 
 type Schema = z.output<typeof schema>;

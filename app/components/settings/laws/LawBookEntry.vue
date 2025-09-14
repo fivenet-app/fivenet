@@ -37,8 +37,8 @@ const overlay = useOverlay();
 const settingsLawsClient = await getSettingsLawsClient();
 
 const schema = z.object({
-    name: z.string().min(3).max(128),
-    description: z.union([z.string().min(3).max(255), z.string().length(0).optional()]),
+    name: z.coerce.string().min(3).max(128),
+    description: z.union([z.coerce.string().min(3).max(255), z.coerce.string().length(0).optional()]),
 });
 
 type Schema = z.output<typeof schema>;

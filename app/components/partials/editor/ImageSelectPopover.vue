@@ -29,7 +29,7 @@ const emit = defineEmits<{
 const { featureGates, fileUpload } = useAppConfig();
 
 const schema = z.object({
-    url: z.string().url(),
+    url: z.coerce.string().url(),
 });
 
 type Schema = z.output<typeof schema>;

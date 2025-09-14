@@ -13,7 +13,7 @@ export const userAccessEntry = z.object({
 export const jobAccessEntry = z.object({
     id: z.coerce.number(),
     targetId: z.coerce.number(),
-    job: z.string().nonempty(),
+    job: z.coerce.string().nonempty(),
     minimumGrade: z.coerce.number().nonnegative(),
     access: z.coerce.number().nonnegative(),
     required: z.coerce.boolean().optional(),

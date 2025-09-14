@@ -24,9 +24,9 @@ const notifications = useNotificationsStore();
 const jobsJobsClient = await getJobsJobsClient();
 
 const schema = z.object({
-    reason: z.string().min(3).max(255),
-    prefix: z.string().max(12).optional(),
-    suffix: z.string().max(12).optional(),
+    reason: z.coerce.string().min(3).max(255),
+    prefix: z.coerce.string().max(12).optional(),
+    suffix: z.coerce.string().max(12).optional(),
 });
 
 type Schema = z.output<typeof schema>;

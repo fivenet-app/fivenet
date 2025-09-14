@@ -28,10 +28,10 @@ const documentsDocumentsClient = await getDocumentsDocumentsClient();
 const canEdit = can('documents.DocumentsService/CreateOrUpdateCategory');
 
 const schema = z.object({
-    name: z.string().min(3).max(128),
-    description: z.union([z.string().min(0).max(255), z.string().optional()]),
-    color: z.string().max(7),
-    icon: z.string().max(128).optional(),
+    name: z.coerce.string().min(3).max(128),
+    description: z.union([z.coerce.string().min(0).max(255), z.coerce.string().optional()]),
+    color: z.coerce.string().max(7),
+    icon: z.coerce.string().max(128).optional(),
 });
 
 type Schema = z.output<typeof schema>;

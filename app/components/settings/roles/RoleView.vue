@@ -256,7 +256,7 @@ async function copyRole(): Promise<void> {
 }
 
 const schema = z.object({
-    input: z.string(),
+    input: z.coerce.string(),
 });
 
 type Schema = z.output<typeof schema>;

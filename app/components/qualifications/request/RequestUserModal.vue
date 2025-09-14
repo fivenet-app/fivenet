@@ -20,7 +20,7 @@ const notifications = useNotificationsStore();
 const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
 const schema = z.object({
-    userComment: z.string().min(0).max(255),
+    userComment: z.coerce.string().min(0).max(255),
 });
 
 type Schema = z.output<typeof schema>;

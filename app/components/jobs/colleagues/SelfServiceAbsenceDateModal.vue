@@ -33,7 +33,7 @@ const maxEnd = addDays(today, jobProps.value?.settings?.absenceFutureDays ?? 93)
 
 const schema = z.union([
     z.object({
-        reason: z.string().min(3).max(255),
+        reason: z.coerce.string().min(3).max(255),
         absence: z.object({
             start: z.date().min(minStart).max(maxEnd),
             end: z.date().min(minStart).max(maxEnd),
@@ -41,7 +41,7 @@ const schema = z.union([
         reset: z.literal(false),
     }),
     z.object({
-        reason: z.string().min(3).max(255),
+        reason: z.coerce.string().min(3).max(255),
         absence: z
             .object({
                 start: z.date(),

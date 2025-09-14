@@ -29,7 +29,7 @@ const { listJobs } = completorStore;
 const citizensCitizensClient = await getCitizensCitizensClient();
 
 const schema = z.object({
-    reason: z.string().min(3).max(255),
+    reason: z.coerce.string().min(3).max(255),
     job: z.custom<Job>().optional(),
     grade: z.custom<JobGrade>().optional(),
     reset: z.coerce.boolean(),

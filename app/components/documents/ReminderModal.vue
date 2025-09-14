@@ -26,7 +26,7 @@ const notifications = useNotificationsStore();
 const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const schema = z.object({
-    message: z.string().min(1).max(64),
+    message: z.coerce.string().min(1).max(64),
     reminderTime: z.coerce.date().optional(),
     maxReminderCount: z.coerce.number().int().min(1).max(10).default(10),
 });

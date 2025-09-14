@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const pageNumberSchema = z.number().int().nonnegative().min(1).max(999_999_999).default(1);
+export const pageNumberSchema = z.coerce.number().int().nonnegative().min(1).max(999_999_999).default(1);
 
 export const zodDurationSchema = z
     .number()
@@ -11,7 +11,7 @@ export const zodDurationSchema = z
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 params: {
-                    i18n: 'zodI18n.errors.custom_types.duration.invalid',
+                    i18n: 'zod.errors.custom_types.duration.invalid',
                 },
             });
             return false;
@@ -22,7 +22,7 @@ export const zodDurationSchema = z
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 params: {
-                    i18n: 'zodI18n.errors.custom_types.duration.invalid',
+                    i18n: 'zod.errors.custom_types.duration.invalid',
                 },
             });
             return false;
@@ -33,7 +33,7 @@ export const zodDurationSchema = z
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 params: {
-                    i18n: 'zodI18n.errors.custom_types.duration.invalid',
+                    i18n: 'zod.errors.custom_types.duration.invalid',
                 },
             });
             return false;
@@ -53,7 +53,7 @@ export function zodFileSingleSchema(
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
                     params: {
-                        i18n: 'zodI18n.errors.custom_types.filelist.required',
+                        i18n: 'zod.errors.custom_types.filelist.required',
                     },
                 });
                 return false;
@@ -77,7 +77,7 @@ export function zodFileSingleSchema(
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 params: {
-                    i18n: 'zodI18n.errors.custom_types.filelist.wrong_file_type',
+                    i18n: 'zod.errors.custom_types.filelist.wrong_file_type',
                     size: Math.ceil(fileSize / 10240),
                 },
             });

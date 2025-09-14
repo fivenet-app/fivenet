@@ -30,19 +30,19 @@ const citizensCitizensClient = await getCitizensCitizensClient();
 
 const schema = z
     .object({
-        reason: z.string().min(3).max(255),
+        reason: z.coerce.string().min(3).max(255),
         mugshot: z.instanceof(File).optional(),
         reset: z.coerce.boolean(),
     })
     .or(
         z.union([
             z.object({
-                reason: z.string().min(3).max(255),
+                reason: z.coerce.string().min(3).max(255),
                 mugshot: z.instanceof(File).optional(),
                 reset: z.literal(false),
             }),
             z.object({
-                reason: z.string().min(3).max(255),
+                reason: z.coerce.string().min(3).max(255),
                 mugshot: z.custom<File>().optional(),
                 reset: z.literal(true),
             }),

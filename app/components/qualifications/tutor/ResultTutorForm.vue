@@ -53,7 +53,7 @@ const selectedUser = ref<undefined | UserShort>(undefined);
 const schema = z.object({
     status: z.nativeEnum(ResultStatus),
     score: z.coerce.number().min(0).max(1000),
-    summary: z.string().max(255),
+    summary: z.coerce.string().max(255),
 });
 
 type Schema = z.output<typeof schema>;

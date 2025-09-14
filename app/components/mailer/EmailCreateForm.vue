@@ -91,7 +91,7 @@ const schema = z.object({
         .refine((domain) => proposals.value?.domains.includes(domain), {
             message: t('errors.MailerService.ErrAddresseInvalid'),
         }),
-    label: z.string().max(128).optional(),
+    label: z.coerce.string().max(128).optional(),
     deactivated: z.coerce.boolean(),
     access: z.object({
         jobs: jobAccessEntry.array().max(maxAccessEntries).default([]),

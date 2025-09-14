@@ -49,17 +49,17 @@ const { maxAccessEntries } = useAppConfig();
 
 const schema = z.object({
     weight: z.coerce.number(),
-    abbreviation: z.string().min(3).max(20),
-    title: z.string().min(3).max(255),
-    description: z.union([z.string().min(3).max(512), z.string().length(0).optional()]),
-    content: z.string().min(3).max(750000),
+    abbreviation: z.coerce.string().min(3).max(20),
+    title: z.coerce.string().min(3).max(255),
+    description: z.union([z.coerce.string().min(3).max(512), z.coerce.string().length(0).optional()]),
+    content: z.coerce.string().min(3).max(750000),
     closed: z.coerce.boolean(),
     draft: z.coerce.boolean(),
     public: z.coerce.boolean(),
     discordSyncEnabled: z.coerce.boolean(),
     discordSettings: z.object({
-        roleName: z.string().max(64).optional(),
-        roleFormat: z.string().max(64).optional(),
+        roleName: z.coerce.string().max(64).optional(),
+        roleFormat: z.coerce.string().max(64).optional(),
     }),
     examMode: z.nativeEnum(QualificationExamMode),
     examSettings: examSettings,
@@ -70,7 +70,7 @@ const schema = z.object({
         jobs: jobAccessEntry.array().max(maxAccessEntries).default([]),
     }),
     labelSyncEnabled: z.coerce.boolean(),
-    labelSyncFormat: z.string().max(128).optional(),
+    labelSyncFormat: z.coerce.string().max(128).optional(),
     files: z.custom<File>().array().max(5).default([]),
     requirements: z.custom<QualificationRequirement>().array().max(10).default([]),
 });

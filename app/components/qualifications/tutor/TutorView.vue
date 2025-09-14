@@ -24,7 +24,7 @@ const resultTutorModal = overlay.create(ResultTutorModal, {
 });
 
 const schema = z.object({
-    user: z.number().optional(),
+    user: z.coerce.number().optional(),
 });
 
 const query = useSearchForm('qualifications_tutor', schema);

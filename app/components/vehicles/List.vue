@@ -44,8 +44,8 @@ const notifications = useNotificationsStore();
 const { attr, attrStringList, can, isSuperuser } = useAuth();
 
 const schema = z.object({
-    licensePlate: z.string().max(32).default(''),
-    model: z.string().min(6).max(32).optional(),
+    licensePlate: z.coerce.string().max(32).default(''),
+    model: z.coerce.string().min(6).max(32).optional(),
     userIds: z.coerce.number().array().max(5).default([]),
     wanted: z.boolean().default(false),
 

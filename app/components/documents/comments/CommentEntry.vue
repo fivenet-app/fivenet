@@ -42,7 +42,7 @@ const documentsDocumentsClient = await getDocumentsDocumentsClient();
 const editing = ref(false);
 
 const schema = z.object({
-    content: z.string().min(3).max(1536),
+    content: z.coerce.string().min(3).max(1536),
 });
 
 type Schema = z.output<typeof schema>;

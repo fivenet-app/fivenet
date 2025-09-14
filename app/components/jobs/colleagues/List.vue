@@ -34,11 +34,11 @@ const { attr, can, activeChar } = useAuth();
 const jobsJobsClient = await getJobsJobsClient();
 
 const schema = z.object({
-    name: z.string().max(50).default(''),
+    name: z.coerce.string().max(50).default(''),
     absent: z.coerce.boolean().default(false),
     labels: z.coerce.number().array().max(3).default([]),
-    namePrefix: z.string().max(12).optional(),
-    nameSuffix: z.string().max(12).optional(),
+    namePrefix: z.coerce.string().max(12).optional(),
+    nameSuffix: z.coerce.string().max(12).optional(),
     sorting: z
         .object({
             columns: z

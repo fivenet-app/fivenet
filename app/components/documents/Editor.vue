@@ -119,9 +119,9 @@ const emptyCategory: Category = {
 };
 
 const schema = z.object({
-    title: z.string().min(3).max(255),
-    state: z.union([z.string().length(0), z.string().min(3).max(32)]),
-    content: z.string().min(3).max(1750000),
+    title: z.coerce.string().min(3).max(255),
+    state: z.union([z.coerce.string().length(0), z.coerce.string().min(3).max(32)]),
+    content: z.coerce.string().min(3).max(1750000),
     closed: z.coerce.boolean(),
     draft: z.coerce.boolean(),
     public: z.coerce.boolean(),

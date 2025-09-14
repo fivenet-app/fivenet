@@ -65,26 +65,32 @@ const schema = z.object({
         default: z
             .array(
                 z.object({
-                    category: z.string().min(1).max(48),
-                    name: z.string().min(1).max(48),
+                    category: z.coerce.string().min(1).max(48),
+                    name: z.coerce.string().min(1).max(48),
                 }),
             )
             .max(25),
     }),
     website: z.object({
         links: z.object({
-            privacyPolicy: z.union([z.string().min(1).max(255).url().startsWith('https://'), z.string().length(0).optional()]),
-            imprint: z.union([z.string().min(1).max(255).url().startsWith('https://'), z.string().length(0).optional()]),
+            privacyPolicy: z.union([
+                z.coerce.string().min(1).max(255).url().startsWith('https://'),
+                z.coerce.string().length(0).optional(),
+            ]),
+            imprint: z.union([
+                z.coerce.string().min(1).max(255).url().startsWith('https://'),
+                z.coerce.string().length(0).optional(),
+            ]),
         }),
         statsPage: z.coerce.boolean(),
     }),
     jobInfo: z.object({
         unemployedJob: z.object({
-            name: z.string().min(1).max(20),
+            name: z.coerce.string().min(1).max(20),
             grade: z.coerce.number().min(0).max(99),
         }),
-        publicJobs: z.string().array().max(99).default([]),
-        hiddenJobs: z.string().array().max(99).default([]),
+        publicJobs: z.coerce.string().array().max(99).default([]),
+        hiddenJobs: z.coerce.string().array().max(99).default([]),
     }),
     userTracker: z.object({
         refreshTime: zodDurationSchema,
@@ -93,18 +99,18 @@ const schema = z.object({
     discord: z.object({
         enabled: z.coerce.boolean(),
         syncInterval: zodDurationSchema,
-        botId: z.string().optional(),
+        botId: z.coerce.string().optional(),
         botPermissions: z.coerce.number(),
         inviteUrl: z.union([
-            z.string().min(1).max(255).url().startsWith('https://discord.com/'),
-            z.string().length(0).optional(),
+            z.coerce.string().min(1).max(255).url().startsWith('https://discord.com/'),
+            z.coerce.string().length(0).optional(),
         ]),
-        ignoredJobs: z.string().array().max(99).default([]),
+        ignoredJobs: z.coerce.string().array().max(99).default([]),
         botPresence: z
             .object({
                 type: z.nativeEnum(DiscordBotPresenceType),
-                status: z.string().max(255).optional(),
-                url: z.union([z.string().max(255).url(), z.string().length(0).optional()]),
+                status: z.coerce.string().max(255).optional(),
+                url: z.union([z.coerce.string().max(255).url(), z.coerce.string().length(0).optional()]),
             })
             .optional(),
     }),
@@ -112,14 +118,14 @@ const schema = z.object({
         z.object({
             bannerMessageEnabled: z.literal(false),
             bannerMessage: z.object({
-                title: z.string().max(512),
+                title: z.coerce.string().max(512),
                 expiresAt: z.date().optional(),
             }),
         }),
         z.object({
             bannerMessageEnabled: z.literal(true),
             bannerMessage: z.object({
-                title: z.string().min(3).max(512),
+                title: z.coerce.string().min(3).max(512),
                 expiresAt: z.date().optional(),
             }),
         }),

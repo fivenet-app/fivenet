@@ -20,8 +20,8 @@ const schema = z.object({
     labels: z
         .object({
             id: z.coerce.number(),
-            name: z.string().min(1).max(64),
-            color: z.string().length(7),
+            name: z.coerce.string().min(1).max(64),
+            color: z.coerce.string().length(7),
         })
         .array()
         .max(15)

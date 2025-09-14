@@ -29,7 +29,7 @@ const accessLevels = [
 ];
 
 const schema = z.object({
-    reason: z.string().min(3).max(255),
+    reason: z.coerce.string().min(3).max(255),
     accessLevel: z.nativeEnum(AccessLevel),
 });
 

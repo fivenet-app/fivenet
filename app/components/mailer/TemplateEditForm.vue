@@ -25,8 +25,8 @@ const { selectedEmail } = storeToRefs(mailerStore);
 const mailerMailerClient = await getMailerMailerClient();
 
 const schema = z.object({
-    title: z.string().min(3).max(255),
-    content: z.string().min(3).max(1024),
+    title: z.coerce.string().min(3).max(255),
+    content: z.coerce.string().min(3).max(1024),
 });
 
 type Schema = z.output<typeof schema>;

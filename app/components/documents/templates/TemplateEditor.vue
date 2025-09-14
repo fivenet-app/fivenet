@@ -47,13 +47,13 @@ const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const schema = z.object({
     weight: z.coerce.number().min(0).max(999_999),
-    title: z.string().min(3).max(255),
-    description: z.string().min(3).max(255),
-    color: z.string().max(7),
-    icon: z.string().max(128).optional(),
-    contentTitle: z.string().min(3).max(2048),
-    content: z.string().min(3).max(1500000),
-    contentState: z.union([z.string().min(1).max(512), z.string().length(0)]),
+    title: z.coerce.string().min(3).max(255),
+    description: z.coerce.string().min(3).max(255),
+    color: z.coerce.string().max(7),
+    icon: z.coerce.string().max(128).optional(),
+    contentTitle: z.coerce.string().min(3).max(2048),
+    content: z.coerce.string().min(3).max(1500000),
+    contentState: z.union([z.coerce.string().min(1).max(512), z.coerce.string().length(0)]),
     category: z.custom<Category>().optional(),
     jobAccess: jobAccessEntry.array().max(maxAccessEntries).default([]),
     contentAccess: z.object({

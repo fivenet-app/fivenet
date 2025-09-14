@@ -19,9 +19,9 @@ const notifications = useNotificationsStore();
 const settingsLawsClient = await getSettingsLawsClient();
 
 const schema = z.object({
-    name: z.string().min(3).max(128),
-    description: z.union([z.string().min(3).max(1024), z.string().length(0).optional()]),
-    hint: z.union([z.string().min(3).max(512), z.string().length(0).optional()]),
+    name: z.coerce.string().min(3).max(128),
+    description: z.union([z.coerce.string().min(3).max(1024), z.coerce.string().length(0).optional()]),
+    hint: z.union([z.coerce.string().min(3).max(512), z.coerce.string().length(0).optional()]),
     fine: z.number({ coerce: true }).nonnegative().max(999_999_999),
     detentionTime: z.number({ coerce: true }).nonnegative().max(999_999_999),
     stvoPoints: z.number({ coerce: true }).nonnegative().max(999_999_999),

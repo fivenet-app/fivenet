@@ -11,7 +11,7 @@ import type { SortByColumn } from '~~/gen/ts/resources/common/database/database'
 import type { ListQualificationsResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
 const schema = z.object({
-    search: z.string().max(64).optional(),
+    search: z.coerce.string().max(64).optional(),
     sorting: z
         .object({
             columns: z

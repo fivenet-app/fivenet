@@ -21,10 +21,10 @@ const mailerStore = useMailerStore();
 const { draft: state, addressBook, emails, selectedEmail } = storeToRefs(mailerStore);
 
 const schema = z.object({
-    title: z.string().min(3).max(255),
-    content: z.string().min(1).max(2048),
+    title: z.coerce.string().min(3).max(255),
+    content: z.coerce.string().min(1).max(2048),
     recipients: z
-        .object({ label: z.string().min(6).max(80) })
+        .object({ label: z.coerce.string().min(6).max(80) })
         .array()
         .min(1)
         .max(20)

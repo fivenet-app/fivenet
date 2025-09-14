@@ -35,11 +35,11 @@ const { data: dispatchTargetJobs } = useLazyAsyncData('centrum-dispatches-target
 });
 
 const schema = z.object({
-    message: z.string().min(3).max(255),
-    description: z.union([z.string().min(3).max(512), z.string().length(0).optional()]),
+    message: z.coerce.string().min(3).max(255),
+    description: z.union([z.coerce.string().min(3).max(512), z.coerce.string().length(0).optional()]),
     anon: z.coerce.boolean(),
     jobs: z.object({
-        jobs: z.array(z.string().min(1).max(32)).min(1).max(5).default([]),
+        jobs: z.array(z.coerce.string().min(1).max(32)).min(1).max(5).default([]),
     }),
 });
 

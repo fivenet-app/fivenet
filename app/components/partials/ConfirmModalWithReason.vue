@@ -27,7 +27,7 @@ const emit = defineEmits<{
 }>();
 
 const schema = z.object({
-    reason: z.string().min(3).max(255),
+    reason: z.coerce.string().min(3).max(255),
 });
 
 type Schema = z.output<typeof schema>;

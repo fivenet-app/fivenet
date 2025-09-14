@@ -24,8 +24,8 @@ const authAuthClient = await getAuthAuthClient();
 const accountError = ref<RpcError | undefined>();
 
 const schema = z.object({
-    registrationToken: z.string().length(6).trim(),
-    password: z.string().min(6).max(70),
+    registrationToken: z.coerce.string().length(6).trim(),
+    password: z.coerce.string().min(6).max(70),
 });
 
 type Schema = z.output<typeof schema>;

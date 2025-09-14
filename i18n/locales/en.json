@@ -2532,7 +2532,7 @@
         },
         "footer": "Type {key1} for citizens, {key2} for documents search."
     },
-    "zodI18n": {
+    "zod": {
         "errors": {
             "custom_types": {
                 "duration": {

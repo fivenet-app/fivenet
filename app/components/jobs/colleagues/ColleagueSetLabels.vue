@@ -40,12 +40,12 @@ async function getColleagueLabels(search?: string): Promise<GetColleagueLabelsRe
 const changed = ref(false);
 
 const schema = z.object({
-    reason: z.string().min(3).max(255),
+    reason: z.coerce.string().min(3).max(255),
     labels: z
         .object({
             id: z.coerce.number(),
-            name: z.string().min(1),
-            color: z.string().length(7),
+            name: z.coerce.string().min(1),
+            color: z.coerce.string().length(7),
             order: z.coerce.number().nonnegative().default(0),
         })
         .array()

@@ -19,13 +19,13 @@ const authAuthClient = await getAuthAuthClient();
 const accountError = ref<RpcError | undefined>();
 
 const schema = z.object({
-    registrationToken: z.string().length(6),
+    registrationToken: z.coerce.string().length(6),
     username: z
         .string()
         .min(3)
         .max(24)
         .regex(/^[0-9A-Za-zÄÖÜß_-]{3,24}$/),
-    password: z.string().min(6).max(70),
+    password: z.coerce.string().min(6).max(70),
 });
 
 type Schema = z.output<typeof schema>;

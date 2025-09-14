@@ -23,8 +23,8 @@ const { nuiEnabled } = storeToRefs(settingsStore);
 const filestoreFilestoreClient = await getFilestoreFilestoreClient();
 
 const schema = z.object({
-    category: z.string().min(3).max(255),
-    name: z.string().min(3).max(255),
+    category: z.coerce.string().min(3).max(255),
+    name: z.coerce.string().min(3).max(255),
     file: zodFileSingleSchema(fileUpload.fileSizes.fileStore, fileUpload.types.images),
 });
 

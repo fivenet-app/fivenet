@@ -34,10 +34,10 @@ const completorStore = useCompletorStore();
 
 const schema = z.object({
     calendar: z.custom<CalendarShort>().optional(),
-    title: z.string().min(3).max(512),
+    title: z.coerce.string().min(3).max(512),
     startTime: z.date(),
     endTime: z.date(),
-    content: z.string().min(3).max(1000000),
+    content: z.coerce.string().min(3).max(1000000),
     closed: z.coerce.boolean(),
     rsvpOpen: z.coerce.boolean(),
     users: z.custom<UserShort>().array().max(20).default([]),

@@ -39,12 +39,12 @@ const availableAttributes = ref<{ label: string; value: UnitAttribute }[]>([
 const { maxAccessEntries } = useAppConfig();
 
 const schema = z.object({
-    name: z.string().min(3).max(24),
-    initials: z.string().min(2).max(4),
-    description: z.union([z.string().min(1).max(255), z.string().length(0).optional()]),
-    color: z.string().length(7),
-    icon: z.string().max(128).optional(),
-    homePostal: z.union([z.string().min(1).max(48), z.string().length(0).optional()]),
+    name: z.coerce.string().min(3).max(24),
+    initials: z.coerce.string().min(2).max(4),
+    description: z.union([z.coerce.string().min(1).max(255), z.coerce.string().length(0).optional()]),
+    color: z.coerce.string().length(7),
+    icon: z.coerce.string().max(128).optional(),
+    homePostal: z.union([z.coerce.string().min(1).max(48), z.coerce.string().length(0).optional()]),
     attributes: z.nativeEnum(UnitAttribute).array().max(5).default([]),
     access: z.object({
         jobs: jobAccessEntry.array().max(maxAccessEntries).default([]),

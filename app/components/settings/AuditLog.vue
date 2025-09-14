@@ -37,10 +37,10 @@ const schema = z.object({
             end: z.coerce.date(),
         })
         .optional(),
-    services: z.string().max(64).array().max(10).default([]),
-    methods: z.string().max(64).array().max(10).default([]),
+    services: z.coerce.string().max(64).array().max(10).default([]),
+    methods: z.coerce.string().max(64).array().max(10).default([]),
     states: z.nativeEnum(EventType).array().max(10).default([]),
-    search: z.string().max(64).default(''),
+    search: z.coerce.string().max(64).default(''),
     sorting: z
         .object({
             columns: z

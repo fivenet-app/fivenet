@@ -29,7 +29,7 @@ const { showLocationMarker } = storeToRefs(livemapStore);
 const centrumCentrumClient = await getCentrumCentrumClient();
 
 const schema = z.object({
-    postal: z.string().trim().max(12).default(''),
+    postal: z.coerce.string().trim().max(12).default(''),
     id: z.coerce.number().max(16).default(0),
 });
 

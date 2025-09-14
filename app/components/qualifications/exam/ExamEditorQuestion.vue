@@ -34,8 +34,8 @@ const { nuiEnabled } = storeToRefs(settingsStore);
 
 const schema = z.object({
     id: z.coerce.number(),
-    title: z.string().min(0).max(512),
-    description: z.string().max(1024).optional(),
+    title: z.coerce.string().min(0).max(512),
+    description: z.coerce.string().max(1024).optional(),
     data: z.object({
         data: z.union([
             z.object({
@@ -48,7 +48,7 @@ const schema = z.object({
             z.object({
                 oneofKind: z.literal('image'),
                 image: z.object({
-                    alt: z.string().max(128).optional(),
+                    alt: z.coerce.string().max(128).optional(),
                     image: z.custom<File>().optional(),
                 }),
             }),
@@ -66,13 +66,13 @@ const schema = z.object({
             z.object({
                 oneofKind: z.literal('singleChoice'),
                 singleChoice: z.object({
-                    choices: z.string().max(255).array().max(1).default(['']),
+                    choices: z.coerce.string().max(255).array().max(1).default(['']),
                 }),
             }),
             z.object({
                 oneofKind: z.literal('multipleChoice'),
                 multipleChoice: z.object({
-                    choices: z.string().max(255).array().max(10).default([]),
+                    choices: z.coerce.string().max(255).array().max(10).default([]),
                     limit: z.coerce.number().positive().min(0).max(10).default(10).optional(),
                 }),
             }),
@@ -80,7 +80,7 @@ const schema = z.object({
     }),
     answer: z
         .object({
-            answerKey: z.string().max(1024),
+            answerKey: z.coerce.string().max(1024),
         })
         .optional(),
     points: z.coerce.number().min(0).max(99999),

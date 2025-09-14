@@ -18,8 +18,8 @@ const { setAccessTokenExpiration } = authStore;
 const authAuthClient = await getAuthAuthClient();
 
 const schema = z.object({
-    currentPassword: z.string().min(6).max(70),
-    newPassword: z.string().min(6).max(70),
+    currentPassword: z.coerce.string().min(6).max(70),
+    newPassword: z.coerce.string().min(6).max(70),
 });
 
 type Schema = z.output<typeof schema>;

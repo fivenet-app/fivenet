@@ -53,8 +53,8 @@ const schema = z.object({
     mode: z.nativeEnum(CentrumMode).default(CentrumMode.MANUAL),
     fallbackMode: z.nativeEnum(CentrumMode).default(CentrumMode.AUTO_ROUND_ROBIN),
     predefinedStatus: z.object({
-        unitStatus: z.string().array().max(20).default([]),
-        dispatchStatus: z.string().array().max(20).default([]),
+        unitStatus: z.coerce.string().array().max(20).default([]),
+        dispatchStatus: z.coerce.string().array().max(20).default([]),
     }),
     timings: z.object({
         dispatchMaxWait: z.coerce.number().min(30).max(6000).default(900),

@@ -36,12 +36,12 @@ const canDo = computed(() => ({
 }));
 
 const schema = z.object({
-    name: z.string().min(3).max(255),
-    description: z.string().max(512).optional(),
+    name: z.coerce.string().min(3).max(255),
+    description: z.coerce.string().max(512).optional(),
     private: z.coerce.boolean(),
     public: z.coerce.boolean(),
     closed: z.coerce.boolean(),
-    color: z.string().max(12),
+    color: z.coerce.string().max(12),
     access: z.object({
         jobs: jobAccessEntry.array().max(maxAccessEntries).default([]),
         users: userAccessEntry.array().max(maxAccessEntries).default([]),

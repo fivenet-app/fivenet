@@ -9,8 +9,8 @@ const props = defineProps<{
 }>();
 
 const schema = z.object({
-    rows: z.number().min(1).max(25).default(2),
-    cols: z.number().min(1).max(200).default(3),
+    rows: z.coerce.number().min(1).max(25).default(2),
+    cols: z.coerce.number().min(1).max(200).default(3),
     withHeaderRow: z.boolean().default(true),
 });
 
