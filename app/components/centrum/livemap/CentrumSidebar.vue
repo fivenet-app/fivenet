@@ -399,7 +399,7 @@ defineShortcuts({
                                 position="top-left"
                             >
                                 <UButton
-                                    class="inset-0 inline-flex items-center justify-center rounded-md border border-black/20 bg-clip-padding text-black hover:bg-[#f4f4f4]"
+                                    class="inset-0 inline-flex items-center justify-center rounded-md border border-black/20 bg-clip-padding text-black"
                                     size="xs"
                                     :icon="open ? 'i-mdi-chevron-double-right' : 'i-mdi-chevron-double-left'"
                                     :color="!getOwnUnit ? 'primary' : 'neutral'"

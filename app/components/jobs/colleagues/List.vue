@@ -563,7 +563,7 @@ defineShortcuts({
                                             <UButton
                                                 v-for="label in colleague.props?.labels?.list"
                                                 :key="label.name"
-                                                class="justify-between gap-2"
+                                                class="cursor-pointer justify-between gap-2"
                                                 :class="
                                                     isColorBright(hexToRgb(label.color, RGBBlack)!)
                                                         ? 'text-black!'

@@ -8,7 +8,7 @@ import IDCopyBadge from '../partials/IDCopyBadge.vue';
 import Pagination from '../partials/Pagination.vue';
 
 defineEmits<{
-    (e: 'close'): void;
+    (e: 'close', v: boolean): void;
 }>();
 
 const { attr, can } = useAuth();
@@ -67,7 +67,7 @@ const editing = ref(false);
                         icon="i-mdi-menu"
                         variant="ghost"
                         color="neutral"
-                        @click="$emit('close')"
+                        @click="$emit('close', false)"
                     />
                 </template>
 

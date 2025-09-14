@@ -13,7 +13,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    (e: 'close'): void;
+    (e: 'close', v: boolean): void;
     (e: 'refresh'): void;
 }>();
 
@@ -63,7 +63,7 @@ async function createOrUpdateTemplate(values: Schema): Promise<CreateOrUpdateTem
         });
 
         emit('refresh');
-        emit('close');
+        emit('close', false);
 
         return response;
     } catch (e) {
@@ -89,7 +89,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <UButtonGroup class="mb-2 flex">
             <UButton class="flex-1" type="submit" icon="i-mdi-pencil" :label="$t('common.save')" />
 
-            <UButton icon="i-mdi-cancel" color="error" :label="$t('common.cancel')" @click="$emit('close')" />
+            <UButton icon="i-mdi-cancel" color="error" :label="$t('common.cancel')" @click="$emit('close', false)" />
         </UButtonGroup>
 
         <UFormField name="title" :label="$t('common.name')">

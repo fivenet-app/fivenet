@@ -37,7 +37,7 @@ const selectedTab = ref('citizens');
 </script>
 
 <template>
-    <UModal :title="$t('components.clipboard.clipboard_modal.title')">
+    <UModal :title="$t('components.clipboard.clipboard_modal.title')" :ui="{ body: 'min-h-80' }">
         <template #body>
             <UTabs v-model="selectedTab" :items="items" variant="link">
                 <template #citizens>

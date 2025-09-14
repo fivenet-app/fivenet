@@ -28,7 +28,7 @@ const props = withDefaults(
 );
 
 defineEmits<{
-    (e: 'close'): void;
+    (e: 'close', v: boolean): void;
     (e: 'refresh'): void;
 }>();
 
@@ -225,7 +225,7 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                 </template>
 
                 <template #leading>
-                    <UButton icon="i-lucide-x" color="neutral" variant="ghost" class="-ms-1.5" @click="$emit('close')" />
+                    <UButton icon="i-lucide-x" color="neutral" variant="ghost" class="-ms-1.5" @click="$emit('close', false)" />
                 </template>
             </UDashboardNavbar>
 

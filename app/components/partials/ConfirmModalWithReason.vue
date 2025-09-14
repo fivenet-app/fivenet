@@ -23,7 +23,7 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-    (e: 'close'): void;
+    (e: 'close', v: boolean): void;
 }>();
 
 const schema = z.object({
@@ -41,7 +41,7 @@ const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await props.confirm(event.data.reason).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-    emit('close');
+    emit('close', false);
 }, 1000);
 
 const formRef = useTemplateRef('formRef');
@@ -70,7 +70,7 @@ const formRef = useTemplateRef('formRef');
                 @click="
                     if (cancel) cancel();
 
-                    $emit('close');
+                    $emit('close', false);
                 "
             />
         </template>

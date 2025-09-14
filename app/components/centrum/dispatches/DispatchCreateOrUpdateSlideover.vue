@@ -12,7 +12,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    (e: 'close'): void;
+    (e: 'close', v: boolean): void;
 }>();
 
 const { activeChar } = useAuth();
@@ -76,7 +76,7 @@ async function createDispatch(values: Schema): Promise<void> {
         });
         await call;
 
-        emit('close');
+        emit('close', false);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -202,7 +202,7 @@ const formRef = useTemplateRef('formRef');
                     @click="() => formRef?.submit()"
                 />
 
-                <UButton class="flex-1" block color="neutral" :label="$t('common.close', 1)" @click="$emit('close')" />
+                <UButton class="flex-1" block color="neutral" :label="$t('common.close', 1)" @click="$emit('close', false)" />
             </UButtonGroup>
         </template>
     </USlideover>

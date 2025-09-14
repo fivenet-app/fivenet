@@ -14,7 +14,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    (e: 'close'): void;
+    (e: 'close', v: boolean): void;
     (e: 'refresh'): void;
 }>();
 
@@ -37,7 +37,7 @@ const state = reactive<Schema>({
 
 async function shareCalendarEntry(values: Schema): Promise<undefined | ShareCalendarEntryResponse> {
     if (values.users.length === 0) {
-        emit('close');
+        emit('close', false);
         return;
     }
 
@@ -48,7 +48,7 @@ async function shareCalendarEntry(values: Schema): Promise<undefined | ShareCale
     const { response } = await call;
 
     emit('refresh');
-    emit('close');
+    emit('close', false);
 
     values.users.length = 0;
 
@@ -122,7 +122,7 @@ const formRef = useTemplateRef('formRef');
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block :label="$t('common.cancel', 1)" @click="$emit('close')" />
+                <UButton class="flex-1" color="neutral" block :label="$t('common.cancel', 1)" @click="$emit('close', false)" />
 
                 <UButton
                     class="flex-1"

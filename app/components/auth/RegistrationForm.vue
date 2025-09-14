@@ -160,22 +160,19 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 :loading="!canSubmit"
                 :label="$t('components.auth.RegistrationForm.submit_button')"
             />
-        </UForm>
 
-        <div class="space-y-4">
             <USeparator orientation="horizontal" color="primary" />
 
             <UButton block color="neutral" trailing-icon="i-mdi-login" :to="'/auth/login'" :disabled="!canSubmit">
                 {{ $t('components.auth.RegistrationForm.back_to_login_button') }}
             </UButton>
-        </div>
 
-        <DataErrorBlock
-            v-if="accountError"
-            class="mt-2"
-            :title="$t('components.auth.RegistrationForm.create_error')"
-            :error="accountError"
-            :close="() => (accountError = undefined)"
-        />
+            <DataErrorBlock
+                v-if="accountError"
+                :title="$t('components.auth.RegistrationForm.create_error')"
+                :error="accountError"
+                :close="() => (accountError = undefined)"
+            />
+        </UForm>
     </div>
 </template>

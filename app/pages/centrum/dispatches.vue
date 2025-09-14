@@ -30,20 +30,19 @@ const centrumCentrumClient = await getCentrumCentrumClient();
 
 const schema = z.object({
     postal: z.coerce.string().trim().max(12).default(''),
-    id: z.coerce.number().max(16).default(0),
+    id: z.coerce.number().max(16).optional(),
+    page: pageNumberSchema,
 });
 
 const query = useSearchForm('centrum_dispatches_archive', schema);
 
-const page = useRouteQuery('page', '1', { transform: Number });
-
-const { data, status, refresh, error } = useLazyAsyncData(`centrum-dispatches-${page.value}`, () => listDispatches());
+const { data, status, refresh, error } = useLazyAsyncData(`centrum-dispatches-${query.page}`, () => listDispatches());
 
 async function listDispatches(): Promise<ListDispatchesResponse> {
     try {
         const req: ListDispatchesRequest = {
             pagination: {
-                offset: calculateOffset(page.value, data.value?.pagination),
+                offset: calculateOffset(query.page, data.value?.pagination),
             },
             notStatus: [],
             status: [],
@@ -119,12 +118,14 @@ const mount = ref(false);
                                         type="text"
                                         name="postal"
                                         :placeholder="$t('common.postal')"
+                                        class="w-full"
                                     >
                                         <template #trailing>
                                             <UKbd value="/" />
                                         </template>
                                     </UInput>
                                 </UFormField>
+
                                 <UFormField class="flex-1" name="id" :label="$t('common.id')">
                                     <UInput
                                         v-model="query.id"
@@ -133,6 +134,7 @@ const mount = ref(false);
                                         :min="1"
                                         :max="99999999999"
                                         :placeholder="$t('common.id')"
+                                        class="w-full"
                                     />
                                 </UFormField>
                             </UForm>
@@ -159,7 +161,7 @@ const mount = ref(false);
                             />
                         </div>
 
-                        <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+                        <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
                     </div>
                 </Pane>
             </Splitpanes>

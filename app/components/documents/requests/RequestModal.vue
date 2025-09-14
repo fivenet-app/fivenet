@@ -149,7 +149,12 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UDrawer :title="$t('common.request', 2)" :overlay="false">
+    <UDrawer :title="$t('common.request', 2)" :overlay="false" :close="{ onClick: () => $emit('close', false) }">
+        <template #title>
+            <span>{{ $t('common.request', 2) }}</span>
+            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="$emit('close', false)" />
+        </template>
+
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <div v-if="canDo.create" class="flex flex-row gap-2 md:flex-col">

@@ -118,7 +118,7 @@ const confirmModal = overlay.create(ConfirmModal);
 
 <template>
     <div>
-        <div class="mt-2 flex gap-2">
+        <div class="flex gap-2">
             <UButtonGroup v-if="rsvpOpen" class="inline-flex w-full">
                 <UButton
                     class="flex-1"

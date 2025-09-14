@@ -22,7 +22,7 @@ withDefaults(
 );
 
 defineEmits<{
-    (e: 'close'): void;
+    (e: 'close', v: boolean): void;
 }>();
 </script>
 
@@ -38,7 +38,7 @@ defineEmits<{
                 :label="$t('common.confirm')"
                 @click="
                     confirm();
-                    $emit('close');
+                    $emit('close', true);
                 "
             />
             <UButton
@@ -48,7 +48,7 @@ defineEmits<{
                     if (cancel) {
                         cancel();
                     }
-                    $emit('close');
+                    $emit('close', false);
                 "
             />
         </template>

@@ -63,7 +63,7 @@ const zIndexOffset = computed(() => calculateDispatchZIndexOffset(props.dispatch
         <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">
             <div class="flex flex-col items-center uppercase">
                 <span
-                    class="inset-0 rounded-md border border-black/20 bg-neutral-50 bg-clip-padding whitespace-nowrap text-black hover:bg-[#f4f4f4]"
+                    class="inset-0 rounded-md border border-black/20 bg-neutral-50 bg-clip-padding whitespace-nowrap text-black"
                 >
                     DSP-{{ dispatch.id }}
                 </span>

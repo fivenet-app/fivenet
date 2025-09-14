@@ -14,7 +14,12 @@ const { dispatchers, anyDispatchersActive, getCurrentMode } = storeToRefs(centru
 </script>
 
 <template>
-    <UDrawer :title="$t('common.dispatchers', 2)" :overlay="false">
+    <UDrawer :title="$t('common.dispatchers', 2)" :overlay="false" :close="{ onClick: () => $emit('close', false) }">
+        <template #title>
+            <span>{{ $t('common.dispatchers', 2) }}</span>
+            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="$emit('close', false)" />
+        </template>
+
         <template #actions>
             <UBadge color="neutral">
                 {{ $t('common.mode') }}: {{ $t(`enums.centrum.CentrumMode.${CentrumMode[getCurrentMode ?? 0]}`) }}

@@ -60,7 +60,7 @@ async function doCall(): Promise<void> {
         <template v-if="number">
             <UTooltip v-if="showIcon" :text="$t('common.call')">
                 <UButton
-                    class="shrink-0"
+                    class="shrink-0 cursor-pointer"
                     variant="link"
                     icon="i-mdi-phone"
                     :label="showLabel ? $t('common.call') : undefined"

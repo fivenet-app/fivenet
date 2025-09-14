@@ -127,7 +127,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
         <DataErrorBlock
             v-if="accountError"
-            class="mt-2"
             :title="$t('components.auth.ForgotPassword.create_error')"
             :error="accountError"
             :close="() => (accountError = undefined)"

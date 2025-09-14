@@ -297,9 +297,12 @@ onBeforeUnmount(() => {
 
             <LayerControls>
                 <div v-if="can('centrum.CentrumService/TakeControl').value">
-                    <div class="mt-1 inline-flex gap-1 overflow-y-hidden px-1">
-                        <USwitch v-model="livemapSettings.showHeatmap" />
-                        <span class="truncate hover:line-clamp-2">{{ $t('common.heatmap') }}</span>
+                    <div class="mt-1 overflow-y-hidden px-1">
+                        <USwitch
+                            v-model="livemapSettings.showHeatmap"
+                            :label="$t('common.heatmap')"
+                            :ui="{ label: 'truncate text-sm hover:line-clamp-2' }"
+                        />
                     </div>
                 </div>
 

@@ -57,7 +57,7 @@ function copyEmail(): void {
             :ui="{ base: 'py-0 sm:py-0 px-0 sm:px-0' }"
             v-bind="$attrs"
         >
-            <span class="truncate" :class="textClass"> {{ email ?? $t('common.na') }} </span>
+            <span class="cursor-pointer truncate" :class="textClass"> {{ email ?? $t('common.na') }} </span>
         </UButton>
 
         <template #content>
