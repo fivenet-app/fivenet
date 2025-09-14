@@ -4,7 +4,6 @@ go 1.25.1
 
 require (
 	buf.build/go/protovalidate v0.14.0
-	github.com/Code-Hex/go-generics-cache v1.5.1
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/DeRuina/timberjack v1.3.5
 	github.com/HugoSmits86/nativewebp v1.2.0
@@ -12,7 +11,6 @@ require (
 	github.com/XSAM/otelsql v0.40.0
 	github.com/adhocore/gronx v1.19.6
 	github.com/alecthomas/kong v1.12.1
-	github.com/andyburri/iconify-go v0.1.0
 	github.com/aymanbagabas/go-udiff v0.3.1
 	github.com/blevesearch/bleve/v2 v2.5.3
 	github.com/cespare/xxhash/v2 v2.3.0
@@ -22,6 +20,7 @@ require (
 	github.com/diamondburned/arikawa/v3 v3.6.0
 	github.com/documize/html-diff v0.0.0-20160503140253-f61c192c7796
 	github.com/fsnotify/fsnotify v1.9.0
+	github.com/galexrt/iconify-go v0.2.0
 	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-contrib/pprof v1.5.3
 	github.com/gin-contrib/sessions v1.0.4
@@ -51,7 +50,7 @@ require (
 	github.com/paulmach/orb v0.11.1
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.23.2
-	github.com/puzpuzpuz/xsync/v4 v4.1.0
+	github.com/puzpuzpuz/xsync/v4 v4.2.0
 	github.com/rs/cors v1.11.1
 	github.com/sethvargo/go-retry v0.3.0
 	github.com/spf13/viper v1.21.0
