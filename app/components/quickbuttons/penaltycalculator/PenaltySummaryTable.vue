@@ -116,7 +116,7 @@ const columns = computed(
 
     <UTable
         v-else
-        class="divide-base-600 max-w-full divide-y"
+        class="max-w-full divide-y divide-default"
         :columns="columns"
         :data="selectedLaws"
         :empty="$t('common.none_selected', [`${$t('common.crime')}`])"

@@ -61,7 +61,7 @@ onBeforeRouteLeave(async (to) => {
                 <Splitpanes>
                     <Pane :min-size="25">
                         <div class="relative size-full">
-                            <div v-if="error" class="absolute inset-0 z-30 flex items-center justify-center bg-neutral-600/70">
+                            <div v-if="error" class="absolute inset-0 z-30 flex items-center justify-center bg-default/70">
                                 <DataErrorBlock
                                     :title="$t('components.centrum.dispatch_center.failed_datastream')"
                                     :error="error"
@@ -105,11 +105,11 @@ onBeforeRouteLeave(async (to) => {
 <style>
 .splitpanes--vertical > .splitpanes__splitter {
     min-width: 2px;
-    background-color: var(--color-gray-800);
+    background-color: var(--ui-border);
 }
 
 .splitpanes--horizontal > .splitpanes__splitter {
     min-height: 2px;
-    background-color: var(--color-gray-800);
+    background-color: var(--ui-border);
 }
 </style>

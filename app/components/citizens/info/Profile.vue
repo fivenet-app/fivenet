@@ -173,7 +173,7 @@ const { attr } = useAuth();
                             <span v-if="user?.licenses.length === 0">
                                 {{ $t('common.no_licenses') }}
                             </span>
-                            <ul v-else class="divide-base-200 border-base-200 w-full divide-y rounded-md border" role="list">
+                            <ul v-else class="w-full divide-y divide-default rounded-md border border-default" role="list">
                                 <li
                                     v-for="license in user?.licenses"
                                     :key="license.type"

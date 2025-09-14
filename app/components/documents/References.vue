@@ -149,7 +149,7 @@ const columns = computed(() =>
         <template v-else>
             <!-- Relations list (smallest breakpoint only) -->
             <div class="sm:hidden">
-                <ul class="divide-y divide-gray-600 rounded-lg sm:hidden" role="list">
+                <ul class="divide-y divide-default rounded-lg sm:hidden" role="list">
                     <li v-for="reference in references" :key="reference.id">
                         <ULink
                             class="block p-4 hover:bg-neutral-900"

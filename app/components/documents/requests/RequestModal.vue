@@ -190,11 +190,7 @@ const formRef = useTemplateRef('formRef');
 
                 <USeparator class="my-2" />
 
-                <ul
-                    v-if="isRequestPending(status)"
-                    class="mb-6 divide-y divide-gray-800 rounded-md dark:divide-gray-500"
-                    role="list"
-                >
+                <ul v-if="isRequestPending(status)" class="mb-6 divide-y divide-default rounded-md" role="list">
                     <li v-for="idx in 2" :key="idx" class="flex justify-between gap-x-4 py-4">
                         <div class="flex min-w-0 gap-x-2 px-2">
                             <div class="min-w-0 flex-auto">
@@ -226,6 +222,7 @@ const formRef = useTemplateRef('formRef');
                         </div>
                     </li>
                 </ul>
+
                 <DataErrorBlock
                     v-else-if="error"
                     :title="$t('common.unable_to_load', [$t('common.request', 2)])"
@@ -238,7 +235,7 @@ const formRef = useTemplateRef('formRef');
                     :message="$t('common.not_found', [$t('common.request', 2)])"
                 />
 
-                <ul v-else class="mb-6 divide-y divide-gray-800 rounded-md dark:divide-gray-500" role="list">
+                <ul v-else class="mb-6 divide-y divide-default rounded-md" role="list">
                     <RequestListEntry
                         v-for="request in requests.requests"
                         :key="request.id"

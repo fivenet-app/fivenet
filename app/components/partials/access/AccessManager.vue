@@ -224,7 +224,7 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
 </script>
 
 <template>
-    <div class="flex flex-col gap-1 divide-y divide-neutral-100 md:divide-y-0 dark:divide-neutral-800">
+    <div class="flex flex-col gap-1 divide-y divide-default md:divide-y-0">
         <AccessEntry
             v-for="(entry, idx) in access"
             :key="entry.id"

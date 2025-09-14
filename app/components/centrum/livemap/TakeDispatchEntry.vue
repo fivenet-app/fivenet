@@ -82,7 +82,7 @@ onBeforeMount(() => {
             </div>
         </dt>
         <dd class="mt-1 flex-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-            <ul class="divide-base-200 border-base-200 divide-y rounded-md border" role="list">
+            <ul class="divide-y divide-default rounded-md border border-default" role="list">
                 <li class="flex items-center gap-1 py-3 pr-4 pl-3 text-sm">
                     <span class="font-medium">{{ $t('common.sent_by') }}:</span>
                     <span>

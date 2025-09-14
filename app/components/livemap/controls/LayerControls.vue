@@ -62,7 +62,7 @@ const groupedLayers = computed(() => {
                 />
 
                 <template #content>
-                    <div class="w-full max-w-xl divide-y divide-gray-100 py-1 dark:divide-gray-800">
+                    <div class="w-full max-w-xl divide-y divide-default py-1">
                         <div class="px-1 pb-0.5">
                             <p class="truncate text-base font-bold text-highlighted">
                                 {{ $t('common.layer', 2) }}
