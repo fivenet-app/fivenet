@@ -96,7 +96,7 @@ const schema = z.object({
         botId: z.coerce.string().optional(),
         botPermissions: z.coerce.number(),
         inviteUrl: z.union([
-            z.url().min(1).max(255)startsWith('https://discord.com/'),
+            z.url().min(1).max(255).startsWith('https://discord.com/'),
             z.coerce.string().length(0).optional(),
         ]),
         ignoredJobs: z.coerce.string().array().max(99).default([]),

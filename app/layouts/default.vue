@@ -184,6 +184,21 @@ const links = computed(() =>
                 text: t('common.control_panel'),
                 kbds: ['G', 'P'],
             },
+            defaultOpen: false,
+            children: [
+                {
+                    label: t('components.settings.job_props.job_properties'),
+                    icon: 'i-mdi-tune',
+                    to: '/settings/props',
+                    permission: 'settings.SettingsService/SetJobProps' as Perms,
+                },
+                {
+                    label: t('common.role', 2),
+                    icon: 'i-mdi-account-group',
+                    to: '/settings/roles',
+                    permission: 'settings.SettingsService/GetRoles' as Perms,
+                },
+            ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
             permission: 'settings.SettingsService/GetJobProps' as Perms,
             active: route.name.startsWith('settings'),
         },
