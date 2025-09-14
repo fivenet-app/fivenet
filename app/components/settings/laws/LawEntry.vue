@@ -22,9 +22,9 @@ const schema = z.object({
     name: z.coerce.string().min(3).max(128),
     description: z.union([z.coerce.string().min(3).max(1024), z.coerce.string().length(0).optional()]),
     hint: z.union([z.coerce.string().min(3).max(512), z.coerce.string().length(0).optional()]),
-    fine: z.number({ coerce: true }).nonnegative().max(999_999_999),
-    detentionTime: z.number({ coerce: true }).nonnegative().max(999_999_999),
-    stvoPoints: z.number({ coerce: true }).nonnegative().max(999_999_999),
+    fine: z.coerce.number().nonnegative().max(999_999_999),
+    detentionTime: z.coerce.number().nonnegative().max(999_999_999),
+    stvoPoints: z.coerce.number().nonnegative().max(999_999_999),
 });
 
 type Schema = z.output<typeof schema>;

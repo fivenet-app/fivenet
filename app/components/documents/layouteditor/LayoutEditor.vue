@@ -559,7 +559,7 @@ const showPreview = ref(false);
                                 class="pointer-events-none absolute inset-0 h-full w-full select-none"
                                 :style="{ opacity: page.bgOpacity, zIndex: 1 }"
                             />
-                            <div v-for="frame in frames" :key="'pv-' + frame.id" class="absolute" :style="frameAbsStyle(f)">
+                            <div v-for="frame in frames" :key="'pv-' + frame.id" class="absolute" :style="frameAbsStyle(frame)">
                                 <PreviewCell v-if="frame.kind === 'widget'" :node="frame" :data="formData" />
                             </div>
                         </div>

@@ -73,14 +73,8 @@ const schema = z.object({
     }),
     website: z.object({
         links: z.object({
-            privacyPolicy: z.union([
-                z.coerce.string().min(1).max(255).url().startsWith('https://'),
-                z.coerce.string().length(0).optional(),
-            ]),
-            imprint: z.union([
-                z.coerce.string().min(1).max(255).url().startsWith('https://'),
-                z.coerce.string().length(0).optional(),
-            ]),
+            privacyPolicy: z.union([z.url().min(1).max(255).startsWith('https://'), z.coerce.string().length(0).optional()]),
+            imprint: z.union([z.url().min(1).max(255).startsWith('https://'), z.coerce.string().length(0).optional()]),
         }),
         statsPage: z.coerce.boolean(),
     }),
@@ -102,15 +96,15 @@ const schema = z.object({
         botId: z.coerce.string().optional(),
         botPermissions: z.coerce.number(),
         inviteUrl: z.union([
-            z.coerce.string().min(1).max(255).url().startsWith('https://discord.com/'),
+            z.url().min(1).max(255)startsWith('https://discord.com/'),
             z.coerce.string().length(0).optional(),
         ]),
         ignoredJobs: z.coerce.string().array().max(99).default([]),
         botPresence: z
             .object({
-                type: z.nativeEnum(DiscordBotPresenceType),
+                type: z.enum(DiscordBotPresenceType),
                 status: z.coerce.string().max(255).optional(),
-                url: z.union([z.coerce.string().max(255).url(), z.coerce.string().length(0).optional()]),
+                url: z.union([z.string().max(255).url(), z.coerce.string().length(0).optional()]),
             })
             .optional(),
     }),

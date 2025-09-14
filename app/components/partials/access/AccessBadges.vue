@@ -3,13 +3,13 @@
     setup
     generic="JobsT extends JobAccessEntry, UsersT extends UserAccessEntry, QualiT extends QualificationAccessEntry"
 >
-import type { EnumLike } from 'zod';
+import type { z } from 'zod';
 import JobInfoPopover from '../JobInfoPopover.vue';
 import type { JobAccessEntry, QualificationAccessEntry, UserAccessEntry } from './helpers';
 
 withDefaults(
     defineProps<{
-        accessLevel: EnumLike;
+        accessLevel: z.util.EnumLike;
         jobs?: JobsT[];
         users?: UsersT[];
         qualifications?: QualiT[];
