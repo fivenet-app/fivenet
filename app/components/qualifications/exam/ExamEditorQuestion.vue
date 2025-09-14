@@ -483,9 +483,9 @@ watch(
                         <NotSupportedTabletBlock v-if="nuiEnabled" />
                         <template v-else>
                             <UFileUpload
-                                :accept="appConfig.fileUpload.types.images.join(',')"
                                 :disabled="disabled"
                                 class="w-full"
+                                :accept="appConfig.fileUpload.types.images.join(',')"
                                 :placeholder="$t('common.image')"
                                 :label="$t('common.file_upload_label')"
                                 :description="$t('common.allowed_file_types')"

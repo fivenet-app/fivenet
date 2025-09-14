@@ -159,9 +159,9 @@ const formRef = useTemplateRef('formRef');
 
                 <UFileUpload
                     name="file"
-                    :accept="fileUpload.types.images.join(',')"
                     block
                     :disabled="disabled || !canSubmit"
+                    :accept="fileUpload.types.images.join(',')"
                     :placeholder="$t('common.image')"
                     :label="$t('common.file_upload_label')"
                     :description="$t('common.allowed_file_types')"

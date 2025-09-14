@@ -407,8 +407,8 @@ const confirmModal = overlay.create(ConfirmModal);
                                     <div v-else class="flex flex-col gap-2 md:flex-row">
                                         <UFileUpload
                                             class="w-full flex-1 grow"
-                                            :accept="appConfig.fileUpload.types.images.join(',')"
                                             :disabled="!canSubmit || !canEdit"
+                                            :accept="appConfig.fileUpload.types.images.join(',')"
                                             :placeholder="$t('common.image')"
                                             :label="$t('common.file_upload_label')"
                                             :description="$t('common.allowed_file_types')"

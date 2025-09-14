@@ -107,9 +107,9 @@ const formRef = useTemplateRef('formRef');
                                     v-model="state.profilePicture"
                                     class="flex-1"
                                     name="mugshot"
-                                    :accept="appConfig.fileUpload.types.images.join(',')"
                                     block
                                     :disabled="formRef?.loading"
+                                    :accept="appConfig.fileUpload.types.images.join(',')"
                                     :placeholder="$t('common.image')"
                                     :label="$t('common.file_upload_label')"
                                     :description="$t('common.allowed_file_types')"
