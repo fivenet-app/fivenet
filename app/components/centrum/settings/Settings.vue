@@ -48,10 +48,10 @@ const modes = ref<{ mode: CentrumMode; selected?: boolean }[]>([
 
 const schema = z.object({
     enabled: z.coerce.boolean().default(false),
-    type: z.nativeEnum(CentrumType).default(CentrumType.DISPATCH),
+    type: z.enum(CentrumType).default(CentrumType.DISPATCH),
     public: z.coerce.boolean(),
-    mode: z.nativeEnum(CentrumMode).default(CentrumMode.MANUAL),
-    fallbackMode: z.nativeEnum(CentrumMode).default(CentrumMode.AUTO_ROUND_ROBIN),
+    mode: z.enum(CentrumMode).default(CentrumMode.MANUAL),
+    fallbackMode: z.enum(CentrumMode).default(CentrumMode.AUTO_ROUND_ROBIN),
     predefinedStatus: z.object({
         unitStatus: z.coerce.string().array().max(20).default([]),
         dispatchStatus: z.coerce.string().array().max(20).default([]),

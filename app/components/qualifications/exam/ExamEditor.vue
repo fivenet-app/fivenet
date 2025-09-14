@@ -39,7 +39,7 @@ const { moveUp, moveDown } = useListReorder(toRef(exam.value.questions));
 export const examSettings = z.object({
     time: zodDurationSchema,
     autoGrade: z.coerce.boolean().default(false),
-    autoGradeMode: z.nativeEnum(AutoGradeMode).default(AutoGradeMode.STRICT),
+    autoGradeMode: z.enum(AutoGradeMode).default(AutoGradeMode.STRICT),
     minimumPoints: z.coerce.number().min(0).default(0),
 });
 

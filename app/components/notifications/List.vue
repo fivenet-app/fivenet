@@ -26,7 +26,7 @@ const categories: { mode: NotificationCategory }[] = [
 
 const schema = z.object({
     includeRead: z.coerce.boolean().default(false),
-    categories: z.nativeEnum(NotificationCategory).array().max(4).default([]),
+    categories: z.enum(NotificationCategory).array().max(4).default([]),
     page: pageNumberSchema,
 });
 

@@ -40,7 +40,7 @@ const docRelations = docRelationsEnum.map((r) => ({
 const schema = z.object({
     closed: z.coerce.boolean().optional(),
     relations: z
-        .nativeEnum(DocRelation)
+        .enum(DocRelation)
         .array()
         .max(docRelations.length)
         .default(docRelationsEnum.map((r) => DocRelation[r.name as keyof typeof DocRelation])),

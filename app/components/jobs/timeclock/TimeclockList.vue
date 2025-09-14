@@ -58,13 +58,13 @@ const minMonth = subMonths(today, 6);
 
 const schema = z.object({
     viewMode: z
-        .nativeEnum(TimeclockViewMode)
+        .enum(TimeclockViewMode)
         .default(
             TimeclockViewMode[(route.query?.mode as string | undefined)?.toUpperCase() as keyof typeof TimeclockViewMode] ??
                 TimeclockViewMode.SELF,
         ),
     mode: z
-        .nativeEnum(TimeclockMode)
+        .enum(TimeclockMode)
         .default(
             TimeclockMode[(route.query?.view as string | undefined)?.toUpperCase() as keyof typeof TimeclockMode] ??
                 (props.hideDaily ? TimeclockMode.WEEKLY : TimeclockMode.RANGE),

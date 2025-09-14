@@ -202,59 +202,78 @@ func (s *Server) ListTimeclock(
 		)
 	}
 
+	agg := tTimeClock.
+		SELECT(
+			tTimeClock.UserID.AS("agg.user_id"),
+			tTimeClock.Date.AS("agg.date"),
+			jet.MIN(tTimeClock.StartTime).AS("agg.start_time"),
+			jet.MAX(tTimeClock.EndTime).AS("agg.end_time"),
+			jet.SUM(tTimeClock.SpentTime).AS("agg.spent_time"),
+		).
+		FROM(
+			tTimeClock.INNER_JOIN(
+				tColleague,
+				tColleague.ID.EQ(tTimeClock.UserID),
+			),
+		).
+		WHERE(condition).
+		GROUP_BY(groupBys...).
+		AsTable("agg")
+
+	stmt := agg.
+		SELECT(
+			jet.IntegerColumn("agg.user_id").AS("timeclock_entry.user_id"),
+			jet.DateColumn("agg.date").AS("timeclock_entry.date"),
+			jet.DateTimeColumn("agg.start_time").AS("timeclock_entry.start_time"),
+			jet.DateTimeColumn("agg.end_time").AS("timeclock_entry.end_time"),
+			jet.FloatColumn("agg.spent_time").AS("timeclock_entry.spent_time"),
+
+			tColleague.ID,
+			tColleague.Job,
+			tColleague.JobGrade,
+			tColleague.Firstname,
+			tColleague.Lastname,
+			tColleague.Dateofbirth,
+			tColleague.PhoneNumber,
+			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
+			tAvatar.FilePath.AS("colleague.profile_picture"),
+			tColleagueProps.UserID,
+			tColleagueProps.Job,
+			tColleagueProps.AbsenceBegin,
+			tColleagueProps.AbsenceEnd,
+			tColleagueProps.NamePrefix,
+			tColleagueProps.NameSuffix,
+		).
+		FROM(
+			agg.
+				INNER_JOIN(tColleague,
+					tColleague.ID.EQ(jet.IntegerColumn("agg.user_id")),
+				).
+				LEFT_JOIN(tUserProps,
+					tUserProps.UserID.EQ(tColleague.ID),
+				).
+				LEFT_JOIN(tColleagueProps,
+					tColleagueProps.UserID.EQ(tColleague.ID).
+						AND(tColleague.Job.EQ(jet.String(userInfo.GetJob()))),
+				).
+				LEFT_JOIN(tAvatar,
+					tAvatar.ID.EQ(tUserProps.AvatarFileID),
+				),
+		).
+		ORDER_BY(orderBys...).
+		OFFSET(req.GetPagination().GetOffset()).
+		LIMIT(limit)
+
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 
 	switch req.GetMode() {
 	case jobs.TimeclockMode_TIMECLOCK_MODE_UNSPECIFIED:
 		fallthrough
+
 	case jobs.TimeclockMode_TIMECLOCK_MODE_DAILY:
 		resp.Entries = &pbjobs.ListTimeclockResponse_Daily{
 			Daily: &pbjobs.TimeclockDay{},
 		}
-
-		stmt := tTimeClock.
-			SELECT(
-				tTimeClock.UserID,
-				tTimeClock.StartTime,
-				tTimeClock.EndTime,
-				jet.SUM(tTimeClock.SpentTime).AS("timeclock_entry.spent_time"),
-				tColleague.ID,
-				tColleague.Job,
-				tColleague.JobGrade,
-				tColleague.Firstname,
-				tColleague.Lastname,
-				tColleague.Dateofbirth,
-				tColleague.PhoneNumber,
-				tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
-				tAvatar.FilePath.AS("colleague.profile_picture"),
-				tColleagueProps.UserID,
-				tColleagueProps.Job,
-				tColleagueProps.AbsenceBegin,
-				tColleagueProps.AbsenceEnd,
-				tColleagueProps.NamePrefix,
-				tColleagueProps.NameSuffix,
-			).
-			FROM(
-				tTimeClock.
-					INNER_JOIN(tColleague,
-						tColleague.ID.EQ(tTimeClock.UserID),
-					).
-					LEFT_JOIN(tUserProps,
-						tUserProps.UserID.EQ(tColleague.ID),
-					).
-					LEFT_JOIN(tColleagueProps,
-						tColleagueProps.UserID.EQ(tColleague.ID).
-							AND(tColleague.Job.EQ(jet.String(userInfo.GetJob()))),
-					).
-					LEFT_JOIN(tAvatar,
-						tAvatar.ID.EQ(tUserProps.AvatarFileID),
-					),
-			).
-			WHERE(condition).
-			OFFSET(req.GetPagination().GetOffset()).
-			GROUP_BY(groupBys...).
-			ORDER_BY(orderBys...).
-			LIMIT(limit)
 
 		data := resp.GetDaily()
 		if err := stmt.QueryContext(ctx, s.db, &data.Entries); err != nil {
@@ -282,51 +301,6 @@ func (s *Server) ListTimeclock(
 			Weekly: &pbjobs.TimeclockWeekly{},
 		}
 
-		stmt := tTimeClock.
-			SELECT(
-				tTimeClock.UserID,
-				tTimeClock.Date,
-				tTimeClock.StartTime,
-				tTimeClock.EndTime,
-				jet.SUM(tTimeClock.SpentTime).AS("timeclock_entry.spent_time"),
-				tColleague.ID,
-				tColleague.Job,
-				tColleague.JobGrade,
-				tColleague.Firstname,
-				tColleague.Lastname,
-				tColleague.Dateofbirth,
-				tColleague.PhoneNumber,
-				tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
-				tAvatar.FilePath.AS("colleague.profile_picture"),
-				tColleagueProps.UserID,
-				tColleagueProps.Job,
-				tColleagueProps.AbsenceBegin,
-				tColleagueProps.AbsenceEnd,
-				tColleagueProps.NamePrefix,
-				tColleagueProps.NameSuffix,
-			).
-			FROM(
-				tTimeClock.
-					INNER_JOIN(tColleague,
-						tColleague.ID.EQ(tTimeClock.UserID),
-					).
-					LEFT_JOIN(tUserProps,
-						tUserProps.UserID.EQ(tColleague.ID),
-					).
-					LEFT_JOIN(tColleagueProps,
-						tColleagueProps.UserID.EQ(tColleague.ID).
-							AND(tColleague.Job.EQ(jet.String(userInfo.GetJob()))),
-					).
-					LEFT_JOIN(tAvatar,
-						tAvatar.ID.EQ(tUserProps.AvatarFileID),
-					),
-			).
-			WHERE(condition).
-			OFFSET(req.GetPagination().GetOffset()).
-			GROUP_BY(groupBys...).
-			ORDER_BY(orderBys...).
-			LIMIT(limit)
-
 		data := resp.GetWeekly()
 		if err := stmt.QueryContext(ctx, s.db, &data.Entries); err != nil {
 			if !errors.Is(err, qrm.ErrNoRows) {
@@ -351,51 +325,6 @@ func (s *Server) ListTimeclock(
 		resp.Entries = &pbjobs.ListTimeclockResponse_Range{
 			Range: &pbjobs.TimeclockRange{},
 		}
-
-		stmt := tTimeClock.
-			SELECT(
-				tTimeClock.UserID,
-				tTimeClock.Date,
-				tTimeClock.StartTime,
-				tTimeClock.EndTime,
-				jet.SUM(tTimeClock.SpentTime).AS("timeclock_entry.spent_time"),
-				tColleague.ID,
-				tColleague.Job,
-				tColleague.JobGrade,
-				tColleague.Firstname,
-				tColleague.Lastname,
-				tColleague.Dateofbirth,
-				tColleague.PhoneNumber,
-				tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
-				tAvatar.FilePath.AS("colleague.profile_picture"),
-				tColleagueProps.UserID,
-				tColleagueProps.Job,
-				tColleagueProps.AbsenceBegin,
-				tColleagueProps.AbsenceEnd,
-				tColleagueProps.NamePrefix,
-				tColleagueProps.NameSuffix,
-			).
-			FROM(
-				tTimeClock.
-					INNER_JOIN(tColleague,
-						tColleague.ID.EQ(tTimeClock.UserID),
-					).
-					LEFT_JOIN(tUserProps,
-						tUserProps.UserID.EQ(tColleague.ID),
-					).
-					LEFT_JOIN(tColleagueProps,
-						tColleagueProps.UserID.EQ(tColleague.ID).
-							AND(tColleague.Job.EQ(jet.String(userInfo.GetJob()))),
-					).
-					LEFT_JOIN(tAvatar,
-						tAvatar.ID.EQ(tUserProps.AvatarFileID),
-					),
-			).
-			WHERE(condition).
-			OFFSET(req.GetPagination().GetOffset()).
-			GROUP_BY(groupBys...).
-			ORDER_BY(orderBys...).
-			LIMIT(limit)
 
 		data := resp.GetRange()
 		if err := stmt.QueryContext(ctx, s.db, &data.Entries); err != nil {

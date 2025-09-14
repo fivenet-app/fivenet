@@ -61,7 +61,7 @@ const schema = z.object({
         roleName: z.coerce.string().max(64).optional(),
         roleFormat: z.coerce.string().max(64).optional(),
     }),
-    examMode: z.nativeEnum(QualificationExamMode),
+    examMode: z.enum(QualificationExamMode),
     examSettings: examSettings,
     exam: z.object({
         questions: z.custom<ExamQuestion>().array().max(100).default([]),

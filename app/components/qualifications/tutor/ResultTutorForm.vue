@@ -51,7 +51,7 @@ const availableStatus = [
 const selectedUser = ref<undefined | UserShort>(undefined);
 
 const schema = z.object({
-    status: z.nativeEnum(ResultStatus),
+    status: z.enum(ResultStatus),
     score: z.coerce.number().min(0).max(1000),
     summary: z.coerce.string().max(255),
 });

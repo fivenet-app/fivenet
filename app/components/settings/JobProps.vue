@@ -54,7 +54,7 @@ const schema = z.object({
             employeeRoleFormat: z.coerce.string().max(64),
             gradeRoleFormat: z.coerce.string().max(64),
             unemployedEnabled: z.coerce.boolean(),
-            unemployedMode: z.nativeEnum(UserInfoSyncUnemployedMode),
+            unemployedMode: z.enum(UserInfoSyncUnemployedMode),
             unemployedRoleName: z.coerce.string().max(64),
             syncNicknames: z.coerce.boolean(),
             groupMapping: z

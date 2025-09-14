@@ -26,7 +26,7 @@ const notifications = useNotificationsStore();
 const centrumCentrumClient = await getCentrumCentrumClient();
 
 const schema = z.object({
-    status: z.nativeEnum(StatusUnit),
+    status: z.enum(StatusUnit),
     code: z.union([z.coerce.string().min(1).max(20), z.coerce.string().length(0).optional()]),
     reason: z.union([z.coerce.string().min(3).max(255), z.coerce.string().length(0).optional()]),
 });

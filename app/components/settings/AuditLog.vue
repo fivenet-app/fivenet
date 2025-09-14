@@ -39,7 +39,7 @@ const schema = z.object({
         .optional(),
     services: z.coerce.string().max(64).array().max(10).default([]),
     methods: z.coerce.string().max(64).array().max(10).default([]),
-    states: z.nativeEnum(EventType).array().max(10).default([]),
+    states: z.enum(EventType).array().max(10).default([]),
     search: z.coerce.string().max(64).default(''),
     sorting: z
         .object({

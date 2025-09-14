@@ -34,7 +34,7 @@ const activityTypes = Object.keys(UserActivityType)
 const options = activityTypes.map((at) => ({ label: t(`enums.users.UserActivityType.${UserActivityType[at]}`), value: at }));
 
 const schema = z.object({
-    types: z.nativeEnum(UserActivityType).array().max(activityTypes.length).default(activityTypes),
+    types: z.enum(UserActivityType).array().max(activityTypes.length).default(activityTypes),
     sorting: z
         .object({
             columns: z
