@@ -1,6 +1,7 @@
 package icons
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
@@ -30,13 +31,18 @@ type Params struct {
 
 // New creates a new ImageProxy instance with the provided logger and configuration.
 func New(p Params) (*IconifyAPI, error) {
-	icServer, err := iconifygo.NewIconifyServer(
-		"/api/icons",
-		p.Config.Icons.Path,
-		iconifygo.WithHandlers("json"),
-	)
-	if err != nil {
-		return nil, err
+	var icServer *iconifygo.IconifyServer
+	if !p.Config.Icons.Proxy {
+		var err error
+		icServer, err = iconifygo.NewIconifyServer(
+			"/api/icons",
+			p.Config.Icons.Path,
+			iconifygo.WithHandlers("json"),
+			iconifygo.WithPreloadIconsets([]string{"simple-icons", "lucide", "mdi", "flagpack"}),
+		)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create iconify server. %w", err)
+		}
 	}
 
 	ip := &IconifyAPI{
@@ -76,7 +82,11 @@ func (i *IconifyAPI) RegisterHTTP(e *gin.Engine) {
 			}
 
 			// Build the target URL for the iconify API request
-			targetURL := buildTargetURL(i.apiURL, path, query)
+			targetURL, err := buildTargetURL(i.apiURL, path, query)
+			if err != nil {
+				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to build proxy request"})
+				return
+			}
 			if len(targetURL) > 1024 {
 				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "request URL too long"})
 				return
@@ -120,10 +130,13 @@ func validateIconRequest(path string, query url.Values) bool {
 	return true
 }
 
-func buildTargetURL(apiURL string, path string, query url.Values) string {
-	targetURL := apiURL + path
+func buildTargetURL(apiURL string, path string, query url.Values) (string, error) {
+	targetURL, err := url.JoinPath(apiURL, path)
+	if err != nil {
+		return "", err
+	}
 	if q := query.Encode(); q != "" {
 		targetURL += "?" + q
 	}
-	return targetURL
+	return targetURL, nil
 }
