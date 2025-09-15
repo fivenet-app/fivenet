@@ -68,13 +68,16 @@ const results = ref<InstanceType<typeof ResultList> | null>(null);
         </template>
 
         <template #body>
-            <UPageCard :title="$t('common.request', 2)">
-                <RequestList
-                    ref="requests"
-                    :qualification="qualification"
-                    :exam-mode="qualification.examMode"
-                    @refresh="async () => results?.refresh()"
-                />
+            <UPageCard :title="$t('common.request', 2)" :ui="{ body: '' }">
+                <template #default>
+                    <RequestList
+                        ref="requests"
+                        class="-mx-4 -mb-4 sm:-mx-6 sm:-mb-6"
+                        :qualification="qualification"
+                        :exam-mode="qualification.examMode"
+                        @refresh="async () => results?.refresh()"
+                    />
+                </template>
             </UPageCard>
 
             <UPageCard :ui="{ body: 'flex flex-col w-full', title: 'flex flex-row flex-1 items-center w-full' }">
@@ -95,12 +98,15 @@ const results = ref<InstanceType<typeof ResultList> | null>(null);
                     </UTooltip>
                 </template>
 
-                <ResultList
-                    ref="results"
-                    :qualification="qualification"
-                    :exam-mode="qualification.examMode"
-                    @refresh="async () => requests?.refresh()"
-                />
+                <template #default>
+                    <ResultList
+                        ref="results"
+                        class="-mx-4 -mb-4 sm:-mx-6 sm:-mb-6"
+                        :qualification="qualification"
+                        :exam-mode="qualification.examMode"
+                        @refresh="async () => requests?.refresh()"
+                    />
+                </template>
             </UPageCard>
         </template>
     </UDashboardPanel>

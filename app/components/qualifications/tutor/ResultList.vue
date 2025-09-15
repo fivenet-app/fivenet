@@ -278,28 +278,26 @@ const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
-    <div class="overflow-hidden">
-        <div class="px-1 sm:px-2">
-            <DataErrorBlock
-                v-if="error"
-                :title="$t('common.unable_to_load', [$t('common.qualifications', 2)])"
-                :error="error"
-                :retry="refresh"
+    <div>
+        <DataErrorBlock
+            v-if="error"
+            :title="$t('common.unable_to_load', [$t('common.qualifications', 2)])"
+            :error="error"
+            :retry="refresh"
+        />
+
+        <template v-else>
+            <UTable
+                v-model:sorting="query.sorting.columns"
+                :columns="columns"
+                :data="data?.results"
+                :loading="isRequestPending(status)"
+                :empty="$t('common.not_found', [$t('common.result', 2)])"
+                :pagination-options="{ manualPagination: true }"
+                :sorting-options="{ manualSorting: true }"
             />
 
-            <template v-else>
-                <UTable
-                    v-model:sorting="query.sorting.columns"
-                    :columns="columns"
-                    :data="data?.results"
-                    :loading="isRequestPending(status)"
-                    :empty="$t('common.not_found', [$t('common.result', 2)])"
-                    :pagination-options="{ manualPagination: true }"
-                    :sorting-options="{ manualSorting: true }"
-                />
-
-                <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
-            </template>
-        </div>
+            <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+        </template>
     </div>
 </template>

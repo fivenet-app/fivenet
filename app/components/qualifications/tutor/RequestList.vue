@@ -313,136 +313,133 @@ const examViewResultModal = overlay.create(ExamViewResultModal);
 </script>
 
 <template>
-    <div class="overflow-hidden">
-        <div class="px-1 sm:px-2">
-            <DataErrorBlock
-                v-if="error"
-                :title="$t('common.unable_to_load', [$t('common.request', 2)])"
-                :error="error"
-                :retry="refresh"
-            />
+    <div>
+        <DataErrorBlock
+            v-if="error"
+            :title="$t('common.unable_to_load', [$t('common.request', 2)])"
+            :error="error"
+            :retry="refresh"
+        />
 
-            <template v-else>
-                <UTable
-                    v-model:sorting="query.sorting.columns"
-                    :columns="columns"
-                    :data="data?.requests"
-                    :loading="isRequestPending(status)"
-                    :empty="$t('common.not_found', [$t('common.request', 2)])"
-                    :pagination-options="{ manualPagination: true }"
-                    :sorting-options="{ manualSorting: true }"
-                >
-                    <template #citizen-cell="{ row }">
-                        <CitizenInfoPopover :user="row.original.user" />
-                    </template>
-                    <template #status-cell="{ row }">
-                        <span class="font-medium" :class="requestStatusToTextColor(row.original.status)">
-                            <span class="font-semibold">{{
-                                $t(`enums.qualifications.RequestStatus.${RequestStatus[row.original.status ?? 0]}`)
-                            }}</span>
-                        </span>
-                    </template>
-                    <template #createdAt-cell="{ row }">
-                        <GenericTime :value="row.original.createdAt" />
-                    </template>
-                    <template #approvedAt-cell="{ row }">
-                        <GenericTime :value="row.original.approvedAt" />
-                    </template>
-                    <template #approver-cell="{ row }">
-                        <CitizenInfoPopover v-if="row.original.approver" :user="row.original.approver" />
-                    </template>
-                    <template #actions-cell="{ row }">
-                        <UTooltip v-if="row.original.status !== RequestStatus.DENIED" :text="$t('common.decline')">
-                            <UButton
-                                variant="link"
-                                icon="i-mdi-close-thick"
-                                color="orange"
-                                @click="
-                                    requestTutorModal.open({
-                                        request: row.original,
-                                        status: RequestStatus.DENIED,
-                                        onRefresh: onRefresh,
-                                    })
-                                "
-                            />
-                        </UTooltip>
-
-                        <UTooltip
-                            v-if="
-                                row.original.status !== RequestStatus.ACCEPTED &&
-                                row.original.status !== RequestStatus.EXAM_STARTED &&
-                                row.original.status !== RequestStatus.EXAM_GRADING
+        <template v-else>
+            <UTable
+                v-model:sorting="query.sorting.columns"
+                :columns="columns"
+                :data="data?.requests"
+                :loading="isRequestPending(status)"
+                :empty="$t('common.not_found', [$t('common.request', 2)])"
+                :pagination-options="{ manualPagination: true }"
+                :sorting-options="{ manualSorting: true }"
+            >
+                <template #citizen-cell="{ row }">
+                    <CitizenInfoPopover :user="row.original.user" />
+                </template>
+                <template #status-cell="{ row }">
+                    <span class="font-medium" :class="requestStatusToTextColor(row.original.status)">
+                        <span class="font-semibold">{{
+                            $t(`enums.qualifications.RequestStatus.${RequestStatus[row.original.status ?? 0]}`)
+                        }}</span>
+                    </span>
+                </template>
+                <template #createdAt-cell="{ row }">
+                    <GenericTime :value="row.original.createdAt" />
+                </template>
+                <template #approvedAt-cell="{ row }">
+                    <GenericTime :value="row.original.approvedAt" />
+                </template>
+                <template #approver-cell="{ row }">
+                    <CitizenInfoPopover v-if="row.original.approver" :user="row.original.approver" />
+                </template>
+                <template #actions-cell="{ row }">
+                    <UTooltip v-if="row.original.status !== RequestStatus.DENIED" :text="$t('common.decline')">
+                        <UButton
+                            variant="link"
+                            icon="i-mdi-close-thick"
+                            color="orange"
+                            @click="
+                                requestTutorModal.open({
+                                    request: row.original,
+                                    status: RequestStatus.DENIED,
+                                    onRefresh: onRefresh,
+                                })
                             "
-                            :text="$t('common.accept')"
-                        >
-                            <UButton
-                                variant="link"
-                                icon="i-mdi-check-bold"
-                                color="green"
-                                @click="
-                                    requestTutorModal.open({
-                                        request: row.original,
-                                        status: RequestStatus.ACCEPTED,
-                                        onRefresh: onRefresh,
-                                    })
-                                "
-                            />
-                        </UTooltip>
+                        />
+                    </UTooltip>
 
-                        <UTooltip
-                            v-if="
-                                row.original.status === RequestStatus.ACCEPTED ||
-                                row.original.status === RequestStatus.EXAM_GRADING
+                    <UTooltip
+                        v-if="
+                            row.original.status !== RequestStatus.ACCEPTED &&
+                            row.original.status !== RequestStatus.EXAM_STARTED &&
+                            row.original.status !== RequestStatus.EXAM_GRADING
+                        "
+                        :text="$t('common.accept')"
+                    >
+                        <UButton
+                            variant="link"
+                            icon="i-mdi-check-bold"
+                            color="green"
+                            @click="
+                                requestTutorModal.open({
+                                    request: row.original,
+                                    status: RequestStatus.ACCEPTED,
+                                    onRefresh: onRefresh,
+                                })
                             "
-                            :text="$t('common.grade')"
-                        >
-                            <UButton
-                                variant="link"
-                                icon="i-mdi-star"
-                                color="warning"
-                                @click="
-                                    (row.original.status === RequestStatus.EXAM_GRADING
-                                        ? examViewResultModal
-                                        : resultTutorModal
-                                    ).open({
-                                        qualificationId: row.original.qualificationId,
-                                        examMode: examMode,
-                                        userId: row.original.userId,
-                                        onRefresh: onRefresh,
-                                    })
-                                "
-                            />
-                        </UTooltip>
+                        />
+                    </UTooltip>
 
-                        <UTooltip
-                            v-if="
-                                checkQualificationAccess(
-                                    qualification.access,
-                                    qualification.creator,
-                                    AccessLevel.EDIT,
-                                    undefined,
-                                    qualification?.creatorJob,
-                                )
+                    <UTooltip
+                        v-if="
+                            row.original.status === RequestStatus.ACCEPTED || row.original.status === RequestStatus.EXAM_GRADING
+                        "
+                        :text="$t('common.grade')"
+                    >
+                        <UButton
+                            variant="link"
+                            icon="i-mdi-star"
+                            color="warning"
+                            @click="
+                                (row.original.status === RequestStatus.EXAM_GRADING
+                                    ? examViewResultModal
+                                    : resultTutorModal
+                                ).open({
+                                    qualificationId: row.original.qualificationId,
+                                    examMode: examMode,
+                                    userId: row.original.userId,
+                                    onRefresh: onRefresh,
+                                })
                             "
-                            :text="$t('common.delete')"
-                        >
-                            <UButton
-                                variant="link"
-                                icon="i-mdi-delete"
-                                color="error"
-                                @click="
-                                    confirmModal.open({
-                                        confirm: async () =>
-                                            deleteQualificationRequest(row.original.qualificationId, row.original.userId),
-                                    })
-                                "
-                            />
-                        </UTooltip>
-                    </template>
-                </UTable>
+                        />
+                    </UTooltip>
 
-                <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
-            </template>
-        </div>
+                    <UTooltip
+                        v-if="
+                            checkQualificationAccess(
+                                qualification.access,
+                                qualification.creator,
+                                AccessLevel.EDIT,
+                                undefined,
+                                qualification?.creatorJob,
+                            )
+                        "
+                        :text="$t('common.delete')"
+                    >
+                        <UButton
+                            variant="link"
+                            icon="i-mdi-delete"
+                            color="error"
+                            @click="
+                                confirmModal.open({
+                                    confirm: async () =>
+                                        deleteQualificationRequest(row.original.qualificationId, row.original.userId),
+                                })
+                            "
+                        />
+                    </UTooltip>
+                </template>
+            </UTable>
+
+            <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+        </template>
     </div>
 </template>
