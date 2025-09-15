@@ -57,9 +57,7 @@ const availableJobGrades = computed(
 );
 
 async function createRole(): Promise<void> {
-    if (state.jobGrade === undefined || state.jobGrade.grade < 0) {
-        return;
-    }
+    if (state.jobGrade === undefined || state.jobGrade.grade < 0) return;
 
     try {
         const call = settingsSettingsClient.createRole({
@@ -68,9 +66,7 @@ async function createRole(): Promise<void> {
         });
         const { response } = await call;
 
-        if (!response.role) {
-            return;
-        }
+        if (!response.role) return;
 
         notifications.add({
             title: { key: 'notifications.settings.role_created.title', parameters: {} },

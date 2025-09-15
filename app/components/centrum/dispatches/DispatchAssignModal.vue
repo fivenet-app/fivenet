@@ -32,9 +32,7 @@ const state = reactive<Schema>({
 });
 
 async function assignDispatch(): Promise<void> {
-    if (dispatch.value === undefined) {
-        return;
-    }
+    if (dispatch.value === undefined) return;
 
     try {
         const toAdd: number[] = [];

@@ -77,9 +77,7 @@ async function deleteFile(path: string): Promise<DeleteFileResponse> {
 
 function addUploadedFile(file: File): void {
     const idx = files.value?.files.findIndex((f) => f.filePath === file.filePath);
-    if (idx === undefined) {
-        return;
-    }
+    if (idx === undefined) return;
 
     if (idx > -1) {
         files.value?.files.unshift(file);

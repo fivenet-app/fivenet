@@ -174,9 +174,7 @@ const state = reactive<Schema>({
 });
 
 async function updateAppConfig(values: Schema): Promise<void> {
-    if (!config.value || !config.value?.config) {
-        return;
-    }
+    if (!config.value || !config.value?.config) return;
 
     // Update local version of retrieved config
     config.value.config.defaultLocale = values.defaultLocale.code;
@@ -229,9 +227,7 @@ async function updateAppConfig(values: Schema): Promise<void> {
 }
 
 function setSettingsValues(): void {
-    if (!config.value || !config.value.config) {
-        return;
-    }
+    if (!config.value || !config.value.config) return;
 
     const locale = locales.value.find((l) => l.code === config.value?.config?.defaultLocale);
     if (locale) {
@@ -329,9 +325,7 @@ const selectedTab = computed({
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    if (event.submitter?.getAttribute('role') === 'tab') {
-        return;
-    }
+    if (event.submitter?.getAttribute('role') === 'tab') return;
 
     canSubmit.value = false;
     await updateAppConfig(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));

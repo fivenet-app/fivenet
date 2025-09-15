@@ -65,13 +65,9 @@ export const useCalendarStore = defineStore(
                         Math.abs(curr - time) < Math.abs(prev - time) ? curr : prev,
                     );
 
-                    if (eventReminders.value.get(entry.id) === closestTime) {
-                        return;
-                    }
+                    if (eventReminders.value.get(entry.id) === closestTime) return;
 
-                    if (closestTime > time) {
-                        return;
-                    }
+                    if (closestTime > time) return;
 
                     if (time <= 0) {
                         eventReminders.value.delete(entry.id);
@@ -264,9 +260,7 @@ export const useCalendarStore = defineStore(
                 if (response.entries.length > 0) {
                     response.entries.forEach((entry) => {
                         // Make sure that we have the calendar in our list before adding it
-                        if (!calendars.value.find((c) => c.id === entry.calendarId)) {
-                            return;
-                        }
+                        if (!calendars.value.find((c) => c.id === entry.calendarId)) return;
 
                         const idx = entries.value.findIndex((c) => c.id === entry!.id);
                         if (idx > -1) {

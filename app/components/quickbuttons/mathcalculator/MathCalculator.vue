@@ -21,18 +21,14 @@ const numberInput = useTemplateRef('numberInput');
 const resultElement = useTemplateRef('resultElement');
 
 function getPercent() {
-    if (!powerOn.value) {
-        return;
-    }
+    if (!powerOn.value) return;
 
     const percent = parseFloat(currentCalculate.value.replace(',', '.')) / 100;
     currentCalculate.value = percent.toString().replace('.', ',');
 }
 
 function allClear() {
-    if (!powerOn.value) {
-        return;
-    }
+    if (!powerOn.value) return;
 
     currentCalculate.value = '0';
     lastOperation.value = '0';
@@ -40,9 +36,7 @@ function allClear() {
 }
 
 function doDelete() {
-    if (!powerOn.value) {
-        return;
-    }
+    if (!powerOn.value) return;
 
     if (currentCalculate.value !== '0') {
         currentCalculate.value = currentCalculate.value.slice(0, -1);
@@ -53,9 +47,7 @@ function doDelete() {
 }
 
 function inputValue(val: string) {
-    if (!powerOn.value) {
-        return;
-    }
+    if (!powerOn.value) return;
 
     // Clear the error status when a new character is inputted
     lastStatus.value = '';
@@ -95,23 +87,17 @@ function inputValue(val: string) {
 }
 
 function scrollRight() {
-    if (numberInput.value?.scrollTop === undefined) {
-        return;
-    }
+    if (numberInput.value?.scrollTop === undefined) return;
     numberInput.value.scrollLeft = numberInput.value?.scrollWidth;
 }
 
 function scrollDown() {
-    if (resultElement.value?.scrollTop === undefined) {
-        return;
-    }
+    if (resultElement.value?.scrollTop === undefined) return;
     resultElement.value.scrollTop = resultElement.value.scrollHeight;
 }
 
 function calculate() {
-    if (!powerOn.value) {
-        return;
-    }
+    if (!powerOn.value) return;
 
     if (lastIsOperand()) {
         // Trigger an error for incomplete expressions

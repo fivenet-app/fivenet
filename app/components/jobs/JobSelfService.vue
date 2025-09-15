@@ -28,9 +28,7 @@ const { data: colleagueSelf } = useLazyAsyncData('jobs-selfcolleague', async () 
 });
 
 onBeforeMount(() => {
-    if (!colleagueSelf.value?.colleague?.dateofbirth) {
-        return;
-    }
+    if (!colleagueSelf.value?.colleague?.dateofbirth) return;
 
     const birthday = parse(colleagueSelf.value?.colleague?.dateofbirth, 'dd.MM.yyyy', new Date());
     birthday.setFullYear(new Date().getFullYear());

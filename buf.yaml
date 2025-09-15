@@ -13,4 +13,4 @@ lint:
     - PACKAGE_VERSION_SUFFIX
 breaking:
   use:
-    - WIRE
+    - FILE_NO_DELETE

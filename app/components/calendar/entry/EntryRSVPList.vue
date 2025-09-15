@@ -64,9 +64,7 @@ async function rsvpCalendarEntry(
     rsvpResponse: RsvpResponses,
     remove?: boolean,
 ): Promise<undefined | RSVPCalendarEntryResponse> {
-    if (ownEntry.value?.response === rsvpResponse) {
-        return;
-    }
+    if (ownEntry.value?.response === rsvpResponse) return;
 
     try {
         const response = await calendarStore.rsvpCalendarEntry({

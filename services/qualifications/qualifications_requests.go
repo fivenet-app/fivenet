@@ -65,20 +65,28 @@ func (s *Server) ListQualificationRequests(
 			tQualiRequests.QualificationID.EQ(mysql.Int64(req.GetQualificationId())),
 		)
 	} else {
+		accessExists := mysql.EXISTS(
+			mysql.SELECT(mysql.Int(1)).
+				FROM(tQAccess).
+				WHERE(
+					tQAccess.TargetID.EQ(tQualiRequests.QualificationID).
+						AND(tQAccess.Job.EQ(mysql.String(userInfo.GetJob()))).
+						AND(tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade()))).
+						AND(
+							tQAccess.Access.GT_EQ(mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_GRADE))).
+								OR(
+									tQAccess.Access.GT_EQ(mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_VIEW))).
+										AND(tQualiRequests.UserID.EQ(mysql.Int32(userInfo.GetUserId()))),
+								),
+						),
+				),
+		)
+
 		condition = condition.AND(mysql.AND(
 			tQuali.DeletedAt.IS_NULL(),
 			mysql.OR(
 				tQualiRequests.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-				mysql.AND(
-					tQAccess.Access.IS_NOT_NULL(),
-					mysql.OR(
-						tQAccess.Access.GT_EQ(mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_GRADE))),
-						mysql.AND(
-							tQAccess.Access.GT(mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED))),
-							tQualiRequests.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-						),
-					),
-				),
+				accessExists,
 			),
 		))
 	}
@@ -126,6 +134,8 @@ func (s *Server) ListQualificationRequests(
 				),
 		).
 		WHERE(condition)
+
+	fmt.Println(countStmt.DebugSql())
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -225,6 +235,8 @@ func (s *Server) ListQualificationRequests(
 		WHERE(condition).
 		OFFSET(req.GetPagination().GetOffset()).
 		LIMIT(limit)
+
+	fmt.Println(stmt.DebugSql())
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Requests); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

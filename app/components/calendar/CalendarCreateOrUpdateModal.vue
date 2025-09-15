@@ -111,9 +111,7 @@ async function createOrUpdateCalendar(values: Schema): Promise<CreateCalendarRes
 }
 
 function setFromProps(): void {
-    if (!data.value?.calendar) {
-        return;
-    }
+    if (!data.value?.calendar) return;
 
     const calendar = data.value?.calendar;
     state.name = calendar.name;

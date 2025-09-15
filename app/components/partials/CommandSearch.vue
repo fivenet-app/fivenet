@@ -35,7 +35,6 @@ async function searchCitiznes(q: string): Promise<CommandPaletteItem[]> {
             search: q.trim().substring(1, 64).trim(),
         });
         const { response } = await call;
-        console.log('response', response);
 
         return response.users.map((u) => ({
             id: u.userId,

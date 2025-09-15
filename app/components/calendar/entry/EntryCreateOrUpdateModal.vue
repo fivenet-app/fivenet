@@ -103,9 +103,7 @@ function setFromProps(): void {
         return;
     }
 
-    if (!data.value?.entry) {
-        return;
-    }
+    if (!data.value?.entry) return;
 
     const entry = data.value?.entry;
     if (entry.calendar) {

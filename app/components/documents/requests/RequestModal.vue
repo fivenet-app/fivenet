@@ -79,9 +79,7 @@ async function listDocumnetReqs(documentId: number): Promise<ListDocumentReqsRes
 }
 
 async function createDocumentRequest(values: Schema): Promise<void> {
-    if (values.requestType === undefined) {
-        return;
-    }
+    if (values.requestType === undefined) return;
 
     try {
         const call = documentsDocumentsClient.createDocumentReq({

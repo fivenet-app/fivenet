@@ -56,17 +56,13 @@ onBeforeMount(async () => {
     await listEmails();
 
     if (route.query?.tab === 'new') {
-        if (emails.value.length === 0 || !hasPrivateEmail.value) {
-            return;
-        }
+        if (emails.value.length === 0 || !hasPrivateEmail.value) return;
     }
 });
 
 // Disable create form when email is selected
 watch(selectedEmail, async () => {
-    if (!selectedEmail.value) {
-        return;
-    }
+    if (!selectedEmail.value) return;
 
     loading.value = true;
     await mailerStore.getEmail(selectedEmail.value.id).finally(() => (loading.value = false));

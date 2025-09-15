@@ -33,9 +33,7 @@ const selectedThread = computed({
 });
 
 watch(selectedThread, () => {
-    if (!selectedThread.value) {
-        return;
-    }
+    if (!selectedThread.value) return;
 
     const ref = threadRefs.value.get(selectedThread.value?.id);
     if (ref) {

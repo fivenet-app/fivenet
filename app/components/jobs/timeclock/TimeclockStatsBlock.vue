@@ -43,9 +43,7 @@ const statsData = ref<{
 });
 
 async function updateStats(): Promise<void> {
-    if (!props.stats) {
-        return;
-    }
+    if (!props.stats) return;
 
     statsData.value.sum.value = parseFloat(((Math.round(props.stats.spentTimeSum * 100) / 100) * 60 * 60).toPrecision(2));
     statsData.value.avg.value = parseFloat(((Math.round(props.stats.spentTimeAvg * 100) / 100) * 60 * 60).toPrecision(2));

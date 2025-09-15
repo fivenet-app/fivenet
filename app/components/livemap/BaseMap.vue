@@ -42,9 +42,7 @@ const { location, selectedMarker, zoom } = storeToRefs(livemapStore);
 let map: L.Map | undefined;
 
 function mapResize(): void {
-    if (map === undefined) {
-        return;
-    }
+    if (map === undefined) return;
 
     map.invalidateSize();
 }
@@ -130,9 +128,7 @@ const isMoving = ref<boolean>(false);
 watchDebounced(
     isMoving,
     async () => {
-        if (map === undefined || isMoving.value) {
-            return;
-        }
+        if (map === undefined || isMoving.value) return;
 
         const newHash = stringifyHash(map.getZoom(), map.getCenter().lat, map.getCenter().lng);
         if (currentLocationQuery.value !== newHash) {

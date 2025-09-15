@@ -57,9 +57,7 @@ async function findPostal(q: string): Promise<void> {
 }
 
 watch(selectedPostal, () => {
-    if (!selectedPostal.value) {
-        return;
-    }
+    if (!selectedPostal.value) return;
 
     location.value = selectedPostal.value;
 });

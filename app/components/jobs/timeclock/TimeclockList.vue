@@ -100,9 +100,7 @@ const schema = z.object({
 const query = useSearchForm('jobs_timeclock', schema);
 
 function setFromProps(): void {
-    if (props.userId === undefined) {
-        return;
-    }
+    if (props.userId === undefined) return;
 
     query.viewMode = TimeclockViewMode.ALL;
     query.users = [props.userId];

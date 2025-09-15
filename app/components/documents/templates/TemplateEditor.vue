@@ -100,9 +100,7 @@ const state = reactive<Schema>({
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    if (event.submitter?.getAttribute('role') === 'tab') {
-        return;
-    }
+    if (event.submitter?.getAttribute('role') === 'tab') return;
 
     canSubmit.value = false;
     await createOrUpdateTemplate(event.data, props.templateId).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
@@ -302,9 +300,7 @@ onBeforeMount(async () => {
             const { response } = await call;
 
             const tpl = response.template;
-            if (!tpl) {
-                return;
-            }
+            if (!tpl) return;
 
             setValuesFromTemplate(tpl);
 

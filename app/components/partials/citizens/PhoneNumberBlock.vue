@@ -31,9 +31,7 @@ const { nuiEnabled, streamerMode } = storeToRefs(settingsStore);
 const notifications = useNotificationsStore();
 
 async function doCall(): Promise<void> {
-    if (props.number === undefined) {
-        return;
-    }
+    if (props.number === undefined) return;
 
     if (nuiEnabled.value) {
         return phoneCallNumber(props.number);

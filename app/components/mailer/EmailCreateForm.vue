@@ -114,9 +114,7 @@ const state = reactive<Schema>({
 });
 
 function setFromProps(): void {
-    if (!props.modelValue || !props.modelValue?.email) {
-        return;
-    }
+    if (!props.modelValue || !props.modelValue?.email) return;
 
     const split = props.modelValue?.email.split('@');
     if (split[0] && split[1]) {

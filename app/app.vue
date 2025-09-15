@@ -68,18 +68,12 @@ setUserLocale();
 watch(getUserLocale, setUserLocale);
 
 async function clickListener(event: MouseEvent): Promise<void> {
-    if (!event.target || event.defaultPrevented) {
-        return;
-    }
+    if (!event.target || event.defaultPrevented) return;
 
     const element = event.target as HTMLElement;
-    if (element.tagName.toLowerCase() !== 'a' && !element.hasAttribute('href')) {
-        return;
-    }
+    if (element.tagName.toLowerCase() !== 'a' && !element.hasAttribute('href')) return;
     const href = element.getAttribute('href');
-    if (href?.startsWith('/') || href?.startsWith('#') || href === '') {
-        return;
-    }
+    if (href?.startsWith('/') || href?.startsWith('#') || href === '') return;
 
     event.preventDefault();
     await navigateTo({
@@ -91,9 +85,7 @@ async function clickListener(event: MouseEvent): Promise<void> {
 }
 
 onMounted(async () => {
-    if (!import.meta.client) {
-        return;
-    }
+    if (!import.meta.client) return;
 
     if (nuiEnabled.value) {
         // NUI message handling
@@ -106,9 +98,7 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(async () => {
-    if (!import.meta.client) {
-        return;
-    }
+    if (!import.meta.client) return;
 
     if (nuiEnabled.value) {
         // NUI message handling
@@ -121,9 +111,7 @@ onBeforeUnmount(async () => {
 });
 
 watch(updateAvailable, async () => {
-    if (!updateAvailable.value) {
-        return;
-    }
+    if (!updateAvailable.value) return;
 
     toast.add({
         title: t('system.update_available.title', { version: updateAvailable.value }),

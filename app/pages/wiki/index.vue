@@ -47,9 +47,7 @@ async function listPages(): Promise<PageShort[]> {
 }
 
 watch(pages, async () => {
-    if (!pages.value) {
-        return;
-    }
+    if (!pages.value) return;
 
     if (pages.value.length === 1 && pages.value[0]?.job !== undefined && pages.value[0]?.job === activeChar.value?.job) {
         await navigateTo({

@@ -54,9 +54,7 @@ const availableJobs = computed(
 );
 
 async function createRole(): Promise<void> {
-    if (state.job === undefined || state.job?.name === undefined) {
-        return;
-    }
+    if (state.job === undefined || state.job?.name === undefined) return;
 
     try {
         const call = settingsSettingsClient.createRole({
@@ -65,9 +63,7 @@ async function createRole(): Promise<void> {
         });
         const { response } = await call;
 
-        if (!response.role) {
-            return;
-        }
+        if (!response.role) return;
 
         notifications.add({
             title: { key: 'notifications.settings.role_created.title', parameters: {} },

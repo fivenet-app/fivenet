@@ -64,16 +64,13 @@ async function findUser(userId?: number): Promise<UserShort[]> {
 
 async function setFromProps(): Promise<void> {
     if (entry.value.type === 'user' && entry.value.userId !== undefined) {
-        if (selectedUser.value?.userId === entry.value.userId) {
-            return;
-        }
+        if (selectedUser.value?.userId === entry.value.userId) return;
 
         const users = await findUser(entry.value.userId);
         selectedUser.value = users.find((char) => char.userId === entry.value.userId);
     } else if (entry.value.type === 'qualification' && entry.value.qualificationId !== undefined) {
-        if (selectedQualification.value?.id === entry.value.qualificationId || entry.value.qualificationId === undefined) {
+        if (selectedQualification.value?.id === entry.value.qualificationId || entry.value.qualificationId === undefined)
             return;
-        }
 
         try {
             const { response } = await qualificationsQualificationsClient.getQualification({

@@ -164,15 +164,11 @@ let lastSavedString = '';
 let lastSaveTimestamp = 0;
 
 async function saveHistory(values: Schema, name: string | undefined = undefined, type = 'document'): Promise<void> {
-    if (saving.value) {
-        return;
-    }
+    if (saving.value) return;
 
     const now = Date.now();
     // Skip if identical to last saved or if within MIN_GAP
-    if (state.content === lastSavedString || now - lastSaveTimestamp < 5000) {
-        return;
-    }
+    if (state.content === lastSavedString || now - lastSaveTimestamp < 5000) return;
 
     saving.value = true;
 
@@ -264,9 +260,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
             state.references
                 .filter((r) => r.id === undefined || r.id <= 0)
                 .forEach((ref) => {
-                    if (state.references.some((r) => r.id === ref.id)) {
-                        return;
-                    }
+                    if (state.references.some((r) => r.id === ref.id)) return;
                     ref.sourceDocumentId = response.document!.id!;
                     documentsDocumentsClient.addDocumentReference({
                         reference: ref,

@@ -71,9 +71,7 @@ async function setViaURL(urlOrBlob: string | File): Promise<void> {
 }
 
 function setImage(url: string | undefined): void {
-    if (!url) {
-        return;
-    }
+    if (!url) return;
 
     props.editor
         .chain()

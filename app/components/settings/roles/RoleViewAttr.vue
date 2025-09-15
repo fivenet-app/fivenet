@@ -154,9 +154,7 @@ const validValues = computed<AttributeValues | undefined>(() => attribute.value.
 watchOnce(attrValues, () => emit('changed'), { deep: true });
 
 async function toggleStringListValue(value: string): Promise<void> {
-    if (attrValues.value.validValues.oneofKind !== 'stringList') {
-        return;
-    }
+    if (attrValues.value.validValues.oneofKind !== 'stringList') return;
 
     const idx = attrValues.value.validValues.stringList.strings.findIndex((v) => v === value);
     if (idx === -1) {
@@ -167,12 +165,8 @@ async function toggleStringListValue(value: string): Promise<void> {
 }
 
 async function toggleStringListAll(): Promise<void> {
-    if (attrValues.value.validValues.oneofKind !== 'stringList') {
-        return;
-    }
-    if (maxValues?.validValues.oneofKind !== 'stringList') {
-        return;
-    }
+    if (attrValues.value.validValues.oneofKind !== 'stringList') return;
+    if (maxValues?.validValues.oneofKind !== 'stringList') return;
 
     if (attrValues.value.validValues.stringList.strings.length === maxValues?.validValues.stringList.strings.length) {
         attrValues.value.validValues.stringList.strings = [];
@@ -182,9 +176,7 @@ async function toggleStringListAll(): Promise<void> {
 }
 
 async function toggleJobListValue(value: string): Promise<void> {
-    if (attrValues.value.validValues.oneofKind !== 'jobList') {
-        return;
-    }
+    if (attrValues.value.validValues.oneofKind !== 'jobList') return;
 
     const idx = attrValues.value.validValues.jobList.strings.findIndex((v) => v === value);
     if (idx === -1) {
@@ -195,12 +187,8 @@ async function toggleJobListValue(value: string): Promise<void> {
 }
 
 async function toggleJobListAll(): Promise<void> {
-    if (attrValues.value.validValues.oneofKind !== 'jobList') {
-        return;
-    }
-    if (maxValues?.validValues.oneofKind !== 'jobList') {
-        return;
-    }
+    if (attrValues.value.validValues.oneofKind !== 'jobList') return;
+    if (maxValues?.validValues.oneofKind !== 'jobList') return;
 
     if (attrValues.value.validValues.jobList.strings.length === maxValues?.validValues.jobList.strings.length) {
         attrValues.value.validValues.jobList.strings = [];
@@ -210,13 +198,9 @@ async function toggleJobListAll(): Promise<void> {
 }
 
 async function toggleJobGradeValue(job: Job, checked: boolean): Promise<void> {
-    if (attrValues.value.validValues.oneofKind !== 'jobGradeList') {
-        return;
-    }
+    if (attrValues.value.validValues.oneofKind !== 'jobGradeList') return;
 
-    if (!job.grades[0]) {
-        return;
-    }
+    if (!job.grades[0]) return;
 
     if (!attrValues.value.validValues.jobGradeList.fineGrained) {
         if (checked && !attrValues.value.validValues.jobGradeList.jobs[job.name]) {
@@ -238,9 +222,7 @@ async function toggleJobGradeValue(job: Job, checked: boolean): Promise<void> {
 }
 
 async function toggleJobGradeListFineGrained(checked: boolean): Promise<void> {
-    if (attrValues.value.validValues.oneofKind !== 'jobGradeList') {
-        return;
-    }
+    if (attrValues.value.validValues.oneofKind !== 'jobGradeList') return;
 
     if (!attrValues.value.validValues.jobGradeList.grades) {
         attrValues.value.validValues.jobGradeList.grades = {};

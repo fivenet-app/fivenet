@@ -117,7 +117,7 @@ const fileListModal = overlay.create(FileListModal);
 const sourceCodeModal = overlay.create(SourceCodeModal);
 const versionHistoryModal = overlay.create(VersionHistoryModal);
 
-const extensions = [
+const extensions: Extensions = [
     UniqueID.configure({
         attributeName: 'id',
         types: ['heading'],
@@ -162,7 +162,6 @@ const extensions = [
     TextAlign.configure({
         types: ['heading', 'paragraph', 'image'],
     }),
-    Underline,
     TextStyleKit.configure({
         backgroundColor: {
             types: ['textStyle'],
@@ -180,6 +179,7 @@ const extensions = [
             types: ['textStyle'],
         },
     }),
+    Underline,
     InvisibleCharacters.configure({
         visible: editorSettings.value.showInvisibleCharacters,
     }),
@@ -451,7 +451,6 @@ const stopWatch = watch(modelValue, (value) => {
     if (props.enableCollab && ydoc && yjsProvider) {
         seedDocument && seedDocument(yjsSchema!, value);
     } else {
-        console.log('SET EDITOR CONTENT');
         unref(editor)?.commands.setContent(value, { emitUpdate: true });
     }
 
@@ -520,9 +519,7 @@ const searchAndReplace = reactive<{
 });
 
 const updateSearchReplace = (clearIndex: boolean = false) => {
-    if (!editor.value) {
-        return;
-    }
+    if (!editor.value) return;
 
     if (clearIndex) {
         editor.value.commands.resetIndex();
@@ -534,16 +531,12 @@ const updateSearchReplace = (clearIndex: boolean = false) => {
 };
 
 const goToSelection = () => {
-    if (!editor.value) {
-        return;
-    }
+    if (!editor.value) return;
 
     const { results, resultIndex } = editor.value.storage.searchAndReplace;
     const position: Range | undefined = results[resultIndex];
 
-    if (!position) {
-        return;
-    }
+    if (!position) return;
 
     unref(editor)?.commands.setTextSelection(position);
 
@@ -594,16 +587,12 @@ const replaceAll = () => editor.value?.commands.replaceAll();
 
 const contentRef = useTemplateRef('contentRef');
 watch(contentRef, () => {
-    if (!contentRef.value || !contentRef.value.$el) {
-        return;
-    }
+    if (!contentRef.value || !contentRef.value.$el) return;
 
     const element = contentRef.value.$el as HTMLDivElement;
     element.addEventListener('click', (event: MouseEvent) => {
         const element = event.target as HTMLElement;
-        if (element.tagName.toLowerCase() !== 'a' && !element.hasAttribute('href')) {
-            return;
-        }
+        if (element.tagName.toLowerCase() !== 'a' && !element.hasAttribute('href')) return;
 
         event.preventDefault();
     });

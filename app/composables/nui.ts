@@ -25,14 +25,10 @@ const focusNUITargets = ['input', 'textarea'];
  * @returns void promise
  */
 export async function onFocusHandler(event: FocusEvent): Promise<void> {
-    if (event.target === window) {
-        return;
-    }
+    if (event.target === window) return;
 
     const element = event.target as HTMLElement;
-    if (!focusNUITargets.includes(element.tagName.toLowerCase())) {
-        return;
-    }
+    if (!focusNUITargets.includes(element.tagName.toLowerCase())) return;
     event.stopPropagation();
     logger.debug('focus handler event:', event.type, element.tagName.toLowerCase());
 
@@ -78,81 +74,61 @@ export async function onNUIMessage(event: MessageEvent<NUIMessage>): Promise<voi
 // NUI Callbacks
 
 export async function toggleTablet(state: boolean): Promise<void> {
-    if (!isNUIEnabled().value) {
-        return;
-    }
+    if (!isNUIEnabled().value) return;
 
     return await fetchNUI(state ? 'openTablet' : 'closeTablet', { ok: true });
 }
 
 export async function focusTablet(state: boolean): Promise<void> {
-    if (!isNUIEnabled().value) {
-        return;
-    }
+    if (!isNUIEnabled().value) return;
 
     return await fetchNUI('focusTablet', { state: state });
 }
 
 export async function openTokenMgmt(): Promise<void> {
-    if (!isNUIEnabled().value) {
-        return;
-    }
+    if (!isNUIEnabled().value) return;
 
     return await fetchNUI('openTokenMgmt', { ok: true });
 }
 
 export async function setWaypoint(x: number, y: number): Promise<void> {
-    if (!isNUIEnabled().value) {
-        return;
-    }
+    if (!isNUIEnabled().value) return;
 
     return fetchNUI('setWaypoint', { x: x, y: y });
 }
 
 export async function phoneCallNumber(phoneNumber: string): Promise<void> {
-    if (!isNUIEnabled().value) {
-        return;
-    }
+    if (!isNUIEnabled().value) return;
 
     return fetchNUI('phoneCallNumber', { phoneNumber: phoneNumber });
 }
 
 export async function copyToClipboard(text: string): Promise<void> {
-    if (!isNUIEnabled().value) {
-        return;
-    }
+    if (!isNUIEnabled().value) return;
 
     return fetchNUI('copyToClipboard', { text: text });
 }
 
 export async function setRadioFrequency(frequency: string): Promise<void> {
-    if (!isNUIEnabled().value) {
-        return;
-    }
+    if (!isNUIEnabled().value) return;
 
     return fetchNUI('setRadioFrequency', { frequency: frequency });
 }
 
 export async function setWaypointPLZ(plz: string): Promise<void> {
-    if (!isNUIEnabled().value) {
-        return;
-    }
+    if (!isNUIEnabled().value) return;
 
     return fetchNUI('setWaypointPLZ', { plz: plz });
 }
 
 export async function openURLInWindow(url: string): Promise<void> {
-    if (!isNUIEnabled().value) {
-        return;
-    }
+    if (!isNUIEnabled().value) return;
 
     return fetchNUI('openURLInWindow', { url: url });
 }
 
 export async function setTabletColors(primary: string, gray: string): Promise<void> {
-    if (!isNUIEnabled().value) {
-        return;
-    }
+    if (!isNUIEnabled().value) return;
 
     return fetchNUI('setTabletColors', { primary: primary, gray: gray });
 }

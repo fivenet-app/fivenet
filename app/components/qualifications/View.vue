@@ -134,9 +134,7 @@ const canDo = computed(() => ({
 }));
 
 watchOnce(data, async () => {
-    if (!data.value?.qualification?.request) {
-        return;
-    }
+    if (!data.value?.qualification?.request) return;
 
     if (data.value?.qualification?.request.status === RequestStatus.EXAM_STARTED) {
         await navigateTo({

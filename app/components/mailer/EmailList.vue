@@ -28,9 +28,7 @@ const selectedEmail = computed({
 });
 
 watch(selectedEmail, async () => {
-    if (!selectedEmail.value) {
-        return;
-    }
+    if (!selectedEmail.value) return;
 
     const ref = emailRefs.value.get(selectedEmail.value?.id);
     if (ref) {

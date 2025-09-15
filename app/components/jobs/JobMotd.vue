@@ -33,9 +33,7 @@ const state = reactive<Schema>({
 });
 
 watch(data, () => {
-    if (!data.value) {
-        return;
-    }
+    if (!data.value) return;
 
     state.motd = data.value.motd;
 });

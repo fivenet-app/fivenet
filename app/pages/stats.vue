@@ -89,9 +89,7 @@ async function getStats(): Promise<Stats> {
 const { website } = useAppConfig();
 
 onBeforeMount(async () => {
-    if (website.statsPage) {
-        return;
-    }
+    if (website.statsPage) return;
 
     if (activeChar.value === null) {
         await navigateTo('/');

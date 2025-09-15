@@ -42,9 +42,7 @@ const dispatchesFiltered = computedAsync(async () =>
 );
 
 watch(settings, () => {
-    if (!settings.value?.enabled) {
-        return;
-    }
+    if (!settings.value?.enabled) return;
 
     removeLivemapLayer('dispatches_all');
 

@@ -21,9 +21,7 @@ const completorStore = useCompletorStore();
 const { data: lawBooks, status, refresh, error } = useLazyAsyncData(`lawbooks`, () => completorStore.listLawBooks());
 
 function deletedLawBook(id: number): void {
-    if (!lawBooks.value) {
-        return;
-    }
+    if (!lawBooks.value) return;
 
     const idx = lawBooks.value.findIndex((b) => b.id === id);
     if (idx > -1) {
@@ -44,14 +42,10 @@ function addLawBook(): void {
 
 function updateLaw(event: { id: number; law: Law }): void {
     const book = lawBooks.value?.find((b) => b.id === event.law.lawbookId);
-    if (book === undefined) {
-        return;
-    }
+    if (book === undefined) return;
 
     const idx = book?.laws.findIndex((l) => l.id === event.law.id || l.id === event.id);
-    if (idx === -1) {
-        return;
-    }
+    if (idx === -1) return;
 
     book.laws[idx] = event.law;
 }

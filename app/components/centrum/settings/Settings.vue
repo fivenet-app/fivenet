@@ -153,9 +153,7 @@ async function updateSettings(values: Schema): Promise<void> {
 }
 
 function setSettingsValues(): void {
-    if (!settings.value) {
-        return;
-    }
+    if (!settings.value) return;
 
     state.enabled = settings.value.enabled;
     state.mode = settings.value.mode;
@@ -223,9 +221,7 @@ const selectedTab = computed({
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    if (event.submitter?.getAttribute('role') === 'tab') {
-        return;
-    }
+    if (event.submitter?.getAttribute('role') === 'tab') return;
 
     canSubmit.value = false;
     await updateSettings(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));

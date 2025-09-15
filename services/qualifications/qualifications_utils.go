@@ -29,7 +29,6 @@ func (s *Server) listQualificationsQuery(
 	tCreator := tables.User().AS("creator")
 
 	wheres := []mysql.BoolExpression{}
-
 	if !userInfo.GetSuperuser() {
 		accessExists := mysql.EXISTS(
 			mysql.
@@ -38,7 +37,7 @@ func (s *Server) listQualificationsQuery(
 				WHERE(mysql.AND(
 					tQAccess.Access.IS_NOT_NULL(),
 					tQAccess.Access.GT_EQ(
-						mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED)),
+						mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_VIEW)),
 					),
 					mysql.OR(
 						mysql.AND(
@@ -163,6 +162,25 @@ func (s *Server) getQualificationQuery(
 		tQuali.ID.EQ(mysql.Int64(qualificationId)),
 	}
 	if !userInfo.GetSuperuser() {
+		accessExists := mysql.EXISTS(
+			mysql.
+				SELECT(mysql.Int(1)).
+				FROM(tQAccess).
+				WHERE(mysql.AND(
+					tQAccess.Access.IS_NOT_NULL(),
+					tQAccess.Access.GT_EQ(
+						mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_VIEW)),
+					),
+					mysql.OR(
+						mysql.AND(
+							tQAccess.Job.EQ(mysql.String(userInfo.GetJob())),
+							tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
+						),
+					),
+				),
+				),
+		)
+
 		wheres = append(wheres,
 			mysql.AND(
 				tQuali.DeletedAt.IS_NULL(),
@@ -172,12 +190,7 @@ func (s *Server) getQualificationQuery(
 						tQuali.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
 						tQuali.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
 					),
-					mysql.AND(
-						tQAccess.Access.IS_NOT_NULL(),
-						tQAccess.Access.GT_EQ(
-							mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED)),
-						),
-					),
+					accessExists,
 				),
 			),
 		)

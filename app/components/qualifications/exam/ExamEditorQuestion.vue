@@ -1,12 +1,11 @@
 <script lang="ts" setup>
 import type { WatchStopHandle } from 'vue';
-import { z } from 'zod';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
 import { useSettingsStore } from '~/stores/settings';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { File } from '~~/gen/ts/resources/file/file';
-import type { ExamQuestion, ExamQuestionSeparator, ExamQuestionYesNo } from '~~/gen/ts/resources/qualifications/exam';
+import type { ExamQuestion } from '~~/gen/ts/resources/qualifications/exam';
 import QuestionMutipleChoice from './QuestionMutipleChoice.vue';
 import QuestionSingleChoice from './QuestionSingleChoice.vue';
 
@@ -31,60 +30,6 @@ const appConfig = useAppConfig();
 const settingsStore = useSettingsStore();
 
 const { nuiEnabled } = storeToRefs(settingsStore);
-
-const schema = z.object({
-    id: z.coerce.number(),
-    title: z.coerce.string().min(0).max(512),
-    description: z.coerce.string().max(1024).optional(),
-    data: z.object({
-        data: z.union([
-            z.object({
-                oneofKind: z.literal(undefined),
-            }),
-            z.object({
-                oneofKind: z.literal('separator'),
-                separator: z.custom<ExamQuestionSeparator>().default({}),
-            }),
-            z.object({
-                oneofKind: z.literal('image'),
-                image: z.object({
-                    alt: z.coerce.string().max(128).optional(),
-                    image: z.custom<File>().optional(),
-                }),
-            }),
-            z.object({
-                oneofKind: z.literal('yesno'),
-                yesno: z.custom<ExamQuestionYesNo>().default({}),
-            }),
-            z.object({
-                oneofKind: z.literal('freeText'),
-                freeText: z.object({
-                    minLength: z.coerce.number().nonnegative(),
-                    maxLength: z.coerce.number().nonnegative(),
-                }),
-            }),
-            z.object({
-                oneofKind: z.literal('singleChoice'),
-                singleChoice: z.object({
-                    choices: z.coerce.string().max(255).array().max(1).default(['']),
-                }),
-            }),
-            z.object({
-                oneofKind: z.literal('multipleChoice'),
-                multipleChoice: z.object({
-                    choices: z.coerce.string().max(255).array().max(10).default([]),
-                    limit: z.coerce.number().positive().min(0).max(10).default(10).optional(),
-                }),
-            }),
-        ]),
-    }),
-    answer: z
-        .object({
-            answerKey: z.coerce.string().max(1024),
-        })
-        .optional(),
-    points: z.coerce.number().min(0).max(99999),
-});
 
 function handleQuestionChange(): void {
     if (question.value === undefined) {
@@ -203,9 +148,7 @@ async function handleImage(file: globalThis.File | null | undefined): Promise<vo
 const questionTypes = ['separator', 'image', 'yesno', 'freeText', 'singleChoice', 'multipleChoice'];
 
 function changeQuestionType(qt: string): void {
-    if (question.value === undefined) {
-        return;
-    }
+    if (question.value === undefined) return;
 
     switch (qt) {
         case 'image':
@@ -414,7 +357,7 @@ watch(
 </script>
 
 <template>
-    <UForm v-if="question" class="flex items-center gap-2" :schema="schema" :state="question">
+    <div v-if="question" class="flex items-center gap-2">
         <div class="inline-flex items-center gap-1">
             <UTooltip :text="$t('common.draggable')">
                 <UIcon class="handle size-7 cursor-move" name="i-mdi-drag-horizontal" />
@@ -426,7 +369,7 @@ watch(
             </UButtonGroup>
         </div>
 
-        <UFormField name="data.data.oneofKind">
+        <UFormField :name="`exam.questions.${index}.data.data.oneofKind`">
             <ClientOnly>
                 <USelectMenu
                     :model-value="question.data!.data.oneofKind"
@@ -451,11 +394,11 @@ watch(
 
         <div class="flex flex-1 flex-col gap-2 p-4">
             <div class="flex flex-1 flex-col gap-2">
-                <UFormField name="title" :label="$t('common.title')" required>
+                <UFormField :name="`exam.questions.${index}.title`" :label="$t('common.title')" required>
                     <UInput v-model="question.title" type="text" :placeholder="$t('common.title')" size="xl" class="w-full" />
                 </UFormField>
 
-                <UFormField class="flex-1" name="description" :label="$t('common.description')">
+                <UFormField :name="`exam.questions.${index}.description`" :label="$t('common.description')" class="flex-1">
                     <UTextarea
                         v-model="question.description"
                         type="text"
@@ -535,7 +478,11 @@ watch(
                 >
                     <div class="flex flex-col gap-2">
                         <div class="flex gap-2">
-                            <UFormField class="flex-1" name="data.data.freeText.minLength" :label="$t('common.min')">
+                            <UFormField
+                                class="flex-1"
+                                :name="`exam.questions.${index}.data.data.freeText.minLength`"
+                                :label="$t('common.min')"
+                            >
                                 <UInputNumber
                                     v-model="question.data!.data.freeText.minLength"
                                     :step="10"
@@ -545,7 +492,11 @@ watch(
                                 />
                             </UFormField>
 
-                            <UFormField class="flex-1" name="data.data.freeText.maxLength" :label="$t('common.max')">
+                            <UFormField
+                                class="flex-1"
+                                :name="`exam.questions.${index}.data.data.freeText.maxLength`"
+                                :label="$t('common.max')"
+                            >
                                 <UInputNumber
                                     v-model="question.data!.data.freeText.maxLength"
                                     :step="10"
@@ -556,13 +507,15 @@ watch(
                             </UFormField>
                         </div>
 
-                        <UTextarea
-                            v-model="question.answer!.answer.freeText.text"
-                            :rows="5"
-                            resize
-                            :disabled="disabled"
-                            class="w-full"
-                        />
+                        <UFormField :name="`exam.questions.${index}.answer.answer.freeText.text`" :label="$t('common.answer')">
+                            <UTextarea
+                                v-model="question.answer!.answer.freeText.text"
+                                :rows="5"
+                                resize
+                                :disabled="disabled"
+                                class="w-full"
+                            />
+                        </UFormField>
                     </div>
                 </template>
 
@@ -571,7 +524,7 @@ watch(
                         question.data!.data.oneofKind === 'singleChoice' && question.answer!.answer.oneofKind === 'singleChoice'
                     "
                 >
-                    <QuestionSingleChoice v-model="question" :disabled="disabled" />
+                    <QuestionSingleChoice v-model="question" :disabled="disabled" :index="index" />
                 </template>
 
                 <template
@@ -580,14 +533,18 @@ watch(
                         question.answer!.answer.oneofKind === 'multipleChoice'
                     "
                 >
-                    <QuestionMutipleChoice v-model="question" :disabled="disabled" />
+                    <QuestionMutipleChoice v-model="question" :disabled="disabled" :index="index" />
                 </template>
 
                 <div
                     v-if="question.data!.data.oneofKind !== 'separator' && question.data!.data.oneofKind !== 'image'"
                     class="mt-2 flex flex-row gap-2"
                 >
-                    <UFormField class="flex-1" name="answer.answerKey" :label="$t('common.answer_key')">
+                    <UFormField
+                        class="flex-1"
+                        :name="`exam.questions.${index}.answer.answerKey`"
+                        :label="$t('common.answer_key')"
+                    >
                         <UTextarea
                             v-model="question.answer!.answerKey"
                             :placeholder="$t('common.answer_key')"
@@ -598,10 +555,9 @@ watch(
                         />
                     </UFormField>
 
-                    <UFormField class="max-w-24" name="points" :label="$t('common.points', 2)">
+                    <UFormField class="max-w-24" :name="`exam.questions.${index}.points`" :label="$t('common.points', 2)">
                         <UInputNumber
                             v-model="question.points"
-                            name="points"
                             :min="0"
                             :placeholder="$t('common.points', 2)"
                             :disabled="disabled"
@@ -614,5 +570,5 @@ watch(
         <UTooltip :text="$t('components.qualifications.remove_question')">
             <UButton class="mt-1 flex-initial self-start" icon="i-mdi-close" color="error" @click="$emit('delete')" />
         </UTooltip>
-    </UForm>
+    </div>
 </template>

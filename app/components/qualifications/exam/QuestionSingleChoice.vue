@@ -4,6 +4,7 @@ import type { ExamQuestion } from '~~/gen/ts/resources/qualifications/exam';
 
 defineProps<{
     disabled?: boolean;
+    index: number;
 }>();
 
 const question = defineModel<ExamQuestion>({ required: true });
@@ -20,7 +21,12 @@ const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
         v-if="question.data!.data.oneofKind === 'singleChoice' && question.answer!.answer.oneofKind === 'singleChoice'"
         class="flex flex-col gap-2"
     >
-        <UFormField class="flex-1" name="data.data.singleChoices.choices" :label="$t('common.option', 2)" required>
+        <UFormField
+            class="flex-1"
+            :name="`exam.questions.${index}.data.data.singleChoice.choices`"
+            :label="$t('common.option', 2)"
+            required
+        >
             <VueDraggable
                 v-model="question.data!.data.singleChoice.choices"
                 class="flex w-full flex-col gap-2"
@@ -43,7 +49,7 @@ const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
                         </UButtonGroup>
                     </div>
 
-                    <UFormField :name="`data.data.singleChoices.choices.${idx}`" class="w-full">
+                    <UFormField :name="`exam.questions.${index}.data.data.singleChoice.choices.${idx}`" class="w-full">
                         <UInput
                             v-model="question.data!.data.singleChoice.choices[idx]"
                             class="w-full"
@@ -73,7 +79,7 @@ const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
                 />
             </UTooltip>
 
-            <UFormField :label="$t('common.answer')" class="mt-2">
+            <UFormField :name="`exam.questions.${index}.answer.singleChoice.choice`" :label="$t('common.answer')" class="mt-2">
                 <USelect
                     v-model="question.answer!.answer.singleChoice.choice"
                     :items="question.data!.data.singleChoice?.choices"

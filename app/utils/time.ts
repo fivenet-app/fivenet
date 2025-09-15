@@ -62,9 +62,7 @@ export function stringToDate(time: string): Date {
 }
 
 export function toTimestamp(date?: Date): resourcesTimestampTimestamp.Timestamp | undefined {
-    if (date === undefined) {
-        return;
-    }
+    if (date === undefined) return;
 
     return {
         timestamp: googleProtobufTimestamp.Timestamp.fromDate(date),

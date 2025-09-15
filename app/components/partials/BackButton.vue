@@ -9,9 +9,7 @@ const props = defineProps<{
 const router = useRouter();
 
 async function goBack(): Promise<void> {
-    if (props.to) {
-        return;
-    }
+    if (props.to) return;
 
     if (history.length === 0) {
         if (props.fallbackTo) {

@@ -25,9 +25,7 @@ const props = withDefaults(
 const notifications = useNotificationsStore();
 
 function copyEmail(): void {
-    if (!props.email) {
-        return;
-    }
+    if (!props.email) return;
 
     copyToClipboardWrapper(props.email);
 

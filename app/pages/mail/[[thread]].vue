@@ -73,9 +73,7 @@ const { status, refresh } = useLazyAsyncData(`mailer-thread:${page.value}`, () =
 });
 
 async function loadThreads(): Promise<ListThreadsResponse | undefined> {
-    if (!selectedEmail.value?.id) {
-        return;
-    }
+    if (!selectedEmail.value?.id) return;
 
     if (selectedEmail.value.settings === undefined) {
         await mailerStore.getEmail(selectedEmail.value.id);
@@ -110,9 +108,7 @@ const selectedThreadId = computed(() =>
 );
 
 watch(selectedThreadId, async () => {
-    if (selectedThreadId.value <= 0) {
-        return;
-    }
+    if (selectedThreadId.value <= 0) return;
 
     const thread = await mailerStore.getThread(selectedThreadId.value);
     selectedThread.value = thread;

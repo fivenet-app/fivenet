@@ -98,9 +98,7 @@ async function saveLawBook(id: number, values: Schema): Promise<LawBook> {
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    if (!lawBook.value) {
-        return;
-    }
+    if (!lawBook.value) return;
 
     canSubmit.value = false;
     await saveLawBook(lawBook.value.id, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));

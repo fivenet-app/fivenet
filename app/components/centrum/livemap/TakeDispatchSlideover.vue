@@ -21,9 +21,7 @@ const queryDispatches = ref('');
 
 async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
     try {
-        if (!canTakeDispatch.value) {
-            return;
-        }
+        if (!canTakeDispatch.value) return;
 
         const dispatchIds = selectedDispatches.value.filter((sd) => {
             const dsp = dispatches.value.get(sd);
@@ -35,9 +33,7 @@ async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
             return dsp.status === undefined ? true : !isStatusDispatchCompleted(dsp.status.status);
         });
 
-        if (dispatchIds.length === 0) {
-            return;
-        }
+        if (dispatchIds.length === 0) return;
 
         // Make sure all selected dispatches are still existing and not in a "completed"
         const call = centrumCentrumClient.takeDispatch({

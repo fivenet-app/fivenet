@@ -65,9 +65,7 @@ const document = computed(() => data.value || props.document);
 
 // Invalidate the data when the documentId changes
 watch(documentId, (val) => {
-    if (val === documentId.value) {
-        return;
-    }
+    if (val === documentId.value) return;
 
     data.value = undefined;
 });

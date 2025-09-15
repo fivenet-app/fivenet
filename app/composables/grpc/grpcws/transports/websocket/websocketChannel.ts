@@ -69,9 +69,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
     }
 
     async onMessage(data: ArrayBuffer | null): Promise<void> {
-        if (data === null) {
-            return;
-        }
+        if (data === null) return;
 
         const frame = GrpcFrame.fromBinary(new Uint8Array(data));
         const streamId = frame.streamId;
@@ -96,9 +94,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
                     this.logger.debug('Received header for stream', streamId, `${stream[1].service}/${stream[1].method}`);
 
                 const header = frame.payload.header;
-                if (header === null) {
-                    return;
-                }
+                if (header === null) return;
 
                 const metaData = headersToMetadata(header.headers);
                 stream[0].onHeaders(metaData, header.status);
@@ -115,9 +111,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
                     this.logger.debug('Received body for stream', streamId, `${stream[1].service}/${stream[1].method}`);
 
                 const body = frame.payload.body;
-                if (body === null) {
-                    return;
-                }
+                if (body === null) return;
 
                 stream[0].onChunk(body.data);
                 break;

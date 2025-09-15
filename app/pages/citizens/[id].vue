@@ -78,9 +78,7 @@ useHead({
 });
 
 function addToClipboard(): void {
-    if (!user.value) {
-        return;
-    }
+    if (!user.value) return;
 
     clipboardStore.addUser(user.value);
 

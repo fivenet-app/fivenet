@@ -218,9 +218,7 @@ export const useLivemapStore = defineStore(
         };
 
         const restartStream = async (): Promise<void> => {
-            if (!abort.value || abort.value.signal.aborted) {
-                return;
-            }
+            if (!abort.value || abort.value.signal.aborted) return;
 
             // Reset back off time if it exceeds max
             if (reconnectBackoffTime.value > maxBackOffTime) {

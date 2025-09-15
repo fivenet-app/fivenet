@@ -4,6 +4,7 @@ import type { ExamQuestion } from '~~/gen/ts/resources/qualifications/exam';
 
 defineProps<{
     disabled?: boolean;
+    index: number;
 }>();
 
 const question = defineModel<ExamQuestion>({ required: true });
@@ -20,7 +21,7 @@ const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
         v-if="question.data!.data.oneofKind === 'multipleChoice' && question.answer!.answer.oneofKind === 'multipleChoice'"
         class="flex flex-col gap-2"
     >
-        <UFormField name="data.data.multipleChoice.limit" :label="$t('common.max')">
+        <UFormField :name="`exam.questions.${index}.data.data.multipleChoice.limit`" :label="$t('common.max')">
             <UInputNumber
                 v-model="question.data!.data.multipleChoice.limit"
                 :min="1"
@@ -29,7 +30,12 @@ const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
             />
         </UFormField>
 
-        <UFormField class="flex-1" :label="$t('common.option', 2)" required>
+        <UFormField
+            :name="`exam.questions.${index}.data.data.multipleChoice.choices`"
+            class="flex-1"
+            :label="$t('common.option', 2)"
+            required
+        >
             <VueDraggable
                 v-model="question.data!.data.multipleChoice.choices"
                 class="flex flex-col gap-2"
@@ -52,18 +58,23 @@ const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
                         </UButtonGroup>
                     </div>
 
-                    <UCheckboxGroup
-                        v-model="question.answer!.answer.multipleChoice.choices"
-                        :value="question.data!.data.multipleChoice.choices[idx]"
-                        :disabled="disabled"
-                    />
-                    <UInput
-                        v-model="question.data!.data.multipleChoice.choices[idx]"
-                        class="w-full"
-                        type="text"
-                        block
-                        :disabled="disabled"
-                    />
+                    <UFormField>
+                        <UCheckboxGroup
+                            v-model="question.answer!.answer.multipleChoice.choices"
+                            :value="question.data!.data.multipleChoice.choices[idx]"
+                            :disabled="disabled"
+                        />
+                    </UFormField>
+
+                    <UFormField :name="`exam.questions.${index}.data.data.multipleChoice.choices.${idx}`">
+                        <UInput
+                            v-model="question.data!.data.multipleChoice.choices[idx]"
+                            class="w-full"
+                            type="text"
+                            block
+                            :disabled="disabled"
+                        />
+                    </UFormField>
 
                     <UTooltip :text="$t('components.qualifications.remove_option')">
                         <UButton
@@ -85,7 +96,11 @@ const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
                 />
             </UTooltip>
 
-            <UFormField :label="$t('common.answer')" class="mt-2">
+            <UFormField
+                :name="`exam.questions.${index}.answer.multipleChoice.choices`"
+                :label="$t('common.answer')"
+                class="mt-2"
+            >
                 <USelect
                     v-model="question.answer!.answer.multipleChoice.choices"
                     multiple

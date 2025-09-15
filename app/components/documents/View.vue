@@ -85,9 +85,7 @@ if (hash.value !== undefined && hash.value !== null) {
 
 const documentRequestModal = overlay.create(RequestModal);
 function openRequestsModal(): void {
-    if (doc.value?.access === undefined || doc.value?.document === undefined) {
-        return;
-    }
+    if (doc.value?.access === undefined || doc.value?.document === undefined) return;
 
     documentRequestModal.open({
         access: doc.value.access,
@@ -117,9 +115,7 @@ async function togglePin(documentId: number, state: boolean, personal: boolean):
 }
 
 function updateReminderTime(reminderTime?: Timestamp): void {
-    if (!doc.value?.document) {
-        return;
-    }
+    if (!doc.value?.document) return;
 
     if (!doc.value.document.workflowUser) {
         doc.value.document.workflowUser = {
@@ -134,9 +130,7 @@ function updateReminderTime(reminderTime?: Timestamp): void {
 }
 
 async function toggleDocument(): Promise<void> {
-    if (!doc.value?.document) {
-        return;
-    }
+    if (!doc.value?.document) return;
 
     doc.value.document!.closed = await documentsDocuments.toggleDocument(props.documentId, !doc.value.document?.closed);
 }
