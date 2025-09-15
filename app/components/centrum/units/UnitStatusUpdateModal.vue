@@ -3,10 +3,10 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { unitStatusToBadgeColor, unitStatuses } from '~/components/centrum/helpers';
 import { useCentrumStore } from '~/stores/centrum';
-import type { Coordinate } from '~/types/livemap';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import { type Unit, StatusUnit } from '~~/gen/ts/resources/centrum/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import type { Coordinate } from '~~/shared/types/types';
 
 const props = defineProps<{
     unit: Unit;

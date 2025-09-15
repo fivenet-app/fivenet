@@ -120,7 +120,7 @@ const { attr, can } = useAuth();
                                             :key="label.name"
                                             class="justify-between gap-2"
                                             :class="
-                                                isColorBright(hexToRgb(label.color, RGBBlack)!) ? 'text-black!' : 'text-white!'
+                                                isColorBright(hexToRgb(label.color, rgbBlack)!) ? 'text-black!' : 'text-white!'
                                             "
                                             :style="{ backgroundColor: label.color }"
                                             size="md"

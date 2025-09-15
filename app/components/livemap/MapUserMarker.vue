@@ -49,7 +49,7 @@ const markerColor = computed(() =>
 const unit = computed(() => (props.marker.unitId !== undefined ? units.value.get(props.marker.unitId) : undefined));
 const hasUnit = computed(() => props.showUnitNames && props.marker.unitId !== undefined);
 const unitInverseColor = computed(() => {
-    return hexToRgb(unit.value?.color ?? livemap.userMarkers.fallbackColor, RGBBlack)!;
+    return hexToRgb(unit.value?.color ?? livemap.userMarkers.fallbackColor, rgbBlack)!;
 });
 
 const iconAnchor = computed<PointExpression | undefined>(() => [props.size / 2, props.size * (hasUnit.value ? 1.8 : 0.95)]);

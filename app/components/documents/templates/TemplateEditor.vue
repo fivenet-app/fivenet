@@ -16,13 +16,13 @@ import { TemplateBlock } from '~/composables/tiptap/extensions/TemplateBlock';
 import { TemplateVar } from '~/composables/tiptap/extensions/TemplateVar';
 import { useAuthStore } from '~/stores/auth';
 import { useCompletorStore } from '~/stores/completor';
+import { jobAccessEntry, userAccessEntry } from '~/utils/validation';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/documents/documents';
-import { jobAccessEntry, userAccessEntry } from '~~/shared/types/validation';
 import TemplateEditorButtons from './TemplateEditorButtons.vue';
 import TemplateWorkflowEditor from './TemplateWorkflowEditor.vue';
 

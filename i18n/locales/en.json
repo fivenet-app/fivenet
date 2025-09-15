@@ -700,7 +700,9 @@
         "longitude_short": "Long",
         "inactive": "Inactive",
         "path": "Path",
-        "directory": "Directory | Directories"
+        "directory": "Directory | Directories",
+        "undo": "Undo",
+        "redo": "Redo"
     },
     "components": {
         "partials": {

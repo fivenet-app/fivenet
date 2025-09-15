@@ -51,6 +51,9 @@ importers:
       '@protobuf-ts/grpcweb-transport':
         specifier: 2.11.1
         version: 2.11.1
+      '@selemondev/vue3-signature-pad':
+        specifier: ^1.4.2
+        version: 1.4.2(vue@3.5.21(typescript@5.9.2))
       '@tailwindcss/typography':
         specifier: 0.5.16
         version: 0.5.16(tailwindcss@4.1.13)
@@ -2519,6 +2522,11 @@ packages:
     resolution: {integrity: sha512-StxAO/8ts62KZVRAm4JZYq9+NqNsV7RvimNK+YM7ry//zebEH6meuugqW/P5OFUCjyQgui+9fUxT6d5NShvMvA==}
     cpu: [x64]
     os: [win32]
+
+  '@selemondev/vue3-signature-pad@1.4.2':
+    resolution: {integrity: sha512-XDgGmtbeMpC4ooJutTMbDDYRzN76Q62cd/+Rdm9vw2NtF6KRq+z0NJCSrht3g7ozMlDoVY47S82r47lHPqIEaw==}
+    peerDependencies:
+      vue: ^3.2.0
 
   '@shikijs/core@3.12.2':
     resolution: {integrity: sha512-L1Safnhra3tX/oJK5kYHaWmLEBJi1irASwewzY3taX5ibyXyMkkSDZlq01qigjryOBwrXSdFgTiZ3ryzSNeu7Q==}
@@ -7461,6 +7469,9 @@ packages:
     resolution: {integrity: sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==}
     engines: {node: '>=14'}
 
+  signature_pad@5.1.0:
+    resolution: {integrity: sha512-h9rIm0vZggb/wWiajLzrH0Md+YntTHIo2dUFm6mfYAIItD75yzpiIHa1HcRA9NhQqPBix2KF8TIIA9vaokomBw==}
+
   simple-concat@1.0.1:
     resolution: {integrity: sha512-cSFtAPtRhljv69IK0hTVZQ+OfE9nePi/rtJmw5UjHeVyVroEqJXP1sFztKUy1qU+xvz3u/sfYJLa947b7nAN2Q==}
 
@@ -11120,6 +11131,12 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.50.1':
     optional: true
+
+  '@selemondev/vue3-signature-pad@1.4.2(vue@3.5.21(typescript@5.9.2))':
+    dependencies:
+      nanoid: 5.1.5
+      signature_pad: 5.1.0
+      vue: 3.5.21(typescript@5.9.2)
 
   '@shikijs/core@3.12.2':
     dependencies:
@@ -16999,6 +17016,8 @@ snapshots:
   siginfo@2.0.0: {}
 
   signal-exit@4.1.0: {}
+
+  signature_pad@5.1.0: {}
 
   simple-concat@1.0.1: {}
 

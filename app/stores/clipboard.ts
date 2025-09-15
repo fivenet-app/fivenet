@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { stringToDate } from '~/utils/time';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
@@ -120,7 +121,7 @@ export function getDocument(obj: ClipboardDocument): DocumentShort {
         public: obj.public,
     };
     if (obj.createdAt !== undefined) {
-        doc.createdAt = toTimestamp(fromString(obj.createdAt));
+        doc.createdAt = toTimestamp(stringToDate(obj.createdAt));
     }
     return doc;
 }

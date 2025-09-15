@@ -333,7 +333,7 @@ const props = defineProps<{
                                     v-for="attribute in activity.data.data.labelsChange.removed"
                                     :key="attribute.name"
                                     class="justify-between gap-2 line-through"
-                                    :class="isColorBright(hexToRgb(attribute.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
+                                    :class="isColorBright(hexToRgb(attribute.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
                                     :style="{ backgroundColor: attribute.color }"
                                 >
                                     {{ attribute.name }}
@@ -343,7 +343,7 @@ const props = defineProps<{
                                     v-for="attribute in activity.data.data.labelsChange.added"
                                     :key="attribute.name"
                                     class="justify-between gap-2"
-                                    :class="isColorBright(hexToRgb(attribute.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
+                                    :class="isColorBright(hexToRgb(attribute.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
                                     :style="{ backgroundColor: attribute.color }"
                                 >
                                     {{ attribute.name }}

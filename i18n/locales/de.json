@@ -700,7 +700,9 @@
         "longitude_short": "Long",
         "inactive": "Inaktiv",
         "path": "Pfad",
-        "directory": "Verzeichnis | Verzeichnisse"
+        "directory": "Verzeichnis | Verzeichnisse",
+        "undo": "Rückgängig machen",
+        "redo": "Wiederholen"
     },
     "components": {
         "partials": {

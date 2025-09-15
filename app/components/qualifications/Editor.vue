@@ -7,6 +7,7 @@ import { type AccessType, enumToAccessLevelEnums } from '~/components/partials/a
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import RequirementEntry from '~/components/qualifications/RequirementEntry.vue';
 import type { Content } from '~/types/history';
+import { jobAccessEntry } from '~/utils/validation';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -20,7 +21,6 @@ import {
     QualificationExamMode,
 } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { UpdateQualificationRequest, UpdateQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
-import { jobAccessEntry } from '~~/shared/types/validation';
 import BackButton from '../partials/BackButton.vue';
 import ConfirmModal from '../partials/ConfirmModal.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';

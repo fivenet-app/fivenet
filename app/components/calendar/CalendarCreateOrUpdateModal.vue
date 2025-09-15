@@ -8,10 +8,10 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCalendarStore } from '~/stores/calendar';
+import { jobAccessEntry, userAccessEntry } from '~/utils/validation';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateCalendarResponse, UpdateCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
-import { jobAccessEntry, userAccessEntry } from '~~/shared/types/validation';
 
 const props = defineProps<{
     calendarId?: number;

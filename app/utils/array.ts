@@ -7,10 +7,6 @@ export function shuffleArray<T>(arr: T[]): T[] {
     return arr;
 }
 
-export function range(size: number, startAt?: number): number[] {
-    return [...Array(size).keys()].map((i) => i + (startAt ?? 0));
-}
-
 export function writeUInt32BE(arr: Uint8Array, value: number, offset: number) {
     value = +value;
     offset = offset | 0;

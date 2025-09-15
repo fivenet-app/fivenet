@@ -100,7 +100,7 @@ const idsLink = computed<CommandPaletteItem[]>(() => {
     ].filter((l) => l.label.toLowerCase().includes(q.toLowerCase()));
 
     const id = q.substring(q.indexOf('-') + 1).trim();
-    if (id.length > 0 && isNumber(id)) {
+    if (id.length > 0 && id !== '' && !isNaN(Number(id.toString()))) {
         if (q.startsWith('CIT')) {
             links.push({
                 id: 'id-citizen',

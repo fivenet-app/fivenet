@@ -28,6 +28,8 @@ export const backgroundColors: Color[] = [
     { label: 'stone', chip: { color: 'stone' }, class: 'bg-stone-500 dark:bg-stone-400' },
 ] as const;
 
+export const rgbBlack = { r: 0, g: 0, b: 0 };
+
 // Taken from https://stackoverflow.com/a/16348977
 export function stringToColor(str: string): string {
     let hash = 0;
@@ -41,8 +43,6 @@ export function stringToColor(str: string): string {
     }
     return color;
 }
-
-export const RGBBlack = { r: 0, g: 0, b: 0 };
 
 // Taken from https://stackoverflow.com/a/5624139
 export function hexToRgb(hex: string, def: RGB | undefined = undefined): RGB | undefined {
@@ -58,7 +58,7 @@ export function hexToRgb(hex: string, def: RGB | undefined = undefined): RGB | u
 }
 
 export function isColorBright(input: RGB | string): boolean {
-    const rgb = typeof input === 'string' ? hexToRgb(input, RGBBlack)! : input;
+    const rgb = typeof input === 'string' ? hexToRgb(input, rgbBlack)! : input;
 
     // http://www.w3.org/TR/AERT#color-contrast
     const brightness = Math.round((rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000);

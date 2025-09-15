@@ -139,7 +139,7 @@ const { attr } = useAuth();
                                         v-for="label in user.props?.labels?.list"
                                         :key="label.name"
                                         class="justify-between gap-2"
-                                        :class="isColorBright(hexToRgb(label.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
+                                        :class="isColorBright(hexToRgb(label.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
                                         :style="{ backgroundColor: label.color }"
                                         size="md"
                                     >

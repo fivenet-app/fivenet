@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import FiveNetHints from '~/components/FiveNetHints.vue';
+import HintsBox from '~/components/HintsBox.vue';
 import CardsList from '~/components/partials/CardsList.vue';
 import type { CardElements } from '~/utils/types';
 
@@ -100,7 +100,7 @@ const items = [
         <template #body>
             <CardsList :items="items" />
 
-            <FiveNetHints class="mt-4" />
+            <HintsBox class="mt-4" />
         </template>
     </UDashboardPanel>
 </template>

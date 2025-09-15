@@ -26,7 +26,7 @@ const modelValue = defineModel<string>();
             :block="block"
         >
             <template #leading>
-                <span :style="{ backgroundColor: modelValue ?? 'black' }" class="size-3 rounded-sm" />
+                <span :style="{ backgroundColor: modelValue ?? 'black' }" class="size-5 rounded-sm" />
             </template>
         </UButton>
 

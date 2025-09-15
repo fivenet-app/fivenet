@@ -5,12 +5,12 @@ import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
+import { jobAccessEntry, qualificationAccessEntry } from '~/utils/validation';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import { UnitAttribute } from '~~/gen/ts/resources/centrum/attributes';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/units_access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { jobAccessEntry, qualificationAccessEntry } from '~~/shared/types/validation';
 
 const props = defineProps<{
     unit?: Unit;

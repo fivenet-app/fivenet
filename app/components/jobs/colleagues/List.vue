@@ -565,7 +565,7 @@ defineShortcuts({
                                                 :key="label.name"
                                                 class="cursor-pointer justify-between gap-2"
                                                 :class="
-                                                    isColorBright(hexToRgb(label.color, RGBBlack)!)
+                                                    isColorBright(hexToRgb(label.color, rgbBlack)!)
                                                         ? 'text-black!'
                                                         : 'text-white!'
                                                 "

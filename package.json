@@ -35,6 +35,7 @@
         "@nuxtjs/robots": "5.5.1",
         "@pinia/nuxt": "0.11.2",
         "@protobuf-ts/grpcweb-transport": "2.11.1",
+        "@selemondev/vue3-signature-pad": "^1.4.2",
         "@tailwindcss/typography": "0.5.16",
         "@tiptap/extension-character-count": "3.4.2",
         "@tiptap/extension-collaboration": "3.4.2",

@@ -116,7 +116,7 @@ const formRef = useTemplateRef('formRef');
             <div class="flex max-w-72 flex-row flex-wrap gap-1">
                 <UButtonGroup v-for="(attribute, idx) in state.labels" :key="attribute.name">
                     <UBadge
-                        :class="isColorBright(hexToRgb(attribute.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
+                        :class="isColorBright(hexToRgb(attribute.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
                         :style="{ backgroundColor: attribute.color }"
                         size="md"
                     >
@@ -126,7 +126,7 @@ const formRef = useTemplateRef('formRef');
                     <UButton
                         v-if="canDo.set"
                         :class="
-                            isColorBright(hexToRgb(attribute.color, RGBBlack)!)
+                            isColorBright(hexToRgb(attribute.color, rgbBlack)!)
                                 ? 'bg-white/20! text-black!'
                                 : 'bg-black/20! text-white!'
                         "
@@ -160,7 +160,7 @@ const formRef = useTemplateRef('formRef');
                 <template #item-label="{ item }">
                     <span
                         class="truncate"
-                        :class="isColorBright(hexToRgb(item.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
+                        :class="isColorBright(hexToRgb(item.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
                         :style="{ backgroundColor: item.color }"
                         >{{ item.name }}</span
                     >
